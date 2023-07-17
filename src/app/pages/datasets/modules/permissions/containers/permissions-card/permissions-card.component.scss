@@ -1,4 +1,10 @@
-@import '~assets/styles/mixins/cards';
+@import 'mixins/cards';
+
+:host ::ng-deep {
+  ix-permissions-item {
+    padding: 12px 0;
+  }
+}
 
 .card {
   @include details-card();
@@ -10,7 +16,7 @@
       border-bottom: 1px solid var(--lines);
       display: flex;
       flex-wrap: wrap;
-      padding: 20px 25px 10px;
+      padding: 0 0 10px;
 
       .details-item:not(:last-child) {
         width: 50%;
@@ -27,15 +33,17 @@
           text-overflow: ellipsis;
           white-space: nowrap;
         }
-      
+
         ix-copy-btn {
           margin-top: -4px;
         }
       }
     }
-
-    .loader-permissions {
-      padding: 50px 20px 20px;
-    }
   }
+}
+
+.loader-permissions {
+  background-color: var(--bg2);
+  margin: 4px;
+  padding: 50px 24px 24px;
 }

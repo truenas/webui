@@ -1,4 +1,5 @@
 import 'jest-preset-angular/setup-jest';
+import { HighContrastModeDetector } from '@angular/cdk/a11y';
 import { APP_BASE_HREF } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { MatBadgeModule } from '@angular/material/badge';
@@ -25,6 +26,7 @@ import { StoreModule } from '@ngrx/store';
 import {
   MissingTranslationHandler, TranslateCompiler, TranslateLoader, TranslateModule, TranslateFakeLoader,
 } from '@ngx-translate/core';
+import { MockProvider } from 'ng-mocks';
 import { NgxFilesizeModule } from 'ngx-filesize';
 import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler';
 import { IcuMissingTranslationHandler } from 'app/core/classes/icu-missing-translation-handler';
@@ -34,6 +36,7 @@ import { CastModule } from 'app/modules/cast/cast.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { SnackbarModule } from 'app/modules/snackbar/snackbar.module';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 
 jest.setTimeout(30 * 1000);
 
@@ -63,6 +66,7 @@ defineGlobalsInjections({
     NgxFilesizeModule,
     CastModule,
     SnackbarModule,
+    TestIdModule,
     TranslateModule.forRoot({
       defaultLanguage: 'en',
       loader: {
@@ -84,6 +88,7 @@ defineGlobalsInjections({
     AppLoaderModule,
   ],
   providers: [
+    MockProvider(HighContrastModeDetector),
     {
       provide: APP_BASE_HREF,
       useValue: '',
@@ -100,17 +105,29 @@ defineGlobalsInjections({
   ],
 });
 
-// eslint-disable-next-line no-restricted-globals
-Object.defineProperty(window, 'matchMedia', {
-  writable: true,
-  value: jest.fn().mockImplementation((query) => ({
-    matches: false,
-    media: query,
-    onchange: null,
-    addListener: jest.fn(),
-    removeListener: jest.fn(),
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
-  })),
+beforeEach(() => {
+  // eslint-disable-next-line no-restricted-globals
+  Object.defineProperty(window, 'matchMedia', {
+    writable: true,
+    value: jest.fn().mockImplementation((query: unknown) => ({
+      matches: false,
+      media: query,
+      onchange: null,
+      addListener: jest.fn(),
+      removeListener: jest.fn(),
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+      dispatchEvent: jest.fn(),
+    })),
+  });
+
+  // eslint-disable-next-line no-restricted-globals
+  Object.defineProperty(window, 'ResizeObserver', {
+    writable: true,
+    value: jest.fn().mockImplementation(() => ({
+      disconnect: jest.fn(),
+      observe: jest.fn(),
+      unobserve: jest.fn(),
+    })),
+  });
 });

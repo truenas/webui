@@ -3,18 +3,19 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { MockPipe } from 'ng-mocks';
 import { of } from 'rxjs';
-import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
+import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
-import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { EntityModule } from 'app/modules/entity/entity.module';
+import { IxEmptyRowHarness } from 'app/modules/ix-tables/components/ix-empty-row/ix-empty-row.component.harness';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
 import { ApiKeyFormDialogComponent } from 'app/pages/api-keys/components/api-key-form-dialog/api-key-form-dialog.component';
 import { ApiKeyListComponent } from 'app/pages/api-keys/components/api-key-list/api-key-list.component';
 import { ApiKeyComponentStore, ApiKeysState } from 'app/pages/api-keys/store/api-key.store';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('ApiKeyListComponent', () => {
   let spectator: Spectator<ApiKeyListComponent>;
@@ -28,12 +29,11 @@ describe('ApiKeyListComponent', () => {
       IxTableModule,
     ],
     declarations: [
-      MockPipe(FormatDateTimePipe, jest.fn(() => 'Jan 10 2022 10:36')),
+      FakeFormatDateTimePipe,
       ApiKeyFormDialogComponent,
     ],
     providers: [
       ApiKeyComponentStore,
-      mockProvider(WebSocketService),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
@@ -55,7 +55,7 @@ describe('ApiKeyListComponent', () => {
           name: 'second-api-key',
           key: 'strong-key',
           created_at: {
-            $date: 1010101010101,
+            $date: 1011101010101,
           },
         }]),
         mockCall('api_key.delete'),
@@ -74,8 +74,8 @@ describe('ApiKeyListComponent', () => {
     const cells = await table.getCells(true);
     const expectedRows = [
       ['Name', 'Created Date', ''],
-      ['first-api-key', 'Jan 10 2022 10:36', 'more_vert'],
-      ['second-api-key', 'Jan 10 2022 10:36', 'more_vert'],
+      ['first-api-key', '2002-01-04 01:36:50', ''],
+      ['second-api-key', '2002-01-15 15:23:30', ''],
     ];
 
     expect(cells).toEqual(expectedRows);
@@ -84,19 +84,19 @@ describe('ApiKeyListComponent', () => {
   it('should have empty message when loaded and datasource is empty', async () => {
     store.setState({ isLoading: false, entities: [], error: null } as ApiKeysState);
 
-    const table = await loader.getHarness(IxTableHarness);
-    const text = await table.getCellTextByIndex();
-
-    expect(text).toEqual([['No API Keys']]);
+    spectator.detectChanges();
+    const emptyRow = await loader.getHarness(IxEmptyRowHarness);
+    const emptyTitle = await emptyRow.getTitleText();
+    expect(emptyTitle).toBe('No records have been added yet');
   });
 
   it('should have error message when can not retrieve response', async () => {
     store.setState({ error: 'Can not retrieve response', isLoading: false, entities: [] } as ApiKeysState);
 
-    const table = await loader.getHarness(IxTableHarness);
-    const text = await table.getCellTextByIndex();
-
-    expect(text).toEqual([['Can not retrieve response']]);
+    spectator.detectChanges();
+    const emptyRow = await loader.getHarness(IxEmptyRowHarness);
+    const emptyTitle = await emptyRow.getTitleText();
+    expect(emptyTitle).toBe('Can not retrieve response');
   });
 
   it('should open edit dialog form when Edit item is pressed', async () => {
@@ -112,7 +112,7 @@ describe('ApiKeyListComponent', () => {
 
     const actionsMenu = await loader.getHarness(MatMenuHarness.with({ selector: '[aria-label="API Key Actions"]' }));
     await actionsMenu.open();
-    await actionsMenu.clickItem({ text: 'editEdit' });
+    await actionsMenu.clickItem({ text: 'Edit' });
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ApiKeyFormDialogComponent, {
       data: {
@@ -139,7 +139,7 @@ describe('ApiKeyListComponent', () => {
 
     const actionsMenu = await loader.getHarness(MatMenuHarness.with({ selector: '[aria-label="API Key Actions"]' }));
     await actionsMenu.open();
-    await actionsMenu.clickItem({ text: 'deleteDelete' });
+    await actionsMenu.clickItem({ text: 'Delete' });
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('api_key.delete', ['1']);

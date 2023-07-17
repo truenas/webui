@@ -1,5 +1,5 @@
-@import '~assets/styles/mixins/cards';
-@import '~assets/styles/scss-imports/splitview';
+@import 'mixins/cards';
+@import 'scss-imports/splitview';
 
 .card {
   @include details-card();
@@ -11,7 +11,6 @@
 
     .details-item {
       margin: 20px 0 0;
-
     }
   }
 
@@ -24,23 +23,24 @@
   .details .label {
     @media (max-width: calc($breakpoint-dualcolumn - 1px)) {
       display: block;
-      margin-top: 6px;
       padding: 0;
       width: 100%;
     }
   }
-
 }
 
 .details {
   border-top: 1px solid var(--lines);
   box-sizing: border-box;
-  margin: 20px -25px 0; // Fragile. Rely on external styles
-  padding: 20px 25px 0 !important; // Fragile. Rely on external styles
+  margin: 10px 0 0;
+  padding: 10px 0 0 !important;
 }
 
 ix-space-management-chart {
-  padding: 0 0 0 8px;
+  display: grid;
+  grid-gap: 15px;
+  grid-template-columns: 1fr 2fr;
+  padding: 0 0 5px;
 
   @media (max-width: $breakpoint-dualcolumn) {
     padding-left: 0;

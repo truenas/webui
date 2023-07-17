@@ -9,7 +9,7 @@ import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { CloneVmDialogComponent } from 'app/pages/vm/vm-list/clone-vm-dialog/clone-vm-dialog.component';
-import { WebSocketService } from 'app/services';
+import { DialogService, WebSocketService } from 'app/services';
 
 describe('CloneVmDialogComponent', () => {
   let spectator: Spectator<CloneVmDialogComponent>;
@@ -25,6 +25,7 @@ describe('CloneVmDialogComponent', () => {
         mockCall('vm.clone'),
       ]),
       mockProvider(MatDialogRef),
+      mockProvider(DialogService),
       {
         provide: MAT_DIALOG_DATA,
         useValue: {

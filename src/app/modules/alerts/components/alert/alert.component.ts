@@ -41,7 +41,7 @@ enum AlertLevelColor {
 })
 export class AlertComponent implements OnChanges {
   @Input() alert: Alert;
-  @Input() isHa: boolean;
+  @Input() isHaLicensed: boolean;
 
   alertLevelColor: AlertLevelColor;
   icon: string;

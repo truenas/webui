@@ -1,4 +1,4 @@
-<div class="form-error" *ngIf="control.touched || control.dirty">
+<div *ngIf="control.touched || control.dirty" class="form-error">
   <mat-error *ngFor="let message of messages">
     <span [innerHTML]="message"></span>
   </mat-error>

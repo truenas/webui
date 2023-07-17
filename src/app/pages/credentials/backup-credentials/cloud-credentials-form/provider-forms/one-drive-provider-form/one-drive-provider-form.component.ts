@@ -1,21 +1,24 @@
 import {
+  AfterViewInit,
   ChangeDetectionStrategy, Component, OnInit, ViewChild,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Observable, of } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
 import { OneDriveType } from 'app/enums/cloudsync-provider.enum';
 import { CloudCredential } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudsyncOneDriveDrive } from 'app/interfaces/cloudsync-credential.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import {
   OauthProviderComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/oauth-provider/oauth-provider.component';
 import {
   BaseProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/base-provider-form';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -23,7 +26,7 @@ import { DialogService, WebSocketService } from 'app/services';
   templateUrl: './one-drive-provider-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class OneDriveProviderFormComponent extends BaseProviderFormComponent implements OnInit {
+export class OneDriveProviderFormComponent extends BaseProviderFormComponent implements OnInit, AfterViewInit {
   @ViewChild(OauthProviderComponent, { static: true }) oauthComponent: OauthProviderComponent;
 
   form = this.formBuilder.group({
@@ -48,11 +51,23 @@ export class OneDriveProviderFormComponent extends BaseProviderFormComponent imp
     },
   ]);
 
-  drives$: Observable<Option[]> = of([]);
+  drives$ = of<Option[]>([]);
 
   private drives: CloudsyncOneDriveDrive[] = [];
+  private formPatcher$ = new BehaviorSubject<CloudCredential['attributes']>({});
 
+  getFormSetter$ = (): BehaviorSubject<CloudCredential['attributes']> => {
+    return this.formPatcher$;
+  };
+
+  ngAfterViewInit(): void {
+    this.formPatcher$.pipe(untilDestroyed(this)).subscribe((values) => {
+      this.form.patchValue(values);
+      this.oauthComponent.form.patchValue(values);
+    });
+  }
   constructor(
+    private errorHandler: ErrorHandlerService,
     private formBuilder: FormBuilder,
     private ws: WebSocketService,
     private dialogService: DialogService,
@@ -77,21 +92,16 @@ export class OneDriveProviderFormComponent extends BaseProviderFormComponent imp
     };
   }
 
-  setValues(values: CloudCredential['attributes']): void {
-    this.form.patchValue(values);
-    this.oauthComponent.form.patchValue(values);
-  }
-
   private setupDriveSelect(): void {
     this.form.controls.drives.valueChanges.pipe(untilDestroyed(this)).subscribe((driveId) => {
-      const drive = this.drives.find((drive) => drive.drive_id === driveId);
-      if (!drive) {
+      const selectedDrive = this.drives.find((drive) => drive.drive_id === driveId);
+      if (!selectedDrive) {
         return;
       }
 
       this.form.patchValue({
-        drive_type: drive.drive_type,
-        drive_id: drive.drive_id,
+        drive_type: selectedDrive.drive_type,
+        drive_id: selectedDrive.drive_id,
       });
     });
   }
@@ -113,8 +123,8 @@ export class OneDriveProviderFormComponent extends BaseProviderFormComponent imp
             })),
           );
         },
-        error: (error) => {
-          new EntityUtils().handleWsError(null, error, this.dialogService);
+        error: (error: WebsocketError) => {
+          this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });
   }

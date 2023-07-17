@@ -3,14 +3,14 @@ import {
   Component, Input, OnChanges,
 } from '@angular/core';
 import {
-  ControlValueAccessor, UntypedFormControl, NgControl,
+  ControlValueAccessor, NgControl,
 } from '@angular/forms';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { EMPTY, Observable } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
-import { SelectOption } from 'app/interfaces/option.interface';
+import { SelectOption, SelectOptionValueType } from 'app/interfaces/option.interface';
 
-type IxSelectValue = string | number | string[] | number[];
+type IxSelectValue = SelectOptionValueType;
 
 @UntilDestroy()
 @Component({
@@ -29,12 +29,36 @@ export class IxSelectComponent implements ControlValueAccessor, OnChanges {
   @Input() multiple: boolean;
   @Input() emptyValue: string = null;
   @Input() hideEmpty = false;
+  @Input() compareWith: (val1: unknown, val2: unknown) => boolean = (val1: unknown, val2: unknown) => val1 === val2;
 
-  formControl = new UntypedFormControl(this).value as UntypedFormControl;
   isDisabled = false;
   hasErrorInOptions = false;
   opts$: Observable<SelectOption[]>;
   isLoading = false;
+  private opts: SelectOption[] = [];
+
+  get selectedLabel(): string {
+    if (this.value === undefined) {
+      return '';
+    }
+
+    if (this.multiple) {
+      return this.multipleLabels.join(',');
+    }
+
+    const selectedOption = this.opts.find((opt) => this.compareWith(opt.value, this.value));
+    return selectedOption ? selectedOption.label : '';
+  }
+
+  get multipleLabels(): string[] {
+    const selectedLabels: string[] = [];
+    this.opts.forEach((opt) => {
+      if (Array.isArray(this.value) && this.value.some((val) => val === opt.value)) {
+        selectedLabels.push(` ${opt.label}`);
+      }
+    });
+    return selectedLabels.length > 0 ? selectedLabels : [];
+  }
 
   constructor(
     public controlDirective: NgControl,
@@ -59,6 +83,10 @@ export class IxSelectComponent implements ControlValueAccessor, OnChanges {
           this.cdr.markForCheck();
         }),
       );
+
+      this.opts$.pipe(untilDestroyed(this)).subscribe((opts) => {
+        this.opts = opts;
+      });
     }
   }
 
@@ -81,6 +109,10 @@ export class IxSelectComponent implements ControlValueAccessor, OnChanges {
   setDisabledState?(isDisabled: boolean): void {
     this.isDisabled = isDisabled;
     this.cdr.markForCheck();
+  }
+
+  onOptionTooltipClicked(event: MouseEvent): void {
+    event.stopPropagation();
   }
 
   get disabledState(): boolean {

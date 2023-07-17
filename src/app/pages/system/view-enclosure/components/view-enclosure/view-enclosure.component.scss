@@ -1,16 +1,16 @@
-.mat-card.error {
+.mat-mdc-card.error {
   margin: 16px auto 0;
   top: 0;
   width: 600px;
 }
 
-.mat-card.error .error-message {
+.mat-mdc-card.error .error-message {
   text-align: left;
 }
 
-.mat-card.error .error-message,
-.mat-card.error .error-header,
-.mat-card.error .error-footer {
+.mat-mdc-card.error .error-message,
+.mat-mdc-card.error .error-header,
+.mat-mdc-card.error .error-footer {
   padding: 16px;
 }
 
@@ -62,7 +62,9 @@ nav.view-nav-bar {
   background-color: var(--bg2);
   color: var(--fg2);
   height: 100%;
+  min-height: calc(100vh - 200px);
   overflow: auto;
+  position: relative;
   width: 240px;
 }
 
@@ -95,11 +97,75 @@ nav.view-nav-bar {
   position: relative;
 }
 
-.spinner {
-  left: calc(50% - 20px);
+.loader-dialog {
+  box-shadow: #000 0 2px 30px;
+  left: calc(50% - 150px);
+  margin: 0 auto;
+  max-width: 300px;
+  min-width: 300px;
   position: absolute;
-  top: 64px;
-  z-index: 4;
+  top: 320px;
+  width: 300px;
+  z-index: 30;
+
+  .loader-dialog-inner {
+    padding: 16px;
+
+    ul {
+      display: table;
+      margin: 16px auto;
+      padding: 0;
+      width: 90%;
+
+      li {
+        display: table-row;
+
+        .td {
+          display: table-cell;
+          height: 40px;
+          vertical-align: middle;
+        }
+
+        .indicator {
+          margin-left: calc(100% - 16px);
+        }
+
+        .indicator.icon {
+          color: var(--green);
+        }
+
+        .indicator.spinner {
+          $spinner-size: 40px;
+          height: $spinner-size;
+          padding-left: 1px;
+          width: $spinner-size;
+        }
+      }
+    }
+  }
+}
+
+.loader-dialog.simple {
+  $simple-spinner-width: 120px;
+  box-shadow: unset;
+  display: block;
+  left: calc(50% - 60px);
+  margin: 0;
+  max-width: $simple-spinner-width;
+  min-width: $simple-spinner-width;
+  position: relative;
+  top: 100px;
+  width: $simple-spinner-width;
+  z-index: 30;
+
+  .spinner.indicator {
+    display: block;
+    margin: 0 auto;
+  }
+}
+
+.mini-container .loader-dialog.simple {
+  position: absolute;
 }
 
 .lt-lg.enclosure-selector {

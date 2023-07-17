@@ -14,13 +14,17 @@ import { JobState } from 'app/enums/job-state.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Job } from 'app/interfaces/job.interface';
 import { NewTicketResponse } from 'app/interfaces/support.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { JobItemComponent } from 'app/modules/jobs/components/job-item/job-item.component';
 import { FileTicketLicensedFormComponent } from 'app/pages/system/file-ticket/file-ticket-licensed-form/file-ticket-licensed-form.component';
-import { WebSocketService, DialogService } from 'app/services';
+import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('FileTicketLicensedFormComponent', () => {
   let spectator: Spectator<FileTicketLicensedFormComponent>;
@@ -67,6 +71,11 @@ describe('FileTicketLicensedFormComponent', () => {
       mockWindow({
         open: jest.fn(),
       }),
+      mockProvider(WebsocketConnectionService, {
+        isConnected$: of(true),
+      }),
+      mockProvider(IxSlideInRef),
+      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
 
@@ -123,7 +132,7 @@ describe('FileTicketLicensedFormComponent', () => {
     const button = await loader.getHarness(MatButtonHarness.with({ text: 'EULA' }));
     await button.click();
 
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
     expect(router.navigate).toHaveBeenCalledWith(['system', 'support', 'eula']);
   });
 });

@@ -1,0 +1,67 @@
+@import 'mixins/loader';
+@import 'scss-imports/cssvars';
+
+:host {
+  $pagetitle: 68px;
+  $outer-padding: 16px;
+
+  display: block;
+  height: calc(100% - #{$pagetitle});
+  margin-top: -#{$outer-padding * 2};
+  position: relative;
+
+  &.loading {
+    @include background-logo-loader(1.5);
+
+    &::before {
+      background: var(--bg2);
+      content: '';
+      display: block;
+      height: 100%;
+      left: 0;
+      opacity: 1;
+      position: absolute;
+      top: 0;
+      width: 100%;
+      z-index: 20;
+    }
+
+    &::after {
+      z-index: 30;
+    }
+  }
+}
+
+ul.ct-legend {
+  top: -2em !important;
+}
+
+.mat-mdc-card.ghost-card {
+  min-height: 430px;
+}
+
+.mat-button-toggle .ix-icon {
+  font-size: 24px;
+  line-height: normal;
+  margin-bottom: 4px;
+}
+
+.master-container {
+  align-items: stretch;
+  bottom: 0;
+  display: flex;
+  flex-flow: row wrap;
+  height: 100%;
+  left: 0;
+  padding-bottom: 0;
+  place-content: stretch space-evenly;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 100%;
+}
+
+cdk-virtual-scroll-viewport {
+  height: 100%;
+  width: 100%;
+}

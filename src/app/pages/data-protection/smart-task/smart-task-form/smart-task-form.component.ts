@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+} from '@angular/core';
 import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -8,21 +10,22 @@ import { SmartTestType, smartTestTypeLabels } from 'app/enums/smart-test-type.en
 import { choicesToOptions, mapToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/data-protection/smart/smart';
 import { SmartTestTask } from 'app/interfaces/smart-test.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import {
   crontabToScheduleWithoutMinutes,
 } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
-import { WebSocketService } from 'app/services';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
   templateUrl: './smart-task-form.component.html',
-  styleUrls: ['./smart-task-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SmartTaskFormComponent {
+export class SmartTaskFormComponent implements OnInit {
   get isNew(): boolean {
     return !this.editingTest;
   }
@@ -36,7 +39,7 @@ export class SmartTaskFormComponent {
   form = this.fb.group({
     disks: [[] as string[]],
     all_disks: [false],
-    type: [null as SmartTestType],
+    type: [null as SmartTestType, Validators.required],
     desc: [''],
     schedule: ['', Validators.required],
   });
@@ -55,22 +58,27 @@ export class SmartTaskFormComponent {
   readonly diskOptions$ = this.ws.call('smart.test.disk_choices').pipe(choicesToOptions());
   readonly typeOptions$ = of(mapToOptions(smartTestTypeLabels, this.translate));
 
-  private editingTest: SmartTestTask;
-
   constructor(
     private fb: FormBuilder,
     private ws: WebSocketService,
     private translate: TranslateService,
-    private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
+    private snackbar: SnackbarService,
     private errorHandler: FormErrorHandlerService,
+    private slideInRef: IxSlideInRef<SmartTaskFormComponent>,
+    @Inject(SLIDE_IN_DATA) private editingTest: SmartTestTask,
   ) {}
 
-  setTestForEdit(test: SmartTestTask): void {
-    this.editingTest = test;
+  ngOnInit(): void {
+    if (this.editingTest) {
+      this.setTestForEdit();
+    }
+  }
+
+  setTestForEdit(): void {
     this.form.patchValue({
-      ...test,
-      schedule: scheduleToCrontab(test.schedule),
+      ...this.editingTest,
+      schedule: scheduleToCrontab(this.editingTest.schedule),
     });
   }
 
@@ -94,8 +102,13 @@ export class SmartTaskFormComponent {
 
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
+        if (this.isNew) {
+          this.snackbar.success(this.translate.instant('Task created'));
+        } else {
+          this.snackbar.success(this.translate.instant('Task updated'));
+        }
         this.isLoading = false;
-        this.slideInService.close();
+        this.slideInRef.close();
       },
       error: (error) => {
         this.isLoading = false;

@@ -3,11 +3,12 @@
   [label]="label"
   [tooltip]="tooltip"
   [required]="required"
+  [ixTestOverride]="controlDirective.name"
 ></ix-label>
 
 <div class="permissions-container">
-  <table [class.disabled]="isDisabled">
-    <tr>
+  <table ixTest="permissions-table" [class.disabled]="isDisabled">
+    <tr [ixTest]="[controlDirective.name, 'permissions-header']">
       <td></td>
       <td>
         <span class="header-label">{{ 'Read' | translate }}</span>
@@ -19,13 +20,14 @@
         <span class="header-label">{{ 'Execute' | translate }}</span>
       </td>
     </tr>
-    <tr>
+    <tr [ixTest]="[controlDirective.name, 'user-permissions']">
       <td>
         <span class="header-label">{{ 'User' | translate }}</span>
       </td>
       <td>
         <mat-checkbox
           color="primary"
+          ixTest="user-read"
           [disabled]="isDisabled"
           [checked]="ownerRead"
           (change)="toggleOwnerRead()"
@@ -34,6 +36,7 @@
       <td>
         <mat-checkbox
           color="primary"
+          ixTest="user-write"
           [disabled]="isDisabled"
           [checked]="ownerWrite"
           (change)="toggleOwnerWrite()"
@@ -42,19 +45,21 @@
       <td>
         <mat-checkbox
           color="primary"
+          ixTest="user-execute"
           [disabled]="isDisabled"
           [checked]="ownerExec"
           (change)="toggleOwnerExec()"
         ></mat-checkbox>
       </td>
     </tr>
-    <tr>
+    <tr [ixTest]="[controlDirective.name, 'group-permissions']">
       <td>
         <span class="header-label">{{ 'Group' | translate }}</span>
       </td>
       <td>
         <mat-checkbox
           color="primary"
+          ixTest="group-read"
           [disabled]="isDisabled"
           [checked]="groupRead"
           (change)="toggleGroupRead()"
@@ -63,6 +68,7 @@
       <td>
         <mat-checkbox
           color="primary"
+          ixTest="group-write"
           [disabled]="isDisabled"
           [checked]="groupWrite"
           (change)="toggleGroupWrite()"
@@ -71,19 +77,21 @@
       <td>
         <mat-checkbox
           color="primary"
+          ixTest="group-execute"
           [disabled]="isDisabled"
           [checked]="groupExec"
           (change)="toggleGroupExec()"
         ></mat-checkbox>
       </td>
     </tr>
-    <tr *ngIf="!hideOthersPermissions">
+    <tr *ngIf="!hideOthersPermissions" [ixTest]="[controlDirective.name, 'other-permissions']">
       <td>
         <span class="header-label">{{ 'Other' | translate }}</span>
       </td>
       <td>
         <mat-checkbox
           color="primary"
+          ixTest="other-read"
           [disabled]="isDisabled"
           [checked]="otherRead"
           (change)="toggleOtherRead()"
@@ -92,6 +100,7 @@
       <td>
         <mat-checkbox
           color="primary"
+          ixTest="other-write"
           [disabled]="isDisabled"
           [checked]="otherWrite"
           (change)="toggleOtherWrite()"
@@ -100,6 +109,7 @@
       <td>
         <mat-checkbox
           color="primary"
+          ixTest="other-execute"
           [disabled]="isDisabled"
           [checked]="otherExec"
           (change)="toggleOtherExec()"

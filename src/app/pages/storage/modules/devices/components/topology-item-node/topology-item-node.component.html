@@ -10,7 +10,7 @@
       <span>{{ name }}</span>
     </div>
   </div>
-  <div class="cell cell-status" [style.background-color]="statusColor">
+  <div class="cell cell-status" [ngClass]="statusClass">
     <span>{{ status }}</span>
   </div>
   <div class="cell cell-capacity">
@@ -18,16 +18,5 @@
   </div>
   <div class="cell cell-errors">
     <span>{{ errors }}</span>
-  </div>
-  <div class="cell cell-actions">
-    <button *ngIf="isDisk" mat-icon-button [matMenuTriggerFor]="menu" (click)="$event.stopPropagation()">
-      <ix-icon name="more_vert"></ix-icon>
-    </button>
-    <mat-menu #menu="matMenu" class="menu">
-      <button mat-menu-item (click)="onReplace()">
-        <ix-icon name="mdi-file-replace"></ix-icon>
-        <span>{{ 'Replace' | translate }}</span>
-      </button>
-    </mat-menu>
   </div>
 </div>

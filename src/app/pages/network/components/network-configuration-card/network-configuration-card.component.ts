@@ -3,15 +3,16 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import * as ipRegex from 'ip-regex';
-import { combineLatest } from 'rxjs';
+import ipRegex from 'ip-regex';
+import { combineLatest, filter } from 'rxjs';
 import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
 import { NetworkConfiguration } from 'app/interfaces/network-configuration.interface';
 import { NetworkSummary } from 'app/interfaces/network-summary.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { NetworkConfigurationComponent } from 'app/pages/network/components/configuration/configuration.component';
-import { WebSocketService } from 'app/services';
+import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -30,10 +31,14 @@ export class NetworkConfigurationCardComponent implements OnInit {
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
     private slideInService: IxSlideInService,
+    private core: CoreService,
   ) {}
 
   ngOnInit(): void {
     this.loadNetworkConfigAndSummary();
+
+    this.core.register({ observerClass: this, eventName: 'NetworkInterfacesChanged' })
+      .pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.loadNetworkConfigAndSummary());
   }
 
   get serviceAnnouncement(): string {
@@ -106,10 +111,8 @@ export class NetworkConfigurationCardComponent implements OnInit {
   }
 
   onSettingsClicked(): void {
-    this.slideInService.open(NetworkConfigurationComponent, { wide: true });
-    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.loadNetworkConfigAndSummary();
-    });
+    const slideInRef = this.slideInService.open(NetworkConfigurationComponent, { wide: true });
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.loadNetworkConfigAndSummary());
   }
 
   private loadNetworkConfigAndSummary(): void {
@@ -125,6 +128,7 @@ export class NetworkConfigurationCardComponent implements OnInit {
         this.isLoading = false; // TODO: Add loading indication in UI.
         this.summary = summary;
         this.config = config;
+
         this.cdr.markForCheck();
       });
 

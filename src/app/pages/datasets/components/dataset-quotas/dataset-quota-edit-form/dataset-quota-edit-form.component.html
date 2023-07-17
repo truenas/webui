@@ -20,22 +20,23 @@
 
         <ix-input
           formControlName="obj_quota"
+          type="number"
           [label]="objectQuotaLabel | translate"
           [tooltip]="objectQuotaTooltip | translate"
-          type="number"
         ></ix-input>
       </ix-fieldset>
 
-      <div class="form-actions">
+      <ix-form-actions>
         <button
           type="submit"
           mat-button
           color="primary"
+          ixTest="save"
           [disabled]="form.invalid || isFormLoading"
         >
           {{ 'Save' | translate }}
         </button>
-      </div>
+      </ix-form-actions>
     </form>
   </mat-card-content>
 </mat-card>

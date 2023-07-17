@@ -2,13 +2,13 @@
   <mat-card-header>
     <h3 mat-card-title>{{ 'Permissions' | translate }}</h3>
 
-    <a *ngIf="canEditPermissions" mat-button [routerLink]="editPermissionsUrl">
+    <a *ngIf="canEditPermissions" mat-button ixTest="edit-permissions" (click)="redirectToEditPermissions()">
       {{ 'Edit' | translate }}
     </a>
   </mat-card-header>
 
   <mat-card-content>
-    <div class="file-information" *ngIf="stat?.user || isLoading">
+    <div *ngIf="stat?.user || isLoading" class="file-information">
       <div class="details-item">
         <div class="label">{{ 'Owner:' | translate }}</div>
         <div *ngIf="!isLoading; else loaderDetailsItem" class="value">
@@ -22,7 +22,8 @@
         </div>
       </div>
     </div>
-    <div *ngIf="acl; else loaderPermissions" class="permissions">
+
+    <div *ngIf="acl" class="permissions">
       <ix-view-trivial-permissions
         *ngIf="acl.trivial; else nonTrivial"
         [stat]="stat"
@@ -49,8 +50,14 @@
   <ngx-skeleton-loader></ngx-skeleton-loader>
 </ng-template>
 
-<ng-template #loaderPermissions>
-  <div class="permissions loader-permissions">
-    <ngx-skeleton-loader [count]="3"></ngx-skeleton-loader>
-  </div>
-</ng-template>
+<div *ngIf="isLoading" class="permissions loader-permissions">
+  <ngx-skeleton-loader
+    [count]="4"
+  ></ngx-skeleton-loader>
+</div>
+
+<ix-entity-empty
+  *ngIf="!isLoading && !acl"
+  [conf]="emptyConfig"
+></ix-entity-empty>
+

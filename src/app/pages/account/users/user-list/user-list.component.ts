@@ -2,24 +2,25 @@ import {
   Component,
   OnInit,
   ChangeDetectorRef,
-  ViewChild, ChangeDetectionStrategy,
-  ViewChildren, QueryList,
+  ViewChild,
+  ChangeDetectionStrategy,
   AfterViewInit,
   TemplateRef,
 } from '@angular/core';
-import { MatSort, Sort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { select, Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import {
-  combineLatest, Observable, of,
-} from 'rxjs';
+import { combineLatest, Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { User } from 'app/interfaces/user.interface';
-import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
-import { IxDetailRowDirective } from 'app/modules/ix-tables/directives/ix-detail-row.directive';
-import { userPageEntered } from 'app/pages/account/users/store/user.actions';
+import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { yesNoColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
+import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
+import { createTable } from 'app/modules/ix-table2/utils';
+import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
+import { userPageEntered, userRemoved } from 'app/pages/account/users/store/user.actions';
 import { selectUsers, selectUserState, selectUsersTotal } from 'app/pages/account/users/store/user.selectors';
 import { UserFormComponent } from 'app/pages/account/users/user-form/user-form.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -35,57 +36,74 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserListComponent implements OnInit, AfterViewInit {
-  @ViewChild(MatSort, { static: false }) sort: MatSort;
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
-  displayedColumns: string[] = ['username', 'uid', 'builtin', 'full_name', 'actions'];
-  filterString = '';
-  dataSource: MatTableDataSource<User> = new MatTableDataSource([]);
-  defaultSort: Sort = { active: 'uid', direction: 'asc' };
-  emptyConfig: EmptyConfig = {
-    type: EmptyType.NoPageData,
-    title: this.translate.instant('No Users'),
-    large: true,
-  };
-  loadingConfig: EmptyConfig = {
-    type: EmptyType.Loading,
-    large: false,
-    title: this.translate.instant('Loading...'),
-  };
-  errorConfig: EmptyConfig = {
-    type: EmptyType.Errors,
-    large: true,
-    title: this.translate.instant('Can not retrieve response'),
-  };
-  expandedRow: User;
-  @ViewChildren(IxDetailRowDirective) private detailRows: QueryList<IxDetailRowDirective>;
+  dataProvider = new ArrayDataProvider<User>();
+  columns = createTable<User>([
+    textColumn({
+      title: this.translate.instant('Username'),
+      propertyName: 'username',
+      sortable: true,
+    }),
+    textColumn({
+      title: this.translate.instant('UID'),
+      propertyName: 'uid',
+      sortable: true,
+    }),
+    yesNoColumn({
+      title: this.translate.instant('Builtin'),
+      propertyName: 'builtin',
+      sortable: true,
+    }),
+    textColumn({
+      title: this.translate.instant('Full Name'),
+      propertyName: 'full_name',
+      sortable: true,
+    }),
+  ]);
+
   isLoading$ = this.store$.select(selectUserState).pipe(map((state) => state.isLoading));
-  emptyOrErrorConfig$: Observable<EmptyConfig> = combineLatest([
+  emptyType$: Observable<EmptyType> = combineLatest([
+    this.isLoading$,
     this.store$.select(selectUsersTotal).pipe(map((total) => total === 0)),
     this.store$.select(selectUserState).pipe(map((state) => state.error)),
   ]).pipe(
-    switchMap(([, isError]) => {
-      if (isError) {
-        return of(this.errorConfig);
+    switchMap(([isLoading, isNoData, isError]) => {
+      if (isLoading) {
+        return of(EmptyType.Loading);
       }
-
-      return of(this.emptyConfig);
+      if (isError) {
+        return of(EmptyType.Errors);
+      }
+      if (isNoData) {
+        return of(EmptyType.NoPageData);
+      }
+      return of(EmptyType.NoSearchResults);
     }),
   );
+
   hideBuiltinUsers = true;
+  filterString = '';
+  users: User[] = [];
+
+  get emptyConfigService(): EmptyService {
+    return this.emptyService;
+  }
 
   constructor(
-    private translate: TranslateService,
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,
     private layoutService: LayoutService,
+    private translate: TranslateService,
+    private emptyService: EmptyService,
   ) { }
 
   ngOnInit(): void {
     this.store$.dispatch(userPageEntered());
     this.getPreferences();
     this.getUsers();
+    this.setDefaultSort();
   }
 
   ngAfterViewInit(): void {
@@ -108,26 +126,19 @@ export class UserListComponent implements OnInit, AfterViewInit {
       untilDestroyed(this),
     ).subscribe({
       next: (users) => {
+        this.users = users;
         this.createDataSource(users);
-        this.cdr.markForCheck();
       },
       error: () => {
+        this.users = [];
         this.createDataSource();
-        this.cdr.markForCheck();
       },
     });
   }
 
   createDataSource(users: User[] = []): void {
-    this.dataSource = new MatTableDataSource(users);
-    setTimeout(() => {
-      // TODO: Figure out how to avoid setTimeout to make it work on first loading
-      if (this.filterString) {
-        this.dataSource.filter = this.filterString;
-      }
-      this.dataSource.sort = this.sort;
-      this.cdr.markForCheck();
-    }, 0);
+    this.dataProvider.setRows(users);
+    this.cdr.markForCheck();
   }
 
   toggleBuiltins(): void {
@@ -135,27 +146,27 @@ export class UserListComponent implements OnInit, AfterViewInit {
   }
 
   doAdd(): void {
-    const modal = this.slideIn.open(UserFormComponent, { wide: true });
-    modal.setupForm();
-  }
-
-  onToggle(row: User): void {
-    this.expandedRow = this.expandedRow === row ? null : row;
-    this.toggleDetailRows();
-    this.cdr.markForCheck();
-  }
-
-  toggleDetailRows(): void {
-    this.detailRows.forEach((row) => {
-      if (row.expanded && row.ixDetailRow !== this.expandedRow) {
-        row.close();
-      } else if (!row.expanded && row.ixDetailRow === this.expandedRow) {
-        row.open();
-      }
-    });
+    this.slideInService.open(UserFormComponent, { wide: true });
   }
 
   onListFiltered(query: string): void {
-    this.dataSource.filter = query;
+    this.filterString = query.toLowerCase();
+    this.createDataSource(this.users.filter((user) => {
+      return user.username.toLowerCase().includes(this.filterString)
+        || user.full_name.toLowerCase().includes(this.filterString)
+        || user.uid.toString().includes(this.filterString);
+    }));
+  }
+
+  setDefaultSort(): void {
+    this.dataProvider.setSorting({
+      active: 1,
+      direction: SortDirection.Asc,
+      propertyName: 'uid',
+    });
+  }
+
+  handleDeletedUser(id: number): void {
+    this.store$.dispatch(userRemoved({ id }));
   }
 }

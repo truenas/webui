@@ -13,7 +13,7 @@ import { BaseAlertServiceForm } from 'app/pages/system/alert-service/alert-servi
 export class TelegramServiceComponent extends BaseAlertServiceForm {
   form = this.formBuilder.group({
     bot_token: ['', Validators.required],
-    chat_ids: [[] as (string | number)[], [
+    chat_ids: [[] as number[], [
       Validators.required,
       this.validatorsService.customValidator(
         (control) => this.validateTelegramChatIds(control),
@@ -30,8 +30,15 @@ export class TelegramServiceComponent extends BaseAlertServiceForm {
     super();
   }
 
+  getSubmitAttributes(): TelegramServiceComponent['form']['value'] {
+    return {
+      ...this.form.value,
+      chat_ids: this.form.value.chat_ids.map((chatId) => Number(chatId)),
+    };
+  }
+
   validateTelegramChatIds(control: AbstractControl): boolean {
     const chatIds = control.value as string[];
-    return chatIds.every((chatId) => String(chatId).match(/^-?\d+$/));
+    return chatIds.every((chatId) => String(chatId).match(/^-?\d*$/));
   }
 }

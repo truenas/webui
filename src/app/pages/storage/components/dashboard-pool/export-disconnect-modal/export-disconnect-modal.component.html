@@ -106,16 +106,18 @@
     <button
       type="button"
       mat-button
-      class="mat-button mat-accent action-btn"
-      (click)="cancel()"
+      class="mat-mdc-button mat-button mat-accent action-btn"
       name="cancel_button"
+      ixTest="cancel"
+      (click)="cancel()"
     >
       {{ 'Cancel' | translate }}
     </button>
     <button
       type="submit"
       mat-button
-      class="mat-button mat-primary"
+      class="mat-mdc-button mat-button mat-primary"
+      ixTest="disconnect"
       [disabled]="form.invalid || isFormLoading"
     >
       {{ 'Export/Disconnect' | translate }}

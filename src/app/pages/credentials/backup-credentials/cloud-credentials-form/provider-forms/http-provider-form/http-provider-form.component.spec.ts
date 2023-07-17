@@ -24,7 +24,7 @@ describe('HttpProviderFormComponent', () => {
   });
 
   it('show existing provider attributes when they are set as form values', async () => {
-    spectator.component.setValues({
+    spectator.component.getFormSetter$().next({
       url: 'http://truenas.com/provider',
     });
 
@@ -36,7 +36,7 @@ describe('HttpProviderFormComponent', () => {
 
   it('returns form attributes for submission when getSubmitAttributes() is called', async () => {
     await form.fillForm({
-      URL: 'http://truenas.com/sync',
+      URL: 'truenas.com/sync',
     });
 
     const values = spectator.component.getSubmitAttributes();

@@ -1,0 +1,53 @@
+<div class="paginator">
+  <div class="page-size">
+    <span>{{ 'Items per page' | translate }}:</span>
+    <mat-select ixTest="pageSize" [value]="pageSize" (selectionChange)="onPageSizeChange($event)">
+      <mat-option *ngFor="let option of pageSizeOptions" [value]="option" [ixTest]="['pageSizeOption', option]">
+        {{ option }}
+      </mat-option>
+    </mat-select>
+  </div>
+  <span class="pages">
+    <ng-container *ngIf="lastPage > firstPage">
+      {{ firstPage }} – {{ lastPage }}
+    </ng-container>
+    <ng-container *ngIf="lastPage <= firstPage">
+      {{ lastPage }}
+    </ng-container>
+    {{ 'of' | translate }} {{ totalItems }}
+  </span>
+  <div class="buttons">
+    <button
+      mat-icon-button
+      ixTest="left"
+      [disabled]="currentPage === 1"
+      (click)="goToPage(1)"
+    >
+      <ix-icon name="first_page"></ix-icon>
+    </button>
+    <button
+      mat-icon-button
+      ixTest="left"
+      [disabled]="currentPage === 1"
+      (click)="previousPage()"
+    >
+      <ix-icon name="mdi-chevron-left"></ix-icon>
+    </button>
+    <button
+      mat-icon-button
+      ixTest="right"
+      [disabled]="currentPage === totalPages || !totalPages"
+      (click)="nextPage()"
+    >
+      <ix-icon name="mdi-chevron-right"></ix-icon>
+    </button>
+    <button
+      mat-icon-button
+      ixTest="right"
+      [disabled]="currentPage === totalPages || !totalPages"
+      (click)="goToPage(totalPages)"
+    >
+      <ix-icon name="last_page"></ix-icon>
+    </button>
+  </div>
+</div>

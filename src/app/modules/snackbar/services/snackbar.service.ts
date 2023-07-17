@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
-import { SnackbarConfig } from 'app/modules/snackbar/components/snackbar/snackbar-config.interface';
 import { SnackbarComponent } from 'app/modules/snackbar/components/snackbar/snackbar.component';
 
 /**
@@ -21,7 +20,7 @@ export class SnackbarService {
         message,
         icon: 'check',
         iconCssColor: 'var(--green)',
-      } as SnackbarConfig,
+      },
     });
   }
 }

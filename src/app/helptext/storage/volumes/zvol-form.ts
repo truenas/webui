@@ -1,6 +1,6 @@
 import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
+import { matchOtherValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
 
 export default {
   zvol_title_add: T('Add Zvol'),
@@ -36,7 +36,7 @@ export default {
  the best files to compress.<br> <i>GZIP</i> options range from 1 for least \
  compression, best performance, through 9 for maximum compression with \
  greatest performance impact.<br> <i>ZLE</i> is a fast algorithm that only \
- elminates runs of zeroes.'),
+ eliminates runs of zeroes.'),
   zvol_compression_validation: [Validators.required],
 
   zvol_deduplication_placeholder: T('ZFS Deduplication'),
@@ -50,10 +50,11 @@ export default {
   zvol_readonly_tooltip: T('Set to prevent the zvol from being modified.'),
 
   zvol_sparse_placeholder: T('Sparse'),
-  zvol_sparse_tooltip: T('Set to provide <a\
+  zvol_sparse_tooltip: T('Enable to use <a\
  href="https://searchstorage.techtarget.com/definition/thin-provisioning"\
- target="_blank">thin provisioning</a>.\
- <b>Caution:</b> writes can fail when the pool is low on space.'),
+ target="_blank">thin provisioning</a>\
+ where disk space for this volume is allocated <b>‘on demand’</b> as new writes are received.\
+ Use caution when enabling this feature, as writes can fail when the pool is low on space.'),
 
   zvol_volblocksize_placeholder: T('Block size'),
   zvol_volblocksize_tooltip: T('The zvol default block size is automatically chosen\

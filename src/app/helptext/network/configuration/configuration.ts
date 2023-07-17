@@ -1,7 +1,7 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export default {
-  title: T('Global Configuration'),
+  title: T('Edit Global Configuration'),
 
   hostname_placeholder: T('Hostname'),
   hostname_tooltip: T('System hostname.'),
@@ -45,18 +45,6 @@ export default {
   httpproxy_tooltip: T('When using a proxy, enter the proxy information for \
  the network in the format <i>http://my.proxy.server:3128</i> or \
  <i>http://user:password@my.proxy.server:3128</i>'),
-
-  netwait_enabled_placeholder: T('Enable Netwait Feature'),
-  netwait_enabled_tooltip: T('Delays the start of network services until \
- pings are returned from the IP addresses added to the \
- <i>Netwait IP List</i>.'),
-
-  netwait_ip_placeholder: T('Netwait IP List'),
-  netwait_ip_tooltip: T('Enter a list of IP addresses to \
- <a href="https://man7.org/linux/man-pages/man8/ping.8.html" target="_blank">ping</a>. \
- Separate entries by pressing <code>Enter</code>. Each address is tried \
- until one is successful or the list is exhausted. Leave empty to use \
- the default gateway.'),
 
   hosts_placeholder: T('Host Name Database'),
   hosts_tooltip: T('Additional hosts to be appended to <i>/etc/hosts</i>.\

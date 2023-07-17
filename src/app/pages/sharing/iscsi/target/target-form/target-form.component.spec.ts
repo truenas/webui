@@ -10,16 +10,20 @@ import {
   IscsiAuthAccess, IscsiInitiatorGroup, IscsiPortal, IscsiTarget,
 } from 'app/interfaces/iscsi.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
-import { WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('TargetFormComponent', () => {
   let spectator: Spectator<TargetFormComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
+  let websocket: WebSocketService;
 
   const existingTarget = {
     id: 123,
@@ -50,6 +54,9 @@ describe('TargetFormComponent', () => {
     ],
     providers: [
       mockProvider(IxSlideInService),
+      mockProvider(DialogService),
+      mockProvider(IxSlideInRef),
+      { provide: SLIDE_IN_DATA, useValue: undefined },
       mockWebsocket([
         mockCall('iscsi.target.create'),
         mockCall('iscsi.target.update'),
@@ -71,11 +78,11 @@ describe('TargetFormComponent', () => {
         mockCall('iscsi.initiator.query', [{
           id: 3,
           comment: 'comment_3',
-          initiators: 'initiator_1',
+          initiators: ['initiator_1'],
         }, {
           id: 4,
           comment: 'comment_4',
-          initiators: 'initiator_2',
+          initiators: ['initiator_2'],
         }] as IscsiInitiatorGroup[]),
         mockCall('iscsi.auth.query', [{
           id: 5,
@@ -96,133 +103,144 @@ describe('TargetFormComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
-    spectator = createComponent();
-
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
-  });
-
-  it('add new target when form is submitted', async () => {
-    const addButtons = await loader.getAllHarnesses(MatButtonHarness.with({ text: 'Add' }));
-    await addButtons[0].click();
-    await addButtons[0].click();
-    await addButtons[1].click();
-    await addButtons[1].click();
-
-    spectator.component.form.patchValue({
-      name: 'name_new',
-      alias: 'alias_new',
-      mode: IscsiTargetMode.Iscsi,
-      groups: [
-        {
-          portal: 11,
-          initiator: 12,
-          authmethod: IscsiAuthMethod.ChapMutual,
-          auth: 13,
-        },
-        {
-          portal: 21,
-          initiator: 22,
-          authmethod: IscsiAuthMethod.Chap,
-          auth: 23,
-        },
-      ],
-      auth_networks: ['10.0.0.0/8', '11.0.0.0/8'],
+  describe('adds new target', () => {
+    beforeEach(async () => {
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+      websocket = spectator.inject(WebSocketService);
     });
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    await saveButton.click();
+    it('add new target when form is submitted', async () => {
+      const addButtons = await loader.getAllHarnesses(MatButtonHarness.with({ text: 'Add' }));
+      await addButtons[0].click();
+      await addButtons[0].click();
+      await addButtons[1].click();
+      await addButtons[1].click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('iscsi.target.create', [{
-      name: 'name_new',
-      alias: 'alias_new',
-      mode: 'ISCSI',
-      groups: [
-        {
-          portal: 11,
-          initiator: 12,
-          authmethod: IscsiAuthMethod.ChapMutual,
-          auth: 13,
-        },
-        {
-          portal: 21,
-          initiator: 22,
-          authmethod: IscsiAuthMethod.Chap,
-          auth: 23,
-        },
-      ],
-      auth_networks: ['10.0.0.0/8', '11.0.0.0/8'],
-    }]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+      spectator.component.form.patchValue({
+        name: 'name_new',
+        alias: 'alias_new',
+        mode: IscsiTargetMode.Iscsi,
+        groups: [
+          {
+            portal: 11,
+            initiator: 12,
+            authmethod: IscsiAuthMethod.ChapMutual,
+            auth: 13,
+          },
+          {
+            portal: 21,
+            initiator: 22,
+            authmethod: IscsiAuthMethod.Chap,
+            auth: 23,
+          },
+        ],
+        auth_networks: ['10.0.0.0/8', '11.0.0.0/8'],
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(websocket.call).toHaveBeenCalledWith('iscsi.target.create', [{
+        name: 'name_new',
+        alias: 'alias_new',
+        mode: 'ISCSI',
+        groups: [
+          {
+            portal: 11,
+            initiator: 12,
+            authmethod: IscsiAuthMethod.ChapMutual,
+            auth: 13,
+          },
+          {
+            portal: 21,
+            initiator: 22,
+            authmethod: IscsiAuthMethod.Chap,
+            auth: 23,
+          },
+        ],
+        auth_networks: ['10.0.0.0/8', '11.0.0.0/8'],
+      }]);
+      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+    });
   });
 
-  it('edits existing target when form opened for edit is submitted', async () => {
-    spectator.component.setTargetForEdit(existingTarget);
-
-    await form.fillForm({
-      'Target Name': 'name_new',
-      'Target Alias': 'alias_new',
-      'Target Mode': 'iSCSI',
+  describe('edit new target', () => {
+    beforeEach(async () => {
+      spectator = createComponent({
+        providers: [
+          { provide: SLIDE_IN_DATA, useValue: existingTarget },
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+      websocket = spectator.inject(WebSocketService);
     });
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    await saveButton.click();
+    it('edits existing target when form opened for edit is submitted', async () => {
+      await form.fillForm({
+        'Target Name': 'name_new',
+        'Target Alias': 'alias_new',
+        'Target Mode': 'iSCSI',
+      });
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith(
-      'iscsi.target.update',
-      [
-        123,
-        {
-          name: 'name_new',
-          alias: 'alias_new',
-          mode: 'ISCSI',
-          groups: [
-            {
-              portal: 1,
-              initiator: 4,
-              authmethod: IscsiAuthMethod.ChapMutual,
-              auth: 66,
-            },
-            {
-              portal: 2,
-              initiator: 3,
-              authmethod: IscsiAuthMethod.ChapMutual,
-              auth: 55,
-            },
-          ],
-          auth_networks: ['192.168.10.0/24', '192.168.0.0/24'],
-        },
-      ],
-    );
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
-  });
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
 
-  it('loads and shows the \'portal\', \'initiator\' and \'auth\'', () => {
-    spectator.component.setTargetForEdit(existingTarget);
+      expect(websocket.call).toHaveBeenLastCalledWith(
+        'iscsi.target.update',
+        [
+          123,
+          {
+            name: 'name_new',
+            alias: 'alias_new',
+            mode: 'ISCSI',
+            groups: [
+              {
+                portal: 1,
+                initiator: 4,
+                authmethod: IscsiAuthMethod.ChapMutual,
+                auth: 66,
+              },
+              {
+                portal: 2,
+                initiator: 3,
+                authmethod: IscsiAuthMethod.ChapMutual,
+                auth: 55,
+              },
+            ],
+            auth_networks: ['192.168.10.0/24', '192.168.0.0/24'],
+          },
+        ],
+      );
+      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+    });
 
-    let portal; let initiator; let auth: Option[];
-    spectator.component.portals$.subscribe((options) => portal = options);
-    spectator.component.initiators$.subscribe((options) => initiator = options);
-    spectator.component.auths$.subscribe((options) => auth = options);
+    it('loads and shows the \'portal\', \'initiator\' and \'auth\'', () => {
+      let portal; let initiator; let auth: Option[];
+      spectator.component.portals$.subscribe((options) => portal = options);
+      spectator.component.initiators$.subscribe((options) => initiator = options);
+      spectator.component.auths$.subscribe((options) => auth = options);
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenNthCalledWith(1, 'iscsi.portal.query', []);
-    expect(spectator.inject(WebSocketService).call).toHaveBeenNthCalledWith(2, 'iscsi.initiator.query', []);
-    expect(spectator.inject(WebSocketService).call).toHaveBeenNthCalledWith(3, 'iscsi.auth.query', []);
+      expect(websocket.call).toHaveBeenNthCalledWith(1, 'iscsi.portal.query', []);
+      expect(websocket.call).toHaveBeenNthCalledWith(2, 'iscsi.initiator.query', []);
+      expect(websocket.call).toHaveBeenNthCalledWith(3, 'iscsi.auth.query', []);
 
-    expect(portal).toEqual([
-      { label: '11 (comment_1)', value: 1 },
-      { label: '22 (comment_2)', value: 2 },
-    ]);
+      expect(portal).toEqual([
+        { label: '11 (comment_1)', value: 1 },
+        { label: '22 (comment_2)', value: 2 },
+      ]);
 
-    expect(initiator).toEqual([
-      { label: '3 (initiator_1)', value: 3 },
-      { label: '4 (initiator_2)', value: 4 },
-    ]);
+      expect(initiator).toEqual([
+        { label: '3 (initiator_1)', value: 3 },
+        { label: '4 (initiator_2)', value: 4 },
+      ]);
 
-    expect(auth).toEqual([
-      { label: '55', value: 55 },
-      { label: '66', value: 66 },
-    ]);
+      expect(auth).toEqual([
+        { label: '55', value: 55 },
+        { label: '66', value: 66 },
+      ]);
+    });
   });
 });

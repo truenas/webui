@@ -12,6 +12,10 @@ export interface InputExpandableTableConf extends AppTableConfig {
   configure?: () => void;
   limitRowsByMaxHeight?: boolean;
   addButtonLabel?: string;
+  tooltip?: {
+    message?: string;
+    header?: string;
+  };
 }
 
 export enum ExpandableTableState {
@@ -41,7 +45,7 @@ export class ExpandableTableComponent implements OnInit, AfterViewChecked {
   @ViewChild('tableComponent') tableComponent: TableComponent;
 
   @ViewChild('appTable', { read: ElementRef })
-  appTable: ElementRef;
+  appTable: ElementRef<HTMLElement>;
 
   populateTable(): void {
     this.title = this.tableConf.title || '';
@@ -71,8 +75,8 @@ export class ExpandableTableComponent implements OnInit, AfterViewChecked {
       return;
     }
     const tableHeader = this.appTable.nativeElement.querySelector('thead');
-    const detailsRow = this.appTable.nativeElement.querySelector('#actions-row');
-    const expandableHeader = this.appTable.nativeElement.querySelector('mat-expansion-panel-header');
+    const detailsRow: HTMLElement = this.appTable.nativeElement.querySelector('#actions-row');
+    const expandableHeader: HTMLElement = this.appTable.nativeElement.querySelector('mat-expansion-panel-header');
     const tableHeaderHeight = tableHeader ? tableHeader.offsetHeight : 0;
     const expandableHeaderHeight = expandableHeader ? expandableHeader.offsetHeight : 0;
     const detailsFooterHeight = detailsRow ? detailsRow.offsetHeight : 0;
@@ -80,7 +84,7 @@ export class ExpandableTableComponent implements OnInit, AfterViewChecked {
     const maxRowsHeight = totalHeight - expandableHeaderHeight - tableHeaderHeight - detailsFooterHeight;
     const customActions = this.appTable.nativeElement.querySelector('#customActions');
     if (customActions) {
-      expandableHeader.style = 'padding-right: 0';
+      expandableHeader.style.paddingRight = '0';
     }
     if (this.tableConf.limitRowsByMaxHeight) {
       const prevRowsLimit = this.tableConf.limitRows;

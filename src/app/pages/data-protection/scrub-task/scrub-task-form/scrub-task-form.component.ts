@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+} from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -6,21 +8,22 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import helptext from 'app/helptext/data-protection/scrub/scrub-form';
 import { CreatePoolScrubTask, PoolScrubTask } from 'app/interfaces/pool-scrub.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import {
   crontabToSchedule,
 } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
-import { WebSocketService } from 'app/services';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
   templateUrl: './scrub-task-form.component.html',
-  styleUrls: ['./scrub-task-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ScrubTaskFormComponent {
+export class ScrubTaskFormComponent implements OnInit {
   get isNew(): boolean {
     return !this.editingTask;
   }
@@ -55,22 +58,27 @@ export class ScrubTaskFormComponent {
     enabled: helptext.scrub_enabled_tooltip,
   };
 
-  private editingTask: PoolScrubTask;
-
   constructor(
     private translate: TranslateService,
     private fb: FormBuilder,
     private ws: WebSocketService,
-    private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
+    private snackbar: SnackbarService,
     private errorHandler: FormErrorHandlerService,
+    private slideInRef: IxSlideInRef<ScrubTaskFormComponent>,
+    @Inject(SLIDE_IN_DATA) private editingTask: PoolScrubTask,
   ) {}
 
-  setTaskForEdit(task: PoolScrubTask): void {
-    this.editingTask = task;
+  ngOnInit(): void {
+    if (this.editingTask) {
+      this.setTaskForEdit();
+    }
+  }
+
+  setTaskForEdit(): void {
     this.form.patchValue({
-      ...task,
-      schedule: scheduleToCrontab(task.schedule),
+      ...this.editingTask,
+      schedule: scheduleToCrontab(this.editingTask.schedule),
     });
   }
 
@@ -93,8 +101,13 @@ export class ScrubTaskFormComponent {
 
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
+        if (this.isNew) {
+          this.snackbar.success(this.translate.instant('Task created'));
+        } else {
+          this.snackbar.success(this.translate.instant('Task updated'));
+        }
         this.isLoading = false;
-        this.slideInService.close();
+        this.slideInRef.close();
       },
       error: (error) => {
         this.isLoading = false;

@@ -67,7 +67,7 @@
                 [tooltip]="helptext.mac_tooltip | translate"
               ></ix-input>
 
-              <button type="button" mat-button (click)="generateMacAddress()">
+              <button type="button" mat-button ixTest="generate" (click)="generateMacAddress()">
                 {{ 'Generate' | translate }}
               </button>
             </div>
@@ -111,9 +111,9 @@
 
             <ix-input
               formControlName="size"
+              type="number"
               [label]="'Raw Filesize' | translate"
               [tooltip]="helptext.raw_size_tooltip | translate"
-              type="number"
             ></ix-input>
           </ng-container>
           <ng-container *ngSwitchCase="VmDeviceType.Pci">
@@ -127,11 +127,30 @@
           </ng-container>
           <ng-container *ngSwitchCase="VmDeviceType.Usb">
             <ix-select
-              formControlName="device"
-              [label]="'Device' | translate"
-              [options]="usbOptions$"
+              formControlName="controller_type"
+              [label]="'Controller Type' | translate"
+              [options]="usbControllerOptions$"
               [required]="true"
             ></ix-select>
+            <ix-select
+              formControlName="device"
+              [label]="'Device' | translate"
+              [options]="usbDeviceOptions$"
+              [required]="true"
+            ></ix-select>
+            <ng-container *ngIf="usbForm.controls.usb.enabled" [formGroup]="usbForm.controls.usb">
+              <ix-input
+                formControlName="vendor_id"
+                [label]="'Vendor ID' | translate"
+                [required]="true"
+              ></ix-input>
+              <ix-input
+                formControlName="product_id"
+                [label]="'Product ID' | translate"
+                [required]="true"
+              ></ix-input>
+              <ix-errors [control]="usbForm.controls.usb"></ix-errors>
+            </ng-container>
           </ng-container>
           <ng-container *ngSwitchCase="VmDeviceType.Display">
             <ix-input
@@ -185,16 +204,18 @@
           [label]="'Device Order' | translate"
         ></ix-input>
       </ix-fieldset>
-      <div class="form-actions">
+
+      <ix-form-actions>
         <button
           type="submit"
           mat-button
           color="primary"
+          ixTest="save"
           [disabled]="typeSpecificForm.invalid || isLoading"
         >
           {{ 'Save' | translate }}
         </button>
-      </div>
+      </ix-form-actions>
     </form>
   </mat-card-content>
 </mat-card>

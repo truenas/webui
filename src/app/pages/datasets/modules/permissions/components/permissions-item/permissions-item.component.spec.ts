@@ -1,4 +1,5 @@
 import { createComponentFactory } from '@ngneat/spectator/jest';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import {
   PermissionsItemComponent,
 } from 'app/pages/datasets/modules/permissions/components/permissions-item/permissions-item.component';
@@ -23,10 +24,7 @@ describe('PermissionsItemComponent', () => {
       },
     });
 
-    expect(spectator.query('.icon')).toHaveDescendantWithText({
-      selector: 'mat-icon',
-      text: 'people',
-    });
+    expect(spectator.query(IxIconComponent).name).toBe('people');
     expect(spectator.query('.name')).toHaveExactText('Group – johns');
     expect(spectator.query('.permissions')).toHaveExactText('Read | Execute');
   });

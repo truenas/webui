@@ -1,0 +1,98 @@
+<div class="app" fxFlex="200px">
+  <a
+    *ngIf="app?.installed"
+    class="installed-badge"
+    [matTooltip]="'An instance of this app already installed. Click the badge to see installed apps.' | translate"
+    [ixTest]="[app?.name, 'installed-badge']"
+    (click)="navigateToAllInstalledPage()"
+  >
+    {{ 'Installed' | translate }}
+  </a>
+  <div class="app-image-holder">
+    <ix-app-card-logo [url]="app?.icon_url"></ix-app-card-logo>
+  </div>
+  <button
+    *ngIf="!wasPoolSet"
+    mat-button
+    color="primary"
+    ixTest="setup-pool"
+    (click)="showChoosePoolModal()"
+  >
+    {{ 'Setup Pool To Install' | translate }}
+  </button>
+  <button
+    *ngIf="wasPoolSet"
+    mat-button
+    color="primary"
+    [ixTest]="[app?.name, 'install']"
+    [disabled]="!app"
+    (click)="navigateToInstallPage()"
+  >
+    <ng-container *ngIf="!app?.installed">{{ 'Install' | translate }}</ng-container>
+    <ng-container *ngIf="app?.installed">{{ 'Install Another Instance' | translate }}</ng-container>
+  </button>
+</div>
+
+<div class="app-info" fxFlex="240px">
+  <div class="app-list-item catalog-container">
+    <ngx-skeleton-loader *ngIf="isLoading$ | async; else catalog"></ngx-skeleton-loader>
+    <ng-template #catalog>
+      <ng-container *ngIf="app?.catalog">
+        {{ "{catalog} Catalog" | translate: { catalog: app.catalog } }}
+      </ng-container>
+    </ng-template>
+  </div>
+  <div class="app-list-item">
+    <span class="label">{{ 'App Version' | translate }}:</span>
+    <ngx-skeleton-loader *ngIf="isLoading$ | async; else latestAppVersion"></ngx-skeleton-loader>
+    <ng-template #latestAppVersion>
+      <ng-container *ngIf="app?.latest_app_version; else notAvailable">
+        {{ app?.latest_app_version }}
+      </ng-container>
+    </ng-template>
+  </div>
+  <div class="app-list-item">
+    <span class="label">{{ 'Keywords' | translate }}:</span>
+    <ngx-skeleton-loader *ngIf="isLoading$ | async; else appCategories"></ngx-skeleton-loader>
+    <ng-template #appCategories>
+      <ng-container *ngIf="app?.tags; else notAvailable">
+        {{ app?.tags.join(', ') }}
+      </ng-container>
+    </ng-template>
+  </div>
+  <div class="app-list-item">
+    <span class="label">{{ 'Train' | translate }}:</span>
+    <ngx-skeleton-loader *ngIf="isLoading$ | async; else train"></ngx-skeleton-loader>
+    <ng-template #train>
+      <ng-container *ngIf="app?.train; else notAvailable">
+        {{ app?.train }}
+      </ng-container>
+    </ng-template>
+  </div>
+  <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-121706 -->
+  <div class="app-list-item">
+    <span class="label">{{ 'Homepage' | translate }}:</span>
+    <ngx-skeleton-loader *ngIf="isLoading$ | async; else homepage"></ngx-skeleton-loader>
+    <ng-template #homepage>
+      <ng-container *ngIf="app?.home; else notAvailable">
+        <a
+          ixTest="homepage"
+          target="_blank"
+          [href]="app.home"
+          [title]="app.home"
+        >{{ app.home | cleanLink }}</a>
+      </ng-container>
+    </ng-template>
+  </div>
+</div>
+
+<div class="app-description">
+  <ngx-skeleton-loader *ngIf="isLoading$ | async; else appDescription" count="2"></ngx-skeleton-loader>
+  <ng-template #appDescription>
+    <div *ngIf="description" class="description-wrapper">{{ description }}</div>
+  </ng-template>
+</div>
+
+<ng-template #notAvailable>
+  {{ 'N/A' | translate }}
+</ng-template>

@@ -6,15 +6,14 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {
   byText, createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
-import { MockPipe } from 'ng-mocks';
-import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
+import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SmartTestType } from 'app/enums/smart-test-type.enum';
 import { ManualSmartTest } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
-import { WebSocketService } from 'app/services';
+import { DialogService, WebSocketService } from 'app/services';
 import { ManualTestDialogComponent, ManualTestDialogParams } from './manual-test-dialog.component';
 
 describe('ManualTestDialogComponent', () => {
@@ -27,9 +26,10 @@ describe('ManualTestDialogComponent', () => {
       ReactiveFormsModule,
     ],
     declarations: [
-      MockPipe(FormatDateTimePipe, jest.fn(() => '2022-03-16 14:46:14')),
+      FakeFormatDateTimePipe,
     ],
     providers: [
+      mockProvider(DialogService),
       mockWebsocket([
         mockCall('smart.test.manual_test', [
           { disk: 'sda', expected_result_time: { $date: 1647438105 } },
@@ -67,7 +67,7 @@ describe('ManualTestDialogComponent', () => {
   });
 
   it('shows list of disks that do not support SMART', () => {
-    const unsupportedMessage = spectator.query(byText('These disks do not support SMART tests:'));
+    const unsupportedMessage = spectator.query(byText('These disks do not support S.M.A.R.T. tests:'));
 
     const unsupportedDisks = unsupportedMessage.nextElementSibling;
 
@@ -97,7 +97,7 @@ describe('ManualTestDialogComponent', () => {
       selector: '.device-name',
       text: 'sda',
     });
-    expect(tests[0]).toHaveText('2022-03-16 14:46:14');
+    expect(tests[0]).toHaveText('1970-01-20 04:37:18');
 
     expect(tests[1]).toHaveDescendantWithText({
       selector: '.device-name',

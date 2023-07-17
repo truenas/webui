@@ -1,7 +1,7 @@
 <p align="center">
  <a href="https://discord.gg/Q3St5fPETd"><img alt="Join Discord" src="https://badgen.net/discord/members/Q3St5fPETd/?icon=discord&label=Join%20the%20TrueNAS%20Community" /></a>
  <a href="https://www.truenas.com/community/"><img alt="Join Forums" src="https://badgen.net/badge/Forums/Post%20Now//purple" /></a> 
- <a href="https://jira.ixsystems.com"><img alt="File Issue" src="https://badgen.net/badge/Jira/File%20Issue//red?icon=jira" /></a>
+ <a href="https://ixsystems.atlassian.net/browse/NAS/"><img alt="File Issue" src="https://badgen.net/badge/Jira/File%20Issue//red?icon=jira" /></a>
 </p>
 
 TrueNAS WebUI
@@ -50,12 +50,24 @@ Install yarn packages:
 $ yarn install
 ```
 
-Run the environment configuration script
+Generate an environment file
+
+```sh
+$ yarn check-env
+```
+
+Configure the remote TrueNAS system you'd like to connect to. 
 (if your ip address changes later you may repeat this step)
 
 ```sh
-$ ./setup_env.js -i <ip address or FQDN of the server where TrueNAS is running>
+$ yarn ui remote -i <ip address or FQDN of the server where TrueNAS is running>
 ```
+NOTE: It is highly recommended to create an alias in your shell of choice to 'ui' to minimize typing
+If this script gives a typescript error in the console, please see the section above on generating an environment file
+
+zsh example: `alias ui='yarn run --silent ui`
+
+## Starting the Application
 
 To start run
 ```yarn start```
@@ -84,7 +96,7 @@ rm yarn.lock
 yarn cache clean --force
 yarn install
 ```
-This should bring the yarn environment back to a useable state.
+This should bring the yarn environment back to a usable state.
 
 # Translating Text to Other Languages
 
@@ -112,4 +124,4 @@ Full license details can be found at https://pixabay.com/service/license/.
 
 # Contributing
 
-Learn how you can contribute to our project and help us maintain it [on our Contribution guide](https://github.com/truenas/webui/blob/NAS-112459/CONTRIBUTING.md).
+Learn how you can contribute to our project and help us maintain it [on our Contribution guide](https://github.com/truenas/webui/blob/master/CONTRIBUTING.md).

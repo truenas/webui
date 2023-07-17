@@ -9,7 +9,7 @@
       <ix-fieldset [title]="'ACL Entries' | translate">
         <ix-list
           formArrayName="entries"
-          [empty]="form.controls.entries.length === 0"
+          [empty]="form.controls.entries.length === 0 && !isLoading"
           [label]="'Add entry' | translate"
           (add)="addAce()"
         >
@@ -18,25 +18,33 @@
             [formGroupName]="i"
             (delete)="removeAce(i)"
           >
-            <div class="entry-row">
-              <ix-input
-                formControlName="ae_who_sid"
-                [label]="'SID' | translate"
-                [tooltip]="helptext.ae_who_sid_tooltip | translate"
-              ></ix-input>
+            <div *ngIf="entry.controls.ae_who_sid.value" class="entry-row">
+              {{ 'SID' | translate }}:
+              {{ entry.controls.ae_who_sid.value }}
             </div>
             <div class="entry-row">
-              <ix-input
-                formControlName="ae_who_name_domain"
-                [label]="'Domain' | translate"
-                [tooltip]="helptext.ae_who_name_domain_tooltip | translate"
-              ></ix-input>
+              <ix-select
+                formControlName="ae_who"
+                [label]="'Who' | translate"
+                [options]="tags$"
+                [required]="true"
+              ></ix-select>
 
-              <ix-input
-                formControlName="ae_who_name_name"
-                [label]="'Name' | translate"
-                [tooltip]="helptext.ae_who_name_name_tooltip | translate"
-              ></ix-input>
+              <ix-combobox
+                *ngIf="entry.controls.ae_who.value === nfsAclTag.User"
+                formControlName="user"
+                [label]="'User' | translate"
+                [provider]="userProvider"
+                [required]="true"
+              ></ix-combobox>
+
+              <ix-combobox
+                *ngIf="entry.controls.ae_who.value === nfsAclTag.UserGroup"
+                formControlName="group"
+                [label]="'Group' | translate"
+                [provider]="groupProvider"
+                [required]="true"
+              ></ix-combobox>
             </div>
 
             <div class="entry-row">
@@ -64,16 +72,17 @@
         </ix-list>
       </ix-fieldset>
 
-      <div class="form-actions">
+      <ix-form-actions>
         <button
           mat-button
           type="submit"
           color="primary"
+          ixTest="save"
           [disabled]="form.invalid || isLoading"
         >
           {{ 'Save' | translate }}
         </button>
-      </div>
+      </ix-form-actions>
     </form>
   </mat-card-content>
 </mat-card>

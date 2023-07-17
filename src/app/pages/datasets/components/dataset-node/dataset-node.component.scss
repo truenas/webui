@@ -1,32 +1,33 @@
-@import '~assets/styles/mixins/grid';
-@import '~assets/styles/scss-imports/splitview';
+@import 'scss-imports/splitview';
 
 :host {
   align-items: center;
+  box-sizing: border-box;
   display: flex;
   flex: 1;
   font-weight: 500;
-  min-height: 48px;
+  min-height: 44px;
   padding: 0;
 }
 
 .tree-node-grid {
-  @include grid-row();
   align-items: center;
-
-  // Override default fraction based values to avoid misaligned columns
+  display: grid;
+  grid-gap: 8px;
   grid-template-columns: auto 125px 125px 125px;
+  min-width: fit-content;
+  width: 100%;
 
   @media (max-width: $breakpoint-tablet) {
-    // Override default fraction based values to avoid misaligned columns
     grid-template-columns: auto 0 0 0;
     width: 100%;
   }
 
   .cell {
     align-items: center;
+    box-sizing: border-box;
     display: inline-flex;
-    min-height: 48px;
+    min-height: 44px;
 
     @media (max-width: $breakpoint-tablet) {
       display: none;

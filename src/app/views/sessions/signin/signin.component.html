@@ -1,254 +1,53 @@
+<!-- TODO: Hack. Mat inputs don't get their styles imported unless mat-form-field is used somewhere -->
+<mat-form-field style="display: none;"><input ixTest="noop" matInput></mat-form-field>
+
 <div class="page-wrap height-100 login-form">
   <div class="session-form-hold">
     <mat-progress-bar
-      [mode]="connected() ? 'determinate' : 'indeterminate'"
       value="0"
       class="session-progress"
+      [mode]="(hasLoadingIndicator$ | async) ? 'indeterminate' : 'determinate'"
     ></mat-progress-bar>
     <mat-card>
       <mat-card-content>
-        <div [hidden]="!(connected() && isLogoReady)">
-          <div class="text-center logo-wrapper">
+        <div *ngIf="isConnected$ | async; else disconnected">
+          <div class="logo-wrapper">
             <img
               class="logo-bg"
               alt="Logo image background of stars and sky at night"
               src="assets/images/stars-sky-1200w.jpg"
-              srcset="assets/images/stars-sky-400w.jpg, assets/images/stars-sky-800w.jpg  2x, assets/images/stars-sky-1200w.jpg 3x"
-            />
-            <mat-icon
-              class="logo"
-              svgIcon="ix:truenas_scale_logo_full"
-              alt="TrueNAS SCALE logo"
-            ></mat-icon>
+              srcset="assets/images/stars-sky-400w.jpg, assets/images/stars-sky-800w.jpg 2x, assets/images/stars-sky-1200w.jpg 3x"
+            >
+            <ix-icon name="ix:logo_truenas_scale_full" class="logo"></ix-icon>
           </div>
 
           <div class="card-bottom">
-            <div class="form-container" [hidden]="!canLogin()">
-              <form
-                #signinForm="ngForm"
-                [hidden]="!hasRootPassword"
-                (ngSubmit)="signin()"
-              >
-                <div class="form-element username">
-                  <div class="label-container">
-                    <label class="label input-text">
-                      {{ 'Username' | translate }}
-                    </label>
-                  </div>
-                  <mat-form-field class="full-width">
-                    <span matPrefix>
-                      <mat-icon
-                        fontSet="mdi-set"
-                        fontIcon="mdi-account"
-                        class="icon account"
-                      ></mat-icon>
-                      &nbsp;&nbsp;
-                    </span>
-                    <input
-                      autofocus
-                      matInput
-                      name="username"
-                      required
-                      #username="ngModel"
-                      value=""
-                      autocorrect="off"
-                      autocomplete="off"
-                      [(ngModel)]="signinData.username"
-                      [placeholder]="'Username' | translate"
-                    />
-                    <mat-error *ngIf="username.errors && (username.dirty || username.touched) && username.errors.required">
-                      <span *ngIf="!failed">
-                        {{ 'Please enter your username' | translate }}
-                      </span>
-                      <span *ngIf="failed">
-                        {{ 'Please enter your username again' | translate }}
-                      </span>
-                    </mat-error>
-                  </mat-form-field>
-                </div>
-                <div class="form-element password">
-                  <div class="label-container">
-                    <label class="label input-text">
-                      {{ 'Password' | translate }}
-                    </label>
-                  </div>
-                  <mat-form-field class="full-width">
-                    <span matPrefix>
-                      <mat-icon class="icon lock">lock </mat-icon>
-                      &nbsp;&nbsp;
-                    </span>
-                    <input
-                      type="password"
-                      name="password"
-                      required
-                      matInput
-                      #password="ngModel"
-                      value=""
-                      [(ngModel)]="signinData.password"
-                      [placeholder]="'Password' | translate"
-                    />
-                    <mat-error *ngIf="password.errors && (password.dirty || password.touched) && password.errors.required">
-                      <span *ngIf="!failed">
-                        {{ 'Please enter your password' | translate }}
-                      </span>
-                      <span *ngIf="failed">
-                        {{ 'Please enter your password again' | translate }}
-                      </span>
-                    </mat-error>
-                  </mat-form-field>
-                </div>
-                <div *ngIf="isTwoFactor" class="form-element">
-                  <mat-form-field class="full-width">
-                    <span matPrefix>
-                      <mat-icon class="icon phonelink">phonelink</mat-icon>
-                      &nbsp;&nbsp;
-                    </span>
-                    <input
-                      matInput
-                      name="otp"
-                      #otp="ngModel"
-                      required
-                      autocomplete="off"
-                      [(ngModel)]="signinData.otp"
-                      [placeholder]="'Two-Factor Authentication Code' | translate"
-                    />
-                    <mat-error>
-                      <span *ngIf="!failed">
-                        {{ 'Please enter your 2FA code' | translate }}
-                      </span>
-                      <span *ngIf="failed">
-                        {{ 'Please enter your 2FA code again' | translate }}
-                      </span>
-                    </mat-error>
-                  </mat-form-field>
-                </div>
-                <button
-                  name="signin_button"
-                  mat-button
-                  color="primary"
-                  class="fn-theme-primary full-width mb-1"
-                  id="signin_button"
-                  [disabled]="username.invalid || password.invalid"
-                >
-                  {{ 'Log in' | translate }}
-                </button>
-              </form>
-              <div [hidden]="hasRootPassword">
-                <form
-                  (ngSubmit)="setpassword()"
-                  [formGroup]="setPasswordFormGroup"
-                  #setPasswordForm="ngForm"
-                >
-                  <div>
-                    <span>
-                      {{ 'Set new root account password:' | translate }}
-                    </span>
-                  </div>
-                  <div class="form-element">
-                    <div class="label-container">
-                      <label class="label input-text">
-                        {{ 'Password' | translate }}
-                      </label>
-                    </div>
-                    <mat-form-field class="full-width">
-                      <input
-                        matInput
-                        type="password"
-                        id="password"
-                        formControlName="password"
-                        required
-                        [placeholder]="'Password' | translate"
-                      />
-                      <mat-error *ngIf="password.errors && (password.dirty || password.touched)">
-                        <span *ngIf="password.errors.required">
-                          {{ 'This field is required' | translate }}
-                        </span>
-                      </mat-error>
-                    </mat-form-field>
-                  </div>
-                  <div class="form-element">
-                    <div class="label-container">
-                      <label class="label input-text">
-                        {{ 'Reenter Password' | translate }}
-                      </label>
-                    </div>
-                    <mat-form-field class="full-width">
-                      <input
-                        matInput
-                        type="password"
-                        name="password2"
-                        formControlName="password2"
-                        required
-                        [placeholder]="'Confirm Password' | translate"
-                      />
-                      <mat-error *ngIf="password2.errors && (password2.dirty || password2.touched)">
-                        <span *ngIf="password2.errors">
-                          {{ 'Passwords do not match' | translate }}
-                        </span>
-                      </mat-error>
-                    </mat-form-field>
-                  </div>
-                  <div class="form-element" [hidden]="!hasInstanceId">
-                    <div class="label-container">
-                      <label class="label input-text">
-                        {{ 'EC2 Instance ID' | translate }}
-                      </label>
-                    </div>
-                    <mat-form-field class="full-width">
-                      <input
-                        matInput
-                        name="instanceId"
-                        formControlName="instanceId"
-                        required
-                        [placeholder]="'EC2 Instance ID' | translate"
-                      />
-                    </mat-form-field>
-                  </div>
-                  <button
-                    name="signin_button2"
-                    mat-button
-                    color="primary"
-                    class="mat-accent full-width mb-1"
-                    type="submit"
-                    [disabled]="!setPasswordForm.form.valid"
-                  >
-                    {{ 'Sign in' | translate }}
-                  </button>
-                </form>
-              </div>
+            <div *ngIf="canLogin$ | async" class="form-container">
+              <ix-signin-form *ngIf="wasAdminSet$ | async; else noAdminSet"></ix-signin-form>
+              <ng-template #noAdminSet>
+                <ix-set-admin-password-form></ix-set-admin-password-form>
+              </ng-template>
             </div>
 
-            <span *ngIf="productSupportsHa && failoverStatus != FailoverStatus.Single">
-              <div class="ha-status">
-                <div class="ha-status-txt">
-                  <p>{{ haStatusText }}</p>
-                  <span *ngIf="showReasons">
-                    <p *ngFor="let reason of haDisabledReasons">
-                      {{ reasonText[disabledReason(reason)] | translate }}
-                    </p>
-                  </span>
-                  <span *ngIf="isHaInfoReady">
-                    <p>{{ failoverStatuses[failoverStatus] }}</p>
-                    <span *ngIf="failoverIps.length > 0">
-                      <p>
-                        {{ 'Active IP Addresses' | translate }}:
-                        {{ failoverIps.join(', ') }}
-                      </p>
-                    </span>
-                  </span>
-                </div>
-              </div>
-            </span>
+            <ng-container *ngIf="failover$ | async as failover">
+              <ix-failover-status
+                *ngIf="hasFailover$ | async"
+                class="failover-status"
+                [status]="failover.status"
+                [failoverIps]="failover.ips"
+                [disabledReasons]="failover.disabledReasons"
+              ></ix-failover-status>
+            </ng-container>
 
             <ix-true-command-status></ix-true-command-status>
             <ix-copyright-line class="copyright" [withIxLogo]="true"></ix-copyright-line>
           </div>
         </div>
-        <div *ngIf="!connected() || !isLogoReady" class="disconnected">
+        <ng-template #disconnected>
           <ix-disconnected-message
-            [hasFailover]="haStatus"
+            [hasFailover]="hasFailover$ | async"
           ></ix-disconnected-message>
-        </div>
+        </ng-template>
       </mat-card-content>
     </mat-card>
   </div>

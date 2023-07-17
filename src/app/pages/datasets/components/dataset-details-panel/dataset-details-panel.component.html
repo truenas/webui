@@ -1,11 +1,14 @@
 <div class="header">
-  <h3 class="title">
+  <h3 class="title" [class.no-buttons]="dataset.locked || isZvol">
     <div class="mobile-prefix">
-      <a class="mobile-back-button">
-        <ix-icon
-          name="mdi-chevron-left"
-          (click)="onCloseMobileDetails()"
-        ></ix-icon>
+      <a
+        tabindex="0"
+        class="mobile-back-button"
+        ixTest="details-back-button"
+        (click)="onCloseMobileDetails()"
+        (keydown.enter)="onCloseMobileDetails()"
+      >
+        <ix-icon name="mdi-chevron-left"></ix-icon>
       </a>
       {{ 'Details for' | translate }}
     </div>
@@ -22,10 +25,15 @@
 
   <div class="add-buttons">
     <ng-container *ngIf="!dataset.locked && !isZvol">
-      <button mat-button (click)="onAddZvol()">
+      <button mat-button ixTest="add-zvol" (click)="onAddZvol()">
         {{ 'Add Zvol' | translate }}
       </button>
-      <button mat-button color="primary" (click)="onAddDataset()">
+      <button
+        mat-button
+        color="primary"
+        ixTest="add-dataset"
+        (click)="onAddDataset()"
+      >
         {{ 'Add Dataset' | translate }}
       </button>
     </ng-container>

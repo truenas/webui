@@ -1,4 +1,4 @@
-@import '~text-security/text-security.css';
+@import 'text-security/text-security.css';
 
 :host {
   color: var(--fg1);
@@ -14,7 +14,7 @@ td {
 
 .permissions-container {
   &.disabled {
-    opacity: 0.38;
+    opacity: var(--disabled-opacity);
 
     mat-checkbox {
       cursor: not-allowed;
@@ -32,7 +32,8 @@ td {
   font-size: x-small;
 }
 
-.mat-error {
+.mat-error,
+.mat-mdc-form-field-error {
   display: block;
   font-size: 12px;
   margin-top: 3px;

@@ -1,0 +1,143 @@
+@import 'scss-imports/splitview';
+
+:host {
+  border-bottom: 1px solid var(--lines);
+  color: var(--fg1);
+  display: flex;
+  justify-content: space-between;
+  padding: 0 10px 25px;
+
+  @media (max-width: $breakpoint-md) {
+    flex-direction: column-reverse;
+  }
+}
+
+:host ::ng-deep {
+  .mat-mdc-option {
+    text-transform: capitalize;
+  }
+}
+
+.search-filters {
+  width: 100%;
+
+  .filters-btn {
+    display: flex;
+    justify-content: flex-end;
+
+    button {
+      background-color: transparent;
+      color: var(--primary) !important;
+
+      ix-icon {
+        color: var(--primary);
+      }
+    }
+  }
+
+  .filters-container {
+    .filters {
+      display: flex;
+      gap: 18px;
+
+      @media (max-width: $breakpoint-xs) {
+        display: grid;
+      }
+
+      .catalogs,
+      .sort {
+        width: 30%;
+
+        @media (max-width: $breakpoint-xs) {
+          width: 100%;
+        }
+      }
+
+      .сategories {
+        width: 40%;
+
+        @media (max-width: $breakpoint-xs) {
+          width: 100%;
+        }
+
+        ix-chips {
+          margin-top: 0;
+          padding-top: 0;
+        }
+      }
+
+      .info-container {
+        align-items: flex-start;
+        column-gap: 5px;
+        display: flex;
+        font-size: x-small;
+      }
+    }
+  }
+}
+
+.header-numbers {
+  display: flex;
+  gap: 70px;
+  justify-content: flex-end;
+  margin-left: 60px;
+  margin-top: -4px;
+  white-space: nowrap;
+
+  @media (max-width: $breakpoint-md) {
+    gap: 2em;
+    margin-left: 3em;
+  }
+
+  @media (max-width: $breakpoint-xs) {
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 0;
+    padding: 30px 0;
+  }
+}
+
+.header-number {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  row-gap: 8px;
+
+  .header-number-title,
+  h2 {
+    color: var(--fg-1);
+  }
+
+  h2 {
+    line-height: 1;
+  }
+}
+
+.header-link {
+  align-items: center;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  justify-content: center;
+  min-height: 54px;
+
+  h2 {
+    min-height: 26px;
+  }
+
+  ::ng-deep ngx-skeleton-loader {
+    min-width: 32px;
+
+    &,
+    span {
+      height: 26px;
+    }
+  }
+
+  span {
+    color: var(--primary);
+    display: block;
+    font-weight: 600;
+  }
+}

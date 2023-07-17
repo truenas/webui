@@ -1,9 +1,10 @@
 :host {
   margin-right: 6px;
-}
+  min-width: 24px;
 
-.mat-icon {
-  align-items: center;
-  display: inline-flex;
-  vertical-align: bottom;
+  ix-icon {
+    align-items: center;
+    display: inline-flex;
+    vertical-align: bottom;
+  }
 }

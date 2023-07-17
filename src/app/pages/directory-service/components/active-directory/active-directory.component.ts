@@ -12,17 +12,18 @@ import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { singleArrayToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/directory-service/active-directory';
 import { NssInfoType } from 'app/interfaces/active-directory.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   LeaveDomainDialogComponent,
 } from 'app/pages/directory-service/components/leave-domain-dialog/leave-domain-dialog.component';
 import {
-  DialogService, ModalService, SystemGeneralService, WebSocketService,
+  DialogService, SystemGeneralService, WebSocketService,
 } from 'app/services';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -74,14 +75,14 @@ export class ActiveDirectoryComponent implements OnInit {
   constructor(
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
-    private errorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
+    private formErrorHandler: FormErrorHandlerService,
     private formBuilder: FormBuilder,
     private systemGeneralService: SystemGeneralService,
     private dialogService: DialogService,
     private matDialog: MatDialog,
     private translate: TranslateService,
-    private slideInService: IxSlideInService,
-    private modalService: ModalService,
+    private slideInRef: IxSlideInRef<ActiveDirectoryComponent>,
     private snackbarService: SnackbarService,
   ) {}
 
@@ -103,9 +104,9 @@ export class ActiveDirectoryComponent implements OnInit {
         );
         this.cdr.markForCheck();
       },
-      error: (error) => {
+      error: (error: WebsocketError) => {
         this.isLoading = false;
-        new EntityUtils().handleWsError(this, error, this.dialogService);
+        this.dialogService.error(this.errorHandler.parseWsError(error));
         this.cdr.markForCheck();
       },
     });
@@ -118,7 +119,7 @@ export class ActiveDirectoryComponent implements OnInit {
         return;
       }
 
-      this.slideInService.close();
+      this.slideInRef.close();
     });
   }
 
@@ -139,12 +140,12 @@ export class ActiveDirectoryComponent implements OnInit {
           if (update.job_id) {
             this.showStartingJob(update.job_id);
           } else {
-            this.slideInService.close();
+            this.slideInRef.close();
           }
         },
         error: (error) => {
           this.isLoading = false;
-          this.errorHandler.handleWsFormError(error, this.form);
+          this.formErrorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();
         },
       });
@@ -163,10 +164,10 @@ export class ActiveDirectoryComponent implements OnInit {
           this.isLoading = false;
           this.cdr.markForCheck();
         },
-        error: (error) => {
+        error: (error: WebsocketError) => {
           this.isLoading = false;
           this.cdr.markForCheck();
-          new EntityUtils().handleWsError(this, error, this.dialogService);
+          this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });
   }
@@ -204,12 +205,10 @@ export class ActiveDirectoryComponent implements OnInit {
     dialogRef.componentInstance.wsshow();
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       dialogRef.close();
-      this.slideInService.close();
-      this.modalService.refreshTable();
+      this.slideInRef.close();
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
-      new EntityUtils().handleWsError(this, error, this.dialogService);
-      this.modalService.refreshTable();
+      this.dialogService.error(this.errorHandler.parseJobError(error));
       dialogRef.close();
     });
   }

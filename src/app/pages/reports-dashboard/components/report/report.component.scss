@@ -1,6 +1,6 @@
-@import '~assets/styles/mixins/loader';
+@import 'mixins/loader';
 
-.mat-card-content {
+.mat-mdc-card-content {
   height: 100%;
   margin: 0;
 }
@@ -193,7 +193,7 @@ span.disk-detail-subtitle {
   text-align: right;
 }
 
-.pool-status .mat-icon.mat-icon {
+.pool-status .ix-icon.ix-icon {
   bottom: -6px;
   margin: -4px 0 0 4px;
   position: relative;
@@ -220,7 +220,7 @@ span.disk-detail-subtitle {
   padding-bottom: 5px;
 }
 
-.disk-detail-temps-bar .mat-progress-bar-buffer {
+.disk-detail-temps-bar .mat-mdc-progress-bar-buffer {
   opacity: 0 !important;
 }
 
@@ -255,7 +255,7 @@ span.disk-detail-subtitle {
   color: #c00;
 }
 
-.disk-detail-temp-label.hot .mat-progress-bar-element {
+.disk-detail-temp-label.hot .mat-mdc-progress-bar-element {
   border: solid 7px #c00;
 }
 
@@ -499,7 +499,7 @@ p.value {
   margin: 0 0 0 4px;
 }
 
-.mat-card-title {
+.mat-mdc-card-title {
   font-size: initial;
   margin: 0;
 
@@ -517,7 +517,7 @@ p.value {
   position: relative;
 
   /* Children get the padding so dividers fit the full width of card */
-  .mat-card {
+  .mat-mdc-card {
     padding-left: 0;
     padding-right: 0;
 
@@ -527,7 +527,7 @@ p.value {
     }
   }
 
-  .mat-card-footer,
+  .mat-mdc-card-footer,
   .mat-toolbar-row,
   .legend-wrapper,
   .chart-wrapper {
@@ -565,7 +565,7 @@ p.value {
   }
 }
 
-.report .mat-card-footer {
+.report .mat-mdc-card-footer {
   width: 100%;
 }
 
@@ -609,7 +609,7 @@ p.value {
     &.mat-button-toggle-disabled {
       background-color: transparent;
       color: var(--fg1);
-      opacity: 0.38;
+      opacity: var(--disabled-opacity);
 
       .mat-button-toggle-button {
         cursor: not-allowed;
@@ -621,5 +621,4 @@ p.value {
       padding: 0 12px;
     }
   }
-
 }

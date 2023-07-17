@@ -1,11 +1,8 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import globalHelptext from 'app/helptext/global-helptext';
 
 export default {
   field_accepts_tooltip: T('This field accepts human-readable input (Ex. 50 GiB, 500M, 2 TB).'),
   users: {
-    quota_title: T('Set Quotas'),
-    user_title: T('Apply Quotas to Selected Users'),
     usersTooltip: T('You can search both for local users as well as users from Active Directory.\
 Press ENTER to separate entries.'),
     data_quota: {
@@ -28,7 +25,6 @@ Press ENTER to separate entries.'),
       button_filter: T('Filter'),
     },
     dialog: {
-      title: T('Edit User'),
       user: {
         placeholder: T('User'),
       },
@@ -36,8 +32,6 @@ Press ENTER to separate entries.'),
   },
 
   groups: {
-    quota_title: T('Set Quotas'),
-    group_title: T('Apply Quotas to Selected Groups'),
     groupsTooltip: T('You can search both for local groups as well as groups from Active Directory.\
 Press ENTER to separate entries.'),
     data_quota: {
@@ -60,7 +54,6 @@ Press ENTER to separate entries.'),
       button_filter: T('Filter'),
     },
     dialog: {
-      title: T('Edit Group'),
       group: {
         placeholder: T('Group'),
       },
@@ -68,9 +61,6 @@ Press ENTER to separate entries.'),
   },
 
   shared: {
-    input_error: globalHelptext.human_readable.input_error,
-    set: T('Set Quota'),
-    cancel: T('Cancel'),
     nameErr: T('Name not found'),
   },
 };

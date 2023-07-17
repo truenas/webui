@@ -1,0 +1,201 @@
+<mat-card class="card">
+  <ix-fake-progress-bar [loading]="isLoading$ | async"></ix-fake-progress-bar>
+  <form (keydown.enter)="$event.preventDefault()">
+    <mat-vertical-stepper #stepper>
+      <mat-step
+        ixStepActivation
+        [errorMessage]="getTopLevelErrorForStep(PoolCreationWizardStep.General)"
+        [hasError]="!!getTopLevelErrorForStep(PoolCreationWizardStep.General)"
+        (activate)="onStepActivated(PoolCreationWizardStep.General)"
+      >
+        <ng-template matStepLabel>
+          <div class="step-header">
+            {{ 'General Info' | translate }}
+            <ix-icon
+              *ngIf="getTopLevelWarningForStep(PoolCreationWizardStep.General) as warning"
+              class="error-warning-icon"
+              name="warning"
+              [matTooltip]="warning | translate"
+            ></ix-icon>
+          </div>
+        </ng-template>
+        <ix-general-wizard-step
+          [isStepActive]="activeStep === PoolCreationWizardStep.General"
+        ></ix-general-wizard-step>
+      </mat-step>
+
+      <mat-step
+        *ngIf="hasEnclosureStep"
+        ixStepActivation
+        [errorMessage]="getTopLevelErrorForStep(PoolCreationWizardStep.EnclosureOptions)"
+        [hasError]="!!getTopLevelErrorForStep(PoolCreationWizardStep.EnclosureOptions) && getWasStepActivated(PoolCreationWizardStep.EnclosureOptions)"
+        (activate)="onStepActivated(PoolCreationWizardStep.EnclosureOptions)"
+      >
+        <ng-template matStepLabel>
+          <div class="step-header">
+            {{ 'Enclosure Options' | translate }}
+            <ix-icon
+              *ngIf="getTopLevelWarningForStep(PoolCreationWizardStep.EnclosureOptions) as warning"
+              class="error-warning-icon"
+              name="warning"
+              [matTooltip]="warning | translate"
+            ></ix-icon>
+          </div>
+        </ng-template>
+        <ix-enclosure-wizard-step
+          [isStepActive]="activeStep === PoolCreationWizardStep.EnclosureOptions"
+        ></ix-enclosure-wizard-step>
+      </mat-step>
+
+      <mat-step
+        ixStepActivation
+        [errorMessage]="getTopLevelErrorForStep(PoolCreationWizardStep.Data)"
+        [hasError]="!!getTopLevelErrorForStep(PoolCreationWizardStep.Data) && getWasStepActivated(PoolCreationWizardStep.Data)"
+        (activate)="onStepActivated(PoolCreationWizardStep.Data)"
+      >
+        <ng-template matStepLabel>
+          <div class="step-header">
+            {{ 'Data' | translate }}
+            <ix-icon
+              *ngIf="getTopLevelWarningForStep(PoolCreationWizardStep.Data) as warning"
+              class="error-warning-icon"
+              name="warning"
+              [matTooltip]="warning | translate"
+            ></ix-icon>
+          </div>
+        </ng-template>
+        <ix-data-wizard-step
+          [isStepActive]="activeStep === PoolCreationWizardStep.Data"
+          [stepWarning]="getTopLevelWarningForStep(PoolCreationWizardStep.Data)"
+          (goToLastStep)="goToLastStep()"
+        ></ix-data-wizard-step>
+      </mat-step>
+
+      <mat-step
+        ixStepActivation
+        [errorMessage]="getTopLevelErrorForStep(PoolCreationWizardStep.Log)"
+        [hasError]="!!getTopLevelErrorForStep(PoolCreationWizardStep.Log) && getWasStepActivated(PoolCreationWizardStep.Log)"
+        (activate)="onStepActivated(PoolCreationWizardStep.Log)"
+      >
+        <ng-template matStepLabel>
+          <div class="step-header">
+            {{ 'Log (Optional)' | translate }}
+            <ix-icon
+              *ngIf="getTopLevelWarningForStep(PoolCreationWizardStep.Log) as warning"
+              class="error-warning-icon"
+              name="warning"
+              [matTooltip]="warning | translate"
+            ></ix-icon>
+          </div>
+        </ng-template>
+        <ix-log-wizard-step
+          [stepWarning]="getTopLevelWarningForStep(PoolCreationWizardStep.Log)"
+          (goToLastStep)="goToLastStep()"
+          ></ix-log-wizard-step>
+      </mat-step>
+
+      <mat-step
+        ixStepActivation
+        [errorMessage]="getTopLevelErrorForStep(PoolCreationWizardStep.Spare)"
+        [hasError]="!!getTopLevelErrorForStep(PoolCreationWizardStep.Spare) && getWasStepActivated(PoolCreationWizardStep.Spare)"
+        (activate)="onStepActivated(PoolCreationWizardStep.Spare)"
+      >
+        <ng-template matStepLabel>
+          <div class="step-header">
+            {{ 'Spare (Optional)' | translate }}
+            <ix-icon
+              *ngIf="getTopLevelWarningForStep(PoolCreationWizardStep.Spare) as warning"
+              class="error-warning-icon"
+              name="warning"
+              [matTooltip]="warning | translate"
+            ></ix-icon>
+          </div>
+        </ng-template>
+        <ix-spare-wizard-step
+          [stepWarning]="getTopLevelWarningForStep(PoolCreationWizardStep.Spare)"
+          (goToLastStep)="goToLastStep()"
+        ></ix-spare-wizard-step>
+      </mat-step>
+
+      <mat-step
+        ixStepActivation
+        [errorMessage]="getTopLevelErrorForStep(PoolCreationWizardStep.Cache)"
+        [hasError]="!!getTopLevelErrorForStep(PoolCreationWizardStep.Cache) && getWasStepActivated(PoolCreationWizardStep.Cache)"
+        (activate)="onStepActivated(PoolCreationWizardStep.Cache)"
+      >
+        <ng-template matStepLabel>
+          <div class="step-header">
+            {{ 'Cache (Optional)' | translate }}
+            <ix-icon
+              *ngIf="getTopLevelWarningForStep(PoolCreationWizardStep.Cache) as warning"
+              class="error-warning-icon"
+              name="warning"
+              [matTooltip]="warning | translate"
+            ></ix-icon>
+          </div>
+        </ng-template>
+        <ix-cache-wizard-step
+          [stepWarning]="getTopLevelWarningForStep(PoolCreationWizardStep.Cache)"
+          (goToLastStep)="goToLastStep()"
+        ></ix-cache-wizard-step>
+      </mat-step>
+
+      <mat-step
+        ixStepActivation
+        [errorMessage]="getTopLevelErrorForStep(PoolCreationWizardStep.Metadata)"
+        [hasError]="!!getTopLevelErrorForStep(PoolCreationWizardStep.Metadata) && getWasStepActivated(PoolCreationWizardStep.Metadata)"
+        (activate)="onStepActivated(PoolCreationWizardStep.Metadata)"
+      >
+        <ng-template matStepLabel>
+          <div class="step-header">
+            {{ 'Metadata (Optional)' | translate }}
+            <ix-icon
+              *ngIf="getTopLevelWarningForStep(PoolCreationWizardStep.Metadata) as warning"
+              class="error-warning-icon"
+              name="warning"
+              [matTooltip]="warning | translate"
+            ></ix-icon>
+          </div>
+        </ng-template>
+        <ix-metadata-wizard-step
+          [stepWarning]="getTopLevelWarningForStep(PoolCreationWizardStep.Metadata)"
+          (goToLastStep)="goToLastStep()"
+        ></ix-metadata-wizard-step>
+      </mat-step>
+
+      <mat-step
+        ixStepActivation
+        [errorMessage]="getTopLevelErrorForStep(PoolCreationWizardStep.Dedup)"
+        [hasError]="!!getTopLevelErrorForStep(PoolCreationWizardStep.Dedup) && getWasStepActivated(PoolCreationWizardStep.Dedup)"
+        (activate)="onStepActivated(PoolCreationWizardStep.Dedup)"
+      >
+        <ng-template matStepLabel>
+          <div class="step-header">
+            {{ 'Dedup (Optional)' | translate }}
+            <ix-icon
+              *ngIf="getTopLevelWarningForStep(PoolCreationWizardStep.Dedup) as warning"
+              class="error-warning-icon"
+              name="warning"
+              [matTooltip]="warning | translate"
+            ></ix-icon>
+          </div>
+        </ng-template>
+        <ix-dedup-wizard-step
+          [stepWarning]="getTopLevelWarningForStep(PoolCreationWizardStep.Dedup)"
+          (goToLastStep)="goToLastStep()"
+        ></ix-dedup-wizard-step>
+      </mat-step>
+
+      <mat-step
+        ixStepActivation
+        (activate)="onStepActivated(PoolCreationWizardStep.Review)"
+      >
+        <ng-template matStepLabel>{{ 'Review' | translate }}</ng-template>
+        <ix-review-wizard-step
+          [isStepActive]="activeStep === PoolCreationWizardStep.Review"
+          (createPool)="createPool()"
+        ></ix-review-wizard-step>
+      </mat-step>
+    </mat-vertical-stepper>
+  </form>
+</mat-card>

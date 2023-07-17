@@ -1,6 +1,10 @@
-export interface Option {
+export type BaseOptionValueType = string | number;
+export type RadioOptionValueType = string | number | boolean;
+export type SelectOptionValueType = string | number | string[] | number[] | [ number, string ];
+
+export interface Option<T = BaseOptionValueType> {
   label: string;
-  value: string | number;
+  value: T;
 }
 
 export type MapOption = [
@@ -8,12 +12,12 @@ export type MapOption = [
   label: string,
 ];
 
-export interface RadioOption {
-  label: string;
-  value: string | number | boolean;
+export interface RadioOption<T = RadioOptionValueType> extends Option<T> {
   tooltip?: string;
 }
 
-export interface SelectOption extends Option {
+export interface SelectOption<T = SelectOptionValueType> extends Option<T> {
   disabled?: boolean;
+  tooltip?: string;
+  hoverTooltip?: string;
 }

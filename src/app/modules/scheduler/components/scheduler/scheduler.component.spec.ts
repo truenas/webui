@@ -8,8 +8,8 @@ import { MockPipe } from 'ng-mocks';
 import { of } from 'rxjs';
 import { IxLabelComponent } from 'app/modules/ix-forms/components/ix-label/ix-label.component';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { SchedulerModalComponent } from 'app/modules/scheduler/components/scheduler-modal/scheduler-modal.component';
 import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
+import { SchedulerModalComponent } from 'app/modules/scheduler/components/scheduler-modal/scheduler-modal.component';
 import { CrontabExplanationPipe } from 'app/modules/scheduler/pipes/crontab-explanation.pipe';
 
 describe('SchedulerComponent', () => {
@@ -76,14 +76,14 @@ describe('SchedulerComponent', () => {
     const select = await loader.getHarness(MatSelectHarness);
     const currentValue = await select.getValueText();
     spectator.detectChanges();
-    expect(currentValue).toEqual('Custom (0 2 15-28 * mon)');
+    expect(currentValue).toBe('Custom (0 2 15-28 * mon)');
   });
 
   it('writes values to form group when preset is selected from the dropdown', async () => {
     const select = await loader.getHarness(MatSelectHarness);
     await select.open();
     await select.clickOptions({ text: 'Daily (0 0 * * *)  At 00:00 (12:00 AM)' });
-    expect(control.value).toEqual('0 0 * * *');
+    expect(control.value).toBe('0 0 * * *');
   });
 
   it('shows Scheduler modal when custom option is selected', async () => {
@@ -106,6 +106,6 @@ describe('SchedulerComponent', () => {
     await select.open();
     await select.clickOptions({ text: 'Custom  Create custom schedule' });
 
-    expect(control.value).toEqual('0 2 */4 * 0');
+    expect(control.value).toBe('0 2 */4 * 0');
   });
 });

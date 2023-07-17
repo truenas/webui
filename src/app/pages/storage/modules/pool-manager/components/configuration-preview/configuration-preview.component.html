@@ -1,0 +1,29 @@
+<mat-card class="card">
+  <mat-card-header>
+    <h3 mat-card-title>{{ 'Configuration Preview' | translate }}</h3>
+  </mat-card-header>
+  <mat-card-content>
+    <div>
+      <div class="details-item">
+        <div class="label">{{ 'Name' | translate }}:</div>
+        <div class="value">{{ (name$ | async) || unknownProp }}</div>
+      </div>
+      <div *ngFor="let category of topology$ | async | keyvalue" class="details-item">
+        <div class="label">
+          {{ category.key | mapValue: vdevTypeLabels | translate }}:
+        </div>
+        <div class="value">
+          {{ category.value | ixTopologyCategoryDescription }}
+        </div>
+      </div>
+      <div class="details-item">
+        <div class="label">{{ 'Encryption' | translate }}:</div>
+        <div class="value">{{ (encryption$ | async) || unknownProp }}</div>
+      </div>
+      <div class="details-item">
+        <div class="label">{{ 'Total Raw Capacity' | translate }}:</div>
+        <div class="value">{{ totalCapacity$ | async | filesize: { standard: 'iec' } }}</div>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

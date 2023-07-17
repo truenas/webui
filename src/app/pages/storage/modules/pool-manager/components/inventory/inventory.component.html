@@ -1,0 +1,30 @@
+<mat-card class="card">
+  <mat-card-header>
+    <h3 mat-card-title>{{ 'Unassigned Disks' | translate }}</h3>
+  </mat-card-header>
+  <mat-card-content *ngIf="!(isLoading$| async); else loading">
+    <ng-container *ngIf="hasDisks$ | async; else noDisks">
+      <div *ngFor="let item of sizeDisksMap[DiskType.Hdd] | keyvalue: orderBySize">
+        <div *ngIf="item.value" class="details-item">
+          <ix-icon name="ix:hdd"></ix-icon>
+          <div class="label">{{ getFilesize(item.key) }} </div>
+          <div class="value"> × {{ item.value.length }}</div>
+        </div>
+      </div>
+      <div *ngFor="let item of sizeDisksMap[DiskType.Ssd] | keyvalue: orderBySize">
+        <div *ngIf="item.value" class="details-item">
+          <ix-icon name="ix:ssd"></ix-icon>
+          <div class="label">{{ getFilesize(item.key) }} </div>
+          <div class="value"> × {{ item.value.length }}</div>
+        </div>
+      </div>
+    </ng-container>
+    <ng-template #noDisks>
+      {{ 'No disks available.' | translate }}
+    </ng-template>
+  </mat-card-content>
+</mat-card>
+
+<ng-template #loading>
+  <div class="loading">{{ 'Loading disks...' | translate }}</div>
+</ng-template>

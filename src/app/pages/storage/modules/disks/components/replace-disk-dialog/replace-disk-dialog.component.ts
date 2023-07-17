@@ -6,7 +6,7 @@ import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dial
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
-import { Observable, of } from 'rxjs';
+import { of } from 'rxjs';
 import helptext from 'app/helptext/storage/volumes/volume-status';
 import { Option } from 'app/interfaces/option.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
@@ -34,7 +34,7 @@ export class ReplaceDiskDialogComponent implements OnInit {
 
   unusedDisks: UnusedDisk[] = [];
 
-  unusedDisksOptions$: Observable<Option[]> = of([]);
+  unusedDisksOptions$ = of<Option[]>([]);
 
   readonly helptext = helptext;
 
@@ -71,13 +71,13 @@ export class ReplaceDiskDialogComponent implements OnInit {
   }
 
   setupExportedPoolWarning(): void {
-    this.form.get('replacement').valueChanges.pipe(untilDestroyed(this)).subscribe(
+    this.form.controls.replacement.valueChanges.pipe(untilDestroyed(this)).subscribe(
       this.warnAboutExportedPool.bind(this),
     );
   }
 
   warnAboutExportedPool(diskIdentifier: string): void {
-    const unusedDisk = this.unusedDisks.find((unusedDisk) => unusedDisk.identifier === diskIdentifier);
+    const unusedDisk = this.unusedDisks.find((disk) => disk.identifier === diskIdentifier);
     if (!unusedDisk?.exported_zpool) {
       return;
     }

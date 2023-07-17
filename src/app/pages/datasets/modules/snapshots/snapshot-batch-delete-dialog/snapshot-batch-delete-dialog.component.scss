@@ -1,7 +1,8 @@
 :host {
   display: block;
+  min-width: 400px;
 
-  .mat-list {
+  .mat-mdc-list {
     max-height: 50vh;
     overflow-y: auto;
   }
@@ -46,5 +47,13 @@
     button {
       margin-left: 10px;
     }
+  }
+
+  .result-message {
+    padding: 0 24px;
+  }
+
+  ix-form-actions {
+    margin: 10px;
   }
 }

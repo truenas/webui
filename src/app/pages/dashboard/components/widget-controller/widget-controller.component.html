@@ -1,4 +1,4 @@
-<div *ngIf="rendered" class="widget stats-widget" ngClass.xs="double-height xs">
+<div class="widget stats-widget" ngClass.xs="double-height xs">
   <div class="card-container front">
     <mat-card
       class="front"
@@ -9,7 +9,7 @@
       <mat-card-content>
         <mat-toolbar-row>
           <h3 class="mat-card-title-text">
-            <div class="card-title-text">{{ title | translate }}</div>
+            <div class="card-title-text">{{ 'Dashboard' | translate }}</div>
           </h3>
         </mat-toolbar-row>
 
@@ -41,7 +41,7 @@
                   <span *ngIf="widget.identifier && nameFromIdentifier(widget.identifier).length">
                     {{ nameFromIdentifier(widget.identifier) }}
                   </span>
-                  <mat-icon class="next-slide">chevron_right</mat-icon>
+                  <ix-icon class="next-slide" name="chevron_right"></ix-icon>
                 </mat-list-item>
               </ng-container>
             </mat-list>

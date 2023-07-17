@@ -5,15 +5,18 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { Router } from '@angular/router';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { AclType } from 'app/enums/acl-type.enum';
+import {
+  mockCall, mockJob, mockWebsocket,
+} from 'app/core/testing/utils/mock-websocket.utils';
+import { DatasetAclType } from 'app/enums/dataset.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import {
-  DialogService, StorageService, UserService, WebSocketService,
+  DialogService, StorageService, UserService,
 } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 import { DatasetTrivialPermissionsComponent } from './dataset-trivial-permissions.component';
 
 describe('DatasetTrivialPermissionsComponent', () => {
@@ -36,7 +39,7 @@ describe('DatasetTrivialPermissionsComponent', () => {
       mockWebsocket([
         mockCall('pool.dataset.query', [{
           acltype: {
-            value: AclType.Posix1e,
+            value: DatasetAclType.Posix,
           },
         } as Dataset]),
         mockJob('pool.dataset.permission'),
@@ -75,7 +78,7 @@ describe('DatasetTrivialPermissionsComponent', () => {
   it('shows path of the dataset being edited', () => {
     const datasetPath = spectator.query('.dataset-path');
 
-    expect(datasetPath).toHaveText('Dataset:/mnt/pool/trivial');
+    expect(datasetPath).toHaveText('Dataset: /mnt/pool/trivial');
   });
 
   it('shows current setting owner and access information', async () => {
@@ -181,6 +184,6 @@ describe('DatasetTrivialPermissionsComponent', () => {
     const setAclButton = await loader.getHarness(MatButtonHarness.with({ text: 'Set ACL' }));
     await setAclButton.click();
 
-    expect(router.navigate).toHaveBeenCalledWith(['/datasets', 'pool/trivial', 'permissions', 'acl']);
+    expect(router.navigate).toHaveBeenCalledWith(['/datasets', 'acl', 'edit'], { queryParams: { path: '/mnt/pool/trivial' } });
   });
 });

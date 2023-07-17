@@ -3,7 +3,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { ScrubTaskUi } from 'app/interfaces/scrub-task.interface';
-import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import {
@@ -17,7 +16,7 @@ import { selectTimezone } from 'app/store/system-config/system-config.selectors'
 @UntilDestroy()
 @Component({
   template: '<ix-entity-table [title]="title" [conf]="this"></ix-entity-table>',
-  providers: [TaskService, UserService, EntityFormService],
+  providers: [TaskService, UserService],
 })
 export class ScrubListComponent implements EntityTableConfig {
   title = this.translate.instant('Scrub Tasks');
@@ -64,9 +63,6 @@ export class ScrubListComponent implements EntityTableConfig {
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
-    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.entityList.getData();
-    });
   }
 
   resourceTransformIncomingRestData(data: ScrubTaskUi[]): ScrubTaskUi[] {
@@ -82,7 +78,8 @@ export class ScrubListComponent implements EntityTableConfig {
   }
 
   doAdd(): void {
-    this.slideInService.open(ScrubTaskFormComponent);
+    const slideInRef = this.slideInService.open(ScrubTaskFormComponent);
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
   }
 
   getActions(): EntityTableAction<ScrubTaskUi>[] {
@@ -91,8 +88,8 @@ export class ScrubListComponent implements EntityTableConfig {
       icon: 'edit',
       label: 'Edit',
       onClick: (row: ScrubTaskUi) => {
-        const slideIn = this.slideInService.open(ScrubTaskFormComponent);
-        slideIn.setTaskForEdit(row);
+        const slideInRef = this.slideInService.open(ScrubTaskFormComponent, { data: row });
+        slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
       },
     }, {
       id: 'delete',

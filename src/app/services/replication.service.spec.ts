@@ -1,9 +1,10 @@
-import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
+import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { lastValueFrom } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
+import { DialogService } from 'app/services/dialog.service';
 import { ReplicationService } from 'app/services/replication.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -23,6 +24,7 @@ describe('ReplicationService', () => {
           'parent2/child2',
         ]),
       ]),
+      mockProvider(DialogService),
     ],
   });
 

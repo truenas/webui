@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { of } from 'rxjs';
 import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -11,11 +12,15 @@ import helptext from 'app/helptext/network/configuration/configuration';
 import {
   NetworkConfiguration, NetworkConfigurationActivity, NetworkConfigurationConfig, NetworkConfigurationUpdate,
 } from 'app/interfaces/network-configuration.interface';
-import { ipv4Validator, ipv6Validator } from 'app/modules/entity/entity-form/validators/ip-validation';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { ipv4Validator, ipv6Validator } from 'app/modules/ix-forms/validators/ip-validation';
+import { DialogService, SystemGeneralService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { WebSocketService } from 'app/services/ws.service';
+import { AppState } from 'app/store';
+import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -44,8 +49,6 @@ export class NetworkConfigurationComponent implements OnInit {
     outbound_network_activity: [NetworkActivityType.Deny],
     outbound_network_value: [[] as string[]],
     httpproxy: [''],
-    netwait_enabled: [false],
-    netwait_ip: [[] as string[]],
     hosts: [[] as string[]],
   });
 
@@ -177,19 +180,6 @@ export class NetworkConfigurationComponent implements OnInit {
     tooltip: helptext.httpproxy_tooltip,
   };
 
-  netwaitEnabled = {
-    fcName: 'netwait_enabled',
-    label: helptext.netwait_enabled_placeholder,
-    tooltip: helptext.netwait_enabled_tooltip,
-  };
-
-  netwaitIp = {
-    fcName: 'netwait_ip',
-    label: helptext.netwait_ip_placeholder,
-    tooltip: helptext.netwait_ip_tooltip,
-    hidden: true,
-  };
-
   hosts = {
     fcName: 'hosts',
     label: helptext.hosts_placeholder,
@@ -198,12 +188,14 @@ export class NetworkConfigurationComponent implements OnInit {
 
   constructor(
     private ws: WebSocketService,
-    private slideInService: IxSlideInService,
-    private errorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
+    private slideInRef: IxSlideInRef<NetworkConfigurationComponent>,
+    private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
     private dialogService: DialogService,
     private systemGeneralService: SystemGeneralService,
+    private store$: Store<AppState>,
   ) {}
 
   ngOnInit(): void {
@@ -219,11 +211,6 @@ export class NetworkConfigurationComponent implements OnInit {
         }
       },
     );
-    this.form.controls.netwait_enabled.valueChanges.pipe(untilDestroyed(this)).subscribe(
-      (value: boolean) => {
-        this.netwaitIp.hidden = !value;
-      },
-    );
 
     this.form.controls.inherit_dhcp.valueChanges.pipe(untilDestroyed(this)).subscribe(
       (value: boolean) => {
@@ -236,9 +223,9 @@ export class NetworkConfigurationComponent implements OnInit {
     );
 
     if (this.systemGeneralService.getProductType() === ProductType.ScaleEnterprise) {
-      this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((isHa) => {
-        this.hostnameB.hidden = !isHa;
-        this.hostnameVirtual.hidden = !isHa;
+      this.store$.select(selectIsHaLicensed).pipe(untilDestroyed(this)).subscribe((isHaLicensed) => {
+        this.hostnameB.hidden = !isHaLicensed;
+        this.hostnameVirtual.hidden = !isHaLicensed;
       });
     }
   }
@@ -255,25 +242,19 @@ export class NetworkConfigurationComponent implements OnInit {
             inherit_dhcp: config.domain === '',
             domain: config.domain,
             domains: config.domains,
-            nameserver1: config.nameserver1,
-            nameserver2: config.nameserver2,
-            nameserver3: config.nameserver3,
-            ipv4gateway: config.ipv4gateway,
-            ipv6gateway: config.ipv6gateway,
+            nameserver1: config.nameserver1 || config.state.nameserver1,
+            nameserver2: config.nameserver2 || config.state.nameserver2,
+            nameserver3: config.nameserver3 || config.state.nameserver3,
+            ipv4gateway: config.ipv4gateway || config.state.ipv4gateway,
+            ipv6gateway: config.ipv6gateway || config.state.ipv6gateway,
             outbound_network_activity: NetworkActivityType.Allow,
             outbound_network_value: [],
             httpproxy: config.httpproxy,
-            netwait_enabled: config.netwait_enabled,
-            netwait_ip: config.netwait_ip,
-            hosts: [],
+            hosts: config.hosts,
             netbios: config.service_announcement.netbios,
             mdns: config.service_announcement.mdns,
             wsd: config.service_announcement.wsd,
           };
-
-          if (config.hosts && config.hosts !== '') {
-            transformed.hosts = config.hosts.split('\n');
-          }
 
           if (config.activity) {
             if (config.activity.activities.length === 0) {
@@ -288,8 +269,8 @@ export class NetworkConfigurationComponent implements OnInit {
           this.isFormLoading = false;
           this.cdr.markForCheck();
         },
-        error: (error) => {
-          new EntityUtils().handleWsError(this, error, this.dialogService);
+        error: (error: WebsocketError) => {
+          this.dialogService.error(this.errorHandler.parseWsError(error));
           this.isFormLoading = false;
           this.cdr.markForCheck();
         },
@@ -325,7 +306,6 @@ export class NetworkConfigurationComponent implements OnInit {
 
     const params = {
       ...values,
-      hosts: values.hosts.length > 0 ? values.hosts.join('\n') : '',
       activity,
       service_announcement: serviceAnnouncement,
     };
@@ -337,11 +317,11 @@ export class NetworkConfigurationComponent implements OnInit {
         next: () => {
           this.isFormLoading = false;
           this.cdr.markForCheck();
-          this.slideInService.close();
+          this.slideInRef.close();
         },
         error: (error) => {
           this.isFormLoading = false;
-          this.errorHandler.handleWsFormError(error, this.form);
+          this.formErrorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();
         },
       });

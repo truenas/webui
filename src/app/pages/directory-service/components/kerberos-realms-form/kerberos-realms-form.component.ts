@@ -1,22 +1,23 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+} from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import helptext from 'app/helptext/directory-service/kerberos-realms-form-list';
 import { KerberosRealm, KerberosRealmUpdate } from 'app/interfaces/kerberos-realm.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { WebSocketService } from 'app/services';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
   templateUrl: './kerberos-realms-form.component.html',
-  styleUrls: ['./kerberos-realms-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class KerberosRealmsFormComponent {
-  private editingRealm: KerberosRealm;
+export class KerberosRealmsFormComponent implements OnInit {
   get isNew(): boolean {
     return !this.editingRealm;
   }
@@ -45,15 +46,21 @@ export class KerberosRealmsFormComponent {
 
   constructor(
     private ws: WebSocketService,
-    private slideInService: IxSlideInService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
     private translate: TranslateService,
+    private slideInRef: IxSlideInRef<KerberosRealmsFormComponent>,
+    @Inject(SLIDE_IN_DATA) private editingRealm: KerberosRealm,
   ) {}
 
-  setRealmForEdit(realm: KerberosRealm): void {
-    this.editingRealm = realm;
+  ngOnInit(): void {
+    if (this.editingRealm) {
+      this.setRealmForEdit();
+    }
+  }
+
+  setRealmForEdit(): void {
     if (!this.isNew) {
       this.form.patchValue(this.editingRealm);
     }
@@ -77,7 +84,7 @@ export class KerberosRealmsFormComponent {
       next: () => {
         this.isFormLoading = false;
         this.cdr.markForCheck();
-        this.slideInService.close();
+        this.slideInRef.close();
       },
       error: (error) => {
         this.isFormLoading = false;

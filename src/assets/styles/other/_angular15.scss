@@ -1,0 +1,54 @@
+$button-size: 40px;
+$icon-size: 24px;
+
+.mat-mdc-button__label,
+.mdc-button__label {
+  align-items: center;
+  display: flex;
+}
+
+body .mdc-icon-button,
+body .mat-mdc-icon-button {
+  align-items: center;
+  display: flex;
+  height: $button-size !important;
+  justify-content: center;
+  padding: 0 !important;
+  width: $button-size !important;
+
+  *[role=img] {
+    font-size: $icon-size;
+    height: $icon-size;
+    line-height: $icon-size;
+    vertical-align: middle;
+    width: $icon-size;
+
+    svg {
+      height: $icon-size;
+      width: $icon-size;
+    }
+  }
+
+  .mat-mdc-button-touch-target,
+  .mat-mdc-button-persistent-ripple,
+  .mat-mdc-focus-indicator,
+  .mat-ripple {
+    height: $button-size !important;
+    width: $button-size !important;
+  }
+}
+
+table td .mdc-icon-button {
+  *[role=img] {
+    align-items: center;
+    display: flex;
+    height: $button-size;
+    justify-content: center;
+    width: $button-size;
+  }
+}
+
+.mat-mdc-button {
+  font-size: 14px;
+  white-space: pre;
+}

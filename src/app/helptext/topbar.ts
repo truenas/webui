@@ -22,6 +22,9 @@ export default {
     [FailoverDisabledReason.NoJournalSync]: T('Thread responsible for syncing db transactions not running on this node.'),
     [FailoverDisabledReason.RemNoJournalSync]: T('Thread responsible for syncing db transactions not running on other node.'),
     [FailoverDisabledReason.RemFailoverOngoing]: T('Other node is currently processing a failover event.'),
+    [FailoverDisabledReason.LocFailoverOngoing]: T('This node is currently processing a failover event.'),
+    [FailoverDisabledReason.NoHeartbeatIface]: T('Local heartbeat interface does not exist.'),
+    [FailoverDisabledReason.NoCarrierOnHeartbeat]: T('Local heartbeat interface is down.'),
   },
   updateRunning_dialog: {
     title: T('Update in Progress'),
@@ -46,11 +49,8 @@ export default {
   },
 
   signupDialog: {
-    title: T('Connect to TrueCommand Cloud'),
     content: T('This allows your TrueNAS system to be monitored and administrated by\
  TrueCommand. Click <b>SIGNUP</b> to create a new TrueCommand Cloud instance or <b>CONNECT</b> to join an existing instance.'),
-    singup_btn: T('SIGNUP'),
-    connect_btn: T('CONNECT'),
   },
 
   updateDialog: {

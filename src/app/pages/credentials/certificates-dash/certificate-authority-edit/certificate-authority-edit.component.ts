@@ -1,9 +1,13 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+} from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import {
   ViewCertificateDialogData,
@@ -11,8 +15,6 @@ import {
 import {
   ViewCertificateDialogComponent,
 } from 'app/pages/credentials/certificates-dash/view-certificate-dialog/view-certificate-dialog.component';
-import { DialogService } from 'app/services';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -21,7 +23,7 @@ import { WebSocketService } from 'app/services/ws.service';
   styleUrls: ['./certificate-authority-edit.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CertificateAuthorityEditComponent {
+export class CertificateAuthorityEditComponent implements OnInit {
   isLoading = false;
 
   form = this.formBuilder.group({
@@ -35,16 +37,20 @@ export class CertificateAuthorityEditComponent {
   constructor(
     private ws: WebSocketService,
     private formBuilder: FormBuilder,
-    private dialogService: DialogService,
     private matDialog: MatDialog,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
-    private slideInService: IxSlideInService,
+    private slideInRef: IxSlideInRef<CertificateAuthorityEditComponent>,
+    @Inject(SLIDE_IN_DATA) private certificate: CertificateAuthority,
   ) {}
 
-  setCertificateAuthority(certificateAuthority: CertificateAuthority): void {
-    this.certificateAuthority = certificateAuthority;
-    this.form.patchValue(certificateAuthority);
+  ngOnInit(): void {
+    this.setCertificateAuthority();
+  }
+
+  setCertificateAuthority(): void {
+    this.certificateAuthority = this.certificate;
+    this.form.patchValue(this.certificateAuthority);
     this.cdr.markForCheck();
   }
 
@@ -77,7 +83,7 @@ export class CertificateAuthorityEditComponent {
         next: () => {
           this.isLoading = false;
           this.cdr.markForCheck();
-          this.slideInService.close();
+          this.slideInRef.close(true);
         },
         error: (error) => {
           this.isLoading = false;

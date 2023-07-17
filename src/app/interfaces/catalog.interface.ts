@@ -1,5 +1,8 @@
 import { JobState } from 'app/enums/job-state.enum';
-import { ChartFormValue, ChartSchemaGroup, ChartSchemaNode } from 'app/interfaces/chart-release.interface';
+import { AppMaintainer } from 'app/interfaces/available-app.interface';
+import {
+  AppMetadata, ChartFormValue, ChartSchemaGroup, ChartSchemaNode,
+} from 'app/interfaces/chart-release.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 
 export interface Catalog {
@@ -62,16 +65,20 @@ export interface CatalogTrain {
 
 export interface CatalogApp {
   app_readme: string;
+  app_metadata: AppMetadata;
   categories: string[];
   healthy: boolean;
   healthy_error: string;
   icon_url: string;
   location: string;
   name: string;
+  title: string;
   latest_version: string;
   latest_app_version: string;
   latest_human_version: string;
   versions?: { [version: string]: CatalogAppVersion };
+  recommended?: boolean;
+  last_update?: string;
   catalog?: {
     id?: string;
     label?: string;
@@ -129,13 +136,18 @@ export interface ChartMetadata {
   keywords: string[];
   name: string;
   sources: string[];
+  maintainers: AppMaintainer[];
+  annotations: { title: string };
   version: string;
+  kubeVersion: string;
+  type: string;
 }
 
 export interface ChartMetadataDependency {
   name: string;
   repository: string;
   version: string;
+  enabled: boolean;
 }
 
 export interface CatalogItems {

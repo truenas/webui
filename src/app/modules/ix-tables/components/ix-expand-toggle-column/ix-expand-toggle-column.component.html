@@ -1,15 +1,14 @@
 <ng-container matColumnDef="actions">
   <th *matHeaderCellDef mat-header-cell></th>
-  <td mat-cell *matCellDef="let row">
+  <td *matCellDef="let row" mat-cell>
     <button
       mat-icon-button
-      [matTooltip]="(expandedRow === row ? 'Collapse Row' : 'Expand Row') | translate"
-      [attr.aria-label]="(expandedRow === row ? 'Collapse Row' : 'Expand Row') | translate"
+      ixTest="toggle-row"
+      [matTooltip]="expandedRow === row ? ('Collapse Row' | translate) : ('Expand Row' | translate)"
+      [attr.aria-label]="expandedRow === row ? ('Collapse Row' | translate) : ('Expand Row' | translate)"
       (click)="$event.stopPropagation(); onClick(row)"
     >
-      <mat-icon>
-        {{ expandedRow === row ? 'expand_less' : 'expand_more' }}
-      </mat-icon>
+      <ix-icon [name]="expandedRow === row ? 'expand_less' : 'expand_more'"></ix-icon>
     </button>
   </td>
 </ng-container>

@@ -28,14 +28,14 @@ describe('DatasetRolesCellComponent', () => {
     });
 
     const loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ixIcon = await loader.getHarness(IxIconHarness).catch(() => undefined);
+    ixIcon = await loader.getHarnessOrNull(IxIconHarness);
   }
 
   it('shows "System Dataset" when dataset is marked as system', async () => {
     await setupTest({ name: 'root/dataset' } as DatasetDetails, true);
 
     expect(await ixIcon.getNamespace()).toBe('ix');
-    expect(await ixIcon.getName()).toBe('truenas_scale_logomark');
+    expect(await ixIcon.getName()).toBe('logo_truenas_scale_mark');
     expect(spectator.query(MatTooltip).message).toBe('This dataset is used by the system');
   });
 
@@ -109,14 +109,5 @@ describe('DatasetRolesCellComponent', () => {
 
     expect(await ixIcon.getNamespace()).toBe('ix');
     expect(await ixIcon.getName()).toBe('iscsi_share');
-  });
-
-  it('shows "SMB/NFS/iSCSI" icons when dataset all shares', async () => {
-    await setupTest({
-      name: 'root/shares',
-      smb_shares: [{}],
-      nfs_shares: [{}],
-      iscsi_shares: [{}],
-    } as DatasetDetails, false);
   });
 });

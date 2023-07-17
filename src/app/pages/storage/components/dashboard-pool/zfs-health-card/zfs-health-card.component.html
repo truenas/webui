@@ -2,42 +2,13 @@
   <mat-card-header>
     <h3 mat-card-title>
       {{ 'ZFS Health' | translate }}
-
-      <ng-container [ngSwitch]="true">
-        <mat-icon
-          *ngSwitchCase="pool.healthy"
-          class="pool-icon icon-online"
-          [matTooltip]="'Everything is fine' | translate"
-        >
-          check_circle
-        </mat-icon>
-        <mat-icon
-          *ngSwitchCase="pool.status === PoolStatus.Degraded"
-          class="pool-icon icon-warning"
-          [matTooltip]="'Degraded' | translate"
-        >
-          warning
-        </mat-icon>
-        <mat-icon
-          *ngSwitchCase="pool.status === PoolStatus.Faulted"
-          class="pool-icon icon-faulted"
-          [matTooltip]="'Faulted' | translate"
-        >
-          help
-        </mat-icon>
-        <mat-icon
-          *ngSwitchDefault
-          class="pool-icon icon-error"
-          [matTooltip]="'Error' | translate"
-        >
-          cancel
-        </mat-icon>
-      </ng-container>
+      <ix-pool-card-icon [type]="iconType" [tooltip]="iconTooltip"></ix-pool-card-icon>
     </h3>
 
     <button
       *ngIf="!isScanRunning; else runningScanControls"
       mat-button
+      ixTest="scrub"
       (click)="onStartScrub()"
     >
       {{ 'Scrub' | translate }}
@@ -47,13 +18,14 @@
       <button
         *ngIf="isScanScrub; else disabledButton"
         mat-button
+        ixTest="stop-scrub"
         (click)="onStopScrub()"
       >
         {{ 'Stop Scrub' | translate }}
       </button>
 
       <ng-template #disabledButton>
-        <button mat-button disabled>{{ 'Scrub' | translate }}</button>
+        <button mat-button disabled ixTest="scrub-disabled">{{ 'Scrub' | translate }}</button>
       </ng-template>
     </ng-template>
   </mat-card-header>
@@ -61,7 +33,7 @@
   <mat-card-content fxLayout="column" fxFlex="100">
     <div class="details-item">
       <div class="label">{{ 'Pool Status' | translate }}:</div>
-      <div class="value">{{ pool.status | mapValue: poolStatusLabels }}</div>
+      <div class="value">{{ pool.status | mapValue: poolStatusLabels | translate }}</div>
     </div>
 
     <div class="details-item">
@@ -69,21 +41,12 @@
       <div class="value">{{ totalZfsErrors | number }}</div>
     </div>
 
-    <div *ngIf="hasScrubTask$ | async as hasScrubTask" class="details-item">
+    <div class="details-item">
       <div class="label">{{ 'Scheduled Scrub Task' | translate }}:</div>
-      <div class="value">
-        <ngx-skeleton-loader
-          *ngIf="hasScrubTask.isLoading"
-        ></ngx-skeleton-loader>
-        <ng-container *ngIf="hasScrubTask.value !== undefined">
-          {{ hasScrubTask.value ? ('Set' | translate) : ('Not Set' | translate) }}
-        </ng-container>
-        <ng-container *ngIf="hasScrubTask.error">
-          <!-- TODO: Handle error -->
-          Error
-        </ng-container>
+      <div *ixWithLoadingState="hasScrubTask$ as hasScrubTask" class="value">
+        {{ hasScrubTask ? ('Set' | translate) : ('Not Set' | translate) }}
       </div>
-      <a [routerLink]="['/data-protection/scrub']">
+      <a ixTest="view-all-scrub-tasks" [routerLink]="['/data-protection/scrub']">
         {{ 'View All Scrub Tasks' | translate }}
       </a>
     </div>
@@ -93,7 +56,7 @@
       <div class="value">
         {{ pool.autotrim.value === 'on' ? ('On' | translate) : ('Off' | translate) }}
       </div>
-      <a class="action" (click)="onEditAutotrim()">
+      <a class="action" ixTest="edit-auto-trim" (click)="onEditAutotrim()">
         {{ 'Edit Auto TRIM' | translate }}
       </a>
     </div>
@@ -110,8 +73,8 @@
           {{ timeLeftString }}
         </div>
         <mat-progress-bar
-          [value]="scan.percentage"
           class="progress"
+          [value]="scan.percentage"
         ></mat-progress-bar>
       </div>
 

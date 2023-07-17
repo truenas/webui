@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -14,16 +14,19 @@ import { RsyncMode, RsyncSshConnectMode } from 'app/enums/rsync-mode.enum';
 import helptext from 'app/helptext/data-protection/resync/resync-form';
 import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
 import { RsyncTask, RsyncTaskUpdate } from 'app/interfaces/rsync-task.interface';
-import { portRangeValidator } from 'app/modules/entity/entity-form/validators/range-validation';
 import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
+import { portRangeValidator } from 'app/modules/ix-forms/validators/range-validation/range-validation';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SshConnectionFormComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-form/ssh-connection-form.component';
-import { KeychainCredentialService, UserService, WebSocketService } from 'app/services';
+import { KeychainCredentialService, UserService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -106,20 +109,20 @@ export class RsyncTaskFormComponent implements OnInit {
   readonly userProvider = new UserComboboxProvider(this.userService);
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
 
-  private editingTask: RsyncTask;
-
   constructor(
     private translate: TranslateService,
     private formBuilder: FormBuilder,
     private ws: WebSocketService,
-    private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
     private userService: UserService,
     private filesystemService: FilesystemService,
+    private snackbar: SnackbarService,
     protected keychainCredentialService: KeychainCredentialService,
     protected matDialog: MatDialog,
     private validatorsService: IxValidatorsService,
+    private slideInRef: IxSlideInRef<RsyncTaskFormComponent>,
+    @Inject(SLIDE_IN_DATA) private editingTask: RsyncTask,
   ) {}
 
   get isModuleMode(): boolean {
@@ -160,15 +163,18 @@ export class RsyncTaskFormComponent implements OnInit {
         });
       }
     });
+
+    if (this.editingTask) {
+      this.setTaskForEdit();
+    }
   }
 
-  setTaskForEdit(task: RsyncTask): void {
-    this.editingTask = task;
+  setTaskForEdit(): void {
     this.form.patchValue({
-      ...task,
-      schedule: scheduleToCrontab(task.schedule),
-      sshconnectmode: task.ssh_credentials ? RsyncSshConnectMode.KeyChain : RsyncSshConnectMode.PrivateKey,
-      ssh_credentials: task.ssh_credentials?.id || null,
+      ...this.editingTask,
+      schedule: scheduleToCrontab(this.editingTask.schedule),
+      sshconnectmode: this.editingTask.ssh_credentials ? RsyncSshConnectMode.KeyChain : RsyncSshConnectMode.PrivateKey,
+      ssh_credentials: this.editingTask.ssh_credentials?.id || null,
     });
   }
 
@@ -207,12 +213,19 @@ export class RsyncTaskFormComponent implements OnInit {
 
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
+        if (this.isNew) {
+          this.snackbar.success(this.translate.instant('Task created'));
+        } else {
+          this.snackbar.success(this.translate.instant('Task updated'));
+        }
         this.isLoading = false;
-        this.slideInService.close();
+        this.slideInRef.close(true);
       },
       error: (error) => {
         this.isLoading = false;
-        this.errorHandler.handleWsFormError(error, this.form);
+        this.errorHandler.handleWsFormError(error, this.form, {
+          remotehost: 'remotepath',
+        });
         this.cdr.markForCheck();
       },
     });

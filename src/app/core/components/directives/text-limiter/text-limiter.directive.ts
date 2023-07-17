@@ -10,7 +10,7 @@ import { TextLimiterTooltipComponent } from './text-limiter-tooltip/text-limiter
 })
 export class TextLimiterDirective implements AfterViewInit, OnChanges {
   @Input() popup = true;
-  @Input() threshold: number | string;
+  @Input() threshold: number;
   @Input() content = '';
 
   private overlayRef: OverlayRef;
@@ -39,7 +39,7 @@ export class TextLimiterDirective implements AfterViewInit, OnChanges {
   }
 
   constructor(
-    private el: ElementRef,
+    private el: ElementRef<HTMLElement>,
     private overlayPositionBuilder: OverlayPositionBuilder,
     private overlay: Overlay,
   ) {}

@@ -4,43 +4,39 @@ import {
 import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import {
   filter, first, map, switchMap, tap,
 } from 'rxjs/operators';
 import { helptext } from 'app/helptext/system/reporting';
 import { ReportingConfigUpdate } from 'app/interfaces/reporting.interface';
-import { rangeValidator } from 'app/modules/entity/entity-form/validators/range-validation';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { WebSocketService, DialogService } from 'app/services';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { rangeValidator } from 'app/modules/ix-forms/validators/range-validation/range-validation';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { DialogService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
   templateUrl: './reports-config-form.component.html',
-  styleUrls: ['./reports-config-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ReportsConfigFormComponent implements OnInit {
   isFormLoading = true;
   tooltips = {
-    cpu_in_percentage: helptext.cpu_in_percentage_tooltip,
-    graphite_separateinstances: helptext.graphite_separateinstances_tooltip,
     graphite: helptext.graphite_tooltip,
     graph_age: helptext.graph_age_tooltip,
     graph_points: helptext.graph_points_tooltip,
   };
   userValues: ReportingConfigUpdate;
   readonly defaultValues: ReportingConfigUpdate = {
-    cpu_in_percentage: false,
-    graphite_separateinstances: false,
     graphite: '',
     graph_age: 12,
     graph_points: 1200,
   };
   form = this.fb.group({
-    cpu_in_percentage: [this.defaultValues.cpu_in_percentage, []],
-    graphite_separateinstances: [this.defaultValues.graphite_separateinstances, []],
     graphite: [this.defaultValues.graphite, []],
     graph_age: [this.defaultValues.graph_age, [Validators.required, rangeValidator(1, 60)]],
     graph_points: [this.defaultValues.graph_points, [Validators.required, rangeValidator(1, 4096)]],
@@ -51,8 +47,10 @@ export class ReportsConfigFormComponent implements OnInit {
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
     private dialog: DialogService,
+    private snackbar: SnackbarService,
+    private translate: TranslateService,
     private errorHandler: FormErrorHandlerService,
-    private slideIn: IxSlideInService,
+    private slideInRef: IxSlideInRef<ReportsConfigFormComponent>,
   ) { }
 
   ngOnInit(): void {
@@ -81,9 +79,10 @@ export class ReportsConfigFormComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe({
       next: () => {
+        this.snackbar.success(this.translate.instant('Reporting configuration saved'));
         this.isFormLoading = false;
         this.cdr.markForCheck();
-        this.slideIn.close();
+        this.slideInRef.close();
       },
       error: (error) => {
         this.isFormLoading = false;
@@ -101,7 +100,7 @@ export class ReportsConfigFormComponent implements OnInit {
           return this.dialog.confirm({
             title: helptext.dialog.title,
             message: helptext.dialog.message,
-            buttonMsg: helptext.dialog.action,
+            buttonText: helptext.dialog.action,
           }).pipe(
             filter(Boolean),
             map(() => ({ confirm_rrd_destroy: true, ...body })),

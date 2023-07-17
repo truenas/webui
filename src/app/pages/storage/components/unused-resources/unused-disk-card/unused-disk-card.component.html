@@ -7,6 +7,7 @@
     <h1 class="value">{{ unusedDisks.length }}</h1>
     <button
       mat-button
+      ixTest="add-to-pool"
       [disabled]="!unusedDisks.length"
       (click)="onAddToStorage()"
     >{{ 'Add To Pool' | translate }}</button>

@@ -1,5 +1,5 @@
 {
-    "/api/*": {
+    "/api/**": {
         "target": "http://$SERVER$",
         "secure": false,
         "changeOrigin": true,

@@ -1,13 +1,9 @@
-import { CertificateDigestAlgorithm } from 'app/enums/ca-digest-algorithm.enum';
-import { CertificateKeyType } from 'app/enums/ca-key-type.enum';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
+import { CertificateDigestAlgorithm } from 'app/enums/certificate-digest-algorithm.enum';
+import { CertificateKeyType } from 'app/enums/certificate-key-type.enum';
 import {
-  AuthorityKeyIdentifier,
-  BasicConstraints,
   CertificateAuthority,
   CertificateExtensions,
-  ExtendedKeyUsage,
-  KeyUsage,
 } from 'app/interfaces/certificate-authority.interface';
 
 export interface Certificate {
@@ -15,6 +11,7 @@ export interface Certificate {
   CA_type_intermediate: boolean;
   CA_type_internal: boolean;
   CSR: string;
+  acme?: unknown;
   DN: string;
   can_be_revoked: boolean;
   cert_type: string; // Enum? "CERTIFICATE"
@@ -38,12 +35,14 @@ export interface Certificate {
   internal: string;
   issuer: string | { name: string };
   key_length: number;
-  key_type: string; // Enum RSA
+  key_type: CertificateKeyType;
   lifetime: number;
   name: string;
   organization: string;
   organizational_unit: string;
   parsed: boolean;
+  passphrase: string;
+  passphrase2: string;
   privatekey: string;
   privatekey_path: string;
   revoked: boolean;
@@ -70,26 +69,7 @@ export interface CertificateProfile {
   lifetime: number;
 }
 
-/**
- * Temporary type for type-safety reasons.
- * @deprecated
- */
-export type CertificateExtension =
-  Partial<
-  & BasicConstraints
-  & AuthorityKeyIdentifier
-  & ExtendedKeyUsage
-  & KeyUsage
-  >;
-
-/**
- * @deprecated
- */
-export type CertificationExtensionAttribute =
-  | keyof BasicConstraints
-  | keyof AuthorityKeyIdentifier
-  | keyof ExtendedKeyUsage
-  | keyof KeyUsage;
+export type CertificateExtension = keyof CertificateExtensions;
 
 export interface ExtendedKeyUsageChoices {
   [key: string]: string;
@@ -122,7 +102,7 @@ export interface CertificateCreate {
   state?: string;
   create_type: CertificateCreateType;
   digest_algorithm?: string;
-  san?: string;
+  san?: string[];
   cert_extensions?: CertificateExtensions;
 }
 

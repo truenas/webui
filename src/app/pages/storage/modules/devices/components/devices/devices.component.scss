@@ -1,6 +1,5 @@
-@import '~assets/styles/mixins/grid';
-@import '~assets/styles/scss-imports/splitview';
-@import 'app/modules/layout/components/breadcrumb/breadcrumb.component';
+@import 'scss-imports/splitview';
+@import 'app/modules/page-header/breadcrumb/breadcrumb.component';
 
 $singlecolumn-max-width: ($card-width-slim + $gap * 2);
 $dualcolumn-slim-max-width: ($card-width-slim * 2 + $gap * 2);
@@ -21,6 +20,12 @@ $scrollbar-offset: 20px;
   display: flex;
   flex-direction: row;
   min-height: 100%;
+}
+
+.spacer {
+  display: block;
+  flex-grow: 0;
+  width: 40px;
 }
 
 .table-container {
@@ -157,19 +162,15 @@ $scrollbar-offset: 20px;
 
   ::ng-deep .header h3.title {
     width: calc(100% - 16px);
+
+    @media(max-width: $breakpoint-tablet) {
+      margin-left: -40px;
+      width: 100%;
+    }
   }
 
   ::ng-deep .cards .scroll-window {
     display: block;
-    padding-bottom: 96px;
-  }
-
-  ::ng-deep .cards .scroll-window > * {
-    display: grid;
-    margin: 0 auto;
-    max-width: $card-width;
-    min-width: unset !important;
-    width: 99% !important;
   }
 
   ix-disk-details-panel {
@@ -218,15 +219,15 @@ ix-disk-details-panel {
 }
 
 .disk-tree-header {
-  @include grid-row();
-
   align-items: center;
   color: var(--fg2);
-
-  // Override default fraction based values to avoid misaligned columns
-  grid-template-columns: auto 125px 125px 125px 90px;
+  display: grid;
+  grid-gap: 8px;
+  grid-template-columns: auto 125px 125px 125px 40px;
   min-height: 48px;
+  min-width: fit-content;
   padding-left: 48px;
+  width: 100%;
 
   @media (max-width: $breakpoint-tablet) {
     grid-template-columns: auto 0 0 0 0;
@@ -234,7 +235,7 @@ ix-disk-details-panel {
   }
 
   @media (min-width: $breakpoint-singlecolumn) {
-    grid-template-columns: auto 125px 125px 125px 40px;
+    grid-template-columns: auto 125px 125px 125px;
     overflow-x: hidden;
   }
 

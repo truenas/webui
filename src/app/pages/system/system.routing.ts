@@ -3,22 +3,19 @@ import { RouterModule, Routes } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { ServicesComponent } from 'app/pages/services/services.component';
 import { ShellComponent } from 'app/pages/shell/shell.component';
-import { AlertServiceListComponent } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.component';
+import { AlertSettingsComponent } from 'app/pages/system/alert-settings/alert-settings.component';
 import { FailoverSettingsComponent } from 'app/pages/system/failover-settings/failover-settings.component';
 import { GeneralSettingsComponent } from 'app/pages/system/general-settings/general-settings.component';
+import { SupportCardComponent } from 'app/pages/system/general-settings/support/support-card/support-card.component';
 import { ManualUpdateFormComponent } from 'app/pages/system/update/manual-update-form/manual-update-form.component';
 import { ViewEnclosureComponent } from 'app/pages/system/view-enclosure/components/view-enclosure/view-enclosure.component';
 import { AdvancedSettingsComponent } from './advanced/advanced-settings.component';
 import { CronListComponent } from './advanced/cron/cron-list/cron-list.component';
-import { InitshutdownListComponent } from './advanced/initshutdown/initshutdown-list/initshutdown-list.component';
-import { AlertConfigFormComponent } from './alert-config-form/alert-config-form.component';
+import { InitshutdownListComponent } from './advanced/init-shutdown/initshutdown-list/initshutdown-list.component';
+import { TunableListComponent } from './advanced/sysctl/tunable-list/tunable-list.component';
 import { BootEnvironmentListComponent } from './bootenv/bootenv-list/bootenv-list.component';
 import { BootStatusListComponent } from './bootenv/bootenv-status/bootenv-status.component';
-import { EmailComponent } from './email/email.component';
 import { EulaComponent } from './general-settings/support/eula/eula.component';
-import { SupportComponent } from './general-settings/support/support.component';
-import { TunableListComponent } from './tunable/tunable-list/tunable-list.component';
-import { TwoFactorComponent } from './two-factor/two-factor.component';
 import { UpdateComponent } from './update/update.component';
 
 export const routes: Routes = [
@@ -26,6 +23,10 @@ export const routes: Routes = [
     path: '',
     data: { title: T('System') },
     children: [{
+      path: '',
+      pathMatch: 'full',
+      redirectTo: 'general',
+    }, {
       path: 'general',
       data: { title: T('General'), breadcrumb: T('General'), icon: 'build' },
       children: [{
@@ -91,19 +92,10 @@ export const routes: Routes = [
           ],
         },
       ],
-    },
-    {
-      path: 'email',
-      component: EmailComponent,
-      data: { title: T('Email'), breadcrumb: T('Email'), icon: 'email' },
     }, {
-      path: 'alertsettings',
-      component: AlertConfigFormComponent,
+      path: 'alert-settings',
+      component: AlertSettingsComponent,
       data: { title: T('Alert Settings'), breadcrumb: T('Alert Settings'), icon: 'notifications_active' },
-    }, {
-      path: 'alertservice',
-      data: { title: T('Alert Services'), breadcrumb: T('Alert Services'), icon: 'notifications' },
-      component: AlertServiceListComponent,
     }, {
       path: 'failover',
       component: FailoverSettingsComponent,
@@ -114,7 +106,7 @@ export const routes: Routes = [
       children: [
         {
           path: '',
-          component: SupportComponent,
+          component: SupportCardComponent,
           data: { title: T('Support'), breadcrumb: T('Support') },
         }, {
           path: 'eula',
@@ -122,10 +114,6 @@ export const routes: Routes = [
           data: { title: T('EULA'), breadcrumb: T('EULA') },
         },
       ],
-    }, {
-      path: 'two-factor',
-      component: TwoFactorComponent,
-      data: { title: T('Two-Factor Auth'), breadcrumb: T('Two-Factor Auth') },
     }, {
       path: 'services',
       component: ServicesComponent,
@@ -144,11 +132,11 @@ export const routes: Routes = [
       }],
     }, {
       path: 'initshutdown',
-      data: { title: 'Init/Shutdown Scripts', breadcrumb: 'Init/Shutdown Scripts', icon: 'event_note' },
+      data: { title: T('Init/Shutdown Scripts'), breadcrumb: T('Init/Shutdown Scripts'), icon: 'event_note' },
       children: [{
         path: '',
         component: InitshutdownListComponent,
-        data: { title: 'Init/Shutdown Scripts', breadcrumb: 'Init/Shutdown Scripts' },
+        data: { title: T('Init/Shutdown Scripts'), breadcrumb: T('Init/Shutdown Scripts') },
       }],
     }],
   },

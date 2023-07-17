@@ -1,9 +1,10 @@
 boto3
 pexpect
-pytest==5.3.0
-pytest-bdd==4.1.0
+pytest
+pytest-bdd
 pytest-dependency
 pytest-timeout
+pytest-timestamper
 pytz
 requests
 selenium==3.141.0

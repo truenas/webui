@@ -46,7 +46,7 @@ describe('IxValidatorsService', () => {
       validatorFn = spectator.service.validateOnCondition(condition, Validators.required);
 
       errors = validatorFn(control);
-      expect(errors).toEqual(null);
+      expect(errors).toBeNull();
     });
   });
 

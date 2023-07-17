@@ -1,0 +1,70 @@
+<ng-template #pageHeader>
+  <ix-page-title-header
+    [pageTitle]="pageTitle"
+    [loading]="isLoading$ | async"
+  ></ix-page-title-header>
+</ng-template>
+
+<div class="flex-container">
+  <div class="app-wrapper">
+    <section fxLayout="row">
+      <ix-app-details-header
+        [app]="app"
+        [isLoading$]="isLoading$"
+      ></ix-app-details-header>
+    </section>
+
+    <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-121706 -->
+    <section *ngIf="(isLoading$ | async) || app?.screenshots?.length">
+      <h2>{{ 'Screenshots' | translate }}</h2>
+      <div fxLayout="row nowrap" fxLayoutGap="16px">
+        <div *ngIf="isLoading$ | async; else appScreenshots" class="screenshots-loader">
+          <ngx-skeleton-loader fxFlex class="screenshot-loader"></ngx-skeleton-loader>
+          <ngx-skeleton-loader fxFlex class="screenshot-loader"></ngx-skeleton-loader>
+          <ngx-skeleton-loader fxFlex class="screenshot-loader"></ngx-skeleton-loader>
+        </div>
+
+        <ng-template #appScreenshots>
+          <div class="screenshots" gallerize>
+            <div *ngFor="let image of app.screenshots" class="screenshot">
+              <img class="screenshot-image" [src]="image" />
+            </div>
+          </div>
+        </ng-template>
+      </div>
+    </section>
+
+    <div class="show-xs-md">
+      <ng-container *ngTemplateOutlet="appDetailCards"></ng-container>
+    </div>
+
+    <section *ngIf="app">
+      <ix-app-details-similar [app]="app"></ix-app-details-similar>
+    </section>
+  </div>
+
+  <div class="hide-xs-md">
+    <ng-container *ngTemplateOutlet="appDetailCards"></ng-container>
+  </div>
+</div>
+
+<ng-template #appDetailCards>
+  <div fxFlex fxLayoutAlign="end" class="cards-wrapper">
+    <section class="app-info-cards">
+      <ix-app-resources-card
+        class="app-info-card"
+        [isLoading$]="isLoading$"
+      ></ix-app-resources-card>
+      <ix-app-helm-chart-card
+        class="app-info-card"
+        [app]="app"
+        [isLoading$]="isLoading$"
+      ></ix-app-helm-chart-card>
+      <ix-app-available-info-card
+        class="app-info-card"
+        [app]="app"
+        [isLoading$]="isLoading$"
+      ></ix-app-available-info-card>
+    </section>
+  </div>
+</ng-template>

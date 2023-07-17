@@ -17,8 +17,9 @@ import {
 } from 'app/pages/api-keys/components/key-created-dialog/key-created-dialog.component';
 import { ApiKeyComponentStore } from 'app/pages/api-keys/store/api-key.store';
 import {
-  AppLoaderService, DialogService, WebSocketService,
+  AppLoaderService, DialogService,
 } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('ApiKeyFormDialogComponent', () => {
   let spectator: Spectator<ApiKeyFormDialogComponent>;

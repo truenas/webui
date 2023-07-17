@@ -2,7 +2,6 @@
   class="dashboard"
   fxLayout="column"
   fxLayoutGap="8px"
-  [class.has-footer]="hasConsoleFooter"
 >
   <div class="content" fxLayout="column" fxLayout.lg="row" fxLayoutGap="8px">
     <div class="right-column" fxFlex="100" fxFlex.lg="65">
@@ -16,8 +15,9 @@
                 <mat-form-field floatPlaceholder="never" id="timeout-field">
                   <input
                     matInput
-                    [(ngModel)]="checkinTimeout"
+                    ixTest="checkin-timeout"
                     [pattern]="checkinTimeoutPattern"
+                    [(ngModel)]="checkinTimeout"
                   />
                 </mat-form-field>
                 {{ helptext.checkin_text_2 | translate }}
@@ -39,9 +39,7 @@
             <button
               *ngIf="!checkinWaiting"
               mat-button
-              ix-auto
-              ix-auto-type="button"
-              ix-auto-identifier="testChange"
+              ixTest="test-changes"
               [disabled]="isHaEnabled"
               (click)="commitPendingChanges()"
             >
@@ -51,9 +49,7 @@
             <button
               *ngIf="checkinWaiting"
               mat-button
-              ix-auto
-              ix-auto-type="button"
-              ix-auto-identifier="keepChange"
+              ixTest="save-changes"
               [disabled]="isHaEnabled"
               (click)="checkInNow()"
             >
@@ -62,9 +58,7 @@
 
             <button
               mat-button
-              ix-auto
-              ix-auto-type="button"
-              ix-auto-identifier="revertChange"
+              ixTest="revert-changes"
               [disabled]="isHaEnabled"
               (click)="rollbackPendingChanges()"
             >
@@ -77,9 +71,6 @@
             (
             <span
               class="pseudolink"
-              ix-auto
-              ix-auto-type="link"
-              ix-auto-identifier="goToHA"
               (click)="goToHa()"
             >
               {{ helptext.go_to_ha | translate }}
@@ -87,7 +78,10 @@
             ).
           </div>
         </mat-card>
-        <ix-conf-table [conf]="interfaceTableConf" fxFlex></ix-conf-table>
+        <ix-interfaces-card
+          [isHaEnabled]="isHaEnabled"
+          (interfacesUpdated)="checkInterfacePendingChanges()"
+        ></ix-interfaces-card>
         <ix-network-configuration-card
           class="dashboard-card"
         ></ix-network-configuration-card>
@@ -96,13 +90,8 @@
 
     <div class="left-column" fxFlex="100" fxFlex.lg="35">
       <div fxLayout="column" fxFlexFill fxLayoutGap="8px">
-        <ix-conf-table [conf]="staticRoutesTableConf" fxFlex></ix-conf-table>
-        <ix-conf-table [conf]="openvpnTableConf" fxFlex></ix-conf-table>
-        <ix-conf-table
-          *ngIf="ipmiEnabled"
-          fxFlex
-          [conf]="ipmiTableConf"
-        ></ix-conf-table>
+        <ix-static-routes></ix-static-routes>
+        <ix-ipmi-card></ix-ipmi-card>
       </div>
     </div>
   </div>

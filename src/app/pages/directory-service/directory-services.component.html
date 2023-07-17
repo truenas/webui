@@ -1,11 +1,11 @@
 <ng-container [ngSwitch]="true">
-  <div fxLayout="column" fxLayoutAlign="center center" *ngSwitchCase="!isActiveDirectoryEnabled && !isLdapEnabled" class="everything-disabled">
+  <div *ngSwitchCase="!isActiveDirectoryEnabled && !isLdapEnabled" fxLayout="column" fxLayoutAlign="center center" class="everything-disabled">
     <ix-entity-empty [conf]="noDirectoryServicesConfig"></ix-entity-empty>
     <div class="actions">
-      <button mat-button (click)="openActiveDirectoryForm()">
+      <button mat-button ixTest="configure-active-directory" (click)="openActiveDirectoryForm()">
         {{ 'Configure Active Directory' | translate }}
       </button>
-      <button mat-button (click)="openLdapForm()">
+      <button mat-button ixTest="configure-ldap" (click)="openLdapForm()">
         {{ 'Configure LDAP' | translate }}
       </button>
     </div>
@@ -39,9 +39,9 @@
 </ng-container>
 
 <cdk-accordion-item
+  #expansionPanel="cdkAccordionItem"
   class="advanced-settings"
   [class.expanded]="expansionPanel.expanded"
-  #expansionPanel="cdkAccordionItem"
 >
   <h3 class="header">
     {{ 'Advanced Settings' | translate }}
@@ -49,6 +49,7 @@
     <button
       *ngIf="!expansionPanel.expanded"
       mat-button
+      ixTest="show-advanced-settings"
       (click)="onAdvancedSettingsOpened(expansionPanel)"
     >{{ 'Show' | translate }}</button>
   </h3>
@@ -66,7 +67,7 @@
     <mat-toolbar-row>
       <h3>{{ card.title | translate }}</h3>
       <div class="actions action-icon">
-        <button mat-button color="default" (click)="card.onSettingsPressed()">
+        <button mat-button color="default" [ixTest]="[card.title, 'settings']" (click)="card.onSettingsPressed()">
           {{ 'Settings' | translate }}
         </button>
       </div>

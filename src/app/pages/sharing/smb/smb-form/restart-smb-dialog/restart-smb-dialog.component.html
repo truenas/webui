@@ -13,6 +13,12 @@
   </div>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-  <button mat-button [mat-dialog-close]="false">{{ 'No' | translate }}</button>
-  <button mat-button [mat-dialog-close]="true" cdkFocusInitial color="primary">{{ 'Restart Service' | translate }}</button>
+  <button mat-button ixTest="do-not-restart" [mat-dialog-close]="false">{{ 'No' | translate }}</button>
+  <button
+    mat-button
+    cdkFocusInitial
+    color="primary"
+    ixTest="restart-service"
+    [mat-dialog-close]="true"
+  >{{ 'Restart Service' | translate }}</button>
 </mat-dialog-actions>

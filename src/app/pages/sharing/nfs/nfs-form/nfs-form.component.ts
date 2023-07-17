@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
@@ -7,17 +7,23 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { EMPTY, Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
+import { NfsProtocol } from 'app/enums/nfs-protocol.enum';
 import { NfsSecurityProvider } from 'app/enums/nfs-security-provider.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingNfs, shared } from 'app/helptext/sharing';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
-import { ipv4or6cidrValidator } from 'app/modules/entity/entity-form/validators/ip-validation';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { GroupComboboxProvider } from 'app/modules/ix-forms/classes/group-combobox-provider';
 import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { DialogService, UserService, WebSocketService } from 'app/services';
+import { ipv4or6cidrValidator } from 'app/modules/ix-forms/validators/ip-validation';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { DialogService, UserService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -29,7 +35,6 @@ export class NfsFormComponent implements OnInit {
   isLoading = false;
   isAdvancedMode = false;
   hasNfsSecurityField = false;
-  existingNfsShare: NfsShare;
 
   form = this.formBuilder.group({
     path: ['', Validators.required],
@@ -85,37 +90,43 @@ export class NfsFormComponent implements OnInit {
     private userService: UserService,
     private translate: TranslateService,
     private dialogService: DialogService,
-    private slideInService: IxSlideInService,
+    private errorHandler: ErrorHandlerService,
     private filesystemService: FilesystemService,
-    private errorHandler: FormErrorHandlerService,
+    private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
+    private snackbar: SnackbarService,
+    private slideInRef: IxSlideInRef<NfsFormComponent>,
+    @Inject(SLIDE_IN_DATA) private existingNfsShare: NfsShare,
   ) {}
 
-  setNfsShareForEdit(nfsShare: NfsShare): void {
-    this.existingNfsShare = nfsShare;
-    nfsShare.networks.forEach(() => this.addNetworkControl());
-    nfsShare.hosts.forEach(() => this.addHostControl());
-    this.form.patchValue(nfsShare);
+  setNfsShareForEdit(): void {
+    this.existingNfsShare.networks.forEach(() => this.addNetworkControl());
+    this.existingNfsShare.hosts.forEach(() => this.addHostControl());
+    this.form.patchValue(this.existingNfsShare);
   }
 
   ngOnInit(): void {
     this.checkForNfsSecurityField();
+
+    if (this.existingNfsShare) {
+      this.setNfsShareForEdit();
+    }
   }
 
   addNetworkControl(): void {
-    this.form.get('networks').push(this.formBuilder.control('', [Validators.required, ipv4or6cidrValidator()]));
+    this.form.controls.networks.push(this.formBuilder.control('', [Validators.required, ipv4or6cidrValidator()]));
   }
 
   removeNetworkControl(index: number): void {
-    this.form.get('networks').removeAt(index);
+    this.form.controls.networks.removeAt(index);
   }
 
   addHostControl(): void {
-    this.form.get('hosts').push(this.formBuilder.control('', Validators.required));
+    this.form.controls.hosts.push(this.formBuilder.control('', Validators.required));
   }
 
   removeHostControl(index: number): void {
-    this.form.get('hosts').removeAt(index);
+    this.form.controls.hosts.removeAt(index);
   }
 
   toggleAdvancedMode(): void {
@@ -140,13 +151,18 @@ export class NfsFormComponent implements OnInit {
       )
       .subscribe({
         next: () => {
+          if (this.isNew) {
+            this.snackbar.success(this.translate.instant('NFS share created'));
+          } else {
+            this.snackbar.success(this.translate.instant('NFS share updated'));
+          }
           this.isLoading = false;
           this.cdr.markForCheck();
-          this.slideInService.close();
+          this.slideInRef.close();
         },
         error: (error) => {
           this.isLoading = false;
-          this.errorHandler.handleWsFormError(error, this.form);
+          this.formErrorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();
         },
       });
@@ -156,7 +172,7 @@ export class NfsFormComponent implements OnInit {
     this.ws.call('nfs.config')
       .pipe(untilDestroyed(this))
       .subscribe((nfsConfig) => {
-        this.hasNfsSecurityField = nfsConfig.v4;
+        this.hasNfsSecurityField = nfsConfig.protocols?.includes(NfsProtocol.V4);
       });
   }
 
@@ -177,8 +193,8 @@ export class NfsFormComponent implements OnInit {
     return this.dialogService.confirm({
       title: shared.dialog_title,
       message: shared.dialog_message,
-      hideCheckBox: true,
-      buttonMsg: shared.dialog_button,
+      hideCheckbox: true,
+      buttonText: shared.dialog_button,
     }).pipe(
       switchMap((confirmed) => {
         if (!confirmed) {
@@ -188,15 +204,14 @@ export class NfsFormComponent implements OnInit {
         return this.ws.call('service.update', [ServiceName.Nfs, { enable: true }]).pipe(
           switchMap(() => this.ws.call('service.start', [ServiceName.Nfs, { silent: false }])),
           map(() => {
-            this.dialogService.info(
-              this.translate.instant('{service} Service', { service: 'NFS' }),
+            this.snackbar.success(
               this.translate.instant('The {service} service has been enabled.', { service: 'NFS' }),
             );
 
             return undefined;
           }),
-          catchError((error) => {
-            this.dialogService.errorReport(error.error, error.reason, error.trace.formatted);
+          catchError((error: WebsocketError) => {
+            this.dialogService.error(this.errorHandler.parseWsError(error));
             return EMPTY;
           }),
         );

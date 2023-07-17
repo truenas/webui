@@ -118,8 +118,8 @@
             *ngIf="!outboundNetworkValue.hidden"
             class="outbound-network-value"
             [formControlName]="outboundNetworkValue.fcName"
-            [label]="outboundNetworkValue.label"
-            [tooltip]="outboundNetworkValue.tooltip"
+            [label]="outboundNetworkValue.label | translate"
+            [tooltip]="outboundNetworkValue.tooltip | translate"
             [options]="outboundNetworkValue.options"
             [multiple]="true"
           ></ix-select>
@@ -131,20 +131,6 @@
             [label]="httpproxy.label | translate"
             [tooltip]="httpproxy.tooltip | translate"
           ></ix-input>
-
-          <ix-checkbox
-            [formControlName]="netwaitEnabled.fcName"
-            [label]="netwaitEnabled.label | translate"
-            [tooltip]="netwaitEnabled.tooltip | translate"
-          ></ix-checkbox>
-
-          <ix-chips
-            *ngIf="!netwaitIp.hidden"
-            [formControlName]="netwaitIp.fcName"
-            [label]="netwaitIp.label | translate"
-            [placeholder]="netwaitIp.label | translate"
-            [tooltip]="netwaitIp.tooltip | translate"
-          ></ix-chips>
 
           <ix-chips
             [formControlName]="hosts.fcName"
@@ -160,6 +146,7 @@
           mat-button
           type="submit"
           color="primary"
+          ixTest="save"
           [disabled]="form.invalid || isFormLoading"
         >
           {{ 'Save' | translate }}

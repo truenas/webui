@@ -2,16 +2,18 @@ import {
   Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild, TemplateRef, AfterViewInit,
 } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
-import { NavigationExtras, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
   filter, map, switchMap,
 } from 'rxjs/operators';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service, ServiceRow } from 'app/interfaces/service.interface';
-import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { IscsiService } from 'app/services/';
 import { DialogService } from 'app/services/dialog.service';
 import { LayoutService } from 'app/services/layout.service';
@@ -28,19 +30,19 @@ import { WebSocketService } from 'app/services/ws.service';
 export class ServicesComponent implements OnInit, AfterViewInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
-  dataSource: MatTableDataSource<ServiceRow> = new MatTableDataSource([]);
+  dataSource = new MatTableDataSource<ServiceRow>([]);
   displayedColumns = ['name', 'state', 'enable', 'actions'];
   error = false;
   loading = true;
-  loadingConf: EmptyConfig = {
-    type: EmptyType.Loading,
-    large: false,
-    title: this.translate.instant('Loading...'),
-  };
+  readonly EmptyType = EmptyType;
   serviceLoadingMap = new Map<ServiceName, boolean>();
   readonly serviceNames = serviceNames;
   readonly ServiceStatus = ServiceStatus;
   private readonly hiddenServices: ServiceName[] = [ServiceName.Gluster, ServiceName.Afp];
+
+  get emptyConfigService(): EmptyService {
+    return this.emptyService;
+  }
 
   constructor(
     private ws: WebSocketService,
@@ -50,11 +52,16 @@ export class ServicesComponent implements OnInit, AfterViewInit {
     private iscsiService: IscsiService,
     private cdr: ChangeDetectorRef,
     private layoutService: LayoutService,
+    private emptyService: EmptyService,
   ) {}
 
   ngOnInit(): void {
     this.getData();
     this.getUpdates();
+  }
+
+  get shouldShowEmpty(): boolean {
+    return !this.dataSource.filteredData.length;
   }
 
   ngAfterViewInit(): void {
@@ -65,12 +72,13 @@ export class ServicesComponent implements OnInit, AfterViewInit {
     this.ws.call('service.query', [[], { order_by: ['service'] }]).pipe(
       map((services) => {
         const transformed = services
+          .filter((service) => serviceNames.has(service.service))
           .filter((service) => !this.hiddenServices.includes(service.service))
           .map((service) => {
-            const transformed = { ...service } as ServiceRow;
-            transformed.name = serviceNames.get(service.service);
-
-            return transformed;
+            return {
+              ...service,
+              name: serviceNames.has(service.service) ? serviceNames.get(service.service) : service.service,
+            } as ServiceRow;
           });
 
         transformed.sort((a, b) => a.name.localeCompare(b.name));
@@ -132,26 +140,32 @@ export class ServicesComponent implements OnInit, AfterViewInit {
             return this.dialog.confirm({
               title: this.translate.instant('Alert'),
               message,
-              hideCheckBox: true,
-              buttonMsg: this.translate.instant('Stop'),
+              hideCheckbox: true,
+              buttonText: this.translate.instant('Stop'),
             });
           }),
-          filter(Boolean),
           untilDestroyed(this),
-        ).subscribe(() => {
-          this.updateService(rpc, service);
+        ).subscribe((confirmed) => {
+          if (confirmed) {
+            this.updateService(rpc, service);
+          } else {
+            this.resetServiceStateToDefault(service);
+          }
         });
       } else {
         this.dialog.confirm({
           title: this.translate.instant('Alert'),
           message: this.translate.instant('Stop {serviceName}?', { serviceName }),
-          hideCheckBox: true,
-          buttonMsg: this.translate.instant('Stop'),
+          hideCheckbox: true,
+          buttonText: this.translate.instant('Stop'),
         }).pipe(
-          filter(Boolean),
           untilDestroyed(this),
-        ).subscribe(() => {
-          this.updateService(rpc, service);
+        ).subscribe((confirmed) => {
+          if (confirmed) {
+            this.updateService(rpc, service);
+          } else {
+            this.resetServiceStateToDefault(service);
+          }
         });
       }
     } else {
@@ -185,12 +199,16 @@ export class ServicesComponent implements OnInit, AfterViewInit {
           );
         }
       },
-      error: (error) => {
+      error: (error: WebsocketError) => {
         let message = this.translate.instant('Error starting service {serviceName}.', { serviceName });
         if (rpc === 'service.stop') {
           message = this.translate.instant('Error stopping service {serviceName}.', { serviceName });
         }
-        this.dialog.errorReport(message, error.reason, error.trace.formatted);
+        this.dialog.error({
+          title: message,
+          message: error.reason,
+          backtrace: error.trace.formatted,
+        });
         this.serviceLoadingMap.set(service.service, false);
         this.cdr.markForCheck();
       },
@@ -212,25 +230,30 @@ export class ServicesComponent implements OnInit, AfterViewInit {
   }
 
   configureService(row: Service): void {
-    if (row.service === ServiceName.OpenVpnClient || row.service === ServiceName.OpenVpnServer) {
-      const navigationExtras: NavigationExtras = { state: { configureOpenVPN: row.service.replace('openvpn_', '') } };
-      this.router.navigate(['network'], navigationExtras);
-    } else {
-      switch (row.service) {
-        case ServiceName.Iscsi:
-          this.router.navigate(['/sharing', 'iscsi']);
-          break;
-        case ServiceName.Cifs:
-          this.router.navigate(['/services', 'smb']);
-          break;
-        default:
-          this.router.navigate(['/services', row.service]);
-          break;
-      }
+    switch (row.service) {
+      case ServiceName.Iscsi:
+        this.router.navigate(['/sharing', 'iscsi']);
+        break;
+      case ServiceName.Cifs:
+        this.router.navigate(['/services', 'smb']);
+        break;
+      default:
+        this.router.navigate(['/services', row.service]);
+        break;
     }
   }
 
   onSearch(query: string): void {
     this.dataSource.filter = query;
+    this.cdr.markForCheck();
+  }
+
+  resetServiceStateToDefault(service: Service): void {
+    this.serviceLoadingMap.set(service.service, true);
+    this.cdr.markForCheck();
+    setTimeout(() => {
+      this.serviceLoadingMap.set(service.service, false);
+      this.cdr.markForCheck();
+    }, 0);
   }
 }

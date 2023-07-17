@@ -1,4 +1,4 @@
-host {
+:host {
   display: block;
   margin-bottom: 12px;
 }
@@ -18,27 +18,35 @@ host {
 
 .input-container {
   background: var(--bg1);
-  border: solid 1px var(--lines);
+  border: solid 1.5px var(--lines);
   border-radius: 2px;
-  font-size: 12px;
-  padding: 7px;
   position: relative;
+
+  ::ng-deep {
+    mat-select .mat-mdc-select-value {
+      padding: 5px 8px;
+    }
+
+    mat-select .mat-mdc-select-value-text {
+      white-space: initial;
+    }
+  }
 
   &:focus-within {
     border-color: var(--primary);
   }
 
   &.disabled {
-    opacity: 0.38;
+    opacity: var(--disabled-opacity);
 
-    ::ng-deep .mat-select-value {
+    ::ng-deep .mat-mdc-select-value {
       cursor: not-allowed;
       opacity: 1;
     }
   }
 }
 
-::ng-deep .mat-select-panel .mat-option.schedule-option {
+::ng-deep .mat-mdc-select-panel .mat-mdc-option.schedule-option {
   height: auto;
   line-height: 24px;
   min-height: 3em;
@@ -46,10 +54,12 @@ host {
 
   .crontab {
     font-style: italic;
-    opacity: 0.7;
   }
 
-  .preset-description {
+  .preset-description,
+  .crontab {
+    font-size: 11px;
+    margin: 0 1px;
     opacity: 0.7;
   }
 }

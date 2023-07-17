@@ -1,0 +1,26 @@
+<mat-card>
+  <mat-toolbar-row>
+    <h3>{{ 'Kernel' | translate }}</h3>
+    <div class="actions action-icon">
+      <button
+        *ixWithLoadingState="debugKernel$ as debugKernel"
+        mat-button
+        [ixTest]="['kernel', 'configure']"
+        (click)="onConfigurePressed(debugKernel)"
+      >
+        {{ 'Configure' | translate }}
+      </button>
+    </div>
+  </mat-toolbar-row>
+
+  <mat-card-content>
+    <mat-list>
+      <mat-list-item>
+        <span class="label">{{ 'Enable Debug Kernel' | translate }}:</span>
+        <span *ixWithLoadingState="debugKernel$ as debugKernel" class="value">
+          {{ debugKernel ? ('Enabled' | translate) : ('Disabled' | translate) }}
+        </span>
+      </mat-list-item>
+    </mat-list>
+  </mat-card-content>
+</mat-card>

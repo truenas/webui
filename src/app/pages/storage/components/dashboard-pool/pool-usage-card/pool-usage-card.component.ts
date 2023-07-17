@@ -1,18 +1,14 @@
 import {
+  ChangeDetectionStrategy,
   Component, Input, OnInit,
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { PoolStatus } from 'app/enums/pool-status.enum';
+import { TranslateService } from '@ngx-translate/core';
+import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { getPoolDisks } from 'app/pages/storage/modules/disks/utils/get-pool-disks.utils';
 import { ThemeService } from 'app/services/theme/theme.service';
-
-export enum UsageHealthLevel {
-  Warn = 'warn',
-  Error = 'error',
-  Safe = 'safe',
-}
 
 const maxPct = 80;
 
@@ -21,22 +17,25 @@ const maxPct = 80;
   selector: 'ix-pool-usage-card',
   templateUrl: './pool-usage-card.component.html',
   styleUrls: ['./pool-usage-card.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PoolUsageCardComponent implements OnInit {
   @Input() poolState: Pool;
   @Input() rootDataset: Dataset;
 
-  readonly usageHealthLevel = UsageHealthLevel;
   chartLowCapacityColor: string;
   chartFillColor: string;
   chartBlankColor: string;
 
-  constructor(public themeService: ThemeService) {}
+  constructor(
+    public themeService: ThemeService,
+    private translate: TranslateService,
+  ) {}
 
   ngOnInit(): void {
-    this.chartBlankColor = this.themeService.currentTheme()['bg1'];
-    this.chartFillColor = this.themeService.currentTheme()['primary'];
-    this.chartLowCapacityColor = this.themeService.currentTheme()['red'];
+    this.chartBlankColor = this.themeService.currentTheme().bg1;
+    this.chartFillColor = this.themeService.currentTheme().primary;
+    this.chartLowCapacityColor = this.themeService.currentTheme().red;
   }
 
   get isLowCapacity(): boolean {
@@ -55,34 +54,17 @@ export class PoolUsageCardComponent implements OnInit {
     return this.rootDataset.used.parsed / this.capacity * 100;
   }
 
-  get health(): UsageHealthLevel {
-    const isError = this.isStatusError(this.poolState);
-    const isWarning = this.isStatusWarning(this.poolState);
-
-    if (isError) {
-      return UsageHealthLevel.Error;
+  get iconType(): PoolCardIconType {
+    if (this.isLowCapacity) {
+      return PoolCardIconType.Warn;
     }
-    if (isWarning || !this.poolState.healthy || this.isLowCapacity) {
-      return UsageHealthLevel.Warn;
-    }
-
-    return UsageHealthLevel.Safe;
+    return PoolCardIconType.Safe;
   }
 
-  private isStatusError(poolState: Pool): boolean {
-    return [
-      PoolStatus.Faulted,
-      PoolStatus.Unavailable,
-      PoolStatus.Removed,
-    ].includes(poolState.status);
-  }
-
-  private isStatusWarning(poolState: Pool): boolean {
-    return [
-      PoolStatus.Locked,
-      PoolStatus.Unknown,
-      PoolStatus.Offline,
-      PoolStatus.Degraded,
-    ].includes(poolState.status);
+  get iconTooltip(): string {
+    if (this.isLowCapacity) {
+      return this.translate.instant('Pool is using more than {maxPct}% of available space', { maxPct });
+    }
+    return this.translate.instant('Everything is fine');
   }
 }

@@ -10,13 +10,17 @@ import { filter, switchMap } from 'rxjs/operators';
 import { AclType } from 'app/enums/acl-type.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-permissions';
 import { DatasetPermissionsUpdate } from 'app/interfaces/dataset-permissions.interface';
+import { Job } from 'app/interfaces/job.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { GroupComboboxProvider } from 'app/modules/ix-forms/classes/group-combobox-provider';
 import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import {
-  DialogService, StorageService, UserService, WebSocketService,
+  DialogService, StorageService, UserService,
 } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -69,6 +73,7 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private ws: WebSocketService,
+    private errorHandler: ErrorHandlerService,
     private storageService: StorageService,
     private translate: TranslateService,
     private dialog: DialogService,
@@ -90,7 +95,7 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.datasetId = this.activatedRoute.snapshot.params['datasetId'];
+    this.datasetId = this.activatedRoute.snapshot.params['datasetId'] as string;
     this.datasetPath = '/mnt/' + this.datasetId;
 
     this.loadPermissionsInformation();
@@ -98,7 +103,11 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
   }
 
   onSetAclPressed(): void {
-    this.router.navigate(['/datasets', this.datasetId, 'permissions', 'acl']);
+    this.router.navigate(['/datasets', 'acl', 'edit'], {
+      queryParams: {
+        path: '/mnt/' + this.datasetId,
+      },
+    });
   }
 
   onSubmit(): void {
@@ -114,14 +123,17 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
     jobComponent.setDescription(this.translate.instant('Saving Permissions...'));
     jobComponent.setCall('pool.dataset.permission', payload);
     jobComponent.submit();
+    jobComponent.failure.pipe(untilDestroyed(this)).subscribe((failedJob) => {
+      this.dialog.error(this.errorHandler.parseJobError(failedJob));
+    });
     jobComponent.success.pipe(untilDestroyed(this)).subscribe({
       next: () => {
         dialogRef.close();
         this.router.navigate(['/datasets', this.datasetId]);
       },
-      error: (error) => {
+      error: (error: WebsocketError | Job) => {
         dialogRef.close();
-        this.dialog.errorReportMiddleware(error);
+        this.dialog.error(this.errorHandler.parseError(error));
       },
     });
   }
@@ -136,7 +148,8 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
       .subscribe({
         next: ([datasets, stat]) => {
           this.isLoading = false;
-          this.aclType = datasets[0].acltype.value as AclType;
+          // TODO: DatasetAclType and AclType may represent the same thing
+          this.aclType = datasets[0].acltype.value as unknown as AclType;
           this.oldDatasetMode = stat.mode.toString(8).substring(2, 5);
           this.form.patchValue({
             mode: this.oldDatasetMode,
@@ -144,9 +157,9 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
             group: stat.group,
           });
         },
-        error: (error) => {
+        error: (error: WebsocketError) => {
           this.isLoading = false;
-          this.dialog.errorReportMiddleware(error);
+          this.dialog.error(this.errorHandler.parseWsError(error));
         },
       });
   }
@@ -163,16 +176,16 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
       },
     } as DatasetPermissionsUpdate[1];
     if (values.applyUser) {
-      update['user'] = values.user;
+      update.user = values.user;
     }
 
     if (values.applyGroup) {
-      update['group'] = values.group;
+      update.group = values.group;
     }
 
     if (this.oldDatasetMode !== values.mode) {
-      update['mode'] = values.mode;
-      update.options['stripacl'] = true;
+      update.mode = values.mode;
+      update.options.stripacl = true;
     }
 
     return [this.datasetId, update];

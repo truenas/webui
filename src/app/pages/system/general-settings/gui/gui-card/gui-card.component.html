@@ -1,0 +1,76 @@
+<mat-card>
+  <mat-toolbar-row>
+    <h3>{{ helptext.guiTitle| translate }}</h3>
+    <div class="actions action-icon">
+      <button mat-button id="gui-settings" color="default" [ixTest]="['gui', 'settings']" (click)="doAdd()">
+        {{ 'Settings' | translate }}
+      </button>
+    </div>
+  </mat-toolbar-row>
+
+  <mat-card-content>
+    <mat-list>
+      <mat-list-item>
+        <span class="label">{{ 'Theme' | translate }}:</span>
+        <span *ixWithLoadingState="preferences$ as preferences" class="value">
+          {{ preferences.userTheme }}
+        </span>
+      </mat-list-item>
+      <mat-list-item>
+        <span class="label">{{ helptext.ui_certificate.label | translate }}:</span>
+        <span *ixWithLoadingState="generalConfig$ as generalConfig" class="value">
+          {{ generalConfig.ui_certificate.name }}
+        </span>
+      </mat-list-item>
+      <mat-list-item>
+        <span class="label">{{ helptext.ui_address.label | translate }}:</span>
+        <span *ixWithLoadingState="generalConfig$ as generalConfig" class="value">
+          {{ generalConfig.ui_address.join(', ') }}
+        </span>
+      </mat-list-item>
+      <mat-list-item>
+        <span class="label">{{ helptext.ui_v6address.label | translate }}:</span>
+        <span *ixWithLoadingState="generalConfig$ as generalConfig" class="value">
+          {{ generalConfig.ui_v6address.join(', ') }}
+        </span>
+      </mat-list-item>
+      <mat-list-item>
+        <span class="label">{{ helptext.ui_port.label | translate }}:</span>
+        <span *ixWithLoadingState="generalConfig$ as generalConfig" class="value">
+          {{ generalConfig.ui_port }}
+        </span>
+      </mat-list-item>
+      <mat-list-item>
+        <span class="label">{{ helptext.ui_httpsport.label | translate }}:</span>
+        <span *ixWithLoadingState="generalConfig$ as generalConfig" class="value">
+          {{ generalConfig.ui_httpsport }}
+        </span>
+      </mat-list-item>
+      <mat-list-item>
+        <span class="label">{{ helptext.ui_httpsprotocols.label | translate }}:</span>
+        <span *ixWithLoadingState="generalConfig$ as generalConfig" class="value">
+          {{ generalConfig.ui_httpsprotocols.join(', ') }}
+        </span>
+      </mat-list-item>
+      <mat-list-item>
+        <span class="label">{{ helptext.ui_httpsredirect.label | translate }}:</span>
+        <span *ixWithLoadingState="generalConfig$ as generalConfig" class="value">
+          {{ generalConfig.ui_httpsredirect ? ('Enabled' | translate) : ('Disabled' | translate) }}
+        </span>
+      </mat-list-item>
+      <mat-list-item>
+        <span class="label">{{ helptext.usage_collection.label | translate }}:</span>
+        <span *ixWithLoadingState="generalConfig$ as generalConfig" class="value">
+          {{ generalConfig.usage_collection ? ('Enabled' | translate) : ('Disabled' | translate) }}
+        </span>
+      </mat-list-item>
+      <mat-list-item>
+        <span class="label">{{ helptext.ui_consolemsg.label | translate }}:</span>
+        <span *ixWithLoadingState="generalConfig$ as generalConfig" class="value">
+          {{ generalConfig.ui_consolemsg ? ('Enabled' | translate) : ('Disabled' | translate) }}
+        </span>
+      </mat-list-item>
+    </mat-list>
+  </mat-card-content>
+</mat-card>
+

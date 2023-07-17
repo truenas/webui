@@ -1,4 +1,5 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator';
+import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 
 describe('IxFormatterService', () => {
@@ -6,10 +7,37 @@ describe('IxFormatterService', () => {
 
   const createService = createServiceFactory({
     service: IxFormatterService,
+    providers: [
+      mockWindow({
+        location: {
+          protocol: 'https:',
+        },
+      }),
+    ],
   });
 
   beforeEach(() => {
     spectator = createService();
+  });
+
+  describe('convertBytesToHumanReadable', () => {
+    it('format bytes to human readable string with 2 decimal points by default', () => {
+      const transformed = spectator.service.convertBytesToHumanReadable(1474828);
+
+      expect(transformed).toBe('1.41 MiB');
+    });
+
+    it('returns 0 when bytes is 0', () => {
+      const transformed = spectator.service.convertBytesToHumanReadable(0);
+
+      expect(transformed).toBe('0 B');
+    });
+
+    it('accepts string as number of bytes', () => {
+      const transformed = spectator.service.convertBytesToHumanReadable('44722');
+
+      expect(transformed).toBe('43.67 KiB');
+    });
   });
 
   describe('memorySizeFormatting', () => {
@@ -32,7 +60,7 @@ describe('IxFormatterService', () => {
   describe('memorySizeParsing', () => {
     it('should return null when invalid size string is passed', () => {
       const parsed = spectator.service.memorySizeParsing('2u');
-      expect(parsed).toBe(null);
+      expect(parsed).toBeNull();
     });
 
     it('should return value converted in bytes when valid size string is passed', () => {
@@ -44,6 +72,18 @@ describe('IxFormatterService', () => {
     converted value in bytes`, () => {
       const parsed = spectator.service.memorySizeParsing('2');
       expect(parsed).toBe(2097152);
+    });
+  });
+
+  describe('stringAsUrlParsing', () => {
+    it('should append protocol scheme when raw IP address is passed', () => {
+      const parsed = spectator.service.stringAsUrlParsing('10.20.20.10');
+      expect(parsed).toBe('https://10.20.20.10');
+    });
+
+    it('should return raw value when valid url is passed', () => {
+      const parsed = spectator.service.stringAsUrlParsing('http://localhost:4200');
+      expect(parsed).toBe('http://localhost:4200');
     });
   });
 });

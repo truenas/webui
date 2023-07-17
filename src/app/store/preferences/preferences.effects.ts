@@ -1,18 +1,18 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { EMPTY, throwError } from 'rxjs';
 import {
   catchError, map, mergeMap, switchMap, withLatestFrom,
 } from 'rxjs/operators';
-import { rootUserId } from 'app/constants/root-user-id.contant';
+import { WINDOW } from 'app/helpers/window.helper';
 import { WebSocketService } from 'app/services';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { AppState } from 'app/store/index';
 import {
   autoRefreshReportsToggled,
   builtinGroupsToggled,
-  builtinUsersToggled, guiFormSubmitted, localizationFormSubmitted,
+  builtinUsersToggled, guiFormSubmitted, lifetimeTokenUpdated, localizationFormSubmitted,
   preferencesLoaded, preferredColumnsUpdated,
   themeNotFound,
   updateRebootAfterManualUpdate,
@@ -28,10 +28,10 @@ export class PreferencesEffects {
   loadPreferences$ = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized),
     mergeMap(() => {
-      return this.ws.call('user.query', [[['id', '=', rootUserId]]]).pipe(
-        map(([user]) => {
-          const preferences = user.attributes.preferences;
-          const dashboardState = user.attributes.dashState;
+      return this.ws.call('auth.me').pipe(
+        map((user) => {
+          const preferences = user.attributes?.preferences;
+          const dashboardState = user.attributes?.dashState;
 
           if (dashboardState) {
             this.store$.dispatch(dashboardStateLoaded({ dashboardState }));
@@ -63,6 +63,7 @@ export class PreferencesEffects {
       snapshotExtraColumnsToggled,
       builtinGroupsToggled,
       localizationFormSubmitted,
+      lifetimeTokenUpdated,
       guiFormSubmitted,
       updateRebootAfterManualUpdate,
       autoRefreshReportsToggled,
@@ -73,7 +74,7 @@ export class PreferencesEffects {
         return throwError(() => new Error('Attempting to save user preferences before they were loaded.'));
       }
 
-      return this.ws.call('user.set_attribute', [rootUserId, 'preferences', state.preferences]);
+      return this.ws.call('auth.set_attribute', ['preferences', state.preferences]);
     }),
   ), { dispatch: false });
 
@@ -81,5 +82,6 @@ export class PreferencesEffects {
     private actions$: Actions,
     private ws: WebSocketService,
     private store$: Store<AppState>,
+    @Inject(WINDOW) private window: Window,
   ) {}
 }

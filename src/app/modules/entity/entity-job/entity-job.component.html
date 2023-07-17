@@ -1,10 +1,5 @@
 <h1 mat-dialog-title>{{ title | translate }}</h1>
-<mat-dialog-content
-  class="entity-job-dialog"
-  ix-auto
-  ix-auto-type="dialog"
-  ix-auto-identifier="title"
->
+<mat-dialog-content class="entity-job-dialog">
   <div *ngIf="showRealtimeLogs && realtimeLogs" class="logs-container">
     <h5>{{ 'Logs' | translate }}</h5>
     <pre #logs class="message logs">{{ realtimeLogs }}</pre>
@@ -85,21 +80,17 @@
       class="mat-dialog-close"
       mat-icon-button
       mat-dialog-close="close"
-      ix-auto
-      ix-auto-type="button"
-      ix-auto-identifier="CLOSE"
+      ixTest="close"
     >
-      <mat-icon>close</mat-icon>
+      <ix-icon name="close"></ix-icon>
     </button>
   </ng-template>
 
   <ng-template #buttonsDefault>
     <button
-      mat-button
       *ngIf="showAbortButton && job?.state === JobState.Running"
-      ix-auto
-      ix-auto-type="button"
-      ix-auto-identifier="ABORT"
+      mat-button
+      ixTest="abort"
       (click)="abortJob()"
     >
       {{ 'Abort' | translate }}
@@ -110,11 +101,9 @@
       class="mat-dialog-close"
       mat-icon-button
       mat-dialog-close="close"
-      ix-auto
-      ix-auto-type="button"
-      ix-auto-identifier="CLOSE"
+      ixTest="close"
     >
-      <mat-icon>remove</mat-icon>
+      <ix-icon name="remove"></ix-icon>
     </button>
   </ng-template>
 </div>

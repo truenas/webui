@@ -7,12 +7,15 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
-import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import {
+  mockCall, mockJob, mockWebsocket,
+} from 'app/core/testing/utils/mock-websocket.utils';
 import { helptextSystemKmip } from 'app/helptext/system/kmip';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
+import { DialogService, SystemGeneralService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 import { KmipComponent } from './kmip.component';
 
 describe('KmipComponent', () => {

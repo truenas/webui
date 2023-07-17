@@ -1,6 +1,6 @@
 import { CaCreateType } from 'app/enums/ca-create-type.enum';
-import { CertificateDigestAlgorithm } from 'app/enums/ca-digest-algorithm.enum';
-import { CertificateKeyType } from 'app/enums/ca-key-type.enum';
+import { CertificateDigestAlgorithm } from 'app/enums/certificate-digest-algorithm.enum';
+import { CertificateKeyType } from 'app/enums/certificate-key-type.enum';
 import { EcCurve } from 'app/enums/ec-curve.enum';
 import { ExtendedKeyUsageFlag } from 'app/enums/extended-key-usage-flag.enum';
 
@@ -11,19 +11,19 @@ export interface BasicConstraints {
   extension_critical: boolean;
 }
 
-export interface AuthorityKeyIdentifier {
+export interface AuthorityKeyIdentifiers {
   authority_cert_issuer: boolean;
   enabled: boolean;
   extension_critical: boolean;
 }
 
 export interface ExtendedKeyUsage {
-  usages: ExtendedKeyUsageFlag;
+  usages: ExtendedKeyUsageFlag[];
   enabled: boolean;
   extension_critical: boolean;
 }
 
-export interface KeyUsage {
+export interface KeyUsages {
   enabled: boolean;
   digital_signature: boolean;
   content_commitment: boolean;
@@ -39,9 +39,9 @@ export interface KeyUsage {
 
 export interface CertificateExtensions {
   BasicConstraints: BasicConstraints;
-  AuthorityKeyIdentifier: AuthorityKeyIdentifier;
+  AuthorityKeyIdentifier: AuthorityKeyIdentifiers;
   ExtendedKeyUsage: ExtendedKeyUsage;
-  KeyUsage: KeyUsage;
+  KeyUsage: KeyUsages;
 }
 
 export interface CertificateAuthorityUpdate {
@@ -112,7 +112,7 @@ export interface CertificateAuthority {
   internal: string;
   issuer: string | { name: string };
   key_length: number;
-  key_type: string;
+  key_type: CertificateKeyType;
   lifetime: number;
   name: string;
   organization: string;

@@ -1,0 +1,40 @@
+<h3>{{ 'Application Info' | translate }}</h3>
+
+<div class="app-list-item">
+  <span class="label">{{ 'Version' | translate }}:</span>
+  <ngx-skeleton-loader *ngIf="isLoading$ | async; else version"></ngx-skeleton-loader>
+  <ng-template #version>
+    <ng-container *ngIf="app?.latest_app_version; else notAvailable">
+      {{ app?.latest_app_version }}
+    </ng-container>
+  </ng-template>
+</div>
+<div class="app-list-item sources">
+  <span class="label">{{ 'Source' | translate }}:</span>
+  <ngx-skeleton-loader *ngIf="(isLoading$ | async) || loadingSources; else appSources"></ngx-skeleton-loader>
+  <ng-template #appSources>
+    <div *ngIf="sources?.length; else notAvailable">
+      <a
+        *ngFor="let source of sources;"
+        class="source-link"
+        target="_blank"
+        [href]="source"
+        [title]="source"
+        [ixTest]="[app.name, 'source']"
+      >{{ source | cleanLink }}</a>
+    </div>
+  </ng-template>
+</div>
+<div class="app-list-item">
+  <span class="label">{{ 'Last App Update' }}:</span>
+  <ngx-skeleton-loader *ngIf="isLoading$ | async; else lastUpdate"></ngx-skeleton-loader>
+  <ng-template #lastUpdate>
+    <ng-container *ngIf="app?.last_update; else notAvailable">
+      {{ relativeDate }}
+    </ng-container>
+  </ng-template>
+</div>
+
+<ng-template #notAvailable>
+  {{ 'N/A' | translate }}
+</ng-template>

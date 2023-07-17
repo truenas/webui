@@ -82,7 +82,7 @@ describe('GroupDetailsRowComponent', () => {
   });
 
   it('should redirect to group members form', async () => {
-    const membersButton = await loader.getHarness(MatButtonHarness.with({ text: 'peopleMembers' }));
+    const membersButton = await loader.getHarness(MatButtonHarness.with({ text: 'Members' }));
     await membersButton.click();
 
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/', 'credentials', 'groups', 1, 'members']);
@@ -92,7 +92,7 @@ describe('GroupDetailsRowComponent', () => {
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: /Edit/ }));
     await editButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(GroupFormComponent);
+    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(GroupFormComponent, { data: dummyGroup });
   });
 
   it('should open DeleteUserGroup when Delete button is pressed', async () => {

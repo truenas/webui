@@ -13,12 +13,12 @@ export class InterfaceNameValidatorService {
     private validatorsService: IxValidatorsService,
   ) {}
 
-  validate: ValidatorFn = (control: AbstractControl): ValidationErrors => {
+  validate: ValidatorFn = (control: AbstractControl<string>): ValidationErrors => {
     if (!control.parent) {
       return null;
     }
 
-    const type = control.parent.value.type;
+    const type = (control.parent.value as { type: NetworkInterfaceType }).type;
     const isPrefixRequired = [
       NetworkInterfaceType.Bridge,
       NetworkInterfaceType.LinkAggregation,
@@ -67,6 +67,8 @@ export class InterfaceNameValidatorService {
         return 'bond';
       case NetworkInterfaceType.Vlan:
         return 'vlan';
+      default:
+        return '';
     }
   }
 }

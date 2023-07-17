@@ -3,8 +3,9 @@
 <div mat-dialog-actions>
   <span fxFlex></span>
   <button
-    class="mat-button mat-primary"
-    ix-auto="CLOSE"
+    mat-button
+    color="primary"
+    ixTest="close-dialog"
     (click)="dialogRef.close(true)"
   >
     {{ 'Close' | translate }}

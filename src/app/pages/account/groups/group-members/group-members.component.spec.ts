@@ -4,14 +4,15 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatListHarness } from '@angular/material/list/testing';
 import { Router } from '@angular/router';
-import { createRoutingFactory, SpectatorRouting } from '@ngneat/spectator/jest';
+import { createRoutingFactory, mockProvider, SpectatorRouting } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Group } from 'app/interfaces/group.interface';
 import { User } from 'app/interfaces/user.interface';
 import { DualListboxComponent } from 'app/modules/common/dual-list/dual-list.component';
 import { NgxDualListboxModule } from 'app/modules/common/dual-list/dual-list.module';
 import { GroupMembersComponent } from 'app/pages/account/groups/group-members/group-members.component';
-import { WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 
 const fakeGroupDataSource = [{
   id: 1,
@@ -19,7 +20,6 @@ const fakeGroupDataSource = [{
   group: 'dummy-group',
   builtin: false,
   smb: true,
-  sudo: false,
   users: [41],
 }] as Group[];
 
@@ -40,6 +40,7 @@ describe('GroupMembersComponent', () => {
         mockCall('user.query', [{ id: 41, username: 'dummy-user' }, { id: 42, username: 'second-user' }] as User[]),
         mockCall('group.update'),
       ]),
+      mockProvider(DialogService),
     ],
     params: {
       pk: '1',
@@ -74,7 +75,7 @@ describe('GroupMembersComponent', () => {
 
   it('sends an update payload to websocket and closes modal when Save button is pressed', async () => {
     const userList = await loader.getHarness(MatListHarness.with({ selector: '[aria-label="All users"]' }));
-    const memberList = await loader.getHarness(MatListHarness.with({ selector: '[aria-label="Group members"' }));
+    const memberList = await loader.getHarness(MatListHarness.with({ selector: '[aria-label="Group members"]' }));
     const users = await userList.getItems();
 
     expect(users).toHaveLength(1);
@@ -82,8 +83,8 @@ describe('GroupMembersComponent', () => {
 
     await (await users[0].host()).click();
 
-    const forwardButton = await loader.getHarness(MatButtonHarness.with({ text: 'arrow_forward' }));
-    await forwardButton.click();
+    const addButton = await loader.getHarness(MatButtonHarness.with({ selector: '[ixTest="add-to-list"]' }));
+    await addButton.click();
 
     expect(await userList.getItems()).toHaveLength(0);
     expect(await memberList.getItems()).toHaveLength(2);

@@ -1,0 +1,70 @@
+<ix-fake-progress-bar [loading]="isLoading"></ix-fake-progress-bar>
+
+<h1 matDialogTitle>{{ 'How would you rate this page?' | translate }}</h1>
+
+<mat-dialog-content>
+  <button
+    mat-icon-button
+    mat-dialog-close
+    class="close-feedback-dialog"
+    ixTest="close-feedback-dialog"
+  >
+    <ix-icon name="clear"></ix-icon>
+  </button>
+
+  <div class="file-ticket-helper">
+    <span>{{ 'Submitting a bug?' | translate }}</span>
+    <span>{{ 'Use' | translate }}</span>
+    <a
+      class="file-ticket-link"
+      ixTest="file-ticket"
+      (click)="openFileTicketForm()"
+    >{{ 'File Ticket' | translate }}</a>
+    <span>{{ 'form instead' | translate }}.</span>
+  </div>
+
+  <form [formGroup]="form">
+    <ix-star-rating
+      formControlName="rating"
+      [label]="'Select rating' | translate"
+      [required]="true"
+    ></ix-star-rating>
+
+    <ix-textarea
+      formControlName="message"
+      [label]="'Message' | translate"
+      [rows]="5"
+      [placeholder]="'Share your thoughts on our product\'s features, usability, or any suggestions for improvement.' | translate"
+    ></ix-textarea>
+
+    <ix-slide-toggle
+      formControlName="take_screenshot"
+      [label]="'Take screenshot of the current page' | translate"
+      [tooltip]="'Capture and attach screenshot to the review' | translate"
+    ></ix-slide-toggle>
+
+    <ix-file-input
+      *ngIf="!form.controls.take_screenshot.value"
+      formControlName="image"
+      [label]="'Attach image (optional)' | translate"
+      [tooltip]="'Select image you want attach to review' | translate"
+      [multiple]="false"
+      [acceptedFiles]="acceptedFiles"
+    ></ix-file-input>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <ix-form-actions>
+    <button
+      mat-button
+      type="submit"
+      color="primary"
+      ixTest="submit"
+      [disabled]="form.invalid || isLoading"
+      (click)="onSubmit()"
+    >
+      {{ 'Submit' | translate }}
+    </button>
+  </ix-form-actions>
+</mat-dialog-actions>

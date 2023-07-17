@@ -1,0 +1,72 @@
+.ix-dark :host ::ng-deep div.mat-mdc-dialog-content {
+  overflow: auto !important;
+}
+
+:host {
+  font-size: 14px;
+
+  .status {
+    opacity: 0.75;
+    padding: 3px;
+  }
+
+  .other {
+    border: 1px solid var(--fg1);
+  }
+
+  .active {
+    border: 1px solid var(--green);
+    color: var(--green);
+  }
+
+  .status-filter {
+    align-items: center;
+    display: flex;
+
+
+    .mat-mdc-form-field {
+      margin: 0 0 0 10px;
+      width: unset !important;
+
+      .mat-mdc-form-field-infix {
+        width: 80px;
+      }
+    }
+  }
+
+  .title-div {
+    margin: 10px 0;
+    width: 100%;
+  }
+
+  .version-list {
+    height: 200px;
+    margin-top: 10px;
+    overflow-y: auto;
+    width: 100%;
+  }
+
+  .row-dark {
+    background: rgba(0, 0, 0, 0.5);
+  }
+
+  .row-light {
+    background: rgba(0, 0, 0, 0.1);
+  }
+
+  .detail-row {
+    padding: 5px 10px;
+
+    div {
+      align-items: center;
+    }
+
+    .info-col {
+      height: 20px;
+    }
+  }
+
+  .value-row {
+    opacity: 0.5;
+  }
+}

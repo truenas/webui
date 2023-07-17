@@ -1,0 +1,14 @@
+<div class="header-container">
+  <ix-breadcrumb fxFlex="100%"></ix-breadcrumb>
+  <div class="title-container">
+    <div fxLayout="row" fxLayoutAlign="center center">
+      <h1>{{ pageTitle ? (pageTitle | translate) : (currentTitle$ | async) | translate }}</h1>
+      <ix-new-page-badge *ngIf="hasNewIndicator$ | async"></ix-new-page-badge>
+    </div>
+
+    <div class="actions-container">
+      <ng-content></ng-content>
+    </div>
+  </div>
+  <ix-fake-progress-bar *ngIf="loading" [loading]="true"></ix-fake-progress-bar>
+</div>

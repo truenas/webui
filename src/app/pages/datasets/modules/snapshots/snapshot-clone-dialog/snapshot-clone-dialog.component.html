@@ -12,32 +12,39 @@
     [tooltip]="tooltips.dataset_dst | translate"
   ></ix-input>
 
-  <div class="form-actions">
-    <button mat-button type="submit" color="primary" [disabled]="form.invalid">
+  <ix-form-actions>
+    <button
+      mat-button
+      type="submit"
+      color="primary"
+      ixTest="clone"
+      [disabled]="form.invalid"
+    >
       {{ 'Clone' | translate }}
     </button>
 
-    <button mat-button type="button" matDialogClose>
+    <button mat-button type="button" ixTest="cancel" matDialogClose>
       {{ 'Cancel' | translate }}
     </button>
-  </div>
+  </ix-form-actions>
 </form>
 <ng-template #successMessage>
   <p>{{ 'Dataset {name} was created.' | translate: { name: datasetName } }}</p>
 
-  <div class="form-actions">
+  <ix-form-actions>
     <a
       mat-button
       type="submit"
       color="primary"
+      ixTest="go-to-datasets"
       matDialogClose
-      [routerLink]="['/storage']"
+      [routerLink]="['/datasets']"
     >
-      {{ 'Go to Storage' | translate }}
+      {{ 'Go to Datasets' | translate }}
     </a>
 
-    <button mat-button type="button" matDialogClose>
+    <button mat-button type="button" ixTest="close" matDialogClose>
       {{ 'Close' | translate }}
     </button>
-  </div>
+  </ix-form-actions>
 </ng-template>

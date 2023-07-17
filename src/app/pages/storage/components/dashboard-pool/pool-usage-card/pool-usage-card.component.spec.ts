@@ -3,10 +3,12 @@ import { byText, createComponentFactory, Spectator } from '@ngneat/spectator/jes
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
+import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { PoolCardIconComponent } from 'app/pages/storage/components/dashboard-pool/pool-card-icon/pool-card-icon.component';
 import { GaugeChartComponent } from 'app/pages/storage/components/dashboard-pool/pool-usage-card/gauge-chart/gauge-chart.component';
 import { PoolUsageCardComponent } from 'app/pages/storage/components/dashboard-pool/pool-usage-card/pool-usage-card.component';
 import { ThemeService } from 'app/services/theme/theme.service';
@@ -22,6 +24,7 @@ describe('PoolUsageCardComponent', () => {
     ],
     declarations: [
       MockComponent(GaugeChartComponent),
+      MockComponent(PoolCardIconComponent),
     ],
     providers: [
       ThemeService,
@@ -54,16 +57,13 @@ describe('PoolUsageCardComponent', () => {
               type: TopologyItemType.Disk,
             }],
           },
-        } as unknown as Pool,
+        } as Pool,
         rootDataset: {
           used: {
             parsed: 3384541603,
           },
           available: {
             parsed: 899688274,
-          },
-          usedbysnapshots: {
-            parsed: 120000,
           },
         } as Dataset,
       },
@@ -74,9 +74,7 @@ describe('PoolUsageCardComponent', () => {
     expect(spectator.query('.capacity-caption')).toHaveText('Usable Capacity: 3.99 GiB');
     expect(spectator.query('.used-caption')).toHaveText('Used: 3.15 GiB');
     expect(spectator.query('.available-caption')).toHaveText('Available: 858.01 MiB');
-    expect(spectator.query('.snapshots-caption')).toHaveText('Used by Snapshots: 117.19 KiB');
     expect(spectator.query('.warning-container')).not.toBeVisible();
-    expect(spectator.query('mat-card-header mat-icon')).toHaveText('check_circle');
     expect(spectator.query(GaugeChartComponent).label).toBe('79%');
     expect(Math.round(spectator.query(GaugeChartComponent).value)).toBe(79);
     expect(spectator.query(GaugeChartComponent).colorFill).toBe('var(--blue)');
@@ -95,7 +93,6 @@ describe('PoolUsageCardComponent', () => {
     expect(spectator.query('.capacity-caption')).toHaveText('Usable Capacity: 2.47 TiB');
     expect(spectator.query('.used-caption')).toHaveText('Used: 2 TiB');
     expect(spectator.query('.available-caption')).toHaveText('Available: 480.56 GiB');
-    expect(spectator.query('.snapshots-caption')).toHaveText('Used by Snapshots: 0 B');
     expect(spectator.query('.warning-container')).toBeVisible();
     expect(spectator.query('.warning-container')).toHaveText('Warning: Low Capacity');
     expect(spectator.query(GaugeChartComponent).label).toBe('81%');
@@ -104,23 +101,24 @@ describe('PoolUsageCardComponent', () => {
   });
 
   it('renders status icon', () => {
-    expect(spectator.query('mat-card-header mat-icon')).toHaveText('check_circle');
+    expect(spectator.query(PoolCardIconComponent).type).toBe(PoolCardIconType.Safe);
+    expect(spectator.query(PoolCardIconComponent).tooltip).toBe('Everything is fine');
 
-    spectator.setInput('poolState', { healthy: false, status: 'ONLINE' } as unknown as Pool);
-    expect(spectator.query('mat-card-header mat-icon')).toHaveText('error');
+    spectator.setInput('rootDataset', {
+      used: {
+        parsed: 2199792913690,
+      },
+      available: {
+        parsed: 516000806915,
+      },
+    } as Dataset);
 
-    spectator.setInput('poolState', { healthy: true, status: 'OFFLINE' } as unknown as Pool);
-    expect(spectator.query('mat-card-header mat-icon')).toHaveText('error');
-
-    spectator.setInput('poolState', { healthy: true, status: 'REMOVED' } as unknown as Pool);
-    expect(spectator.query('mat-card-header mat-icon')).toHaveText('cancel');
-
-    spectator.setInput('poolState', { healthy: true, status: 'FAULTED' } as unknown as Pool);
-    expect(spectator.query('mat-card-header mat-icon')).toHaveText('cancel');
+    expect(spectator.query(PoolCardIconComponent).type).toBe(PoolCardIconType.Warn);
+    expect(spectator.query(PoolCardIconComponent).tooltip).toBe('Pool is using more than 80% of available space');
   });
 
   it('should pre-select disks when user click "View Disk Space Reports" link', () => {
     const href = spectator.query(byText('View Disk Space Reports')).getAttribute('href');
-    expect(href).toBe('/reportsdashboard/disk?disks=sda&disks=sdb');
+    expect(href).toBe('/reportsdashboard/partition?disks=sda&disks=sdb');
   });
 });

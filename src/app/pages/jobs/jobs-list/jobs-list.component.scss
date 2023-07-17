@@ -18,24 +18,26 @@
       margin: 3px 0;
     }
 
-    .mat-icon.state-success {
-      color: var(--green);
-    }
+    ix-icon {
+      &.success {
+        color: var(--green);
+      }
 
-    .mat-icon.state-failed {
-      color: var(--red);
-    }
+      &.failed {
+        color: var(--red);
+      }
 
-    .mat-icon.state-running {
-      color: var(--primary);
-    }
+      &.running {
+        color: var(--primary);
+      }
 
-    .mat-icon.state-waiting {
-      color: var(--accent);
-    }
+      &.waiting {
+        color: var(--accent);
+      }
 
-    .mat-icon.state-aborted {
-      color: var(--orange);
+      &.aborted {
+        color: var(--orange);
+      }
     }
   }
 
@@ -58,7 +60,6 @@
 
   .jobs-container {
     background-color: var(--bg2);
-    display: flex;
     padding: 0;
     position: relative;
 
@@ -68,8 +69,49 @@
       overflow-x: hidden;
     }
   }
+}
 
-  .mat-column-arguments_logs button:not(:first-of-type) {
-    margin-left: 5px;
+::ng-deep .mat-button-toggle-group {
+  $border-color: var(--lines);
+
+  &.mat-button-toggle-group-appearance-standard {
+    border-color: $border-color;
+    border-radius: 0;
+
+    .mat-button-toggle + .mat-button-toggle {
+      border-color: $border-color;
+    }
+  }
+
+  .mat-button-toggle-appearance-standard {
+    &.mat-button-toggle-checked {
+      background: var(--hover-bg);
+      color: var(--fg2);
+    }
+  }
+
+  .mat-button-toggle {
+    background-color: transparent;
+    border-color: $border-color;
+    color: var(--fg2);
+
+    &:hover {
+      background-color: var(--hover-bg);
+    }
+
+    &.mat-button-toggle-disabled {
+      background-color: transparent;
+      color: var(--fg1);
+      opacity: var(--disabled-opacity);
+
+      .mat-button-toggle-button {
+        cursor: not-allowed;
+      }
+    }
+
+    .mat-button-toggle-label-content {
+      line-height: 34px;
+      padding: 0 12px;
+    }
   }
 }

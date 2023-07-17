@@ -10,11 +10,11 @@
   >
     <mat-expansion-panel-header>
       <mat-panel-title>
-        <h5 class="title" *ngIf="title">
+        <h5 *ngIf="title" class="title">
           <ng-container *ngIf="titleHref; else plainTitle">
-            <a [routerLink]="titleHref">
+            <a [ixTest]="[title, 'open-in-new']" [routerLink]="titleHref">
               {{ title }}
-              <mat-icon class="title-icon">open_in_new</mat-icon>
+              <ix-icon name="open_in_new" class="title-icon"></ix-icon>
             </a>
           </ng-container>
           <ng-template #plainTitle>{{ title }}</ng-template>
@@ -26,14 +26,17 @@
       </mat-panel-title>
       <mat-panel-description class="description-panel">
         <div class="actions">
+          <ix-tooltip
+            *ngIf="tableConf.tooltip"
+            [header]="tableConf.tooltip.header | translate"
+            [message]="tableConf.tooltip.message | translate"
+          ></ix-tooltip>
           <button
             *ngIf="tableConf.configure"
             mat-button
             color="default"
             class="action-icon action-button"
-            ix-auto
-            ix-auto-type="button"
-            ix-auto-identifier="{{ tableConf.name }}-configure"
+            [ixTest]="['configure', tableConf.name]"
             (click)="tableConf.configure()"
           >
             {{ 'Configure' | translate }}
@@ -44,9 +47,8 @@
             mat-button
             color="default"
             class="action-icon action-button"
-            ix-auto
-            ix-auto-type="button"
-            ix-auto-identifier="{{ tableConf.name }}-add"
+            [ixTest]="['add', tableConf.name]"
+            [disabled]="tableConf.addActionDisabled"
             (click)="tableConf.add()"
           >
             {{ tableConf.addButtonLabel ? tableConf.addButtonLabel : ('Add' | translate) }}
@@ -64,8 +66,8 @@
     [ngClass]="{ 'actions-row': isExpanded && tableConf.detailsHref }"
   >
     <div>
-      <a [routerLink]="tableConf.detailsHref.split('/')">
-        {{ 'View Details' | translate }}
+      <a [ixTest]="[tableConf.name, 'view-all']" [routerLink]="tableConf.detailsHref.split('/')">
+        {{ 'View All' | translate }}
       </a>
     </div>
   </div>

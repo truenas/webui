@@ -1,6 +1,7 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import {
@@ -15,6 +16,13 @@ describe('SlackServiceComponent', () => {
     imports: [
       IxFormsModule,
       ReactiveFormsModule,
+    ],
+    providers: [
+      mockWindow({
+        location: {
+          protocol: 'https:',
+        },
+      }),
     ],
   });
 
@@ -36,7 +44,7 @@ describe('SlackServiceComponent', () => {
 
   it('returns alert service form values when getSubmitAttributes is called', async () => {
     await form.fillForm({
-      'Webhook URL': 'https://hooks.slack.com/services/T00000000/A11111111/XXXXXXXXXXXXXXXXXXXXXXXX',
+      'Webhook URL': 'hooks.slack.com/services/T00000000/A11111111/XXXXXXXXXXXXXXXXXXXXXXXX',
     });
 
     const submittedValues = spectator.component.getSubmitAttributes();

@@ -7,8 +7,11 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import helptext from 'app/helptext/storage/disks/disks';
 import { Disk } from 'app/interfaces/storage.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
+import { AppLoaderService, DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -25,6 +28,7 @@ export class ManageDiskSedDialogComponent implements OnInit {
 
   constructor(
     private ws: WebSocketService,
+    private errorHandler: ErrorHandlerService,
     private loader: AppLoaderService,
     private dialogService: DialogService,
     private dialogRef: MatDialogRef<ManageDiskSedDialogComponent>,
@@ -57,9 +61,9 @@ export class ManageDiskSedDialogComponent implements OnInit {
           this.disk = disks[0];
           this.passwordControl.setValue(this.disk.passwd);
         },
-        error: (error) => {
+        error: (error: WebsocketError) => {
           this.loader.close();
-          this.dialogService.errorReportMiddleware(error);
+          this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });
   }
@@ -74,9 +78,9 @@ export class ManageDiskSedDialogComponent implements OnInit {
           this.dialogRef.close(true);
           this.snackbar.success(this.translate.instant('SED password updated.'));
         },
-        error: (error) => {
+        error: (error: WebsocketError) => {
           this.loader.close();
-          this.dialogService.errorReportMiddleware(error);
+          this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });
   }

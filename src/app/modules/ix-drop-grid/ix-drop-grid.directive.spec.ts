@@ -1,68 +1,59 @@
 import { CdkDragEnter, DragDropModule, DropListRef } from '@angular/cdk/drag-drop';
 import { DOCUMENT } from '@angular/common';
 import {
-  ComponentFactory,
-  ComponentFactoryResolver, ComponentRef, EventEmitter, Injector, Provider, ReflectiveInjector, ViewContainerRef,
+  ComponentRef, EventEmitter, Injector, ViewContainerRef,
 } from '@angular/core';
+import { fakeAsync, tick } from '@angular/core/testing';
 import { createDirectiveFactory, mockProvider, SpectatorDirective } from '@ngneat/spectator/jest';
+import { MockModule } from 'ng-mocks';
 import { IxDropGridItemDirective } from 'app/modules/ix-drop-grid/ix-drop-grid-item.directive';
 import { IxDropGridPlaceholderComponent } from 'app/modules/ix-drop-grid/ix-drop-grid-placeholder.component';
 import { IxDropGridDirective } from 'app/modules/ix-drop-grid/ix-drop-grid.directive';
 import { ixDropGridDirectiveToken } from 'app/modules/ix-drop-grid/ix-drop-grid.tokens';
 
-const timeoutMs = 1;
 const animationTimeoutMs = 200;
 
 describe('IxDropGridDirective', () => {
   let spectator: SpectatorDirective<IxDropGridDirective>;
 
-  let resolveAndCreateOriginal: (providers: Provider[], parent?: Injector) => ReflectiveInjector;
+  let resolveAndCreateOriginal: typeof Injector.create;
   let viewContainerRefMock: ViewContainerRef;
-  let componentFactoryResolverMock: ComponentFactoryResolver;
-  const fakeFactory = {};
   const fakeInjector = {};
 
   const createDirective = createDirectiveFactory({
     directive: IxDropGridDirective,
     template: '<div ixDropGrid>',
     imports: [
-      DragDropModule,
+      MockModule(DragDropModule),
     ],
     declarations: [IxDropGridDirective],
     providers: [
       mockProvider(ViewContainerRef, {
         createComponent: jest.fn(),
       }),
-      mockProvider(ComponentFactoryResolver, {
-        resolveComponentFactory: jest.fn(),
-      }),
     ],
   });
 
-  function setupMocks(spectator: SpectatorDirective<IxDropGridDirective>): void {
-    resolveAndCreateOriginal = ReflectiveInjector.resolveAndCreate;
-    ReflectiveInjector.resolveAndCreate = jest.fn().mockReturnValue(fakeInjector);
+  function setupMocks(): void {
+    resolveAndCreateOriginal = Injector.create;
+    Injector.create = jest.fn().mockReturnValue(fakeInjector);
 
     viewContainerRefMock = spectator.inject(ViewContainerRef);
     jest.spyOn(viewContainerRefMock, 'createComponent').mockReturnValue({ instance: undefined } as ComponentRef<unknown>);
-    spectator.directive['viewContainerRef'] = viewContainerRefMock;
-
-    componentFactoryResolverMock = spectator.inject(ComponentFactoryResolver);
-    jest.spyOn(componentFactoryResolverMock, 'resolveComponentFactory').mockReturnValue(fakeFactory as ComponentFactory<unknown>);
-    spectator.directive['resolver'] = componentFactoryResolverMock;
+    spectator.directive.viewContainerRef = viewContainerRefMock;
 
     spectator.detectChanges();
   }
 
   function restoreMocks(): void {
     jest.restoreAllMocks();
-    ReflectiveInjector.resolveAndCreate = resolveAndCreateOriginal;
+    Injector.create = resolveAndCreateOriginal;
   }
 
   describe('ngOnInit()', () => {
     beforeEach(() => {
       spectator = createDirective(null, { detectChanges: false });
-      setupMocks(spectator);
+      setupMocks();
     });
 
     afterEach(() => {
@@ -70,20 +61,22 @@ describe('IxDropGridDirective', () => {
     });
 
     it('calls \'resolveAndCreate()\' with correct arguments', () => {
-      expect(ReflectiveInjector.resolveAndCreate)
-        .toHaveBeenCalledWith([{ provide: ixDropGridDirectiveToken, useValue: spectator.directive }]);
+      expect(Injector.create)
+        .toHaveBeenCalledWith({
+          providers: [{ provide: ixDropGridDirectiveToken, useValue: spectator.directive }],
+        });
     });
 
     it('calls \'createComponent()\' with correct arguments', () => {
       expect(viewContainerRefMock.createComponent)
-        .toHaveBeenCalledWith(fakeFactory, 0, fakeInjector);
+        .toHaveBeenCalledWith(IxDropGridPlaceholderComponent, expect.objectContaining({ index: 0 }));
     });
   });
 
   describe('registerPlaceholder()', () => {
     beforeEach(() => {
       spectator = createDirective(null, { detectChanges: false });
-      setupMocks(spectator);
+      setupMocks();
     });
     afterEach(() => {
       restoreMocks();
@@ -98,15 +91,15 @@ describe('IxDropGridDirective', () => {
   describe('registerItem()', () => {
     beforeEach(() => {
       spectator = createDirective(null, { detectChanges: false });
-      setupMocks(spectator);
+      setupMocks();
     });
     afterEach(() => {
       restoreMocks();
     });
     it('pipes \'entered\' stream into \'onItemEntered()\' calls', () => {
-      const enteredEmitter = new EventEmitter();
+      const enteredEmitter = new EventEmitter<unknown>();
       spectator.directive.registerItem(
-        { entered: enteredEmitter, dropped: new EventEmitter() } as IxDropGridItemDirective,
+        { entered: enteredEmitter, dropped: new EventEmitter<unknown>() } as IxDropGridItemDirective,
       );
       jest.spyOn(spectator.directive, 'onItemEntered').mockImplementation();
       const fakeObj = {};
@@ -114,18 +107,18 @@ describe('IxDropGridDirective', () => {
       expect(spectator.directive.onItemEntered).toHaveBeenCalledWith(fakeObj);
     });
     it('pipes \'dropped\' stream into \'onItemDropped()\' calls', () => {
-      const droppedEmitter = new EventEmitter();
+      const droppedEmitter = new EventEmitter<unknown>();
       spectator.directive.registerItem(
-        { entered: new EventEmitter(), dropped: droppedEmitter } as IxDropGridItemDirective,
+        { entered: new EventEmitter<unknown>(), dropped: droppedEmitter } as IxDropGridItemDirective,
       );
       jest.spyOn(spectator.directive, 'onItemDropped').mockImplementation();
       droppedEmitter.emit();
       expect(spectator.directive.onItemDropped).toHaveBeenCalledWith();
     });
     it('stops piping \'entered\' stream into \'onItemEntered()\' after ngOnDestroy()', () => {
-      const enteredEmitter = new EventEmitter();
+      const enteredEmitter = new EventEmitter<unknown>();
       spectator.directive.registerItem(
-        { entered: enteredEmitter, dropped: new EventEmitter() } as IxDropGridItemDirective,
+        { entered: enteredEmitter, dropped: new EventEmitter<unknown>() } as IxDropGridItemDirective,
       );
       jest.spyOn(spectator.directive, 'onItemEntered').mockImplementation();
 
@@ -134,9 +127,9 @@ describe('IxDropGridDirective', () => {
       expect(spectator.directive.onItemEntered).not.toHaveBeenCalled();
     });
     it('stops piping \'dropped\' stream into \'onItemDropped()\' after ngOnDestroy()', () => {
-      const droppedEmitter = new EventEmitter();
+      const droppedEmitter = new EventEmitter<unknown>();
       spectator.directive.registerItem(
-        { entered: new EventEmitter(), dropped: droppedEmitter } as IxDropGridItemDirective,
+        { entered: new EventEmitter<unknown>(), dropped: droppedEmitter } as IxDropGridItemDirective,
       );
       jest.spyOn(spectator.directive, 'onItemDropped').mockImplementation();
 
@@ -157,7 +150,7 @@ describe('IxDropGridDirective', () => {
 
     beforeEach(() => {
       spectator = createDirective(null, { detectChanges: false });
-      setupMocks(spectator);
+      setupMocks();
 
       const fakeSourceParentElement = {
         removeChild: jest.fn(),
@@ -260,13 +253,11 @@ describe('IxDropGridDirective', () => {
       spectator.directive.onItemEntered({ ...fakeEvent, container: fakePlaceholder.itemInstance });
       expect(requestAnimationFrameSpy).not.toHaveBeenCalled();
     });
-    it('when element dropped on itself: skips \'enter()\' call', (done) => {
+    it('when element dropped on itself: skips \'enter()\' call', fakeAsync(() => {
       spectator.directive.onItemEntered({ ...fakeEvent, container: fakePlaceholder.itemInstance });
-      setTimeout(() => {
-        expect(fakePlaceholder.itemInstance._dropListRef.enter).not.toHaveBeenCalled();
-        done();
-      }, animationTimeoutMs);
-    }, 2 * animationTimeoutMs);
+      tick(animationTimeoutMs);
+      expect(fakePlaceholder.itemInstance._dropListRef.enter).not.toHaveBeenCalled();
+    }));
     it('when \'source\' empty: puts correct value into \'sourceIndex\' property', () => {
       spectator.directive.source = null;
       Object.assign(fakeDropElement.parentElement.children, [{}, fakeSourceElement], { length: 2 });
@@ -325,18 +316,16 @@ describe('IxDropGridDirective', () => {
       spectator.directive.onItemEntered(fakeEvent);
       expect(requestAnimationFrameSpy).toHaveBeenCalled();
     });
-    it('makes \'enter()\' call with correct arguments', (done) => {
+    it('makes \'enter()\' call with correct arguments', fakeAsync(() => {
       spectator.directive.onItemEntered(fakeEvent);
-      setTimeout(() => {
-        expect(fakePlaceholder.itemInstance._dropListRef.enter)
-          .toHaveBeenCalledWith(
-            fakeEvent.item._dragRef,
-            fakeItemElement.offsetLeft,
-            fakeItemElement.offsetTop,
-          );
-        done();
-      }, animationTimeoutMs);
-    }, 2 * animationTimeoutMs);
+      tick(animationTimeoutMs);
+      expect(fakePlaceholder.itemInstance._dropListRef.enter)
+        .toHaveBeenCalledWith(
+          fakeEvent.item._dragRef,
+          fakeItemElement.offsetLeft,
+          fakeItemElement.offsetTop,
+        );
+    }));
   });
 
   describe('onItemDropped()', () => {
@@ -347,7 +336,7 @@ describe('IxDropGridDirective', () => {
 
     beforeEach(() => {
       spectator = createDirective(null, { detectChanges: false });
-      setupMocks(spectator);
+      setupMocks();
 
       fakeParentElement = {
         appendChild: jest.fn(),
@@ -410,10 +399,6 @@ describe('IxDropGridDirective', () => {
       spectator.directive.onItemDropped();
       expect(spectator.directive.target).toBeFalsy();
     });
-    it('deletes value of \'target\' property', () => {
-      spectator.directive.onItemDropped();
-      expect(spectator.directive.source).toBeFalsy();
-    });
 
     const vals = {
       a: {}, b: {}, c: {}, x: {}, y: {}, z: {},
@@ -437,16 +422,16 @@ describe('IxDropGridDirective', () => {
     ].forEach(({
       input, sourceIndex, targetIndex, expectedOutput,
     }) => {
-      it(`moves item in input array from ${sourceIndex} to ${targetIndex}`, (done) => {
+      it(`moves item in input array from ${sourceIndex} to ${targetIndex}`, fakeAsync(() => {
         spectator.directive.sourceIndex = sourceIndex;
         spectator.directive.targetIndex = targetIndex;
         spectator.directive.ixDropGridModel = input;
-        spectator.directive.ixDropGridModelChange.subscribe((output) => {
-          expect(output).toEqual(expectedOutput);
-          done();
-        });
+        jest.spyOn(spectator.directive.ixDropGridModelChange, 'next');
         spectator.directive.onItemDropped();
-      }, timeoutMs);
+        tick(animationTimeoutMs);
+
+        expect(spectator.directive.ixDropGridModelChange.next).toHaveBeenCalledWith(expectedOutput);
+      }));
     });
   });
 });

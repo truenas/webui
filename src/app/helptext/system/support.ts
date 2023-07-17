@@ -1,4 +1,3 @@
-import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const helptextSystemSupport = {
@@ -9,36 +8,19 @@ export const helptextSystemSupport = {
  Team will promptly communicate with the Contacts saved below to quickly resolve any issue that may \
  have occurred on the system.'),
     primary_contact: T('Primary Contact'),
-    pc_name_placeholder: T('Name'),
-    pc_title_placeholder: T('Title'),
-    pc_email_placeholder: T('Email'),
-    pc_phone_placeholder: T('Phone Number'),
-    pc_validation: [Validators.required],
-    pc_email_validation: [Validators.required, Validators.email],
 
     secondary_contact: T('Secondary Contact'),
-    sec_name_placeholder: T('Secondary Name'),
-    sec_title_placeholder: T('Secondary Title'),
-    sec_email_placeholder: T('Secondary Email'),
-    sec_phone_placeholder: T('Secondary Phone Number'),
-    sec_email_validation: [Validators.required, Validators.email],
 
-    enable_checkbox_placeholder: T('Enable iXsystems Proactive Support'),
-    save_button: T('Save'),
-    dialog_title: T('Settings saved'),
     dialog_mesage: T('Successfully saved proactive support settings.'),
-    dialog_err: T('Error Saving Proactive Support Settings'),
     dialog_unavailable_title: T('Warning'),
     dialog_unavailable_warning: T('Proactive support settings is not available.'),
   },
 
   token: {
-    placeholder: T('OAuth Token'),
     tooltip: T('OAuth Token for current session'),
   },
 
   type: {
-    placeholder: T('Type'),
     tooltip: T('Select <i>Bug</i> when reporting an issue or <i>Suggestion</i> when requesting new functionality.'),
   },
 
@@ -82,7 +64,6 @@ export const helptextSystemSupport = {
   },
 
   attach_debug: {
-    placeholder: T('Attach Debug'),
     tooltip: T(
       'Set to generate and attach to the new issue a report\
  containing an overview of the system hardware, build\
@@ -92,12 +73,10 @@ export const helptextSystemSupport = {
   },
 
   title: {
-    placeholder: T('Subject'),
     tooltip: T('Enter a descriptive title for the new issue.'),
   },
 
   body: {
-    placeholder: T('Description'),
     tooltip: T(
       'Enter a one to three paragraph summary of the issue.\
  Describe the problem and provide any steps to\
@@ -106,7 +85,6 @@ export const helptextSystemSupport = {
   },
 
   screenshot: {
-    placeholder: T('Attach screenshots.'),
     tooltip: T('Select one or more screenshots that illustrate the problem.'),
   },
 
@@ -121,17 +99,9 @@ export const helptextSystemSupport = {
     title: T('Error Updating Production Status'),
   },
 
-  is_production_job: {
-    title: T('Production Status'),
-    message: T('Updating production status...'),
-  },
-
   is_production_dialog: {
-    title: T('Status updated'),
     message: T('Production status successfully updated'),
   },
-
-  submitBtn: T('Save'),
 
   docHub: T('<a href="https://www.truenas.com/docs/hub/" target="_blank">\
  TrueNAS Documentation Hub</a> - Read and contribute to the open-source documentation.'),
@@ -139,7 +109,7 @@ export const helptextSystemSupport = {
   forums: T('<a href="https://www.ixsystems.com/community/" target="_blank">\
  TrueNAS Forums</a> - Find answers from other users in the forums.'),
 
-  licensing: T('<a href="https://www.ixsystems.com/support/" target="_blank">\
+  licensing: T('<a href="https://www.ixsystems.com/support/truenas-arrays/" target="_blank">\
  TrueNAS Licensing</a> - Learn more about enterprise-grade support.'),
 
   updateTxt: T('Update License'),
@@ -149,12 +119,4 @@ export const helptextSystemSupport = {
    failed to attach. Please download the debug manually \
    (System → Advanced → Save Debug), upload it to a third-party storage service and provide\
     a link in the JIRA issue comment.'),
-
-  updateProd: {
-    title: T('Update Production Status'),
-    message: T('Set production status as active'),
-    checkbox: T('Send initial debug'),
-    button: T('Proceed'),
-  },
-
 };

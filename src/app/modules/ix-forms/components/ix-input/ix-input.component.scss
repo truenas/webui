@@ -1,4 +1,5 @@
-@import '../../../../../../node_modules/text-security/text-security.css';
+@import 'scss-imports/cssvars';
+@import 'text-security/text-security.css';
 
 :host {
   color: var(--fg1);
@@ -9,7 +10,7 @@
 }
 
 .disabled {
-  opacity: 0.38;
+  opacity: var(--disabled-opacity);
 
   input {
     cursor: not-allowed;
@@ -24,12 +25,7 @@
   display: flex;
   flex-direction: row;
   font-size: 12px;
-  padding: 3px 8px;
   position: relative;
-
-  input {
-    min-height: 26px;
-  }
 
   &:focus-within {
     border-color: var(--primary);
@@ -66,19 +62,37 @@
 
 .prefix-icon {
   cursor: default;
-  left: 0;
+  left: 2px;
   right: auto;
 }
 
 .prefix-padding {
-  padding-left: 16px;
+  padding-left: 28px;
 }
 
-.input-container .mat-icon {
+.input-container .ix-icon {
   font-size: 1rem;
   height: auto;
+  line-height: 1;
+  max-height: 16px;
   max-width: 16px;
   width: auto;
+}
+
+.input-container {
+  .toggle_pw {
+    @include variable(display, --toggle_pw_display_prop, $toggle-pw-display-prop);
+    opacity: var(--disabled-opacity);
+    position: absolute;
+    right: 0;
+    top: -5px;
+  }
+
+  .toggle_pw ix-icon {
+    font-size: 17px;
+    position: relative;
+    top: -2px;
+  }
 }
 
 .input-container .mat-icon-button {
@@ -90,11 +104,13 @@
 
 .password-field {
   font-family: text-security-disc;
+  font-size: 14px;
   /* Use -webkit-text-security if the browser supports it */
   -webkit-text-security: disc;
 }
 
-.mat-error {
+.mat-error,
+.mat-mdc-form-field-error {
   display: block;
   font-size: 12px;
   margin-top: 3px;
@@ -102,4 +118,9 @@
 
 .has-reset-input-icon {
   padding-right: 20px;
+}
+
+::ng-deep .mat-option-text {
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

@@ -1,12 +1,10 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export default {
-  activedirectory_custactions_clearcache_dialog_title: T('Active Directory'),
   activedirectory_custactions_clearcache_dialog_message: T('The cache is being rebuilt.'),
 
   ad_leave_domain_dialog: {
     error: T('Error'),
-    success: T('Success'),
     success_msg: T('You have left the domain.'),
   },
 
@@ -58,9 +56,7 @@ export default {
  Service For Unix 3.0 or 3.5, and <i>sfu20</i> is for Service For Unix 2.0.'),
   activedirectory_enable_tooltip: T('Enable the Active Directory service.\
  The first time this option is set, the Domain Account Password must be entered.'),
-  activedirectory_netbiosname_a_tooltip: T('Netbios Name of this NAS. This name must differ from\
- the <i>Workgroup</i> name and be no greater than 15 characters.'),
-  activedirectory_netbiosname_b_tooltip: T('Netbios Name of this NAS. This name must differ from\
+  activedirectory_netbiosname_tooltip: T('Netbios Name of this NAS. This name must differ from\
  the <i>Workgroup</i> name and be no greater than 15 characters.'),
   activedirectory_netbiosalias_tooltip: T('Alternative names that SMB clients can use when\
  connecting to this NAS. Can be no greater than 15 characters.'),

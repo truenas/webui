@@ -1,52 +1,88 @@
-import { PlatformLocation } from '@angular/common';
+import { Location } from '@angular/common';
 import { Injectable, Type } from '@angular/core';
-import { Subject } from 'rxjs';
+import { NavigationEnd, Router } from '@angular/router';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { merge, Observable, Subject } from 'rxjs';
+import { filter } from 'rxjs/operators';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxSlideInComponent } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.component';
 
-export interface ResponseOnClose {
-  response?: unknown;
-  error?: unknown;
-  modalType: Type<unknown>;
-}
-
+@UntilDestroy()
 @Injectable({
   providedIn: 'root',
 })
 export class IxSlideInService {
-  private slideInComponent: IxSlideInComponent;
-  private slideInClosed$ = new Subject<ResponseOnClose>();
-  modalType: Type<unknown>;
+  slideInComponent: IxSlideInComponent;
+  slideInRefMap = new Map<string, IxSlideInRef<unknown>>();
+  /**
+   * Emits when any slide in has been closed.
+   * Prefer to use slideInClosed$ in slideInRef to tell when an individual slide in is closed.
+   */
+  readonly onClose$ = new Subject<void>();
 
-  constructor(private location: PlatformLocation) {
-    this.location.onPopState(() => this.close());
+  constructor(
+    private location: Location,
+    private router: Router,
+  ) {
+    this.closeOnNavigation();
   }
 
-  setModal(modal: IxSlideInComponent): void {
-    this.slideInComponent = modal;
+  get isSlideInOpen(): boolean {
+    return this.slideInComponent?.isSlideInOpen;
   }
 
-  open<T>(modal: Type<T>, params?: { wide: boolean }): T {
-    this.modalType = modal;
-    return this.slideInComponent.openSlideIn(modal, params);
+  setSlideComponent(slideComponent: IxSlideInComponent): void {
+    this.slideInComponent = slideComponent;
   }
 
-  close(error?: Error, response?: unknown): void {
-    if (error) {
-      this.slideInClosed$.error({
-        error,
-        modalType: this.modalType,
-      });
-    }
+  open<T, D>(component: Type<T>, params?: { wide?: boolean; data?: D }): IxSlideInRef<T, D> {
+    this.slideInRefMap.forEach((ref) => ref.close());
 
-    this.slideInClosed$.next({
-      response: response === undefined ? null : response,
-      modalType: this.modalType,
+    const slideInRef = this.slideInComponent.openSlideIn<T, D>(component, params);
+    this.slideInRefMap.set(slideInRef.id, slideInRef);
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe((response?: D) => {
+      this.deleteRef(slideInRef.id);
+      if (response === undefined) {
+        response = null;
+      }
+      this.onClose$.next(null);
     });
-
-    this.slideInComponent.closeSlideIn();
+    return slideInRef;
   }
 
-  get onClose$(): Subject<ResponseOnClose> {
-    return this.slideInClosed$;
+  closeLast(): void {
+    if (!this.isSlideInOpen) { return; }
+
+    const lastSlideInRef = Array.from(this.slideInRefMap.values()).pop();
+    lastSlideInRef.close();
+  }
+
+  closeAll(): void {
+    if (!this.isSlideInOpen) { return; }
+
+    this.slideInRefMap.forEach((ref) => ref.close());
+  }
+
+  deleteRef(id: string): void {
+    this.slideInRefMap.delete(id);
+
+    if (this.isSlideInOpen) {
+      this.slideInComponent.closeSlideIn();
+    }
+  }
+
+  private closeOnNavigation(): void {
+    merge(
+      new Observable((observer) => {
+        this.location.subscribe((event) => {
+          observer.next(event);
+        });
+      }),
+      this.router.events.pipe(filter((event) => event instanceof NavigationEnd)),
+    )
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.closeAll();
+      });
   }
 }

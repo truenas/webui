@@ -3,7 +3,7 @@
   [loading]="isFormLoading"
 ></ix-modal-header>
 
-<div class="ix-modal-subheader" *ngFor="let job$ of jobs$ | async">
+<div *ngFor="let job$ of jobs$ | async" class="ix-modal-subheader">
   <ix-job-item *ngIf="job$ | async as job" [job]="job"></ix-job-item>
 </div>
 
@@ -102,24 +102,25 @@
         </div>
       </div>
 
-      <div class="form-actions">
+      <ix-form-actions>
         <button
           mat-button
           type="submit"
           color="primary"
+          ixTest="save"
           [disabled]="form.invalid || isFormLoading"
         >
           {{ 'Save' | translate }}
         </button>
 
-        <button mat-button type="button" (click)="onUserGuidePressed()">
+        <button mat-button type="button" ixTest="user-guide" (click)="onUserGuidePressed()">
           {{ 'User Guide' | translate }}
         </button>
 
-        <button mat-button type="button" (click)="onEulaPressed()">
+        <button mat-button type="button" ixTest="eula" (click)="onEulaPressed()">
           {{ 'EULA' | translate }}
         </button>
-      </div>
+      </ix-form-actions>
     </form>
   </mat-card-content>
 </mat-card>

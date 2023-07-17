@@ -8,6 +8,8 @@ import { MockComponent } from 'ng-mocks';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import {
   CertificateDetailsComponent,
@@ -18,8 +20,8 @@ import {
 import {
   ViewCertificateDialogComponent,
 } from 'app/pages/credentials/certificates-dash/view-certificate-dialog/view-certificate-dialog.component';
-import { WebSocketService } from 'app/services';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { DialogService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 import { CertificateAuthorityEditComponent } from './certificate-authority-edit.component';
 
 describe('CertificateAuthorityEditComponent', () => {
@@ -42,7 +44,12 @@ describe('CertificateAuthorityEditComponent', () => {
         mockCall('certificateauthority.update'),
       ]),
       mockProvider(MatDialog),
-      mockProvider(IxSlideInService),
+      mockProvider(IxSlideInRef),
+      mockProvider(DialogService),
+      {
+        provide: SLIDE_IN_DATA,
+        useValue: certificateAuthority,
+      },
     ],
     declarations: [
       MockComponent(ViewCertificateDialogComponent),
@@ -52,9 +59,7 @@ describe('CertificateAuthorityEditComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
-    spectator.component.setCertificateAuthority(certificateAuthority);
     spectator.detectChanges();
-
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
@@ -77,7 +82,7 @@ describe('CertificateAuthorityEditComponent', () => {
     await saveButton.click();
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('certificateauthority.update', [1, { name: 'New Name' }]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
   });
 
   it('opens modal for authority certificate when View/Download Certificate is pressed', async () => {

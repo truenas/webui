@@ -4,52 +4,55 @@
   </mat-card-header>
   <mat-card-content>
     <div>
-      <div class="details-item" *ngIf="topologyParentItem?.name">
-        <span class="label">{{ 'Parent' | translate }}:</span>
-        <span class="value">{{ topologyParentItem.name | uppercase }}</span>
+      <div *ngIf="topologyParentItem?.name" class="details-item">
+        <div class="label">{{ 'Parent' | translate }}:</div>
+        <div class="value">{{ topologyParentItem.name | uppercase }}</div>
       </div>
       <div class="details-item">
-        <span class="label">{{ 'Read Errors' | translate }}:</span>
-        <span class="value">{{ topologyItem.stats?.read_errors }}</span>
+        <div class="label">{{ 'Read Errors' | translate }}:</div>
+        <div class="value">{{ topologyItem.stats?.read_errors }}</div>
       </div>
       <div class="details-item">
-        <span class="label">{{ 'Write Errors' | translate }}:</span>
-        <span class="value">{{ topologyItem.stats?.write_errors }}</span>
+        <div class="label">{{ 'Write Errors' | translate }}:</div>
+        <div class="value">{{ topologyItem.stats?.write_errors }}</div>
       </div>
       <div class="details-item">
-        <span class="label">{{ 'Checksum Errors' | translate }}:</span>
-        <span class="value">{{ topologyItem.stats?.checksum_errors }}</span>
+        <div class="label">{{ 'Checksum Errors' | translate }}:</div>
+        <div class="value">{{ topologyItem.stats?.checksum_errors }}</div>
       </div>
     </div>
   </mat-card-content>
   <mat-card-actions *ngIf="isDisk">
-    <button *ngIf="canExtendDisk" mat-stroked-button (click)="onExtend()">
-      {{ 'Extend' | translate }}
-    </button>
+    <ng-container *ngIf="canExtendDisk" [ngTemplateOutlet]="extend"></ng-container>
+    <ng-container *ngIf="canRemoveDisk" [ngTemplateOutlet]="remove"></ng-container>
 
-    <button *ngIf="canRemoveDisk" mat-stroked-button (click)="onRemove()">
-      {{ 'Remove' | translate }}
-    </button>
-
-    <button *ngIf="canDetachDisk" mat-stroked-button (click)="onDetach()">
+    <button *ngIf="canDetachDisk" mat-button ixTest="detach" (click)="onDetach()">
       {{ 'Detach' | translate }}
     </button>
 
-    <button *ngIf="canOfflineDisk" mat-stroked-button (click)="onOffline()">
+    <button *ngIf="canOfflineDisk" mat-button ixTest="offline" (click)="onOffline()">
       {{ 'Offline' | translate }}
     </button>
 
-    <button *ngIf="canOnlineDisk" mat-stroked-button (click)="onOnline()">
+    <button *ngIf="canOnlineDisk" mat-button ixTest="online" (click)="onOnline()">
       {{ 'Online' | translate }}
     </button>
   </mat-card-actions>
   <mat-card-actions *ngIf="isMirror">
-    <button mat-stroked-button (click)="onExtend()">
-      {{ 'Extend' | translate }}
-    </button>
-    <!-- TODO: May have conditions when removing a mirror is not allowed -->
-    <button mat-stroked-button (click)="onRemove()">
-      {{ 'Remove' | translate }}
-    </button>
+    <ng-container [ngTemplateOutlet]="extend"></ng-container>
+    <ng-container *ngIf="canRemoveVDEV" [ngTemplateOutlet]="remove"></ng-container>
   </mat-card-actions>
 </mat-card>
+
+<ng-template #extend>
+  <button mat-button ixTest="extend" (click)="onExtend()">
+    {{ 'Extend' | translate }}
+  </button>
+</ng-template>
+
+<ng-template #remove>
+  <!-- TODO: May have conditions when removing a mirror is not allowed -->
+  <button mat-button ixTest="remove" (click)="onRemove()">
+    {{ 'Remove' | translate }}
+  </button>
+</ng-template>

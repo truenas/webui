@@ -1,16 +1,16 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { TranslateService } from '@ngx-translate/core';
-import { forkJoin, of } from 'rxjs';
+import { EMPTY, forkJoin, of } from 'rxjs';
 import {
   catchError, filter, map, switchMap,
 } from 'rxjs/operators';
-import { ApiEventMessage } from 'app/enums/api-event-message.enum';
+import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import {
   abortJobPressed, jobAdded, jobChanged, jobRemoved, jobsLoaded, jobsNotLoaded,
 } from 'app/modules/jobs/store/job.actions';
-import { WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { jobAborted } from './job.actions';
 
@@ -40,18 +40,19 @@ export class JobEffects {
     }),
   ));
 
-  // TODO: Two types of subscription need to be refactored into one in WebSocketService.
   subscribeToUpdates$ = createEffect(() => this.actions$.pipe(
     ofType(jobsLoaded),
     switchMap(() => {
       return this.ws.subscribe('core.get_jobs').pipe(
-        filter((event) => !(event.msg === ApiEventMessage.Changed && event.cleared)),
-        map((event) => {
+        filter((event) => event.msg !== IncomingApiMessageType.Removed),
+        switchMap((event) => {
           switch (event.msg) {
-            case ApiEventMessage.Added:
-              return jobAdded({ job: event.fields });
-            case ApiEventMessage.Changed:
-              return jobChanged({ job: event.fields });
+            case IncomingApiMessageType.Added:
+              return of(jobAdded({ job: event.fields }));
+            case IncomingApiMessageType.Changed:
+              return of(jobChanged({ job: event.fields }));
+            default:
+              return EMPTY;
           }
         }),
       );
@@ -61,9 +62,9 @@ export class JobEffects {
   subscribeToRemoval$ = createEffect(() => this.actions$.pipe(
     ofType(jobsLoaded),
     switchMap(() => {
-      return this.ws.sub('core.get_jobs').pipe(
-        filter((event) => event.msg === ApiEventMessage.Changed && event.cleared),
-        map((event) => jobRemoved({ id: event.id })),
+      return this.ws.subscribe('core.get_jobs').pipe(
+        filter((event) => event.msg === IncomingApiMessageType.Removed),
+        map((event) => jobRemoved({ id: event.id as number })),
       );
     }),
   ));

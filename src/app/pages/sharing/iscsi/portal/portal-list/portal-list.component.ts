@@ -2,12 +2,18 @@ import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { lastValueFrom } from 'rxjs';
+import { Overwrite } from 'utility-types';
 import { Choices } from 'app/interfaces/choices.interface';
+import { IscsiPortal } from 'app/interfaces/iscsi.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { PortalFormComponent } from 'app/pages/sharing/iscsi/portal/portal-form/portal-form.component';
 import { IscsiService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+
+type IscsiPortalRow = Overwrite<IscsiPortal, {
+  listen: string[];
+}>;
 
 @UntilDestroy()
 @Component({
@@ -16,11 +22,12 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
     <ix-entity-table [conf]="this" [title]="tableTitle"></ix-entity-table>
   `,
 })
-export class PortalListComponent implements EntityTableConfig {
+export class PortalListComponent implements EntityTableConfig<IscsiPortalRow> {
   tableTitle = this.translate.instant('Portals');
   queryCall = 'iscsi.portal.query' as const;
   wsDelete = 'iscsi.portal.delete' as const;
   routeAddTooltip = this.translate.instant('Add Portal');
+  entityList: EntityTableComponent<IscsiPortalRow>;
 
   columns = [
     {
@@ -62,19 +69,18 @@ export class PortalListComponent implements EntityTableConfig {
     private slideInService: IxSlideInService,
   ) {}
 
-  afterInit(entityList: EntityTableComponent): void {
-    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      entityList.getData();
-    });
+  afterInit(entityList: EntityTableComponent<IscsiPortalRow>): void {
+    this.entityList = entityList;
   }
 
   doAdd(): void {
-    this.slideInService.open(PortalFormComponent);
+    const slideInRef = this.slideInService.open(PortalFormComponent);
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
   }
 
-  doEdit(id: number, entityList: EntityTableComponent): void {
-    const row = entityList.rows.find((row) => row.id === id);
-    const listen = row.listen.map((item: string) => {
+  doEdit(id: number, entityList: EntityTableComponent<IscsiPortalRow>): void {
+    const portal = entityList.rows.find((row) => row.id === id);
+    const listen = portal.listen.map((item: string) => {
       const lastIndex = item.lastIndexOf(':');
       return {
         ip: item.substring(0, lastIndex),
@@ -82,11 +88,8 @@ export class PortalListComponent implements EntityTableConfig {
       };
     });
 
-    const form = this.slideInService.open(PortalFormComponent);
-    form.setupForm({
-      ...row,
-      listen,
-    });
+    const slideInRef = this.slideInService.open(PortalFormComponent, { data: { ...portal, listen } });
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
   }
 
   prerequisite(): Promise<boolean> {
@@ -96,12 +99,17 @@ export class PortalListComponent implements EntityTableConfig {
     });
   }
 
-  dataHandler(entityTable: EntityTableComponent): void {
-    entityTable.rows.forEach((row) => {
-      Object.keys(row.listen).forEach((ip) => {
-        const listenIp = this.ipChoices[row.listen[ip].ip] || row.listen[ip].ip;
-        row.listen[ip] = listenIp + ':' + row.listen[ip].port;
+  resourceTransformIncomingRestData(portals: IscsiPortal[]): IscsiPortalRow[] {
+    return portals.map((portal) => {
+      const listen = portal.listen.map((listenInterface) => {
+        const listenIp = this.ipChoices[listenInterface.ip] || listenInterface.ip;
+        return `${listenIp}:${listenInterface.port}`;
       });
+
+      return {
+        ...portal,
+        listen,
+      };
     });
   }
 }

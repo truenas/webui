@@ -14,14 +14,6 @@
           [required]="true"
         ></ix-input>
 
-        <ix-input
-          formControlName="netbiosname_b"
-          [label]="'NetBIOS Name (TrueNAS Controller 2)' | translate"
-          [tooltip]="tooltips.netbiosname_b | translate"
-          [required]="true"
-          [hidden]="!hasSecondController"
-        ></ix-input>
-
         <ix-chips
           formControlName="netbiosalias"
           [label]="'NetBIOS Alias' | translate"
@@ -86,6 +78,12 @@
           [tooltip]="tooltips.aapl_extensions | translate"
         ></ix-checkbox>
 
+        <ix-checkbox
+          formControlName="multichannel"
+          [label]="'Multichannel' | translate"
+          [tooltip]="tooltips.multichannel | translate"
+          ></ix-checkbox>
+
         <ix-combobox
           formControlName="admin_group"
           [label]="'Administrators Group' | translate"
@@ -119,12 +117,6 @@
           [options]="bindIpAddressOptions$"
           [multiple]="true"
         ></ix-select>
-
-        <ix-textarea
-          formControlName="smb_options"
-          [label]="'Auxiliary Parameters' | translate"
-          [tooltip]="tooltips.smb_options"
-        ></ix-textarea>
       </ix-fieldset>
 
       <div class="form-actions">
@@ -132,16 +124,17 @@
           mat-button
           type="submit"
           color="primary"
+          ixTest="save"
           [disabled]="form.invalid || isFormLoading"
         >
           {{ 'Save' | translate }}
         </button>
 
-        <button mat-button type="button" (click)="onCancel()">
+        <button mat-button type="button" ixTest="cancel" [routerLink]="['/services']">
           {{ 'Cancel' | translate }}
         </button>
 
-        <button mat-button type="button" (click)="onAdvancedSettingsToggled()">
+        <button mat-button type="button" ixTest="toggle-advanced-settings" (click)="onAdvancedSettingsToggled()">
           {{
             isBasicMode
               ? ('Advanced Settings' | translate)

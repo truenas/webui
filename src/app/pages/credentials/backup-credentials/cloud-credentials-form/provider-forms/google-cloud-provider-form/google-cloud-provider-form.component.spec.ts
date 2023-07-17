@@ -24,7 +24,7 @@ describe('GoogleCloudProviderFormComponent', () => {
   });
 
   it('show existing provider attributes when they are set as form values', async () => {
-    spectator.component.setValues({
+    spectator.component.getFormSetter$().next({
       service_account_credentials: 'credentials1',
     });
 
@@ -36,7 +36,7 @@ describe('GoogleCloudProviderFormComponent', () => {
 
   // Limited testing because of lack of support for file inputs in JSDOM.
   it('returns form attributes for submission when getSubmitAttributes() is called', () => {
-    spectator.component.setValues({
+    spectator.component.getFormSetter$().next({
       service_account_credentials: 'credentials1',
     });
 

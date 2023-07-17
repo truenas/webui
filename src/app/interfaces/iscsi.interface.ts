@@ -15,12 +15,13 @@ export type IscsiPortalUpdate = Omit<IscsiPortal, 'id' | 'tag'>;
 
 export interface IscsiInterface {
   ip: string;
+  port: number;
 }
 
 export interface IscsiInitiatorGroup {
   comment: string;
   id: number;
-  initiators: string;
+  initiators: string[];
 }
 
 export type IscsiInitiatorGroupUpdate = Omit<IscsiInitiatorGroup, 'id'>;

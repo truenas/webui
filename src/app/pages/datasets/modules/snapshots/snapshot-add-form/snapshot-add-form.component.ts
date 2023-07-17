@@ -1,30 +1,33 @@
 import {
-  Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef,
+  Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, Inject,
 } from '@angular/core';
-import { AbstractControl, UntypedFormBuilder, Validators } from '@angular/forms';
+import {
+  AbstractControl, FormBuilder, Validators,
+} from '@angular/forms';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { format } from 'date-fns-tz';
 import {
-  Observable, combineLatest, of,
+  Observable, combineLatest, of, merge,
 } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { singleArrayToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/storage/snapshots/snapshots';
 import { Option } from 'app/interfaces/option.interface';
 import { CreateZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
-import { atLeastOne } from 'app/modules/entity/entity-form/validators/at-least-one-validation';
-import { requiredEmpty } from 'app/modules/entity/entity-form/validators/required-empty-validation';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
+import { atLeastOne } from 'app/modules/ix-forms/validators/at-least-one-validation';
+import { requiredEmpty } from 'app/modules/ix-forms/validators/required-empty-validation';
 import { snapshotExcludeBootQueryFilter } from 'app/pages/datasets/modules/snapshots/constants/snapshot-exclude-boot.constant';
+import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { WebSocketService } from 'app/services';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
   templateUrl: './snapshot-add-form.component.html',
-  styleUrls: ['./snapshot-add-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SnapshotAddFormComponent implements OnInit {
@@ -43,21 +46,25 @@ export class SnapshotAddFormComponent implements OnInit {
     )]],
     naming_schema: [''],
     recursive: [false],
+    vmware_sync: [false],
   });
 
   datasetOptions$: Observable<Option[]>;
   namingSchemaOptions$: Observable<Option[]>;
+  hasVmsInDataset = false;
 
   readonly helptext = helptext;
 
   constructor(
-    private fb: UntypedFormBuilder,
+    private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
     private ws: WebSocketService,
     private translate: TranslateService,
     private errorHandler: FormErrorHandlerService,
     private validatorsService: IxValidatorsService,
-    private slideIn: IxSlideInService,
+    private datasetStore: DatasetTreeStore,
+    private slideInRef: IxSlideInRef<SnapshotAddFormComponent>,
+    @Inject(SLIDE_IN_DATA) private datasetId: string,
   ) {}
 
   ngOnInit(): void {
@@ -71,7 +78,8 @@ export class SnapshotAddFormComponent implements OnInit {
         this.datasetOptions$ = of(datasetOptions);
         this.namingSchemaOptions$ = of(namingSchemaOptions);
         this.isFormLoading = false;
-        this.form.get('name').markAsTouched();
+        this.form.controls.name.markAsTouched();
+        this.checkForVmsInDataset();
         this.cdr.markForCheck();
       },
       error: (error) => {
@@ -80,10 +88,19 @@ export class SnapshotAddFormComponent implements OnInit {
         this.cdr.markForCheck();
       },
     });
+
+    merge(
+      this.form.controls.recursive.valueChanges,
+      this.form.controls.dataset.valueChanges,
+    ).pipe(untilDestroyed(this)).subscribe(() => this.checkForVmsInDataset());
+
+    if (this.datasetId) {
+      this.setDataset();
+    }
   }
 
-  setDataset(datasetId: string): void {
-    this.form.get('dataset').setValue(datasetId);
+  setDataset(): void {
+    this.form.controls.dataset.setValue(this.datasetId);
   }
 
   onSubmit(): void {
@@ -98,13 +115,18 @@ export class SnapshotAddFormComponent implements OnInit {
       params.name = values.name;
     }
 
+    if (this.hasVmsInDataset) {
+      params.vmware_sync = values.vmware_sync;
+    }
+
     this.isFormLoading = true;
     this.ws.call('zfs.snapshot.create', [params]).pipe(
       untilDestroyed(this),
     ).subscribe({
       next: () => {
         this.isFormLoading = false;
-        this.slideIn.close(null, true);
+        this.slideInRef.close(true);
+        this.datasetStore.datasetUpdated();
         this.cdr.markForCheck();
       },
       error: (error) => {
@@ -131,7 +153,25 @@ export class SnapshotAddFormComponent implements OnInit {
 
   private getNamingSchemaOptions(): Observable<Option[]> {
     return this.ws.call('replication.list_naming_schemas').pipe(
-      map(new EntityUtils().array1dToLabelValuePair),
+      singleArrayToOptions(),
     );
+  }
+
+  private checkForVmsInDataset(): void {
+    this.isFormLoading = true;
+    this.ws.call('vmware.dataset_has_vms', [this.form.controls.dataset.value, this.form.controls.recursive.value])
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: (hasVmsInDataset) => {
+          this.hasVmsInDataset = hasVmsInDataset;
+          this.isFormLoading = false;
+          this.cdr.markForCheck();
+        },
+        error: (error) => {
+          this.errorHandler.handleWsFormError(error, this.form);
+          this.isFormLoading = false;
+          this.cdr.markForCheck();
+        },
+      });
   }
 }

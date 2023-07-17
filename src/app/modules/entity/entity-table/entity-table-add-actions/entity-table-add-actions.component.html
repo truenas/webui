@@ -10,28 +10,25 @@
   <form class="form-element search-field" id="row-filter">
     <mat-form-field floatPlaceholder="never">
       <span matPrefix class="search-icon-wrapper">
-        <mat-icon>search</mat-icon>
+        <ix-icon name="search"></ix-icon>
       </span>
       <input
         #filter
         matInput
-        placeholder="{{ 'Filter' | translate }} {{ entity.title | translate }}"
-        ix-auto
-        ix-auto-type="input"
-        ix-auto-identifier="Filter {{ conf.title }}"
         autocomplete="off"
+        ixTest="table-filter"
+        [placeholder]="'Filter {item}' | translate: { item: entity.title | translate }"
         [value]="filterValue"
       />
       <span
         class="reset-icon-wrapper"
         matSuffix
-        [class.invisible]="!filterValue || filterValue.length == 0"
+        [class.invisible]="!filterValue || filterValue.length === 0"
       >
-        <mat-icon
-          fontSet="mdi-set"
-          fontIcon="mdi-close-circle"
+        <ix-icon
+          name="mdi-close-circle"
           (click)="resetFilter()"
-        ></mat-icon>
+        ></ix-icon>
       </span>
     </mat-form-field>
   </form>
@@ -40,13 +37,11 @@
     <span *ngFor="let custBtn of conf.customActions">
       <button
         *ngIf="!conf.isCustomActionVisible || conf.isCustomActionVisible(custBtn.id)"
-        id="cust_button_{{ custBtn.name }}"
         mat-button
-        ix-auto
-        ix-auto-type="button"
-        ix-auto-identifier="{{ custBtn.name }}"
         type="button"
         color="default"
+        [ixTest]="[conf.title, custBtn.name]"
+        [id]="'cust_button_' + custBtn.name"
         (click)="custBtn['function']()"
       >
         {{ custBtn.name | translate }}
@@ -60,13 +55,11 @@
       mat-button
       color="default"
       class="menu-toggle"
-      ix-auto
-      ix-auto-type="button"
-      ix-auto-identifier="{{ conf.title }}_COLUMNS"
+      [ixTest]="[conf.title, 'columns-menu']"
       [matMenuTriggerFor]="menu"
     >
       {{ 'Columns' | translate }}
-      <mat-icon class="menu-caret">arrow_drop_down</mat-icon>
+      <ix-icon name="mdi-menu-down" class="menu-caret"></ix-icon>
     </button>
     <mat-menu #menu="matMenu" multiple overlapTrigger="false">
       <!-- SELECT ALL -->
@@ -74,14 +67,12 @@
         <button
           mat-menu-item
           id="check-all"
-          ix-auto
-          ix-auto-type="action"
-          ix-auto-identifier="COLUMNS_SELECT"
+          [ixTest]="[conf.title, 'select-all-columns']"
           (click)="entity.checkAll()"
         >
           <span>
-            <mat-icon *ngIf="entity.checkLength()">check_circle</mat-icon>
-            <mat-icon *ngIf="!entity.checkLength()">remove</mat-icon>
+            <ix-icon *ngIf="entity.checkLength()" name="check_circle"></ix-icon>
+            <ix-icon *ngIf="!entity.checkLength()" name="remove"></ix-icon>
           </span>
           <span *ngIf="!entity.checkLength()">
             {{ 'Select All' | translate }}
@@ -97,15 +88,13 @@
         <button
           *ngFor="let col of entity.allColumns"
           mat-menu-item
-          id="menu_option-{{ col.name }}"
-          ix-auto
-          ix-auto-type="action"
-          ix-auto-identifier="COLUMNS_{{ col.name }}"
+          [ixTest]="[conf.title, 'select-column', col.name]"
+          [id]="'menu_option-' + col.name"
           (click)="entity.toggle(col)"
         >
           <span>
-            <mat-icon *ngIf="entity.isChecked(col)">check_circle</mat-icon>
-            <mat-icon *ngIf="!entity.isChecked(col)">remove</mat-icon>
+            <ix-icon *ngIf="entity.isChecked(col)" name="check_circle"></ix-icon>
+            <ix-icon *ngIf="!entity.isChecked(col)" name="remove"></ix-icon>
           </span>
           <span>{{ col.name | translate }}</span>
         </button>
@@ -115,13 +104,11 @@
         <button
           mat-menu-item
           id="reset_col_view"
-          ix-auto
-          ix-auto-type="action"
-          ix-auto-identifier="COLUMNS_Reset to Defaults"
+          [ixTest]="[conf.title, 'reset-columns-to-defaults']"
           (click)="entity.resetColViewToDefaults()"
         >
           <span>
-            <mat-icon>undo</mat-icon>
+            <ix-icon name="undo"></ix-icon>
           </span>
           <span>{{ 'Reset to Defaults' | translate }}</span>
         </button>
@@ -131,40 +118,34 @@
   <!-- END COLUMN FILTER -->
 
   <!-- OLD TEMPLATE START -->
-  <div class="entity-add-actions-wrapper" *ngIf="this.totalActions > 0">
+  <div *ngIf="this.totalActions > 0" class="entity-add-actions-wrapper">
     <button
+      *ngIf="this.totalActions > 1; else elseBlock"
       mat-button
       color="primary"
-      [matMenuTriggerFor]="menu"
       class="menu-toggle"
-      *ngIf="this.totalActions > 1; else elseBlock"
-      matTooltip="{{ this.menuTriggerMessage | translate }}"
-      ix-auto
-      ix-auto-type="button"
-      ix-auto-identifier="{{ entity.conf.title }}_ACTIONS"
+      [ixTest]="[conf.title, 'actions']"
+      [matTooltip]="menuTriggerMessage | translate"
+      [matMenuTriggerFor]="menu"
     >
       {{ 'Actions' | translate }}
-      <mat-icon class="menu-caret">arrow_drop_down</mat-icon>
+      <ix-icon name="mdi-menu-down" class="menu-caret"></ix-icon>
     </button>
     <mat-menu #menu="matMenu" overlapTrigger="false">
       <button
         *ngIf="this.entity.conf.routeAdd || this.entity.conf.doAdd"
         mat-menu-item
         id="add_action_button"
-        ix-auto
-        ix-auto-type="button"
-        ix-auto-identifier="{{ entity.conf.title }}_ADD"
+        [ixTest]="[conf.title, 'add']"
         (click)="this.entity.doAdd()"
       >
         <span>{{ 'Add' | translate }}</span>
       </button>
       <button
         *ngFor="let action of actions"
-        id="add_action_button_{{ action?.label }}"
         mat-menu-item
-        ix-auto
-        ix-auto-type="button"
-        ix-auto-identifier="{{ entity.conf.title }}_{{ action.label }}"
+        [ixTest]="[conf.title, 'action', action.label]"
+        [id]="'add_action_button_' + action?.label"
         (click)="action.onClick()"
       >
         <span>{{ action.label | translate }}</span>
@@ -177,25 +158,21 @@
         *ngIf="this.entity.conf.routeAdd || this.entity.conf.doAdd"
         mat-button
         color="primary"
-        matTooltip="{{ this.entity.conf.routeAddTooltip | translate }}"
         id="add_action_button"
-        ix-auto
-        ix-auto-type="button"
-        ix-auto-identifier="{{ entity.conf.title }}_ADD"
+        [ixTest]="[conf.title, 'add']"
+        [matTooltip]="entity.conf.routeAddTooltip | translate"
         [disabled]="entity.conf.addBtnDisabled"
         (click)="this.entity.doAdd()"
       >
         {{ 'Add' | translate }}
       </button>
       <button
-        *ngIf="!(this.entity.conf.routeAdd || this.entity.conf.doAdd) && this.totalActions == 1"
-        id="add_action_button_{{ actions[0]?.label }}"
+        *ngIf="!(this.entity.conf.routeAdd || this.entity.conf.doAdd) && this.totalActions === 1"
         mat-button
         color="primary"
-        matTooltip="{{ actions[0].label | translate }}"
-        ix-auto
-        ix-auto-type="button"
-        ix-auto-identifier="{{ entity.conf.title }}_{{ this.actions[0].label }}"
+        [ixTest]="[conf.title, 'actions', actions[0].label]"
+        [id]="'add_action_button_' + actions[0]?.label"
+        [matTooltip]="actions[0].label | translate"
         (click)="this.actions[0].onClick()"
       >
         {{ this.actions[0].label | translate }}
@@ -207,26 +184,24 @@
   <div *ngIf="conf.globalConfig" id="config">
     <button
       mat-icon-button
-      id="{{ conf.globalConfig.id }}"
-      ix-auto
-      ix-auto-type="settings"
-      ix-auto-identifier="{{ entity.title }}"
+      [ixTest]="[conf.title, conf.globalConfig.id]"
+      [id]="conf.globalConfig.id"
       [matTooltip]="conf.globalConfig.tooltip"
       (click)="conf.globalConfig.onClick()"
     >
-      <mat-icon *ngIf="conf.globalConfig.icon; else settingsIcon">
-        {{ conf.globalConfig.icon }}
-      </mat-icon>
-      <ng-template #settingsIcon><mat-icon>settings</mat-icon></ng-template>
+      <ng-container *ngIf="conf.globalConfig.icon; else settingsIcon">
+        <ix-icon [name]="conf.globalConfig.icon"></ix-icon>
+      </ng-container>
+      <ng-template #settingsIcon><ix-icon name="settings"></ix-icon></ng-template>
     </button>
   </div>
 
   <mat-spinner
     *ngIf="!entity.showDefaults && entity.showSpinner"
-    [diameter]="40"
-    id="entity-spinner"
     #entityspinner
+    id="entity-spinner"
     class="spinner"
+    [diameter]="40"
   >
   </mat-spinner>
 

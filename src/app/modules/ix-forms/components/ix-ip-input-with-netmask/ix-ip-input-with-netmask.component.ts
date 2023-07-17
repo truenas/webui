@@ -40,7 +40,7 @@ export class IxIpInputWithNetmaskComponent implements ControlValueAccessor {
   }
 
   onNetmaskChange($event: MatSelectChange): void {
-    this.netmask = $event.value;
+    this.netmask = $event.value as string;
     this.onValueChanged();
   }
 
@@ -71,8 +71,7 @@ export class IxIpInputWithNetmaskComponent implements ControlValueAccessor {
     this.onChange(value);
   }
 
-  private setAddressAndNetmask(ipWithNetmask: string): void {
-    ipWithNetmask = ipWithNetmask || '';
+  private setAddressAndNetmask(ipWithNetmask = ''): void {
     const [address, netmask] = ipWithNetmask.split('/');
     this.address = address;
     this.netmask = netmask;

@@ -11,14 +11,6 @@
           <b>{{ 'Current Version' | translate }}</b>: {{ currentVersion }}
         </p>
 
-        <ix-select
-          formControlName="filelocation"
-          [label]="helptext.filelocation.placeholder | translate"
-          [tooltip]="helptext.filelocation.tooltip | translate"
-          [options]="fileLocationOptions$"
-          [required]="true"
-        ></ix-select>
-
         <ix-file-input
           formControlName="updateFile"
           [label]="helptext.filename.placeholder | translate"
@@ -27,8 +19,18 @@
           [required]="true"
           [acceptedFiles]="'.tar,.update'"
         ></ix-file-input>
+
+        <ix-select
+          *ngIf="!isHaLicensed"
+          formControlName="filelocation"
+          [label]="helptext.filelocation.placeholder | translate"
+          [tooltip]="helptext.filelocation.tooltip | translate"
+          [options]="fileLocationOptions$"
+          [required]="true"
+        ></ix-select>
+
         <ix-checkbox
-          *ngIf="!isHa && systemService.isEnterprise"
+          *ngIf="!isHaLicensed && systemService.isEnterprise"
           formControlName="rebootAfterManualUpdate"
           [label]="helptext.rebootAfterManualUpdate.placeholder | translate"
           [tooltip]="helptext.rebootAfterManualUpdate.tooltip | translate"
@@ -40,6 +42,7 @@
           mat-button
           type="submit"
           color="primary"
+          ixTest="apply-update"
           [disabled]="form.invalid || (isFormLoading$ | async)"
         >
           {{ 'Apply Update' | translate }}

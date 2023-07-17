@@ -1,6 +1,12 @@
 :host {
   display: block;
   position: relative;
+
+  ::ng-deep {
+    .mat-mdc-dialog-actions {
+      position: static;
+    }
+  }
 }
 
 mat-dialog-content.entity-job-dialog {
@@ -8,16 +14,15 @@ mat-dialog-content.entity-job-dialog {
   max-width: 400px;
   min-width: 400px;
 
-  .mat-dialog-content {
+  .mat-mdc-dialog-content {
     overflow: auto !important;
   }
 }
 
-
 .mat-dialog-close {
   position: absolute;
-  right: -24px;
-  top: -24px;
+  right: 5px;
+  top: 5px;
 }
 
 .entity-job-progress {
@@ -26,6 +31,7 @@ mat-dialog-content.entity-job-dialog {
 
 .entity-job-description {
   opacity: 0.75;
+  white-space: pre-line;
 }
 
 .entity-job-time {

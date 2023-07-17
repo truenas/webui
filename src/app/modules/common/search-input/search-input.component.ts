@@ -8,10 +8,11 @@ import {
   ViewChild,
   OnInit,
   OnChanges,
-  SimpleChanges,
+  HostBinding,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
+import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 
 @UntilDestroy()
 @Component({
@@ -21,6 +22,7 @@ import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SearchInputComponent implements OnInit, OnChanges {
+  @HostBinding('class.disabled')
   @Input() disabled = false;
   @Input() value = '';
   @Output() search = new EventEmitter<string>();
@@ -40,9 +42,13 @@ export class SearchInputComponent implements OnInit, OnChanges {
     this.handleSearchValueChanges();
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.disabled.previousValue !== changes.disabled.currentValue && !!this.searchValue) {
+  ngOnChanges(changes: IxSimpleChanges<this>): void {
+    if (changes.disabled?.previousValue !== changes.disabled?.currentValue && !!this.searchValue) {
       this.updateSearchValue(this.searchValue);
+    }
+
+    if (changes.value?.previousValue !== changes.value?.currentValue) {
+      this.searchValue = changes.value.currentValue;
     }
   }
 

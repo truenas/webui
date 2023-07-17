@@ -1,0 +1,36 @@
+:host {
+  display: block;
+  margin-bottom: 16px;
+  margin-top: 16px;
+
+  ix-radio-group {
+    margin-top: 0;
+  }
+
+  .spacer-top {
+    margin-top: 16px;
+  }
+
+  .spacer-bottom {
+    margin-bottom: 16px;
+  }
+
+  mat-checkbox,
+  .pool-name,
+  .disk-name {
+    display: block;
+    width: 100%;
+  }
+
+  .disk-name {
+    opacity: 0.75;
+  }
+
+  .label {
+    line-height: 1.25;
+  }
+
+  mat-checkbox:not(:last-child) {
+    margin-bottom: 4px;
+  }
+}

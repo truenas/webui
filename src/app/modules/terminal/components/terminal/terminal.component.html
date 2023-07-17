@@ -12,12 +12,13 @@
       <button
         *ngIf="conf.customReconnectAction"
         mat-button
+        ixTest="reconnect"
         (click)="conf.customReconnectAction()"
       >
         {{ 'Reconnect' | translate }}
       </button>
 
-      <button mat-button color="primary" (click)="resetDefault()">
+      <button mat-button color="primary" ixTest="restore-default" (click)="resetDefault()">
         {{ 'Restore Default' | translate }}
       </button>
 
@@ -27,7 +28,7 @@
       ></ix-tooltip>
     </ng-container>
     <ng-template #reconnectControls>
-      <button mat-button color="primary" (click)="reconnect()">
+      <button mat-button color="primary" ixTest="reconnect" (click)="reconnect()">
         {{ 'Reconnect' | translate }}
       </button>
     </ng-template>
@@ -36,8 +37,8 @@
 
 <div class="terminal-wrapper">
   <div
-    id="terminal"
     #terminal
+    id="terminal"
     [ngStyle]="{ 'font-size': fontSize + 'px' }"
     (window:resize)="onResize()"
     (contextmenu)="onRightClick()"

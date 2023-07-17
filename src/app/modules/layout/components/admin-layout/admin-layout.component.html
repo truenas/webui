@@ -1,0 +1,112 @@
+<mat-sidenav-container
+  class="app-side-nav-container"
+  fxLayout="row"
+  ngClass.xs="xs"
+  ngClass.sm="sm"
+  ngClass.md="md"
+  ngClass.lg="lg"
+  ngClass.xl="xl"
+>
+  <!-- Main side navigation -->
+  <mat-sidenav
+    #sidenav
+    class="sidebar-panel not-alerts"
+    [fxFlex]="sidenavWidth"
+    [opened]="isSidenavOpen"
+    [mode]="sidenavMode"
+    [disableClose]="sidenavMode !== 'over'"
+    (closedStart)="onMenuClosed()"
+  >
+    <div id="scroll-area" class="navigation-hold" fxLayout="column">
+      <div [class]="['branding', 'topbar', 'truenas-' + (productType$ | async | lowercase)]">
+        <a routerLink="/dashboard" class="logo" ixTest="main-logo">
+          <ix-icon
+            class="app-logo"
+            [name]="themeService.isDefaultTheme ? 'ix:logo_truenas_scale_mark_color': 'ix:logo_truenas_scale_mark'"
+          ></ix-icon>
+        </a>
+        <a routerLink="/dashboard" class="logo-text" ixTest="main-logo">
+          <ix-icon
+            class="app-logo-text"
+            [name]="themeService.isDefaultTheme? 'ix:logo_truenas_scale_type_color': 'ix:logo_truenas_scale_type'"
+          ></ix-icon>
+        </a>
+      </div>
+
+      <ix-navigation
+        [isSidenavCollapsed]="isSidenavCollapsed"
+        (menuToggled)="toggleMenu($event)"
+        (menuClosed)="toggleMenu()"
+      ></ix-navigation>
+
+      <div class="slidein-nav slidein-nav-sm" [class.slidein-open]="isOpen">
+        <ix-secondary-menu
+          [subMenuItems]="subs"
+          [menuName]="menuName"
+          (toggleMenu)="toggleMenu()"
+        ></ix-secondary-menu>
+      </div>
+
+      <div *ngIf="!isSidenavCollapsed" class="sidenav-copyright-txt">
+        <div
+          *ngIf="hostname"
+          class="hostname-label"
+          [matTooltip]="'Hostname: ' + hostname"
+        >
+          {{ hostname }}
+        </div>
+        <ix-copyright-line class="copyright-line"></ix-copyright-line>
+      </div>
+      <div
+        *ngIf="isSidenavCollapsed"
+        class="sidenav-copyright-icon"
+        matTooltipPosition="right"
+        [matTooltip]="'TrueNAS ' + (productType$ | async | mapValue: productTypeLabels) + '® © ' + (copyrightYear$ | async) + ' by iXsystems Inc.'"
+      >
+        <ix-icon name="copyright"></ix-icon>
+      </div>
+    </div>
+  </mat-sidenav>
+
+  <mat-sidenav-content
+    class="fn-maincontent"
+    [fxFlex]="'calc(100% - ' + sidenavWidth + ')'"
+    [style.margin-left]="sidenavWidth"
+  >
+    <ix-topbar [sidenav]="sidenav" (sidenavStatusChange)="onSidenavStatusChange($event)"></ix-topbar>
+
+    <div class="slidein-nav slidein-nav-md" [class.slidein-open]="isOpen">
+      <ix-secondary-menu
+        [subMenuItems]="subs"
+        [menuName]="menuName"
+        (toggleMenu)="toggleMenu()"
+      ></ix-secondary-menu>
+    </div>
+    <div class="overlay" [class.isdark]="isOpen" (click)="toggleMenu()"></div>
+
+    <!-- App content -->
+    <div
+      class="rightside-content-hold"
+      [class.has-footer]="hasConsoleFooter$ | async"
+    >
+      <ix-page-title-header *ngIf="!headerPortalOutlet"></ix-page-title-header>
+      <ng-template
+        *ngIf="headerPortalOutlet"
+        [cdkPortalOutlet]="headerPortalOutlet"
+      ></ng-template>
+      <router-outlet></router-outlet>
+    </div>
+    <ix-console-footer *ngIf="hasConsoleFooter$ | async"></ix-console-footer>
+  </mat-sidenav-content>
+  <!-- Alert bar -->
+  <mat-sidenav
+    class="alert-sidenav"
+    position="end"
+    [opened]="isAlertPanelOpen$ | async"
+    (closed)="onAlertsPanelClosed()"
+  >
+    <ix-alerts-panel></ix-alerts-panel>
+  </mat-sidenav>
+</mat-sidenav-container>
+
+<ix-slide-in id="ix-slide-in-form"></ix-slide-in>

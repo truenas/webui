@@ -2,8 +2,9 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
@@ -13,7 +14,7 @@ import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { SnackbarModule } from 'app/modules/snackbar/snackbar.module';
 import { EncryptionOptionsDialogComponent } from 'app/pages/datasets/modules/encryption/components/encyption-options-dialog/encryption-options-dialog.component';
-import { DialogService, WebSocketService } from 'app/services';
+import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 import { EncryptionOptionsDialogData } from './encryption-options-dialog-data.interface';
 
 describe('EncryptionOptionsDialogComponent', () => {
@@ -34,6 +35,10 @@ describe('EncryptionOptionsDialogComponent', () => {
       { provide: MAT_DIALOG_DATA, useValue: {} },
       mockProvider(MatDialogRef),
       mockProvider(DialogService),
+      mockProvider(MatDialog, {
+        open: jest.fn(() => mockEntityJobComponentRef),
+      }),
+      mockProvider(AppLoaderService),
       mockWebsocket([
         mockCall('pool.dataset.change_key'),
         mockCall('pool.dataset.inherit_parent_encryption_properties'),
@@ -148,7 +153,7 @@ describe('EncryptionOptionsDialogComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(websocket.call).toHaveBeenCalledWith(
+    expect(mockEntityJobComponentRef.componentInstance.setCall).toHaveBeenCalledWith(
       'pool.dataset.change_key',
       ['pool/parent/child', { key, generate_key: false }],
     );
@@ -169,7 +174,7 @@ describe('EncryptionOptionsDialogComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(websocket.call).toHaveBeenCalledWith(
+    expect(mockEntityJobComponentRef.componentInstance.setCall).toHaveBeenCalledWith(
       'pool.dataset.change_key',
       ['pool/parent/child', { generate_key: true }],
     );
@@ -192,7 +197,7 @@ describe('EncryptionOptionsDialogComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(websocket.call).toHaveBeenCalledWith(
+    expect(mockEntityJobComponentRef.componentInstance.setCall).toHaveBeenCalledWith(
       'pool.dataset.change_key',
       ['pool/parent/child', { passphrase: '12345678', pbkdf2iters: 350001 }],
     );

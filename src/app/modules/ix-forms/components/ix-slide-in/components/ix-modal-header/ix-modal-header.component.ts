@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 
 @Component({
   selector: 'ix-modal-header',
@@ -11,5 +11,11 @@ export class IxModalHeaderComponent {
   @Input() loading: boolean;
   @Input() disableClose = false;
 
-  constructor(public slideInService: IxSlideInService) {}
+  constructor(
+    private slideInRef: IxSlideInRef<IxModalHeaderComponent>,
+  ) {}
+
+  close(): void {
+    this.slideInRef.close();
+  }
 }

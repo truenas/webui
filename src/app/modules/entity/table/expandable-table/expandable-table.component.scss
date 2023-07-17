@@ -1,5 +1,6 @@
 .description-panel {
   .actions {
+    align-items: center;
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
@@ -8,7 +9,6 @@
 }
 
 .actions-row {
-  align-items: center;
   align-items: flex-end;
   display: flex;
   flex-direction: row;
@@ -48,6 +48,66 @@
   vertical-align: middle;
 }
 
-.title a:focus-visible {
-  background: var(--hover-bg);
+.title {
+  a {
+    white-space: nowrap;
+
+    &:focus-visible {
+      background: var(--hover-bg);
+    }
+  }
+}
+
+:host ::ng-deep .tooltip .material-icons {
+  align-items: center;
+  display: flex;
+  font-size: 24px !important;
+  margin-right: 6px;
+}
+
+
+
+.expanded-table-container {
+  height: 100%;
+}
+
+.expanded-table {
+  height: 100%;
+}
+
+.expanded-table.expanded-height {
+  height: 90%;
+}
+
+.expanded-table ::ng-deep {
+  .mat-expansion-panel-body {
+    padding: 0 !important;
+  }
+
+  .mat-expansion-panel-header {
+    height: auto !important;
+    margin: 5px 0;
+    padding-bottom: inherit;
+    padding-right: inherit;
+    padding-top: inherit;
+  }
+
+  .mat-expansion-panel-header span {
+    padding: 0;
+  }
+
+  mat-card {
+    border: 0 !important;
+    margin: 0 !important;
+  }
+
+  mat-panel-title,
+  mat-panel-description {
+    margin: 0 !important;
+  }
+
+  mat-panel-title {
+    align-items: center;
+    display: flex;
+  }
 }

@@ -3,113 +3,40 @@
     <ix-search-input (search)="onListFiltered($event)"></ix-search-input>
     <mat-slide-toggle
       color="primary"
+      ixTest="show-built-in-users"
       [checked]="!this.hideBuiltinUsers"
       (change)="toggleBuiltins()"
     >
       <label>{{ 'Show Built-in Users' | translate }}</label>
     </mat-slide-toggle>
-    <button mat-button [color]="'primary'" (click)="doAdd()">
+    <button mat-button ixTest="add-user" [color]="'primary'" (click)="doAdd()">
       {{ 'Add' | translate }}
     </button>
   </ix-page-title-header>
 </ng-template>
 
-<ix-entity-empty
-  *ngIf="isLoading$ | async; else loaded"
-  [conf]="loadingConfig"
-></ix-entity-empty>
-
-<ng-template #loaded>
-  <mat-card>
-    <mat-card-content>
-      <table
-        ix-table
-        matSort
-        matSortDisableClear="true"
-        [matSortActive]="defaultSort.active"
-        [dataSource]="dataSource"
-        [matSortDirection]="defaultSort.direction"
-        [multiTemplateDataRows]="true"
-        [fixedLayout]="true"
-      >
-        <ng-container matColumnDef="username">
-          <th *matHeaderCellDef mat-header-cell mat-sort-header>
-            {{ 'Username' | translate }}
-          </th>
-          <td mat-cell *matCellDef="let user; dataSource: dataSource">
-            {{ user.username }}
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="uid">
-          <th *matHeaderCellDef mat-header-cell mat-sort-header>
-            {{ 'UID' | translate }}
-          </th>
-          <td mat-cell *matCellDef="let user; dataSource: dataSource">
-            {{ user.uid }}
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="builtin">
-          <th *matHeaderCellDef mat-header-cell mat-sort-header>
-            {{ 'Builtin' | translate }}
-          </th>
-          <td mat-cell *matCellDef="let user; dataSource: dataSource">
-            {{ user.builtin }}
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="home">
-          <th *matHeaderCellDef mat-header-cell mat-sort-header>
-            {{ 'Home' | translate }}
-          </th>
-          <td mat-cell *matCellDef="let user; dataSource: dataSource">
-            {{ user.home }}
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="full_name">
-          <th *matHeaderCellDef mat-header-cell mat-sort-header>
-            {{ 'Full Name' | translate }}
-          </th>
-          <td mat-cell *matCellDef="let user; dataSource: dataSource">
-            {{ user.full_name }}
-          </td>
-        </ng-container>
-
-        <ix-expand-toggle-column
-          [expandedRow]="expandedRow"
-          (toggle)="onToggle($event)"
-        ></ix-expand-toggle-column>
-
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr
-          mat-row
-          *matRowDef="
-            let user;
-            columns: displayedColumns;
-            dataSource: dataSource
-          "
-          [ixDetailRow]="user"
-          [ixDetailRowOptions]="{ colspan: displayedColumns.length }"
-          [ixDetailRowTemplate]="expandedRowTemplate"
-          (toggle)="onToggle($event)"
-        ></tr>
-
-        <tr class="mat-row no-data-row" *matNoDataRow>
-          <td class="mat-cell" [attr.colspan]="displayedColumns.length">
-            <ix-entity-empty
-              [conf]="emptyOrErrorConfig$ | async"
-            ></ix-entity-empty>
-          </td>
-        </tr>
-      </table>
-
-      <ix-table-paginator [dataSource]="dataSource"></ix-table-paginator>
-    </mat-card-content>
-  </mat-card>
-</ng-template>
-
-<ng-template #expandedRowTemplate let-user let-colspan="colspan">
-  <ix-user-details-row [user]="user" [colspan]="colspan"></ix-user-details-row>
-</ng-template>
+<div class="table-container">
+  <ix-table2
+    [ix-table-empty]="!dataProvider.rows.length"
+    [emptyConfig]="emptyConfigService.defaultEmptyConfig((emptyType$ | async))"
+  >
+    <thead
+      ix-table-head
+      [columns]="columns"
+      [dataProvider]="dataProvider"
+    ></thead>
+    <tbody
+      ix-table-body
+      [columns]="columns"
+      [dataProvider]="dataProvider"
+    >
+      <ng-template ix-table-details-row [dataProvider]="dataProvider" let-user>
+        <ix-user-details-row
+          [user]="user"
+          (delete)="handleDeletedUser($event)"
+        ></ix-user-details-row>
+      </ng-template>
+    </tbody>
+  </ix-table2>
+  <ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>
+</div>

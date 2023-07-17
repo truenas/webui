@@ -1,6 +1,6 @@
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef, Component,
+  ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
@@ -12,10 +12,12 @@ import { IscsiAuthMethod } from 'app/enums/iscsi.enum';
 import { choicesToOptions, tagArrayToOptions } from 'app/helpers/options.helper';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { IscsiInterface, IscsiPortal } from 'app/interfaces/iscsi.interface';
-import { ipValidator } from 'app/modules/entity/entity-form/validators/ip-validation';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { IscsiService, WebSocketService } from 'app/services';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { ipValidator } from 'app/modules/ix-forms/validators/ip-validation';
+import { IscsiService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -23,9 +25,8 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   styleUrls: ['./portal-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PortalFormComponent {
+export class PortalFormComponent implements OnInit {
   isLoading = false;
-  private editingIscsiPortal: IscsiPortal;
   listen: IscsiInterface[] = [];
   listPrefix = '__';
 
@@ -91,15 +92,20 @@ export class PortalFormComponent {
     private translate: TranslateService,
     protected ws: WebSocketService,
     private cdr: ChangeDetectorRef,
-    private slideInService: IxSlideInService,
     private errorHandler: FormErrorHandlerService,
     protected iscsiService: IscsiService,
+    private slideInRef: IxSlideInRef<PortalFormComponent>,
+    @Inject(SLIDE_IN_DATA) private editingIscsiPortal: IscsiPortal,
   ) {}
 
-  setupForm(iscsiPortal: IscsiPortal): void {
-    this.editingIscsiPortal = iscsiPortal;
+  ngOnInit(): void {
+    if (this.editingIscsiPortal) {
+      this.setupForm();
+    }
+  }
 
-    iscsiPortal.listen.forEach((listen, index) => {
+  setupForm(): void {
+    this.editingIscsiPortal.listen.forEach((listen, index) => {
       const newListItem = {} as IscsiInterface;
       this.ipAddressFromControls.forEach((fc) => {
         if (fc.name === 'ip') {
@@ -112,7 +118,7 @@ export class PortalFormComponent {
     });
 
     this.form.patchValue({
-      ...iscsiPortal,
+      ...this.editingIscsiPortal,
     });
     this.cdr.markForCheck();
   }
@@ -121,7 +127,7 @@ export class PortalFormComponent {
     const newIndex = this.listen.length;
     const newListItem = {} as IscsiInterface;
     this.ipAddressFromControls.forEach((fc) => {
-      newListItem[fc.name as keyof IscsiInterface] = fc.default;
+      newListItem[fc.name as 'ip'] = fc.default;
       this.form.addControl(`${fc.name}${this.listPrefix}${newIndex}`, new FormControl(fc.default, fc.validator));
     });
 
@@ -150,7 +156,7 @@ export class PortalFormComponent {
     Object.values(_.groupBy(tempListen, 'index')).forEach((item) => {
       const ip = item.find((ele) => ele.name === 'ip')?.value as string;
       if (ip) {
-        listen.push({ ip });
+        listen.push({ ip } as IscsiInterface);
       }
     });
 
@@ -178,7 +184,7 @@ export class PortalFormComponent {
       next: () => {
         this.isLoading = false;
         this.cdr.markForCheck();
-        this.slideInService.close();
+        this.slideInRef.close();
       },
       error: (error) => {
         this.isLoading = false;

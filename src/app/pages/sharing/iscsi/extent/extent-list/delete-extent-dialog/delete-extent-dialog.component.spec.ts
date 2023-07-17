@@ -12,7 +12,8 @@ import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import {
   DeleteExtentDialogComponent,
 } from 'app/pages/sharing/iscsi/extent/extent-list/delete-extent-dialog/delete-extent-dialog.component';
-import { WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('DeleteExtentDialogComponent', () => {
   let spectator: Spectator<DeleteExtentDialogComponent>;
@@ -28,6 +29,7 @@ describe('DeleteExtentDialogComponent', () => {
         mockCall('iscsi.extent.delete'),
       ]),
       mockProvider(MatDialogRef),
+      mockProvider(DialogService),
       {
         provide: MAT_DIALOG_DATA,
         useValue: {

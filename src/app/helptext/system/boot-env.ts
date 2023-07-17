@@ -32,9 +32,4 @@ export const helptextSystemBootenv = {
     title: T('Device Attached'),
     message: T('was successfully attached.'),
   },
-
-  delete_failure_dialog: {
-    title: T('Error'),
-    message: T('Could not delete boot environment.'),
-  },
 };

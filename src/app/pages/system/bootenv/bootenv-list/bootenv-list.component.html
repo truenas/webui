@@ -2,19 +2,19 @@
   <ix-page-title-header>
     <ix-search-input (search)="onSearch($event)"></ix-search-input>
 
-    <button mat-button (click)="openBootenvStats()">
+    <button mat-button ixTest="bootenv-stats" (click)="openBootenvStats()">
       {{ 'Stats/Settings' | translate }}
     </button>
 
-    <button mat-button [routerLink]="['/', 'system', 'boot', 'status']">
+    <button mat-button ixTest="bootenv-status" [routerLink]="['/', 'system', 'boot', 'status']">
       {{ 'Boot Pool Status' | translate }}
     </button>
 
-    <button mat-button (click)="doScrub()">
+    <button mat-button ixTest="bootenv-scrub" (click)="doScrub()">
       {{ 'Scrub Boot Pool' | translate }}
     </button>
 
-    <button mat-button (click)="doAdd()" color="primary">
+    <button mat-button color="primary" ixTest="bootenv-add" (click)="doAdd()">
       {{ 'Add' | translate }}
     </button>
   </ix-page-title-header>
@@ -36,6 +36,7 @@
   <div class="actions">
     <button
       mat-button
+      ixTest="delete"
       [disabled]="!selectionHasItems"
       (click)="doDelete(checkboxColumn?.selection.selected)"
     >
@@ -49,6 +50,9 @@
   ix-table
   matSort
   matSortDisableClear="true"
+  ixTest="bootenv-table"
+  [ix-table-empty]="!dataSource.filteredData.length"
+  [emptyConfig]="emptyConfigService.defaultEmptyConfig((emptyType$ | async))"
   [dataSource]="dataSource"
   [matSortActive]="defaultSort.active"
   [matSortDirection]="defaultSort.direction"
@@ -61,8 +65,8 @@
       {{ 'Name' | translate }}
     </th>
     <td
-      mat-cell
       *matCellDef="let bootenv; dataSource: dataSource"
+      mat-cell
       [title]="bootenv.name"
     >
       {{ bootenv.name }}
@@ -74,8 +78,8 @@
       {{ 'Active' | translate }}
     </th>
     <td
-      mat-cell
       *matCellDef="let bootenv; dataSource: dataSource"
+      mat-cell
       [title]="bootenv.id"
     >
       <ng-container [ngSwitch]="bootenv.active">
@@ -94,7 +98,7 @@
     <th *matHeaderCellDef mat-header-cell mat-sort-header>
       {{ 'Date Created' | translate }}
     </th>
-    <td mat-cell *matCellDef="let bootenv; dataSource: dataSource">
+    <td *matCellDef="let bootenv; dataSource: dataSource" mat-cell>
       {{ bootenv.created.$date | formatDateTime }}
     </td>
   </ng-container>
@@ -103,7 +107,7 @@
     <th *matHeaderCellDef mat-header-cell mat-sort-header>
       {{ 'Space' | translate }}
     </th>
-    <td mat-cell *matCellDef="let bootenv; dataSource: dataSource">
+    <td *matCellDef="let bootenv; dataSource: dataSource" mat-cell>
       {{ bootenv.rawspace | filesize: { standard: 'iec', round: 0 } }}
     </td>
   </ng-container>
@@ -112,70 +116,78 @@
     <th *matHeaderCellDef mat-header-cell mat-sort-header>
       {{ 'Keep' | translate }}
     </th>
-    <td mat-cell *matCellDef="let bootenv; dataSource: dataSource" class="keep-td">
+    <td *matCellDef="let bootenv; dataSource: dataSource" mat-cell class="keep-td">
       <ix-icon [name]="bootenv.keep ? 'bookmark' : 'bookmark_border'"></ix-icon>
-      {{ (bootenv.keep ? 'Yes' : 'No') | translate }}
+      {{ bootenv.keep | yesNo }}
     </td>
   </ng-container>
 
   <ng-container matColumnDef="actions">
     <th *matHeaderCellDef mat-header-cell></th>
-    <td mat-cell *matCellDef="let bootenv; dataSource: dataSource">
+    <td *matCellDef="let bootenv; dataSource: dataSource" mat-cell>
       <button
-        [title]="'Settings' | translate"
         mat-icon-button
+        ixTest="bootenv-actions"
+        [title]="'Settings' | translate"
         [matMenuTriggerFor]="actionsMenu"
       >
-        <mat-icon>more_vert</mat-icon>
+        <ix-icon name="more_vert"></ix-icon>
       </button>
       <mat-menu #actionsMenu="matMenu">
         <a
-          mat-menu-item
           *ngIf="!bootenv.active.includes('R')"
+          mat-menu-item
+          [ixTest]="[bootenv.name, 'activate']"
           (click)="doActivate(bootenv)"
-          ><ix-icon name="mdi-check-decagram"></ix-icon>
+        >
+          <ix-icon name="mdi-check-decagram"></ix-icon>
           {{ 'Activate' | translate }}
         </a>
-        <a mat-menu-item (click)="doClone(bootenv)">
+        <a
+          mat-menu-item
+          [ixTest]="[bootenv.name, 'clone']"
+          (click)="doClone(bootenv)"
+        >
           <ix-icon name="mdi-content-copy"></ix-icon>
           {{ 'Clone' | translate }}
         </a>
-        <a mat-menu-item (click)="doRename(bootenv)">
+        <a
+          mat-menu-item
+          [ixTest]="[bootenv.name, 'rename']"
+          (click)="doRename(bootenv)"
+        >
           <ix-icon name="mdi-rename-box"></ix-icon>
           {{ 'Rename' | translate }}
         </a>
         <a
-          mat-menu-item
           *ngIf="bootenv.active === '-' || bootenv.active === ''"
+          mat-menu-item
+          [ixTest]="[bootenv.name, 'delete']"
           (click)="doDelete([bootenv])"
           ><ix-icon name="mdi-delete"></ix-icon>
           {{ 'Delete' | translate }}
         </a>
-        <a mat-menu-item (click)="toggleKeep(bootenv)">
+        <a
+          mat-menu-item
+          [ixTest]="[bootenv.name, 'toggle-keep']"
+          (click)="toggleKeep(bootenv)"
+        >
           <ix-icon
             [name]="bootenv.keep ? 'bookmark_border' : 'bookmark'"
           ></ix-icon>
-          {{ (bootenv.keep ? 'Unkeep' : 'Keep') | translate }}
+          {{ bootenv.keep ? ('Unkeep' | translate) : ('Keep' | translate) }}
         </a>
       </mat-menu>
     </td>
   </ng-container>
 
-  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr *matHeaderRowDef="displayedColumns" mat-header-row ixTest="table-header"></tr>
   <tr
+    *matRowDef="let bootEnvironment; columns: displayedColumns; dataSource: dataSource"
     mat-row
-    *matRowDef="let element; columns: displayedColumns; dataSource: dataSource"
+    [ixTest]="bootEnvironment.name"
   ></tr>
 
-  <tr class="mat-row no-data-row" *matNoDataRow>
-    <td
-      class="mat-cell"
-      [attr.colspan]="displayedColumns.length"
-      *ngIf="!(isLoading$ | async)"
-    >
-      <ix-entity-empty [conf]="emptyOrErrorConfig$ | async"></ix-entity-empty>
-    </td>
-  </tr>
 </table>
 
 <ix-table-paginator

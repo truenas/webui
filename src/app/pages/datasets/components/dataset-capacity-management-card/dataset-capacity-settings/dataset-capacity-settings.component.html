@@ -106,16 +106,17 @@
         </div>
       </div>
 
-      <div class="form-actions">
+      <ix-form-actions>
         <button
           mat-button
           type="submit"
           color="primary"
+          ixTest="save"
           [disabled]="form.invalid || isLoading"
         >
           {{ 'Save' | translate }}
         </button>
-      </div>
+      </ix-form-actions>
     </form>
   </mat-card-content>
 </mat-card>

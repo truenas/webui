@@ -1,0 +1,18 @@
+<h1 mat-dialog-title>{{ 'Scan This QR Code' | translate }}</h1>
+<div mat-dialog-content>
+  <div id="qr-wrapper">
+    <qr-code [value]="data.qrInfo" [size]="150"> </qr-code>
+  </div>
+</div>
+<div mat-dialog-actions id="qr-dialog-buttons">
+  <ix-warning class="warning" [message]="'Scan this QR Code with your authenticator app of choice. The next time you try to login, you will be asked to enter an One Time Password (OTP) from your authenticator app. This step is extremely important. Without the OTP you will be locked out of this system.' | translate"></ix-warning>
+  <button
+    mat-button
+    cdkFocusInitial
+    color="accent"
+    ixTest="close-qr"
+    (click)="onNoClick()"
+  >
+    {{ 'CLOSE' | translate }}
+  </button>
+</div>

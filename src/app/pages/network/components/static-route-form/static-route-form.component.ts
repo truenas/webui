@@ -1,23 +1,25 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+} from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import helptext from 'app/helptext/network/static-routes/static-routes';
 import { StaticRoute, UpdateStaticRoute } from 'app/interfaces/static-route.interface';
-import { ipv4or6Validator } from 'app/modules/entity/entity-form/validators/ip-validation';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { WebSocketService } from 'app/services';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { ipv4or6Validator } from 'app/modules/ix-forms/validators/ip-validation';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
   templateUrl: './static-route-form.component.html',
-  styleUrls: ['./static-route-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class StaticRouteFormComponent {
-  private editingRoute: StaticRoute;
+export class StaticRouteFormComponent implements OnInit {
   get isNew(): boolean {
     return !this.editingRoute;
   }
@@ -41,15 +43,22 @@ export class StaticRouteFormComponent {
   constructor(
     private fb: FormBuilder,
     private ws: WebSocketService,
-    private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
+    private snackbar: SnackbarService,
     private errorHandler: FormErrorHandlerService,
     private translate: TranslateService,
+    private slideInRef: IxSlideInRef<StaticRouteFormComponent>,
+    @Inject(SLIDE_IN_DATA) private editingRoute: StaticRoute,
   ) {}
 
-  setEditingStaticRoute(route: StaticRoute): void {
-    this.editingRoute = route;
-    this.form.patchValue(route);
+  ngOnInit(): void {
+    if (this.editingRoute) {
+      this.setEditingStaticRoute();
+    }
+  }
+
+  setEditingStaticRoute(): void {
+    this.form.patchValue(this.editingRoute);
   }
 
   onSubmit(): void {
@@ -68,9 +77,14 @@ export class StaticRouteFormComponent {
 
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
+        if (this.isNew) {
+          this.snackbar.success(this.translate.instant('Static route added'));
+        } else {
+          this.snackbar.success(this.translate.instant('Static route updated'));
+        }
         this.isFormLoading = false;
         this.cdr.markForCheck();
-        this.slideInService.close();
+        this.slideInRef.close();
       },
       error: (error) => {
         this.isFormLoading = false;

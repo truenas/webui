@@ -26,15 +26,15 @@ describe('IxSlideToggleComponent', () => {
       spectator.component.setDisabledState(true);
       expect(spectator.component.isDisabled).toBeTruthy();
     });
-    it('when called with false, input is not disabled', () => {
+    it('when called with false, button is not disabled', () => {
       spectator.component.setDisabledState(false);
       spectator.detectChanges();
-      expect(spectator.query('input')).not.toBeDisabled();
+      expect(spectator.query('button')).not.toBeDisabled();
     });
-    it('when called with true, input is disabled', () => {
+    it('when called with true, buton is disabled', () => {
       spectator.component.setDisabledState(true);
       spectator.detectChanges();
-      expect(spectator.query('input')).toBeDisabled();
+      expect(spectator.query('button')).toBeDisabled();
     });
   });
 

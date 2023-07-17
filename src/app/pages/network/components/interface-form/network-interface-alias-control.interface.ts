@@ -1,4 +1,4 @@
-import * as ipRegex from 'ip-regex';
+import ipRegex from 'ip-regex';
 import { NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
 import { NetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
 

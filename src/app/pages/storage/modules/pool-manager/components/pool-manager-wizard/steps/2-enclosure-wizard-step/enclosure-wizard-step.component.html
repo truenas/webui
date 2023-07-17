@@ -1,0 +1,48 @@
+<ng-container [formGroup]="form">
+  <ix-radio-group
+    formControlName="dispersalStrategy"
+    [options]="dispersalOptions$"
+  ></ix-radio-group>
+
+  <div *ngIf="isLimitingToSingle" class="limiting">
+    <ix-select
+      formControlName="limitToEnclosure"
+      [required]="true"
+      [options]="enclosureOptions$"
+      [label]="'Enclosure' | translate"
+    ></ix-select>
+
+    <div class="description">
+      {{ helptext.enclosureOptionsDescription | translate }}
+    </div>
+  </div>
+</ng-container>
+
+<p *ngIf="stepWarning" class="warning">
+  {{ stepWarning }}
+</p>
+
+<ix-form-actions>
+  <button
+    mat-button
+    matStepperPrevious
+    color="accent"
+    type="button"
+    ixTest="back"
+    [disabled]="form.invalid"
+  >
+    {{ 'Back' | translate }}
+  </button>
+  <div class="step-buttons">
+    <button
+      mat-button
+      matStepperNext
+      color="primary"
+      type="button"
+      ixTest="next"
+      [disabled]="form.invalid"
+    >
+      {{ 'Next' | translate }}
+    </button>
+  </div>
+</ix-form-actions>

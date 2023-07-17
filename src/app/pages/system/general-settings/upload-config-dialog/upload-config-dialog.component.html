@@ -7,12 +7,18 @@
     [label]="'Select Configuration File' | translate"
   ></ix-file-input>
 
-  <div class="form-actions">
-    <button mat-button type="submit" color="primary" [disabled]="form.invalid">
-      {{ 'Upload' | translate }}
-    </button>
-    <button mat-button type="button" [matDialogClose]="false">
+  <ix-form-actions>
+    <button mat-button type="button" ixTest="cancel" [matDialogClose]="false">
       {{ 'Cancel' | translate }}
     </button>
-  </div>
+    <button
+      mat-button
+      type="submit"
+      color="primary"
+      ixTest="upload"
+      [disabled]="form.invalid"
+    >
+      {{ 'Upload' | translate }}
+    </button>
+  </ix-form-actions>
 </form>

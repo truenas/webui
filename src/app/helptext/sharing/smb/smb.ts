@@ -1,11 +1,6 @@
-import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const helptextSharingSmb = {
-  fieldset_basic: T('Basic'),
-  fieldset_access: T('Access'),
-  fieldset_other: T('Other Options'),
-
   column_name: T('Name'),
   column_path: T('Path'),
   column_comment: T('Description'),
@@ -13,7 +8,6 @@ export const helptextSharingSmb = {
 
   placeholder_path: T('Path'),
   tooltip_path: T('Select pool, dataset, or directory to share.'),
-  validators_path: [Validators.required],
   errormsg_name: T(
     '<i>global</i> is a reserved name that cannot be used as a share\
  name. Please enter a different share name.',
@@ -109,22 +103,6 @@ export const helptextSharingSmb = {
   ),
 
   placeholder_hostsallow: T('Hosts Allow'),
-  tooltip_hostsallow: T(
-    'Enter a list of allowed hostnames or IP addresses.\
- Separate entries by pressing <code>Enter</code>. A more detailed description \
- with examples can be found \
- <a href="https://www.samba.org/samba/docs/current/man-html/smb.conf.5.html#HOSTSALLOW" target="_blank">here</a>. <br><br> \
- If neither *Hosts Allow* or *Hosts Deny* contains \
- an entry, then SMB share access is allowed for any host. <br><br> \
- If there is a *Hosts Allow* list but no *Hosts Deny* list, then only allow \
- hosts on the *Hosts Allow* list. <br><br> \
- If there is a *Hosts Deny* list but no *Hosts Allow* list, then allow all \
- hosts that are not on the *Hosts Deny* list. <br><br> \
- If there is both a *Hosts Allow* and *Hosts Deny* list, then allow all hosts \
- that are on the *Hosts Allow* list. <br><br> \
- If there is a host not on the *Hosts Allow* and not on the *Hosts Deny* list, \
- then allow it.',
-  ),
 
   placeholder_hostsdeny: T('Hosts Deny'),
   tooltip_hostsdeny: T(
@@ -147,13 +125,6 @@ export const helptextSharingSmb = {
     'Export ZFS snapshots as\
  <a href="https://docs.microsoft.com/en-us/windows/desktop/vss/shadow-copies-and-shadow-copy-sets"\
  target=_blank>Shadow Copies</a> for VSS clients.',
-  ),
-
-  placeholder_auxsmbconf: T('Auxiliary Parameters'),
-  tooltip_auxsmbconf: T(
-    'Additional \
- <a href="https://www.samba.org/samba/docs/current/man-html/smb.conf.5.html" target="_blank">smb.conf</a> \
- parameters.',
   ),
 
   placeholder_aapl_name_mangling: T('Use Apple-style Character Encoding'),
@@ -238,10 +209,7 @@ export const helptextSharingSmb = {
  <a href="https://docs.microsoft.com/en-us/windows/win32/secauthz/security-identifiers" target="_blank">Windows\
  Security Identifier</a>. Either a <i>SID</i> or a <i>Domain</i> and <i>Name</i> is required for this ACL.',
   ),
-  ae_who_name_domain_tooltip: T(
-    'Domain for the user <i>Name</i>. Required when a <i>SID</i> is not entered.\
- Local users have the SMB server NetBIOS name: <code>freenas\\smbusers</code>.',
-  ),
+  ae_who_name_domain_tooltip: T('The domain for local users is the NetBIOS name of the TrueNAS server.'),
   ae_who_name_name_tooltip: T(
     'Who this ACL entry applies to, shown as a user name. Requires adding the user <i>Domain</i>.',
   ),

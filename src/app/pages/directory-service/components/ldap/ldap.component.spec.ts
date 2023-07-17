@@ -12,12 +12,14 @@ import helptext from 'app/helptext/directory-service/ldap';
 import { KerberosRealm } from 'app/interfaces/kerberos-realm.interface';
 import { LdapConfig, LdapConfigUpdateResult } from 'app/interfaces/ldap-config.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { LdapComponent } from 'app/pages/directory-service/components/ldap/ldap.component';
 import {
-  DialogService, ModalService, SystemGeneralService, WebSocketService,
+  DialogService, SystemGeneralService, WebSocketService,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -74,8 +76,9 @@ describe('LdapComponent', () => {
       }),
       mockProvider(DialogService),
       mockProvider(SnackbarService),
-      mockProvider(ModalService),
       mockProvider(MatDialog),
+      mockProvider(IxSlideInRef),
+      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
     declarations: [
       MockComponent(EntityJobComponent),
@@ -158,12 +161,12 @@ describe('LdapComponent', () => {
       anonbind: true,
       kerberos_principal: 'principal2',
     }]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
   });
 
   it('shows job dialog when form is submitted and there is a job_id in the response', async () => {
-    const mockWebsocket = spectator.inject(MockWebsocketService);
-    mockWebsocket.mockCall('ldap.update', { job_id: 2 } as LdapConfigUpdateResult);
+    const websocketMock = spectator.inject(MockWebsocketService);
+    websocketMock.mockCall('ldap.update', { job_id: 2 } as LdapConfigUpdateResult);
     const matDialog = spectator.inject(MatDialog);
     const jobComponent = {
       jobId: null,
@@ -179,9 +182,8 @@ describe('LdapComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(jobComponent.jobId).toEqual(2);
+    expect(jobComponent.jobId).toBe(2);
     expect(jobComponent.wsshow).toHaveBeenCalled();
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
-    expect(spectator.inject(ModalService).refreshTable).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
   });
 });

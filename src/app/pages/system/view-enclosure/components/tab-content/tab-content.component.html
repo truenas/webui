@@ -1,13 +1,13 @@
-<table id="tab-data" mat-table [dataSource]="data.elements">
+<table id="tab-data" mat-table [ixTest]="['enclosures-table', data.name]" [dataSource]="data.elements">
   <!-- Column -->
   <ng-container
     *ngFor="let header of data.header; let i = index"
     [matColumnDef]="data.header[i]"
   >
     <th *matHeaderCellDef mat-header-cell>{{ header }}</th>
-    <td mat-cell *matCellDef="let element">{{ element.data[header] }}</td>
+    <td *matCellDef="let element" mat-cell>{{ element.data[header] }}</td>
   </ng-container>
 
-  <tr mat-header-row *matHeaderRowDef="data.header"></tr>
-  <tr mat-row *matRowDef="let row; columns: data.header"></tr>
+  <tr *matHeaderRowDef="data.header" mat-header-row ixTest="table-header"></tr>
+  <tr *matRowDef="let row; columns: data.header" mat-row [ixTest]="row.name"></tr>
 </table>

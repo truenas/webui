@@ -14,4 +14,8 @@ export class IxIconHarness extends MatIconHarness {
       .addOption('name', options.name, (harness, text) => HarnessPredicate.stringMatches(harness.getName(), text))
       .addOption('namespace', options.namespace, (harness, text) => HarnessPredicate.stringMatches(harness.getNamespace(), text));
   }
+
+  async click(): Promise<void> {
+    return (await this.host()).click();
+  }
 }

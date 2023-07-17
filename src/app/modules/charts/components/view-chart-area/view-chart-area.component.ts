@@ -1,7 +1,11 @@
 import {
-  Component, Input, OnDestroy, OnChanges, SimpleChanges, ViewChild, ElementRef,
+  Component, Input, OnDestroy, OnChanges, ViewChild, ElementRef,
 } from '@angular/core';
-import { Chart, ChartData, ChartOptions } from 'chart.js';
+import {
+  Chart, ChartData, ChartOptions, ChartConfiguration,
+} from 'chart.js';
+import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
+import 'chartjs-adapter-date-fns';
 
 @Component({
   selector: 'ix-view-chart-area',
@@ -10,13 +14,13 @@ import { Chart, ChartData, ChartOptions } from 'chart.js';
 })
 export class ViewChartAreaComponent implements OnDestroy, OnChanges {
   @ViewChild('canvas', { static: true }) canvas: ElementRef;
-  @Input() data: ChartData;
-  @Input() options: ChartOptions;
+  @Input() data: ChartData<'line'>;
+  @Input() options: ChartOptions<'line'>;
 
   chart: Chart;
   maxSources = 8;
 
-  makeConfig(data: ChartData): Chart.ChartConfiguration {
+  makeConfig(data: ChartData): ChartConfiguration {
     return {
       type: 'line',
       data,
@@ -39,7 +43,7 @@ export class ViewChartAreaComponent implements OnDestroy, OnChanges {
     );
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(changes: IxSimpleChanges<this>): void {
     if (changes.options || !this.chart) {
       this.render();
     }

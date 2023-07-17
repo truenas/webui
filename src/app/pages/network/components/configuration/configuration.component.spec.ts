@@ -8,14 +8,17 @@ import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.u
 import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
 import { NetworkConfiguration } from 'app/interfaces/network-configuration.interface';
 import { IxRadioGroupHarness } from 'app/modules/ix-forms/components/ix-radio-group/ix-radio-group.harness';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { NetworkConfigurationComponent } from 'app/pages/network/components/configuration/configuration.component';
 import {
-  DialogService, LanguageService, SystemGeneralService, WebSocketService,
+  DialogService, LanguageService, SystemGeneralService,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('NetworkConfigurationComponent', () => {
   let spectator: Spectator<NetworkConfigurationComponent>;
@@ -43,7 +46,7 @@ describe('NetworkConfigurationComponent', () => {
           domains: [],
           hostname: 'truenas',
           hostname_local: 'truenas',
-          hosts: '',
+          hosts: [],
           httpproxy: '',
           id: 1,
           ipv4gateway: '',
@@ -51,8 +54,6 @@ describe('NetworkConfigurationComponent', () => {
           nameserver1: '',
           nameserver2: '',
           nameserver3: '',
-          netwait_enabled: false,
-          netwait_ip: [],
           service_announcement: {
             mdns: true,
             netbios: false,
@@ -69,11 +70,14 @@ describe('NetworkConfigurationComponent', () => {
         mockCall('network.configuration.update'),
       ]),
       mockProvider(IxSlideInService),
+      mockProvider(IxSlideInService),
       mockProvider(FormErrorHandlerService),
       mockProvider(DialogService),
       mockProvider(Router),
       mockProvider(LanguageService),
       mockProvider(SystemGeneralService),
+      mockProvider(IxSlideInRef),
+      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
 
@@ -97,12 +101,11 @@ describe('NetworkConfigurationComponent', () => {
       'Nameserver 1': '',
       'Nameserver 2': '',
       'Nameserver 3': '',
-      'IPv4 Default Gateway': '',
+      'IPv4 Default Gateway': '192.168.30.2',
       'IPv6 Default Gateway': '',
       'Inherit domain from DHCP': false,
       'Outbound Activity': 'Allow All',
       'HTTP Proxy': '',
-      'Enable Netwait Feature': false,
       'Host Name Database': [],
     });
   });
@@ -129,7 +132,6 @@ describe('NetworkConfigurationComponent', () => {
       'IPv4 Default Gateway': '',
       'IPv6 Default Gateway': '',
       'HTTP Proxy': '',
-      'Enable Netwait Feature': false,
       'Host Name Database': [],
     });
 
@@ -148,15 +150,13 @@ describe('NetworkConfigurationComponent', () => {
         hostname: 'truenas01',
         hostname_b: undefined,
         hostname_virtual: undefined,
-        hosts: '',
+        hosts: [],
         httpproxy: '',
         ipv4gateway: '',
         ipv6gateway: '',
         nameserver1: '',
         nameserver2: '',
         nameserver3: '',
-        netwait_enabled: false,
-        netwait_ip: [],
         service_announcement: {
           mdns: true,
           netbios: true,
@@ -166,7 +166,7 @@ describe('NetworkConfigurationComponent', () => {
     );
   });
 
-  it('saves activity as ALLOW with activities = [] when "Deny All" is selected ', async () => {
+  it('saves activity as ALLOW with activities = [] when "Deny All" is selected', async () => {
     const outboundRadioGroup = await loader.getHarness(IxRadioGroupHarness.with({ selector: '.outbound-network-radio' }));
     await outboundRadioGroup.setValue('Deny All');
 

@@ -6,9 +6,6 @@
 
   <div
     mat-dialog-content
-    ix-auto
-    ix-auto-type="dialog"
-    ix-auto-identifier="title"
     class="dialog-content"
   >
     <div *ngIf="attachments.length" class="attachments">
@@ -62,19 +59,20 @@
     [label]="'Confirm' | translate"
   ></ix-checkbox>
 
-  <div class="form-actions">
+  <ix-form-actions>
+    <button mat-button type="button" ixTest="cancel" [matDialogClose]="false">
+      {{ 'Cancel' | translate }}
+    </button>
+
     <button
       class="delete-button"
       mat-button
       type="submit"
       color="primary"
+      ixTest="delete-dataset"
       [disabled]="form.invalid"
     >
       {{ 'Delete Dataset' | translate }}
     </button>
-
-    <button mat-button type="button" [matDialogClose]="false">
-      {{ 'Cancel' | translate }}
-    </button>
-  </div>
+  </ix-form-actions>
 </form>

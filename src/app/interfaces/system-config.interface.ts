@@ -3,8 +3,6 @@ import { Certificate } from 'app/interfaces/certificate.interface';
 
 export interface SystemGeneralConfig {
   birthday: ApiTimestamp;
-  crash_reporting: boolean;
-  crash_reporting_is_set: boolean;
   id: number;
   kbdmap: string;
   language: string;
@@ -17,6 +15,7 @@ export interface SystemGeneralConfig {
   ui_httpsredirect: boolean;
   ui_port: number;
   ui_v6address: string[];
+  ui_allowlist: string[];
   usage_collection: boolean;
   usage_collection_is_set: boolean;
   wizardshown: boolean;
@@ -24,7 +23,6 @@ export interface SystemGeneralConfig {
 
 export interface SystemGeneralConfigUpdate {
   birthday?: ApiTimestamp;
-  crash_reporting?: boolean;
   kbdmap?: string;
   language?: string;
   timezone?: string;
@@ -35,6 +33,7 @@ export interface SystemGeneralConfigUpdate {
   ui_httpsredirect?: boolean;
   ui_port?: number;
   ui_v6address?: string[];
+  ui_allowlist?: string[];
   usage_collection?: boolean;
   sysloglevel?: string;
   syslogserver?: string;

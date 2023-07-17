@@ -44,24 +44,26 @@
         <ng-container #alertServiceContainer></ng-container>
       </ix-fieldset>
 
-      <div class="form-actions">
+      <ix-form-actions>
         <button
           mat-button
           type="submit"
-          [disabled]="!canSubmit"
           color="primary"
+          ixTest="save"
+          [disabled]="!canSubmit"
         >
           {{ 'Save' | translate }}
         </button>
         <button
           mat-button
           type="button"
+          ixTest="send-test-alert"
           [disabled]="!canSubmit"
           (click)="onSendTestAlert()"
         >
           {{ 'Send Test Alert' | translate }}
         </button>
-      </div>
+      </ix-form-actions>
     </form>
   </mat-card-content>
 </mat-card>

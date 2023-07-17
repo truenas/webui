@@ -13,6 +13,7 @@ import { Pool } from 'app/interfaces/pool.interface';
 import { StorageDashboardDisk } from 'app/interfaces/storage.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DiskHealthCardComponent } from 'app/pages/storage/components/dashboard-pool/disk-health-card/disk-health-card.component';
+import { PoolCardIconComponent } from 'app/pages/storage/components/dashboard-pool/pool-card-icon/pool-card-icon.component';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
 
 const disks: StorageDashboardDisk[] = [
@@ -49,7 +50,8 @@ const disks: StorageDashboardDisk[] = [
     zfs_guid: '12387051346845729003',
     alerts: [],
     tempAggregates: { min: 10, max: 50, avg: 30 },
-    smartTests: 0,
+    smartTestsRunning: 0,
+    smartTestsFailed: 0,
   },
 ];
 
@@ -61,6 +63,9 @@ describe('DiskHealthCardComponent', () => {
     component: DiskHealthCardComponent,
     imports: [
       NgxSkeletonLoaderModule,
+    ],
+    declarations: [
+      PoolCardIconComponent,
     ],
     providers: [
       mockProvider(PoolsDashboardStore),

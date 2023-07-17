@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, TrackByFunction,
 } from '@angular/core';
-import { Router } from '@angular/router';
+import { NavigationExtras, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { map } from 'rxjs/operators';
@@ -17,7 +17,8 @@ import {
   selectDismissedAlerts,
   selectUnreadAlerts,
 } from 'app/modules/alerts/store/alert.selectors';
-import { SystemGeneralService, WebSocketService } from 'app/services';
+import { SystemGeneralService } from 'app/services';
+import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -32,7 +33,7 @@ export class AlertsPanelComponent implements OnInit {
   unreadAlerts$ = this.store$.select(selectUnreadAlerts);
   dismissedAlerts$ = this.store$.select(selectDismissedAlerts);
 
-  isHa = false;
+  isHaLicensed = false;
 
   readonly trackByAlertId: TrackByFunction<Alert> = (_, alert) => alert.id;
 
@@ -40,7 +41,6 @@ export class AlertsPanelComponent implements OnInit {
     private store$: Store<AlertSlice>,
     private router: Router,
     private systemService: SystemGeneralService,
-    private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
   ) {}
 
@@ -60,9 +60,9 @@ export class AlertsPanelComponent implements OnInit {
     this.store$.dispatch(dismissAllAlertsPressed());
   }
 
-  navigateTo(route: string[]): void {
+  navigateTo(route: string[], extras?: NavigationExtras): void {
     this.store$.dispatch(alertPanelClosed());
-    this.router.navigate(route);
+    this.router.navigate(route, extras);
   }
 
   private checkHaStatus(): void {
@@ -70,8 +70,8 @@ export class AlertsPanelComponent implements OnInit {
       return;
     }
 
-    this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((isHa: boolean) => {
-      this.isHa = isHa;
+    this.store$.select(selectIsHaLicensed).pipe(untilDestroyed(this)).subscribe((isHaLicensed) => {
+      this.isHaLicensed = isHaLicensed;
       this.cdr.markForCheck();
     });
   }

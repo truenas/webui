@@ -1,19 +1,22 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import helptext from 'app/helptext/storage/vmware-snapshot/vmware-snapshot';
+import helptext from 'app/helptext/storage/vmware-snapshot/vm-ware-snapshot';
 import {
   MatchDatastoresWithDatasets, VmwareDatastore, VmwareFilesystem, VmwareSnapshot, VmwareSnapshotUpdate,
 } from 'app/interfaces/vmware.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { DialogService, WebSocketService } from 'app/services';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -58,7 +61,6 @@ export class VmwareSnapshotFormComponent implements OnInit {
     datastore: helptext.VMware_snapshot_form_datastore_tooltip,
   };
 
-  private editingSnapshot: VmwareSnapshot;
   private datastoreList: VmwareDatastore[];
   private filesystemList: VmwareFilesystem[];
 
@@ -66,13 +68,15 @@ export class VmwareSnapshotFormComponent implements OnInit {
   datastoreOptions$ = of([]);
 
   constructor(
+    private errorHandler: ErrorHandlerService,
     private fb: FormBuilder,
     private ws: WebSocketService,
     private translate: TranslateService,
-    private slideInService: IxSlideInService,
-    private errorHandler: FormErrorHandlerService,
+    private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     protected dialogService: DialogService,
+    private slideInRef: IxSlideInRef<VmwareSnapshotFormComponent>,
+    @Inject(SLIDE_IN_DATA) private editingSnapshot: VmwareSnapshot,
   ) {}
 
   ngOnInit(): void {
@@ -82,6 +86,10 @@ export class VmwareSnapshotFormComponent implements OnInit {
         this.form.controls.filesystem.setValue(fileSystemValue);
       }
     });
+
+    if (this.editingSnapshot) {
+      this.setSnapshotForEdit();
+    }
   }
 
   get disableFetchDatastores(): boolean {
@@ -89,9 +97,8 @@ export class VmwareSnapshotFormComponent implements OnInit {
     return !hostname || !username || !password;
   }
 
-  setSnapshotForEdit(snapshot: VmwareSnapshot): void {
-    this.editingSnapshot = snapshot;
-    this.form.patchValue(snapshot);
+  setSnapshotForEdit(): void {
+    this.form.patchValue(this.editingSnapshot);
     this.onFetchDataStores();
   }
 
@@ -108,10 +115,10 @@ export class VmwareSnapshotFormComponent implements OnInit {
       username,
       password,
     }]).pipe(untilDestroyed(this)).subscribe({
-      next: (res: MatchDatastoresWithDatasets) => {
+      next: (matches: MatchDatastoresWithDatasets) => {
         this.isLoading = false;
-        this.filesystemList = res.filesystems;
-        this.datastoreList = res.datastores;
+        this.filesystemList = matches.filesystems;
+        this.datastoreList = matches.datastores;
 
         this.filesystemOptions$ = of(
           this.filesystemList.map((filesystem) => ({
@@ -128,13 +135,16 @@ export class VmwareSnapshotFormComponent implements OnInit {
         );
         this.cdr.markForCheck();
       },
-      error: (error) => {
+      error: (error: WebsocketError) => {
         this.isLoading = false;
         this.datastoreOptions$ = of([]);
         if (error.reason && error.reason.includes('[ETIMEDOUT]')) {
-          this.dialogService.errorReport(helptext.connect_err_dialog.title, helptext.connect_err_dialog.msg);
+          this.dialogService.error({
+            title: helptext.connect_err_dialog.title,
+            message: helptext.connect_err_dialog.msg,
+          });
         } else {
-          new EntityUtils().handleWsError(this, error, this.dialogService);
+          this.dialogService.error(this.errorHandler.parseWsError(error));
         }
         this.cdr.markForCheck();
       },
@@ -171,18 +181,18 @@ export class VmwareSnapshotFormComponent implements OnInit {
               datastoreDescription: datastoreObj.description || this.translate.instant('(No description)'),
             },
           ),
-          hideCheckBox: true,
+          hideCheckbox: true,
         })
         : of(true)
     ).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       request$.pipe(untilDestroyed(this)).subscribe({
         next: () => {
           this.isLoading = false;
-          this.slideInService.close();
+          this.slideInRef.close();
         },
         error: (error) => {
           this.isLoading = false;
-          this.errorHandler.handleWsFormError(error, this.form);
+          this.formErrorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();
         },
       });

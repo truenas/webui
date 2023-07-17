@@ -1,23 +1,30 @@
 <h1 matDialogTitle>{{ title }}</h1>
-<div *ngIf="data.exportedPool">
+<div *ngIf="data.exportedPool" class="warning-wrapper">
   <ix-warning [message]="'This disk is part of the exported pool {pool}. Wiping this disk will make {pool} unable\
   to import. You will lose any and all data in {pool}. Please make sure that any sensitive data in {pool} is backed up before wiping this disk.' | translate: { pool: '\'' + data.exportedPool + '\'' }"></ix-warning>
 </div>
-<form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   <ix-select
     formControlName="wipe_method"
     [label]="'Method' | translate"
     [tooltip]="tooltips.wipe_method | translate"
     [options]="wipeMethods$"
+    [hideEmpty]="true"
   ></ix-select>
 
-  <div class="form-actions">
-    <button mat-button type="submit" color="primary" [disabled]="form.invalid">
-      {{ 'Wipe' | translate }}
-    </button>
-
-    <button mat-button type="button" matDialogClose>
+  <ix-form-actions>
+    <button mat-button type="button" ixTest="cancel" matDialogClose>
       {{ 'Cancel' | translate }}
     </button>
-  </div>
+
+    <button
+      mat-button
+      type="submit"
+      color="primary"
+      ixTest="wipe"
+      [disabled]="form.invalid"
+    >
+      {{ 'Wipe' | translate }}
+    </button>
+  </ix-form-actions>
 </form>

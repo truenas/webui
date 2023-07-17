@@ -8,15 +8,6 @@ export default {
       tooltip: T('Choose a new disk for the pool. To protect any existing data,\
  adding the selected disk is stopped when the disk is already in use or has partitions present.'),
     },
-    passphrase: {
-      placeholder: T('Passphrase'),
-      tooltip: T('Enter the current passphrase for the encrypted pool. This will be used\
- to encrypt the new disk and integrate it into the pool.'),
-    },
-    passphrase2: {
-      placeholder: T('Confirm Passphrase'),
-      tooltip: T('Verify the pool encryption passphrase.'),
-    },
     force: {
       placeholder: T('Force'),
       tooltip: T('Set to override safety checks and add the disk to the pool. <br>WARNING:\
@@ -29,49 +20,9 @@ export default {
     },
   },
 
-  actions_label: {
-    edit: T('Edit'),
-    offline: T('Offline'),
-    online: T('Online'),
-    replace: T('Replace'),
-    remove: T('Remove'),
-    detach: T('Detach'),
-    extend: T('Extend'),
-  },
-
-  offline_disk: {
-    title: T('Offline Disk'),
-    message: T('Offline disk '),
-    buttonMsg: T('Offline'),
-  },
-
-  online_disk: {
-    title: T('Online Disk'),
-    message: T('Online disk '),
-    buttonMsg: T('Online'),
-  },
   replace_disk: {
     title: T('Replacing Disk'),
     description: T('Replacing disk...'),
-  },
-  remove_disk: {
-    title: T('Remove Disk'),
-    message: T('Remove disk '),
-    buttonMsg: T('Remove'),
-  },
-  detach_disk: {
-    title: T('Detach Disk'),
-    message: T('Detach disk '),
-    buttonMsg: T('Detach'),
-  },
-  extend_disk: {
-    form_title: T('Extend Vdev'),
-    saveButtonText: T('Extend'),
-    title: T('Extending Vdev'),
-    description: T('Extending vdev...'),
-    info_dialog_content: T('Successfully extended vdev '),
-    err_title: T('Error Extending Vdev'),
-    err_msg: T('Could not extend Vdev.'),
   },
   exported_pool_warning: helptext.exported_pool_warning,
 

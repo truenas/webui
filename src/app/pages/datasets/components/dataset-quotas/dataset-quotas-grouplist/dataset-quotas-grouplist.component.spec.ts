@@ -11,23 +11,25 @@ import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.u
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { DatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
 import { DatasetQuotaEditFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-edit-form/dataset-quota-edit-form.component';
 import {
-  AppLoaderService, DialogService, StorageService, WebSocketService,
+  AppLoaderService, DialogService, WebSocketService,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { DatasetQuotasGrouplistComponent } from './dataset-quotas-grouplist.component';
 
-export const fakeGroupQuotas: DatasetQuota[] = [{
+const fakeGroupQuotas: DatasetQuota[] = [{
   id: 1,
   name: 'daemon',
   obj_quota: 0,
   obj_used: 0,
-  obj_used_percent: 0,
   quota: 512000,
   quota_type: DatasetQuotaType.Group,
   used_bytes: 0,
@@ -37,7 +39,6 @@ export const fakeGroupQuotas: DatasetQuota[] = [{
   name: 'bin',
   obj_quota: 0,
   obj_used: 0,
-  obj_used_percent: 0,
   quota: 512000,
   quota_type: DatasetQuotaType.Group,
   used_bytes: 0,
@@ -59,7 +60,7 @@ describe('DatasetQuotasGrouplistComponent', () => {
       mockProvider(AppLoaderService),
       mockProvider(FormErrorHandlerService),
       mockProvider(WebSocketService),
-      mockProvider(StorageService, {
+      mockProvider(IxFormatterService, {
         convertBytesToHumanReadable: jest.fn(() => '500 KiB'),
       }),
       mockProvider(ActivatedRoute, {
@@ -73,12 +74,14 @@ describe('DatasetQuotasGrouplistComponent', () => {
       }),
       mockProvider(IxSlideInService, {
         onClose$: new Subject<unknown>(),
-        open: jest.fn(),
+        open: jest.fn(() => ({ slideInClosed$: of() })),
       }),
       mockWebsocket([
         mockCall('pool.dataset.get_quota', fakeGroupQuotas),
         mockCall('pool.dataset.set_quota'),
       ]),
+      mockProvider(IxSlideInRef),
+      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
 
@@ -91,7 +94,7 @@ describe('DatasetQuotasGrouplistComponent', () => {
   it('should show table rows', async () => {
     expect(ws.call).toHaveBeenCalledWith(
       'pool.dataset.get_quota',
-      ['Test', DatasetQuotaType.Group, [['OR', [['quota', '>', 0], ['obj_quota', '>', 0]]]]],
+      ['Test', DatasetQuotaType.Group, []],
     );
 
     expect(ws.call).toHaveBeenCalledWith(
@@ -103,15 +106,15 @@ describe('DatasetQuotasGrouplistComponent', () => {
     const cells = await table.getCells(true);
     const expectedRows = [
       ['Name', 'ID', 'Data Quota', 'DQ Used', 'DQ % Used', 'Object Quota', 'OQ Used', 'OQ % Used', ''],
-      ['daemon', '1', '500 KiB', '0', '0%', '0', '0', '0%', 'delete'],
-      ['bin', '2', '500 KiB', '0', '0%', '0', '0', '0%', 'delete'],
+      ['daemon', '1', '500 KiB', '0', '0%', '—', '0', '—', ''],
+      ['bin', '2', '500 KiB', '0', '0%', '—', '0', '—', ''],
     ];
 
     expect(cells).toEqual(expectedRows);
   });
 
   it('should delete group quota when click delete button', async () => {
-    const [firstDeleteButton] = await loader.getAllHarnesses(MatButtonHarness.with({ text: 'delete' }));
+    const [firstDeleteButton] = await loader.getAllHarnesses(MatButtonHarness.with({ selector: '[aria-label="Delete"]' }));
     await firstDeleteButton.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(
@@ -135,9 +138,11 @@ describe('DatasetQuotasGrouplistComponent', () => {
 
   it('should open slide to edit group quota when click a row', async () => {
     const element = await spectator.fixture.nativeElement as HTMLElement;
-    const [firstRow] = element.querySelectorAll('.mat-row');
+    const [firstRow] = element.querySelectorAll('.mat-mdc-row');
     (firstRow as HTMLElement).click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(DatasetQuotaEditFormComponent);
+    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(
+      DatasetQuotaEditFormComponent, { data: { datasetId: 'Test', id: 1, quotaType: 'GROUP' } },
+    );
   });
 });

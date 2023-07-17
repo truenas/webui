@@ -1,10 +1,11 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { EffectsModule } from '@ngrx/effects';
 import { Store, StoreModule } from '@ngrx/store';
-import { MockPipe, ngMocks } from 'ng-mocks';
+import { ngMocks } from 'ng-mocks';
 import { firstValueFrom } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
+import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { Alert } from 'app/interfaces/alert.interface';
@@ -13,7 +14,7 @@ import { AlertPageObject } from 'app/modules/alerts/components/alert/alert.page-
 import { AlertEffects } from 'app/modules/alerts/store/alert.effects';
 import { adapter, alertReducer, alertsInitialState } from 'app/modules/alerts/store/alert.reducer';
 import { alertStateKey, selectAlerts } from 'app/modules/alerts/store/alert.selectors';
-import { WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 import { systemConfigReducer, SystemConfigState } from 'app/store/system-config/system-config.reducer';
 import { systemConfigStateKey } from 'app/store/system-config/system-config.selectors';
 
@@ -51,7 +52,7 @@ describe('AlertComponent', () => {
       EffectsModule.forRoot([AlertEffects]),
     ],
     declarations: [
-      MockPipe(FormatDateTimePipe, jest.fn(() => 'Jan 10 2022 10:36')),
+      FakeFormatDateTimePipe,
     ],
     providers: [
       mockWebsocket([
@@ -81,17 +82,17 @@ describe('AlertComponent', () => {
   });
 
   it('shows an alert node on an HA system', () => {
-    spectator.setInput('isHa', true);
+    spectator.setInput('isHaLicensed', true);
     expect(alert.nodeElement).toHaveExactText('Active Controller (A)');
   });
 
   it('shows an alert icon', async () => {
     const icon = await alert.getIconHarness();
-    expect(await icon.getName()).toEqual('cancel');
+    expect(await icon.getName()).toBe('cancel');
   });
 
   it('shows alert datetime (formatted according to system settings) and system timezone', () => {
-    expect(alert.dateTimeElement.textContent.replace(/\s{2,}/g, ' ').trim()).toEqual('Jan 10 2022 10:36 (America/Alaska)');
+    expect(alert.dateTimeElement.textContent.replace(/\s{2,}/g, ' ').trim()).toBe('1970-01-20 03:03:31 (America/Alaska)');
 
     const formatPipe = ngMocks.findInstance(FormatDateTimePipe);
     expect(formatPipe.transform).toHaveBeenCalledWith(1641811015);

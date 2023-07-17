@@ -11,7 +11,7 @@ import {
   DirectoryServicesMonitorComponent,
 } from 'app/modules/common/dialog/directory-services-monitor/directory-services-monitor.component';
 import { topbarDialogPosition } from 'app/modules/layout/components/topbar/topbar-dialog-position.constant';
-import { WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({

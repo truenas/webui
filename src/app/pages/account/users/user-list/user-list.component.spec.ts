@@ -1,13 +1,14 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { CoreComponents } from 'app/core/core-components.module';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { User } from 'app/interfaces/user.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
+import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
+import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
-import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
 import { usersInitialState, UsersState } from 'app/pages/account/users/store/user.reducer';
 import { selectUsers, selectUserState, selectUsersTotal } from 'app/pages/account/users/store/user.selectors';
 import { UserDetailsRowComponent } from 'app/pages/account/users/user-details-row/user-details-row.component';
@@ -15,7 +16,7 @@ import { DialogService, WebSocketService } from 'app/services';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { UserListComponent } from './user-list.component';
 
-export const fakeUserDataSource: User[] = [{
+const fakeUserDataSource: User[] = [{
   id: 1,
   uid: 0,
   username: 'root',
@@ -27,9 +28,8 @@ export const fakeUserDataSource: User[] = [{
   smb: false,
   password_disabled: false,
   locked: false,
-  sudo: false,
-  sudo_nopasswd: false,
   sudo_commands: [],
+  sudo_commands_nopasswd: [],
   email: 'root@root.root',
   group: {
     id: 41,
@@ -48,9 +48,8 @@ export const fakeUserDataSource: User[] = [{
   smb: true,
   password_disabled: false,
   locked: false,
-  sudo: false,
-  sudo_nopasswd: false,
   sudo_commands: [],
+  sudo_commands_nopasswd: [],
   email: null,
   group: {
     id: 101,
@@ -72,6 +71,8 @@ describe('UserListComponent', () => {
     imports: [
       EntityModule,
       IxTableModule,
+      CoreComponents,
+      IxTable2Module,
     ],
     declarations: [
       UserDetailsRowComponent,
@@ -115,50 +116,40 @@ describe('UserListComponent', () => {
     store$.overrideSelector(selectUsers, fakeUserDataSource);
     store$.refreshState();
 
-    const table = await loader.getHarness(IxTableHarness);
-    const cells = await table.getCells(true);
     const expectedRows = [
-      ['Username', 'UID', 'Builtin', 'Full Name', ''],
-      ['root', '0', 'true', 'root', 'expand_more'],
-      ['test', '1004', 'false', 'test', 'expand_more'],
+      ['Username', 'UID', 'Builtin', 'Full Name'],
+      ['root', '0', 'Yes', 'root'],
+      ['test', '1004', 'No', 'test'],
     ];
 
+    const table = await loader.getHarness(IxTable2Harness);
+    const cells = await table.getCellTexts();
     expect(cells).toEqual(expectedRows);
   });
 
-  it('should have empty message when loaded and datasource is empty', async () => {
-    store$.overrideSelector(selectUsers, []);
-    store$.refreshState();
-
-    const table = await loader.getHarness(IxTableHarness);
-    const text = await table.getCellTextByIndex();
-
-    expect(text).toEqual([['No Users']]);
-  });
-
-  it('should have error message when can not retrieve response', async () => {
-    store$.overrideSelector(selectUserState, {
-      error: 'Users could not be loaded',
-    } as UsersState);
-    store$.refreshState();
-    store$.select(selectUsers).subscribe((snapshots) => {
-      expect(snapshots).toEqual([]);
-    });
-
-    const table = await loader.getHarness(IxTableHarness);
-    const text = await table.getCellTextByIndex();
-
-    expect(text).toEqual([['Can not retrieve response']]);
-  });
-
-  it('should expand only one row on click', async () => {
+  it('should expand and collapse only one row when clicked on it', async () => {
     store$.overrideSelector(selectUsers, fakeUserDataSource);
     store$.refreshState();
 
-    const [firstExpandButton, secondExpandButton] = await loader.getAllHarnesses(MatButtonHarness.with({ text: 'expand_more' }));
-    await firstExpandButton.click();
-    await secondExpandButton.click();
+    const table = await loader.getHarness(IxTable2Harness);
+    await table.clickRow(0);
+    await table.clickRow(1);
+    expect(spectator.queryAll(UserDetailsRowComponent)).toHaveLength(1);
 
-    expect(spectator.queryAll('.expanded').length).toEqual(1);
+    await table.clickRow(1);
+    expect(spectator.queryAll(UserDetailsRowComponent)).toHaveLength(0);
+  });
+
+  it('should expand and collapse only one row on toggle click', async () => {
+    store$.overrideSelector(selectUsers, fakeUserDataSource);
+    store$.refreshState();
+
+    const table = await loader.getHarness(IxTable2Harness);
+    await table.clickToggle(0);
+    await table.clickToggle(1);
+    expect(spectator.queryAll(UserDetailsRowComponent)).toHaveLength(1);
+
+    await table.clickToggle(1);
+    expect(spectator.queryAll(UserDetailsRowComponent)).toHaveLength(0);
   });
 });

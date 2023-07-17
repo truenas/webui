@@ -1,0 +1,23 @@
+tr {
+  th {
+    font-size: 12px;
+    height: 48px;
+    overflow: hidden;
+    padding: 0 16px;
+    text-align: left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    .title-container {
+      align-items: center;
+      display: flex;
+    }
+
+    ix-icon {
+      font-size: 14px;
+      height: 14px;
+      margin-left: 4px;
+      width: 14px;
+    }
+  }
+}

@@ -1,7 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export default {
-  ldap_custactions_clearcache_dialog_title: T('LDAP'),
   ldap_custactions_clearcache_dialog_message: T('The cache is being rebuilt.'),
   ldap_hostname_tooltip: T('The hostname or IP address of the LDAP server. \
  Separate entries by pressing <code>Enter</code>.'),

@@ -4,10 +4,10 @@
   display: flex;
   flex-wrap: wrap;
   font-size: 12px;
-  margin-bottom: 19px;
-  margin-top: 12px;
+  margin-bottom: 0;
+  margin-top: 0;
 
   mat-checkbox {
-    margin-left: 0;
+    max-width: 93%;
   }
 }

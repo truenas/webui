@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -8,24 +8,25 @@ import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
+import { allCommands } from 'app/constants/all-commands.constant';
 import helptext from 'app/helptext/account/groups';
 import { Group } from 'app/interfaces/group.interface';
-import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation';
-import { regexValidator } from 'app/modules/entity/entity-form/validators/regex-validation';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { forbiddenValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { groupAdded, groupChanged } from 'app/pages/account/groups/store/group.actions';
 import { GroupSlice } from 'app/pages/account/groups/store/group.selectors';
-import { UserService, WebSocketService } from 'app/services';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { UserService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
   templateUrl: './group-form.component.html',
-  styleUrls: ['./group-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class GroupFormComponent {
-  private editingGroup: Group;
+export class GroupFormComponent implements OnInit {
   get isNew(): boolean {
     return !this.editingGroup;
   }
@@ -35,9 +36,12 @@ export class GroupFormComponent {
   isFormLoading = false;
 
   form = this.fb.group({
-    gid: [null as number, [Validators.required, regexValidator(/^\d+$/)]],
+    gid: [null as number, [Validators.required, Validators.pattern(/^\d+$/)]],
     name: ['', [Validators.required, Validators.pattern(UserService.namePattern)]],
-    sudo: [false],
+    sudo_commands: [[] as string[]],
+    sudo_commands_all: [false],
+    sudo_commands_nopasswd: [[] as string[]],
+    sudo_commands_nopasswd_all: [false],
     smb: [false],
     allowDuplicateGid: [false],
   });
@@ -53,18 +57,22 @@ export class GroupFormComponent {
   constructor(
     private fb: FormBuilder,
     private ws: WebSocketService,
-    private slideInService: IxSlideInService,
+    private slideInRef: IxSlideInRef<GroupFormComponent>,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
     private translate: TranslateService,
     private store$: Store<GroupSlice>,
+    private snackbar: SnackbarService,
+    @Inject(SLIDE_IN_DATA) private editingGroup: Group,
   ) { }
 
-  /**
-   * @param group Skip argument to add new group.
-   */
-  setupForm(group?: Group): void {
-    this.editingGroup = group;
+  ngOnInit(): void {
+    this.setupForm();
+  }
+
+  setupForm(): void {
+    this.setFormRelations();
+
     if (this.isNew) {
       this.ws.call('group.get_next_gid').pipe(untilDestroyed(this)).subscribe((nextId) => {
         this.form.patchValue({
@@ -74,11 +82,16 @@ export class GroupFormComponent {
       });
       this.setNamesInUseValidator();
     } else {
-      this.form.get('gid').disable();
+      this.form.controls.gid.disable();
       this.form.patchValue({
         gid: this.editingGroup.gid,
         name: this.editingGroup.group,
-        sudo: this.editingGroup.sudo,
+        sudo_commands: this.editingGroup.sudo_commands.includes(allCommands) ? [] : this.editingGroup.sudo_commands,
+        sudo_commands_all: this.editingGroup.sudo_commands.includes(allCommands),
+        sudo_commands_nopasswd: this.editingGroup.sudo_commands_nopasswd?.includes(allCommands)
+          ? []
+          : this.editingGroup.sudo_commands_nopasswd,
+        sudo_commands_nopasswd_all: this.editingGroup.sudo_commands_nopasswd?.includes(allCommands),
         smb: this.editingGroup.smb,
         allowDuplicateGid: true,
       });
@@ -92,7 +105,7 @@ export class GroupFormComponent {
       if (currentName) {
         forbiddenNames = _.remove(forbiddenNames, currentName);
       }
-      this.form.get('name').addValidators(forbiddenValues(forbiddenNames));
+      this.form.controls.name.addValidators(forbiddenValues(forbiddenNames));
     });
   }
 
@@ -101,7 +114,8 @@ export class GroupFormComponent {
     const commonBody = {
       name: values.name,
       smb: values.smb,
-      sudo: values.sudo,
+      sudo_commands: values.sudo_commands_all ? [allCommands] : values.sudo_commands,
+      sudo_commands_nopasswd: values.sudo_commands_nopasswd_all ? [allCommands] : values.sudo_commands_nopasswd,
       allow_duplicate_gid: values.allowDuplicateGid,
     };
 
@@ -126,12 +140,14 @@ export class GroupFormComponent {
     ).subscribe({
       next: (group) => {
         if (this.isNew) {
+          this.snackbar.success(this.translate.instant('Group added'));
           this.store$.dispatch(groupAdded({ group }));
         } else {
+          this.snackbar.success(this.translate.instant('Group updated'));
           this.store$.dispatch(groupChanged({ group }));
         }
         this.isFormLoading = false;
-        this.slideInService.close();
+        this.slideInRef.close();
         this.cdr.markForCheck();
       },
       error: (error) => {
@@ -139,6 +155,24 @@ export class GroupFormComponent {
         this.errorHandler.handleWsFormError(error, this.form);
         this.cdr.markForCheck();
       },
+    });
+  }
+
+  private setFormRelations(): void {
+    this.form.controls.sudo_commands_all.valueChanges.pipe(untilDestroyed(this)).subscribe((isAll) => {
+      if (isAll) {
+        this.form.controls.sudo_commands.disable();
+      } else {
+        this.form.controls.sudo_commands.enable();
+      }
+    });
+
+    this.form.controls.sudo_commands_nopasswd_all.valueChanges.pipe(untilDestroyed(this)).subscribe((isAll) => {
+      if (isAll) {
+        this.form.controls.sudo_commands_nopasswd.disable();
+      } else {
+        this.form.controls.sudo_commands_nopasswd.enable();
+      }
     });
   }
 }

@@ -21,11 +21,21 @@
   border: solid 1.5px var(--lines);
   border-radius: 2px;
   font-size: 12px;
-  padding: 6px 8px;
   position: relative;
 
-  ::ng-deep .mat-select-trigger {
-    font-size: 12px !important;
+  ::ng-deep {
+    .mat-mdc-select-value {
+      padding: 5.1px 8px;
+    }
+
+    .mat-mdc-select-trigger {
+      font-size: 12px !important;
+    }
+
+    .mat-mdc-select-min-line {
+      display: block;
+      width: 0;
+    }
   }
 
   &:focus-within {
@@ -33,9 +43,9 @@
   }
 
   &.disabled {
-    opacity: 0.38;
+    opacity: var(--disabled-opacity);
 
-    ::ng-deep .mat-select-value {
+    ::ng-deep .mat-mdc-select-value {
       cursor: not-allowed;
       opacity: 1;
     }
@@ -44,7 +54,13 @@
 
 .loader {
   display: inline-block;
-  margin-left: -35px;
+  margin-left: -45px;
   opacity: 0.5;
+  vertical-align: middle;
+}
+
+.option-tooltip {
+  margin-bottom: 0;
+  margin-left: 8px;
   vertical-align: middle;
 }

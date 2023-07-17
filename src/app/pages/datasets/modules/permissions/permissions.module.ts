@@ -15,6 +15,7 @@ import { CastModule } from 'app/modules/cast/cast.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import {
   AclEditorListComponent,
 } from 'app/pages/datasets/modules/permissions/components/acl-editor-list/acl-editor-list.component';
@@ -50,6 +51,7 @@ import {
 } from 'app/pages/datasets/modules/permissions/containers/permissions-card/permissions-card.component';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
 import { PermissionsCardStore } from 'app/pages/datasets/modules/permissions/stores/permissions-card.store';
+import { SaveAsPresetModalComponent } from './components/save-as-preset-modal/save-as-preset-modal.component';
 import { StripAclModalComponent } from './components/strip-acl-modal/strip-acl-modal.component';
 
 @NgModule({
@@ -71,6 +73,7 @@ import { StripAclModalComponent } from './components/strip-acl-modal/strip-acl-m
     MatDialogModule,
     NgxSkeletonLoaderModule,
     CoreComponents,
+    TestIdModule,
   ],
   declarations: [
     AclEditorListComponent,
@@ -86,6 +89,7 @@ import { StripAclModalComponent } from './components/strip-acl-modal/strip-acl-m
     DatasetTrivialPermissionsComponent,
     PermissionsCardComponent,
     StripAclModalComponent,
+    SaveAsPresetModalComponent,
   ],
   exports: [
     PermissionsCardComponent,

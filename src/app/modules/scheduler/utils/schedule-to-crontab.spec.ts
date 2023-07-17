@@ -11,7 +11,7 @@ describe('scheduleToCrontab', () => {
       month: '2-5',
     };
 
-    expect(scheduleToCrontab(schedule)).toEqual('15 10 * 2-5 6');
+    expect(scheduleToCrontab(schedule)).toBe('15 10 * 2-5 6');
   });
 
   it('converts scheduler without minutes to crontab', () => {
@@ -22,6 +22,6 @@ describe('scheduleToCrontab', () => {
       month: '2-5',
     };
 
-    expect(scheduleToCrontab(schedule)).toEqual('0 10 * 2-5 6');
+    expect(scheduleToCrontab(schedule)).toBe('0 10 * 2-5 6');
   });
 });

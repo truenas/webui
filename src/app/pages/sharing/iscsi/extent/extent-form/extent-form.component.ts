@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
@@ -13,10 +13,12 @@ import { mntPath } from 'app/enums/mnt-path.enum';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { IscsiExtent } from 'app/interfaces/iscsi.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { IscsiService, WebSocketService } from 'app/services';
+import { IscsiService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -76,17 +78,16 @@ export class ExtentFormComponent implements OnInit {
   );
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider();
 
-  private editingExtent: IscsiExtent;
-
   constructor(
     protected iscsiService: IscsiService,
     private translate: TranslateService,
     private formBuilder: FormBuilder,
-    private slideInService: IxSlideInService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private ws: WebSocketService,
     private filesystemService: FilesystemService,
+    private slideInRef: IxSlideInRef<ExtentFormComponent>,
+    @Inject(SLIDE_IN_DATA) private editingExtent: IscsiExtent,
   ) {}
 
   ngOnInit(): void {
@@ -102,18 +103,21 @@ export class ExtentFormComponent implements OnInit {
         this.form.controls.filesize.enable();
       }
     });
+
+    if (this.editingExtent) {
+      this.setExtentForEdit();
+    }
   }
 
-  setExtentForEdit(extent: IscsiExtent): void {
-    if (extent.type === IscsiExtentType.Disk) {
-      if (_.startsWith(extent.path, 'zvol')) {
-        extent.disk = extent.path;
+  setExtentForEdit(): void {
+    if (this.editingExtent.type === IscsiExtentType.Disk) {
+      if (_.startsWith(this.editingExtent.path, 'zvol')) {
+        this.editingExtent.disk = this.editingExtent.path;
       }
-      delete extent.path;
+      delete this.editingExtent.path;
     }
 
-    this.editingExtent = extent;
-    this.form.patchValue(extent);
+    this.form.patchValue(this.editingExtent);
   }
 
   onSubmit(): void {
@@ -125,10 +129,8 @@ export class ExtentFormComponent implements OnInit {
       values.path = values.disk;
     }
 
-    if (values.type === IscsiExtentType.File) {
-      if (+values.filesize !== 0) {
-        values.filesize = +values.filesize + (values.blocksize - +values.filesize % values.blocksize);
-      }
+    if (values.type === IscsiExtentType.File && +values.filesize !== 0) {
+      values.filesize = +values.filesize + (values.blocksize - +values.filesize % values.blocksize);
     }
 
     this.isLoading = true;
@@ -145,7 +147,7 @@ export class ExtentFormComponent implements OnInit {
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isLoading = false;
-        this.slideInService.close();
+        this.slideInRef.close();
       },
       error: (error) => {
         this.isLoading = false;

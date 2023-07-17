@@ -1,0 +1,68 @@
+:host {
+  display: block;
+  min-width: 400px;
+}
+
+.buttons {
+  justify-content: flex-end;
+  margin-bottom: -10px;
+}
+
+.exist-content {
+  margin-top: 20px;
+}
+
+.save-content {
+  margin-top: 16px;
+
+  ix-input {
+    margin-top: 0;
+  }
+}
+
+.label {
+  font-size: 12px;
+}
+
+.presets {
+  border-bottom: 1px solid var(--lines);
+  max-height: 350px;
+  overflow: auto;
+  padding-bottom: 12px;
+  padding-top: 5px;
+}
+
+.preset {
+  align-items: center;
+  display: flex;
+  padding: 5px 0;
+
+  &.preset-disabled {
+    opacity: 0.5;
+  }
+
+  .preset-name {
+    margin-right: auto;
+  }
+
+  .preset-type {
+    background: var(--alt-bg2);
+    border-radius: 4px;
+    font-weight: bold;
+    margin: 0 3px;
+    padding: 0 6px;
+  }
+
+  .preset-remove {
+    cursor: pointer;
+    height: 20px;
+    // TODO:
+    margin-bottom: -1px;
+
+    .ix-icon {
+      font-size: 20px;
+      height: 20px;
+      width: 20px;
+    }
+  }
+}

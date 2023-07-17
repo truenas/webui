@@ -1,0 +1,9 @@
+<div id="breadcrumb-bar" class="breadcrumb-bar">
+  <ul class="breadcrumb">
+    <li *ngFor="let breadcrumb of breadcrumbs;">
+      <a [routerLink]="breadcrumb.url" [ixTest]="['breadcrumb', breadcrumb.breadcrumb]">
+        {{ breadcrumb.breadcrumb | translate }}
+      </a>
+    </li>
+  </ul>
+</div>

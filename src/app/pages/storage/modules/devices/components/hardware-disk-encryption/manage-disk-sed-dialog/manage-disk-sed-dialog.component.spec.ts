@@ -10,7 +10,8 @@ import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-inpu
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 import { ManageDiskSedDialogComponent } from './manage-disk-sed-dialog.component';
 
 describe('ManageDiskSedDialogComponent', () => {
@@ -35,6 +36,7 @@ describe('ManageDiskSedDialogComponent', () => {
         mockCall('disk.update'),
       ]),
       mockProvider(MatDialogRef),
+      mockProvider(DialogService),
       mockProvider(SnackbarService),
       {
         provide: MAT_DIALOG_DATA,
@@ -53,7 +55,7 @@ describe('ManageDiskSedDialogComponent', () => {
     expect(spectator.inject(WebSocketService).call)
       .toHaveBeenCalledWith('disk.query', [[['devname', '=', 'sda']], { extra: { passwords: true } }]);
 
-    expect(await passwordInput.getValue()).toEqual('123456');
+    expect(await passwordInput.getValue()).toBe('123456');
   });
 
   it('allows password to be cleared if it is set', async () => {

@@ -4,13 +4,25 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { of } from 'rxjs';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { DialogService, WebSocketService } from 'app/services';
+import { AuthService } from 'app/services/auth/auth.service';
 import { ChangePasswordDialogComponent } from './change-password-dialog.component';
+
+const loggedInUser = {
+  pw_name: 'root',
+  pw_uid: 0,
+  pw_gid: 0,
+  pw_gecos: 'root',
+  pw_dir: '/root',
+  pw_shell: '/usr/bin/zsh',
+  id: 1,
+};
 
 describe('ChangePasswordDialogComponent', () => {
   let spectator: Spectator<ChangePasswordDialogComponent>;
@@ -30,6 +42,9 @@ describe('ChangePasswordDialogComponent', () => {
       ]),
       mockProvider(DialogService),
       mockProvider(MatDialogRef),
+      mockProvider(AuthService, {
+        user$: of(loggedInUser),
+      }),
     ],
   });
 
@@ -40,8 +55,8 @@ describe('ChangePasswordDialogComponent', () => {
   });
 
   it('checks current user password and shows an error if it is not correct', async () => {
-    const mockWebsocket = spectator.inject(MockWebsocketService);
-    mockWebsocket.mockCallOnce('auth.check_user', false);
+    const websocketMock = spectator.inject(MockWebsocketService);
+    websocketMock.mockCallOnce('auth.check_user', false);
 
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
@@ -69,7 +84,7 @@ describe('ChangePasswordDialogComponent', () => {
     await saveButton.click();
 
     expect(websocket.call).toHaveBeenCalledWith('auth.check_user', ['root', 'correct']);
-    expect(websocket.call).toHaveBeenCalledWith('user.update', [1, { password: '123456' }]);
+    expect(websocket.call).toHaveBeenCalledWith('user.update', [loggedInUser.id, { password: '123456' }]);
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
   });
 });

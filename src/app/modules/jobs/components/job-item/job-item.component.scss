@@ -1,14 +1,14 @@
 :host {
   display: block;
-
-  &:not(:last-child) {
-    border-bottom: 1px solid var(--lines);
-  }
+  max-width: 100%;
 }
 
 .job-item {
-  display: block;
-  padding: 8px 12px 8px 24px;
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  padding: 8px 12px;
+  place-content: center space-between;
 
   &.abortable .job-item-body {
     max-width: calc(100% - 48px);
@@ -16,6 +16,12 @@
 
   .job-item-body {
     flex: 1;
+    max-width: 100%;
+
+    .job-description {
+      white-space: pre-line;
+      word-break: break-word;
+    }
   }
 
   &.interactive {
@@ -36,10 +42,13 @@
 }
 
 .job-progress-description {
+  display: block;
+  max-width: 100%;
   opacity: 0.75;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: pre-line;
+  word-break: break-word;
 }
 
 .job-time {

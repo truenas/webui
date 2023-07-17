@@ -24,6 +24,7 @@ export interface ReplicationTask {
   embed?: boolean;
   enabled?: boolean;
   encryption?: boolean;
+  encryption_inherit?: boolean;
   encryption_key?: string;
   encryption_key_format?: EncryptionKeyFormat;
   encryption_key_location?: string;
@@ -36,6 +37,7 @@ export interface ReplicationTask {
   lifetime_value?: number;
   logging_level?: LoggingLevel;
   name: string;
+  name_regex: string;
   naming_schema?: string[];
   netcat_active_side?: NetcatMode;
   netcat_active_side_listen_address?: string;
@@ -43,19 +45,18 @@ export interface ReplicationTask {
   netcat_active_side_port_min?: number;
   netcat_passive_side_connect_address?: string;
   only_matching_schedule?: boolean;
-  periodic_snapshot_tasks?: number[] | PeriodicSnapshotTask[];
+  periodic_snapshot_tasks?: PeriodicSnapshotTask[];
   properties?: boolean;
   properties_exclude?: string[];
-  properties_override?: Record<string, unknown>;
+  properties_override?: Record<string, string | number | boolean>;
   readonly?: ReadOnlyMode;
   recursive: boolean;
   replicate?: boolean;
   restrict_schedule?: Schedule;
   retention_policy: RetentionPolicy;
   retries?: number;
-  schedule?: Schedule | boolean;
+  schedule?: Schedule;
   schedule_method: ScheduleMethod;
-  schedule_picker: string;
   source_datasets?: string[];
   source_datasets_from: string;
   speed_limit?: number;
@@ -87,9 +88,10 @@ export interface ReplicationCreate {
   exclude?: string[];
   properties?: boolean;
   properties_exclude?: string[];
-  properties_override?: Record<string, unknown>;
+  properties_override?: Record<string, string | number | boolean>;
   replicate?: boolean;
   encryption?: boolean;
+  encryption_inherit?: boolean;
   encryption_key?: string;
   encryption_key_format?: EncryptionKeyFormat;
   encryption_key_location?: string;
@@ -116,4 +118,5 @@ export interface ReplicationCreate {
   retries?: number;
   logging_level?: LoggingLevel;
   enabled: boolean;
+  sudo?: boolean;
 }

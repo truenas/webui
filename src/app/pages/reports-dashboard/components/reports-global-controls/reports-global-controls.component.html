@@ -1,4 +1,4 @@
-<form class="reports-toolbar" [formGroup]="form">
+<form *ngIf="allTabs.length" class="reports-toolbar" [formGroup]="form">
   <ng-container *ngIf="activeTab?.value === ReportType.Disk">
     <ix-select
       formControlName="devices"
@@ -25,13 +25,11 @@
     mat-button
     color="primary"
     class="menu-toggle"
-    ix-auto
-    ix-auto-type="button"
-    ix-auto-identifier="tab-selector"
+    ixTest="category-menu"
     [matMenuTriggerFor]="categoryMenu"
   >
     {{ activeTab.label }}
-    <ix-icon name="arrow_drop_down" class="menu-caret"></ix-icon>
+    <ix-icon name="mdi-menu-down" class="menu-caret"></ix-icon>
   </button>
 
   <mat-menu #categoryMenu="matMenu" overlapTrigger="false" class="reports-menu">
@@ -39,20 +37,17 @@
       <button
         *ngFor="let tab of allTabs"
         mat-menu-item
-        ix-auto
-        ix-auto-type="option"
-        [ix-auto-identifier]="tab.label"
-        (click)="onNavigateToTab(tab)"
+        [ixTest]="['category', tab.label]"
         [class.selected]="isActiveTab(tab)"
+        [routerLink]="['/reportsdashboard', tab.value]"
       >{{ tab.label | translate }}</button>
     </div>
   </mat-menu>
 
   <button
     mat-icon-button
-    ix-auto
-    ix-auto-type="button"
     class="config-form-button"
+    ixTest="reports-configuration"
     (click)="showConfigForm()"
   >
     <ix-icon

@@ -1,5 +1,5 @@
 <div
-  class="ix-{{ id }} ix-slide-in-form"
+  [class]="['ix-' + id, 'ix-slide-in-form']"
   [class.open]="isSlideInOpen"
   [class.wide]="wide"
 >
@@ -9,7 +9,7 @@
 </div>
 
 <div
-  class="ix-slide-in-background ix-{{ id }}-background"
+  [class]="['ix-slide-in-background', 'ix-' + id + '-background']"
   [class.open]="isSlideInOpen"
-  (click)="close()"
+  (click)="onBackdropClicked()"
 ></div>

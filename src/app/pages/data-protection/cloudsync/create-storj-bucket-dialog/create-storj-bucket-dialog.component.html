@@ -1,0 +1,29 @@
+<h1 mat-dialog-title>{{ 'Add bucket' | translate }}</h1>
+<p mat-dialog-></p>
+<form [formGroup]="form" (submit)="onSubmit()">
+  <div mat-dialog-content>
+    <p>{{ 'Add a new bucket to your Storj account.' | translate }}</p>
+    <ix-input
+      formControlName="bucket"
+      [required]="true"
+      [label]="'Bucket Name' | translate"
+    ></ix-input>
+  </div>
+  <div mat-dialog-actions>
+    <span fxFlex></span>
+    <button
+      mat-button
+      type="button"
+      ixTest="cancel"
+      [mat-dialog-close]="false"
+    >{{ 'Cancel' | translate }}</button>
+    <button
+      mat-button
+      type="submit"
+      color="primary"
+      ixTest="save"
+      [disabled]="form.invalid"
+    >{{ 'Save' | translate }}</button>
+  </div>
+</form>
+

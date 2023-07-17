@@ -61,6 +61,6 @@ describe('ManageConfigurationMenuComponent', () => {
     await menu.clickItem({ text: 'Reset to Defaults' });
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
-    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/others/config-reset']);
+    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/others/config-reset'], { skipLocationChange: true });
   });
 });

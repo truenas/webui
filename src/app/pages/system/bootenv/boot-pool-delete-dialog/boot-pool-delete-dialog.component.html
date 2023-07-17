@@ -16,7 +16,7 @@
 
   <div class="bulk-list">
     <ix-bulk-list-item
-      *ngFor="let bulkItem of bulkItems | keyvalue; trackBy: trackById"
+      *ngFor="let bulkItem of bulkItems | keyvalue; trackBy: trackByKey"
       [item]="bulkItem.value"
     >
       <span>{{ bulkItem.value.item.id }}</span>
@@ -39,17 +39,25 @@
         mat-button
         type="submit"
         color="primary"
+        ixTest="delete"
         [disabled]="form.invalid"
       >
         {{ 'Delete' | translate }}
       </button>
-      <button *ngIf="!isJobCompleted" mat-button type="button" matDialogClose>
+      <button
+        *ngIf="!isJobCompleted"
+        mat-button
+        type="button"
+        ixTest="save"
+        matDialogClose
+      >
         {{ 'Cancel' | translate }}
       </button>
       <button
         *ngIf="isJobCompleted"
         mat-button
         type="button"
+        ixTest="close"
         [matDialogClose]="true"
       >
         {{ 'Close' | translate }}

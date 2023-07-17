@@ -4,14 +4,17 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { Weekday } from 'app/enums/weekday.enum';
 import helptext from 'app/helptext/storage/resilver/resilver';
 import { ResilverConfigUpdate } from 'app/interfaces/resilver-config.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { DialogService, TaskService, WebSocketService } from 'app/services';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { DialogService, TaskService } from 'app/services';
 import { CalendarService } from 'app/services/calendar.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -48,14 +51,17 @@ export class ResilverConfigComponent implements OnInit {
   timeOptions$ = of(this.taskService.getTimeOptions());
 
   constructor(
+    private errorHandler: ErrorHandlerService,
     private ws: WebSocketService,
-    private errorHandler: FormErrorHandlerService,
+    private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
     private calendarService: CalendarService,
     private taskService: TaskService,
     private dialogService: DialogService,
     private router: Router,
+    private snackbar: SnackbarService,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -72,7 +78,7 @@ export class ResilverConfigComponent implements OnInit {
         error: (error) => {
           this.isFormLoading = false;
           this.cdr.markForCheck();
-          new EntityUtils().handleWsError(this, error, this.dialogService);
+          this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });
   }
@@ -85,13 +91,14 @@ export class ResilverConfigComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
+          this.snackbar.success(this.translate.instant('Resilver configuration saved'));
           this.isFormLoading = false;
           this.cdr.markForCheck();
           this.router.navigate(['/data-protection']);
         },
         error: (error) => {
           this.isFormLoading = false;
-          this.errorHandler.handleWsFormError(error, this.form);
+          this.formErrorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();
         },
       });

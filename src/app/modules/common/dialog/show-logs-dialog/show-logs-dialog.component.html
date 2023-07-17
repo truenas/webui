@@ -1,0 +1,24 @@
+<h1 mat-dialog-title>{{ 'Logs' | translate }}</h1>
+
+<div *ngIf="job?.logs_excerpt" class="logs">
+  <pre><code>{{ job.logs_excerpt }}</code></pre>
+  <ix-copy-btn [text]="job.logs_excerpt"></ix-copy-btn>
+</div>
+
+<div mat-dialog-actions>
+  <button
+    mat-button
+    matDialogClose
+    ixTest="close"
+  >
+    {{ 'Close' | translate }}
+  </button>
+  <button
+    mat-button
+    color="primary"
+    ixTest="download-logs"
+    (click)="downloadLogs()"
+  >
+    {{ 'Download Logs' | translate }}
+  </button>
+</div>

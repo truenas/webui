@@ -3,6 +3,7 @@
   [label]="label"
   [tooltip]="tooltip"
   [required]="required"
+  [ixTestOverride]="controlDirective.name"
 ></ix-label>
 
 <div class="input-container" [class.disabled]="isDisabled">
@@ -12,6 +13,7 @@
       <input
         type="file"
         [accept]="acceptedFiles"
+        [ixTest]="controlDirective.name"
         [required]="required"
         [disabled]="isDisabled"
         [multiple]="multiple"
@@ -20,13 +22,13 @@
     </label>
   </div>
   <div *ngIf="value && value.length">
-    <p class="file" *ngFor="let file of value">
+    <p *ngFor="let file of value" class="file">
       <span
         class="file-action"
         [matTooltip]="'Remove file' | translate"
         (click)="removeFile(file)"
       >
-        <mat-icon>close</mat-icon>
+        <ix-icon name="close"></ix-icon>
       </span>
       <span class="file-name">{{ file.name }}</span>
       <span class="file-size">{{ formatSize(file.size) }}</span>

@@ -21,7 +21,7 @@ export class UserComboboxProvider implements IxComboboxProvider {
 
   userQueryResToOptions(users: User[]): Option[] {
     return users.map((user) => {
-      return { label: user.username, value: user.username };
+      return { label: user.username, value: user[this.optionsValueField] };
     });
   }
 
@@ -34,5 +34,5 @@ export class UserComboboxProvider implements IxComboboxProvider {
       );
   }
 
-  constructor(private userService: UserService) {}
+  constructor(private userService: UserService, private optionsValueField: 'username' | 'id' = 'username') {}
 }

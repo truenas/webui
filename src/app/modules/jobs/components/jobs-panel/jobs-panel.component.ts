@@ -1,5 +1,5 @@
 import {
-  Component, ChangeDetectionStrategy, TrackByFunction,
+  Component, ChangeDetectionStrategy,
 } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -8,6 +8,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, map } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
+import { trackById } from 'app/helpers/track-by.utils';
 import { Job } from 'app/interfaces/job.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { abortJobPressed, jobPanelClosed } from 'app/modules/jobs/store/job.actions';
@@ -31,7 +32,7 @@ export class JobsPanelComponent {
   failedJobsCount$ = this.store$.select(selectFailedJobsCount);
   availableJobs$ = this.store$.select(selectJobsPanelSlice);
 
-  readonly trackByJobId: TrackByFunction<Job> = (_, job) => job.id;
+  readonly trackByJobId = trackById;
 
   constructor(
     private router: Router,
@@ -40,17 +41,16 @@ export class JobsPanelComponent {
     private translate: TranslateService,
     private dialog: DialogService,
     private matDialog: MatDialog,
-  ) {
-  }
+  ) {}
 
   onAbort(job: Job): void {
     this.dialog
       .confirm({
         title: this.translate.instant('Abort'),
         message: this.translate.instant('Are you sure you want to abort the <b>{task}</b> task?', { task: job.method }),
-        hideCheckBox: true,
-        buttonMsg: this.translate.instant('Abort'),
-        cancelMsg: this.translate.instant('Cancel'),
+        hideCheckbox: true,
+        buttonText: this.translate.instant('Abort'),
+        cancelText: this.translate.instant('Cancel'),
         disableClose: true,
       })
       .pipe(filter(Boolean), untilDestroyed(this))
@@ -68,12 +68,10 @@ export class JobsPanelComponent {
     const dialogRef = this.matDialog.open(EntityJobComponent, {
       data: { title },
       hasBackdrop: true,
-      width: '400px',
     });
 
     dialogRef.componentInstance.jobId = job.id;
     dialogRef.componentInstance.autoCloseOnSuccess = true;
-    dialogRef.componentInstance.openJobsManagerOnClose = false;
     dialogRef.componentInstance.wsshow();
   }
 

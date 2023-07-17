@@ -1,74 +1,24 @@
-<h1
-  mat-dialog-title
-  class="truecommand-signup-modal-form-title"
-  [innerHTML]="title | translate"
-></h1>
+<h1 matDialogTitle>{{ 'Connect to TrueCommand Cloud' | translate }}</h1>
 
-<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-  <div
-    mat-dialog-content
-    ix-auto
-    ix-auto-type="dialog"
-    ix-auto-identifier="title"
-    class="truecommand-signup-modal-form-content"
+<mat-dialog-content>
+  <p [innerHtml]="helptext.signupDialog.content | translate"></p>
+</mat-dialog-content>
+
+<ix-form-actions mat-dialog-actions class="form-actions">
+  <button mat-button type="button" ixTest="truecommand-signup" (click)="onSignup()">
+    {{ 'Signup' | translate }}
+  </button>
+
+  <button mat-button type="button" ixTest="cancel-truecommand" [matDialogClose]="false">
+    {{ 'Cancel' | translate }}
+  </button>
+
+  <button
+    mat-button
+    color="primary"
+    ixTest="truecommand-connect"
+    [matDialogClose]="true"
   >
-    <ix-input
-      formControlName="api_key"
-      [label]="helptext.updateDialog.api_placeholder | translate"
-      [tooltip]="helptext.updateDialog.api_tooltip | translate"
-    ></ix-input>
-
-    <ix-checkbox
-      formControlName="enabled"
-      [label]="helptext.updateDialog.enabled_placeholder | translate"
-      [tooltip]="helptext.updateDialog.enabled_tooltip | translate"
-    ></ix-checkbox>
-  </div>
-
-  <div mat-dialog-actions>
-    <span fxFlex></span>
-
-    <button
-      mat-button
-      type="button"
-      class="mat-button mat-accent action-btn"
-      name="Cancel_button"
-      ix-auto-type="button"
-      ix-auto-identifier="{{ 'Cancel' | uppercase }}"
-      [ix-auto]=""
-      (click)="onCancel()"
-    >
-      {{ 'Cancel' | translate }}
-    </button>
-
-    <span>
-      <button
-        *ngIf="isConnected"
-        mat-button
-        type="button"
-        class="mat-button action-btn"
-        id="cust_button_deregister"
-        ix-auto-type="button"
-        ix-auto-identifier="{{ helptext.tcDeregisterBtn | uppercase }}"
-        [ix-auto]=""
-        [name]="helptext.tcDeregisterBtn + '_button'"
-        (click)="onDeregister()"
-      >
-        {{ helptext.tcDeregisterBtn | translate }}
-      </button>
-    </span>
-
-    <button
-      mat-button
-      type="submit"
-      class="mat-button mat-primary"
-      ix-auto-type="button"
-      ix-auto-identifier="{{ saveButtonText | uppercase }}"
-      [name]="saveButtonText + '_button'"
-      [disabled]="form.invalid"
-      [ix-auto]=""
-    >
-      {{ saveButtonText | translate }}
-    </button>
-  </div>
-</form>
+    {{ 'Connect' | translate }}
+  </button>
+</ix-form-actions>

@@ -25,7 +25,7 @@ describe('getTreeBranchToNode', () => {
   it('returns an array of parent and children datasets from the tree by the predicate', () => {
     const result = getTreeBranchToNode(tree, (dataset) => dataset.id === 'root/parent/child');
 
-    expect(result.length).toBe(3);
+    expect(result).toHaveLength(3);
     expect(result[0].id).toBe('root');
     expect(result[1].id).toBe('root/parent');
     expect(result[2].id).toBe('root/parent/child');

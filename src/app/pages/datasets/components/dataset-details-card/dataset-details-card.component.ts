@@ -1,20 +1,24 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
+  ChangeDetectionStrategy, Component, Input,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, first } from 'rxjs/operators';
+import { filter, first, switchMap } from 'rxjs/operators';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
 import { DeleteDatasetDialogComponent } from 'app/pages/datasets/components/delete-dataset-dialog/delete-dataset-dialog.component';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import { ModalService } from 'app/services/modal.service';
+import { DialogService, WebSocketService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -26,15 +30,19 @@ import { ModalService } from 'app/services/modal.service';
 export class DatasetDetailsCardComponent {
   @Input() dataset: DatasetDetails;
   @Input() isLoading: boolean;
-  OnOff = OnOff;
+
+  readonly OnOff = OnOff;
 
   constructor(
-    private modalService: ModalService,
     private translate: TranslateService,
     private mdDialog: MatDialog,
     private datasetStore: DatasetTreeStore,
-    private cdr: ChangeDetectorRef,
+    private slideInService: IxSlideInService,
+    private errorHandler: ErrorHandlerService,
     private router: Router,
+    private ws: WebSocketService,
+    private dialogService: DialogService,
+    private snackbar: SnackbarService,
   ) { }
 
   get datasetCompression(): string {
@@ -61,30 +69,51 @@ export class DatasetDetailsCardComponent {
     return this.dataset.comments?.source === ZfsPropertySource.Local && !!this.dataset.comments?.value?.length;
   }
 
+  get canBePromoted(): boolean {
+    return Boolean(this.dataset.origin?.parsed);
+  }
+
   deleteDataset(): void {
     this.mdDialog.open(DeleteDatasetDialogComponent, { data: this.dataset })
       .afterClosed()
-      .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe(() => {
-        this.datasetStore.datasetUpdated();
-        this.datasetStore.selectedParentDataset$.pipe(first(), untilDestroyed(this)).subscribe((parent) => {
-          this.router.navigate(['/datasets', parent?.id], { state: { hideMobileDetails: true } });
-        });
+      .pipe(
+        filter(Boolean),
+        switchMap(() => {
+          this.datasetStore.datasetUpdated();
+          return this.datasetStore.selectedParentDataset$.pipe(first());
+        }),
+        untilDestroyed(this),
+      )
+      .subscribe((parent) => {
+        this.router.navigate(['/datasets', parent?.id], { state: { hideMobileDetails: true } });
+      });
+  }
+
+  promoteDataset(): void {
+    this.ws.call('pool.dataset.promote', [this.dataset.id])
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: () => {
+          this.snackbar.success(this.translate.instant('Dataset promoted successfully.'));
+          this.datasetStore.datasetUpdated();
+        },
+        error: (error: WebsocketError) => {
+          this.dialogService.error(this.errorHandler.parseWsError(error));
+        },
       });
   }
 
   editDataset(): void {
-    const editDatasetComponent = this.modalService.openInSlideIn(DatasetFormComponent, this.dataset.id);
-    editDatasetComponent.setPk(this.dataset.id);
-    editDatasetComponent.setVolId(this.dataset.pool);
-    editDatasetComponent.setTitle(this.translate.instant('Edit Dataset'));
+    const slideInRef = this.slideInService.open(DatasetFormComponent, {
+      wide: true, data: { datasetId: this.dataset.id, isNew: false },
+    });
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.datasetStore.datasetUpdated());
   }
 
   editZvol(): void {
-    const addZvolComponent = this.modalService.openInSlideIn(ZvolFormComponent, this.dataset.id);
-    addZvolComponent.setParent(this.dataset.id);
-    addZvolComponent.isNew = false;
-    // form doesnt work without cdr.markForCheck
-    this.cdr.markForCheck();
+    const slideInRef = this.slideInService.open(ZvolFormComponent, {
+      data: { isNew: false, parentId: this.dataset.id },
+    });
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.datasetStore.datasetUpdated());
   }
 }

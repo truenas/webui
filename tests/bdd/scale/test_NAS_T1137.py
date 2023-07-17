@@ -1,14 +1,15 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
 
-import time
+import reusableSeleniumCode as rsc
+import xpaths
 from function import (
     wait_on_element,
     is_element_present,
     attribute_value_exist,
+    wait_on_element_disappear,
     run_cmd,
-    ssh_cmd,
-    wait_on_element_disappear
+    post
 )
 from pytest_bdd import (
     given,
@@ -17,6 +18,7 @@ from pytest_bdd import (
     when,
     parsers,
 )
+from pytest_dependency import depends
 
 
 @scenario('features/NAS-T1137.feature', 'Create smb share for ericbsd verify only ericbsd can access it')
@@ -24,118 +26,122 @@ def test_create_smb_share_for_ericbsd_verify_only_ericbsd_can_access_it():
     """Create smb share for ericbsd verify only ericbsd can access it."""
 
 
-@given('the browser is open, the FreeNAS URL and logged in')
-def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_password):
-    """the browser is open, the FreeNAS URL and logged in."""
+@given('the browser is open, the TrueNAS URL and logged in')
+def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_password, request):
+    """the browser is open, the TrueNAS URL and logged in."""
+    depends(request, ['ericbsd_dataset', 'LDAP_SMB'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
-        assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
-    if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
-        assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
-        driver.find_element_by_xpath('//input[@data-placeholder="Username"]').clear()
-        driver.find_element_by_xpath('//input[@data-placeholder="Username"]').send_keys('root')
-        driver.find_element_by_xpath('//input[@data-placeholder="Password"]').clear()
-        driver.find_element_by_xpath('//input[@data-placeholder="Password"]').send_keys(root_password)
-        assert wait_on_element(driver, 5, '//button[@name="signin_button"]')
-        driver.find_element_by_xpath('//button[@name="signin_button"]').click()
+        assert wait_on_element(driver, 10, xpaths.login.user_Input)
+    if not is_element_present(driver, xpaths.side_Menu.dashboard):
+        assert wait_on_element(driver, 10, xpaths.login.user_Input)
+        driver.find_element_by_xpath(xpaths.login.user_Input).clear()
+        driver.find_element_by_xpath(xpaths.login.user_Input).send_keys('root')
+        driver.find_element_by_xpath(xpaths.login.password_Input).clear()
+        driver.find_element_by_xpath(xpaths.login.password_Input).send_keys(root_password)
+        assert wait_on_element(driver, 5, xpaths.login.signin_Button)
+        driver.find_element_by_xpath(xpaths.login.signin_Button).click()
     else:
-        driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
+        assert wait_on_element(driver, 10, xpaths.side_Menu.dashboard, 'clickable')
+        driver.find_element_by_xpath(xpaths.side_Menu.dashboard).click()
 
 
-@when('you should be on the dashboard, click on Sharing then Windows Shares(SMB)')
-def you_should_be_on_the_dashboard_click_on_sharing_then_windows_sharessmb(driver):
-    """you should be on the dashboard, click on Sharing then Windows Shares(SMB)."""
-    assert wait_on_element(driver, 10, '//span[contains(.,"Dashboard")]')
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Shares"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Shares"]').click()
-    assert wait_on_element(driver, 5, '//div[contains(.,"Shares")]')
+@when('you should be on the dashboard, click on Shares on the side menu')
+def you_should_be_on_the_dashboard_click_on_shares_on_the_side_menu(driver):
+    """you should be on the dashboard, click on Shares on the side menu."""
+    assert wait_on_element(driver, 10, xpaths.dashboard.title)
+    assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
+    assert wait_on_element(driver, 10, xpaths.side_Menu.shares, 'clickable')
+    driver.find_element_by_xpath(xpaths.side_Menu.shares).click()
 
 
-@then('The Windows Shares(SMB) page should open, Click Add')
-def the_windows_sharessmb_page_should_open_click_add(driver):
-    """The Windows Shares(SMB) page should open, Click Add."""
-    assert wait_on_element(driver, 7, '//mat-card[contains(.,"Windows (SMB) Shares")]//button[contains(.,"Add")]', 'clickable')
-    driver.find_element_by_xpath('//mat-card[contains(.,"Windows (SMB) Shares")]//button[contains(.,"Add")]').click()
-    assert wait_on_element(driver, 5, '//h3[contains(text(),"Add SMB")]')
-    assert wait_on_element(driver, 5, '//h4[contains(.,"Basic")]')  
+@then('on the Shares page click on the SMB Add button')
+def on_the_shares_page_click_on_the_smb_add_button(driver):
+    """on the Shares page click on the SMB Add button."""
+    assert wait_on_element(driver, 5, xpaths.sharing.title)
+    assert wait_on_element(driver, 7, xpaths.sharing.smb_Add_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.sharing.smb_Add_Button).click()
 
 
-@then(parsers.parse('Set Path to the LDAP dataset "{path}", Input "{smbname}" as name, Click to enable, Input "{description}" as description, and Click Summit'))
-def set_path_to_the_ldap_dataset_mnttankericbsd_dataset_input_eric_share_as_name_click_to_enable_input_test_eric_smb_share_as_description_and_click_summit(driver, path, smbname, description):
-    """Set Path to the LDAP dataset "{path}", Input "{smbname}" as name, Click to enable, Input "{description}" as description, and Click Summit."""
-    time.sleep(1)
-    global smb_path
-    smb_path = path
-    assert wait_on_element(driver, 5, '//input[@ix-auto="input__path"]', 'inputable')
-    driver.find_element_by_xpath('//input[@ix-auto="input__path"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__path"]').send_keys(path)
-    assert wait_on_element(driver, 5, '//input[@ix-auto="input__Name"]')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').send_keys(smbname)
-    checkbox_checked = attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Enabled"]', 'class', 'mat-checkbox-checked')
+@then(parsers.parse('on the SMB Add set Path to "{path}"'))
+def on_the_smb_add_set_path_to_mnttankwheel_dataset(driver, path):
+    """on the SMB Add set Path to "/mnt/tank/wheel_dataset"."""
+    global dataset_path
+    dataset_path = path
+    assert wait_on_element(driver, 5, xpaths.smb.addTitle)
+    assert wait_on_element(driver, 5, xpaths.smb.path_Input, 'inputable')
+    driver.find_element_by_xpath(xpaths.smb.path_Input).clear()
+    driver.find_element_by_xpath(xpaths.smb.path_Input).send_keys(path)
+
+
+@then(parsers.parse('input "{share_name}" as name, click to enable'))
+def input_eric_share_as_name_click_to_enable(driver, share_name):
+    """input "eric_share" as name, Click to enable."""
+    assert wait_on_element(driver, 5, xpaths.smb.name_Input, 'inputable')
+    driver.find_element_by_xpath(xpaths.smb.name_Input).click()
+    driver.find_element_by_xpath(xpaths.smb.name_Input).clear()
+    driver.find_element_by_xpath(xpaths.smb.name_Input).send_keys(share_name)
+    assert wait_on_element(driver, 5, xpaths.checkbox.enabled, 'clickable')
+    checkbox_checked = attribute_value_exist(driver, xpaths.checkbox.enabled, 'class', 'mat-mdc-checkbox-checked')
     if not checkbox_checked:
-        driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Enabled"]').click()
-    assert attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Enabled"]', 'class', 'mat-checkbox-checked')
-    assert wait_on_element(driver, 5, '//input[@ix-auto="input__Description"]')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Description"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Description"]').send_keys(description)
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
+        driver.find_element_by_xpath(xpaths.checkbox.enabled).click()
+    assert attribute_value_exist(driver, xpaths.checkbox.enabled, 'class', 'mat-mdc-checkbox-checked')
 
 
-@then(parsers.parse('{sharename} should be added, start service if its not running'))
-def sharename_should_be_added_start_service_if_its_not_running(driver, sharename):
-    """{sharename} should be added, start service if its not running."""
-    assert wait_on_element(driver, 5, '//div[contains(.,"SMB")]')
-    assert wait_on_element(driver, 5, f'//div[contains(.,"{sharename}")]')
-    if not is_element_present(driver, '//mat-card[contains(.,"Windows (SMB) Shares")]//span[contains(.,"RUNNING")]'):
-        assert wait_on_element(driver, 10, '//mat-card[contains(.,"Windows (SMB) Shares")]//mat-icon[text()="more_vert"]', 'clickable')      
-        driver.find_element_by_xpath('//mat-card[contains(.,"Windows (SMB) Shares")]//mat-icon[text()="more_vert"]').click()
-        assert wait_on_element(driver, 10, '//button[normalize-space(text())="Turn On Service"]', 'clickable')
-        driver.find_element_by_xpath('//button[normalize-space(text())="Turn On Service"]').click()
-        assert wait_on_element(driver, 20, '//mat-card[contains(.,"Windows (SMB) Shares")]//span[contains(.,"RUNNING")]')
-    # This sleep is to make sure that the NAS VM is ready for the step
-    time.sleep(2)
+@then(parsers.parse('input "{description}" as description, and click save'))
+def input_test_eric_smb_share_as_description_and_click_save(driver, description):
+    """input "test eric SMB share" as description, and click save."""
+    assert wait_on_element(driver, 5, xpaths.smb.description_Input, 'inputable')
+    driver.find_element_by_xpath(xpaths.smb.description_Input).clear()
+    driver.find_element_by_xpath(xpaths.smb.description_Input).send_keys(description)
+    assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
+    driver.find_element_by_xpath(xpaths.button.save).click()
 
 
-@then(parsers.parse('Send a file to the share with nas_IP/"{smbname}" and "{user}" and "{password}"'))
-def send_a_file_to_the_share_with_nas_iperic_share_and_ericbsd_and_testing1234(driver, nas_ip, smbname, user, password):
-    """Send a file to the share with nas_IP/"{smbname}" and "{user}" and "testing1234"."""
+@then('if Restart SMB Service box appears, click Restart Service')
+def if_restart_smb_service_box_appears_click_restart_service(driver):
+    """if Restart SMB Service box appears, click Restart Service."""
+    rsc.Start_Or_Restart_SMB_Service(driver)
+    assert wait_on_element_disappear(driver, 30, xpaths.progress.progressbar)
+
+
+@then(parsers.parse('the "{share_name}" should be added to the Shares list'))
+def the_eric_share_should_be_added_to_the_shares_list(driver, share_name):
+    """the eric_share should be added to the Shares list."""
+    assert wait_on_element(driver, 5, xpaths.sharing.smb_Share_Name(share_name))
+    assert wait_on_element(driver, 5, xpaths.sharing.smb_Service_Status)
+
+
+@then(parsers.parse('send a file to the "{share_name}" and "{user}"%"{password}" should succeed'))
+def send_a_file_to_the_eric_share(driver, nas_ip, share_name, user, password):
+    """send a file to the "eric_share" and "{user}"%"{password}"."""
     run_cmd('touch testfile.txt')
-    results = run_cmd(f'smbclient //{nas_ip}/{smbname} -U {user}%{password} -c "put testfile.txt testfile.txt"')
-    time.sleep(1)
+    results = run_cmd(f'smbclient //{nas_ip}/{share_name} -U {user}%{password} -c "put testfile.txt testfile.txt"')
+    assert results['result'], results['output']
     run_cmd('rm testfile.txt')
-    assert results['result'], results['output']
 
 
-@then('Verify that the is on nas_ip with root and password')
-def verify_that_the_is_on_nas_ip_with_root_and_password(driver, root_password, nas_ip):
-    """Verify that the is on nas_ip with root and password."""
-    global results
-    cmd = 'ls -la /mnt/tank/ericbsd_dataset'
-    results = ssh_cmd(cmd, 'root', root_password, nas_ip)
-    assert results['result'], results['output']
-    assert 'testfile' in results['output'], results['output']
+@then('verify that the file is in the dataset')
+def verify_that_the_file_is_in_the_dataset(root_password, nas_ip):
+    """verify that the file is in the dataset."""
+    file = f'{dataset_path}/testfile.txt'
+    results = post(nas_ip, '/filesystem/stat/', ('root', root_password), file)
+    assert results.status_code == 200, results.text
 
 
-@then(parsers.parse('send a file to the share should fail with NAS IP/"{smbname}" and {user2}%{password2}'))
-def send_a_file_to_the_share_should_fail_with_nas_iperic_share_and_footesting(driver, smbname, user2, password2, nas_ip):
-    """send a file to the share should fail with NAS IP/"{smbname}" and {user2}{password2}."""
+@then(parsers.parse('send a file to "{share_name}" with "{user}"%"{password}" should fail'))
+def send_a_file_to_eric_share_with_foo_should_fail(driver, nas_ip, share_name, user, password):
+    """send a file to "eric_share" with "{user}"%"{password}" should fail."""
     run_cmd('touch testfile2.txt')
-    results = run_cmd(f'smbclient //{nas_ip}/{smbname} -U {user2}%{password2} -c "put testfile2.txt testfile2.txt"')
-    time.sleep(1)
+    results = run_cmd(f'smbclient //{nas_ip}/{share_name} -U {user}%{password} -c "put testfile2.txt testfile2.txt"')
     run_cmd('rm testfile2.txt')
     assert not results['result'], results['output']
 
 
-@then(parsers.parse('verify that the file is not on the NAS'))
-def verify_that_the_file_is_not_on_the_nas(driver, nas_ip, root_password):
-    """verify that the file is not on the NAS."""
-    global results
-    cmd = 'ls -la /mnt/tank/ericbsd_dataset/'
-    results = ssh_cmd(cmd, 'root', root_password, nas_ip)
-    assert results['result'], results['output']
-    assert 'testfile2' not in results['output'], results['output']
+@then('verify that the file is not is in the dataset')
+def verify_that_the_file_is_not_is_in_the_dataset(root_password, nas_ip):
+    """verify that the file is not is in the dataset."""
+    file = f'{dataset_path}/testfile2.txt'
+    results = post(nas_ip, '/filesystem/stat/', ('root', root_password), file)
+    assert results.status_code == 422, results.text
+    assert results.json()['message'] == f'Path {dataset_path}/testfile2.txt not found', results.text

@@ -24,11 +24,10 @@
   }
 }
 
-.form-actions {
-  display: flex;
-  flex-direction: row-reverse;
+.progress-bar-panel {
+  padding-bottom: 15px;
+}
 
-  > button {
-    margin-left: 10px;
-  }
+.show-results-content {
+  padding: 0 24px 24px;
 }

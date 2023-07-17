@@ -9,11 +9,11 @@ import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { Disk } from 'app/interfaces/storage.interface';
 import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, WebSocketService } from 'app/services';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { DiskFormComponent } from './disk-form.component';
 
 describe('DiskFormComponent', () => {
@@ -42,7 +42,7 @@ describe('DiskFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockProvider(IxSlideInService),
+      mockProvider(IxSlideInRef),
       mockProvider(DialogService),
       mockProvider(SnackbarService),
       mockWebsocket([
@@ -57,7 +57,7 @@ describe('DiskFormComponent', () => {
     form = await loader.getHarness(IxFormHarness);
   });
 
-  it('it disables \'SED Password\' when \'Clear SED Password\' is checked', async () => {
+  it('disables \'SED Password\' when \'Clear SED Password\' is checked', async () => {
     const clearPassword = await loader.getHarness(IxCheckboxHarness.with({ label: 'Clear SED Password' }));
     const sedPassword = await loader.getHarness(IxInputHarness.with({ label: 'SED Password' }));
     await clearPassword.setValue(true);
@@ -84,7 +84,7 @@ describe('DiskFormComponent', () => {
     });
   });
 
-  it('it saves disk settings when form is saved', async () => {
+  it('saves disk settings when form is saved', async () => {
     spectator.component.setFormDisk(dataDisk);
     const changeValue = {
       'Advanced Power Management': 'Level 64 - Intermediate power usage with Standby',
@@ -113,7 +113,7 @@ describe('DiskFormComponent', () => {
       togglesmart: true,
       passwd: '',
     }]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalledWith(true);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
   });
 });

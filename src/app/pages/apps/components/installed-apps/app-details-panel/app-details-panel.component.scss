@@ -1,0 +1,57 @@
+@import 'mixins/cards';
+@import 'scss-imports/splitview';
+
+.header {
+  @media (max-width: calc($breakpoint-hidden - 1px)) {
+    border-bottom: solid 1px var(--lines);
+    margin: 0 16px 16px 0;
+  }
+}
+
+.title {
+  margin-bottom: 12px;
+  margin-top: 20px;
+  min-height: 36px;
+
+  @media (max-width: calc($breakpoint-hidden - 1px)) {
+    margin-top: 0;
+  }
+
+  .mobile-prefix {
+    display: none;
+
+    @media (max-width: $breakpoint-hidden) {
+      align-items: center;
+      display: flex;
+    }
+  }
+
+  .prefix {
+    display: flex;
+
+    @media (max-width: $breakpoint-hidden) {
+      display: none;
+    }
+  }
+
+  a.mobile-back-button {
+    cursor: pointer;
+    display: none;
+    padding: 5px 10px;
+
+    @media (max-width: $breakpoint-hidden) {
+      display: inline-block;
+      left: 2px;
+      position: relative;
+      top: 1px;
+    }
+  }
+}
+
+.cards {
+  @include details-cards();
+
+  @media (max-width: $breakpoint-tablet) {
+    overflow: hidden;
+  }
+}

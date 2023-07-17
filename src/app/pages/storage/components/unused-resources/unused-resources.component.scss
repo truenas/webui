@@ -1,5 +1,5 @@
-@import '~assets/styles/mixins/cards';
-@import '~assets/styles/scss-imports/splitview';
+@import 'mixins/cards';
+@import 'scss-imports/splitview';
 
 .header {
   align-items: center;
@@ -8,7 +8,7 @@
   margin-bottom: 5px;
   margin-left: 5px;
   margin-right: 5px;
-  
+
   .title {
     color: var(--fg2);
   }
@@ -18,7 +18,7 @@
   @include resource-cards();
   height: unset;
   margin-bottom: 30px;
-  
+
   @media (min-width: calc($breakpoint-tablet + 1px)) {
     display: flex;
     gap: 16px;

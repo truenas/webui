@@ -1,5 +1,5 @@
 import {
-  Component, ChangeDetectionStrategy, Input, EventEmitter, Output, ChangeDetectorRef, OnInit,
+  Component, ChangeDetectionStrategy, Input, ChangeDetectorRef, OnInit, OnDestroy,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -10,10 +10,10 @@ import {
 } from 'rxjs/operators';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { SnapshotCloneDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-clone-dialog/snapshot-clone-dialog.component';
 import { SnapshotRollbackDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
 import { DialogService, WebSocketService, AppLoaderService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -22,10 +22,9 @@ import { DialogService, WebSocketService, AppLoaderService } from 'app/services'
   styleUrls: ['./snapshot-details-row.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SnapshotDetailsRowComponent implements OnInit {
+export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
   @Input() snapshot: ZfsSnapshot;
   @Input() colspan: number;
-  @Output() update = new EventEmitter<void>();
 
   isLoading = true;
   isHold: boolean;
@@ -36,12 +35,17 @@ export class SnapshotDetailsRowComponent implements OnInit {
     private ws: WebSocketService,
     private translate: TranslateService,
     private loader: AppLoaderService,
+    private errorHandler: ErrorHandlerService,
     private matDialog: MatDialog,
     private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
     this.getSnapshotInfo();
+  }
+
+  ngOnDestroy(): void {
+    this.loader.close();
   }
 
   getSnapshotInfo(): void {
@@ -55,10 +59,10 @@ export class SnapshotDetailsRowComponent implements OnInit {
         this.isLoading = false;
         this.cdr.markForCheck();
       },
-      error: (error) => {
+      error: (error: WebsocketError) => {
         this.isLoading = false;
         this.cdr.markForCheck();
-        new EntityUtils().handleWsError(this, error, this.dialogService);
+        this.dialogService.error(this.errorHandler.parseWsError(error));
       },
     });
   }
@@ -85,16 +89,18 @@ export class SnapshotDetailsRowComponent implements OnInit {
     this.dialogService.confirm({
       title: this.translate.instant('Delete'),
       message: this.translate.instant('Delete snapshot {name}?', { name: snapshot.name }),
-      buttonMsg: this.translate.instant('Delete'),
+      buttonText: this.translate.instant('Delete'),
     }).pipe(
       filter(Boolean),
       tap(() => this.loader.open()),
       switchMap(() => this.ws.call('zfs.snapshot.delete', [snapshot.name])),
       untilDestroyed(this),
     ).subscribe({
-      next: () => this.loader.close(),
+      next: () => {
+        this.loader.close();
+      },
       error: (error: WebsocketError) => {
-        this.dialogService.errorReportMiddleware(error);
+        this.dialogService.error(this.errorHandler.parseWsError(error));
         this.loader.close();
       },
     });

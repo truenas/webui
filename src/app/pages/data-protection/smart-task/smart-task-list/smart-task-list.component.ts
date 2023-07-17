@@ -5,7 +5,6 @@ import { TranslateService } from '@ngx-translate/core';
 import helptext from 'app/helptext/data-protection/smart/smart';
 import { SmartTestTaskUi } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
-import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { SmartTaskFormComponent } from 'app/pages/data-protection/smart-task/smart-task-form/smart-task-form.component';
@@ -18,7 +17,7 @@ import { selectTimezone } from 'app/store/system-config/system-config.selectors'
 @UntilDestroy()
 @Component({
   template: '<ix-entity-table [title]="title" [conf]="this"></ix-entity-table>',
-  providers: [TaskService, EntityFormService],
+  providers: [TaskService],
 })
 export class SmartTaskListComponent implements EntityTableConfig {
   title = this.translate.instant('S.M.A.R.T. Tests');
@@ -63,7 +62,6 @@ export class SmartTaskListComponent implements EntityTableConfig {
     protected storageService: StorageService,
     protected slideInService: IxSlideInService,
     protected taskService: TaskService,
-    protected entityFormService: EntityFormService,
     protected translate: TranslateService,
     protected store$: Store<AppState>,
   ) {
@@ -74,9 +72,6 @@ export class SmartTaskListComponent implements EntityTableConfig {
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
-    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.entityList.getData();
-    });
   }
 
   resourceTransformIncomingRestData(data: SmartTestTaskUi[]): SmartTestTaskUi[] {
@@ -101,7 +96,8 @@ export class SmartTaskListComponent implements EntityTableConfig {
   }
 
   doAdd(): void {
-    this.slideInService.open(SmartTaskFormComponent);
+    const slideInRef = this.slideInService.open(SmartTaskFormComponent);
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
   }
 
   getActions(): EntityTableAction<SmartTestTaskUi>[] {
@@ -110,8 +106,8 @@ export class SmartTaskListComponent implements EntityTableConfig {
       icon: 'edit',
       label: 'Edit',
       onClick: (row: SmartTestTaskUi) => {
-        const slideIn = this.slideInService.open(SmartTaskFormComponent);
-        slideIn.setTestForEdit(row);
+        const slideInRef = this.slideInService.open(SmartTaskFormComponent, { data: row });
+        slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
       },
     }, {
       id: 'delete',

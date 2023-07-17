@@ -17,6 +17,7 @@ import {
   catchError, filter, switchMap, tap,
 } from 'rxjs/operators';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-quotas';
 import { DatasetQuota, SetDatasetQuota } from 'app/interfaces/dataset-quota.interface';
@@ -24,12 +25,14 @@ import { ConfirmOptions } from 'app/interfaces/dialog.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { QueryFilter, QueryParams } from 'app/interfaces/query-api.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
+import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
+import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { DatasetQuotaAddFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-add-form/dataset-quota-add-form.component';
 import { DatasetQuotaEditFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-edit-form/dataset-quota-edit-form.component';
 import {
   AppLoaderService, DialogService, StorageService, WebSocketService,
 } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 
@@ -44,56 +47,43 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   datasetId: string;
-  dataSource: MatTableDataSource<DatasetQuota> = new MatTableDataSource([]);
+  dataSource = new MatTableDataSource<DatasetQuota>([]);
   invalidQuotas: DatasetQuota[] = [];
   displayedColumns: string[] = ['name', 'id', 'quota', 'used_bytes', 'used_percent', 'obj_quota', 'obj_used', 'obj_used_percent', 'actions'];
   defaultSort: Sort = { active: 'id', direction: 'asc' };
 
+  readonly EmptyType = EmptyType;
+  emptyType: EmptyType = EmptyType.NoPageData;
   isLoading = false;
-  loadingConfig: EmptyConfig = {
-    type: EmptyType.Loading,
-    large: false,
-    title: this.translate.instant('Loading...'),
-  };
-  emptyConfig: EmptyConfig = {
-    type: EmptyType.NoPageData,
-    title: this.translate.instant('No User Quotas'),
-    large: true,
-  };
-  errorConfig: EmptyConfig = {
-    type: EmptyType.Errors,
-    large: true,
-    title: this.translate.instant('Can not retrieve response'),
-  };
-  emptyOrErrorConfig: EmptyConfig = this.emptyConfig;
 
   useFullFilter = true;
-  protected fullFilter: QueryParams<DatasetQuota> = [['OR', [['quota', '>', 0], ['obj_quota', '>', 0]]]];
-  protected emptyFilter: QueryParams<DatasetQuota> = [];
   protected invalidFilter: QueryParams<DatasetQuota> = [['name', '=', null] as QueryFilter<DatasetQuota>] as QueryParams<DatasetQuota>;
+
+  get emptyConfigService(): EmptyService {
+    return this.emptyService;
+  }
 
   constructor(
     protected ws: WebSocketService,
     protected storageService: StorageService,
+    protected formatter: IxFormatterService,
     protected dialogService: DialogService,
+    private errorHandler: ErrorHandlerService,
     protected loader: AppLoaderService,
     protected aroute: ActivatedRoute,
     private translate: TranslateService,
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
     private layoutService: LayoutService,
     @Inject(WINDOW) private window: Window,
+    private emptyService: EmptyService,
   ) { }
 
   ngOnInit(): void {
     const paramMap = this.aroute.snapshot.params;
-    this.datasetId = paramMap.datasetId;
+    this.datasetId = paramMap.datasetId as string;
     this.useFullFilter = this.window.localStorage.getItem('useFullFilter') !== 'false';
     this.getUserQuotas();
-
-    this.slideIn.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.getUserQuotas();
-    });
   }
 
   ngAfterViewInit(): void {
@@ -105,6 +95,9 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
   }
 
   renderRowValue(row: DatasetQuota, field: string): string | number {
+    if (row[field as keyof DatasetQuota] === undefined) {
+      return '—';
+    }
     switch (field) {
       case 'name':
         if (!row[field]) {
@@ -112,14 +105,16 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
         }
         return row[field];
       case 'quota':
-        return this.storageService.convertBytesToHumanReadable(row[field], 0);
+        return this.formatter.convertBytesToHumanReadable(row[field], 0);
       case 'used_percent':
         return `${Math.round(row[field] * 100) / 100}%`;
       case 'obj_used_percent':
-        return `${Math.round(row[field] * 100) / 100}%`;
+        return row.obj_quota ? `${Math.round(row.obj_used / row.obj_quota * 100) / 100}%` : '—';
+      case 'obj_quota':
+        return row.obj_quota ? row.obj_quota : '—';
       case 'used_bytes':
         if (row[field] !== 0) {
-          return this.storageService.convertBytesToHumanReadable(row[field], 2);
+          return this.formatter.convertBytesToHumanReadable(row[field], 2);
         }
         return row[field];
       default:
@@ -145,31 +140,35 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
   }
 
   getUserQuotas(): void {
-    const filter = this.useFullFilter ? this.fullFilter : this.emptyFilter;
     this.isLoading = true;
     this.ws.call(
       'pool.dataset.get_quota',
-      [this.datasetId, DatasetQuotaType.User, filter],
+      [this.datasetId, DatasetQuotaType.User, []],
     ).pipe(untilDestroyed(this)).subscribe({
       next: (quotas: DatasetQuota[]) => {
         this.isLoading = false;
+        if (this.useFullFilter) {
+          quotas = quotas.filter((quota) => quota.quota > 0 || quota.obj_quota > 0);
+        }
         this.createDataSource(quotas);
         this.checkInvalidQuotas();
       },
       error: (error) => {
-        this.emptyOrErrorConfig = this.errorConfig;
+        this.emptyType = EmptyType.Errors;
         this.handleError(error);
       },
     });
   }
 
   handleError = (error: WebsocketError | Job): void => {
-    this.dialogService.errorReportMiddleware(error);
+    this.dialogService.error(this.errorHandler.parseError(error));
   };
 
   createDataSource(quotas: DatasetQuota[] = []): void {
     if (!quotas.length) {
-      this.emptyOrErrorConfig = this.emptyConfig;
+      this.emptyType = EmptyType.NoPageData;
+    } else {
+      this.emptyType = EmptyType.NoSearchResults;
     }
     this.dataSource = new MatTableDataSource(quotas);
     this.dataSource.sort = this.sort;
@@ -207,8 +206,8 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
     return this.dialogService.confirm({
       title: helptext.users.filter_dialog.title_show,
       message: helptext.users.filter_dialog.message_show,
-      hideCheckBox: true,
-      buttonMsg: helptext.users.filter_dialog.button_show,
+      hideCheckbox: true,
+      buttonText: helptext.users.filter_dialog.button_show,
     });
   }
 
@@ -216,8 +215,8 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
     return this.dialogService.confirm({
       title: helptext.users.filter_dialog.title_filter,
       message: helptext.users.filter_dialog.message_filter,
-      hideCheckBox: true,
-      buttonMsg: helptext.users.filter_dialog.button_filter,
+      hideCheckbox: true,
+      buttonText: helptext.users.filter_dialog.button_filter,
     });
   }
 
@@ -230,7 +229,7 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
         this.loader.close();
         this.getUserQuotas();
       }),
-      catchError((error: WebsocketError | Job<null, unknown[]>) => {
+      catchError((error: WebsocketError | Job) => {
         this.loader.close();
         this.handleError(error);
         return EMPTY;
@@ -244,7 +243,7 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
       title: this.translate.instant('Remove Invalid Quotas'),
       message: this.translate.instant('This action will set all dataset quotas for the removed or invalid users to 0,\
  virutally removing any dataset quota entires for such users. Are you sure you want to proceed?'),
-      buttonMsg: this.translate.instant('Remove'),
+      buttonText: this.translate.instant('Remove'),
     };
     return this.dialogService.confirm(confirmOptions);
   }
@@ -254,13 +253,17 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
   }
 
   doAdd(): void {
-    const form = this.slideIn.open(DatasetQuotaAddFormComponent);
-    form.setupAddQuotaForm(DatasetQuotaType.User, this.datasetId);
+    const slideInRef = this.slideInService.open(DatasetQuotaAddFormComponent, {
+      data: { quotaType: DatasetQuotaType.User, datasetId: this.datasetId },
+    });
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.getUserQuotas());
   }
 
   doEdit(row: DatasetQuota): void {
-    const form = this.slideIn.open(DatasetQuotaEditFormComponent);
-    form.setupEditQuotaForm(DatasetQuotaType.User, this.datasetId, row.id);
+    const slideInRef = this.slideInService.open(DatasetQuotaEditFormComponent, {
+      data: { quotaType: DatasetQuotaType.User, datasetId: this.datasetId, id: row.id },
+    });
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.getUserQuotas());
   }
 
   doDelete(row: DatasetQuota): void {
@@ -272,7 +275,7 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
         this.loader.close();
         this.getUserQuotas();
       }),
-      catchError((error: WebsocketError | Job<null, unknown[]>) => {
+      catchError((error: WebsocketError | Job) => {
         this.loader.close();
         this.handleError(error);
         return EMPTY;
@@ -285,8 +288,8 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
     return this.dialogService.confirm({
       title: this.translate.instant('Delete User Quota'),
       message: this.translate.instant('Are you sure you want to delete the user quota <b>{name}</b>?', { name }),
-      buttonMsg: this.translate.instant('Delete'),
-      hideCheckBox: true,
+      buttonText: this.translate.instant('Delete'),
+      hideCheckbox: true,
     });
   }
 

@@ -1,0 +1,190 @@
+<form [formGroup]="form">
+  <ix-select
+    formControlName="exist_replication"
+    [label]="helptext.exist_replication_placeholder | translate"
+    [options]="existReplicationOptions$"
+    [tooltip]="helptext.exist_replication_tooltip | translate"
+  ></ix-select>
+
+  <div class="replication">
+    <div class="source">
+      <ix-select
+        formControlName="source_datasets_from"
+        [label]="helptext.source_datasets_from_placeholder | translate"
+        [options]="datasetFromOptions$"
+        [tooltip]="helptext.source_datasets_from_tooltip | translate"
+        [required]="true"
+      ></ix-select>
+      <ix-select
+        *ngIf="form.controls.ssh_credentials_source.enabled"
+        formControlName="ssh_credentials_source"
+        [label]="helptext.ssh_credentials_source_placeholder | translate"
+        [options]="sshCredentialsOptions$"
+        [tooltip]="helptext.ssh_credentials_source_tooltip | translate"
+        [required]="true"
+      ></ix-select>
+      <ix-explorer
+        *ngIf="form.controls.source_datasets.enabled"
+        formControlName="source_datasets"
+        [label]="helptext.source_datasets_placeholder | translate"
+        [tooltip]="helptext.source_datasets_tooltip | translate"
+        [multiple]="true"
+        [required]="true"
+        [root]="isRemoteSource ? '' : mntPath"
+        [nodeProvider]="isRemoteSource ? remoteSourceNodeProvider : datasetNodeProvider"
+      ></ix-explorer>
+
+      <ix-checkbox
+        *ngIf="form.controls.recursive.enabled"
+        formControlName="recursive"
+        [label]="helptext.recursive_placeholder | translate"
+        [tooltip]="helptext.recursive_tooltip | translate"
+      ></ix-checkbox>
+      <span *ngIf="snapshotsText" class="snapshots-text" [class.warning]="isSnapshotsWarning">{{ snapshotsText }}</span>
+      <ix-checkbox
+        *ngIf="form.controls.custom_snapshots.enabled"
+        formControlName="custom_snapshots"
+        [label]="helptext.custom_snapshots_placeholder | translate"
+        [tooltip]="helptext.custom_snapshots_tooltip | translate"
+      ></ix-checkbox>
+      <ix-radio-group
+        *ngIf="form.controls.schema_or_regex.enabled"
+        formControlName="schema_or_regex"
+        [label]="schemaOrRegexLabel | translate"
+        [required]="true"
+        [options]="schemaOrRegexOptions$"
+      ></ix-radio-group>
+      <ix-input
+        *ngIf="form.controls.naming_schema.enabled"
+        formControlName="naming_schema"
+        [label]="helptext.naming_schema_placeholder | translate"
+        [tooltip]="helptext.naming_schema_tooltip | translate"
+        [required]="true"
+      ></ix-input>
+      <ix-input
+        *ngIf="form.controls.name_regex.enabled"
+        formControlName="name_regex"
+        [label]="helptext.name_regex_placeholder  | translate"
+        [tooltip]="helptext.name_regex_tooltip | translate"
+        [required]="true"
+      ></ix-input>
+    </div>
+    <div class="target">
+      <ix-select
+        formControlName="target_dataset_from"
+        [label]="helptext.target_dataset_from_placeholder | translate"
+        [tooltip]="helptext.target_dataset_from_tooltip | translate"
+        [options]="datasetFromOptions$"
+        [required]="true"
+      ></ix-select>
+      <ix-select
+        *ngIf="form.controls.ssh_credentials_target.enabled"
+        formControlName="ssh_credentials_target"
+        [label]="helptext.ssh_credentials_target_placeholder | translate"
+        [options]="sshCredentialsOptions$"
+        [tooltip]="helptext.ssh_credentials_target_tooltip | translate"
+        [required]="true"
+      ></ix-select>
+      <ix-explorer
+        *ngIf="form.controls.target_dataset.enabled"
+        formControlName="target_dataset"
+        [label]="helptext.target_dataset_placeholder | translate"
+        [tooltip]="helptext.target_dataset_tooltip | translate"
+        [required]="true"
+        [root]="isRemoteTarget ? '' : mntPath"
+        [nodeProvider]="isRemoteTarget ? remoteTargetNodeProvider : datasetNodeProvider"
+      ></ix-explorer>
+      <ix-checkbox
+        *ngIf="form.controls.encryption.enabled"
+        formControlName="encryption"
+        [label]="helptext.encryption_placeholder | translate"
+        [tooltip]="helptext.encryption_tooltip | translate"
+      ></ix-checkbox>
+      <ix-checkbox
+        *ngIf="form.controls.encryption.enabled && form.controls.encryption.value"
+        formControlName="encryption_inherit"
+        [label]="helptext.encryption_inherit_placeholder | translate"
+        [tooltip]="helptext.encryption_inherit_tooltip | translate"
+      ></ix-checkbox>
+      <ix-select
+        *ngIf="form.controls.encryption_key_format.enabled"
+        formControlName="encryption_key_format"
+        [label]="helptext.encryption_key_format_placeholder | translate"
+        [tooltip]="helptext.encryption_key_format_tooltip | translate"
+        [options]="encryptionKeyFormatOptions$"
+        [required]="true"
+      ></ix-select>
+      <ix-checkbox
+        *ngIf="form.controls.encryption_key_generate.enabled"
+        formControlName="encryption_key_generate"
+        [label]="helptext.encryption_key_generate_placeholder | translate"
+        [tooltip]="helptext.encryption_key_generate_tooltip | translate"
+      ></ix-checkbox>
+      <ix-input
+        *ngIf="form.controls.encryption_key_hex.enabled"
+        formControlName="encryption_key_hex"
+        [label]="helptext.encryption_key_hex_placeholder  | translate"
+        [tooltip]="helptext.encryption_key_hex_tooltip | translate"
+        [required]="true"
+      ></ix-input>
+      <ix-input
+        *ngIf="form.controls.encryption_key_passphrase.enabled"
+        formControlName="encryption_key_passphrase"
+        type="password"
+        [label]="helptext.encryption_key_passphrase_placeholder  | translate"
+        [tooltip]="helptext.encryption_key_passphrase_tooltip | translate"
+        [required]="true"
+      ></ix-input>
+      <ix-checkbox
+        *ngIf="form.controls.encryption_key_location_truenasdb.enabled"
+        formControlName="encryption_key_location_truenasdb"
+        [label]="helptext.encryption_key_location_truenasdb_placeholder | translate"
+        [tooltip]="helptext.encryption_key_location_truenasdb_tooltip | translate"
+      ></ix-checkbox>
+      <ix-input
+        *ngIf="form.controls.encryption_key_location.enabled"
+        formControlName="encryption_key_location"
+        [label]="helptext.encryption_key_location_placeholder  | translate"
+        [tooltip]="helptext.encryption_key_location_tooltip | translate"
+        [required]="true"
+      ></ix-input>
+    </div>
+  </div>
+
+  <ix-radio-group
+    *ngIf="form.controls.transport.enabled"
+    formControlName="transport"
+    [label]="helptext.transport_placeholder | translate"
+    [tooltip]="helptext.transport_tooltip | translate"
+    [required]="true"
+    [options]="transportOptions$"
+  ></ix-radio-group>
+  <ix-checkbox
+    *ngIf="form.controls.sudo.enabled"
+    formControlName="sudo"
+    [label]="'Use Sudo For Zfs Commands' | translate"
+    [tooltip]="helptext.sudo_tooltip | translate"
+  ></ix-checkbox>
+  <ix-input
+    formControlName="name"
+    [label]="helptext.name_placeholder | translate"
+    [tooltip]="helptext.name_tooltip | translate"
+    [required]="true"
+  ></ix-input>
+  <ix-form-actions>
+    <button
+      mat-button
+      matStepperNext
+      color="primary"
+      ixTest="next"
+      [disabled]="form.invalid"
+    >{{ 'Next' | translate }}</button>
+    <button
+      mat-button
+      type="button"
+      color="primary"
+      ixTest="advanced"
+      (click)="openAdvanced()"
+    >{{ 'Advanced Replication Creation' | translate }}</button>
+  </ix-form-actions>
+</form>

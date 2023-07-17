@@ -70,15 +70,15 @@ describe('ThemeUtils', () => {
      * */
 
     const redRgb = 'rgb(255,0,0)';
-    const red = utils.rgbToHsl(redRgb);
+    const red = utils.rgbToHsl(redRgb, true, true);
     expect(red).toBe('hsl(0, 100%, 50%)');
 
     const greenRgb = 'rgb(0,255,0)';
-    const green = utils.rgbToHsl(greenRgb);
+    const green = utils.rgbToHsl(greenRgb, true, true);
     expect(green).toBe('hsl(120, 100%, 50%)');
 
     const blueRgb = 'rgb(0,0,255)';
-    const blue = utils.rgbToHsl(blueRgb);
+    const blue = utils.rgbToHsl(blueRgb, true, true);
     expect(blue).toBe('hsl(240, 100%, 50%)');
   });
 
@@ -87,7 +87,7 @@ describe('ThemeUtils', () => {
       const sourceColor = '#AAAAAA';
       const resultingColor = utils.darken(sourceColor, 5);
 
-      expect(resultingColor).toEqual('hsl(0, 0%, 61.7%)');
+      expect(resultingColor).toBe('hsl(0, 0%, 61.7%)');
     });
   });
 
@@ -96,7 +96,7 @@ describe('ThemeUtils', () => {
       const sourceColor = '#AAAAAA';
       const resultingColor = utils.lighten(sourceColor, 5);
 
-      expect(resultingColor).toEqual('hsl(0, 0%, 71.7%)');
+      expect(resultingColor).toBe('hsl(0, 0%, 71.7%)');
     });
   });
 

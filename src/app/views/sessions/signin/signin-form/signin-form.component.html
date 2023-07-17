@@ -1,0 +1,66 @@
+<form [formGroup]="form" (keyup.enter)="hasTwoFactor ? loginWithOtp() : login()">
+  <ng-container
+    *ngIf="!hasTwoFactor"
+  >
+    <ix-input
+      ixAutofocus
+      formControlName="username"
+      prefixIcon="person"
+      autocomplete="username"
+      class="username-input"
+      [label]="'Username' | translate"
+      [required]="true"
+    ></ix-input>
+
+    <ix-input
+      formControlName="password"
+      type="password"
+      prefixIcon="lock"
+      autocomplete="current-password"
+      [label]="'Password' | translate"
+      [required]="true"
+    ></ix-input>
+    <button
+      class="submit-button"
+      mat-button
+      type="button"
+      color="primary"
+      ixTest="log-in"
+      [disabled]="isLoading$ | async"
+      (click)="login()"
+    >
+      {{ 'Log In' | translate }}
+    </button>
+  </ng-container>
+  <ng-container
+    *ngIf="hasTwoFactor"
+  >
+    <ix-input
+      formControlName="otp"
+      prefixIcon="phonelink"
+      autocomplete="one-time-code"
+      [label]="'Two-Factor Authentication Code' | translate"
+      [required]="true"
+    ></ix-input>
+    <button
+      class="submit-button"
+      mat-button
+      type="button"
+      color="primary"
+      ixTest="log-in"
+      [disabled]="isLoading$ | async"
+      (click)="loginWithOtp()"
+    >
+      {{ 'Proceed' | translate }}
+    </button>
+    <button
+      class="submit-button"
+      mat-button
+      type="button"
+      ixTest="otp-log-in"
+      [disabled]="isLoading$ | async"
+      (click)="cancelOtpLogin()"
+    >{{ 'Cancel' | translate }}</button>
+    
+  </ng-container>
+</form>

@@ -11,8 +11,11 @@ import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/storage/volumes/volume-status';
 import { PoolAttachParams } from 'app/interfaces/pool.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
+import { AppLoaderService, DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 export interface ExtendDialogParams {
   poolId: number;
@@ -47,6 +50,7 @@ export class ExtendDialogComponent implements OnInit {
 
   constructor(
     private ws: WebSocketService,
+    private errorHandler: ErrorHandlerService,
     private loader: AppLoaderService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
@@ -67,7 +71,7 @@ export class ExtendDialogComponent implements OnInit {
   }
 
   warnForExportedPools(diskName: string): void {
-    const unusedDisk = this.unusedDisks.find((unusedDisk) => unusedDisk.name === diskName);
+    const unusedDisk = this.unusedDisks.find((disk) => disk.name === diskName);
     if (!unusedDisk?.exported_zpool) {
       return;
     }
@@ -103,9 +107,9 @@ export class ExtendDialogComponent implements OnInit {
           this.snackbar.success(this.translate.instant('Vdev successfully extended.'));
           this.dialogRef.close(true);
         },
-        error: (error) => {
+        error: (error: WebsocketError) => {
           this.loader.close();
-          this.dialogService.errorReportMiddleware(error);
+          this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });
   }
@@ -118,8 +122,8 @@ export class ExtendDialogComponent implements OnInit {
           this.unusedDisks = disks;
           this.disksWithDuplicateSerials = disks.filter((disk) => disk.duplicate_serial.length);
         },
-        error: (error) => {
-          this.dialogService.errorReportMiddleware(error);
+        error: (error: WebsocketError) => {
+          this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });
   }

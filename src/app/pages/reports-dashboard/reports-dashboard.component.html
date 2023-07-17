@@ -9,21 +9,7 @@
 <div
   *ngIf="visibleReports && activeReports"
   class="master-container"
-  lazyViewer
-  view=".report"
-  fxLayout="row wrap"
-  fxLayoutAlign="space-evenly"
 >
-  <div *ngIf="timeDiffWarning" class="time-warning">
-    <div>
-      <ix-icon name="warning"></ix-icon>
-    </div>
-    <div>
-      <span>{{ timeDiffWarning }}</span>
-      <span>{{ 'NAS/browser time mismatch can lead to the reporting data display misbehavior.' | translate }}</span>
-    </div>
-  </div>
-
   <cdk-virtual-scroll-viewport [itemSize]="325" [minBufferPx]="325" [maxBufferPx]="325">
     <div *cdkVirtualFor="let key of visibleReports; let i = index" class="report-container">
       <ix-report
@@ -33,7 +19,7 @@
         [isReversed]="isReportReversed(activeReports[key])"
       ></ix-report>
       <ix-report
-        *ngIf="activeReports[key].identifiers.length == 0"
+        *ngIf="activeReports[key].identifiers.length === 0"
         [report]="activeReports[key]"
         [isReversed]="isReportReversed(activeReports[key])"
       ></ix-report>

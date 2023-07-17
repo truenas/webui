@@ -1,0 +1,13 @@
+.table-container {
+  ::ng-deep ix-empty-row {
+    background: var(--bg2);
+    border-left: 1px solid var(--contrast-lighter);
+    border-right: 1px solid var(--contrast-lighter);
+  }
+}
+
+.table-details-row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}

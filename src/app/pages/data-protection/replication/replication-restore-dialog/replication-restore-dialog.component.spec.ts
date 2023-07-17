@@ -11,8 +11,9 @@ import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import {
   ReplicationRestoreDialogComponent,
 } from 'app/pages/data-protection/replication/replication-restore-dialog/replication-restore-dialog.component';
-import { WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('ReplicationRestoreDialogComponent', () => {
   let spectator: Spectator<ReplicationRestoreDialogComponent>;
@@ -28,6 +29,7 @@ describe('ReplicationRestoreDialogComponent', () => {
       mockWebsocket([
         mockCall('replication.restore'),
       ]),
+      mockProvider(DialogService),
       mockProvider(MatDialogRef),
       {
         provide: MAT_DIALOG_DATA,

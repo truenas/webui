@@ -25,20 +25,24 @@ module.exports = {
         "plugin:@angular-eslint/recommended",
         "plugin:@typescript-eslint/recommended",
         "plugin:@typescript-eslint/recommended-requiring-type-checking",
-        "plugin:rxjs/recommended"
+        "plugin:rxjs/recommended",
+        "plugin:sonarjs/recommended"
       ],
       "plugins": [
         "rxjs",
         "rxjs-angular",
         "unicorn",
         "angular-file-naming",
-        "@shopify"
+        "@shopify",
+        "unused-imports",
+        "sonarjs",
       ],
       "rules": {
-        // TODO: Conflicts with ngx-translate-extract
+        // Conflicts with ngx-translate-extract
         "prefer-template": "off",
 
         // Consciously altered
+        "no-underscore-dangle": "off",
         "class-methods-use-this": "off",
         "import/prefer-default-export": "off",
         "no-continue": "off",
@@ -84,7 +88,6 @@ module.exports = {
         "no-prototype-builtins": "off",
         "no-trailing-spaces": ["error"],
         "@typescript-eslint/unbound-method": "off",
-        "@typescript-eslint/explicit-module-boundary-types": "off",
         "@typescript-eslint/no-misused-promises": ["error", { checksVoidReturn: false }],
         '@typescript-eslint/naming-convention': [
           'error',
@@ -130,11 +133,13 @@ module.exports = {
           },
         ],
         "@typescript-eslint/restrict-template-expressions": ["error", { allowNumber: true, allowAny: true }],
-
-        // TODO: Aibnb rules that are disabled for now as they cannot be fixed automatically
-        "no-underscore-dangle": "off",
-        "consistent-return": "off",
+        "@typescript-eslint/no-explicit-any": "error",
+        "@typescript-eslint/no-floating-promises": "off",
+        "@typescript-eslint/dot-notation": ["error", { allowIndexSignaturePropertyAccess: true }],
+        "sonarjs/prefer-single-boolean-return": ["off"],
         "no-plusplus": "off",
+
+        // TODO: Airbnb rules that are disabled for now as they cannot be fixed automatically
         "no-restricted-syntax": ["error",
           // TODO: Partially implemented. ForOfStatement is allowed for now.
           {
@@ -148,12 +153,15 @@ module.exports = {
           {
             "selector": "WithStatement",
             "message": "`with` is disallowed in strict mode because it makes code impossible to predict and optimize."
-          }
+          },
+          {
+            selector: 'MemberExpression[property.name="get"][object.name="form"], MemberExpression[property.name="get"] > MemberExpression[property.name="form"]',
+            message: "For type safety reasons prefer `controls.name` over `get('name')`",
+          },
         ],
         "no-param-reassign": "off",
         "@typescript-eslint/no-loop-func": "off",
         "no-await-in-loop": "off",
-        "@typescript-eslint/no-shadow": "off",
         "no-multi-str": "off",
         "no-mixed-operators": ["error", {
           groups: [
@@ -167,19 +175,13 @@ module.exports = {
         }],
         "default-case": "off",
         "@typescript-eslint/member-ordering": "off",
-        "@typescript-eslint/no-unsafe-assignment": "off",
-        "@typescript-eslint/no-explicit-any": "off",
-        "@typescript-eslint/no-unsafe-return": "off",
-        "@typescript-eslint/no-unsafe-call": "off",
-        "@typescript-eslint/no-unsafe-member-access": "off",
-        "@typescript-eslint/no-floating-promises": "off",
-        "@typescript-eslint/prefer-regexp-exec": "off",
 
         // Other temporary disables
+        "@typescript-eslint/no-unsafe-return": "off",
         "@typescript-eslint/no-unsafe-argument": "off",
-        "@typescript-eslint/dot-notation": ["off", { allowIndexSignaturePropertyAccess: true }],
         "rxjs/no-implicit-any-catch": ["off"],
         "rxjs/no-nested-subscribe": ["off"],
+        "sonarjs/cognitive-complexity": ["error", 45],
 
         // Other overwrites
         "@typescript-eslint/lines-between-class-members": "off",
@@ -199,6 +201,7 @@ module.exports = {
             "message": "Use the injected window service instead. Search for @Inject(WINDOW)."
           }
         ],
+        "sonarjs/no-duplicate-string": ["off"],
 
         // Extra rules
         "@angular-eslint/use-lifecycle-interface": ["error"],
@@ -216,6 +219,7 @@ module.exports = {
         "@typescript-eslint/prefer-includes": ["error"],
         "@typescript-eslint/prefer-for-of": ["error"],
         "@typescript-eslint/prefer-as-const": ["error"],
+        "@typescript-eslint/consistent-generic-constructors": ["error"],
         "@angular-eslint/use-component-view-encapsulation": ["error"],
         "@typescript-eslint/no-unused-vars": "off",
         "unused-imports/no-unused-imports": "error",
@@ -225,7 +229,14 @@ module.exports = {
           argsIgnorePattern: "^_$",
           ignoreRestSiblings: true,
         }],
-        "@typescript-eslint/ban-types": ["error"],
+        "id-denylist": ["error", "res"],
+        "@typescript-eslint/ban-types": ["error", {
+          extendDefaults: true,
+          types: {
+            UntypedFormBuilder: 'Prefer normal typed FormBuilder.',
+            SimpleChanges: 'Prefer typed IxSimpleChanges<this>.',
+          }
+        }],
         "unicorn/filename-case": ["error", { case: "kebabCase"}],
         "unicorn/prefer-array-find": ["error"],
         "@angular-eslint/component-selector": ["error", {
@@ -283,18 +294,43 @@ module.exports = {
         "angular-file-naming/module-filename-suffix": "error",
         "angular-file-naming/pipe-filename-suffix": "error",
         "angular-file-naming/service-filename-suffix": ["error", {
-          "suffixes": ["service", "effects", "store", "guard"]
+          "suffixes": ["service", "effects", "store", "guard", "pipe"]
         }],
       }
     },
     {
+      "files": ["**/*.spec.ts"],
+      "plugins": ["jest"],
+      "extends": ["plugin:jest/recommended", "plugin:jest/style"],
+      "rules": {
+        "jest/no-large-snapshots": ["error"],
+        "jest/prefer-equality-matcher": ["error"],
+        "jest/prefer-lowercase-title": ["error", { "ignore": ["describe"] }],
+        "jest/expect-expect": [
+          "error",
+          {
+            "assertFunctionNames": ["expect", "expectObservable"],
+          }
+        ]
+      }
+    },
+    {
       "files": ["*.html"],
-      "parser": "@angular-eslint/template-parser",
-      "plugins": [
-        "@angular-eslint/template",
-        "unused-imports",
-      ],
-      "rules": {}
+      "extends": ["plugin:@angular-eslint/template/recommended"],
+      "plugins": ["angular-test-ids"],
+      "rules": {
+        "@angular-eslint/template/attributes-order": ["error"],
+        "@angular-eslint/template/no-duplicate-attributes": ['error'],
+        "@angular-eslint/template/no-interpolation-in-attributes": ['error'],
+        "angular-test-ids/require-test-id": ["error", {
+          "attribute": "ixTest",
+          "addElements": ["a", "mat-row", "mat-slider", "table"]
+        }],
+
+        // TODO: To be enabled later
+        '@angular-eslint/template/use-track-by-function': ['off'],
+        '@angular-eslint/template/no-negated-async': ['off'],
+      }
     }
   ]
 }

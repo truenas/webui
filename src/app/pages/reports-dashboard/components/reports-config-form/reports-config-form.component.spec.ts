@@ -2,11 +2,15 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import {
+  createComponentFactory, mockProvider, Spectator,
+} from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ReportingConfig } from 'app/interfaces/reporting.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
@@ -15,19 +19,15 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ReportsConfigFormComponent } from './reports-config-form.component';
 
 const mockInitialConfig = {
-  cpu_in_percentage: false,
   graph_age: 12,
   graph_points: 1200,
   graphite: '',
-  graphite_separateinstances: false,
 } as ReportingConfig;
 
 const mockUserConfig = {
-  cpu_in_percentage: true,
   graph_age: 24,
   graph_points: 2048,
   graphite: '127.0.0.1',
-  graphite_separateinstances: true,
 } as ReportingConfig;
 
 describe('ReportsConfigFormComponent', () => {
@@ -51,6 +51,8 @@ describe('ReportsConfigFormComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
+      mockProvider(IxSlideInRef),
+      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
 
@@ -66,8 +68,6 @@ describe('ReportsConfigFormComponent', () => {
 
     expect(ws.call).toHaveBeenCalledWith('reporting.config');
     expect(values).toEqual({
-      'Report CPU usage in percent': true,
-      'Graphite Separate Instances': true,
       'Remote Graphite Server Hostname': '127.0.0.1',
       'Graph Age in Months': '24',
       'Number of Graph Points': '2048',
@@ -105,11 +105,9 @@ describe('ReportsConfigFormComponent', () => {
     );
     expect(ws.call).toHaveBeenLastCalledWith('reporting.update', [{
       confirm_rrd_destroy: true,
-      cpu_in_percentage: true,
       graph_age: 18,
       graph_points: 2048,
       graphite: '127.0.0.1',
-      graphite_separateinstances: true,
     }]);
   });
 
@@ -117,8 +115,6 @@ describe('ReportsConfigFormComponent', () => {
     const form = await loader.getHarness(IxFormHarness);
 
     expect(await form.getValues()).toEqual({
-      'Report CPU usage in percent': true,
-      'Graphite Separate Instances': true,
       'Remote Graphite Server Hostname': '127.0.0.1',
       'Graph Age in Months': '24',
       'Number of Graph Points': '2048',
@@ -128,8 +124,6 @@ describe('ReportsConfigFormComponent', () => {
     await resetButton.click();
 
     expect(await form.getValues()).toEqual({
-      'Report CPU usage in percent': false,
-      'Graphite Separate Instances': false,
       'Remote Graphite Server Hostname': '',
       'Graph Age in Months': '12',
       'Number of Graph Points': '1200',

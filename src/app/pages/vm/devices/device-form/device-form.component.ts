@@ -1,10 +1,10 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { BehaviorSubject, of } from 'rxjs';
+import { BehaviorSubject, forkJoin, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import {
@@ -16,12 +16,17 @@ import helptext from 'app/helptext/vm/devices/device-add-edit';
 import {
   VmDevice, VmDeviceUpdate,
 } from 'app/interfaces/vm-device.interface';
-import { regexValidator } from 'app/modules/entity/entity-form/validators/regex-validation';
 import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { NetworkService, VmService, WebSocketService } from 'app/services';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import {
+  DialogService, NetworkService, VmService, WebSocketService,
+} from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+
+const specifyCustom = 'Specify custom';
 
 @UntilDestroy()
 @Component({
@@ -59,7 +64,7 @@ export class DeviceFormComponent implements OnInit {
 
   nicForm = this.formBuilder.group({
     type: [null as VmNicType, Validators.required],
-    mac: ['', regexValidator(this.networkService.macRegex)],
+    mac: ['', Validators.pattern(this.networkService.macRegex)],
     nic_attach: ['', Validators.required],
     trust_guest_rx_filters: [false],
   });
@@ -85,19 +90,38 @@ export class DeviceFormComponent implements OnInit {
   });
 
   usbForm = this.formBuilder.group({
+    controller_type: ['', Validators.required],
     device: ['', Validators.required],
+    usb: this.formBuilder.group({
+      vendor_id: ['', Validators.required],
+      product_id: ['', Validators.required],
+    }),
   });
 
   readonly helptext = helptext;
   readonly VmDeviceType = VmDeviceType;
-
-  readonly usbOptions$ = this.ws.call('vm.device.usb_passthrough_choices').pipe(
+  readonly usbDeviceOptions$ = this.ws.call('vm.device.usb_passthrough_choices').pipe(
     map((usbDevices) => {
-      return Object.entries(usbDevices).map(([id, device]) => {
+      const options = Object.entries(usbDevices).map(([id, device]) => {
         let label = id;
         label += device.capability?.product ? ` ${device.capability.product}` : '';
         label += device.capability?.vendor ? ` (${device.capability.vendor})` : '';
         return { label, value: id };
+      });
+      options.push({
+        label: specifyCustom,
+        value: specifyCustom,
+      });
+      return options;
+    }),
+  );
+  readonly usbControllerOptions$ = this.ws.call('vm.device.usb_controller_choices').pipe(
+    map((usbControllers) => {
+      return Object.entries(usbControllers).map(([key, controller]) => {
+        return {
+          label: controller,
+          value: key,
+        };
       });
     }),
   );
@@ -110,7 +134,7 @@ export class DeviceFormComponent implements OnInit {
       map((passthroughDevices) => {
         return Object.keys(passthroughDevices).map((id) => {
           return {
-            label: id,
+            label: passthroughDevices[id].description || id,
             value: id,
           };
         });
@@ -187,6 +211,7 @@ export class DeviceFormComponent implements OnInit {
         return this.displayForm;
       default:
         assertUnreachable(this.typeControl.value);
+        return undefined;
     }
   }
 
@@ -196,61 +221,84 @@ export class DeviceFormComponent implements OnInit {
     private formBuilder: FormBuilder,
     private ws: WebSocketService,
     private translate: TranslateService,
+    private snackbar: SnackbarService,
     private networkService: NetworkService,
     private filesystemService: FilesystemService,
     private vmService: VmService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
-    private slideIn: IxSlideInService,
+    private dialogService: DialogService,
+    private slideInRef: IxSlideInRef<DeviceFormComponent>,
+    @Inject(SLIDE_IN_DATA) private slideInData: { virtualMachineId: number; device: VmDevice },
   ) {}
 
   ngOnInit(): void {
     this.generateMacWhenNicIsSelected();
+
+    this.usbForm.controls.usb.disable();
+    this.usbForm.controls.device.valueChanges.pipe(untilDestroyed(this)).subscribe((device) => {
+      if (device === specifyCustom) {
+        this.usbForm.controls.usb.enable();
+      } else {
+        this.usbForm.controls.usb.disable();
+      }
+    });
+
+    if (this.slideInData.virtualMachineId) {
+      this.virtualMachineId = this.slideInData.virtualMachineId;
+      this.setVirtualMachineId();
+    }
+
+    if (this.slideInData.device) {
+      this.existingDevice = this.slideInData.device;
+      this.setDeviceForEdit();
+    }
   }
 
-  setVirtualMachineId(id: number): void {
-    this.virtualMachineId = id;
+  setVirtualMachineId(): void {
     this.hideDisplayIfCannotBeAdded();
   }
 
-  setDeviceForEdit(device: VmDevice): void {
-    this.existingDevice = device;
-    this.typeControl.setValue(device.dtype);
-    this.orderControl.setValue(device.order);
-    switch (device.dtype) {
+  setDeviceForEdit(): void {
+    this.typeControl.setValue(this.existingDevice.dtype);
+    this.orderControl.setValue(this.existingDevice.order);
+    switch (this.existingDevice.dtype) {
       case VmDeviceType.Pci:
-        this.pciForm.patchValue(device.attributes);
+        this.pciForm.patchValue(this.existingDevice.attributes);
         break;
       case VmDeviceType.Raw:
         this.rawFileForm.patchValue({
-          ...device.attributes,
-          sectorsize: device.attributes.logical_sectorsize === null
+          ...this.existingDevice.attributes,
+          sectorsize: this.existingDevice.attributes.logical_sectorsize === null
             ? 0
-            : device.attributes.logical_sectorsize,
+            : this.existingDevice.attributes.logical_sectorsize,
         });
         break;
       case VmDeviceType.Nic:
-        this.nicForm.patchValue(device.attributes);
+        this.nicForm.patchValue(this.existingDevice.attributes);
         break;
       case VmDeviceType.Display:
-        this.displayForm.patchValue(device.attributes);
+        this.displayForm.patchValue(this.existingDevice.attributes);
         break;
       case VmDeviceType.Disk:
         this.diskForm.patchValue({
-          ...device.attributes,
-          sectorsize: device.attributes.logical_sectorsize === null
+          ...this.existingDevice.attributes,
+          sectorsize: this.existingDevice.attributes.logical_sectorsize === null
             ? 0
-            : device.attributes.logical_sectorsize,
+            : this.existingDevice.attributes.logical_sectorsize,
         });
         break;
       case VmDeviceType.Cdrom:
-        this.cdromForm.patchValue(device.attributes);
+        this.cdromForm.patchValue(this.existingDevice.attributes);
         break;
       case VmDeviceType.Usb:
-        this.usbForm.patchValue(device.attributes);
+        if (!this.existingDevice.attributes.device) {
+          this.existingDevice.attributes.device = specifyCustom;
+        }
+        this.usbForm.patchValue(this.existingDevice.attributes);
         break;
       default:
-        assertUnreachable(device);
+        assertUnreachable(this.existingDevice);
     }
   }
 
@@ -270,6 +318,28 @@ export class DeviceFormComponent implements OnInit {
 
   onSubmit(event: SubmitEvent): void {
     event.preventDefault();
+
+    if (this.typeControl.value === VmDeviceType.Pci) {
+      forkJoin([
+        this.ws.call('vm.device.passthrough_device_choices'),
+        this.ws.call('system.advanced.config'),
+      ]).pipe(untilDestroyed(this)).subscribe(([passthroughDevices, advancedConfig]) => {
+        const dev = this.pciForm.controls.pptdev.value;
+        if (!passthroughDevices[dev]?.reset_mechanism_defined && !advancedConfig.isolated_gpu_pci_ids.includes(dev)) {
+          this.dialogService.confirm({
+            title: this.translate.instant('Warning'),
+            message: this.translate.instant('PCI device does not have a reset mechanism defined and you may experience inconsistent/degraded behavior when starting/stopping the VM.'),
+          }).pipe(untilDestroyed(this)).subscribe((confirmed) => confirmed && this.onSend());
+        } else {
+          this.onSend();
+        }
+      });
+    } else {
+      this.onSend();
+    }
+  }
+
+  private onSend(): void {
     this.isLoading = true;
 
     const update: VmDeviceUpdate = {
@@ -287,9 +357,14 @@ export class DeviceFormComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
+          if (this.isNew) {
+            this.snackbar.success(this.translate.instant('Device added'));
+          } else {
+            this.snackbar.success(this.translate.instant('Device updated'));
+          }
           this.isLoading = false;
           this.cdr.markForCheck();
-          this.slideIn.close();
+          this.slideInRef.close();
         },
         error: (error) => {
           this.errorHandler.handleWsFormError(error, this.typeSpecificForm);
@@ -300,8 +375,12 @@ export class DeviceFormComponent implements OnInit {
   }
 
   private getUpdateAttributes(): VmDeviceUpdate['attributes'] {
-    if ('sectorsize' in this.typeSpecificForm.value) {
-      const { sectorsize, ...otherAttributes } = this.typeSpecificForm.value;
+    const values = this.typeSpecificForm.value;
+    if ('device' in values && values.device === specifyCustom) {
+      values.device = null;
+    }
+    if ('sectorsize' in values) {
+      const { sectorsize, ...otherAttributes } = values;
       return {
         ...otherAttributes,
         logical_sectorsize: sectorsize === 0 ? null : sectorsize,
@@ -309,7 +388,7 @@ export class DeviceFormComponent implements OnInit {
       };
     }
 
-    return this.typeSpecificForm.value;
+    return values;
   }
 
   /**

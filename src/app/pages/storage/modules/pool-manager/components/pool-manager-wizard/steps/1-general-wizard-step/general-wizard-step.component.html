@@ -1,0 +1,35 @@
+<ng-container [formGroup]="form">
+  <ix-input
+    formControlName="name"
+    [label]="'Name' | translate"
+    [required]="true"
+  ></ix-input>
+  <ix-checkbox
+    formControlName="encryption"
+    [label]="'Encryption' | translate"
+  ></ix-checkbox>
+  <ix-select
+    *ngIf="form.controls.encryption.value"
+    formControlName="encryptionStandard"
+    [label]="'Encryption Standard' | translate"
+    [options]="encryptionAlgorithmOptions$"
+    [required]="true"
+  ></ix-select>
+
+  <ix-pool-warnings></ix-pool-warnings>
+
+  <ix-form-actions>
+    <div class="step-buttons">
+      <button
+        mat-button
+        matStepperNext
+        color="primary"
+        type="button"
+        ixTest="next"
+        [disabled]="form.invalid"
+      >
+        {{ 'Next' | translate }}
+      </button>
+    </div>
+  </ix-form-actions>
+</ng-container>

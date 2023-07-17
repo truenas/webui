@@ -6,13 +6,13 @@ import { of } from 'rxjs';
 import {
   catchError, filter, map, switchMap,
 } from 'rxjs/operators';
-import { ApiEventMessage } from 'app/enums/api-event-message.enum';
+import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
 import {
   userPageEntered, usersLoaded, usersNotLoaded, userRemoved,
 } from 'app/pages/account/users/store/user.actions';
-import { WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { builtinUsersToggled } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -46,9 +46,9 @@ export class UserEffects {
   subscribeToRemoval$ = createEffect(() => this.actions$.pipe(
     ofType(usersLoaded),
     switchMap(() => {
-      return this.ws.sub('user.query').pipe(
-        filter((event) => event.msg === ApiEventMessage.Changed && event.cleared),
-        map((event) => userRemoved({ id: event.id })),
+      return this.ws.subscribe('user.query').pipe(
+        filter((event) => event.msg === IncomingApiMessageType.Removed),
+        map((event) => userRemoved({ id: event.id as number })),
       );
     }),
   ));

@@ -9,7 +9,7 @@ export interface RoutePart {
   breadcrumb: string;
   url: string;
   ngUrl?: string[];
-  disabled?: boolean;
+  isNew?: boolean;
 }
 
 @Injectable()
@@ -28,7 +28,7 @@ export class RoutePartsService {
 
   private generateRouteParts(route: ActivatedRoute, url = '', routeParts: RoutePart[] = []): RoutePart[] {
     const children: ActivatedRoute[] = route.children;
-    const ngUrl: string[] = [url];
+    const ngUrl: string[] = [];
 
     if (children.length === 0) {
       return routeParts;
@@ -38,22 +38,23 @@ export class RoutePartsService {
       const routeUrl: string = child.snapshot.url.map((segment) => segment.path).join('/');
       if (routeUrl) {
         url += `/${routeUrl}`;
-        ngUrl.push(routeUrl);
+        ngUrl.push(url);
       }
 
-      const { title, breadcrumb, disabled } = child.snapshot.data;
-      if (title) {
-        routeParts.push({
-          title,
-          breadcrumb,
-          disabled,
-          url,
-          ngUrl,
-        });
-      }
+      const { title, breadcrumb, isNew } = child.snapshot.data as RoutePart;
+
+      routeParts.push({
+        title,
+        breadcrumb,
+        url,
+        ngUrl,
+        isNew,
+      });
 
       return this.generateRouteParts(child, url, routeParts);
     }
+
+    return undefined;
   }
 
   get routeParts(): RoutePart[] {

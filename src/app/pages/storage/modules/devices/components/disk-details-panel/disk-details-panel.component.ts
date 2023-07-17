@@ -5,8 +5,7 @@ import {
   Output,
   EventEmitter,
 } from '@angular/core';
-import { PoolTopologyCategory } from 'app/enums/pool-topology-category.enum';
-import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
+import { VdevType } from 'app/enums/v-dev-type.enum';
 import { Disk, isTopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
 
 @Component({
@@ -20,7 +19,8 @@ export class DiskDetailsPanelComponent {
   @Input() topologyParentItem: TopologyItem;
   @Input() disk: Disk;
   @Input() poolId: number;
-  @Input() topologyCategory: PoolTopologyCategory;
+  @Input() topologyCategory: VdevType;
+  @Input() hasTopLevelRaidz: boolean;
 
   @Output() closeMobileDetails: EventEmitter<void> = new EventEmitter<void>();
 
@@ -33,8 +33,7 @@ export class DiskDetailsPanelComponent {
   }
 
   get isTopologyDisk(): boolean {
-    return isTopologyDisk(this.topologyItem)
-      && this.topologyItem.status !== TopologyItemStatus.Unavail;
+    return isTopologyDisk(this.topologyItem);
   }
 
   onCloseMobileDetails(): void {
@@ -45,5 +44,7 @@ export class DiskDetailsPanelComponent {
     if (isTopologyDisk(this.topologyItem)) {
       return this.topologyItem.disk !== null;
     }
+
+    return false;
   }
 }

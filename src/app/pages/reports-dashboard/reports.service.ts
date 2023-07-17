@@ -1,16 +1,17 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { TranslateService } from '@ngx-translate/core';
-import { addSeconds, differenceInDays, differenceInSeconds } from 'date-fns';
+import { addSeconds } from 'date-fns';
 import {
-  map, Observable, shareReplay, BehaviorSubject,
+  map, Observable, shareReplay, BehaviorSubject, switchMap, interval,
 } from 'rxjs';
+import { ReportingGraphName } from 'app/enums/reporting-graph-name.enum';
 import { CoreEvent } from 'app/interfaces/events';
+import { ReportDataRequestEvent } from 'app/interfaces/events/reporting-events.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { ReportingGraph } from 'app/interfaces/reporting-graph.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ReportComponent } from 'app/pages/reports-dashboard/components/report/report.component';
-import { getReportTypeLabels, ReportTab } from 'app/pages/reports-dashboard/interfaces/report-tab.interface';
+import { ReportTab, reportTypeLabels, ReportType } from 'app/pages/reports-dashboard/interfaces/report-tab.interface';
 import { CoreService } from 'app/services/core-service/core.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
@@ -37,81 +38,84 @@ export enum ReportingDatabaseError {
 })
 export class ReportsService implements OnDestroy {
   serverTime: Date;
-  showTimeDiffWarning = false;
-  private reportingGraphs$ = new BehaviorSubject([]);
-  private diskMetrics$ = new BehaviorSubject([]);
+  private reportingGraphs$ = new BehaviorSubject<ReportingGraph[]>([]);
+  private diskMetrics$ = new BehaviorSubject<Option[]>([]);
   private reportsUtils: Worker;
+  private hasUps = false;
+  private hasDiskTemperature = false;
+  private hasTarget = false;
 
   constructor(
     private ws: WebSocketService,
     private core: CoreService,
     private store$: Store<AppState>,
-    private translate: TranslateService,
   ) {
     this.reportsUtils = new Worker(new URL('./reports-utils.worker', import.meta.url), { type: 'module' });
 
-    this.core.register({
-      observerClass: this,
-      eventName: 'ReportDataRequest',
-    }).subscribe((evt: CoreEvent) => {
-      const chartId = (evt.sender as ReportComponent).chartId;
-      this.ws.call('reporting.get_data', [[evt.data.params], evt.data.timeFrame]).subscribe({
-        next: (reportingData) => {
-          let res;
+    this.core
+      .register({
+        observerClass: this,
+        eventName: 'ReportDataRequest',
+      })
+      .subscribe((evt: ReportDataRequestEvent) => {
+        const chartId = (evt.sender as ReportComponent).chartId;
+        this.ws.call('reporting.get_data', [[evt.data.params], evt.data.timeFrame]).subscribe({
+          next: (reportingData) => {
+            const processedData = [...reportingData];
 
-          // If requested, we truncate trailing null values
-          if (evt.data.truncate) {
-            const truncated = this.truncateData(reportingData[0].data);
-            res = Object.assign([], reportingData);
-            res[0].data = truncated;
-          } else {
-            res = reportingData;
-          }
+            const truncateTrailingNullValues = evt.data.truncate;
+            if (truncateTrailingNullValues) {
+              processedData[0].data = this.truncateData(reportingData[0].data as number[][]);
+            }
 
-          const commands = [
-            {
-              command: 'optimizeLegend',
-              input: res[0],
-            },
-            {
-              command: 'convertAggregations',
-              input: '|',
-              options: [evt.data.report.vertical_label], // units
-            },
-          ];
+            const commands = [
+              {
+                command: 'optimizeLegend',
+                input: processedData[0],
+              },
+              {
+                command: 'convertAggregations',
+                input: '|',
+                options: [evt.data.report.vertical_label], // units
+              },
+            ];
 
-          this.reportsUtils.postMessage({ name: 'ProcessCommandsAsReportData', data: commands, sender: chartId });
-        },
-        error: (err: WebsocketError) => {
-          this.reportsUtils.postMessage({ name: 'FetchingError', data: err, sender: chartId });
-        },
+            this.reportsUtils.postMessage({ name: 'ProcessCommandsAsReportData', data: commands, sender: chartId });
+          },
+          error: (err: WebsocketError) => {
+            this.reportsUtils.postMessage({ name: 'FetchingError', data: err, sender: chartId });
+          },
+        });
       });
-    });
 
-    this.reportsUtils.onmessage = ({ data }) => {
+    this.reportsUtils.onmessage = ({ data }: { data: CoreEvent }) => {
       if (data.name === 'ReportData') {
-        this.core.emit({ name: `ReportData-${data.sender}`, data: data.data, sender: this });
+        this.core.emit({ name: `ReportData-${String(data.sender)}`, data: data.data, sender: this });
       }
     };
 
     this.ws.call('reporting.graphs').subscribe((reportingGraphs) => {
+      this.hasUps = reportingGraphs.some((graph) => graph.name === ReportingGraphName.Ups);
+      this.hasTarget = reportingGraphs.some((graph) => graph.name === ReportingGraphName.Target);
       this.reportingGraphs$.next(reportingGraphs);
     });
 
-    this.store$.pipe(waitForSystemInfo).subscribe((systemInfo) => {
-      const now = Date.now();
-      const datetime = systemInfo.datetime.$date;
-      this.serverTime = new Date(datetime);
-      const timeDiffInSeconds = differenceInSeconds(datetime, now);
-      const timeDiffInDays = differenceInDays(datetime, now);
-      if (timeDiffInSeconds > 300 || timeDiffInDays > 0) {
-        this.showTimeDiffWarning = true;
-      }
-
-      setInterval(() => {
-        this.serverTime = addSeconds(this.serverTime, 1);
-      }, 1000);
+    this.ws.call('disk.temperatures').subscribe((values) => {
+      this.hasDiskTemperature = Boolean(Object.values(values).filter(Boolean).length);
     });
+
+    this.store$
+      .pipe(
+        waitForSystemInfo,
+        map((systemInfo) => systemInfo.datetime.$date),
+        switchMap((timestamp) => {
+          this.serverTime = new Date(timestamp);
+          return interval(1000);
+        }),
+      )
+      .subscribe(() => {
+        this.serverTime = addSeconds(this.serverTime, 1);
+      });
   }
 
   ngOnDestroy(): void {
@@ -142,9 +146,21 @@ export class ReportsService implements OnDestroy {
   }
 
   getReportTabs(): ReportTab[] {
-    return Array.from(getReportTypeLabels(this.translate)).map(([value, label]) => {
-      return { value, label } as ReportTab;
-    });
+    return Array.from(reportTypeLabels)
+      .filter(([value]) => {
+        if (value === ReportType.Ups && !this.hasUps) {
+          return false;
+        }
+
+        if (value === ReportType.Target && !this.hasTarget) {
+          return false;
+        }
+
+        return true;
+      })
+      .map(([value, label]) => {
+        return { value, label } as ReportTab;
+      });
   }
 
   getDiskDevices(): Observable<Option[]> {
@@ -170,6 +186,14 @@ export class ReportsService implements OnDestroy {
   }
 
   getDiskMetrics(): Observable<Option[]> {
-    return this.diskMetrics$.asObservable();
+    return this.diskMetrics$.asObservable().pipe(
+      map((options) => {
+        if (!this.hasDiskTemperature) {
+          return options.filter((option) => option.value !== 'disktemp');
+        }
+
+        return options;
+      }),
+    );
   }
 }

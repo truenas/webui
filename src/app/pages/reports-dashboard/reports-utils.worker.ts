@@ -30,10 +30,7 @@ export interface Command {
   options?: unknown[]; // Function parameters
 }
 
-const maxDecimals = (input: number, max?: number): number => {
-  if (!max) {
-    max = 2;
-  }
+const maxDecimals = (input: number, max = 2): number => {
   const str = input.toString().split('.');
   if (!str[1]) {
     // Not a float
@@ -138,9 +135,6 @@ function formatValue(value: number, units: string): string | number {
   let converted;
   switch (units.toLowerCase()) {
     case 'bits':
-      converted = convertKmgt(value, units);
-      output = maxDecimals(converted.value).toString() + converted.shortName;
-      break;
     case 'bytes':
       converted = convertKmgt(value, units);
       output = maxDecimals(converted.value).toString() + converted.shortName;
@@ -306,12 +300,10 @@ const commands = {
     return output;
   },
   avgFromReportData: (input: number[][]) => {
-    const output = avgFromReportData(input);
-    return output;
+    return avgFromReportData(input);
   },
   optimizeLegend: (input: ReportingData) => {
-    const output = optimizeLegend(input);
-    return output;
+    return optimizeLegend(input);
   },
   convertAggregations: (input: ReportingData, options?: [string]) => {
     const output = options ? convertAggregations(input, ...options) : input;
@@ -321,16 +313,13 @@ const commands = {
     return output;
   },
   avgCpuTempReport: (input: ReportingData) => {
-    const output = avgCpuTempReport(input);
-    return output;
+    return avgCpuTempReport(input);
   },
   arrayAvg: (input: number[]) => {
-    const output = arrayAvg(input);
-    return output;
+    return arrayAvg(input);
   },
   maxDecimals: (input: number, options?: [number]) => {
-    const output = options ? maxDecimals(input, ...options) : maxDecimals(input);
-    return output;
+    return options ? maxDecimals(input, ...options) : maxDecimals(input);
   },
 };
 
@@ -351,22 +340,22 @@ function emit(evt: CoreEvent): void {
   postMessage(evt);
 }
 
-addEventListener('message', ({ data }) => { // eslint-disable-line no-restricted-globals
+addEventListener('message', ({ data }: { data: CoreEvent }) => { // eslint-disable-line no-restricted-globals
   const evt = data;
   let output;
 
   switch (evt.name) {
     case 'SayHello': {
-      const response = evt.data + ' World!';
+      const response = `${String(evt.data)} World!`;
       emit({ name: 'Response', data: response });
       break;
     }
     case 'ProcessCommands':
-      output = processCommands(evt.data);
+      output = processCommands(evt.data as Command[]);
       emit({ name: 'Response', data: output, sender: evt.sender });
       break;
     case 'ProcessCommandsAsReportData':
-      output = processCommands(evt.data);
+      output = processCommands(evt.data as Command[]);
       emit({ name: 'ReportData', data: output, sender: evt.sender });
       break;
     case 'FetchingError':

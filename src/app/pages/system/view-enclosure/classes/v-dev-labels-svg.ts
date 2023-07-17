@@ -1,11 +1,15 @@
 import { Selection } from 'd3';
 import * as d3 from 'd3';
-import { Application, Container } from 'pixi.js';
+import { Application, Container, DefaultRendererPlugins } from 'pixi.js';
 import { Subject } from 'rxjs';
+import { EnclosureSlot, SelectedEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import { CoreEvent } from 'app/interfaces/events';
+import { HighlightDiskEvent } from 'app/interfaces/events/enclosure-events.interface';
+import { LabelDrivesEvent } from 'app/interfaces/events/label-drives-event.interface';
+import { ThemeChangedEvent } from 'app/interfaces/events/theme-changed-event.interface';
+import { Disk } from 'app/interfaces/storage.interface';
 import { Theme } from 'app/interfaces/theme.interface';
 import { ChassisView } from 'app/pages/system/view-enclosure/classes/chassis-view';
-import { EnclosureDisk, VDevMetadata } from 'app/pages/system/view-enclosure/classes/system-profiler';
 
 export class VDevLabelsSvg {
   /*
@@ -31,7 +35,7 @@ export class VDevLabelsSvg {
   constructor(
     private chassis: ChassisView,
     private app: Application,
-    private selectedDisk: EnclosureDisk,
+    private selectedDisk: Disk,
     theme: Theme,
   ) {
     this.color = 'var(--cyan)';
@@ -50,22 +54,14 @@ export class VDevLabelsSvg {
     this.events$.subscribe((evt: CoreEvent): void => {
       switch (evt.name) {
         case 'ThemeChanged': {
-          const theme = evt.data;
+          const theme = (evt as ThemeChangedEvent).data;
           this.color = theme.blue;
           this.selectedDiskColor = theme.cyan;
           this.highlightColor = theme.yellow;
           break;
         }
         case 'LabelDrives':
-          this.createVdevLabels(evt.data);
-          break;
-        case 'OverlayReady':
-          break;
-        case 'ShowPath':
-          break;
-        case 'HidePath':
-          break;
-        case 'EnableHighlightMode':
+          this.createVdevLabels((evt as LabelDrivesEvent).data);
           break;
         case 'DisableHighlightMode':
           tiles = this.getParent().querySelectorAll('rect.tile');
@@ -75,8 +71,8 @@ export class VDevLabelsSvg {
           tiles = this.getParent().querySelectorAll('rect.tile');
           this.hideAllTiles(tiles as NodeListOf<HTMLElement>);
 
-          this.highlightedDiskName = evt.data.devname;
-          this.showTile(evt.data.devname);
+          this.highlightedDiskName = (evt as HighlightDiskEvent).data.devname;
+          this.showTile(this.highlightedDiskName);
           break;
         case 'UnhighlightDisk':
           break;
@@ -93,7 +89,7 @@ export class VDevLabelsSvg {
     const op = this.getParent();
     d3.select('#' + op.id + ' svg').remove();
     d3.select('#' + op.id + ' canvas.clickpad').remove();
-    this.app.renderer.plugins.interaction.setTargetElement(this.app.renderer.view);
+    (this.app.renderer.plugins as DefaultRendererPlugins).interaction.setTargetElement(this.app.renderer.view);
   }
 
   d3Init(): void {
@@ -111,7 +107,7 @@ export class VDevLabelsSvg {
       .attr('height', op.offsetHeight)
       .attr('style', 'position:absolute; top:0; left:0;');
 
-    this.app.renderer.plugins.interaction.setTargetElement(op.querySelector('canvas.clickpad'));
+    (this.app.renderer.plugins as DefaultRendererPlugins).interaction.setTargetElement(op.querySelector('canvas.clickpad'));
   }
 
   getParent(): HTMLElement {
@@ -126,7 +122,7 @@ export class VDevLabelsSvg {
     className: string,
     diskName: string,
   ): void {
-    const color = diskName === this.selectedDisk.devname ? this.selectedDiskColor : this.color;
+    const color = diskName === this.selectedDisk?.devname ? this.selectedDiskColor : this.color;
 
     const style = 'fill-opacity:0.25; stroke-width:1';
 
@@ -142,27 +138,36 @@ export class VDevLabelsSvg {
       .attr('style', style);
   }
 
-  createVdevLabels(vdev: VDevMetadata): void {
-    const disks = vdev.disks
-      ? Object.keys(vdev.disks)
-      : [this.selectedDisk.devname]; // NOTE: vdev.slots only has values for current enclosure
+  createVdevLabels(data: SelectedEnclosureSlot): void {
+    const vdevSlots = data.vdevSlots.length ? data.vdevSlots : [data.selected];
+    vdevSlots.forEach((enclosureSlot: EnclosureSlot) => {
+      // Ignore slots on non-selected enclosure
+      if (enclosureSlot.enclosure !== data.selected.enclosure) return;
 
-    disks.forEach((disk) => {
-      const slot = typeof vdev.slots !== 'undefined' ? vdev.slots[disk] : this.selectedDisk.enclosure.slot;
-
-      if (slot && slot >= this.chassis.slotRange.start && slot <= this.chassis.slotRange.end) {
+      // The Actual creating of labels
+      // Requirements: diskNames, isOnController
+      const isInRange = (
+        enclosureSlot?.slot
+        && enclosureSlot.slot >= this.chassis.slotRange.start
+        && enclosureSlot.slot <= this.chassis.slotRange.end
+      );
+      if (isInRange) {
         // Create tile if the disk is in the current enclosure
-        const dt = this.chassis.driveTrayObjects.find((dto) => parseInt(dto.id) === slot);
+        const dt = this.chassis.driveTrayObjects.find((dto) => parseInt(dto.id) === enclosureSlot.slot);
         const src = dt.container;
         const tray = src.getGlobalPosition();
 
-        const tileClass = 'tile tile_' + disk;
+        const tileClass = enclosureSlot.disk
+          ? 'tile tile_' + enclosureSlot.disk.name
+          : 'tile tile_empty';
+
+        const tileName = enclosureSlot.disk ? enclosureSlot.disk.name : 'empty';
 
         const tileWidth = src.width * this.chassis.driveTrays.scale.x * this.chassis.container.scale.x;
         const tileHeight = src.height * this.chassis.driveTrays.scale.y * this.chassis.container.scale.y;
 
-        this.createVdevLabelTile(tray.x, tray.y, tileWidth, tileHeight, tileClass, disk);
-        this.trays[disk] = {
+        this.createVdevLabelTile(tray.x, tray.y, tileWidth, tileHeight, tileClass, tileName);
+        this.trays[tileName] = {
           x: tray.x, y: tray.y, width: tileWidth, height: tileHeight,
         };
       }

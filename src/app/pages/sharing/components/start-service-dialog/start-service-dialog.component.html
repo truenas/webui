@@ -1,0 +1,27 @@
+<h1 mat-dialog-title>{{ 'Start {service} Service' | translate: { service: serviceName } }}</h1>
+<div mat-dialog-content>
+  <p class="description">
+    {{ '{service} Service is not currently running. Start the service now?' | translate: { service: serviceName } }}
+  </p>
+
+  <ix-checkbox
+    [formControl]="startAutomaticallyControl"
+    [label]="'Enable this service to start automatically.' | translate"
+  ></ix-checkbox>
+</div>
+<ix-form-actions mat-dialog-actions>
+  <button
+    mat-button
+    ixTest="do-not-start"
+    (click)="onCancel()"
+  >{{ 'No' | translate }}</button>
+
+  <button
+    mat-button
+    color="primary"
+    ixTest="enable-service"
+    (click)="onEnable()"
+  >
+    {{ 'Enable Service' | translate }}
+  </button>
+</ix-form-actions>

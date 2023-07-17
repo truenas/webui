@@ -8,87 +8,91 @@
 </ng-template>
 
 <mat-card>
-  <mat-card-content>
-    <table ix-table [dataSource]="dataSource">
-      <ng-container matColumnDef="name">
-        <th *matHeaderCellDef mat-header-cell>{{ 'Name' | translate }}</th>
-        <td mat-cell *matCellDef="let service; dataSource: dataSource">
-          {{ service.name }}
-        </td>
-      </ng-container>
+  <table
+    ix-table
+    ixTest="services-table"
+    [ix-table-empty]="shouldShowEmpty"
+    [emptyConfig]="emptyConfigService.defaultEmptyConfig(loading ? EmptyType.Loading : EmptyType.NoSearchResults)"
+    [dataSource]="dataSource"
+  >
+    <ng-container matColumnDef="name">
+      <th *matHeaderCellDef mat-header-cell>{{ 'Name' | translate }}</th>
+      <td *matCellDef="let service; dataSource: dataSource" mat-cell>
+        {{ service.name }}
+      </td>
+    </ng-container>
 
-      <ng-container matColumnDef="state">
-        <th *matHeaderCellDef mat-header-cell>{{ 'Running' | translate }}</th>
-        <td mat-cell *matCellDef="let service; dataSource: dataSource">
-          <mat-spinner
-            *ngIf="serviceLoadingMap.get(service.service); else slider"
-            matTooltipPosition="right"
-            [diameter]="40"
-            [matTooltip]="
-              (service.state === ServiceStatus.Running
-                ? 'Stopping'
-                : 'Starting'
-              )
-                | uppercase
-                | translate
-            "
-          ></mat-spinner>
+    <ng-container matColumnDef="state">
+      <th *matHeaderCellDef mat-header-cell>{{ 'Running' | translate }}</th>
+      <td *matCellDef="let service; dataSource: dataSource" mat-cell>
+        <mat-spinner
+          *ngIf="serviceLoadingMap.get(service.service); else slider"
+          matTooltipPosition="right"
+          [diameter]="30"
+          [matTooltip]="
+            (service.state === ServiceStatus.Running
+              ? 'Stopping'
+              : 'Starting'
+            )
+              | uppercase
+              | translate
+          "
+        ></mat-spinner>
 
-          <ng-template #slider>
-            <mat-slide-toggle
-              color="primary"
-              matTooltipPosition="right"
-              [checked]="service.state === ServiceStatus.Running"
-              [matTooltip]="service.state"
-              (change)="onSliderChange(service)"
-            ></mat-slide-toggle>
-          </ng-template>
-        </td>
-      </ng-container>
-
-      <ng-container matColumnDef="enable">
-        <th *matHeaderCellDef mat-header-cell>
-          {{ 'Start Automatically' | translate }}
-        </th>
-        <td mat-cell *matCellDef="let service; dataSource: dataSource">
-          <mat-checkbox
+        <ng-template #slider>
+          <mat-slide-toggle
             color="primary"
-            [(ngModel)]="service.enable"
-            (change)="onCheckboxChange(service)"
-          ></mat-checkbox>
-        </td>
-      </ng-container>
+            matTooltipPosition="right"
+            [checked]="service.state === ServiceStatus.Running"
+            [matTooltip]="service.state"
+            [ixTest]="[service.service, 'service']"
+            (change)="onSliderChange(service)"
+          ></mat-slide-toggle>
+        </ng-template>
+      </td>
+    </ng-container>
 
-      <ng-container matColumnDef="actions">
-        <th *matHeaderCellDef mat-header-cell></th>
-        <td mat-cell *matCellDef="let service; dataSource: dataSource">
-          <button
-            mat-icon-button
-            type="button"
-            matTooltipPosition="left"
-            [matTooltip]="'Configure' | translate"
-            (click)="configureService(service)"
-          >
-            <mat-icon>edit</mat-icon>
-          </button>
-        </td>
-      </ng-container>
+    <ng-container matColumnDef="enable">
+      <th *matHeaderCellDef mat-header-cell>
+        {{ 'Start Automatically' | translate }}
+      </th>
+      <td *matCellDef="let service; dataSource: dataSource" mat-cell>
+        <mat-checkbox
+          color="primary"
+          [ixTest]="[service.service, 'service']"
+          [(ngModel)]="service.enable"
+          (change)="onCheckboxChange(service)"
+        ></mat-checkbox>
+      </td>
+    </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr
-        mat-row
-        *matRowDef="
-          let element;
-          columns: displayedColumns;
-          dataSource: dataSource
-        "
-      ></tr>
+    <ng-container matColumnDef="actions">
+      <th *matHeaderCellDef mat-header-cell></th>
+      <td *matCellDef="let service; dataSource: dataSource" mat-cell>
+        <button
+          mat-icon-button
+          type="button"
+          matTooltipPosition="left"
+          [ixTest]="[service.service, 'edit']"
+          [attr.aria-label]="'Edit' | translate"
+          [matTooltip]="'Configure' | translate"
+          (click)="configureService(service)"
+        >
+          <ix-icon name="edit"></ix-icon>
+        </button>
+      </td>
+    </ng-container>
 
-      <tr class="mat-row no-data-row" *matNoDataRow>
-        <td class="mat-cell" [attr.colspan]="displayedColumns.length">
-          <ix-entity-empty [conf]="loadingConf"></ix-entity-empty>
-        </td>
-      </tr>
-    </table>
-  </mat-card-content>
+    <tr *matHeaderRowDef="displayedColumns" mat-header-row ixTest="table-header"></tr>
+    <tr
+      *matRowDef="
+        let service;
+        columns: displayedColumns;
+        dataSource: dataSource
+      "
+      mat-row
+      [ixTest]="service.service"
+    ></tr>
+
+  </table>
 </mat-card>

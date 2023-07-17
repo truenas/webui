@@ -1,7 +1,7 @@
 <mat-card class="card">
   <mat-toolbar-row>
     <h3>{{ 'Global Configuration' | translate }}</h3>
-    <button mat-button color="default" (click)="onSettingsClicked()">
+    <button mat-button color="default" ixTest="network-settings" (click)="onSettingsClicked()">
       {{ 'Settings' | translate }}
     </button>
   </mat-toolbar-row>
@@ -23,7 +23,7 @@
           <mat-list *ngIf="ipv4?.length > 0" class="list">
             <div class="section-title">{{ 'Default Route' | translate }}</div>
             <mat-list-item>
-              <mat-icon class="list-icon">router</mat-icon>
+              <ix-icon name="router" class="list-icon"></ix-icon>
               <span class="label">{{ 'IPv4' | translate }}:</span>
               <ul class="value">
                 <li *ngFor="let ip of ipv4">{{ ip }}</li>
@@ -33,7 +33,7 @@
 
           <mat-list *ngIf="ipv6?.length > 0" class="list">
             <mat-list-item>
-              <mat-icon class="list-icon">router</mat-icon>
+              <ix-icon name="router" class="list-icon"></ix-icon>
               <span class="label">{{ 'IPv6' | translate }}:</span>
               <ul class="value">
                 <li *ngFor="let ip of ipv6">{{ ip }}</li>
@@ -55,14 +55,6 @@
               </span>
             </li>
             <li>
-              <span class="label">{{ 'Netwait:' | translate }}</span>
-              <span class="value">
-                {{
-                  (config.netwait_enabled ? 'Enabled' : 'Disabled') | translate
-                }}
-              </span>
-            </li>
-            <li>
               <span class="label">{{ 'HTTP Proxy:' | translate }}</span>
               <span class="value">{{ config.httpproxy || '---' }}</span>
             </li>
@@ -78,7 +70,7 @@
             </li>
             <li>
               <span class="label">{{ 'Hostname Database:' | translate }}</span>
-              <span class="value">{{ config.hosts || '---' }}</span>
+              <span class="value">{{ config.hosts.join(', ') || '---' }}</span>
             </li>
             <li>
               <span class="label">{{ 'Outbound Network:' | translate }}</span>

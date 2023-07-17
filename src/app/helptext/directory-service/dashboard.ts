@@ -28,10 +28,6 @@ export default {
   kerberosKeytab: {
     title: T('Kerberos Keytab'),
   },
-  button: {
-    settings: T('Settings'),
-    add: T('Add'),
-  },
   advancedEdit: {
     title: T('Warning'),
     message: T('Changing Advanced settings can be dangerous when done incorrectly. Please use caution before saving.'),

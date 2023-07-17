@@ -1,19 +1,22 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { UntypedFormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { UpsMode } from 'app/enums/ups-mode.enum';
 import { choicesToOptions, singleArrayToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-ups';
 import { UpsConfigUpdate } from 'app/interfaces/ups-config.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
 import { IxComboboxProvider } from 'app/modules/ix-forms/components/ix-combobox/ix-combobox-provider';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { DialogService, WebSocketService } from 'app/services';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -38,9 +41,9 @@ export class ServiceUpsComponent implements OnInit {
     rmonitor: [false],
     shutdown: [null as string],
     shutdowntimer: [null as number],
-    shutdowncmd: [null as unknown],
+    shutdowncmd: [null as string],
     powerdown: [false],
-    nocommwarntime: [300 as unknown],
+    nocommwarntime: [300],
     hostsync: [15],
     description: [null as string],
     options: [null as string],
@@ -77,7 +80,13 @@ export class ServiceUpsComponent implements OnInit {
 
   readonly tooltips = {
     identifier: helptext.ups_identifier_tooltip,
-    mode: helptext.ups_mode_tooltip,
+    mode: this.translate.instant('Choose <i>Master</i> if the UPS is plugged directly\
+      into the system serial port. The UPS will remain the\
+      last item to shut down. Choose <i>Slave</i> to have\
+      this system shut down before <i>Master</i>. See the\
+      <a href="{url}"\
+      target="_blank">Network UPS Tools Overview</a>.',
+    { url: 'https://networkupstools.org/docs/user-manual.chunked/ar01s02.html#_monitoring_client' }),
     remotehost: helptext.ups_remotehost_tooltip,
     remoteport: helptext.ups_remoteport_tooltip,
     driver: helptext.ups_driver_tooltip,
@@ -102,11 +111,14 @@ export class ServiceUpsComponent implements OnInit {
 
   constructor(
     private ws: WebSocketService,
-    private errorHandler: FormErrorHandlerService,
+    private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
-    private fb: UntypedFormBuilder,
+    private errorHandler: ErrorHandlerService,
+    private fb: FormBuilder,
     private dialogService: DialogService,
     private router: Router,
+    private translate: TranslateService,
+    private snackbar: SnackbarService,
   ) {}
 
   ngOnInit(): void {
@@ -115,7 +127,7 @@ export class ServiceUpsComponent implements OnInit {
     this.form.controls.remotehost.disable();
     this.form.controls.remoteport.disable();
 
-    this.form.controls['mode'].valueChanges.pipe(untilDestroyed(this)).subscribe((mode) => {
+    this.form.controls.mode.valueChanges.pipe(untilDestroyed(this)).subscribe((mode) => {
       if (mode === UpsMode.Master) {
         this.form.controls.remotehost.disable();
         this.form.controls.remoteport.disable();
@@ -143,7 +155,7 @@ export class ServiceUpsComponent implements OnInit {
         },
         error: (error) => {
           this.isFormLoading = false;
-          new EntityUtils().handleWsError(this, error, this.dialogService);
+          this.dialogService.error(this.errorHandler.parseWsError(error));
           this.cdr.markForCheck();
         },
       });
@@ -165,18 +177,15 @@ export class ServiceUpsComponent implements OnInit {
       .subscribe({
         next: () => {
           this.isFormLoading = false;
+          this.snackbar.success(this.translate.instant('Service configuration saved'));
           this.cdr.markForCheck();
           this.router.navigate(['/services']);
         },
         error: (error) => {
           this.isFormLoading = false;
-          this.errorHandler.handleWsFormError(error, this.form);
+          this.formErrorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();
         },
       });
-  }
-
-  onCancel(): void {
-    this.router.navigate(['/services']);
   }
 }

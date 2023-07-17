@@ -6,10 +6,12 @@ import { TranslateService } from '@ngx-translate/core';
 import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/directory-service/active-directory';
 import { LeaveActiveDirectory } from 'app/interfaces/active-directory-config.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { Job } from 'app/interfaces/job.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -24,6 +26,7 @@ export class LeaveDomainDialogComponent {
   });
 
   constructor(
+    private errorHandler: ErrorHandlerService,
     private formBuilder: FormBuilder,
     private loader: AppLoaderService,
     private ws: WebSocketService,
@@ -52,9 +55,9 @@ export class LeaveDomainDialogComponent {
           this.loader.close();
           this.dialogRef.close(true);
         },
-        error: (error) => {
+        error: (error: Job) => {
           this.loader.close();
-          new EntityUtils().handleWsError(helptext.ad_leave_domain_dialog.error, error, this.dialogService);
+          this.dialogService.error(this.errorHandler.parseJobError(error));
         },
       });
   }

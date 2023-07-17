@@ -4,28 +4,27 @@
   <div class="controls">
     <button
       mat-icon-button
+      ixTest="settings-menu"
       [title]="'Settings' | translate"
       [matMenuTriggerFor]="alertSettingsMenu"
     >
-      <mat-icon>settings</mat-icon>
+      <ix-icon name="settings"></ix-icon>
     </button>
     <mat-menu #alertSettingsMenu="matMenu">
-      <a mat-menu-item (click)="navigateTo(['/system', 'alertsettings'])">
+      <a mat-menu-item ixTest="alert-settings" (click)="navigateTo(['/system', 'alert-settings'])">
         {{ 'Alert Settings' | translate }}
       </a>
-      <a mat-menu-item (click)="navigateTo(['/system', 'alertservice'])">
-        {{ 'Alert Services' | translate }}
-      </a>
-      <a mat-menu-item (click)="navigateTo(['/system', 'email'])">
+      <a mat-menu-item ixTest="email-settings" (click)="navigateTo(['/system', 'general'], { fragment: 'email' })">
         {{ 'Email' | translate }}
       </a>
     </mat-menu>
     <button
       mat-icon-button
+      ixTest="close-panel"
       [title]="'Close panel' | translate"
       (click)="onPanelClosed()"
     >
-      <mat-icon>clear</mat-icon>
+      <ix-icon name="clear"></ix-icon>
     </button>
   </div>
 </div>
@@ -40,7 +39,7 @@
 <ng-template #loaded>
   <!-- TODO: Consider extracting into its own component -->
   <div *ngIf="error$ | async as error" class="error">
-    <mat-icon class="icon" color="accent">cancel</mat-icon>
+    <ix-icon class="icon" color="accent" name="cancel"></ix-icon>
     <h4 class="message">
       <span class="error-word">{{ 'Error:' | translate }}</span>
       {{ error }}
@@ -49,7 +48,7 @@
 
   <div *appLet="unreadAlerts$ | async as unreadAlerts">
     <div *ngIf="!unreadAlerts.length; else hasUnreadAlerts" class="no-alerts">
-      <mat-icon class="icon">info</mat-icon>
+      <ix-icon class="icon" name="info"></ix-icon>
       <h4 class="message">{{ 'There are no alerts.' | translate }}</h4>
     </div>
 
@@ -61,11 +60,16 @@
           role="listitem"
           [class.alert-last]="last"
         >
-          <ix-alert [alert]="alert" [isHa]="isHa"></ix-alert>
+          <ix-alert [alert]="alert" [isHaLicensed]="isHaLicensed"></ix-alert>
         </div>
       </div>
 
-      <button matRipple class="button-row" (click)="onDismissAll()">
+      <button
+        matRipple
+        class="button-row"
+        ixTest="dismiss-all-alerts"
+        (click)="onDismissAll()"
+      >
         {{ 'Dismiss All Alerts' | translate }}
       </button>
     </ng-template>
@@ -80,11 +84,16 @@
           role="listitem"
           [class.alert-last]="last"
         >
-          <ix-alert [alert]="alert" [isHa]="isHa"></ix-alert>
+          <ix-alert [alert]="alert" [isHaLicensed]="isHaLicensed"></ix-alert>
         </div>
       </div>
 
-      <button class="button-row" matRipple (click)="onReopenAll()">
+      <button
+        class="button-row"
+        matRipple
+        ixTest="reopen-all-alerts"
+        (click)="onReopenAll()"
+      >
         {{ 'Re-Open All Alerts' | translate }}
       </button>
     </ng-container>

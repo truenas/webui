@@ -5,12 +5,14 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { StaticRoute } from 'app/interfaces/static-route.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { StaticRouteFormComponent } from 'app/pages/network/components/static-route-form/static-route-form.component';
-import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('StaticRouteFormComponent', () => {
   let spectator: Spectator<StaticRouteFormComponent>;
@@ -29,16 +31,18 @@ describe('StaticRouteFormComponent', () => {
       ]),
       mockProvider(IxSlideInService),
       mockProvider(FormErrorHandlerService),
+      mockProvider(IxSlideInRef),
+      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
 
-  beforeEach(() => {
-    spectator = createComponent();
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(WebSocketService);
-  });
-
   describe('adding a static route', () => {
+    beforeEach(() => {
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      ws = spectator.inject(WebSocketService);
+    });
+
     it('sends a create payload to websocket and closes modal when save is pressed', async () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
@@ -60,12 +64,21 @@ describe('StaticRouteFormComponent', () => {
 
   describe('editing a group', () => {
     beforeEach(() => {
-      spectator.component.setEditingStaticRoute({
-        id: 13,
-        description: 'Existing route',
-        destination: '20.24.12.13/16',
-        gateway: '20.24.12.1',
-      } as StaticRoute);
+      spectator = createComponent({
+        providers: [
+          {
+            provide: SLIDE_IN_DATA,
+            useValue: {
+              id: 13,
+              description: 'Existing route',
+              destination: '20.24.12.13/16',
+              gateway: '20.24.12.1',
+            } as StaticRoute,
+          },
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      ws = spectator.inject(WebSocketService);
     });
 
     it('shows current group values when form is being edited', async () => {

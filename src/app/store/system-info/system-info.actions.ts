@@ -1,5 +1,4 @@
 import { createAction, props } from '@ngrx/store';
-import { HaStatus } from 'app/interfaces/events/ha-status-event.interface';
 import { SystemFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 
@@ -13,11 +12,20 @@ export const systemFeaturesLoaded = createAction(
   props<{ systemFeatures: SystemFeatures }>(),
 );
 
-export const haStatusLoaded = createAction(
-  '[System Info API] HA Status Loaded',
-  props<{ haStatus: HaStatus }>(),
+export const systemHaCapabilityLoaded = createAction(
+  '[System Info API] System is HA capable Loaded',
+  props<{ isSystemHaCapable: boolean }>(),
 );
 
-export const loadHaStatus = createAction(
-  '[System Info API] Load HA Status',
+export const ixHardwareLoaded = createAction(
+  '[System Info API] System is IxHardware Loaded',
+  props<{ isIxHardware: boolean }>(),
+);
+
+export const passiveNodeReplaced = createAction(
+  '[System Info API] Passive Node Replaced',
+);
+
+export const systemInfoUpdated = createAction(
+  '[System Info API] System Info Updated',
 );

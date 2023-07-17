@@ -2,7 +2,7 @@
 
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   <ix-fieldset [title]="'Identification' | translate">
-    <div fxLayout="row" fxLayoutGap="16px">
+    <div class="columns">
       <div fxFlex="50%">
         <ix-input
           formControlName="full_name"
@@ -15,7 +15,6 @@
           formControlName="username"
           [label]="'Username' | translate"
           [tooltip]="tooltips.username | translate"
-          [hint]="getUsernameHint()"
           [required]="true"
         ></ix-input>
 
@@ -55,7 +54,7 @@
   <mat-divider></mat-divider>
 
   <ix-fieldset [title]="'User ID and Groups' | translate">
-    <div fxLayout="row" fxLayoutGap="16px">
+    <div class="columns">
       <div fxFlex="50%">
         <ix-input
           formControlName="uid"
@@ -93,7 +92,7 @@
 
   <mat-divider></mat-divider>
 
-  <div fxLayout="row" fxLayoutGap="16px">
+  <div class="columns">
     <div fxFlex="50%">
       <ix-fieldset [title]="'Directories and Permissions' | translate">
         <ix-explorer
@@ -108,6 +107,12 @@
           [label]="'Home Directory Permissions' | translate"
           [tooltip]="tooltips.home_mode | translate"
         ></ix-permissions>
+
+        <ix-checkbox
+          formControlName="home_create"
+          [label]="'Create Home Directory' | translate"
+          [tooltip]="tooltips.home_create | translate"
+        ></ix-checkbox>
       </ix-fieldset>
     </div>
 
@@ -119,12 +124,23 @@
           [tooltip]="tooltips.sshpubkey | translate"
         ></ix-textarea>
 
-        <ix-combobox
+        <ix-file-input
+          formControlName="sshpubkey_file"
+          [label]="'Upload SSH Key' | translate"
+        ></ix-file-input>
+
+        <ix-checkbox
+          formControlName="ssh_password_enabled"
+          [label]="'SSH password login enabled' | translate"
+        ></ix-checkbox>
+
+        <ix-select
           formControlName="shell"
           [label]="'Shell' | translate"
           [tooltip]="tooltips.shell | translate"
-          [provider]="shellProvider"
-        ></ix-combobox>
+          [options]="shellOptions$"
+          [required]="true"
+        ></ix-select>
 
         <ix-checkbox
           formControlName="locked"
@@ -132,10 +148,24 @@
           [tooltip]="tooltips.locked | translate"
         ></ix-checkbox>
 
+        <ix-chips
+          formControlName="sudo_commands"
+          [label]="'Allowed sudo commands' | translate"
+        ></ix-chips>
+
         <ix-checkbox
-          formControlName="sudo"
-          [label]="'Permit Sudo' | translate"
-          [tooltip]="tooltips.sudo | translate"
+          formControlName="sudo_commands_all"
+          [label]="'Allow all sudo commands' | translate"
+        ></ix-checkbox>
+
+        <ix-chips
+          formControlName="sudo_commands_nopasswd"
+          [label]="'Allowed sudo commands with no password' | translate"
+        ></ix-chips>
+
+        <ix-checkbox
+          formControlName="sudo_commands_nopasswd_all"
+          [label]="'Allow all sudo commands with no password' | translate"
         ></ix-checkbox>
 
         <ix-checkbox
@@ -147,11 +177,12 @@
     </div>
   </div>
 
-  <div class="form-actions">
+  <ix-form-actions>
     <button
       mat-button
       type="submit"
       color="primary"
+      ixTest="save"
       [disabled]="form.invalid || isFormLoading"
     >
       {{ 'Save' | translate }}
@@ -160,9 +191,10 @@
       *ngIf="!isNewUser"
       mat-button
       type="button"
+      ixTest="download-keys"
       (click)="onDownloadSshPublicKey()"
     >
       {{ 'Download Authorized Keys' | translate }}
     </button>
-  </div>
+  </ix-form-actions>
 </form>

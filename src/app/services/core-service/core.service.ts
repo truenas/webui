@@ -86,13 +86,11 @@ export class CoreService {
         subscriptionType = 'Sender';
       }
 
-      if (subscriptionType === 'NameSender' && reg.eventName === evt.name && reg.sender === evt.sender) {
-        reg.observable$.next(evt);
-      } else if (subscriptionType === 'Name' && evt.name && reg.eventName === evt.name) {
-        reg.observable$.next(evt);
-      } else if (subscriptionType === 'Sender' && evt.sender && reg.sender === evt.sender) {
-        reg.observable$.next(evt);
-      } else if (subscriptionType === 'Any') {
+      const isNameSenderSubscription = subscriptionType === 'NameSender' && reg.eventName === evt.name && reg.sender === evt.sender;
+      const isNameSubscription = subscriptionType === 'Name' && evt.name && reg.eventName === evt.name;
+      const isSenderSubscription = subscriptionType === 'Sender' && evt.sender && reg.sender === evt.sender;
+      const isAnySubscription = subscriptionType === 'Any';
+      if (isNameSenderSubscription || isNameSubscription || isSenderSubscription || isAnySubscription) {
         reg.observable$.next(evt);
       }
     });

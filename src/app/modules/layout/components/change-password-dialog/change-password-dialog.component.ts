@@ -5,12 +5,15 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, switchMap, tap } from 'rxjs/operators';
 import helptext from 'app/helptext/topbar';
-import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
+import { matchOtherValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, WebSocketService } from 'app/services';
+import { AuthService } from 'app/services/auth/auth.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -32,6 +35,8 @@ export class ChangePasswordDialogComponent {
     ]],
   });
 
+  private loggedInUser: LoggedInUser;
+
   readonly tooltips = {
     password: helptext.changePasswordDialog.pw_new_pw_tooltip,
   };
@@ -42,15 +47,21 @@ export class ChangePasswordDialogComponent {
     private dialogService: DialogService,
     private fb: FormBuilder,
     private ws: WebSocketService,
+    private authService: AuthService,
     private loader: AppLoaderService,
     private validatorsService: IxValidatorsService,
+    private errorHandler: ErrorHandlerService,
     private snackbar: SnackbarService,
-  ) {}
+  ) {
+    this.authService.user$.pipe(filter(Boolean), untilDestroyed(this)).subscribe((user) => {
+      this.loggedInUser = user;
+    });
+  }
 
   onSubmit(): void {
     this.loader.open();
     const { currentPassword, password } = this.form.value;
-    this.ws.call('auth.check_user', ['root', currentPassword]).pipe(
+    this.ws.call('auth.check_user', [this.loggedInUser.pw_name, currentPassword]).pipe(
       tap((passwordVerified) => {
         if (passwordVerified) {
           return;
@@ -63,7 +74,7 @@ export class ChangePasswordDialogComponent {
         this.loader.close();
       }),
       filter(Boolean),
-      switchMap(() => this.ws.call('user.update', [1, { password }])),
+      switchMap(() => this.ws.call('user.update', [this.loggedInUser.id, { password }])),
       untilDestroyed(this),
     ).subscribe({
       next: () => {
@@ -73,9 +84,9 @@ export class ChangePasswordDialogComponent {
         this.loader.close();
         this.dialogRef.close();
       },
-      error: (error) => {
+      error: (error: WebsocketError) => {
         this.loader.close();
-        (new EntityUtils()).errorReport(error, this.dialogService);
+        this.dialogService.error(this.errorHandler.parseWsError(error));
       },
     });
   }

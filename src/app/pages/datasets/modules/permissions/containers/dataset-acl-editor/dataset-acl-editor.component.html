@@ -1,8 +1,8 @@
 <mat-card class="card card-square">
   <mat-spinner
     *ngIf="isLoading; else loaded"
-    [diameter]="40"
     class="spinner"
+    [diameter]="40"
   ></mat-spinner>
 
   <ng-template #loaded>
@@ -12,8 +12,8 @@
       </mat-card-title>
 
       <div class="dataset-path">
-        <label class="header-label">{{ 'Dataset' | translate }}:</label>
-        <div>{{ fullDatasetPath }}</div>
+        <label class="header-label">{{ 'Path' | translate }}:</label>
+        <div>{{ datasetPath }}</div>
       </div>
 
       <div class="ownership-row" [formGroup]="ownerFormGroup">
@@ -58,11 +58,24 @@
             [ownerGroup]="ownerFormGroup.get('ownerGroup').value"
           ></ix-acl-editor-list>
 
+          <div class="add-item">
+            <button
+              mat-button
+              class="action"
+              ixTest="add-acl-item"
+              (click)="onAddItemPressed()"
+            >
+              <ix-icon name="add"></ix-icon>
+              {{ 'Add Item' | translate }}
+            </button>
+          </div>
+
           <div class="controls-container">
             <div class="controls">
               <div class="checkboxes" [formGroup]="saveParameters">
                 <ix-checkbox
                   formControlName="recursive"
+                  class="recursive-checkbox"
                   [label]="helptext.dataset_acl_recursive_placeholder | translate"
                   [tooltip]="helptext.dataset_acl_recursive_tooltip | translate"
                 ></ix-checkbox>
@@ -76,15 +89,25 @@
               </div>
 
               <div class="control-buttons">
-                <button mat-button class="action" (click)="onAddItemPressed()">
-                  {{ 'Add Item' | translate }}
+                <button
+                  mat-button
+                  color="primary"
+                  class="action"
+                  ixTest="save-acl"
+                  [disabled]="acesWithError.length > 0 || !acl.acl.length || ownerFormGroup.invalid"
+                  (click)="onSavePressed()"
+                >
+                  {{ 'Save Access Control List' | translate }}
                 </button>
+              </div>
 
+              <div class="control-buttons">
                 <a
                   *ngIf="acl.trivial; else stripButton"
                   mat-button
                   class="action"
-                  [routerLink]="['/datasets/permissions/edit', datasetPath]"
+                  ixTest="edit-permissions"
+                  [routerLink]="['/datasets', getDatasetPath(), 'permissions', 'edit']"
                 >
                   {{ 'Permissions Editor' | translate }}
                 </a>
@@ -93,6 +116,7 @@
                     mat-button
                     color="warn"
                     class="action"
+                    ixTest="strip-acl"
                     (click)="onStripAclPressed()"
                   >
                     {{ 'Strip ACL' | translate }}
@@ -100,25 +124,23 @@
                 </ng-template>
               </div>
 
+              <h4 class="presets-label">Presets</h4>
               <div class="control-buttons">
                 <button
                   mat-button
                   class="action"
+                  ixTest="use-preset"
                   (click)="onUsePresetPressed()"
                 >
-                  {{ 'Use ACL Preset' | translate }}
+                  {{ 'Use Preset' | translate }}
                 </button>
-              </div>
-
-              <div class="control-buttons">
                 <button
                   mat-button
-                  color="primary"
                   class="action"
-                  [disabled]="acesWithError.length > 0 || !acl.acl.length || ownerFormGroup.invalid"
-                  (click)="onSavePressed()"
+                  ixTest="save-as-preset"
+                  (click)="onSavePreset()"
                 >
-                  {{ 'Save Access Control List' | translate }}
+                  {{ 'Save As Preset' | translate }}
                 </button>
               </div>
             </div>

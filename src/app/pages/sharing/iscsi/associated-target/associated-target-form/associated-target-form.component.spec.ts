@@ -6,10 +6,13 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IscsiTargetExtent } from 'app/interfaces/iscsi.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
-import { IscsiService, WebSocketService } from 'app/services';
+import { DialogService, IscsiService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { AssociatedTargetFormComponent } from './associated-target-form.component';
 
 describe('AssociatedTargetFormComponent', () => {
@@ -42,72 +45,90 @@ describe('AssociatedTargetFormComponent', () => {
         ]),
       }),
       mockProvider(IxSlideInService),
+      mockProvider(DialogService),
       mockWebsocket([
         mockCall('iscsi.targetextent.create'),
         mockCall('iscsi.targetextent.update'),
       ]),
+      mockProvider(IxSlideInRef),
+      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
 
-  beforeEach(async () => {
-    spectator = createComponent();
+  describe('Add new associated target', () => {
+    beforeEach(async () => {
+      spectator = createComponent({
+        providers: [
+          { provide: SLIDE_IN_DATA, useValue: null },
+        ],
+      });
 
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
-  });
-
-  it('add new associated target when form is submitted', async () => {
-    await form.fillForm({
-      Target: 'target-1',
-      'LUN ID': 234,
-      Extent: 'extent-1',
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
     });
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    await saveButton.click();
+    it('add new associated target when form is submitted', async () => {
+      await form.fillForm({
+        Target: 'target-1',
+        'LUN ID': 234,
+        Extent: 'extent-1',
+      });
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('iscsi.targetextent.create', [{
-      extent: 1,
-      lunid: 234,
-      target: 1,
-    }]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
-  });
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
 
-  it('shows values for an existing associated target when form is opened for edit', async () => {
-    spectator.component.setTargetForEdit(existingAssociatedTarget);
-
-    const values = await form.getValues();
-    expect(values).toEqual({
-      Extent: 'extent-2',
-      'LUN ID': '15',
-      Target: 'target-2',
+      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('iscsi.targetextent.create', [{
+        extent: 1,
+        lunid: 234,
+        target: 1,
+      }]);
+      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
     });
   });
 
-  it('edits existing associated target when form opened for edit is submitted', async () => {
-    spectator.component.setTargetForEdit(existingAssociatedTarget);
+  describe('Edit associated target', () => {
+    beforeEach(async () => {
+      spectator = createComponent({
+        providers: [
+          { provide: SLIDE_IN_DATA, useValue: existingAssociatedTarget },
+        ],
+      });
 
-    await form.fillForm({
-      Target: 'target-1',
-      'LUN ID': 234,
-      Extent: 'extent-1',
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
     });
 
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    await saveButton.click();
+    it('shows values for an existing associated target when form is opened for edit', async () => {
+      const values = await form.getValues();
+      expect(values).toEqual({
+        Extent: 'extent-2',
+        'LUN ID': '15',
+        Target: 'target-2',
+      });
+    });
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith(
-      'iscsi.targetextent.update',
-      [
-        12,
-        {
-          extent: 1,
-          lunid: 234,
-          target: 1,
-        },
-      ],
-    );
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    it('edits existing associated target when form opened for edit is submitted', async () => {
+      await form.fillForm({
+        Target: 'target-1',
+        'LUN ID': 234,
+        Extent: 'extent-1',
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith(
+        'iscsi.targetextent.update',
+        [
+          12,
+          {
+            extent: 1,
+            lunid: 234,
+            target: 1,
+          },
+        ],
+      );
+      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+    });
   });
 });

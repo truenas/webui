@@ -1,10 +1,5 @@
 <h1 mat-dialog-title>{{ title | translate }}</h1>
-<mat-dialog-content
-  class="resilver-progress-dialog"
-  ix-auto
-  ix-auto-type="dialog"
-  ix-auto-identifier="title"
->
+<mat-dialog-content class="resilver-progress-dialog">
   <div *ngIf="state !== PoolScanState.Finished">
     <mat-progress-bar
       class="example-margin"
@@ -17,13 +12,11 @@
   <div>{{ description | translate }}{{ diskName }}</div>
   <div>{{ statusLabel | translate }}{{ state }}</div>
 </mat-dialog-content>
-<div>
+<div mat-dialog-actions>
   <button
     mat-button
     mat-dialog-close="close"
-    ix-auto
-    ix-auto-type="button"
-    ix-auto-identifier="CLOSE"
+    ixTest="close"
   >
     {{ 'Close' | translate }}
   </button>

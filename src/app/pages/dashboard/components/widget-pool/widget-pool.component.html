@@ -1,4 +1,4 @@
-<div *ngIf="rendered" class="widget stats-widget" ngClass.xs="double-height xs">
+<div class="widget stats-widget" ngClass.xs="double-height xs">
   <div class="card-container front">
     <mat-card
       class="front overflow-hidden"
@@ -8,24 +8,22 @@
     >
       <mat-card-content #carouselparent>
         <mat-toolbar-row
-          class="view-{{ path.length > 0 ? currentSlideName : 'Pool' }}"
+          [class]="'view-' + (path.length > 0 ? currentSlideName : 'Pool')"
           [class.drag-handle]="showReorderHandle"
         >
           <ng-content [select]="[cdkDragHandle]"></ng-content>
 
           <!-- Mobile Only: Exit widget -->
           <button
-            *ngIf="currentSlide == '0'"
+            *ngIf="currentSlide === '0'"
             fxHide.gt-xs
             class="mat-card-title-text primary-nav"
             mat-icon-button
             color="default"
-            ix-auto
-            ix-auto-type="button"
-            ix-auto-identifier="goBack"
+            [ixTest]="[poolState.name, 'widget', 'back']"
             (click)="goBack()"
           >
-            <mat-icon class="back-arrow">chevron_left</mat-icon>
+            <ix-icon name="chevron_left" class="back-arrow"></ix-icon>
           </button>
 
           <!-- Back to previous slide -->
@@ -34,12 +32,10 @@
             class="mat-card-title-text primary-nav"
             mat-icon-button
             color="default"
-            ix-auto
-            ix-auto-type="button"
-            ix-auto-identifier="previousSlide"
+            [ixTest]="[poolState.name, 'widget', 'back']"
             (click)="updateSlide(path[previousSlide].name, true, previousSlide)"
           >
-            <mat-icon class="back-arrow">chevron_left</mat-icon>
+            <ix-icon name="chevron_left" class="back-arrow"></ix-icon>
           </button>
 
           <h3 class="mat-card-title-text">
@@ -47,7 +43,7 @@
               class="card-title-text"
               [class.drag-handle]="showReorderHandle"
             >
-              <span class="grip" *ngIf="showReorderHandle"></span>
+              <span *ngIf="showReorderHandle" class="grip"></span>
               <span>{{ title | translate }}</span>
             </div>
           </h3>
@@ -55,41 +51,35 @@
           <div class="controls">
             <a
               mat-icon-button
-              ix-auto-type="button"
-              ix-auto-identifier="poolStatus"
-              [routerLink]="['/storage', 'status', poolState.id]"
-              [ix-auto]="poolState.name"
+              [ixTest]="poolState.name"
+              [routerLink]="['/storage']"
             >
-              <mat-icon
-                fontSet="mdi-set"
-                fontIcon="mdi-database"
-                matTooltip="{{ 'Pool Status' | translate }}"
+              <ix-icon
+                name="mdi-database"
                 matTooltipPosition="above"
                 aria-label="Configure Pools"
-              ></mat-icon>
+                [matTooltip]="'Pool Status' | translate"
+              ></ix-icon>
             </a>
 
             <a
               mat-icon-button
-              ix-auto
-              ix-auto-type="button"
-              ix-auto-identifier="diskReports"
+              [ixTest]="[poolState.name, 'disk-reports']"
               [routerLink]="['/reportsdashboard', 'disk']"
               [queryParams]="{ disks: poolDisks }"
             >
-              <mat-icon
-                matTooltip="{{ 'Disk Reports' | translate }}"
+              <ix-icon
+                name="insert_chart"
                 matTooltipPosition="above"
                 aria-label="Disk Reports"
-              >
-                insert_chart
-              </mat-icon>
+                [matTooltip]="'Disk Reports' | translate"
+              ></ix-icon>
             </a>
           </div>
         </mat-toolbar-row>
 
         <!-- Carousel -->
-        <div *ngIf="poolState && path" class="carousel" #carousel>
+        <div *ngIf="poolState && path" #carousel class="carousel">
           <ng-template #locked>
             <div fxFlex="40" class="locked offline">
               <ix-icon name="error"></ix-icon>
@@ -100,7 +90,7 @@
           <div
             *ngFor="let slide of path"
             fxFlex="100"
-            class="slide {{ slide.name }}"
+            [class]="['slide', 'overview', slide.name]"
           >
             <ng-container *ngTemplateOutlet="slide.template"></ng-container>
           </div>
@@ -126,33 +116,37 @@
                   <div class="pool-name">
                     <span
                       textLimiter
-                      threshold="9"
-                      content="{{ poolState.name | translate }}"
+                      [threshold]="9"
+                      [content]="poolState.name | translate"
                     ></span>
                   </div>
 
                   <div class="table">
                     <div class="tr">
-                      <div class="td label"><strong>Total Disks :</strong></div>
+                      <div class="td label">
+                        <strong> {{ 'Total Disks' | translate }}: </strong>
+                      </div>
                       <div class="td">
-                        {{ totalDisks ? totalDisks + ' (data)' : 'Unknown' }}
+                        {{ totalDisks }}
                       </div>
                     </div>
 
                     <div class="pool-status tr">
-                      <div class="td label"><strong>Pool Status:</strong></div>
+                      <div class="td label">
+                        <strong> {{ 'Pool Status' | translate }}: </strong>
+                      </div>
                       <div class="td status-cell">
                         <span class="capitalize">
-                          {{ poolState.status }}
+                          {{ poolState.status | titlecase | translate | uppercase }}
                         </span>
                         <ng-container [ngSwitch]="poolState.status">
                           <span *ngSwitchCase="PoolStatus.Locked" class="lock-icon-wrapper icon">
                             <ix-icon name="lock"></ix-icon>
                           </span>
-                          <span *ngSwitchCase="PoolStatus.Online" class="{{ poolHealth.level }} icon">
+                          <span *ngSwitchCase="PoolStatus.Online" [class]="[poolHealth.level, 'icon']">
                             <ix-icon [name]="poolHealth.isHealthy ? 'check_circle' : 'error'"></ix-icon>
                           </span>
-                          <span *ngSwitchCase="PoolStatus.Healthy" class="{{ poolHealth.level }} icon">
+                          <span *ngSwitchCase="PoolStatus.Healthy" [class]="[poolHealth.level, 'icon']">
                             <ix-icon [name]="poolHealth.isHealthy ? 'check_circle' : 'error'"></ix-icon>
                           </span>
                           <span *ngSwitchDefault class="error icon">
@@ -165,12 +159,10 @@
                     <div class="used-space tr">
                       <ng-container *ngIf="!volumeData || !volumeData.used_pct">
                         <div class="td label">
-                          <strong>
-                            {{ 'Used Space' | translate }}:</strong
-                            >&nbsp;
+                          <strong>{{ 'Used Space' | translate }}:</strong>&nbsp;
                         </div>
                         <div class="td">
-                          <span class="value-used">Unknown</span>
+                          <span class="value-used">{{ 'Unknown' | translate }}</span>
                         </div>
                       </ng-container>
 
@@ -185,7 +177,7 @@
                           <span class="value-used">
                             {{ volumeData.used_pct }}
                           </span>
-                          <span class="icon {{ convertPercentToNumber(volumeData.used_pct) >= 90 ? 'error' : 'warning' }}">
+                          <span [class]="['icon', convertPercentToNumber(volumeData.used_pct) >= 90 ? 'error' : 'warning']">
                             <ix-icon name="error"></ix-icon>
                           </span>
                         </div>
@@ -204,24 +196,43 @@
                     </div>
                     <!-- END ROW -->
 
-                    <div class="disk-errors tr" *ngIf="poolState.status == PoolStatus.Online">
+                    <div *ngIf="poolState.status === PoolStatus.Online" class="disk-errors tr">
                       <div class="td label">
-                        <strong>Disks with Errors:</strong>
+                        <strong>{{ 'Disks with Errors' | translate }}:</strong>
                       </div>
                       <div class="td">
                         {{ unhealthyDisks.totalErrors }}
-                        <span *ngIf="unhealthyDisks.totalErrors != '0' && unhealthyDisks.totalErrors != 'Unknown'">
-                          Disks
+                        <span *ngIf="unhealthyDisks.totalErrors !== 0 && unhealthyDisks.totalErrors !== 'Unknown'">
+                          {{ 'Disks' | translate }}
                         </span>
                         <span
-                          *ngIf="unhealthyDisks.totalErrors != '0' && unhealthyDisks.totalErrors != 'Unknown'"
+                          *ngIf="unhealthyDisks.totalErrors !== 0 && unhealthyDisks.totalErrors !== 'Unknown'"
                           class="error icon"
                         >
                           <ix-icon class="disk-errors" name="error"></ix-icon>
                         </span>
-                        <span  *ngIf="unhealthyDisks.totalErrors == '0'" class="safe icon">
+                        <span *ngIf="unhealthyDisks.totalErrors === 0" class="safe icon">
                           <ix-icon class="healthy" name="check_circle"></ix-icon>
                         </span>
+                      </div>
+                    </div>
+
+                    <div *ngIf="poolState.scan.end_time || isScanInProgress" class="tr last-scan">
+                      <div class="td label">
+                        <strong>{{ isScanScrub ? ('Last Scrub' | translate) : ('Last Resilver' | translate) }}:</strong>
+                      </div>
+                      <div class="td">
+                        <ng-container *ngIf="!isScanInProgress">
+                          {{ poolState.scan.end_time.$date | formatDateTime }}
+                          <span>
+                            <ix-icon *ngIf="isScanFinished" class="healthy" name="check_circle"></ix-icon>
+                            <ix-icon *ngIf="!isScanFinished" class="warning" name="error"></ix-icon>
+                          </span>
+                        </ng-container>
+                        <ng-container *ngIf="isScanInProgress">
+                          {{ 'In Progress' | translate}}
+                          {{ poolState.scan.percentage / 100 | percent: '1.2-2' }}
+                        </ng-container>
                       </div>
                     </div>
                   </div>
@@ -236,7 +247,7 @@
                 fxLayout="column"
                 fxLayoutAlign="space-around center"
               >
-                <div fxFlex="100" *ngIf="poolState.topology && poolState.topology.data; else locked">
+                <div *ngIf="poolState.topology && poolState.topology.data; else locked" fxFlex="100">
                   <div class="list-subheader">
                     <span class="capitalize">{{ 'Overview' | translate }}</span>
                   </div>
@@ -260,7 +271,7 @@
                         <span *ngIf="displayValue !== 'Unknown'" class="value">
                           {{ 'Gathering data...' | translate }}
                         </span>
-                        <span *ngIf="displayValue == 'Unknown'" class="value">
+                        <span *ngIf="displayValue === 'Unknown'" class="value">
                           {{ 'Unknown' | translate }}
                         </span>
                       </ng-template>
@@ -280,15 +291,11 @@
                       <span *ngIf="poolState.topology.data.length > 1">
                         s
                       </span>
-                      <mat-icon
+                      <ix-icon
                         *ngIf="poolState.topology.data.length > 0"
+                        name="chevron_right"
                         class="next-slide"
-                        ix-auto
-                        ix-auto-type="button"
-                        ix-auto-identifier="nextSlide"
-                      >
-                        chevron_right
-                      </mat-icon>
+                      ></ix-icon>
                     </mat-list-item>
 
                     <mat-list-item
@@ -301,36 +308,28 @@
                         {{ 'Caches' | translate }}:
                       </strong>
                       {{ poolState.topology.cache.length }}
-                      <mat-icon
+                      <ix-icon
                         *ngIf="poolState.topology.cache.length > 0"
+                        name="chevron_right"
                         class="next-slide"
-                        ix-auto
-                        ix-auto-type="button"
-                        ix-auto-identifier="nextSlide"
-                      >
-                        chevron_right
-                      </mat-icon>
+                      ></ix-icon>
                     </mat-list-item>
 
                     <mat-list-item
-                      (click)="updateSlide('data', poolState.topology.spare.length > 0, 1, 0, PoolTopologyCategory.Spare)"
                       [ngClass]="{
                         clickable: poolState.topology.spare.length > 0
                       }"
+                      (click)="updateSlide('data', poolState.topology.spare.length > 0, 1, 0, PoolTopologyCategory.Spare)"
                     >
                       <strong>
                         {{ 'Spares' | translate }}:
                       </strong>
                       {{ poolState.topology.spare.length }}
-                      <mat-icon
+                      <ix-icon
                         *ngIf="poolState.topology.spare.length > 0"
+                        name="chevron_right"
                         class="next-slide"
-                        ix-auto
-                        ix-auto-type="button"
-                        ix-auto-identifier="nextSlide"
-                      >
-                        chevron_right
-                      </mat-icon>
+                      ></ix-icon>
                     </mat-list-item>
 
                     <mat-list-item
@@ -343,15 +342,11 @@
                         {{ 'Logs' | translate }}:
                       </strong>
                       {{ poolState.topology.log.length }}
-                      <mat-icon
+                      <ix-icon
                         *ngIf="poolState.topology.log.length > 0"
+                        name="chevron_right"
                         class="next-slide"
-                        ix-auto
-                        ix-auto-type="button"
-                        ix-auto-identifier="nextSlide"
-                      >
-                        chevron_right
-                      </mat-icon>
+                      ></ix-icon>
                     </mat-list-item>
                   </mat-list>
                 </div>
@@ -380,18 +375,18 @@
                 <!-- STATUS ICONS -->
                 <span
                   *ngIf="vdev.status === TopologyItemStatus.Online"
-                  class="{{ poolHealth.level }} healthy"
+                  [class]="[poolHealth.level, 'healthy']"
                 >
                   <ix-icon name="check_circle"></ix-icon>
                 </span>
                 <span
                   *ngIf="vdev.status !== TopologyItemStatus.Online"
-                  class="{{ poolHealth.level }} healthy"
+                  [class]="[poolHealth.level, 'healthy']"
                 >
                   <ix-icon name="error"></ix-icon>
                 </span>
 
-                <span *ngIf="vdev.type == 'DISK'" class="vdev">
+                <span *ngIf="vdev.type === 'DISK'" class="vdev">
                   <span>
                     {{ trimMultipath(vdev.disk).name }}
                   </span>
@@ -429,14 +424,7 @@
                   </span>
                 </span>
 
-                <mat-icon
-                  class="next-slide"
-                  ix-auto
-                  ix-auto-type="button"
-                  ix-auto-identifier="nextSlide"
-                >
-                  chevron_right
-                </mat-icon>
+                <ix-icon class="next-slide" name="chevron_right"></ix-icon>
               </mat-list-item>
             </mat-list>
           </ng-template>
@@ -452,14 +440,13 @@
                 *ngFor="let disk of path[currentSlideIndex].dataSource.children; let i = index"
                 role="listitem"
                 [ngClass]="{ clickable: true }"
-                (click)="updateSlide('disk details', true, currentSlideIndex + 1, i, currentSlideTopology, disk)"
-                (click)="getDiskDetails('name', disk.disk)"
+                (click)="updateSlide('disk details', true, currentSlideIndex + 1, i, currentSlideTopology, disk); getDiskDetails('name', disk.disk)"
               >
                 <strong>
                   <span *ngIf="disk.status !== 'UNAVAIL'">
                     {{ trimMultipath(disk.disk).fullName }}
                   </span>
-                  <span *ngIf="disk.status == 'UNAVAIL'">
+                  <span *ngIf="disk.status === 'UNAVAIL'">
                     {{ 'Unknown Disk' | translate }}
                   </span>
                   :
@@ -467,48 +454,33 @@
                 {{ disk.status | translate }}
 
                 <!-- STATUS ICONS -->
-                <span *ngIf="disk.status === TopologyItemStatus.Online" class="{{ poolHealth.level }} healthy">
+                <span *ngIf="disk.status === TopologyItemStatus.Online" [class]="[poolHealth.level, 'healthy']">
                   <ix-icon name="check_circle"></ix-icon>
                 </span>
-                <span *ngIf="disk.status !== TopologyItemStatus.Online" class="{{ poolHealth.level }} healthy">
+                <span *ngIf="disk.status !== TopologyItemStatus.Online" [class]="[poolHealth.level, 'healthy']">
                   <ix-icon name="error"></ix-icon>
                 </span>
 
                 <!-- CHEVRON -->
-                <mat-icon
-                  class="next-slide"
-                  ix-auto
-                  ix-auto-type="button"
-                  ix-auto-identifier="nextSlide"
-                >
-                  chevron_right
-                </mat-icon>
+                <ix-icon class="next-slide" name="chevron_right"></ix-icon>
               </mat-list-item>
             </mat-list>
 
-            <mat-list *ngIf="path[currentSlideIndex].dataSource.type == 'DISK'">
+            <mat-list *ngIf="path[currentSlideIndex].dataSource.type === 'DISK'">
               <mat-list-item
                 role="listitem"
                 [ngClass]="{ clickable: true }"
-                (click)="updateSlide('disk details', true, currentSlideIndex + 1, undefined, currentSlideTopology, path[currentSlideIndex].dataSource)"
-                (click)="getDiskDetails('name', path[currentSlideIndex].dataSource.disk)"
+                (click)="updateSlide('disk details', true, currentSlideIndex + 1, undefined, currentSlideTopology, path[currentSlideIndex].dataSource); getDiskDetails('name', asDisk(path[currentSlideIndex].dataSource).disk)"
               >
                 <strong>
-                  {{ trimMultipath(path[2].dataSource.disk).fullName }}
+                  {{ trimMultipath(asDisk(path[2].dataSource).disk).fullName }}
                   :
                 </strong>
                 {{ path[2].dataSource.status | translate }}
-                <span *ngIf="path[2].dataSource.status === TopologyItemStatus.Online" class="{{ poolHealth.level }} healthy">
+                <span *ngIf="path[2].dataSource.status === TopologyItemStatus.Online" [class]="[poolHealth.level, 'healthy']">
                   <ix-icon name="check_circle"></ix-icon>
                 </span>
-                <mat-icon
-                  class="next-slide"
-                  ix-auto
-                  ix-auto-type="button"
-                  ix-auto-identifier="nextSlide"
-                >
-                  chevron_right
-                </mat-icon>
+                <ix-icon class="next-slide" name="chevron_right"></ix-icon>
               </mat-list-item>
             </mat-list>
           </ng-template>
@@ -521,7 +493,7 @@
             <mat-list>
               <mat-list-item role="listitem">
                 <strong> {{ 'Name' | translate }}:</strong>
-                {{ path[currentSlideIndex].dataSource.disk }}
+                {{ asDisk(path[currentSlideIndex].dataSource).disk }}
               </mat-list-item>
 
               <mat-list-item role="listitem">
@@ -558,7 +530,7 @@
               </div>
               <mat-list>
                 <ng-container *ngFor="let key of currentDiskDetailsKeys">
-                  <mat-list-item *ngIf="key != 'identifier' && currentDiskDetails[diskKey(key)]" role="listitem">
+                  <mat-list-item *ngIf="key !== 'identifier' && currentDiskDetails[diskKey(key)]" role="listitem">
                     <strong class="detail-key"> {{ key }}:</strong>
                     {{ currentDiskDetails[diskKey(key)] }}
                   </mat-list-item>

@@ -17,6 +17,7 @@
   tbody td,
   tfoot td {
     border-bottom: 1px solid var(--lines);
+    box-sizing: content-box;
     color: var(--fg2);
     min-height: 48px;
     overflow: hidden;
@@ -69,7 +70,7 @@
   }
 
   .cdk-column-actions {
-    width: 40px;
+    width: 30px;
   }
 
   .cdk-column-expandedDetail {
@@ -77,7 +78,7 @@
     width: 100%;
   }
 
-  .mat-row.details-row {
+  .mat-mdc-row.details-row {
     height: 0;
     min-height: 0;
 
@@ -95,4 +96,3 @@
     }
   }
 }
-

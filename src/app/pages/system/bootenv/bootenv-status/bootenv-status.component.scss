@@ -1,5 +1,4 @@
-@import '~assets/styles/mixins/grid';
-@import '~assets/styles/scss-imports/splitview';
+@import 'scss-imports/splitview';
 
 $singlecolumn-max-width: ($card-width-slim + $gap * 2);
 $dualcolumn-slim-max-width: ($card-width-slim * 2 + $gap * 2);
@@ -7,7 +6,6 @@ $scrollbar-offset: 20px;
 
 $level-offset: 24px;
 $padding-left: 8px;
-$columns: 7;
 
 :host {
   display: block;
@@ -53,15 +51,23 @@ $columns: 7;
   z-index: 10;
 }
 
+.spacer {
+  display: block;
+  flex-grow: 0;
+  width: 40px;
+}
+
 .tree-header {
-  @include grid-row($columns);
   align-items: center;
   border-bottom: 2px solid var(--lines);
   color: var(--fg2);
-
+  display: grid;
+  grid-gap: 8px;
   grid-template-columns: auto 100px 100px 100px 100px 100px 70px;
   min-height: 48px;
+  min-width: fit-content;
   padding-left: 48px;
+  width: 100%;
 
   @media (max-width: $breakpoint-tablet) {
     grid-template-columns: auto 0 0 0 0 0 0;

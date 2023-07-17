@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
 } from '@angular/core';
-import { ControlValueAccessor, UntypedFormControl, NgControl } from '@angular/forms';
+import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
 
 @UntilDestroy()
@@ -19,8 +19,6 @@ export class IxTextareaComponent implements ControlValueAccessor {
   @Input() required: boolean;
   @Input() rows = 4;
   @Input() readonly: boolean;
-
-  formControl = new UntypedFormControl(this).value as UntypedFormControl;
 
   value = '';
   isDisabled = false;

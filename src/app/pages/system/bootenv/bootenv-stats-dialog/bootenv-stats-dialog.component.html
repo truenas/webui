@@ -8,7 +8,7 @@
   <div class="status-item">
     <span class="status-name"> {{ 'Boot Pool Condition' | translate }}: </span>
     <span class="status-value">
-      {{ condition | mapValue: poolStatusLabels }}
+      {{ condition | mapValue: poolStatusLabels | translate }}
       <ng-container *ngIf="condition === PoolStatus.Degraded">
         {{ 'Check Alerts for more details.' | translate }}
       </ng-container>
@@ -45,13 +45,19 @@
     [required]="true"
   ></ix-input>
 
-  <div class="form-actions">
-    <button mat-button type="submit" color="primary" [disabled]="form.invalid">
-      {{ 'Update Interval' | translate }}
-    </button>
-
-    <button mat-button type="button" matDialogClose>
+  <ix-form-actions>
+    <button mat-button type="button" matDialogClose ixTest="close">
       {{ 'Close' | translate }}
     </button>
-  </div>
+
+    <button
+      mat-button
+      type="submit"
+      color="primary"
+      ixTest="update-interval"
+      [disabled]="form.invalid"
+    >
+      {{ 'Update Interval' | translate }}
+    </button>
+  </ix-form-actions>
 </form>

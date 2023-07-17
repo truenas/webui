@@ -10,7 +10,8 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 import { LeaveDomainDialogComponent } from './leave-domain-dialog.component';
 
 describe('LeaveDomainDialogComponent', () => {
@@ -38,7 +39,7 @@ describe('LeaveDomainDialogComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('it leaves Active Directory domain when form is filled in and submitted', async () => {
+  it('leaves Active Directory domain when form is filled in and submitted', async () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
       Username: 'Administrator',

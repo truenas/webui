@@ -10,12 +10,13 @@ import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { CoreBulkQuery, CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { Disk } from 'app/interfaces/storage.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
-import { DialogService, WebSocketService } from 'app/services';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { DialogService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 import { DiskBulkEditComponent } from './disk-bulk-edit.component';
 
 const mockJobSuccessResponse = [{
@@ -55,7 +56,7 @@ describe('DiskBulkEditComponent', () => {
       TooltipModule,
     ],
     providers: [
-      mockProvider(IxSlideInService),
+      mockProvider(IxSlideInRef),
       mockProvider(SnackbarService),
       mockProvider(DialogService),
       mockWebsocket([
@@ -71,7 +72,7 @@ describe('DiskBulkEditComponent', () => {
     ws = spectator.inject(WebSocketService);
   });
 
-  it('it sets disks settings when form is opened', async () => {
+  it('sets disks settings when form is opened', async () => {
     spectator.component.setFormDiskBulk([dataDisk1, dataDisk2]);
     const formValue = await form.getValues();
     const diskIds = spectator.component.diskIds;
@@ -85,7 +86,7 @@ describe('DiskBulkEditComponent', () => {
     expect(diskIds).toEqual(['{serial}VB76b9dd9d-4e5d8cf2', '{serial}VB5a315293-ea077d3d']);
   });
 
-  it('it update selected disks when form is submitted', async () => {
+  it('updates selected disks when form is submitted', async () => {
     spectator.component.diskIds = [
       '{serial}VB76b9dd9d-4e5d8cf2',
       '{serial}VBd494d425-607efd80',
@@ -125,7 +126,7 @@ describe('DiskBulkEditComponent', () => {
     ];
 
     expect(ws.job).toHaveBeenCalledWith('core.bulk', req);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
   });
 });

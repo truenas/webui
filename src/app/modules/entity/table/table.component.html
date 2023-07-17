@@ -1,37 +1,35 @@
 <mat-card
+  #apptable
   class="app-table"
   fxLayout="column"
-  #apptable
   [class.mat-elevation-z0]="_tableConf.expandable"
 >
   <mat-toolbar-row *ngIf="!_tableConf.expandable">
-    <h3 class="title" *ngIf="title">
+    <h3 *ngIf="title" class="title">
       <ng-container *ngIf="titleHref; else plainTitle">
-        <a [routerLink]="titleHref">
-          {{ title }}
-          <mat-icon class="title-icon">open_in_new</mat-icon>
+        <a [ixTest]="[title, 'open-in-new']" [routerLink]="titleHref">
+          {{ title | translate }}
+          <ix-icon name="open_in_new" class="title-icon"></ix-icon>
         </a>
       </ng-container>
-      <ng-template #plainTitle>{{ title }}</ng-template>
+      <ng-template #plainTitle>{{ title | translate }}</ng-template>
     </h3>
     <div class="actions">
       <button
         *ngFor="let action of _tableConf.tableActions"
         mat-button
         color="default"
-        class="table-action-button"
+        [ixTest]="['table', _tableConf.name, action.label]"
         (click)="$event.stopPropagation(); action.onClick()"
       >
         {{ action.label | translate }}
       </button>
       <button
+        *ngIf="_tableConf.add"
         mat-button
         color="default"
         class="action-icon"
-        *ngIf="_tableConf.add"
-        ix-auto
-        ix-auto-type="button"
-        ix-auto-identifier="{{ _tableConf.name }}-add"
+        [ixTest]="['table', _tableConf.name, 'add']"
         (click)="_tableConf.add()"
       >
         {{ 'Add' | translate }}
@@ -41,8 +39,8 @@
 
   <mat-card-content class="table-container">
     <div
-      class="table-container"
       #table
+      class="table-container"
       [class.empty]="dataSource && !dataSource.length"
       [class.loading]="!tableConf.tableComponent"
     >
@@ -50,6 +48,7 @@
         *ngIf="dataSource && dataSource.length > 0"
         mat-table
         class="table-component"
+        [ixTest]="['table', _tableConf.name]"
         [dataSource]="displayedDataSource"
       >
         <ng-container
@@ -70,7 +69,7 @@
             >
               {{ column.name | translate }}
             </th>
-            <td mat-cell *matCellDef="let element" [attr.width]="column?.width">
+            <td *matCellDef="let element" mat-cell [attr.width]="column?.width">
               <div class="table-cell">
                 <ng-container [ngSwitch]="determineColumnType(column)">
                   <ul *ngSwitchCase="'listview'">
@@ -79,65 +78,59 @@
                     </li>
                   </ul>
 
-                  <div class="state-info" *ngSwitchCase="'state-info'">
-                    <mat-icon
+                  <div *ngSwitchCase="'state-info'" class="state-info">
+                    <ix-icon
                       *ngIf="element[column.state.prop] === LinkState.Up"
-                      svgIcon="ix:network_upload_download"
+                      name="ix:network_upload_download"
                       class="state-info-icon"
                       [matTooltip]="showInOutInfo(element)"
                       [id]="element[idProp]"
-                    ></mat-icon>
-                    <mat-icon
+                    ></ix-icon>
+                    <ix-icon
                       *ngIf="element[column.state.prop] !== LinkState.Up"
-                      svgIcon="ix:network_upload_download_disabled"
+                      name="ix:network_upload_download_disabled"
                       class="state-info-icon"
-                    ></mat-icon>
+                    ></ix-icon>
                     &nbsp;&nbsp;<span>{{ element[column.prop] }}</span>
                   </div>
 
-                  <mat-icon *ngSwitchCase="'state-icon'" class="state-icon">
-                    {{ column.state.icon }}
-                  </mat-icon>
+                  <ix-icon
+                    *ngSwitchCase="'state-icon'"
+                    class="state-icon"
+                    [name]="column.state.icon"
+                  ></ix-icon>
 
                   <mat-checkbox
                     *ngSwitchCase="'checkbox'"
-                    ix-auto
-                    ix-auto-type="checkbox"
-                    ix-auto-identifier="{{ element[column.prop] }}-checkbox"
                     color="primary"
-                    [(ngModel)]="element[column.prop]"
+                    [ixTest]="element[column.prop]"
                     [disabled]="!column.onChange"
+                    [(ngModel)]="element[column.prop]"
                     (change)="column.onChange(element)"
                     (click)="$event.stopPropagation()"
                   ></mat-checkbox>
 
                   <mat-slide-toggle
                     *ngSwitchCase="'slide-toggle'"
-                    ix-auto
-                    ix-auto-type="slide-toggle"
-                    ix-auto-identifier="{{ element[column.prop] }}-slide-toggle"
                     color="primary"
+                    [ixTest]="element[column.prop]"
+                    [disabled]="!column.onChange || column.disabled"
                     [(ngModel)]="element[column.prop]"
-                    [disabled]="!column.onChange"
                     (change)="column.onChange(element)"
                     (click)="$event.stopPropagation()"
                   ></mat-slide-toggle>
 
                   <button
                     *ngSwitchCase="'state-button'"
-                    ix-auto
-                    ix-auto-type="button"
-                    ix-auto-identifier="{{ element[column.prop] }}-task-state"
                     mat-stroked-button
+                    class="state-button"
+                    [ixTest]="[element[column.prop], 'state']"
                     [ngClass]="getButtonClass(element[column.prop])"
                     (click)="$event.stopPropagation(); onButtonClick(element)"
                   >
                     {{ element[column.prop].state }}
                     <div *ngIf="element[column.prop].warnings?.length > 0" class="label-warning-icon">
-                      <mat-icon
-                        fontSet="mdi-set"
-                        fontIcon="mdi-alert"
-                      ></mat-icon>
+                      <ix-icon name="mdi-alert"></ix-icon>
                     </div>
                   </button>
 
@@ -145,13 +138,12 @@
                     <div class="text-overflow-ellipsis">
                       {{ element[column.prop] }}
                     </div>
-                    <mat-icon
+                    <ix-icon
                       *ngIf="element.locked"
-                      [matTooltip]="'Dataset is currently locked' | translate"
+                      name="locked"
                       class="append"
-                    >
-                      locked
-                    </mat-icon>
+                      [matTooltip]="'Dataset is currently locked' | translate"
+                    ></ix-icon>
                   </div>
 
                   <ng-container *ngSwitchDefault>
@@ -170,27 +162,27 @@
 
         <!-- Complex Info Column -->
         <ng-template #complex>
-          <ng-container [matColumnDef]="column.name" *ngFor="let column of _tableConf.columns">
+          <ng-container *ngFor="let column of _tableConf.columns" [matColumnDef]="column.name">
             <th
-              mat-header-cell
               *matHeaderCellDef
+              mat-header-cell
               class="text-overflow-ellipsis"
               [attr.width]="column?.width"
             >
               {{ column.name | translate }}
             </th>
-            <td mat-cell *matCellDef="let element" [attr.width]="column?.width">
+            <td *matCellDef="let element" mat-cell [attr.width]="column?.width">
               <div class="table-cell">
                 <ng-container>
-                  <ul class="complex-table-data" *ngIf="!column.getIcon">
+                  <ul *ngIf="!column.getIcon" class="complex-table-data">
                     <li>{{ column.name }}: {{ element[column.prop1] }}</li>
                     <li>{{ column.name2 }}: {{ element[column.prop2] }}</li>
                   </ul>
-                  <mat-icon
+                  <ix-icon
                     *ngIf="column.getIcon && column.getIcon(element, column.prop1)"
-                    [innerHtml]="column.getIcon(element, column.prop1)"
+                    [name]="column.getIcon(element, column.prop1)"
                     [matTooltip]="column.iconTooltip"
-                  ></mat-icon>
+                  ></ix-icon>
                 </ng-container>
               </div>
             </td>
@@ -213,20 +205,20 @@
               <ng-container *ngFor="let rowAction of actions">
                 <ng-container *ngIf="!_tableConf.isActionVisible || _tableConf.isActionVisible(rowAction.name, element)">
                   <mat-spinner
-                    [diameter]="40"
                     *ngIf="element['onChanging']; else actionButtons"
+                    [diameter]="40"
                   ></mat-spinner>
                   <ng-template #actionButtons>
                     <button
                       mat-icon-button
+                      [ixTest]="['row-action', _tableConf.name, rowAction.name]"
+                      [disabled]="rowAction.disabled || rowAction.disabledCondition?.(element)"
                       (click)="$event.stopPropagation(); rowAction.onClick(element)"
                     >
-                      <mat-icon
-                        class="table-action-button"
+                      <ix-icon
+                        [name]="rowAction.icon"
                         [matTooltip]="rowAction.matTooltip"
-                      >
-                        {{ rowAction.icon }}
-                      </mat-icon>
+                      ></ix-icon>
                     </button>
                   </ng-template>
                 </ng-container>
@@ -234,27 +226,29 @@
               <button
                 *ngIf="_tableConf.deleteCall"
                 mat-icon-button
+                [ixTest]="['table', _tableConf.name, 'delete']"
+                [disabled]="_tableConf.deleteActionDisabled"
                 (click)="$event.stopPropagation(); deleteRow(element)"
               >
-                <mat-icon
-                  class="table-action-button"
+                <ix-icon
+                  name="delete"
                   [matTooltip]="'Delete' | translate"
-                >
-                  delete
-                </mat-icon>
+                ></ix-icon>
               </button>
             </div>
           </td>
         </ng-container>
 
         <tr
-          mat-header-row
           *matHeaderRowDef="displayedColumns"
+          mat-header-row
+          ixTest="table-header"
           [attr.hidden]="hideHeader || _tableConf.complex"
         ></tr>
         <tr
-          mat-row
           *matRowDef="let row; columns: displayedColumns"
+          mat-row
+          [ixTest]="[_tableConf.name, row[idProp]]"
           (click)="editRow(row)"
         ></tr>
       </table>
@@ -285,7 +279,7 @@
         *ngFor="let action of _tableConf.tableFooterActions let last=last"
         mat-button
         color="default"
-        [ngClass]="{ 'table-action-button': !last }"
+        [ixTest]="['table', _tableConf.name, 'footer-action', action.label]"
         (click)="$event.stopPropagation(); action.onClick()"
       >
         {{ action.label | translate }}

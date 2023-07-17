@@ -1,0 +1,140 @@
+<ix-modal-header [title]="'Edit VM' | translate" [loading]="isLoading"></ix-modal-header>
+
+<mat-card>
+  <mat-card-content>
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+      <ix-fieldset>
+        <ix-input
+          formControlName="name"
+          [label]="'Name' | translate"
+          [required]="true"
+          [tooltip]="helptext.name_tooltip | translate"
+        ></ix-input>
+        <ix-input
+          formControlName="description"
+          [label]="'Description' | translate"
+          [tooltip]="helptext.description_tooltip | translate"
+        ></ix-input>
+        <ix-select
+          formControlName="time"
+          [label]="'System Clock' | translate"
+          [required]="true"
+          [options]="timeOptions$"
+          [tooltip]="helptext.time_tooltip | translate"
+        ></ix-select>
+        <ix-select
+          formControlName="bootloader"
+          [label]="'Boot Method' | translate"
+          [required]="true"
+          [options]="bootloaderOptions$"
+          [tooltip]="helptext.bootloader_tooltip | translate"
+        ></ix-select>
+        <ix-input
+          formControlName="shutdown_timeout"
+          type="number"
+          [label]="'Shutdown Timeout' | translate"
+          [tooltip]="helptext.shutdown_timeout.tooltip | translate"
+        ></ix-input>
+        <ix-checkbox
+          formControlName="autostart"
+          [label]="'Start on Boot' | translate"
+          [tooltip]="helptext.autostart_tooltip | translate"
+        ></ix-checkbox>
+        <ix-checkbox
+          formControlName="hyperv_enlightenments"
+          [label]="'Enable Hyper-V Enlightenments' | translate"
+          [tooltip]="helptext.hyperv_enlightenments_tooltip | translate"
+        ></ix-checkbox>
+      </ix-fieldset>
+      <ix-fieldset [title]="'CPUs and Memory' | translate">
+        <ix-input
+          formControlName="vcpus"
+          type="number"
+          [label]="'Virtual CPUs' | translate"
+          [tooltip]="helptext.vcpus_tooltip | translate"
+        ></ix-input>
+        <ix-input
+          formControlName="cores"
+          type="number"
+          [label]="'Cores' | translate"
+          [tooltip]="helptext.cores.tooltip | translate"
+        ></ix-input>
+        <ix-input
+          formControlName="threads"
+          type="number"
+          [label]="'Threads' | translate"
+          [tooltip]="helptext.threads.tooltip | translate"
+        ></ix-input>
+        <ix-input
+          formControlName="cpuset"
+          [label]="'Optional: CPU Set (Examples: 0-3,8-11)' | translate"
+          [tooltip]="helptext.cpuset.tooltip | translate"
+        ></ix-input>
+        <ix-checkbox
+          formControlName="pin_vcpus"
+          [label]="'Pin vcpus' | translate"
+          [tooltip]="helptext.pin_vcpus.tooltip | translate"
+        ></ix-checkbox>
+        <ix-select
+          formControlName="cpu_mode"
+          [label]="'CPU Mode' | translate"
+          [options]="cpuModeOptions$"
+          [required]="true"
+        ></ix-select>
+        <ix-select
+          *ngIf="showCpuModelField"
+          formControlName="cpu_model"
+          [label]="'CPU Model' | translate"
+          [options]="cpuModelOptions$"
+        ></ix-select>
+        <ix-input
+          formControlName="memory"
+          [label]="'Memory Size' | translate"
+          [tooltip]="helptext.memory_tooltip | translate"
+          [format]="formatter.memorySizeFormatting"
+          [parse]="formatter.memorySizeParsing"
+        ></ix-input>
+        <ix-input
+          formControlName="min_memory"
+          [label]="'Minimum Memory Size' | translate"
+          [tooltip]="helptext.min_memory_tooltip | translate"
+          [format]="formatter.memorySizeFormatting"
+          [parse]="formatter.memorySizeParsing"
+        ></ix-input>
+        <ix-input
+          formControlName="nodeset"
+          [label]="'Optional: NUMA nodeset (Example: 0-1)' | translate"
+          [tooltip]="helptext.nodeset.tooltip | translate"
+        ></ix-input>
+      </ix-fieldset>
+      <ix-fieldset [title]="'GPU' | translate">
+        <ix-checkbox
+          formControlName="hide_from_msr"
+          [label]="'Hide from MSR' | translate"
+        ></ix-checkbox>
+        <ix-checkbox
+          formControlName="ensure_display_device"
+          [label]="'Ensure Display Device' | translate"
+        ></ix-checkbox>
+        <ix-select
+          formControlName="gpus"
+          [multiple]="true"
+          [options]="gpuOptions$"
+          [label]="'GPUs' | translate"
+        ></ix-select>
+      </ix-fieldset>
+
+      <ix-form-actions>
+        <button
+          type="submit"
+          mat-button
+          color="primary"
+          ixTest="save"
+          [disabled]="form.invalid || isLoading"
+        >
+          {{ 'Save' | translate }}
+        </button>
+      </ix-form-actions>
+    </form>
+  </mat-card-content>
+</mat-card>

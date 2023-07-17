@@ -13,4 +13,7 @@ export enum FailoverDisabledReason {
   NoJournalSync = 'NO_JOURNAL_SYNC',
   RemNoJournalSync = 'REM_NO_JOURNAL_SYNC',
   RemFailoverOngoing = 'REM_FAILOVER_ONGOING',
+  LocFailoverOngoing = 'LOC_FAILOVER_ONGOING',
+  NoHeartbeatIface = 'NO_HEARTBEAT_IFACE',
+  NoCarrierOnHeartbeat = 'NO_CARRIER_ON_HEARTBEAT',
 }

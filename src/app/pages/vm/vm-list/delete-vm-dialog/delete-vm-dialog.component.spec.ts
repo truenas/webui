@@ -9,7 +9,7 @@ import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { DeleteVmDialogComponent } from 'app/pages/vm/vm-list/delete-vm-dialog/delete-vm-dialog.component';
-import { WebSocketService } from 'app/services';
+import { DialogService, WebSocketService } from 'app/services';
 
 describe('DeleteVmDialogComponent', () => {
   let spectator: Spectator<DeleteVmDialogComponent>;
@@ -25,6 +25,7 @@ describe('DeleteVmDialogComponent', () => {
         mockCall('vm.delete'),
       ]),
       mockProvider(MatDialogRef),
+      mockProvider(DialogService),
       {
         provide: MAT_DIALOG_DATA,
         useValue: {

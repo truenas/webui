@@ -8,6 +8,8 @@ import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.se
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
@@ -37,9 +39,13 @@ describe('SnapshotAddFormComponent', () => {
         mockCall('zfs.snapshot.create'),
         mockCall('pool.dataset.query', mockDatasets),
         mockCall('replication.list_naming_schemas', mockNamingSchema),
+        mockCall('pool.dataset.details'),
+        mockCall('vmware.dataset_has_vms', true),
       ]),
       mockProvider(IxSlideInService),
       mockProvider(FormErrorHandlerService),
+      mockProvider(IxSlideInRef),
+      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
 
@@ -64,14 +70,21 @@ describe('SnapshotAddFormComponent', () => {
       Name: 'test-snapshot-name',
     });
 
+    expect(ws.call).toHaveBeenCalledWith('vmware.dataset_has_vms', ['APPS', false]);
+
+    await form.fillForm({
+      'VMWare Sync': true,
+    });
+
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.call).toHaveBeenLastCalledWith('zfs.snapshot.create', [
+    expect(ws.call).toHaveBeenCalledWith('zfs.snapshot.create', [
       {
         dataset: 'APPS',
         name: 'test-snapshot-name',
         recursive: false,
+        vmware_sync: true,
       },
     ]);
   });
@@ -81,17 +94,21 @@ describe('SnapshotAddFormComponent', () => {
     await form.fillForm({
       Dataset: 'APPS',
       Name: null,
+      Recursive: true,
       'Naming Schema': '%Y %H %d %M %m',
     });
+
+    expect(ws.call).toHaveBeenCalledWith('vmware.dataset_has_vms', ['APPS', true]);
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.call).toHaveBeenLastCalledWith('zfs.snapshot.create', [
+    expect(ws.call).toHaveBeenCalledWith('zfs.snapshot.create', [
       {
         dataset: 'APPS',
         naming_schema: '%Y %H %d %M %m',
-        recursive: false,
+        recursive: true,
+        vmware_sync: false,
       },
     ]);
   });
@@ -108,5 +125,20 @@ describe('SnapshotAddFormComponent', () => {
     await saveButton.click();
 
     expect(ws.call).not.toHaveBeenCalledWith('zfs.snapshot.create');
+  });
+
+  it('re-checks for VMs in dataset when recursive checkbox is toggled or dataset changed', async () => {
+    jest.clearAllMocks();
+
+    const form = await loader.getHarness(IxFormHarness);
+    await form.fillForm({ Dataset: 'POOL' });
+    await form.fillForm({ Recursive: true });
+    await form.fillForm({ Dataset: 'APPS' });
+    await form.fillForm({ Recursive: false });
+
+    expect(ws.call).toHaveBeenNthCalledWith(1, 'vmware.dataset_has_vms', ['POOL', false]);
+    expect(ws.call).toHaveBeenNthCalledWith(2, 'vmware.dataset_has_vms', ['POOL', true]);
+    expect(ws.call).toHaveBeenNthCalledWith(3, 'vmware.dataset_has_vms', ['APPS', true]);
+    expect(ws.call).toHaveBeenNthCalledWith(4, 'vmware.dataset_has_vms', ['APPS', false]);
   });
 });

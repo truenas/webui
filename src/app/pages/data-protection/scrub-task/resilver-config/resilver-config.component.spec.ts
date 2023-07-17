@@ -9,9 +9,10 @@ import { ResilverConfig } from 'app/interfaces/resilver-config.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
-import { DialogService, LanguageService, WebSocketService } from 'app/services';
+import { DialogService, LanguageService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { ResilverConfigComponent } from './resilver-config.component';
 
 describe('ResilverConfigComponent', () => {

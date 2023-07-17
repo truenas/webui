@@ -5,18 +5,46 @@
     display: flex;
     flex-direction: column;
     min-height: 48px;
-    padding: 15px 12px;
+    padding: 16px 12px;
+    position: relative;
+    white-space: pre-line;
+    word-break: break-word;
+
+    .logs {
+      position: relative;
+    }
+
+    pre {
+      margin: 0;
+
+      code {
+        display: flex;
+      }
+    }
+
+    &:hover,
+    &:focus,
+    &:active {
+      ix-copy-btn {
+        opacity: 1;
+        visibility: visible;
+      }
+    }
 
     h4 {
-      margin-bottom: 8px;
+      margin-bottom: 12px;
     }
 
     &:not(:first-of-type) {
       border-top: 1px solid var(--lines);
     }
-  }
 
-  .text-formatted {
-    white-space: pre-line;
+    ix-copy-btn {
+      bottom: 0;
+      opacity: 0;
+      position: absolute;
+      right: 0;
+      visibility: hidden;
+    }
   }
 }

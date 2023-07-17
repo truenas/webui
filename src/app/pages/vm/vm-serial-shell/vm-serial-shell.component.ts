@@ -19,7 +19,7 @@ export class VmSerialShellComponent implements TerminalConfiguration {
   preInit(): Observable<void> {
     return new Observable<void>((subscriber: Subscriber<void>) => {
       this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
-        this.pk = params['pk'];
+        this.pk = params['pk'] as string;
         subscriber.next();
       });
     });

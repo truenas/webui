@@ -10,7 +10,7 @@ import { BulkListItem, BulkListItemState } from 'app/core/components/bulk-list-i
 import { Bootenv } from 'app/interfaces/bootenv.interface';
 import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -24,7 +24,6 @@ export class BootPoolDeleteDialogComponent {
   });
   isJobCompleted = false;
   bulkItems = new Map<string, BulkListItem<Bootenv>>();
-  hasErrors = false;
 
   get successCount(): number {
     return [...this.bulkItems.values()].filter((item) => item.state === BulkListItemState.Success).length;
@@ -32,7 +31,7 @@ export class BootPoolDeleteDialogComponent {
   get failedCount(): number {
     return [...this.bulkItems.values()].filter((item) => item.state === BulkListItemState.Error).length;
   }
-  readonly trackById: TrackByFunction<KeyValue<string, BulkListItem<Bootenv>>> = (_, entry) => entry.key;
+  readonly trackByKey: TrackByFunction<KeyValue<string, BulkListItem<Bootenv>>> = (_, entry) => entry.key;
 
   constructor(
     private fb: FormBuilder,
@@ -51,13 +50,13 @@ export class BootPoolDeleteDialogComponent {
   }
 
   onSubmit(): void {
-    const params = this.getSelectedNames(this.bootenvs);
+    const bootenvsToDelete = this.getSelectedNames(this.bootenvs);
 
     this.bootenvs.forEach((bootenv) => {
       this.bulkItems.set(bootenv.id, { state: BulkListItemState.Running, item: bootenv });
     });
 
-    this.ws.job('core.bulk', ['bootenv.do_delete', params]).pipe(
+    this.ws.job('core.bulk', ['bootenv.do_delete', bootenvsToDelete]).pipe(
       filter((job: Job<CoreBulkResponse<void>[], string[][]>) => !!job.result),
       untilDestroyed(this),
     ).subscribe((response) => {

@@ -1,0 +1,39 @@
+:host {
+  .logs {
+    position: relative;
+
+    &:hover,
+    &:focus,
+    &:active {
+      ix-copy-btn {
+        opacity: 1;
+        visibility: visible;
+      }
+    }
+
+    pre {
+      max-height: 300px;
+      overflow: auto;
+
+      code {
+        display: flex;
+        overflow: auto;
+        padding: 20px;
+        white-space: pre-wrap;
+      }
+    }
+
+    ix-copy-btn {
+      bottom: 0;
+      opacity: 0;
+      position: absolute;
+      right: 0;
+      visibility: hidden;
+    }
+  }
+}
+
+.mat-mdc-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+}

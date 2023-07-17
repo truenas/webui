@@ -85,7 +85,6 @@
         <ix-checkbox
           formControlName="zilstat"
           [label]="'Expose zilstat via SNMP' | translate"
-          [tooltip]="tooltips.zilstat | translate"
         ></ix-checkbox>
 
         <ix-select
@@ -101,14 +100,15 @@
           mat-button
           type="submit"
           color="primary"
+          ixTest="save"
           [disabled]="form.invalid || isFormLoading"
         >
           {{ 'Save' | translate }}
         </button>
 
-        <a mat-button type="button" [routerLink]="['/services']">
+        <button mat-button type="button" ixTest="cancel" [routerLink]="['/services']">
           {{ 'Cancel' | translate }}
-        </a>
+        </button>
       </div>
     </form>
   </mat-card-content>

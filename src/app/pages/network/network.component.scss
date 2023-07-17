@@ -2,10 +2,6 @@ div.dashboard {
   height: calc(100vh - 175px);
 }
 
-div.dashboard.has-footer {
-  height: calc(100vh - 165px);
-}
-
 div.content {
   flex: 1;
 }
@@ -28,4 +24,9 @@ div.disabled-notice {
 .dashboard-card {
   display: flex;
   flex: 1 1 0;
+}
+
+#timeout-field {
+  text-align: center;
+  width: 50px;
 }

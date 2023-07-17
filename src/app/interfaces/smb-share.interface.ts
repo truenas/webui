@@ -1,10 +1,10 @@
+import { NfsAclTag } from 'app/enums/nfs-acl.enum';
 import { SmbSharesecPermission, SmbSharesecType } from 'app/enums/smb-sharesec.enum';
 
 export interface SmbShare {
   aapl_name_mangling: boolean;
   abe: boolean;
   acl: boolean;
-  auxsmbconf: string;
   browsable: boolean;
   cluster_volname: string;
   comment: string;
@@ -27,6 +27,7 @@ export interface SmbShare {
   streams: boolean;
   timemachine: boolean;
   vuid: string;
+  path_local: string;
 }
 
 export enum SmbPresetType {
@@ -56,22 +57,12 @@ export interface SmbSharesec {
 export interface SmbSharesecAce {
   ae_perm: SmbSharesecPermission;
   ae_type: SmbSharesecType;
-  ae_who_name: {
-    domain: string;
-    name: string;
-    sidtype: string;
-  };
-  ae_who_sid: string;
-}
-
-export interface SmbSharesecAceUpdate {
-  ae_perm: SmbSharesecPermission;
-  ae_type: SmbSharesecType;
-  ae_who_name?: {
-    domain: string;
-    name: string;
+  ae_who_id: {
+    id_type: NfsAclTag.Everyone | NfsAclTag.UserGroup | NfsAclTag.User | null;
+    id: number;
   };
   ae_who_sid?: string;
+  ae_who_str?: NfsAclTag.Everyone | number | null;
 }
 
 export type SmbShareUpdate = {

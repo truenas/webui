@@ -7,9 +7,11 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { User } from 'app/interfaces/user.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
+import { AppLoaderService, DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -24,6 +26,7 @@ export class DeleteUserDialogComponent implements OnInit {
   readonly deleteMessage = T('Are you sure you want to delete user <b>"{user}"</b>?');
 
   constructor(
+    private errorHandler: ErrorHandlerService,
     private ws: WebSocketService,
     private loader: AppLoaderService,
     private dialogService: DialogService,
@@ -48,8 +51,8 @@ export class DeleteUserDialogComponent implements OnInit {
           this.snackbar.success(this.translate.instant('User deleted'));
           this.dialogRef.close(true);
         },
-        error: (error) => {
-          new EntityUtils().handleWsError(this, error, this.dialogService);
+        error: (error: WebsocketError) => {
+          this.dialogService.error(this.errorHandler.parseWsError(error));
           this.loader.close();
         },
       });
@@ -65,8 +68,8 @@ export class DeleteUserDialogComponent implements OnInit {
           this.cdr.markForCheck();
           this.loader.close();
         },
-        error: (error) => {
-          new EntityUtils().handleWsError(this, error, this.dialogService);
+        error: (error: WebsocketError) => {
+          this.dialogService.error(this.errorHandler.parseWsError(error));
           this.loader.close();
         },
       });

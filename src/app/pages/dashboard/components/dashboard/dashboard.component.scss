@@ -1,10 +1,10 @@
-@import '~assets/styles/mixins/loader';
+@import 'mixins/loader';
 
 :host {
   display: block;
 }
 
-.mat-card {
+.mat-mdc-card {
   &.loading {
     @include background-logo-loader(1);
   }

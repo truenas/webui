@@ -9,7 +9,7 @@ describe('SysInfoComponent', () => {
     system_product: 'VirtualBox',
     model: 'AMD Ryzen 3 3200G',
     memory: '5 GiB',
-    serial: 'ffbb355c',
+    system_serial: 'ffbb355c',
   };
   const licenseInfo = {
     customer_name: 'iXsystems Inc.',
@@ -18,6 +18,7 @@ describe('SysInfoComponent', () => {
     expiration_date: '2022-06-10',
     daysLeftinContract: -4,
     add_hardware: 'NONE',
+    system_serial: 'abcdefgh12345678',
   };
   let spectator: Spectator<SysInfoComponent>;
   const createComponent = createComponentFactory({
@@ -33,7 +34,7 @@ describe('SysInfoComponent', () => {
     });
   });
 
-  it('it shows a block with system info', () => {
+  it('shows a block with system info', () => {
     const sysInfoValues = spectator.queryAll('.sys-info-wrapper .value');
     const sysInfoLabels = spectator.queryAll('.sys-info-wrapper .label');
     const infoRows = sysInfoValues.reduce((acc, item, i) => {
@@ -47,11 +48,11 @@ describe('SysInfoComponent', () => {
       'Model:': systemInfo.model,
       'OS Version:': systemInfo.version,
       'Product:': systemInfo.system_product,
-      'Serial Number:': systemInfo.serial,
+      'System Serial:': systemInfo.system_serial,
     });
   });
 
-  it('it shows a block with license info', () => {
+  it('shows a block with license info', () => {
     spectator.setInput({
       licenseInfo: licenseInfo as LicenseInfoInSupport,
       hasLicense: true,
@@ -67,7 +68,8 @@ describe('SysInfoComponent', () => {
     expect(infoRows).toEqual({
       'Customer Name:': licenseInfo.customer_name,
       'Model:': systemInfo.model,
-      'System Serial:': systemInfo.serial,
+      'Licensed Serials:': licenseInfo.system_serial,
+      'System Serial:': systemInfo.system_serial,
       'Features:': licenseInfo.features.join(', '),
       'Contract Type:': licenseInfo.contract_type,
       'Expiration Date:': `${licenseInfo.expiration_date} ( EXPIRED )`,

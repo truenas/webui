@@ -1,105 +1,89 @@
-<mat-card>
-  <form (ngSubmit)="onSubmit()" [formGroup]="formGroup">
-    <div class="form-wrap">
-      <div
-        [ngClass]="'form-line'"
-        fxFlex="100%"
-        fxFlex.gt-xs="calc(100% - 16px)"
-      >
-        <div
-          id="dynamicField_allow_all_initiators"
-          dynamicField
-          [config]="fieldConfig[0]"
-          [group]="formGroup"
-          [fieldShow]="'show'"
-        ></div>
-      </div>
-      <div
-        fxFlex="100%"
-        fxFlex.gt-xs="calc(50% - 16px)"
-        class="connected-initiators-container form-inline has-tooltip"
-        [ngClass]="connectedInitiatorsDisabled ? 'disabled' : ''"
-      >
-        <label>{{ 'Connected Initiators' | translate }}</label>
-        <ix-tooltip [message]="connectedInitiatorsTooltip"></ix-tooltip>
-        <mat-selection-list
-          class="connected-initiators-list"
-          #connectedInitiatorsList
-          [disabled]="connectedInitiatorsDisabled"
-        >
-          <mat-list-option
-            *ngFor="let initiator of connectedInitiators"
-            [value]="initiator"
-          >
-            {{ initiator['initiator'] }} ({{ initiator['initiator_addr'] }})
-          </mat-list-option>
-        </mat-selection-list>
-        <div fxLayoutAlign="end center">
-          <button
-            mat-flat-button
-            color="primary"
-            type="button"
-            ix-auto
-            ix-auto-type="button"
-            ix-auto-identifier="refresh"
-            [disabled]="connectedInitiatorsDisabled"
-            (click)="getConnectedInitiators()"
-          >
-            <mat-icon>refresh</mat-icon> {{ 'REFRESH' }}
-          </button>
+<mat-card class="form-card">
+  <mat-progress-bar
+    *ngIf="isFormLoading"
+    mode="indeterminate"
+  ></mat-progress-bar>
+  <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+    <mat-card-content>
+      <div class="card-content">
+        <div class="header-container">
+          <ix-checkbox
+            formControlName="all"
+            [label]="helptext.all_placeholder_initiators | translate"
+          ></ix-checkbox>
+          <div *ngIf="!isAllowAll" class="add-container">
+            <ix-input
+              formControlName="new_initiator"
+              [label]="helptext.initiator_form_placeholder_initiators | translate"
+              [tooltip]="helptext.initiator_form_tooltip_initiators | translate"
+            ></ix-input>
+            <button
+              mat-flat-button
+              color="primary"
+              ixTest="add-initiator"
+              type="button"
+              [disabled]="isFormLoading"
+              (click)="onAddInitiator()"
+            >
+              <ix-icon name="add"></ix-icon>
+            </button>
+          </div>
         </div>
-      </div>
 
-      <div
-        [ngClass]="'form-inline'"
-        fxFlex="100%"
-        fxFlex.gt-xs="calc(50% - 16px)"
-      >
-        <ix-dynamic-list [config]="fieldConfig[1] | cast" [group]="formGroup">
-        </ix-dynamic-list>
+        <ix-dual-listbox
+          *ngIf="!isAllowAll" 
+          minHeight="55vh"
+          maxHeight="55vh"
+          [items]="allInitiators"
+          [title1]="'Connected Initiators' | translate"
+          [title2]="'Allowed Initiators' | translate"
+          [(selectedItems)]="selectedInitiators"
+        >
+          <ng-template #templateItem let-item>
+            <span matListItemLine>{{ item.name }}</span>
+          </ng-template>
+        </ix-dual-listbox>
+
+        <button
+          *ngIf="!isAllowAll" 
+          mat-flat-button
+          color="primary"
+          type="button"
+          ixTest="refresh"
+          [disabled]="isFormLoading"
+          (click)="getConnectedInitiators()"
+        >
+          <ix-icon name="refresh"></ix-icon>
+          {{ 'REFRESH' }}
+        </button>
+
+        <ix-input
+          formControlName="comment"
+          [label]="helptext.initiator_form_placeholder_comment | translate"
+          [tooltip]="helptext.initiator_form_tooltip_comment | translate"
+        ></ix-input>
+
       </div>
-      <div
-        [ngClass]="'form-line'"
-        fxFlex="100%"
-        fxFlex.gt-xs="calc(100% - 16px)"
-      >
-        <div
-          id="dynamicField_comment"
-          dynamicField
-          [config]="fieldConfig[2]"
-          [group]="formGroup"
-          [fieldShow]="'show'"
-        ></div>
-      </div>
-    </div>
+    </mat-card-content>
+  
     <mat-card-actions>
       <button
-        class="btn btn-block btn-warning"
-        type="submit"
         mat-button
         color="primary"
-        ix-auto
-        ix-auto-type="button"
-        ix-auto-identifier="save"
-        [disabled]="!formGroup.valid"
+        ixTest="save"
+        type="submit"
+        [disabled]="isFormLoading || form.invalid"
       >
         {{ 'Save' | translate }}
       </button>
       <button
-        *ngIf="routeSuccess"
-        type="button"
         mat-button
-        ix-auto
-        ix-auto-type="button"
-        ix-auto-identifier="cancel"
-        color="accent"
-        (click)="goBack()"
+        ixTest="cancel"
+        type="button"
+        (click)="onCancel()"
       >
         {{ 'Cancel' | translate }}
       </button>
     </mat-card-actions>
-    <mat-error *ngIf="error" type="danger" id="error_message">
-      <div [innerHTML]="error"></div>
-    </mat-error>
   </form>
 </mat-card>

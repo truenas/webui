@@ -1,15 +1,18 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { byText, createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import {
+  byText, createComponentFactory, mockProvider, Spectator,
+} from '@ngneat/spectator/jest';
+import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
 import { NetworkConfiguration } from 'app/interfaces/network-configuration.interface';
 import { NetworkSummary } from 'app/interfaces/network-summary.interface';
 import { NetworkConfigurationComponent } from 'app/pages/network/components/configuration/configuration.component';
 import { NetworkConfigurationCardComponent } from 'app/pages/network/components/network-configuration-card/network-configuration-card.component';
-import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('NetworkConfigurationCardComponent', () => {
   let spectator: Spectator<NetworkConfigurationCardComponent>;
@@ -25,8 +28,7 @@ describe('NetworkConfigurationCardComponent', () => {
           nameserver1: '8.8.8.8',
           nameserver2: '8.8.4.4',
           httpproxy: 'http://proxy.com',
-          netwait_enabled: true,
-          hosts: 'host1.com\nhost2.com',
+          hosts: ['host1.com', 'host2.com'],
           domains: ['domain.cz'],
           service_announcement: {
             mdns: true,
@@ -44,6 +46,9 @@ describe('NetworkConfigurationCardComponent', () => {
           nameservers: ['8.8.8.8', '8.8.4.4', '8.8.1.1'],
         } as NetworkSummary),
       ]),
+      mockProvider(IxSlideInService, {
+        open: jest.fn(() => ({ slideInClosed$: of() })),
+      }),
     ],
   });
 
@@ -83,7 +88,7 @@ describe('NetworkConfigurationCardComponent', () => {
     const ipv4Section = spectator.query(byText('IPv4:')).parentElement;
     const addresses = ipv4Section.querySelectorAll('li');
 
-    expect(addresses.length).toBe(1);
+    expect(addresses).toHaveLength(1);
     expect(addresses[0]).toHaveExactText('192.168.1.1');
   });
 
@@ -91,7 +96,7 @@ describe('NetworkConfigurationCardComponent', () => {
     const ipv4Section = spectator.query(byText('IPv6:')).parentElement;
     const addresses = ipv4Section.querySelectorAll('li');
 
-    expect(addresses.length).toBe(1);
+    expect(addresses).toHaveLength(1);
     expect(addresses[0]).toHaveExactText('fe80::a00:27ff:fe09:c274');
   });
 
@@ -108,21 +113,19 @@ describe('NetworkConfigurationCardComponent', () => {
       'Additional Domains:': 'domain.cz',
       'Domain:': 'local',
       'HTTP Proxy:': 'http://proxy.com',
-      'Hostname Database:': 'host1.com\nhost2.com',
+      'Hostname Database:': 'host1.com, host2.com',
       'Hostname:': 'truenas',
-      'Netwait:': 'Enabled',
       'Outbound Network:': 'Allow usage, kmip, rsync, update',
       'Service Announcement:': 'mDNS, WS-DISCOVERY',
     });
   });
 
   it('opens settings form when Settings button is clicked', async () => {
-    const ixSlideInService = spectator.inject(IxSlideInService);
-    jest.spyOn(ixSlideInService, 'open').mockImplementation();
+    const slideInRef = spectator.inject(IxSlideInService);
 
     const settingsButton = await loader.getHarness(MatButtonHarness.with({ text: 'Settings' }));
     await settingsButton.click();
 
-    expect(ixSlideInService.open).toHaveBeenCalledWith(NetworkConfigurationComponent, { wide: true });
+    expect(slideInRef.open).toHaveBeenCalledWith(NetworkConfigurationComponent, { wide: true });
   });
 });

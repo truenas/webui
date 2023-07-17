@@ -13,13 +13,13 @@
           [label]="'Type' | translate"
           [required]="true"
           [options]="interfaceTypes$"
-          [tooltip]="helptext.int_type_tooltip"
+          [tooltip]="helptext.int_type_tooltip | translate"
         ></ix-select>
 
         <ix-input
           formControlName="name"
           [label]="'Name' | translate"
-          [tooltip]="helptext.int_name_tooltip"
+          [tooltip]="helptext.int_name_tooltip | translate"
           [required]="true"
           [readonly]="!isNew"
         ></ix-input>
@@ -27,19 +27,19 @@
         <ix-input
           formControlName="description"
           [label]="'Description' | translate"
-          [tooltip]="helptext.int_description_tooltip"
+          [tooltip]="helptext.int_description_tooltip | translate"
         ></ix-input>
 
         <ix-checkbox
           formControlName="ipv4_dhcp"
           [label]="'DHCP' | translate"
-          [tooltip]="helptext.int_dhcp_tooltip"
+          [tooltip]="helptext.int_dhcp_tooltip | translate"
         ></ix-checkbox>
 
         <ix-checkbox
           formControlName="ipv6_auto"
           [label]="'Autoconfigure IPv6' | translate"
-          [tooltip]="helptext.int_ipv6auto_tooltip"
+          [tooltip]="helptext.int_ipv6auto_tooltip | translate"
         ></ix-checkbox>
       </ix-fieldset>
 
@@ -49,7 +49,7 @@
           [multiple]="true"
           [label]="'Bridge Members' | translate"
           [options]="bridgeMembers$"
-          [tooltip]="helptext.bridge_members_tooltip"
+          [tooltip]="helptext.bridge_members_tooltip | translate"
         ></ix-select>
       </ix-fieldset>
 
@@ -78,13 +78,22 @@
         ></ix-select>
 
         <ix-select
+          *ngIf="!isFailover"
           formControlName="lag_ports"
           [label]="'Link Aggregation Interfaces' | translate"
           [multiple]="true"
           [options]="lagPorts$"
           [required]="true"
-          [tooltip]="isFailover ? helptext.lagg_interfaces_failover_tooltip : helptext.lagg_interfaces_tooltip"
+          [tooltip]="helptext.lagg_interfaces_tooltip | translate"
         ></ix-select>
+        <ix-ordered-listbox
+          *ngIf="isFailover"
+          formControlName="lag_ports"
+          [label]="'Link Aggregation Interfaces' | translate"
+          [options]="lagPorts$"
+          [required]="true"
+          [tooltip]="helptext.lagg_interfaces_failover_tooltip | translate"
+        ></ix-ordered-listbox>
       </ix-fieldset>
 
       <ix-fieldset *ngIf="isVlan" [title]="'VLAN Settings' | translate">
@@ -93,37 +102,37 @@
           [label]="'Parent Interface' | translate"
           [required]="true"
           [options]="vlanParentInterfaces$"
-          [tooltip]="helptext.vlan_pint_tooltip"
+          [tooltip]="helptext.vlan_pint_tooltip | translate"
         ></ix-select>
 
         <ix-input
           formControlName="vlan_tag"
-          [label]="'VLAN Tag' | translate"
-          [tooltip]="helptext.vlan_tag_tooltip"
-          [required]="true"
           type="number"
+          [label]="'VLAN Tag' | translate"
+          [tooltip]="helptext.vlan_tag_tooltip | translate"
+          [required]="true"
         ></ix-input>
 
         <ix-select
           formControlName="vlan_pcp"
           [label]="'Priority Code Point' | translate"
-          [tooltip]="helptext.vlan_pcp_tooltip"
+          [tooltip]="helptext.vlan_pcp_tooltip | translate"
           [options]="vlanPcpOptions$"
         ></ix-select>
       </ix-fieldset>
 
-      <ix-fieldset *ngIf="isHa" [title]="'Failover' | translate">
+      <ix-fieldset *ngIf="isHaLicensed" [title]="'Failover' | translate">
         <ix-checkbox
           formControlName="failover_critical"
           [label]="'Critical' | translate"
-          [tooltip]="helptext.failover_critical_tooltip"
+          [tooltip]="helptext.failover_critical_tooltip | translate"
         ></ix-checkbox>
 
         <ix-select
           formControlName="failover_group"
           [label]="'Failover Group' | translate"
           [options]="failoverGroups$"
-          [tooltip]="helptext.failover_group_tooltip"
+          [tooltip]="helptext.failover_group_tooltip | translate"
         ></ix-select>
       </ix-fieldset>
 
@@ -132,7 +141,7 @@
           type="number"
           formControlName="mtu"
           [label]="'MTU' | translate"
-          [tooltip]="helptext.mtu_tooltip"
+          [tooltip]="helptext.mtu_tooltip | translate"
         ></ix-input>
 
         <ix-list
@@ -153,39 +162,42 @@
                 formControlName="address"
                 [label]="('IP Address' | translate) + ipLabelSuffix"
                 [required]="true"
-                [tooltip]="helptext.alias_address_tooltip"
+                [tooltip]="helptext.alias_address_tooltip | translate"
               ></ix-ip-input-with-netmask>
 
-              <ng-container *ngIf="isHa">
+              <ng-container *ngIf="isHaLicensed">
                 <ix-input
                   formControlName="failover_address"
                   [label]="('IP Address' | translate) + failoverLabelSuffix"
                   [required]="true"
-                  [tooltip]="helptext.failover_alias_address_tooltip"
+                  [tooltip]="helptext.failover_alias_address_tooltip | translate"
                 ></ix-input>
 
                 <ix-input
                   formControlName="failover_virtual_address"
                   [label]="'Virtual IP Address (Failover Address)' | translate"
                   [required]="true"
-                  [tooltip]="helptext.failover_virtual_alias_address_tooltip"
+                  [tooltip]="helptext.failover_virtual_alias_address_tooltip | translate"
                 ></ix-input>
               </ng-container>
+
+              <ix-errors [control]="network"></ix-errors>
             </div>
           </ix-list-item>
         </ix-list>
       </ix-fieldset>
 
-      <div class="form-actions">
+      <ix-form-actions>
         <button
           mat-button
           type="submit"
           color="primary"
+          ixTest="save"
           [disabled]="form.invalid || isLoading"
         >
           {{ 'Save' | translate }}
         </button>
-      </div>
+      </ix-form-actions>
     </form>
   </mat-card-content>
 </mat-card>

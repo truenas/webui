@@ -1,6 +1,6 @@
 <div
-  class="sys-license-wrapper"
   *ngIf="hasLicense && licenseInfo; else infoBlock"
+  class="sys-license-wrapper"
 >
   <div class="sys-info-row">
     <span class="label">{{ 'Customer Name' | translate }}:</span>
@@ -33,9 +33,17 @@
     <span class="label">{{ 'Model' | translate }}:</span>
     <span class="value">{{ systemInfo.model }}</span>
   </div>
-  <div *ngIf="systemInfo.serial" class="sys-info-row">
+  <div *ngIf="systemInfo.system_serial" class="sys-info-row">
     <span class="label">{{ 'System Serial' | translate }}:</span>
-    <span class="value">{{ systemInfo.serial }}</span>
+    <span class="value">{{ systemInfo.system_serial }}</span>
+  </div>
+  <div *ngIf="licenseInfo?.system_serial || licenseInfo?.system_serial_ha" class="sys-info-row">
+    <span class="label">{{ 'Licensed Serials' | translate }}:</span>
+    <span class="value">
+      <span *ngIf="licenseInfo?.system_serial">{{ licenseInfo.system_serial }}</span>
+      <span *ngIf="licenseInfo?.system_serial && licenseInfo?.system_serial_ha"> / </span>
+      <span *ngIf="licenseInfo?.system_serial_ha">{{ licenseInfo.system_serial_ha }}</span>
+    </span>
   </div>
   <div *ngIf="licenseInfo.add_hardware" class="sys-info-row">
     <span class="label">{{ 'Additional Hardware' | translate }}:</span>
@@ -61,9 +69,9 @@
       <span class="label">{{ 'Memory' | translate }}:</span>
       <span class="value">{{ systemInfo.memory }}</span>
     </div>
-    <div *ngIf="systemInfo.serial" class="fn-sys-info-row">
-      <span class="label">{{ 'Serial Number' | translate }}:</span>
-      <span class="value">{{ systemInfo.serial }}</span>
+    <div *ngIf="systemInfo.system_serial" class="fn-sys-info-row">
+      <span class="label">{{ 'System Serial' | translate }}:</span>
+      <span class="value">{{ systemInfo.system_serial }}</span>
     </div>
   </div>
 </ng-template>

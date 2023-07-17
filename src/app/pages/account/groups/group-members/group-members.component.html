@@ -9,37 +9,37 @@
   </mat-card-title>
 
   <mat-card-content>
-    <div class="padding-16" *ngIf="users.length">
+    <div *ngIf="users.length" class="padding-16">
       <ix-dual-listbox
         minHeight="55vh"
         maxHeight="55vh"
         [items]="users"
-        [(selectedItems)]="selectedMembers"
         [title1]="'All users' | translate"
         [title2]="'Group members' | translate"
+        [(selectedItems)]="selectedMembers"
       >
         <ng-template #templateItem let-item>
-          <mat-icon
-            matListIcon
-            fontSet="mdi-set"
-            fontIcon="mdi-account"
+          <ix-icon
+            matListItemIcon
+            name="mdi-account"
             class="icon account"
-          ></mat-icon>
-          <span matLine>{{ item.username }}</span>
+          ></ix-icon>
+          <span matListItemLine>{{ item.username }}</span>
         </ng-template>
       </ix-dual-listbox>
     </div>
   </mat-card-content>
 
-  <mat-card-actions class="button-container">
+  <mat-card-actions>
     <button
       mat-button
       color="primary"
+      ixTest="save"
       [disabled]="isFormLoading"
       (click)="onSubmit()"
     >
       {{ 'Save' | translate }}
     </button>
-    <button mat-button (click)="onCancel()">{{ 'Cancel' | translate }}</button>
+    <button mat-button ixTest="cancel" (click)="onCancel()">{{ 'Cancel' | translate }}</button>
   </mat-card-actions>
 </mat-card>

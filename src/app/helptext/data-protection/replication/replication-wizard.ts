@@ -14,12 +14,12 @@ export default {
   target_dataset_from_tooltip: T('Storage location for the replicated \
  snapshots.'),
 
-  ssh_credentials_source_placeholder: T('SSH Connections'),
+  ssh_credentials_source_placeholder: T('SSH Connection'),
   ssh_credentials_source_tooltip: T('Select an existing SSH connection \
  to a remote system or choose <i>Create New</i> to create a new SSH \
  connection.'),
 
-  ssh_credentials_target_placeholder: T('SSH Connections'),
+  ssh_credentials_target_placeholder: T('SSH Connection'),
   ssh_credentials_target_tooltip: T('Select a saved remote system SSH \
  connection or choose <i>Create New</i> to create a new SSH connection.'),
 
@@ -48,6 +48,11 @@ export default {
  <code>/zvol1</code> after <i>dataset1</i> will create <i>zvol1</i> for \
  snapshot storage.'),
 
+  sudo_warning: T(`Selected SSH connection uses non-root user. Would you like to use sudo with <i>/usr/sbin/zfs</i> commands? Passwordless sudo must be enabled on the remote system.
+If not checked, <i>zfs allow</i> must be used to grant non-user permissions to perform ZFS tasks. Mounting ZFS filesystems by non-root still would not be possible due to Linux restrictions.`),
+  sudo_tooltip: T('Controls whether the user used for SSH/SSH+NETCAT replication will have passwordless sudo enabled to execute zfs commands on the remote host.\
+    If not checked, <i>zfs allow</i> must be used to grant non-user permissions to perform ZFS tasks. Mounting ZFS filesystems by non-root still would not be possible due to Linux restrictions.'),
+
   recursive_placeholder: T('Recursive'),
   recursive_tooltip: T('Set to also replicate all snapshots contained \
  within the selected source dataset snapshots. Unset to only replicate \
@@ -55,6 +60,9 @@ export default {
 
   encryption_placeholder: T('Encryption'),
   encryption_tooltip: T('Set to use encryption when replicating data. Additional encryption options will appear.'),
+
+  encryption_inherit_placeholder: T('Inherit Encryption'),
+  encryption_inherit_tooltip: T('Target dataset encryption will be inherited from its parent dataset.'),
 
   encryption_key_generate_placeholder: T('Generate Encryption Key'),
   encryption_key_generate_tooltip: T('If the <i>Hex key</i> type is chosen, an encryption key will be auto-generated.'),
@@ -130,8 +138,6 @@ export default {
  system. Enter a number and choose a measure of time from the drop-down.'),
 
   // dialog
-  cipher_placeholder: T('Cipher'),
-
   clearSnapshotDialog_title: T('Destination Snapshots Are Not Related to Replicated Snapshots'),
   clearSnapshotDialog_content: T('Destination dataset does not contain any snapshots that can be used as a basis for the incremental\
  changes in the snapshots being sent. The snapshots in the destination dataset will be deleted and the\

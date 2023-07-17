@@ -19,7 +19,7 @@ export class GroupComboboxProvider implements IxComboboxProvider {
 
   groupQueryResToOptions(groups: Group[]): Option[] {
     return groups.map((group) => {
-      return { label: group.group, value: group.group };
+      return { label: group.group, value: group[this.optionsValueField] };
     });
   }
 
@@ -32,5 +32,5 @@ export class GroupComboboxProvider implements IxComboboxProvider {
       );
   }
 
-  constructor(private userService: UserService) {}
+  constructor(private userService: UserService, private optionsValueField: 'group' | 'id' = 'group') {}
 }

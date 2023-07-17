@@ -1,0 +1,37 @@
+@import 'mixins/cards';
+
+.root-container {
+  display: flex;
+
+  .main-container {
+    width: 100%;
+  }
+
+  .details-container {
+    width: 60%;
+  }
+}
+
+.card {
+  @include details-card();
+
+  ix-fake-progress-bar {
+    position: absolute;
+    top: 0;
+  }
+}
+
+.step-header {
+  align-items: center;
+  display: flex;
+}
+
+.step-buttons {
+  display: flex;
+  gap: 12px;
+  padding-top: 12px;
+}
+
+.error-warning-icon {
+  margin-left: 10px;
+}

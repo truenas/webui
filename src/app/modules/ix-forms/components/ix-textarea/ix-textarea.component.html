@@ -4,6 +4,7 @@
     [label]="label"
     [tooltip]="tooltip"
     [required]="required"
+    [ixTestOverride]="controlDirective.name"
   ></ix-label>
 
   <div class="input-container" [class.disabled]="isDisabled" [class.readonly]="readonly">
@@ -13,8 +14,9 @@
       [required]="required"
       [disabled]="isDisabled"
       [readonly]="readonly"
-      [(ngModel)]="value"
       [placeholder]="placeholder"
+      [ixTest]="controlDirective.name"
+      [(ngModel)]="value"
       (ngModelChange)="onChange($event)"
       (blur)="onTouch()"
     ></textarea>

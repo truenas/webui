@@ -37,8 +37,6 @@ export default {
  target="_blank">snmpd.conf(5)</a> options. Add one\
  option for each line.'),
 
-  zilstat_tooltip: T('Enabling this option may have performance implications on your pools.'),
-
   loglevel_tooltip: T('Choose how many log entries to create. Choices range\
  from the least log entries (<i>Emergency</i>) to the\
  most (<i>Debug</i>).'),
@@ -52,5 +50,4 @@ export default {
     { label: 'Info', value: 6 },
     { label: 'Debug', value: 7 },
   ],
-
 };

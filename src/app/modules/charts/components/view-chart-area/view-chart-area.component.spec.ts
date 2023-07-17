@@ -2,14 +2,11 @@ import 'jest-canvas-mock';
 import {
   createComponentFactory, Spectator,
 } from '@ngneat/spectator/jest';
-import { ChartData, ChartDataSets } from 'chart.js';
+import { ChartData, ChartDataset } from 'chart.js';
+import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { ViewChartAreaComponent } from 'app/modules/charts/components/view-chart-area/view-chart-area.component';
 
 describe('ViewChartAreaComponent', () => {
-  /*
-  * Component Setup
-  * */
-
   let spectator: Spectator<ViewChartAreaComponent>;
 
   const createComponent = createComponentFactory({
@@ -17,11 +14,7 @@ describe('ViewChartAreaComponent', () => {
     detectChanges: false,
   });
 
-  /*
-  * Generate Mock Data
-  * */
-
-  const generateDatasets = (dataSources: number, dataPoints: number): ChartDataSets[] => {
+  const generateDatasets = (dataSources: number, dataPoints: number): ChartDataset<'line'>[] => {
     const datasets = [];
 
     for (let i = 0; i < dataSources; i++) {
@@ -42,9 +35,9 @@ describe('ViewChartAreaComponent', () => {
     return datasets;
   };
 
-  const generateChartData = (dataSources: number, dataPoints: number): ChartData => {
+  const generateChartData = (dataSources: number, dataPoints: number): ChartData<'line'> => {
     const datasets = generateDatasets(dataSources, dataPoints);
-    const data: ChartData = {
+    const data: ChartData<'line'> = {
       labels: [],
       datasets,
     };
@@ -65,13 +58,13 @@ describe('ViewChartAreaComponent', () => {
    * */
 
   it('should not handle more than 8 data points', () => {
-    const data: ChartData = generateChartData(9, 2);
+    const data = generateChartData(9, 2);
     expect(spectator.component.maxSources).toBe(8);
     expect(() => spectator.setInput('data', data)).toThrow();
   });
 
   it('should render chart when data arrives', () => {
-    const data: ChartData = { labels: [], datasets: [] };
+    const data = { labels: [], datasets: [] } as ChartData<'line'>;
     spectator.setInput('data', data);
 
     // Manually trigger change detection
@@ -82,7 +75,7 @@ describe('ViewChartAreaComponent', () => {
         firstChange: true,
         isFirstChange: () => true,
       },
-    });
+    } as IxSimpleChanges<ViewChartAreaComponent>);
 
     // Make sure expected values are present after input is set
     expect(spectator.component.data).toBeTruthy();

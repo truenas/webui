@@ -1,13 +1,13 @@
-<div class="dialog-content">
+<div class="dialog-content" mat-dialog-content>
   <h3 mat-dialog-title class="dialog-title">
     {{ contentText.title | translate }}
   </h3>
   <p class="dialog-message">
     <span [innerHTML]="contentText.message | translate"></span>
   </p>
-  <div *appLet="selectRunningJobs$ | async as jobs">
-    <div *ngIf="jobs.length">
-      <ix-job-item *ngFor="let job of jobs" [job]="job"></ix-job-item>
-    </div>
+</div>
+<div *appLet="selectRunningJobs$ | async as jobs" class="jobs">
+  <div *ngIf="jobs.length">
+    <ix-job-item *ngFor="let job of jobs" [job]="job"></ix-job-item>
   </div>
 </div>

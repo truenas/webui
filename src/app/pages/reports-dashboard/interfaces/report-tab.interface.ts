@@ -1,4 +1,4 @@
-import { TranslateService } from '@ngx-translate/core';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export enum ReportType {
   Cpu = 'cpu',
@@ -16,20 +16,17 @@ export enum ReportType {
 export interface ReportTab {
   label: string;
   value: ReportType;
-  hidden?: boolean;
 }
 
-export function getReportTypeLabels(translate: TranslateService): Map<ReportType, string> {
-  return new Map([
-    [ReportType.Cpu, translate.instant('CPU')],
-    [ReportType.Disk, translate.instant('Disk')],
-    [ReportType.Memory, translate.instant('Memory')],
-    [ReportType.Network, translate.instant('Network')],
-    [ReportType.Nfs, translate.instant('NFS')],
-    [ReportType.Partition, translate.instant('Partition')],
-    [ReportType.System, translate.instant('System')],
-    [ReportType.Ups, translate.instant('UPS')],
-    [ReportType.Target, translate.instant('Target')],
-    [ReportType.Zfs, translate.instant('ZFS')],
-  ]);
-}
+export const reportTypeLabels = new Map<ReportType, string>([
+  [ReportType.Cpu, T('CPU')],
+  [ReportType.Disk, T('Disk')],
+  [ReportType.Memory, T('Memory')],
+  [ReportType.Network, T('Network')],
+  [ReportType.Nfs, T('NFS')],
+  [ReportType.Partition, T('Partition')],
+  [ReportType.System, T('System')],
+  [ReportType.Ups, T('UPS')],
+  [ReportType.Target, T('Target')],
+  [ReportType.Zfs, T('ZFS')],
+]);

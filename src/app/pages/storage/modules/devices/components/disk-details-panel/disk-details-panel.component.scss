@@ -1,5 +1,5 @@
-@import '~assets/styles/mixins/cards';
-@import '~assets/styles/scss-imports/splitview';
+@import 'mixins/cards';
+@import 'scss-imports/splitview';
 
 .title {
   $title-gap: 8px;
@@ -10,11 +10,11 @@
   flex-wrap: nowrap;
   gap: $title-gap;
   max-width: 70%;
-  place-items: start;
+  place-items: flex-start;
   width: 80%;
 
   @media (max-width: $breakpoint-tablet) {
-    align-items: start;
+    align-items: flex-start;
     flex-direction: column;
     gap: unset;
     max-width: 100%;
@@ -26,7 +26,7 @@
   }
 
   @media (min-width: $breakpoint-singlecolumn) and (max-width: calc($breakpoint-dualcolumn-slim - 1px)) {
-    align-items: start;
+    align-items: flex-start;
     flex-direction: row;
     flex-wrap: wrap;
     max-width: 100%;
@@ -71,7 +71,6 @@
       display: flex;
       margin-left: 40px;
       margin-top: 4px;
-      max-width: calc(100% - 48px);
     }
 
     @media (min-width: $breakpoint-singlecolumn) and (max-width: calc($breakpoint-dualcolumn-slim - 1px)) {
@@ -99,14 +98,6 @@
   @media (max-width: $breakpoint-tablet) {
     overflow: hidden;
   }
-
-  .scroll-window {
-    min-height: 400px;
-
-    @media (max-height: 800px) {
-      min-height: 600px;
-    }
-  }
 }
 
 .title-icon {
@@ -122,40 +113,35 @@
 .header {
   align-items: center;
   display: flex;
-  margin-bottom: 16px;
-  padding: 12px 12px 12px 0;
+  margin: 0 0.333333rem 16px;
+  padding: 12px 0;
   place-content: space-between;
-
 
   @media (min-width: calc($breakpoint-tablet + 1px)) and (max-width: $breakpoint-hidden) {
     border-bottom: solid 1px var(--lines);
-    place-content: start;
+    margin: 0 16px 16px 0;
   }
 
   @media (max-width: $breakpoint-tablet) {
     flex-direction: column;
-    place-content: start;
+    margin: 0 20px;
   }
 
   @media (min-width: $breakpoint-hidden) and (max-width: calc($breakpoint-dualcolumn-slim - 1px)) {
     flex-wrap: wrap;
     margin-bottom: 8px;
-    padding-bottom: 0;
+    padding: 0;
   }
 
-  @media (min-width: $breakpoint-singlecolumn) {
-    align-items: center;
-  }
-
-  a.mobile-back-button:hover {
-    cursor: pointer;
-  }
 
   a.mobile-back-button {
+    cursor: pointer;
     display: none;
+    padding: 5px 10px;
+
     @media (max-width: $breakpoint-hidden) {
       display: inline-block;
-      padding: 0 4px 0 16px;
+      left: 2px;
       position: relative;
       top: 1px;
     }

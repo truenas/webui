@@ -1,5 +1,5 @@
 import {
-  Component, Inject, Input, OnDestroy, OnInit,
+  Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output,
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -9,7 +9,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { filter, take } from 'rxjs/operators';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
@@ -22,24 +22,27 @@ import { HaStatus } from 'app/interfaces/events/ha-status-event.interface';
 import { NetworkInterfacesChangedEvent } from 'app/interfaces/events/network-interfaces-changed-event.interface';
 import { SidenavStatusData } from 'app/interfaces/events/sidenav-status-event.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AlertSlice, selectImportantUnreadAlertsCount } from 'app/modules/alerts/store/alert.selectors';
 import {
   ResilverProgressDialogComponent,
 } from 'app/modules/common/dialog/resilver-progress/resilver-progress.component';
 import { UpdateDialogComponent } from 'app/modules/common/dialog/update-dialog/update-dialog.component';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { FeedbackDialogComponent } from 'app/modules/ix-feedback/feedback-dialog/feedback-dialog.component';
 import { topbarDialogPosition } from 'app/modules/layout/components/topbar/topbar-dialog-position.constant';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { LayoutService } from 'app/services/layout.service';
-import { ModalService } from 'app/services/modal.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
-import { WebSocketService } from 'app/services/ws.service';
-import { selectHaStatus, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
+import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
+import { selectHaStatus, selectIsHaLicensed, selectIsUpgradePending } from 'app/store/ha-info/ha-info.selectors';
+import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 import { alertIndicatorPressed, sidenavUpdated } from 'app/store/topbar/topbar.actions';
 
 @UntilDestroy()
@@ -50,6 +53,7 @@ import { alertIndicatorPressed, sidenavUpdated } from 'app/store/topbar/topbar.a
 })
 export class TopbarComponent implements OnInit, OnDestroy {
   @Input() sidenav: MatSidenav;
+  @Output() sidenavStatusChange = new EventEmitter<SidenavStatusData>();
 
   updateIsDone: Subscription;
 
@@ -61,7 +65,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
   haDisabledReasons: FailoverDisabledReason[] = [];
   isFailoverLicensed = false;
   upgradeWaitingToFinish = false;
-  pendingUpgradeChecked = false;
   hostname: string;
   checkinRemaining: number;
   checkinInterval: Interval;
@@ -81,17 +84,18 @@ export class TopbarComponent implements OnInit, OnDestroy {
     public themeService: ThemeService,
     private router: Router,
     private ws: WebSocketService,
+    private wsManager: WebsocketConnectionService,
     private dialogService: DialogService,
     private systemGeneralService: SystemGeneralService,
     private dialog: MatDialog,
     private translate: TranslateService,
-    private modalService: ModalService,
     private loader: AppLoaderService,
     private mediaObserver: MediaObserver,
     private layoutService: LayoutService,
     private store$: Store<AlertSlice>,
     private core: CoreService,
     private snackbar: SnackbarService,
+    private errorHandler: ErrorHandlerService,
     @Inject(WINDOW) private window: Window,
   ) {
     this.systemGeneralService.getProductType$.pipe(untilDestroyed(this)).subscribe((productType) => {
@@ -102,18 +106,22 @@ export class TopbarComponent implements OnInit, OnDestroy {
       this.updateNotificationSent = true;
     });
 
-    this.mediaObserver.media$.pipe(untilDestroyed(this)).subscribe((evt) => {
-      this.screenSize = evt.mqAlias;
+    this.mediaObserver.asObservable().pipe(untilDestroyed(this)).subscribe((changes) => {
+      this.screenSize = changes[0].mqAlias;
     });
   }
 
   ngOnInit(): void {
     if (this.productType === ProductType.ScaleEnterprise) {
       this.checkEula();
+      this.listenForUpgradePendingState();
 
-      this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((isFailoverLicensed) => {
-        this.isFailoverLicensed = isFailoverLicensed;
-        this.getHaStatus();
+      this.store$.select(selectIsHaLicensed).pipe(untilDestroyed(this)).subscribe((isHaLicensed) => {
+        this.isFailoverLicensed = isHaLicensed;
+
+        if (isHaLicensed) {
+          this.getHaStatus();
+        }
       });
     }
 
@@ -134,12 +142,14 @@ export class TopbarComponent implements OnInit, OnDestroy {
           this.updateIsDone.unsubscribe();
         });
       }
-      if (!this.isFailoverLicensed) {
-        if (event?.fields?.arguments[0] && (event.fields.arguments[0] as { reboot: boolean }).reboot) {
-          this.systemWillRestart = true;
-          if (event.fields.state === JobState.Success) {
-            this.router.navigate(['/others/reboot']);
-          }
+      if (
+        !this.isFailoverLicensed
+        && event?.fields?.arguments[0]
+        && (event.fields.arguments[0] as { reboot: boolean }).reboot
+      ) {
+        this.systemWillRestart = true;
+        if (event.fields.state === JobState.Success) {
+          this.router.navigate(['/others/reboot'], { skipLocationChange: true });
         }
       }
 
@@ -158,10 +168,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
       } else {
         this.checkNetworkChangesPending();
       }
-      if (evt && evt.data.checkin) {
-        if (this.checkinInterval) {
-          clearInterval(this.checkinInterval);
-        }
+      if (evt && evt.data.checkin && this.checkinInterval) {
+        clearInterval(this.checkinInterval);
       }
     });
 
@@ -176,10 +184,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
     this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((sysInfo) => {
       this.hostname = sysInfo.hostname;
-    });
-
-    this.ws.onCloseSubject$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.modalService.closeSlideIn();
     });
   }
 
@@ -209,25 +213,21 @@ export class TopbarComponent implements OnInit, OnDestroy {
       this.store$.dispatch(sidenavUpdated(data));
     }
 
-    this.core.emit({
-      name: 'SidenavStatus',
-      data,
-      sender: this,
-    });
+    this.sidenavStatusChange.emit(data);
   }
 
   getLogoIcon(): string {
     const isBlueTheme = this.themeService.activeTheme === 'ix-blue' || this.themeService.activeTheme === 'midnight';
     if (isBlueTheme && this.screenSize === 'xs') {
-      return 'ix:logomark';
+      return 'ix:logo_mark';
     }
     if (!isBlueTheme && this.screenSize === 'xs') {
-      return 'ix:logomark_rgb';
+      return 'ix:logo_mark_rgb';
     }
     if (isBlueTheme && this.screenSize !== 'xs') {
-      return 'ix:full_logo';
+      return 'ix:logo_full';
     }
-    return 'ix:full_logo_rgb';
+    return 'ix:logo_full_rgb';
   }
 
   checkEula(): void {
@@ -237,8 +237,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
           this.dialogService.confirm({
             title: this.translate.instant('End User License Agreement - TrueNAS'),
             message: eula,
-            hideCheckBox: true,
-            buttonMsg: this.translate.instant('I Agree'),
+            hideCheckbox: true,
+            buttonText: this.translate.instant('I Agree'),
             hideCancel: true,
           }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
             this.window.localStorage.removeItem('upgrading_status');
@@ -256,9 +256,9 @@ export class TopbarComponent implements OnInit, OnDestroy {
   }
 
   checkNetworkCheckinWaiting(): void {
-    this.ws.call('interface.checkin_waiting').pipe(untilDestroyed(this)).subscribe((res) => {
-      if (res !== null) {
-        const seconds = res;
+    this.ws.call('interface.checkin_waiting').pipe(untilDestroyed(this)).subscribe((checkingSeconds) => {
+      if (checkingSeconds !== null) {
+        const seconds = checkingSeconds;
         if (seconds > 0 && this.checkinRemaining === null) {
           this.checkinRemaining = seconds;
           this.checkinInterval = setInterval(() => {
@@ -294,8 +294,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
     this.dialogService.confirm({
       title: network_interfaces_helptext.checkin_title,
       message: network_interfaces_helptext.pending_checkin_dialog_text,
-      hideCheckBox: true,
-      buttonMsg: network_interfaces_helptext.checkin_button,
+      hideCheckbox: true,
+      buttonText: network_interfaces_helptext.checkin_button,
     }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.userCheckInPrompted = false;
       this.loader.open();
@@ -308,9 +308,9 @@ export class TopbarComponent implements OnInit, OnDestroy {
           );
           this.waitingNetworkCheckin = false;
         },
-        error: (err) => {
+        error: (err: WebsocketError) => {
           this.loader.close();
-          new EntityUtils().handleWsError(this, err, this.dialogService);
+          this.dialogService.error(this.errorHandler.parseWsError(err));
         },
       });
     });
@@ -323,8 +323,8 @@ export class TopbarComponent implements OnInit, OnDestroy {
       this.dialogService.confirm({
         title: network_interfaces_helptext.pending_changes_title,
         message: network_interfaces_helptext.pending_changes_message,
-        hideCheckBox: true,
-        buttonMsg: this.translate.instant('Continue'),
+        hideCheckbox: true,
+        buttonText: this.translate.instant('Continue'),
       }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
         this.router.navigate(['/network']);
       });
@@ -337,14 +337,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
   updateHaInfo(info: HaStatus): void {
     this.haDisabledReasons = info.reasons;
-    if (info.status === 'HA Enabled') {
-      this.haStatusText = helptext.ha_status_text_enabled;
-      if (!this.pendingUpgradeChecked) {
-        this.checkUpgradePending();
-      }
-    } else {
-      this.haStatusText = helptext.ha_status_text_disabled;
-    }
+    this.haStatusText = info.hasHa ? helptext.ha_status_text_enabled : helptext.ha_status_text_disabled;
   }
 
   getHaStatus(): void {
@@ -380,22 +373,12 @@ export class TopbarComponent implements OnInit, OnDestroy {
     }
   }
 
-  checkUpgradePending(): void {
-    this.pendingUpgradeChecked = true;
-    this.ws.call('failover.upgrade_pending').pipe(untilDestroyed(this)).subscribe((isUpgradePending) => {
-      this.upgradeWaitingToFinish = isUpgradePending;
-      if (isUpgradePending) {
-        this.upgradePendingDialog();
-      }
-    });
-  }
-
   upgradePendingDialog(): void {
     this.dialogService.confirm({
       title: this.translate.instant('Pending Upgrade'),
       message: this.translate.instant('There is an upgrade waiting to finish.'),
-      hideCheckBox: true,
-      buttonMsg: this.translate.instant('Continue'),
+      hideCheckbox: true,
+      buttonText: this.translate.instant('Continue'),
     }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: this.translate.instant('Update') } });
       dialogRef.componentInstance.setCall('failover.upgrade_finish');
@@ -406,7 +389,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
         this.upgradeWaitingToFinish = false;
       });
       dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((failure) => {
-        new EntityUtils().errorReport(failure, this.dialogService);
+        this.dialogService.error(this.errorHandler.parseJobError(failure));
       });
     });
   }
@@ -436,5 +419,16 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
   openIx(): void {
     this.window.open('https://www.ixsystems.com/', '_blank');
+  }
+
+  onFeedbackIndicatorPressed(): void {
+    this.dialog.open(FeedbackDialogComponent);
+  }
+
+  private listenForUpgradePendingState(): void {
+    this.store$.select(selectIsUpgradePending).pipe(filter(Boolean), take(1), untilDestroyed(this)).subscribe(() => {
+      this.upgradeWaitingToFinish = true;
+      this.upgradePendingDialog();
+    });
   }
 }

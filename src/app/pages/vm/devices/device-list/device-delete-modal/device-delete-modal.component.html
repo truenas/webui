@@ -3,9 +3,6 @@
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   <div
     mat-dialog-content
-    ix-auto
-    ix-auto-type="dialog"
-    ix-auto-identifier="title"
     class="device-delete-modal-content"
   >
     <p
@@ -41,8 +38,9 @@
     <button
       type="button"
       mat-button
-      class="mat-button mat-accent action-btn"
+      class="mat-mdc-button mat-button mat-accent action-btn"
       name="Cancel_button"
+      ixTest="cancel"
       (click)="cancel()"
     >
       {{ 'Cancel' | translate }}
@@ -50,9 +48,10 @@
     <button
       type="submit"
       mat-button
-      class="mat-button mat-primary"
-      [disabled]="form.invalid"
+      class="mat-mdc-button mat-button mat-primary"
       name="Delete Device_button"
+      ixTest="delete-device"
+      [disabled]="form.invalid"
     >
       {{ 'Delete Device' | translate }}
     </button>

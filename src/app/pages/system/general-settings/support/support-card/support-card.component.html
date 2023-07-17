@@ -1,0 +1,134 @@
+<mat-card class="system-card" gdArea="system-card">
+  <mat-toolbar-row class="title-bar">
+    <h3>{{ 'Support' | translate }}</h3>
+  </mat-toolbar-row>
+
+  <div fxLayout="column">
+    <div class="mat-mdc-card-content" fxLayout="column">
+      <div
+        class="container"
+        fxLayoutGap="16px"
+        fxLayout.lt-lg="row wrap"
+        fxLayoutAlign="space-evenly center"
+        [fxLayout.xs]="isProductImageRack ? 'column' : 'row wrap'"
+        [fxLayout.gt-md]="isProductImageRack ? 'column' : 'row wrap'"
+      >
+        <div
+          class="product-image"
+          [fxFlex.gt-md]="isProductImageRack ? 'calc(200px - 32px)' : '40%'"
+          [fxFlex.gt-xs]="isProductImageRack ? 'calc(40% - 32px)' : '40%'"
+          [fxFlex.xs]="isProductImageRack ? 'calc(200px - 32px)' : '40%'"
+          [style.background-image]="'url(assets/images/' + productImage + ')'"
+        >
+          <img class="invisible" [src]="'assets/images/' + productImage" />
+        </div>
+
+        <div
+          *ngIf="systemInfo"
+          fxLayout="column"
+          fxLayoutAlign="start stretch"
+          fxLayoutGap="16px"
+          fxFlex.gt-xs="calc(60% - 32px)"
+          [fxFlex.gt-md]="isProductImageRack ? 'calc(50% - 32px)' : 'calc(60% - 32px)'"
+          [fxFlex.xs]="isProductImageRack ? 'calc(50% - 32px)' : 'calc(60% - 32px)'"
+          [class]="extraMargin ? 'extra-margin' : 'regular-margin'"
+        >
+          <ix-sys-info
+            [hasLicense]="hasLicense"
+            [systemInfo]="systemInfo"
+            [licenseInfo]="licenseInfo"
+          ></ix-sys-info>
+
+          <div class="links-wrapper">
+            <div *ngFor="let link of links" class="links">
+              <div [innerHTML]="link"></div>
+            </div>
+          </div>
+          <div *ngIf="hasLicense">
+            <mat-checkbox
+              color="primary"
+              ixTest="production-system"
+              [(ngModel)]="isProduction"
+              (change)="updateProductionStatus($event)"
+            >
+              {{ 'This is a production system' | translate }}
+            </mat-checkbox>
+          </div>
+
+          <!-- ACTION BUTTONS -->
+          <div
+            fxLayout="row"
+            fxLayoutGap="8px"
+            class="actions button-group"
+            [class.btn-fixed]="!isProductImageRack"
+          >
+            <button
+              id="update-license-btn"
+              mat-button
+              color="default"
+              ixTest="set-license"
+              (click)="updateLicense()"
+            >
+              {{ licenseButtonText | translate }}
+            </button>
+            <ng-container
+              *ngIf="hasLicense && !isProductImageRack; else elseBlock"
+            >
+              <button
+                mat-button
+                color="default"
+                class="menu-toggle"
+                ixTest="get-support"
+                [matMenuTriggerFor]="menu"
+              >
+                <span>
+                  {{ 'Get Support' | translate }}
+                  <ix-icon name="mdi-menu-down" class="menu-caret"></ix-icon>
+                </span>
+              </button>
+              <mat-menu #menu="matMenu" overlapTrigger="false">
+                <button
+                  id="fileTicket"
+                  mat-menu-item
+                  ixTest="file-ticket"
+                  (click)="fileTicket()"
+                >
+                  <span>{{ ticketText | translate }}</span>
+                </button>
+                <button
+                  id="proactiveSupport"
+                  mat-menu-item
+                  ixTest="proactive-support"
+                  (click)="openProactive()"
+                >
+                  <span>{{ proactiveText | translate }}</span>
+                </button>
+              </mat-menu>
+            </ng-container>
+            <ng-template #elseBlock>
+              <button
+                id="file-ticket-btn"
+                mat-button
+                color="default"
+                ixTest="file-ticket"
+                (click)="fileTicket()"
+              >
+                {{ ticketText | translate }}
+              </button>
+              <button
+                *ngIf="hasLicense"
+                id="proactive-btn"
+                mat-button
+                color="default"
+                ixTest="proactive-support"
+                (click)="openProactive()"
+              >
+                {{ proactiveText | translate }}
+              </button>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</mat-card>

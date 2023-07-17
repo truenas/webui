@@ -1,4 +1,4 @@
-@import '~assets/styles/scss-imports/splitview';
+@import 'scss-imports/splitview';
 
 /* Universal Overrides for Egret */
 
@@ -11,50 +11,6 @@
 }
 
 /* Navigation shorter and fixed to Top */
-ix-topbar {
-  position: fixed;
-  width: 100%;
-  z-index: 5;
-}
-
-ix-topbar {
-  top: 0;
-
-  .topbar-mobile-footer {
-    align-items: center;
-    display: inline-flex;
-    place-content: flex-end;
-    width: inherit;
-
-    @media (min-width: $breakpoint-min-mobile) and (max-width: $breakpoint-min-mobile) {
-      display: flex;
-      flex-wrap: wrap;
-      height: auto;
-    }
-
-    @media (max-width: $breakpoint-tablet) {
-      background-color: var(--topbar);
-      bottom: 0;
-      height: 48px;
-      left: 0;
-      padding: 0 16px;
-      place-content: space-around;
-      position: fixed;
-      width: 100%;
-    }
-
-    .topbar-button-right {
-      margin: 0;
-
-      @media (min-width: $breakpoint-min-mobile) and (max-width: $breakpoint-tablet) {
-        margin: 4px;
-      }
-    }
-
-  }
-
-}
-
 div.mat-toolbar {
   box-sizing: border-box;
   display: flex;
@@ -62,10 +18,6 @@ div.mat-toolbar {
   min-height: 64px;
   padding: 0 16px;
   width: 100%;
-}
-
-ix-topbar .mat-toolbar .mat-toolbar-row {
-  height: 48px !important;
 }
 
 .xs .rightside-content-hold {
@@ -77,19 +29,8 @@ ix-topbar .mat-toolbar .mat-toolbar-row {
 
 }
 
-@keyframes silde_to_top {
-  0% {
-    bottom: -60px;
-  }
-
-  100% {
-    bottom: 0;
-    z-index: 1000000;
-  }
-}
-
 /* Tabbed navigation is fixed too */
-.tab-header-fixed .mat-tab-header {
+.tab-header-fixed .mat-mdc-tab-header {
   background: #efefef;
   flex-shrink: 0;
   overflow: hidden;
@@ -104,16 +45,16 @@ ix-topbar .mat-toolbar .mat-toolbar-row {
   margin-top: -10px;
 }
 
-.mat-tab-body-wrapper {
+.mat-mdc-tab-body-wrapper {
   padding: 16px;
 }
 
 /* Cards & Tables */
-.mat-card-table {
+.mat-mdc-card-table {
   padding: 0 !important;
 }
 
-.mat-card-table .ngx-datatable {
+.mat-mdc-card-table .ngx-datatable {
   margin: 0 !important;
 }
 
@@ -122,7 +63,6 @@ ngx-datatable .mat-box-shadow {
 }
 
 .mat-card-title-text {
-  font-family: var(--font-family-body);
   font-size: 24px;
   margin: 16px;
 }
@@ -150,42 +90,39 @@ body.collapsed-menu mat-sidenav-container.mat-drawer-opened mat-sidenav-content.
 }
 
 /* side menu*/
-.mat-nav-list .mat-list-item {
+.mat-nav-list .mat-mdc-list-item {
   display: block;
   height: auto !important;
 }
 
 .drag-handle {
   cursor: move;
-}
-
-.drag-handle .grip {
-  color: #ccc;
-  content: '....';
-  cursor: move;
-  display: inline-block;
-  font-family: sans-serif;
-  font-size: 12px;
-  height: 20px;
-  letter-spacing: 2px;
-  line-height: 5px;
-  margin-right: 0.3em;
-  margin-top: -0.9em;
-  overflow: hidden;
-  padding: 3px 4px;
-  pointer-events: none;
-  text-shadow: 1px 0 1px black;
-  vertical-align: middle;
-  white-space: normal;
-  width: 10px;
-}
-
-.drag-handle .grip::after {
-  content: '.. .. .. ..';
-}
-
-.drag-handle {
   position: relative;
+
+  .grip {
+    color: #ccc;
+    content: '....';
+    cursor: move;
+    display: inline-block;
+    font-family: sans-serif;
+    font-size: 12px;
+    height: 20px;
+    letter-spacing: 2px;
+    line-height: 5px;
+    margin-right: 0.3em;
+    margin-top: -0.9em;
+    overflow: hidden;
+    padding: 3px 4px;
+    pointer-events: none;
+    text-shadow: 1px 0 1px black;
+    vertical-align: middle;
+    white-space: normal;
+    width: 10px;
+
+    &::after {
+      content: '.. .. .. ..';
+    }
+  }
 
   > .cdk-drag-handle {
     height: 100%;

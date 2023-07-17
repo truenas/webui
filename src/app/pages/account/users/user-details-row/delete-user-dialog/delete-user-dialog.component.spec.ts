@@ -15,7 +15,8 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import {
   DeleteUserDialogComponent,
 } from 'app/pages/account/users/user-details-row/delete-user-dialog/delete-user-dialog.component';
-import { WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('DeleteUserDialogComponent', () => {
   let spectator: Spectator<DeleteUserDialogComponent>;
@@ -37,6 +38,7 @@ describe('DeleteUserDialogComponent', () => {
         ] as Group[]),
       ]),
       mockProvider(SnackbarService),
+      mockProvider(DialogService),
       mockProvider(MatDialogRef),
       {
         provide: MAT_DIALOG_DATA,
@@ -71,8 +73,8 @@ describe('DeleteUserDialogComponent', () => {
   });
 
   it('shows Delete primary group checkbox if this is the last user in the group', async () => {
-    const mockWebsocket = spectator.inject(MockWebsocketService);
-    mockWebsocket.mockCall('group.query', [
+    const websocketMock = spectator.inject(MockWebsocketService);
+    websocketMock.mockCall('group.query', [
       {
         users: [1],
       },

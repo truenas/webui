@@ -1,0 +1,33 @@
+<div class="left-column">
+  <a
+    *ngIf="app?.installed"
+    class="installed-badge"
+    [matTooltip]="'An instance of this app already installed. Click the badge to see installed apps.' | translate"
+    [ixTest]="[app?.name, 'installed-badge']"
+    (click)="navigateToAllInstalledPage()"
+  >
+    {{ 'Installed' | translate }}
+  </a>
+
+  <ix-app-card-logo [url]="app.icon_url"></ix-app-card-logo>
+
+  <div
+    class="catalog"
+    [class.catalog-official]="app.catalog === officialCatalog"
+  >
+    {{ app.catalog | titlecase }}
+  </div>
+</div>
+
+<div class="right-column">
+  <div class="header">
+    <h3 class="name">{{ app.title || app.name }}</h3>
+    <div class="version">v{{ app.latest_version }}</div>
+  </div>
+
+  <div class="description">{{ description }}</div>
+
+  <div class="meta">
+    <div class="train">{{ 'Train: {train}' | translate: { train: app.train || ('N/A' | translate) } }}</div>
+  </div>
+</div>

@@ -1,0 +1,32 @@
+<ng-container [ngSwitch]="type">
+  <ix-icon
+    *ngSwitchCase="poolCardIconType.Safe"
+    name="check_circle"
+    class="pool-icon icon-online"
+    [matTooltip]="tooltip | translate"
+  ></ix-icon>
+  <ix-icon
+    *ngSwitchCase="poolCardIconType.Warn"
+    name="error"
+    class="pool-icon icon-warning"
+    [matTooltip]="tooltip | translate"
+  ></ix-icon>
+  <ix-icon
+    *ngSwitchCase="poolCardIconType.Faulted"
+    name="help"
+    class="pool-icon icon-faulted"
+    [matTooltip]="tooltip | translate"
+  ></ix-icon>
+  <ix-icon
+    *ngSwitchCase="poolCardIconType.Error"
+    name="cancel"
+    class="pool-icon icon-error"
+    [matTooltip]="tooltip | translate"
+  ></ix-icon>
+  <ix-icon
+    *ngSwitchDefault
+    name="cancel"
+    class="pool-icon icon-error"
+    [matTooltip]="tooltip | translate"
+  ></ix-icon>
+</ng-container>

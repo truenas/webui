@@ -4,9 +4,6 @@ export default {
   cifs_srv_netbiosname_tooltip: T('Automatically populated with the original hostname\
  of the system. This name is limited to 15 characters and\
  cannot be the <b>Workgroup</b> name.'),
-  cifs_srv_netbiosname_b_tooltip: T('Automatically populated with the original hostname\
- of the system. This name is limited to 15 characters and\
- cannot be the <b>Workgroup</b> name.'),
   cifs_srv_netbiosalias_tooltip: T('Enter any aliases, separated by spaces.\
  Each alias can be up to 15 characters long.'),
   cifs_srv_workgroup_tooltip: T('Must match Windows workgroup name. \
@@ -39,6 +36,10 @@ export default {
  <a href="https://support.apple.com/en-us/HT210803" target="_blank">protocol extensions</a> \
  can be used by macOS to improve the performance and behavioral characteristics of SMB shares. \
  This is required for Time Machine support.'),
+  cifs_srv_multichannel_tooltip: T('SMB multichannel allows servers to use multiple network connections \
+ simultaneously by combining the bandwidth of several network interface cards (NICs) for \
+ better performance. SMB multichannel does not function if you combine NICs into a LAGG.\
+ <a href="https://www.truenas.com/docs/scale/scaletutorials/shares/smb/smbmultichannel/" target="_blank">Read more in docs</a>'),
   cifs_srv_guest_tooltip: T('Account to be used for guest access. Default is \
  <i>nobody</i>. The chosen account is required to have permissions to the \
  shared pool or dataset. To adjust permissions, edit the dataset Access \

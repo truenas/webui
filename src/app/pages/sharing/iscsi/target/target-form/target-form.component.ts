@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+} from '@angular/core';
 import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -10,9 +12,11 @@ import { IscsiAuthMethod, IscsiTargetMode } from 'app/enums/iscsi.enum';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { IscsiTarget, IscsiTargetGroup } from 'app/interfaces/iscsi.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { IscsiService, WebSocketService } from 'app/services';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IscsiService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -20,7 +24,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   styleUrls: ['./target-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TargetFormComponent {
+export class TargetFormComponent implements OnInit {
   get isNew(): boolean {
     return !this.editingTarget;
   }
@@ -79,26 +83,29 @@ export class TargetFormComponent {
     auth_networks: this.formBuilder.array<string>([]),
   });
 
-  private editingTarget: IscsiTarget;
-
   constructor(
     protected iscsiService: IscsiService,
     private translate: TranslateService,
     private formBuilder: FormBuilder,
-    private slideInService: IxSlideInService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private ws: WebSocketService,
+    private slideInRef: IxSlideInRef<TargetFormComponent>,
+    @Inject(SLIDE_IN_DATA) private editingTarget: IscsiTarget,
   ) {}
 
-  setTargetForEdit(target: IscsiTarget): void {
-    this.editingTarget = target;
+  ngOnInit(): void {
+    if (this.editingTarget) {
+      this.setTargetForEdit();
+    }
+  }
 
-    Object.values(target.groups).forEach(() => this.addGroup());
-    Object.values(target.auth_networks).forEach(() => this.addNetwork());
+  setTargetForEdit(): void {
+    Object.values(this.editingTarget.groups).forEach(() => this.addGroup());
+    Object.values(this.editingTarget.auth_networks).forEach(() => this.addNetwork());
 
     this.form.patchValue({
-      ...target,
+      ...this.editingTarget,
     });
   }
 
@@ -117,7 +124,7 @@ export class TargetFormComponent {
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isLoading = false;
-        this.slideInService.close();
+        this.slideInRef.close();
       },
       error: (error) => {
         this.isLoading = false;

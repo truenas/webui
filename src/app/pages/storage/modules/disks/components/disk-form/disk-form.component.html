@@ -89,9 +89,9 @@
 
           <ix-input
             formControlName="passwd"
+            type="password"
             [label]="'SED Password' | translate"
             [tooltip]="helptext.disk_form_passwd_tooltip | translate"
-            type="password"
           ></ix-input>
 
           <ix-checkbox
@@ -109,6 +109,7 @@
           mat-button
           type="submit"
           color="primary"
+          ixTest="save"
           [disabled]="form.invalid || isLoading"
         >
           {{ 'Save' | translate }}

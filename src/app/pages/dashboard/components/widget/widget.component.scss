@@ -14,7 +14,7 @@
     top: -4px;
     width: 100vw !important;
 
-    .mat-card {
+    .mat-mdc-card {
       border: 0;
     }
 
@@ -30,8 +30,8 @@
     max-width: 540px;
     min-width: 540px;
 
-    .mat-card.zero-state {
-      .mat-icon {
+    .mat-mdc-card.zero-state {
+      .ix-icon {
         animation: loading 2s linear infinite;
         color: var(--fg2);
         height: 80px;
@@ -51,6 +51,10 @@
     width: 100%;
   }
 
+  .overflow-hidden {
+    overflow: hidden !important;
+  }
+
   .card-container {
     height: 100%;
     transform-style: preserve-3d;
@@ -65,13 +69,13 @@
     }
   }
 
-  .mat-card,
+  .mat-mdc-card,
   .mat-raised-button,
-  .mat-button {
+  .mat-mdc-button {
     backface-visibility: hidden;
   }
 
-  .mat-card {
+  .mat-mdc-card {
     height: 100%;
     left: 0;
     margin: 0;
@@ -89,7 +93,7 @@
     }
   }
 
-  .mat-card-content {
+  .mat-mdc-card-content {
     padding: 0 !important;
     text-align: center;
 
@@ -104,7 +108,9 @@
   }
 
   .controls {
+    align-items: center;
     color: var(--fg2);
+    display: flex;
     position: absolute;
     right: 8px;
 

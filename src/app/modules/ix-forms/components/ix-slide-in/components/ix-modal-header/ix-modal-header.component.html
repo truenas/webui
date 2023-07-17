@@ -4,9 +4,9 @@
   fxLayoutAlign="space-between center"
 >
   <h3 class="ix-formtitle">{{ title | translate }}</h3>
-  <mat-icon *ngIf="!disableClose" id="ix-close-icon" (click)="slideInService.close()">
-    cancel
-  </mat-icon>
+  <ng-container *ngIf="!disableClose">
+    <ix-icon name="cancel" id="ix-close-icon" (click)="close()"></ix-icon>
+  </ng-container>
 </div>
 
 <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>

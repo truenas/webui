@@ -1,5 +1,5 @@
 import {
-  Component, ChangeDetectionStrategy, ChangeDetectorRef,
+  Component, ChangeDetectionStrategy, ChangeDetectorRef, Inject, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
@@ -8,26 +8,33 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import {
-  combineLatest, Observable, of, Subscription,
+  combineLatest, from, Observable, of, Subscription,
 } from 'rxjs';
 import {
-  filter, map, switchMap,
+  debounceTime, filter, map, switchMap, take,
 } from 'rxjs/operators';
+import { allCommands } from 'app/constants/all-commands.constant';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/account/user-form';
+import { Option } from 'app/interfaces/option.interface';
 import { User, UserUpdate } from 'app/interfaces/user.interface';
-import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation';
-import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
 import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
+import { forbiddenValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
+import { matchOtherValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { userAdded, userChanged } from 'app/pages/account/users/store/user.actions';
 import { selectUsers } from 'app/pages/account/users/store/user.selectors';
-import { WebSocketService, UserService } from 'app/services';
+import { UserService, DialogService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { StorageService } from 'app/services/storage.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
+
+const defaultHomePath = '/nonexistent';
 
 @UntilDestroy({ arrayName: 'subscriptions' })
 @Component({
@@ -35,11 +42,11 @@ import { AppState } from 'app/store';
   styleUrls: ['./user-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UserFormComponent {
-  private editingUser: User;
-
+export class UserFormComponent implements OnInit {
   isFormLoading = false;
   subscriptions: Subscription[] = [];
+
+  homeModeOldValue = '';
 
   get isNewUser(): boolean {
     return !this.editingUser;
@@ -54,7 +61,7 @@ export class UserFormComponent {
     username: ['', [
       Validators.required,
       Validators.pattern(UserService.namePattern),
-      Validators.maxLength(16),
+      Validators.maxLength(32),
     ]],
     email: ['', [Validators.email]],
     password: ['', [
@@ -73,14 +80,20 @@ export class UserFormComponent {
     group: [null as number],
     group_create: [true],
     groups: [[] as number[]],
-    home: ['/nonexistent', []],
-    home_mode: ['755'],
+    home: [defaultHomePath, []],
+    home_mode: ['700'],
+    home_create: [false],
     sshpubkey: [null as string],
+    sshpubkey_file: [null as File[]],
     password_disabled: [false],
     shell: [null as string],
     locked: [false],
-    sudo: [false],
+    sudo_commands: [[] as string[]],
+    sudo_commands_all: [false],
+    sudo_commands_nopasswd: [[] as string[]],
+    sudo_commands_nopasswd_all: [false],
     smb: [true],
+    ssh_password_enabled: [false],
   });
 
   readonly tooltips = {
@@ -96,21 +109,51 @@ export class UserFormComponent {
     groups: helptext.user_form_aux_groups_tooltip,
     home: helptext.user_form_dirs_explorer_tooltip,
     home_mode: helptext.user_form_home_dir_permissions_tooltip,
+    home_create: helptext.user_form_home_create_tooltip,
     sshpubkey: helptext.user_form_auth_sshkey_tooltip,
     password_disabled: helptext.user_form_auth_pw_enable_tooltip,
     shell: helptext.user_form_shell_tooltip,
     locked: helptext.user_form_lockuser_tooltip,
-    sudo: helptext.user_form_sudo_tooltip,
     smb: helptext.user_form_smb_tooltip,
   };
 
   readonly groupOptions$ = this.ws.call('group.query').pipe(
     map((groups) => groups.map((group) => ({ label: group.group, value: group.id }))),
   );
-  readonly shellOptions$ = this.ws.call('user.shell_choices').pipe(choicesToOptions());
+  shellOptions$: Observable<Option[]>;
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider();
-  readonly shellProvider = new SimpleAsyncComboboxProvider(this.shellOptions$);
   readonly groupProvider = new SimpleAsyncComboboxProvider(this.groupOptions$);
+
+  get homeCreateWarning(): string {
+    const homeCreate = this.form.value.home_create;
+    const home = this.form.value.home;
+    const homeMode = this.form.value.home_mode;
+    if (this.isNewUser) {
+      if (!homeCreate && home !== defaultHomePath) {
+        return this.translate.instant(
+          'With this configuration, the existing directory {path} will be used as a home directory without creating a new directory for the user.',
+          { path: '\'' + this.form.value.home + '\'' },
+        );
+      }
+    } else {
+      if (this.editingUser.immutable || home === defaultHomePath) {
+        return '';
+      }
+      if (!homeCreate && this.editingUser.home !== home) {
+        return this.translate.instant(
+          'Operation will change permissions on path: {path}',
+          { path: '\'' + this.form.value.home + '\'' },
+        );
+      }
+      if (!homeCreate && !!homeMode && this.homeModeOldValue !== homeMode) {
+        return this.translate.instant(
+          'Operation will change permissions on path: {path}',
+          { path: '\'' + this.form.value.home + '\'' },
+        );
+      }
+    }
+    return '';
+  }
 
   constructor(
     private ws: WebSocketService,
@@ -120,43 +163,89 @@ export class UserFormComponent {
     private translate: TranslateService,
     private validatorsService: IxValidatorsService,
     private filesystemService: FilesystemService,
-    private slideIn: IxSlideInService,
+    private slideInRef: IxSlideInRef<UserFormComponent>,
+    private snackbar: SnackbarService,
     private storageService: StorageService,
     private store$: Store<AppState>,
-  ) { }
+    private dialog: DialogService,
+    @Inject(SLIDE_IN_DATA) private editingUser: User,
+  ) {
+    this.form.controls.smb.errors$.pipe(
+      filter((error) => error?.manualValidateErrorMsg),
+      switchMap(() => this.form.controls.password.valueChanges),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      if (this.form.controls.smb.invalid) {
+        this.form.controls.smb.updateValueAndValidity();
+      }
+    });
+  }
 
-  /**
-   * @param user Skip argument to add new user.
-   */
-  setupForm(user?: User): void {
-    this.editingUser = user;
+  ngOnInit(): void {
+    this.setupForm();
+  }
 
-    this.form.get('password_conf').addValidators(
+  setupForm(): void {
+    this.form.controls.sshpubkey_file.valueChanges.pipe(
+      switchMap((files: File[]) => {
+        return !files?.length ? of('') : from(files[0].text());
+      }),
+      untilDestroyed(this),
+    ).subscribe((key) => {
+      this.form.controls.sshpubkey.setValue(key);
+    });
+
+    this.form.controls.group.valueChanges.pipe(debounceTime(300), untilDestroyed(this)).subscribe((group) => {
+      this.updateShellOptions(group, this.form.value.groups);
+    });
+
+    this.form.controls.groups.valueChanges.pipe(debounceTime(300), untilDestroyed(this)).subscribe((groups) => {
+      this.updateShellOptions(this.form.value.group, groups);
+    });
+
+    this.form.controls.home.valueChanges.pipe(untilDestroyed(this)).subscribe((home) => {
+      if (home === defaultHomePath) {
+        this.form.controls.home_mode.disable();
+      } else {
+        this.form.controls.home_mode.enable();
+      }
+    });
+
+    this.form.controls.home_create.valueChanges.pipe(untilDestroyed(this)).subscribe((checked) => {
+      if (checked) {
+        this.form.patchValue({ home_mode: '700' });
+      }
+    });
+
+    this.form.controls.password_conf.addValidators(
       this.validatorsService.withMessage(
         matchOtherValidator('password'),
         this.translate.instant(this.isNewUser ? 'Password and confirmation should match.' : 'New password and confirmation should match.'),
       ),
     );
 
-    if (user?.home && user.home !== '/nonexistent') {
-      this.storageService.filesystemStat(user.home).pipe(untilDestroyed(this)).subscribe((stat) => {
+    if (this.editingUser?.home && this.editingUser.home !== defaultHomePath) {
+      this.storageService.filesystemStat(this.editingUser.home).pipe(untilDestroyed(this)).subscribe((stat) => {
         this.form.patchValue({ home_mode: stat.mode.toString(8).substring(2, 5) });
+        this.homeModeOldValue = stat.mode.toString(8).substring(2, 5);
       });
     } else {
-      this.form.patchValue({ home_mode: '755' });
+      this.form.patchValue({ home_mode: '700' });
+      this.form.controls.home_mode.disable();
     }
     this.subscriptions.push(
-      this.form.get('locked').disabledWhile(this.form.get('password_disabled').value$),
-      this.form.get('sudo').disabledWhile(this.form.get('password_disabled').value$),
-      this.form.get('password').disabledWhile(this.form.get('password_disabled').value$),
-      this.form.get('password_conf').disabledWhile(this.form.get('password_disabled').value$),
-      this.form.get('group').disabledWhile(this.form.get('group_create').value$),
+      this.form.controls.locked.disabledWhile(this.form.controls.password_disabled.value$),
+      this.form.controls.password.disabledWhile(this.form.controls.password_disabled.value$),
+      this.form.controls.password_conf.disabledWhile(this.form.controls.password_disabled.value$),
+      this.form.controls.group.disabledWhile(this.form.controls.group_create.value$),
+      this.form.controls.sudo_commands.disabledWhile(this.form.controls.sudo_commands_all.value$),
+      this.form.controls.sudo_commands_nopasswd.disabledWhile(this.form.controls.sudo_commands_nopasswd_all.value$),
     );
 
     if (this.isNewUser) {
       this.setupNewUserForm();
     } else {
-      this.setupEditUserForm(user);
+      this.setupEditUserForm(this.editingUser);
     }
   }
 
@@ -168,68 +257,94 @@ export class UserFormComponent {
       group: values.group,
       groups: values.groups,
       home_mode: values.home_mode,
+      home_create: values.home_create,
       home: values.home,
       locked: values.password_disabled ? false : values.locked,
       password_disabled: values.password_disabled,
       shell: values.shell,
       smb: values.smb,
-      sshpubkey: values.sshpubkey,
-      sudo: values.password_disabled ? false : values.sudo,
+      ssh_password_enabled: values.ssh_password_enabled,
+      sshpubkey: values.sshpubkey ? values.sshpubkey.trim() : values.sshpubkey,
+      sudo_commands: values.sudo_commands_all ? [allCommands] : values.sudo_commands,
+      sudo_commands_nopasswd: values.sudo_commands_nopasswd_all ? [allCommands] : values.sudo_commands_nopasswd,
       username: values.username,
     };
 
-    this.isFormLoading = true;
-    let request$: Observable<unknown>;
-    if (this.isNewUser) {
-      request$ = this.ws.call('user.create', [{
-        ...body,
-        group_create: values.group_create,
-        password: values.password,
-        uid: values.uid,
-      }]);
-    } else {
-      const passwordNotEmpty = values.password !== '' && values.password_conf !== '';
-      if (passwordNotEmpty && !values.password_disabled) {
-        body.password = values.password;
-      }
-      request$ = this.ws.call('user.update', [this.editingUser.id, body]);
+    let homeCreateWarningConfirmation$ = of(true);
+    if (this.homeCreateWarning) {
+      homeCreateWarningConfirmation$ = this.dialog.confirm({
+        title: this.translate.instant('Warning!'),
+        message: this.homeCreateWarning,
+      });
     }
 
-    request$.pipe(
-      switchMap((id) => this.ws.call('user.query', [[['id', '=', id]]])),
-      map((users) => users[0]),
+    homeCreateWarningConfirmation$.pipe(
+      filter(Boolean),
       untilDestroyed(this),
     ).subscribe({
-      next: (user) => {
+      next: () => {
+        this.isFormLoading = true;
+        this.cdr.markForCheck();
+
+        let request$: Observable<number>;
+        let nextRequest$: Observable<number>;
         if (this.isNewUser) {
-          this.store$.dispatch(userAdded({ user }));
+          request$ = this.ws.call('user.create', [{
+            ...body,
+            group_create: values.group_create,
+            password: values.password,
+            uid: values.uid,
+          }]);
         } else {
-          this.store$.dispatch(userChanged({ user }));
+          const passwordNotEmpty = values.password !== '' && values.password_conf !== '';
+          if (passwordNotEmpty && !values.password_disabled) {
+            body.password = values.password;
+          }
+          if (body.home_create) {
+            request$ = this.ws.call('user.update', [this.editingUser.id, { home_create: true, home: body.home }]);
+            delete body.home_create;
+            delete body.home;
+            nextRequest$ = this.ws.call('user.update', [this.editingUser.id, body]);
+          } else {
+            request$ = this.ws.call('user.update', [this.editingUser.id, body]);
+          }
         }
-        this.isFormLoading = false;
-        this.slideIn.close();
-        this.cdr.markForCheck();
+
+        request$.pipe(
+          switchMap((id) => nextRequest$ || of(id)),
+          switchMap((id) => this.ws.call('user.query', [[['id', '=', id]]])),
+          map((users) => users[0]),
+          untilDestroyed(this),
+        ).subscribe({
+          next: (user) => {
+            if (this.isNewUser) {
+              this.snackbar.success(this.translate.instant('User added'));
+              this.store$.dispatch(userAdded({ user }));
+            } else {
+              this.snackbar.success(this.translate.instant('User updated'));
+              this.store$.dispatch(userChanged({ user }));
+            }
+            this.isFormLoading = false;
+            this.slideInRef.close();
+            this.cdr.markForCheck();
+          },
+          error: (error) => {
+            this.isFormLoading = false;
+            this.errorHandler.handleWsFormError(error, this.form);
+            this.cdr.markForCheck();
+          },
+        });
       },
-      error: (error) => {
-        this.isFormLoading = false;
-        this.errorHandler.handleWsFormError(error, this.form);
-        this.cdr.markForCheck();
+      complete: () => {
       },
     });
   }
 
   onDownloadSshPublicKey(): void {
-    const name = this.form.get('username').value;
-    const key = this.form.get('sshpubkey').value;
+    const name = this.form.controls.username.value;
+    const key = this.form.controls.sshpubkey.value;
     const blob = new Blob([key], { type: 'text/plain' });
     this.storageService.downloadBlob(blob, `${name}_public_key_rsa`);
-  }
-
-  getUsernameHint(): string {
-    if (this.form.get('username')?.value?.length > 8) {
-      return this.translate.instant('Usernames can be up to 16 characters long. When using NIS or other legacy software with limited username lengths, keep usernames to eight characters or less for compatibility.');
-    }
-    return null;
   }
 
   private setupNewUserForm(): void {
@@ -240,10 +355,9 @@ export class UserFormComponent {
     this.detectFullNameChanges();
 
     this.subscriptions.push(
-      this.form.get('password').disabledWhile(this.form.get('password_disabled').value$),
-      this.form.get('password_conf').disabledWhile(this.form.get('password_disabled').value$),
-      this.form.get('locked').disabledWhile(this.form.get('password_disabled').value$),
-      this.form.get('sudo').disabledWhile(this.form.get('password_disabled').value$),
+      this.form.controls.password.disabledWhile(this.form.controls.password_disabled.value$),
+      this.form.controls.password_conf.disabledWhile(this.form.controls.password_disabled.value$),
+      this.form.controls.locked.disabledWhile(this.form.controls.password_disabled.value$),
     );
   }
 
@@ -260,32 +374,37 @@ export class UserFormComponent {
       shell: user.shell,
       smb: user.smb,
       sshpubkey: user.sshpubkey,
-      sudo: user.sudo,
+      ssh_password_enabled: user.ssh_password_enabled,
+      sudo_commands: user.sudo_commands?.includes(allCommands) ? [] : user.sudo_commands,
+      sudo_commands_all: user.sudo_commands?.includes(allCommands),
+      sudo_commands_nopasswd: user.sudo_commands_nopasswd?.includes(allCommands) ? [] : user.sudo_commands_nopasswd,
+      sudo_commands_nopasswd_all: user.sudo_commands_nopasswd?.includes(allCommands),
       uid: user.uid,
       username: user.username,
     });
 
-    this.form.get('uid').disable();
-    this.form.get('group_create').disable();
+    this.form.controls.uid.disable();
+    this.form.controls.group_create.disable();
 
-    if (user.builtin) {
-      this.form.get('group').disable();
-      this.form.get('home_mode').disable();
-      this.form.get('home').disable();
-      this.form.get('username').disable();
+    if (user.immutable) {
+      this.form.controls.group.disable();
+      this.form.controls.home_mode.disable();
+      this.form.controls.home.disable();
+      this.form.controls.home_create.disable();
+      this.form.controls.username.disable();
     }
 
     this.setNamesInUseValidator(user.username);
   }
 
   private detectFullNameChanges(): void {
-    this.form.get('full_name').valueChanges.pipe(
+    this.form.controls.full_name.valueChanges.pipe(
       map((fullName) => this.getUserName(fullName)),
       filter((username) => !!username),
       untilDestroyed(this),
     ).subscribe((username) => {
       this.form.patchValue({ username });
-      this.form.get('username').markAsTouched();
+      this.form.controls.username.markAsTouched();
     });
   }
 
@@ -299,7 +418,7 @@ export class UserFormComponent {
       switchMap((homeSharePath) => {
         this.form.patchValue({ home: homeSharePath });
 
-        return combineLatest([of(homeSharePath), this.form.get('username').valueChanges]);
+        return combineLatest([of(homeSharePath), this.form.controls.username.valueChanges]);
       }),
       untilDestroyed(this),
     ).subscribe(([homeSharePath, username]) => {
@@ -314,7 +433,8 @@ export class UserFormComponent {
   }
 
   private setFirstShellOption(): void {
-    this.shellOptions$.pipe(
+    this.ws.call('user.shell_choices', [this.form.value.groups]).pipe(
+      choicesToOptions(),
       filter((shells) => !!shells.length),
       map((shells) => shells[0].value),
       untilDestroyed(this),
@@ -329,7 +449,7 @@ export class UserFormComponent {
       if (currentName) {
         forbiddenNames = _.remove(forbiddenNames, currentName);
       }
-      this.form.get('username').addValidators(forbiddenValues(forbiddenNames));
+      this.form.controls.username.addValidators(forbiddenValues(forbiddenNames));
     });
   }
 
@@ -346,5 +466,19 @@ export class UserFormComponent {
     }
 
     return username.toLocaleLowerCase();
+  }
+
+  private updateShellOptions(group: number, groups: number[]): void {
+    const ids = new Set<number>(groups);
+    if (group) {
+      ids.add(group);
+    }
+
+    this.ws.call('user.shell_choices', [Array.from(ids)])
+      .pipe(choicesToOptions(), take(1), untilDestroyed(this))
+      .subscribe((options) => {
+        this.shellOptions$ = of(options);
+        this.cdr.markForCheck();
+      });
   }
 }

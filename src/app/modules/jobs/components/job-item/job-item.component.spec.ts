@@ -1,32 +1,16 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { provideMockStore } from '@ngrx/store/testing';
-import { MockPipe } from 'ng-mocks';
-import { CoreComponents } from 'app/core/core-components.module';
-import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
-import { mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { JobItemComponent } from 'app/modules/jobs/components/job-item/job-item.component';
-import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
 describe('JobItemComponent', () => {
   let spectator: Spectator<JobItemComponent>;
 
   const createComponent = createComponentFactory({
     component: JobItemComponent,
-    imports: [
-      CoreComponents,
-    ],
     declarations: [
-      MockPipe(FormatDateTimePipe, jest.fn(() => 'Jan 10 2022 10:36')),
-    ],
-    providers: [
-      mockWebsocket(),
-      provideMockStore({
-        selectors: [
-          { selector: selectGeneralConfig, value: { timezone: 'UTC' } },
-        ],
-      }),
+      FakeFormatDateTimePipe,
     ],
   });
 
@@ -47,7 +31,7 @@ describe('JobItemComponent', () => {
 
     expect(spectator.query('.job-description')).toHaveText('cloudsync.sync');
     expect(spectator.query('.job-progress-description')).toHaveText('progress description');
-    expect(spectator.query('.job-icon-abort')).toBeTruthy();
+    expect(spectator.query('.job-button-abort ix-icon')).toBeTruthy();
     expect(spectator.query('.job-icon-failed')).toBeFalsy();
   });
 
@@ -70,7 +54,7 @@ describe('JobItemComponent', () => {
     });
 
     expect(spectator.query('.job-description')).toHaveText('cloudsync.sync');
-    expect(spectator.query('.job-time')).toHaveText('Stopped:  Jan 10 2022 10:36');
+    expect(spectator.query('.job-time')).toHaveText('Stopped:  1970-01-20 03:03:31');
     expect(spectator.query('.job-icon-failed')).toBeTruthy();
   });
 

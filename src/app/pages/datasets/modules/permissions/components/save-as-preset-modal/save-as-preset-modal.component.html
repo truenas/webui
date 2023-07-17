@@ -1,0 +1,47 @@
+<h1 mat-dialog-title>{{ 'Save As Preset' | translate }}</h1>
+<form [formGroup]="form" (submit)="onSubmit()">
+  <div mat-dialog-content>
+    <p>{{ 'Save current ACL entries as a preset for future use.' | translate }}</p>
+
+    <div class="exist-content">
+      <h4 class="label">{{ 'Existing presets' | translate }}:</h4>
+      <div class="presets">
+        <ng-container *ngFor="let preset of presets">
+          <div class="preset" [ngClass]="{ 'preset-disabled': !isCurrentAclType(preset.acltype) }">
+            <div class="preset-name">{{ preset.name }}</div>
+            <div class="preset-type">{{ preset.acltype }}</div>
+
+            <span
+              *ngIf="!preset.builtin"
+              class="preset-remove"
+              (click)="onRemovePreset(preset)"
+            >
+              <ix-icon name="cancel"></ix-icon>
+            </span>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+
+    <div class="save-content">
+      <h4 class="label">{{ 'Save ACL as preset' | translate }}:</h4>
+      <ix-input
+        formControlName="presetName"
+        [label]="'Preset Name' | translate"
+      ></ix-input>
+    </div>
+  </div>
+
+  <div mat-dialog-actions class="buttons">
+    <button mat-button matDialogClose ixTest="cancel">{{ 'Cancel' | translate }}</button>
+    <button
+      mat-button
+      color="primary"
+      type="submit"
+      ixTest="save"
+      [disabled]="form.invalid || isFormLoading"
+    >
+      {{ 'Save' | translate }}
+    </button>
+  </div>
+</form>

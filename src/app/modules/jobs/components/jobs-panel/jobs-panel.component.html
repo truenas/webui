@@ -1,42 +1,28 @@
 <mat-dialog-content>
-  <div
-    class="jobs-header"
-    fxLayout="row"
-    fxLayoutAlign="space-between baseline"
-    fxLayoutGap="8px"
-  >
+  <div class="jobs-header">
     <h3>{{ 'Jobs' | translate }}</h3>
 
-    <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="8px">
+    <div class="badges">
       <div
         class="job-badge running"
-        fxLayout="row"
-        fxLayoutAlign="center center"
-        fxLayoutGap="4px"
         [matTooltip]="'Active' | translate"
       >
         <span class="job-badge-count">{{ runningJobsCount$ | async }}</span>
-        <mat-icon class="job-icon-running">sync</mat-icon>
+        <ix-icon name="sync" class="job-icon-running"></ix-icon>
       </div>
       <div
         class="job-badge waiting"
-        fxLayout="row"
-        fxLayoutAlign="center center"
-        fxLayoutGap="4px"
         [matTooltip]="'Waiting' | translate"
       >
         <span class="job-badge-count">{{ waitingJobsCount$ | async }}</span>
-        <mat-icon class="job-icon-waiting">schedule</mat-icon>
+        <ix-icon name="schedule" class="job-icon-waiting"></ix-icon>
       </div>
       <div
         class="job-badge failed"
-        fxLayout="row"
-        fxLayoutAlign="center center"
-        fxLayoutGap="4px"
         [matTooltip]="'Failed' | translate"
       >
         <span class="job-badge-count">{{ failedJobsCount$ | async }}</span>
-        <mat-icon class="job-icon-failed">cancel</mat-icon>
+        <ix-icon name="cancel" class="job-icon-failed"></ix-icon>
       </div>
     </div>
   </div>
@@ -50,16 +36,16 @@
   </div>
 
   <div *ngIf="error$ | async as error" class="error">
-    <mat-icon class="icon" color="accent">cancel</mat-icon>
+    <ix-icon name="cancel" class="icon" color="accent"></ix-icon>
     <h4 class="message">
-      <span class="error-word">{{ 'Error:' | translate }}</span>
+      <span class="error-word">{{ 'Error' | translate }}:</span>
       {{ error }}
     </h4>
   </div>
 
   <ng-template #loaded>
     <div *appLet="availableJobs$ | async as jobs">
-      <div class="jobs-list" *ngIf="jobs.length">
+      <div *ngIf="jobs.length > 0" class="jobs-list">
         <ix-job-item
           *ngFor="let job of jobs; trackBy: trackByJobId"
           [job]="job"
@@ -70,7 +56,7 @@
       </div>
 
       <div *ngIf="!jobs.length" class="no-jobs">
-        <mat-icon class="icon">info</mat-icon>
+        <ix-icon name="info"></ix-icon>
         <h4 class="message">{{ 'There are no tasks.' | translate }}</h4>
       </div>
     </div>
@@ -80,9 +66,7 @@
 <mat-dialog-actions>
   <button
     mat-button
-    ix-auto
-    ix-auto-type="button"
-    ix-auto-identifier="HISTORY"
+    ixTest="history"
     (click)="goToJobs()"
   >
     {{ 'History' | translate }}

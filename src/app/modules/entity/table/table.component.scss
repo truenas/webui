@@ -12,10 +12,15 @@ mat-card-content.table-container {
   height: inherit;
   margin-bottom: 0;
   max-width: 100%;
+  padding: 0 !important;
 }
 
-.mat-row {
+.mat-mdc-row {
   cursor: pointer;
+}
+
+.state-button {
+  line-height: initial;
 }
 
 .mat-header-cell,
@@ -52,26 +57,16 @@ div.table-container {
   table-layout: fixed;
 }
 
-.table-cell .mat-icon.table-action-button {
-  display: inline-block;
-  margin: 0;
-  text-align: center;
-}
-
-.table-action-button {
-  margin-right: 5px;
-}
-
 div.table-row-action {
   align-items: center;
   display: flex;
+  gap: 8px;
   justify-content: flex-end;
-  margin-right: -20px;
+  margin-right: -10px;
 }
 
-mat-icon.state-icon,
-mat-icon.state-info-icon,
-mat-icon.table-action-button {
+.mat-icon.state-icon,
+.mat-icon.state-info-icon {
   position: inherit;
 }
 
@@ -103,9 +98,15 @@ button div.label-warning-icon {
   display: inline;
 }
 
-button div.label-warning-icon .mat-icon {
+button div.label-warning-icon .ix-icon {
   font-size: 14px;
   margin: 0;
+}
+
+.text-overflow-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .path-locked-status {
@@ -114,7 +115,7 @@ button div.label-warning-icon .mat-icon {
   justify-content: flex-start;
   min-width: 0;
 
-  .mat-icon {
+  .ix-icon {
     cursor: help;
     flex-shrink: 0;
     font-size: 14px;

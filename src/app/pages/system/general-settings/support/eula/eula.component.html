@@ -9,8 +9,9 @@
       <button
         id="back-to-support-button"
         mat-flat-button
-        class="mat-button mat-primary"
-        (click)="goToSupport()"
+        class="mat-mdc-button mat-button mat-primary"
+        ixTest="back-to-support"
+        [routerLink]="['/system/general']"
       >
         {{ 'Back to Support' | translate }}
       </button>

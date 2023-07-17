@@ -1,4 +1,5 @@
 import { LinkState } from 'app/enums/network-interface.enum';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 
 export interface ReportingRealtimeUpdate {
   cpu: AllCpusUpdate;
@@ -97,11 +98,9 @@ export interface ZfsUpdate {
 
 export interface ReportingConfig {
   confirm_rrd_destroy?: boolean;
-  cpu_in_percentage: boolean;
   graph_age: number;
   graph_points: number;
   graphite: string;
-  graphite_separateinstances: boolean;
   id: number;
 }
 
@@ -131,7 +130,7 @@ export interface ReportingData {
   name: string;
   start: number;
   step: number;
-  data: number[][];
+  data: number[][] | WebsocketError;
   aggregations: {
     [key in ReportingAggregationKeys]: string[];
   };

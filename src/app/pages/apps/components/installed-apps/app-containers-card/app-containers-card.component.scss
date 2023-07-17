@@ -1,0 +1,62 @@
+@import 'mixins/cards';
+
+.card {
+  @include details-card();
+  margin: 0;
+
+  .details-item .value {
+    display: inline-flex;
+  }
+
+  ::ng-deep ngx-skeleton-loader {
+    display: flex;
+
+    .loader {
+      margin: 0;
+    }
+  }
+}
+
+.containers {
+  margin-top: 16px;
+
+  h4 {
+    margin-bottom: 8px;
+  }
+}
+
+.container-list {
+  background-color: rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+  max-height: 200px;
+  min-height: 40px;
+  overflow-y: auto;
+  padding: 12px;
+}
+
+.container-item {
+  .information {
+    align-items: center;
+    column-gap: 5px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  .container-name {
+    width: 100%;
+    word-wrap: break-word;
+  }
+
+  .container-status {
+    flex: 1;
+    min-width: 40px;
+  }
+
+  .container-action {
+    align-items: center;
+    display: flex;
+    flex: 1 0 auto;
+    justify-content: flex-end;
+  }
+}

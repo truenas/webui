@@ -5,7 +5,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
-import { MatMenuModule } from '@angular/material/menu';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxFilesizeModule } from 'ngx-filesize';
@@ -17,9 +16,10 @@ import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
-import { IxTreeModule } from 'app/modules/ix-tree/ix-tree.module';
+import { TreeModule } from 'app/modules/ix-tree/tree.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { DevicesComponent } from 'app/pages/storage/modules/devices/components/devices/devices.component';
 import {
   DiskDetailsPanelComponent,
@@ -47,11 +47,10 @@ import { ExtendDialogComponent } from './components/zfs-info-card/extend-dialog/
     EntityModule,
     FlexLayoutModule,
     IxFormsModule,
-    IxTreeModule,
+    TreeModule,
     MatButtonModule,
     MatCardModule,
     MatDialogModule,
-    MatMenuModule,
     IxIconModule,
     NgxFilesizeModule,
     NgxSkeletonLoaderModule.forRoot({
@@ -68,6 +67,7 @@ import { ExtendDialogComponent } from './components/zfs-info-card/extend-dialog/
     AppLoaderModule,
     LayoutModule,
     CommonDirectivesModule,
+    TestIdModule,
   ],
   declarations: [
     DevicesComponent,

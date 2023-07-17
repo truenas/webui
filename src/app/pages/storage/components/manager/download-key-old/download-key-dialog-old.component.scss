@@ -1,0 +1,11 @@
+@import 'scss-imports/cssvars';
+
+.mat-mdc-dialog-content {
+  max-width: 600px;
+}
+
+.red-warning-button {
+  @include variable(background-color, --red, $red !important);
+  color: white;
+  margin-right: 7px;
+}

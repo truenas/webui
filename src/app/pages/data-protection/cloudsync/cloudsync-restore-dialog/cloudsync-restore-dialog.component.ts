@@ -11,8 +11,9 @@ import { TransferMode } from 'app/enums/transfer-mode.enum';
 import helptext_cloudsync from 'app/helptext/data-protection/cloudsync/cloudsync-form';
 import { CloudsyncRestoreParams } from 'app/interfaces/cloudsync-provider.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { AppLoaderService, WebSocketService } from 'app/services';
+import { AppLoaderService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({

@@ -1,17 +1,11 @@
-import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const helptextSystemUpdate = {
-  version: {
-    paraText: T('<b>Current Version:</b> '),
-  },
-
   filelocation: {
     placeholder: T('Update File Temporary Storage Location'),
     tooltip: T(
       'The update file is temporarily stored here before being applied.',
     ),
-    validation: [Validators.required],
   },
 
   filename: {
@@ -39,6 +33,9 @@ export const helptextSystemUpdate = {
     message: T('Error submitting file'),
   },
 
+  continueDialogTitle: T('Warning'),
+  continueDialogAction: T('Continue with the upgrade'),
+
   clickForInformationLink: T('Click for information on\
     <a href="https://www.truenas.com/docs/truenasupgrades/" target="_blank">TrueNAS SCALE Migration, Nightly trains\
     and other upgrade options.</a>'),
@@ -48,14 +45,6 @@ export const helptextSystemUpdate = {
     complete_msg: T('The standby controller has finished upgrading. To complete the update process, \
  failover to the standby controller.'),
     complete_action: T('Close'),
-  },
-
-  save_config_err: {
-    title: T('Error Saving Configuration Settings'),
-    message: T('System failed to save configuration settings. Check the network connection. \
- To proceed with the system upgrade <b>without</b> saving a current backup of the configuration setting, select \
- the <i>Confirm</i> checkbox and click <i>Proceed with Update</i>.'),
-    button_text: T('Proceed with Update'),
   },
 
   non_ha_download_msg: T('Continue with download?'),

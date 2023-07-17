@@ -1,8 +1,12 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
+import { WINDOW } from 'app/helpers/window.helper';
 
 @Injectable()
 export class IxFormatterService {
+  readonly protocol = this.window?.location?.protocol || 'http:';
   readonly iecUnits: readonly string[] = ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB'];
+
+  constructor(@Inject(WINDOW) private window: Window) {}
 
   /**
    * Formats any memory size in bytes to human readable string, e.g., '2147483648' to '2 GiB'
@@ -14,7 +18,7 @@ export class IxFormatterService {
       return '';
     }
     value = value.toString();
-    return !value || Number.isNaN(Number(value)) ? '' : this.convertBytesToHumanReadable(value, 0);
+    return !value || Number.isNaN(Number(value)) ? '' : this.convertBytesToHumanReadable(value, 2);
   };
 
   /**
@@ -23,13 +27,16 @@ export class IxFormatterService {
    * @param value The value to be parsed
    * @returns The parsed value
    */
-  memorySizeParsing: (val: string) => number = (value: string) => {
+  memorySizeParsing: (val: string, postfixValue?: string) => number = (value: string, postfix: string) => {
     if (!value) {
       return null;
     }
-    const humanStringToNum = this.convertHumanStringToNum(value);
+
+    const finalValue = `${value} ${!Number(value) ? '' : postfix || ''}`.trim();
+    const humanStringToNum = this.convertHumanStringToNum(finalValue, true);
+
     // Default unit is MiB so if the user passed in no unit, we assume unit is MiB
-    return (humanStringToNum !== Number(value)) ? humanStringToNum : this.convertHumanStringToNum(value + 'mb');
+    return (humanStringToNum !== Number(finalValue)) ? humanStringToNum : this.convertHumanStringToNum(finalValue + 'mb', true);
   };
 
   /**
@@ -62,7 +69,7 @@ export class IxFormatterService {
     } else {
       units = hideBytes ? '' : 'B';
     }
-    return `${bytes.toFixed(dec)} ${units}`;
+    return `${parseFloat(bytes.toFixed(dec))} ${units}`;
   };
 
   /**
@@ -192,5 +199,13 @@ export class IxFormatterService {
       return 1;
     }
     return (1024 ** (this.iecUnits.indexOf(unitStr)));
+  };
+
+  stringAsUrlParsing = (value: string): string => {
+    if (value.startsWith('http')) {
+      return value;
+    }
+
+    return `${this.protocol}//${value}`;
   };
 }

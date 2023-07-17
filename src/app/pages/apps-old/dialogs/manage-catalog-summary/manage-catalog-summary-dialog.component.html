@@ -1,0 +1,104 @@
+<div mat-dialog-content>
+  <div class="title-div" fxLayout="row" fxLayoutAlign="space-between center">
+    <strong
+      class="catalog-name"
+      textLimiter
+      [threshold]="40"
+      [content]="'{app} Catalog Summary' | translate: { app: catalog.label }"
+    ></strong>
+    <span *ngIf="catalog.healthy" class="status active">
+      {{ 'Healthy' | translate }}
+    </span>
+    <span *ngIf="!catalog.healthy" class="status other">
+      {{ 'Unhealthy' | translate }}
+    </span>
+  </div>
+  <div class="resource" fxLayout="row" fxLayoutAlign="space-between center">
+    <div class="status-filter">
+      <span>{{ 'Train' | translate }}:</span>
+      <mat-form-field class="form-element">
+        <mat-select
+          ixTest="train"
+          [(ngModel)]="selectedTrain"
+          (ngModelChange)="onOptionChanged()"
+        >
+          <mat-option
+            *ngFor="let option of trainOptions"
+            [value]="option"
+            [ixTest]="['train', option]"
+          >
+            {{ option }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="status-filter">
+      <span>{{ 'Status' | translate }}:</span>
+      <mat-form-field class="form-element">
+        <mat-select
+          ixTest="status"
+          [(ngModel)]="selectedStatus"
+          (ngModelChange)="onOptionChanged()"
+        >
+          <mat-option
+            *ngFor="let option of statusOptions"
+            [value]="option"
+            [ixTest]="['status', option]"
+          >
+            {{ option }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+  <div class="version-list">
+    <div fxLayout="row" fxLayoutAlign="center start" class="detail-row row-light">
+      <span fxFlex="25%">{{ 'Train' | translate }}</span>
+      <span fxFlex="25%">{{ 'App' | translate }}</span>
+      <span fxFlex="50%">{{ 'Status' | translate }}</span>
+    </div>
+    <div *ngIf="filteredItems.length > 0; else empty">
+      <div
+        *ngFor="let item of filteredItems; let i = index"
+        class="detail-row value-row"
+        [ngClass]="{ 'row-dark': i % 2 === 0, 'row-light': i % 2 === 1 }"
+      >
+        <div fxLayout="row" fxLayoutAlign="center start">
+          <div fxFlex="25%" class="item-train">
+            <span textLimiter [threshold]="15" [content]="item.train"></span>
+          </div>
+          <span fxFlex="25%" class="item-app">
+            <span textLimiter [threshold]="15" [content]="item.app"></span>
+          </span>
+          <span fxFlex="50%" class="info-col">
+            <span
+              textLimiter
+              [threshold]="22"
+              [content]="item.healthy ? ('Healthy' | translate) : ('Unhealthy' | translate)"
+            ></span>
+          </span>
+        </div>
+      </div>
+    </div>
+    <ng-template #empty>
+      <div
+        fxLayout="row"
+        fxLayoutAlign="start start"
+        class="detail-row value-row row-dark"
+      >
+        {{ 'No Item' | translate }}
+      </div>
+    </ng-template>
+  </div>
+</div>
+
+<div class="button-bar" mat-dialog-actions align="end">
+  <button
+    mat-button
+    class="mat-mdc-button mat-button mat-secondary"
+    ixTest="close"
+    (click)="dialogRef.close(false)"
+  >
+    {{ helptext.actionBtnText.close | translate }}
+  </button>
+</div>

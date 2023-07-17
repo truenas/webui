@@ -1,0 +1,104 @@
+<ix-modal-header
+  [title]="'GUI Settings' | translate"
+  [loading]="isFormLoading"
+></ix-modal-header>
+<mat-card>
+  <mat-card-content>
+    <form
+      class="ix-form-container"
+      [formGroup]="formGroup"
+      (submit)="onSubmit()"
+    >
+      <ix-fieldset [title]="helptext.fieldset_gui | translate">
+        <ix-select
+          formControlName="theme"
+          [label]="'Theme' | translate"
+          [options]="options.themes"
+          [required]="true"
+        ></ix-select>
+        <ix-with-manage-certificates-link>
+          <ix-select
+            formControlName="ui_certificate"
+            [label]="helptext.ui_certificate.label | translate"
+            [tooltip]="helptext.ui_certificate.tooltip | translate"
+            [options]="options.ui_certificate"
+            [required]="true"
+          ></ix-select>
+        </ix-with-manage-certificates-link>
+
+        <ix-select
+          formControlName="ui_address"
+          [label]="helptext.ui_address.label | translate"
+          [tooltip]="helptext.ui_address.tooltip | translate"
+          [options]="options.ui_address"
+          [required]="true"
+          [multiple]="true"
+        ></ix-select>
+
+        <ix-select
+          formControlName="ui_v6address"
+          [label]="helptext.ui_v6address.label | translate"
+          [tooltip]="helptext.ui_v6address.tooltip | translate"
+          [options]="options.ui_v6address"
+          [required]="true"
+          [multiple]="true"
+        ></ix-select>
+
+        <ix-input
+          type="number"
+          formControlName="ui_port"
+          [label]="helptext.ui_port.label | translate"
+          [tooltip]="helptext.ui_port.tooltip | translate"
+        ></ix-input>
+
+        <ix-input
+          type="number"
+          formControlName="ui_httpsport"
+          [label]="helptext.ui_httpsport.label | translate"
+          [tooltip]="helptext.ui_httpsport.tooltip | translate"
+        ></ix-input>
+
+        <ix-select
+          formControlName="ui_httpsprotocols"
+          [label]="helptext.ui_httpsprotocols.label | translate"
+          [tooltip]="helptext.ui_httpsprotocols.tooltip | translate"
+          [options]="options.ui_httpsprotocols"
+          [required]="true"
+          [multiple]="true"
+        ></ix-select>
+
+        <ix-checkbox
+          formControlName="ui_httpsredirect"
+          [label]="helptext.ui_httpsredirect.label | translate"
+          [tooltip]="helptext.ui_httpsredirect.tooltip | translate"
+        ></ix-checkbox>
+      </ix-fieldset>
+
+      <ix-fieldset [title]="helptext.fieldset_other | translate">
+        <ix-checkbox
+          formControlName="usage_collection"
+          [label]="helptext.usage_collection.label | translate"
+          [tooltip]="helptext.usage_collection.tooltip | translate"
+        ></ix-checkbox>
+
+        <ix-checkbox
+          formControlName="ui_consolemsg"
+          [label]="helptext.ui_consolemsg.label | translate"
+          [tooltip]="helptext.ui_consolemsg.tooltip | translate"
+        ></ix-checkbox>
+      </ix-fieldset>
+
+      <ix-form-actions>
+        <button
+          mat-button
+          type="submit"
+          color="primary"
+          ixTest="save"
+          [disabled]="formGroup.invalid || isFormLoading"
+        >
+          {{ 'Save' | translate }}
+        </button>
+      </ix-form-actions>
+    </form>
+  </mat-card-content>
+</mat-card>

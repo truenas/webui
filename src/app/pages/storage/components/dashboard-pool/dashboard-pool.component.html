@@ -6,16 +6,17 @@
         *ngIf="!pool.is_upgraded"
         mat-button
         color="primary"
+        [ixTest]="['upgrade-pool', pool.name]"
         (click)="onUpgrade()"
       >
         {{ 'Upgrade' | translate }}
       </button>
 
-      <button mat-button (click)="onExport()">
+      <button mat-button [ixTest]="['export', pool.name]" (click)="onExport()">
         {{ 'Export/Disconnect' | translate }}
       </button>
 
-      <button mat-button (click)="onExpand()">
+      <button mat-button [ixTest]="['expand', pool.name]" (click)="onExpand()">
         {{ 'Expand' | translate }}
       </button>
     </div>
@@ -55,7 +56,7 @@
       gdColumns.lt-xl="calc(50% - 4px) calc(50% - 4px)"
       gdColumns.lt-md="auto"
     >
-      <mat-card class="card" *ngFor="let _ of counter(4)">
+      <mat-card *ngFor="let _ of counter(4)" class="card">
         <mat-card-content>
           <ngx-skeleton-loader
             *ngFor="let _ of counter(5)"

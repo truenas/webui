@@ -9,13 +9,13 @@
     [label]="'Force unmount' | translate"
   ></ix-checkbox>
 
-  <div class="form-actions">
-    <button mat-button type="submit" color="primary">
-      {{ 'Lock' | translate }}
-    </button>
-
-    <button mat-button type="button" [matDialogClose]="false">
+  <ix-form-actions>
+    <button mat-button type="button" ixTest="cancel" [matDialogClose]="false">
       {{ 'Cancel' | translate }}
     </button>
-  </div>
+
+    <button mat-button type="submit" color="primary" ixTest="lock">
+      {{ 'Lock' | translate }}
+    </button>
+  </ix-form-actions>
 </form>

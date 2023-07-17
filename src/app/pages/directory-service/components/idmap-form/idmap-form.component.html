@@ -50,20 +50,14 @@
           [tooltip]="helptext.idmap.range_tooltip | translate"
         ></ix-input>
 
-        <div *ngIf="hasCertificateField$ | async" class="linked-select">
-          <div class="link-wrapper">
-            <a class="link" (click)="certificatesLinkClicked()">
-              {{ 'Manage Certificates' | translate }}
-            </a>
-          </div>
-
+        <ix-with-manage-certificates-link *ngIf="hasCertificateField$ | async">
           <ix-select
             formControlName="certificate"
             [label]="'Certificate' | translate"
             [options]="certificates$"
             [tooltip]="helptext.idmap.certificate_id.tooltip | translate"
           ></ix-select>
-        </div>
+        </ix-with-manage-certificates-link>
       </ix-fieldset>
 
       <ix-fieldset [title]="'Options' | translate">
@@ -95,8 +89,8 @@
         <ix-input
           *ngIf="isOptionVisible('rangesize')"
           formControlName="rangesize"
-          [label]="'Range Size' | translate"
           type="number"
+          [label]="'Range Size' | translate"
           [required]="isOptionRequired('rangesize')"
           [tooltip]="helptext.idmap.rangesize.tooltip | translate"
         ></ix-input>
@@ -232,16 +226,17 @@
           [tooltip]="helptext.idmap.sssd_compat.tooltip | translate"
         ></ix-checkbox>
       </ix-fieldset>
-      <div class="form-actions">
+      <ix-form-actions>
         <button
           type="submit"
           mat-button
           color="primary"
+          ixTest="save"
           [disabled]="form.invalid || isLoading"
         >
           {{ 'Save' | translate }}
         </button>
-      </div>
+      </ix-form-actions>
     </form>
   </mat-card-content>
 </mat-card>

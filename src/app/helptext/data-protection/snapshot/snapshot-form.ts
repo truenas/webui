@@ -1,12 +1,8 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export default {
-  fieldset_dataset: T('Dataset'),
-  fieldset_schedule: T('Schedule'),
-
   dataset_placeholder: T('Dataset'),
   dataset_tooltip: T('Select a pool, dataset, or zvol.'),
-  dataset_warning: T('Invalid dataset.'),
 
   recursive_placeholder: T('Recursive'),
   recursive_tooltip: T('Set to take separate snapshots of the \
@@ -23,12 +19,9 @@ export default {
  <code>Enter</code>.'),
 
   lifetime_placeholder: T('Snapshot Lifetime'),
-  lifetime_tooltip: T('Define a length of time to retain the snapshot \
- on this system using a numeric value and a single lowercase letter for \
- units. Examples: <i>3h</i> is three hours, <i>1m</i> is one month, and \
- <i>1y</i> is one year. Does not accept Minute values. After the time \
- expires, the snapshot is removed. Snapshots which have been replicated \
- to other systems are not affected.'),
+  lifetime_tooltip: T('Define a length of time to retain the snapshot on this system. After the \
+  time expires, the snapshot is removed. Snapshots which have been replicated \
+  to other systems are not affected.'),
 
   naming_schema_placeholder: T('Naming Schema'),
   naming_schema_tooltip: T('Snapshot name format string. The default \
@@ -67,7 +60,4 @@ export default {
   enabled_tooltip: T('To activate this periodic snapshot schedule, set \
  this option. To disable this task without deleting it, unset this \
  option.'),
-
-  snapshot_task_add: T('Add Periodic Snapshot Task'),
-  snapshot_task_edit: T('Edit Periodic Snapshot Task'),
 };

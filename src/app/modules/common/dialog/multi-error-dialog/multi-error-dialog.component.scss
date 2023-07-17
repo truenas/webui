@@ -1,0 +1,15 @@
+
+.mat-mdc-dialog-actions {
+  display: block;
+  min-height: unset;
+  text-align: right;
+}
+
+.mat-divider {
+  margin: 8px 0;
+}
+
+.ix-dark .mat-mdc-dialog-container,
+.ix-dark .mat-mdc-dialog-content {
+  overflow: auto !important;
+}

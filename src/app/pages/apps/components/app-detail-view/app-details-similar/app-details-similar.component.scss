@@ -1,0 +1,26 @@
+@import 'scss-imports/cssvars';
+
+h2 {
+  margin-bottom: 16px;
+}
+
+.similar-apps,
+.similar-apps-loader {
+  display: grid !important;
+  grid-gap: 16px;
+  grid-template-columns: repeat(2, 1fr);
+
+  @media(max-width: $breakpoint-xs) {
+    grid-template-columns: 1fr !important;
+  }
+
+  ix-app-card {
+    box-sizing: border-box;
+  }
+}
+
+.similar-app-loader {
+  ::ng-deep span {
+    height: 100px;
+  }
+}

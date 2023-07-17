@@ -5,33 +5,30 @@
     fxLayoutAlign="center center"
   >
     <ng-container [ngSwitch]="item.state">
-      <mat-icon
+      <ix-icon
         *ngSwitchCase="State.Initial"
+        name="radio_button_checked"
         class="initial"
         [matTooltip]="item.message || 'Pending' | translate"
-      >
-        radio_button_checked
-      </mat-icon>
+      ></ix-icon>
       <mat-spinner
         *ngSwitchCase="State.Running"
         class="running"
         [diameter]="20"
         [matTooltip]="item.message || 'Running' | translate"
       ></mat-spinner>
-      <mat-icon
+      <ix-icon
         *ngSwitchCase="State.Success"
+        name="check_circle"
         class="success"
         [matTooltip]="item.message || 'Success' | translate"
-      >
-        check_circle
-      </mat-icon>
-      <mat-icon
+      ></ix-icon>
+      <ix-icon
         *ngSwitchCase="State.Error"
+        name="error"
         class="error"
         [matTooltip]="item.message || 'Error' | translate"
-      >
-        error
-      </mat-icon>
+      ></ix-icon>
     </ng-container>
   </div>
   <div class="bulk-list-item-title">

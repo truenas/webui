@@ -4,6 +4,10 @@ mat-card {
   width: 80%;
 }
 
+p {
+  margin-bottom: 15px;
+}
+
 #eula {
   color: var(--fg1);
   font-size: 120%;
@@ -14,7 +18,7 @@ h2 {
   margin-bottom: 1rem;
 }
 
-.mat-card-actions {
+.mat-mdc-card-actions {
   margin-bottom: unset;
 }
 

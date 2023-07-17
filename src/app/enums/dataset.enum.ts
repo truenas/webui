@@ -1,3 +1,4 @@
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { Brand } from 'utility-types';
 
 export enum DatasetAclType {
@@ -17,6 +18,7 @@ export enum DatasetEncryptionType {
 
 export enum DatasetQuotaType {
   Dataset = 'DATASET',
+  Project = 'PROJECT',
   User = 'USER',
   Group = 'GROUP',
   UserObj = 'USEROBJ',
@@ -40,20 +42,33 @@ export enum DatasetSync {
   Standard = 'STANDARD',
   Always = 'ALWAYS',
   Disabled = 'DISABLED',
-  Inherit = 'INHERIT',
 }
+
+export const datasetSyncLabels = new Map<DatasetSync, string>([
+  [DatasetSync.Standard, T('Standard')],
+  [DatasetSync.Always, T('Always')],
+  [DatasetSync.Disabled, T('Disabled')],
+]);
 
 export enum DatasetSnapdir {
   Visible = 'VISIBLE',
   Hidden = 'HIDDEN',
-  Inherit = 'INHERIT',
 }
+
+export const datasetSnapdirLabels = new Map<DatasetSnapdir, string>([
+  [DatasetSnapdir.Visible, T('Visible')],
+  [DatasetSnapdir.Hidden, T('Invisible')],
+]);
 
 export enum DatasetSnapdev {
   Visible = 'VISIBLE',
   Hidden = 'HIDDEN',
-  Inherit = 'INHERIT',
 }
+
+export const datasetSnapdevLabels = new Map<DatasetSnapdev, string>([
+  [DatasetSnapdev.Visible, T('Visible')],
+  [DatasetSnapdev.Hidden, T('Hidden')],
+]);
 
 export enum DatasetChecksum {
   On = 'ON',
@@ -67,16 +82,26 @@ export enum DatasetChecksum {
 }
 
 export enum DatasetCaseSensitivity {
-  Inherit = 'INHERIT',
   Sensitive = 'SENSITIVE',
   Insensitive = 'INSENSITIVE',
-  Mixed = 'MIXED',
 }
+
+export const datasetCaseSensitivityLabels = new Map<DatasetCaseSensitivity, string>([
+  [DatasetCaseSensitivity.Sensitive, T('Sensitive')],
+  [DatasetCaseSensitivity.Insensitive, T('Insensitive')],
+]);
 
 export enum DatasetShareType {
   Generic = 'GENERIC',
   Smb = 'SMB',
+  Apps = 'APPS',
 }
+
+export const datasetShareTypeLabels = new Map<DatasetShareType, string>([
+  [DatasetShareType.Generic, T('Generic')],
+  [DatasetShareType.Smb, T('SMB')],
+  [DatasetShareType.Apps, T('Apps')],
+]);
 
 export enum DatasetXattr {
   Inherit = 'INHERIT',

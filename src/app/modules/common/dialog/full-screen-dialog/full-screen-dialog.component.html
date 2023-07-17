@@ -1,0 +1,13 @@
+<div class="wrapper">
+  <div class="container">
+    <div class="title">{{ title }}</div>
+    <p class="message">{{ message }}</p>
+  </div>
+  <button
+    *ngIf="data.showClose"
+    mat-button
+    color="primary"
+    ixTest="close-full-screen"
+    (click)="close()"
+  >{{ 'Continue' | translate }}</button>
+</div>

@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import {
-  createRoutingFactory, mockProvider, SpectatorRouting, byText,
+  createRoutingFactory, mockProvider, SpectatorRouting,
 } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
@@ -30,6 +30,7 @@ import {
 import {
   PermissionsItemComponent,
 } from 'app/pages/datasets/modules/permissions/components/permissions-item/permissions-item.component';
+import { SaveAsPresetModalComponent } from 'app/pages/datasets/modules/permissions/components/save-as-preset-modal/save-as-preset-modal.component';
 import {
   SelectPresetModalComponent,
 } from 'app/pages/datasets/modules/permissions/components/select-preset-modal/select-preset-modal.component';
@@ -47,7 +48,6 @@ describe('DatasetAclEditorComponent', () => {
   let websocket: MockWebsocketService;
   let matDialog: MatDialog;
   let loader: HarnessLoader;
-  let rootLoader: HarnessLoader;
   const acl = {
     acltype: AclType.Nfs4,
     trivial: false,
@@ -94,7 +94,7 @@ describe('DatasetAclEditorComponent', () => {
     providers: [
       StorageService,
       DatasetAclEditorStore,
-      DialogService,
+      mockProvider(DialogService),
       mockWebsocket([
         mockCall('filesystem.getacl', acl),
         mockCall('filesystem.stat', {
@@ -107,9 +107,14 @@ describe('DatasetAclEditorComponent', () => {
         userQueryDsCache: () => of(),
         groupQueryDsCache: () => of(),
       }),
+      mockProvider(MatDialog, {
+        open: jest.fn(() => ({
+          afterClosed: () => of(),
+        })),
+      }),
     ],
-    params: {
-      datasetId: 'pool/dataset',
+    queryParams: {
+      path: '/mnt/pool/dataset',
     },
   });
 
@@ -118,7 +123,6 @@ describe('DatasetAclEditorComponent', () => {
     websocket = spectator.inject(MockWebsocketService);
     matDialog = spectator.inject(MatDialog);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    rootLoader = TestbedHarnessEnvironment.documentRootLoader(spectator.fixture);
   });
 
   describe('preset modal', () => {
@@ -130,13 +134,23 @@ describe('DatasetAclEditorComponent', () => {
       jest.restoreAllMocks();
     });
 
-    it('shows preset modal if user presses "Use Preset"', async () => {
-      const usePresetButton = await loader.getHarness(MatButtonHarness.with({ text: 'Use ACL Preset' }));
+    it('shows select preset modal if user presses "Use Preset"', async () => {
+      const usePresetButton = await loader.getHarness(MatButtonHarness.with({ text: 'Use Preset' }));
       await usePresetButton.click();
 
       expect(matDialog.open).toHaveBeenCalledWith(
         SelectPresetModalComponent,
         { data: { allowCustom: false, datasetPath: '/mnt/pool/dataset' } },
+      );
+    });
+
+    it('shows save as preset modal if user presses "Save As Preset"', async () => {
+      const saveAsPresetButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save As Preset' }));
+      await saveAsPresetButton.click();
+
+      expect(matDialog.open).toHaveBeenCalledWith(
+        SaveAsPresetModalComponent,
+        { data: { aclType: AclType.Nfs4, datasetPath: '/mnt/pool/dataset' } },
       );
     });
   });
@@ -213,26 +227,6 @@ describe('DatasetAclEditorComponent', () => {
         owner: 'john',
         ownerGroup: 'johns',
       });
-    });
-
-    // TODO: Doesn't work because of entryComponents. Try again after upgrading Angular.
-    xit('shows a warning when `recursive` checkbox is pressed', async () => {
-      spectator.click(byText('Apply permissions recursively'));
-
-      expect(spectator.query('.mat-dialog-container', { root: true })).toExist();
-
-      spectator.click(spectator.query(
-        byText('Confirm'),
-        { root: true },
-      ));
-
-      const continueButton = await rootLoader.getHarness(MatButtonHarness.with({ text: 'Continue' }));
-      await continueButton.click();
-
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save Access Control List' }));
-      await saveButton.click();
-
-      expect(store.saveAcl).toHaveBeenCalledWith(234);
     });
   });
 });

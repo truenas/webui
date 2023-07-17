@@ -1,0 +1,58 @@
+<ng-template #pageHeader>
+  <ix-page-title-header>
+    <ix-search-input (search)="onListFiltered($event)"></ix-search-input>
+
+    <button mat-button ixTest="refresh-all" (click)="onRefreshAll()">
+      {{ 'Refresh All' | translate }}
+    </button>
+
+    <button mat-button color="primary" ixTest="add-catalog" (click)="doAdd()">
+      {{ 'Add Catalog' | translate }}
+    </button>
+  </ix-page-title-header>
+</ng-template>
+
+<div class="table-container">
+  <ix-table2
+    [ix-table-empty]="!dataProvider.rows.length"
+    [emptyConfig]="emptyService.defaultEmptyConfig(emptyType$ | async)"
+  >
+    <thead
+      ix-table-head
+      [columns]="columns"
+      [dataProvider]="dataProvider"
+    ></thead>
+    <tbody
+      ix-table-body
+      [columns]="columns"
+      [dataProvider]="dataProvider"
+    >
+      <ng-template ix-table-details-row [dataProvider]="dataProvider" let-catalog>
+        <div class="table-details-row-actions">
+          <button
+            mat-button
+            [ixTest]="[catalog.label, 'summary']"
+            (click)="showSummary(catalog)"
+          >{{ 'Summary' | translate }}</button>
+          <button
+            mat-button
+            [ixTest]="[catalog.label, 'refresh']"
+            (click)="refreshRow(catalog)"
+          >{{ 'Refresh' | translate }}</button>
+          <button
+            mat-button
+            [ixTest]="[catalog.label, 'edit']"
+            (click)="doEdit(catalog)"
+          >{{ 'Edit' | translate }}</button>
+          <button
+            *ngIf="!catalog.builtin"
+            mat-button
+            [ixTest]="[catalog.label, 'delete']"
+            (click)="doDelete(catalog)"
+          >{{ 'Delete' | translate }}</button>
+        </div>
+      </ng-template>
+    </tbody>
+  </ix-table2>
+  <ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>
+</div>

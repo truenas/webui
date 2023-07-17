@@ -1,5 +1,5 @@
-@import '~assets/styles/mixins/cards';
-@import '~assets/styles/scss-imports/splitview';
+@import 'mixins/cards';
+@import 'scss-imports/splitview';
 
 .title {
   $title-gap: 8px;
@@ -9,9 +9,14 @@
   flex-direction: row;
   flex-wrap: nowrap;
   gap: $title-gap;
-  max-width: 70%;
+  max-width: 100%;
   place-items: flex-start;
-  width: 80%;
+
+  &.no-buttons {
+    .full-path {
+      max-width: 80%;
+    }
+  }
 
   @media (max-width: $breakpoint-tablet) {
     align-items: flex-start;
@@ -54,7 +59,6 @@
 
   .prefix {
     display: flex;
-    max-width: 30%;
     opacity: 0.85;
 
     @media (max-width: $breakpoint-hidden) {
@@ -64,7 +68,7 @@
 
   .full-path {
     display: flex;
-    max-width: inherit;
+    max-width: 15vw;
 
     @media  (max-width: $breakpoint-tablet) {
       display: flex;
@@ -100,37 +104,36 @@
 .header {
   align-items: center;
   display: flex;
-  margin-bottom: 16px;
-  padding: 12px 12px 12px 0;
+  margin: 0 0.333333rem 16px;
+  overflow: hidden;
+  padding: 12px 0;
   place-content: space-between;
-
 
   @media (min-width: calc($breakpoint-tablet + 1px)) and (max-width: $breakpoint-hidden) {
     border-bottom: solid 1px var(--lines);
-    place-content: center;
+    margin: 0 16px 16px 0;
   }
 
   @media (max-width: $breakpoint-tablet) {
     flex-direction: column;
-    place-content: flex-start;
+    margin: 0 20px;
   }
 
   @media (min-width: $breakpoint-hidden) and (max-width: calc($breakpoint-dualcolumn-slim - 1px)) {
     border-bottom: solid 1px var(--lines);
     flex-wrap: wrap;
     margin-bottom: 8px;
-    padding-bottom: 0;
-  }
-
-  @media (min-width: $breakpoint-singlecolumn) {
-    align-items: center;
+    padding: 0;
   }
 
   a.mobile-back-button {
+    cursor: pointer;
     display: none;
+    padding: 5px 10px;
+
     @media (max-width: $breakpoint-hidden) {
       display: inline-block;
-      padding: 0 4px 0 16px;
+      left: 2px;
       position: relative;
       top: 1px;
     }
@@ -151,34 +154,32 @@
   }
 
   .add-buttons {
+    display: flex;
     flex-shrink: 0;
-
+    gap: 16px;
 
     @media (max-width: $breakpoint-tablet) {
       border-bottom: solid 1px var(--lines);
     }
 
-    @media (max-width: $breakpoint-tablet) {
+    @mixin shared-buttons-logic {
       border-top: solid 1px var(--lines);
       display: flex;
       margin-top: 16px;
       padding: 14px 0;
       place-content: center;
-      width: 98%;
+      width: 100%;
+    }
+
+    @media (max-width: $breakpoint-tablet) {
+      @include shared-buttons-logic;
     }
 
     @media (min-width: $breakpoint-hidden) and (max-width: calc($breakpoint-dualcolumn-slim - 1px)) {
-      border-top: solid 1px var(--lines);
-      display: flex;
-      margin-top: 16px;
-      padding: 14px 0;
-      place-content: center;
-      width: 98%;
+      @include shared-buttons-logic;
     }
 
     button {
-      margin-left: 6px;
-
       @media (max-width: $breakpoint-tablet) {
         flex: 1;
         width: 40%;

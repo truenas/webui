@@ -1,15 +1,24 @@
-<h1 matDialogTitle>{{ 'Key for {id}' | translate: { id: dataset.id } }}</h1>
-<p class="key">{{ key }}</p>
-<p>
-  {{ 'WARNING: Only the key for the dataset in question will be downloaded.' | translate }}
-</p>
+<h1 matDialogTitle>{{ 'Key for {id}' | translate: { id: '\''+dataset.id+'\'' } }}</h1>
 
-<div class="form-actions">
-  <button mat-button type="submit" color="primary" (click)="onDownload()">
-    {{ 'Download Key' | translate }}
-  </button>
+<mat-dialog-content>
+  <p class="key">{{ key }}</p>
+  <p>
+    {{ 'WARNING: Only the key for the dataset in question will be downloaded.' | translate }}
+  </p>
+</mat-dialog-content>
 
-  <button mat-button type="button" [matDialogClose]="false">
+<ix-form-actions matDialogActions>
+  <button mat-button type="button" ixTest="close" [matDialogClose]="false">
     {{ 'Close' | translate }}
   </button>
-</div>
+
+  <button
+    mat-button
+    type="submit"
+    color="primary"
+    ixTest="download-key"
+    (click)="onDownload()"
+  >
+    {{ 'Download Key' | translate }}
+  </button>
+</ix-form-actions>

@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
+import { Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -18,20 +19,22 @@ export class ThemeService {
   defaultTheme = defaultTheme.name;
   activeTheme = this.defaultTheme;
   allThemes: Theme[] = allThemes;
-
   private utils: ThemeUtils;
+  loadTheme$ = new Subject<string>();
 
   constructor(
     private store$: Store<AppState>,
     @Inject(WINDOW) private window: Window,
   ) {
     this.utils = new ThemeUtils();
-    this.onThemeChanged(this.activeTheme);
 
-    const savedTheme = this.window.sessionStorage.getItem('theme');
-    if (savedTheme) {
-      this.onThemeChanged(savedTheme);
-    }
+    this.loadTheme$.subscribe(() => {
+      const savedTheme = this.window.sessionStorage.getItem('theme') || defaultTheme.name;
+
+      if (savedTheme) {
+        this.onThemeChanged(savedTheme);
+      }
+    });
 
     this.store$.select(selectTheme).pipe(
       filter(Boolean),
@@ -61,9 +64,9 @@ export class ThemeService {
   }
 
   findTheme(name: string, reset?: boolean): Theme {
-    const theme = this.allThemes.find((theme) => theme.name === name);
-    if (theme) {
-      return theme;
+    const existingTheme = this.allThemes.find((theme) => theme.name === name);
+    if (existingTheme) {
+      return existingTheme;
     }
 
     // Optionally reset if not found
@@ -91,7 +94,7 @@ export class ThemeService {
 
       // Generate aux. text styles
       if (this.allThemes[0].accentColors.includes(color as Theme['accentColors'][number])) {
-        const txtColor = this.utils.textContrast(swatch, theme['bg2']);
+        const txtColor = this.utils.textContrast(swatch, theme.bg2);
         document.documentElement.style.setProperty('--' + color + '-txt', txtColor);
       }
 
@@ -104,18 +107,18 @@ export class ThemeService {
     document.documentElement.style.setProperty('--grey', '#989898');
 
     // Add neutral focus color
-    document.documentElement.style.setProperty('--focus-bg', 'rgba(122, 122, 122, .25)');
+    document.documentElement.style.setProperty('--focus-bg', 'rgba(122, 122, 122, .55)');
     document.documentElement.style.setProperty('--focus-brd', 'rgba(255, 255, 255, .25)');
 
     // Set Material palette colors
-    document.documentElement.style.setProperty('--primary', theme['primary']);
-    document.documentElement.style.setProperty('--accent', theme['accent']);
+    document.documentElement.style.setProperty('--primary', theme.primary);
+    document.documentElement.style.setProperty('--accent', theme.accent);
 
     // Set Material aux. text styles
-    const primaryColor = this.utils.colorFromMeta(theme['primary']) as keyof Theme; // eg. blue
-    const accentColor = this.utils.colorFromMeta(theme['accent']) as keyof Theme; // eg. yellow
-    const primaryTextColor = this.utils.textContrast(theme[primaryColor] as string, theme['bg2']);
-    const accentTextColor = this.utils.textContrast(theme[accentColor] as string, theme['bg2']);
+    const primaryColor = this.utils.colorFromMeta(theme.primary) as keyof Theme; // eg. blue
+    const accentColor = this.utils.colorFromMeta(theme.accent) as keyof Theme; // eg. yellow
+    const primaryTextColor = this.utils.textContrast(theme[primaryColor] as string, theme.bg2);
+    const accentTextColor = this.utils.textContrast(theme[accentColor] as string, theme.bg2);
 
     document.documentElement.style.setProperty('--primary-txt', primaryTextColor);
     document.documentElement.style.setProperty('--accent-txt', accentTextColor);
@@ -127,7 +130,7 @@ export class ThemeService {
     document.documentElement.style.setProperty('--lines', lineColor);
 
     // Set multiple background color contrast options
-    const contrastSrc = theme['bg2'];
+    const contrastSrc = theme.bg2;
     const contrastPrimary = theme[primaryColor] as string;
     const contrastDarker = this.utils.darken(contrastSrc, 5);
     const contrastDarkest = this.utils.darken(contrastSrc, 10);
@@ -143,10 +146,10 @@ export class ThemeService {
 
     let topbarTextColor;
     if (!theme['topbar-txt'] && theme.topbar) {
-      topbarTextColor = this.utils.textContrast(theme.topbar, theme['bg2']);
+      topbarTextColor = this.utils.textContrast(theme.topbar, theme.bg2);
       document.documentElement.style.setProperty('--topbar-txt', topbarTextColor);
     } else if (!theme['topbar-txt'] && !theme.topbar) {
-      topbarTextColor = this.utils.textContrast(theme[primaryColor] as string, theme['bg2']);
+      topbarTextColor = this.utils.textContrast(theme[primaryColor] as string, theme.bg2);
       document.documentElement.style.setProperty('--topbar-txt', topbarTextColor);
     }
   }
@@ -168,7 +171,12 @@ export class ThemeService {
    * @returns array of colors
    */
   getColorPattern(): string[] {
-    return this.currentTheme().accentColors.map((color) => this.currentTheme()[color]);
+    return [this.currentTheme().accentColors, [...Array(50).values()]].flat().map((color: Theme['accentColors'][0]) => {
+      if (color) {
+        return this.currentTheme()[color];
+      }
+      return `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+    });
   }
 
   getUtils(): ThemeUtils {

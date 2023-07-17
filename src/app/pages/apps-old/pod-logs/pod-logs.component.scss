@@ -1,0 +1,54 @@
+:host ::ng-deep {
+  .pod-logs-wrapper {
+    color: white;
+    height: calc(100% - 100px);
+    margin-left: 8px;
+    margin-right: 8px;
+    width: calc(100% - 16px);
+  }
+
+  .pod-logs {
+    background: black;
+    font-family: 'Inconsolata';
+    height: calc(100% - 30px);
+    overflow: auto;
+    padding: 5px;
+    width: 100%;
+  }
+
+  .meta-data {
+    font-size: 14px;
+    padding: 5px 0;
+  }
+
+  .meta-data label {
+    font-weight: bold;
+  }
+
+  .meta-data .name {
+    margin: 0 10px 0 5px;
+    opacity: 0.5;
+  }
+
+  .no-logs,
+  .timestamp {
+    display: inline-block;
+    margin-right: 10px;
+    min-width: 155px;
+    opacity: 0.5;
+  }
+
+  .log-data {
+    color: rgb(0, 208, 214);
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+
+  .no-logs {
+    margin: 5px 10px;
+  }
+
+  .spinner {
+    margin: 23px auto 0;
+  }
+}

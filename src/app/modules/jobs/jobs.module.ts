@@ -17,6 +17,7 @@ import { JobsPanelComponent } from 'app/modules/jobs/components/jobs-panel/jobs-
 import { JobEffects } from 'app/modules/jobs/store/job.effects';
 import { jobReducer } from 'app/modules/jobs/store/job.reducer';
 import { jobStateKey } from 'app/modules/jobs/store/job.selectors';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 
 @NgModule({
   imports: [
@@ -33,6 +34,7 @@ import { jobStateKey } from 'app/modules/jobs/store/job.selectors';
     MatTooltipModule,
     MatDialogModule,
     MatProgressSpinnerModule,
+    TestIdModule,
   ],
   declarations: [JobItemComponent, JobsPanelComponent],
   exports: [JobItemComponent, JobsPanelComponent],

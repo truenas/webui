@@ -3,73 +3,73 @@
     <h3 mat-card-title>{{ 'Roles' | translate }}</h3>
   </mat-card-header>
   <mat-card-content>
-    <div class="details-item" *ngIf="dataset.apps?.length || isApplications">
-      <mat-icon class="icon">apps</mat-icon>
+    <div *ngIf="dataset.apps?.length || isApplications" class="details-item">
+      <ix-icon class="icon" name="apps"></ix-icon>
       <div class="label">{{ 'Apps' | translate }}:</div>
-      <div class="apps value" *ngIf="!isApplications">
+      <div *ngIf="!isApplications" class="apps value">
         {{ 'This dataset is used by: {apps}' | translate: { apps: appsNames } }}
       </div>
-      <div class="apps value" *ngIf="isApplications">
+      <div *ngIf="isApplications" class="apps value">
         {{ 'This dataset is used to store Kubernetes config and other container related data' | translate }}
       </div>
-      <a class="action" [routerLink]="['/apps']">
+      <a class="action" ixTest="manage-apps-settings" [routerLink]="['/apps']">
         {{ 'Manage Apps Settings' | translate }}
       </a>
     </div>
-    <div class="details-item" *ngIf="isSystemDataset">
-      <ix-icon class="icon" name="ix:truenas_scale_logomark"></ix-icon>
+    <div *ngIf="isSystemDataset" class="details-item">
+      <ix-icon class="icon" name="ix:logo_truenas_scale_mark"></ix-icon>
       <div class="label">{{ 'System Dataset' | translate }}:</div>
       <div class="system-dataset value">
         {{ 'This dataset is used by the system' | translate }}
       </div>
-      <a class="action" [routerLink]="['/system', 'advanced']">
+      <a class="action" ixTest="manage-advanced-settings" [routerLink]="['/system', 'advanced']">
         {{ 'Manage Advanced Settings' | translate }}
       </a>
     </div>
-    <div class="details-item" *ngIf="hasChildrenWithShares">
-      <mat-icon class="icon">share</mat-icon>
+    <div *ngIf="hasChildrenWithShares" class="details-item">
+      <ix-icon class="icon" name="share"></ix-icon>
       <div class="label">{{ 'Child Shares' | translate }}:</div>
       <div class="children-with-shares value">
         {{ 'This dataset has children with shares' | translate }}
       </div>
     </div>
-    <div class="details-item" *ngIf="dataset.vms?.length">
-      <mat-icon class="icon">computer</mat-icon>
+    <div *ngIf="dataset.vms?.length" class="details-item">
+      <ix-icon class="icon" name="computer"></ix-icon>
       <div class="label">{{ 'VM' | translate }}:</div>
       <div class="vms value">
         {{ 'This dataset is used by: {vms}' | translate: { vms: vmsNames } }}
       </div>
-      <a class="action" [routerLink]="['/vm']">
+      <a class="action" ixTest="manage-vm-settings" [routerLink]="['/vm']">
         {{ 'Manage VM Settings' | translate }}
       </a>
     </div>
-    <div class="details-item" *ngIf="dataset.smb_shares?.length">
-      <mat-icon svgIcon="ix:smb_share" class="icon"></mat-icon>
+    <div *ngIf="dataset.smb_shares?.length" class="details-item">
+      <ix-icon name="ix:smb_share" class="icon"></ix-icon>
       <div class="label">{{ 'Share Attached' | translate }}:</div>
       <div class="smb-shares value">
         {{ 'Dataset is shared via SMB as {shares}' | translate: { shares: smbSharesNames } }}
       </div>
-      <a class="action" [routerLink]="['/sharing/smb']">
+      <a class="action" ixTest="manage-smb-shares" [routerLink]="['/sharing/smb']">
         {{ 'Manage SMB Shares' | translate }}
       </a>
     </div>
-    <div class="details-item" *ngIf="dataset.nfs_shares?.length">
-      <mat-icon svgIcon="ix:nfs_share" class="icon"></mat-icon>
+    <div *ngIf="dataset.nfs_shares?.length" class="details-item">
+      <ix-icon name="ix:nfs_share" class="icon"></ix-icon>
       <div class="label">{{ 'Share Attached' | translate }}:</div>
       <div class="nfs-shares value">
         {{ 'Dataset is shared via NFS' | translate }}
       </div>
-      <a class="action" [routerLink]="['/sharing/nfs']">
+      <a class="action" ixTest="manage-nfs-shares" [routerLink]="['/sharing/nfs']">
         {{ 'Manage NFS Shares' | translate }}
       </a>
     </div>
-    <div class="details-item" *ngIf="dataset.iscsi_shares?.length">
-      <mat-icon svgIcon="ix:iscsi_share" class="icon"></mat-icon>
+    <div *ngIf="dataset.iscsi_shares?.length" class="details-item">
+      <ix-icon name="ix:iscsi_share" class="icon"></ix-icon>
       <div class="label">{{ 'Share Attached' | translate }}:</div>
       <div class="iscsi-shares value">
         {{ 'Dataset is shared via iSCSI' | translate }}
       </div>
-      <a class="action" [routerLink]="['/sharing/iscsi']">
+      <a class="action" ixTest="manage-iscsi-shares" [routerLink]="['/sharing/iscsi']">
         {{ 'Manage iSCSI Shares' | translate }}
       </a>
     </div>

@@ -8,7 +8,6 @@ import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.u
 import { AclType } from 'app/enums/acl-type.enum';
 import { PosixAclTag, PosixPermission } from 'app/enums/posix-acl.enum';
 import { AclTemplateByPath } from 'app/interfaces/acl.interface';
-import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { IxRadioGroupHarness } from 'app/modules/ix-forms/components/ix-radio-group/ix-radio-group.harness';
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -62,7 +61,6 @@ describe('SelectPresetModalComponent', () => {
       mockProvider(DialogService),
       mockWebsocket([
         mockCall('filesystem.acltemplate.by_path', presets),
-        mockCall('system.advanced.config', {} as AdvancedConfig),
       ]),
       {
         provide: MAT_DIALOG_DATA,
@@ -86,8 +84,7 @@ describe('SelectPresetModalComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  // TODO: Enable when [required] is added to the select
-  xit('loads acl presets for given path and shows them in the select', async () => {
+  it('loads acl presets for given path and shows them in the select', async () => {
     const ws = spectator.inject(WebSocketService);
     const presetSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Preset' }));
 
@@ -98,7 +95,8 @@ describe('SelectPresetModalComponent', () => {
       },
       path: '/mnt/pool/dataset',
     }]);
-    expect(await presetSelect.getOptionLabels()).toEqual(['POSIX_HOME', 'POSIX_OFFICE']);
+    expect(await presetSelect.getOptionLabels()).toContain('POSIX_HOME');
+    expect(await presetSelect.getOptionLabels()).toContain('POSIX_OFFICE');
   });
 
   it('hides the preset select when Create a custom ACL is selected', async () => {

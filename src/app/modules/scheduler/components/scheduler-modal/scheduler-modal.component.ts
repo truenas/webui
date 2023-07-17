@@ -133,7 +133,7 @@ export class SchedulerModalComponent implements OnInit {
   }
 
   private setupFormSubscriptions(): void {
-    this.form.controls['preset'].valueChanges.pipe(untilDestroyed(this)).subscribe((preset) => {
+    this.form.controls.preset.valueChanges.pipe(untilDestroyed(this)).subscribe((preset) => {
       this.setValuesFromCrontab(preset);
     });
 
@@ -148,7 +148,7 @@ export class SchedulerModalComponent implements OnInit {
 
   private generateMonthControls(): void {
     this.months.forEach((month) => {
-      this.form.controls['months'].addControl(month.value as string, new FormControl(false));
+      this.form.controls.months.addControl(month.value as string, new FormControl(false));
     });
   }
 

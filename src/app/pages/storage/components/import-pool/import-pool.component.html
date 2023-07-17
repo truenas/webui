@@ -1,12 +1,12 @@
 <ix-modal-header
-  [title]="helptext.import_title"
+  [title]="helptext.import_title | translate"
   [loading]="isLoading"
 ></ix-modal-header>
 <mat-card>
   <mat-card-content>
     <form
-      [formGroup]="formGroup"
       class="ix-form-container"
+      [formGroup]="formGroup"
       (submit)="onSubmit()"
     >
       <ix-fieldset [title]="helptext.import_label | translate">
@@ -18,16 +18,17 @@
           [required]="true"
         ></ix-select>
       </ix-fieldset>
-      <div class="form-actions">
+      <ix-form-actions>
         <button
           mat-button
           type="submit"
           color="primary"
+          ixTest="import"
           [disabled]="formGroup.invalid || isLoading"
         >
           {{ 'Import' | translate }}
         </button>
-      </div>
+      </ix-form-actions>
     </form>
   </mat-card-content>
 </mat-card>

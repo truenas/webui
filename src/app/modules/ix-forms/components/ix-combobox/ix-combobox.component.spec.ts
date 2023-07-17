@@ -68,8 +68,21 @@ describe('IxComboboxComponent', () => {
     it('shows value when type it in', () => {
       spectator.typeInElement('new value', 'input');
       spectator.detectComponentChanges();
+      spectator.detectComponentChanges();
 
       expect(spectator.query('input')).toHaveValue('new value');
+    });
+
+    it('form control value is set to custom value if [allowCustomValue] enabled', () => {
+      spectator.setInput('allowCustomValue', true);
+      spectator.typeInElement('/my-custom-1', 'input');
+      expect(formControl.value).toBe('/my-custom-1');
+    });
+
+    it('if [allowCustomValue] is disabled and user types custom value.', () => {
+      spectator.setInput('allowCustomValue', false);
+      spectator.typeInElement('/my-custom-2', 'input');
+      expect(formControl.value).toBeNull();
     });
 
     it('shows values autocomplete when type start', async () => {
@@ -84,7 +97,7 @@ describe('IxComboboxComponent', () => {
       await new Promise((smth) => setTimeout(smth, 300));
       spectator.typeInElement('test', 'input');
 
-      expect(spectator.queryAll('mat-option').length).toEqual(4);
+      expect(spectator.queryAll('mat-option')).toHaveLength(4);
       spectator.queryAll('mat-option').forEach((item, idx) => {
         expect(item).toHaveText(provider[idx].label);
       });
@@ -98,7 +111,7 @@ describe('IxComboboxComponent', () => {
       spectator.component.hasErrorInOptions = true;
       spectator.detectComponentChanges();
 
-      expect(spectator.queryAll('mat-option').length).toEqual(1);
+      expect(spectator.queryAll('mat-option')).toHaveLength(1);
       expect(spectator.query('mat-option')).toHaveText('Options cannot be loaded');
     });
 
@@ -112,7 +125,7 @@ describe('IxComboboxComponent', () => {
       await new Promise((smth) => setTimeout(smth, 300));
       spectator.typeInElement('test', 'input');
 
-      expect(spectator.queryAll('mat-option').length).toEqual(2);
+      expect(spectator.queryAll('mat-option')).toHaveLength(2);
       spectator.click(spectator.queryAll('mat-option')[1]);
       expect(formControl.value).toBe('value2');
     });

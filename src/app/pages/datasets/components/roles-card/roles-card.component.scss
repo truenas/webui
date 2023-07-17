@@ -1,11 +1,13 @@
-@import '~assets/styles/mixins/cards';
+@import 'mixins/cards';
 
 .card {
   @include details-card();
 }
 
 .icon {
+  height: 24px;
   margin-right: 8px;
+  width: 24px;
 }
 
 .apps,

@@ -1,0 +1,99 @@
+@import 'scss-imports/splitview';
+
+:host {
+  display: flex;
+}
+
+.wizard-container {
+  width: 80%;
+
+  @media (max-width: $breakpoint-sm) {
+    width: 100%;
+  }
+
+  .actions {
+    padding: 0 10px;
+
+    @media (max-width: $breakpoint-xs) {
+      margin: 0 10px;
+      padding: 0;
+
+      button {
+        width: 100%;
+      }
+    }
+  }
+}
+
+.search-container {
+  margin-left: 16px;
+  min-width: 250px;
+  width: 20%;
+
+  @media (max-width: $breakpoint-xs) {
+    display: none;
+  }
+
+  .search-card {
+    background-color: var(--bg2);
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 0 14px 14px;
+    position: sticky;
+    top: 10px;
+
+    .section {
+      color: var(--fg1);
+      display: flex;
+      font-family: var(--font-family-body);
+      font-size: 15px;
+      gap: 5px;
+      padding: 10px;
+
+      ix-icon {
+        color: var(--red);
+      }
+    }
+
+    .section:hover {
+      background-color: var(--contrast-lighter);
+      cursor: pointer;
+    }
+  }
+}
+
+.mini-search-card {
+  background-color: var(--bg2);
+  display: none;
+  padding: 2px 14px;
+  position: sticky;
+  top: -16px;
+  z-index: 99;
+
+  @media (max-width: $breakpoint-xs) {
+    display: block;
+    margin: 0 9px;
+    top: 0;
+  }
+}
+
+ix-app-metadata-card ::ng-deep {
+  display: block;
+  margin-bottom: 16px;
+  margin-top: -32px;
+
+  mat-card.card {
+    background: transparent;
+  }
+
+  mat-card-header {
+    display: none;
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .gradient {
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0), var(--bg1));
+  }
+}

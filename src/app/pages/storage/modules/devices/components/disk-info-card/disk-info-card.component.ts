@@ -1,12 +1,12 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit,
+  ChangeDetectionStrategy, Component, Input,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter } from 'rxjs/operators';
 import { DiskType } from 'app/enums/disk-type.enum';
-import { Disk } from 'app/interfaces/storage.interface';
+import { Disk, TopologyDisk } from 'app/interfaces/storage.interface';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
 import { DiskFormComponent } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
 import {
@@ -22,11 +22,11 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   styleUrls: ['./disk-info-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DiskInfoCardComponent implements OnInit {
+export class DiskInfoCardComponent {
+  @Input() topologyDisk: TopologyDisk;
   @Input() disk: Disk;
 
   constructor(
-    private cdr: ChangeDetectorRef,
     private matDialog: MatDialog,
     private slideInService: IxSlideInService,
     private route: ActivatedRoute,
@@ -37,28 +37,27 @@ export class DiskInfoCardComponent implements OnInit {
     return this.disk?.type === DiskType.Hdd;
   }
 
-  ngOnInit(): void {
-    this.slideInService.onClose$?.pipe(
-      filter((value) => !!value.response && value.modalType === DiskFormComponent),
-      untilDestroyed(this),
-    ).subscribe(() => {
-      this.devicesStore.reloadList();
-    });
+  get isAvailable(): boolean {
+    return !!this.disk;
   }
 
   onEdit(): void {
-    const editForm = this.slideInService.open(DiskFormComponent, { wide: true });
-    editForm.setFormDisk(this.disk);
+    const slideInRef = this.slideInService.open(DiskFormComponent, { wide: true });
+    slideInRef.componentInstance.setFormDisk(this.disk);
+    slideInRef.slideInClosed$.pipe(
+      filter((response) => Boolean(response)),
+      untilDestroyed(this),
+    ).subscribe(() => this.devicesStore.reloadList());
   }
 
   onReplace(): void {
-    const poolId = this.route.snapshot.params.poolId;
+    const poolId = this.route.snapshot.params.poolId as string;
     this.matDialog
       .open(ReplaceDiskDialogComponent, {
         data: {
           poolId: Number(poolId),
-          guid: this.disk.zfs_guid,
-          diskName: this.disk.name,
+          guid: this.topologyDisk.guid,
+          diskName: this.disk?.name || this.topologyDisk.guid,
         } as ReplaceDiskDialogData,
       })
       .afterClosed()

@@ -1,24 +1,24 @@
 <mat-card
   class="view-card rackmount"
-  [ngClass]="{
-    'multiple-enclosures': system && system.profile && system.profile.length > 1
-  }"
-  id="{{ currentTab.alias }}"
-  (window:resize)="onResize()"
   ngClass.gt-md="gt-md"
   ngClass.md="md"
   ngClass.sm="sm"
   ngClass.xs="xs"
+  [id]="currentTab.alias"
+  [ngClass]="{
+    'multiple-enclosures': systemState && systemState.enclosures?.length > 1
+  }"
+  (window:resize)="onResize()"
 >
   <mat-toolbar id="Disks-toolbar">
     <div *ngIf="selectedEnclosure" class="mat-card-title-text">
       {{ currentTab.alias }} on
       {{
-        system.enclosures[selectedEnclosure.enclosureKey].label == system.enclosures[selectedEnclosure.enclosureKey].name
+        selectedEnclosure.label === selectedEnclosure.name
           ? selectedEnclosure.model
-          : system.enclosures[selectedEnclosure.enclosureKey].label
+          : selectedEnclosure.label
       }}
-      ({{ selectedEnclosure.enclosureKey }})
+      ({{ selectedEnclosure.number }})
     </div>
 
     <!-- ENCLOSURE MODEL -->
@@ -28,7 +28,7 @@
 
     <!-- ENCLOSURE RENAME -->
     <div class="enclosure-label-actions">
-      <button mat-button color="default" (click)="labelForm()">
+      <button mat-button color="default" ixTest="edit-label" (click)="labelForm()">
         {{ 'EDIT LABEL' | translate }}
       </button>
     </div>
@@ -36,9 +36,9 @@
 
   <!-- Tabs other than Disks -->
   <ix-tab-content
-    class="other-tab"
     *ngIf="currentTab.alias !== 'Disks'"
-    [data]="system.enclosures[selectedEnclosure.enclosureKey].elements[currentTab.elementIndex]"
+    class="other-tab"
+    [data]="selectedEnclosure.elements[currentTab.elementIndex] | cast"
   ></ix-tab-content>
 
   <mat-card-content id="Disks-content" [class]="currentTab.alias">
@@ -46,25 +46,25 @@
     <div class="disks-overview-wrapper">
       <div #disksoverview id="disks-overview" [class]="currentView">
         <!-- POOLS OVERLAY -->
-        <div *ngIf="currentView == 'pools' || exitingView == 'pools'" class="pools stage-left dom-overlay">
+        <div *ngIf="currentView === 'pools' || exitingView === 'pools'" class="pools stage-left dom-overlay">
           <div class="content">
             <h2>{{ 'Pools' | translate }}</h2>
           </div>
         </div>
-        <div *ngIf="currentView == 'pools' || exitingView == 'pools'" class="pools stage-right dom-overlay list">
+        <div *ngIf="currentView === 'pools' || exitingView === 'pools'" class="pools stage-right dom-overlay list">
           <div class="content">
-            <div *ngIf="enclosurePools.length > 0; else noPools" class="legend">
-              <div *ngFor="let pool of enclosurePools; let i = index">
+            <div *ngIf="selectedEnclosureView.pools.length > 0; else noPools" class="legend">
+              <div *ngFor="let pool of selectedEnclosureView.pools; let i = index">
                 <div
                   class="swatch"
                   [style.background]="subenclosure
-                      ? theme[themeKey(theme.accentColors[subenclosure.poolKeys[pool]])]
-                      : theme[themeKey(theme.accentColors[selectedEnclosure.poolKeys[pool]])]
+                      ? theme[themeKey(theme.accentColors[i])]
+                      : theme[themeKey(theme.accentColors[i])]
                   "
                 ></div>
                 {{ pool }}
-                <span *ngIf="!system.pools[selectedEnclosure.poolKeys[pool]] || !system.pools[selectedEnclosure.poolKeys[pool]].healthy">
-                  <mat-icon fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
+                <span *ngIf="!systemState.pools[i] || !systemState.pools[i].healthy">
+                  <ix-icon name="mdi-alert"></ix-icon>
                 </span>
               </div>
 
@@ -89,12 +89,12 @@
         </div>
 
         <!-- STATUS OVERLAY -->
-        <div *ngIf="currentView == 'status' || exitingView == 'status'" class="status stage-left dom-overlay">
+        <div *ngIf="currentView === 'status' || exitingView === 'status'" class="status stage-left dom-overlay">
           <div class="content">
             <h2>{{ 'Status' | translate }}</h2>
           </div>
         </div>
-        <div *ngIf="currentView == 'status' || exitingView == 'status'" class="status stage-right dom-overlay list">
+        <div *ngIf="currentView === 'status' || exitingView === 'status'" class="status stage-right dom-overlay list">
           <div class="content">
             <div class="legend">
               <div>
@@ -118,36 +118,42 @@
         </div>
 
         <!-- DETAILS OVERLAY -->
-        <div *ngIf="currentView == 'details' || exitingView == 'details'" class="details stage-left dom-overlay">
-          <div class="content">
-            <h1 class="disk-name {{ selectedDisk.name }}">
-              {{ selectedDisk.name }}
+        <div *ngIf="currentView === 'details' || exitingView === 'details'"
+             class="details stage-left dom-overlay">
+          <div class="content" >
+            <h1 [class]="['disk-name', selectedSlot?.disk?.name]">
+              <span *ngIf="selectedSlot?.disk">{{ selectedSlot?.disk?.name }}</span>
+              <span *ngIf="!selectedSlot?.disk">{{ 'Empty' | translate }}</span>
             </h1>
             <div class="title">
-              <span class="semibold">{{ 'vdev' | translate }}: </span>
-              <span *ngIf="selectedVdev.type == 'DISK'">
-                {{ 'NONE' | translate }}
+              <span *ngIf="selectedSlot?.vdev" class="semibold">{{ 'vdev' | translate }}: </span>
+              <span *ngIf="!selectedSlot?.vdev && selectedSlot?.disk" class="semibold">
+                {{ 'UNASSIGNED' | translate }}
               </span>
-              <span *ngIf="selectedVdev.type !== 'DISK'">
-                {{ selectedVdev.type == 'None' ? 'UNASSIGNED' : selectedVdev.type }}
+              <span>
+                {{ isTopologyDisk ? ('Disk' | translate) : (selectedSlot?.vdev?.name | uppercase) }}
               </span>
             </div>
-            <div *ngIf="selectedVdev.type !== 'None'" class="title">
-              <span class="semibold">{{ 'Function' | translate }}:</span>
+            <div *ngIf="selectedSlot?.vdev" class="title">
+              <span class="semibold">{{ 'Topology' | translate }}:</span>
               <span>
-                {{ $any(selectedVdev).topology == 'None' ? 'UNKNOWN' : selectedVdev.topology.toUpperCase() }}
+                {{ !selectedSlot?.vdev?.type ? ('Unknown' | translate) : (selectedSlot.vdev.type | uppercase) }}
               </span>
+            </div>
+            <div *ngIf="selectedSlot?.topologyCategory" class="title">
+              <span class="semibold">{{ 'Category' | translate }}: </span>
+              <span>{{ selectedSlot?.topologyCategory.toUpperCase() }}</span>
             </div>
             <div class="title">
               <span class="semibold">{{ 'Slot' | translate }}: </span>
-              <span>{{ selectedDisk.enclosure.slot }}</span>
+              <span>{{ selectedSlot?.slot }}</span>
             </div>
           </div>
         </div>
 
         <div
+          *ngIf="currentView === 'details' || exitingView === 'details'"
           #domLabels
-          *ngIf="currentView == 'details' || exitingView == 'details'"
           class="details stage-right dom-overlay"
         >
           <div
@@ -155,29 +161,29 @@
             (mouseenter)="toggleHighlightMode('on')"
             (mouseleave)="toggleHighlightMode('off')"
           >
-            <div *ngIf="selectedVdevDisks; else noVdevDisks" class="legend">
+            <div *ngIf="selectedVdevSlots.length; else noVdevDisks" class="legend">
               <div
-                *ngFor="let disk of selectedVdevDisks; let i = index"
-                class="vdev-disk {{ disk }}"
-                (mouseenter)="highlightPath(disk)"
-                (mouseleave)="unhighlightPath(disk)"
+                *ngFor="let slot of selectedVdevSlots; let i = index"
+                [class]="['vdev-disk', slot.disk.name]"
+                (mouseenter)="highlightPath(slot.disk.name)"
+                (mouseleave)="unhighlightPath(slot.disk.name)"
               >
                 <div
                   class="swatch"
-                  [style.background]="selectedDisk.devname == disk ? theme.yellow : theme.cyan"
+                  [style.background]="selectedSlot.disk.devname === slot.disk.name ? theme.yellow : theme.cyan"
                 ></div>
-                {{ disk }}
-                <span *ngIf="!selectedVdev.slots[disk]">
-                  ({{ selectedVdev.diskEnclosures[disk] == system.rearIndex ? 'Rear' : selectedVdev.diskEnclosures[disk] }})
-                </span
-                >
+                {{ slot.disk.name }}
+                <span *ngIf="slot.enclosure !== selectedEnclosureView.number">
+                  (enclosure {{ slot.enclosure }}, slot {{ slot.slot }})
+                </span>
               </div>
             </div>
 
             <ng-template #noVdevDisks>
               <div class="legend">
                 <div class="vdev-disk">
-                  {{ 'No vdev info for disk.' | translate }}
+                  <span *ngIf="selectedSlot?.disk">{{ 'No vdev info for disk.' | translate }}</span>
+                  <span *ngIf="!selectedSlot?.disk">{{ 'No disk in slot' | translate }}</span>
                 </div>
               </div>
             </ng-template>
@@ -193,21 +199,20 @@
         </div>
 
         <!-- FRONT/REAR TOGGLE -->
-        <!--<div *ngIf="subenclosure && currentView != 'expanders'" class="caption dom-overlay front-rear-toggle">-->
         <div
-          *ngIf="chassis && (chassis.rear || chassis.internal) && currentView != 'expanders'"
+          *ngIf="chassis && (chassis.rear || chassis.internal) && currentView !== 'expanders'"
           class="caption dom-overlay front-rear-toggle"
         >
-          <button mat-button (click)="enclosureOverride(EnclosureLocation.Front)">
+          <button mat-button ixTest="front" (click)="enclosureOverride(EnclosureLocation.Front)">
             {{ 'FRONT' | translate }}
           </button>
 
-          <button *ngIf="chassis.rear" mat-button (click)="enclosureOverride(EnclosureLocation.Rear)">
+          <button *ngIf="chassis.rear" mat-button ixTest="rear" (click)="enclosureOverride(EnclosureLocation.Rear)">
             {{ 'REAR' | translate }}
           </button>
 
-          <button *ngIf="chassis.internal" mat-button (click)="enclosureOverride('rear')">
-            {{ 'Internal' | translate }}
+          <button *ngIf="chassis.internal" mat-button ixTest="internal" (click)="enclosureOverride(EnclosureLocation.Internal)">
+            {{ 'INTERNAL' | translate }}
           </button>
         </div>
 
@@ -216,18 +221,18 @@
 
         <!-- EXPANDERS OVERLAY -->
         <div
-          *ngIf="currentView == 'expanders' || exitingView == 'expanders'"
+          *ngIf="currentView === 'expanders' || exitingView === 'expanders'"
           class="expanders full-stage dom-overlay"
         >
           <div *ngIf="expanders" class="content">
-            <div
-              *ngFor="let expander of expanders"
-              [style.width]="(100 / expanders.length).toString() + '%'"
+            <div *ngFor="let expander of expanders"
               class="expander-item"
+              [style.width]="(100 / expanders.length).toString() + '%'"
             >
               <div class="primary-number">{{ $any(expander).status }}</div>
-              <div class="title">{{ expander.descriptor }}</div>
-              <div class="subtitle">{{ 'Expander Status' | translate }}</div>
+              <div class="title">{{ 'Expander Status' | translate }}</div>
+              <div *ngIf="expander.descriptor" class="subtitle">{{ expander.descriptor }}</div>
+              <div *ngIf="!expander.descriptor" class="subtitle">{{ 'No descriptor provided' | translate }}</div>
             </div>
           </div>
         </div>
@@ -235,21 +240,32 @@
     </div>
 
     <!-- DETAILS/TITLE -->
-    <div id="disks-details-header" [class]="currentView">
+    <div *ngIf="systemState?.enclosureViews?.length && selectedEnclosure" id="disks-details-header" [class]="currentView">
       <a
-        *ngIf="currentView == 'details'"
+        *ngIf="currentView === 'details'"
         class="btn-default back fn-theme-primary"
+        ixTest="back-enclosure"
         (click)="clearDisk()"
       >
-        <mat-icon>chevron_left</mat-icon>
+        <ix-icon name="chevron_left"></ix-icon>
       </a>
-      {{ selectedDisk ? 'Disk Details for ' + selectedDisk.name : 'Disks Overview' }}
+      <span *ngIf="currentView === 'details' && selectedSlot?.disk">
+        {{ 'Disk Details for ' + selectedSlot.disk.name }}
+      </span>
+      <span *ngIf="currentView === 'details' && !selectedSlot?.disk">
+        {{ 'Slot ' + selectedSlot.slot }}
+      </span>
+      <span *ngIf="currentView !== 'details'">
+        {{ 'Disks Overview' }}
+      </span>
     </div>
 
     <!-- DETAILS/OVERVIEW -->
-    <div *ngIf="selectedDisk; then details; else overview"></div>
+    <div *ngIf="currentView === 'details'; then details; else overview"></div>
+
+    <!-- OVERVIEW -->
     <ng-template #overview>
-      <div id="disks-details">
+      <div class="disks-details">
         <div
           class="details-wrapper"
           id="view-selector"
@@ -262,25 +278,25 @@
             <div
               fxFlex
               class="tiles"
-              [class.active]="currentView == 'pools'"
               fxLayout="column"
               fxLayoutAlign="center center"
+              [class.active]="currentView === 'pools'"
             >
-              Loading...
+              {{ 'Loading...' | translate }}
             </div>
           </ng-template>
 
           <div
-            *ngIf="system && system.pools && enclosurePools; else loading"
+            *ngIf="systemState?.pools && selectedEnclosurePools; else loading"
             fxFlex
             class="tiles"
             fxLayout="column"
             fxLayoutAlign="center center"
-            [class.active]="currentView == 'pools'"
+            [class.active]="currentView === 'pools'"
           >
-            <div class="primary-number">{{ enclosurePools.length }}</div>
+            <div class="primary-number">{{ selectedEnclosurePools.length }}</div>
             <div class="title">{{ 'Pools in Enclosure' | translate }}</div>
-            <div *ngIf="unhealthyPools && unhealthyPools.length == 1" class="subtitle">
+            <div *ngIf="unhealthyPools && unhealthyPools.length === 1" class="subtitle">
               Pool "{{ unhealthyPools[0].name }}" is
               {{ unhealthyPools[0].status }}.
             </div>
@@ -294,6 +310,7 @@
             <button
               mat-button
               color="default"
+              ixTest="show-pools"
               (click)="setCurrentView('pools')"
             >
               {{ 'SHOW POOLS' | translate }}
@@ -301,16 +318,16 @@
           </div>
 
           <div
-            *ngIf="system; else loading"
+            *ngIf="systemProfile && enclosureViews; else loading"
             fxFlex
             class="tiles"
             fxLayout="column"
             fxLayoutAlign="center center"
-            [class.active]="currentView == 'status'"
+            [class.active]="currentView === 'status'"
           >
             <div class="primary-number">{{ failedDisks.length }}</div>
             <div class="title">
-              Failed Disk<span *ngIf="failedDisks.length != 1">s</span>
+              Failed Disk<span *ngIf="failedDisks.length !== 1">s</span>
             </div>
             <div class="subtitle">
               <span *ngIf="failedDisks.length < 1">All disks healthy</span>
@@ -319,7 +336,7 @@
                 {{ failedDisks.length - 1 }} other disk
                 <span *ngIf="failedDisks.length > 2"> s </span>
               </span>
-              <span *ngIf="failedDisks.length == 1">
+              <span *ngIf="failedDisks.length === 1">
                 Check {{ failedDisks[0].disk }}
                 <span *ngIf="!subenclosure">
                   in enclosure {{ failedDisks[0].enclosure }}
@@ -333,6 +350,7 @@
             <button
               mat-button
               color="default"
+              ixTest="show-status"
               (click)="setCurrentView('status')"
             >
               {{ 'SHOW STATUS' | translate }}
@@ -340,12 +358,12 @@
           </div>
 
           <div
-            *ngIf="system && expanders && expanders.length > 0"
+            *ngIf="systemState && expanders && expanders.length > 0"
             fxFlex
             class="tiles"
             fxLayout="column"
             fxLayoutAlign="center center"
-            [class.active]="currentView == 'expanders'"
+            [class.active]="currentView === 'expanders'"
           >
             <div class="primary-number">{{ expanders.length }}</div>
             <div class="title">{{ 'SAS Expanders' | translate }}</div>
@@ -353,6 +371,7 @@
             <button
               mat-button
               color="default"
+              ixTest="show-expander-status"
               (click)="setCurrentView('expanders')"
             >
               {{ 'SHOW EXPANDER STATUS' | translate }}
@@ -364,10 +383,35 @@
 
     <!-- DETAILS/DISK -->
     <ng-template #details>
+
+      <!-- Empty Slot -->
       <div
+        *ngIf="!selectedSlot?.disk"
         #diskdetails
-        id="disks-details"
-        [class]="{ 'disk-selected': selectedVdev }"
+        [class]="{ 'disks-details': true, 'disk-selected': selectedSlot.disk }"
+      >
+        <div
+          class="details-wrapper"
+          fxFill
+          fxLayout="row"
+          fxLayoutAlign="space-around stretch"
+        >
+          <div
+            fxFlex="80"
+            class="disk-basic-details tiles empty-slot-details details-section"
+            fxLayout="column"
+            fxLayoutAlign="center center"
+          >
+            <h1>Slot {{ selectedSlot.slot }} is empty</h1>
+          </div>
+        </div>
+      </div>
+
+      <!-- Slot with Disk -->
+      <div
+        *ngIf="selectedSlot?.disk"
+        #diskdetails
+        [class]="{ 'disks-details': true, 'disk-selected': selectedSlot.vdev }"
       >
         <div
           class="details-wrapper"
@@ -377,18 +421,21 @@
         >
           <div
             fxFlex="25"
-            class="disk-basic-details"
+            class="disk-basic-details details-section"
             fxLayout="column"
             fxLayoutAlign="center center"
           >
-            <ix-disk-ui [data]="selectedDisk"></ix-disk-ui
-            ><!-- disk icon + labels -->
-            <div class="capacity">{{ converter(selectedDisk.size) }}</div>
+            <ix-disk-ui [data]="selectedSlot.disk"></ix-disk-ui>
+
+            <!-- disk icon + labels -->
+            <div class="capacity">{{ selectedSlot.disk.size | filesize: { standard: 'iec' } }}</div>
             <div class="disk-actions">
               <button
+                *ngIf="!hideIdentifyDrive"
                 id="identify-btn"
                 mat-button
                 color="primary"
+                ixTest="identify-drive"
                 (click)="toggleSlotStatus()"
               >
                 {{ 'Identify Drive' | translate }}
@@ -396,7 +443,7 @@
             </div>
           </div>
 
-          <div fxFlex="75" class="tiles disk-advanced-details">
+          <div fxFlex="75" class="tiles details-section disk-advanced-details">
             <div class="details-wrapper" fxLayout="row wrap" fxLayoutGap="16px">
               <div
                 fxFlex="calc(25% - 16px)"
@@ -408,9 +455,9 @@
                   <div class="label">{{ 'Pool' | translate }}</div>
                   <div class="value">
                     {{
-                      selectedDisk.vdev
-                        ? selectedDisk.vdev.pool
-                        : 'Disk not attached to any pools.'
+                      selectedSlot.pool ? selectedSlot.pool : selectedSlot?.pool
+                        ? selectedSlot.pool
+                        : ('Disk not attached to any pools.' | translate)
                     }}
                   </div>
                 </div>
@@ -424,7 +471,7 @@
               >
                 <div>
                   <div class="label">{{ 'Model' | translate }}</div>
-                  <div class="value">{{ selectedDisk.model }}</div>
+                  <div class="value">{{ selectedSlot.disk.model }}</div>
                 </div>
               </div>
 
@@ -436,7 +483,7 @@
               >
                 <div>
                   <div class="label">{{ 'Serial' | translate }}</div>
-                  <div class="value">{{ selectedDisk.serial }}</div>
+                  <div class="value">{{ selectedSlot.disk.serial }}</div>
                 </div>
               </div>
 
@@ -448,7 +495,7 @@
               >
                 <div>
                   <div class="label">{{ 'Status' | translate }}</div>
-                  <div class="value">{{ selectedDisk.status }}</div>
+                  <div class="value">{{ selectedSlot.topologyStatus }}</div>
                 </div>
               </div>
 
@@ -460,7 +507,7 @@
               >
                 <div>
                   <div class="label">{{ 'Adv. Power Mgmt.' | translate }}</div>
-                  <div class="value">{{ selectedDisk.advpowermgmt }}</div>
+                  <div class="value">{{ selectedSlot.disk.advpowermgmt }}</div>
                 </div>
               </div>
 
@@ -475,7 +522,7 @@
                     {{ 'S.M.A.R.T. Enabled' | translate }}
                   </div>
                   <div class="value">
-                    {{ selectedDisk.togglesmart ? 'Yes' : 'No' }}
+                    {{ selectedSlot.disk.togglesmart | yesNo }}
                   </div>
                 </div>
               </div>
@@ -491,7 +538,7 @@
                     {{ 'S.M.A.R.T. Options' | translate }}
                   </div>
                   <div class="value">
-                    {{ selectedDisk.smartoptions ? selectedDisk.smartoptions : 'None' }}
+                    {{ selectedSlot.disk.smartoptions ? selectedSlot.disk.smartoptions : 'None' }}
                   </div>
                 </div>
               </div>
@@ -504,7 +551,7 @@
               >
                 <div>
                   <div class="label">{{ 'Transfer Mode' | translate }}</div>
-                  <div class="value">{{ selectedDisk.transfermode }}</div>
+                  <div class="value">{{ selectedSlot.disk.transfermode }}</div>
                 </div>
               </div>
 
@@ -516,7 +563,7 @@
               >
                 <div>
                   <div class="label">{{ 'HDD Standby' | translate }}</div>
-                  <div class="value">{{ selectedDisk.hddstandby }}</div>
+                  <div class="value">{{ selectedSlot.disk.hddstandby }}</div>
                 </div>
               </div>
 
@@ -529,7 +576,7 @@
                 <div>
                   <div class="label">{{ 'Description' | translate }}</div>
                   <div class="value">
-                    {{ selectedDisk.description ? selectedDisk.description : 'None' }}
+                    {{ selectedSlot.disk.description ? selectedSlot.disk.description : 'None' }}
                   </div>
                 </div>
               </div>
@@ -543,8 +590,8 @@
                 <div>
                   <div class="label">{{ 'Rotation Rate' | translate }}</div>
                   <div class="value">
-                    <ng-container *ngIf="selectedDisk.rotationrate; else flash">
-                      {{ selectedDisk.rotationrate }}{{ 'RPM' | translate }}
+                    <ng-container *ngIf="selectedSlot.disk.rotationrate; else flash">
+                      {{ selectedSlot.disk.rotationrate }}{{ 'RPM' | translate }}
                     </ng-container>
                     <ng-template #flash>
                       {{ 'Not Available' | translate }}

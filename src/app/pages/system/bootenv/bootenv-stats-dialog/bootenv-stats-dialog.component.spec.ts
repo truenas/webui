@@ -5,9 +5,8 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { MockPipe } from 'ng-mocks';
 import { CoreComponents } from 'app/core/core-components.module';
-import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
+import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { PoolStatus } from 'app/enums/pool-status.enum';
@@ -62,7 +61,7 @@ describe('BootenvStatsDialogComponent', () => {
       }),
     ],
     declarations: [
-      MockPipe(FormatDateTimePipe, jest.fn(() => '2022-01-27 20:45:14')),
+      FakeFormatDateTimePipe,
     ],
   });
 
@@ -76,8 +75,10 @@ describe('BootenvStatsDialogComponent', () => {
     return spectator.queryAll('.status-item').reduce((allItems, element) => {
       const label = element.querySelector('.status-name').textContent.trim();
       const value = element.querySelector('.status-value').textContent.trim();
-      allItems[label] = value;
-      return allItems;
+      return {
+        ...allItems,
+        [label]: value,
+      };
     }, {} as { [name: string]: string });
   }
 
@@ -116,8 +117,8 @@ describe('BootenvStatsDialogComponent', () => {
   });
 
   it('tells user to look at alerts if boot pool status is degraded', () => {
-    const mockWebsocket = spectator.inject(MockWebsocketService);
-    mockWebsocket.mockCall('boot.get_state', {
+    const websocketMock = spectator.inject(MockWebsocketService);
+    websocketMock.mockCall('boot.get_state', {
       ...poolInstance,
       status: PoolStatus.Degraded,
     } as PoolInstance);

@@ -1,0 +1,96 @@
+<ix-fieldset [title]="'Destination' | translate" [formGroup]="form">
+  <ix-explorer
+    formControlName="target_dataset"
+    [label]="'Destination' | translate"
+    [required]="true"
+    [root]="''"
+    [tooltip]="helptext.target_dataset_tooltip"
+    [nodeProvider]="nodeProvider"
+  ></ix-explorer>
+  <ix-select
+    formControlName="readonly"
+    [label]="'Destination Dataset Read-only Policy' | translate"
+    [options]="readonlyModes$"
+    [required]="true"
+    [tooltip]="helptext.readonly_tooltip | translate"
+  ></ix-select>
+  <ix-checkbox
+    formControlName="encryption"
+    [label]="'Encryption' | translate"
+    [tooltip]="helptext.encryption_tooltip | translate"
+  ></ix-checkbox>
+  <ix-checkbox
+    *ngIf="hasEncryption"
+    formControlName="encryption_inherit"
+    [label]="'Inherit Encryption' | translate"
+    [tooltip]="helptext.encryption_inherit_tooltip | translate"
+  ></ix-checkbox>
+
+  <ng-container *ngIf="hasEncryption && !hasEncryptionInherit">
+    <ix-select
+      formControlName="encryption_key_format"
+      [label]="'Encryption Key Format' | translate"
+      [options]="encryptionKeyFormats$"
+      [required]="true"
+      [tooltip]="helptext.encryption_key_generate_tooltip | translate"
+    ></ix-select>
+    <ix-checkbox
+      *ngIf="isHex"
+      formControlName="encryption_key_generate"
+      [label]="'Generate Encryption Key' | translate"
+      [tooltip]="helptext.encryption_key_generate_tooltip | translate"
+    ></ix-checkbox>
+    <ix-input
+      *ngIf="isHex && !form.value.encryption_key_generate"
+      formControlName="encryption_key_hex"
+      [label]="'Encryption Key' | translate"
+      [tooltip]="helptext.encryption_key_hex_tooltip | translate"
+    ></ix-input>
+    <ix-input
+      *ngIf="!isHex"
+      formControlName="encryption_key_passphrase"
+      type="password"
+      [label]="'Passphrase' | translate"
+      [tooltip]="helptext.encryption_key_passphrase_tooltip | translate"
+    ></ix-input>
+    <ix-checkbox
+      formControlName="encryption_key_location_truenasdb"
+      [label]="'Store Encryption key in Sending TrueNAS database' | translate"
+      [tooltip]="helptext.encryption_key_location_truenasdb_tooltip | translate"
+    ></ix-checkbox>
+    <ix-input
+      *ngIf="!form.value.encryption_key_location_truenasdb"
+      formControlName="encryption_key_location"
+      [label]="'Encryption Key Location in Target System' | translate"
+      [tooltip]="helptext.encryption_key_location_tooltip | translate"
+    ></ix-input>
+  </ng-container>
+
+  <ix-checkbox
+    formControlName="allow_from_scratch"
+    [label]="'Replication from scratch' | translate"
+    [tooltip]="helptext.allow_from_scratch_tooltip | translate"
+  ></ix-checkbox>
+  <ix-select
+    formControlName="retention_policy"
+    [label]="'Snapshot Retention Policy' | translate"
+    [options]="retentionPolicies$"
+    [required]="true"
+    [tooltip]="helptext.retention_policy_tooltip | translate"
+  ></ix-select>
+  <div *ngIf="form.value.retention_policy === RetentionPolicy.Custom" class="retention-policy">
+    <ix-input
+      formControlName="lifetime_value"
+      type="number"
+      [label]="'Snapshot Lifetime' | translate"
+      [tooltip]="helptext.lifetime_value_tooltip | translate"
+    ></ix-input>
+    <ix-select
+      *ngIf="form.value.retention_policy === RetentionPolicy.Custom"
+      formControlName="lifetime_unit"
+      [label]="'Unit' | translate"
+      [options]="lifetimeUnits$"
+      [required]="true"
+    ></ix-select>
+  </div>
+</ix-fieldset>

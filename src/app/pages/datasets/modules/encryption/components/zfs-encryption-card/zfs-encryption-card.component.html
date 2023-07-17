@@ -2,13 +2,19 @@
   <mat-card-header>
     <h3 mat-card-title>{{ 'ZFS Encryption' | translate }}</h3>
 
-    <a *ngIf="canEdit" mat-button (click)="onEditPressed()">
+    <a
+      *ngIf="canEdit"
+      mat-button
+      ixTest="edit"
+      (click)="onEditPressed()"
+    >
       {{ 'Edit' | translate }}
     </a>
     <a
       *ngIf="canUnlock"
       mat-button
       color="primary"
+      ixTest="unlock"
       [routerLink]="['/datasets', dataset.id, 'unlock']"
     >
       {{ 'Unlock' | translate }}
@@ -30,6 +36,7 @@
           <div class="value">/{{ dataset.encryption_root }}</div>
           <a
             class="action"
+            ixTest="go-to-encryption-root"
             [routerLink]="['/datasets', dataset.encryption_root]"
           >
             {{ 'Go To Encryption Root' | translate }}
@@ -49,11 +56,20 @@
     </ng-container>
   </mat-card-content>
   <mat-card-actions *ngIf="dataset.encrypted && isEncryptionRoot && !this.dataset.locked">
-    <button *ngIf="canExportKey" mat-stroked-button (click)="onExportKey()">
+    <button
+      *ngIf="canExportKey && isRoot"
+      mat-button
+      ixTest="export-all-keys"
+      (click)="onExportAllKeys()"
+    >
+      {{ 'Export All Keys' | translate }}
+    </button>
+
+    <button *ngIf="canExportKey" mat-button ixTest="export-key" (click)="onExportKey()">
       {{ 'Export Key' | translate }}
     </button>
 
-    <button *ngIf="hasPassphrase" mat-stroked-button (click)="onLock()">
+    <button *ngIf="hasPassphrase" mat-button ixTest="lock" (click)="onLock()">
       {{ 'Lock' | translate }}
     </button>
   </mat-card-actions>

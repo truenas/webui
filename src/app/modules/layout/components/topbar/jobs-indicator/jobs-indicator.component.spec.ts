@@ -44,12 +44,12 @@ describe('JobsIndicatorComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('it shows an icon with a badge for number of running jobs', async () => {
+  it('shows an icon with a badge for number of running jobs', async () => {
     const iconButton = await loader.getHarness(MatButtonHarness);
     const icon = await iconButton.getHarness(MatIconHarness);
     expect(await icon.getName()).toMatch('assignment');
 
-    const badge = await iconButton.getHarness(MatBadgeHarness);
+    const badge = await loader.getHarness(MatBadgeHarness);
     expect(await badge.getText()).toBe('4');
   });
 

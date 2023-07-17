@@ -69,7 +69,7 @@ describe('SchedulerPreviewColumnComponent', () => {
   it('passes cron and time constraints to SchedulerDateExamplesComponent to show date examples', () => {
     const examplesComponent = spectator.query(SchedulerDateExamplesComponent);
 
-    expect(format(examplesComponent.startDate, 'yyyy-MM-dd HH:mm:ss')).toEqual('2022-02-22 09:28:00');
+    expect(format(examplesComponent.startDate, 'yyyy-MM-dd HH:mm:ss')).toBe('2022-02-22 09:28:00');
   });
 
   it('shows calendar for next month with dates highlighted when next arrow is pressed', async () => {
@@ -80,7 +80,7 @@ describe('SchedulerPreviewColumnComponent', () => {
     const monthName = await calendar.getCurrentViewLabel();
 
     expect(highlightedDays).toEqual(['7', '14', '21', '24', '25', '28']);
-    expect(monthName).toEqual('MAR 2022');
+    expect(monthName).toBe('MAR 2022');
   });
 
   it('updates SchedulerDateExamplesComponent when next month is selected', async () => {
@@ -88,7 +88,7 @@ describe('SchedulerPreviewColumnComponent', () => {
     await calendar.next();
 
     const examplesComponent = spectator.query(SchedulerDateExamplesComponent);
-    expect(format(examplesComponent.startDate, 'yyyy-MM-dd HH:mm:ss')).toEqual('2022-03-01 00:00:00');
+    expect(format(examplesComponent.startDate, 'yyyy-MM-dd HH:mm:ss')).toBe('2022-03-01 00:00:00');
   });
 
   it('does not show any dates when user goes in the past', async () => {

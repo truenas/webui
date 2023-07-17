@@ -6,10 +6,11 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import filesize from 'filesize';
 import * as _ from 'lodash';
-import { of } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { Option, SelectOption } from 'app/interfaces/option.interface';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
-import { WidgetUtils } from 'app/pages/dashboard/utils/widget-utils';
 import { AddToPoolType, ManageUnusedDiskDialogResource } from 'app/pages/storage/components/unused-resources/unused-disk-card/manage-unused-disk-dialog/manage-unused-disk-dialog.interface';
 
 @UntilDestroy()
@@ -19,9 +20,7 @@ import { AddToPoolType, ManageUnusedDiskDialogResource } from 'app/pages/storage
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ManageUnusedDiskDialogComponent implements OnInit {
-  private utils: WidgetUtils;
-
-  readonly toPoolOptions$ = of([
+  readonly toPoolOptions$: Observable<SelectOption<AddToPoolType>[]> = of([
     {
       label: this.translate.instant('New Pool'),
       value: AddToPoolType.New,
@@ -31,7 +30,7 @@ export class ManageUnusedDiskDialogComponent implements OnInit {
     },
   ]);
 
-  readonly poolOptions$ = of(
+  readonly poolOptions$: Observable<Option[]> = of(
     this.resource.pools.map((pool) => ({
       label: pool.name,
       value: pool.id,
@@ -59,27 +58,24 @@ export class ManageUnusedDiskDialogComponent implements OnInit {
     public cdr: ChangeDetectorRef,
     private dialogRef: MatDialogRef<ManageUnusedDiskDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public resource: ManageUnusedDiskDialogResource,
-  ) {
-    this.utils = new WidgetUtils();
-  }
+  ) {}
 
   get groupedDisks(): { formattedDisk: string; exportedPool: string }[] {
     const diskInfoFormats = this.resource.unusedDisks.map((disk) => {
       return {
-        detailedDisk: `${this.utils.convert(disk.size).value} ${this.utils.convert(disk.size).units} ${disk.subsystem === 'nvme' ? disk.subsystem.toUpperCase() : disk.type}`,
+        detailedDisk: `${filesize(disk.size, { standard: 'iec' })} ${disk.subsystem === 'nvme' ? disk.subsystem.toUpperCase() : disk.type}`,
         exportedPool: disk.exported_zpool,
       };
     });
     const groupDisks = _.groupBy(diskInfoFormats, (diskDetailsWithPoolName) => {
       return diskDetailsWithPoolName.detailedDisk + diskDetailsWithPoolName.exportedPool;
     });
-    const groupDiskFormats = Object.keys(groupDisks).map((format: string) => {
+    return Object.keys(groupDisks).map((format: string) => {
       return {
         formattedDisk: `${groupDisks[format][0].detailedDisk} x ${groupDisks[format].length}`,
         exportedPool: groupDisks[format][0].exportedPool,
       };
     });
-    return groupDiskFormats;
   }
 
   get isExistingMode(): boolean {
@@ -89,8 +85,8 @@ export class ManageUnusedDiskDialogComponent implements OnInit {
   ngOnInit(): void {
     this.form.controls.toPool.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
       if (value === AddToPoolType.New) {
-        this.form.get('pool').reset();
-        this.form.get('pool').setErrors(null);
+        this.form.controls.pool.reset();
+        this.form.controls.pool.setErrors(null);
       }
       this.cdr.detectChanges();
     });

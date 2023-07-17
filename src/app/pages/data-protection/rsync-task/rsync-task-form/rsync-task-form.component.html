@@ -4,7 +4,7 @@
   <mat-card-content>
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <div class="fieldsets">
-        <ix-fieldset [title]="'Source' | translate" class="fieldset">
+        <ix-fieldset class="fieldset" [title]="'Source' | translate">
           <ix-explorer
             formControlName="path"
             [label]="'Path' | translate"
@@ -36,7 +36,7 @@
           ></ix-input>
         </ix-fieldset>
 
-        <ix-fieldset [title]="'Remote' | translate" class="fieldset">
+        <ix-fieldset class="fieldset" [title]="'Remote' | translate">
           <ix-select
             formControlName="mode"
             [label]="'Rsync Mode' | translate"
@@ -56,7 +56,7 @@
             <ix-input
               formControlName="remotemodule"
               [label]="'Remote Module Name' | translate"
-              [tooltip]="helptext.rsync_remotemodule_tooltip"
+              [tooltip]="helptext.rsync_remotemodule_tooltip | translate"
               [required]="true"
             ></ix-input>
           </ng-container>
@@ -80,10 +80,10 @@
 
               <ix-input
                 formControlName="remoteport"
+                type="number"
                 [label]="'Remote SSH Port' | translate"
                 [required]="true"
-                type="number"
-                [tooltip]="helptext.rsync_remoteport_tooltip"
+                [tooltip]="helptext.rsync_remoteport_tooltip | translate"
               ></ix-input>
             </ng-container>
 
@@ -105,12 +105,12 @@
             <ix-checkbox
               formControlName="validate_rpath"
               [label]="'Validate Remote Path' | translate"
-              [tooltip]="helptext.rsync_validate_rpath_tooltip"
+              [tooltip]="helptext.rsync_validate_rpath_tooltip | translate"
             ></ix-checkbox>
           </ng-template>
         </ix-fieldset>
 
-        <ix-fieldset [title]="'Schedule' | translate" class="fieldset">
+        <ix-fieldset class="fieldset" [title]="'Schedule' | translate">
           <ix-scheduler
             formControlName="schedule"
             [required]="true"
@@ -127,63 +127,63 @@
           <ix-checkbox
             formControlName="enabled"
             [label]="'Enabled' | translate"
-            [tooltip]="helptext.rsync_enabled_tooltip"
+            [tooltip]="helptext.rsync_enabled_tooltip | translate"
           ></ix-checkbox>
         </ix-fieldset>
 
-        <ix-fieldset [title]="'More Options' | translate" class="fieldset">
+        <ix-fieldset class="fieldset" [title]="'More Options' | translate">
           <ix-checkbox
             formControlName="times"
             [label]="'Times' | translate"
-            [tooltip]="helptext.rsync_times_tooltip"
+            [tooltip]="helptext.rsync_times_tooltip | translate"
           ></ix-checkbox>
 
           <ix-checkbox
             formControlName="compress"
             [label]="'Compress' | translate"
-            [tooltip]="helptext.rsync_compress_tooltip"
+            [tooltip]="helptext.rsync_compress_tooltip | translate"
           ></ix-checkbox>
 
           <ix-checkbox
             formControlName="archive"
             [label]="'Archive' | translate"
-            [tooltip]="helptext.rsync_archive_tooltip"
+            [tooltip]="helptext.rsync_archive_tooltip | translate"
           ></ix-checkbox>
 
           <ix-checkbox
             formControlName="delete"
             [label]="'Delete' | translate"
-            [tooltip]="helptext.rsync_delete_tooltip"
+            [tooltip]="helptext.rsync_delete_tooltip | translate"
           ></ix-checkbox>
 
           <ix-checkbox
             formControlName="quiet"
             [label]="'Quiet' | translate"
-            [tooltip]="helptext.rsync_quiet_tooltip"
+            [tooltip]="helptext.rsync_quiet_tooltip | translate"
           ></ix-checkbox>
 
           <ix-checkbox
             formControlName="preserveperm"
             [label]="'Preserve Permissions' | translate"
-            [tooltip]="helptext.rsync_preserveperm_tooltip"
+            [tooltip]="helptext.rsync_preserveperm_tooltip | translate"
           ></ix-checkbox>
 
           <ix-checkbox
             formControlName="preserveattr"
             [label]="'Preserve Extended Attributes' | translate"
-            [tooltip]="helptext.rsync_preserveattr_tooltip"
+            [tooltip]="helptext.rsync_preserveattr_tooltip | translate"
           ></ix-checkbox>
 
           <ix-checkbox
             formControlName="delayupdates"
             [label]="'Delay Updates' | translate"
-            [tooltip]="helptext.rsync_delayupdates_tooltip"
+            [tooltip]="helptext.rsync_delayupdates_tooltip | translate"
           ></ix-checkbox>
 
           <ix-chips
             formControlName="extra"
             [label]="'Auxiliary Parameters' | translate"
-            [tooltip]="helptext.rsync_extra_tooltip"
+            [tooltip]="helptext.rsync_extra_tooltip | translate"
           ></ix-chips>
         </ix-fieldset>
       </div>
@@ -192,8 +192,9 @@
         <button
           mat-button
           type="submit"
-          [disabled]="form.invalid || isLoading"
           color="primary"
+          ixTest="save"
+          [disabled]="form.invalid || isLoading"
         >
           {{ 'Save' | translate }}
         </button>

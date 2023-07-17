@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -10,7 +10,7 @@ import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
 import _ from 'lodash';
 import { Observable, of } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
+import { filter, map, switchMap } from 'rxjs/operators';
 import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
@@ -18,18 +18,30 @@ import { mntPath } from 'app/enums/mnt-path.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import helptext from 'app/helptext/data-protection/cloudsync/cloudsync-form';
 import { CloudSyncTaskUi, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
-import { CloudsyncBucket } from 'app/interfaces/cloudsync-credential.interface';
+import { CloudsyncBucket, CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { SelectOption } from 'app/interfaces/option.interface';
 import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
-import { CloudCredentialService, DialogService, WebSocketService } from 'app/services';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { CreateStorjBucketDialogComponent } from 'app/pages/data-protection/cloudsync/create-storj-bucket-dialog/create-storj-bucket-dialog.component';
+import { CustomTransfersDialogComponent } from 'app/pages/data-protection/cloudsync/custom-transfers-dialog/custom-transfers-dialog.component';
+import { CloudCredentialService, DialogService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
+
+const newStorjBucket = 'new_storj_bucket';
+const customOptionValue = -1;
+
+type FormValue = CloudsyncFormComponent['form']['value'];
 
 @UntilDestroy()
 @Component({
@@ -38,7 +50,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [CloudCredentialService],
 })
-export class CloudsyncFormComponent {
+export class CloudsyncFormComponent implements OnInit {
   get isNew(): boolean {
     return !this.editingTask;
   }
@@ -48,6 +60,8 @@ export class CloudsyncFormComponent {
       ? this.translate.instant('Add Cloud Sync Task')
       : this.translate.instant('Edit Cloud Sync Task');
   }
+
+  googleDriveProviderId: number;
 
   form = this.formBuilder.group({
     description: ['' as string, Validators.required],
@@ -59,6 +73,7 @@ export class CloudsyncFormComponent {
     credentials: [null as number, Validators.required],
     bucket: [''],
     bucket_input: ['', Validators.required],
+    acknowledge_abuse: [false],
     folder_destination: [[] as string[]],
     folder_source: [[] as string[]],
     bucket_policy_only: [false],
@@ -80,15 +95,15 @@ export class CloudsyncFormComponent {
     filename_encryption: [true],
     encryption_password: [''],
     encryption_salt: [''],
-    transfers: [null as number],
+    transfers: [4],
     bwlimit: [[] as string[]],
   });
 
   isLoading = false;
-  bucketPlaceholder = helptext.bucket_placeholder;
-  bucketTooltip = helptext.bucket_tooltip;
-  bucketInputPlaceholder = helptext.bucket_input_placeholder;
-  bucketInputTooltip = helptext.bucket_input_tooltip;
+  bucketPlaceholder: string = helptext.bucket_placeholder;
+  bucketTooltip: string = helptext.bucket_tooltip;
+  bucketInputPlaceholder: string = helptext.bucket_input_placeholder;
+  bucketInputTooltip: string = helptext.bucket_input_tooltip;
 
   readonly transferModeTooltip = `
     ${helptext.transfer_mode_warning_sync}<br><br>
@@ -109,11 +124,15 @@ export class CloudsyncFormComponent {
     { label: this.translate.instant('MOVE'), value: TransferMode.Move },
   ]);
 
+  credentialsList: CloudsyncCredential[] = [];
   readonly credentialsOptions$ = this.cloudCredentialService.getCloudsyncCredentials().pipe(
     map((options) => {
-      return options.map((option) => (
-        { label: `${option.name} (${option.provider})`, value: option.id }
-      ));
+      return options.map((option) => {
+        if (option.provider === CloudsyncProviderName.GoogleDrive) {
+          this.googleDriveProviderId = option.id;
+        }
+        return { label: `${option.name} (${option.provider})`, value: option.id };
+      });
     }),
     untilDestroyed(this),
   );
@@ -132,27 +151,44 @@ export class CloudsyncFormComponent {
     { label: 'Glacier Deep Archive', value: 'DEEP_ARCHIVE' },
   ]);
 
-  bucketOptions$: Observable<SelectOption[]> = of([]);
+  transfersDefaultOptions = [
+    { label: this.translate.instant('Low Bandwidth (4)'), value: 4 },
+    { label: this.translate.instant('Medium Bandwidth (8)'), value: 8 },
+    { label: this.translate.instant('High Bandwidth (16)'), value: 16 },
+  ];
+
+  transfersCustomOption = { label: this.translate.instant('Custom'), value: customOptionValue };
+
+  transfersOptions$ = of([...this.transfersDefaultOptions, this.transfersCustomOption]);
+
+  bucketOptions$ = of<SelectOption[]>([]);
 
   readonly fileNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
   readonly bucketNodeProvider = this.getBucketsNodeProvider();
 
-  private editingTask: CloudSyncTaskUi;
-
   constructor(
+    public slideInRef: IxSlideInRef<CloudsyncFormComponent>,
     private translate: TranslateService,
     private formBuilder: FormBuilder,
     private ws: WebSocketService,
     protected router: Router,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
+    private snackbar: SnackbarService,
     protected dialog: DialogService,
     protected matDialog: MatDialog,
     protected slideInService: IxSlideInService,
     private filesystemService: FilesystemService,
     protected cloudCredentialService: CloudCredentialService,
-  ) {
+    @Inject(SLIDE_IN_DATA) private editingTask: CloudSyncTaskUi,
+  ) { }
+
+  ngOnInit(): void {
     this.setupForm();
+
+    if (this.editingTask) {
+      this.setTaskForEdit();
+    }
   }
 
   setupForm(): void {
@@ -171,6 +207,26 @@ export class CloudsyncFormComponent {
     this.form.controls.encryption_password.disable();
     this.form.controls.encryption_salt.disable();
 
+    this.form.controls.bucket.valueChanges.pipe(untilDestroyed(this)).subscribe((selectedOption) => {
+      if (selectedOption !== newStorjBucket) {
+        return;
+      }
+      const dialogRef = this.matDialog.open(CreateStorjBucketDialogComponent, {
+        width: '500px',
+        data: {
+          credentialsId: this.form.controls.credentials.value,
+        },
+      });
+      dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe((bucket) => {
+        if (bucket !== false) {
+          this.isLoading = true;
+          this.loadBucketOptions();
+          this.form.controls.bucket.setValue(bucket);
+        } else {
+          this.form.controls.bucket.setValue('');
+        }
+      });
+    });
     this.form.controls.direction.valueChanges.pipe(untilDestroyed(this)).subscribe((direction) => {
       if (direction === Direction.Pull || this.form.controls.transfer_mode.value === TransferMode.Move) {
         this.form.controls.snapshot.disable();
@@ -226,9 +282,13 @@ export class CloudsyncFormComponent {
         }
 
         this.cloudCredentialService.getCloudsyncCredentials()
-          .pipe(untilDestroyed(this)).subscribe((credentialsList) => {
-            this.cloudCredentialService.getProviders().pipe(untilDestroyed(this)).subscribe((providersList) => {
-              const targetCredentials = _.find(credentialsList, { id: credentials });
+          .pipe(
+            switchMap((credentialsList) => {
+              this.credentialsList = credentialsList;
+              return this.cloudCredentialService.getProviders();
+            }),
+            map((providersList) => {
+              const targetCredentials = _.find(this.credentialsList, { id: credentials });
               const targetProvider = _.find(providersList, { name: targetCredentials?.provider });
               if (targetProvider && targetProvider.buckets) {
                 this.isLoading = true;
@@ -246,35 +306,8 @@ export class CloudsyncFormComponent {
                   this.bucketInputTooltip = helptext.bucket_input_tooltip;
                 }
 
-                this.getBuckets(targetCredentials.id).pipe(untilDestroyed(this)).subscribe({
-                  next: (buckets) => {
-                    this.bucketOptions$ = of(buckets.map((bucket) => ({
-                      label: bucket.Name,
-                      value: bucket.Path,
-                      disabled: !bucket.Enabled,
-                    })));
-                    this.isLoading = false;
-                    this.form.controls.bucket.enable();
-                    this.form.controls.bucket_input.disable();
-                    this.cdr.markForCheck();
-                  },
-                  error: (err) => {
-                    this.isLoading = false;
-                    this.form.controls.bucket.disable();
-                    this.form.controls.bucket_input.enable();
-                    this.dialog.closeAllDialogs();
-                    this.dialog.confirm({
-                      title: err.extra ? err.extra.excerpt : (this.translate.instant('Error: ') + err.error),
-                      message: err.reason,
-                      hideCheckBox: true,
-                      buttonMsg: this.translate.instant('Fix Credential'),
-                    }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-                      const navigationExtras: NavigationExtras = { state: { editCredential: 'cloudcredentials', id: targetCredentials.id } };
-                      this.router.navigate(['/', 'credentials', 'backup-credentials'], navigationExtras);
-                    });
-                    this.cdr.markForCheck();
-                  },
-                });
+                this.loadBucketOptions();
+
                 this.cdr.markForCheck();
               } else {
                 this.form.controls.bucket.disable();
@@ -287,8 +320,8 @@ export class CloudsyncFormComponent {
                 this.form.controls.bucket_policy_only.disable();
               }
 
-              const taskSchema = _.find(providersList, { name: targetCredentials?.provider })
-                ? _.find(providersList, { name: targetCredentials?.provider }).task_schema : [];
+              const schemaFound = _.find(providersList, { name: targetCredentials?.provider });
+              const taskSchema = schemaFound ? schemaFound.task_schema : [];
 
               const taskSchemas = ['task_encryption', 'fast_list', 'chunk_size', 'storage_class'];
               for (const i of taskSchemas) {
@@ -301,8 +334,10 @@ export class CloudsyncFormComponent {
                   }
                 }
               }
-            });
-          });
+            }),
+            untilDestroyed(this),
+          )
+          .subscribe();
       } else {
         this.form.controls.bucket.disable();
         this.form.controls.bucket_input.disable();
@@ -321,18 +356,15 @@ export class CloudsyncFormComponent {
       if (!values) {
         return;
       }
-      if (!Array.isArray(values)) {
-        values = [values];
-      }
-      if (!values.length) {
+      const paths = Array.isArray(values) ? values : [values];
+      if (!paths.length) {
         return;
       }
 
-      const parentDirectories = values.map((value: string) => {
+      const parentDirectories = paths.map((value: string) => {
         const split = value.split('/');
         const sliced = split.slice(0, split.length - 1);
-        const joined = sliced.join('/');
-        return joined;
+        return sliced.join('/');
       });
       const allMatch = parentDirectories.every((directory: string) => directory === parentDirectories[0]);
 
@@ -362,17 +394,14 @@ export class CloudsyncFormComponent {
       if (!values) {
         return;
       }
-      if (!Array.isArray(values)) {
-        values = [values];
-      }
-      if (!values.length) {
+      const sources = Array.isArray(values) ? values : [values];
+      if (!sources.length) {
         return;
       }
-      const parentDirectories = values.map((value: string) => {
+      const parentDirectories = sources.map((value: string) => {
         const split = value.split('/');
         const sliced = split.slice(0, split.length - 1);
-        const joined = sliced.join('/');
-        return joined;
+        return sliced.join('/');
       });
       const allMatch = parentDirectories.every((directory: string) => directory === parentDirectories[0]);
 
@@ -396,6 +425,62 @@ export class CloudsyncFormComponent {
           folderSourceControl.setErrors(null);
         }
       }
+    });
+
+    this.form.controls.transfers.valueChanges.pipe(untilDestroyed(this)).subscribe((value: number) => {
+      if (value === customOptionValue) {
+        const dialogRef = this.matDialog.open(CustomTransfersDialogComponent);
+        dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe((transfers: number) => {
+          if (this.isCustomTransfers(transfers)) {
+            this.setTransfersOptions(true, transfers);
+          }
+          this.form.controls.transfers.setValue(transfers || null);
+        });
+      } else if (!this.isCustomTransfers(value)) {
+        this.setTransfersOptions(false, value);
+      }
+    });
+  }
+
+  loadBucketOptions(): void {
+    const targetCredentials = _.find(this.credentialsList, { id: this.form.controls.credentials.value });
+
+    this.getBuckets(targetCredentials.id).pipe(untilDestroyed(this)).subscribe({
+      next: (buckets) => {
+        const bucketOptions = buckets.map((bucket) => ({
+          label: bucket.Name,
+          value: bucket.Path,
+          disabled: !bucket.Enabled,
+        }));
+        if (targetCredentials.provider === CloudsyncProviderName.Storj) {
+          bucketOptions.unshift({
+            label: this.translate.instant('Add new'),
+            value: newStorjBucket,
+            disabled: false,
+          });
+        }
+        this.bucketOptions$ = of(bucketOptions);
+        this.isLoading = false;
+        this.form.controls.bucket.enable();
+        this.form.controls.bucket_input.disable();
+        this.cdr.markForCheck();
+      },
+      error: (error: WebsocketError) => {
+        this.isLoading = false;
+        this.form.controls.bucket.disable();
+        this.form.controls.bucket_input.enable();
+        this.dialog.closeAllDialogs();
+        this.dialog.confirm({
+          title: error.extra ? (error.extra as { excerpt: string }).excerpt : `${this.translate.instant('Error: ')}${error.error}`,
+          message: error.reason,
+          hideCheckbox: true,
+          buttonText: this.translate.instant('Fix Credential'),
+        }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+          const navigationExtras: NavigationExtras = { state: { editCredential: 'cloudcredentials', id: targetCredentials.id } };
+          this.router.navigate(['/', 'credentials', 'backup-credentials'], navigationExtras);
+        });
+        this.cdr.markForCheck();
+      },
     });
   }
 
@@ -428,6 +513,7 @@ export class CloudsyncFormComponent {
       if (bucket === '') {
         delete data.attributes.bucket;
       }
+
       return this.ws.call('cloudsync.list_directory', [data]).pipe(
         map((listing) => {
           const nodes: ExplorerNodeData[] = [];
@@ -447,73 +533,91 @@ export class CloudsyncFormComponent {
     };
   }
 
-  setTaskForEdit(task: CloudSyncTaskUi): void {
-    this.editingTask = task;
+  isCustomTransfers(transfers: number): boolean {
+    const transfersDefaultValues = this.transfersDefaultOptions.map((option) => option.value);
+    return transfers && !transfersDefaultValues.includes(transfers);
+  }
+
+  setTransfersOptions(isCustomTransfersSelected: boolean, customTransfers?: number): void {
+    if (isCustomTransfersSelected) {
+      const customOption = { label: this.translate.instant('Custom ({customTransfers})', { customTransfers }), value: customTransfers };
+      this.transfersOptions$ = of([...this.transfersDefaultOptions, customOption, this.transfersCustomOption]);
+    } else {
+      this.transfersOptions$ = of([...this.transfersDefaultOptions, this.transfersCustomOption]);
+    }
+  }
+
+  setTaskForEdit(): void {
+    const transfers = this.editingTask.transfers;
+    if (this.isCustomTransfers(transfers)) {
+      this.setTransfersOptions(true, transfers);
+    }
 
     this.form.patchValue({
-      ...task,
-      cloudsync_picker: scheduleToCrontab(task.schedule) as CronPresetValue,
-      credentials: task.credentials.id,
-      encryption: task.encryption,
-      bwlimit: task.bwlimit.map((bwlimit) => {
+      ...this.editingTask,
+      cloudsync_picker: scheduleToCrontab(this.editingTask.schedule) as CronPresetValue,
+      credentials: this.editingTask.credentials.id,
+      encryption: this.editingTask.encryption,
+      bwlimit: this.editingTask.bwlimit.map((bwlimit) => {
         return bwlimit.bandwidth
-          ? `${bwlimit.time}, ${filesize(bwlimit.bandwidth)}`
+          ? `${bwlimit.time}, ${filesize(bwlimit.bandwidth, { standard: 'iec' })}`
           : `${bwlimit.time}, off`;
       }),
     });
 
-    if (task.direction === Direction.Pull) {
-      this.form.controls.path_destination.setValue([task.path]);
+    if (this.editingTask.direction === Direction.Pull) {
+      this.form.controls.path_destination.setValue([this.editingTask.path]);
 
-      if (task.include?.length) {
+      if (this.editingTask.include?.length) {
         this.form.controls.folder_source.setValue(
-          task.include.map((path: string) => (`${task.attributes.folder as string}/${path.split('/')[1]}`)),
+          this.editingTask.include.map((path: string) => (`${this.editingTask.attributes.folder as string}/${path.split('/')[1]}`)),
         );
       } else {
-        this.form.controls.folder_source.setValue([task.attributes.folder as string]);
+        this.form.controls.folder_source.setValue([this.editingTask.attributes.folder as string]);
       }
     } else {
-      this.form.controls.folder_destination.setValue([task.attributes.folder as string]);
+      this.form.controls.folder_destination.setValue([this.editingTask.attributes.folder as string]);
 
-      if (task.include?.length) {
+      if (this.editingTask.include?.length) {
         this.form.controls.path_source.setValue(
-          task.include.map((path: string) => (`${task.path}/${path.split('/')[1]}`)),
+          this.editingTask.include.map((path: string) => (`${this.editingTask.path}/${path.split('/')[1]}`)),
         );
       } else {
-        this.form.controls.path_source.setValue([task.path]);
+        this.form.controls.path_source.setValue([this.editingTask.path]);
       }
     }
 
-    if (task.attributes.bucket) {
-      this.form.controls.bucket.setValue(task.attributes.bucket as string);
-      this.form.controls.bucket_input.setValue(task.attributes.bucket as string);
+    if (this.editingTask.attributes.bucket) {
+      this.form.controls.bucket.setValue(this.editingTask.attributes.bucket as string);
+      this.form.controls.bucket_input.setValue(this.editingTask.attributes.bucket as string);
     }
-    if (task.attributes.bucket_policy_only) {
-      this.form.controls.bucket_policy_only.setValue(task.attributes.bucket_policy_only as boolean);
+    if (this.editingTask.attributes.bucket_policy_only) {
+      this.form.controls.bucket_policy_only.setValue(this.editingTask.attributes.bucket_policy_only as boolean);
     }
-    if (task.attributes.task_encryption) {
-      this.form.controls.task_encryption.setValue(task.attributes.task_encryption as string);
+    if (this.editingTask.attributes.task_encryption) {
+      this.form.controls.task_encryption.setValue(this.editingTask.attributes.task_encryption as string);
     }
-    if (task.attributes.fast_list) {
-      this.form.controls.fast_list.setValue(task.attributes.fast_list as boolean);
+    if (this.editingTask.attributes.fast_list) {
+      this.form.controls.fast_list.setValue(this.editingTask.attributes.fast_list as boolean);
     }
-    if (task.attributes.chunk_size) {
-      this.form.controls.chunk_size.setValue(task.attributes.chunk_size as number);
+    if (this.editingTask.attributes.chunk_size) {
+      this.form.controls.chunk_size.setValue(this.editingTask.attributes.chunk_size as number);
     }
-    if (task.attributes.storage_class) {
-      this.form.controls.storage_class.setValue(task.attributes.storage_class as string);
+    if (this.editingTask.attributes.acknowledge_abuse) {
+      this.form.controls.acknowledge_abuse.setValue(this.editingTask.attributes.acknowledge_abuse as boolean);
+    }
+    if (this.editingTask.attributes.storage_class) {
+      this.form.controls.storage_class.setValue(this.editingTask.attributes.storage_class as string);
     }
   }
 
-  prepareBwlimit(bwlimit: string): { time: string; bandwidth: string }[] {
+  prepareBwlimit(bwlimit: string[]): CloudSyncTaskUpdate['bwlimit'] {
     const bwlimtArr = [];
 
     for (const limit of bwlimit) {
       const sublimitArr = limit.split(/\s*,\s*/);
-      if (sublimitArr.length === 1 && bwlimit.length === 1) {
-        if (!sublimitArr[0].includes(':')) {
-          sublimitArr.unshift('00:00');
-        }
+      if (sublimitArr.length === 1 && bwlimit.length === 1 && !sublimitArr[0].includes(':')) {
+        sublimitArr.unshift('00:00');
       }
       if (sublimitArr[1] && sublimitArr[1] !== 'off') {
         if (sublimitArr[1].endsWith('/s') || sublimitArr[1].endsWith('/S')) {
@@ -533,92 +637,82 @@ export class CloudsyncFormComponent {
     return bwlimtArr;
   }
 
-  prepareData(formValue: any): CloudSyncTaskUpdate {
-    const value = _.cloneDeep(formValue);
+  prepareData(formValue: FormValue): CloudSyncTaskUpdate {
     const attributes: CloudSyncTaskUpdate['attributes'] = {};
 
-    if (value.direction === Direction.Pull) {
-      value.path = _.isArray(value.path_destination) ? value.path_destination[0] : value.path_destination;
+    const value: CloudSyncTaskUpdate = {
+      ...formValue,
+      attributes,
+      include: undefined,
+      path: undefined,
+      bwlimit: formValue.bwlimit ? this.prepareBwlimit(formValue.bwlimit) : undefined,
+      schedule: formValue.cloudsync_picker ? crontabToSchedule(formValue.cloudsync_picker) : {},
+      snapshot: formValue.direction === Direction.Pull ? false : formValue.snapshot,
+    };
 
-      if (!value.folder_source.length || !_.isArray(value.folder_source)) {
+    const attributesToFill = [
+      'bucket', 'bucket_input', 'bucket_policy_only', 'task_encryption',
+      'storage_class', 'fast_list', 'chunk_size', 'acknowledge_abuse',
+    ] as const;
+
+    ([
+      'path_source', 'path_destination', 'folder_source',
+      'folder_destination', 'cloudsync_picker', ...attributesToFill,
+    ] as const).forEach((key) => {
+      delete (value as unknown as FormValue)[key];
+    });
+
+    if (formValue.direction === Direction.Pull) {
+      value.path = _.isArray(formValue.path_destination) ? formValue.path_destination[0] : formValue.path_destination;
+
+      if (!formValue.folder_source.length || !_.isArray(formValue.folder_source)) {
         attributes.folder = '/';
-      } else if (value.folder_source.length === 1) {
-        attributes.folder = value.folder_source[0];
+      } else if (formValue.folder_source.length === 1) {
+        attributes.folder = formValue.folder_source[0];
       } else {
         value.include = [];
-        for (const dir of value.folder_source) {
+        for (const dir of formValue.folder_source) {
           const directory = dir.split('/');
           value.include.push('/' + directory[directory.length - 1] + '/**');
         }
-        const directory = value.folder_source[value.folder_source.length - 1].split('/');
+        const directory = formValue.folder_source[formValue.folder_source.length - 1].split('/');
         attributes.folder = directory.slice(0, directory.length - 1).join('/');
       }
     } else {
-      attributes.folder = _.isArray(value.folder_destination) ? value.folder_destination[0] : value.folder_destination;
+      attributes.folder = _.isArray(formValue.folder_destination)
+        ? formValue.folder_destination[0] : formValue.folder_destination;
 
-      if (!value.path_source.length || !_.isArray(value.path_source)) {
+      if (!formValue.path_source.length || !_.isArray(formValue.path_source)) {
         value.path = '/';
-      } else if (value.path_source.length === 1) {
-        value.path = value.path_source[0];
+      } else if (formValue.path_source.length === 1) {
+        value.path = formValue.path_source[0];
       } else {
         value.include = [];
-        for (const dir of value.path_source) {
+        for (const dir of formValue.path_source) {
           const directory = dir.split('/');
           value.include.push('/' + directory[directory.length - 1] + '/**');
         }
-        const directory = value.path_source[value.path_source.length - 1].split('/');
+        const directory = formValue.path_source[formValue.path_source.length - 1].split('/');
         value.path = directory.slice(0, directory.length - 1).join('/');
       }
     }
 
-    delete value.path_source;
-    delete value.path_destination;
-    delete value.folder_source;
-    delete value.folder_destination;
+    attributesToFill.forEach((name) => {
+      if (name === 'acknowledge_abuse' && this.form.controls.credentials.value !== this.googleDriveProviderId) {
+        return;
+      }
 
-    if (value.bucket !== undefined) {
-      attributes.bucket = value.bucket;
-      delete value.bucket;
-    }
-    if (value.bucket_input !== undefined) {
-      attributes.bucket = value.bucket_input;
-      delete value.bucket_input;
-    }
-
-    if (value.bucket_policy_only !== undefined) {
-      attributes.bucket_policy_only = value.bucket_policy_only;
-      delete value.bucket_policy_only;
-    }
-
-    if (value.task_encryption !== undefined) {
-      attributes.encryption = value.task_encryption === '' ? null : value.task_encryption;
-      delete value.task_encryption;
-    }
-    if (value.storage_class !== undefined) {
-      attributes.storage_class = value.storage_class;
-      delete value.storage_class;
-    }
-    if (value.fast_list !== undefined) {
-      attributes.fast_list = value.fast_list;
-      delete value.fast_list;
-    }
-    if (value.chunk_size !== undefined) {
-      attributes.chunk_size = value.chunk_size;
-      delete value.chunk_size;
-    }
+      if (formValue[name] !== undefined && formValue[name] !== null && formValue[name] !== '') {
+        if (name === 'task_encryption') {
+          attributes[name] = formValue[name] === '' ? null : formValue[name];
+        } else {
+          attributes[name] = formValue[name];
+        }
+      }
+    });
 
     value.attributes = attributes;
 
-    value.schedule = value.cloudsync_picker ? crontabToSchedule(value.cloudsync_picker) : {};
-    delete value.cloudsync_picker;
-
-    if (value.bwlimit !== undefined) {
-      value.bwlimit = this.prepareBwlimit(value.bwlimit);
-    }
-
-    if (value.direction === Direction.Pull) {
-      value.snapshot = false;
-    }
     return value;
   }
 
@@ -653,6 +747,7 @@ export class CloudsyncFormComponent {
 
     this.isLoading = true;
     let request$: Observable<unknown>;
+
     if (this.isNew) {
       request$ = this.ws.call('cloudsync.create', [payload]);
     } else {
@@ -661,8 +756,13 @@ export class CloudsyncFormComponent {
 
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
+        if (this.isNew) {
+          this.snackbar.success(this.translate.instant('Task created'));
+        } else {
+          this.snackbar.success(this.translate.instant('Task updated'));
+        }
         this.isLoading = false;
-        this.slideInService.close();
+        this.slideInRef.close(true);
       },
       error: (error) => {
         this.isLoading = false;

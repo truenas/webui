@@ -4,9 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { MockPipe } from 'ng-mocks';
 import { BulkListItemComponent } from 'app/core/components/bulk-list-item/bulk-list-item.component';
-import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
@@ -15,8 +13,9 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { BootPoolDeleteDialogComponent } from 'app/pages/system/bootenv/boot-pool-delete-dialog/boot-pool-delete-dialog.component';
-import { fakeBootEnvironmentsDataSource } from 'app/pages/system/bootenv/bootenv-list/bootenv-list.component.spec';
-import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
+import { fakeBootEnvironmentsDataSource } from 'app/pages/system/bootenv/test/fake-boot-environments';
+import { AppLoaderService, DialogService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 
 const mockSuccessBulkResponse = [{
   result: null,
@@ -47,7 +46,6 @@ describe('BootPoolDeleteDialogComponent', () => {
     ],
     declarations: [
       BulkListItemComponent,
-      MockPipe(FormatDateTimePipe, jest.fn(() => '2022-31-05 10:52:06')),
     ],
     providers: [
       {

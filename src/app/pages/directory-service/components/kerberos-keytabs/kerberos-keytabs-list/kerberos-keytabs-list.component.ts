@@ -12,11 +12,11 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 @Component({
   template: '<ix-entity-table [title]="title" [conf]="this"></ix-entity-table>',
 })
-export class KerberosKeytabsListComponent implements EntityTableConfig {
+export class KerberosKeytabsListComponent implements EntityTableConfig<KerberosKeytab> {
   title = this.translate.instant('Kerberos Keytabs');
   queryCall = 'kerberos.keytab.query' as const;
   wsDelete = 'kerberos.keytab.delete' as const;
-  protected entityList: EntityTableComponent;
+  protected entityList: EntityTableComponent<KerberosKeytab>;
 
   columns = [
     { name: this.translate.instant('Name'), prop: 'name', always_display: true },
@@ -36,21 +36,19 @@ export class KerberosKeytabsListComponent implements EntityTableConfig {
     private translate: TranslateService,
   ) { }
 
-  afterInit(entityList: EntityTableComponent): void {
+  afterInit(entityList: EntityTableComponent<KerberosKeytab>): void {
     this.entityList = entityList;
-    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      entityList.getData();
-    });
   }
 
   doAdd(): void {
-    this.slideInService.open(KerberosKeytabsFormComponent);
+    const slideInRef = this.slideInService.open(KerberosKeytabsFormComponent);
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
   }
 
   doEdit(id: number): void {
-    const row = this.entityList.rows.find((row) => row.id === id);
-    const form = this.slideInService.open(KerberosKeytabsFormComponent);
-    form.setKerberosKeytabsForEdit(row);
+    const kerberosKeytab = this.entityList.rows.find((row) => row.id === id);
+    const slideInRef = this.slideInService.open(KerberosKeytabsFormComponent, { data: kerberosKeytab });
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
   }
 
   getActions(): EntityTableAction<KerberosKeytab>[] {

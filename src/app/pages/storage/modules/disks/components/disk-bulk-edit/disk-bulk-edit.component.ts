@@ -9,16 +9,15 @@ import { JobState } from 'app/enums/job-state.enum';
 import { translateOptions } from 'app/helpers/translate.helper';
 import helptext from 'app/helptext/storage/disks/disks';
 import { Disk, DiskUpdate } from 'app/interfaces/storage.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { WebSocketService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
   templateUrl: 'disk-bulk-edit.component.html',
-  styleUrls: ['disk-bulk-edit.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DiskBulkEditComponent {
@@ -41,7 +40,7 @@ export class DiskBulkEditComponent {
     private dialogService: DialogService,
     private ws: WebSocketService,
     private translate: TranslateService,
-    private slideInService: IxSlideInService,
+    private slideInRef: IxSlideInRef<DiskBulkEditComponent, boolean>,
     private snackbarService: SnackbarService,
     private errorHandler: FormErrorHandlerService,
   ) {}
@@ -89,7 +88,7 @@ export class DiskBulkEditComponent {
     }
 
     this.form.patchValue({ ...setForm });
-    this.form.controls['disknames'].disable();
+    this.form.controls.disknames.disable();
   }
 
   prepareDataSubmit(): [id: string, update: DiskUpdate][] {
@@ -123,8 +122,11 @@ export class DiskBulkEditComponent {
           this.isLoading = false;
           const isSuccessful = job.result.every((result) => {
             if (result.error !== null) {
-              this.slideInService.close();
-              this.dialogService.errorReport(helptext.dialog_error, result.error);
+              this.slideInRef.close(true);
+              this.dialogService.error({
+                title: helptext.dialog_error,
+                message: result.error,
+              });
               return false;
             }
 
@@ -132,13 +134,13 @@ export class DiskBulkEditComponent {
           });
 
           if (isSuccessful) {
-            this.slideInService.close();
+            this.slideInRef.close(true);
             this.snackbarService.success(successText);
           }
         },
         error: (error) => {
           this.isLoading = false;
-          this.slideInService.close();
+          this.slideInRef.close(false);
           this.errorHandler.handleWsFormError(error, this.form);
         },
       });

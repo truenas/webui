@@ -2,17 +2,21 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  ElementRef,
   EventEmitter,
   Input,
+  OnChanges,
   Output,
+  ViewChild,
 } from '@angular/core';
 import {
   ControlValueAccessor,
-  UntypedFormControl,
   NgControl,
 } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { Option } from 'app/interfaces/option.interface';
+import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 
 @UntilDestroy()
 @Component({
@@ -21,7 +25,7 @@ import { TranslateService } from '@ngx-translate/core';
   styleUrls: ['./ix-input.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class IxInputComponent implements ControlValueAccessor {
+export class IxInputComponent implements ControlValueAccessor, OnChanges {
   @Input() label: string;
   @Input() placeholder: string;
   @Input() prefixIcon: string;
@@ -31,18 +35,20 @@ export class IxInputComponent implements ControlValueAccessor {
   @Input() readonly: boolean;
   @Input() type: string;
   @Input() autocomplete = 'off';
+  @Input() autocompleteOptions: Option[];
+  @Input() postfix?: string;
 
   /**
    * @deprecated Avoid using. Use valueChanges.
    */
-  @Output() inputBlur: EventEmitter<unknown> = new EventEmitter();
+  @Output() inputBlur = new EventEmitter<unknown>();
 
   /** If formatted value returned by parseAndFormatInput has non-numeric letters
    * and input 'type' is a number, the input will stay empty on the form */
   @Input() format: (value: string | number) => string;
-  @Input() parse: (value: string | number) => string | number;
+  @Input() parse: (value: string | number, postfix?: string) => string | number;
 
-  formControl = new UntypedFormControl(this).value as UntypedFormControl;
+  @ViewChild('ixInput') inputElementRef: ElementRef<HTMLInputElement>;
 
   private _value: string | number = '';
   formatted: string | number = '';
@@ -50,6 +56,7 @@ export class IxInputComponent implements ControlValueAccessor {
   isDisabled = false;
   showPassword = false;
   invalid = false;
+  filteredOptions: Option[];
 
   onChange: (value: string | number) => void = (): void => {};
   onTouch: () => void = (): void => {};
@@ -62,13 +69,19 @@ export class IxInputComponent implements ControlValueAccessor {
     this.controlDirective.valueAccessor = this;
   }
 
+  ngOnChanges(changes: IxSimpleChanges<this>): void {
+    if ('autocompleteOptions' in changes) {
+      this.filterOptions();
+    }
+  }
+
   get value(): string | number {
     return this._value;
   }
 
   set value(val: string | number) {
     if (this.type === 'number') {
-      this._value = val ? Number(val) : null;
+      this._value = (val || val === 0) ? Number(val) : null;
       return;
     }
     this._value = val;
@@ -76,10 +89,8 @@ export class IxInputComponent implements ControlValueAccessor {
 
   writeValue(value: string | number): void {
     let formatted = value;
-    if (value) {
-      if (this.format) {
-        formatted = this.format(value);
-      }
+    if (value && this.format) {
+      formatted = this.format(value);
     }
     this.formatted = formatted;
     this.value = value;
@@ -90,10 +101,11 @@ export class IxInputComponent implements ControlValueAccessor {
     const value = ixInput.value;
     this.value = value;
     this.formatted = value;
-    if (this.parse && !!value) {
-      this.value = this.parse(value);
+    if (value && this.parse) {
+      this.value = this.parse(value, this.postfix);
     }
     this.onChange(this.value);
+    this.filterOptions();
   }
 
   invalidMessage(): string {
@@ -120,7 +132,9 @@ export class IxInputComponent implements ControlValueAccessor {
   }
 
   getType(): string {
-    return this.type === 'password' ? 'search' : this.type;
+    // Mimicking a password field to prevent browsers from remembering passwords.
+    const isFakePassword = this.type === 'password' && (this.autocomplete === 'off' || this.showPassword);
+    return isFakePassword ? 'text' : this.type;
   }
 
   isPasswordField(): boolean {
@@ -128,7 +142,7 @@ export class IxInputComponent implements ControlValueAccessor {
   }
 
   hasValue(): boolean {
-    return this.invalid || (this.value && this.value.toString().length > 0);
+    return this.invalid || this.value?.toString()?.length > 0;
   }
 
   resetInput(input: HTMLInputElement): void {
@@ -137,6 +151,7 @@ export class IxInputComponent implements ControlValueAccessor {
     this.value = '';
     this.formatted = '';
     this.onChange(this.value);
+    this.filterOptions();
   }
 
   setDisabledState(isDisabled: boolean): void {
@@ -155,7 +170,8 @@ export class IxInputComponent implements ControlValueAccessor {
     this.onTouch();
     if (this.formatted) {
       if (this.parse) {
-        this.value = this.parse(this.formatted);
+        this.value = this.parse(this.formatted, this.postfix);
+        this.formatted = this.value;
       }
       if (this.format) {
         this.formatted = this.format(this.value);
@@ -169,5 +185,30 @@ export class IxInputComponent implements ControlValueAccessor {
 
   onPasswordToggled(): void {
     this.showPassword = !this.showPassword;
+  }
+
+  onEnter(): void {
+    if (this.filteredOptions && this.filteredOptions.length) {
+      this.optionSelected(this.filteredOptions[0]);
+    }
+  }
+
+  optionSelected(option: Option): void {
+    if (this.inputElementRef && this.inputElementRef.nativeElement) {
+      this.inputElementRef.nativeElement.value = option.label;
+      setTimeout(() => this.inputElementRef.nativeElement.blur(), 10);
+    }
+
+    this.writeValue(option.label);
+    this.onChange(option.label);
+    this.filterOptions();
+  }
+
+  filterOptions(): void {
+    if (this.autocompleteOptions) {
+      this.filteredOptions = this.autocompleteOptions.filter((option) => {
+        return option.label.toString().toLowerCase().includes(this.value.toString().toLowerCase());
+      });
+    }
   }
 }

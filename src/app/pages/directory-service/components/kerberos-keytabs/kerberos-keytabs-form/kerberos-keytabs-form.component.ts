@@ -1,21 +1,23 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
-import { UntypedFormBuilder, Validators } from '@angular/forms';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+} from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import helptext from 'app/helptext/directory-service/kerberos-keytabs-form-list';
 import { KerberosKeytab } from 'app/interfaces/kerberos-config.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { WebSocketService } from 'app/services';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
   templateUrl: './kerberos-keytabs-form.component.html',
-  styleUrls: ['./kerberos-keytabs-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class KerberosKeytabsFormComponent {
+export class KerberosKeytabsFormComponent implements OnInit {
   get isNew(): boolean {
     return !this.editingKerberosKeytab;
   }
@@ -35,26 +37,30 @@ export class KerberosKeytabsFormComponent {
 
   readonly helptext = helptext;
 
-  private editingKerberosKeytab: KerberosKeytab;
-
   constructor(
     private translate: TranslateService,
-    private formBuilder: UntypedFormBuilder,
-    private slideInService: IxSlideInService,
+    private formBuilder: FormBuilder,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private ws: WebSocketService,
+    private slideInRef: IxSlideInRef<KerberosKeytabsFormComponent>,
+    @Inject(SLIDE_IN_DATA) private editingKerberosKeytab: KerberosKeytab,
   ) {}
 
-  setKerberosKeytabsForEdit(kerberosKeytab: KerberosKeytab): void {
-    this.editingKerberosKeytab = kerberosKeytab;
-    this.form.patchValue(kerberosKeytab);
+  ngOnInit(): void {
+    if (this.editingKerberosKeytab) {
+      this.setKerberosKeytabsForEdit();
+    }
+  }
+
+  setKerberosKeytabsForEdit(): void {
+    this.form.patchValue({
+      name: this.editingKerberosKeytab.name,
+    });
   }
 
   onSubmit(): void {
-    const values = {
-      ...this.form.value,
-    };
+    const values = this.form.value;
 
     const fReader: FileReader = new FileReader();
     if (values.file.length) {
@@ -62,22 +68,26 @@ export class KerberosKeytabsFormComponent {
     }
 
     fReader.onloadend = () => {
-      values.file = btoa(fReader.result as string);
+      const file = btoa(fReader.result as string);
+      const payload = {
+        name: values.name,
+        file,
+      };
       this.isLoading = true;
       let request$: Observable<unknown>;
       if (this.isNew) {
-        request$ = this.ws.call('kerberos.keytab.create', [values]);
+        request$ = this.ws.call('kerberos.keytab.create', [payload]);
       } else {
         request$ = this.ws.call('kerberos.keytab.update', [
           this.editingKerberosKeytab.id,
-          values,
+          payload,
         ]);
       }
 
       request$.pipe(untilDestroyed(this)).subscribe({
         next: () => {
           this.isLoading = false;
-          this.slideInService.close();
+          this.slideInRef.close();
         },
         error: (error) => {
           this.isLoading = false;

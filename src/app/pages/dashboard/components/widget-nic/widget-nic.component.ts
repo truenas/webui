@@ -1,5 +1,5 @@
 import {
-  Component, AfterViewInit, Input, ViewChild, ElementRef, OnChanges, SimpleChanges,
+  Component, AfterViewInit, Input, ViewChild, ElementRef, OnChanges,
 } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -12,16 +12,15 @@ import { Subject } from 'rxjs';
 import { filter, throttleTime } from 'rxjs/operators';
 import { LinkState, NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
 import { CoreEvent } from 'app/interfaces/events';
+import { NetworkTrafficEvent } from 'app/interfaces/events/network-traffic-event.interface';
 import { NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
+import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { DashboardNicState } from 'app/pages/dashboard/components/dashboard/dashboard.component';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
-import { WidgetUtils } from 'app/pages/dashboard/utils/widget-utils';
 
 interface NetTraffic {
-  sent: string;
-  sentUnits: string;
-  received: string;
-  receivedUnits: string;
+  sent: number;
+  received: number;
   linkState: LinkState;
 }
 
@@ -51,11 +50,10 @@ enum Path {
 export class WidgetNicComponent extends WidgetComponent implements AfterViewInit, OnChanges {
   @Input() stats: Subject<CoreEvent>;
   @Input() nicState: DashboardNicState;
-  @ViewChild('carousel', { static: true }) carousel: ElementRef;
-  @ViewChild('carouselparent', { static: false }) carouselParent: ElementRef;
+  @ViewChild('carousel', { static: true }) carousel: ElementRef<HTMLElement>;
+  @ViewChild('carouselparent', { static: false }) carouselParent: ElementRef<HTMLElement>;
   traffic: NetTraffic;
   currentSlide = '0';
-  private utils: WidgetUtils;
 
   readonly LinkState = LinkState;
   readonly NetworkInterfaceAliasType = NetworkInterfaceAliasType;
@@ -103,11 +101,9 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
     public translate: TranslateService,
   ) {
     super(translate);
-    this.configurable = false;
-    this.utils = new WidgetUtils();
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(changes: IxSimpleChanges<this>): void {
     if (changes.nicState) {
       this.title = this.currentSlide === '0' ? this.defaultTitle : this.nicState.name;
     }
@@ -118,16 +114,11 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
       filter((evt) => evt.name === 'NetTraffic_' + this.nicState.name),
       throttleTime(500),
       untilDestroyed(this),
-    ).subscribe((evt: CoreEvent) => {
-      const sent = this.utils.convert(evt.data.sent_bytes_rate);
-      const received = this.utils.convert(evt.data.received_bytes_rate);
-
+    ).subscribe((evt: NetworkTrafficEvent) => {
       this.traffic = {
-        sent: sent.value,
-        sentUnits: sent.units,
-        received: received.value,
-        receivedUnits: received.units,
-        linkState: evt.data.link_state as LinkState,
+        sent: evt.data.sent_bytes_rate,
+        received: evt.data.received_bytes_rate,
+        linkState: evt.data.link_state,
       };
     });
   }
@@ -149,7 +140,7 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
     const slide = this.carouselParent.nativeElement.querySelector('.slide');
 
     const el = styler(carousel);
-    const slideW = styler(slide).get('width');
+    const slideW = styler(slide).get('width') as number;
 
     tween({
       from: { x: (parseInt(this.currentSlide) * 100) * -1 },

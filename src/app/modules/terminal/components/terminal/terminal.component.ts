@@ -1,14 +1,14 @@
 import {
   AfterViewInit,
   ChangeDetectionStrategy, ChangeDetectorRef,
-  Component, ElementRef, Input, OnDestroy, OnInit, TemplateRef, ViewChild,
+  Component, ElementRef, HostListener, Input, OnDestroy, OnInit, TemplateRef, ViewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import * as FontFaceObserver from 'fontfaceobserver';
-import { filter } from 'rxjs/operators';
+import { filter, take, tap } from 'rxjs/operators';
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import { ShellConnectedEvent } from 'app/interfaces/shell.interface';
@@ -16,7 +16,7 @@ import { TerminalConfiguration } from 'app/interfaces/terminal.interface';
 import { CopyPasteMessageComponent } from 'app/modules/terminal/components/copy-paste-message/copy-paste-message.component';
 import { XtermAttachAddon } from 'app/modules/terminal/xterm-attach-addon';
 import { ShellService, WebSocketService } from 'app/services';
-import { CoreService } from 'app/services/core-service/core.service';
+import { AuthService } from 'app/services/auth/auth.service';
 import { LayoutService } from 'app/services/layout.service';
 import { AppState } from 'app/store';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -37,27 +37,38 @@ export class TerminalComponent implements OnInit, AfterViewInit, OnDestroy {
   waitParentChanges = 300;
   fontSize = 14;
   fontName = 'Inconsolata';
+  defaultFontName = 'monospace';
   xterm: Terminal;
-  private fitAddon: FitAddon;
-
   shellConnected = false;
   connectionId: string;
+  terminalSettings = {
+    cursorBlink: false,
+    tabStopWidth: 8,
+    cols: 80,
+    rows: 20,
+    focus: true,
+    fontSize: this.fontSize,
+    fontFamily: this.defaultFontName,
+    allowTransparency: true,
+  };
+
+  private fitAddon: FitAddon;
   private attachAddon: XtermAttachAddon;
 
   readonly toolbarTooltip = this.translate.instant(`<b>Copy & Paste</b> <br/>
                   Context menu copy and paste operations are disabled in the Shell. Copy and paste shortcuts for Mac are <i>Command+C</i> and <i>Command+V</i>. For most operating systems, use <i>Ctrl+Insert</i> to copy and <i>Shift+Insert</i> to paste.<br/><br/>
                   <b>Kill Process</b> <br/>
-                  Kill process shortcut is <i>Crtl+C</i>.`);
+                  Kill process shortcut is <i>Ctrl+C</i>.`);
 
   constructor(
     private ws: WebSocketService,
-    private ss: ShellService,
+    private shellService: ShellService,
     private dialog: MatDialog,
     private translate: TranslateService,
     private layoutService: LayoutService,
     private store$: Store<AppState>,
+    private authService: AuthService,
     private cdr: ChangeDetectorRef,
-    public core: CoreService,
   ) {}
 
   ngOnInit(): void {
@@ -84,23 +95,25 @@ export class TerminalComponent implements OnInit, AfterViewInit, OnDestroy {
         setTimeout(() => { this.resizeTerm(); }, this.waitParentChanges);
       }
     });
+  }
 
-    this.core.register({
-      observerClass: this,
-      eventName: 'MediaChange',
-    }).pipe(untilDestroyed(this)).subscribe(() => {
-      if (this.shellConnected) {
-        setTimeout(() => { this.resizeTerm(); }, this.waitParentChanges);
-      }
-    });
+  @HostListener('window:resize')
+  onWindowResized(): void {
+    if (this.shellConnected) {
+      setTimeout(() => { this.resizeTerm(); }, this.waitParentChanges);
+    }
   }
 
   initShell(): void {
-    this.ws.call('auth.generate_token').pipe(untilDestroyed(this)).subscribe((token) => {
-      this.initializeWebShell(token);
-      this.ss.shellOutput.pipe(untilDestroyed(this)).subscribe(() => {});
-      this.initializeTerminal();
-    });
+    this.authService.authToken$.pipe(
+      take(1),
+      tap((token) => {
+        this.initializeWebShell(token);
+        this.shellService.shellOutput.pipe(untilDestroyed(this)).subscribe(() => {});
+        this.initializeTerminal();
+      }),
+      untilDestroyed(this),
+    ).subscribe();
   }
 
   ngAfterViewInit(): void {
@@ -108,8 +121,8 @@ export class TerminalComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.ss.connected) {
-      this.ss.socket.close();
+    if (this.shellService.connected) {
+      this.shellService.socket.close();
     }
   }
 
@@ -123,18 +136,7 @@ export class TerminalComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   initializeTerminal(): void {
-    const setting = {
-      cursorBlink: false,
-      tabStopWidth: 8,
-      cols: 80,
-      rows: 20,
-      focus: true,
-      fontSize: this.fontSize,
-      fontFamily: this.fontName,
-      allowTransparency: true,
-    };
-
-    this.xterm = new Terminal(setting);
+    this.xterm = new Terminal(this.terminalSettings);
 
     this.fitAddon = new FitAddon();
     this.xterm.loadAddon(this.fitAddon);
@@ -142,11 +144,17 @@ export class TerminalComponent implements OnInit, AfterViewInit, OnDestroy {
     const font = new FontFaceObserver(this.fontName);
 
     font.load().then(() => {
-      this.xterm.open(this.container.nativeElement);
-      this.fitAddon.fit();
+      this.xterm.setOption('fontFamily', this.fontName);
+      this.drawTerminal();
     }, (error) => {
+      this.drawTerminal();
       console.error('Font is not available', error);
     });
+  }
+
+  drawTerminal(): void {
+    this.xterm.open(this.container.nativeElement);
+    this.fitAddon.fit();
   }
 
   updateTerminal(): void {
@@ -158,7 +166,7 @@ export class TerminalComponent implements OnInit, AfterViewInit, OnDestroy {
       this.attachAddon.dispose();
     }
 
-    this.attachAddon = new XtermAttachAddon(this.ss.socket);
+    this.attachAddon = new XtermAttachAddon(this.shellService.socket);
     this.xterm.loadAddon(this.attachAddon);
   }
 
@@ -176,14 +184,14 @@ export class TerminalComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   initializeWebShell(token: string): void {
-    this.ss.token = token;
+    this.shellService.token = token;
 
     if (this.conf.setShellConnectionData) {
-      this.conf.setShellConnectionData(this.ss);
+      this.conf.setShellConnectionData(this.shellService);
     }
-    this.ss.connect();
+    this.shellService.connect();
 
-    this.ss.shellConnected.pipe(untilDestroyed(this)).subscribe((event: ShellConnectedEvent) => {
+    this.shellService.shellConnected.pipe(untilDestroyed(this)).subscribe((event: ShellConnectedEvent) => {
       this.shellConnected = event.connected;
       this.connectionId = event.id;
       this.updateTerminal();
@@ -198,9 +206,9 @@ export class TerminalComponent implements OnInit, AfterViewInit, OnDestroy {
 
   reconnect(): void {
     if (this.conf.setShellConnectionData) {
-      this.conf.setShellConnectionData(this.ss);
+      this.conf.setShellConnectionData(this.shellService);
     }
-    this.ss.connect();
+    this.shellService.connect();
   }
 
   onFontSizeChanged(newSize: number): void {

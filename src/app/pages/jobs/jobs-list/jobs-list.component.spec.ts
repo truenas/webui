@@ -1,16 +1,17 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTabsModule } from '@angular/material/tabs';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { MockPipe } from 'ng-mocks';
 import { of } from 'rxjs';
-import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
+import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
+import { IxEmptyRowHarness } from 'app/modules/ix-tables/components/ix-empty-row/ix-empty-row.component.harness';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
 import { jobsInitialState, JobsState } from 'app/modules/jobs/store/job.reducer';
@@ -19,7 +20,7 @@ import { JobLogsRowComponent } from 'app/pages/jobs/job-logs-row/job-logs-row.co
 import { DialogService, StorageService, WebSocketService } from 'app/services';
 import { JobsListComponent } from './jobs-list.component';
 
-export const fakeJobDataSource: Job[] = [{
+const fakeJobDataSource: Job[] = [{
   abortable: true,
   arguments: [1],
   description: null,
@@ -68,16 +69,16 @@ describe('JobsListComponent', () => {
     ],
     declarations: [
       JobLogsRowComponent,
-      MockPipe(FormatDateTimePipe, jest.fn(() => '2022-05-28 00:00:01')),
+      FakeFormatDateTimePipe,
     ],
     providers: [
       mockProvider(DialogService),
+      mockProvider(MatSnackBar),
       mockWebsocket([
         mockCall('core.download', [1, 'http://localhost/download/log']),
       ]),
       mockProvider(StorageService, {
-        streamDownloadFile: jest.fn(() => of({})),
-        downloadBlob: jest.fn(),
+        downloadUrl: jest.fn(() => of(undefined)),
       }),
       provideMockStore({
         selectors: [
@@ -107,9 +108,9 @@ describe('JobsListComponent', () => {
     const table = await loader.getHarness(IxTableHarness);
     const cells = await table.getCells(true);
     const expectedRows = [
-      ['Name', 'State', 'ID', 'Started', 'Finished', 'Arguments/Logs'],
-      ['highlight_off  cloudsync.sync', 'FAILED', '446', '2022-05-28 00:00:01', '2022-05-28 00:00:01', 'View  Download Logs'],
-      ['check_circle_outline  cloudsync.sync', 'SUCCESS', '445', '2022-05-28 00:00:01', '2022-05-28 00:00:01', 'View'],
+      ['Name', 'State', 'ID', 'Started', 'Finished', 'Logs', ''],
+      ['cloudsync.sync', 'Failed', '446', '2022-05-28 10:00:01', '2022-05-28 10:00:01', 'Download Logs', ''],
+      ['cloudsync.sync', 'Success', '445', '2022-05-28 10:00:01', '2022-05-28 10:00:01', '', ''],
     ];
 
     expect(cells).toEqual(expectedRows);
@@ -119,21 +120,21 @@ describe('JobsListComponent', () => {
     store$.overrideSelector(selectJobs, []);
     store$.refreshState();
 
-    const table = await loader.getHarness(IxTableHarness);
-    const text = await table.getCellTextByIndex();
-
-    expect(text).toEqual([['No tasks']]);
+    spectator.detectChanges();
+    const emptyRow = await loader.getHarness(IxEmptyRowHarness);
+    const emptyTitle = await emptyRow.getTitleText();
+    expect(emptyTitle).toBe('No records have been added yet');
   });
 
   it('should expand only one row on click', async () => {
     store$.overrideSelector(selectJobs, fakeJobDataSource);
     store$.refreshState();
 
-    const [firstExpandButton, secondExpandButton] = await loader.getAllHarnesses(MatButtonHarness.with({ text: 'View' }));
+    const [firstExpandButton, secondExpandButton] = await loader.getAllHarnesses(MatButtonHarness.with({ selector: '[ixTest="toggle-row"]' }));
     await firstExpandButton.click();
     await secondExpandButton.click();
 
-    expect(spectator.queryAll('.expanded').length).toEqual(1);
+    expect(spectator.queryAll('.expanded')).toHaveLength(1);
   });
 
   it('should download logs text file when click Download Logs button', async () => {
@@ -144,7 +145,6 @@ describe('JobsListComponent', () => {
     await downloadLogsButton.click();
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('core.download', ['filesystem.get', ['/var/log/jobs/446.log'], '446.log']);
-    expect(spectator.inject(StorageService).streamDownloadFile).toHaveBeenCalledWith('http://localhost/download/log', '446.log', 'text/plain');
-    expect(spectator.inject(StorageService).downloadBlob).toHaveBeenCalledWith({}, '446.log');
+    expect(spectator.inject(StorageService).downloadUrl).toHaveBeenCalledWith('http://localhost/download/log', '446.log', 'text/plain');
   });
 });

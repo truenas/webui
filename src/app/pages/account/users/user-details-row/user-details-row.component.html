@@ -1,13 +1,20 @@
-<td [attr.colspan]="colspan">
-  <ix-table-expandable-row [data]="getDetails(user)">
-    <button mat-button (click)="doEdit(user)">
-      <mat-icon>edit</mat-icon>
-      <span>{{ 'Edit' | translate }}</span>
-    </button>
+<ix-table-expandable-row [data]="getDetails(user)">
+  <button
+    mat-button
+    [ixTest]="['edit', user.username]"
+    (click)="doEdit(user)"
+  >
+    <ix-icon name="edit"></ix-icon>
+    <span>{{ 'Edit' | translate }}</span>
+  </button>
 
-    <button *ngIf="!user.builtin" mat-button (click)="doDelete(user)">
-      <mat-icon>delete</mat-icon>
-      <span>{{ 'Delete' | translate }}</span>
-    </button>
-  </ix-table-expandable-row>
-</td>
+  <button
+    *ngIf="!user.builtin"
+    mat-button
+    [ixTest]="['delete', user.username]"
+    (click)="doDelete(user)"
+  >
+    <ix-icon name="delete"></ix-icon>
+    <span>{{ 'Delete' | translate }}</span>
+  </button>
+</ix-table-expandable-row>

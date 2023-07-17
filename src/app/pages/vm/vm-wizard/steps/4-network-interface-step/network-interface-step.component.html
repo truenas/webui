@@ -1,0 +1,45 @@
+<form [formGroup]="form">
+  <ix-select
+    formControlName="nic_type"
+    [label]="'Adapter Type' | translate"
+    [required]="true"
+    [options]="nicTypeOptions$"
+    [tooltip]="helptext.NIC_type_tooltip | translate"
+  ></ix-select>
+
+  <ix-input
+    formControlName="nic_mac"
+    [label]="'Mac Address' | translate"
+    [required]="true"
+    [tooltip]="helptext.NIC_mac_tooltip | translate"
+  ></ix-input>
+
+  <ix-select
+    formControlName="nic_attach"
+    [label]="'Attach NIC' | translate"
+    [required]="true"
+    [options]="nicAttachOptions$"
+    [tooltip]="helptext.nic_attach_tooltip | translate"
+  ></ix-select>
+
+  <ix-checkbox
+    *ngIf="isVirtio"
+    formControlName="trust_guest_rx_filters"
+    [label]="'Trust Guest Filters' | translate"
+  ></ix-checkbox>
+
+  <ix-form-actions>
+    <button
+      mat-button
+      matStepperPrevious
+      ixTest="back"
+    >{{ 'Back' | translate }}</button>
+    <button
+      mat-button
+      matStepperNext
+      color="primary"
+      ixTest="next"
+      [disabled]="form.invalid"
+    >{{ 'Next' | translate }}</button>
+  </ix-form-actions>
+</form>

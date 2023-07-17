@@ -32,7 +32,7 @@ describe('CoreService', () => {
 
     const dispatchTable = spectator.service.registrations;
 
-    expect(dispatchTable.length).toBe(1);
+    expect(dispatchTable).toHaveLength(1);
     expect(dispatchTable[0]).toMatchObject(payload);
   });
 
@@ -46,12 +46,12 @@ describe('CoreService', () => {
     const payload2: Registration = { observerClass: mockObserver2, eventName: 'TestEvent2' };
     spectator.service.register(payload2);
 
-    expect(spectator.service.registrations.length).toBe(2);
+    expect(spectator.service.registrations).toHaveLength(2);
 
     spectator.service.unregister(payload1);
     const dispatchTable = spectator.service.registrations;
 
-    expect(dispatchTable.length).toEqual(1);
+    expect(dispatchTable).toHaveLength(1);
     expect(dispatchTable[0].eventName).toMatch('TestEvent2');
     expect(dispatchTable[0].observerClass).toHaveProperty('name', 'Observer2');
   });
@@ -71,7 +71,7 @@ describe('CoreService', () => {
 
     const dispatchTable = spectator.service.registrations;
 
-    expect(dispatchTable.length).toBe(1);
+    expect(dispatchTable).toHaveLength(1);
     expect(spectator.service.registrations[0]).toMatchObject(payload1);
   });
 
@@ -116,7 +116,8 @@ describe('CoreService', () => {
 
         if (totalEvents === 2) {
           spectator.service.unregister({ observerClass: mockObserver });
-          expect(totalEvents).toEqual(4);
+          // eslint-disable-next-line jest/no-conditional-expect
+          expect(totalEvents).toBe(4);
         }
       });
 
@@ -164,7 +165,8 @@ describe('CoreService', () => {
         totalEvents++;
         if (totalEvents === 3) {
           spectator.service.unregister({ observerClass: mockObserver });
-          expect(totalEvents).toEqual(3);
+          // eslint-disable-next-line jest/no-conditional-expect
+          expect(totalEvents).toBe(3);
         }
       });
 

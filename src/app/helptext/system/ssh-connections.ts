@@ -1,11 +1,9 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export default {
-  name_placeholder: T('Name'),
   name_tooltip: T('Name of this SSH connection. SSH connection names \
  must be unique.'),
 
-  setup_method_placeholder: T('Setup Method'),
   setup_method_tooltip: T('How to configure the connection:<br><br> \
  <i>Manual</i> requires configuring authentication on the remote system. \
  This can include copying SSH keys and modifying the <i>root</i> user \
@@ -14,15 +12,15 @@ export default {
  with a remote TrueNAS system. This method uses the URL and login \
  credentials of the remote system to connect and exchange SSH keys.'),
 
-  host_placeholder: T('Host'),
   host_tooltip: T('Hostname or IP address of the remote system.'),
 
-  port_placeholder: T('Port'),
   port_tooltip: T('Port number on the remote system to use for the SSH \
  connection.'),
 
-  username_placeholder: T('Username'),
-  username_tooltip: T('Username for logging in to the remote system.'),
+  username_tooltip: T('Username on the remote system which will be used to login <b>via SSH</b>.'),
+
+  sudo_tooltip: T('Checking this option will lead to <i>/usr/sbin/zfs</i> being allowed to be executed using sudo without password.\
+    If not checked, <i>zfs allow</i> must be used to grant non-user permissions to perform ZFS tasks. Mounting ZFS filesystems by non-root still would not be possible due to Linux restrictions.'),
 
   private_key_placeholder: T('Private Key'),
   private_key_tooltip: T('Choose a saved SSH Keypair or select \
@@ -34,26 +32,16 @@ export default {
  configured, click <b>DISCOVER REMOTE HOST KEY</b> to query the remote \
  system and automatically populate this field.'),
 
-  cipher_tooltip: T('Connection security level:<br> \
- <ul><li><i>Standard</i> is most secure, but has the greatest impact on \
- connection speed.</li><br> \
- <li><i>Fast</i> is less secure than <i>Standard</i> but can give \
- reasonable transfer rates for devices with limited cryptographic speed.</li><br> \
- <li><i>Disabled</i> removes all security in favor of maximizing \
- connection speed. Disabling the security should only be used within a \
- secure, trusted network.</li></ul>'),
-
   connect_timeout_tooltip: T('Time (in seconds) before the system \
  stops attempting to establish a connection with the remote system.'),
 
-  url_placeholder: T('TrueNAS URL'),
   url_tooltip: T('Hostname or IP address of the remote system. A \
  valid URL scheme is required. Example: \
  <b>https://<i>10.231.3.76</i></b>'),
 
-  password_placeholder: T('Password'),
-  password_tooltip: T('User account password for logging into the \
- remote system.'),
-  otp_placeholder: T('One-Time Password (if necessary)'),
+  password_tooltip: T('User account password for logging in to the remote system.'),
+
+  admin_username_tooltip: T('Username on the remote system to log in <b>via Web UI</b> to setup connection.'),
+
   otp_tooltip: T('One-Time Password if two factor authentication is enabled.'),
 };

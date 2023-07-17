@@ -2,13 +2,10 @@ import {
   ChangeDetectionStrategy, Component, Inject,
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/vm/vm-list';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { DialogService } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -24,33 +21,9 @@ export class StopVmDialogComponent {
   constructor(
     private dialogRef: MatDialogRef<StopVmDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public vm: VirtualMachine,
-    private dialog: MatDialog,
-    private dialogService: DialogService,
-    private translate: TranslateService,
   ) { }
 
   onStop(): void {
-    const jobDialogRef = this.dialog.open(
-      EntityJobComponent,
-      {
-        data: {
-          title: this.translate.instant('Stopping {rowName}', { rowName: this.vm.name }),
-        },
-      },
-    );
-    jobDialogRef.componentInstance.setCall('vm.stop', [this.vm.id, {
-      force: false,
-      force_after_timeout: this.forceAfterTimeoutCheckbox.value,
-    }]);
-    jobDialogRef.componentInstance.submit();
-    jobDialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-      jobDialogRef.close(false);
-      this.dialogRef.close(true);
-      this.dialogService.info(
-        this.translate.instant('Finished'),
-        this.translate.instant(helptext.stop_dialog.successMessage, { vmName: this.vm.name }),
-        true,
-      );
-    });
+    this.dialogRef.close({ wasStopped: true, forceAfterTimeout: this.forceAfterTimeoutCheckbox.value });
   }
 }

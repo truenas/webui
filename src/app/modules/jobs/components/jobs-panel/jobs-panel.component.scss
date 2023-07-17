@@ -1,28 +1,51 @@
-$component-header: 42px;
+$component-header: 50px;
 
 :host {
-  .mat-dialog-actions {
+  .mat-mdc-dialog-actions {
+    padding: 14px 24px;
+
     button {
-      display: block;
+      display: flex;
       width: 100%;
     }
+  }
+
+  mat-dialog-content {
+    padding-top: 0;
   }
 }
 
 .jobs-header {
+  align-items: baseline;
   background: var(--bg2);
   border-bottom: 1px solid var(--lines);
+  display: flex;
   height: $component-header;
   margin-left: -24px;
   margin-right: -24px;
-  padding: 4px 24px 12px;
+  padding: 12px 24px;
+  place-content: stretch space-between;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.badges {
+  column-gap: 8px;
+  display: flex;
 }
 
 .job-badge {
+  align-items: center;
   background-color: var(--bg1);
   border-radius: 16px;
+  column-gap: 4px;
+
+  display: flex;
+  flex-direction: row;
   min-width: 48px;
   padding: 0 8px;
+  place-content: center;
   user-select: none;
 
   .job-badge-count {
@@ -30,7 +53,7 @@ $component-header: 42px;
     font-weight: 500;
   }
 
-  .mat-icon {
+  .ix-icon {
     font-size: 20px;
     height: 20px;
     opacity: 0.65;
@@ -56,6 +79,16 @@ $component-header: 42px;
   margin-right: -24px;
   overflow-y: auto;
   padding: 0;
+
+  ix-job-item {
+    &:not(:last-child) {
+      border-bottom: 1px solid var(--lines);
+    }
+
+    ::ng-deep .job-item {
+      padding: 8px 12px 8px 24px;
+    }
+  }
 }
 
 .no-jobs {
@@ -65,7 +98,7 @@ $component-header: 42px;
   justify-content: center;
   padding: 24px 0 0;
 
-  .icon {
+  ix-icon {
     color: var(--fg2);
     font-size: 36px;
     height: 36px;

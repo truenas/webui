@@ -1,9 +1,11 @@
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { FormControl } from '@ngneat/reactive-forms';
 import { createHostFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { IxErrorsComponent } from 'app/modules/ix-forms/components/ix-errors/ix-errors.component';
 import { IxLabelComponent } from 'app/modules/ix-forms/components/ix-label/ix-label.component';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import { IxInputComponent } from './ix-input.component';
 
@@ -14,6 +16,7 @@ describe('IxInputComponent', () => {
     component: IxInputComponent,
     imports: [
       ReactiveFormsModule,
+      MatAutocompleteModule,
     ],
     declarations: [
       MockComponent(IxErrorsComponent),
@@ -50,7 +53,7 @@ describe('IxInputComponent', () => {
     it('renders a prefix icon when it is provided', () => {
       spectator.setInput('prefixIcon', 'person');
 
-      expect(spectator.query('.prefix-icon')).toHaveText('person');
+      expect(spectator.query('.prefix-icon ix-icon')).toHaveLength(1);
       expect(spectator.query('input')).toHaveClass('prefix-padding');
     });
 
@@ -70,7 +73,16 @@ describe('IxInputComponent', () => {
       formControl.setValue('test');
       spectator.detectComponentChanges();
 
-      spectator.click('.reset-input mat-icon');
+      spectator.click('.reset-input ix-icon');
+
+      expect(formControl.value).toBe('');
+    });
+
+    it('shows button that resets input when input type is number and value is 0', () => {
+      formControl.setValue('0');
+      spectator.detectComponentChanges();
+
+      spectator.click('.reset-input ix-icon');
 
       expect(formControl.value).toBe('');
     });
@@ -113,11 +125,20 @@ describe('IxInputComponent', () => {
       expect(formControl.value).toBe(123);
     });
 
+    it('counts 0 as valid when type is number', () => {
+      spectator.setInput('type', 'number');
+
+      spectator.typeInElement('0', 'input');
+
+      expect(formControl.value).toBe(0);
+      expect(spectator.query('.mat-mdc-form-field-error')).toBeNull();
+    });
+
     it('renders input element as pseudo-password field (via search input type) to disable password managers', () => {
       formControl.setValue('test');
       spectator.setInput('type', 'password');
 
-      expect(spectator.query('input')).toHaveAttribute('type', 'search');
+      expect(spectator.query('input')).toHaveAttribute('type', 'text');
     });
 
     it('shows button that toggles password visibility when type is password', () => {
@@ -125,12 +146,12 @@ describe('IxInputComponent', () => {
       spectator.setInput('type', 'password');
 
       expect(spectator.query('input')).toHaveClass('password-field');
-      expect(spectator.query('.toggle_pw').textContent.trim()).toEqual('visibility_off');
+      expect(spectator.query(IxIconComponent).name).toBe('visibility_off');
 
       spectator.click('.toggle_pw');
 
       expect(spectator.query('input')).not.toHaveClass('password-field');
-      expect(spectator.query('.toggle_pw').textContent.trim()).toEqual('visibility');
+      expect(spectator.query(IxIconComponent).name).toBe('visibility');
     });
   });
 
@@ -147,7 +168,7 @@ describe('IxInputComponent', () => {
       } as HTMLInputElement);
       spectator.detectComponentChanges();
 
-      expect(spectator.query('.mat-error')).toHaveText('Value must be a email');
+      expect(spectator.query('.mat-mdc-form-field-error')).toHaveText('Value must be a email');
     });
   });
 

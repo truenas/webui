@@ -21,6 +21,7 @@
         <ix-select
           formControlName="type"
           [label]="'Type' | translate"
+          [required]="true"
           [tooltip]="tooltips.type | translate"
           [options]="typeOptions$"
         ></ix-select>
@@ -36,19 +37,21 @@
           [label]="'Schedule' | translate"
           [tooltip]="tooltips.schedule | translate"
           [hideMinutes]="true"
+          [required]="true"
         ></ix-scheduler>
       </ix-fieldset>
 
-      <div class="form-actions">
+      <ix-form-actions>
         <button
           mat-button
           type="submit"
-          [disabled]="form.invalid || isLoading"
           color="primary"
+          ixTest="save"
+          [disabled]="form.invalid || isLoading"
         >
           {{ 'Save' | translate }}
         </button>
-      </div>
+      </ix-form-actions>
     </form>
   </mat-card-content>
 </mat-card>

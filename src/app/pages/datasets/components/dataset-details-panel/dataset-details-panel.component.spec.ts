@@ -2,10 +2,15 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
+import { SystemInfo } from 'app/interfaces/system-info.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DataProtectionCardComponent } from 'app/pages/datasets/components/data-protection-card/data-protection-card.component';
 import {
   DatasetCapacityManagementCardComponent,
@@ -19,17 +24,12 @@ import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-
 import { ZfsEncryptionCardComponent } from 'app/pages/datasets/modules/encryption/components/zfs-encryption-card/zfs-encryption-card.component';
 import { PermissionsCardComponent } from 'app/pages/datasets/modules/permissions/containers/permissions-card/permissions-card.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import { ModalService } from 'app/services';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 describe('DatasetDetailsPanelComponent', () => {
   let spectator: Spectator<DatasetDetailsPanelComponent>;
   let loader: HarnessLoader;
-  const fakeModalRef = {
-    setParent: jest.fn(),
-    setVolId: jest.fn(),
-    setTitle: jest.fn(),
-    isNew: undefined as boolean,
-  };
   const dataset = {
     id: 'root/parent/child',
     pool: 'my-pool',
@@ -58,14 +58,29 @@ describe('DatasetDetailsPanelComponent', () => {
       ),
     ],
     providers: [
-      mockProvider(ModalService, {
-        openInSlideIn: jest.fn(() => fakeModalRef),
+      mockProvider(IxSlideInService, {
+        open: jest.fn(() => ({
+          slideInClosed$: of(),
+        })),
         onClose$: of(),
       }),
       mockProvider(DatasetTreeStore, {
         selectedDataset$: of(datasetDetails),
         selectedParentDataset$: of(parentDatasetDetails),
       }),
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectSystemInfo,
+            value: {
+              version: 'TrueNAS-SCALE-22.12',
+            } as SystemInfo,
+          },
+        ],
+      }),
+      mockProvider(SnackbarService),
+      mockProvider(IxSlideInRef),
+      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
 
@@ -87,17 +102,19 @@ describe('DatasetDetailsPanelComponent', () => {
   it('opens a dataset form when Add Dataset is pressed', async () => {
     const addDatasetButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add Dataset' }));
     await addDatasetButton.click();
-    expect(spectator.inject(ModalService).openInSlideIn).toHaveBeenCalledWith(DatasetFormComponent);
-    expect(fakeModalRef.setParent).toHaveBeenCalledWith('root/parent/child');
-    expect(fakeModalRef.setVolId).toHaveBeenCalledWith('my-pool');
+    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(
+      DatasetFormComponent,
+      { data: { datasetId: 'root/parent/child', isNew: true }, wide: true },
+    );
   });
 
   it('opens a zvol form when Add Zvol is pressed', async () => {
     const addZvolButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add Zvol' }));
     await addZvolButton.click();
-    expect(spectator.inject(ModalService).openInSlideIn).toHaveBeenCalledWith(ZvolFormComponent);
-    expect(fakeModalRef.setParent).toHaveBeenCalledWith('root/parent/child');
-    expect(fakeModalRef.isNew).toBe(true);
+    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(
+      ZvolFormComponent,
+      { data: { parentId: 'root/parent/child', isNew: true } },
+    );
   });
 
   it('shows all the cards', () => {

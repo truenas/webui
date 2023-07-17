@@ -1,0 +1,70 @@
+<ng-container [formGroup]="form">
+  <ix-input
+    formControlName="name"
+    [label]="helptextSharingIscsi.name_placeholder | translate"
+    [tooltip]="helptextSharingIscsi.name_tooltip | translate"
+    [required]="true"
+  ></ix-input>
+  <ix-select
+    formControlName="type"
+    [label]="helptextSharingIscsi.extent_placeholder_type | translate"
+    [tooltip]="helptextSharingIscsi.extent_tooltip_type | translate"
+    [options]="typeOptions$"
+    [required]="true"
+  ></ix-select>
+  <ix-select
+    formControlName="disk"
+    [label]="helptextSharingIscsi.disk_placeholder | translate"
+    [tooltip]="helptextSharingIscsi.disk_tooltip | translate"
+    [options]="diskOptions$"
+    [required]="true"
+    [fxHide]="!isDevice"
+  ></ix-select>
+  <ix-explorer
+    formControlName="dataset"
+    [label]="helptextSharingIscsi.dataset_placeholder | translate"
+    [tooltip]="helptextSharingIscsi.dataset_tooltip | translate"
+    [required]="true"
+    [nodeProvider]="fileNodeProvider"
+    [fxHide]="!isNewZvol"
+  ></ix-explorer>
+  <ix-input
+    formControlName="volsize"
+    [label]="helptextSharingIscsi.volsize_placeholder | translate"
+    [tooltip]="helptextSharingIscsi.volsize_tooltip | translate"
+    [format]="formatter.memorySizeFormatting"
+    [parse]="formatter.memorySizeParsing"
+    [required]="true"
+    [fxHide]="!isNewZvol"
+  ></ix-input>
+  <ix-explorer
+    formControlName="path"
+    [label]="helptextSharingIscsi.extent_placeholder_path | translate"
+    [required]="true"
+    [nodeProvider]="fileNodeProvider"
+    [fxHide]="isDevice"
+  ></ix-explorer>
+  <ix-input
+    formControlName="filesize"
+    [label]="helptextSharingIscsi.extent_placeholder_filesize | translate"
+    [tooltip]="helptextSharingIscsi.extent_tooltip_filesize | translate"
+    [format]="formatter.memorySizeFormatting"
+    [parse]="formatter.memorySizeParsing"
+    [required]="true"
+    [fxHide]="isDevice"
+  ></ix-input>
+  <ix-select
+    formControlName="usefor"
+    [label]="helptextSharingIscsi.usefor_placeholder | translate"
+    [tooltip]="helptextSharingIscsi.usefor_tooltip | translate"
+    [options]="useforOptions$"
+    [required]="true"
+  ></ix-select>
+  <ix-select
+    formControlName="target"
+    [label]="helptextSharingIscsi.target_placeholder | translate"
+    [tooltip]="helptextSharingIscsi.target_tooltip | translate"
+    [options]="targetOptions$"
+    [required]="true"
+  ></ix-select>
+</ng-container>

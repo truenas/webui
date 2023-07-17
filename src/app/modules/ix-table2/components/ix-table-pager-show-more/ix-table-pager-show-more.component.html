@@ -1,0 +1,13 @@
+<button
+  *ngIf="collapsible && !expanded"
+  mat-stroked-button
+  ixTest="show-more"
+  (click)="showMore()"
+>{{ 'View All' | translate }}</button>
+<button
+  *ngIf="collapsible && expanded"
+  mat-stroked-button
+  ixTest="show-less"
+  (click)="showLess()"
+>{{ 'Collapse' | translate }}</button>
+

@@ -9,12 +9,6 @@ export default {
   ups_fieldset_other: T('Other Options'),
 
   ups_mode_placeholder: T('UPS Mode'),
-  ups_mode_tooltip: T('Choose <i>Master</i> if the UPS is plugged directly\
- into the system serial port. The UPS will remain the\
- last item to shut down. Choose <i>Slave</i> to have\
- this system shut down before <i>Master</i>. See the\
- <a href="http://networkupstools.org/docs/user-manual.chunked/ar01s02.html#_monitoring_client"\
- target="_blank">Network UPS Tools Overview</a>.'),
   ups_mode_options: [
     { label: 'Master', value: UpsMode.Master },
     { label: 'Slave', value: UpsMode.Slave },

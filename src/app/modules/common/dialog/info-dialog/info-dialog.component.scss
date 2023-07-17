@@ -18,8 +18,18 @@
   overflow: auto !important;
 }
 
+h1 {
+  align-items: center;
+  display: flex;
+}
+
 .information-icon {
+  align-items: center;
+  display: flex;
   margin-right: 5px;
-  position: relative;
-  top: 5px;
+}
+
+.information-title {
+  align-items: center;
+  display: flex;
 }

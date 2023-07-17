@@ -4,7 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import { EMPTY, Observable } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
-import { PoolTopologyCategory } from 'app/enums/pool-topology-category.enum';
+import { VdevType } from 'app/enums/v-dev-type.enum';
 import { DeviceNestedDataNode, VDevGroup } from 'app/interfaces/device-nested-data-node.interface';
 import { PoolTopology } from 'app/interfaces/pool.interface';
 import { Disk } from 'app/interfaces/storage.interface';
@@ -87,7 +87,7 @@ export class DevicesStore extends ComponentStore<DevicesState> {
                   nodes: this.createDataNodes(pools[0].topology),
                 });
               }),
-              catchError((error) => {
+              catchError((error: WebsocketError) => {
                 this.patchState({
                   isLoading: false,
                   error,
@@ -131,42 +131,42 @@ export class DevicesStore extends ComponentStore<DevicesState> {
       dataNodes.push({
         children: topology.data,
         group: this.translate.instant('Data VDEVs'),
-        guid: PoolTopologyCategory.Data,
+        guid: VdevType.Data,
       });
     }
     if (topology.cache.length) {
       dataNodes.push({
         children: topology.cache,
         group: this.translate.instant('Cache'),
-        guid: PoolTopologyCategory.Cache,
+        guid: VdevType.Cache,
       });
     }
     if (topology.log.length) {
       dataNodes.push({
         children: topology.log,
         group: this.translate.instant('Log'),
-        guid: PoolTopologyCategory.Log,
+        guid: VdevType.Log,
       });
     }
     if (topology.spare.length) {
       dataNodes.push({
         children: topology.spare,
         group: this.translate.instant('Spare'),
-        guid: PoolTopologyCategory.Spare,
+        guid: VdevType.Spare,
       });
     }
     if (topology.special.length) {
       dataNodes.push({
         children: topology.special,
         group: this.translate.instant('Metadata'),
-        guid: PoolTopologyCategory.Special,
+        guid: VdevType.Special,
       });
     }
     if (topology.dedup.length) {
       dataNodes.push({
         children: topology.dedup,
         group: this.translate.instant('Dedup'),
-        guid: PoolTopologyCategory.Dedup,
+        guid: VdevType.Dedup,
       });
     }
     return dataNodes;

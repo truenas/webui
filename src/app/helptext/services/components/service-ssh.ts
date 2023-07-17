@@ -7,8 +7,7 @@ export default {
 
   ssh_tcpport_tooltip: 'Open a port for SSH connection requests.',
 
-  ssh_rootlogin_tooltip: T('<b>Root logins are discouraged.</b> Allows root \
- logins. A password must be set for the <i>root</i> user account.'),
+  ssh_password_login_groups_tooltip: T('Groups that can log in using password'),
 
   ssh_passwordauth_tooltip: T('Enabling allows using a password to authenticate \
  the SSH login. <i>Warning:</i> when directory services are enabled, allowing password \

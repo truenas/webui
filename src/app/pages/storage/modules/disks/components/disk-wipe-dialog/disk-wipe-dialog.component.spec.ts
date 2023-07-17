@@ -13,7 +13,8 @@ import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import {
   DiskWipeDialogComponent,
 } from 'app/pages/storage/modules/disks/components/disk-wipe-dialog/disk-wipe-dialog.component';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('DiskWipeDialogComponent', () => {
   let spectator: Spectator<DiskWipeDialogComponent>;

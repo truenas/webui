@@ -1,3 +1,9 @@
+:host ::ng-deep {
+  ix-select {
+    margin-top: 0;
+  }
+}
+
 .entry-row {
   column-gap: 10px;
   display: flex;
@@ -7,8 +13,4 @@
   > * {
     flex: 1;
   }
-}
-
-.form-actions {
-  margin: 8px 10px;
 }

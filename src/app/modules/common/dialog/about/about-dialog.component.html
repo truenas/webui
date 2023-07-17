@@ -2,20 +2,19 @@
   <div class="header">
     <div class="header-overlay">
       <div class="logo-wrapper">
-        <mat-icon
-          svgIcon="ix:truenas_scale_logo_full"
+        <ix-icon
+          name="ix:logo_truenas_scale_full"
           class="logo"
-          alt="TrueNAS SCALE logo"
-        ></mat-icon>
+        ></ix-icon>
       </div>
     </div>
   </div>
 
-  <div class="content-wrapper">
+  <div mat-dialog-content>
     <div class="help">{{ helptext.help | translate }}</div>
     <div class="line-item">
       <div fxFlex="10%">
-        <mat-icon class="bullet-icon">assignment</mat-icon>
+        <ix-icon name="assignment" class="bullet-icon"></ix-icon>
       </div>
       <div
         fxFlex="90%"
@@ -25,7 +24,7 @@
     </div>
 
     <div class="line-item">
-      <div fxFlex="10%"><mat-icon class="bullet-icon">group</mat-icon></div>
+      <div fxFlex="10%"><ix-icon name="group" class="bullet-icon"></ix-icon></div>
       <div
         fxFlex="90%"
         class="medium-font"
@@ -34,8 +33,8 @@
     </div>
 
     <div
-      id="open-source"
       *appLet="systemType | mapValue: productTypeLabels as product"
+      id="open-source"
       [innerHtml]="helptext.opensource | translate: { product }"
     ></div>
   </div>
@@ -46,10 +45,8 @@
   <div id="button-wrapper">
     <button
       mat-button
-      class="mat-button mat-primary"
-      ix-auto
-      ix-auto-type="button"
-      ix-auto-identifier="CLOSE"
+      class="mat-mdc-button mat-button mat-primary"
+      ixTest="close"
       (click)="dialogRef.close(false)"
     >
       {{ helptext.actionBtnText.about | translate | uppercase }}

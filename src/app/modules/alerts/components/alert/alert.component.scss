@@ -3,6 +3,7 @@
   display: flex;
   flex-direction: row;
   padding: 14px 16px;
+  word-break: break-word;
 
   &.dismissed {
     opacity: 0.6;
@@ -18,6 +19,7 @@
 .alert-message {
   font-size: inherit;
   font-weight: normal;
+  line-height: inherit;
   margin-bottom: 6px;
   margin-top: 3px;
 }

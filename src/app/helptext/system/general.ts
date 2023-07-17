@@ -99,17 +99,6 @@ export const helptextSystemGeneral = {
     tooltip: T('Choose a time format.'),
   },
 
-  secretseed: {
-    placeholder: T('Export Password Secret Seed'),
-  },
-
-  crash_reporting: {
-    label: T('Crash reporting'),
-    tooltip: T('Send failed HTTP request data which can include client\
- and server IP addresses, failed method call tracebacks, and\
- middleware log file contents to iXsystems.'),
-  },
-
   usage_collection: {
     label: T('Usage collection'),
     tooltip: T('Enable sending anonymous usage statistics to iXsystems.'),
@@ -170,9 +159,4 @@ export const helptextSystemGeneral = {
   guiTitle: T('GUI'),
   guiPageTitle: T('GUI Settings'),
   ntpTitle: T('NTP Servers'),
-  supportTitle: T('Support'),
-  deleteServer: {
-    title: T('Delete Server'),
-    message: T('Delete'),
-  },
 };

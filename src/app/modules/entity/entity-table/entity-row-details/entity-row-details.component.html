@@ -23,10 +23,11 @@
         fxLayoutAlign="center center"
         mat-button
         type="button"
-        id="{{ conf.entityName }}_{{ action.name }}_{{ action.id }}"
+        [ixTest]="['action', action.name, action.id]"
+        [id]="conf.entityName + '_' + action.name + '_' + action.id"
         (click)="action.onClick(conf.config)"
       >
-        <mat-icon class="mr-1">{{ action.icon }}</mat-icon>
+        <ix-icon class="mr-1" [name]="action.icon"></ix-icon>
         <span>{{ action.label | translate }}</span>
       </button>
     </ng-container>

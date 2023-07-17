@@ -1,13 +1,13 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { tap } from 'rxjs';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
-import { EntityUtils } from 'app/modules/entity/utils';
-import { AppLoaderService, DialogService } from 'app/services';
-import { IxFileUploadService } from 'app/services/ix-file-upload.service';
+import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { AuthService } from 'app/services/auth/auth.service';
 
 @UntilDestroy()
 @Component({
@@ -21,41 +21,39 @@ export class UploadConfigDialogComponent {
   });
 
   readonly helptext = helptext;
+  private apiEndPoint: string;
 
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
-    private loader: AppLoaderService,
-    private fileUpload: IxFileUploadService,
-    private dialog: DialogService,
-    private dialogRef: MatDialogRef<UploadConfigDialogComponent>,
-  ) {}
+    private mdDialog: MatDialog,
+    private authService: AuthService,
+  ) {
+    this.authService.authToken$.pipe(
+      tap((token) => {
+        this.apiEndPoint = '/_upload?auth_token=' + token;
+      }),
+      untilDestroyed(this),
+    ).subscribe();
+  }
 
   onSubmit(): void {
-    this.loader.open();
-
-    this.fileUpload.onUploaded$
-      .pipe(untilDestroyed(this))
-      .subscribe(
-        () => {
-          this.loader.close();
-          this.dialogRef.close();
-          this.router.navigate(['/others/reboot']);
-        },
-      );
-
-    this.fileUpload.onUploading$
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        error: (error) => {
-          this.loader.close();
-          new EntityUtils().handleWsError(this, error, this.dialog);
-        },
-      });
-
-    this.fileUpload.upload(
-      this.form.value.config[0],
-      'config.upload',
-    );
+    const formData: FormData = new FormData();
+    const dialogRef = this.mdDialog.open(EntityJobComponent,
+      { data: { title: 'Uploading and Applying Config', closeOnClickOutside: false } });
+    dialogRef.componentInstance.setDescription('Uploading and Applying Config');
+    formData.append('data', JSON.stringify({
+      method: 'config.upload',
+      params: [],
+    }));
+    formData.append('file', this.form.value.config[0]);
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+      dialogRef.close();
+      this.router.navigate(['/others/reboot'], { skipLocationChange: true });
+    });
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((job) => {
+      dialogRef.componentInstance.setDescription(job.error);
+    });
+    dialogRef.componentInstance.wspost(this.apiEndPoint, formData);
   }
 }

@@ -1,0 +1,21 @@
+.new-page-feedback {
+  margin-top: 3px;
+
+  span {
+    background: var(--red);
+    border-radius: 2px;
+    color: var(--accent-txt);
+    line-height: initial;
+    margin: 0 15px;
+    padding: 1px 4px;
+  }
+
+  button {
+    background-color: transparent;
+    border: none;
+    color: var(--primary);
+    cursor: pointer;
+    padding: 0;
+    text-decoration: underline;
+  }
+}

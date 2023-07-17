@@ -1,6 +1,5 @@
 import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { regexValidator } from 'app/modules/entity/entity-form/validators/regex-validation';
 
 export const helptext = {
   two_factor: {
@@ -19,7 +18,7 @@ export const helptext = {
       placeholder: T('Interval'),
       tooltip: T('The lifespan (in seconds) of each One-Time Password. Default is 30 seconds. \
  The minimum lifetime is 5 seconds.'),
-      validation: [Validators.min(5), regexValidator(/^\d+$/)],
+      validation: [Validators.min(5), Validators.pattern(/^\d+$/)],
       hint: T('Some authentication tools default to 30 seconds and do not support custom intervals.'),
     },
     window: {
@@ -59,8 +58,9 @@ IMPORTANT: Two-factor authentication is time-based and requires that the system 
       btn: T('Save'),
     },
 
-    enabled_status_false: T('Two-factor authentication is NOT enabled.'),
-    enabled_status_true: T('Two-factor authentication IS currently enabled.'),
+    global_enabled_user_enabled: T('Two-Factor authentication has been configured. No further actions are required.'),
+    global_enabled_user_disabled: T('Two-Factor authentication is required on this system, but it\'s not yet configured for your user. Please configure it now.'),
+    global_disabled: T('Two-Factor authentication is not enabled on this this system. You can configure your personal settings, but they will have no effect until two-factor authentication is enabled globally by system administrator.'),
 
     enable_button: T('Enable Two-Factor Authentication'),
     disable_button: T('Disable Two-Factor Authentication'),

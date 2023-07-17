@@ -4,16 +4,17 @@ import _ from 'lodash';
 import {
   combineLatest, forkJoin, Observable, of, tap,
 } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { catchError, switchMap } from 'rxjs/operators';
 import { SmartTestResultStatus } from 'app/enums/smart-test-result-status.enum';
 import { Alert } from 'app/interfaces/alert.interface';
+import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { SmartTestResults } from 'app/interfaces/smart-test.interface';
 import { Disk, DiskTemperatureAgg, StorageDashboardDisk } from 'app/interfaces/storage.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { DialogService, StorageService, WebSocketService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 export interface PoolsDashboardState {
   arePoolsLoading: boolean;
@@ -45,6 +46,7 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
   readonly rootDatasets$ = this.select((state) => state.rootDatasets);
 
   constructor(
+    private errorHandler: ErrorHandlerService,
     private ws: WebSocketService,
     private dialogService: DialogService,
     private sorter: StorageService,
@@ -99,13 +101,17 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
         this.patchState({
           arePoolsLoading: false,
         });
-        new EntityUtils().handleWsError(this, error, this.dialogService);
+        this.dialogService.error(this.errorHandler.parseWsError(error));
       },
     );
   }
 
   getPools(): Observable<Pool[]> {
     return this.ws.call('pool.query', [[], { extra: { is_upgraded: true } }]);
+  }
+
+  listenForPoolUpdates(): Observable<ApiEvent<Pool>> {
+    return this.ws.subscribe('pool.query');
   }
 
   getRootDatasets(): Observable<Dataset[]> {
@@ -131,7 +137,7 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
         this.patchState({
           areDisksLoading: false,
         });
-        new EntityUtils().handleWsError(this, error, this.dialogService);
+        this.dialogService.error(this.errorHandler.parseWsError(error));
       },
     );
   }
@@ -164,7 +170,12 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
   }
 
   getDiskTempAggregates(disksNames: string[]): Observable<DiskTemperatureAgg> {
-    return this.ws.call('disk.temperature_agg', [disksNames, 14]);
+    return this.ws.call('disk.temperature_agg', [disksNames, 14]).pipe(
+      catchError((error: WebsocketError) => {
+        console.error('Error loading temperature: ', error);
+        return of({});
+      }),
+    );
   }
 
   getProcessedDisks(
@@ -178,7 +189,8 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
     },
   ): Observable<StorageDashboardDisk[]> {
     for (const disk of disks) {
-      disk.smartTests = 0;
+      disk.smartTestsRunning = 0;
+      disk.smartTestsFailed = 0;
       disk.alerts = [];
     }
     for (const alert of alerts) {
@@ -190,14 +202,16 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
     (disksWithTestResults as unknown as StorageDashboardDisk[]).forEach((diskWithResults) => {
       const testDisk = disks.find((disk) => disk.devname === diskWithResults.devname);
       const tests = diskWithResults?.tests ?? [];
-      const testsStillRunning = tests.filter((test) => test.status !== SmartTestResultStatus.Running);
-      testDisk.smartTests = testsStillRunning.length;
+      const testsStillRunning = tests.filter((test) => test.status === SmartTestResultStatus.Running);
+      const testsStillFailed = tests.filter((test) => test.status === SmartTestResultStatus.Failed);
+      testDisk.smartTestsRunning = testsStillRunning.length;
+      testDisk.smartTestsFailed = testsStillFailed.length;
     });
     const disksWithTempData = Object.keys(tempAgg);
     for (const diskWithTempData of disksWithTempData) {
-      const disk = disks.find((disk) => disk.devname === diskWithTempData);
-      if (disk) {
-        disk.tempAggregates = { ...tempAgg[diskWithTempData] };
+      const dashboardDisk = disks.find((disk) => disk.devname === diskWithTempData);
+      if (dashboardDisk) {
+        dashboardDisk.tempAggregates = { ...tempAgg[diskWithTempData] };
       }
     }
     return of(disks);

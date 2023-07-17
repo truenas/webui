@@ -17,17 +17,5 @@ export default {
       title: T('No Pods Found'),
       message: T('Invalid Pod name'),
     },
-    choosePod: {
-      title: T('Choose pod'),
-      placeholder: T('Pods'),
-      action: T('Choose'),
-    },
-    chooseContainer: {
-      title: T('Choose container'),
-      placeholder: T('Containers'),
-    },
-    chooseCommand: {
-      placeholder: T('Commands'),
-    },
   },
 };

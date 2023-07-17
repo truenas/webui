@@ -5,7 +5,9 @@ import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { PowerMenuComponent } from 'app/modules/layout/components/topbar/power-menu/power-menu.component';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
+import { AuthService } from 'app/services/auth/auth.service';
+import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
 
 describe('PowerMenuComponent', () => {
   let spectator: Spectator<PowerMenuComponent>;
@@ -14,13 +16,14 @@ describe('PowerMenuComponent', () => {
   const createComponent = createComponentFactory({
     component: PowerMenuComponent,
     providers: [
-      mockProvider(WebSocketService, {
-        logout: jest.fn(),
+      mockProvider(AuthService, {
+        logout: jest.fn(() => of()),
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
       mockProvider(Router),
+      mockProvider(WebsocketConnectionService),
     ],
   });
 
@@ -35,7 +38,7 @@ describe('PowerMenuComponent', () => {
     const logout = await menu.getItems({ text: /Log Out$/ });
     await logout[0].click();
 
-    expect(spectator.inject(WebSocketService).logout).toHaveBeenCalled();
+    expect(spectator.inject(AuthService).logout).toHaveBeenCalled();
   });
 
   it('has a Restart menu item that restarts system after confirmation', async () => {
@@ -45,7 +48,7 @@ describe('PowerMenuComponent', () => {
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
       message: 'Restart the system?',
     }));
-    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/others/reboot']);
+    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/others/reboot'], { skipLocationChange: true });
   });
 
   it('has a Shutdown menu item that shuts down system after confirmation', async () => {
@@ -55,6 +58,6 @@ describe('PowerMenuComponent', () => {
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
       message: 'Shut down the system?',
     }));
-    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/others/shutdown']);
+    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/others/shutdown'], { skipLocationChange: true });
   });
 });

@@ -1,10 +1,11 @@
 import { Routes } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslationsLoadedGuard } from 'app/core/guards/translations-loaded.guard';
-import { ApplicationsComponent } from 'app/pages/applications//applications.component';
-import { AdminLayoutComponent } from './modules/common/layouts/admin-layout/admin-layout.component';
-import { AuthLayoutComponent } from './modules/common/layouts/auth-layout/auth-layout.component';
-import { AuthService } from './services/auth/auth.service';
+import { AdminLayoutComponent } from 'app/modules/layout/components/admin-layout/admin-layout.component';
+import { ApplicationsComponent } from 'app/pages/apps-old/applications.component';
+import { TwoFactorGuardService } from 'app/services/auth/two-factor-guard.service';
+import { AuthLayoutComponent } from './modules/layout/components/auth-layout/auth-layout.component';
+import { AuthGuardService } from './services/auth/auth-guard.service';
 
 export const rootRouterConfig: Routes = [{
   path: '',
@@ -29,7 +30,8 @@ export const rootRouterConfig: Routes = [{
 {
   path: '',
   component: AdminLayoutComponent,
-  canActivate: [AuthService, TranslationsLoadedGuard],
+  canActivate: [AuthGuardService, TranslationsLoadedGuard],
+  canActivateChild: [TwoFactorGuardService],
   children: [{
     path: 'dashboard',
     loadChildren: () => import('./pages/dashboard/dashboard.module').then((module) => module.DashboardModule),
@@ -38,12 +40,12 @@ export const rootRouterConfig: Routes = [{
   {
     path: 'credentials',
     loadChildren: () => import('./pages/account/account.module').then((module) => module.AccountModule),
-    data: { title: T('Credentials'), breadcrumb: T('Credentials'), disabled: true },
+    data: { title: T('Credentials'), breadcrumb: T('Credentials') },
   },
   {
     path: 'system',
     loadChildren: () => import('./pages/system/system.module').then((module) => module.SystemModule),
-    data: { title: T('System'), breadcrumb: T('System'), disabled: true },
+    data: { title: T('System'), breadcrumb: T('System') },
   },
   {
     path: 'tasks',
@@ -72,12 +74,17 @@ export const rootRouterConfig: Routes = [{
   },
   {
     path: 'apps',
+    loadChildren: () => import('app/pages/apps/apps.module').then((module) => module.AppsModule),
+    data: { title: T('Applications'), breadcrumb: T('Applications') },
+  },
+  {
+    path: 'apps-old',
     component: ApplicationsComponent,
     data: { title: T('Applications'), breadcrumb: T('Applications') },
   },
   {
-    path: 'apps/:tabIndex',
-    loadChildren: () => import('./pages/applications/applications.module').then((module) => module.ApplicationsModule),
+    path: 'apps-old/:tabIndex',
+    loadChildren: () => import('app/pages/apps-old/old-apps.module').then((module) => module.OldAppsModule),
     data: { title: T('Applications'), breadcrumb: T('Applications') },
   },
   {
@@ -98,7 +105,7 @@ export const rootRouterConfig: Routes = [{
   {
     path: 'reportsdashboard',
     loadChildren: () => import('app/pages/reports-dashboard/reports-dashboard.module').then((module) => module.ReportsDashboardModule),
-    data: { title: T('Reporting'), breadcrumb: T('Reporting'), disabled: true },
+    data: { title: T('Reporting'), breadcrumb: T('Reporting') },
   },
   {
     path: 'shell',
@@ -111,6 +118,11 @@ export const rootRouterConfig: Routes = [{
     data: { title: T('API Keys'), breadcrumb: T('API Keys') },
   },
   {
+    path: 'two-factor-auth',
+    loadChildren: () => import('./pages/two-factor-auth/two-factor-auth.module').then((module) => module.default),
+    data: { title: T('Two-Factor Authentication'), breadcrumb: T('Two-Factor Authentication') },
+  },
+  {
     path: 'data-protection',
     loadChildren: () => import('./pages/data-protection/data-protection.module').then((module) => module.DataProtectionModule),
     data: { title: T('Data Protection'), breadcrumb: T('Data Protection') },
@@ -118,7 +130,7 @@ export const rootRouterConfig: Routes = [{
   {
     path: 'credentials',
     loadChildren: () => import('./pages/credentials/credentials.module').then((module) => module.CredentialsModule),
-    data: { title: T('Credentials'), breadcrumb: T('Credentials'), disabled: true },
+    data: { title: T('Credentials'), breadcrumb: T('Credentials') },
   },
   {
     path: 'jobs',

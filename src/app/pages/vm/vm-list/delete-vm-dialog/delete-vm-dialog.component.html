@@ -21,6 +21,7 @@
 <div mat-dialog-actions class="buttons">
   <button
     mat-button
+    ixTest="cancel"
     [matDialogClose]="false"
   >
     {{ 'Cancel' | translate }}
@@ -28,8 +29,9 @@
   <button
     mat-button
     color="primary"
-    (click)="onDelete()"
+    ixTest="delete"
     [disabled]="form.invalid"
+    (click)="onDelete()"
   >
     {{ 'Delete' | translate }}
   </button>

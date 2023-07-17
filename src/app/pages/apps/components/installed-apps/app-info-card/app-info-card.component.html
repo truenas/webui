@@ -1,0 +1,134 @@
+<mat-card class="card">
+  <mat-card-header>
+    <h3 mat-card-title>
+      {{ 'Application Info' | translate }}
+    </h3>
+    <div>
+      <button
+        id="edit-app"
+        mat-button
+        [ixTest]="[app?.name, 'edit']"
+        (click)="editButtonPressed()"
+      >
+        {{ 'Edit' | translate }}
+      </button>
+      <button
+        *ngIf="hasUpdates"
+        id="update-app"
+        mat-button
+        [ixTest]="[app?.name, 'update']"
+        (click)="updateButtonPressed()"
+      >
+        {{ 'Update' | translate }}
+      </button>
+    </div>
+  </mat-card-header>
+  <mat-card-content>
+    <div fxLayout="row" fxLayoutGap="8px">
+      <div class="app-logo">
+        <img [src]="app?.chart_metadata?.icon" />
+      </div>
+      <div class="details-list">
+        <div class="details-item">
+          <div class="label">{{ 'Name' | translate }}:</div>
+          <div class="value">
+            <ng-container *ngIf="app?.chart_metadata?.name; else notAvailable">
+              {{ app.chart_metadata.name }}
+            </ng-container>
+          </div>
+        </div>
+        <div class="details-item">
+          <div class="label">{{ 'Version' | translate }}:</div>
+          <div class="value">
+            <ng-container *ngIf="app?.human_version; else notAvailable">
+              {{ app.human_version }}
+            </ng-container>
+          </div>
+        </div>
+        <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-121706 -->
+        <div class="details-item">
+          <div class="label">{{ 'Last Updated' | translate }}:</div>
+          <div class="value">
+            <ng-container [ngTemplateOutlet]="notAvailable"></ng-container>
+          </div>
+        </div>
+        <div class="details-item sources">
+          <div class="label">{{ 'Source' | translate }}:</div>
+          <div class="value">
+            <div *ngIf="app?.chart_metadata?.sources?.length; else notAvailable">
+              <a
+                *ngFor="let source of app?.chart_metadata?.sources;"
+                class="source-link"
+                target="_blank"
+                [href]="source"
+                [title]="source"
+                [ixTest]="[app.name, 'source']"
+              >{{ source | cleanLink }}</a>
+            </div>
+          </div>
+        </div>
+        <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-121706 -->
+        <div class="details-item">
+          <div class="label">{{ 'Developer' | translate }}:</div>
+          <div class="value">
+            <ng-container [ngTemplateOutlet]="notAvailable"></ng-container>
+          </div>
+        </div>
+        <!-- TODO: https://ixsystems.atlassian.net/browse/NAS-121706 -->
+        <div *ngIf="false" class="details-item">
+          <div class="label">{{ 'Commits in the last 60 days' | translate }}:</div>
+          <div class="value">
+            <ng-container [ngTemplateOutlet]="notAvailable"></ng-container>
+          </div>
+        </div>
+        <div class="details-item">
+          <div class="label">{{ 'Catalog' | translate }}:</div>
+          <div class="value">
+            <ng-container *ngIf="app?.catalog; else notAvailable">
+              {{ app.catalog }}
+            </ng-container>
+          </div>
+        </div>
+        <div class="details-item">
+          <div class="label">{{ 'Train' | translate }}:</div>
+          <div class="value">
+            <ng-container *ngIf="app?.catalog_train; else notAvailable">
+              {{ app.catalog_train }}
+            </ng-container>
+          </div>
+        </div>
+        <div *ngIf="app?.portals" class="portals">
+          <button
+            *ngFor="let portal of app.portals | keyvalue"
+            mat-button
+            [ixTest]="['portal', app.name, portal.key]"
+            (click)="portalLink(app, portal.key)"
+          >
+            {{ portalName(portal.key) }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </mat-card-content>
+  <mat-card-actions *ngIf="app">
+    <button
+      *ngIf="app.history && !isEmpty(app.history)"
+      mat-button
+      [ixTest]="[app.name, 'rollback']"
+      (click)="rollbackApp()"
+    >
+      {{ 'Roll Back' | translate }}
+    </button>
+    <button
+      mat-button
+      [ixTest]="[app.name, 'delete']"
+      (click)="deleteButtonPressed()"
+    >
+      {{ 'Delete' | translate }}
+    </button>
+  </mat-card-actions>
+</mat-card>
+
+<ng-template #notAvailable>
+  {{ 'N/A' | translate }}
+</ng-template>

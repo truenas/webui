@@ -1,0 +1,64 @@
+<ix-modal-header
+  [title]="'Create Virtual Machine' | translate"
+  [loading]="isLoading"
+></ix-modal-header>
+
+<mat-card>
+  <mat-card-content>
+    <mat-vertical-stepper [linear]="true" (selectionChange)="updateSummary()">
+      <mat-step [stepControl]="osStep?.form">
+        <ng-template matStepLabel>{{ 'Operating System' | translate }}</ng-template>
+        <ix-os-step></ix-os-step>
+      </mat-step>
+
+      <mat-step [stepControl]="cpuAndMemoryStep?.form">
+        <ng-template matStepLabel>{{ 'CPU And Memory' | translate }}</ng-template>
+        <ix-cpu-and-memory-step></ix-cpu-and-memory-step>
+      </mat-step>
+
+      <mat-step [stepControl]="diskStep?.form">
+        <ng-template matStepLabel>{{ 'Disks' | translate }}</ng-template>
+        <ix-disk-step></ix-disk-step>
+      </mat-step>
+
+      <mat-step [stepControl]="networkInterfaceStep?.form">
+        <ng-template matStepLabel>{{ 'Network Interface' | translate }}</ng-template>
+        <ix-network-interface-step></ix-network-interface-step>
+      </mat-step>
+
+      <mat-step [stepControl]="installationMediaStep?.form">
+        <ng-template matStepLabel>{{ 'Installation Media' | translate }}</ng-template>
+        <ix-installation-media-step></ix-installation-media-step>
+      </mat-step>
+
+      <mat-step [stepControl]="gpuStep?.form">
+        <ng-template matStepLabel>{{ 'GPU' | translate }}</ng-template>
+        <ix-gpu-step></ix-gpu-step>
+      </mat-step>
+
+      <mat-step>
+        <ng-template matStepLabel>{{ 'Confirm Options' | translate }}</ng-template>
+
+        <ix-summary [summary]="summary"></ix-summary>
+
+        <p class="confirm-line">{{ 'Confirm these settings.' | translate }}</p>
+
+        <ix-form-actions>
+          <button
+            mat-button
+            matStepperPrevious
+            ixTest="back"
+          >{{ 'Back' | translate }}</button>
+          <button
+            mat-button
+            matStepperNext
+            color="primary"
+            ixTest="save"
+            [disabled]="isLoading"
+            (click)="onSubmit()"
+          >{{ 'Save' | translate }}</button>
+        </ix-form-actions>
+      </mat-step>
+    </mat-vertical-stepper>
+  </mat-card-content>
+</mat-card>

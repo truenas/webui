@@ -13,7 +13,8 @@ import {
 import {
   OneDriveProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/one-drive-provider-form/one-drive-provider-form.component';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('OneDriveProviderFormComponent', () => {
   let spectator: Spectator<OneDriveProviderFormComponent>;
@@ -56,7 +57,7 @@ describe('OneDriveProviderFormComponent', () => {
   });
 
   it('show existing provider attributes when they are set as form values', async () => {
-    spectator.component.setValues({
+    spectator.component.getFormSetter$().next({
       client_id: 'client',
       client_secret: 'secret',
       token: 'token',

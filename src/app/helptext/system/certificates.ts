@@ -1,102 +1,70 @@
 import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
-import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
+import { helptextSystemCa } from 'app/helptext/system/ca';
 
 export const helptextSystemCertificates = {
   add: {
-    title: T('Add Certificate'),
-    title_csr: T('Add CSR'),
-    fieldset_basic: T('Identifier and Type'),
-    fieldset_type: T('Certificate Options'),
-    fieldset_certificate: T('Certificate Subject'),
-    fieldset_extra: T('Extra Constraints'),
-
     name: {
-      placeholder: T('Name'),
       tooltip: T('Descriptive identifier for this certificate.'),
-      validation: [Validators.required, Validators.pattern('[A-Za-z0-9_-]+$')],
       errors: T('Allowed characters: letters, numbers, underscore (_), and dash (-).'),
     },
 
     cert_create_type: {
-      placeholder: T('Type'),
       tooltip: T('<i>Internal Certificates</i> use system-managed CAs for certificate issuance. \
  <i>Import Certificate</i> lets you import an existing certificate onto the system.'),
-      options: [
-        { label: T('Internal Certificate'), value: CertificateCreateType.CreateInternal },
-        { label: T('Import Certificate'), value: CertificateCreateType.CreateImported },
-      ],
-      value: CertificateCreateType.CreateInternal,
     },
 
     csr_create_type: {
       placeholder: T('Type'),
       tooltip: T('<i>Certificate Signing Requests</i> control when an external CA will issue (sign) the certificate. Typically used with ACME or other CAs that most popular browsers trust by default \
  <i>Import Certificate Signing Request</i> lets you import an existing CSR onto the system. Typically used with ACME or internal CAs.'),
-      options: [
-        { label: T('Certificate Signing Request'), value: CertificateCreateType.CreateCsr },
-        { label: T('Import Certificate Signing Request'), value: CertificateCreateType.CreateImportedCsr },
-      ],
-      value: CertificateCreateType.CreateCsr,
     },
 
     profiles: {
-      placeholder: T('Profiles'),
       tooltip: T('Predefined certificate extensions. Choose a profile that best \
 matches your certificate usage scenario.'),
     },
 
     isCSRonSystem: {
-      placeholder: T('CSR exists on this system'),
       tooltip: T(
         'Check this box if importing a certificate for which a CSR exists on this system',
       ),
     },
 
     csrlist: {
-      placeholder: T('Certificate Signing Request'),
       tooltip: T(
         'Select an existing CSR.',
       ),
-      validation: [Validators.required],
     },
 
     signedby: {
-      placeholder: T('Signing Certificate Authority'),
       tooltip: T(
         'Select a previously imported or created CA.',
       ),
-      validation: [Validators.required],
     },
 
     key_type: {
-      placeholder: T('Key Type'),
-      validation: [Validators.required],
+      tooltip: helptextSystemCa.add.key_type.tooltip,
     },
 
     ec_curve: {
-      placeholder: T('EC Curve'),
+      tooltip: helptextSystemCa.add.ec_curve.tooltip,
     },
 
     key_length: {
-      placeholder: T('Key Length'),
       tooltip: T(
         'The number of bits in the key used by the\
  cryptographic algorithm. For security reasons,\
  a minimum key length of <i>2048</i> is recommended.',
       ),
-      validation: [Validators.required],
     },
 
     digest_algorithm: {
-      placeholder: T('Digest Algorithm'),
       tooltip: T(
         'The cryptographic algorithm to use. The default\
  <i>SHA256</i> only needs to be changed if the\
  organization requires a different algorithm.',
       ),
-      validation: [Validators.required],
     },
 
     lifetime: {
@@ -106,48 +74,36 @@ matches your certificate usage scenario.'),
     },
 
     country: {
-      placeholder: T('Country'),
       tooltip: T('Select the country of the organization.'),
-      validation: [Validators.required],
     },
 
     state: {
-      placeholder: T('State'),
       tooltip: T('Enter the state or province of the organization.'),
-      validation: [Validators.required],
     },
 
     city: {
-      placeholder: T('Locality'),
       tooltip: T(
         'Enter the location of the organization. For example,\
  the city.',
       ),
-      validation: [Validators.required],
     },
 
     organization: {
-      placeholder: T('Organization'),
       tooltip: T('Enter the name of the company or organization.'),
-      validation: [Validators.required],
     },
 
     organizational_unit: {
-      placeholder: T('Organizational Unit'),
       tooltip: T('Organizational unit of the entity.'),
     },
 
     email: {
-      placeholder: T('Email'),
       tooltip: T(
         'Enter the email address of the person responsible for\
  the CA.',
       ),
-      validation: [Validators.email, Validators.required],
     },
 
     common: {
-      placeholder: T('Common Name'),
       tooltip: T(
         'Enter the <a href="https://kb.iu.edu/d/aiuv"\
  target="_blank">fully-qualified hostname (FQDN)</a> of\
@@ -157,30 +113,23 @@ matches your certificate usage scenario.'),
     },
 
     san: {
-      placeholder: T('Subject Alternate Names'),
       tooltip: T(
         'Multi-domain support. Enter additional domains to \
  secure. Separate domains by pressing <code>Enter</code> \
  For example, if the primary domain is <i>example.com</i>, \
  entering <i>www.example.com</i> secures both addresses.',
       ),
-      validation: [Validators.required],
     },
 
     certificate: {
-      placeholder: T('Certificate'),
       tooltip: T('Paste the certificate for the CA.'),
-      validation: [Validators.required],
     },
 
     cert_csr: {
-      placeholder: T('Signing Request'),
       tooltip: T('Paste the contents of your Certificate Signing Request here.'),
-      validation: [Validators.required],
     },
 
     privatekey: {
-      placeholder: T('Private Key'),
       tooltip: T(
         'Paste the private key associated with the\
  Certificate when available. Please provide\
@@ -189,18 +138,11 @@ matches your certificate usage scenario.'),
     },
 
     passphrase: {
-      placeholder: T('Passphrase'),
       tooltip: T('Enter the passphrase for the Private Key.'),
-      validation: [matchOtherValidator('passphrase2')],
-    },
-
-    passphrase2: {
-      placeholder: T('Confirm Passphrase'),
     },
 
     basic_constraints: {
       config: {
-        placeholder: T('Basic Constraints Config'),
         tooltip: T('Specify whether to use the certificate for a Certificate Authority \
           and whether this extension is critical. Clients must recognize critical extensions \
           to prevent rejection. Web certificates typically require you to disable \
@@ -211,13 +153,11 @@ matches your certificate usage scenario.'),
         tooltip: T('Identify this certificate as a Certificate Authority (CA).'),
       },
       enabled: {
-        placeholder: T('Basic Constraints'),
         tooltip: T('Activate the Basic Constraints extension to identify whether \
           the certificate\'s subject is a CA and the maximum depth of valid \
           certification paths that include this certificate.'),
       },
       path_length: {
-        placeholder: T('Path Length'),
         tooltip: T('How many non-self-issued intermediate certificates that can follow \
 this certificate in a valid certification path. Entering <i>0</i> allows a single \
 additional certificate to follow in the certificate path. Cannot be less than <i>0</i>.'),
@@ -233,7 +173,6 @@ certificate still approved.'),
 
     authority_key_identifier: {
       config: {
-        placeholder: T('Authority Key Config'),
         tooltip: T('Specify whether the issued certificate should include Authority Key Identifier information,\
           and whether the extension is critical. Critical extensions must be recognized by the client or be rejected.'),
       },
@@ -243,7 +182,6 @@ certificate still approved.'),
 key used to sign this certificate.'),
       },
       enabled: {
-        placeholder: T('Authority Key Identifier'),
         tooltip: T('Activate this extension.\
  The authority key identifier extension provides a means of \
  identifying the public key corresponding to the private key used to \
@@ -266,7 +204,6 @@ certificate still approved.'),
 
     extended_key_usage: {
       usages: {
-        placeholder: T('Usages'),
         tooltip: T('Identify the purpose for this public key. Typically used for end \
 entity certificates. Multiple usages can be selected. Do not mark this extension \
 critical when the <i>Usage</i> is <i>ANY_EXTENDED_KEY_USAGE</i>.<br><br> \
@@ -276,7 +213,6 @@ requires that the purpose of the certificate is consistent with both extensions.
 for more details.'),
       },
       enabled: {
-        placeholder: T('Extended Key Usage'),
         tooltip: T('Activate this certificate extension.\
 The Extended Key Usage extension identifies and limits valid uses for this certificate, such as client authentication or server authentication.\
 See <a href="https://www.ietf.org/rfc/rfc3280.txt" target="_blank">RFC 3280, section 4.2.1.13</a> \
@@ -293,13 +229,11 @@ certificate still approved.'),
 
     key_usage: {
       config: {
-        placeholder: T('Key Usage Config'),
         tooltip: T('Specify this certificate\'s valid Key Usages. Web certificates \
           typically need at least Digital Signature and possibly Key Encipherment \
           or Key Agreement, while other applications may need other usages.'),
       },
       enabled: {
-        placeholder: T('Key Usage'),
         tooltip: T('Activate this certificate extension.\
   The key usage extension defines the purpose \
  (e.g., encipherment, signature, certificate signing) of the key contained in \
@@ -374,23 +308,14 @@ certificate still approved.'),
  Underscore (_), and dash (-) characters are allowed.',
       ),
     },
+    renew_days: {
+      tooltip: T(
+        'For example if you set this value to 5, system will renew certificates that expire in 5 days or less.',
+      ),
+    },
   },
 
   list: {
-    tooltip_add: T('Create Certificate'),
-
-    column_name: T('Name'),
-    column_issuer: T('Issuer'),
-    column_distinguished_name: T('Distinguished Name'),
-    column_from: T('From'),
-    column_until: T('Until'),
-
-    action_view: T('View'),
-    action_export_certificate: T('Export Certificate'),
-    action_export_private_key: T('Export Private Key'),
-
-    action_create_acme_certificate: T('Create ACME Certificate'),
-
     download_error_dialog: {
       title: T('Error'),
       cert_message: T('Error exporting the certificate'),
@@ -401,72 +326,29 @@ certificate still approved.'),
   },
 
   acme: {
-    fieldset_acme: T('ACME Certificate'),
     identifier: {
-      placeholder: T('Identifier'),
       tooltip: T('Internal identifier of the certificate. Only\
  alphanumeric characters, dash (<b>-</b>), and underline (<b>_</b>) are\
  allowed.'),
     },
     tos: {
-      placeholder: T('Terms of Service'),
       tooltip: T('Please accept the terms of service for the given ACME\
  Server.'),
     },
     renew_day: {
-      placeholder: T('Renew Certificate Days'),
       tooltip: T('Number of days to renew certificate before expiring.'),
-      validation: [Validators.required, Validators.min(0)],
     },
     dir_uri: {
-      placeholder: T('ACME Server Directory URI'),
       tooltip: T('URI of the ACME Server Directory. Choose a\
  preconfigured URI or enter a custom URI.'),
     },
     authenticator: {
-      placeholder: T('Authenticator'),
       tooltip: T('Authenticator to validate the Domain. Choose a\
  previously configured ACME DNS authenticator.'),
     },
-    job_dialog_title: T('Creating...'),
     error_dialog: {
       title: T('Error'),
     },
 
-  },
-
-  viewButton: {
-    certificate: T('View/Download Certificate'),
-    csr: T('View/Download CSR'),
-    key: T('View/Download Key'),
-  },
-
-  viewDialog: {
-    download: T('Download'),
-    close: T('Close'),
-    copy: T('Copy'),
-  },
-
-  edit_view: {
-    country: T('Country: '),
-    state: T('State: '),
-    city: T('City: '),
-    organization: T('Organization: '),
-    organizational_unit: T('Organizational Unit: '),
-    email: T('Email: '),
-    common: T('Common: '),
-    san: T('SAN: '),
-    DN: T('Distinguished Name: '),
-    type: T('Type: '),
-    path: T('Path: '),
-    digest_algorithm: T('Digest Algorithm: '),
-    key_length: T('Key Length: '),
-    key_type: T('Key Type: '),
-    unitl: T('Until: '),
-    issuer: T('Issuer: '),
-    revoked: T('Revoked: '),
-    signed_by: T('Signed By: '),
-    signed_certificates: T('Signed Certificates: '),
-    lifetime: T('Lifetime: '),
   },
 };

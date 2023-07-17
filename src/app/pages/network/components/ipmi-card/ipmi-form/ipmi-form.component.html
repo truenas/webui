@@ -1,0 +1,100 @@
+<ix-modal-header
+  [title]="'IPMI' | translate"
+  [loading]="isLoading"
+></ix-modal-header>
+
+<mat-card>
+  <mat-card-content>
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+      <ng-container *ngIf="remoteControllerOptions">
+        <ix-fieldset [title]="helptext.ipmi_remote_controller | translate">
+          <ix-radio-group
+            formControlName="remoteController"
+            [label]="helptext.ipmi_remote_controller | translate"
+            [options]="remoteControllerOptions"
+          >
+          </ix-radio-group>
+        </ix-fieldset>
+        <mat-divider></mat-divider>
+      </ng-container>
+
+      <ix-fieldset [title]="helptext.ipmi_configuration | translate">
+        <ix-checkbox
+          formControlName="dhcp"
+          [label]="'DHCP' | translate"
+          [tooltip]="helptext.dhcp_tooltip | translate"
+        ></ix-checkbox>
+
+        <ix-input
+          formControlName="ipaddress"
+          [label]="'IPv4 Address' | translate"
+          [tooltip]="helptext.ipaddress_tooltip | translate"
+        ></ix-input>
+
+        <ix-input
+          formControlName="netmask"
+          [label]="'IPv4 Netmask' | translate"
+          [tooltip]="helptext.netmask_tooltip | translate"
+        ></ix-input>
+
+        <ix-input
+          formControlName="gateway"
+          [label]="'IPv4 Default Gateway' | translate"
+          [tooltip]="helptext.gateway_tooltip | translate"
+        ></ix-input>
+
+        <ix-input
+          formControlName="vlan"
+          type="number"
+          [label]="'VLAN ID' | translate"
+          [tooltip]="helptext.vlan_tooltip | translate"
+        ></ix-input>
+      </ix-fieldset>
+      <mat-divider></mat-divider>
+
+      <ix-fieldset [title]="helptext.ipmi_password_reset | translate">
+        <ix-input
+          formControlName="password"
+          type="password"
+          [label]="'Password' | translate"
+          [tooltip]="helptext.password_tooltip | translate"
+        ></ix-input>
+      </ix-fieldset>
+
+      <mat-divider></mat-divider>
+
+      <mat-card-actions class="buttons">
+        <button
+          mat-button
+          type="submit"
+          color="primary"
+          ixTest="save"
+          [disabled]="form.invalid || isLoading"
+        >
+          {{ 'Save' | translate }}
+        </button>
+
+        <button
+          mat-button
+          type="button"
+          ixTest="manage-ipmi"
+          [disabled]="isManageButtonDisabled || isLoading"
+          (click)="openManageWindow()"
+        >
+          {{ 'Manage' | translate }}
+        </button>
+
+        <button mat-button type="button" ixTest="toggle-identify-light" (click)="toggleFlashing()">
+          <ng-container *ngIf="!isFlashing">
+            <ix-icon name="highlight"></ix-icon>
+            {{ 'Flash Identify Light' | translate }}
+          </ng-container>
+          <ng-container *ngIf="isFlashing">
+            <ix-icon name="highlight"></ix-icon>
+            {{ 'Stop Flashing' | translate }}
+          </ng-container>
+        </button>
+      </mat-card-actions>
+    </form>
+  </mat-card-content>
+</mat-card>

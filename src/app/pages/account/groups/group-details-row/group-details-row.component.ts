@@ -4,15 +4,11 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
 import { Group } from 'app/interfaces/group.interface';
 import {
   DeleteGroupDialogComponent,
 } from 'app/pages/account/groups/group-details-row/delete-group-dialog/delete-group-dialog.component';
 import { GroupFormComponent } from 'app/pages/account/groups/group-form/group-form.component';
-import {
-  WebSocketService,
-} from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
@@ -25,21 +21,16 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 export class GroupDetailsRowComponent {
   @Input() group: Group;
   @Input() colspan: number;
-  @Output() update = new EventEmitter<void>();
+  @Output() delete = new EventEmitter<number>();
 
   constructor(
-    private ws: WebSocketService,
-    private translate: TranslateService,
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
     private router: Router,
     private matDialog: MatDialog,
   ) {}
 
   doEdit(group: Group): void {
-    const groupEdit = this.slideIn.open(GroupFormComponent);
-    if (groupEdit) {
-      groupEdit.setupForm(group);
-    }
+    this.slideInService.open(GroupFormComponent, { data: group });
   }
 
   openGroupMembersForm(): void {
@@ -55,7 +46,7 @@ export class GroupDetailsRowComponent {
           return;
         }
 
-        this.update.emit();
+        this.delete.emit(group.id);
       });
   }
 }

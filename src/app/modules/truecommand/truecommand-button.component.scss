@@ -17,21 +17,14 @@
   animation: nudge 3s infinite linear;
 }
 
-::ng-deep .mat-icon.truecommand-icon > span.mat-badge-content {
+::ng-deep .truecommand-button > span.mat-badge-content {
   font-family: 'Material Icons';
 }
 
-::ng-deep .mat-icon.truecommand-icon.CONNECTED > span.mat-badge-content {
+::ng-deep .truecommand-button.CONNECTED > span.mat-badge-content {
   background: var(--green);
 }
 
-::ng-deep .mat-icon.truecommand-icon.FAILED > span.mat-badge-content {
-  background: var(--warn);
-}
-
-button.cdk-focused.cdk-keyboard-focused:focus-visible,
-button:focus-visible {
-  background: var(--focus-bg);
-  box-shadow: 0 0 0 1px var(--focus-brd) inset !important;
-  outline-width: 0;
+::ng-deep .truecommand-button.FAILED > span.mat-badge-content {
+  background: var(--red);
 }

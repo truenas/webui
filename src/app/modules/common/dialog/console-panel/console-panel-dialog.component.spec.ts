@@ -1,7 +1,7 @@
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { ConsoleMessagesStore } from 'app/modules/common/console-footer/console-messages.store';
 import { ConsolePanelDialogComponent } from 'app/modules/common/dialog/console-panel/console-panel-dialog.component';
+import { ConsoleMessagesStore } from 'app/modules/layout/components/console-footer/console-messages.store';
 
 describe('ConsolePanelDialogComponent', () => {
   let spectator: Spectator<ConsolePanelDialogComponent>;

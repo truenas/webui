@@ -2,40 +2,10 @@
   <mat-card-header>
     <h3 mat-card-title>
       {{ 'Usage' | translate }}
-
-      <ng-container [ngSwitch]="health">
-        <mat-icon
-          *ngSwitchCase="usageHealthLevel.Safe"
-          [matTooltip]="'Everything is fine' | translate"
-          class="pool-icon icon-online"
-        >
-          check_circle
-        </mat-icon>
-        <mat-icon
-          *ngSwitchCase="usageHealthLevel.Warn"
-          [matTooltip]="(isLowCapacity ? 'Low Capacity' : 'Warning') | translate"
-          class="pool-icon icon-warning"
-        >
-          error
-        </mat-icon>
-        <mat-icon
-          *ngSwitchCase="usageHealthLevel.Error"
-          class="pool-icon icon-faulted"
-          [matTooltip]="'Error' | translate"
-        >
-          cancel
-        </mat-icon>
-        <mat-icon
-          *ngSwitchDefault
-          class="pool-icon icon-error"
-          [matTooltip]="'Error' | translate"
-        >
-          cancel
-        </mat-icon>
-      </ng-container>
+      <ix-pool-card-icon [type]="iconType" [tooltip]="iconTooltip"></ix-pool-card-icon>
     </h3>
 
-    <a mat-button [routerLink]="['/', 'datasets', poolState.name]">
+    <a mat-button [ixTest]="[poolState.name, 'manage-datasets']" [routerLink]="['/', 'datasets', poolState.name]">
       {{ 'Manage Datasets' | translate }}
     </a>
   </mat-card-header>
@@ -49,8 +19,8 @@
       <ix-gauge-chart
         [colorFill]="usedPercentage === 0 ? chartBlankColor : isLowCapacity ? chartLowCapacityColor : chartFillColor"
         [colorBlank]="chartBlankColor"
-        [width]="160"
-        [height]="160"
+        [width]="150"
+        [height]="150"
         [label]="usedPercentage / 100 | percent: '1.0-1'"
         [value]="usedPercentage > 100 ? 100 : usedPercentage"
         [style]="isLowCapacity ? 'color: var(--red);' : ''"
@@ -87,19 +57,16 @@
               </span>
             </span>
           </li>
-          <li class="item-caption">
-            <span class="snapshots-caption" fxLayoutAlign="start center">
-              <b>{{ 'Used by Snapshots' | translate }}:</b>
-              <span class="value-caption">
-                {{ (rootDataset?.usedbysnapshots?.parsed | filesize: { standard: 'iec' }) || ('Unknown' | translate) }}
-              </span>
-            </span>
-          </li>
+          <!--
+              TODO: Used by Snapshots was removed.
+              Details in comments sections: https://ixsystems.atlassian.net/browse/NAS-118891
+          -->
         </ul>
       </div>
       <a
         class="link"
-        [routerLink]="['/reportsdashboard', 'disk']"
+        [ixTest]="[poolState.name, 'view-disk-space-reports']"
+        [routerLink]="['/reportsdashboard', 'partition']"
         [queryParams]="{ disks }"
       >
         {{ 'View Disk Space Reports' | translate }}

@@ -10,7 +10,8 @@ import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-se
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
-import { SystemGeneralService, WebSocketService } from 'app/services';
+import { DialogService, SystemGeneralService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 import { SignCsrDialogComponent } from './sign-csr-dialog.component';
 
 describe('SignCsrDialogComponent', () => {
@@ -28,6 +29,7 @@ describe('SignCsrDialogComponent', () => {
         mockCall('certificateauthority.ca_sign_csr'),
       ]),
       mockProvider(MatDialogRef),
+      mockProvider(DialogService),
       mockProvider(SystemGeneralService, {
         getUnsignedCertificates: () => of([
           { id: 1, name: 'csr-1' },

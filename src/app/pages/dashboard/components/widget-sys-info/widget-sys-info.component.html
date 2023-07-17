@@ -26,7 +26,7 @@
           [class.drag-handle]="showReorderHandle"
         >
           <ng-content [select]="[cdkDragHandle]"></ng-content>
-          <span class="grip" *ngIf="showReorderHandle"></span>
+          <span *ngIf="showReorderHandle" class="grip"></span>
           <h3 fxHide.xs class="mat-card-title-text">
             <span
               class="card-title-text"
@@ -66,30 +66,28 @@
                 class="mat-card-title-text primary-nav"
                 mat-icon-button
                 color="default"
-                ix-auto
-                ix-auto-type="button"
-                ix-auto-identifier="goBack"
+                [ixTest]="['sysinfo-widget', 'back']"
                 (click)="goBack()"
               >
-                <mat-icon class="back-arrow">chevron_left</mat-icon>
+                <ix-icon name="chevron_left" class="back-arrow"></ix-icon>
               </button>
 
               <div
-                class="platform-logo-wrapper {{ productType.toLowerCase() }}"
                 fxFlex="20"
+                [class]="['platform-logo-wrapper', productType?.toLowerCase()]"
               >
                 <ng-container *ngIf="productImage || isPassive; else textOnly">
-                  <mat-icon
-                    svgIcon="ix:truenas_scale_logo_full"
-                    id="{{ productModel }}"
-                  ></mat-icon>
+                  <ix-icon
+                    name="ix:logo_truenas_scale_full"
+                    [id]="productModel"
+                  ></ix-icon>
                 </ng-container>
 
                 <ng-template #textOnly>
-                  <mat-icon
-                    svgIcon="ix:truenas_scale_logotype"
-                    id="{{ productModel }}"
-                  ></mat-icon>
+                  <ix-icon
+                    name="ix:logo_truenas_scale_type"
+                    [id]="productModel"
+                  ></ix-icon>
                 </ng-template>
               </div>
 
@@ -101,16 +99,16 @@
                 [fxFlex.xs]="productType === ProductType.ScaleEnterprise && productImage === 'X10' ? 80 : 100"
               >
                 <div
-                  class="product-image {{ productEnclosure }}"
+                  [class]="'product-image ' + productEnclosure"
                   [class.truenas]="productType === ProductType.ScaleEnterprise"
                   [class.freenas]="productType !== ProductType.ScaleEnterprise"
-                  [class.ix-logo]="productImage == 'ix-original.svg'"
+                  [class.ix-logo]="productImage === 'ix-original.svg'"
                 >
                   <img
                     *ngIf="productImage; else generic"
-                    id="{{ productModel }}"
-                    matTooltip="View Enclosure"
                     matTooltipPosition="above"
+                    [matTooltip]="'View Enclosure' | translate"
+                    [id]="productModel"
                     [class.clickable]="enclosureSupport"
                     [matTooltipDisabled]="!enclosureSupport"
                     [src]="'assets/images/' + productImage"
@@ -118,24 +116,27 @@
                   />
 
                   <ng-template #generic>
-                    <mat-icon
-                      *ngIf="!certified && !isHa"
+                    <ix-icon
+                      *ngIf="!certified && !isHaLicensed"
                       class="generic"
-                      svgIcon="ix:truenas_scale_logomark"
-                    ></mat-icon>
-                    <mat-icon
-                      *ngIf="certified && !isHa"
+                      name="ix:logo_truenas_scale_mark"
+                    ></ix-icon>
+                    <ix-icon
+                      *ngIf="certified && !isHaLicensed"
                       class="generic"
-                      svgIcon="ix:freenas_certified"
-                    ></mat-icon>
+                      name="ix:logo_freenas_certified"
+                    ></ix-icon>
                   </ng-template>
-                  <div class="generic alert" *ngIf="!productImage && isPassive && haStatus !== 'HA Enabled'">
-                    <mat-icon fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
+                  <div *ngIf="!hasHa && isPassive" class="generic alert">
+                    <ix-icon name="mdi-alert"></ix-icon>
                   </div>
-                  <div *ngIf="productImage && isHa" class="ha-node-status">
-                    ({{ (isPassive ? 'Standby' : 'Active') | translate }})
+                  <div *ngIf="productImage && isHaLicensed && !isPassive" class="ha-node-status">
+                    ({{ 'Active' | translate }})
                   </div>
-                  <div *ngIf="ready && !productImage && productType === ProductType.ScaleEnterprise" class="ha-node-status">
+                  <div *ngIf="productImage && isHaLicensed && isPassive && hasHa" class="ha-node-status">
+                    ({{ 'Standby' | translate }})
+                  </div>
+                  <div *ngIf="ready && !productImage && productType === ProductType.ScaleEnterprise && hasHa" class="ha-node-status">
                     ({{ 'Unsupported Hardware' | translate }})
                   </div>
                 </div>
@@ -152,17 +153,15 @@
                   <button
                     *ngIf="!isPassive"
                     mat-button
-                    ix-auto
-                    ix-auto-type="button"
-                    [color]="updateBtnStatus"
+                    color="default"
+                    [ixTest]="['widget-sysinfo', 'update']"
                     (click)="router.navigate(['system', 'update'])"
-                    [ix-auto-identifier]="updateBtnLabel"
                   >
                     {{ updateBtnLabel | translate }}
                   </button>
                   <ix-simple-failover-button
                     *ngIf="isPassive"
-                    [disabled]="!haStatus || haStatus !== 'HA Enabled'"
+                    [disabled]="!hasHa && !(hasOnlyMismatchVersionsReason$ | async)"
                   ></ix-simple-failover-button>
                 </div>
               </ng-template>
@@ -171,30 +170,32 @@
             <!-- Details Section -->
             <div class="right" fxFlex.xs fxFlex.gt-xs="60" fxLayout="column">
               <div
-                *ngIf="!data && isHa && isPassive && !haStatus"
+                *ngIf="!data && isHaLicensed && isPassive && hasHa"
                 class="data-container ha-status"
                 fxFlex
               >
                 <div class="spinner-wrapper">
-                  <mat-spinner [diameter]="40" class="spinner"></mat-spinner>
+                  <mat-spinner class="spinner" [diameter]="40"></mat-spinner>
                 </div>
               </div>
 
               <div
-                *ngIf="!data && isHa && isPassive && haStatus && haStatus !== 'HA Enabled'"
+                *ngIf="!data || (isHaLicensed && isPassive && !hasHa)"
                 class="data-container ha-status"
                 fxFlex
               >
-                <h3>{{ haStatus }}</h3>
+                <h3>
+                  {{ hasHa ? ('HA Enabled' | translate) : ('HA Disabled' | translate) }}
+                </h3>
               </div>
 
-              <div *ngIf="!data && !isHa" class="loader">
-                <mat-spinner [diameter]="40" class="spinner"></mat-spinner>
+              <div *ngIf="!data && !isHaLicensed" class="loader">
+                <mat-spinner class="spinner" [diameter]="40"></mat-spinner>
               </div>
 
-              <div *ngIf="data" class="data-container" fxFlex>
+              <div *ngIf="(data && !isPassive) || (data && isPassive && hasHa)" class="data-container" fxFlex>
                 <div fxHide.gt-xs class="list-subheader">
-                  {{ (isPassive ? 'System Information (Standby)' : 'System Information') | translate }}
+                  {{ isPassive ? ('System Information (Standby)' | translate) : ('System Information' | translate) }}
                 </div>
                 <div fxHide.xs class="list-subheader">
                   {{ 'Overview' | translate }}
@@ -204,7 +205,7 @@
                   <mat-list-item>
                     <strong>{{ 'Platform' | translate }}:</strong>
                     <span>
-                      {{ data.system_product && manufacturer == 'ixsystems' ? data.system_product : 'Generic' }}
+                      {{ data.system_product && isIxHardware ? data.system_product : 'Generic' }}
                     </span>
                   </mat-list-item>
                   <mat-list-item>
@@ -214,8 +215,8 @@
                         <span>{{ data.version }}</span>
                       </div>
                       <ix-copy-btn
-                        [text]="data.version"
                         class="copy-version-button"
+                        [text]="data.version"
                       ></ix-copy-btn>
                     </div>
                   </mat-list-item>
@@ -223,14 +224,12 @@
                   <mat-list-item *ngIf="data.license">
                     <strong>{{ 'License' | translate }}:</strong>
                     <span>
-                      {{ data.license.contract_type.toLowerCase() | titlecase }}
+                      {{ licenseString }}
                     </span>
-                    &nbsp;contract, &nbsp; expires
-                    {{ data.license.contract_end.$value }}
                   </mat-list-item>
 
-                  <mat-list-item *ngIf="data.system_serial && manufacturer == 'ixsystems'">
-                    <strong>{{ 'Serial Number' | translate }}:</strong>
+                  <mat-list-item *ngIf="data.system_serial && isIxHardware">
+                    <strong>{{ 'System Serial' | translate }}:</strong>
                     <span>{{ data.system_serial }}</span>
                   </mat-list-item>
 
@@ -245,10 +244,6 @@
                       {{ '{uptimeString} as of {dateTime}' | translate: { uptimeString, dateTime } }}
                     </span>
                   </mat-list-item>
-                  <mat-list-item *ngIf="showTimeDiffWarning" class="time-warning">
-                    <mat-icon [matTooltip]="timeDiffWarning">error</mat-icon>
-                    {{ timeDiffWarning }}
-                  </mat-list-item>
                 </mat-list>
 
                 <div
@@ -260,17 +255,15 @@
                     *ngIf="!isPassive"
                     mat-button
                     color="primary"
-                    ix-auto
-                    ix-auto-type="button"
-                    [ix-auto-identifier]="updateBtnLabel"
+                    [ixTest]="['widget-sysinfo', 'update']"
                     (click)="router.navigate(['system', 'update'])"
                   >
                     {{ updateBtnLabel | translate }}
                   </button>
                   <ix-simple-failover-button
                     *ngIf="isPassive"
-                    [disabled]="!haStatus || haStatus !== 'HA Enabled'"
                     color="primary"
+                    [disabled]="!hasHa && !(hasOnlyMismatchVersionsReason$ | async)"
                   ></ix-simple-failover-button>
                 </div>
               </div>
@@ -282,25 +275,6 @@
         </div>
         <!-- end carousel -->
       </mat-card-content>
-    </mat-card>
-
-    <!-- Flip Side -->
-    <mat-card class="back">
-      <mat-card-content>
-        <h3>Form goes here</h3>
-      </mat-card-content>
-      <div class="widget-footer">
-        <button
-          mat-button
-          color="primary"
-          ix-auto
-          ix-auto-type="button"
-          ix-auto-identifier="FLIP"
-          (click)="toggleConfig()"
-        >
-          {{ 'Flip' | translate }}
-        </button>
-      </div>
     </mat-card>
   </div>
 </div>

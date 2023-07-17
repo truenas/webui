@@ -2,11 +2,11 @@ import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { forkJoin, of } from 'rxjs';
+import { EMPTY, forkJoin, of } from 'rxjs';
 import {
   catchError, filter, map, mergeMap, pairwise, switchMap, withLatestFrom,
 } from 'rxjs/operators';
-import { ApiEventMessage } from 'app/enums/api-event-message.enum';
+import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import {
   dismissAlertPressed, dismissAllAlertsPressed,
   reopenAlertPressed,
@@ -18,7 +18,7 @@ import {
   alertsNotLoaded,
 } from 'app/modules/alerts/store/alert.actions';
 import { AlertSlice, selectDismissedAlerts, selectUnreadAlerts } from 'app/modules/alerts/store/alert.selectors';
-import { WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 
 @Injectable()
@@ -39,18 +39,19 @@ export class AlertEffects {
     }),
   ));
 
-  // TODO: Two types of subscription need to be refactored into one in WebSocketService.
   subscribeToUpdates$ = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized),
     switchMap(() => {
       return this.ws.subscribe('alert.list').pipe(
-        filter((event) => !(event.msg === ApiEventMessage.Changed && event.cleared)),
-        map((event) => {
+        filter((event) => event.msg !== IncomingApiMessageType.Removed),
+        switchMap((event) => {
           switch (event.msg) {
-            case ApiEventMessage.Added:
-              return alertAdded({ alert: event.fields });
-            case ApiEventMessage.Changed:
-              return alertChanged({ alert: event.fields });
+            case IncomingApiMessageType.Added:
+              return of(alertAdded({ alert: event.fields }));
+            case IncomingApiMessageType.Changed:
+              return of(alertChanged({ alert: event.fields }));
+            default:
+              return EMPTY;
           }
         }),
       );
@@ -60,9 +61,9 @@ export class AlertEffects {
   subscribeToRemoval$ = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized),
     switchMap(() => {
-      return this.ws.sub('alert.list').pipe(
-        filter((event) => event.msg === ApiEventMessage.Changed && event.cleared),
-        map((event) => alertRemoved({ id: event.id })),
+      return this.ws.subscribe('alert.list').pipe(
+        filter((event) => event.msg === IncomingApiMessageType.Removed),
+        map((event) => alertRemoved({ id: event.id.toString() })),
       );
     }),
   ));

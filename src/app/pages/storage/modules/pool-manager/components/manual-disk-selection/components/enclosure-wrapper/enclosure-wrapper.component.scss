@@ -1,0 +1,51 @@
+.outer-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 120px;
+}
+
+.horizontal-border {
+  border: 0.5px solid var(--alt-bg2);
+  height: 1px;
+}
+
+.vertical-border {
+  border: 0.5px solid var(--alt-bg2);
+  width: 1px;
+}
+
+.vdev-container {
+  display: flex;
+  height: 100%;
+
+  .content-container {
+    flex-grow: 1;
+    margin: 5px 3px;
+    padding-bottom: 5px;
+  }
+}
+
+.bottom-border-container {
+  display: flex;
+  flex-direction: row;
+
+  .horizontal-border {
+    flex-grow: 1;
+  }
+}
+
+.enclosure-container {
+  display: flex;
+  margin: 0 5px;
+  position: relative;
+  top: -10px;
+
+  ix-icon {
+    margin-right: 5px;
+  }
+
+  strong {
+    font-size: 14px;
+  }
+}

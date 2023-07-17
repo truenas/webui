@@ -1,13 +1,14 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
+import { WINDOW } from 'app/helpers/window.helper';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
-import { WebSocketService } from './ws.service';
 
 @UntilDestroy()
 @Injectable()
@@ -367,18 +368,22 @@ export class LanguageService {
       code: 'zh-hans',
     },
   ];
-  updateCall = 'system.general.update' as const;
 
   constructor(
     protected translate: TranslateService,
     protected ws: WebSocketService,
     private store$: Store<AppState>,
+    @Inject(WINDOW) private window: Window,
   ) {
   }
 
   setLanguageFromBrowser(): Observable<boolean> {
     if (this.currentLanguage) {
       return of(true);
+    }
+
+    if (this.window.localStorage.language) {
+      return this.setLanguage(this.window.localStorage.getItem('language'));
     }
 
     const browserLang = this.translate.getBrowserLang();

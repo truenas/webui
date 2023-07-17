@@ -1,5 +1,9 @@
-import { ChangeDetectionStrategy, Component, ViewChild } from '@angular/core';
+import {
+  AfterViewInit, ChangeDetectionStrategy, Component, ViewChild,
+} from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { BehaviorSubject } from 'rxjs';
 import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
 import { CloudCredential } from 'app/interfaces/cloud-sync-task.interface';
@@ -10,12 +14,14 @@ import {
   BaseProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/base-provider-form';
 
+@UntilDestroy()
 @Component({
   templateUrl: './token-provider-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TokenProviderFormComponent extends BaseProviderFormComponent {
+export class TokenProviderFormComponent extends BaseProviderFormComponent implements AfterViewInit {
   @ViewChild(OauthProviderComponent, { static: false }) oauthComponent: OauthProviderComponent;
+  private formPatcher$ = new BehaviorSubject<CloudCredential['attributes']>({});
 
   form = this.formBuilder.group({
     token: ['', Validators.required],
@@ -48,6 +54,19 @@ export class TokenProviderFormComponent extends BaseProviderFormComponent {
     }
   }
 
+  getFormSetter$ = (): BehaviorSubject<CloudCredential['attributes']> => {
+    return this.formPatcher$;
+  };
+
+  ngAfterViewInit(): void {
+    this.formPatcher$.pipe(untilDestroyed(this)).subscribe((values) => {
+      this.form.patchValue(values);
+      if (this.hasOAuth) {
+        this.oauthComponent.form.patchValue(values);
+      }
+    });
+  }
+
   onOauthAuthenticated(attributes: Record<string, unknown>): void {
     this.form.patchValue(attributes);
   }
@@ -61,13 +80,5 @@ export class TokenProviderFormComponent extends BaseProviderFormComponent {
       ...this.oauthComponent.form.value,
       ...this.form.value,
     };
-  }
-
-  setValues(values: CloudCredential['attributes']): void {
-    this.form.patchValue(values);
-
-    if (this.hasOAuth) {
-      this.oauthComponent.form.patchValue(values);
-    }
   }
 }

@@ -1,18 +1,18 @@
-import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
+import { MiB } from 'app/constants/bytes.constant';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { Disk, TopologyDisk } from 'app/interfaces/storage.interface';
 import { TopologyItemIconComponent } from 'app/pages/storage/modules/devices/components/topology-item-icon/topology-item-icon.component';
 import { TopologyItemNodeComponent } from 'app/pages/storage/modules/devices/components/topology-item-node/topology-item-node.component';
-import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
 
 describe('TopologyItemNodeComponent', () => {
   let spectator: Spectator<TopologyItemNodeComponent>;
   const topologyDisk = {
     type: TopologyItemType.Disk,
-    path: null,
+    path: '/path/to/disk',
     guid: '123',
     status: TopologyItemStatus.Offline,
     stats: {
@@ -25,15 +25,12 @@ describe('TopologyItemNodeComponent', () => {
   } as TopologyDisk;
   const disk = {
     type: DiskType.Hdd,
-    size: 1024 * 1024 * 16,
+    size: 16 * MiB,
   } as Disk;
   const createComponent = createComponentFactory({
     component: TopologyItemNodeComponent,
     declarations: [
       MockComponent(TopologyItemIconComponent),
-    ],
-    providers: [
-      mockProvider(DevicesStore),
     ],
   });
 
@@ -51,11 +48,11 @@ describe('TopologyItemNodeComponent', () => {
 
   it('shows "Status"', () => {
     expect(spectator.query('.cell-status span')).toHaveText(topologyDisk.status);
-    expect(spectator.component.statusColor).toEqual('var(--alt-bg2)');
+    expect(spectator.query('.cell-status')).toHaveClass('fn-theme-yellow');
   });
 
   it('shows "Capacity"', () => {
-    expect(spectator.query('.cell-capacity')).toHaveText('16.00MiB');
+    expect(spectator.query('.cell-capacity')).toHaveText('16 MiB');
   });
 
   it('shows "Errors"', () => {

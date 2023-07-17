@@ -1,10 +1,10 @@
 import {
   Component, EventEmitter, Input, Output,
 } from '@angular/core';
-import { MatSliderChange } from '@angular/material/slider';
 
 @Component({
   selector: 'ix-toolbar-slider',
+  styleUrls: ['./toolbar-slider.component.scss'],
   templateUrl: './toolbar-slider.component.html',
 })
 export class ToolbarSliderComponent {
@@ -16,8 +16,8 @@ export class ToolbarSliderComponent {
   @Input() name: string;
   @Output() valueChange = new EventEmitter<number>();
 
-  onChange(event: MatSliderChange): void {
-    this.value = event.value;
+  onChange(updatedValue: string): void {
+    this.value = +updatedValue;
     this.valueChange.emit(this.value);
   }
 }

@@ -1,0 +1,23 @@
+<h1 mat-dialog-title>{{ 'Repeat Data VDev' | translate }}</h1>
+<div mat-dialog-content>
+  <ix-select
+    [formControl]="repeatCountControl"
+    [label]="'Additional Data VDevs to Create' | translate"
+    [required]="true"
+    [options]="repeatOptions$"
+    [tooltip]="helptext.manager_duplicate_vdevs_tooltip | translate"
+  ></ix-select>
+
+  <p class="description">{{ description }}</p>
+</div>
+<ix-form-actions mat-dialog-actions>
+  <button mat-button ixTest="cancel" [matDialogClose]="null">{{ 'Cancel' | translate }}</button>
+  <button
+    mat-button
+    color="primary"
+    ixTest="repeat-vdev"
+    (click)="onSubmit()"
+  >
+    {{ 'Repeat Vdev' | translate }}
+  </button>
+</ix-form-actions>

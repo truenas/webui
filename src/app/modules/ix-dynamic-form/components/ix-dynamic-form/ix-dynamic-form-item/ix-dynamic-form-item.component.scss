@@ -1,0 +1,35 @@
+.disabled {
+  cursor: not-allowed;
+  opacity: var(--disabled-opacity);
+  pointer-events: none;
+}
+
+.indent {
+  padding-left: 16px;
+}
+
+.list {
+  margin: 0 16px;
+}
+
+.label {
+  display: flex;
+  flex-direction: row;
+  height: 28px;
+}
+
+.label-wrapper {
+  align-items: center;
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  margin-right: 10px;
+}
+
+.label-tooltip {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  justify-content: center;
+}

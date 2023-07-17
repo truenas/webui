@@ -2,12 +2,9 @@ import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import {
   Component, ElementRef, OnInit, OnDestroy, AfterViewInit, ViewChild, TemplateRef, Inject,
 } from '@angular/core';
-import {
-  Router, ActivatedRoute,
-} from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
-import { format } from 'date-fns';
+import { ReportingGraphName } from 'app/enums/reporting-graph-name.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Option } from 'app/interfaces/option.interface';
 import { ReportTab, ReportType } from 'app/pages/reports-dashboard/interfaces/report-tab.interface';
@@ -18,7 +15,7 @@ import { ReportsService } from './reports.service';
 @UntilDestroy()
 @Component({
   selector: 'ix-reports-dashboard',
-  styleUrls: ['./reports-dashboard.scss'],
+  styleUrls: ['./reports-dashboard.component.scss'],
   templateUrl: './reports-dashboard.component.html',
 })
 export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewInit {
@@ -33,50 +30,41 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
   otherReports: Report[] = [];
   activeReports: Report[] = [];
   visibleReports: number[] = [];
-  allTabs: ReportTab[] = this.reportsService.getReportTabs();
-  hasUps = false;
+  allTabs: ReportTab[];
 
   constructor(
-    private router: Router,
     private route: ActivatedRoute,
-    private translate: TranslateService,
     private layoutService: LayoutService,
     private reportsService: ReportsService,
     @Inject(WINDOW) private window: Window,
   ) {}
 
-  get timeDiffWarning(): string {
-    if (!this.reportsService.showTimeDiffWarning) {
-      return '';
-    }
-    const datetime = format(this.reportsService.serverTime, 'MMM dd, HH:mm:ss, OOOO');
-    return this.translate.instant('Your NAS time {datetime} does not match your computer time.', { datetime });
-  }
-
   ngOnInit(): void {
-    this.scrollContainer = document.querySelector('.rightside-content-hold');
+    this.scrollContainer = this.layoutService.getContentContainer();
     this.scrollContainer.style.overflow = 'hidden';
 
-    this.reportsService.getReportGraphs().pipe(untilDestroyed(this)).subscribe((reports) => {
-      this.allReports = reports.map((report) => {
-        const list = [];
-        if (report.identifiers) {
-          report.identifiers.forEach(() => list.push(true));
-        } else {
-          list.push(true);
-        }
-        return {
-          ...report,
-          isRendered: list,
-        };
+    this.reportsService.getReportGraphs()
+      .pipe(untilDestroyed(this))
+      .subscribe((reports) => {
+        this.allTabs = this.reportsService.getReportTabs();
+        this.allReports = reports.map((report) => {
+          const list = [];
+          if (report.identifiers) {
+            report.identifiers.forEach(() => list.push(true));
+          } else {
+            list.push(true);
+          }
+          return {
+            ...report,
+            isRendered: list,
+          };
+        });
+
+        this.diskReports = this.allReports.filter((report) => report.name.startsWith('disk'));
+        this.otherReports = this.allReports.filter((report) => !report.name.startsWith('disk'));
+
+        this.activateTabFromUrl();
       });
-
-      this.hasUps = this.allReports.some((report) => report.title.startsWith('UPS'));
-      this.diskReports = this.allReports.filter((report) => report.name.startsWith('disk'));
-      this.otherReports = this.allReports.filter((report) => !report.name.startsWith('disk'));
-
-      this.activateTabFromUrl();
-    });
   }
 
   ngAfterViewInit(): void {
@@ -88,7 +76,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
   }
 
   activateTabFromUrl(): void {
-    const subpath = this.route.snapshot.url[0] && this.route.snapshot.url[0].path;
+    const subpath = this.route.snapshot?.url[0]?.path;
     const tabFound = this.allTabs.find((tab) => tab.value === subpath);
     this.updateActiveTab(tabFound || this.allTabs[0]);
   }
@@ -105,41 +93,55 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
     }
   }
 
-  navigateToTab(tab: ReportTab): void {
-    this.router.navigate(['/reportsdashboard', tab.value]);
-  }
-
   activateTab(activeTab: ReportTab): void {
     const reportCategories = activeTab.value === ReportType.Disk ? this.diskReports : this.otherReports.filter(
       (report) => {
+        const graphName = report.name as ReportingGraphName;
         let condition;
         switch (activeTab.value) {
           case ReportType.Cpu:
-            condition = (report.name === 'cpu' || report.name === 'load' || report.name === 'cputemp');
+            condition = [
+              ReportingGraphName.Cpu,
+              ReportingGraphName.CpuTemp,
+              ReportingGraphName.SystemLoad,
+            ].includes(graphName);
             break;
           case ReportType.Memory:
-            condition = (report.name === 'memory' || report.name === 'swap');
+            condition = [
+              ReportingGraphName.Memory,
+              ReportingGraphName.Swap,
+            ].includes(graphName);
             break;
           case ReportType.Network:
-            condition = (report.name === 'interface');
+            condition = ReportingGraphName.NetworkInterface === graphName;
             break;
           case ReportType.Nfs:
-            condition = (report.name === 'nfsstat' || report.name === 'nfsstatbytes');
+            condition = [
+              ReportingGraphName.NfsStat,
+              ReportingGraphName.NfsStatBytes,
+            ].includes(graphName);
             break;
           case ReportType.Partition:
-            condition = (report.name === 'df');
+            condition = ReportingGraphName.Partition === graphName;
             break;
           case ReportType.System:
-            condition = (report.name === 'processes' || report.name === 'uptime');
+            condition = [
+              ReportingGraphName.Processes,
+              ReportingGraphName.Uptime,
+            ].includes(graphName);
             break;
           case ReportType.Target:
-            condition = (report.name === 'ctl');
+            condition = ReportingGraphName.Target === graphName;
             break;
           case ReportType.Ups:
-            condition = report.name.startsWith('ups');
+            condition = report.name.startsWith(ReportingGraphName.Ups);
             break;
           case ReportType.Zfs:
-            condition = report.name.startsWith('arc');
+            condition = [
+              ReportingGraphName.ZfsArcSize,
+              ReportingGraphName.ZfsArcRatio,
+              ReportingGraphName.ZfsArcResult,
+            ].includes(graphName);
             break;
           default:
             condition = true;

@@ -1,4 +1,4 @@
-@import '~assets/styles/mixins/cards';
+@import 'mixins/cards';
 
 :host {
   display: flex;
@@ -9,33 +9,26 @@
   flex: 1;
 
   .content-container {
+    display: flex;
+    flex-direction: column;
     height: 100%;
   }
 
   .vdev-line {
+    align-items: center;
+    display: flex;
     margin: 8px 0;
+    place-content: center space-between;
 
     &:first-child {
       margin-top: 0;
     }
   }
-}
 
-.pool-icon {
-  &.icon-online {
-    color: var(--green);
-  }
-
-  &.icon-warning {
-    color: var(--orange);
-  }
-
-  &.icon-faulted {
-    color: var(--blue);
-  }
-
-  &.icon-error {
-    color: var(--red);
+  .vdev-stats {
+    align-items: center;
+    display: flex;
+    place-content: center;
   }
 }
 
@@ -44,6 +37,3 @@
   padding: 0 6px;
 }
 
-.vdev-line {
-  margin: 12px 0;
-}

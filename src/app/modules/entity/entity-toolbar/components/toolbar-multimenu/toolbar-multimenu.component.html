@@ -4,27 +4,23 @@
     <button
       mat-button
       color="default"
-      ix-auto
-      ix-auto-type="button"
       class="menu-toggle"
+      [ixTest]="['toolbar-menu', label]"
       [matMenuTriggerFor]="menu"
-      [ix-auto-identifier]="id + '_' + config.label"
     >
-      {{ config.label }} <mat-icon class="menu-caret">arrow_drop_down</mat-icon>
+      {{ label }} <ix-icon name="mdi-menu-down" class="menu-caret"></ix-icon>
     </button>
     <mat-menu #menu="matMenu" multiple overlapTrigger="false">
       <!-- SELECT ALL -->
       <div (click)="$event.stopPropagation()">
         <button
           mat-menu-item
-          ix-auto
-          ix-auto-type="option"
-          [ix-auto-identifier]="id + '_SELECT_ALL'"
+          [ixTest]="['toolbar-menu', label, 'select-all']"
           (click)="checkAll()"
         >
           <span>
-            <mat-icon *ngIf="checkLength()">check_circle</mat-icon>
-            <mat-icon *ngIf="!checkLength()">remove</mat-icon>
+            <ix-icon *ngIf="checkLength()" name="check_circle"></ix-icon>
+            <ix-icon *ngIf="!checkLength()" name="remove"></ix-icon>
           </span>
           <span>Select All</span>
         </button>
@@ -33,32 +29,30 @@
       <!-- OPTIONS-->
       <div (click)="$event.stopPropagation()">
         <button
-          *ngFor="let option of config.options; let i = index"
+          *ngFor="let option of options; let i = index"
           mat-menu-item
-          ix-auto
-          ix-auto-type="option"
-          [ix-auto-identifier]="id + '_' + option.label"
+          [ixTest]="['toolbar-menu', label, option.label]"
           (click)="onClick(option, i)"
         >
           <span>
-            <mat-icon *ngIf="selectStates[i]">check_circle</mat-icon>
-            <mat-icon *ngIf="!selectStates[i]">remove</mat-icon>
+            <ix-icon *ngIf="checkLength()" name="check_circle"></ix-icon>
+            <ix-icon *ngIf="!checkLength()" name="remove"></ix-icon>
           </span>
           <span>{{ option.label | translate }}</span>
-          <span *ngIf="option.labelIcon" class="icon-suffix {{ option.labelIconType }}">
+          <span *ngIf="option.labelIcon" [class]="['icon-suffix', option.labelIconType]">
             &nbsp;
-            <mat-icon *ngIf="!option.labelIconType || option.labelIconType == 'default'">
-              {{ option.labelIcon }}
-            </mat-icon>
-            <mat-icon
-              *ngIf="option.labelIconType && option.labelIconType == 'community'"
-              fontSet="mdi-set"
-              fontIcon="mdi-{{ option.labelIcon }}"
-            ></mat-icon>
-            <mat-icon
-              *ngIf="option.labelIconType && option.labelIconType == 'custom'"
-              [svgIcon]="option.labelIcon"
-            ></mat-icon>
+            <ix-icon
+              *ngIf="!option.labelIconType || option.labelIconType === 'default'"
+              [name]="option.labelIcon"
+            ></ix-icon>
+            <ix-icon
+              *ngIf="option?.labelIconType === 'community'"
+              [name]="'mdi-' + option.labelIcon"
+            ></ix-icon>
+            <ix-icon
+              *ngIf="option?.labelIconType === 'custom'"
+              [name]="option.labelIcon"
+            ></ix-icon>
           </span>
         </button>
       </div>

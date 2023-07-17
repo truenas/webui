@@ -10,10 +10,11 @@ import { mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.ut
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { PoolFindResult } from 'app/interfaces/pool-import.interface';
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
-import { WebSocketService, DialogService } from 'app/services';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { DialogService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 import { ImportPoolComponent } from './import-pool.component';
 
 describe('ImportPoolComponent', () => {
@@ -48,7 +49,7 @@ describe('ImportPoolComponent', () => {
             status: PoolStatus.Online,
           }] as PoolFindResult[])),
       ]),
-      mockProvider(IxSlideInService),
+      mockProvider(IxSlideInRef),
       mockProvider(DialogService),
       mockProvider(MatDialog, {
         open: () => mockEntityJobComponentRef,

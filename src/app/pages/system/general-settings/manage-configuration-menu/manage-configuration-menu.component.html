@@ -1,16 +1,22 @@
-<button mat-button color="primary" class="menu-toggle" [matMenuTriggerFor]="menu">
+<button
+  mat-button
+  color="primary"
+  class="menu-toggle"
+  ixTest="manage-configuration-menu"
+  [matMenuTriggerFor]="menu"
+>
   {{ 'Manage Configuration' | translate }}
-  <mat-icon class="menu-caret">arrow_drop_down</mat-icon>
+  <ix-icon name="mdi-menu-down" class="menu-caret"></ix-icon>
 </button>
 
 <mat-menu #menu="matMenu">
-  <button mat-menu-item (click)="onDownloadConfig()">
+  <button mat-menu-item ixTest="download-configuration" (click)="onDownloadConfig()">
     {{ 'Download File' | translate }}
   </button>
-  <button mat-menu-item (click)="onUploadConfig()">
+  <button mat-menu-item ixTest="upload-configuration" (click)="onUploadConfig()">
     {{ 'Upload File' | translate }}
   </button>
-  <button mat-menu-item (click)="onResetDefaults()">
+  <button mat-menu-item ixTest="reset-configuration" (click)="onResetDefaults()">
     {{ 'Reset to Defaults' | translate }}
   </button>
 </mat-menu>

@@ -24,7 +24,7 @@ export class BootenvNodeItemComponent {
 
   get ownName(): string {
     if (!this.topologyItem) {
-      return;
+      return '';
     }
     if (this.topologyItem.name) {
       return this.topologyItem.name;

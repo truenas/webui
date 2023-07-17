@@ -18,7 +18,7 @@
     margin: 0;
     min-height: 36px;
 
-    .mat-slide-toggle-content {
+    .mat-mdc-slide-toggle-content {
       font-family: var(--font-family-body);
     }
   }
@@ -35,7 +35,7 @@
 }
 
 .reports-menu ::ng-deep {
-  .mat-menu-item {
+  .mat-mdc-menu-item {
     &.selected {
       background-color: var(--primary);
     }

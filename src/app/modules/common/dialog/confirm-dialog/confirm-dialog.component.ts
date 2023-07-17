@@ -1,46 +1,77 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component, Inject,
+} from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
-import { ApiMethod } from 'app/interfaces/api-directory.interface';
+import { ConfirmOptions, ConfirmOptionsWithSecondaryCheckbox } from 'app/interfaces/dialog.interface';
 
 @Component({
   selector: 'ix-confirm-dialog',
   templateUrl: './confirm-dialog.component.html',
   styleUrls: ['./confirm-dialog.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ConfirmDialogComponent {
-  title: string;
-  message: string;
-  buttonMsg: string = this.translate.instant('Continue');
-  cancelMsg: string = this.translate.instant('Cancel');
-  hideCheckBox = false;
+  options: ConfirmOptionsWithSecondaryCheckbox;
+
   isSubmitEnabled = false;
-  secondaryCheckBox = false;
-  secondaryCheckBoxMsg = '';
-  method: ApiMethod;
-  data: unknown;
-  tooltip: string;
-  hideCancel = false;
-  customSubmit: () => void;
+  isSecondaryCheckboxChecked = false;
 
-  @Output() switchSelectionEmitter = new EventEmitter<boolean>();
+  private readonly defaultOptions = {
+    buttonText: this.translate.instant('Continue'),
+    cancelText: this.translate.instant('Cancel'),
+    hideCheckbox: false,
+    confirmationCheckboxText: this.translate.instant('Confirm'),
+  } as ConfirmOptions;
 
-  constructor(public dialogRef: MatDialogRef<ConfirmDialogComponent>, protected translate: TranslateService) {
+  constructor(
+    private dialogRef: MatDialogRef<ConfirmDialogComponent>,
+    private translate: TranslateService,
+    @Inject(MAT_DIALOG_DATA) options: ConfirmOptionsWithSecondaryCheckbox,
+  ) {
+    this.options = { ...this.defaultOptions, ...options };
+    if (options.hideCancel) {
+      this.dialogRef.disableClose = options.hideCancel;
+    }
+
+    if (options.secondaryCheckbox) {
+      // Don't allow user to close via backdrop to ensure that object is returned.
+      this.dialogRef.disableClose = true;
+    }
   }
 
   toggleSubmit(data: MatCheckboxChange): void {
     this.isSubmitEnabled = data.checked;
   }
 
-  secondaryCheckBoxEvent(): void {
-    this.switchSelectionEmitter.emit(this.secondaryCheckBox);
+  isDisabled(): boolean {
+    if (!this.options.hideCheckbox) {
+      return !this.isSubmitEnabled && !this.options.hideCheckbox;
+    }
+    return false;
   }
 
-  isDisabled(): boolean {
-    if (!this.hideCheckBox) {
-      return !this.isSubmitEnabled && !this.hideCheckBox;
-    }
-    return this.secondaryCheckBox ? !this.isSubmitEnabled : false;
+  onCancel(): void {
+    const result = this.options.secondaryCheckbox
+      ? {
+        confirmed: false,
+        secondaryCheckbox: this.isSecondaryCheckboxChecked,
+      }
+      : false;
+
+    this.dialogRef.close(result);
+  }
+
+  onSubmit(): void {
+    const result = this.options.secondaryCheckbox
+      ? {
+        confirmed: true,
+        secondaryCheckbox: this.isSecondaryCheckboxChecked,
+      }
+      : true;
+
+    this.dialogRef.close(result);
   }
 }

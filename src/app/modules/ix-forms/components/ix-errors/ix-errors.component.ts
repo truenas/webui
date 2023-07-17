@@ -1,11 +1,17 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, SimpleChanges,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges,
 } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { DefaultValidationError } from 'app/enums/default-validation-error.enum';
+import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
+
+interface SomeError {
+  [key: string]: unknown;
+}
 
 @UntilDestroy()
 @Component({
@@ -47,6 +53,8 @@ export class IxErrorsComponent implements OnChanges {
       { min, max },
     ),
     number: () => this.translate.instant('Value must be a number'),
+    cron: () => this.translate.instant('Invalid cron expression'),
+    ip2: () => this.translate.instant('Invalid IP address'),
   };
 
   constructor(
@@ -54,19 +62,24 @@ export class IxErrorsComponent implements OnChanges {
     private cdr: ChangeDetectorRef,
   ) {}
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(changes: IxSimpleChanges<this>): void {
     if ('control' in changes && this.control) {
       // This manually works around: https://github.com/angular/angular/issues/10816
       this.statusChangeSubscription?.unsubscribe();
-      this.statusChangeSubscription = this.control.statusChanges.pipe(untilDestroyed(this)).subscribe(() => {
+      this.statusChangeSubscription = this.control.statusChanges.pipe(
+        filter((status) => status !== 'PENDING'),
+        untilDestroyed(this),
+      ).subscribe(() => {
         const newErrors: string[] = Object.keys(this.control.errors || []).map((error) => {
-          if (this.control.errors[error].message) {
-            return this.control.errors[error].message;
+          const message = (this.control.errors[error] as SomeError).message as string;
+          if (message) {
+            return message;
           }
 
           return this.getDefaultError(error as DefaultValidationError);
         });
-        this.messages = newErrors;
+
+        this.messages = newErrors.filter((message) => !!message);
 
         this.cdr.markForCheck();
       });
@@ -82,25 +95,34 @@ export class IxErrorsComponent implements OnChanges {
   getDefaultError(error: DefaultValidationError): string {
     switch (error) {
       case DefaultValidationError.Min:
-        return this.defaultErrMessages.min(this.control.errors.min.min);
+        return this.defaultErrMessages.min((this.control.errors.min as SomeError).min as number);
       case DefaultValidationError.Max:
-        return this.defaultErrMessages.max(this.control.errors.max.max);
+        return this.defaultErrMessages.max((this.control.errors.max as SomeError).max as number);
       case DefaultValidationError.Required:
         return this.defaultErrMessages.required();
       case DefaultValidationError.Email:
         return this.defaultErrMessages.email();
       case DefaultValidationError.MinLength:
-        return this.defaultErrMessages.minlength(this.control.errors.minlength.requiredLength);
+        return this.defaultErrMessages.minlength((this.control.errors.minlength as SomeError).requiredLength as number);
       case DefaultValidationError.MaxLength:
-        return this.defaultErrMessages.maxlength(this.control.errors.maxlength.requiredLength);
+        return this.defaultErrMessages.maxlength((this.control.errors.maxlength as SomeError).requiredLength as number);
       case DefaultValidationError.Range:
-        return this.defaultErrMessages.range(this.control.errors.rangeValue.min, this.control.errors.rangeValue.max);
+        return this.defaultErrMessages.range(
+          (this.control.errors.rangeValue as SomeError).min as number,
+          (this.control.errors.rangeValue as SomeError).max as number,
+        );
       case DefaultValidationError.Pattern:
         return this.defaultErrMessages.pattern();
       case DefaultValidationError.Forbidden:
-        return this.defaultErrMessages.forbidden(this.control.value);
+        return this.defaultErrMessages.forbidden(this.control.errors.value);
       case DefaultValidationError.Number:
         return this.defaultErrMessages.number();
+      case DefaultValidationError.Cron:
+        return this.defaultErrMessages.cron();
+      case DefaultValidationError.Ip2:
+        return this.defaultErrMessages.ip2();
+      default:
+        return undefined;
     }
   }
 }

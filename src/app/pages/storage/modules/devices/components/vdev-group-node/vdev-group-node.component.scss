@@ -15,12 +15,14 @@
     padding: 4px 0;
 
     &:first-child {
+      display: flex;
       left: 0;
       position: sticky;
     }
   }
 
   .caption-name {
+    align-self: center;
     background: linear-gradient(90deg, var(--bg1) 0%, var(--bg1) calc(100% - 13px), transparent 100%);
     padding-left: 8px;
     padding-right: 15px;

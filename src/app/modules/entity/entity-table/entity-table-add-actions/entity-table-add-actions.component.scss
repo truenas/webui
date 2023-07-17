@@ -1,3 +1,5 @@
+@import 'scss-imports/cssvars';
+
 .entity-add-actions-wrapper {
   display: inline-block;
   text-align: left;
@@ -10,4 +12,49 @@
 
 .spinner {
   margin-left: 8px;
+}
+
+form {
+  &.search-field {
+    input {
+      height: 34px !important;
+      top: -8px !important;
+    }
+
+    .search-icon-wrapper,
+    .reset-icon-wrapper {
+      left: 2px;
+      position: relative;
+      top: 1px;
+
+      ix-icon {
+        width: 24px;
+      }
+    }
+  }
+}
+
+#row-filter.form-element {
+  display: inline;
+  margin: 0;
+  max-height: 36px;
+  width: unset !important;
+}
+
+@media #{$media-lt-sm} {
+  #row-filter.search-field {
+    margin-top: 8px;
+  }
+}
+
+#row-filter.form-element ::ng-deep .mat-mdc-text-field-wrapper {
+  max-height: 36px !important;
+  width: inherit !important;
+}
+
+#row-filter.form-element ::ng-deep .mat-mdc-text-field-wrapper .mat-input-element {
+  height: 16px;
+  padding-left: 8px;
+  position: relative;
+  top: -4px;
 }

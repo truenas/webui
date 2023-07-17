@@ -1,4 +1,3 @@
-import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const helptextSystemAcme = {
@@ -8,7 +7,6 @@ export const helptextSystemAcme = {
   authenticator_name_placeholder: T('Name'),
   authenticator_name_tooltip: T('Internal identifier for the\
  authenticator.'),
-  authenticator_name_validation: Validators.required,
 
   authenticator_provider_placeholder: T('Authenticator'),
   authenticator_provider_tooltip: T('Choose a DNS provider and\

@@ -11,10 +11,12 @@ export interface VirtualMachine {
   cpu_model: string;
   description: string;
   devices: VmDevice[];
-  grubconfig: string;
   hide_from_msr: boolean;
   ensure_display_device: boolean;
   id: number;
+  /**
+   * In megabytes.
+   */
   memory: number;
   name: string;
   shutdown_timeout: number;
@@ -31,9 +33,13 @@ export interface VirtualMachine {
   vcpus: number;
   arch_type: string;
   machine_type: string;
+  command_line_args: string;
+  suspend_on_snapshot: boolean;
+  min_memory: number;
+  uuid: string;
 }
 
-export type VirtualMachineUpdate = Omit<VirtualMachine, 'status' | 'id'>;
+export type VirtualMachineUpdate = Omit<VirtualMachine, 'status' | 'id' | 'devices'>;
 
 export type VmStopParams = [
   id: number,

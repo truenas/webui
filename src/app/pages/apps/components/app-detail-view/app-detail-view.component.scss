@@ -1,0 +1,184 @@
+@import 'scss-imports/splitview';
+
+:host {
+  color: var(--fg1);
+  display: block;
+  position: relative;
+  width: 100%;
+}
+
+::ng-deep {
+  @media(max-width: $breakpoint-xs) {
+    ix-page-title-header {
+      border: 0;
+      margin-bottom: 0;
+
+      .actions-container {
+        padding: 0;
+      }
+    }
+
+    ix-app-details-header {
+      display: block !important;
+
+      .app,
+      .app-info {
+        max-width: 100% !important;
+        width: 100%;
+      }
+
+      .app-info {
+        margin: 16px 0;
+      }
+
+      .app-description {
+        padding: 0 !important;
+      }
+    }
+  }
+}
+
+.hide-xs-md {
+  display: flex;
+  flex: 1;
+
+  @media(max-width: $breakpoint-md) {
+    display: none !important;
+  }
+}
+
+.show-xs-md {
+  display: none !important;
+
+  @media(max-width: $breakpoint-md) {
+    display: flex !important;
+    flex: 1;
+  }
+}
+
+.flex-container {
+  box-sizing: border-box;
+  display: flex;
+  flex-flow: row nowrap;
+
+  @media(max-width: $breakpoint-md) {
+    flex-wrap: wrap;
+  }
+
+  @media(max-width: $breakpoint-xs) {
+    padding: 0 10px;
+  }
+
+  .app-wrapper {
+    position: relative;
+    width: 70%;
+
+    @media(max-width: $breakpoint-xs) {
+      > section:first-child {
+        display: block !important;
+
+        > div {
+          margin-top: 16px;
+          max-height: inherit;
+          max-width: 100% !important;
+          padding: 0;
+        }
+      }
+    }
+
+    @media(max-width: $breakpoint-md) {
+      width: 100%;
+    }
+  }
+}
+
+.screenshots,
+.screenshots-loader {
+  display: grid !important;
+  gap: 14px;
+  grid-template-columns: repeat(3, 1fr);
+  width: 100%;
+
+  @media(max-width: $breakpoint-xs) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.screenshot {
+  position: relative;
+
+  ix-icon {
+    display: inline-flex;
+    height: 1.5rem;
+    left: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 7rem;
+  }
+
+  .screenshot-image {
+    display: block;
+    height: 100%;
+    max-height: 200px;
+    max-width: 100%;
+    object-fit: cover;
+    width: 100%;
+  }
+}
+
+.screenshot-loader {
+  ::ng-deep span {
+    height: 160px;
+  }
+}
+
+.app-info,
+.app-info-card {
+  ngx-skeleton-loader {
+    display: inline-flex;
+    width: 35%;
+
+    ::ng-deep span {
+      margin: 0;
+    }
+  }
+}
+
+.app-info-cards {
+  flex: 1;
+  padding: 0 1rem 0 2rem;
+
+  @media(max-width: $breakpoint-md) {
+    display: grid;
+    grid-gap: 1rem;
+    grid-template-columns: repeat(3, 1fr);
+    padding: 0;
+
+    .app-info-card {
+      margin: 0;
+      max-width: 100%;
+    }
+  }
+
+  @media(max-width: $breakpoint-xs) {
+    display: block;
+    margin-bottom: 16px;
+
+    .app-info-card {
+      margin-bottom: 16px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+}
+
+section {
+  margin-bottom: 2rem;
+
+  h2 {
+    margin-bottom: 1rem;
+  }
+}

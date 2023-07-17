@@ -10,11 +10,12 @@ import { TranslateService } from '@ngx-translate/core';
 import { forkJoin } from 'rxjs';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { SupportConfigUpdate } from 'app/interfaces/support.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService, WebSocketService } from 'app/services';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -43,11 +44,12 @@ export class ProactiveComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
+    private errorHandler: ErrorHandlerService,
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
-    private slideInService: IxSlideInService,
-    private errorHandler: FormErrorHandlerService,
+    private slideInRef: IxSlideInRef<ProactiveComponent>,
+    private formErrorHandler: FormErrorHandlerService,
     private translate: TranslateService,
     private snackbar: SnackbarService,
   ) {}
@@ -66,7 +68,7 @@ export class ProactiveComponent implements OnInit {
         next: () => {
           this.isLoading = false;
           this.cdr.markForCheck();
-          this.slideInService.close();
+          this.slideInRef.close();
 
           this.snackbar.success(
             this.translate.instant(helptext.proactive.dialog_mesage),
@@ -74,7 +76,7 @@ export class ProactiveComponent implements OnInit {
         },
         error: (error) => {
           this.isLoading = false;
-          this.errorHandler.handleWsFormError(error, this.form);
+          this.formErrorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();
         },
       });
@@ -103,11 +105,11 @@ export class ProactiveComponent implements OnInit {
             enabled: isEnabled,
           });
         },
-        error: (error) => {
+        error: (error: WebsocketError) => {
           this.isFormDisabled = true;
           this.form.disable();
           this.cdr.markForCheck();
-          new EntityUtils().handleWsError(this, error, this.dialogService);
+          this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });
   }

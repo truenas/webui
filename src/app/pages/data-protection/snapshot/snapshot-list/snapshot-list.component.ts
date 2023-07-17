@@ -3,21 +3,24 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import { take } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import {
   PeriodicSnapshotTask,
   PeriodicSnapshotTaskUi,
   PeriodicSnapshotTaskUpdate,
 } from 'app/interfaces/periodic-snapshot-task.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { SnapshotTaskComponent } from 'app/pages/data-protection/snapshot/snapshot-task/snapshot-task.component';
 import {
-  DialogService, StorageService, WebSocketService,
+  DialogService, StorageService,
 } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { TaskService } from 'app/services/task.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
@@ -34,8 +37,7 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
   routeAdd: string[] = ['tasks', 'snapshot', 'add'];
   routeAddTooltip = this.translate.instant('Add Periodic Snapshot Task');
   routeEdit: string[] = ['tasks', 'snapshot', 'edit'];
-  entityList: EntityTableComponent;
-  asyncView = true;
+  entityList: EntityTableComponent<PeriodicSnapshotTaskUi>;
   filterValue = '';
 
   columns = [
@@ -76,6 +78,7 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
     private ws: WebSocketService,
     private taskService: TaskService,
     private translate: TranslateService,
+    private errorHandler: ErrorHandlerService,
     private slideInService: IxSlideInService,
     private route: ActivatedRoute,
     private router: Router,
@@ -84,11 +87,8 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
     this.filterValue = this.route.snapshot.paramMap.get('dataset') || '';
   }
 
-  afterInit(entityList: EntityTableComponent): void {
+  afterInit(entityList: EntityTableComponent<PeriodicSnapshotTaskUi>): void {
     this.entityList = entityList;
-    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.entityList.getData();
-    });
   }
 
   resourceTransformIncomingRestData(tasks: PeriodicSnapshotTask[]): PeriodicSnapshotTaskUi[] {
@@ -105,7 +105,7 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
         frequency: this.taskService.getTaskCronDescription(transformedTask.cron_schedule),
       };
 
-      this.store$.select(selectTimezone).pipe(untilDestroyed(this)).subscribe((timezone) => {
+      this.store$.select(selectTimezone).pipe(take(1), untilDestroyed(this)).subscribe((timezone) => {
         transformedData.next_run = this.taskService.getTaskNextRun(transformedData.cron_schedule, timezone);
       });
 
@@ -119,7 +119,7 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
 
   stateButton(row: PeriodicSnapshotTaskUi): void {
     if (row.state.state === JobState.Error) {
-      this.dialogService.errorReport(row.state.state, row.state.error);
+      this.dialogService.error({ title: row.state.state, message: row.state.error });
     }
   }
 
@@ -133,20 +133,21 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
             row.enabled = !row.enabled;
           }
         },
-        error: (err) => {
+        error: (error: WebsocketError) => {
           row.enabled = !row.enabled;
-          new EntityUtils().handleWsError(this, err, this.dialogService);
+          this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });
   }
 
   doAdd(): void {
-    this.slideInService.open(SnapshotTaskComponent, { wide: true });
+    const slideInRef = this.slideInService.open(SnapshotTaskComponent, { wide: true });
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
   }
 
   doEdit(id: number): void {
-    const row = this.entityList.rows.find((row) => row.id === id);
-    const form = this.slideInService.open(SnapshotTaskComponent, { wide: true });
-    form.setTaskForEdit(row);
+    const snapshotTask = this.entityList.rows.find((row) => row.id === id);
+    const slideInRef = this.slideInService.open(SnapshotTaskComponent, { wide: true, data: snapshotTask });
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
   }
 }

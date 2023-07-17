@@ -5,13 +5,13 @@ import { DsUncachedGroup, DsUncachedUser } from 'app/interfaces/ds-cache.interfa
 import { Group } from 'app/interfaces/group.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
-import { WebSocketService } from './ws.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
   static namePattern = /^[a-zA-Z0-9_][a-zA-Z0-9_.-]*[$]?$/;
-  protected uncachedUserQuery = 'dscache.get_uncached_user' as const;
-  protected uncachedGroupQuery = 'dscache.get_uncached_group' as const;
+  protected uncachedUserQuery = 'user.get_user_obj' as const;
+  protected uncachedGroupQuery = 'group.get_group_obj' as const;
   protected userQuery = 'user.query' as const;
   protected groupQuery = 'group.query' as const;
   protected queryOptions = { extra: { search_dscache: true }, limit: 50 };
@@ -53,8 +53,8 @@ export class UserService {
     }));
   }
 
-  getGroupByName(group: string): Observable<DsUncachedGroup> {
-    return this.ws.call(this.uncachedGroupQuery, [group]);
+  getGroupByName(groupname: string): Observable<DsUncachedGroup> {
+    return this.ws.call(this.uncachedGroupQuery, [{ groupname }]);
   }
 
   userQueryDsCache(search = '', offset = 0): Observable<User[]> {
@@ -67,6 +67,6 @@ export class UserService {
   }
 
   getUserByName(username: string): Observable<DsUncachedUser> {
-    return this.ws.call(this.uncachedUserQuery, [username]);
+    return this.ws.call(this.uncachedUserQuery, [{ username }]);
   }
 }

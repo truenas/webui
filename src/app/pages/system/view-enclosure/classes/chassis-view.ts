@@ -4,8 +4,10 @@ import {
   easing,
 } from 'popmotion';
 import { Subject } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { CoreEvent } from 'app/interfaces/events';
+import { ChangeDriveTrayColorEvent, ChangeDriveTrayOptions } from 'app/interfaces/events/enclosure-events.interface';
 import { DriveTray } from 'app/pages/system/view-enclosure/classes/drivetray';
 // TODO: See if can be removed.
 // eslint-disable-next-line
@@ -37,7 +39,7 @@ export class ChassisView {
      * Instead extend this class for each
      * hardware unit with your customizations
      * */
-
+  readonly className: string = 'ChassisView';
   container: Container;
   events: Subject<CoreEvent>;
   model: string;
@@ -83,13 +85,11 @@ export class ChassisView {
     this.driveTrays = new PIXI.Container();
     this.events = new Subject<CoreEvent>();
 
-    this.events.subscribe((evt: CoreEvent) => {
-      switch (evt.name) {
-        case 'ChangeDriveTrayColor':
-          this.colorDriveTray(parseInt(evt.data.id), evt.data.color);
-          break;
-      }
-    });
+    this.events
+      .pipe(filter((event) => event.name === 'ChangeDriveTrayColor'))
+      .subscribe((evt: CoreEvent) => {
+        this.colorDriveTray((evt as ChangeDriveTrayColorEvent).data);
+      });
 
     // defaults
     this.rows = 6;
@@ -153,8 +153,10 @@ export class ChassisView {
       ? this.chassisScale.y : 1;
 
     this.container.addChild(this.chassis);
+    this.renderDriveTrays();
+  }
 
-    // Render DriveTrays
+  renderDriveTrays(): void {
     if (!this.slotRange) {
       this.slotRange = { start: 1, end: this.totalDriveTrays };
     }
@@ -214,8 +216,8 @@ export class ChassisView {
 
   onEnter(): void {
     const opacity = this.disabledOpacity;
-    const delay = 50;
-    const duration = 50;
+    const delay = 60;
+    const duration = 60;
 
     setTimeout((): void => {
       const fade = (alpha: number): number => this.chassis.alpha = alpha;
@@ -285,17 +287,22 @@ export class ChassisView {
     return { x: nextPositionX, y: nextPositionY };
   }
 
-  colorDriveTray(slot: number, color: string): void {
+  colorDriveTray(options: ChangeDriveTrayOptions): void {
+    // if there is no disk in slot we can't get a slot number, so we use id instead
+    const slot = !options.slot ? Number(options.id) : options.slot;
     const driveIndex = slot - this.slotRange.start;
+
     if (driveIndex < 0 || driveIndex >= this.totalDriveTrays) {
-      console.warn(`IGNORING DRIVE AT INDEX ${driveIndex} SLOT ${slot} IS OUT OF RANGE`);
+      console.warn(`IGNORING DRIVE AT INDEX ${driveIndex} SLOT ${options.slot} IS OUT OF RANGE`);
       return;
     }
+
     const dt = this.driveTrayObjects[driveIndex];
 
-    dt.color = color.toLowerCase();
-    if (this.initialized) {
-      dt.handle.alpha = color === 'none' ? this.disabledOpacity : 1;
+    if (dt) dt.color = options.color.toLowerCase();
+
+    if (dt && this.initialized) {
+      dt.handle.alpha = options.color === 'none' ? this.disabledOpacity : 1;
     }
   }
 

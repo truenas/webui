@@ -1,14 +1,11 @@
-.form-actions {
-  margin: 8px 10px;
-
-  button {
-    margin-right: 10px;
-  }
-}
-
 .alias {
   margin-left: 12px;
   margin-right: 12px;
+
+  ix-errors {
+    display: block;
+    margin-bottom: 15px;
+  }
 
   .alias-ip {
     margin-top: 0;

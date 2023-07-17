@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -5,30 +6,33 @@ import {
   Component,
   OnInit, QueryList,
   TemplateRef,
-  TrackByFunction,
   ViewChild,
   ViewChildren,
 } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { MatTabChangeEvent } from '@angular/material/tabs';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { BehaviorSubject } from 'rxjs';
 import {
+  BehaviorSubject, combineLatest, EMPTY, Observable, of,
+} from 'rxjs';
+import {
+  catchError,
   filter, map, switchMap,
 } from 'rxjs/operators';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
+import { trackById } from 'app/helpers/track-by.utils';
 import { Job } from 'app/interfaces/job.interface';
-import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { IxDetailRowDirective } from 'app/modules/ix-tables/directives/ix-detail-row.directive';
+import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { abortJobPressed } from 'app/modules/jobs/store/job.actions';
 import {
   JobSlice, selectJobState, selectJobs, selectFailedJobs, selectRunningJobs,
 } from 'app/modules/jobs/store/job.selectors';
 import { DialogService, StorageService, WebSocketService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { LayoutService } from 'app/services/layout.service';
 import { JobTab } from './job-tab.enum';
 
@@ -46,24 +50,41 @@ export class JobsListComponent implements OnInit, AfterViewInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
   @ViewChildren(IxDetailRowDirective) private detailRows: QueryList<IxDetailRowDirective>;
 
-  dataSource: MatTableDataSource<Job> = new MatTableDataSource([]);
-  displayedColumns = ['name', 'state', 'id', 'time_started', 'time_finished', 'arguments_logs'];
+  dataSource = new MatTableDataSource<Job>([]);
+  displayedColumns = ['name', 'state', 'id', 'time_started', 'time_finished', 'logs', 'actions'];
   expandedRow: Job;
   selectedIndex: JobTab = 0;
-  emptyConfig: EmptyConfig = {
-    type: EmptyType.NoPageData,
-    large: true,
-    title: this.translate.instant('No tasks'),
-  };
-  loadingConfig: EmptyConfig = {
-    type: EmptyType.Loading,
-    large: false,
-    title: this.translate.instant('Loading...'),
-  };
-  selector$ = new BehaviorSubject(selectJobs);
 
+  selector$ = new BehaviorSubject<typeof selectRunningJobs | typeof selectJobs | typeof selectFailedJobs>(selectJobs);
+
+  emptyType$: Observable<EmptyType> = combineLatest([
+    this.isLoading$,
+    this.error$.pipe(map((error) => !!error)),
+    this.selector$.pipe(
+      switchMap((selector) => this.store$.select(selector)),
+      map((jobs) => jobs.length === 0),
+    ),
+  ]).pipe(
+    switchMap(([isLoading, isError, isNoData]) => {
+      if (isLoading) {
+        return of(EmptyType.Loading);
+      }
+      if (isError) {
+        return of(EmptyType.Errors);
+      }
+      if (isNoData) {
+        return of(EmptyType.NoPageData);
+      }
+      return of(EmptyType.NoSearchResults);
+    }),
+  );
   readonly JobState = JobState;
-  readonly trackByJobId: TrackByFunction<Job> = (_, job) => job.id;
+  readonly JobTab = JobTab;
+  readonly trackByJobId = trackById;
+
+  get emptyConfigService(): EmptyService {
+    return this.emptyService;
+  }
 
   constructor(
     private ws: WebSocketService,
@@ -71,8 +92,10 @@ export class JobsListComponent implements OnInit, AfterViewInit {
     private translate: TranslateService,
     private dialogService: DialogService,
     private store$: Store<JobSlice>,
+    private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private layoutService: LayoutService,
+    private emptyService: EmptyService,
   ) {}
 
   onAborted(job: Job): void {
@@ -80,9 +103,9 @@ export class JobsListComponent implements OnInit, AfterViewInit {
       .confirm({
         title: this.translate.instant('Abort'),
         message: this.translate.instant('Are you sure you want to abort the <b>{task}</b> task?', { task: job.method }),
-        hideCheckBox: true,
-        buttonMsg: this.translate.instant('Abort'),
-        cancelMsg: this.translate.instant('Cancel'),
+        hideCheckbox: true,
+        buttonText: this.translate.instant('Abort'),
+        cancelText: this.translate.instant('Cancel'),
         disableClose: true,
       })
       .pipe(filter(Boolean), untilDestroyed(this))
@@ -123,48 +146,34 @@ export class JobsListComponent implements OnInit, AfterViewInit {
     });
   }
 
-  onTabChange(tab: MatTabChangeEvent): void {
-    this.selectedIndex = tab.index;
+  onTabChange(tab: JobTab): void {
+    this.selectedIndex = tab;
     switch (this.selectedIndex) {
       case JobTab.Failed:
         this.selector$.next(selectFailedJobs);
         this.expandedRow = null;
-        this.emptyConfig.title = this.translate.instant('There are no failed tasks.');
         break;
       case JobTab.Running:
         this.selector$.next(selectRunningJobs);
         this.expandedRow = null;
-        this.emptyConfig.title = this.translate.instant('There are no active tasks.');
         break;
       case JobTab.All:
       default:
         this.selector$.next(selectJobs);
         this.expandedRow = null;
-        this.emptyConfig.title = this.translate.instant('There are no tasks.');
         break;
     }
   }
 
   downloadLogs(job: Job): void {
-    const filename = `${job.id}.log`;
-    this.ws.call('core.download', ['filesystem.get', [job.logs_path], filename]).pipe(untilDestroyed(this)).subscribe({
-      next: ([_, url]) => {
-        const mimetype = 'text/plain';
-        this.storage.streamDownloadFile(url, filename, mimetype)
-          .pipe(untilDestroyed(this))
-          .subscribe({
-            next: (file) => {
-              this.storage.downloadBlob(file, filename);
-            },
-            error: (err) => {
-              new EntityUtils().handleWsError(this, err, this.dialogService);
-            },
-          });
-      },
-      error: (err) => {
-        new EntityUtils().handleWsError(this, err, this.dialogService);
-      },
-    });
+    this.ws.call('core.download', ['filesystem.get', [job.logs_path], `${job.id}.log`]).pipe(
+      switchMap(([_, url]) => this.storage.downloadUrl(url, `${job.id}.log`, 'text/plain')),
+      catchError((error: HttpErrorResponse) => {
+        this.dialogService.error(this.errorHandler.parseHttpError(error));
+        return EMPTY;
+      }),
+      untilDestroyed(this),
+    ).subscribe();
   }
 
   onSearch(query: string): void {

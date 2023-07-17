@@ -1,9 +1,13 @@
-@import 'cssvars';
+@import 'scss-imports/cssvars';
 
 .session-form-hold {
   margin: 0 auto;
   max-width: 480px;
   width: 100%;
+
+  .mat-mdc-card-content {
+    padding: 0 !important;
+  }
 }
 
 .page-wrap {
@@ -15,84 +19,37 @@
 .copyright {
   color: var(--alt-fg1);
   font-size: 85%;
-  margin-top: 35px;
+  margin-top: 10px;
   text-align: center;
 }
 
-.ha-status-txt {
-  text-align: center;
-}
-
-#signin_button {
-  font-weight: 700;
-}
-
-.mat-card {
+.mat-mdc-card {
   background-color: var(--bg2);
   color: var(--fg2);
   padding: 0 0 32px !important;
 }
 
-.mat-card .mat-card-content > div {
+.mat-mdc-card .mat-mdc-card-content > div {
   padding: 0;
-}
-
-.mat-card .mat-card-content > div.disconnected {
-  padding: 32px 32px 0;
 }
 
 .card-bottom {
   padding: 0 16px;
 }
 
-.disconnected-content {
-  align-items: center;
-  display: flex;
-}
-
-div.fake-icon {
-  align-items: center;
-  background-color: $fg2; //var(--fg2);
-  border-radius: 50%;
-  color: $bg2; //var(--bg2);
-  display: flex;
-  font-weight: 700;
-  height: 30px;
-  justify-content: center;
-  margin-right: 12px;
-  min-width: 30px;
-  width: 30px;
-}
-
-#legacy-btn-wrapper {
-  margin: 0 32px;
-  text-align: center;
-}
-
-#legacy-btn-wrapper button.mat-button {
-  background: rgba(0, 0, 0, 0.4);
-  font-weight: normal !important;
-  opacity: 0.75;
-}
-
-form {
-  margin: 32px 32px 0;
-}
-
-form > div {
-  margin: 8px 0;
-}
-
-form button {
-  margin: 16px 0;
+.form-container {
+  margin-bottom: 28px;
+  padding: 20px 32px 8px;
 }
 
 .logo-wrapper {
   background-color: var(--bg2);
   padding: 20% 0;
   position: relative;
+  text-align: center;
 
   .logo {
+    fill: currentColor;
     height: auto;
     position: relative;
     width: 256px;
@@ -106,21 +63,10 @@ form button {
     opacity: 0.75;
     position: absolute;
     top: 0;
+    user-select: none;
     width: 100%;
     z-index: 1;
   }
-}
-
-#full-logo {
-  cursor: pointer;
-  height: 40px;
-  margin-left: 5px;
-  position: relative;
-  top: 14px;
-}
-
-.mat-form-field.mat-focused:focus-within {
-  outline-width: 0;
 }
 
 @media (max-width:600px) {
@@ -136,7 +82,7 @@ form button {
     width: 100vw;
   }
 
-  .mat-card {
+  .mat-mdc-card {
     min-height: 100vh;
     top: 0;
   }
@@ -164,28 +110,7 @@ form button {
   }
 }
 
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-
-input:-webkit-autofill:focus,
-
-input:-webkit-autofill:active {
-  box-shadow: 0 0 0 30px var(--bg1) inset !important;
-  caret-color: white;
-  -webkit-text-fill-color: white !important;
-  transition: background-color 5000s ease-in-out 0s;
+.failover-status {
+  margin-top: 25px;
 }
 
-.icon {
-  color: var(--fg1);
-  position: relative;
-
-  &.account,
-  &.lock {
-    top: 4px;
-  }
-
-  &.phonelink {
-    top: 2px;
-  }
-}

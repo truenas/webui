@@ -13,11 +13,11 @@
   display: flex;
   flex-direction: row;
   font-size: 12px;
-  padding: 3px 8px;
   position: relative;
 
   input {
     min-height: 26px;
+    padding: 3px 8px;
   }
 
   &:focus-within {
@@ -25,7 +25,7 @@
   }
 
   &.disabled {
-    opacity: 0.38;
+    opacity: var(--disabled-opacity);
 
     input {
       cursor: not-allowed;

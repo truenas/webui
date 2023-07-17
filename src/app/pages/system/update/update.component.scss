@@ -60,7 +60,7 @@
   display: flex;
   margin: 10px 0 !important;
 
-  i {
+  .ix-icon {
     margin-right: 10px;
   }
 
@@ -92,9 +92,13 @@
 }
 
 .train-select-row {
-  margin-bottom: 3px;
-  margin-top: -6px;
-  vertical-align: top;
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+
+  ix-select {
+    width: 100%;
+  }
 }
 
 #refresh-button,

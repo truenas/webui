@@ -11,7 +11,6 @@ import { QueryParams } from 'app/interfaces/query-api.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { ActiveDirectoryComponent } from 'app/pages/directory-service/components/active-directory/active-directory.component';
 import { IdmapFormComponent } from 'app/pages/directory-service/components/idmap-form/idmap-form.component';
 import { IdmapRow } from 'app/pages/directory-service/components/idmap-list/idmap-row.interface';
@@ -20,6 +19,7 @@ import {
   IdmapService, WebSocketService,
 } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
@@ -57,7 +57,8 @@ export class IdmapListComponent implements EntityTableConfig {
   constructor(
     protected idmapService: IdmapService,
     private ws: WebSocketService,
-    private slideIn: IxSlideInService,
+    private errorHandler: ErrorHandlerService,
+    private slideInService: IxSlideInService,
     protected dialogService: DialogService,
     protected translate: TranslateService,
   ) { }
@@ -83,9 +84,6 @@ export class IdmapListComponent implements EntityTableConfig {
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
-    this.slideIn.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.entityList.getData();
-    });
   }
 
   prerequisite(): Promise<boolean> {
@@ -111,13 +109,14 @@ export class IdmapListComponent implements EntityTableConfig {
       onClick: () => {
         this.idmapService.getActiveDirectoryStatus().pipe(untilDestroyed(this)).subscribe((adConfig) => {
           if (adConfig.enable) {
-            this.slideIn.open(IdmapFormComponent);
+            const slideInRef = this.slideInService.open(IdmapFormComponent);
+            slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
           } else {
             this.dialogService.confirm({
               title: helptext.idmap.enable_ad_dialog.title,
               message: helptext.idmap.enable_ad_dialog.message,
-              hideCheckBox: true,
-              buttonMsg: helptext.idmap.enable_ad_dialog.button,
+              hideCheckbox: true,
+              buttonText: helptext.idmap.enable_ad_dialog.button,
             })
               .pipe(filter(Boolean), untilDestroyed(this))
               .subscribe(() => this.showActiveDirectoryForm());
@@ -135,9 +134,9 @@ export class IdmapListComponent implements EntityTableConfig {
       icon: 'edit',
       label: this.translate.instant('Edit'),
       disabled: row.disableEdit,
-      onClick: (row: IdmapRow) => {
-        const form = this.slideIn.open(IdmapFormComponent);
-        form.setIdmapForEdit(row);
+      onClick: (rowToEdit: IdmapRow) => {
+        const slideInRef = this.slideInService.open(IdmapFormComponent, { data: rowToEdit });
+        slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
       },
     });
     if (!requiredIdmapDomains.includes(row.name as IdmapName)) {
@@ -146,10 +145,10 @@ export class IdmapListComponent implements EntityTableConfig {
         label: this.translate.instant('Delete'),
         name: 'delete',
         icon: 'delete',
-        onClick: (row: IdmapRow) => {
-          this.entityList.doDeleteJob(row).pipe(untilDestroyed(this)).subscribe({
-            error: (err: WebsocketError) => {
-              new EntityUtils().handleWsError(this.entityList, err);
+        onClick: (rowToDelete: IdmapRow) => {
+          this.entityList.doDeleteJob(rowToDelete).pipe(untilDestroyed(this)).subscribe({
+            error: (error: WebsocketError) => {
+              this.dialogService.error(this.errorHandler.parseWsError(error));
             },
             complete: () => {
               this.entityList.getData();
@@ -162,6 +161,7 @@ export class IdmapListComponent implements EntityTableConfig {
   }
 
   showActiveDirectoryForm(): void {
-    this.slideIn.open(ActiveDirectoryComponent, { wide: true });
+    const slideInRef = this.slideInService.open(ActiveDirectoryComponent, { wide: true });
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
   }
 }

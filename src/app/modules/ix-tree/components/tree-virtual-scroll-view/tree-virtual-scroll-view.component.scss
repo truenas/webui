@@ -1,0 +1,27 @@
+::ng-deep {
+  ix-tree-virtual-scroll-view {
+    background: var(--bg2);
+    color: var(--fg2);
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-height: 100vh;
+    min-width: fit-content;
+    position: relative;
+
+    cdk-virtual-scroll-viewport {
+      height: 100%;
+    }
+
+    .scrollTop {
+      bottom: 20px;
+      left: 50%;
+      position: absolute;
+      transform: translateX(-50%);
+
+      &.mat-mdc-icon-button {
+        background-color: var(--alt-bg1);
+      }
+    }
+  }
+}

@@ -14,7 +14,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import {
   ExtendDialogComponent, ExtendDialogParams,
 } from 'app/pages/storage/modules/devices/components/zfs-info-card/extend-dialog/extend-dialog.component';
-import { WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('ExtendDialogComponent', () => {
   let spectator: Spectator<ExtendDialogComponent>;

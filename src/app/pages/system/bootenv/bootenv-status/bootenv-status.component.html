@@ -15,9 +15,9 @@
         <mat-list>
           <mat-list-item>
             {{ 'Status' | translate }}:
-            {{ poolInstance.scan.pause != null ? 'PAUSED' : poolInstance.scan.state ? poolInstance.scan.state : ('None requested' | translate) }}
+            {{ poolInstance.scan.pause !== null ? 'PAUSED' : poolInstance.scan.state ? poolInstance.scan.state : ('None requested' | translate) }}
           </mat-list-item>
-          <mat-list-item *ngIf="poolInstance.scan.errors != null">
+          <mat-list-item *ngIf="poolInstance.scan.errors !== null">
             {{ 'Errors' | translate }}:
             {{ poolInstance.scan.errors }}
           </mat-list-item>
@@ -40,17 +40,17 @@
       <div>{{ 'Errors' | translate }}</div>
     </div>
 
-    <ix-tree
+    <ix-tree-view
       class="tree"
-      [dataSource]="dataSource"
-      [treeControl]="treeControl"
+      [ixDataSource]="dataSource"
+      [ixTreeControl]="treeControl"
     >
       <ix-tree-node
-        *ixTreeNodeDef="let topologyItem; dataSource: dataSource"
-        ixTreeNodeToggle
-        [ixTreeNodeDefDataSource]="dataSource"
+        *treeNodeDef="let topologyItem; dataSource: dataSource"
+        treeNodeToggle
+        [treeNodeDefDataSource]="dataSource"
       >
-        <button mat-icon-button disabled></button>
+        <span class="spacer"></span>
         <ix-bootenv-node-item
           [node]="topologyItem"
           [poolInstance]="poolInstance"
@@ -60,19 +60,19 @@
       </ix-tree-node>
 
       <ix-nested-tree-node
-        *ixTreeNodeDef="let topologyItem; dataSource: dataSource; when: hasNestedChild"
-        [ixTreeNodeDefDataSource]="dataSource"
+        *treeNodeDef="let topologyItem; dataSource: dataSource; when: hasNestedChild"
+        [treeNodeDefDataSource]="dataSource"
       >
         <div class="nested-tree-root-node">
           <button
             mat-icon-button
-            ixTreeNodeToggle
+            treeNodeToggle
+            [ixTest]="['toggle-row', topologyItem.guid]"
             [attr.aria-label]="'Toggle {row}' | translate: { row: topologyItem.guid }"
             (click)="$event.preventDefault()"
           >
-            <mat-icon>
-              {{ treeControl.isExpanded(topologyItem) ? 'expand_more' : 'chevron_right' }}
-            </mat-icon>
+            <ix-icon *ngIf="treeControl.isExpanded(topologyItem)" name="expand_more"></ix-icon>
+            <ix-icon *ngIf="!treeControl.isExpanded(topologyItem)" name="chevron_right"></ix-icon>
           </button>
           <ix-bootenv-node-item
             [node]="topologyItem"
@@ -84,9 +84,9 @@
 
         <ng-container
           *ngIf="treeControl.isExpanded(topologyItem)"
-          ixTreeNodeOutlet
+          treeNodeOutlet
         ></ng-container>
       </ix-nested-tree-node>
-    </ix-tree>
+    </ix-tree-view>
   </div>
 </div>

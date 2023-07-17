@@ -1,0 +1,71 @@
+<ng-template #pageHeader>
+  <ix-page-title-header [pageTitle]="'Discover' | translate">
+    <ix-custom-app-button></ix-custom-app-button>
+  </ix-page-title-header>
+</ng-template>
+
+<ix-available-apps-header></ix-available-apps-header>
+
+<div class="available-apps-list">
+  <ix-fake-progress-bar
+    *ngIf="(isLoading$ | async) || (isFiltering$ | async)"
+    class="loader-bar"
+    [loading]="true"
+  ></ix-fake-progress-bar>
+
+  <h3 *ngIf="appsFilterStore.searchQuery$ | async as searchQuery" class="section-title">
+    {{ 'Search Results for «{query}»' | translate: { query: searchQuery } }}
+  </h3>
+
+  <ngx-skeleton-loader
+    *ngIf="isLoading$ | async"
+    class="fake-apps"
+    [count]="6"
+    [animation]="false"
+  ></ngx-skeleton-loader>
+
+  <ng-container *ngIf="!(isLoading$ | async)">
+    <ng-container *ngIf="!(isFilterOrSearch$ | async)">
+      <ng-container
+        *ngFor="let appSection of (appsFilterStore.appsByCategories$ | async); trackBy: trackByAppSectionTitle"
+        [ngTemplateOutlet]="apps"
+        [ngTemplateOutletContext]="{ $implicit: appSection }"
+      ></ng-container>
+    </ng-container>
+
+    <div *ngIf="isFilterOrSearch$ | async">
+      <ng-container
+        *ngFor="let appSection of (appsFilterStore.searchedApps$ | async); trackBy: trackByAppSectionTitle"
+        [ngTemplateOutlet]="apps"
+        [ngTemplateOutletContext]="{ $implicit: appSection }"
+      ></ng-container>
+    </div>
+  </ng-container>
+</div>
+
+<ng-template #apps let-appSection>
+  <section *ngIf="appSection.apps as apps">
+    <ng-container *ngIf="apps.length">
+      <h3 class="section-title">{{ appSection.title }}</h3>
+      <div class="apps">
+        <ix-app-card
+          *ngFor="let app of apps; trackBy: trackByAppId"
+          [app]="app"
+          [routerLink]="['/apps', 'available', app.catalog, app.train, app.name]"
+        ></ix-app-card>
+      </div>
+    </ng-container>
+  </section>
+  <div
+    *ngIf="(appSection.totalApps > appsFilterStore.appsPerCategory) && (showViewMoreButton$ | async)"
+    class="view-all"
+  >
+    <button
+      mat-flat-button
+      [ixTest]="[appSection.title, 'view-all']"
+      [routerLink]="['/apps', 'available', appSection.category]"
+    >
+      {{ 'View All' | translate }} {{ appSection.title | translate }}
+    </button>
+  </div>
+</ng-template>

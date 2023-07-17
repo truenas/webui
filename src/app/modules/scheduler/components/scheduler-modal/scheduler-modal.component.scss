@@ -1,11 +1,10 @@
-::ng-deep .scheduler-modal .mat-dialog-container {
+::ng-deep .scheduler-modal .mat-mdc-dialog-container {
   padding: 0;
 }
 
 :host {
   display: flex;
-  // TODO: Make mixin
-  font-family: Roboto, 'Helvetica Neue', sans-serif;
+  font-family: var(--mdc-dialog-subhead-font);
 }
 
 .settings-column {
@@ -20,8 +19,6 @@
   section {
     border-bottom: 1px solid var(--lines);
     margin-bottom: 16px;
-    padding-left: 20px;
-    padding-right: 24px;
 
     h4 {
       margin-bottom: 4px;
@@ -53,23 +50,6 @@
     grid-template-rows: 1fr;
     margin-bottom: 6px;
     margin-top: 12px;
-  }
-
-  .months,
-  .weekdays {
-    ::ng-deep .mat-checkbox-layout {
-      align-items: center;
-      display: flex;
-      flex-direction: column;
-
-      .mat-checkbox-inner-container {
-        margin: 0;
-      }
-
-      .mat-checkbox-label {
-        margin-top: 4px;
-      }
-    }
   }
 
   .form-actions {
@@ -107,4 +87,10 @@
   .days-of-week-header {
     font-size: x-small;
   }
+}
+
+.settings-column,
+ix-scheduler-preview-column {
+  max-height: 90vh;
+  overflow: hidden auto;
 }

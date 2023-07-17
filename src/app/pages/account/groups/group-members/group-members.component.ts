@@ -1,17 +1,20 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { switchMap } from 'rxjs/operators';
 import { Group } from 'app/interfaces/group.interface';
 import { User } from 'app/interfaces/user.interface';
-import { EntityUtils } from 'app/modules/entity/utils';
 import { DialogService } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
   templateUrl: './group-members.component.html',
   styleUrls: ['./group-members.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GroupMembersComponent implements OnInit {
   members: User[] = [];
@@ -26,6 +29,8 @@ export class GroupMembersComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private router: Router,
     private dialog: DialogService,
+    private errorHandler: ErrorHandlerService,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
@@ -34,6 +39,7 @@ export class GroupMembersComponent implements OnInit {
       switchMap((params) => this.ws.call('group.query', [[['id', '=', parseInt(params.pk)]]])),
       switchMap((groups) => {
         this.group = groups[0];
+        this.cdr.markForCheck();
         return this.ws.call('user.query');
       }),
       untilDestroyed(this),
@@ -43,6 +49,7 @@ export class GroupMembersComponent implements OnInit {
       this.members = members;
       this.selectedMembers = members;
       this.isFormLoading = false;
+      this.cdr.markForCheck();
     });
   }
 
@@ -52,6 +59,7 @@ export class GroupMembersComponent implements OnInit {
 
   onSubmit(): void {
     this.isFormLoading = true;
+    this.cdr.markForCheck();
 
     const userIds = this.selectedMembers.map((user) => user.id);
     this.ws.call('group.update', [this.group.id, { users: userIds }]).pipe(
@@ -63,7 +71,8 @@ export class GroupMembersComponent implements OnInit {
       },
       error: (error) => {
         this.isFormLoading = false;
-        new EntityUtils().handleWsError(this, error, this.dialog);
+        this.cdr.markForCheck();
+        this.dialog.error(this.errorHandler.parseWsError(error));
       },
     });
   }

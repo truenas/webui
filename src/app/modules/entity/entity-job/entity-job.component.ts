@@ -4,19 +4,18 @@ import {
 import {
   OnInit, Component, EventEmitter, Output, Inject, AfterViewChecked,
 } from '@angular/core';
-import {
-  MatDialog, MatDialogConfig, MatDialogRef, MAT_DIALOG_DATA,
-} from '@angular/material/dialog';
+import { MatDialogConfig, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { UUID } from 'angular2-uuid';
 import * as _ from 'lodash';
+import { Subscription } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
-import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface';
+import {
+  ApiDirectory, ApiMethod,
+} from 'app/interfaces/api-directory.interface';
 import { Job, JobProgress } from 'app/interfaces/job.interface';
 import { EntityJobConfig } from 'app/modules/entity/entity-job/entity-job-config.interface';
-import { JobsPanelComponent } from 'app/modules/jobs/components/jobs-panel/jobs-panel.component';
-import { WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -41,7 +40,6 @@ export class EntityJobComponent implements OnInit, AfterViewChecked {
   altMessage: string;
   showRealtimeLogs = false;
   autoCloseOnSuccess = false;
-  openJobsManagerOnClose = false;
   readonly JobState = JobState;
 
   private realtimeLogsSubscribed = false;
@@ -53,12 +51,12 @@ export class EntityJobComponent implements OnInit, AfterViewChecked {
   @Output() aborted = new EventEmitter<Job>();
   @Output() failure = new EventEmitter<Job>();
   @Output() prefailure = new EventEmitter<HttpErrorResponse>();
+
   constructor(
     public dialogRef: MatDialogRef<EntityJobComponent, MatDialogConfig>,
     private ws: WebSocketService,
     @Inject(MAT_DIALOG_DATA) public data: EntityJobConfig,
     protected http: HttpClient,
-    private matDialog: MatDialog,
   ) {}
 
   ngOnInit(): void {
@@ -93,22 +91,6 @@ export class EntityJobComponent implements OnInit, AfterViewChecked {
 
       this.description = '<b>Error:</b> ' + error;
     });
-
-    if (this.openJobsManagerOnClose) {
-      this.dialogRef.beforeClosed()
-        .pipe(untilDestroyed(this))
-        .subscribe(() => {
-          this.matDialog.open(JobsPanelComponent, {
-            width: '400px',
-            hasBackdrop: true,
-            panelClass: 'topbar-panel',
-            position: {
-              top: '48px',
-              right: '16px',
-            },
-          });
-        });
-    }
   }
 
   ngAfterViewChecked(): void {
@@ -143,14 +125,14 @@ export class EntityJobComponent implements OnInit, AfterViewChecked {
   }
 
   submit(): void {
-    let subscriptionId: string = null;
+    let logsSubscription: Subscription = null;
     this.ws.job(this.method, this.args)
       .pipe(untilDestroyed(this)).subscribe({
         next: (job) => {
           this.job = job;
           this.showAbortButton = this.job.abortable;
           if (this.showRealtimeLogs && this.job.logs_path && !this.realtimeLogsSubscribed) {
-            subscriptionId = this.getRealtimeLogs();
+            logsSubscription = this.getRealtimeLogs();
           }
           if (job.progress && !this.showRealtimeLogs) {
             this.progress.emit(job.progress);
@@ -159,7 +141,8 @@ export class EntityJobComponent implements OnInit, AfterViewChecked {
             this.aborted.emit(this.job);
           }
         },
-        error: () => {
+        error: (job: Job) => {
+          this.job = job;
           this.failure.emit(this.job);
         },
         complete: () => {
@@ -169,8 +152,7 @@ export class EntityJobComponent implements OnInit, AfterViewChecked {
             this.failure.emit(this.job);
           }
           if (this.realtimeLogsSubscribed) {
-            this.ws.unsubscribe('filesystem.file_tail_follow:' + this.job.logs_path);
-            this.ws.unsub('filesystem.file_tail_follow:' + this.job.logs_path, subscriptionId);
+            logsSubscription.unsubscribe();
           }
         },
       });
@@ -208,10 +190,10 @@ export class EntityJobComponent implements OnInit, AfterViewChecked {
 
   wspost(path: string, options: unknown): void {
     this.http.post(path, options).pipe(untilDestroyed(this)).subscribe({
-      next: (res: Job | { job_id: number }) => {
-        this.job = res as Job; // Type is actually not a Job, but a { job_id: number }
-        if (res && 'job_id' in res) {
-          this.jobId = res.job_id;
+      next: (response: Job | { job_id: number }) => {
+        this.job = response as Job; // Type is actually not a Job, but a { job_id: number }
+        if (response && 'job_id' in response) {
+          this.jobId = response.job_id;
         }
         this.wsshow();
       },
@@ -274,16 +256,16 @@ export class EntityJobComponent implements OnInit, AfterViewChecked {
    * websocket updates. The subscription id is used to unsubscribe form those real time
    * websocket updates at a later time. Unsubscription is not possible without this id
    */
-  getRealtimeLogs(): string {
+  getRealtimeLogs(): Subscription {
     this.realtimeLogsSubscribed = true;
-    const subscriptionId = UUID.UUID();
     const subName = 'filesystem.file_tail_follow:' + this.job.logs_path;
-    this.ws.sub(subName, subscriptionId).pipe(untilDestroyed(this)).subscribe((res) => {
-      if (res && res.data && typeof res.data === 'string') {
-        this.realtimeLogs += res.data;
-      }
-    });
-    return subscriptionId;
+    return this.ws.subscribeToLogs(subName)
+      .pipe(map((apiEvent) => apiEvent.fields), untilDestroyed(this))
+      .subscribe((logs) => {
+        if (logs && logs.data && typeof logs.data === 'string') {
+          this.realtimeLogs += logs.data;
+        }
+      });
   }
 
   scrollBottom(): void {

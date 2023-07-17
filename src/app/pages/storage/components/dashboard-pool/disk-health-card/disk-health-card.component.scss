@@ -1,4 +1,4 @@
-@import '~assets/styles/mixins/cards';
+@import 'mixins/cards';
 
 :host {
   display: flex;
@@ -23,22 +23,4 @@
   align-items: center;
   display: flex;
   justify-content: space-between;
-}
-
-.pool-icon {
-  &.icon-online {
-    color: var(--green);
-  }
-
-  &.icon-warning {
-    color: var(--orange);
-  }
-
-  &.icon-faulted {
-    color: var(--blue);
-  }
-
-  &.icon-error {
-    color: var(--red);
-  }
 }

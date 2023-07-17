@@ -3,14 +3,23 @@ import {
 } from '@angular/core';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
-import { filter, switchMap, take } from 'rxjs/operators';
+import {
+  filter, map, switchMap, take,
+} from 'rxjs/operators';
 import { helptextSystemFailover } from 'app/helptext/system/failover';
-import { EntityUtils } from 'app/modules/entity/utils';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
+import { AuthService } from 'app/services/auth/auth.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
+import { WebSocketService } from 'app/services/ws.service';
+import { AppState } from 'app/store';
+import { haSettingsUpdated } from 'app/store/ha-info/ha-info.actions';
 
 @UntilDestroy({
   arrayName: 'subscriptions',
@@ -44,9 +53,13 @@ export class FailoverSettingsComponent implements OnInit {
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
-    private errorHandler: FormErrorHandlerService,
+    private authService: AuthService,
+    private errorHandler: ErrorHandlerService,
+    private formErrorHandler: FormErrorHandlerService,
     private translate: TranslateService,
     private snackbar: SnackbarService,
+    private store$: Store<AppState>,
+    private wsManager: WebsocketConnectionService,
   ) {}
 
   ngOnInit(): void {
@@ -59,25 +72,26 @@ export class FailoverSettingsComponent implements OnInit {
 
     this.ws.call('failover.update', [values])
       .pipe(
-        switchMap(() => {
-          return this.dialogService.info(
-            this.translate.instant('Failover'),
-            this.translate.instant('Settings saved.'),
-          );
-        }),
+        map(() => { this.store$.dispatch(haSettingsUpdated()); }),
         untilDestroyed(this),
       )
       .subscribe({
         next: () => {
+          this.snackbar.success(this.translate.instant('Settings saved.'));
           this.isLoading = false;
           this.cdr.markForCheck();
 
           if (values.disabled && !values.master) {
-            this.ws.logout();
+            this.authService.logout().pipe(untilDestroyed(this)).subscribe({
+              next: () => {
+                this.authService.clearAuthToken();
+                this.wsManager.closeWebsocketConnection();
+              },
+            });
           }
         },
         error: (error) => {
-          this.errorHandler.handleWsFormError(error, this.form);
+          this.formErrorHandler.handleWsFormError(error, this.form);
           this.isLoading = false;
           this.cdr.markForCheck();
         },
@@ -85,23 +99,19 @@ export class FailoverSettingsComponent implements OnInit {
   }
 
   onSyncToPeerPressed(): void {
-    const dialog = this.dialogService.confirm({
+    this.dialogService.confirm({
       title: helptextSystemFailover.dialog_sync_to_peer_title,
       message: helptextSystemFailover.dialog_sync_to_peer_message,
-      buttonMsg: helptextSystemFailover.dialog_button_ok,
-      secondaryCheckBox: true,
-      secondaryCheckBoxMsg: helptextSystemFailover.dialog_sync_to_peer_checkbox,
-      data: [{ reboot: false }],
-    });
-
-    dialog
-      .afterClosed()
+      buttonText: helptextSystemFailover.dialog_button_ok,
+      secondaryCheckbox: true,
+      secondaryCheckboxText: helptextSystemFailover.dialog_sync_to_peer_checkbox,
+    })
       .pipe(
-        filter(Boolean),
-        switchMap(() => {
+        filter((result) => result.confirmed),
+        switchMap((result) => {
           this.isLoading = true;
           this.cdr.markForCheck();
-          return this.ws.call('failover.sync_to_peer', dialog.componentInstance.data as [{ reboot?: boolean }]);
+          return this.ws.call('failover.sync_to_peer', [{ reboot: result.secondaryCheckbox }]);
         }),
         untilDestroyed(this),
       )
@@ -113,10 +123,10 @@ export class FailoverSettingsComponent implements OnInit {
             helptextSystemFailover.confirm_dialogs.sync_to_message,
           );
         },
-        error: (error) => {
+        error: (error: WebsocketError) => {
           this.isLoading = false;
           this.cdr.markForCheck();
-          new EntityUtils().handleWsError(this, error, this.dialogService);
+          this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });
   }
@@ -125,7 +135,7 @@ export class FailoverSettingsComponent implements OnInit {
     this.dialogService.confirm({
       title: helptextSystemFailover.dialog_sync_from_peer_title,
       message: helptextSystemFailover.dialog_sync_from_peer_message,
-      buttonMsg: helptextSystemFailover.dialog_button_ok,
+      buttonText: helptextSystemFailover.dialog_button_ok,
     })
       .pipe(
         filter(Boolean),
@@ -144,10 +154,10 @@ export class FailoverSettingsComponent implements OnInit {
             this.translate.instant(helptextSystemFailover.confirm_dialogs.sync_from_message),
           );
         },
-        error: (error) => {
+        error: (error: WebsocketError) => {
           this.isLoading = false;
           this.cdr.markForCheck();
-          new EntityUtils().handleWsError(this, error, this.dialogService);
+          this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });
   }
@@ -168,9 +178,9 @@ export class FailoverSettingsComponent implements OnInit {
           this.setFailoverConfirmation();
           this.setFormRelations();
         },
-        error: (error) => {
+        error: (error: WebsocketError) => {
           this.isLoading = false;
-          new EntityUtils().handleWsError(this, error, this.dialogService);
+          this.dialogService.error(this.errorHandler.parseWsError(error));
           this.cdr.markForCheck();
         },
       });
@@ -184,8 +194,8 @@ export class FailoverSettingsComponent implements OnInit {
           return this.dialogService.confirm({
             title: helptextSystemFailover.master_dialog_title,
             message: helptextSystemFailover.master_dialog_warning,
-            buttonMsg: this.translate.instant('Continue'),
-            cancelMsg: this.translate.instant('Cancel'),
+            buttonText: this.translate.instant('Continue'),
+            cancelText: this.translate.instant('Cancel'),
             disableClose: true,
           });
         }),

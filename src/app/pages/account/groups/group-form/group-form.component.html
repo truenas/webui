@@ -18,10 +18,24 @@
           [tooltip]="tooltips.name"
         ></ix-input>
 
+        <ix-chips
+          formControlName="sudo_commands"
+          [label]="'Allowed sudo commands' | translate"
+        ></ix-chips>
+
         <ix-checkbox
-          formControlName="sudo"
-          [label]="'Permit Sudo' | translate"
-          [tooltip]="tooltips.sudo"
+          formControlName="sudo_commands_all"
+          [label]="'Allow all sudo commands' | translate"
+        ></ix-checkbox>
+
+        <ix-chips
+          formControlName="sudo_commands_nopasswd"
+          [label]="'Allowed sudo commands with no password' | translate"
+        ></ix-chips>
+
+        <ix-checkbox
+          formControlName="sudo_commands_nopasswd_all"
+          [label]="'Allow all sudo commands with no password' | translate"
         ></ix-checkbox>
 
         <ix-checkbox
@@ -38,16 +52,17 @@
         ></ix-checkbox>
       </ix-fieldset>
 
-      <div class="form-actions">
+      <ix-form-actions>
         <button
           mat-button
           type="submit"
           color="primary"
+          ixTest="save"
           [disabled]="form.invalid || isFormLoading"
         >
           {{ 'Save' | translate }}
         </button>
-      </div>
+      </ix-form-actions>
     </form>
   </mat-card-content>
 </mat-card>

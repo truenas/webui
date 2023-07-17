@@ -12,7 +12,9 @@ describe('SnackbarService', () => {
     ],
   });
 
-  beforeEach(() => spectator = createService());
+  beforeEach(() => {
+    spectator = createService();
+  });
 
   describe('success', () => {
     it('opens a snackbar with message', () => {

@@ -4,8 +4,8 @@ import { map } from 'rxjs/operators';
 import { Choices } from 'app/interfaces/choices.interface';
 import { MapOption, Option } from 'app/interfaces/option.interface';
 
-export function mapToOptions(map: Map<string, string>, translate: TranslateService): Option[] {
-  return Array.from(map.entries()).map(([value, label]) => ({ label: translate.instant(label), value }));
+export function mapToOptions(optionMap: Map<string, string>, translate: TranslateService): Option[] {
+  return Array.from(optionMap.entries()).map(([value, label]) => ({ label: translate.instant(label), value }));
 }
 
 /**
@@ -40,4 +40,15 @@ export function tagArrayToOptions(): OperatorFunction<{ tag: number }[], Option[
   return map((options) => {
     return options.map((option) => ({ label: String(option.tag), value: option.tag }));
   });
+}
+
+/**
+ * @usage
+ * valueToLabel(options)(value)
+ */
+export function findLabelsByValue(options: Option[]): (value: string) => string {
+  return (value: string): string => {
+    const selectedOption = options.find((option) => option.value === value);
+    return selectedOption?.label;
+  };
 }

@@ -1,5 +1,6 @@
-import { createFeatureSelector, createSelector } from '@ngrx/store';
+import { createFeatureSelector, createSelector, MemoizedSelector } from '@ngrx/store';
 import { JobState } from 'app/enums/job-state.enum';
+import { Job } from 'app/interfaces/job.interface';
 import { adapter, JobsState } from 'app/modules/jobs/store/job.reducer';
 
 export const jobStateKey = 'jobs';
@@ -16,6 +17,11 @@ export const selectJobs = createSelector(
   selectAll,
 );
 
+export const selectJob = (id: number): MemoizedSelector<object, Job> => createSelector(
+  selectJobs,
+  (jobs) => jobs.find((job) => job.id === id),
+);
+
 export const selectIsJobPanelOpen = createSelector(
   selectJobState,
   (state) => state.isPanelOpen,
@@ -23,7 +29,7 @@ export const selectIsJobPanelOpen = createSelector(
 
 export const selectRunningJobs = createSelector(
   selectJobs,
-  (jobs) => jobs.filter((job) => job.state === JobState.Running),
+  (jobs) => jobs.filter((job) => job.state === JobState.Running && !job.transient),
 );
 
 export const selectUpdateJob = createSelector(
@@ -33,12 +39,12 @@ export const selectUpdateJob = createSelector(
 
 export const selectFailedJobs = createSelector(
   selectJobs,
-  (jobs) => jobs.filter((job) => job.state === JobState.Failed),
+  (jobs) => jobs.filter((job) => job.state === JobState.Failed && !job.transient),
 );
 
 export const selectWaitingJobs = createSelector(
   selectJobs,
-  (jobs) => jobs.filter((job) => job.state === JobState.Waiting),
+  (jobs) => jobs.filter((job) => job.state === JobState.Waiting && !job.transient),
 );
 
 export const selectRunningJobsCount = createSelector(

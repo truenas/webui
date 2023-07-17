@@ -11,7 +11,8 @@ import {
   KeyCreatedDialogComponent,
 } from 'app/pages/api-keys/components/key-created-dialog/key-created-dialog.component';
 import { ApiKeyComponentStore } from 'app/pages/api-keys/store/api-key.store';
-import { WebSocketService, AppLoaderService } from 'app/services';
+import { AppLoaderService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({

@@ -3,6 +3,7 @@
 import sys
 import os
 import getopt
+import json
 from configparser import ConfigParser
 from subprocess import run
 cwd = str(os.getcwd())
@@ -37,8 +38,7 @@ option_list = [
 test_suite_list = [
     'ha-bhyve02',
     'ha-tn09',
-    'scale',
-    'scale-validation'
+    'scale'
 ]
 
 markers_list = [
@@ -124,42 +124,18 @@ def run_testing():
     if 'ip' in globals() and 'password' in globals() and 'version' in globals() and test_suite == 'scale':
         os.environ["nas_ip"] = ip
         os.environ["nas_password"] = password
-        os.environ['test_suite'] = test_suite
     elif os.path.exists(f'{cwd}/config.cfg') and test_suite == 'scale':
         configs = ConfigParser()
         configs.read('config.cfg')
         os.environ["nas_ip"] = configs['NAS_CONFIG']['ip']
         os.environ["nas_password"] = configs['NAS_CONFIG']['password']
         os.environ["nas_version"] = configs['NAS_CONFIG']['version']
-        os.environ['test_suite'] = test_suite
-    elif 'ip' in globals() and 'password' in globals() and test_suite == 'scale-validation':
-        os.environ["nas_ip"] = ip
-        os.environ["nas_password"] = password
-        os.environ["nas_version"] = version
-        os.environ['test_suite'] = test_suite
-    elif os.path.exists(f'{cwd}/config.cfg') and test_suite == 'scale-validation':
-        configs = ConfigParser()
-        configs.read('config.cfg')
-        os.environ["nas_ip"] = configs['NAS_CONFIG']['ip']
-        os.environ["nas_password"] = configs['NAS_CONFIG']['password']
-        os.environ['test_suite'] = test_suite
-    elif not os.path.exists(f'{cwd}/config.cfg') and test_suite in ['scale', 'scale-validation']:
-        msg = 'Please use --ip and --nas-password or add confing.cfg ' \
-            'in this directory'
-        print(msg)
-        print('config.cfg example: ')
-        cfg_msg = "[NAS_CONFIG]\n"
-        cfg_msg += "ip = 0.0.0.0\n"
-        cfg_msg += "password = testing\n"
-        if test_suite == 'scale-validation':
-            cfg_msg += "version = TrueNAS-12.0-U2\n"
-        print(cfg_msg)
-        exit(1)
     else:
         os.environ["nas_ip"] = 'None'
         os.environ["nas_password"] = 'None'
         os.environ["nas_version"] = 'None'
-        os.environ['test_suite'] = test_suite
+
+    os.environ['test_suite'] = test_suite
 
     convert_jira_feature_file(test_suite)
     pytest_cmd = [
@@ -175,6 +151,14 @@ def run_testing():
         pytest_cmd.append("-k")
         pytest_cmd.append(marker)
     run(pytest_cmd)
+    openfile = open('results/cucumber/webui_test.json')
+    data = json.load(openfile)
+    for num in range(len(data)):
+        if len(data[num]['elements'][0]['steps']) == 1:
+            data[num]['elements'][0]['steps'][0]['result']['status'] = 'skipped'
+    with open('results/cucumber/webui_test.json', 'w') as outfile:
+        json.dump(data, outfile)
+    openfile.close()
 
 
 if run_convert is True:

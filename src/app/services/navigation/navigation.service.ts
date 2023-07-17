@@ -10,6 +10,7 @@ import { MenuItem, MenuItemType } from 'app/interfaces/menu-item.interface';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
+import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { waitForSystemFeatures, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
@@ -100,11 +101,19 @@ export class NavigationService {
       isVisible$: this.hasApps$,
     },
     {
+      name: T('Apps (Old)'),
+      type: MenuItemType.Link,
+      tooltip: T('Apps'),
+      icon: 'apps',
+      state: 'apps-old',
+      isVisible$: this.hasApps$,
+    },
+    {
       name: T('Reporting'),
       type: MenuItemType.Link,
       tooltip: T('Reports'),
       icon: 'insert_chart',
-      state: 'reportsdashboard',
+      state: 'reportsdashboard/cpu',
     },
     {
       name: T('System Settings'),
@@ -117,18 +126,11 @@ export class NavigationService {
         { name: T('General'), state: 'general' },
         { name: T('Advanced'), state: 'advanced' },
         { name: T('Boot'), state: 'boot' },
-        {
-          name: T('Failover'),
-          state: 'failover',
-          isVisible$: this.hasFailover$,
-        },
+        { name: T('Failover'), state: 'failover', isVisible$: this.hasFailover$ },
         { name: T('Services'), state: 'services' },
         { name: T('Shell'), state: 'shell' },
-        {
-          name: T('Enclosure'),
-          state: 'viewenclosure',
-          isVisible$: this.hasEnclosure$,
-        },
+        { name: T('Alert Settings'), state: 'alert-settings' },
+        { name: T('Enclosure'), state: 'viewenclosure', isVisible$: this.hasEnclosure$ },
       ],
     },
   ];
@@ -144,7 +146,7 @@ export class NavigationService {
   }
 
   private checkForFailoverSupport(): void {
-    this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((hasFailover) => {
+    this.store$.select(selectIsHaLicensed).pipe(untilDestroyed(this)).subscribe((hasFailover) => {
       this.hasFailover$.next(hasFailover);
     });
   }

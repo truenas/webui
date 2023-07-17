@@ -1,17 +1,21 @@
 import {
   ChangeDetectorRef,
   Component,
+  EventEmitter,
   Input,
   OnInit,
+  Output,
   ViewChild,
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { DatatableComponent } from '@swimlane/ngx-datatable';
-import { SortPropDir } from '@swimlane/ngx-datatable/lib/types/sort-prop-dir.type';
+import { DatatableComponent, SortPropDir } from '@siemens/ngx-datatable';
 import * as filesize from 'filesize';
+import { GiB, MiB } from 'app/constants/bytes.constant';
 import helptext from 'app/helptext/storage/volumes/manager/vdev';
+import { UpdatePoolTopologyGroup } from 'app/interfaces/pool.interface';
+import { ManagerVdev } from 'app/pages/storage/components/manager/classes/manager-vdev.class';
 import { ManagerDisk } from 'app/pages/storage/components/manager/manager-disk.interface';
 import { ManagerComponent } from 'app/pages/storage/components/manager/manager.component';
 import { StorageService } from 'app/services/storage.service';
@@ -23,10 +27,12 @@ import { StorageService } from 'app/services/storage.service';
   styleUrls: ['vdev.component.scss'],
 })
 export class VdevComponent implements OnInit {
-  @Input() index: number;
-  @Input() group: string;
+  @Input() title: string;
+  @Input() uuid: string;
+  @Input() group: UpdatePoolTopologyGroup;
   @Input() manager: ManagerComponent;
   @Input() initialValues = {} as { disks: ManagerDisk[]; type: string };
+  @Output() vdevChanged = new EventEmitter<ManagerVdev>();
   @ViewChild(DatatableComponent, { static: false }) table: DatatableComponent;
   typeControl = new FormControl(undefined as string);
   removable = true;
@@ -42,7 +48,7 @@ export class VdevComponent implements OnInit {
   vdevDisksError: boolean;
   showDiskSizeError: boolean;
   vdevTypeDisabled = false;
-  private tenMib = 10 * 1024 * 1024;
+  private tenMib = 10 * MiB;
   protected mindisks: { [key: string]: number } = {
     stripe: 1, mirror: 2, raidz: 3, raidz2: 4, raidz3: 5,
   };
@@ -65,28 +71,32 @@ export class VdevComponent implements OnInit {
     } else {
       this.typeControl.setValue('stripe');
     }
-    if (this.initialValues['disks']) {
-      this.initialValues['disks'].forEach((disk: ManagerDisk) => {
+    if (this.initialValues.disks) {
+      this.initialValues.disks.forEach((disk: ManagerDisk) => {
         this.addDisk(disk);
         this.manager.removeDisk(disk);
       });
-      this.initialValues['disks'] = [];
+      this.initialValues.disks = [];
     }
-    if (this.initialValues['type']) {
-      this.typeControl.setValue(this.initialValues['type']);
+    if (this.initialValues.type) {
+      this.typeControl.setValue(this.initialValues.type);
     }
     this.estimateSize();
 
     this.typeControl.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+      this.emitChangedVdev();
       this.onTypeChange();
     });
+
+    this.cdr.markForCheck();
   }
 
   getType(): string {
-    if (this.typeControl.value === undefined || this.typeControl.value === null) {
-      if (this.manager.firstDataVdevType !== undefined) {
-        this.typeControl.setValue(this.manager.firstDataVdevType);
-      }
+    if (
+      (this.typeControl.value === undefined || this.typeControl.value === null)
+      && this.manager.firstDataVdevType !== undefined
+    ) {
+      this.typeControl.setValue(this.manager.firstDataVdevType);
     }
 
     // TODO: Enum
@@ -99,6 +109,7 @@ export class VdevComponent implements OnInit {
     this.guessVdevType();
     this.estimateSize();
     this.disks = this.sorter.tableSorter(this.disks, 'devname', 'asc');
+    this.emitChangedVdev();
   }
 
   removeDisk(disk: ManagerDisk): void {
@@ -107,6 +118,18 @@ export class VdevComponent implements OnInit {
     this.guessVdevType();
     this.estimateSize();
     this.manager.getCurrentLayout();
+  }
+
+  emitChangedVdev(): void {
+    this.vdevChanged.emit({
+      disks: [...this.disks],
+      type: this.typeControl.value,
+      uuid: this.uuid,
+      group: this.group,
+      rawSize: this.rawSize,
+      vdevDisksError: this.vdevDisksError,
+      showDiskSizeError: this.showDiskSizeError,
+    });
   }
 
   guessVdevType(): void {
@@ -140,7 +163,7 @@ export class VdevComponent implements OnInit {
     let stripeSize = 0;
     let smallestdisk = 0;
     let estimate = 0;
-    const swapsize = this.manager.swapondrive * 1024 * 1024 * 1024;
+    const swapsize = this.manager.swapondrive * GiB;
     this.showDiskSizeError = false;
     for (let i = 0; i < this.disks.length; i++) {
       const size = this.disks[i].real_capacity - swapsize;
@@ -187,6 +210,7 @@ export class VdevComponent implements OnInit {
 
     this.rawSize = estimate;
     this.size = filesize(estimate, { standard: 'iec' });
+    this.emitChangedVdev();
   }
 
   onSelect({ selected }: { selected: ManagerDisk[] }): void {

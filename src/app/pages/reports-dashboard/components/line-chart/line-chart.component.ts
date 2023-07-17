@@ -1,5 +1,5 @@
 import {
-  Component, Input, AfterViewInit, OnDestroy, OnChanges, SimpleChanges, ViewChild, ElementRef,
+  Component, Input, AfterViewInit, OnDestroy, OnChanges, ViewChild, ElementRef,
 } from '@angular/core';
 import { UUID } from 'angular2-uuid';
 import { utcToZonedTime } from 'date-fns-tz';
@@ -8,6 +8,7 @@ import Dygraph, { dygraphs } from 'dygraphs';
 import smoothPlotter from 'dygraphs/src/extras/smooth-plotter.js';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { ReportingData } from 'app/interfaces/reporting.interface';
+import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { Theme } from 'app/interfaces/theme.interface';
 import { Report, LegendDataWithStackedTotalHtml } from 'app/pages/reports-dashboard/interfaces/report.interface';
 import { CoreService } from 'app/services/core-service/core.service';
@@ -50,7 +51,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
   @Input() labelY?: string = 'Label Y';
   @Input() interactive = false;
 
-  library = 'dygraph'; // dygraph or chart.js
+  library: 'dygraph' | 'chart.js' = 'dygraph';
 
   chart: Dygraph;
 
@@ -68,8 +69,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
   constructor(
     private core: CoreService,
     public themeService: ThemeService,
-  ) {
-  }
+  ) {}
 
   render(update?: boolean): void {
     this.renderGraph(update);
@@ -83,7 +83,9 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
 
     if (this.isReversed) {
       this.data.legend = this.data.legend.reverse();
-      this.data.data.forEach((row, i) => this.data.data[i] = row.slice().reverse());
+      (this.data.data as number[][]).forEach((row, i) => {
+        (this.data.data as number[][])[i] = row.slice().reverse();
+      });
       this.data.aggregations.min = this.data.aggregations.min.slice().reverse();
       this.data.aggregations.max = this.data.aggregations.max.slice().reverse();
       this.data.aggregations.mean = this.data.aggregations.mean.slice().reverse();
@@ -121,7 +123,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
           },
         },
       },
-      legendFormatter: (data: dygraphs.LegendData) => {
+      legendFormatter: (legend: dygraphs.LegendData) => {
         const getSuffix = (converted: Conversion): string => {
           if (converted.shortName !== undefined) {
             return converted.shortName;
@@ -130,7 +132,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
           return converted.suffix !== undefined ? converted.suffix : '';
         };
 
-        const clone = { ...data } as LegendDataWithStackedTotalHtml;
+        const clone = { ...legend } as LegendDataWithStackedTotalHtml;
         clone.series.forEach((item: dygraphs.SeriesLegendData, index: number) => {
           if (!item.y) { return; }
           const converted = this.formatLabelValue(item.y, this.inferUnits(this.labelY), 1, true);
@@ -157,7 +159,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
 
         return series;
       },
-      drawCallback: (dygraph: any) => {
+      drawCallback: (dygraph: Dygraph & { axes_: { maxyval: number }[] }) => {
         if (dygraph.axes_) {
           const numero = dygraph.axes_[0].maxyval;
           const converted = this.formatLabelValue(numero, this.inferUnits(this.labelY));
@@ -180,7 +182,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
     }
   }
 
-  protected makeTimeAxis(rd: ReportingData): any[] {
+  protected makeTimeAxis(rd: ReportingData): dygraphs.DataArray {
     const structure = this.library === 'chart.js' ? 'columns' : 'rows';
     if (structure === 'rows') {
       // Push dates to row based data...
@@ -190,8 +192,9 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
       legend.unshift('x');
       rows.push(legend);
 
-      for (let i = 0; i < rd.data.length; i++) {
-        const item = Object.assign([], rd.data[i]);
+      const rowData = rd.data as number[][];
+      for (let i = 0; i < rowData.length; i++) {
+        const item = Object.assign([], rowData[i]);
         let dateStr = utcToZonedTime(new Date(rd.start * 1000 + i * rd.step * 1000), this.timezone).toString();
         // UTC: 2020-12-17T16:33:10Z
         // Los Angeles: 2020-12-17T08:36:30-08:00
@@ -205,16 +208,19 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
       }
 
       return rows;
-    } if (structure === 'columns') {
+    }
+    if (structure === 'columns') {
       const columns = [];
 
-      for (let i = 0; i < rd.data.length; i++) {
+      for (let i = 0; i < (rd.data as number[][]).length; i++) {
         const date = new Date(rd.start * 1000 + i * rd.step * 1000);
         columns.push(date);
       }
 
-      return columns;
+      return columns as unknown as dygraphs.DataArray;
     }
+
+    return undefined;
   }
 
   inferUnits(label: string): string {
@@ -319,7 +325,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
     this.render();
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(changes: IxSimpleChanges<this>): void {
     if (changes.data) {
       this.render();
 

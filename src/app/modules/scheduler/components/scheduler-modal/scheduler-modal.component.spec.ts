@@ -107,8 +107,8 @@ describe('SchedulerModalComponent', () => {
     it('shows preview column for the current crontab', () => {
       const previewColumn = spectator.query(SchedulerPreviewColumnComponent);
 
-      expect(previewColumn.crontab).toEqual('0 2 * * mon');
-      expect(previewColumn.timezone).toEqual('America/New_York');
+      expect(previewColumn.crontab).toBe('0 2 * * mon');
+      expect(previewColumn.timezone).toBe('America/New_York');
     });
 
     it('sets form values when preset is selected', async () => {
@@ -143,7 +143,7 @@ describe('SchedulerModalComponent', () => {
       await daysOfWeek[0].check();
 
       const previewColumn = spectator.query(SchedulerPreviewColumnComponent);
-      expect(previewColumn.crontab).toEqual('25 */2 2-5 2,3,4,5,6,7,8,9,10,11,12 mon,sun');
+      expect(previewColumn.crontab).toBe('25 */2 2-5 2,3,4,5,6,7,8,9,10,11,12 mon,sun');
     });
 
     it('sets day of week portion of crontab to * when all days are selected', async () => {
@@ -151,7 +151,7 @@ describe('SchedulerModalComponent', () => {
       await parallel(() => weekdays.map((weekday) => weekday.check()));
 
       const previewColumn = spectator.query(SchedulerPreviewColumnComponent);
-      expect(previewColumn.crontab).toEqual('0 2 * * *');
+      expect(previewColumn.crontab).toBe('0 2 * * *');
     });
 
     it('sets month portion of crontab to * when all months are selected', async () => {
@@ -159,7 +159,7 @@ describe('SchedulerModalComponent', () => {
       await parallel(() => months.map((month) => month.check()));
 
       const previewColumn = spectator.query(SchedulerPreviewColumnComponent);
-      expect(previewColumn.crontab).toEqual('0 2 * * mon');
+      expect(previewColumn.crontab).toBe('0 2 * * mon');
     });
 
     it('shows an explanation about how DOW and DOM conditions work when both of them are restricted', async () => {

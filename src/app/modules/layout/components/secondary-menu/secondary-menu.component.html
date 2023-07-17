@@ -5,12 +5,9 @@
       routerLinkActive="selected"
       class="sidebar-list-item slide-in-nav-item"
       role="listitem"
-      ix-auto
-      ix-auto-type="option"
-      [ix-auto-identifier]="subItem.name"
       (click)="toggleMenu.emit()"
     >
-      <a [routerLink]="['/', menuName, subItem.state]" class="slidein-nav-link">
+      <a class="slidein-nav-link" [ixTest]="subItem.name" [routerLink]="['/', menuName, subItem.state]">
         {{ subItem.name | translate }}
       </a>
     </mat-list-item>

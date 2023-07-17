@@ -49,12 +49,14 @@ export interface ChartFormValues extends HierarchicalObjectMap<ChartFormValue> {
 
 export interface ChartRelease {
   name: string;
+  title: string;
   info: ChartInfo;
   config: { [key: string]: ChartFormValue };
   hooks: unknown[];
   version: number;
   namespace: string;
   chart_metadata: ChartMetadata;
+  app_metadata: AppMetadata;
   id: string;
   catalog: string;
   catalog_train: string;
@@ -115,6 +117,13 @@ export type ChartReleaseQueryParams = QueryParams<ChartRelease, {
   };
 }>;
 
+export type ChartReleaseUpgradeParams = [
+  name: string,
+  params?: {
+    item_version: string;
+  },
+];
+
 export interface ChartContainerImage {
   id: string;
   update_available: boolean;
@@ -128,8 +137,9 @@ export interface ChartSchemaEnum {
 export interface ChartSchemaNodeConf {
   type: ChartSchemaType;
   attrs?: ChartSchemaNode[];
+  null?: boolean;
   items?: ChartSchemaNode[];
-  default?: unknown;
+  default?: unknown | unknown[];
   enum?: ChartSchemaEnum[];
   required?: boolean;
   value?: string;
@@ -181,4 +191,22 @@ export interface ChartSchema {
   };
   supported: boolean;
   values: { [key: string]: ChartFormValue };
+}
+
+export interface AppMetadata {
+  runAsContext?: {
+    description: string;
+    gid?: number;
+    groupName?: string;
+    userName?: string;
+    uid?: number;
+  }[];
+  capabilities?: {
+    description: string;
+    name: string;
+  }[];
+  hostMounts?: {
+    description: string;
+    hostPath: string;
+  }[];
 }

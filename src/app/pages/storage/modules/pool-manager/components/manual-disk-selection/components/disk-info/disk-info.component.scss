@@ -1,0 +1,30 @@
+.container {
+  align-items: flex-start;
+  display: grid;
+  grid-gap: 4px 10px;
+  grid-template-areas:
+    'a b'
+    'c d';
+  height: 100%;
+
+  &.no-slot .model {
+    grid-column: 1 / span 2;
+  }
+}
+
+.item {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+
+  .label {
+    flex-shrink: 0;
+    font-weight: bold;
+    margin-right: 4px;
+  }
+
+  .value {
+    word-break: break-all;
+  }
+}

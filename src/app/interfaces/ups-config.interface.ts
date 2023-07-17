@@ -11,7 +11,7 @@ export interface UpsConfig {
   mode: UpsMode;
   monpwd: string;
   monuser: string;
-  nocommwarntime: unknown;
+  nocommwarntime: number;
   options: string;
   optionsupsd: string;
   port: string;
@@ -20,7 +20,7 @@ export interface UpsConfig {
   remoteport: number;
   rmonitor: boolean;
   shutdown: UpsShutdownMode;
-  shutdowncmd: unknown;
+  shutdowncmd: string;
   shutdowntimer: number;
 }
 

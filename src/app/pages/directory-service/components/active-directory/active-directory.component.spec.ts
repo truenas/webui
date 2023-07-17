@@ -14,6 +14,8 @@ import { ActiveDirectoryConfig } from 'app/interfaces/active-directory-config.in
 import { DirectoryServicesState } from 'app/interfaces/directory-services-state.interface';
 import { KerberosRealm } from 'app/interfaces/kerberos-realm.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -24,7 +26,7 @@ import {
   LeaveDomainDialogComponent,
 } from 'app/pages/directory-service/components/leave-domain-dialog/leave-domain-dialog.component';
 import {
-  DialogService, ModalService, SystemGeneralService, WebSocketService,
+  DialogService, SystemGeneralService, WebSocketService,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -83,7 +85,8 @@ describe('ActiveDirectoryComponent', () => {
       mockProvider(DialogService),
       mockProvider(SnackbarService),
       mockProvider(IxSlideInService),
-      mockProvider(ModalService),
+      mockProvider(IxSlideInRef),
+      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
     declarations: [
       LeaveDomainDialogComponent,
@@ -195,7 +198,7 @@ describe('ActiveDirectoryComponent', () => {
       netbiosname: 'truenas',
       netbiosalias: ['alias1', 'alias2'],
     }]);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
   });
 
   it('shows EntityJobComponent when activedirectory.update returns a job id', async () => {
@@ -230,9 +233,8 @@ describe('ActiveDirectoryComponent', () => {
       },
       disableClose: true,
     });
-    expect(entityJobComponent.jobId).toEqual(12345);
-    expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
-    expect(spectator.inject(ModalService).refreshTable).toHaveBeenCalled();
+    expect(entityJobComponent.jobId).toBe(12345);
+    expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
   });
 
   describe('leave domain button', () => {

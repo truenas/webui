@@ -1,11 +1,8 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export default {
-  user_form_title_class: 'name-and-contact',
   user_form_full_name_tooltip: T('Spaces are allowed.'),
-  user_form_username_tooltip: T('Usernames can be up to 16 characters long.\
- When using NIS or other legacy software with limited username lengths,\
- keep usernames to eight characters or less for compatibility.\
+  user_form_username_tooltip: T('Usernames can be up to 32 characters long.\
  Usernames cannot begin with a hyphen (<i>-</i>) or contain a space,\
  tab, or these characters:\
  <i>, : + & # % ^ ( ) ! @ ~ * ? < > =</i>. <i>$</i> can only be\
@@ -27,10 +24,12 @@ export default {
  home directory. If the directory exists and matches the username,\
  it is set as the user\'s home directory. When the path does not\
  end with a subdirectory matching the username, a new subdirectory is\
- created. The full path to the user\'s home directory is shown\
+ created only if the \'Create Home Directory\' field is marked checked.\
+ The full path to the user\'s home directory is shown\
  here when editing a user.'),
   user_form_home_dir_permissions_tooltip: T('Sets default Unix permissions of the user home\
  directory. This is read-only for built-in users.'),
+  user_form_home_create_tooltip: T('Create a new home directory for user within the selected path.'),
   user_form_auth_sshkey_tooltip: T('Enter or paste the <b>public</b> SSH key of the\
  user for any key-based authentication. <b>Do not paste the private key.</b>'),
   user_form_auth_pw_enable_tooltip: T('<i>Yes:</i> Disables the <b>Password</b> \
@@ -47,8 +46,5 @@ export default {
  using password-based services until this option is unset. Locking an \
  account is only possible when <b>Disable Password</b> is <i>No</i> and \
  a <b>Password</b> has been created for the account.'),
-  user_form_sudo_tooltip: T('Give this user permission to use <a \
- href="https://www.sudo.ws/" target="_blank">sudo</a>. When using sudo, \
- a user is prompted for their account <b>Password</b>.'),
   user_form_smb_tooltip: T('Set to allow user to authenticate to Samba shares.'),
 };

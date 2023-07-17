@@ -1,17 +1,16 @@
-<mat-icon
+<ix-icon
   class="alert-icon"
+  [name]="icon"
   [color]="alertLevelColor"
   [matTooltip]="iconTooltip"
->
-  {{ icon }}
-</mat-icon>
+></ix-icon>
 
 <div class="alert-body">
-  <h3 *ngIf="!alert.dismissed" class="alert-level {{ alertLevelColor }}">
+  <h3 *ngIf="!alert.dismissed" [class]="['alert-level', alertLevelColor]">
     {{ alertLevelLabel }}
   </h3>
   <h4 class="alert-message" [innerHTML]="alert.formatted"></h4>
-  <div *ngIf="isHa" class="alert-node">{{ alert.node }}</div>
+  <div *ngIf="isHaLicensed" class="alert-node">{{ alert.node }}</div>
   <div class="alert-time">
     {{ alert.datetime.$date | formatDateTime }}
     <ng-container *ngIf="timezone$ | async as timezone">
@@ -24,12 +23,19 @@
     tabindex="0"
     role="button"
     class="action-link"
+    [ixTest]="[alert.key, 'reopen']"
     (click)="onReopen()"
   >
     {{ 'Re-Open' | translate }}
   </a>
   <ng-template #reopenLink>
-    <a tabindex="0" role="button" class="action-link" (click)="onDismiss()">
+    <a
+      tabindex="0"
+      role="button"
+      class="action-link"
+      [ixTest]="[alert.key, 'dismiss']"
+      (click)="onDismiss()"
+    >
       {{ 'Dismiss' | translate }}
     </a>
   </ng-template>

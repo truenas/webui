@@ -1,0 +1,5 @@
+<div class="footer-console-bar">
+  <pre #messageContainer class="messages" (click)="onShowConsolePanel()">
+    {{ lastThreeLogLines$ | async }}
+  </pre>
+</div>

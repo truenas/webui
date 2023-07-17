@@ -14,7 +14,6 @@ export const helptextSharingIscsi = {
  section of <a href="https://tools.ietf.org/html/rfc3721.html"\
  target="_blank">RFC3721</a>.',
   ),
-  target_form_validators_name: [Validators.required],
 
   target_form_placeholder_alias: T('Target Alias'),
   target_form_tooltip_alias: T('Optional user-friendly name.'),
@@ -37,7 +36,6 @@ export const helptextSharingIscsi = {
   target_form_tooltip_portal: T(
     'Leave empty or select number of existing portal to use.',
   ),
-  target_form_validators_portal: [Validators.required],
 
   target_form_placeholder_initiator: T('Initiator Group ID'),
   target_form_tooltip_initiator: T(
@@ -97,8 +95,6 @@ export const helptextSharingIscsi = {
  Default is <i>3260</i>.',
   ),
 
-  portal_form_placeholder_delete: T('Delete'),
-
   initiator_form_tooltip_connected_initiators: T(
     'Initiators currently connected to the system. Shown in IQN\
  format with an IP address. Set initiators and click an <b>-></b>\
@@ -109,7 +105,7 @@ export const helptextSharingIscsi = {
 
   all_placeholder_initiators: T('Allow All Initiators'),
 
-  initiator_form_placeholder_initiators: T('Allowed Initiators (IQN)'),
+  initiator_form_placeholder_initiators: T('Add Allowed Initiators (IQN)'),
   initiator_form_tooltip_initiators: T(
     'Initiators allowed access to this system. Enter an\
  <a href="https://tools.ietf.org/html/rfc3720#section-3.2.6"\
@@ -147,6 +143,10 @@ export const helptextSharingIscsi = {
    configured at the pool level when using zvols or at the extent level \
    for both file and device based extents.'),
 
+  globalconf_tooltip_alua: T('Do not enable ALUA on TrueNAS unless it is also supported \
+    by and enabled on the client computers. ALUA only works when enabled \
+    on both the client and server.'),
+
   fieldset_extent_basic: T('Basic Info'),
   fieldset_extent_type: T('Type'),
   fieldset_extent_options: T('Compatibility'),
@@ -167,7 +167,6 @@ export const helptextSharingIscsi = {
     'Only appears if <i>Device</i> is selected. Select the\
  unused zvol or zvol snapshot.',
   ),
-  extent_validators_disk: [Validators.required],
 
   extent_placeholder_serial: T('Serial'),
   extent_tooltip_serial: T(
@@ -179,7 +178,6 @@ export const helptextSharingIscsi = {
   extent_tooltip_path: T('Browse to an existing file. Create a new file by browsing to a\
  dataset and appending /<i>\'{\'filename.ext\'}\'</i> to the path. Extents cannot be\
  created inside a jail root directory.'),
-  extent_validators_path: [Validators.required],
 
   extent_placeholder_filesize: T('Filesize'),
   extent_tooltip_filesize: T('Entering <i>0</i> uses the actual file size and requires that the\
@@ -313,7 +311,7 @@ export const helptextSharingIscsi = {
   step1_label: T('Create or Choose Block Device'),
 
   name_placeholder: T('Name'),
-  name_tooltip: T('Keep the name short. Using a name longer than 63 characters can prevent accessing the block device.'),
+  name_tooltip: T('Keep the name short and only lowercase. Using a name longer than 63 characters can prevent accessing the block device. Allowed characters: letters, numbers, period (.), dash (-), and colon (:).'),
 
   disk_placeholder: T('Device'),
   disk_tooltip: T('Select the unused zvol or zvol snapshot. Select\

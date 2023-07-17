@@ -12,8 +12,9 @@ import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import {
   TransferModeExplanationComponent,
 } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
-import { WebSocketService } from 'app/services';
+import { DialogService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { CloudsyncRestoreDialogComponent } from './cloudsync-restore-dialog.component';
 
 describe('CloudsyncRestoreDialogComponent', () => {
@@ -33,6 +34,7 @@ describe('CloudsyncRestoreDialogComponent', () => {
       mockWebsocket([
         mockCall('cloudsync.restore'),
       ]),
+      mockProvider(DialogService),
       mockProvider(MatDialogRef),
       {
         provide: MAT_DIALOG_DATA,

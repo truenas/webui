@@ -28,18 +28,26 @@
       [label]="'iSCSI listen port' | translate"
       [required]="true"
     ></ix-input>
+
+    <ix-checkbox
+      *ngIf="isHaSystem"
+      formControlName="alua"
+      [label]="'Asymmetric Logical Unit Access (ALUA)' | translate"
+      [tooltip]="tooltips.alua | translate"
+    ></ix-checkbox>
   </ix-fieldset>
 
-  <div class="form-actions">
+  <ix-form-actions class="form-actions">
     <button
       mat-button
       type="submit"
-      [disabled]="form.invalid || isFormLoading"
       color="primary"
+      ixTest="save"
+      [disabled]="form.invalid || isFormLoading"
     >
       {{ 'Save' | translate }}
     </button>
-  </div>
+  </ix-form-actions>
   <div *ngIf="areSettingsSaved" class="saved-message">
     {{ 'Settings saved.' | translate }}
   </div>

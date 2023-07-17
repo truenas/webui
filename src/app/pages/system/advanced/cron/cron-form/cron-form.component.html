@@ -35,7 +35,7 @@
         <ix-checkbox
           formControlName="stdout"
           [label]="'Hide Standard Output' | translate"
-          [tooltip]="tooltips.enabled | translate"
+          [tooltip]="tooltips.stdout | translate"
         ></ix-checkbox>
 
         <ix-checkbox
@@ -51,16 +51,17 @@
         ></ix-checkbox>
       </ix-fieldset>
 
-      <div class="form-actions">
+      <ix-form-actions>
         <button
           mat-button
           type="submit"
           color="primary"
+          ixTest="save"
           [disabled]="form.invalid || isLoading"
         >
           {{ 'Save' | translate }}
         </button>
-      </div>
+      </ix-form-actions>
     </form>
   </mat-card-content>
 </mat-card>

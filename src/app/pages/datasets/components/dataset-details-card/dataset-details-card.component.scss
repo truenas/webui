@@ -1,4 +1,4 @@
-@import '~assets/styles/mixins/cards';
+@import 'mixins/cards';
 
 .card {
   @include details-card();
@@ -33,4 +33,8 @@
   display: inline-block;
   height: 20px;
   width: 35%;
+}
+
+::ng-deep :host .dataset-path-tooltip {
+  word-break: break-all;
 }

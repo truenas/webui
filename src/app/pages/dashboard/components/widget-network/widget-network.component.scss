@@ -74,7 +74,7 @@ mat-grid-list {
         min-width: 16px;
         width: 16px;
 
-        .mat-icon {
+        .ix-icon {
           font-size: 16px;
           height: 16px;
           line-height: 16px;
@@ -180,20 +180,20 @@ mat-grid-list {
       height: 40px;
       line-height: 40px;
 
-      .mat-icon {
+      .ix-icon {
         font-size: 28px;
         height: 28px;
       }
     }
 
     &.address {
-      .mat-icon {
+      .ix-icon {
         font-size: 16px;
       }
     }
   }
 
-  .mat-icon {
+  .ix-icon {
     font-size: 16px;
     line-height: 20px;
   }
@@ -237,7 +237,7 @@ mat-grid-list {
   height: calc(100% - 56px);
   justify-content: center;
 
-  .mat-button {
+  .mat-mdc-button {
     margin-top: 32px;
   }
 }

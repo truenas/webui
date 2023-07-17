@@ -1,13 +1,22 @@
+<ng-template #tableAddActions>
+  <ix-entity-table-add-actions [entity]="asGenericTable(this)"></ix-entity-table-add-actions>
+</ng-template>
+
 <ng-template #pageHeader>
   <ix-page-title-header>
-    <ix-entity-table-add-actions [entity]="this"></ix-entity-table-add-actions>
+    <ng-container *ngIf="!conf.actionsOutOfHeader" [ngTemplateOutlet]="tableAddActions"></ng-container>
   </ix-page-title-header>
 </ng-template>
+
+<div *ngIf="conf.actionsOutOfHeader" class="actions-out-of-header">
+  <h3>{{ conf.title | translate }}</h3>
+  <ng-container [ngTemplateOutlet]="tableAddActions"></ng-container>
+</div>
 
 <div
   fxLayout="column"
   id="entity-table-component"
-  class="material mat-card mat-card-table"
+  class="material mat-mdc-card mat-card-table"
   [class.is-empty]="isTableEmpty"
 >
   <ng-container>
@@ -29,19 +38,15 @@
           fxLayout="row wrap"
           fxLayoutGap="16px"
         >
-          <span
-            *ngFor="let maction of conf.multiActions"
-            ix-auto
-            ix-auto-type="button"
-            ix-auto-identifier="{{ maction?.id }}"
-          >
+          <span *ngFor="let maction of conf.multiActions">
             <button
               *ngIf="maction.enable"
-              id="{{ maction?.id }}"
               mat-button
+              [ixTest]="['multi-action', maction?.id]"
+              [id]="maction?.id"
               (click)="maction.onClick(this.selection.selected)"
             >
-              <mat-icon>{{ maction?.icon }}</mat-icon>
+              <ix-icon [name]="maction?.icon"></ix-icon>
               &nbsp;
               <span>{{ maction?.label | translate }}</span>
             </button>
@@ -49,15 +54,16 @@
           &nbsp;
         </div>
 
-        <div *ngIf="!conf.multiActions || conf.multiActions.length == 0">
-          <span ix-auto ix-auto-type="button" ix-auto-identifier="mdelete">
+        <div *ngIf="!conf.multiActions || conf.multiActions.length === 0">
+          <span>
             <!-- With Labels -->
             <ng-container>
               <button
                 mat-button
+                ixTest="delete-selected"
                 (click)="doMultiDelete(this.selection.selected)"
               >
-                <mat-icon>delete</mat-icon>
+                <ix-icon name="delete"></ix-icon>
                 <br />
                 <span>
                   {{ 'Delete' | translate }}
@@ -69,11 +75,12 @@
             <ng-container>
               <button
                 mat-button
-                matTooltip="{{ 'Delete selections' | translate }}"
                 matTooltipPosition="below"
+                ixTest="delete-selected"
+                [matTooltip]="'Delete selections' | translate"
                 (click)="doMultiDelete(this.selection.selected)"
               >
-                <mat-icon>delete</mat-icon>
+                <ix-icon name="delete"></ix-icon>
               </button>
             </ng-container>
           </span>
@@ -91,6 +98,7 @@
         multiTemplateDataRows
         mat-table
         matSort
+        [ixTest]="['entity-table', conf?.title]"
         [dataSource]="dataSource"
         [style.minWidth.px]="displayedColumns.length * 25"
       >
@@ -98,13 +106,13 @@
           <!-- Column Template -->
           <ng-container
             *ngIf="isBasicColumnTemplate(column)"
-            matColumnDef="{{ column }}"
+            [matColumnDef]="column"
             [sticky]="isLeftStickyColumnNo(i)"
           >
             <th
+              *matHeaderCellDef
               class="data-column"
               mat-header-cell
-              *matHeaderCellDef
               [class.sticky-left-offset]="shouldApplyStickyOffset(i)"
               [class.sticky-border-right]="
                 isLeftStickyColumnNo(i) && isTableOverflow()
@@ -117,10 +125,10 @@
               {{ currentColumns[i].name | translate }}
             </th>
             <td
-              [class.sticky-left-offset]="shouldApplyStickyOffset(i)"
+              *matCellDef="let element"
               class="data-column"
               mat-cell
-              *matCellDef="let element"
+              [class.sticky-left-offset]="shouldApplyStickyOffset(i)"
               [class.sticky-border-right]="
                 isLeftStickyColumnNo(i) && isTableOverflow()
               "
@@ -147,9 +155,9 @@
 
           <!-- Expansion Chevrons -->
           <ng-container
-            *ngIf="column == 'expansion-chevrons'"
-            matColumnDef="{{ column }}"
+            *ngIf="column === 'expansion-chevrons'"
             stickyEnd
+            [matColumnDef]="column"
           >
             <th
               *matHeaderCellDef
@@ -166,30 +174,30 @@
               (mouseout)="onHover($event, false)"
             >
               <ng-container *ngIf="hasDetails() === true">
-                <ng-container *ngIf="element === expandedElement">
+                <ng-container *ngIf="getRowIdentifier(element) === getRowIdentifier(expandedElement)">
                   <button
-                    [attr.aria-label]="'Close expanded row' | translate"
                     class="transparent-btn"
+                    [ixTest]="['collapse-row', getRowIdentifier(element)]"
+                    [attr.aria-label]="'Close expanded row' | translate"
                   >
-                    <mat-icon
-                      fontSet="mdi-set"
-                      fontIcon="mdi-chevron-up"
+                    <ix-icon
+                      name="mdi-chevron-up"
                       (mouseover)="onHover($event, true)"
                       (mouseout)="onHover($event, false)"
-                    ></mat-icon>
+                    ></ix-icon>
                   </button>
                 </ng-container>
-                <ng-container *ngIf="element !== expandedElement">
+                <ng-container *ngIf="getRowIdentifier(element) !== getRowIdentifier(expandedElement)">
                   <button
-                    [attr.aria-label]="'Expand row' | translate"
                     class="transparent-btn"
+                    [ixTest]="['expand-row', getRowIdentifier(element)]"
+                    [attr.aria-label]="'Expand row' | translate"
                   >
-                    <mat-icon
-                      fontSet="mdi-set"
-                      fontIcon="mdi-chevron-down"
+                    <ix-icon
+                      name="mdi-chevron-down"
                       (mouseover)="onHover($event, true)"
                       (mouseout)="onHover($event, false)"
-                    ></mat-icon>
+                    ></ix-icon>
                   </button>
                 </ng-container>
               </ng-container>
@@ -198,26 +206,26 @@
 
           <!-- Threedot Actions -->
           <ng-container
-            *ngIf="column == 'action'"
-            matColumnDef="{{ column }}"
+            *ngIf="column === 'action'"
             stickyEnd
+            [matColumnDef]="column"
           >
             <th
+              *matHeaderCellDef
               class="threedot-column"
               mat-header-cell
-              *matHeaderCellDef
               [ngClass]="{ 'sticky-border-left': isTableOverflow() }"
             ></th>
             <td
+              *matCellDef="let element"
               class="threedot-column"
               mat-cell
-              *matCellDef="let element"
               [ngClass]="{ 'sticky-border-left': isTableOverflow() }"
               (mouseover)="onHover($event, true)"
               (mouseout)="onHover($event, false)"
             >
               <ix-entity-table-actions
-                [entity]="this"
+                [entity]="asGenericTable(this)"
                 [row]="element"
                 (mouseover)="onHover($event, true)"
                 (mouseout)="onHover($event, false)"
@@ -228,35 +236,31 @@
 
           <!-- Multiselect Checkboxes -->
           <ng-container
-            *ngIf="column == 'multiselect'"
-            matColumnDef="{{ column }}"
+            *ngIf="column === 'multiselect'"
             sticky
+            [matColumnDef]="column"
           >
-            <th class="multiselect-column" *matHeaderCellDef mat-header-cell>
+            <th *matHeaderCellDef class="multiselect-column" mat-header-cell>
               <mat-checkbox
                 color="primary"
-                ix-auto
-                ix-auto-type="checkbox"
-                ix-auto-identifier="title"
+                [ixTest]="[conf.title, 'multiselect']"
                 [indeterminate]="selection.hasValue() && !isAllSelected"
                 [checked]="selection.hasValue() && isAllSelected"
                 (change)="masterToggle($event)"
               ></mat-checkbox>
             </th>
             <td
+              *matCellDef="let element"
               class="multiselect-column"
               mat-cell
-              *matCellDef="let element"
               [ngStyle]="{ cursor: checkLength() ? 'auto' : 'pointer' }"
               (mouseover)="onHover($event, true)"
               (mouseout)="onHover($event, false)"
             >
               <mat-checkbox
                 color="primary"
-                ix-auto
-                ix-auto-type="checkbox"
                 [checked]="selection.isSelected(element)"
-                [ix-auto-identifier]="element[conf.rowIdentifier || 'name']"
+                [ixTest]="element[conf.rowIdentifier || 'name']"
                 (click)="$event.stopPropagation()"
                 (change)="$event ? toggleSelection(element) : null"
               >
@@ -266,13 +270,13 @@
 
           <!-- Interactive Toggle Column -->
           <ng-container
-            *ngIf="column == 'state' && isInteractive(column)"
-            matColumnDef="{{ column }}"
+            *ngIf="column === 'state' && isInteractive(column)"
+            [matColumnDef]="column"
           >
             <th
+              *matHeaderCellDef
               class="toggle-column"
               mat-header-cell
-              *matHeaderCellDef
               [class.padded-away]="
                 !shouldApplyStickyOffset(i) &&
                 !(isLeftStickyColumnNo(i) && isTableOverflow())
@@ -281,9 +285,9 @@
               {{ currentColumns[i].name | translate }}
             </th>
             <td
+              *matCellDef="let element"
               class="toggle-column"
               mat-cell
-              *matCellDef="let element"
               [class.padded-away]="
                 !shouldApplyStickyOffset(i) &&
                 !(isLeftStickyColumnNo(i) && isTableOverflow())
@@ -292,32 +296,25 @@
               (mouseout)="onHover($event, false)"
             >
               <mat-spinner
-                [diameter]="40"
                 *ngIf="element['onChanging']; else actionButtons"
+                [diameter]="40"
               ></mat-spinner>
               <ng-template #actionButtons>
                 <!-- Toggle -->
                 <div
                   *ngIf="currentColumns[i].toggle"
                   class="clickable"
-                  id="overlay__{{ element.name }}_Running"
-                  ix-auto
-                  ix-auto-type="overlay"
-                  matTooltip="{{ element.state }}"
                   matTooltipPosition="right"
-                  [ix-auto-identifier]="column + element.name"
-                  (click)="
-                    $event.stopPropagation(); this.conf.onSliderChange(element)
-                  "
+                  [id]="'overlay__' + getRowIdentifier(element) + '_Running'"
+                  [matTooltip]="element.state"
+                  (click)="$event.stopPropagation(); this.conf.onSliderChange(element)"
                 ></div>
 
                 <mat-slide-toggle
                   *ngIf="currentColumns[i].toggle"
-                  id="slide-toggle__{{ column }}_{{ element.name }}"
-                  ix-auto
-                  ix-auto-type="slider"
-                  ix-auto-identifier="{{ column }}__{{ element.name }}"
                   color="primary"
+                  [id]="'slide-toggle__' + column + '_' + getRowIdentifier(element)"
+                  [ixTest]="[column, getRowIdentifier(element)]"
                   [checked]="element[column] === EntityJobState.Running"
                 >
                 </mat-slide-toggle>
@@ -326,10 +323,8 @@
                 <button
                   *ngIf="currentColumns[i].button"
                   mat-stroked-button
-                  id="interactive-button_{{ column }}_{{ element.name }}"
-                  ix-auto
-                  ix-auto-type="slider"
-                  ix-auto-identifier="{{ column }}__{{ element.name }}"
+                  [ixTest]="[column, getRowIdentifier(element)]"
+                  [id]="'interactive-button_' + column + '_' + getRowIdentifier(element)"
                   [ngClass]="getButtonClass(element[column])"
                   (click)="
                     $event.stopPropagation(); this.conf.onButtonClick(element)
@@ -340,7 +335,7 @@
                     *ngIf="element[column].warnings?.length > 0"
                     class="label-warning-icon"
                   >
-                    <mat-icon fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
+                    <ix-icon name="mdi-alert"></ix-icon>
                   </div>
                 </button>
               </ng-template>
@@ -353,66 +348,66 @@
               ['enabled', 'enable', 'autostart'].includes(column) &&
               isInteractive(column)
             "
-            matColumnDef="{{ column }}"
+            [matColumnDef]="column"
           >
             <th
-              [class.padded-away]="
-                !shouldApplyStickyOffset(i) &&
-                !(isLeftStickyColumnNo(i) && isTableOverflow())
-              "
+              *matHeaderCellDef
               class="toggle-column"
               mat-header-cell
-              *matHeaderCellDef
+              [class.padded-away]="isPaddedAway(i)"
             >
               {{ currentColumns[i].name | translate }}
             </th>
             <td
+              *matCellDef="let element"
               class="toggle-column"
               mat-cell
-              *matCellDef="let element"
-              [class.padded-away]="
-                !shouldApplyStickyOffset(i) &&
-                !(isLeftStickyColumnNo(i) && isTableOverflow())
-              "
+              [class.padded-away]="isPaddedAway(i)"
               (mouseover)="onHover($event, true)"
               (mouseout)="onHover($event, false)"
             >
               <mat-checkbox
+                *ngIf="!(checkboxLoaders.get(getRowIdentifier(element)) | async)"
                 color="primary"
-                id="checkbox__{{ element.name }}"
                 class="checkbox"
-                ix-auto
-                ix-auto-type="checkbox"
-                ix-auto-identifier="{{ column }}__{{ element.name }}"
+                [id]="'checkbox__' + getRowIdentifier(element)"
+                [ixTest]="getRowIdentifier(element)"
+                [disabled]="getDisabled(column)"
                 [(ngModel)]="element[column]"
-                (change)="this.conf.onCheckboxChange(element)"
+                (change)="checkboxChanged(element)"
                 (click)="$event.stopPropagation()"
               ></mat-checkbox>
+
+              <mat-spinner
+                *ngIf="checkboxLoaders.get(getRowIdentifier(element)) | async"
+                mode="indeterminate"
+                [diameter]="25"
+                [id]="'checkbox_spinner__' + getRowIdentifier(element)"
+              ></mat-spinner>
             </td>
           </ng-container>
 
           <ng-container
-            *ngIf="['path', 'paths'].includes(column) && isInteractive(column)"
-            matColumnDef="{{ column }}"
+            *ngIf="['path', 'paths', 'path_local'].includes(column) && isInteractive(column)"
+            [matColumnDef]="column"
           >
             <th *matHeaderCellDef mat-header-cell>
               {{ currentColumns[i].name | translate }}
             </th>
             <td
-              mat-cell
               *matCellDef="let element"
+              mat-cell
               (mouseover)="onHover($event, true)"
               (mouseout)="onHover($event, false)"
             >
               <div class="path-locked-status">
                 <div class="text-overflow-ellipsis">{{ element[column] }}</div>
-                <mat-icon
+                <ix-icon
                   *ngIf="element.locked"
                   class="append"
+                  name="locked"
                   [matTooltip]="'Dataset is currently locked' | translate"
-                >
-                  locked
-                </mat-icon>
+                ></ix-icon>
               </div>
             </td>
           </ng-container>
@@ -421,41 +416,38 @@
         <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
         <ng-container matColumnDef="expandedDetail">
           <td
-            mat-cell
             *matCellDef="let element"
+            mat-cell
             [attr.colspan]="currentColumns.length"
           >
             <div
-              [@detailExpand]="
-                element == expandedElement ? 'expanded' : 'collapsed'
-              "
+              [@detailExpand]="getRowIdentifier(element) === getRowIdentifier(expandedElement) ? 'expanded' : 'collapsed'"
             >
               <ix-entity-table-row-details
                 [config]="element"
-                [parent]="this"
+                [parent]="asGenericTable(this)"
               ></ix-entity-table-row-details>
             </div>
           </td>
         </ng-container>
 
-        <tr mat-header-row *matHeaderRowDef="columnsProps"></tr>
+        <tr *matHeaderRowDef="columnsProps" mat-header-row ixTest="table-header"></tr>
         <tr
           *matRowDef="let element; columns: columnsProps; let i = dataIndex"
           mat-row
           class="element-row"
-          id="{{ element[getFirstKey()] }}"
-          ix-auto
-          ix-auto-type="expander"
-          ix-auto-identifier="{{ element[getFirstKey()] }}"
-          [ngClass]="{ 'expanded-row': expandedElement === element }"
+          [id]="element[getFirstKey()]"
+          [ixTest]="element[getFirstKey()]"
+          [ngClass]="{ 'expanded-row': getRowIdentifier(expandedElement) === getRowIdentifier(element) }"
           (click)="doRowClick(element)"
         ></tr>
 
         <ng-container *ngIf="hasDetails() === true">
           <tr
+            *matRowDef="let row; columns: ['expandedDetail']"
             mat-row
             class="details-row"
-            *matRowDef="let row; columns: ['expandedDetail']"
+            [ixTest]="[row[getFirstKey()], 'details']"
           ></tr>
         </ng-container>
       </table>

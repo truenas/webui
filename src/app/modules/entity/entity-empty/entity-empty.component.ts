@@ -1,30 +1,12 @@
 import { Component, Input } from '@angular/core';
+import { EmptyType } from 'app/enums/empty-type.enum';
+import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 
-export enum EmptyType {
-  Loading = 'duration',
-  FirstUse = 'first_use',
-  NoPageData = 'no_page_data',
-  Errors = 'errors',
-  NoSearchResults = 'no_search_results',
-}
-export interface EmptyConfig {
-  type?: EmptyType;
-  large?: boolean;
-  compact?: boolean;
-  title: string;
-  message?: string;
-  icon?: string;
-  button?: {
-    label: string;
-    action: () => void;
-  };
-}
 @Component({
   selector: 'ix-entity-empty',
   templateUrl: './entity-empty.component.html',
   styleUrls: ['./entity-empty.component.scss'],
 })
-
 export class EntityEmptyComponent {
   @Input() conf: EmptyConfig;
 

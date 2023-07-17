@@ -1,0 +1,116 @@
+<div class="summary-row">
+  <div>
+    <h4>{{ 'General Info' | translate }}</h4>
+
+    <div class="summary-item">
+      <div class="label">{{ 'Pool Name' | translate }}</div>
+      <div class="value">{{ state.name || ('Not Set' | translate) }}</div>
+    </div>
+
+    <div *ngIf="state.encryption" class="summary-item">
+      <div class="label">{{ 'Encryption' | translate }}</div>
+      <div class="value">{{ state.encryption }}</div>
+    </div>
+  </div>
+</div>
+<div class="summary-row">
+  <div class="summary-group topology-summary">
+    <h4>{{ 'Topology Summary' | translate }}</h4>
+
+    <ng-container *ngIf="nonEmptyTopologyCategories.length; else noVdevs">
+      <ng-container *ngFor="let category of nonEmptyTopologyCategories">
+        <div class="summary-item">
+          <div class="label">
+            {{ category[0] | mapValue: vdevTypeLabels | translate }}
+          </div>
+          <div class="value">
+            {{ category[1] | ixTopologyCategoryDescription }}
+          </div>
+        </div>
+      </ng-container>
+    </ng-container>
+
+    <ng-template #noVdevs>
+      {{ 'No VDEVs added.' | translate }}
+    </ng-template>
+  </div>
+
+  <div class="summary-group">
+    <h4>{{ 'Details' | translate }}</h4>
+
+    <div class="summary-item">
+      <div class="label">{{ 'Est. Usable Raw Capacity' | translate }}</div>
+      <div class="value">{{ totalCapacity$ | async | filesize: { standard: 'iec' } }}</div>
+    </div>
+
+    <div
+      *ngIf="state.enclosureSettings.maximizeEnclosureDispersal || limitToEnclosureName"
+      class="summary-item"
+    >
+      <div class="label">{{ 'Dispersal Strategy' | translate }}</div>
+      <div class="value">
+        <ng-container *ngIf="state.enclosureSettings.maximizeEnclosureDispersal">
+          {{ 'Maximize Dispersal' | translate }}
+        </ng-container>
+        <ng-container *ngIf="limitToEnclosureName">
+          {{ 'Limit To {name} Enclosure' | translate: { name: limitToEnclosureName } }}
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="summary-row">
+  <div *ngIf="poolCreationErrors?.length">
+    <h4>{{ 'Warnings' | translate }}</h4>
+
+    <div *ngFor="let error of poolCreationErrors">
+      <div [class]="[error.severity, 'summary-item']">
+        {{ error.text }}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="step-buttons">
+  <button
+    mat-button
+    matStepperPrevious
+    color="accent"
+    type="button"
+    ixTest="back"
+  >
+    {{ 'Back' | translate }}
+  </button>
+
+  <button
+    *ngIf="hasVdevs"
+    mat-button
+    type="button"
+    ixTest="inspect-vdevs"
+    (click)="onInspectVdevsPressed()"
+  >{{ 'Inspect VDEVs' | translate }}</button>
+
+  <button
+    *ngIf="showStartOver"
+    mat-button
+    matStepperNext
+    color="error"
+    type="button"
+    ixTest="start-over"
+    (click)="startOver()"
+  >
+    {{ 'Start Over' | translate }}
+  </button>
+
+  <button
+    mat-button
+    matStepperNext
+    color="primary"
+    type="button"
+    ixTest="create-pool"
+    [disabled]="isCreateDisabled"
+    (click)="createPool.emit()"
+  >
+    {{ 'Create Pool' | translate }}
+  </button>
+</div>

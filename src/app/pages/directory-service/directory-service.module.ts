@@ -9,10 +9,10 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatListModule } from '@angular/material/list';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { TranslateModule } from '@ngx-translate/core';
-import { NgxUploaderModule } from 'ngx-uploader';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { ActiveDirectoryComponent } from 'app/pages/directory-service/components/active-directory/active-directory.component';
 import { IdmapFormComponent } from 'app/pages/directory-service/components/idmap-form/idmap-form.component';
 import { KerberosKeytabsFormComponent } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-form/kerberos-keytabs-form.component';
@@ -35,7 +35,6 @@ import { LdapComponent } from './components/ldap/ldap.component';
     EntityModule,
     ReactiveFormsModule,
     FlexLayoutModule,
-    NgxUploaderModule,
     routing,
     MatListModule,
     MatToolbarModule,
@@ -46,6 +45,7 @@ import { LdapComponent } from './components/ldap/ldap.component';
     IxFormsModule,
     IxTableModule,
     MatDialogModule,
+    TestIdModule,
   ],
   declarations: [
     LdapComponent,

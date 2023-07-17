@@ -2,11 +2,11 @@ import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import { EMPTY, of } from 'rxjs';
 import {
   catchError, filter, map, switchMap,
 } from 'rxjs/operators';
-import { ApiEventMessage } from 'app/enums/api-event-message.enum';
+import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { snapshotExcludeBootQueryFilter } from 'app/pages/datasets/modules/snapshots/constants/snapshot-exclude-boot.constant';
 import {
@@ -14,7 +14,7 @@ import {
   snapshotPageEntered,
   snapshotRemoved, snapshotsLoaded, snapshotsNotLoaded,
 } from 'app/pages/datasets/modules/snapshots/store/snapshot.actions';
-import { WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 
@@ -43,18 +43,19 @@ export class SnapshotEffects {
     }),
   ));
 
-  // TODO: Two types of subscription need to be refactored into one in WebSocketService.
   subscribeToUpdates$ = createEffect(() => this.actions$.pipe(
     ofType(snapshotsLoaded),
     switchMap(() => {
       return this.ws.subscribe('zfs.snapshot.query').pipe(
-        filter((event) => !(event.msg === ApiEventMessage.Changed && event.cleared)),
-        map((event) => {
+        filter((event) => event.msg !== IncomingApiMessageType.Removed),
+        switchMap((event) => {
           switch (event.msg) {
-            case ApiEventMessage.Added:
-              return snapshotAdded({ snapshot: event.fields });
-            case ApiEventMessage.Changed:
-              return snapshotChanged({ snapshot: event.fields });
+            case IncomingApiMessageType.Added:
+              return of(snapshotAdded({ snapshot: event.fields }));
+            case IncomingApiMessageType.Changed:
+              return of(snapshotChanged({ snapshot: event.fields }));
+            default:
+              return EMPTY;
           }
         }),
       );
@@ -64,9 +65,9 @@ export class SnapshotEffects {
   subscribeToRemoval$ = createEffect(() => this.actions$.pipe(
     ofType(snapshotsLoaded),
     switchMap(() => {
-      return this.ws.sub('zfs.snapshot.query').pipe(
-        filter((event) => event.msg === ApiEventMessage.Changed && event.cleared),
-        map((event) => snapshotRemoved({ id: event.id })),
+      return this.ws.subscribe('zfs.snapshot.query').pipe(
+        filter((event) => event.msg === IncomingApiMessageType.Removed),
+        map((event) => snapshotRemoved({ id: event.id.toString() })),
       );
     }),
   ));

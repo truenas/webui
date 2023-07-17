@@ -37,6 +37,7 @@ describe('ZfsEncryptionCardComponent', () => {
 
   const passwordEncryptedRoot = {
     id: 'pool/dataset',
+    name: 'pool/dataset',
     encryption_root: 'pool/dataset',
     locked: false,
     encrypted: true,
@@ -86,7 +87,7 @@ describe('ZfsEncryptionCardComponent', () => {
     });
 
     const buttons = await loader.getAllHarnesses(MatButtonHarness);
-    expect(buttons.length).toBe(2);
+    expect(buttons).toHaveLength(2);
     expect(await buttons[0].getText()).toBe('Edit');
     expect(await buttons[1].getText()).toBe('Export Key');
   });
@@ -103,7 +104,7 @@ describe('ZfsEncryptionCardComponent', () => {
     });
 
     const buttons = await loader.getAllHarnesses(MatButtonHarness);
-    expect(buttons.length).toBe(2);
+    expect(buttons).toHaveLength(2);
     expect(await buttons[0].getText()).toBe('Edit');
     expect(await buttons[1].getText()).toBe('Lock');
   });
@@ -125,7 +126,7 @@ describe('ZfsEncryptionCardComponent', () => {
     });
 
     const buttons = await loader.getAllHarnesses(MatButtonHarness);
-    expect(buttons.length).toBe(1);
+    expect(buttons).toHaveLength(1);
     expect(await buttons[0].getText()).toBe('Unlock');
   });
 
@@ -147,7 +148,7 @@ describe('ZfsEncryptionCardComponent', () => {
     });
 
     const buttons = await loader.getAllHarnesses(MatButtonHarness);
-    expect(buttons.length).toBe(0);
+    expect(buttons).toHaveLength(0);
 
     const goToLink = spectator.query('a');
     expect(goToLink).toHaveText('Go To Encryption Root');
@@ -164,7 +165,7 @@ describe('ZfsEncryptionCardComponent', () => {
     });
 
     const buttons = await loader.getAllHarnesses(MatButtonHarness);
-    expect(buttons.length).toBe(0);
+    expect(buttons).toHaveLength(0);
   });
 
   it('has an Unlock button that takes user to unlock screen', async () => {

@@ -1,16 +1,14 @@
 <div
-  class="panel_container action-length-{{ actions.length }}"
+  [class]="['panel_container', 'action-length-' + actions.length]"
   [style.paddingTop]="inlineActions ? 0 : '4px'"
 >
   <ng-container *ngIf="actions && isSingleAction && singleAction">
     <button
       *ngIf="!entity.conf.isActionVisible || entity.conf.isActionVisible.bind(entity.conf)(actions[0].actions[0].id, row)"
-      id="action_{{ singleAction.name }}__{{ singleAction.id }}"
       mat-button
-      ix-auto-type="button"
-      ix-auto-identifier="{{ row.name }}_{{ singleAction.id }}_{{ singleAction.name }}"
+      [ixTest]="actions[0].actions[0].label"
+      [id]="'action_' + singleAction.name + '__' + singleAction.id"
       [disabled]="singleAction.disabled"
-      [ix-auto]=""
       [color]="actions[0].actions[0].color ? actions[0].actions[0].color : 'default'"
       (click)="singleAction.onClick(this.row)"
     >
@@ -25,33 +23,33 @@
     <button
       *ngIf="iconName.startsWith('mdi-')"
       class="transparent-btn"
+      [ixTest]="[entity?.conf?.title, 'options']"
       [attr.aria-label]="'Actionable Options' | translate"
       [matMenuTriggerFor]="appMenu"
       (click)="noPropagate($event)"
     >
-      <mat-icon
-        fontSet="mdi-set"
-        id="{{ row[entity?.conf?.rowIdentifier || 'name'] }}_{{ action }}_button"
-        [fontIcon]="iconName"
+      <ix-icon
+        [id]="row[entity?.conf?.rowIdentifier || 'name'] + '_' + action + '_button'"
+        [name]="iconName"
         [style.cursor]="'pointer'"
         [style.font-size]="'24px'"
-      ></mat-icon>
+      ></ix-icon>
     </button>
 
     <!-- Standard Material Icon Set -->
     <button
       *ngIf="!iconName.startsWith('mdi-')"
       class="transparent-btn"
+      [ixTest]="[entity?.conf?.title, 'options']"
       [attr.aria-label]="'Actionable Options' | translate"
       [matMenuTriggerFor]="appMenu"
       (click)="noPropagate($event)"
     >
-      <mat-icon
-        id="{{ row[entity?.conf?.rowIdentifier || 'name'] }}_{{ action }}_button"
+      <ix-icon
+        [id]="row[entity?.conf?.rowIdentifier || 'name'] + '_' + action + '_button'"
+        [name]="iconName"
         [style.cursor]="'pointer'"
-      >
-        {{ iconName }}
-      </mat-icon>
+      ></ix-icon>
     </button>
 
     <mat-menu #appMenu="matMenu">
@@ -64,12 +62,10 @@
         >
           <button
             *ngIf="!entity.conf.isActionVisible || entity.conf.isActionVisible.bind(entity.conf)(action.id, row)"
-            id="action_button_{{ action?.name }}__{{ action.id }}"
-            ix-auto-type="action"
-            ix-auto-identifier="{{ action.id }}_{{ action.label }}"
             mat-menu-item
+            [ixTest]="[entity?.conf?.title, 'options', action.label]"
+            [id]="'action_button_' + action?.name + '__' + action.id"
             [disabled]="action.disabled"
-            [ix-auto]=""
             (click)="action.onClick(this.row)"
           >
             <span>{{ action?.label | translate }}</span>
@@ -95,12 +91,10 @@
           >
             <button
               *ngIf="!entity.conf.isActionVisible || entity.conf.isActionVisible.bind(entity.conf)(action.id, row)"
-              id="action_button_{{ action?.name }}__{{ action.id }}"
               mat-menu-item
-              ix-auto-type="action"
-              ix-auto-identifier="{{ action.id }}_{{ action.label }}"
+              [ixTest]="[entity?.conf?.title, 'options', action.label]"
+              [id]="'action_button_' + action?.name + '__' + action.id"
               [disabled]="action.disabled"
-              [ix-auto]=""
               (click)="action.onClick(this.row)"
             >
               <span>{{ action?.label | translate }}</span>
@@ -116,16 +110,14 @@
       <button
         *ngIf="!entity.conf.isActionVisible || entity.conf.isActionVisible.bind(entity.conf)(action.id, row)"
         mat-icon-button
-        id="action_button_{{ action?.name }}__{{ action.id }}"
-        ix-auto-type="action"
-        ix-auto-identifier="{{ action.id }}_{{ action.name.toUpperCase() }}"
+        [ixTest]="[entity?.conf?.title, 'options', action.name]"
+        [id]="'action_button_' + action?.name + '__' + action.id"
         [disabled]="action.disabled"
-        [ix-auto]=""
         [matTooltip]="action.label | translate"
         [matTooltipPosition]="action.ttposition ? action.ttposition : 'left'"
         (click)="action.onClick(this.row)"
       >
-        <mat-icon>{{ action.icon }}</mat-icon>
+        <ix-icon [name]="action.icon"></ix-icon>
       </button>
     </ng-container>
   </ng-template>

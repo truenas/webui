@@ -89,8 +89,7 @@ export class ThemeUtils {
   rgbToHex(value: string): string {
     const [red, green, blue] = this.rgbToArray(value);
 
-    const hex = '#' + ((1 << 24) + (red << 16) + (green << 8) + blue).toString(16).slice(1);
-    return hex;
+    return '#' + ((1 << 24) + (red << 16) + (green << 8) + blue).toString(16).slice(1);
   }
 
   rgbToArray(value: string): number[] {
@@ -110,8 +109,7 @@ export class ThemeUtils {
 
   colorFromMeta(meta: string): string {
     const trimFront = meta.replace('var(--', '');
-    const trimmed = trimFront.replace(')', '');
-    return trimmed;
+    return trimFront.replace(')', '');
   }
 
   forceRgb(value: string): number[] {
@@ -123,8 +121,9 @@ export class ThemeUtils {
       console.error('Cannot convert hsl. Please provide hex or rgb value');
     } else {
       rgb = valueType === 'hex' ? this.hexToRgb(value).rgb : this.rgbToArray(value);
-      return rgb;
     }
+
+    return rgb;
   }
 
   darken(value: string, pc: number): string {
@@ -135,6 +134,8 @@ export class ThemeUtils {
     return this.adjustLightness(value, pc, 'lighten');
   }
 
+  rgbToHsl(param: string | number[], inputString: boolean, outputString: true): string;
+  rgbToHsl(param: string | number[], inputString: boolean, outputString: false): number[];
   rgbToHsl(param: string | number[], inputString = true, outputString = true): number[] | string {
     const value: number[] = inputString ? this.forceRgb(param as string) : param as number[];
 
@@ -190,7 +191,7 @@ export class ThemeUtils {
 
   private adjustLightness(value: string, pc: number, method = 'darken'): string {
     const rgb: number[] = this.forceRgb(value);
-    const hsl = this.rgbToHsl(rgb, false, false) as number[];
+    const hsl = this.rgbToHsl(rgb, false, false);
     let lightness: number = method === 'lighten' ? hsl[2] + pc : hsl[2] - pc;
     lightness = lightness > 100 ? 100 : lightness;
 

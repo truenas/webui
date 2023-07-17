@@ -44,11 +44,17 @@
         ></ix-input>
       </ix-fieldset>
 
-      <div class="form-actions">
-        <button mat-button type="submit" color="primary" [disabled]="isLoading">
+      <ix-form-actions>
+        <button
+          mat-button
+          type="submit"
+          color="primary"
+          ixTest="save"
+          [disabled]="isLoading"
+        >
           {{ 'Save' | translate }}
         </button>
-      </div>
+      </ix-form-actions>
     </form>
   </mat-card-content>
 </mat-card>

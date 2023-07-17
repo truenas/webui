@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
+import { getDatasetLabel } from 'app/pages/datasets/utils/dataset.utils';
 
 @UntilDestroy()
 @Component({
@@ -15,11 +16,7 @@ export class DatasetNodeComponent {
   @Input() dataset: DatasetDetails;
   @Input() isSystemDataset: boolean;
 
-  get nameSegments(): string[] {
-    return this.dataset.name.split('/');
-  }
-
   get label(): string {
-    return this.nameSegments[this.nameSegments.length - 1];
+    return getDatasetLabel(this.dataset);
   }
 }

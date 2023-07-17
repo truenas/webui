@@ -1,9 +1,12 @@
 <ix-modal-header [title]="title" [loading]="isLoading"></ix-modal-header>
 <mat-card>
   <mat-card-content>
-    <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <div class="fieldsets">
-        <ix-fieldset [title]="helptext.fieldset_transfer | translate" class="fieldset">
+        <ix-fieldset
+          class="fieldset"
+          [title]="helptext.fieldset_transfer | translate"
+        >
           <ix-input
             *ngIf="form.controls.description.enabled"
             formControlName="description"
@@ -49,8 +52,15 @@
           ></ix-explorer>
         </ix-fieldset>
 
-        <ix-fieldset [title]="helptext.fieldset_remote | translate" class="fieldset">
-          <a [routerLink]="['/', 'credentials', 'backup-credentials']" (click)="slideInService.close()">
+        <ix-fieldset
+          class="fieldset"
+          [title]="helptext.fieldset_remote | translate"
+        >
+          <a
+            ixTest="manage-credentials"
+            [routerLink]="['/', 'credentials', 'backup-credentials']"
+            (click)="slideInRef.close()"
+          >
             <div class="link">
               {{ 'Manage Credentials' | translate }}<ix-icon name="open_in_new"></ix-icon>
             </div>
@@ -67,7 +77,7 @@
             *ngIf="form.controls.bucket.enabled"
             formControlName="bucket"
             [label]="bucketPlaceholder | translate"
-            [tooltip]="bucketTooltip| translate"
+            [tooltip]="bucketTooltip | translate"
             [options]="bucketOptions$"
           ></ix-select>
           <ix-input
@@ -102,7 +112,10 @@
           ></ix-checkbox>
         </ix-fieldset>
 
-        <ix-fieldset [title]="helptext.fieldset_control | translate" class="fieldset">
+        <ix-fieldset
+          class="fieldset"
+          [title]="helptext.fieldset_control | translate"
+        >
           <ix-scheduler
             *ngIf="form.controls.cloudsync_picker.enabled"
             formControlName="cloudsync_picker"
@@ -118,7 +131,16 @@
           ></ix-checkbox>
         </ix-fieldset>
 
-        <ix-fieldset [title]="helptext.fieldset_advanced_options | translate" class="fieldset">
+        <ix-fieldset
+          class="fieldset"
+          [title]="helptext.fieldset_advanced_options | translate"
+        >
+          <ix-checkbox
+            *ngIf="form.controls.credentials.value === googleDriveProviderId"
+            formControlName="acknowledge_abuse"
+            [label]="helptext.acknowledge_abuse_placeholder | translate"
+            [tooltip]="helptext.acknowledge_abuse_tooltip | translate"
+          ></ix-checkbox>
           <ix-checkbox
             *ngIf="form.controls.snapshot.enabled"
             formControlName="snapshot"
@@ -161,7 +183,9 @@
             [tooltip]="helptext.encryption_tooltip | translate"
             [options]="encryptionOptions$"
           ></ix-select>
-          <div class="advanced-title">{{ helptext.advanced_remote_options | translate }}</div>
+          <div class="advanced-title">
+            {{ helptext.advanced_remote_options | translate }}
+          </div>
           <ix-select
             *ngIf="form.controls.storage_class.enabled"
             formControlName="storage_class"
@@ -169,13 +193,6 @@
             [tooltip]="helptext.storage_class_tooltip | translate"
             [options]="storageClassOptions$"
           ></ix-select>
-          <ix-input
-            *ngIf="form.controls.chunk_size.enabled"
-            formControlName="chunk_size"
-            type="number"
-            [label]="helptext.b2_chunk_size_placeholder | translate"
-            [tooltip]="helptext.b2_chunk_size_tooltip | translate"
-          ></ix-input>
           <ix-checkbox
             *ngIf="form.controls.fast_list.enabled"
             formControlName="fast_list"
@@ -208,13 +225,13 @@
             [label]="helptext.encryption_salt_placeholder | translate"
             [tooltip]="helptext.encryption_salt_tooltip | translate"
           ></ix-input>
-          <ix-input
+          <ix-select
             *ngIf="form.controls.transfers.enabled"
             formControlName="transfers"
-            type="number"
+            [options]="transfersOptions$"
             [label]="helptext.transfers_placeholder | translate"
             [tooltip]="helptext.transfers_tooltip | translate"
-          ></ix-input>
+          ></ix-select>
           <ix-chips
             *ngIf="form.controls.bwlimit.enabled"
             formControlName="bwlimit"
@@ -228,15 +245,21 @@
         <button
           mat-button
           type="submit"
-          [disabled]="form.invalid || isLoading"
           color="primary"
-        >{{ 'Save' | translate }}</button>
+          ixTest="save"
+          [disabled]="form.invalid || isLoading"
+        >
+          {{ 'Save' | translate }}
+        </button>
         <button
           mat-button
           type="button"
+          ixTest="dry-run"
           [disabled]="form.invalid || isLoading"
           (click)="onDryRun()"
-        >{{ helptext.action_button_dry_run | translate }}</button>
+        >
+          {{ helptext.action_button_dry_run | translate }}
+        </button>
       </div>
     </form>
   </mat-card-content>

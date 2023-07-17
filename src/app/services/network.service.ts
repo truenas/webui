@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Choices } from 'app/interfaces/choices.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { WebSocketService } from './ws.service';
+import { AllNetworkInterfacesUpdate } from 'app/interfaces/reporting.interface';
+import { WebSocketService } from 'app/services/ws.service';
 
 @Injectable({ providedIn: 'root' })
 export class NetworkService {
@@ -63,6 +65,12 @@ export class NetworkService {
         }
         return { label: String((33 - i) * 4), value: String((33 - i) * 4) };
       },
+    );
+  }
+
+  subscribeToInOutUpdates(): Observable<AllNetworkInterfacesUpdate> {
+    return this.ws.subscribe('reporting.realtime').pipe(
+      map((event) => event.fields.interfaces),
     );
   }
 }

@@ -2,10 +2,8 @@ import { Component, Inject } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Router, NavigationCancel, NavigationEnd } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { map } from 'rxjs/operators';
 import { WINDOW } from 'app/helpers/window.helper';
-import productText from './helptext/product';
-import { SystemGeneralService, WebSocketService } from './services';
+import { AuthService } from 'app/services/auth/auth.service';
 
 @UntilDestroy()
 @Component({
@@ -13,46 +11,33 @@ import { SystemGeneralService, WebSocketService } from './services';
   templateUrl: './app.component.html',
 })
 export class AppComponent {
+  isAuthenticated = false;
   constructor(
     public title: Title,
     private router: Router,
-    private ws: WebSocketService,
-    private sysGeneralService: SystemGeneralService,
+    private authService: AuthService,
     @Inject(WINDOW) private window: Window,
   ) {
-    const product = productText.product.trim();
-    this.title.setTitle(product + ' - ' + this.window.location.hostname);
-    const darkScheme = this.window.matchMedia('(prefers-color-scheme: dark)').matches;
-    let path;
-    const savedProductType = this.window.localStorage.product_type;
-    if (savedProductType) {
-      const cachedType = savedProductType.toLowerCase();
-      path = `assets/images/truenas_${cachedType}_favicon.png`;
-      if (darkScheme) {
-        path = `assets/images/truenas_${cachedType}_ondark_favicon.png`;
-      }
-    } else {
-      this.sysGeneralService.getProductType$.pipe(
-        map((productType) => productType.toLowerCase()),
-        untilDestroyed(this),
-      ).subscribe((productType) => {
-        path = `assets/images/truenas_${productType}_favicon.png`;
-        if (darkScheme) {
-          path = `assets/images/truenas_${productType}_ondark_favicon.png`;
-        }
-      });
-    }
-    this.setFavicon(path);
+    this.authService.isAuthenticated$.pipe(untilDestroyed(this)).subscribe((isAuthenticated) => {
+      this.isAuthenticated = isAuthenticated;
+    });
+    this.title.setTitle('TrueNAS - ' + this.window.location.hostname);
+
+    this.setFavicon(this.window.matchMedia('(prefers-color-scheme: dark)').matches);
 
     if (this.detectBrowser('Safari')) {
       document.body.className += ' safari-platform';
     }
 
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (event) => {
+      this.setFavicon(event.matches);
+    });
+
     this.router.events.pipe(untilDestroyed(this)).subscribe((event) => {
       // save currenturl
       if (event instanceof NavigationEnd) {
         const navigation = this.router.getCurrentNavigation();
-        if (this.ws.loggedIn && event.url !== '/sessions/signin' && !navigation?.extras?.skipLocationChange) {
+        if (this.isAuthenticated && event.url !== '/sessions/signin' && !navigation?.extras?.skipLocationChange) {
           this.window.sessionStorage.setItem('redirectUrl', event.url);
         }
       }
@@ -77,12 +62,23 @@ export class AppComponent {
     };
   }
 
-  private setFavicon(str: string): void {
-    const link: HTMLLinkElement = document.querySelector("link[rel*='icon']") || document.createElement('link');
-    link['rel'] = 'icon';
-    link['type'] = 'image/png';
-    link['href'] = str;
-    document.getElementsByTagName('head')[0].appendChild(link);
+  private setFavicon(isDarkMode: boolean): void {
+    let path = 'assets/images/truenas_scale_favicon.png';
+    if (isDarkMode) {
+      path = 'assets/images/truenas_scale_ondark_favicon.png';
+    }
+
+    const existingLinkElement = document.querySelector('link[rel=icon]');
+
+    if (existingLinkElement) {
+      (existingLinkElement as unknown as { href: string }).href = path;
+    } else {
+      const link: HTMLLinkElement = document.querySelector("link[rel*='icon']") || document.createElement('link');
+      link.rel = 'icon';
+      link.type = 'image/png';
+      link.href = path;
+      document.getElementsByTagName('head')[0].appendChild(link);
+    }
   }
 
   private detectBrowser(name: string): boolean {

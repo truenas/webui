@@ -12,8 +12,8 @@ import { TaskService } from 'app/services';
   styleUrls: ['./entity-table-row-details.component.scss'],
 })
 export class EntityTableRowDetailsComponent implements OnInit, OnChanges {
-  @Input() config: any;
-  @Input() parent: EntityTableComponent;
+  @Input() config: Record<string, unknown>;
+  @Input() parent: EntityTableComponent<Record<string, unknown>>;
 
   columns: EntityTableColumn[] = [];
   actions: EntityTableAction[] = [];
@@ -33,16 +33,17 @@ export class EntityTableRowDetailsComponent implements OnInit, OnChanges {
   }
 
   getColumnValue(column: EntityTableColumn, isCronTime = false): unknown {
-    const val = _.get(this.config, column.prop.split('.'));
-    if (_.isEmpty(val)) {
+    const columnValue = _.get(this.config, column.prop.split('.')) as unknown;
+
+    if (!columnValue) {
       return column.emptyText || 'N/A';
     }
 
     if (isCronTime) {
-      return this.tryGetTaskCronDescription(val);
+      return this.tryGetTaskCronDescription(columnValue);
     }
 
-    return val;
+    return columnValue;
   }
 
   buildColumns(): void {
@@ -55,9 +56,9 @@ export class EntityTableRowDetailsComponent implements OnInit, OnChanges {
     return this.parent.conf.getActions ? this.parent.conf.getActions(this.config) : this.parent.getActions(this.config);
   }
 
-  private tryGetTaskCronDescription(val: string): string {
+  private tryGetTaskCronDescription(val: unknown): unknown {
     try {
-      return this.taskService.getTaskCronDescription(val, {});
+      return this.taskService.getTaskCronDescription(val as string, {});
     } catch (err: unknown) {
       console.error(err);
       return val;

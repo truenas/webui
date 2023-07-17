@@ -8,7 +8,7 @@ import { of } from 'rxjs';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
-import { ApiEvent } from 'app/interfaces/api-event.interface';
+import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { DirectoryServicesState } from 'app/interfaces/directory-services-state.interface';
 import {
   DirectoryServicesMonitorComponent,
@@ -17,7 +17,7 @@ import {
   DirectoryServicesIndicatorComponent,
 } from 'app/modules/layout/components/topbar/directory-services-indicator/directory-services-indicator.component';
 import { topbarDialogPosition } from 'app/modules/layout/components/topbar/topbar-dialog-position.constant';
-import { WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('DirectoryServicesIndicatorComponent', () => {
   let spectator: Spectator<DirectoryServicesIndicatorComponent>;
@@ -65,8 +65,8 @@ describe('DirectoryServicesIndicatorComponent', () => {
     const icon = spectator.query('button');
     expect(icon).toExist();
 
-    const mockWebsocket = spectator.inject(MockWebsocketService);
-    mockWebsocket.subscribe.mockImplementation(() => of({
+    const websocketMock = spectator.inject(MockWebsocketService);
+    websocketMock.subscribe.mockImplementation(() => of({
       fields: {
         activedirectory: DirectoryServiceState.Disabled,
         ldap: DirectoryServiceState.Disabled,

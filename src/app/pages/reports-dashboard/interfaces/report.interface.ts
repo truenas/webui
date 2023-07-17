@@ -1,6 +1,6 @@
 import { dygraphs } from 'dygraphs';
+import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { ReportingGraph } from 'app/interfaces/reporting-graph.interface';
-import { EmptyConfig } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { ReportZoomLevel } from 'app/pages/reports-dashboard/enums/report-zoom-level.enum';
 
 export interface DateTime {

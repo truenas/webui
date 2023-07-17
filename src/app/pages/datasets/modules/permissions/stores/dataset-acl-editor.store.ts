@@ -18,6 +18,8 @@ import helptext from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import {
   Acl, AclTemplateByPath, NfsAclItem, PosixAclItem, SetAcl,
 } from 'app/interfaces/acl.interface';
+import { Job } from 'app/interfaces/job.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import {
   AclSaveFormParams,
@@ -27,6 +29,7 @@ import { newNfsAce, newPosixAce } from 'app/pages/datasets/modules/permissions/u
 import {
   DialogService, StorageService, UserService, WebSocketService,
 } from 'app/services';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 const initialState: DatasetAclEditorState = {
   isLoading: false,
@@ -42,7 +45,8 @@ const initialState: DatasetAclEditorState = {
 export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState> {
   constructor(
     private ws: WebSocketService,
-    private dialog: DialogService,
+    private errorHandler: ErrorHandlerService,
+    private dialogService: DialogService,
     private matDialog: MatDialog,
     private router: Router,
     private storageService: StorageService,
@@ -54,7 +58,8 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
   readonly loadAcl = this.effect((mountpoints$: Observable<string>) => {
     return mountpoints$.pipe(
       tap((mountpoint) => {
-        this.patchState({
+        this.setState({
+          ...initialState,
           mountpoint,
           isLoading: true,
         });
@@ -71,8 +76,8 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
               isLoading: false,
             });
           }),
-          catchError((error) => {
-            this.dialog.errorReportMiddleware(error);
+          catchError((error: WebsocketError) => {
+            this.dialogService.error(this.errorHandler.parseWsError(error));
 
             this.patchState({
               isLoading: false,
@@ -105,7 +110,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
       selectedAceIndex,
       acl: {
         ...state.acl,
-        acl: (state.acl.acl as (NfsAclItem | PosixAclItem)[]).filter((_, index) => index !== indexToRemove),
+        acl: (state.acl.acl as (NfsAclItem | PosixAclItem)[]).filter((ace, index) => index !== indexToRemove),
       },
       acesWithError: newAcesWithError,
     } as DatasetAclEditorState;
@@ -170,7 +175,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
       // Warn user about risks when changing top level dataset
       switchMap(() => {
         if (this.storageService.isDatasetTopLevel(this.get().mountpoint.replace('mnt/', ''))) {
-          return this.dialog.confirm({
+          return this.dialogService.confirm({
             title: helptext.dataset_acl_dialog_warning,
             message: helptext.dataset_acl_toplevel_dialog_message,
           });
@@ -196,19 +201,19 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
             dialogRef.close();
             this.router.navigate(ngUrl);
           },
-          error: (error) => {
+          error: (error: WebsocketError | Job) => {
             dialogRef.close();
-            this.dialog.errorReportMiddleware(error);
+            this.dialogService.error(this.errorHandler.parseError(error));
           },
         });
         dialogRef.componentInstance.failure.pipe(takeUntil(this.destroy$)).subscribe({
-          next: (error) => {
+          next: (failedJob) => {
             dialogRef.close();
-            this.dialog.errorReportMiddleware(error);
+            this.dialogService.error(this.errorHandler.parseJobError(failedJob));
           },
-          error: (error) => {
+          error: (error: WebsocketError | Job) => {
             dialogRef.close();
-            this.dialog.errorReportMiddleware(error);
+            this.dialogService.error(this.errorHandler.parseError(error));
           },
         });
         dialogRef.componentInstance.submit();
@@ -289,8 +294,8 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
         requests.push(
           this.userService.getUserByName(ace.who).pipe(
             tap((user) => userWhoToIds.set(ace.who, user.pw_uid)),
-            catchError((error) => {
-              this.dialog.errorReportMiddleware(error);
+            catchError((error: WebsocketError) => {
+              this.dialogService.error(this.errorHandler.parseWsError(error));
               markAceAsHavingErrors(index);
               return EMPTY;
             }),
@@ -304,8 +309,8 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
         requests.push(
           this.userService.getGroupByName(ace.who).pipe(
             tap((group) => groupWhoToIds.set(ace.who, group.gr_gid)),
-            catchError((error) => {
-              this.dialog.errorReportMiddleware(error);
+            catchError((error: WebsocketError) => {
+              this.dialogService.error(this.errorHandler.parseWsError(error));
               markAceAsHavingErrors(index);
               return EMPTY;
             }),
@@ -317,8 +322,8 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
     requests.push(
       this.userService.getUserByName(options.owner).pipe(
         tap((user) => userWhoToIds.set(options.owner, user.pw_uid)),
-        catchError((error) => {
-          this.dialog.errorReportMiddleware(error);
+        catchError((error: WebsocketError) => {
+          this.dialogService.error(this.errorHandler.parseWsError(error));
           return EMPTY;
         }),
       ),
@@ -327,8 +332,8 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
     requests.push(
       this.userService.getGroupByName(options.ownerGroup).pipe(
         tap((group) => groupWhoToIds.set(options.ownerGroup, group.gr_gid)),
-        catchError((error) => {
-          this.dialog.errorReportMiddleware(error);
+        catchError((error: WebsocketError) => {
+          this.dialogService.error(this.errorHandler.parseWsError(error));
           return EMPTY;
         }),
       ),

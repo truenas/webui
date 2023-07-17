@@ -1,0 +1,17 @@
+@import 'mixins/cards';
+
+.card {
+  @include details-card();
+}
+
+.details-item {
+  padding-bottom: 10px;
+
+  ix-icon {
+    margin-right: 10px;
+  }
+}
+
+.loading {
+  padding: 16px;
+}

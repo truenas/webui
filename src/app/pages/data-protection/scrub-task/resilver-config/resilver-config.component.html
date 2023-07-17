@@ -41,8 +41,9 @@
         <button
           mat-button
           type="submit"
-          [disabled]="form.invalid || isFormLoading"
           color="primary"
+          ixTest="save"
+          [disabled]="form.invalid || isFormLoading"
         >
           {{ 'Save' | translate }}
         </button>

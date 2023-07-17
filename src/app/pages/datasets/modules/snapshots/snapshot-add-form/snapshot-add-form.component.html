@@ -32,18 +32,25 @@
           [label]="helptext.snapshot_add_recursive_placeholder | translate"
           [tooltip]="helptext.snapshot_add_recursive_tooltip | translate"
         ></ix-checkbox>
+
+        <ix-checkbox
+          *ngIf="hasVmsInDataset"
+          formControlName="vmware_sync"
+          [label]="'VMWare Sync' | translate"
+        ></ix-checkbox>
       </ix-fieldset>
 
-      <div class="form-actions">
+      <ix-form-actions>
         <button
           mat-button
           type="submit"
-          [disabled]="form.invalid || isFormLoading"
           color="primary"
+          ixTest="save"
+          [disabled]="form.invalid || isFormLoading"
         >
           {{ 'Save' | translate }}
         </button>
-      </div>
+      </ix-form-actions>
     </form>
   </mat-card-content>
 </mat-card>

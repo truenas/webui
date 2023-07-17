@@ -126,7 +126,7 @@
   width: 40%;
 }
 
-.td .mat-icon {
+.td .ix-icon {
   height: auto;
   width: 12px;
 }
@@ -159,9 +159,10 @@ span.safe {
   color: var(--green);
 }
 
+.last-scan span .mat-icon,
 .pool-status span .mat-icon,
 .used-space span .mat-icon,
-.disk-errors span .mat-icon {
+.disk-errors span .ix-icon {
   font-size: 17px;
   height: auto;
   margin-left: 4px;
@@ -171,7 +172,7 @@ span.safe {
 }
 
 .used-space span.safe .mat-icon,
-.disk-errors span.safe .mat-icon {
+.disk-errors span.safe .ix-icon {
   top: 4px; // TODO: Remove magic number
 }
 
@@ -201,7 +202,7 @@ span.safe {
   width: 12px;
 }
 
-.carousel-nav .back-arrow.mat-icon {
+.carousel-nav .back-arrow.ix-icon {
   margin-top: -3px; // TODO: Remove magic number
 }
 
@@ -224,24 +225,24 @@ span.safe {
   text-align: center;
 }
 
-.slide .locked.offline .mat-icon {
+.slide .locked.offline .ix-icon {
   font-size: 444%; /* TODO: Check it. Looks weird */
   height: auto;
   width: auto;
 }
 
 .slide div.clickable,
-.slide .mat-list-item.clickable {
+.slide .mat-mdc-list-item.clickable {
   cursor: pointer;
 }
 
-.slide .mat-icon.next-slide {
+.slide .ix-icon.next-slide {
   position: absolute;
   right: 0;
 }
 
-.mat-list-base .mat-list-item {
-  border-bottom: solid 1px rgba(0, 0, 0, 0.1);
+.mat-mdc-list-base .mat-mdc-list-item {
+  border-bottom: solid 1px var(--lines);
 }
 
 .overview .right .list-subheader {
@@ -280,21 +281,21 @@ span.capitalize {
   color: var(--red);
 }
 
-.mat-list-item {
+.mat-mdc-list-item {
   strong {
     margin-right: 6px;
   }
 }
 
-.mat-list-item .error,
-.mat-list-item .warning,
-.mat-list-item .healthy {
+.mat-mdc-list-item .error,
+.mat-mdc-list-item .warning,
+.mat-mdc-list-item .healthy {
   align-items: center;
   display: inline-flex;
   justify-content: center;
   margin-left: 5px;
 
-  .mat-icon {
+  .ix-icon {
     font-size: 20px;
     height: 20px;
     width: 20px;

@@ -3,7 +3,7 @@ import { OnOff } from 'app/enums/on-off.enum';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
-import { PoolTopologyCategory } from 'app/enums/pool-topology-category.enum';
+import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { TopologyItem } from 'app/interfaces/storage.interface';
 import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
@@ -47,7 +47,7 @@ export interface Pool {
 }
 
 export type PoolTopology = {
-  [category in PoolTopologyCategory]: TopologyItem[];
+  [category in VdevType]: TopologyItem[];
 };
 
 export interface PoolScanUpdate {
@@ -73,21 +73,30 @@ export interface CreatePool {
     key?: string;
   };
   name: string;
-  topology: {
-    [key in PoolTopologyCategory]: { type: string; disks: string[] }[];
-  };
+  topology: UpdatePoolTopology;
   checksum?: string;
   deduplication?: DeduplicationSetting;
   allow_duplicate_serials?: boolean;
 }
 
 export interface UpdatePool {
-  topology?: {
-    [key in PoolTopologyCategory]: { type: string; disks?: string[] }[];
-  };
+  topology?: UpdatePoolTopology;
   autotrim?: OnOff;
   allow_duplicate_serials?: boolean;
 }
+
+// TODO: Maybe replace first 5 keys with VdevType enum once old pool manager is removed.
+export interface UpdatePoolTopology {
+  data?: { type: CreateVdevLayout; disks: string[] }[];
+  special?: { type: CreateVdevLayout; disks: string[] }[];
+  dedup?: { type: CreateVdevLayout; disks: string[] }[];
+  cache?: { type: CreateVdevLayout; disks: string[] }[];
+  log?: { type: CreateVdevLayout; disks: string[] }[];
+  // Note that here spares is a correct name, not spare.
+  spares?: string[];
+}
+
+export type UpdatePoolTopologyGroup = keyof UpdatePoolTopology;
 
 export interface PoolAttachParams {
   target_vdev?: string;

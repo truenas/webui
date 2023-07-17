@@ -1,5 +1,5 @@
-import { IxCheckboxListHarness } from 'app/modules/ix-forms/components/ix-checkbox-list/ix-checkbox-list.harness';
 import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
+import { IxCheckboxListHarness } from 'app/modules/ix-forms/components/ix-checkbox-list/ix-checkbox-list.harness';
 import { IxChipsHarness } from 'app/modules/ix-forms/components/ix-chips/ix-chips.harness';
 import { IxComboboxHarness } from 'app/modules/ix-forms/components/ix-combobox/ix-combobox.harness';
 import { IxExplorerHarness } from 'app/modules/ix-forms/components/ix-explorer/ix-explorer.harness';
@@ -12,6 +12,7 @@ import { IxPermissionsHarness } from 'app/modules/ix-forms/components/ix-permiss
 import { IxRadioGroupHarness } from 'app/modules/ix-forms/components/ix-radio-group/ix-radio-group.harness';
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
 import { IxSlideToggleHarness } from 'app/modules/ix-forms/components/ix-slide-toggle/ix-slide-toggle.harness';
+import { IxStarRatingHarness } from 'app/modules/ix-forms/components/ix-star-rating/ix-star-rating.harness';
 import { IxTextareaHarness } from 'app/modules/ix-forms/components/ix-textarea/ix-textarea.harness';
 import { IxFormControlHarness } from 'app/modules/ix-forms/interfaces/ix-form-control-harness.interface';
 import { JiraOauthHarness } from 'app/modules/ix-forms/testing/jira-oauth.harness';
@@ -33,6 +34,7 @@ export const supportedFormControlSelectors = [
   SchedulerHarness,
   IxIpInputWithNetmaskHarness,
   IxFileInputHarness,
+  IxStarRatingHarness,
 ] as const;
 
 export type SupportedFormControlHarness = InstanceType<(typeof supportedFormControlSelectors)[number]>;
@@ -43,11 +45,10 @@ export async function indexControlsByLabel(
   controls: SupportedFormControlHarness[],
 ): Promise<{ [label: string]: SupportedFormControlHarness }> {
   const result: { [label: string]: SupportedFormControlHarness } = {};
-  const getLabels = controls.map((control) => control.getLabelText().then((label) => {
+  for (const control of controls) {
+    const label = await control.getLabelText();
     result[label] = control;
-  }));
-
-  await Promise.all(getLabels);
+  }
 
   return result;
 }

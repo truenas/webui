@@ -7,17 +7,17 @@
         formControlName="defaultGateway"
         [label]="'IPv4 Default Gateway' | translate"
         [required]="true"
-        [tooltip]="helptext.ipv4gateway_tooltip"
+        [tooltip]="helptext.ipv4gateway_tooltip | translate"
       ></ix-input>
     </ix-fieldset>
   </div>
 
   <div mat-dialog-actions>
-    <button mat-button type="button" [matDialogClose]="false">
+    <button mat-button type="button" ixTest="cancel" [matDialogClose]="false">
       {{ 'Cancel' | translate }}
     </button>
 
-    <button mat-button type="submit" color="primary" [disabled]="form.invalid">
+    <button mat-button type="submit" color="primary" ixTest="register" [disabled]="form.invalid">
       {{ 'Register' | translate }}
     </button>
   </div>

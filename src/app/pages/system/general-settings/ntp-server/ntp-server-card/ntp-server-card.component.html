@@ -1,0 +1,98 @@
+<mat-card>
+  <mat-toolbar-row>
+    <h3>{{ 'NTP Servers' | translate }}</h3>
+    <div class="actions action-icon">
+      <button mat-button color="default" ixTest="add-ntp" (click)="doAdd()">
+        {{ 'Add' | translate }}
+      </button>
+    </div>
+  </mat-toolbar-row>
+
+  <table
+    ix-table
+    class="mat-elevation-z0"
+    ixTest="ntp-server-table"
+    [ix-table-empty]="!dataSource.filteredData.length"
+    [emptyConfig]="emptyService.defaultEmptyConfig(emptyType)"
+    [dataSource]="dataSource"
+  >
+    <ng-container matColumnDef="address">
+      <th *matHeaderCellDef mat-header-cell>{{ 'Address' | translate }}</th>
+      <td
+        *matCellDef="let server; dataSource: dataSource"
+        mat-cell
+      >
+        {{ server.address }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="burst">
+      <th *matHeaderCellDef mat-header-cell>{{ 'Burst' | translate }}</th>
+      <td
+        *matCellDef="let server; dataSource: dataSource"
+        mat-cell
+      >
+        {{ server.burst }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="iburst">
+      <th *matHeaderCellDef mat-header-cell>{{ 'IBurst' | translate }}</th>
+      <td
+        *matCellDef="let server; dataSource: dataSource"
+        mat-cell
+      >
+        {{ server.iburst }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="prefer">
+      <th *matHeaderCellDef mat-header-cell>{{ 'Prefer' | translate }}</th>
+      <td
+        *matCellDef="let server; dataSource: dataSource"
+        mat-cell
+      >
+        {{ server.prefer }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="minpoll">
+      <th *matHeaderCellDef mat-header-cell>{{ 'Min Poll' | translate }}</th>
+      <td
+        *matCellDef="let server; dataSource: dataSource"
+        mat-cell
+      >
+        {{ server.minpoll }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="maxpoll">
+      <th *matHeaderCellDef mat-header-cell>{{ 'Max Poll' | translate }}</th>
+      <td
+        *matCellDef="let server; dataSource: dataSource"
+        mat-cell
+      >
+        {{ server.maxpoll }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th *matHeaderCellDef mat-header-cell></th>
+      <td *matCellDef="let server; dataSource: dataSource" mat-cell>
+        <button
+          mat-icon-button
+          type="button"
+          aria-label="Delete"
+          [ixTest]="['delete', server.address]"
+          (click)="doDelete(server); $event.stopPropagation()"
+        >
+          <ix-icon name="delete"></ix-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr *matHeaderRowDef="displayedColumns" mat-header-row ixTest="table-header"></tr>
+    <tr
+      *matRowDef="let server; columns: displayedColumns; dataSource: dataSource"
+      mat-row
+      class="clickable-row"
+      [ixTest]="server.address"
+      (click)="doEdit(server)"
+    ></tr>
+  </table>
+</mat-card>

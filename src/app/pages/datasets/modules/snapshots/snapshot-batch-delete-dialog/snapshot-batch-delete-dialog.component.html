@@ -48,11 +48,12 @@
         mat-button
         type="submit"
         color="primary"
+        ixTest="delete"
         [disabled]="form.invalid"
       >
         {{ 'Delete' | translate }}
       </button>
-      <button mat-button type="button" matDialogClose>
+      <button mat-button type="button" matDialogClose ixTest="cancel">
         {{ 'Cancel' | translate }}
       </button>
     </div>
@@ -62,31 +63,32 @@
 <ng-template #errorOrSuccess>
   <div *ngIf="jobErrors.length; then errorMessage; else successMessage"></div>
 
-  <div class="form-actions">
+  <ix-form-actions>
     <a
       mat-button
       type="submit"
       color="primary"
+      ixTest="go-to-storage"
       [matDialogClose]="true"
       [routerLink]="['/storage']"
     >
       {{ 'Go to Storage' | translate }}
     </a>
-    <button mat-button type="button" [matDialogClose]="true">
+    <button mat-button type="button" ixTest="close" [matDialogClose]="true">
       {{ 'Close' | translate }}
     </button>
-  </div>
+  </ix-form-actions>
 </ng-template>
 
 <ng-template #successMessage>
-  <p>
+  <p class="result-message">
     {{ 'Deleted {n, plural, one {# snapshot} other {# snapshots}}' | translate:
     { n: jobSuccess.length} }}
   </p>
 </ng-template>
 
 <ng-template #errorMessage>
-  <p>
+  <p class="result-message">
     {{ 'Warning: {n} of {total} snapshots could not be deleted.' | translate: { n: jobErrors.length, total } }}
   </p>
   <p>{{ getErrorMessage() }}</p>

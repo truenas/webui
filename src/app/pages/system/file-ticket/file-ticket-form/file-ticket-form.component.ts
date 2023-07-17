@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import {
   Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, Inject,
 } from '@angular/core';
@@ -24,11 +25,12 @@ import {
 } from 'app/interfaces/support.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { GeneralDialogConfig } from 'app/modules/common/dialog/general-dialog/general-dialog.component';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { SystemGeneralService, WebSocketService } from 'app/services';
+import { SystemGeneralService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { IxFileUploadService } from 'app/services/ix-file-upload.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -51,7 +53,7 @@ export class FileTicketFormComponent implements OnInit {
   readonly acceptedFiles = ticketAcceptedFiles;
   readonly typeOptions$ = of(mapToOptions(ticketTypeLabels, this.translate));
   categoryOptions$: Observable<Option[]> = this.getCategories().pipe(
-    tap((options) => this.form.get('category').setDisable(!options.length)),
+    tap((options) => this.form.controls.category.setDisable(!options.length)),
   );
   tooltips = {
     token: helptext.token.tooltip,
@@ -63,7 +65,7 @@ export class FileTicketFormComponent implements OnInit {
     screenshot: helptext.screenshot.tooltip,
   };
   private screenshots: File[] = [];
-  jobs$: BehaviorSubject<Observable<Job>[]> = new BehaviorSubject([]);
+  jobs$ = new BehaviorSubject<Observable<Job>[]>([]);
   isFormDisabled$ = combineLatest([this.form.status$, this.isFormLoading$]).pipe(
     map(([status, loading]) => status === 'INVALID' || loading),
   );
@@ -74,27 +76,27 @@ export class FileTicketFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private sysGeneralService: SystemGeneralService,
-    private slideIn: IxSlideInService,
+    private slideInRef: IxSlideInRef<FileTicketFormComponent>,
     private errorHandler: FormErrorHandlerService,
     private fileUpload: IxFileUploadService,
     private dialog: DialogService,
     @Inject(WINDOW) private window: Window,
   ) {
-    this.form.get('category').setDisable(true);
+    this.form.controls.category.setDisable(true);
     this.restoreToken();
   }
 
   ngOnInit(): void {
     this.isFormLoading$.next(false);
 
-    this.form.get('token').value$.pipe(
+    this.form.controls.token.value$.pipe(
       filter((token) => !!token),
       untilDestroyed(this),
     ).subscribe((token) => {
       this.sysGeneralService.setTokenForJira(token);
     });
 
-    this.form.get('screenshot').valueChanges.pipe(
+    this.form.controls.screenshot.valueChanges.pipe(
       switchMap((screenshots) => this.fileUpload.validateScreenshots(screenshots)),
       catchError((error: WebsocketError) => {
         this.errorHandler.handleWsFormError(error, this.form);
@@ -108,16 +110,16 @@ export class FileTicketFormComponent implements OnInit {
       this.screenshots = validScreenshots;
       if (invalidFiles.length) {
         const message = invalidFiles.map((error) => `${error.name} – ${error.errorMessage}`).join('\n');
-        this.form.get('screenshot').setErrors({ ixManualValidateError: { message } });
+        this.form.controls.screenshot.setErrors({ ixManualValidateError: { message } });
       } else {
-        this.form.get('screenshot').setErrors(null);
+        this.form.controls.screenshot.setErrors(null);
       }
       this.cdr.markForCheck();
     });
   }
 
   getCategories(): Observable<Option[]> {
-    return this.form.get('token').value$.pipe(
+    return this.form.controls.token.value$.pipe(
       filter((token) => !!token),
       debounceTime(300),
       switchMap((token) => this.ws.call('support.fetch_categories', [token])),
@@ -166,8 +168,12 @@ export class FileTicketFormComponent implements OnInit {
           this.fileUpload.onUploading$.pipe(
             untilDestroyed(this),
           ).subscribe({
-            error: () => {
-              this.dialog.errorReport('Ticket', 'Uploading screenshots has failed');
+            error: (error: HttpErrorResponse) => {
+              this.dialog.error({
+                title: this.translate.instant('Ticket'),
+                message: this.translate.instant('Uploading screenshots has failed'),
+                backtrace: `Error: ${error.status},\n ${error.error}\n ${error.message}`,
+              });
             },
           });
           this.fileUpload.onUploaded$.pipe(
@@ -189,7 +195,6 @@ export class FileTicketFormComponent implements OnInit {
             },
             complete: () => {
               this.isFormLoading$.next(false);
-              this.slideIn.close();
               this.openSuccessDialog(job.result);
             },
           });
@@ -202,7 +207,6 @@ export class FileTicketFormComponent implements OnInit {
           });
         } else {
           this.isFormLoading$.next(false);
-          this.slideIn.close();
           this.openSuccessDialog(job.result);
         }
       },
@@ -224,11 +228,10 @@ export class FileTicketFormComponent implements OnInit {
     this.dialog.generalDialog(dialogConfig)
       .pipe(untilDestroyed(this))
       .subscribe((shouldOpen) => {
-        if (!shouldOpen) {
-          return;
+        if (shouldOpen) {
+          this.window.open(params.url, '_blank');
         }
-
-        this.window.open(params.url, '_blank');
+        this.slideInRef.close();
       });
   }
 

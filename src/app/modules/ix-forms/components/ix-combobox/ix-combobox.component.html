@@ -4,6 +4,7 @@
     [label]="label"
     [tooltip]="tooltip"
     [required]="required"
+    [ixTestOverride]="controlDirective.name"
   ></ix-label>
 
   <div class="input-container" [class.disabled]="isDisabled">
@@ -11,9 +12,11 @@
       #ixInput
       matInput
       [value]="selectedOption?.label || textContent"
-      [placeholder]="placeholder"
+      [placeholder]="allowCustomValue ? ('Search or enter value' | translate) : ('Search' | translate)"
       [disabled]="isDisabled"
       [matAutocomplete]="auto"
+      [ixTest]="controlDirective.name"
+      [class.has-value]="selectedOption?.label || textContent"
       (input)="onChanged(ixInput.value)"
       (blur)="onTouch()"
     />
@@ -25,12 +28,11 @@
         [diameter]="15"
       ></mat-progress-spinner>
 
-      <mat-icon
+      <ix-icon
         *ngIf="shouldShowResetInput()"
-        fontSet="mdi-set"
-        fontIcon="mdi-close-circle"
+        name="mdi-close-circle"
         (click)="resetInput()"
-      ></mat-icon>
+      ></ix-icon>
     </span>
 
     <mat-autocomplete
@@ -42,9 +44,11 @@
       <ng-container *ngIf="options && options.length; else loadingOrError">
         <mat-option
           *ngFor="let option of options"
+          class="combobox-mat-options"
           [value]="option"
           [class.ix-selected]="option.value === selectedOption?.value"
           [class.ix-unselected]="option.value !== selectedOption?.value"
+          [ixTest]="[controlDirective.name, option.label]"
         >
           {{ option.label }}
         </mat-option>
@@ -52,7 +56,7 @@
 
       <ng-template #loadingOrError>
         <ng-container *ngIf="hasErrorInOptions">
-          <mat-option [disabled]="true">
+          <mat-option ixTest="options-cannot-be-loaded" [disabled]="true">
             {{ 'Options cannot be loaded' | translate }}
           </mat-option>
         </ng-container>

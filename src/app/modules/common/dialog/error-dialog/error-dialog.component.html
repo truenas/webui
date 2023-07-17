@@ -1,28 +1,26 @@
-<h1 mat-dialog-title id="err-title">
-  <mat-icon class="warning-icon">error</mat-icon>
+<h1 #errorTitle mat-dialog-title id="err-title" class="err-title">
+  <ix-icon class="error-warning-icon" name="error"></ix-icon>
   {{ title | translate }}
 </h1>
-<div mat-dialog-content id="err-md-content">
-  <div id="err-message-wrapper"><span [innerHTML]="message"></span></div>
+<div #errorMdContent mat-dialog-content id="err-md-content">
+  <div #errorMessageWrapper id="err-message-wrapper"><span [innerHTML]="message"></span></div>
   <div
     *ngIf="backtrace"
     class="more-info"
-    ix-auto
-    ix-auto-type="button"
-    ix-auto-identifier="backtrace-toggle"
     (click)="toggleOpen()"
   >
-    <mat-icon *ngIf="isCloseMoreInfo">add_circle_outline</mat-icon>
-    <mat-icon *ngIf="!isCloseMoreInfo">remove_circle_outline</mat-icon>
+    <ix-icon *ngIf="isCloseMoreInfo" name="add_circle_outline"></ix-icon>
+    <ix-icon *ngIf="!isCloseMoreInfo" name="remove_circle_outline"></ix-icon>
     <span>{{ 'More info...' | translate }}</span>
   </div>
   <div
     *ngIf="backtrace"
+    #errorBtPanel
     id="err-bt-panel"
     class="backtrace-panel"
     [class.open]="!isCloseMoreInfo"
   >
-    <div class="textarea scrolled-down" id="err-bt-text" readonly matInput>
+    <div #errorBtText class="textarea scrolled-down" id="err-bt-text" readonly matInput>
       {{ 'Error' | translate }}: {{ backtrace }}
     </div>
   </div>
@@ -30,10 +28,8 @@
 <div mat-dialog-actions>
   <button
     mat-button
-    class="mat-button mat-accent"
-    ix-auto
-    ix-auto-type="button"
-    ix-auto-identifier="CLOSE"
+    class="mat-mdc-button mat-button mat-accent"
+    ixTest="close-error-dialog"
     (click)="dialogRef.close(true)"
   >
     {{ 'Close' | translate }}
@@ -41,10 +37,8 @@
   <button
     *ngIf="logs"
     mat-button
-    class="mat-button mat-primary"
-    ix-auto
-    ix-auto-type="button"
-    ix-auto-identifier="DOWNLOAD LOGS"
+    class="mat-mdc-button mat-button mat-primary"
+    ixTest="download-logs"
     (click)="downloadLogs()"
   >
     {{ 'Download Logs' | translate }}

@@ -3,6 +3,7 @@
   [label]="label"
   [tooltip]="tooltip"
   [required]="required"
+  [ixTestOverride]="controlDirective.name"
 ></ix-label>
 
 <div class="input-container" [class.disabled]="isDisabled">
@@ -12,6 +13,7 @@
     type="text"
     autocomplete="off"
     [value]="inputValue"
+    [ixTest]="controlDirective.name"
     [required]="required"
     [disabled]="isDisabled"
     (change)="onInputChanged(input.value)"
@@ -29,12 +31,12 @@
     <!-- Do not remove #treeNodeTemplate even though it appears to be unused -->
     <ng-template #treeNodeTemplate let-node>
       <span *ngIf="typeNode(node) as node" [class.selected]="isPathSelected(node.data.path)">
-        <mat-icon *ngIf="node.data.type === ExplorerNodeType.File; else folderIcon">
-          insert_drive_file
-        </mat-icon>
+        <ng-container *ngIf="node.data.type === ExplorerNodeType.File; else folderIcon">
+          <ix-icon name="insert_drive_file"></ix-icon>
+        </ng-container>
 
         <ng-template #folderIcon>
-          <mat-icon>folder</mat-icon>
+          <ix-icon name="folder"></ix-icon>
         </ng-template>
 
         <span class="node-name">{{ node.data.name }}</span>

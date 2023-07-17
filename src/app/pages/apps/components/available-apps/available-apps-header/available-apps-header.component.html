@@ -1,0 +1,76 @@
+<div class="search-filters">
+  <ix-input
+    prefixIcon="search"
+    [formControl]="searchControl"
+    [placeholder]="'Search' | translate"
+  ></ix-input>
+  <div class="filters-btn">
+    <button
+      mat-button
+      ixTest="filter"
+      (click)="changeFiltersVisible()"
+    >
+      {{ 'Filters' | translate }}
+      <ix-icon *ngIf="!showFilters" name="expand_more"></ix-icon>
+      <ix-icon *ngIf="showFilters" name="expand_less"></ix-icon>
+    </button>
+  </div>
+  <div *ngIf="showFilters" class="filters-container">
+    <div class="filters">
+      <ix-filter-select-list
+        class="catalogs"
+        [formControl]="form.controls.catalogs"
+        [label]="'Catalogs' | translate"
+        [options]="catalogsOptions$"
+        [multiple]="true"
+      ></ix-filter-select-list>
+      <ix-filter-select-list
+        class="sort"
+        [formControl]="form.controls.sort"
+        [label]="'Sort' | translate"
+        [options]="sortOptions$"
+      ></ix-filter-select-list>
+      <div class="сategories">
+        <ix-chips
+          [formControl]="form.controls.categories"
+          [label]="'Categories' | translate"
+          [autocompleteProvider]="categoriesProvider$"
+        ></ix-chips>
+        <div class="info-container">
+          <ix-icon name="info"></ix-icon>
+          {{ 'Categories are provided by the catalog maintainers. Changing the catalogs filter may affect categories displayed.' | translate }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="header-numbers">
+  <div class="header-number">
+    <div class="header-number-title">{{ 'Available Apps' | translate }}</div>
+    <a class="header-link" ixTest="refresh-charts" (click)="refreshCharts()">
+      <h2 *ngIf="areLoaded$ | async; else loader">{{ (availableApps$ | async).length }}</h2>
+      <span>{{ 'Refresh Charts' | translate }}</span>
+    </a>
+  </div>
+
+  <div class="header-number">
+    <div class="header-number-title">{{ 'Installed Apps' | translate }}</div>
+    <a class="header-link" ixTest="manage-installed-apps" [routerLink]="['/apps/installed']">
+      <h2 *ngIf="areLoaded$ | async; else loader">{{ (installedApps$ | async).length }}</h2>
+      <span>{{ 'Manage Installed Apps' | translate }}</span>
+    </a>
+  </div>
+
+  <div class="header-number">
+    <div class="header-number-title">{{ 'Installed Catalogs' | translate }}</div>
+    <a class="header-link" ixTest="manage-catalogs" [routerLink]="['/apps/available/catalogs']">
+      <h2 *ngIf="areLoaded$ | async; else loader">{{ (catalogs$ | async).length }}</h2>
+      <span>{{ 'Manage Catalogs' | translate }}</span>
+    </a>
+  </div>
+</div>
+
+<ng-template #loader>
+  <ngx-skeleton-loader></ngx-skeleton-loader>
+</ng-template>

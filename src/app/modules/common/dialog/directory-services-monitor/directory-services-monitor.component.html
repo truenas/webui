@@ -6,54 +6,51 @@
       <button
         mat-icon-button
         id="refresh-icon"
-        ix-auto
-        ix-auto-type="button"
-        ix-auto-identifier="refresh"
+        ixTest="refresh-directory-services"
         (click)="getStatus()"
       >
-        <mat-icon>refresh</mat-icon>
+        <ix-icon name="refresh"></ix-icon>
       </button>
 
       <button
         class="dir-services-monitor-action-button"
         mat-icon-button
         mat-dialog-close
-        ix-auto
-        ix-auto-type="button"
-        ix-auto-identifier="CLOSE"
+        ixTest="close-directory-services"
       >
-        <mat-icon>clear</mat-icon>
+        <ix-icon name="clear"></ix-icon>
       </button>
     </div>
   </div>
-  <div class="spinner-wrapper" *ngIf="isLoading">
-    <mat-spinner [diameter]="40" id="dir-service-monitor-spinner"></mat-spinner>
+  <div *ngIf="isLoading" class="spinner-wrapper">
+    <mat-spinner id="dir-service-monitor-spinner" [diameter]="40"></mat-spinner>
   </div>
   <mat-table
     *ngIf="!isLoading"
-    [dataSource]="dataSource"
     class="mat-elevation-z8"
+    [dataSource]="dataSource"
   >
     <!-- Icon Column -->
     <ng-container matColumnDef="icon">
       <mat-header-cell *matHeaderCellDef fxFlex="74px"></mat-header-cell>
       <mat-cell *matCellDef="let element" fxFlex="74px">
         <ng-container [ngSwitch]="element.state">
-          <mat-icon *ngSwitchCase="DirectoryServiceState.Healthy" class="state-healthy">check_circle</mat-icon>
-          <mat-icon *ngSwitchCase="DirectoryServiceState.Faulted" class="state-faulted">highlight_off</mat-icon>
-          <mat-icon *ngSwitchCase="DirectoryServiceState.Leaving" class="state-leaving">arrow_back</mat-icon>
-          <mat-icon *ngSwitchCase="DirectoryServiceState.Joining" class="state-joining">arrow_forward</mat-icon>
-          <mat-icon *ngSwitchCase="DirectoryServiceState.Disabled" class="state-disabled">remove_circle</mat-icon>
+          <ix-icon *ngSwitchCase="DirectoryServiceState.Healthy" name="check_circle" class="state-healthy"></ix-icon>
+          <ix-icon *ngSwitchCase="DirectoryServiceState.Faulted" name="highlight_off" class="state-faulted"></ix-icon>
+          <ix-icon *ngSwitchCase="DirectoryServiceState.Leaving" name="arrow_back" class="state-leaving"></ix-icon>
+          <ix-icon *ngSwitchCase="DirectoryServiceState.Joining" name="arrow_forward" class="state-joining"></ix-icon>
+          <ix-icon *ngSwitchCase="DirectoryServiceState.Disabled" name="remove_circle" class="state-disabled"></ix-icon>
         </ng-container>
       </mat-cell>
-    </ng-container>    <!-- Name Column -->
+    </ng-container>
+
     <ng-container matColumnDef="name">
       <mat-header-cell *matHeaderCellDef>
         {{ 'Name' | translate }}
       </mat-header-cell>
       <mat-cell *matCellDef="let element">{{ element.name }}</mat-cell>
     </ng-container>
-    <!-- State Column -->
+
     <ng-container matColumnDef="state">
       <mat-header-cell *matHeaderCellDef>
         {{ 'State' | translate }}
@@ -64,9 +61,7 @@
     <mat-row
       *matRowDef="let row; columns: displayedColumns"
       class="table-row clickable"
-      ix-auto
-      ix-auto-type="action"
-      ix-auto-identifier="{{ row.name }}"
+      [ixTest]="row.name"
       (click)="goTo(row.id)"
     ></mat-row>
   </mat-table>

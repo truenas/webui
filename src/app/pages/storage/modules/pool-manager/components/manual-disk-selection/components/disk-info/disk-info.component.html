@@ -1,0 +1,21 @@
+<div
+  class="container"
+  [class.no-slot]="!disk.enclosure"
+>
+  <div *ngIf="disk.enclosure" class="item">
+    <div class="label">{{ 'Slot' | translate }}:</div>
+    <div class="value">{{ disk.enclosure.slot }}</div>
+  </div>
+  <div class="item model">
+    <div class="label">{{ 'Model' | translate }}:</div>
+    <div class="value">{{ disk.model }}</div>
+  </div>
+  <div class="item">
+    <div class="label">{{ 'Type' | translate }}:</div>
+    <div class="value">{{ disk.type }}</div>
+  </div>
+  <div class="item">
+    <div class="label">{{ 'Serial' | translate }}:</div>
+    <div class="value">{{ disk.serial }}</div>
+  </div>
+</div>

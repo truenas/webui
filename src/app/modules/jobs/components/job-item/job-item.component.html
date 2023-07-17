@@ -1,8 +1,5 @@
 <div
   class="job-item"
-  fxLayout="row"
-  fxLayoutAlign="space-between center"
-  fxLayoutGap="8px"
   [class.abortable]="job?.state === JobState.Running && job?.abortable"
   [class.interactive]="clickable"
 >
@@ -11,7 +8,7 @@
       <span class="job-description">
         {{ job.description ? job.description : job.method }}
       </span>
-      <small class="job-progress-percent" *ngIf="job.state === JobState.Running">
+      <small *ngIf="job.state === JobState.Running" class="job-progress-percent">
         {{ job.progress.percent || 0 | number: '1.2-2' }}%
       </small>
     </div>
@@ -25,10 +22,10 @@
 
     <div [ngSwitch]="job.state">
       <ng-container *ngSwitchCase="JobState.Running">
-        <div class="job-progress-description" *ngIf="job?.progress?.description">
+        <div *ngIf="job?.progress?.description" class="job-progress-description">
           {{ job.progress.description }}
         </div>
-        <div class="job-time" *ngIf="!job?.progress?.description">
+        <div *ngIf="!job?.progress?.description" class="job-time">
           {{ 'Started' | translate }}:
           <strong>
             {{ job.time_started?.$date ? (job.time_started.$date | formatDateTime) : '–' }}
@@ -59,39 +56,45 @@
     class="job-button-abort"
     mat-icon-button
     type="button"
+    [ixTest]="['abort', job.description, job.method]"
+    [matTooltip]="'Abort' | translate"
     (click)="abort()"
   >
-    <mat-icon
-      fontSet="mdi-set"
-      fontIcon="mdi-close-circle"
-      class="job-icon-abort"
-    ></mat-icon>
+    <ix-icon name="mdi-stop-circle" class="job-icon-abort"></ix-icon>
   </button>
 
   <button
     *ngIf="job.state === JobState.Waiting"
     mat-icon-button
     type="button"
+    [ixTest]="['waiting', job.description, job.method]"
     [disabled]="true"
   >
-    <mat-icon class="job-icon-waiting">schedule</mat-icon>
+    <ix-icon name="schedule" class="job-icon-waiting"></ix-icon>
   </button>
 
   <button
     *ngIf="job.state === JobState.Failed"
     mat-icon-button
     type="button"
+    [ixTest]="['failed', job.description, job.method]"
     [disabled]="true"
   >
-    <mat-icon matTooltipPosition="left" class="job-icon-failed" [matTooltip]="job.error">cancel</mat-icon>
+    <ix-icon
+      name="cancel"
+      matTooltipPosition="left"
+      class="job-icon-failed"
+      [matTooltip]="job.error"
+    ></ix-icon>
   </button>
 
   <button
     *ngIf="job.state === JobState.Success"
     mat-icon-button
     type="button"
+    [ixTest]="['success', job.description, job.method]"
     [disabled]="true"
   >
-    <mat-icon class="job-icon-success">check_circle</mat-icon>
+    <ix-icon name="mdi-check-circle" class="job-icon-success"></ix-icon>
   </button>
 </div>

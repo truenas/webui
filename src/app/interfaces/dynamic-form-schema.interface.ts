@@ -1,6 +1,7 @@
 import { UntypedFormArray } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
+import { ChartSchemaNode } from 'app/interfaces/chart-release.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
 
@@ -10,7 +11,13 @@ export interface DynamicFormSchema {
   schema: DynamicFormSchemaNode[];
 }
 
+export interface DynamicWizardSchema extends DynamicFormSchema {
+  help: string;
+}
+
 export type DynamicFormSchemaNode =
+| DynamicFormSchemaUri
+| DynamicFormSchemaCron
 | DynamicFormSchemaInput
 | DynamicFormSchemaSelect
 | DynamicFormSchemaExplorer
@@ -24,9 +31,11 @@ export interface DynamicFormSchemaBase {
   dependsOn?: string[];
   title?: string;
   required?: boolean;
+  tooltip?: string;
   hidden?: boolean;
   editable?: boolean;
   indent?: boolean;
+  default?: unknown[];
 }
 
 export interface DynamicFormSchemaInput extends DynamicFormSchemaBase {
@@ -34,6 +43,18 @@ export interface DynamicFormSchemaInput extends DynamicFormSchemaBase {
   tooltip?: string;
   inputType?: 'password' | 'number';
   placeholder?: string;
+}
+
+export interface DynamicFormSchemaUri extends DynamicFormSchemaBase {
+  type: DynamicFormSchemaType.Uri;
+  inputType?: string;
+  tooltip?: string;
+  placeholder?: string;
+}
+
+export interface DynamicFormSchemaCron extends DynamicFormSchemaBase {
+  type: DynamicFormSchemaType.Cron;
+  tooltip?: string;
 }
 
 export interface DynamicFormSchemaSelect extends DynamicFormSchemaBase {
@@ -62,7 +83,7 @@ export interface DynamicFormSchemaIpaddr extends DynamicFormSchemaBase {
 export interface DynamicFormSchemaList extends DynamicFormSchemaBase {
   type: DynamicFormSchemaType.List;
   items?: DynamicFormSchemaNode[];
-  itemsSchema?: unknown[];
+  itemsSchema?: ChartSchemaNode[];
 }
 
 export interface DynamicFormSchemaDict extends DynamicFormSchemaBase {
@@ -72,7 +93,7 @@ export interface DynamicFormSchemaDict extends DynamicFormSchemaBase {
 
 export interface AddListItemEvent {
   array: UntypedFormArray;
-  schema: unknown[];
+  schema: ChartSchemaNode[];
 }
 
 export interface DeleteListItemEvent {

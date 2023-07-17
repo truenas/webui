@@ -1,0 +1,92 @@
+:host {
+  background-color: var(--bg2);
+  color: var(--fg2);
+  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  padding: 20px 25px 15px 10px;
+  position: relative;
+  transition: 50ms background-color;
+
+  &:hover,
+  &:focus {
+    background-color: var(--contrast-lighter);
+  }
+}
+
+.left-column {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  justify-content: space-between;
+  padding-left: 2px;
+
+  .installed-badge {
+    background-color: var(--contrast-darkest);
+    color: var(--green);
+    font-family: var(--font-family-header);
+    font-size: 1.3em;
+    font-weight: bold;
+    left: -10px;
+    line-height: 1.3em;
+    padding: 2px 13px 2px 11px;
+    position: absolute;
+    top: 6px;
+    z-index: 1;
+  }
+
+  .catalog {
+    background-color: var(--bg1);
+    border: 1px solid var(--lines);
+    font-family: var(--font-family-header);
+    font-size: 1.1em;
+    font-weight: bold;
+    margin-top: 2px;
+    padding: 0 10px;
+    text-align: center;
+
+    &.catalog-official {
+      color: var(--primary);
+    }
+  }
+}
+
+.right-column {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  margin-left: 16px;
+
+  .header {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+
+    .name {
+      color: var(--fg1);
+      font-family: var(--font-family-header);
+      font-size: 1.3em;
+      line-height: 1.3em;
+      margin-top: 1px;
+      text-transform: capitalize;
+    }
+  }
+
+  .description {
+    font-size: 1.2em;
+    line-height: 1.2em;
+    margin-bottom: 10px;
+    word-break: break-word;
+  }
+
+  .meta {
+    align-items: center;
+    color: var(--fg2);
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 2px;
+    margin-top: auto;
+    opacity: 0.7;
+  }
+}

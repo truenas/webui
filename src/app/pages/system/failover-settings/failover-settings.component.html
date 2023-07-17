@@ -18,9 +18,9 @@
 
         <ix-input
           formControlName="timeout"
+          type="number"
           [label]="'Network Timeout Before Initiating Failover' | translate"
           [tooltip]="helptext.timeout_tooltip | translate"
-          type="number"
         ></ix-input>
       </ix-fieldset>
 
@@ -29,6 +29,7 @@
           mat-button
           type="submit"
           color="primary"
+          ixTest="save"
           [disabled]="form.invalid || isLoading"
         >
           {{ submitButtonText$ | async }}
@@ -37,6 +38,7 @@
         <button
           mat-button
           type="button"
+          ixTest="sync-to-peer"
           [disabled]="isLoading"
           (click)="onSyncToPeerPressed()"
         >
@@ -46,6 +48,7 @@
         <button
           mat-button
           type="button"
+          ixTest="sync-from-peer"
           [disabled]="isLoading"
           (click)="onSyncFromPeerPressed()"
         >

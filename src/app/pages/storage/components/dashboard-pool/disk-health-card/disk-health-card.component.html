@@ -2,40 +2,10 @@
   <mat-card-header>
     <h3 mat-card-title>
       {{ 'Disk Health' | translate }}
-
-      <ng-container [ngSwitch]="diskState.health">
-        <mat-icon
-          *ngSwitchCase="diskHealthLevel.Safe"
-          class="pool-icon icon-online"
-          [matTooltip]="'Everything is fine' | translate"
-        >
-          check_circle
-        </mat-icon>
-        <mat-icon
-          *ngSwitchCase="diskHealthLevel.Warn"
-          class="pool-icon icon-warning"
-          [matTooltip]="'Warning' | translate"
-        >
-          warning
-        </mat-icon>
-        <mat-icon
-          *ngSwitchCase="diskHealthLevel.Error"
-          class="pool-icon icon-error"
-          [matTooltip]="'Error' | translate"
-        >
-          cancel
-        </mat-icon>
-        <mat-icon
-          *ngSwitchDefault
-          class="pool-icon icon-error"
-          [matTooltip]="'Error' | translate"
-        >
-          cancel
-        </mat-icon>
-      </ng-container>
+      <ix-pool-card-icon [type]="iconType" [tooltip]="iconTooltip"></ix-pool-card-icon>
     </h3>
 
-    <a mat-button [routerLink]="['/storage', 'disks']">
+    <a mat-button ixTest="manage-disks" [routerLink]="['/storage', 'disks']">
       {{ 'Manage Disks' | translate }}
     </a>
   </mat-card-header>
@@ -80,7 +50,11 @@
           {{ diskState.symbolText }}{{ diskState.unit }}
         </ng-container>
       </div>
-      <a [routerLink]="['/reportsdashboard', 'disk']" [queryParams]="{ disks: disksNames }">
+      <a
+        ixTest="view-reports"
+        [routerLink]="['/reportsdashboard', 'disk']"
+        [queryParams]="{ disks: disksNames }"
+      >
         {{ 'View Reports' | translate }}
       </a>
     </div>
@@ -90,7 +64,10 @@
       <div class="value">
         {{ diskState.smartTests | number }}
       </div>
-      <a [routerLink]="['/data-protection/smart']">
+      <a
+        ixTest="view-all-smart-tests"
+        [routerLink]="['/storage', 'disks', 'smartresults', SmartTestResultPageType.Pool, poolState.name]"
+      >
         {{ 'View All S.M.A.R.T. Tests' | translate }}
       </a>
     </div>

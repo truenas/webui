@@ -1,20 +1,20 @@
 <ng-container [ngSwitch]="mode">
   <ng-container *ngSwitchCase="TransferMode.Copy">
-    <ix-icon>add_to_photos</ix-icon>
+    <ix-icon name="add_to_photos"></ix-icon>
     <div
       class="description"
       [innerHtml]="helptext.transfer_mode_warning_copy"
     ></div>
   </ng-container>
   <ng-container *ngSwitchCase="TransferMode.Move">
-    <ix-icon>move_to_inbox</ix-icon>
+    <ix-icon name="move_to_inbox"></ix-icon>
     <div
       class="description"
       [innerHtml]="helptext.transfer_mode_warning_move"
     ></div>
   </ng-container>
   <ng-container *ngSwitchCase="TransferMode.Sync">
-    <ix-icon>sync</ix-icon>
+    <ix-icon name="sync"></ix-icon>
     <div
       class="description"
       [innerHtml]="helptext.transfer_mode_warning_sync"

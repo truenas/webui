@@ -4,7 +4,6 @@ import {
   ViewChild,
   OnDestroy,
   OnChanges,
-  SimpleChanges,
   OnInit, Inject,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -19,25 +18,27 @@ import {
   delay, distinctUntilChanged, filter, switchMap, throttleTime,
 } from 'rxjs/operators';
 import { toggleMenuDuration } from 'app/constants/toggle-menu-duration';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
-import { CoreEvent } from 'app/interfaces/events';
+import { LegendEvent, ReportDataEvent } from 'app/interfaces/events/reporting-events.interface';
 import { ReportingData } from 'app/interfaces/reporting.interface';
-import { EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
+import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { LineChartComponent } from 'app/pages/reports-dashboard/components/line-chart/line-chart.component';
 import { ReportStepDirection } from 'app/pages/reports-dashboard/enums/report-step-direction.enum';
-import { ReportZoomLevel, getZoomLevelLabels } from 'app/pages/reports-dashboard/enums/report-zoom-level.enum';
+import { ReportZoomLevel, zoomLevelLabels } from 'app/pages/reports-dashboard/enums/report-zoom-level.enum';
 import {
   DateTime, LegendDataWithStackedTotalHtml, Report, FetchReportParams, TimeAxisData, TimeData,
 } from 'app/pages/reports-dashboard/interfaces/report.interface';
 import { refreshInterval } from 'app/pages/reports-dashboard/reports.constants';
-import { ReportingDatabaseError, ReportsService } from 'app/pages/reports-dashboard/reports.service';
+import { ReportingDatabaseError } from 'app/pages/reports-dashboard/reports.service';
 import { formatData, formatLegendSeries } from 'app/pages/reports-dashboard/utils/report.utils';
-import { WebSocketService } from 'app/services/';
 import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 import { LocaleService } from 'app/services/locale.service';
 import { ThemeService } from 'app/services/theme/theme.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectTheme, waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
@@ -56,7 +57,7 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
   @Input() isReversed?: boolean;
   @ViewChild(LineChartComponent, { static: false }) lineChart: LineChartComponent;
 
-  updateReport$ = new BehaviorSubject<SimpleChanges>(null);
+  updateReport$ = new BehaviorSubject<IxSimpleChanges<this>>(null);
   fetchReport$ = new BehaviorSubject<FetchReportParams>(null);
   autoRefreshTimer: Subscription;
   autoRefreshEnabled: boolean;
@@ -68,6 +69,7 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
   subtitle: string = this.translate.instant('% of all cores');
   isActive = true;
   stepForwardDisabled = true;
+  stepBackDisabled = false;
   timezone: string;
   currentStartDate: number;
   currentEndDate: number;
@@ -81,7 +83,7 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
     { timespan: ReportZoomLevel.Day, timeformat: '%a %H:%M', culling: 4 },
     { timespan: ReportZoomLevel.Hour, timeformat: '%H:%M', culling: 6 },
   ];
-  readonly zoomLevelLabels = getZoomLevelLabels(this.translate);
+  readonly zoomLevelLabels = zoomLevelLabels;
 
   get reportTitle(): string {
     const trimmed = this.report.title.replace(/[()]/g, '');
@@ -102,7 +104,6 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
 
   constructor(
     public translate: TranslateService,
-    private reportsService: ReportsService,
     private ws: WebSocketService,
     protected localeService: LocaleService,
     private dialog: DialogService,
@@ -115,18 +116,18 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
 
     this.core.register({ observerClass: this, eventName: `ReportData-${this.chartId}` }).pipe(
       untilDestroyed(this),
-    ).subscribe((evt: CoreEvent) => {
+    ).subscribe((evt: ReportDataEvent) => {
       this.data = formatData(evt.data);
       this.handleError(evt);
     });
 
     this.core.register({ observerClass: this, eventName: `LegendEvent-${this.chartId}` }).pipe(
       untilDestroyed(this),
-    ).subscribe((evt: CoreEvent) => {
+    ).subscribe((evt: LegendEvent) => {
       const clone = { ...evt.data };
       clone.xHTML = this.formatTime(evt.data.xHTML);
       clone.series = formatLegendSeries(evt.data.series, this.data);
-      this.legendData = clone;
+      this.legendData = clone as LegendDataWithStackedTotalHtml;
     });
 
     this.store$.select(selectTheme).pipe(
@@ -205,12 +206,12 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
     }
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes?.report?.firstChange) {
-      this.updateReport$.next(changes);
-    } else if (changes.report.previousValue && !this.isReady) {
-      this.updateReport$.next(changes);
-    } else if (changes.report.previousValue.title !== changes.report.currentValue.title) {
+  ngOnChanges(changes: IxSimpleChanges<this>): void {
+    const wasReportChanged = changes?.report?.firstChange
+      || (changes.report.previousValue && !this.isReady)
+      || (changes.report.previousValue.title !== changes.report.currentValue.title);
+
+    if (wasReportChanged) {
       this.updateReport$.next(changes);
     }
   }
@@ -268,6 +269,10 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
   }
 
   stepBack(): void {
+    if (this.stepBackDisabled) {
+      return;
+    }
+
     const rrdOptions = this.convertTimespan(
       this.currentZoomLevel,
       ReportStepDirection.Backward,
@@ -281,6 +286,10 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
   }
 
   stepForward(): void {
+    if (this.stepForwardDisabled) {
+      return;
+    }
+
     const rrdOptions = this.convertTimespan(
       this.currentZoomLevel,
       ReportStepDirection.Forward,
@@ -356,6 +365,12 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
       this.stepForwardDisabled = false;
     }
 
+    if (startDate.getFullYear() <= 1999) {
+      this.stepBackDisabled = true;
+    } else {
+      this.stepBackDisabled = false;
+    }
+
     return {
       start: startDate.getTime(),
       end: endDate.getTime(),
@@ -385,16 +400,16 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
     });
   }
 
-  handleError(evt: CoreEvent): void {
-    const err = evt.data.data;
-    if (evt.data?.data?.error === ReportingDatabaseError.FailedExport) {
+  handleError(evt: ReportDataEvent): void {
+    const err = evt.data.data as WebsocketError;
+    if ((evt.data?.data as WebsocketError)?.error === ReportingDatabaseError.FailedExport) {
       this.report.errorConf = {
         type: EmptyType.Errors,
         title: this.translate.instant('Error getting chart data'),
         message: err.reason,
       };
     }
-    if (evt.data?.name === 'FetchingError' && evt.data?.data?.error === ReportingDatabaseError.InvalidTimestamp) {
+    if (evt.data?.name === 'FetchingError' && (evt.data?.data as WebsocketError)?.error === ReportingDatabaseError.InvalidTimestamp) {
       this.report.errorConf = {
         type: EmptyType.Errors,
         title: this.translate.instant('The reporting database is broken'),
@@ -407,7 +422,7 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
             this.dialog.confirm({
               title: this.translate.instant('The reporting database is broken'),
               message,
-              buttonMsg: this.translate.instant('Clear'),
+              buttonText: this.translate.instant('Clear'),
             }).pipe(
               filter(Boolean),
               switchMap(() => this.ws.call('reporting.clear')),
@@ -421,7 +436,7 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
     }
   }
 
-  private applyChanges(changes: SimpleChanges): void {
+  private applyChanges(changes: IxSimpleChanges<this>): void {
     const rrdOptions = this.convertTimespan(this.currentZoomLevel);
     const identifier = changes.report.currentValue.identifiers ? changes.report.currentValue.identifiers[0] : null;
     this.fetchReport$.next({ rrdOptions, identifier, report: changes.report.currentValue });

@@ -1,14 +1,12 @@
 import { CdkDragEnter, CdkDropListGroup, moveItemInArray } from '@angular/cdk/drag-drop';
 import { DOCUMENT } from '@angular/common';
 import {
-  ComponentFactoryResolver,
   Directive,
   EventEmitter,
-  Inject,
+  Inject, Injector,
   Input,
   OnInit,
   Output,
-  ReflectiveInjector,
   ViewContainerRef,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -20,7 +18,7 @@ import { ixDropGridDirectiveToken } from 'app/modules/ix-drop-grid/ix-drop-grid.
 @Directive({
   selector: '[ixDropGrid]',
   providers: [
-    { provide: ixDropGridDirectiveToken, useExisting: IxDropGridDirective },
+    { provide: ixDropGridDirectiveToken, useExisting: this },
   ],
 })
 export class IxDropGridDirective<T = unknown> extends CdkDropListGroup<IxDropGridItemDirective> implements OnInit {
@@ -34,8 +32,7 @@ export class IxDropGridDirective<T = unknown> extends CdkDropListGroup<IxDropGri
   sourceIndex: number;
 
   constructor(
-    private viewContainerRef: ViewContainerRef,
-    private resolver: ComponentFactoryResolver,
+    public viewContainerRef: ViewContainerRef,
     @Inject(DOCUMENT) private document: Document,
   ) {
     super();
@@ -66,7 +63,7 @@ export class IxDropGridDirective<T = unknown> extends CdkDropListGroup<IxDropGri
     const sourceElement = drag.dropContainer.element.nativeElement;
     const dropElement = drop.element.nativeElement;
 
-    function indexOf(collection: unknown, node: unknown): number {
+    function indexOf(collection: HTMLCollection, node: HTMLElement): number {
       return Array.prototype.indexOf.call(collection, node);
     }
 
@@ -135,8 +132,12 @@ export class IxDropGridDirective<T = unknown> extends CdkDropListGroup<IxDropGri
   }
 
   private createPlaceholder(): IxDropGridPlaceholderComponent {
-    const factory = this.resolver.resolveComponentFactory(IxDropGridPlaceholderComponent);
-    const injector = ReflectiveInjector.resolveAndCreate([{ provide: ixDropGridDirectiveToken, useValue: this }]);
-    return this.viewContainerRef.createComponent(factory, 0, injector).instance;
+    const injector = Injector.create({
+      providers: [{ provide: ixDropGridDirectiveToken, useValue: this }],
+    });
+    return this.viewContainerRef.createComponent(IxDropGridPlaceholderComponent, {
+      injector,
+      index: 0,
+    }).instance;
   }
 }

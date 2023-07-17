@@ -76,7 +76,7 @@
         <ix-chips
           formControlName="hostsallow"
           [label]="helptextSharingSmb.placeholder_hostsallow | translate"
-          [tooltip]="helptextSharingSmb.tooltip_hostsallow | translate"
+          [tooltip]="hostsAllowTooltip"
         ></ix-chips>
 
         <ix-chips
@@ -156,19 +156,14 @@
           [label]="helptextSharingSmb.placeholder_path_suffix | translate"
           [tooltip]="helptextSharingSmb.tooltip_path_suffix | translate"
         ></ix-input>
-
-        <ix-textarea
-          formControlName="auxsmbconf"
-          [label]="helptextSharingSmb.placeholder_auxsmbconf | translate"
-          [tooltip]="helptextSharingSmb.tooltip_auxsmbconf | translate"
-        ></ix-textarea>
       </ix-fieldset>
 
-      <div class="form-actions">
+      <ix-form-actions>
         <button
           mat-button
           type="submit"
           color="primary"
+          ixTest="save"
           [disabled]="form.invalid || isLoading"
         >
           {{ 'Save' | translate }}
@@ -177,11 +172,12 @@
         <button
           mat-button
           type="button"
+          ixTest="toggle-advanced-options"
           (click)="this.isAdvancedMode = !this.isAdvancedMode"
         >
           {{ isAdvancedMode ? ('Basic Options' | translate) : ('Advanced Options' | translate) }}
         </button>
-      </div>
+      </ix-form-actions>
     </form>
   </mat-card-content>
 </mat-card>

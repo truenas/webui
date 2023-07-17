@@ -1,5 +1,5 @@
 <h1 matDialogTitle>{{ 'Dataset Rollback From Snapshot' | translate }}</h1>
-<div class="loading" *ngIf="isLoading; else loaded">
+<div *ngIf="isLoading; else loaded" mat-dialog-content class="loading">
   <mat-spinner [diameter]="40"></mat-spinner>
 </div>
 
@@ -48,11 +48,12 @@
           mat-button
           type="submit"
           color="primary"
+          ixTest="rollback"
           [disabled]="form.invalid"
         >
           {{ 'Rollback' | translate }}
         </button>
-        <button mat-button type="button" matDialogClose>
+        <button mat-button type="button" matDialogClose ixTest="cancel">
           {{ 'Cancel' | translate }}
         </button>
       </div>
@@ -70,13 +71,14 @@
         mat-button
         type="submit"
         color="primary"
+        ixTest="go-to-storage"
         matDialogClose
         [routerLink]="['/storage/snapshots']"
       >
         {{ 'Go to Storage' | translate }}
       </a>
 
-      <button mat-button type="button" matDialogClose>
+      <button mat-button type="button" matDialogClose ixTest="close">
         {{ 'Close' | translate }}
       </button>
     </div>

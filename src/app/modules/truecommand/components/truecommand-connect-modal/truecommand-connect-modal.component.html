@@ -1,0 +1,65 @@
+<h1
+  mat-dialog-title
+  class="truecommand-connect-modal-form-title"
+  [innerHTML]="title | translate"
+></h1>
+
+<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+  <div
+    mat-dialog-content
+    class="truecommand-connect-modal-form-content"
+  >
+    <ix-input
+      formControlName="api_key"
+      [label]="helptext.updateDialog.api_placeholder | translate"
+      [tooltip]="helptext.updateDialog.api_tooltip | translate"
+    ></ix-input>
+
+    <ix-checkbox
+      formControlName="enabled"
+      [label]="helptext.updateDialog.enabled_placeholder | translate"
+      [tooltip]="helptext.updateDialog.enabled_tooltip | translate"
+    ></ix-checkbox>
+  </div>
+
+  <div mat-dialog-actions>
+    <span fxFlex></span>
+
+    <button
+      mat-button
+      type="button"
+      class="mat-mdc-button mat-button mat-accent action-btn"
+      name="Cancel_button"
+      ixTest="cancel"
+      (click)="onCancel()"
+    >
+      {{ 'Cancel' | translate }}
+    </button>
+
+    <span>
+      <button
+        *ngIf="isConnected"
+        mat-button
+        type="button"
+        class="mat-mdc-button mat-button action-btn"
+        id="cust_button_deregister"
+        ixTest="deregister"
+        [name]="helptext.tcDeregisterBtn + '_button'"
+        (click)="onDeregister()"
+      >
+        {{ helptext.tcDeregisterBtn | translate }}
+      </button>
+    </span>
+
+    <button
+      mat-button
+      type="submit"
+      class="mat-mdc-button mat-button mat-primary"
+      ixTest="save"
+      [name]="saveButtonText + '_button'"
+      [disabled]="form.invalid"
+    >
+      {{ saveButtonText | translate }}
+    </button>
+  </div>
+</form>
