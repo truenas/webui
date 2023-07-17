@@ -23,12 +23,12 @@ describe('IxCellToggleComponent', () => {
         propertyName: 'booleanField',
         row: { booleanField: true },
         onRowToggle: () => jest.fn(),
-      },
+      } as Partial<IxCellToggleComponent<TestTableData>>,
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('calls "onRowToggle" method when toggle is chenged', async () => {
+  it('calls "onRowToggle" method when toggle is changed', async () => {
     jest.spyOn(spectator.component, 'onRowToggle');
     const toggle = await loader.getHarness(MatSlideToggleHarness);
 

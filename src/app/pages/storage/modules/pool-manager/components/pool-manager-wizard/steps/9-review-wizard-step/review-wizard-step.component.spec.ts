@@ -142,7 +142,7 @@ describe('ReviewWizardStepComponent', () => {
     });
 
     it('shows total capacity', () => {
-      expect(getSummaryItem('Est. Usable Capacity')).toBe('2 GiB');
+      expect(getSummaryItem('Est. Usable Raw Capacity')).toBe('2 GiB');
     });
 
     it('says Maximize Dispersal when this dispersal strategy is used', () => {

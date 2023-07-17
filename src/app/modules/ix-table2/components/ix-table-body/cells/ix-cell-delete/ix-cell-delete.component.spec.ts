@@ -23,7 +23,7 @@ describe('IxCellDeleteComponent', () => {
         propertyName: 'numberField',
         row: { numberField: 1 },
         onRowDelete: () => jest.fn(),
-      },
+      } as Partial<IxCellDeleteComponent<TestTableData>>,
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
