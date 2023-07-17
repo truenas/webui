@@ -10,7 +10,7 @@
         <div class="type-container">
           <h3>{{ layout }}</h3>
           <p *ngIf="minDisks[layout] <= vdev.disks?.length; else addDisks">
-            {{ vdev.rawSize | filesize: { standard: 'iec' } }}{{ ' Est. Usable Capacity' | translate }}
+            {{ vdev.rawSize | filesize: { standard: 'iec' } }}{{ ' Est. Usable Raw Capacity' | translate }}
           </p>
           <ng-template #addDisks>
             <p>{{ 'Add the required no. of disks to get a vdev size estimate' | translate }}</p>
