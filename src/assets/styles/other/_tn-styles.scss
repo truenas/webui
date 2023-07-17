@@ -116,7 +116,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   .mat-step-header .mat-step-icon:not(.mat-step-icon-state-error) {
-    background-color: var(--contrast-lighter);
+    background-color: var(--alt-bg1);
   }
 
   .mat-step-header .mat-step-icon.mat-step-icon-selected {
