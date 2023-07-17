@@ -10,30 +10,25 @@ import { getDiskTypeSizeMap } from 'app/pages/storage/modules/pool-manager/utils
 export class GroupedDisks {
   private diskMap: DiskTypeSizeMap;
 
-  constructor(private disks: UnusedDisk[]) {
+  constructor(disks: UnusedDisk[]) {
     this.diskMap = getDiskTypeSizeMap(disks);
   }
 
   findSuitableDisks(category: PoolManagerTopologyCategory): UnusedDisk[] {
-    let matchingTypeAndSize: UnusedDisk[] = [];
-    const ssdDisks = this.diskMap.SSD[category.diskSize] || [];
-    const hddDisks = this.diskMap.HDD[category.diskSize] || [];
-
     if (category.treatDiskSizeAsMinimum) {
-      for (const diskSize of Object.keys(this.diskMap.HDD)) {
-        if (category.diskSize > Number(diskSize)) continue;
-        matchingTypeAndSize = matchingTypeAndSize.concat(this.diskMap.HDD[diskSize]);
-      }
-      for (const diskSize of Object.keys(this.diskMap.SSD)) {
-        if (category.diskSize > Number(diskSize)) continue;
-        matchingTypeAndSize = matchingTypeAndSize.concat(this.diskMap.SSD[diskSize]);
-      }
-    } else {
-      matchingTypeAndSize = Array.from(
-        new Map([...hddDisks, ...ssdDisks].map((value) => [value.devname, value])).values(),
-      );
+      const matchingDisks: UnusedDisk[] = [];
+      [DiskType.Hdd, DiskType.Ssd].forEach((type) => {
+        const disksByType = this.diskMap[type];
+        for (const diskSize of Object.keys(disksByType)) {
+          if (category.diskSize <= Number(diskSize)) {
+            matchingDisks.push(...disksByType[diskSize]);
+          }
+        }
+      });
+      return matchingDisks;
     }
-    return matchingTypeAndSize;
+
+    return [...this.diskMap.HDD[category.diskSize] || [], ...this.diskMap.SSD[category.diskSize] || []];
   }
 
   removeUsedDisks(usedDisks: UnusedDisk[]): void {
