@@ -32,6 +32,7 @@ export class GeneralWizardStepComponent implements OnInit {
     encryptionStandard: [defaultEncryptionStandard, Validators.required],
   });
 
+  isLoading$ = this.store.isLoading$;
   poolNames$ = this.ws.call('pool.query').pipe(map((pools) => pools.map((pool) => pool.name)));
 
   readonly encryptionAlgorithmOptions$ = this.ws
