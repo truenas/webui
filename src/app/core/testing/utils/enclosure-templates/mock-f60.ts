@@ -21,7 +21,6 @@ export class MockF60 extends MockEnclosure {
     value_raw: '0x1000000',
   };
 
-  // Need to obtain output of real F60 empty slot to verify
   readonly emptySlotTemplate: EnclosureElement = {
     slot: 1,
     data: {
