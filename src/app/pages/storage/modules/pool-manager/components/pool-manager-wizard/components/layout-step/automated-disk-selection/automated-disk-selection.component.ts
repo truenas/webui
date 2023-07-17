@@ -31,6 +31,7 @@ import { minDisksPerLayout } from 'app/pages/storage/modules/pool-manager/utils/
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
+  @Input() isStepActive: boolean;
   @Input() type: VdevType;
   @Input() inventory: UnusedDisk[] = [];
   @Input() canChangeLayout = false;
@@ -245,6 +246,10 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
 
     this.diskSizeAndTypeOptions$ = of(options);
 
+    if (options.length === 1 && this.isStepActive) {
+      this.form.controls.sizeAndType.setValue(options[0].value, { emitEvent: false });
+    }
+
     this.updateLayoutOptions();
   }
 
@@ -273,11 +278,16 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
       widthOptions = [];
     }
 
+    this.widthOptions$ = of(widthOptions);
     const isValueNull = this.form.controls.width.value === null;
+
     if (!isValueNull && !widthOptions.some((option) => option.value === this.form.controls.width.value)) {
       this.form.controls.width.setValue(null, { emitEvent: false });
     }
-    this.widthOptions$ = of(widthOptions);
+
+    if (widthOptions.length === 1 && this.isStepActive) {
+      this.form.controls.width.setValue(+widthOptions[0].value, { emitEvent: false });
+    }
 
     this.updateNumberOptions();
   }
@@ -301,11 +311,15 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
       nextNumberOptions = [];
     }
 
+    this.numberOptions$ = of(nextNumberOptions);
     const isValueNull = this.form.controls.vdevsNumber.value === null;
+
     if (!isValueNull && !nextNumberOptions.some((option) => option.value === this.form.controls.vdevsNumber.value)) {
       this.form.controls.vdevsNumber.setValue(null, { emitEvent: false });
     }
 
-    this.numberOptions$ = of(nextNumberOptions);
+    if (nextNumberOptions.length === 1 && this.isStepActive) {
+      this.form.controls.vdevsNumber.setValue(+nextNumberOptions[0].value, { emitEvent: false });
+    }
   }
 }
