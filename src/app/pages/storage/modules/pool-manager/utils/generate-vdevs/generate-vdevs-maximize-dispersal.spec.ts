@@ -57,7 +57,7 @@ describe('GenerateVdevsService - maximize dispersal', () => {
         ['enclosure3-disk1', 'no-enclosure-disk1'],
         ['enclosure1-disk2', 'enclosure2-disk2'],
         ['enclosure3-disk2', 'enclosure1-disk3'],
-        ['enclosure3-disk3', 'enclosure3-disk4'],
+        ['enclosure2-never-used-ssd', 'enclosure3-disk3'],
       ]),
     });
   });
@@ -130,11 +130,11 @@ describe('GenerateVdevsService - maximize dispersal', () => {
       ]),
       [VdevType.Log]: expectDisks([
         ['small-ssd1'],
-        ['small-ssd2'],
+        ['enclosure2-never-used-too-small'],
       ]),
       [VdevType.Special]: expectDisks([
-        ['no-enclosure-disk1', 'enclosure1-disk2'],
-        ['enclosure2-disk2', 'enclosure3-disk2'],
+        ['enclosure3-disk2', 'no-enclosure-disk1'],
+        ['enclosure1-disk2', 'enclosure2-disk2'],
       ]),
     });
   });
