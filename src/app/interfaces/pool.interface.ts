@@ -57,7 +57,7 @@ export interface PoolScanUpdate {
   end_time: ApiTimestamp;
   errors: number;
   function: PoolScanFunction;
-  pause: string;
+  pause: ApiTimestamp;
   percentage: number;
   start_time: ApiTimestamp;
   state: PoolScanState;
