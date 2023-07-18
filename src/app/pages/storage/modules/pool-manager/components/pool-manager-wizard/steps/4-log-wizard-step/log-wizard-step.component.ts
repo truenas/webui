@@ -15,6 +15,7 @@ import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/p
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LogWizardStepComponent implements OnInit {
+  @Input() isStepActive: boolean;
   @Input() stepWarning: string | null;
   @Output() goToLastStep = new EventEmitter<void>();
 
@@ -37,7 +38,7 @@ export class LogWizardStepComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe({
       next: (logTopology) => {
-        if (!logTopology || !logTopology.length) {
+        if (!logTopology?.length) {
           return;
         }
         let type = logTopology[0].type;

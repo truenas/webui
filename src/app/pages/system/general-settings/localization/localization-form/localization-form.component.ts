@@ -52,11 +52,11 @@ export class LocalizationFormComponent implements OnInit {
     tooltip: string;
     provider: SimpleAsyncComboboxProvider;
   } = {
-      fcName: 'language',
-      label: helptext.stg_language.placeholder,
-      tooltip: helptext.stg_language.tooltip,
-      provider: new SimpleAsyncComboboxProvider(this.sysGeneralService.languageOptions(this.sortLanguagesByName)),
-    };
+    fcName: 'language',
+    label: helptext.stg_language.placeholder,
+    tooltip: helptext.stg_language.tooltip,
+    provider: new SimpleAsyncComboboxProvider(this.sysGeneralService.languageOptions(this.sortLanguagesByName)),
+  };
 
   kbdMap: {
     readonly fcName: 'kbdmap';
@@ -64,11 +64,11 @@ export class LocalizationFormComponent implements OnInit {
     tooltip: string;
     options: Observable<Option[]>;
   } = {
-      fcName: 'kbdmap',
-      label: helptext.stg_kbdmap.placeholder,
-      tooltip: helptext.stg_kbdmap.tooltip,
-      options: this.sysGeneralService.kbdMapChoices(),
-    };
+    fcName: 'kbdmap',
+    label: helptext.stg_kbdmap.placeholder,
+    tooltip: helptext.stg_kbdmap.tooltip,
+    options: this.sysGeneralService.kbdMapChoices(),
+  };
 
   timezone: {
     readonly fcName: 'timezone';
@@ -76,13 +76,13 @@ export class LocalizationFormComponent implements OnInit {
     tooltip: string;
     provider: IxComboboxProvider;
   } = {
-      fcName: 'timezone',
-      label: helptext.stg_timezone.placeholder,
-      tooltip: helptext.stg_timezone.tooltip,
-      provider: new SimpleAsyncComboboxProvider(this.sysGeneralService.timezoneChoices().pipe(map(
-        (tzChoices) => _.sortBy(tzChoices, [(option) => option.label.toLowerCase()]),
-      ))),
-    };
+    fcName: 'timezone',
+    label: helptext.stg_timezone.placeholder,
+    tooltip: helptext.stg_timezone.tooltip,
+    provider: new SimpleAsyncComboboxProvider(this.sysGeneralService.timezoneChoices().pipe(map(
+      (tzChoices) => _.sortBy(tzChoices, [(option) => option.label.toLowerCase()]),
+    ))),
+  };
 
   dateFormat: {
     readonly fcName: 'date_format';
@@ -90,10 +90,10 @@ export class LocalizationFormComponent implements OnInit {
     tooltip: string;
     options?: Observable<Option[]>;
   } = {
-      fcName: 'date_format',
-      label: helptext.date_format.placeholder,
-      tooltip: helptext.date_format.tooltip,
-    };
+    fcName: 'date_format',
+    label: helptext.date_format.placeholder,
+    tooltip: helptext.date_format.tooltip,
+  };
 
   timeFormat: {
     readonly fcName: 'time_format';
@@ -101,10 +101,10 @@ export class LocalizationFormComponent implements OnInit {
     tooltip: string;
     options?: Observable<Option[]>;
   } = {
-      fcName: 'time_format',
-      label: helptext.time_format.placeholder,
-      tooltip: helptext.time_format.tooltip,
-    };
+    fcName: 'time_format',
+    label: helptext.time_format.placeholder,
+    tooltip: helptext.time_format.tooltip,
+  };
 
   constructor(
     private sysGeneralService: SystemGeneralService,

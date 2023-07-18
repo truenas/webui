@@ -14,6 +14,7 @@ import { StorageService, WebSocketService } from 'app/services';
 describe('DownloadKeyDialogComponent', () => {
   let spectator: Spectator<DownloadKeyDialogComponent>;
   let loader: HarnessLoader;
+  const fakeBlob = {};
   const createComponent = createComponentFactory({
     component: DownloadKeyDialogComponent,
     imports: [
@@ -24,7 +25,8 @@ describe('DownloadKeyDialogComponent', () => {
         mockCall('core.download', [null, 'http://localhost:8000/key.json']),
       ]),
       mockProvider(StorageService, {
-        streamDownloadFile: jest.fn(() => of(null)),
+        streamDownloadFile: jest.fn(() => of(fakeBlob)),
+        downloadBlob: jest.fn(),
       }),
       {
         provide: MAT_DIALOG_DATA,
@@ -47,6 +49,7 @@ describe('DownloadKeyDialogComponent', () => {
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('core.download', ['pool.dataset.export_keys', ['my-pool'], 'dataset_my-pool_keys.json']);
     expect(spectator.inject(StorageService).streamDownloadFile).toHaveBeenCalledWith('http://localhost:8000/key.json', 'dataset_my-pool_keys.json', 'application/json');
+    expect(spectator.inject(StorageService).downloadBlob).toHaveBeenCalledWith(fakeBlob, 'dataset_my-pool_keys.json');
   });
 
   it('disables Done button until key has been downloaded', async () => {

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-redundant-type-constituents */
 import { Type } from '@angular/core';
 import { TooltipPosition } from '@angular/material/tooltip';
 import { Observable, Subject } from 'rxjs';

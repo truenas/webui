@@ -26,6 +26,7 @@ import { topologyCategoryToDisks } from 'app/pages/storage/modules/pool-manager/
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LayoutStepComponent implements OnInit {
+  @Input() isStepActive: boolean;
   @Input() type: VdevType;
   @Input() description: string;
 

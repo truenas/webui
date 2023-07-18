@@ -280,7 +280,7 @@ export class DatasetUnlockComponent implements OnInit {
     const errors: { name: string; unlock_error: string }[] = [];
     let skipped: { name: string }[] = [];
     const unlock: { name: string }[] = [];
-    if (job && job.result) {
+    if (job?.result) {
       if (job.result.failed) {
         const failed = job.result.failed;
         Object.entries(failed).forEach(([errorDataset, fail]) => {
@@ -309,7 +309,7 @@ export class DatasetUnlockComponent implements OnInit {
   openSummaryDialog(payload: DatasetUnlockParams, job: Job<DatasetEncryptionSummary[]>): void {
     const errors: DatasetEncryptionSummary[] = [];
     const unlock: DatasetEncryptionSummary[] = [];
-    if (job && job.result) {
+    if (job?.result) {
       job.result.forEach((result) => {
         if (result.unlock_successful) {
           unlock.push(result);
