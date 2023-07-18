@@ -57,7 +57,7 @@ describe('GenerateVdevsService - maximize dispersal', () => {
         ['enclosure3-disk1', 'no-enclosure-disk1'],
         ['enclosure1-disk2', 'enclosure2-disk2'],
         ['enclosure3-disk2', 'enclosure1-disk3'],
-        ['enclosure2-ssd', 'enclosure3-disk3'],
+        ['enclosure3-disk3', 'enclosure3-disk4'],
       ]),
     });
   });

@@ -142,9 +142,9 @@ describe('GenerateVdevsService - treat disk size as minimum', () => {
         ]),
         [VdevType.Log]: expectDisks([
           ['enclosure2-disk2', 'enclosure3-disk2', 'larger2'],
-          ['enclosure1-disk3', 'enclosure2-ssd', 'enclosure3-disk3'],
+          ['enclosure1-disk3', 'enclosure3-disk3', 'larger3'],
         ]),
-        [VdevType.Spare]: expectDisks([['larger3'], ['enclosure3-disk4']]),
+        [VdevType.Spare]: expectDisks([['enclosure3-disk4'], ['enclosure3-disk5']]),
       });
     });
   });
