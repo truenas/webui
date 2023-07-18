@@ -1,10 +1,10 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit,
+  ChangeDetectionStrategy, Component, Input,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { map, Observable } from 'rxjs';
+import { filter, map, Observable } from 'rxjs';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
@@ -17,28 +17,21 @@ import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
   styleUrls: ['./app-details-header.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AppDetailsHeaderComponent implements OnInit {
+export class AppDetailsHeaderComponent {
   @Input() app: AvailableApp;
   @Input() isLoading$: Observable<boolean>;
 
-  protected wasPoolSet = false;
-
   constructor(
+    public kubernetesStore: KubernetesStore,
     private router: Router,
     private matDialog: MatDialog,
-    private cdr: ChangeDetectorRef,
     private installedAppsStore: InstalledAppsStore,
-    private kubernetesStore: KubernetesStore,
   ) {}
 
   get description(): string {
     const splittedText = this.app?.app_readme?.split('</h1>');
     const readyHtml = splittedText[1] || splittedText[0];
     return readyHtml?.replace(/<[^>]*>/g, '');
-  }
-
-  ngOnInit(): void {
-    this.checkIfPoolSet();
   }
 
   navigateToAllInstalledPage(): void {
@@ -66,22 +59,8 @@ export class AppDetailsHeaderComponent implements OnInit {
 
   showChoosePoolModal(): void {
     const dialog = this.matDialog.open(SelectPoolDialogComponent);
-    dialog.afterClosed().pipe(untilDestroyed(this)).subscribe((success) => {
-      if (!success) {
-        return;
-      }
-      this.wasPoolSet = true;
-      this.cdr.markForCheck();
+    dialog.afterClosed().pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.navigateToInstallPage();
     });
-  }
-
-  private checkIfPoolSet(): void {
-    this.kubernetesStore.selectedPool$
-      .pipe(untilDestroyed(this))
-      .subscribe((pool) => {
-        this.wasPoolSet = Boolean(pool);
-        this.cdr.markForCheck();
-      });
   }
 }

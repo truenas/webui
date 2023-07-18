@@ -12,7 +12,7 @@
     <ix-app-card-logo [url]="app?.icon_url"></ix-app-card-logo>
   </div>
   <button
-    *ngIf="!wasPoolSet"
+    *ngIf="!(kubernetesStore.selectedPool$ | async)"
     mat-button
     color="primary"
     ixTest="setup-pool"
@@ -21,7 +21,7 @@
     {{ 'Setup Pool To Install' | translate }}
   </button>
   <button
-    *ngIf="wasPoolSet"
+    *ngIf="!!(kubernetesStore.selectedPool$ | async)"
     mat-button
     color="primary"
     [ixTest]="[app?.name, 'install']"
