@@ -87,7 +87,7 @@ export class TableService {
       dialog.button = dialog.buttonMessage(item);
     }
 
-    if (table.tableConf.deleteMsg && table.tableConf.deleteMsg.doubleConfirm) {
+    if (table.tableConf.deleteMsg?.doubleConfirm) {
       // double confirm: input delete item's name to confirm deletion
       table.tableConf.deleteMsg.doubleConfirm(item).pipe(untilDestroyed(this)).subscribe((doubleConfirmDialog) => {
         if (doubleConfirmDialog) {
@@ -133,7 +133,7 @@ export class TableService {
     }
 
     let id: string | number;
-    if (table.tableConf.deleteMsg && table.tableConf.deleteMsg.id_prop) {
+    if (table.tableConf.deleteMsg?.id_prop) {
       id = item[table.tableConf.deleteMsg.id_prop] as string | number;
     } else {
       id = item.id as string | number;

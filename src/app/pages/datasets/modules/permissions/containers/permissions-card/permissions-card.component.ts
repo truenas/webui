@@ -68,7 +68,7 @@ export class PermissionsCardComponent implements OnInit, OnChanges {
           this.stat = state.stat;
 
           // TODO: Move elsewhere
-          if (this.acl && this.acl.acl && this.acl.acltype === AclType.Nfs4) {
+          if (this.acl?.acl && this.acl.acltype === AclType.Nfs4) {
             for (const acl of this.acl.acl) {
               if (acl.tag === NfsAclTag.Owner && acl.who === null) {
                 acl.who = this.acl.uid.toString();

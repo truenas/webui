@@ -334,7 +334,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
         const options: Option[] = [];
         for (const task of tasks) {
           if (task.transport !== TransportMode.Legacy) {
-            const exp = task.state && task.state.datetime
+            const exp = task.state?.datetime
               ? this.translate.instant('last run {date}', {
                 date: this.datePipe.transform(new Date(task.state.datetime.$date), 'MM/dd/yyyy'),
               })

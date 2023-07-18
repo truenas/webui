@@ -96,7 +96,7 @@ export class ManualTestDialogComponent {
             untilDestroyed(this),
           ).subscribe({
             next: (result) => {
-              if (result && result.progress) {
+              if (result?.progress) {
                 this.progressTotalPercent = result.progress.percent / 100;
               }
               this.cdr.markForCheck();

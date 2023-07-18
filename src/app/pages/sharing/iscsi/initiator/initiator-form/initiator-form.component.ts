@@ -11,10 +11,10 @@ import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService, NetworkService, WebSocketService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
-type InitiatorItem = {
+interface InitiatorItem {
   id: string;
   name: string;
-};
+}
 
 @UntilDestroy()
 @Component({
