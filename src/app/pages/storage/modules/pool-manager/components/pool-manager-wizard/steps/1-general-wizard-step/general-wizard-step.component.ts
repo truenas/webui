@@ -36,6 +36,7 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
   });
 
   poolNames$ = this.ws.call('pool.query').pipe(map((pools) => pools.map((pool) => pool.name)));
+  private readonly oldNameForbiddenValidator = forbiddenAsyncValues(this.poolNames$);
 
   readonly encryptionAlgorithmOptions$ = this.ws
     .call('pool.dataset.encryption_algorithm_choices')
@@ -55,14 +56,15 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
       this.form.controls.encryption.disable();
       this.form.controls.encryptionStandard.disable();
       this.form.controls.name.setValue(this.pool?.name || '');
+      this.form.controls.name.removeAsyncValidators(this.oldNameForbiddenValidator);
+      this.form.controls.name.updateValueAndValidity();
+    } else {
+      this.form.controls.name.addAsyncValidators(this.oldNameForbiddenValidator);
+      this.form.controls.name.updateValueAndValidity();
     }
   }
 
   ngOnInit(): void {
-    if (!this.isAddingVdevs) {
-      this.form.controls.name.addAsyncValidators(forbiddenAsyncValues(this.poolNames$));
-    }
-
     this.initEncryptionField();
     this.connectGeneralOptionsToStore();
 
