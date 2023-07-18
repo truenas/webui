@@ -15,6 +15,7 @@ import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import { Pool } from 'app/interfaces/pool.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
 import {
   DownloadKeyDialogComponent,
 } from 'app/pages/storage/modules/pool-manager/components/download-key-dialog/download-key-dialog.component';
@@ -123,6 +124,7 @@ describe('PoolManagerWizardComponent', () => {
       ]),
       mockProvider(ActivatedRoute, {
         params: of({}),
+        snapshot: { url: '' },
       }),
       mockProvider(MatDialog, {
         open: jest.fn((component) => {
@@ -149,6 +151,10 @@ describe('PoolManagerWizardComponent', () => {
             },
           },
         ],
+      }),
+      mockProvider(AddVdevsStore, {
+        pool$: of(null),
+        isLoading$: of(false),
       }),
       mockProvider(Router),
       mockProvider(SnackbarService),
