@@ -39,9 +39,6 @@ describe('AppDetailsHeaderComponent', () => {
       mockProvider(InstalledAppsStore, {
         installedApps$: of([application]),
       }),
-      mockProvider(KubernetesStore, {
-        selectedPool$: of('has-pool'),
-      }),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
           afterClosed: () => of(),
@@ -51,83 +48,104 @@ describe('AppDetailsHeaderComponent', () => {
     ],
   });
 
-  beforeEach(() => {
-    spectator = createComponent({
-      props: {
-        isLoading$: of(false),
-        app: application,
-      },
+  describe('pool is set up', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        props: {
+          isLoading$: of(false),
+          app: application,
+        },
+        providers: [
+          mockProvider(KubernetesStore, {
+            selectedPool$: of('has-pool'),
+          }),
+        ],
+      });
+
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    it('shows app logo', () => {
+      const logo = spectator.query(AppCardLogoComponent);
+      expect(logo).toExist();
+      expect(logo.url).toBe(application.icon_url);
+    });
+
+    describe('install button', () => {
+      it('shows an Install button that takes user to installation form', async () => {
+        const installButton = await loader.getHarness(MatButtonHarness.with({ text: 'Install' }));
+        await installButton.click();
+
+        expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/apps', 'available', 'Truenas', 'stable', 'SETI@home', 'install']);
+      });
+
+      it('shows Install Another Instance and installed badge when app is installed', async () => {
+        spectator.setInput('app', {
+          ...application,
+          installed: true,
+        });
+
+        const installButton = await loader.getHarness(MatButtonHarness.with({ text: 'Install Another Instance' }));
+        expect(installButton).toExist();
+
+        await installButton.click();
+        expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/apps', 'available', 'Truenas', 'stable', 'SETI@home', 'install']);
+
+        const installedBadge = spectator.query('.installed-badge');
+        expect(installedBadge).toExist();
+        expect(installedBadge).toHaveText('Installed');
+      });
+    });
+
+    describe('other elements', () => {
+      it('shows app catalog', () => {
+        expect(spectator.query('.catalog-container')).toHaveText('Truenas Catalog');
+      });
+
+      it('shows app version', () => {
+        expect(spectator.queryAll('.app-list-item')[1]).toHaveText('App Version: 1.0.0');
+      });
+
+      it('shows app keywords', () => {
+        expect(spectator.queryAll('.app-list-item')[2]).toHaveText('Keywords: aliens, ufo');
+      });
+
+      it('shows app train', () => {
+        expect(spectator.queryAll('.app-list-item')[3]).toHaveText('Train: stable');
+      });
+
+      it('shows app homepage', () => {
+        expect(spectator.queryAll('.app-list-item')[4]).toHaveText('Homepage:seti.org');
+      });
+
+      it('shows app description', () => {
+        expect(spectator.query('.app-description')).toHaveText('Find aliens without leaving your home.');
+      });
+    });
   });
 
-  it('shows app logo', () => {
-    const logo = spectator.query(AppCardLogoComponent);
-    expect(logo).toExist();
-    expect(logo.url).toBe(application.icon_url);
-  });
+  describe('no pool set up', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        props: {
+          isLoading$: of(false),
+          app: application,
+        },
+        providers: [
+          mockProvider(KubernetesStore, {
+            selectedPool$: of(null),
+          }),
+        ],
+      });
 
-  describe('install button', () => {
-    it('shows an Install button that takes user to installation form', async () => {
-      const installButton = await loader.getHarness(MatButtonHarness.with({ text: 'Install' }));
-      await installButton.click();
-
-      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/apps', 'available', 'Truenas', 'stable', 'SETI@home', 'install']);
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
     it('shows Setup Pool To Install instead if pool is not set', async () => {
-      const store = spectator.inject(KubernetesStore);
-      Object.defineProperty(store, 'selectedPool$', { value: of(undefined) });
-      spectator.component.ngOnInit();
-
       const setupPool = await loader.getHarness(MatButtonHarness.with({ text: 'Setup Pool To Install' }));
       await setupPool.click();
 
       expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(SelectPoolDialogComponent);
-    });
-
-    it('shows Install Another Instance and installed badge when app is installed', async () => {
-      spectator.setInput('app', {
-        ...application,
-        installed: true,
-      });
-
-      const installButton = await loader.getHarness(MatButtonHarness.with({ text: 'Install Another Instance' }));
-      expect(installButton).toExist();
-
-      await installButton.click();
-      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/apps', 'available', 'Truenas', 'stable', 'SETI@home', 'install']);
-
-      const installedBadge = spectator.query('.installed-badge');
-      expect(installedBadge).toExist();
-      expect(installedBadge).toHaveText('Installed');
-    });
-  });
-
-  describe('other elements', () => {
-    it('shows app catalog', () => {
-      expect(spectator.query('.catalog-container')).toHaveText('Truenas Catalog');
-    });
-
-    it('shows app version', () => {
-      expect(spectator.queryAll('.app-list-item')[1]).toHaveText('App Version: 1.0.0');
-    });
-
-    it('shows app keywords', () => {
-      expect(spectator.queryAll('.app-list-item')[2]).toHaveText('Keywords: aliens, ufo');
-    });
-
-    it('shows app train', () => {
-      expect(spectator.queryAll('.app-list-item')[3]).toHaveText('Train: stable');
-    });
-
-    it('shows app homepage', () => {
-      expect(spectator.queryAll('.app-list-item')[4]).toHaveText('Homepage:seti.org');
-    });
-
-    it('shows app description', () => {
-      expect(spectator.query('.app-description')).toHaveText('Find aliens without leaving your home.');
     });
   });
 });
