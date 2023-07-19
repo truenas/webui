@@ -63,7 +63,6 @@ describe('ManualDiskSelectionStore', () => {
       expectObservable(spectator.service.vdevs$).toBe('a', {
         a: [{
           disks: [],
-          rawSize: 0,
           uuid: 'first_vdev',
         }],
       });
@@ -95,7 +94,6 @@ describe('ManualDiskSelectionStore', () => {
             ...unusedDisks[1],
             vdevUuid: 'first_vdev',
           }],
-          rawSize: 0,
           uuid: 'first_vdev',
         }],
       });
@@ -130,7 +128,6 @@ describe('ManualDiskSelectionStore', () => {
             ...unusedDisks[1],
             vdevUuid: 'first_vdev',
           }],
-          rawSize: 0,
           uuid: 'first_vdev',
         }],
       });
