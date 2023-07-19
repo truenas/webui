@@ -137,7 +137,7 @@
                       <li *ngIf="cols === 2 && rows === 2 && (pool.scan.end_time || isScanInProgress(pool))" fxLayout="row">
                         <span *ngIf="!isScanInProgress(pool)" [class]="['icon', isScanFinished(pool) ? 'safe' : 'warn']">
                           <ix-icon
-                            [matTooltip]="pool.scan.end_time.$date | formatDateTime"
+                            [matTooltip]="pool?.scan?.end_time?.$date | formatDateTime"
                             [name]="isScanFinished(pool) ? 'check_circle' : 'error'"
                           ></ix-icon>
                         </span>
@@ -162,7 +162,7 @@
                           <span class="storage-value">
                             <span *ngIf="!isScanInProgress(pool)" [class]="['icon', isScanFinished(pool) ? 'safe' : 'warn']">
                               <ix-icon
-                                [matTooltip]="pool.scan.end_time.$date | formatDateTime"
+                                [matTooltip]="pool?.scan?.end_time?.$date | formatDateTime"
                                 [name]="isScanFinished(pool) ? 'check_circle' : 'error'"
                               ></ix-icon>
                             </span>

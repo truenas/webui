@@ -5,7 +5,7 @@ export abstract class ColumnComponent<T> {
   title?: string;
   sortBy?: (row: T) => string | number;
   sortable?: boolean;
-  hidden?: boolean;
+  hidden = false;
 
   protected row: T;
   getRow(): T {

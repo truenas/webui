@@ -7,6 +7,7 @@ import { SmartTestTaskUi } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
+import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { SmartTaskFormComponent } from 'app/pages/data-protection/smart-task/smart-task-form/smart-task-form.component';
 import { TaskService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -75,7 +76,7 @@ export class SmartTaskListComponent implements EntityTableConfig {
 
   resourceTransformIncomingRestData(data: SmartTestTaskUi[]): SmartTestTaskUi[] {
     return data.map((test) => {
-      test.cron_schedule = `0 ${test.schedule.hour} ${test.schedule.dom} ${test.schedule.month} ${test.schedule.dow}`;
+      test.cron_schedule = scheduleToCrontab(test.schedule);
       test.frequency = this.taskService.getTaskCronDescription(test.cron_schedule);
       test.next_run = this.taskService.getTaskNextRun(test.cron_schedule);
 

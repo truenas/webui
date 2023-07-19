@@ -21,6 +21,7 @@ import {
 } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
+import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import {
@@ -110,7 +111,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
   resourceTransformIncomingRestData(tasks: CloudSyncTask[]): CloudSyncTaskUi[] {
     return tasks.map((task) => {
       const transformed = { ...task } as CloudSyncTaskUi;
-      const formattedCronSchedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
+      const formattedCronSchedule = scheduleToCrontab(task.schedule);
       transformed.credential = task.credentials.name;
       transformed.cron_schedule = task.enabled ? formattedCronSchedule : this.translate.instant('Disabled');
       transformed.frequency = this.taskService.getTaskCronDescription(formattedCronSchedule);

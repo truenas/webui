@@ -15,6 +15,7 @@ import { IxTable2EmptyRowComponent } from 'app/modules/ix-table2/components/ix-e
 import { IxCellCheckboxComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-checkbox/ix-cell-checkbox.component';
 import { IxCellDateComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-date/ix-cell-date.component';
 import { IxCellDeleteComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-delete/ix-cell-delete.component';
+import { IxCellScheduleComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-schedule/ix-cell-schedule.component';
 import { IxCellSizeComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-size/ix-cell-size.component';
 import { IxCellTextComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { IxCellToggleComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
@@ -66,6 +67,7 @@ import { IxTableColumnsSelectorComponent } from './components/ix-table-columns-s
     IxCellYesNoComponent,
     IxCellDeleteComponent,
     IxCellToggleComponent,
+    IxCellScheduleComponent,
     IxHeaderCellTextComponent,
     IxHeaderCellCheckboxComponent,
     IxTable2EmptyDirective,
@@ -89,6 +91,7 @@ import { IxTableColumnsSelectorComponent } from './components/ix-table-columns-s
     IxCellYesNoComponent,
     IxCellDeleteComponent,
     IxCellToggleComponent,
+    IxCellScheduleComponent,
     IxHeaderCellTextComponent,
     IxHeaderCellCheckboxComponent,
     IxTable2EmptyDirective,

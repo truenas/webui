@@ -20,7 +20,7 @@ export class IxTableHeadComponent<T> implements AfterViewInit {
   readonly SortDirection = SortDirection;
 
   get displayedColumns(): Column<T, ColumnComponent<T>>[] {
-    return this.columns.filter((column) => !column.hidden);
+    return this.columns?.filter((column) => !column?.hidden);
   }
 
   constructor(

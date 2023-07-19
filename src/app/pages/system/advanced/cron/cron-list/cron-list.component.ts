@@ -5,12 +5,15 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, map, switchMap } from 'rxjs';
+import { Cronjob } from 'app/interfaces/cronjob.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { scheduleColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-schedule/ix-cell-schedule.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { yesNoColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
 import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.interface';
 import { createTable } from 'app/modules/ix-table2/utils';
+import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { CronDeleteDialogComponent } from 'app/pages/system/advanced/cron/cron-delete-dialog/cron-delete-dialog.component';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { CronjobRow } from 'app/pages/system/advanced/cron/cron-list/cronjob-row.interface';
@@ -45,9 +48,9 @@ export class CronListComponent implements OnInit, AfterViewInit {
       title: this.translate.instant('Description'),
       propertyName: 'description',
     }),
-    textColumn({
+    scheduleColumn({
       title: this.translate.instant('Schedule'),
-      propertyName: 'cron_schedule',
+      propertyName: 'schedule',
     }),
     yesNoColumn({
       title: this.translate.instant('Enabled'),
@@ -56,39 +59,22 @@ export class CronListComponent implements OnInit, AfterViewInit {
     textColumn({
       title: this.translate.instant('Next Run'),
       propertyName: 'next_run',
+      hidden: true,
     }),
-    // textColumn({
-    //   title: this.translate.instant('Minute'),
-    //   propertyName: 'schedule.minute',
-    // }),
-    // textColumn({
-    //   title: this.translate.instant('Hour'),
-    //   propertyName: 'schedule.hour',
-    // }),
-    // textColumn({
-    //   title: this.translate.instant('Day of Month'),
-    //   propertyName: 'schedule.dom',
-    // }),
-    // textColumn({
-    //   title: this.translate.instant('Month'),
-    //   propertyName: 'schedule.month',
-    // }),
-    // textColumn({
-    //   title: this.translate.instant('Day of Week'),
-    //   propertyName: 'schedule.dow',
-    // }),
     yesNoColumn({
       title: this.translate.instant('Hide Stdout'),
       propertyName: 'stdout',
+      hidden: true,
     }),
     yesNoColumn({
       title: this.translate.instant('Hide Stderr'),
       propertyName: 'stderr',
+      hidden: true,
     }),
   ]);
 
   get hiddenColumns(): Column<CronjobRow, ColumnComponent<CronjobRow>>[] {
-    return this.columns.filter((column) => column.hidden);
+    return this.columns.filter((column) => column?.hidden);
   }
 
   constructor(
@@ -115,14 +101,11 @@ export class CronListComponent implements OnInit, AfterViewInit {
     this.isLoading = true;
     this.ws.call('cronjob.query').pipe(
       map((cronjobs) => {
-        return cronjobs.map((job: CronjobRow) => {
-          const cronSchedule = `${job.schedule.minute} ${job.schedule.hour} ${job.schedule.dom} ${job.schedule.month} ${job.schedule.dow}`;
-          return {
-            ...job,
-            cron_schedule: cronSchedule,
-            next_run: this.taskService.getTaskNextRun(cronSchedule),
-          };
-        });
+        return cronjobs.map((job: Cronjob): CronjobRow => ({
+          ...job,
+          cron_schedule: scheduleToCrontab(job.schedule),
+          next_run: this.taskService.getTaskNextRun(scheduleToCrontab(job.schedule)),
+        }));
       }),
       untilDestroyed(this),
     ).subscribe((cronjobs) => {
@@ -191,8 +174,8 @@ export class CronListComponent implements OnInit, AfterViewInit {
     }));
   }
 
-  columnsChanged(): void {
-    this.columns = [...this.columns];
+  columnsChange(columns: typeof this.columns): void {
+    this.columns = [...columns];
     this.cdr.detectChanges();
     this.cdr.markForCheck();
   }

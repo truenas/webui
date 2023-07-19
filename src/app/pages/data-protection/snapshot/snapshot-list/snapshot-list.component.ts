@@ -12,6 +12,7 @@ import {
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
+import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { SnapshotTaskComponent } from 'app/pages/data-protection/snapshot/snapshot-task/snapshot-task.component';
 import {
   DialogService, StorageService,
@@ -95,7 +96,7 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
         ...task,
         keepfor: `${task.lifetime_value} ${task.lifetime_unit}(S)`,
         when: this.translate.instant('From {task_begin} to {task_end}', { task_begin: task.schedule.begin, task_end: task.schedule.end }),
-        cron_schedule: `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`,
+        cron_schedule: scheduleToCrontab(task.schedule),
       } as PeriodicSnapshotTaskUi;
 
       return {

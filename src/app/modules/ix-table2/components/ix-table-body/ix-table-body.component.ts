@@ -34,7 +34,7 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
   detailsRow: IxTableDetailsRowDirective<T>;
 
   get displayedColumns(): Column<T, ColumnComponent<T>>[] {
-    return this.columns.filter((column) => !column.hidden);
+    return this.columns?.filter((column) => !column?.hidden);
   }
 
   constructor(
