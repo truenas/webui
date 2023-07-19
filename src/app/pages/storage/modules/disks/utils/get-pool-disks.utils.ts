@@ -2,7 +2,7 @@ import { Pool } from 'app/interfaces/pool.interface';
 import { isTopologyDisk, TopologyDisk } from 'app/interfaces/storage.interface';
 
 export function getPoolDisks(pool: Pool): string[] {
-  if (!pool || !pool.topology) {
+  if (!pool?.topology) {
     return [];
   }
 

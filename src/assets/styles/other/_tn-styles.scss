@@ -115,6 +115,14 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     background-color: rgba(0, 0, 0, 0.1);
   }
 
+  .mat-step-header .mat-step-icon:not(.mat-step-icon-state-error) {
+    background-color: var(--alt-bg1);
+  }
+
+  .mat-step-header .mat-step-icon.mat-step-icon-selected {
+    background-color: var(--primary);
+  }
+
   .mat-bg-primary,
   .mat-raised-button.mat-primary,
   .mat-fab.mat-primary,
@@ -125,7 +133,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .fileupload-drop-zone.dz-file-over,
   .toolbar-avatar.online > .status-dot,
   .cal-open-day-events,
-  .mat-step-header .mat-step-icon:not(.mat-step-icon-state-error) {
+  .mat-step-header .mat-step-icon:not(.mat-step-icon-state-error):not(.mat-step-icon-state-number):not(.mat-step-icon-state-edit) {
     @include variable(background, --primary, $primary, !important);
     @include variable(color, --primary-txt, $primary-txt, !important);
   }

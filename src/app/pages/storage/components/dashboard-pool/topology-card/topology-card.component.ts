@@ -28,7 +28,7 @@ interface TopologyState {
   dedup: string;
 }
 
-interface EmptyDiskObject {
+export interface EmptyDiskObject {
   [p: string]: string | number | boolean | string[] | SmartTestResult[] | EnclosureAndSlot;
 }
 

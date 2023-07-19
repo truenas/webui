@@ -141,7 +141,7 @@ export class SessionsCardComponent {
   }
 
   getUsername(credentialsData: AuthSessionCredentialsData): string {
-    if (credentialsData && credentialsData.credentials_data) {
+    if (credentialsData?.credentials_data) {
       return credentialsData.credentials_data.username || this.getUsername(credentialsData.credentials_data.parent);
     }
     return '';

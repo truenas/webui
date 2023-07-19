@@ -364,10 +364,10 @@ implements OnInit, AfterViewInit, AfterViewChecked {
       return 'slide-toggle';
     }
 
-    if (column.state && column.state.prop && this._tableConf.getInOutInfo) {
+    if (column.state?.prop && this._tableConf.getInOutInfo) {
       return 'state-info';
     }
-    if (column.state && column.state.icon) {
+    if (column.state?.icon) {
       return 'state-icon';
     }
 

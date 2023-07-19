@@ -1,5 +1,5 @@
 import { TiB } from 'app/constants/bytes.constant';
-import { EnclosureDispersalStrategy, MockStorageScenario } from 'app/core/testing/enums/mock-storage.enum';
+import { EnclosureDispersalStrategy, MockDiskType, MockStorageScenario } from 'app/core/testing/enums/mock-storage.enum';
 import {
   AddEnclosureOptions,
   AddTopologyOptions,
@@ -13,7 +13,7 @@ import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
-import { VdevType, TopologyItemType } from 'app/enums/v-dev-type.enum';
+import { TopologyItemType, VdevType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { Enclosure, EnclosureElement, EnclosureElementsGroup } from 'app/interfaces/enclosure.interface';
 import { PoolInstance } from 'app/interfaces/pool.interface';
@@ -28,6 +28,7 @@ import {
 import { MockEnclosure } from './enclosure-templates/mock-enclosure-template';
 import { MockEs102 } from './enclosure-templates/mock-es102';
 import { MockEs24 } from './enclosure-templates/mock-es24';
+import { MockF60 } from './enclosure-templates/mock-f60';
 import { MockM40 } from './enclosure-templates/mock-m40';
 import { MockM50 } from './enclosure-templates/mock-m50';
 import { MockM50Rear } from './enclosure-templates/mock-m50-rear';
@@ -554,7 +555,7 @@ export class MockStorageGenerator {
     return width;
   }
 
-  private generateDiskName(diskCount: number, startIndex = 0): string[] {
+  private generateDiskName(diskCount: number, startIndex = 0, diskType: MockDiskType = MockDiskType.Hdd): string[] {
     const diskNames: string[] = [];
 
     const generateName = (index: number): string => {
@@ -567,7 +568,7 @@ export class MockStorageGenerator {
     };
 
     for (let i = startIndex; i < diskCount; i++) {
-      const name = generateName(i);
+      const name = diskType === MockDiskType.Nvme ? `nvme${i}n1` : generateName(i);
       diskNames.push('sd' + name);
     }
 
@@ -677,6 +678,9 @@ export class MockStorageGenerator {
         break;
       case 'R50':
         chassis = new MockR50(enclosureNumber);
+        break;
+      case 'F60':
+        chassis = new MockF60(enclosureNumber);
         break;
       default:
         console.error('Chassis ' + model + ' not found');

@@ -29,7 +29,7 @@ export type UpdateBootenvParams = [
   updates:{ name: string },
 ];
 
-export type BootenvTooltip = {
+export interface BootenvTooltip {
   name: string;
   source?: string;
-};
+}

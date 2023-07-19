@@ -281,7 +281,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   limitDecimals(numero: number): string | number {
     const subZero = numero.toString().split('.');
-    const decimalPlaces = subZero && subZero[1] ? subZero[1].length : 0;
+    const decimalPlaces = subZero?.[1] ? subZero[1].length : 0;
     return decimalPlaces > 2 ? numero.toFixed(2) : numero;
   }
 

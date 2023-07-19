@@ -44,6 +44,8 @@ export interface Pool {
    * Available with extra is_upgraded=true
    */
   is_upgraded?: boolean;
+  size: number;
+  algorithm: ZfsProperty<string, string>;
 }
 
 export type PoolTopology = {
@@ -57,7 +59,7 @@ export interface PoolScanUpdate {
   end_time: ApiTimestamp;
   errors: number;
   function: PoolScanFunction;
-  pause: string;
+  pause: ApiTimestamp;
   percentage: number;
   start_time: ApiTimestamp;
   state: PoolScanState;
