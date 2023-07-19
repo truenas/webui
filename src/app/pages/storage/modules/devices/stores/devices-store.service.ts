@@ -77,7 +77,7 @@ export class DevicesStore extends ComponentStore<DevicesState> {
       switchMap((poolId) => {
         return this.ws.call('pool.query', [[['id', '=', poolId]]]).pipe(
           switchMap((pools) => {
-            if (!pools || !pools.length) {
+            if (!pools?.length) {
               return of([]);
             }
             // TODO: Handle pool not found.
