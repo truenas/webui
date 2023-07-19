@@ -739,6 +739,7 @@ mat-chip-grid {
 
 body {
   .mdc-tooltip {
+    white-space: pre-line;
     word-break: break-word;
 
     .mdc-tooltip__surface {

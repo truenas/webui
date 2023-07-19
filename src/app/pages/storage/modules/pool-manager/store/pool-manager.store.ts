@@ -1,27 +1,33 @@
 import { Injectable } from '@angular/core';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
+import { Store } from '@ngrx/store';
 import _ from 'lodash';
 import {
   forkJoin, Observable, of, Subject,
 } from 'rxjs';
-import { switchMap, take, tap } from 'rxjs/operators';
+import {
+  map, switchMap, take, tap,
+} from 'rxjs/operators';
+import { GiB } from 'app/constants/bytes.constant';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DispersalStrategy } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/2-enclosure-wizard-step/enclosure-wizard-step.component';
+import { categoryCapacity } from 'app/pages/storage/modules/pool-manager/utils/capacity.utils';
 import { filterAllowedDisks } from 'app/pages/storage/modules/pool-manager/utils/disk.utils';
 import {
   GenerateVdevsService,
 } from 'app/pages/storage/modules/pool-manager/utils/generate-vdevs/generate-vdevs.service';
 import {
-  categoryCapacity,
   topologyCategoryToDisks,
   topologyToDisks,
 } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
 import { DialogService, WebSocketService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { AppState } from 'app/store';
+import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 export interface PoolManagerTopologyCategory {
   layout: CreateVdevLayout;
@@ -108,7 +114,8 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
   readonly enclosureSettings$ = this.select((state) => state.enclosureSettings);
   readonly totalUsableCapacity$ = this.select(
     this.topology$,
-    (topology) => categoryCapacity(topology[VdevType.Data]),
+    this.settingsStore$.pipe(waitForAdvancedConfig, map((config) => config.swapondrive)),
+    (topology, swapondrive) => categoryCapacity(topology[VdevType.Data], swapondrive * GiB),
   );
   readonly allowedDisks$ = this.select(
     this.allDisks$,
@@ -177,6 +184,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private generateVdevs: GenerateVdevsService,
+    private settingsStore$: Store<AppState>,
   ) {
     super(initialState);
   }

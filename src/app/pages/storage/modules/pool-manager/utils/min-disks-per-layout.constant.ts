@@ -6,4 +6,7 @@ export const minDisksPerLayout = {
   [CreateVdevLayout.Raidz1]: 3,
   [CreateVdevLayout.Raidz2]: 4,
   [CreateVdevLayout.Raidz3]: 5,
+  [CreateVdevLayout.Draid1]: 2,
+  [CreateVdevLayout.Draid2]: 3,
+  [CreateVdevLayout.Draid3]: 4,
 };
