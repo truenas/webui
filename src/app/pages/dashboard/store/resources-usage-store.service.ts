@@ -4,7 +4,7 @@ import _ from 'lodash';
 import {
   Observable, map, switchMap, tap,
 } from 'rxjs';
-import { NetworkInterfaceType } from 'app/enums/network-interface.enum';
+import { NetworkInterfaceAliasType, NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { MemoryStatsEventData } from 'app/interfaces/events/memory-stats-event.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { AllCpusUpdate, AllNetworkInterfacesUpdate, ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
@@ -118,6 +118,24 @@ export class ResourcesUsageStore extends ComponentStore<ResourcesUsageState> {
             });
           }
         });
+
+        // Remove NICs from list
+        for (let i = dashboardNetworkInterfaces.length - 1; i >= 0; i--) {
+          if (removeNics[dashboardNetworkInterfaces[i].name]) {
+            // Remove
+            dashboardNetworkInterfaces.splice(i, 1);
+          } else {
+            // Only keep INET addresses
+            dashboardNetworkInterfaces[i].state.aliases = dashboardNetworkInterfaces[i].state.aliases.filter(
+              (address) => {
+                return [
+                  NetworkInterfaceAliasType.Inet,
+                  NetworkInterfaceAliasType.Inet6,
+                ].includes(address.type);
+              },
+            );
+          }
+        }
 
         // Update NICs array
         this.setState((state) => {
