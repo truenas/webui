@@ -55,7 +55,7 @@ describe('CronListComponent', () => {
         mockCall('cronjob.run'),
       ]),
       mockProvider(DialogService, {
-        confirm: () => jest.fn(() => of(true)),
+        confirm: jest.fn(() => of(true)),
       }),
       mockProvider(IxSlideInService, {
         open: jest.fn(() => {
@@ -83,8 +83,8 @@ describe('CronListComponent', () => {
 
   it('should show table rows', async () => {
     const expectedRows = [
-      ['Users', 'Command', 'Description', 'Schedule', 'Enabled', 'Next Run', 'Hide Stdout', 'Hide Stderr'],
-      ['root', "echo 'Hello World'", 'test', '0 0 * * *', 'Yes', 'in about 10 hours', 'Yes', 'No'],
+      ['Users', 'Command', 'Description', 'Schedule', 'Enabled'],
+      ['root', "echo 'Hello World'", 'test', '0 0 * * *', 'Yes'],
     ];
 
     const cells = await table.getCellTexts();
@@ -125,12 +125,14 @@ describe('CronListComponent', () => {
     });
   });
 
-  it.skip('deletes a cronjob with confirmation when Delete button is pressed', async () => {
+  it('deletes a cronjob with confirmation when Delete button is pressed', async () => {
     await table.clickToggle(0);
 
     const deleteIcon = await loader.getHarness(MatButtonHarness.with({ text: 'Delete' }));
     await deleteIcon.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(CronDeleteDialogComponent);
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(CronDeleteDialogComponent, {
+      data: expect.objectContaining({ id: 1 }),
+    });
   });
 });
