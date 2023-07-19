@@ -18,7 +18,6 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { CoreEvent } from 'app/interfaces/events';
-import { MemoryStatsEventData } from 'app/interfaces/events/memory-stats-event.interface';
 import { SystemFeatures, SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import {
   NetworkInterface, NetworkInterfaceAlias,
@@ -90,7 +89,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   activeMobileWidget: DashConfigItem[] = [];
   availableWidgets: DashConfigItem[] = this.generateDefaultConfig();
   renderedWidgets: DashConfigItem[];
-  statsDataEvent$: Subject<CoreEvent> = new Subject<CoreEvent>();
   interval: Interval;
 
   readonly ScreenType = ScreenType;
@@ -98,7 +96,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   get isLoaded(): boolean {
     return this.dashStateReady
-      && this.statsDataEvent$
       && this.pools
       && this.nics
       && this.volumeData
@@ -267,34 +264,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.getNetworkInterfaces();
     this.listenForPoolUpdates();
     this.listenForScanUpdates();
-    this.getResourcesUsageUpdates();
-  }
-
-  getResourcesUsageUpdates(): void {
-    this.ws.subscribe('reporting.realtime').pipe(
-      map((event) => event.fields),
-      untilDestroyed(this),
-    ).subscribe((update) => {
-      if (update?.cpu) {
-        this.statsDataEvent$.next({ name: 'CpuStats', data: update.cpu });
-      }
-
-      if (update?.virtual_memory) {
-        const memStats: MemoryStatsEventData = { ...update.virtual_memory };
-
-        if (update.zfs && update.zfs.arc_size !== null) {
-          memStats.arc_size = update.zfs.arc_size;
-        }
-        this.statsDataEvent$.next({ name: 'MemoryStats', data: memStats });
-      }
-
-      if (update?.interfaces) {
-        const keys = Object.keys(update.interfaces);
-        keys.forEach((key) => {
-          this.statsDataEvent$.next({ name: 'NetTraffic_' + key, data: update.interfaces[key] });
-        });
-      }
-    });
   }
 
   setVolumeData(data: Dataset[]): void {
@@ -436,12 +405,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     let data: Subject<CoreEvent> | DashboardNicState | Pool | Pool[];
 
     switch (item.name) {
-      case WidgetName.Cpu:
-        data = this.statsDataEvent$;
-        break;
-      case WidgetName.Memory:
-        data = this.statsDataEvent$;
-        break;
       case WidgetName.Pool:
         if (spl) {
           const pools = this.pools.filter((pool) => pool[key as keyof Pool] === value.split(':')[1]);
@@ -498,7 +461,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     return state.filter((widget) => {
       if (
         [WidgetName.Pool, WidgetName.Storage].includes(widget.name)
-       && (!this.volumeDataFromConfig(widget) || !this.dataFromConfig(widget))
+        && widget.name !== WidgetName.Cpu && widget.name !== WidgetName.Memory
+        && (!this.volumeDataFromConfig(widget) || !this.dataFromConfig(widget))
       ) {
         return false;
       }
