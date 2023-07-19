@@ -17,7 +17,7 @@ describe('ScheduleToCrontabPipe', () => {
     pipe: ScheduleToCrontabPipe,
   });
 
-  it('transforms a URL into a shorter form in a template', () => {
+  it('transforms schedule object into crontab string', () => {
     spectator = createPipe('{{ inputValue | scheduleToCrontab }}', {
       hostProps: {
         inputValue: schedule,
