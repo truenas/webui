@@ -11,7 +11,7 @@ import { AppState } from 'app/store';
 import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
 @UntilDestroy()
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class LanguageService {
   currentLanguage: string = null;
   availableLangs = [

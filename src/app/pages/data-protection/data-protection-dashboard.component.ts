@@ -27,6 +27,7 @@ import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.com
 import { AppTableAction, AppTableConfig } from 'app/modules/entity/table/table.component';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
+import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import {
@@ -50,7 +51,6 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
-import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
 export interface TaskCard {
   name: string;
@@ -417,12 +417,9 @@ export class DataProtectionDashboardComponent implements OnInit {
 
   scrubDataSourceHelper(data: ScrubTaskUi[]): ScrubTaskUi[] {
     return data.map((task) => {
-      task.cron_schedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
+      task.cron_schedule = scheduleToCrontab(task.schedule);
       task.frequency = this.taskService.getTaskCronDescription(task.cron_schedule);
-
-      this.store$.select(selectTimezone).pipe(untilDestroyed(this)).subscribe((timezone) => {
-        task.next_run = this.taskService.getTaskNextRun(task.cron_schedule, timezone);
-      });
+      task.next_run = this.taskService.getTaskNextRun(task.cron_schedule);
 
       return task;
     });
@@ -430,15 +427,12 @@ export class DataProtectionDashboardComponent implements OnInit {
 
   cloudsyncDataSourceHelper(data: CloudSyncTaskUi[]): CloudSyncTaskUi[] {
     const cloudsyncData = data.map((task) => {
-      const formattedCronSchedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
+      const formattedCronSchedule = scheduleToCrontab(task.schedule);
       task.credential = task.credentials.name;
       task.cron_schedule = task.enabled ? formattedCronSchedule : this.translate.instant('Disabled');
       task.frequency = this.taskService.getTaskCronDescription(formattedCronSchedule);
       task.next_run_time = task.enabled ? this.taskService.getTaskNextTime(formattedCronSchedule) : this.translate.instant('Disabled');
-
-      this.store$.select(selectTimezone).pipe(untilDestroyed(this)).subscribe((timezone) => {
-        task.next_run = task.enabled ? this.taskService.getTaskNextRun(formattedCronSchedule, timezone) : this.translate.instant('Disabled');
-      });
+      task.next_run = task.enabled ? this.taskService.getTaskNextRun(formattedCronSchedule) : this.translate.instant('Disabled');
 
       if (task.job === null) {
         task.state = { state: task.locked ? JobState.Locked : JobState.Pending };
@@ -495,12 +489,9 @@ export class DataProtectionDashboardComponent implements OnInit {
 
   smartTestsDataSourceHelper(data: SmartTestTaskUi[]): SmartTestTaskUi[] {
     return data.map((test) => {
-      test.cron_schedule = `0 ${test.schedule.hour} ${test.schedule.dom} ${test.schedule.month} ${test.schedule.dow}`;
+      test.cron_schedule = scheduleToCrontab(test.schedule);
       test.frequency = this.taskService.getTaskCronDescription(test.cron_schedule);
-
-      this.store$.select(selectTimezone).pipe(untilDestroyed(this)).subscribe((timezone) => {
-        test.next_run = this.taskService.getTaskNextRun(test.cron_schedule, timezone);
-      });
+      test.next_run = this.taskService.getTaskNextRun(test.cron_schedule);
 
       if (test.all_disks) {
         test.disksLabel = [this.translate.instant(helptext_smart.smarttest_all_disks_placeholder)];
@@ -524,12 +515,9 @@ export class DataProtectionDashboardComponent implements OnInit {
   snapshotDataSourceHelper(data: PeriodicSnapshotTaskUi[]): PeriodicSnapshotTaskUi[] {
     return data.map((task) => {
       task.keepfor = `${task.lifetime_value} ${task.lifetime_unit}(S)`;
-      task.cron_schedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
+      task.cron_schedule = scheduleToCrontab(task.schedule);
       task.frequency = this.taskService.getTaskCronDescription(task.cron_schedule);
-
-      this.store$.select(selectTimezone).pipe(untilDestroyed(this)).subscribe((timezone) => {
-        task.next_run = this.taskService.getTaskNextRun(task.cron_schedule, timezone);
-      });
+      task.next_run = this.taskService.getTaskNextRun(task.cron_schedule);
 
       return task;
     });
@@ -537,12 +525,9 @@ export class DataProtectionDashboardComponent implements OnInit {
 
   rsyncDataSourceHelper(data: RsyncTaskUi[]): RsyncTaskUi[] {
     return data.map((task) => {
-      task.cron_schedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
+      task.cron_schedule = scheduleToCrontab(task.schedule);
       task.frequency = this.taskService.getTaskCronDescription(task.cron_schedule);
-
-      this.store$.select(selectTimezone).pipe(untilDestroyed(this)).subscribe((timezone) => {
-        task.next_run = this.taskService.getTaskNextRun(task.cron_schedule, timezone);
-      });
+      task.next_run = this.taskService.getTaskNextRun(task.cron_schedule);
 
       if (task.job === null) {
         task.state = { state: task.locked ? JobState.Locked : JobState.Pending };
