@@ -4,6 +4,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
+import { filter, switchMap, tap } from 'rxjs';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
@@ -109,21 +110,26 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
   }
 
   ngAfterViewInit(): void {
-    this.dashboardStorageStore$.pools$.pipe(
-      deepCloneState(),
+    this.dashboardStorageStore$.isLoading$.pipe(
+      filter((isLoading) => !isLoading),
+      switchMap(() => this.dashboardStorageStore$.pools$.pipe(
+        deepCloneState(),
+        tap((pools: Pool[]) => {
+          this.pools = pools;
+        }),
+      )),
+      switchMap(() => this.dashboardStorageStore$.volumesData$.pipe(
+        deepCloneState(),
+        tap((volumesData) => {
+          this.volumeData = volumesData;
+        }),
+      )),
       untilDestroyed(this),
-    ).subscribe((pools) => {
-      this.pools = pools;
-      this.updateGridInfo();
-      this.updatePoolInfoMap();
-    });
-    this.dashboardStorageStore$.volumesData$.pipe(
-      deepCloneState(),
-      untilDestroyed(this),
-    ).subscribe((volumesData) => {
-      this.volumeData = volumesData;
-      this.updateGridInfo();
-      this.updatePoolInfoMap();
+    ).subscribe({
+      next: () => {
+        this.updateGridInfo();
+        this.updatePoolInfoMap();
+      },
     });
   }
 

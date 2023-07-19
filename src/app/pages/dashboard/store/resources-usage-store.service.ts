@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
+import _ from 'lodash';
 import {
   Observable, map, switchMap, tap,
 } from 'rxjs';
-import { NetworkInterfaceAliasType, NetworkInterfaceType } from 'app/enums/network-interface.enum';
+import { NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { MemoryStatsEventData } from 'app/interfaces/events/memory-stats-event.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { AllCpusUpdate, AllNetworkInterfacesUpdate, ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
@@ -36,6 +37,8 @@ export class ResourcesUsageStore extends ComponentStore<ResourcesUsageState> {
 
   readonly interfacesUsage$ = this.select((state) => state.interfacesUsage);
 
+  readonly isLoading$ = this.select((state) => state.isLoading);
+
   constructor(
     private ws: WebSocketService,
   ) {
@@ -46,7 +49,7 @@ export class ResourcesUsageStore extends ComponentStore<ResourcesUsageState> {
   initialize = this.effect((trigger$) => {
     return trigger$.pipe(
       tap(() => {
-        this.patchState((state) => {
+        this.setState((state) => {
           return {
             ...state,
             isLoading: true,
@@ -54,6 +57,14 @@ export class ResourcesUsageStore extends ComponentStore<ResourcesUsageState> {
         });
       }),
       switchMap(() => this.getNetworkInterfaces()),
+      tap(() => {
+        this.setState((state) => {
+          return {
+            ...state,
+            isLoading: false,
+          };
+        });
+      }),
       switchMap(() => this.getResourceUsageUpdates()),
     );
   });
@@ -61,7 +72,7 @@ export class ResourcesUsageStore extends ComponentStore<ResourcesUsageState> {
   private getNetworkInterfaces(): Observable<NetworkInterface[]> {
     return this.ws.call('interface.query').pipe(
       tap((interfaces) => {
-        const clone = [...interfaces] as DashboardNetworkInterface[];
+        const dashboardNetworkInterfaces = [...interfaces] as DashboardNetworkInterface[];
         const removeNics: { [nic: string]: number | string } = {};
 
         // Store keys for fast lookup
@@ -70,35 +81,37 @@ export class ResourcesUsageStore extends ComponentStore<ResourcesUsageState> {
           nicKeys[networkInterface.name] = index.toString();
 
           // Process Vlans (attach vlans to their parent)
-          if (networkInterface.type !== NetworkInterfaceType.Vlan && !clone[index].state.vlans) {
-            clone[index].state.vlans = [];
+          if (networkInterface.type !== NetworkInterfaceType.Vlan && !dashboardNetworkInterfaces[index].state.vlans) {
+            dashboardNetworkInterfaces[index].state.vlans = [];
           }
 
           if (networkInterface.type === NetworkInterfaceType.Vlan && networkInterface.state.parent) {
             const parentIndex = parseInt(nicKeys[networkInterface.state.parent] as string);
-            if (!clone[parentIndex].state.vlans) {
-              clone[parentIndex].state.vlans = [];
+            if (!dashboardNetworkInterfaces[parentIndex].state.vlans) {
+              dashboardNetworkInterfaces[parentIndex].state.vlans = [];
             }
 
-            clone[parentIndex].state.vlans.push(networkInterface.state);
+            dashboardNetworkInterfaces[parentIndex].state.vlans.push(networkInterface.state);
             removeNics[networkInterface.name] = index;
           }
 
           // Process LAGGs
           if (networkInterface.type === NetworkInterfaceType.LinkAggregation) {
-            clone[index].state.lagg_ports = networkInterface.lag_ports;
+            dashboardNetworkInterfaces[index].state.lagg_ports = networkInterface.lag_ports;
             networkInterface.lag_ports.forEach((nic) => {
               // Consolidate addresses
-              clone[index].state.aliases.forEach((alias) => {
+              dashboardNetworkInterfaces[index].state.aliases.forEach((alias) => {
                 (alias as DashboardNetworkInterfaceAlias).interface = nic;
               });
-              clone[index].state.aliases = clone[index].state.aliases.concat(
-                clone[nicKeys[nic] as number].state.aliases,
+              dashboardNetworkInterfaces[index].state.aliases = dashboardNetworkInterfaces[index].state.aliases.concat(
+                dashboardNetworkInterfaces[nicKeys[nic] as number].state.aliases,
               );
 
               // Consolidate vlans
-              clone[index].state.vlans.forEach((vlan) => { vlan.interface = nic; });
-              clone[index].state.vlans = clone[index].state.vlans.concat(clone[nicKeys[nic] as number].state.vlans);
+              dashboardNetworkInterfaces[index].state.vlans.forEach((vlan) => { vlan.interface = nic; });
+              dashboardNetworkInterfaces[index].state.vlans = dashboardNetworkInterfaces[index].state.vlans.concat(
+                dashboardNetworkInterfaces[nicKeys[nic] as number].state.vlans,
+              );
 
               // Mark interface for removal
               removeNics[nic] = nicKeys[nic];
@@ -106,24 +119,11 @@ export class ResourcesUsageStore extends ComponentStore<ResourcesUsageState> {
           }
         });
 
-        // Remove NICs from list
-        for (let i = clone.length - 1; i >= 0; i--) {
-          if (removeNics[clone[i].name]) {
-            // Remove
-            clone.splice(i, 1);
-          } else {
-            // Only keep INET addresses
-            clone[i].state.aliases = clone[i].state.aliases.filter((address) => {
-              return [NetworkInterfaceAliasType.Inet, NetworkInterfaceAliasType.Inet6].includes(address.type);
-            });
-          }
-        }
-
         // Update NICs array
-        this.patchState((state) => {
+        this.setState((state) => {
           return {
             ...state,
-            nics: clone,
+            nics: _.cloneDeep(dashboardNetworkInterfaces),
           };
         });
       }),
@@ -135,7 +135,7 @@ export class ResourcesUsageStore extends ComponentStore<ResourcesUsageState> {
       map((apiEvent) => apiEvent.fields),
       tap((update) => {
         if (update?.cpu) {
-          this.patchState((state) => {
+          this.setState((state) => {
             return {
               ...state,
               cpuUsageUpdate: update.cpu,
@@ -148,7 +148,7 @@ export class ResourcesUsageStore extends ComponentStore<ResourcesUsageState> {
           if (update.zfs && update.zfs.arc_size !== null) {
             memStats.arc_size = update.zfs.arc_size;
           }
-          this.patchState((state) => {
+          this.setState((state) => {
             return {
               ...state,
               virtualMemoryUsage: memStats,
@@ -156,7 +156,7 @@ export class ResourcesUsageStore extends ComponentStore<ResourcesUsageState> {
           });
         }
         if (update?.interfaces) {
-          this.patchState((state) => {
+          this.setState((state) => {
             return {
               ...state,
               interfacesUsage: {

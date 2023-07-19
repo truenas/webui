@@ -39,6 +39,7 @@ import {
 } from 'app/pages/dashboard/components/widget-sys-info/simple-failover-btn.component';
 import { WidgetSysInfoComponent } from 'app/pages/dashboard/components/widget-sys-info/widget-sys-info.component';
 import { DashboardStorageStore } from 'app/pages/dashboard/store/dashboard-storage-store.service';
+import { DashboardStore } from 'app/pages/dashboard/store/dashboard-store.service';
 import { ResourcesUsageStore } from 'app/pages/dashboard/store/resources-usage-store.service';
 import { routing } from './dashboard.routing';
 
@@ -88,6 +89,7 @@ import { routing } from './dashboard.routing';
   providers: [
     ResourcesUsageStore,
     DashboardStorageStore,
+    DashboardStore,
   ],
 })
 export class DashboardModule {

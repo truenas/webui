@@ -42,7 +42,7 @@
 
 <div class="widgets-wrapper-container" (window:resize)="onMobileResize($event)">
   <div
-    *ngIf="screenType === ScreenType.Desktop && dashStateReady && isEmpty"
+    *ngIf="screenType === ScreenType.Desktop && isLoaded && isEmpty"
     class="widgets-wrapper"
     fxLayout="column"
     fxLayoutAlign="center center"

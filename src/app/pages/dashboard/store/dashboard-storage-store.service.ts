@@ -1,11 +1,14 @@
 import { Injectable } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
+import _ from 'lodash';
 import {
-  EMPTY, Observable, filter, switchMap, tap,
+  Observable, filter, map, switchMap, tap,
 } from 'rxjs';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
+import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Pool } from 'app/interfaces/pool.interface';
+import { PoolScan } from 'app/interfaces/resilver-job.interface';
 import { VolumesData } from 'app/interfaces/volume-data.interface';
 import { WebSocketService } from 'app/services';
 
@@ -36,34 +39,35 @@ export class DashboardStorageStore extends ComponentStore<DashboardStorageState>
 
   initialize = this.effect((trigger$) => {
     return trigger$.pipe(
-      tap(() => this.patchState((state) => ({
+      tap(() => this.setState((state) => ({
         ...state,
         isLoading: true,
       }))),
       switchMap(() => this.loadPoolData()),
-      switchMap((pools) => {
-        if (pools?.length) {
-          return this.loadVolumeData();
-        }
-        return EMPTY;
-      }),
-      tap(() => this.patchState((state) => ({
+      tap(() => this.setState((state) => ({
         ...state,
         isLoading: false,
       }))),
+      switchMap(() => this.listenForScanUpdates()),
       switchMap(() => this.listenToPoolUpdates()),
     );
   });
 
-  private loadPoolData(): Observable<Pool[]> {
+  private loadPoolData(): Observable<unknown> {
     return this.ws.call('pool.query').pipe(
       tap((pools) => {
-        this.patchState((state) => {
+        this.setState((state) => {
           return {
             ...state,
             pools,
           };
         });
+      }),
+      switchMap((pools) => {
+        if (pools?.length) {
+          return this.loadVolumeData();
+        }
+        return pools;
       }),
     );
   }
@@ -85,7 +89,7 @@ export class DashboardStorageStore extends ComponentStore<DashboardStorageState>
       vd[zvol.id] = zvol;
     });
 
-    this.patchState((state) => {
+    this.setState((state) => {
       return {
         ...state,
         volumesData: vd,
@@ -93,7 +97,7 @@ export class DashboardStorageStore extends ComponentStore<DashboardStorageState>
     });
   }
 
-  private listenToPoolUpdates(): Observable<Pool[]> {
+  private listenToPoolUpdates(): Observable<unknown> {
     return this.ws.subscribe('pool.query').pipe(
       filter((event) => event.msg !== IncomingApiMessageType.Removed),
       switchMap(() => this.loadPoolData()),
@@ -107,6 +111,26 @@ export class DashboardStorageStore extends ComponentStore<DashboardStorageState>
     ).pipe(
       tap((datasets) => {
         this.setVolumeData(datasets);
+      }),
+    );
+  }
+
+  private listenForScanUpdates(): Observable<unknown> {
+    return this.ws.subscribe('zfs.pool.scan').pipe(
+      map((apiEvent: ApiEvent<PoolScan>) => apiEvent.fields),
+      tap((poolScan: PoolScan) => {
+        this.setState((state) => {
+          const pools = _.cloneDeep(state.pools).map((pool) => {
+            if (pool.name === poolScan.name) {
+              pool.scan = poolScan.scan;
+            }
+            return pool;
+          });
+          return {
+            ...state,
+            pools,
+          };
+        });
       }),
     );
   }
