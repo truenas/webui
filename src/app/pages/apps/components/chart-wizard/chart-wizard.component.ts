@@ -216,9 +216,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
         const keys = fieldToBeDeleted.split('.');
         _.unset(data, keys);
       },
-      complete: () => {
-        this.saveData(data);
-      },
+      complete: () => this.saveData(data),
     });
 
     this.getFieldsHiddenOnForm(data, deleteField$);
