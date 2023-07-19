@@ -71,7 +71,7 @@ describe('IxTableColumnsSelectorComponent', () => {
     await menu.open();
   });
 
-  it('checks when "Select All" is pressed', async () => {
+  it('checks when "Unselect All" is pressed', async () => {
     await menu.clickItem({ text: 'Unselect All' });
 
     expect(spectator.component.hiddenColumns.selected).toHaveLength(spectator.component.columns.length - 1);
