@@ -36,30 +36,30 @@ export class ServiceLldpComponent implements OnInit {
     label: string;
     tooltip: string;
   } = {
-      fcName: 'intdesc',
-      label: helptext.lldp_intdesc_placeholder,
-      tooltip: helptext.lldp_intdesc_tooltip,
-    };
+    fcName: 'intdesc',
+    label: helptext.lldp_intdesc_placeholder,
+    tooltip: helptext.lldp_intdesc_tooltip,
+  };
 
   country: {
     readonly fcName: 'country';
     label: string;
     tooltip: string;
   } = {
-      fcName: 'country',
-      label: helptext.lldp_country_placeholder,
-      tooltip: helptext.lldp_country_tooltip,
-    };
+    fcName: 'country',
+    label: helptext.lldp_country_placeholder,
+    tooltip: helptext.lldp_country_tooltip,
+  };
 
   location: {
     readonly fcName: 'location';
     label: string;
     tooltip: string;
   } = {
-      fcName: 'location',
-      label: helptext.lldp_location_placeholder,
-      tooltip: helptext.lldp_location_tooltip,
-    };
+    fcName: 'location',
+    label: helptext.lldp_location_placeholder,
+    tooltip: helptext.lldp_location_tooltip,
+  };
 
   locationProvider = new SimpleAsyncComboboxProvider(this.ws.call('lldp.country_choices').pipe(choicesToOptions()));
 

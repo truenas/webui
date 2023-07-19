@@ -11,7 +11,9 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import filesize from 'filesize';
 import _ from 'lodash';
-import { distinctUntilChanged, of, take } from 'rxjs';
+import {
+  distinctUntilChanged, of, take,
+} from 'rxjs';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, vdevLayoutOptions, VdevType } from 'app/enums/v-dev-type.enum';
 import { Option, SelectOption } from 'app/interfaces/option.interface';
@@ -269,7 +271,7 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
     const minRequired = this.minDisks[this.form.controls.layout.value];
     let widthOptions: Option[];
 
-    if (length && minRequired) {
+    if (length && minRequired && length >= minRequired) {
       widthOptions = _.range(minRequired, length + 1).map((item) => ({
         label: `${item}`,
         value: item,

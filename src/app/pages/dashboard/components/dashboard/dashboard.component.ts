@@ -272,7 +272,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
       console.warn(`Pool for ${item.name} [${item.identifier}] widget is not available!`);
       return undefined;
     }
-    return this.volumeData && this.volumeData[dashboardPool.name];
+    return this.volumeData?.[dashboardPool.name];
   }
 
   dataFromConfig(item: DashConfigItem): Subject<CoreEvent> | DashboardNicState | Pool | Pool[] {

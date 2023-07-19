@@ -151,10 +151,10 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
       const mod = threads.length % 2;
       const temperatureIndex = this.hyperthread ? Math.floor(i / 2 - mod) : i;
 
-      if (cpuData.temperature && cpuData.temperature[temperatureIndex] && !cpuData.temperature_celsius) {
+      if (cpuData.temperature?.[temperatureIndex] && !cpuData.temperature_celsius) {
         const temperatureAsCelsius = (cpuData.temperature[temperatureIndex] / 10 - 273.05).toFixed(0);
         temperatureValues.push(parseInt(temperatureAsCelsius));
-      } else if (cpuData.temperature_celsius && cpuData.temperature_celsius[temperatureIndex]) {
+      } else if (cpuData.temperature_celsius?.[temperatureIndex]) {
         temperatureValues.push(cpuData.temperature_celsius[temperatureIndex].toFixed(0));
       }
     }

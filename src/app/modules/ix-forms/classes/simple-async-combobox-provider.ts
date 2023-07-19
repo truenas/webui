@@ -5,7 +5,7 @@ import { IxComboboxProvider } from 'app/modules/ix-forms/components/ix-combobox/
 
 export class SimpleAsyncComboboxProvider implements IxComboboxProvider {
   fetch(filterValue: string): Observable<Option[]> {
-    if (this.options && this.options.length) {
+    if (this.options?.length) {
       return of(this.filter(this.options, filterValue));
     }
     return this.options$
@@ -18,7 +18,7 @@ export class SimpleAsyncComboboxProvider implements IxComboboxProvider {
   nextPage(): Observable<Option[]> { return of([]); }
 
   filter(options: Option[], search: string): Option[] {
-    if (options && options.length) {
+    if (options?.length) {
       if (search) {
         return options.filter((option: Option) => {
           return option.label.toLowerCase().includes(search.toLowerCase())

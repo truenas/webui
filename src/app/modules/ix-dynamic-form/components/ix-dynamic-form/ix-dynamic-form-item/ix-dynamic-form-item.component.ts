@@ -47,9 +47,8 @@ export class IxDynamicFormItemComponent implements OnInit {
       });
     });
     if (
-      this.dynamicSchema
-      && this.dynamicSchema.editable !== undefined
-      && !this.dynamicSchema.editable
+      this.dynamicSchema?.editable !== undefined
+      && !this.dynamicSchema?.editable
     ) {
       this.dynamicForm?.get(this.dynamicSchema.controlName)?.disable();
     }
