@@ -53,6 +53,7 @@ import {
 } from 'app/pages/storage/components/unused-resources/unused-disk-card/manage-unused-disk-dialog/manage-unused-disk-dialog.component';
 import { UnusedDiskCardComponent } from 'app/pages/storage/components/unused-resources/unused-disk-card/unused-disk-card.component';
 import { UnusedResourcesComponent } from 'app/pages/storage/components/unused-resources/unused-resources.component';
+import { PoolManagerModule } from 'app/pages/storage/modules/pool-manager/pool-manager.module';
 import { routing } from 'app/pages/storage/storage.routing';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
 import { DashboardPoolComponent } from './components/dashboard-pool/dashboard-pool.component';
@@ -63,6 +64,7 @@ import { ZfsHealthCardComponent } from './components/dashboard-pool/zfs-health-c
 
 @NgModule({
   imports: [
+    PoolManagerModule,
     routing,
     IxTableModule,
     IxFormsModule,

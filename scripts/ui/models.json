@@ -27,6 +27,10 @@
     "MINI-XL+": {
       "model": "MINI-3.0-XL+",
       "systemProduct": "TRUENAS-MINI-3.0-XL+"
+    },
+    "F60": {
+      "model": "F60",
+      "systemProduct": "TRUENAS-F60-HA"
     }
   },
   "shelves": {

@@ -57,6 +57,7 @@ export class AppResourcesCardComponent implements OnInit {
       if (update?.virtual_memory) {
         const memStats: MemoryStatsEventData = { ...update.virtual_memory };
 
+        // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
         if (update.zfs && update.zfs.arc_size !== null) {
           memStats.arc_size = update.zfs.arc_size;
         }

@@ -1,11 +1,11 @@
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export const NULL_VALUE = 'null_value';
 
-export type ItemBeforeFlattening = {
+export interface ItemBeforeFlattening {
   id: string | number;
   children?: ItemBeforeFlattening[];
   [key: string]: unknown;
-};
+}
 
 type DataBeforeFlattening = ItemBeforeFlattening | ItemBeforeFlattening[];
 

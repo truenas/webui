@@ -11,7 +11,9 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import filesize from 'filesize';
 import _ from 'lodash';
-import { distinctUntilChanged, of, take } from 'rxjs';
+import {
+  distinctUntilChanged, of, take,
+} from 'rxjs';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, vdevLayoutOptions, VdevType } from 'app/enums/v-dev-type.enum';
 import { Option, SelectOption } from 'app/interfaces/option.interface';
@@ -31,6 +33,7 @@ import { minDisksPerLayout } from 'app/pages/storage/modules/pool-manager/utils/
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
+  @Input() isStepActive: boolean;
   @Input() type: VdevType;
   @Input() inventory: UnusedDisk[] = [];
   @Input() canChangeLayout = false;
@@ -245,6 +248,10 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
 
     this.diskSizeAndTypeOptions$ = of(options);
 
+    if (options.length === 1 && this.isStepActive) {
+      this.form.controls.sizeAndType.setValue(options[0].value, { emitEvent: false });
+    }
+
     this.updateLayoutOptions();
   }
 
@@ -264,7 +271,7 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
     const minRequired = this.minDisks[this.form.controls.layout.value];
     let widthOptions: Option[];
 
-    if (length && minRequired) {
+    if (length && minRequired && length >= minRequired) {
       widthOptions = _.range(minRequired, length + 1).map((item) => ({
         label: `${item}`,
         value: item,
@@ -273,11 +280,16 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
       widthOptions = [];
     }
 
+    this.widthOptions$ = of(widthOptions);
     const isValueNull = this.form.controls.width.value === null;
+
     if (!isValueNull && !widthOptions.some((option) => option.value === this.form.controls.width.value)) {
       this.form.controls.width.setValue(null, { emitEvent: false });
     }
-    this.widthOptions$ = of(widthOptions);
+
+    if (widthOptions.length === 1 && this.isStepActive) {
+      this.form.controls.width.setValue(+widthOptions[0].value, { emitEvent: false });
+    }
 
     this.updateNumberOptions();
   }
@@ -301,11 +313,15 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
       nextNumberOptions = [];
     }
 
+    this.numberOptions$ = of(nextNumberOptions);
     const isValueNull = this.form.controls.vdevsNumber.value === null;
+
     if (!isValueNull && !nextNumberOptions.some((option) => option.value === this.form.controls.vdevsNumber.value)) {
       this.form.controls.vdevsNumber.setValue(null, { emitEvent: false });
     }
 
-    this.numberOptions$ = of(nextNumberOptions);
+    if (nextNumberOptions.length === 1 && this.isStepActive) {
+      this.form.controls.vdevsNumber.setValue(+nextNumberOptions[0].value, { emitEvent: false });
+    }
   }
 }

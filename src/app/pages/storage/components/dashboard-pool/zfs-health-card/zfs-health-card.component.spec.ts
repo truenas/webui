@@ -216,4 +216,47 @@ describe('ZfsHealthCardComponent', () => {
       });
     });
   });
+
+  describe('pausing scrub', () => {
+    it('pauses scrub when it was started and then Pause was pressed', async () => {
+      websocketSubscription$.next({
+        id: 2,
+        collection: 'zfs.pool.scan',
+        msg: IncomingApiMessageType.Changed,
+        fields: {
+          name: 'tank',
+          scan: activeScrub,
+        } as PoolScan,
+      });
+      spectator.detectChanges();
+
+      const pauseButton = await loader.getHarness(MatButtonHarness.with({ text: 'Pause Scrub' }));
+      await pauseButton.click();
+
+      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.scrub', [45, PoolScrubAction.Pause]);
+    });
+
+    it('resumes scrub after it was previously paused and Resume was pressed', async () => {
+      websocketSubscription$.next({
+        id: 2,
+        collection: 'zfs.pool.scan',
+        msg: IncomingApiMessageType.Changed,
+        fields: {
+          name: 'tank',
+          scan: {
+            ...activeScrub,
+            pause: {
+              $date: 1655917081000,
+            },
+          },
+        } as PoolScan,
+      });
+      spectator.detectChanges();
+
+      const resumeButton = await loader.getHarness(MatButtonHarness.with({ text: 'Resume Scrub' }));
+      await resumeButton.click();
+
+      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.scrub', [45, PoolScrubAction.Start]);
+    });
+  });
 });
