@@ -20,12 +20,14 @@
           </div>
         </ng-template>
         <ix-general-wizard-step
+          [isAddingVdevs]="!!existingPool"
+          [pool]="existingPool"
           [isStepActive]="activeStep === PoolCreationWizardStep.General"
         ></ix-general-wizard-step>
       </mat-step>
 
       <mat-step
-        *ngIf="hasEnclosureStep"
+        *ngIf="hasEnclosureStep && !existingPool"
         ixStepActivation
         [errorMessage]="getTopLevelErrorForStep(PoolCreationWizardStep.EnclosureOptions)"
         [hasError]="!!getTopLevelErrorForStep(PoolCreationWizardStep.EnclosureOptions) && getWasStepActivated(PoolCreationWizardStep.EnclosureOptions)"
@@ -89,6 +91,7 @@
           </div>
         </ng-template>
         <ix-log-wizard-step
+          [isStepActive]="activeStep === PoolCreationWizardStep.Log"
           [stepWarning]="getTopLevelWarningForStep(PoolCreationWizardStep.Log)"
           (goToLastStep)="goToLastStep()"
           ></ix-log-wizard-step>
@@ -112,6 +115,7 @@
           </div>
         </ng-template>
         <ix-spare-wizard-step
+          [isStepActive]="activeStep === PoolCreationWizardStep.Spare"
           [stepWarning]="getTopLevelWarningForStep(PoolCreationWizardStep.Spare)"
           (goToLastStep)="goToLastStep()"
         ></ix-spare-wizard-step>
@@ -135,6 +139,7 @@
           </div>
         </ng-template>
         <ix-cache-wizard-step
+          [isStepActive]="activeStep === PoolCreationWizardStep.Cache"
           [stepWarning]="getTopLevelWarningForStep(PoolCreationWizardStep.Cache)"
           (goToLastStep)="goToLastStep()"
         ></ix-cache-wizard-step>
@@ -158,6 +163,7 @@
           </div>
         </ng-template>
         <ix-metadata-wizard-step
+          [isStepActive]="activeStep === PoolCreationWizardStep.Metadata"
           [stepWarning]="getTopLevelWarningForStep(PoolCreationWizardStep.Metadata)"
           (goToLastStep)="goToLastStep()"
         ></ix-metadata-wizard-step>
@@ -181,6 +187,7 @@
           </div>
         </ng-template>
         <ix-dedup-wizard-step
+          [isStepActive]="activeStep === PoolCreationWizardStep.Dedup"
           [stepWarning]="getTopLevelWarningForStep(PoolCreationWizardStep.Dedup)"
           (goToLastStep)="goToLastStep()"
         ></ix-dedup-wizard-step>
@@ -192,8 +199,9 @@
       >
         <ng-template matStepLabel>{{ 'Review' | translate }}</ng-template>
         <ix-review-wizard-step
+          [isAddingVdevs]="!!existingPool"
           [isStepActive]="activeStep === PoolCreationWizardStep.Review"
-          (createPool)="createPool()"
+          (createPool)="!!existingPool ? updatePool() : createPool()"
         ></ix-review-wizard-step>
       </mat-step>
     </mat-vertical-stepper>

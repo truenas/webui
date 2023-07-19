@@ -146,11 +146,8 @@ export class ChassisView {
     this.chassis.x = this.chassisOffsetX;
     this.chassis.y = this.chassisOffsetY;
 
-    this.chassis.scale.x = this.chassisScale && this.chassisScale.x
-      ? this.chassisScale.x : 1;
-
-    this.chassis.scale.y = this.chassisScale && this.chassisScale.y
-      ? this.chassisScale.y : 1;
+    this.chassis.scale.x = this.chassisScale?.x || 1;
+    this.chassis.scale.y = this.chassisScale?.y || 1;
 
     this.container.addChild(this.chassis);
     this.renderDriveTrays();

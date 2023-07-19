@@ -2,8 +2,9 @@
   [description]="helptext.log_vdev_description | translate"
   [type]="VdevType.Log"
   [inventory]="inventory$ | async"
-  [canChangeLayout]="true"
+  [canChangeLayout]="canChangeLayout"
   [limitLayouts]="allowedLayouts"
+  [isStepActive]="isStepActive"
 ></ix-layout-step>
 
 <p *ngIf="stepWarning" class="warning">

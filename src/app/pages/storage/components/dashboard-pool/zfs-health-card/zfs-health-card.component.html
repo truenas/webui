@@ -6,7 +6,7 @@
     </h3>
 
     <button
-      *ngIf="!isScanRunning; else runningScanControls"
+      *ngIf="!wasScanInitiated; else runningScanControls"
       mat-button
       ixTest="scrub"
       (click)="onStartScrub()"
@@ -15,14 +15,32 @@
     </button>
 
     <ng-template #runningScanControls>
-      <button
-        *ngIf="isScanScrub; else disabledButton"
-        mat-button
-        ixTest="stop-scrub"
-        (click)="onStopScrub()"
-      >
-        {{ 'Stop Scrub' | translate }}
-      </button>
+      <div *ngIf="isScrub; else disabledButton" class="controls">
+        <button
+          mat-button
+          ixTest="stop-scrub"
+          (click)="onStopScrub()"
+        >
+          {{ 'Stop Scrub' | translate }}
+        </button>
+        <button
+          *ngIf="isScrubPaused; else pauseButton"
+          mat-button
+          ixTest="resume-scrub"
+          (click)="onResumeScrub()"
+        >
+          {{ 'Resume Scrub' | translate }}
+        </button>
+        <ng-template #pauseButton>
+          <button
+            mat-button
+            ixTest="pause-scrub"
+            (click)="onPauseScrub()"
+          >
+            {{ 'Pause Scrub' | translate }}
+          </button>
+        </ng-template>
+      </div>
 
       <ng-template #disabledButton>
         <button mat-button disabled ixTest="scrub-disabled">{{ 'Scrub' | translate }}</button>
@@ -62,14 +80,14 @@
     </div>
 
     <ng-container *ngIf="scan?.function">
-      <div *ngIf="isScanRunning; else scanResults" class="scan-in-progress">
+      <div *ngIf="wasScanInitiated; else scanResults" class="scan-in-progress">
         <div class="scan-description">
           <span class="scan-label">
-            {{ isScanScrub ? ('Scrub In Progress' | translate) : ('Resilvering' | translate) }}:
+            {{ scanLabel }}
           </span>
           {{ scan.percentage / 100 | percent: '1.2-2' }}
         </div>
-        <div *ngIf="scan.total_secs_left" class="time-left">
+        <div *ngIf="scan.total_secs_left && !isScrubPaused" class="time-left">
           {{ timeLeftString }}
         </div>
         <mat-progress-bar

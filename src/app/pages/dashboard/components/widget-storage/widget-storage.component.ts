@@ -210,7 +210,7 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
     let icon = StatusIcon.CheckCircle;
     let value;
 
-    if (!volume || !volume.used_pct) {
+    if (!volume?.used_pct) {
       value = this.translate.instant('Unknown');
       level = StatusLevel.Warn;
       icon = StatusIcon.Error;
@@ -246,7 +246,7 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
     let icon = StatusIcon.Error;
     let value: string = this.translate.instant('Unknown');
 
-    if (pool && pool.topology) {
+    if (pool?.topology) {
       const unhealthy: string[] = []; // Disks with errors
       pool.topology.data.forEach((item: TopologyItem) => {
         if (isTopologyDisk(item)) {
@@ -288,7 +288,7 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
   }
 
   getTotalDisks(pool: Pool): string {
-    if (pool && pool.topology) {
+    if (pool?.topology) {
       return countDisksTotal(pool.topology);
     }
 
@@ -297,7 +297,7 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
 
   getFreeSpace(pool: Pool): string {
     const volume = this.volumeData[pool.name];
-    if (volume && volume.used_pct) {
+    if (volume?.used_pct) {
       if (Number.isNaN(volume.used) ? volume.used : filesize(volume.used, { exponent: 3 }) !== 'Locked') {
         return this.getSizeString(volume.avail);
       }
@@ -314,7 +314,7 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
     let unit;
     let size;
     let displayValue = filesize(volumeSize, { standard: 'iec' });
-    if (displayValue.slice(-2) === ' B') {
+    if (displayValue.endsWith(' B')) {
       unit = displayValue.slice(-1);
       size = new Intl.NumberFormat().format(parseFloat(displayValue.slice(0, -2)));
     } else {
