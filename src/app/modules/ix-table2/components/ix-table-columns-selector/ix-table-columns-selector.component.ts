@@ -1,9 +1,10 @@
 import { SelectionModel } from '@angular/cdk/collections';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, Output,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import _ from 'lodash';
+import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.interface';
 
 @UntilDestroy()
@@ -13,8 +14,8 @@ import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-
   styleUrls: ['./ix-table-columns-selector.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class IxTableColumnsSelectorComponent<T = unknown> implements OnInit {
-  @Input() columns!: Column<T, ColumnComponent<T>>[];
+export class IxTableColumnsSelectorComponent<T = unknown> implements OnChanges {
+  @Input() columns: Column<T, ColumnComponent<T>>[];
   @Output() columnsChange = new EventEmitter<Column<T, ColumnComponent<T>>[]>();
   hiddenColumns = new SelectionModel<Column<T, ColumnComponent<T>>>(true, []);
   private defaultColumns: Column<T, ColumnComponent<T>>[];
@@ -27,9 +28,11 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnInit {
     this.subscribeToColumnsChange();
   }
 
-  ngOnInit(): void {
-    this.defaultColumns = _.cloneDeep(this.columns);
-    this.setInitialState();
+  ngOnChanges(changes: IxSimpleChanges<this>): void {
+    if (changes.columns.firstChange) {
+      this.defaultColumns = changes.columns.currentValue;
+      this.setInitialState();
+    }
   }
 
   toggleAll(): void {
@@ -38,6 +41,7 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnInit {
     } else {
       this.columns.slice(1).forEach((column) => this.hiddenColumns.select(column));
     }
+    this.emitColumnsChange();
   }
 
   isSelected(column: Column<T, ColumnComponent<T>>): boolean {
@@ -53,14 +57,15 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnInit {
       return;
     }
     this.hiddenColumns.toggle(column);
-    this.columnsChange.emit(this.columns);
+    this.emitColumnsChange();
     this.cdr.markForCheck();
   }
 
   private setInitialState(): void {
     this.columns = _.cloneDeep(this.defaultColumns);
-    this.hiddenColumns.setSelection(...this.columns.filter((column) => column.hidden));
-    this.columnsChange.emit(this.columns);
+    this.hiddenColumns.clear();
+    this.hiddenColumns.select(...this.columns.filter((column) => column.hidden));
+    this.emitColumnsChange();
     this.cdr.markForCheck();
   }
 
@@ -74,8 +79,12 @@ export class IxTableColumnsSelectorComponent<T = unknown> implements OnInit {
         if (values.added.length) {
           this.columns.find((column) => column.propertyName === values.added[0].propertyName).hidden = true;
         }
-        this.columnsChange.emit(this.columns);
+        this.emitColumnsChange();
         this.cdr.markForCheck();
       });
+  }
+
+  private emitColumnsChange(): void {
+    this.columnsChange.emit([...this.columns]);
   }
 }

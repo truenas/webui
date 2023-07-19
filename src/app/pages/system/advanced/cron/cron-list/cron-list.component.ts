@@ -1,5 +1,5 @@
 import {
-  AfterViewInit, ChangeDetectorRef, Component, OnInit, TemplateRef, ViewChild,
+  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, TemplateRef, ViewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -28,6 +28,7 @@ import { LayoutService } from 'app/services/layout.service';
 @Component({
   templateUrl: './cron-list.component.html',
   styleUrls: ['./cron-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CronListComponent implements OnInit, AfterViewInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
