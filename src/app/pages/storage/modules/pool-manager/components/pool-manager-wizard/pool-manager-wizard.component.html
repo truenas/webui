@@ -81,7 +81,8 @@
       >
         <ng-template matStepLabel>
           <div class="step-header">
-            {{ 'Log (Optional)' | translate }}
+            {{ 'Log' | translate }}
+            <span class="optional-text">{{ '(Optional)' | translate }}</span>
             <ix-icon
               *ngIf="getTopLevelWarningForStep(PoolCreationWizardStep.Log) as warning"
               class="error-warning-icon"
@@ -105,7 +106,8 @@
       >
         <ng-template matStepLabel>
           <div class="step-header">
-            {{ 'Spare (Optional)' | translate }}
+            {{ 'Spare' | translate }}
+            <span class="optional-text">{{ '(Optional)' | translate }}</span>
             <ix-icon
               *ngIf="getTopLevelWarningForStep(PoolCreationWizardStep.Spare) as warning"
               class="error-warning-icon"
@@ -129,7 +131,8 @@
       >
         <ng-template matStepLabel>
           <div class="step-header">
-            {{ 'Cache (Optional)' | translate }}
+            {{ 'Cache' | translate }}
+            <span class="optional-text">{{ '(Optional)' | translate }}</span>
             <ix-icon
               *ngIf="getTopLevelWarningForStep(PoolCreationWizardStep.Cache) as warning"
               class="error-warning-icon"
@@ -153,7 +156,8 @@
       >
         <ng-template matStepLabel>
           <div class="step-header">
-            {{ 'Metadata (Optional)' | translate }}
+            {{ 'Metadata' | translate }}
+            <span class="optional-text">{{ '(Optional)' | translate }}</span>
             <ix-icon
               *ngIf="getTopLevelWarningForStep(PoolCreationWizardStep.Metadata) as warning"
               class="error-warning-icon"
@@ -177,7 +181,8 @@
       >
         <ng-template matStepLabel>
           <div class="step-header">
-            {{ 'Dedup (Optional)' | translate }}
+            {{ 'Dedup' | translate }}
+            <span class="optional-text">{{ '(Optional)' | translate }}</span>
             <ix-icon
               *ngIf="getTopLevelWarningForStep(PoolCreationWizardStep.Dedup) as warning"
               class="error-warning-icon"
