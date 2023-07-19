@@ -20,12 +20,14 @@
           </div>
         </ng-template>
         <ix-general-wizard-step
+          [isAddingVdevs]="!!existingPool"
+          [pool]="existingPool"
           [isStepActive]="activeStep === PoolCreationWizardStep.General"
         ></ix-general-wizard-step>
       </mat-step>
 
       <mat-step
-        *ngIf="hasEnclosureStep"
+        *ngIf="hasEnclosureStep && !existingPool"
         ixStepActivation
         [errorMessage]="getTopLevelErrorForStep(PoolCreationWizardStep.EnclosureOptions)"
         [hasError]="!!getTopLevelErrorForStep(PoolCreationWizardStep.EnclosureOptions) && getWasStepActivated(PoolCreationWizardStep.EnclosureOptions)"
@@ -197,8 +199,9 @@
       >
         <ng-template matStepLabel>{{ 'Review' | translate }}</ng-template>
         <ix-review-wizard-step
+          [isAddingVdevs]="!!existingPool"
           [isStepActive]="activeStep === PoolCreationWizardStep.Review"
-          (createPool)="createPool()"
+          (createPool)="!!existingPool ? updatePool() : createPool()"
         ></ix-review-wizard-step>
       </mat-step>
     </mat-vertical-stepper>
