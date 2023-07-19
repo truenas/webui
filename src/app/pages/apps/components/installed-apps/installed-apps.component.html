@@ -1,4 +1,4 @@
-<ng-template #pageHeader>
+<ng-template ixPageHeader>
   <ix-page-title-header [pageTitle]="'Installed' | translate">
     <div *ngIf="hasUpdates" class="global-update">
       <span>{{ '{n, plural, one {# available update} other {# available updates} }!' | translate: { n: appsUpdateAvailable } }}</span>

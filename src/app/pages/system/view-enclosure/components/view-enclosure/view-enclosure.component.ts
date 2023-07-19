@@ -1,6 +1,6 @@
 import {
   AfterViewInit, ChangeDetectorRef,
-  Component, ElementRef, OnDestroy, TemplateRef, ViewChild,
+  Component, ElementRef, OnDestroy, ViewChild,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -16,7 +16,6 @@ import { EnclosureState, EnclosureStore } from 'app/pages/system/view-enclosure/
 import { WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { DisksUpdateService } from 'app/services/disks-update.service';
-import { LayoutService } from 'app/services/layout.service';
 import { AppState } from 'app/store';
 import { selectTheme } from 'app/store/preferences/preferences.selectors';
 import { selectIsIxHardware, waitForSystemFeatures, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -40,7 +39,6 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
   errors: ErrorMessage[] = [];
   events: Subject<CoreEvent>;
   @ViewChild('navigation', { static: false }) nav: ElementRef<HTMLElement>;
-  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
   private disksUpdateSubscriptionId: string;
   private destroyed$ = new ReplaySubject<boolean>(1);
 
@@ -152,7 +150,6 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
     public router: Router,
     private ws: WebSocketService,
     private store$: Store<AppState>,
-    private layoutService: LayoutService,
     private disksUpdateService: DisksUpdateService,
     private enclosureStore: EnclosureStore,
     private changeDetectorRef: ChangeDetectorRef,
@@ -219,8 +216,6 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
-
     this.enclosureStore.loadData();
     this.systemProfile = {
       enclosureStore$: this.enclosureStore.data$,

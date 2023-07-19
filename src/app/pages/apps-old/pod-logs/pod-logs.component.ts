@@ -1,7 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import {
-  AfterViewInit,
-  Component, ElementRef, OnInit, TemplateRef, ViewChild,
+  Component, ElementRef, OnInit, ViewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
@@ -34,9 +33,8 @@ interface PodLogEvent {
   styleUrls: ['./pod-logs.component.scss'],
   providers: [ShellService],
 })
-export class PodLogsComponent implements OnInit, AfterViewInit {
+export class PodLogsComponent implements OnInit {
   @ViewChild('logContainer', { static: true }) logContainer: ElementRef<HTMLElement>;
-  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   fontSize = 14;
   chartReleaseName: string;
@@ -70,10 +68,6 @@ export class PodLogsComponent implements OnInit, AfterViewInit {
 
       this.reconnect();
     });
-  }
-
-  ngAfterViewInit(): void {
-    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
   // subscribe pod log for selected app, pod and container.

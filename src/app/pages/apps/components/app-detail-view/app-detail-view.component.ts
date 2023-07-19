@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, OnInit, ChangeDetectorRef, ViewChild, TemplateRef, AfterViewInit,
+  ChangeDetectionStrategy, Component, OnInit, ChangeDetectorRef,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
@@ -12,7 +12,6 @@ import { appImagePlaceholder, officialCatalog } from 'app/constants/catalog.cons
 import { AppDetailsRouteParams } from 'app/interfaces/app-details-route-params.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
-import { LayoutService } from 'app/services/layout.service';
 
 @UntilDestroy()
 @Component({
@@ -20,8 +19,7 @@ import { LayoutService } from 'app/services/layout.service';
   styleUrls: ['./app-detail-view.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AppDetailViewComponent implements OnInit, AfterViewInit {
-  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
+export class AppDetailViewComponent implements OnInit {
   app: AvailableApp;
 
   appId: string;
@@ -41,7 +39,6 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
   constructor(
     private activatedRoute: ActivatedRoute,
     private cdr: ChangeDetectorRef,
-    private layoutService: LayoutService,
     private translate: TranslateService,
     private applicationsStore: AppsStore,
     private gallery: Gallery,
@@ -51,10 +48,6 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.listenForRouteChanges();
     this.setLightbox();
-  }
-
-  ngAfterViewInit(): void {
-    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
   private listenForRouteChanges(): void {
@@ -94,7 +87,6 @@ export class AppDetailViewComponent implements OnInit, AfterViewInit {
 
         if (app) {
           this.app = app;
-          this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
         } else {
           this.router.navigate(['/apps/installed']);
         }

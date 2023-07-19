@@ -78,8 +78,7 @@ export default {
 
   dataset_form_casesensitivity_tooltip: T('<i>Sensitive</i> assumes filenames are case sensitive.\
  <i>Insensitive</i> assumes filenames are not case\
- sensitive. <i>Mixed</b> understands both types of\
- filenames.'),
+ sensitive.'),
 
   dataset_form_aclmode_tooltip: T('Determine how \
  <a href="https://man7.org/linux/man-pages/man1/chmod.1.html" target="_blank">chmod</a> \

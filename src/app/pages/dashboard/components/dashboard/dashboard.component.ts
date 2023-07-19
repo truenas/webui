@@ -1,5 +1,5 @@
 import {
-  Component, OnInit, AfterViewInit, OnDestroy, ElementRef, TemplateRef, ViewChild, Inject, HostListener,
+  Component, OnInit, AfterViewInit, OnDestroy, ElementRef, Inject, HostListener,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { select, Store } from '@ngrx/store';
@@ -76,8 +76,6 @@ export interface DashboardNetworkInterfaceAlias extends NetworkInterfaceAlias {
   ],
 })
 export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
-  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
-
   reorderMode = false;
   isSavingState = false;
   screenType = ScreenType.Desktop;
@@ -159,7 +157,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
     this.checkScreenSize();
     this.startListeners();
   }

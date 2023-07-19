@@ -1,5 +1,5 @@
 import {
-  AfterViewInit, ChangeDetectionStrategy, Component, OnInit, TemplateRef, ViewChild,
+  ChangeDetectionStrategy, Component, OnInit,
 } from '@angular/core';
 import {
   Router, NavigationSkipped,
@@ -11,7 +11,6 @@ import {
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { AppsFilterStore } from 'app/pages/apps/store/apps-filter-store.service';
 import { AppsByCategory, AppsStore } from 'app/pages/apps/store/apps-store.service';
-import { LayoutService } from 'app/services/layout.service';
 
 @UntilDestroy()
 @Component({
@@ -19,9 +18,7 @@ import { LayoutService } from 'app/services/layout.service';
   styleUrls: ['./available-apps.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AvailableAppsComponent implements AfterViewInit, OnInit {
-  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
-
+export class AvailableAppsComponent implements OnInit {
   showViewMoreButton$: Observable<boolean> = this.appsFilterStore.filterValues$.pipe(
     map((appsFilter) => {
       return !appsFilter.sort && !appsFilter.categories.length;
@@ -40,7 +37,6 @@ export class AvailableAppsComponent implements AfterViewInit, OnInit {
   isFiltering$ = this.appsFilterStore.isFiltering$;
 
   constructor(
-    private layoutService: LayoutService,
     protected applicationsStore: AppsStore,
     protected appsFilterStore: AppsFilterStore,
     private router: Router,
@@ -56,10 +52,6 @@ export class AvailableAppsComponent implements AfterViewInit, OnInit {
         this.appsFilterStore.resetFilters();
       }
     });
-  }
-
-  ngAfterViewInit(): void {
-    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
   trackByAppId(id: number, app: AvailableApp): string {

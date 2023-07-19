@@ -1,5 +1,5 @@
 import {
-  Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild, TemplateRef, AfterViewInit,
+  Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef,
 } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
@@ -16,7 +16,6 @@ import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { IscsiService } from 'app/services/';
 import { DialogService } from 'app/services/dialog.service';
-import { LayoutService } from 'app/services/layout.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -27,9 +26,7 @@ import { WebSocketService } from 'app/services/ws.service';
   providers: [IscsiService],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ServicesComponent implements OnInit, AfterViewInit {
-  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
-
+export class ServicesComponent implements OnInit {
   dataSource = new MatTableDataSource<ServiceRow>([]);
   displayedColumns = ['name', 'state', 'enable', 'actions'];
   error = false;
@@ -51,7 +48,6 @@ export class ServicesComponent implements OnInit, AfterViewInit {
     private dialog: DialogService,
     private iscsiService: IscsiService,
     private cdr: ChangeDetectorRef,
-    private layoutService: LayoutService,
     private emptyService: EmptyService,
   ) {}
 
@@ -62,10 +58,6 @@ export class ServicesComponent implements OnInit, AfterViewInit {
 
   get shouldShowEmpty(): boolean {
     return !this.dataSource.filteredData.length;
-  }
-
-  ngAfterViewInit(): void {
-    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
   getData(): void {
