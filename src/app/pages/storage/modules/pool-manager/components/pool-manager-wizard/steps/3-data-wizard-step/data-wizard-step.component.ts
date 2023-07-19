@@ -39,7 +39,7 @@ export class DataWizardStepComponent implements OnInit {
       map((pool) => pool?.topology[VdevType.Data]),
       untilDestroyed(this),
     ).subscribe((dataTopology) => {
-      if (!dataTopology || !dataTopology.length) {
+      if (!dataTopology?.length) {
         return;
       }
       let type = dataTopology[0].type;
