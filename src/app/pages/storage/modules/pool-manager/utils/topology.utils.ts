@@ -63,7 +63,7 @@ export function poolTopologyToStoreTopology(topology: PoolTopology, disks: Disk[
   for (const category of categories) {
     const vdevs = topology[category as VdevType];
 
-    if (!vdevs || !vdevs.length) {
+    if (!vdevs?.length) {
       continue;
     }
     let layoutType: TopologyItemType = vdevs[0].type;
