@@ -1,5 +1,4 @@
 import { BreakpointObserver, BreakpointState, Breakpoints } from '@angular/cdk/layout';
-import { Location } from '@angular/common';
 import {
   Component,
   ChangeDetectionStrategy,
@@ -18,7 +17,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  combineLatest, filter, switchMap, take, tap,
+  combineLatest, filter,
 } from 'rxjs';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -37,8 +36,7 @@ import { KubernetesSettingsComponent } from 'app/pages/apps/components/installed
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
-import { DialogService, WebSocketService } from 'app/services';
-import { AuthService } from 'app/services/auth/auth.service';
+import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 
@@ -131,9 +129,6 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit, OnDestroy 
     private slideInService: IxSlideInService,
     private breakpointObserver: BreakpointObserver,
     @Inject(WINDOW) private window: Window,
-    private authService: AuthService,
-    private location: Location,
-    private ws: WebSocketService,
   ) {
     this.router.events
       .pipe(
@@ -151,7 +146,6 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   ngOnInit(): void {
-    this.showAgreementWarning();
     this.loadChartReleases();
     this.installedAppsStore.isLoading$.pipe(untilDestroyed(this)).subscribe({
       next: (isLoading) => {
@@ -159,33 +153,6 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit, OnDestroy 
         this.cdr.markForCheck();
       },
     });
-  }
-
-  private showAgreementWarning(): void {
-    this.authService.user$.pipe(
-      filter((user) => !user.attributes.appsAggreement),
-      take(1),
-      switchMap(() => this.dialogService.confirm({
-        title: this.translate.instant('Information'),
-        message: this.translate.instant(`Applications allow you to extend the functionality of the TrueNAS server beyond traditional Network Attached Storage (NAS) workloads, and as such are not covered by iXsystems software support contracts unless explicitly stated. Defective or malicious applications can lead to data loss or exposure, as well possible disruptions of core NAS functionality. 
-
-        iXsystems makes no warranty of any kind as to the suitability or safety of using applications. Bug reports in which applications are accessing the same data and filesystem paths as core NAS sharing functionality may be closed without further investigation.`),
-        buttonText: this.translate.instant('Agree'),
-        cancelText: this.translate.instant('Go Back'),
-        disableClose: true,
-      })),
-      tap((confirmed) => {
-        if (!confirmed) {
-          this.router.navigate(['/dashboard']);
-        } else {
-          this.ws.call('auth.set_attribute', ['appsAggreement', true]).pipe(
-            untilDestroyed(this),
-          ).subscribe();
-          this.authService.getLoggedInUserInformation();
-        }
-      }),
-      untilDestroyed(this),
-    ).subscribe();
   }
 
   ngAfterViewInit(): void {

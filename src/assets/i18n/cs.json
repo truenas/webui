@@ -334,7 +334,7 @@
   "Application Metadata": "",
   "Application Name": "",
   "Applications": "",
-  "Applications allow you to extend the functionality of the TrueNAS server beyond traditional Network Attached Storage (NAS) workloads, and as such are not covered by iXsystems software support contracts unless explicitly stated. Defective or malicious applications can lead to data loss or exposure, as well possible disruptions of core NAS functionality. \n\n        iXsystems makes no warranty of any kind as to the suitability or safety of using applications. Bug reports in which applications are accessing the same data and filesystem paths as core NAS sharing functionality may be closed without further investigation.": "",
+  "Applications allow you to extend the functionality of the TrueNAS server beyond traditional Network Attached Storage (NAS) workloads, and as such are not covered by iXsystems software support contracts unless explicitly stated. Defective or malicious applications can lead to data loss or exposure, as well possible disruptions of core NAS functionality. \n\n          iXsystems makes no warranty of any kind as to the suitability or safety of using applications. Bug reports in which applications are accessing the same data and filesystem paths as core NAS sharing functionality may be closed without further investigation.": "",
   "Applications are not running": "",
   "Applications not configured": "",
   "Applications you install will automatically appear here. Click below and browse available apps to get started.": "",
