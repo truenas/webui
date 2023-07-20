@@ -16,12 +16,12 @@ export const routes: Routes = [
         component: PoolsDashboardComponent,
       },
       {
-        path: 'create',
+        path: 'create-legacy',
         component: ManagerComponent,
-        data: { title: T('Create Pool'), breadcrumb: T('Create Pool') },
+        data: { title: T('Create Pool (Legacy)'), breadcrumb: T('Create Pool (Legacy)') },
       },
       {
-        path: 'create_new',
+        path: 'create',
         loadChildren: () => import('./modules/pool-manager/pool-manager.module').then((module) => module.PoolManagerModule),
         data: { title: T('Pool Creation Wizard'), breadcrumb: T('Pool Creation Wizard') },
       },

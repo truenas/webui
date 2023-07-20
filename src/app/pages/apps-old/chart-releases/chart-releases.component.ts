@@ -527,12 +527,12 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit {
   }
 
   shellDialogSubmit(formValue: PodDialogFormValue, appName: string): void {
-    this.router.navigate(['/apps-old/1/shell/', appName, formValue.pods, formValue.command]);
+    this.router.navigate(['/apps-legacy/1/shell/', appName, formValue.pods, formValue.command]);
   }
 
   logDialogSubmit(formValue: PodDialogFormValue, appName: string): void {
     const tailLines = formValue.tail_lines.toString();
-    this.router.navigate(['/apps-old/1/logs/', appName, formValue.pods, formValue.containers, tailLines]);
+    this.router.navigate(['/apps-legacy/1/logs/', appName, formValue.pods, formValue.containers, tailLines]);
   }
 
   showChartEvents(name: string): void {
