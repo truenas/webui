@@ -134,44 +134,28 @@
                           {{ poolInfoMap[pool.name]?.disksWithError?.value }}
                         </span>
                       </li>
-                      <li *ngIf="cols === 2 && rows === 2 && (pool.scan.end_time || isScanInProgress(pool))" fxLayout="row">
-                        <span *ngIf="!isScanInProgress(pool)" [class]="['icon', isScanFinished(pool) ? 'safe' : 'warn']">
-                          <ix-icon
-                            [matTooltip]="pool?.scan?.end_time?.$date | formatDateTime"
-                            [name]="isScanFinished(pool) ? 'check_circle' : 'error'"
-                          ></ix-icon>
-                        </span>
-                        <span *ngIf="isScanInProgress(pool)" class="icon safe">
-                          <ix-icon
-                            name="arrow_circle_right"
-                            [matTooltip]="pool.scan.percentage / 100 | percent: '1.2-2'"
-                          ></ix-icon>
-                        </span>
+                      <li *ngIf="cols === 2 && rows === 2" fxLayout="row">
+                        <ng-container *ngIf="!pool?.scan?.end_time?.$date && !isScanInProgress(pool); else lastScrub">
+                          <span class="icon warn">
+                            <ix-icon name="error" [matTooltip]="'Never' | translate"></ix-icon>
+                          </span>
+                        </ng-container>
                         <span class="label">
-                          {{ isScanScrub(pool) ? ('Last Scrub' | translate) : ('Last Resilver' | translate) }}
+                          {{ isScanResilver(pool) ? ('Last Resilver' | translate) : ('Last Scrub' | translate) }}
                         </span>
                       </li>
                     </ul>
                     <ng-container *ngIf="cols === 1">
                       <div class="divider"></div>
                       <ul fxLayout="column" [fxFlex]="getSubwidgetColumnWidth(pool)">
-                        <li *ngIf="pool.scan.end_time || isScanInProgress" fxLayout="row">
+                        <li fxLayout="row">
                           <span class="label">
-                            {{ isScanScrub(pool) ? ('Last Scrub' | translate) : ('Last Resilver' | translate) }}:
+                            {{ isScanResilver(pool) ? ('Last Resilver' | translate) : ('Last Scrub' | translate) }}:
                           </span>
                           <span class="storage-value">
-                            <span *ngIf="!isScanInProgress(pool)" [class]="['icon', isScanFinished(pool) ? 'safe' : 'warn']">
-                              <ix-icon
-                                [matTooltip]="pool?.scan?.end_time?.$date | formatDateTime"
-                                [name]="isScanFinished(pool) ? 'check_circle' : 'error'"
-                              ></ix-icon>
-                            </span>
-                            <span *ngIf="isScanInProgress(pool)" class="icon safe">
-                              <ix-icon
-                                name="arrow_circle_right"
-                                [matTooltip]="pool.scan.percentage / 100 | percent: '1.2-2'"
-                              ></ix-icon>
-                            </span>
+                            <ng-container *ngIf="!pool?.scan?.end_time?.$date && !isScanInProgress(pool); else lastScrub">
+                              {{ 'Never' | translate }}
+                            </ng-container>
                           </span>
                         </li>
                         <li fxLayout="row">
@@ -221,6 +205,21 @@
                     </ng-container>
                   </div>
                 </div>
+
+                <ng-template #lastScrub>
+                  <span *ngIf="!isScanInProgress(pool)" [class]="['icon', isScanFinished(pool) ? 'safe' : 'warn']">
+                    <ix-icon
+                      [matTooltip]="pool.scan.end_time.$date | formatDateTime"
+                      [name]="isScanFinished(pool) ? 'check_circle' : 'error'"
+                    ></ix-icon>
+                  </span>
+                  <span *ngIf="isScanInProgress(pool)" class="icon safe">
+                    <ix-icon
+                      name="arrow_circle_right"
+                      [matTooltip]="pool.scan.percentage / 100 | percent: '1.2-2'"
+                    ></ix-icon>
+                  </span>
+                </ng-template>
               </mat-grid-tile>
               <mat-grid-tile
                 *ngIf="pools.length % 2 === 1 || pools.length === 0"

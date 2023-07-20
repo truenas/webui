@@ -142,8 +142,8 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     return this.currentDiskDetails ? Object.keys(this.currentDiskDetails) as (keyof Disk)[] : [];
   }
 
-  get isScanScrub(): boolean {
-    return this.poolState.scan?.function === PoolScanFunction.Scrub;
+  get isScanResilver(): boolean {
+    return this.poolState.scan?.function === PoolScanFunction.Resilver;
   }
 
   get isScanInProgress(): boolean {
