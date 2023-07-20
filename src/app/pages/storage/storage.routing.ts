@@ -41,6 +41,11 @@ export const routes: Routes = [
         data: { title: T('Add Vdevs to Pool'), breadcrumb: T('Add Vdevs to Pool') },
       },
       {
+        path: ':poolId/add-vdevs-legacy',
+        component: ManagerComponent,
+        data: { title: T('Add Vdevs to Pool (Legacy)'), breadcrumb: T('Add Vdevs to Pool (Legacy)') },
+      },
+      {
         path: 'disks',
         loadChildren: () => import('./modules/disks/disks.module').then((module) => module.DisksModule),
         data: { title: T('Disks'), breadcrumb: T('Disks') },
