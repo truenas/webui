@@ -24,6 +24,7 @@ import { ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectHasOnlyMismatchVersionsReason, selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
+import { systemInfoUpdated } from 'app/store/system-info/system-info.actions';
 import { selectIsIxHardware, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
@@ -119,6 +120,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
         this.hasHa = haStatus.hasHa;
       });
     } else {
+      this.store$.dispatch(systemInfoUpdated());
       this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe({
         next: (systemInfo) => {
           this.processSysInfo(systemInfo);
