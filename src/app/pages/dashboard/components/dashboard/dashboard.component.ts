@@ -266,6 +266,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.getDisksData();
     this.getNetworkInterfaces();
     this.listenForPoolUpdates();
+    this.listenForScanUpdates();
     this.getResourcesUsageUpdates();
   }
 
@@ -281,6 +282,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       if (update?.virtual_memory) {
         const memStats: MemoryStatsEventData = { ...update.virtual_memory };
 
+        // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
         if (update.zfs && update.zfs.arc_size !== null) {
           memStats.arc_size = update.zfs.arc_size;
         }
@@ -417,7 +419,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       console.warn(`Pool for ${item.name} [${item.identifier}] widget is not available!`);
       return undefined;
     }
-    return this.volumeData && this.volumeData[dashboardPool.name];
+    return this.volumeData?.[dashboardPool.name];
   }
 
   dataFromConfig(item: DashConfigItem): Subject<CoreEvent> | DashboardNicState | Pool | Pool[] {
@@ -711,5 +713,19 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     ).subscribe(() => {
       this.loadPoolData();
     });
+  }
+
+  private listenForScanUpdates(): void {
+    this.ws.subscribe('zfs.pool.scan')
+      .pipe(
+        map((apiEvent) => apiEvent.fields),
+        untilDestroyed(this),
+      )
+      .subscribe((poolScan) => {
+        const updatedPool = this.pools?.find((pool) => pool.name === poolScan.name);
+        if (updatedPool) {
+          updatedPool.scan = poolScan.scan;
+        }
+      });
   }
 }

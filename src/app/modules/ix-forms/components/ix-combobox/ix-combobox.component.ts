@@ -67,7 +67,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
 
   writeValue(value: string | number): void {
     this.value = value;
-    if (this.value && this.options && this.options.length) {
+    if (this.value && this.options?.length) {
       this.selectedOption = { ...(this.options.find((option: Option) => option.value === this.value)) };
     }
     if (this.selectedOption) {
@@ -212,7 +212,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
 
   resetInput(): void {
     this.filterChanged$.next('');
-    if (this.inputElementRef && this.inputElementRef.nativeElement) {
+    if (this.inputElementRef?.nativeElement) {
       this.inputElementRef.nativeElement.value = '';
     }
     this.selectedOption = null;

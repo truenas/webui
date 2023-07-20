@@ -14,6 +14,7 @@ import { MiniXlPlus } from 'app/pages/system/view-enclosure/classes/hardware/min
 import {
   EnclosureDisksComponent,
 } from 'app/pages/system/view-enclosure/components/enclosure-disks/enclosure-disks.component';
+import { EnclosureStore } from 'app/pages/system/view-enclosure/stores/enclosure-store.service';
 import { WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -46,8 +47,20 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
     protected themeService: ThemeService,
     protected diskTemperatureService: DiskTemperatureService,
     protected matDialog: MatDialog,
+    protected enclosureStore: EnclosureStore,
   ) {
-    super(core, cdr, dialogService, translate, ws, store$, themeService, diskTemperatureService, matDialog);
+    super(
+      core,
+      cdr,
+      dialogService,
+      translate,
+      ws,
+      store$,
+      themeService,
+      diskTemperatureService,
+      matDialog,
+      enclosureStore,
+    );
     this.pixiWidth = 320;// 960 * 0.6; // PIXI needs an explicit number. Make sure the template flex width matches this
     this.pixiHeight = 480;
   }

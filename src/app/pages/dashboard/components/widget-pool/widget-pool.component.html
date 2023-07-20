@@ -216,6 +216,25 @@
                         </span>
                       </div>
                     </div>
+
+                    <div *ngIf="poolState.scan.end_time || isScanInProgress" class="tr last-scan">
+                      <div class="td label">
+                        <strong>{{ isScanScrub ? ('Last Scrub' | translate) : ('Last Resilver' | translate) }}:</strong>
+                      </div>
+                      <div class="td">
+                        <ng-container *ngIf="!isScanInProgress">
+                          {{ poolState.scan.end_time.$date | formatDateTime }}
+                          <span>
+                            <ix-icon *ngIf="isScanFinished" class="healthy" name="check_circle"></ix-icon>
+                            <ix-icon *ngIf="!isScanFinished" class="warning" name="error"></ix-icon>
+                          </span>
+                        </ng-container>
+                        <ng-container *ngIf="isScanInProgress">
+                          {{ 'In Progress' | translate}}
+                          {{ poolState.scan.percentage / 100 | percent: '1.2-2' }}
+                        </ng-container>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

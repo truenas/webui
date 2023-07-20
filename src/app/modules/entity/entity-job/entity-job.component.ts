@@ -262,7 +262,7 @@ export class EntityJobComponent implements OnInit, AfterViewChecked {
     return this.ws.subscribeToLogs(subName)
       .pipe(map((apiEvent) => apiEvent.fields), untilDestroyed(this))
       .subscribe((logs) => {
-        if (logs && logs.data && typeof logs.data === 'string') {
+        if (logs?.data && typeof logs.data === 'string') {
           this.realtimeLogs += logs.data;
         }
       });

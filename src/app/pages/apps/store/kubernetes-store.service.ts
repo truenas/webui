@@ -61,7 +61,10 @@ export class KubernetesStore extends ComponentStore<KubernetesState> {
           };
         });
       }),
-      catchError(() => of(this.handleError())),
+      catchError(() => {
+        this.handleError();
+        return of(undefined);
+      }),
     );
   });
 

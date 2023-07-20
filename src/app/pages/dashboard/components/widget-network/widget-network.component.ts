@@ -99,7 +99,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
       },
       tooltip: {
         callbacks: {
-          label(tooltipItem) {
+          label: (tooltipItem) => {
             let label = tooltipItem.dataset.label || '';
             if (label) {
               label += ': ';
@@ -107,13 +107,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
             if (tooltipItem.parsed.y === 0) {
               label += 0;
             } else {
-              const converted = filesize(Number(tooltipItem.parsed.y), {
-                round: 1,
-                output: 'object',
-                standard: 'iec',
-              });
-
-              label = `${label}${converted.value}${converted.unit.charAt(0)}`;
+              label = this.getSpeedLabel(Number(tooltipItem.parsed.y));
             }
             return label;
           },
@@ -143,14 +137,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
             if (value === 0) {
               return 0;
             }
-
-            const converted = filesize(value as number, {
-              round: 1,
-              output: 'object',
-              standard: 'iec',
-            });
-
-            return `${converted.value}${converted.unit.charAt(0)}`;
+            return this.getSpeedLabel(value as number, true);
           },
         },
       },
@@ -216,8 +203,8 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
           if (evt.data.link_state) {
             nicInfo.state = evt.data.link_state;
           }
-          nicInfo.in = `${filesize(evt.data.received_bytes_rate, { standard: 'iec' })}/s`;
-          nicInfo.out = `${filesize(evt.data.sent_bytes_rate, { standard: 'iec' })}/s`;
+          nicInfo.in = this.getSpeedLabel(evt.data.received_bytes_rate * 8);
+          nicInfo.out = this.getSpeedLabel(evt.data.sent_bytes_rate * 8);
 
           if (
             evt.data.sent_bytes !== undefined
@@ -477,5 +464,17 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
 
   getIpAddressTooltip(nic: BaseNetworkInterface): string {
     return `${this.translate.instant('IP Address')}: ${this.getIpAddress(nic)}`;
+  }
+
+  private getSpeedLabel(value: number, axis = false): string {
+    const converted = filesize(Math.abs(value), { output: 'object', standard: axis ? 'jedec' : 'iec' });
+    return `${this.splitValue(converted.value)}${converted.unit}/s`;
+  }
+
+  private splitValue(value: number): number {
+    if (value < 1024) {
+      return Number(value.toString().slice(0, 4));
+    }
+    return Math.round(value);
   }
 }

@@ -5,8 +5,15 @@ export abstract class ColumnComponent<T> {
   title?: string;
   sortBy?: (row: T) => string | number;
   sortable?: boolean;
+  hidden = false;
 
-  row?: T;
+  protected row: T;
+  getRow(): T {
+    return this.row;
+  }
+  setRow(row: T): void {
+    this.row = row;
+  }
   dataProvider?: ArrayDataProvider<T>;
 }
 

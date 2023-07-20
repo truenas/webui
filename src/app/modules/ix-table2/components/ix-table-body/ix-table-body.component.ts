@@ -33,18 +33,22 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
   @ContentChild(IxTableDetailsRowDirective)
   detailsRow: IxTableDetailsRowDirective<T>;
 
+  get displayedColumns(): Column<T, ColumnComponent<T>>[] {
+    return this.columns?.filter((column) => !column?.hidden);
+  }
+
   constructor(
     private cdr: ChangeDetectorRef,
   ) {}
 
   ngAfterViewInit(): void {
     const templatedCellIndexes = this.customCells.toArray().map((cell) => cell.columnIndex);
-    const availabledIndexes = Array.from({ length: this.columns.length }, (_, idx) => idx)
+    const availableIndexes = Array.from({ length: this.columns.length }, (_, idx) => idx)
       .filter((idx) => !templatedCellIndexes.includes(idx));
 
     this.customCells.forEach((cell) => {
       if (cell.columnIndex === undefined) {
-        cell.columnIndex = availabledIndexes.shift();
+        cell.columnIndex = availableIndexes.shift();
       }
     });
 

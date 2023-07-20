@@ -55,7 +55,10 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> {
           };
         });
       }),
-      catchError(() => of(this.handleError())),
+      catchError(() => {
+        this.handleError();
+        return of(undefined);
+      }),
     );
   });
 
@@ -113,7 +116,7 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> {
         this.appsService.getChartRelease(apiEvent.id as string),
       ])),
       tap(([apiEvent, chartReleases]) => {
-        if (!chartReleases || !chartReleases.length) {
+        if (!chartReleases?.length) {
           return;
         }
         this.patchState((state: InstalledAppsState): InstalledAppsState => {

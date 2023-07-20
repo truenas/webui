@@ -55,7 +55,7 @@ export class JobsListComponent implements OnInit, AfterViewInit {
   expandedRow: Job;
   selectedIndex: JobTab = 0;
 
-  selector$ = new BehaviorSubject<typeof selectRunningJobs | typeof selectJobs | typeof selectFailedJobs>(selectJobs);
+  selector$ = new BehaviorSubject<typeof selectRunningJobs | typeof selectJobs>(selectJobs);
 
   emptyType$: Observable<EmptyType> = combineLatest([
     this.isLoading$,

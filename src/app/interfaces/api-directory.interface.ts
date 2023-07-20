@@ -282,7 +282,7 @@ import { PoolRemoveParams } from './pool-remove.interface';
  * API definitions for `call` and `job` methods.
  * For events from `subscribed` see ApiEventDirectory.
  */
-export type ApiDirectory = {
+export interface ApiDirectory {
   // Active Directory
   'activedirectory.config': { params: void; response: ActiveDirectoryConfig };
   'activedirectory.update': { params: [ActiveDirectoryUpdate]; response: ActiveDirectoryConfig };
@@ -1003,7 +1003,7 @@ export type ApiDirectory = {
   'initshutdownscript.create': { params: [CreateInitShutdownScript]; response: InitShutdownScript };
   'initshutdownscript.update': { params: UpdateInitShutdownScriptParams; response: InitShutdownScript };
   'initshutdownscript.delete': { params: [id: number]; response: boolean };
-};
+}
 
 /**
  * Prefer typing like this:

@@ -14,6 +14,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
 import { styler, tween } from 'popmotion';
+import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
+import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { VdevType, TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
@@ -101,14 +103,14 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   }
 
   get totalDisks(): string {
-    if (this.poolState && this.poolState.topology) {
+    if (this.poolState?.topology) {
       return countDisksTotal(this.poolState.topology);
     }
     return this.translate.instant('Unknown');
   }
 
   get unhealthyDisks(): { totalErrors: number | string; disks: string[] } {
-    if (this.poolState && this.poolState.topology) {
+    if (this.poolState?.topology) {
       const unhealthy: string[] = []; // Disks with errors
       this.poolState.topology.data.forEach((item) => {
         if (item.type === TopologyItemType.Disk) {
@@ -138,6 +140,18 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
 
   get currentDiskDetailsKeys(): (keyof Disk)[] {
     return this.currentDiskDetails ? Object.keys(this.currentDiskDetails) as (keyof Disk)[] : [];
+  }
+
+  get isScanScrub(): boolean {
+    return this.poolState.scan?.function === PoolScanFunction.Scrub;
+  }
+
+  get isScanInProgress(): boolean {
+    return this.poolState.scan?.state === PoolScanState.Scanning;
+  }
+
+  get isScanFinished(): boolean {
+    return this.poolState.scan?.state === PoolScanState.Finished;
   }
 
   constructor(
@@ -205,7 +219,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     }
 
     this.displayValue = filesize(this.volumeData.avail, { standard: 'iec' });
-    if (this.displayValue.slice(-2) === ' B') {
+    if (this.displayValue.endsWith(' B')) {
       this.diskSizeLabel = this.displayValue.slice(-1);
       this.diskSize = new Intl.NumberFormat().format(parseFloat(this.displayValue.slice(0, -2)));
     } else {

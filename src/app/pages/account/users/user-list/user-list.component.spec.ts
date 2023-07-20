@@ -118,12 +118,12 @@ describe('UserListComponent', () => {
 
     const expectedRows = [
       ['Username', 'UID', 'Builtin', 'Full Name'],
-      ['root', '0', 'Yes', 'root', ''],
-      ['test', '1004', 'No', 'test', ''],
+      ['root', '0', 'Yes', 'root'],
+      ['test', '1004', 'No', 'test'],
     ];
 
     const table = await loader.getHarness(IxTable2Harness);
-    const cells = await table.getCells(true);
+    const cells = await table.getCellTexts();
     expect(cells).toEqual(expectedRows);
   });
 
@@ -140,16 +140,16 @@ describe('UserListComponent', () => {
     expect(spectator.queryAll(UserDetailsRowComponent)).toHaveLength(0);
   });
 
-  it('should expand and collapse only one row on toogle click', async () => {
+  it('should expand and collapse only one row on toggle click', async () => {
     store$.overrideSelector(selectUsers, fakeUserDataSource);
     store$.refreshState();
 
     const table = await loader.getHarness(IxTable2Harness);
-    await table.clickToogle(0);
-    await table.clickToogle(1);
+    await table.clickToggle(0);
+    await table.clickToggle(1);
     expect(spectator.queryAll(UserDetailsRowComponent)).toHaveLength(1);
 
-    await table.clickToogle(1);
+    await table.clickToggle(1);
     expect(spectator.queryAll(UserDetailsRowComponent)).toHaveLength(0);
   });
 });

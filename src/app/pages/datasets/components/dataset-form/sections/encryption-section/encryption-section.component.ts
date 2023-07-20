@@ -104,6 +104,7 @@ export class EncryptionSectionComponent implements OnChanges {
     return {
       encryption: true,
       encryption_options: encryptionOptions,
+      inherit_encryption: false,
     };
   }
 

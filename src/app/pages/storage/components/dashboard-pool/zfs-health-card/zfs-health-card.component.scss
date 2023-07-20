@@ -18,6 +18,11 @@
   }
 }
 
+.controls {
+  column-gap: 8px;
+  display: flex;
+}
+
 .scan-in-progress {
   @include fade-in();
   margin-top: 25px;

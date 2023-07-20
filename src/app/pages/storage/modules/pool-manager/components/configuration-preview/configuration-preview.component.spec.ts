@@ -119,9 +119,9 @@ describe('ConfigurationPreviewComponent', () => {
     });
   });
 
-  it('shows total capacity', () => {
+  it('shows total raw capacity', () => {
     expect(getItems()).toMatchObject({
-      'Total Capacity:': '10 GiB',
+      'Total Raw Capacity:': '10 GiB',
     });
   });
 });

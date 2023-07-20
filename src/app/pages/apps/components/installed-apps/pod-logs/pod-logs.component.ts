@@ -1,7 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import {
-  AfterViewInit,
-  Component, ElementRef, OnInit, TemplateRef, ViewChild, ViewEncapsulation,
+  AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, TemplateRef, ViewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
@@ -29,8 +28,6 @@ interface PodLogEvent {
   templateUrl: './pod-logs.component.html',
   styleUrls: ['./pod-logs.component.scss'],
   providers: [ShellService],
-  // eslint-disable-next-line @angular-eslint/use-component-view-encapsulation
-  encapsulation: ViewEncapsulation.None,
 })
 export class PodLogsComponent implements OnInit, AfterViewInit {
   @ViewChild('logContainer', { static: true }) logContainer: ElementRef<HTMLElement>;
@@ -57,6 +54,7 @@ export class PodLogsComponent implements OnInit, AfterViewInit {
     private layoutService: LayoutService,
     private errorHandler: ErrorHandlerService,
     private mdDialog: MatDialog,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
@@ -96,6 +94,7 @@ export class PodLogsComponent implements OnInit, AfterViewInit {
 
         if (podLog && podLog.msg !== 'nosub') {
           this.podLogs.push(podLog);
+          this.cdr.markForCheck();
           this.scrollToBottom();
         }
       },
@@ -104,6 +103,7 @@ export class PodLogsComponent implements OnInit, AfterViewInit {
         if (error.reason) {
           this.dialogService.error(this.errorHandler.parseError(error));
         }
+        this.cdr.markForCheck();
       },
     });
   }
@@ -137,9 +137,10 @@ export class PodLogsComponent implements OnInit, AfterViewInit {
         title: 'Choose log',
         customSubmit: (logsFormValueDialog: LogsDialogFormValue) => {
           if (isDownload) {
-            return this.download(logsFormValueDialog);
+            this.download(logsFormValueDialog);
+            return;
           }
-          return this.onChooseLogs(logsFormValueDialog);
+          this.onChooseLogs(logsFormValueDialog);
         },
       },
     });

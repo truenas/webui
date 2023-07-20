@@ -6,25 +6,20 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { combineLatest, lastValueFrom, Subject } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
-import { NetworkInterfaceType } from 'app/enums/network-interface.enum';
+import { filter } from 'rxjs/operators';
 import { ProductType } from 'app/enums/product-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import helptext from 'app/helptext/network/interfaces/interfaces-list';
 import { CoreEvent } from 'app/interfaces/events';
 import { NetworkInterfacesChangedEvent } from 'app/interfaces/events/network-interfaces-changed-event.interface';
-import { NetworkInterface } from 'app/interfaces/network-interface.interface';
-import { StaticRoute } from 'app/interfaces/static-route.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { AppTableConfig, TableComponent } from 'app/modules/entity/table/table.component';
 import { TableService } from 'app/modules/entity/table/table.service';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
-import { StaticRouteFormComponent } from 'app/pages/network/components/static-route-form/static-route-form.component';
-import { NetworkInterfaceUi } from 'app/pages/network/interfaces/network-interface-ui.interface';
+import { InterfacesStore } from 'app/pages/network/stores/interfaces.store';
 import {
   AppLoaderService,
   DialogService, SystemGeneralService,
@@ -59,80 +54,6 @@ export class NetworkComponent implements OnInit, OnDestroy {
   private navigation: Navigation;
   helptext = helptext;
 
-  interfaceTableConf: AppTableConfig<NetworkComponent> = {
-    title: this.translate.instant('Interfaces'),
-    queryCall: 'interface.query',
-    deleteCall: 'interface.delete',
-    name: 'interfaces',
-    columns: [
-      { name: this.translate.instant('Name'), prop: 'name', state: { prop: 'link_state' } },
-      { name: this.translate.instant('IP Addresses'), prop: 'addresses', listview: true },
-    ],
-    dataSourceHelper: this.interfaceDataSourceHelper,
-    getInOutInfo: this.getInterfaceInOutInfo.bind(this),
-    parent: this,
-    add: () => {
-      const slideInRef = this.slideInService.open(InterfaceFormComponent);
-      this.handleSlideInClosed(slideInRef);
-    },
-    edit: (row: NetworkInterfaceUi) => {
-      const slideInRef = this.slideInService.open(InterfaceFormComponent, { data: row });
-      this.handleSlideInClosed(slideInRef);
-    },
-    delete: (row: NetworkInterfaceUi, table: TableComponent) => {
-      const deleteAction = row.type === NetworkInterfaceType.Physical ? this.translate.instant('Reset configuration for ') : this.translate.instant('Delete ');
-      if (this.isHaEnabled) {
-        this.dialogService.warn(helptext.ha_enabled_edit_title, helptext.ha_enabled_edit_msg);
-      } else {
-        this.tableService.delete(table, row as unknown as Record<string, unknown>, deleteAction);
-      }
-    },
-    afterDelete: this.afterDelete.bind(this),
-    deleteMsg: {
-      title: 'interfaces',
-      key_props: ['name'],
-    },
-    confirmDeleteDialog: {
-      buildTitle: (intf: NetworkInterfaceUi): string => {
-        if (intf.type === NetworkInterfaceType.Physical) {
-          return this.translate.instant('Reset Configuration');
-        }
-        return this.translate.instant('Delete');
-      },
-      buttonMessage: (intf: NetworkInterfaceUi): string => {
-        if (intf.type === NetworkInterfaceType.Physical) {
-          return this.translate.instant('Reset Configuration');
-        }
-        return this.translate.instant('Delete');
-      },
-      message: helptext.delete_dialog_text,
-    },
-  };
-
-  staticRoutesTableConf: AppTableConfig<NetworkComponent> = {
-    title: this.translate.instant('Static Routes'),
-    queryCall: 'staticroute.query',
-    deleteCall: 'staticroute.delete',
-    name: 'staticRoutes',
-    columns: [
-      { name: this.translate.instant('Destination'), prop: 'destination' },
-      { name: this.translate.instant('Gateway'), prop: 'gateway' },
-    ],
-    parent: this,
-    add: () => {
-      const slideInRef = this.slideInService.open(StaticRouteFormComponent);
-      this.handleSlideInClosed(slideInRef);
-    },
-    edit: (route: StaticRoute) => {
-      const slideInRef = this.slideInService.open(StaticRouteFormComponent, { data: route });
-      this.handleSlideInClosed(slideInRef);
-    },
-    deleteMsg: {
-      title: 'static route',
-      key_props: ['destination', 'gateway'],
-    },
-  };
-
   constructor(
     private ws: WebSocketService,
     private router: Router,
@@ -147,13 +68,13 @@ export class NetworkComponent implements OnInit, OnDestroy {
     private store$: Store<AppState>,
     private errorHandler: ErrorHandlerService,
     private systemGeneralService: SystemGeneralService,
+    private interfacesStore: InterfacesStore,
     @Inject(WINDOW) private window: Window,
   ) {
     this.navigation = this.router.getCurrentNavigation();
   }
 
   ngOnInit(): void {
-    this.getInterfaces();
     this.checkInterfacePendingChanges();
     this.core
       .register({ observerClass: this, eventName: 'NetworkInterfacesChanged' })
@@ -178,24 +99,14 @@ export class NetworkComponent implements OnInit, OnDestroy {
     this.openInterfaceForEditFromRoute();
   }
 
-  handleSlideInClosed(slideInRef: IxSlideInRef<unknown, unknown>): void {
+  handleSlideInClosed(slideInRef: IxSlideInRef<unknown>): void {
     slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.staticRoutesTableConf.tableComponent.getData();
-      this.getInterfaces();
+      this.interfacesStore.loadInterfaces();
       this.checkInterfacePendingChanges();
     });
   }
 
-  private listenForHaStatus(): void {
-    combineLatest([
-      this.store$.select(selectIsHaLicensed),
-      this.store$.select(selectHaStatus).pipe(filter(Boolean)),
-    ]).pipe(untilDestroyed(this)).subscribe(([isHa, { hasHa }]) => {
-      this.isHaEnabled = isHa && hasHa;
-    });
-  }
-
-  private async checkInterfacePendingChanges(): Promise<void> {
+  async checkInterfacePendingChanges(): Promise<void> {
     let hasPendingChanges = await this.getPendingChanges();
     let checkinWaitingSeconds = await this.getCheckinWaitingSeconds();
 
@@ -209,10 +120,13 @@ export class NetworkComponent implements OnInit, OnDestroy {
     this.handleWaitingCheckin(checkinWaitingSeconds);
   }
 
-  private getInterfaces(): void {
-    if (this.interfaceTableConf.tableComponent) {
-      this.interfaceTableConf.tableComponent.getData();
-    }
+  private listenForHaStatus(): void {
+    combineLatest([
+      this.store$.select(selectIsHaLicensed),
+      this.store$.select(selectHaStatus).pipe(filter(Boolean)),
+    ]).pipe(untilDestroyed(this)).subscribe(([isHa, { hasHa }]) => {
+      this.isHaEnabled = isHa && hasHa;
+    });
   }
 
   private getCheckinWaitingSeconds(): Promise<number> {
@@ -306,7 +220,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
                       data: { commit: true, checkin: false },
                       sender: this,
                     });
-                    this.interfaceTableConf.tableComponent.getData();
+                    this.interfacesStore.loadInterfaces();
                     this.loader.close();
                     this.handleWaitingCheckin(await this.getCheckinWaitingSeconds());
                   },
@@ -393,7 +307,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
             .subscribe({
               next: () => {
                 this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: false }, sender: this });
-                this.interfaceTableConf.tableComponent.getData();
+                this.interfacesStore.loadInterfaces();
                 this.hasPendingChanges = false;
                 this.checkinWaiting = false;
                 this.loader.close();
@@ -410,11 +324,6 @@ export class NetworkComponent implements OnInit, OnDestroy {
       });
   }
 
-  afterDelete(): void {
-    this.hasPendingChanges = true;
-    this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: false, checkin: false }, sender: this });
-  }
-
   goToHa(): void {
     this.router.navigate(['/', 'system', 'failover']);
   }
@@ -424,78 +333,6 @@ export class NetworkComponent implements OnInit, OnDestroy {
       this.formEvent$.complete();
     }
     this.core.unregister({ observerClass: this });
-  }
-
-  getInterfaceInOutInfo(tableSource: NetworkInterfaceUi[]): void {
-    this.ws
-      .subscribe('reporting.realtime')
-      .pipe(
-        map((event) => event.fields),
-        untilDestroyed(this),
-      )
-      .subscribe((reportingData) => {
-        if (reportingData?.interfaces) {
-          tableSource.forEach((row) => {
-            if (!reportingData.interfaces[row.id]) {
-              row.link_state = null;
-            } else {
-              row.link_state = reportingData.interfaces[row.id].link_state;
-              if (reportingData.interfaces[row.id].received_bytes !== undefined) {
-                row.received = this.formatter.convertBytesToHumanReadable(
-                  reportingData.interfaces[row.id].received_bytes,
-                );
-                row.received_bytes = reportingData.interfaces[row.id].received_bytes;
-              }
-              if (reportingData.interfaces[row.id].sent_bytes !== undefined) {
-                row.sent = this.formatter.convertBytesToHumanReadable(
-                  reportingData.interfaces[row.id].sent_bytes,
-                );
-                row.sent_bytes = reportingData.interfaces[row.id].sent_bytes;
-              }
-            }
-          });
-        }
-      });
-  }
-
-  interfaceDataSourceHelper(nic: NetworkInterface[]): NetworkInterfaceUi[] {
-    return nic.map((networkInterface) => {
-      const transformed = { ...networkInterface } as NetworkInterfaceUi;
-      transformed.link_state = networkInterface.state.link_state;
-      const addresses = new Set<string>([]);
-      transformed.aliases.forEach((alias) => {
-        // TODO: See if checks can be removed or replace with enum.
-        if (alias.type.startsWith('INET')) {
-          addresses.add(`${alias.address}/${alias.netmask}`);
-        }
-      });
-
-      if (transformed.ipv4_dhcp || transformed.ipv6_auto) {
-        transformed.state.aliases.forEach((alias) => {
-          if (alias.type.startsWith('INET')) {
-            addresses.add(`${alias.address}/${alias.netmask}`);
-          }
-        });
-      }
-      if (transformed.hasOwnProperty('failover_aliases')) {
-        transformed.failover_aliases.forEach((alias) => {
-          if (alias.type.startsWith('INET')) {
-            addresses.add(`${alias.address}/${alias.netmask}`);
-          }
-        });
-      }
-      transformed.addresses = Array.from(addresses);
-      if (networkInterface.type === NetworkInterfaceType.Physical) {
-        transformed.active_media_type = networkInterface.state.active_media_type;
-        transformed.active_media_subtype = networkInterface.state.active_media_subtype;
-      } else if (networkInterface.type === NetworkInterfaceType.LinkAggregation) {
-        transformed.lagg_ports = networkInterface.lag_ports;
-        transformed.lagg_protocol = networkInterface.lag_protocol;
-      }
-      transformed.mac_address = networkInterface.state.link_address;
-
-      return transformed;
-    });
   }
 
   private openInterfaceForEditFromRoute(): void {

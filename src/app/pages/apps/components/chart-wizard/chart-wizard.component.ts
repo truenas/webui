@@ -227,9 +227,7 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
         const keys = fieldToBeDeleted.split('.');
         _.unset(data, keys);
       },
-      complete: () => {
-        this.saveData(data);
-      },
+      complete: () => this.saveData(data),
     });
 
     this.getFieldsHiddenOnForm(data, deleteField$);
@@ -464,7 +462,7 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private addFormControls(chartSchemaNode: ChartSchemaNode): void {
     this.subscription.add(
-      this.appSchemaService.addFormControls({
+      this.appSchemaService.getNewFormControlChangesSubscription({
         chartSchemaNode,
         formGroup: this.form,
         config: this.config,
