@@ -7,6 +7,10 @@
     <mat-spinner [diameter]="20"></mat-spinner>
     <span>{{ status | mapValue: kubernetesStatusLabels | translate }}</span>
   </div>
+  <div *ngIf="status === kubernetesStatus.Stopped" class="status-wrapper" [matTooltip]="statusDescription$ | async">
+    <ix-icon name="pause_circle_filled"></ix-icon>
+    <span>{{ status | mapValue: kubernetesStatusLabels | translate }}</span>
+  </div>
   <div *ngIf="status === kubernetesStatus.Error" class="status-wrapper" [matTooltip]="statusDescription$ | async">
     <ix-icon name="mdi-close-circle" class="error"></ix-icon>
     <span>{{ status | mapValue: kubernetesStatusLabels | translate }}</span>

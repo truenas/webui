@@ -39,6 +39,11 @@ describe('KubernetesStatusComponent', () => {
     expect(spectator.query('.status-wrapper span')).toHaveText('Error In Cluster');
   });
 
+  it('checks status for Stopped kubernetes status', () => {
+    setupTest(KubernetesStatus.Stopped);
+    expect(spectator.query('.status-wrapper span')).toHaveText('Cluster Stopped');
+  });
+
   it('hides kubernetes status when it is not set', () => {
     setupTest(null);
     expect(spectator.query('.status-wrapper span')).not.toExist();

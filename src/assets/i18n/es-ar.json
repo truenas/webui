@@ -210,6 +210,7 @@
   "Cloud sync «{name}» has started.": "",
   "Cloud sync «{name}» stopped.": "",
   "Cluster Running": "",
+  "Cluster Stopped": "",
   "Commits in the last 60 days": "",
   "Completed S.M.A.R.T. Tests": "",
   "Completely replicate the selected dataset. The target dataset will have all of the source dataset's properties, child datasets, clones and snapshots that match the specified naming schema. Set Snapshot Name Regular Expression to .* to replicate all snapshots.": "",
