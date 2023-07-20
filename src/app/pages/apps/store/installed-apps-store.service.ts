@@ -55,7 +55,10 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> {
           };
         });
       }),
-      catchError(() => of(this.handleError())),
+      catchError(() => {
+        this.handleError();
+        return of(undefined);
+      }),
     );
   });
 

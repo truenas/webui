@@ -23,7 +23,7 @@ module.exports = {
       "extends": [
         "airbnb-typescript/base",
         "plugin:@angular-eslint/recommended",
-        "plugin:@typescript-eslint/recommended-type-checked",
+        "plugin:@typescript-eslint/strict-type-checked",
         "plugin:@typescript-eslint/stylistic-type-checked",
         "plugin:rxjs/recommended",
         "plugin:sonarjs/recommended"
@@ -139,6 +139,10 @@ module.exports = {
         "sonarjs/prefer-single-boolean-return": ["off"],
         "no-plusplus": "off",
         "@typescript-eslint/prefer-nullish-coalescing": ["off"],
+        "@typescript-eslint/no-extraneous-class": ["off"],
+        "@typescript-eslint/no-confusing-void-expression": ["error", {
+          ignoreArrowShorthand: true,
+        }],
 
         // TODO: Airbnb rules that are disabled for now as they cannot be fixed automatically
         "no-restricted-syntax": ["error",
@@ -187,6 +191,10 @@ module.exports = {
         "@typescript-eslint/no-unsafe-enum-comparison": ["off"],
         "@typescript-eslint/no-base-to-string": ["off"],
         "@typescript-eslint/class-literal-property-style": ["off"],
+        "@typescript-eslint/no-unnecessary-condition": ["off"],
+        "@typescript-eslint/no-invalid-void-type": ["off"],
+        "@typescript-eslint/no-dynamic-delete": ["off"],
+        "@typescript-eslint/prefer-reduce-type-parameter": ["off"],
 
         // Other overwrites
         "@typescript-eslint/lines-between-class-members": "off",

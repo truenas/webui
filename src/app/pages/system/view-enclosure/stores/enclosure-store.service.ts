@@ -8,7 +8,6 @@ import {
 import { switchMap } from 'rxjs/operators';
 import { EnclosureSlotDiskStatus } from 'app/enums/enclosure-slot-status.enum';
 import { VdevType, TopologyItemType } from 'app/enums/v-dev-type.enum';
-import { ApiEvent } from 'app/interfaces/api-message.interface';
 import {
   Enclosure,
   EnclosureElement,
@@ -58,7 +57,6 @@ interface ProcessParameters {
 export class EnclosureStore extends ComponentStore<EnclosureState> {
   readonly data$ = this.select((state) => state);
   readonly enclosureViews$ = this.select((state) => state.enclosureViews);
-  readonly selectedEnclosure$ = this.select((state) => state.selectedEnclosure);
 
   private disksUpdateSubscriptionId: string;
 
@@ -107,19 +105,6 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
         this.patchStateWithEnclosureViewsData(),
       ),
     });
-  }
-
-  patchStateWithSelectedEnclosure(): (source: Observable<number>) => Observable<number> {
-    return tapResponse<number>(
-      (selected: number) => {
-        this.patchState({
-          selectedEnclosure: selected,
-        });
-      },
-      (error: Error) => {
-        console.error(error);
-      },
-    );
   }
 
   patchStateWithEnclosureViewsData(): (source: Observable<EnclosureView[]>) => Observable<EnclosureView[]> {
@@ -358,6 +343,24 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
     };
   }
 
+  updateLabel(enclosureId: string, label: string): void {
+    this.patchState((state) => {
+      return {
+        ...state,
+        enclosures: state.enclosures.map((enclosure: Enclosure) => {
+          if (enclosure.id !== enclosureId) {
+            return enclosure;
+          }
+
+          return {
+            ...enclosure,
+            label,
+          };
+        }),
+      };
+    });
+  }
+
   private findTopologyDiskInVdev(vdev: TopologyItem, name: string): TopologyDisk | VDev | null {
     if (!vdev?.type) return null;
 
@@ -380,10 +383,6 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
 
   getPools(): Observable<Pool[]> {
     return this.ws.call('pool.query', [[], { extra: { is_upgraded: true } }]);
-  }
-
-  listenForPoolUpdates(): Observable<ApiEvent<Pool>> {
-    return this.ws.subscribe('pool.query');
   }
 
   listenForDiskUpdates(): void { // Observable<Disk[]> {
