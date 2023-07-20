@@ -126,7 +126,7 @@ export class KubernetesStore extends ComponentStore<KubernetesState> {
 
     this.kubernetesStatusSubscription = this.appsService.getKubernetesStatusUpdates().pipe(
       map((_: ApiEvent<KubernetesStatusData>) => {
-        return this.patchState((state: KubernetesState): KubernetesState => {
+        this.patchState((state: KubernetesState): KubernetesState => {
           return {
             ...state,
             // kubernetesStatus: status,
