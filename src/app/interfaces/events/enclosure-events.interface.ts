@@ -1,16 +1,6 @@
 import { ElementRef } from '@angular/core';
 import { EnclosureView } from 'app/interfaces/enclosure.interface';
 
-export interface EnclosureLabelChangedEvent {
-  name: 'EnclosureLabelChanged';
-  sender: unknown;
-  data: {
-    label: string;
-    index: number;
-    id: string;
-  };
-}
-
 export interface HighlightDiskEvent {
   name: 'HighlightDisk';
   sender: unknown;

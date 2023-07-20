@@ -17,6 +17,7 @@ import { TextLimiterTooltipComponent } from 'app/core/components/directives/text
 import { TextLimiterDirective } from 'app/core/components/directives/text-limiter/text-limiter.directive';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { MapValuePipe } from 'app/core/pipes/map-value.pipe';
+import { ScheduleToCrontabPipe } from 'app/core/pipes/schedule-to-crontab.pipe';
 import { YesNoPipe } from 'app/core/pipes/yes-no.pipe';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
@@ -51,6 +52,7 @@ import { CleanLinkPipe } from './pipes/clean-link.pipe';
     YesNoPipe,
     BulkListItemComponent,
     CleanLinkPipe,
+    ScheduleToCrontabPipe,
   ],
   exports: [
     CommonModule,
@@ -67,6 +69,7 @@ import { CleanLinkPipe } from './pipes/clean-link.pipe';
     BulkListItemComponent,
     YesNoPipe,
     CleanLinkPipe,
+    ScheduleToCrontabPipe,
   ],
   providers: [
     StorageService,

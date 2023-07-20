@@ -1,5 +1,5 @@
 import { TiB } from 'app/constants/bytes.constant';
-import { EnclosureDispersalStrategy, MockStorageScenario } from 'app/core/testing/enums/mock-storage.enum';
+import { EnclosureDispersalStrategy, MockDiskType, MockStorageScenario } from 'app/core/testing/enums/mock-storage.enum';
 import {
   AddEnclosureOptions,
   AddTopologyOptions,
@@ -13,7 +13,7 @@ import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
-import { VdevType, TopologyItemType } from 'app/enums/v-dev-type.enum';
+import { TopologyItemType, VdevType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { Enclosure, EnclosureElement, EnclosureElementsGroup } from 'app/interfaces/enclosure.interface';
 import { PoolInstance } from 'app/interfaces/pool.interface';
@@ -28,6 +28,7 @@ import {
 import { MockEnclosure } from './enclosure-templates/mock-enclosure-template';
 import { MockEs102 } from './enclosure-templates/mock-es102';
 import { MockEs24 } from './enclosure-templates/mock-es24';
+import { MockF60 } from './enclosure-templates/mock-f60';
 import { MockM40 } from './enclosure-templates/mock-m40';
 import { MockM50 } from './enclosure-templates/mock-m50';
 import { MockM50Rear } from './enclosure-templates/mock-m50-rear';
@@ -77,7 +78,7 @@ export class MockStorageGenerator {
     return { poolState: pool, disks };
   }
 
-  addUnassignedDisks(options: AddUnAssignedOptions): MockStorageGenerator {
+  addUnassignedDisks(options: AddUnAssignedOptions): this {
     const offset = this.disks.length;
     for (let i = 0; i < options.repeats; i++) {
       this.disks.push(this.generateDisk(options.diskSize, offset + i, false));
@@ -91,7 +92,7 @@ export class MockStorageGenerator {
     diskSize: 4,
     width: 1,
     repeats: 1,
-  }): MockStorageGenerator {
+  }): this {
     this.addRaidzCapableTopology(VdevType.Data, options);
     return this;
   }
@@ -102,7 +103,7 @@ export class MockStorageGenerator {
     diskSize: 4,
     width: 1,
     repeats: 1,
-  }): MockStorageGenerator {
+  }): this {
     // The redundancy of this device should match the redundancy of the other normal devices in the pool
     this.addRaidzCapableTopology(VdevType.Special, options);
     return this;
@@ -114,7 +115,7 @@ export class MockStorageGenerator {
     diskSize: 4,
     width: 1,
     repeats: 1,
-  }): MockStorageGenerator {
+  }): this {
     // The redundancy of this device should match the redundancy of the other normal devices in the pool
     this.addRaidzCapableTopology(VdevType.Dedup, options);
     return this;
@@ -200,7 +201,7 @@ export class MockStorageGenerator {
   }
 
   // Can create DISK or MIRROR devices. ZFS does not support RAIDZ for log devices
-  addLogTopology(deviceCount: number, isMirror = false, diskSize = 4): MockStorageGenerator {
+  addLogTopology(deviceCount: number, isMirror = false, diskSize = 4): this {
     if (isMirror) {
       this.addRaidzCapableTopology(VdevType.Log, {
         scenario: MockStorageScenario.Uniform,
@@ -216,13 +217,13 @@ export class MockStorageGenerator {
   }
 
   // Can create DISK devices. ZFS does not support RAIDZ or MIRROR for cache devices
-  addCacheTopology(deviceCount: number, diskSize = 4): MockStorageGenerator {
+  addCacheTopology(deviceCount: number, diskSize = 4): this {
     this.addSingleDeviceTopology(VdevType.Cache, deviceCount, diskSize);
     return this;
   }
 
   // Can create DISK devices. ZFS does not support RAIDZ or MIRROR for spares
-  addSpareTopology(deviceCount: number, diskSize = 4): MockStorageGenerator {
+  addSpareTopology(deviceCount: number, diskSize = 4): this {
     this.addSingleDeviceTopology(VdevType.Spare, deviceCount, diskSize);
     return this;
   }
@@ -554,7 +555,7 @@ export class MockStorageGenerator {
     return width;
   }
 
-  private generateDiskName(diskCount: number, startIndex = 0): string[] {
+  private generateDiskName(diskCount: number, startIndex = 0, diskType: MockDiskType = MockDiskType.Hdd): string[] {
     const diskNames: string[] = [];
 
     const generateName = (index: number): string => {
@@ -567,7 +568,7 @@ export class MockStorageGenerator {
     };
 
     for (let i = startIndex; i < diskCount; i++) {
-      const name = generateName(i);
+      const name = diskType === MockDiskType.Nvme ? `nvme${i}n1` : generateName(i);
       diskNames.push('sd' + name);
     }
 
@@ -677,6 +678,9 @@ export class MockStorageGenerator {
         break;
       case 'R50':
         chassis = new MockR50(enclosureNumber);
+        break;
+      case 'F60':
+        chassis = new MockF60(enclosureNumber);
         break;
       default:
         console.error('Chassis ' + model + ' not found');
@@ -864,7 +868,7 @@ export class MockStorageGenerator {
     };
   }
 
-  private removeDiskFromEnclosure(disk: Disk): MockStorageGenerator {
+  private removeDiskFromEnclosure(disk: Disk): this {
     const mockEnclosureIndex: number = this.mockEnclosures.findIndex((mockEnclosure: MockEnclosure) => {
       return mockEnclosure.data.number === disk.enclosure.number;
     });

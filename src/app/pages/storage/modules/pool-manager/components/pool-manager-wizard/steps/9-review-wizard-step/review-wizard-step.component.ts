@@ -29,6 +29,7 @@ import { DialogService } from 'app/services';
 })
 export class ReviewWizardStepComponent implements OnInit {
   @Input() isStepActive: boolean;
+  @Input() isAddingVdevs: boolean;
   @Output() createPool = new EventEmitter<void>();
 
   state: PoolManagerState;

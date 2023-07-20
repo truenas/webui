@@ -56,12 +56,28 @@ export class ZfsHealthCardComponent implements OnChanges {
     private store: PoolsDashboardStore,
   ) { }
 
-  get isScanRunning(): boolean {
+  get scanLabel(): string {
+    if (!this.isScrub) {
+      return this.translate.instant('Resilvering:');
+    }
+
+    if (this.isScrubPaused) {
+      return this.translate.instant('Scrub Paused');
+    }
+
+    return this.translate.instant('Scrub In Progress:');
+  }
+
+  get wasScanInitiated(): boolean {
     return this.scan?.state === PoolScanState.Scanning;
   }
 
-  get isScanScrub(): boolean {
+  get isScrub(): boolean {
     return this.scan?.function === PoolScanFunction.Scrub;
+  }
+
+  get isScrubPaused(): boolean {
+    return Boolean(this.scan?.pause);
   }
 
   get scanDuration(): string {
@@ -83,11 +99,11 @@ export class ZfsHealthCardComponent implements OnChanges {
     // TODO: Consider implementing a reactive service for localized time formatting.
     switch (this.scan.state) {
       case PoolScanState.Finished:
-        return this.isScanScrub
+        return this.isScrub
           ? T('Finished Scrub on {date}')
           : T('Finished Resilver on {date}');
       case PoolScanState.Canceled:
-        return this.isScanScrub
+        return this.isScrub
           ? T('Canceled Scrub on {date}')
           : T('Canceled Resilver on {date}');
       default:
@@ -163,6 +179,18 @@ export class ZfsHealthCardComponent implements OnChanges {
       }),
       untilDestroyed(this),
     ).subscribe();
+  }
+
+  onPauseScrub(): void {
+    this.ws.call('pool.scrub', [this.pool.id, PoolScrubAction.Pause])
+      .pipe(untilDestroyed(this))
+      .subscribe();
+  }
+
+  onResumeScrub(): void {
+    this.ws.call('pool.scrub', [this.pool.id, PoolScrubAction.Start])
+      .pipe(untilDestroyed(this))
+      .subscribe();
   }
 
   onEditAutotrim(): void {

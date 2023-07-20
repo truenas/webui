@@ -17,7 +17,7 @@ import { User } from 'app/interfaces/user.interface';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 
-export type ApiEventDirectory = {
+export interface ApiEventDirectory {
   'alert.list': { response: Alert };
   'chart.release.query': { response: ChartRelease };
   'core.get_jobs': { response: Job };
@@ -37,4 +37,4 @@ export type ApiEventDirectory = {
   'container.image.query': { response: ContainerImage };
   'reporting.realtime': { response: ReportingRealtimeUpdate };
   'smart.test.progress': { response: SmartTestProgressUpdate };
-};
+}

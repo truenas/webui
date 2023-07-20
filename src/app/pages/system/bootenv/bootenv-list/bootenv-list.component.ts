@@ -103,7 +103,7 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
     this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
-  handleSlideInClosed(slideInRef: IxSlideInRef<unknown, unknown>): void {
+  handleSlideInClosed(slideInRef: IxSlideInRef<unknown>): void {
     slideInRef.slideInClosed$.pipe(
       filter((value) => value === true),
       untilDestroyed(this),

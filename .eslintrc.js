@@ -18,13 +18,13 @@ module.exports = {
       "parserOptions": {
         "createDefaultProgram": true,
         "tsconfigRootDir": __dirname,
-        "project": ["./tsconfig.json"],
+        "project": true,
       },
       "extends": [
         "airbnb-typescript/base",
         "plugin:@angular-eslint/recommended",
-        "plugin:@typescript-eslint/recommended",
-        "plugin:@typescript-eslint/recommended-requiring-type-checking",
+        "plugin:@typescript-eslint/strict-type-checked",
+        "plugin:@typescript-eslint/stylistic-type-checked",
         "plugin:rxjs/recommended",
         "plugin:sonarjs/recommended"
       ],
@@ -138,6 +138,11 @@ module.exports = {
         "@typescript-eslint/dot-notation": ["error", { allowIndexSignaturePropertyAccess: true }],
         "sonarjs/prefer-single-boolean-return": ["off"],
         "no-plusplus": "off",
+        "@typescript-eslint/prefer-nullish-coalescing": ["off"],
+        "@typescript-eslint/no-extraneous-class": ["off"],
+        "@typescript-eslint/no-confusing-void-expression": ["error", {
+          ignoreArrowShorthand: true,
+        }],
 
         // TODO: Airbnb rules that are disabled for now as they cannot be fixed automatically
         "no-restricted-syntax": ["error",
@@ -181,7 +186,15 @@ module.exports = {
         "@typescript-eslint/no-unsafe-argument": "off",
         "rxjs/no-implicit-any-catch": ["off"],
         "rxjs/no-nested-subscribe": ["off"],
-        "sonarjs/cognitive-complexity": ["error", 45],
+        "sonarjs/cognitive-complexity": ["error", 40],
+        "@typescript-eslint/consistent-indexed-object-style": ["off"], // Maybe enable later.
+        "@typescript-eslint/no-unsafe-enum-comparison": ["off"],
+        "@typescript-eslint/no-base-to-string": ["off"],
+        "@typescript-eslint/class-literal-property-style": ["off"],
+        "@typescript-eslint/no-unnecessary-condition": ["off"],
+        "@typescript-eslint/no-invalid-void-type": ["off"],
+        "@typescript-eslint/no-dynamic-delete": ["off"],
+        "@typescript-eslint/prefer-reduce-type-parameter": ["off"],
 
         // Other overwrites
         "@typescript-eslint/lines-between-class-members": "off",
@@ -214,7 +227,6 @@ module.exports = {
         "@typescript-eslint/ban-ts-comment": "error",
         "@typescript-eslint/explicit-function-return-type": ["error", { allowExpressions: true }],
         "@typescript-eslint/consistent-type-assertions": ["error"],
-        "@typescript-eslint/no-implicit-any-catch": ["error"],
         "@typescript-eslint/no-unnecessary-boolean-literal-compare": ["error"],
         "@typescript-eslint/prefer-includes": ["error"],
         "@typescript-eslint/prefer-for-of": ["error"],

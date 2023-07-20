@@ -29,7 +29,7 @@ const anyArgument = when((_: unknown) => true);
  */
 @Injectable()
 export class MockWebsocketService extends WebSocketService {
-  private subscribeStream$ = new Subject<ApiEvent<unknown>>();
+  private subscribeStream$ = new Subject<ApiEvent>();
   private jobIdCounter = 1;
 
   constructor(
@@ -74,7 +74,7 @@ export class MockWebsocketService extends WebSocketService {
     this.jobIdCounter += 1;
   }
 
-  emitSubscribeEvent(event: ApiEvent<unknown>): void {
+  emitSubscribeEvent(event: ApiEvent): void {
     this.subscribeStream$.next(event);
   }
 }

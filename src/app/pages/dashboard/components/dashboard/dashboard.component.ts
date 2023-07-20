@@ -282,6 +282,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       if (update?.virtual_memory) {
         const memStats: MemoryStatsEventData = { ...update.virtual_memory };
 
+        // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
         if (update.zfs && update.zfs.arc_size !== null) {
           memStats.arc_size = update.zfs.arc_size;
         }
@@ -418,7 +419,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       console.warn(`Pool for ${item.name} [${item.identifier}] widget is not available!`);
       return undefined;
     }
-    return this.volumeData && this.volumeData[dashboardPool.name];
+    return this.volumeData?.[dashboardPool.name];
   }
 
   dataFromConfig(item: DashConfigItem): Subject<CoreEvent> | DashboardNicState | Pool | Pool[] {
