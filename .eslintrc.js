@@ -182,7 +182,7 @@ module.exports = {
         "@typescript-eslint/no-unsafe-argument": "off",
         "rxjs/no-implicit-any-catch": ["off"],
         "rxjs/no-nested-subscribe": ["off"],
-        "sonarjs/cognitive-complexity": ["error", 45],
+        "sonarjs/cognitive-complexity": ["error", 40],
         "@typescript-eslint/consistent-indexed-object-style": ["off"], // Maybe enable later.
         "@typescript-eslint/no-unsafe-enum-comparison": ["off"],
         "@typescript-eslint/no-base-to-string": ["off"],
