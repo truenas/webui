@@ -3,7 +3,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { take } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import {
   PeriodicSnapshotTask,
@@ -13,6 +12,7 @@ import {
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
+import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { SnapshotTaskComponent } from 'app/pages/data-protection/snapshot/snapshot-task/snapshot-task.component';
 import {
   DialogService, StorageService,
@@ -22,7 +22,6 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
-import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
 @UntilDestroy()
 @Component({
@@ -97,19 +96,14 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
         ...task,
         keepfor: `${task.lifetime_value} ${task.lifetime_unit}(S)`,
         when: this.translate.instant('From {task_begin} to {task_end}', { task_begin: task.schedule.begin, task_end: task.schedule.end }),
-        cron_schedule: `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`,
+        cron_schedule: scheduleToCrontab(task.schedule),
       } as PeriodicSnapshotTaskUi;
 
-      const transformedData = {
+      return {
         ...transformedTask,
         frequency: this.taskService.getTaskCronDescription(transformedTask.cron_schedule),
+        next_run: this.taskService.getTaskNextRun(transformedTask.cron_schedule),
       };
-
-      this.store$.select(selectTimezone).pipe(take(1), untilDestroyed(this)).subscribe((timezone) => {
-        transformedData.next_run = this.taskService.getTaskNextRun(transformedData.cron_schedule, timezone);
-      });
-
-      return transformedData;
     });
   }
 

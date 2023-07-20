@@ -35,6 +35,7 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
     encryptionStandard: [defaultEncryptionStandard, Validators.required],
   });
 
+  isLoading$ = this.store.isLoading$;
   poolNames$ = this.ws.call('pool.query').pipe(map((pools) => pools.map((pool) => pool.name)));
   private readonly oldNameForbiddenValidator = forbiddenAsyncValues(this.poolNames$);
 

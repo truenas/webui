@@ -135,7 +135,7 @@
                         </span>
                       </li>
                       <li *ngIf="cols === 2 && rows === 2" fxLayout="row">
-                        <ng-container *ngIf="!pool.scan?.end_time?.$date && !isScanInProgress(pool); else lastScrub">
+                        <ng-container *ngIf="!pool?.scan?.end_time?.$date && !isScanInProgress(pool); else lastScrub">
                           <span class="icon warn">
                             <ix-icon name="error" [matTooltip]="'Never' | translate"></ix-icon>
                           </span>
@@ -153,7 +153,7 @@
                             {{ isScanResilver(pool) ? ('Last Resilver' | translate) : ('Last Scrub' | translate) }}:
                           </span>
                           <span class="storage-value">
-                            <ng-container *ngIf="!pool.scan?.end_time?.$date && !isScanInProgress(pool); else lastScrub">
+                            <ng-container *ngIf="!pool?.scan?.end_time?.$date && !isScanInProgress(pool); else lastScrub">
                               {{ 'Never' | translate }}
                             </ng-container>
                           </span>

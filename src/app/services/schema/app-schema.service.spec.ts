@@ -437,7 +437,7 @@ describe('AppSchemaService', () => {
   });
   describe('addFormControls()', () => {
     beforeIntString.forEach((item) => {
-      service.addFormControls({
+      service.getNewFormControlChangesSubscription({
         chartSchemaNode: item,
         formGroup: dynamicForm,
         config: null,
@@ -466,7 +466,7 @@ describe('AppSchemaService', () => {
     });
 
     beforeUri.forEach((item) => {
-      service.addFormControls({
+      service.getNewFormControlChangesSubscription({
         chartSchemaNode: item,
         formGroup: dynamicForm,
         config: null,
@@ -480,7 +480,7 @@ describe('AppSchemaService', () => {
     });
 
     beforeCron.forEach((item) => {
-      service.addFormControls({
+      service.getNewFormControlChangesSubscription({
         chartSchemaNode: item,
         formGroup: dynamicForm,
         config: null,
@@ -494,7 +494,7 @@ describe('AppSchemaService', () => {
     });
 
     beforeBoolean.forEach((item) => {
-      service.addFormControls({
+      service.getNewFormControlChangesSubscription({
         chartSchemaNode: item,
         formGroup: dynamicForm,
         config: null,
@@ -509,7 +509,7 @@ describe('AppSchemaService', () => {
     });
 
     beforeList.forEach((item) => {
-      service.addFormControls({
+      service.getNewFormControlChangesSubscription({
         chartSchemaNode: item,
         formGroup: dynamicForm,
         config: null,
@@ -523,7 +523,7 @@ describe('AppSchemaService', () => {
     });
 
     beforeHidden.forEach((item) => {
-      service.addFormControls({
+      service.getNewFormControlChangesSubscription({
         chartSchemaNode: item,
         formGroup: dynamicForm,
         config: null,

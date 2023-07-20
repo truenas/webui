@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
@@ -14,6 +15,7 @@ import { IxTable2EmptyRowComponent } from 'app/modules/ix-table2/components/ix-e
 import { IxCellCheckboxComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-checkbox/ix-cell-checkbox.component';
 import { IxCellDateComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-date/ix-cell-date.component';
 import { IxCellDeleteComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-delete/ix-cell-delete.component';
+import { IxCellScheduleComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-schedule/ix-cell-schedule.component';
 import { IxCellSizeComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-size/ix-cell-size.component';
 import { IxCellTextComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { IxCellToggleComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
@@ -31,6 +33,7 @@ import { IxTableCellDirective } from 'app/modules/ix-table2/directives/ix-table-
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table2/directives/ix-table-details-row.directive';
 import { IxTable2EmptyDirective } from 'app/modules/ix-table2/directives/ix-table-empty.directive';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { IxTableColumnsSelectorComponent } from './components/ix-table-columns-selector/ix-table-columns-selector.component';
 
 @NgModule({
   imports: [
@@ -46,6 +49,7 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     NgxFilesizeModule,
     TestIdModule,
     CoreComponents,
+    MatMenuModule,
   ],
   declarations: [
     IxTable2Component,
@@ -63,10 +67,12 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     IxCellYesNoComponent,
     IxCellDeleteComponent,
     IxCellToggleComponent,
+    IxCellScheduleComponent,
     IxHeaderCellTextComponent,
     IxHeaderCellCheckboxComponent,
     IxTable2EmptyDirective,
     IxTable2EmptyRowComponent,
+    IxTableColumnsSelectorComponent,
     IxTablePagerShowMoreComponent,
   ],
   exports: [
@@ -85,10 +91,12 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     IxCellYesNoComponent,
     IxCellDeleteComponent,
     IxCellToggleComponent,
+    IxCellScheduleComponent,
     IxHeaderCellTextComponent,
     IxHeaderCellCheckboxComponent,
     IxTable2EmptyDirective,
     IxTable2EmptyRowComponent,
+    IxTableColumnsSelectorComponent,
     IxTablePagerShowMoreComponent,
   ],
 })

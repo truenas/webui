@@ -16,6 +16,7 @@ import { ShowLogsDialogComponent } from 'app/modules/common/dialog/show-logs-dia
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
+import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
 import {
@@ -25,7 +26,6 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
-import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
 @UntilDestroy()
 @Component({
@@ -154,12 +154,9 @@ export class RsyncTaskListComponent implements EntityTableConfig<RsyncTaskUi> {
 
   resourceTransformIncomingRestData(tasks: RsyncTaskUi[]): RsyncTaskUi[] {
     return tasks.map((task) => {
-      task.cron_schedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
+      task.cron_schedule = scheduleToCrontab(task.schedule);
       task.frequency = this.taskService.getTaskCronDescription(task.cron_schedule);
-
-      this.store$.select(selectTimezone).pipe(take(1), untilDestroyed(this)).subscribe((timezone) => {
-        task.next_run = this.taskService.getTaskNextRun(task.cron_schedule, timezone);
-      });
+      task.next_run = this.taskService.getTaskNextRun(task.cron_schedule);
 
       if (task.job === null) {
         task.state = { state: task.locked ? JobState.Locked : JobState.Pending };
