@@ -78,6 +78,7 @@ export class KubernetesSettingsComponent implements OnInit {
   }
 
   onSubmit(): void {
+    delete this.form.value.validate_host_path;
     const { enable_container_image_update: enableContainerImageUpdate, ...values } = this.form.value;
 
     this.showReInitConfirm(values).pipe(
