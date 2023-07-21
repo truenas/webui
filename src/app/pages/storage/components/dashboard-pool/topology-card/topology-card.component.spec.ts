@@ -58,7 +58,7 @@ describe('TopologyCardComponent', () => {
 
     spectator = createComponent({
       props: {
-        poolState: storage.poolState as Pool,
+        poolState: storage.poolState as unknown as Pool,
         disks: storage.disks.map((disk: Disk) => diskToDashboardDisk(disk)),
       },
     });

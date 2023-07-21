@@ -1,0 +1,27 @@
+{
+  "enabled": true,
+  "mockEnclosure": true,
+  "enclosureOptions": {
+    "controllerModel": "F60",
+    "expansionModels": [
+      "ES24"
+    ],
+    "dispersal": "default"
+  },
+  "systemProduct": "TRUENAS-F60-HA",
+  "diskOptions": {
+    "enabled": false,
+    "topologyOptions": {
+      "scenario": "uniform",
+      "layout": "MIRROR",
+      "diskSize": 12,
+      "width": 2,
+      "repeats": 1
+    },
+    "mockPools": false,
+    "unassignedOptions": {
+      "diskSize": 4,
+      "repeats": 4
+    }
+  }
+}

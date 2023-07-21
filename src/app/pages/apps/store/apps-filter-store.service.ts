@@ -175,7 +175,10 @@ export class AppsFilterStore extends ComponentStore<AppsFilterState> {
           };
         });
       },
-      error: () => of(this.handleError()),
+      error: () => {
+        this.handleError();
+        return of(undefined);
+      },
     });
   }
 

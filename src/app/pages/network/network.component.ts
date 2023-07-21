@@ -99,7 +99,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
     this.openInterfaceForEditFromRoute();
   }
 
-  handleSlideInClosed(slideInRef: IxSlideInRef<unknown, unknown>): void {
+  handleSlideInClosed(slideInRef: IxSlideInRef<unknown>): void {
     slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
       this.interfacesStore.loadInterfaces();
       this.checkInterfacePendingChanges();

@@ -12,10 +12,10 @@ import {
 } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
-export type DownloadKeyDialogParams = {
+export interface DownloadKeyDialogParams {
   id: number;
   name: string;
-};
+}
 
 @UntilDestroy()
 @Component({

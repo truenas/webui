@@ -11,7 +11,9 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import filesize from 'filesize';
 import _ from 'lodash';
-import { distinctUntilChanged, of, take } from 'rxjs';
+import {
+  distinctUntilChanged, of, take,
+} from 'rxjs';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, vdevLayoutOptions, VdevType } from 'app/enums/v-dev-type.enum';
 import { Option, SelectOption } from 'app/interfaces/option.interface';
@@ -59,7 +61,7 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
 
   constructor(
     private formBuilder: FormBuilder,
-    protected poolManagerStore: PoolManagerStore,
+    protected store: PoolManagerStore,
   ) {}
 
   get selectedDiskSize(): number {
@@ -86,6 +88,16 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.initControls();
+
+    this.store.startOver$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.form.reset({
+        layout: CreateVdevLayout.Stripe,
+        sizeAndType: [null, null],
+        width: null,
+        treatDiskSizeAsMinimum: false,
+        vdevsNumber: null,
+      });
+    });
   }
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
@@ -193,7 +205,7 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
 
   private updateLayout(): void {
     const values = this.form.value;
-    this.poolManagerStore.setAutomaticTopologyCategory(this.type, {
+    this.store.setAutomaticTopologyCategory(this.type, {
       layout: values.layout,
       diskSize: this.selectedDiskSize,
       diskType: this.selectedDiskType,
@@ -212,7 +224,7 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
     if (!isValueNull && !layoutOptions.some((option) => option.value === this.form.controls.layout.value)) {
       this.form.controls.layout.setValue(null, { emitEvent: false });
     }
-    this.poolManagerStore.getLayoutsForVdevType(this.type)
+    this.store.getLayoutsForVdevType(this.type)
       .pipe(
         take(1),
         untilDestroyed(this),
@@ -269,7 +281,7 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
     const minRequired = this.minDisks[this.form.controls.layout.value];
     let widthOptions: Option[];
 
-    if (length && minRequired) {
+    if (length && minRequired && length >= minRequired) {
       widthOptions = _.range(minRequired, length + 1).map((item) => ({
         label: `${item}`,
         value: item,
