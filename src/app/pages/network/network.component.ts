@@ -38,7 +38,6 @@ import { AppState } from 'app/store/index';
   styleUrls: ['./network.component.scss'],
 })
 export class NetworkComponent implements OnInit, OnDestroy {
-  protected summaryCall = 'network.general.summary' as const;
   formEvent$: Subject<CoreEvent>;
 
   isHaEnabled = false;
