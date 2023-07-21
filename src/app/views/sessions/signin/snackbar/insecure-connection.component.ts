@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
+import { WINDOW } from 'app/helpers/window.helper';
 
 @Component({
   selector: 'ix-insecure-connection',
@@ -7,4 +8,12 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InsecureConnectionComponent {
+  connectionText = '';
+
+  constructor(
+    @Inject(WINDOW) private window: Window,
+  ) {
+    const replacedUrl = this.window.location.href.replace('http://', 'https://');
+    this.connectionText = `You are using an insecure connection. <a href="${replacedUrl}">Switch to HTTPS</a> for secure access.`;
+  }
 }

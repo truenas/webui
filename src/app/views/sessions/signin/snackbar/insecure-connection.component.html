@@ -1,4 +1,2 @@
 <ix-icon name="info"></ix-icon>
-<span class="message">
-  {{ 'You are using an insecure connection. Switch to HTTPS for secure access.' | translate }}
-</span>
+<span class="message" [innerHTML]="connectionText | translate"></span>

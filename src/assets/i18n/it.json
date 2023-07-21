@@ -3856,7 +3856,6 @@
   "Yes": "",
   "Yes I understand the risks": "",
   "You are trying to open:<br>\n{url}<br><br>\nBecause HTTP to HTTPS redirect is enabled in settings your browser will force HTTPS connection for this URL.<br>\nThis may create issues if app does not support secure connections.<br>\n<br>\nYou can try opening app url in an incognito mode.<br>\nAlternatively you can disable redirect in Settings, clear browser cache and try again.": "",
-  "You are using an insecure connection. Switch to HTTPS for secure access.": "",
   "You can clear reporting database and start data collection immediately.": "",
   "You can join the <a href=\"https://www.truenas.com/newsletter/\" target=\"_blank\" class=\"external-link\">TrueNAS Newsletter</a> for monthly updates and latest developments.": "",
   "You can search both for local groups as well as groups from Active Directory.Press ENTER to separate entries.": "",
