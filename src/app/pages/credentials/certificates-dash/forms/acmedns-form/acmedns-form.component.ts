@@ -140,8 +140,8 @@ export class AcmednsFormComponent implements OnInit {
     this.dnsAuthenticatorList.forEach((auth) => {
       if (auth.key === event) {
         auth.variables.forEach((variable) => {
-          this.form.controls.attributes.controls[variable].enable();
           const formField = this.form.controls.attributes.controls[variable] as unknown as CustomUntypedFormField;
+          formField.enable();
           if (!formField.hidden$) {
             formField.hidden$ = new BehaviorSubject<boolean>(false);
           }
@@ -149,8 +149,8 @@ export class AcmednsFormComponent implements OnInit {
         });
       } else {
         auth.variables.forEach((variable) => {
-          this.form.controls.attributes.controls[variable].disable();
           const formField = this.form.controls.attributes.controls[variable] as unknown as CustomUntypedFormField;
+          formField.disable();
           if (!formField.hidden$) {
             formField.hidden$ = new BehaviorSubject<boolean>(false);
           }
