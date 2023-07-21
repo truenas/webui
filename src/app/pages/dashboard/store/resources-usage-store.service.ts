@@ -163,7 +163,7 @@ export class ResourcesUsageStore extends ComponentStore<ResourcesUsageState> {
         if (update?.virtual_memory) {
           const memStats: MemoryStatsEventData = { ...update.virtual_memory };
 
-          if (update.zfs && update.zfs.arc_size !== null) {
+          if (update.zfs?.arc_size !== null) {
             memStats.arc_size = update.zfs.arc_size;
           }
           this.setState((state) => {
