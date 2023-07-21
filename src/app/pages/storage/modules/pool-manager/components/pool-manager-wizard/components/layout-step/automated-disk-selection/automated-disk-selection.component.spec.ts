@@ -4,7 +4,7 @@ import { NgControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
+import { Subject, of } from 'rxjs';
 import { TiB } from 'app/constants/bytes.constant';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
@@ -20,6 +20,8 @@ import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/p
 describe('AutomatedDiskSelection', () => {
   let spectator: Spectator<AutomatedDiskSelectionComponent>;
   let loader: HarnessLoader;
+
+  const startOver$ = new Subject<void>();
 
   let layoutSelect: IxSelectHarness;
   let widthSelect: IxSelectHarness;
@@ -89,6 +91,7 @@ describe('AutomatedDiskSelection', () => {
       mockProvider(NgControl),
       mockProvider(FormBuilder),
       mockProvider(PoolManagerStore, {
+        startOver$,
         getLayoutsForVdevType: jest.fn((vdevType: VdevType) => {
           switch (vdevType) {
             case VdevType.Cache:
@@ -325,6 +328,32 @@ describe('AutomatedDiskSelection', () => {
       await treatDiskSizeAsMinimumCheckbox.setValue(true);
 
       expect(await widthSelect.getOptionLabels()).toStrictEqual(['1', '2', '3', '4', '5', '6', '7', '8', '9']);
+    });
+  });
+
+  it('resets form if Start Over confirmed', async () => {
+    await layoutSelect.setValue('Stripe');
+    await sizeSelect.setValue('12 TiB (HDD)');
+
+    const form = spectator.component.form;
+
+    form.patchValue({ treatDiskSizeAsMinimum: true });
+
+    expect(form.value).toStrictEqual({
+      layout: CreateVdevLayout.Stripe,
+      sizeAndType: [13194139533312, DiskType.Hdd],
+      treatDiskSizeAsMinimum: true,
+      width: null,
+    });
+
+    const store = spectator.inject(PoolManagerStore);
+    store.startOver$.next();
+
+    expect(form.value).toStrictEqual({
+      layout: CreateVdevLayout.Stripe,
+      sizeAndType: [null, null],
+      treatDiskSizeAsMinimum: false,
+      width: null,
     });
   });
 });

@@ -92,7 +92,10 @@ export class AppsStore extends ComponentStore<AppsState> {
           };
         });
       }),
-      catchError(() => of(this.handleError())),
+      catchError(() => {
+        this.handleError();
+        return of(undefined);
+      }),
     );
   });
 

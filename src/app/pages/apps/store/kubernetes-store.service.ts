@@ -71,7 +71,10 @@ export class KubernetesStore extends ComponentStore<KubernetesState> {
       }),
       switchMap(() => this.loadKubernetesStatus()),
       switchMap(() => this.listenForKubernetesStatusUpdates()),
-      catchError(() => of(this.handleError())),
+      catchError(() => {
+        this.handleError();
+        return of(undefined);
+      }),
     );
   });
 

@@ -89,8 +89,8 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
     return 100;
   }
 
-  isScanScrub(pool: Pool): boolean {
-    return pool.scan?.function === PoolScanFunction.Scrub;
+  isScanResilver(pool: Pool): boolean {
+    return pool.scan?.function === PoolScanFunction.Resilver;
   }
 
   isScanInProgress(pool: Pool): boolean {
