@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import {
   Observable, ObservableInput, Subscription, catchError, map, of, switchMap, tap,
@@ -44,6 +43,8 @@ export class KubernetesStore extends ComponentStore<KubernetesState> {
   }
 
   readonly initialize = this.effect((triggers$: Observable<void>) => {
+    this.listenForKubernetesStatusUpdates();
+
     return triggers$.pipe(
       tap(() => {
         this.setState((): KubernetesState => {
@@ -70,7 +71,6 @@ export class KubernetesStore extends ComponentStore<KubernetesState> {
         });
       }),
       switchMap(() => this.loadKubernetesStatus()),
-      switchMap(() => this.listenForKubernetesStatusUpdates()),
       catchError(() => {
         this.handleError();
         return of(undefined);
@@ -128,16 +128,15 @@ export class KubernetesStore extends ComponentStore<KubernetesState> {
     }
 
     this.kubernetesStatusSubscription = this.appsService.getKubernetesStatusUpdates().pipe(
-      map((_: ApiEvent<KubernetesStatusData>) => {
+      map((event: ApiEvent<KubernetesStatusData>) => {
         this.patchState((state: KubernetesState): KubernetesState => {
           return {
             ...state,
-            // kubernetesStatus: status,
-            // kubernetesStatusDescription: description,
+            kubernetesStatus: event.fields.status,
+            kubernetesStatusDescription: event.fields.description,
           };
         });
       }),
-      untilDestroyed(this),
     ).subscribe();
   }
 }
