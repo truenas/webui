@@ -30,7 +30,7 @@ import { DialogService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { AppSchemaService } from 'app/services/schema/app-schema.service';
 
-export type SlideInDataChartForm = { title?: string; releases?: ChartRelease[]; catalogApp?: CatalogApp };
+export interface SlideInDataChartForm { title?: string; releases?: ChartRelease[]; catalogApp?: CatalogApp }
 
 @UntilDestroy()
 @Component({
@@ -195,7 +195,7 @@ export class ChartFormComponent implements OnInit, OnDestroy {
 
   addFormControls(chartSchemaNode: ChartSchemaNode): void {
     this.subscription.add(
-      this.appSchemaService.addFormControls({
+      this.appSchemaService.getNewFormControlChangesSubscription({
         chartSchemaNode,
         formGroup: this.form,
         config: this.config,

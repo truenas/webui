@@ -26,7 +26,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 export class SelectPresetModalComponent implements OnInit {
   form = new FormGroup({
     presetName: new FormControl('', this.validatorsService.validateOnCondition(
-      (control) => control.parent && control.parent.get('usePreset').value,
+      (control) => control.parent?.get('usePreset')?.value,
       Validators.required,
     )),
     usePreset: new FormControl(true),

@@ -1,10 +1,14 @@
 <div class="root-container">
   <div class="main-container">
-    <ix-pool-manager-wizard (stepChanged)="onStepChanged($event)"></ix-pool-manager-wizard>
+    <ix-pool-manager-wizard
+      (stepChanged)="onStepChanged($event)"
+    ></ix-pool-manager-wizard>
   </div>
   <div class="sidebar">
     <div class="details-container">
-      <ix-configuration-preview *ngIf="hasConfigurationPreview"></ix-configuration-preview>
+      <ix-configuration-preview
+        *ngIf="hasConfigurationPreview"
+      ></ix-configuration-preview>
       <ix-inventory></ix-inventory>
     </div>
   </div>

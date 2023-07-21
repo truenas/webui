@@ -9,6 +9,12 @@ export enum MockStorageScenario {
   NoRedundancy = 'noRedundancy',
 }
 
+export enum MockDiskType {
+  'Hdd' = 'Hdd',
+  'Nvme' = 'Nvme',
+  'Ssd' = 'Ssd',
+}
+
 export enum EnclosureDispersalStrategy {
   Min = 'min',
   Max = 'max',

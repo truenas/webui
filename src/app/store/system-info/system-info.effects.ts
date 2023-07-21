@@ -47,7 +47,7 @@ export class SystemInfoEffects {
       }
 
       // HIGH AVAILABILITY SUPPORT
-      if ((profile.license && profile.license.system_serial_ha) || profile.system_product === 'BHYVE') {
+      if (profile.license?.system_serial_ha || profile.system_product === 'BHYVE') {
         features.HA = true;
         return of(systemFeaturesLoaded({ systemFeatures: features }));
       }

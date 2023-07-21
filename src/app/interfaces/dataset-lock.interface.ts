@@ -13,9 +13,9 @@ export interface DatasetUnlockResult {
   unlocked: string[];
 }
 
-export type DatasetUnlockParams = {
+export interface DatasetUnlockParams {
   datasets: { name: string; key?: string; passphrase: string }[];
   key_file: boolean;
   recursive: boolean;
   toggle_attachments?: boolean;
-};
+}

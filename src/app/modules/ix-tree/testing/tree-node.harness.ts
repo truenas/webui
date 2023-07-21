@@ -25,7 +25,7 @@ function getNodePredicate<T extends TreeNodeHarness>(
     );
 }
 
-export class TreeNodeHarness extends ContentContainerComponentHarness<string> {
+export class TreeNodeHarness extends ContentContainerComponentHarness {
   static hostSelector = '.ix-tree-node, .ix-nested-tree-node';
   _toggle = this.locatorForOptional('[treeNodeToggle]');
 

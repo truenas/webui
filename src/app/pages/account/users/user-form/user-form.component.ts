@@ -204,7 +204,7 @@ export class UserFormComponent implements OnInit {
     });
 
     this.form.controls.home.valueChanges.pipe(untilDestroyed(this)).subscribe((home) => {
-      if (home === defaultHomePath) {
+      if (home === defaultHomePath || this.editingUser?.immutable) {
         this.form.controls.home_mode.disable();
       } else {
         this.form.controls.home_mode.enable();
@@ -256,7 +256,7 @@ export class UserFormComponent implements OnInit {
       full_name: values.full_name,
       group: values.group,
       groups: values.groups,
-      home_mode: values.home_mode,
+      home_mode: this.homeModeOldValue !== values.home_mode ? values.home_mode : undefined,
       home_create: values.home_create,
       home: values.home,
       locked: values.password_disabled ? false : values.locked,
