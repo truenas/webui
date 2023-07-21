@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import { WINDOW } from 'app/helpers/window.helper';
 
 @Component({
@@ -12,8 +13,9 @@ export class InsecureConnectionComponent {
 
   constructor(
     @Inject(WINDOW) private window: Window,
+    private translate: TranslateService,
   ) {
     const replacedUrl = this.window.location.href.replace('http://', 'https://');
-    this.connectionText = `You are using an insecure connection. <a href="${replacedUrl}">Switch to HTTPS</a> for secure access.`;
+    this.connectionText = this.translate.instant('You are using an insecure connection. <a href="{url}">Switch to HTTPS</a> for secure access.', { url: replacedUrl });
   }
 }

@@ -265,6 +265,7 @@
   "Wizard iSCSI": "",
   "Workloads": "",
   "Wrong username or password. Please try again.": "",
+  "You are using an insecure connection. <a href=\"{url}\">Switch to HTTPS</a> for secure access.": "",
   "ZFS L2ARC read-cache that can be used with fast devices to accelerate read operations.": "",
   "form instead": "",
   "of": "",
