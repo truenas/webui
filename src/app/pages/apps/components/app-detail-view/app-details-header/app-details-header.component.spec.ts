@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
-import { mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
 import {
@@ -57,7 +57,9 @@ describe('AppDetailsHeaderComponent', () => {
       mockProvider(AuthService, {
         user$: of({ attributes: { appsAgreement: true } }),
       }),
-      mockWebsocket(),
+      mockWebsocket([
+        mockCall('auth.set_attribute'),
+      ]),
     ],
   });
 
@@ -79,6 +81,14 @@ describe('AppDetailsHeaderComponent', () => {
   });
 
   describe('install button', () => {
+    it('shows warning if user hasnt agreed to apps agreement', async () => {
+      const authService = spectator.inject(AuthService);
+      Object.defineProperty(authService, 'user$', { value: of({ attributes: { appsAgreement: false } }) });
+      const installButton = await loader.getHarness(MatButtonHarness.with({ text: 'Install' }));
+      await installButton.click();
+      expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
+    });
+
     it('shows an Install button that takes user to installation form', async () => {
       const installButton = await loader.getHarness(MatButtonHarness.with({ text: 'Install' }));
       await installButton.click();
