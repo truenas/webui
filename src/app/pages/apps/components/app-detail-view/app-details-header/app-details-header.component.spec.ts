@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
+import { mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
 import {
@@ -14,6 +15,8 @@ import {
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
+import { DialogService } from 'app/services';
+import { AuthService } from 'app/services/auth/auth.service';
 
 describe('AppDetailsHeaderComponent', () => {
   let spectator: Spectator<AppDetailsHeaderComponent>;
@@ -48,6 +51,13 @@ describe('AppDetailsHeaderComponent', () => {
         })),
       }),
       mockProvider(Router),
+      mockProvider(DialogService, {
+        confirm: jest.fn(() => of(true)),
+      }),
+      mockProvider(AuthService, {
+        user$: of({ attributes: { appsAgreement: true } }),
+      }),
+      mockWebsocket(),
     ],
   });
 

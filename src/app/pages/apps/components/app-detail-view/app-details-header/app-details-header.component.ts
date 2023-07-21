@@ -75,7 +75,7 @@ export class AppDetailsHeaderComponent implements OnInit {
     return this.authService.user$.pipe(
       take(1),
       switchMap((user) => {
-        return user.attributes.appsAggreement ? of(true) : this.dialogService.confirm({
+        return user.attributes.appsAgreement ? of(true) : this.dialogService.confirm({
           title: this.translate.instant('Information'),
           message: this.translate.instant(`Applications allow you to extend the functionality of the TrueNAS server beyond traditional Network Attached Storage (NAS) workloads, and as such are not covered by iXsystems software support contracts unless explicitly stated. Defective or malicious applications can lead to data loss or exposure, as well possible disruptions of core NAS functionality. 
 
@@ -85,7 +85,7 @@ export class AppDetailsHeaderComponent implements OnInit {
           disableClose: true,
         }).pipe(
           filter(Boolean),
-          switchMap(() => this.ws.call('auth.set_attribute', ['appsAggreement', true])),
+          switchMap(() => this.ws.call('auth.set_attribute', ['appsAgreement', true])),
           tap(() => this.authService.getLoggedInUserInformation()),
         );
       }),
