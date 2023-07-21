@@ -53,8 +53,6 @@ export class KubernetesStore extends ComponentStore<KubernetesState> {
           };
         });
       }),
-      switchMap(() => this.loadKubernetesStatus()),
-      switchMap(() => this.listenForKubernetesStatusUpdates()),
       switchMap(() => this.updatePoolAndKubernetesConfig()),
       switchMap((config) => {
         if (config.pool) {
@@ -71,6 +69,8 @@ export class KubernetesStore extends ComponentStore<KubernetesState> {
           };
         });
       }),
+      switchMap(() => this.loadKubernetesStatus()),
+      switchMap(() => this.listenForKubernetesStatusUpdates()),
       catchError(() => of(this.handleError())),
     );
   });
