@@ -117,8 +117,7 @@ def click_next_and_click_allow_to_trust_truenas(driver):
     assert wait_on_element(driver, 5, '//span[contains(text(),"you trust TrueNAS")]')
     assert wait_on_element(driver, 5, '//button[contains(.,"Allow")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(.,"Allow")]').click()
-    while len(driver.window_handles) != 1:
-        time.sleep(1)
+    assert rsc.wait_For_The_Tab_To_Close(driver) is True
     driver.switch_to.window(driver.window_handles[0])
 
 

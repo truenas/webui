@@ -86,7 +86,7 @@ def click_on_login_to_provider_authorization_box_will_appear(driver):
     assert wait_on_element(driver, 5, '//button[@id="cust_button_LOGIN TO PROVIDER"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="cust_button_LOGIN TO PROVIDER"]').click()
     driver.switch_to.window(driver.window_handles[1])
-    assert wait_on_element(driver, 10, '//h1[text()="Authorization"]')
+    assert wait_on_element(driver, 15, '//h1[text()="Authorization"]')
 
 
 @then(parsers.parse('click Proceed, then enter the login "{user_name}" and "{password}"'))
@@ -117,8 +117,7 @@ def click_proceed_then_enter_the_login_user_name_and_password(driver, user_name,
     time.sleep(1)
     assert wait_on_element(driver, 5, '//button[contains(.,"Next")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(.,"Next")]').click()
-    while len(driver.window_handles) != 1:
-        time.sleep(1)
+    assert rsc.wait_For_The_Tab_To_Close(driver) is True
     driver.switch_to.window(driver.window_handles[0])
 
 
