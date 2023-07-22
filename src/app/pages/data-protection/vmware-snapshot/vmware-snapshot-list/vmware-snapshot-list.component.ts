@@ -26,7 +26,9 @@ import { LayoutService } from 'app/services/layout.service';
 })
 export class VmwareSnapshotListComponent implements AfterViewInit, OnInit {
   @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
+  private filterString = '';
 
+  protected snapshots: VmwareSnapshot[] = [];
   dataProvider = new ArrayDataProvider<VmwareSnapshot>();
   columns = createTable<VmwareSnapshot>([
     textColumn({
@@ -81,11 +83,36 @@ export class VmwareSnapshotListComponent implements AfterViewInit, OnInit {
     this.getSnapshotsData();
   }
 
+  onListFiltered(query: string): void {
+    this.filterString = query.toLowerCase();
+    if (!this.snapshots.length) {
+      this.emptyType = EmptyType.NoPageData;
+      return;
+    }
+    if (this.filterString === '') {
+      this.dataProvider.setRows(this.snapshots);
+      this.cdr.markForCheck();
+      return;
+    }
+    const searchedRows = this.snapshots.filter((snapshot) => {
+      return snapshot.hostname.toLowerCase().includes(this.filterString)
+      || snapshot.datastore.toLowerCase().includes(this.filterString)
+      || snapshot.filesystem.toLowerCase().includes(this.filterString)
+      || snapshot.username.toLowerCase().includes(this.filterString);
+    });
+    if (!searchedRows.length) {
+      this.emptyType = EmptyType.NoSearchResults;
+    }
+    this.dataProvider.setRows(searchedRows);
+    this.cdr.markForCheck();
+  }
+
   getSnapshotsData(): void {
     this.isLoading = true;
     this.cdr.markForCheck();
     this.ws.call('vmware.query').pipe(
       tap((snapshots) => {
+        this.snapshots = snapshots;
         if (!snapshots.length) {
           this.emptyType = EmptyType.NoPageData;
         }
