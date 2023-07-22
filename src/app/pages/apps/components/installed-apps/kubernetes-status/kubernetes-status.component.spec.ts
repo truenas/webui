@@ -34,14 +34,29 @@ describe('KubernetesStatusComponent', () => {
     expect(spectator.query('.status-wrapper span')).toHaveText('Initializing Cluster');
   });
 
-  it('checks status for Error kubernetes status', () => {
-    setupTest(KubernetesStatus.Error);
+  it('checks status for Failed kubernetes status', () => {
+    setupTest(KubernetesStatus.Failed);
     expect(spectator.query('.status-wrapper span')).toHaveText('Error In Cluster');
   });
 
   it('checks status for Stopped kubernetes status', () => {
     setupTest(KubernetesStatus.Stopped);
     expect(spectator.query('.status-wrapper span')).toHaveText('Cluster Stopped');
+  });
+
+  it('checks status for Stopping kubernetes status', () => {
+    setupTest(KubernetesStatus.Stopping);
+    expect(spectator.query('.status-wrapper span')).toHaveText('Stopping Cluster');
+  });
+
+  it('checks status for Pending kubernetes status', () => {
+    setupTest(KubernetesStatus.Pending);
+    expect(spectator.query('.status-wrapper span')).toHaveText('Cluster Pending');
+  });
+
+  it('checks status for Unconfigured kubernetes status', () => {
+    setupTest(KubernetesStatus.Unconfigured);
+    expect(spectator.query('.status-wrapper span')).toHaveText('Cluster Not Configured');
   });
 
   it('hides kubernetes status when it is not set', () => {

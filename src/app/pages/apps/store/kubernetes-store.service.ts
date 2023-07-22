@@ -43,8 +43,6 @@ export class KubernetesStore extends ComponentStore<KubernetesState> {
   }
 
   readonly initialize = this.effect((triggers$: Observable<void>) => {
-    this.listenForKubernetesStatusUpdates();
-
     return triggers$.pipe(
       tap(() => {
         this.setState((): KubernetesState => {
@@ -111,6 +109,8 @@ export class KubernetesStore extends ComponentStore<KubernetesState> {
   loadKubernetesStatus(): Observable<KubernetesStatusData> {
     return this.appsService.getKubernetesStatus().pipe(
       tap(({ status, description }: KubernetesStatusData) => {
+        this.listenForKubernetesStatusUpdates();
+
         this.patchState((state: KubernetesState): KubernetesState => {
           return {
             ...state,
