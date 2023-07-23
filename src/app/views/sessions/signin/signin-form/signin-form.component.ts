@@ -22,6 +22,7 @@ import { SigninStore } from 'app/views/sessions/signin/store/signin.store';
 })
 export class SigninFormComponent {
   hasTwoFactor = false;
+  showSecurityWarning = false;
 
   form = this.formBuilder.group({
     username: ['', Validators.required],
@@ -40,7 +41,11 @@ export class SigninFormComponent {
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     @Inject(WINDOW) private window: Window,
-  ) { }
+  ) {
+    if (this.window.location.protocol !== 'https:') {
+      this.showSecurityWarning = true;
+    }
+  }
 
   login(): void {
     this.signinStore.setLoadingState(true);
@@ -73,9 +78,6 @@ export class SigninFormComponent {
     ).subscribe({
       next: () => {
         this.signinStore.handleSuccessfulLogin();
-        if (this.window.location.protocol !== 'https:') {
-          this.signinStore.showSecurityWarning();
-        }
       },
       error: (error) => {
         this.errorHandler.handleWsFormError(error, this.form);
