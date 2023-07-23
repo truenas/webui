@@ -9,12 +9,11 @@ import { Observable, ReplaySubject, Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { Enclosure, EnclosureElement, EnclosureView } from 'app/interfaces/enclosure.interface';
 import { CoreEvent } from 'app/interfaces/events';
-import { EnclosureCanvasEvent, EnclosureLabelChangedEvent } from 'app/interfaces/events/enclosure-events.interface';
+import { EnclosureCanvasEvent } from 'app/interfaces/events/enclosure-events.interface';
 import { ErrorMessage } from 'app/pages/system/view-enclosure/interfaces/error-message.interface';
 import { ViewConfig } from 'app/pages/system/view-enclosure/interfaces/view.config';
 import { EnclosureState, EnclosureStore } from 'app/pages/system/view-enclosure/stores/enclosure-store.service';
 import { WebSocketService } from 'app/services';
-import { CoreService } from 'app/services/core-service/core.service';
 import { DisksUpdateService } from 'app/services/disks-update.service';
 import { LayoutService } from 'app/services/layout.service';
 import { AppState } from 'app/store';
@@ -148,7 +147,6 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
   }
 
   constructor(
-    private core: CoreService,
     public router: Router,
     private ws: WebSocketService,
     private store$: Store<AppState>,
@@ -193,11 +191,6 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
       if (this.systemProfile) {
         this.extractVisualizations();
       }
-    });
-
-    core.register({ observerClass: this, eventName: 'EnclosureLabelChanged' }).pipe(untilDestroyed(this)).subscribe((evt: EnclosureLabelChangedEvent) => {
-      this.systemState.enclosures[evt.data.index].label = evt.data.label;
-      this.events.next(evt);
     });
 
     this.store$.pipe(waitForSystemInfo, untilDestroyed(this))
@@ -255,7 +248,6 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.disksUpdateService.removeSubscriber(this.disksUpdateSubscriptionId);
-    this.core.unregister({ observerClass: this });
     this.destroyed$.next(true);
     this.destroyed$.complete();
   }

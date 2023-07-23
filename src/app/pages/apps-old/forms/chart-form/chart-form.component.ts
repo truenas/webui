@@ -195,7 +195,7 @@ export class ChartFormComponent implements OnInit, OnDestroy {
 
   addFormControls(chartSchemaNode: ChartSchemaNode): void {
     this.subscription.add(
-      this.appSchemaService.addFormControls({
+      this.appSchemaService.getNewFormControlChangesSubscription({
         chartSchemaNode,
         formGroup: this.form,
         config: this.config,

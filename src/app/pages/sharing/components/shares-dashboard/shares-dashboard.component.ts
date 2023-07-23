@@ -144,7 +144,7 @@ export class SharesDashboardComponent implements AfterViewInit {
     }
   }
 
-  handleSlideInClosed(slideInRef: IxSlideInRef<unknown, unknown>, modalType: unknown): void {
+  handleSlideInClosed(slideInRef: IxSlideInRef<unknown>, modalType: unknown): void {
     slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
       switch (modalType) {
         case SmbFormComponent:

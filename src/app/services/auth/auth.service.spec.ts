@@ -68,7 +68,7 @@ describe('AuthService', () => {
     spectator = createService();
 
     testScheduler = new TestScheduler((actual, expected) => {
-      return expect(actual).toEqual(expected);
+      expect(actual).toEqual(expected);
     });
   });
 
