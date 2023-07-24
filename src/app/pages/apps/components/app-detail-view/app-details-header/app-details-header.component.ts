@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit,
+  ChangeDetectionStrategy, Component, Input,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -22,18 +22,15 @@ import { AuthService } from 'app/services/auth/auth.service';
   styleUrls: ['./app-details-header.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AppDetailsHeaderComponent implements OnInit {
+export class AppDetailsHeaderComponent {
   @Input() app: AvailableApp;
   @Input() isLoading$: Observable<boolean>;
 
-  protected wasPoolSet = false;
-
   constructor(
+    public kubernetesStore: KubernetesStore,
     private router: Router,
     private matDialog: MatDialog,
-    private cdr: ChangeDetectorRef,
     private installedAppsStore: InstalledAppsStore,
-    private kubernetesStore: KubernetesStore,
     private authService: AuthService,
     private dialogService: DialogService,
     private translate: TranslateService,
@@ -44,10 +41,6 @@ export class AppDetailsHeaderComponent implements OnInit {
     const splittedText = this.app?.app_readme?.split('</h1>');
     const readyHtml = splittedText[1] || splittedText[0];
     return readyHtml?.replace(/<[^>]*>/g, '');
-  }
-
-  ngOnInit(): void {
-    this.checkIfPoolSet();
   }
 
   navigateToAllInstalledPage(): void {
@@ -103,22 +96,8 @@ export class AppDetailsHeaderComponent implements OnInit {
 
   showChoosePoolModal(): void {
     const dialog = this.matDialog.open(SelectPoolDialogComponent);
-    dialog.afterClosed().pipe(untilDestroyed(this)).subscribe((success) => {
-      if (!success) {
-        return;
-      }
-      this.wasPoolSet = true;
-      this.cdr.markForCheck();
+    dialog.afterClosed().pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.navigateToInstallPage();
     });
-  }
-
-  private checkIfPoolSet(): void {
-    this.kubernetesStore.selectedPool$
-      .pipe(untilDestroyed(this))
-      .subscribe((pool) => {
-        this.wasPoolSet = Boolean(pool);
-        this.cdr.markForCheck();
-      });
   }
 }
