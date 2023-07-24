@@ -55,6 +55,9 @@ describe('SelectPoolDialogComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
+
+    const kubernetesStore = spectator.inject(KubernetesStore);
+    jest.spyOn(kubernetesStore, 'updatePoolAndKubernetesConfig').mockReturnValue(of({}));
   });
 
   it('loads pools available in system and shows them in the dropdown', async () => {
