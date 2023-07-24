@@ -29,6 +29,7 @@ const uncachedUser: DsUncachedUser = {
   attributes: {
     preferences: {} as Preferences,
     dashState: [] as DashConfigItem[],
+    appsAgreement: true,
   },
 };
 

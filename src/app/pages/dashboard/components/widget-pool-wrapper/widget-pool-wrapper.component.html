@@ -1,0 +1,6 @@
+<ix-widget-pool
+  *ngIf="!(isLoading$ | async)"
+  [poolState]="poolState$ | async"
+  [volumeData]="volumeData$ | async"
+  (back)="onMobileBack()"
+></ix-widget-pool>

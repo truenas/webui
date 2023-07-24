@@ -72,6 +72,15 @@
                 <mat-option *ngIf="getDisks().length >= 5 && group === 'data'" value="raidz3" ixTest="raidz3">
                   {{ 'Raid-z3' | translate }}
                 </mat-option>
+                <mat-option *ngIf="getDisks().length >= 2 && group === 'data'" value="draid1" ixTest="draid1">
+                  {{ 'dRaid1' | translate }}
+                </mat-option>
+                <mat-option *ngIf="getDisks().length >= 3 && group === 'data'" value="draid2" ixTest="draid2">
+                  {{ 'dRaid2' | translate }}
+                </mat-option>
+                <mat-option *ngIf="getDisks().length >= 4 && group === 'data'" value="draid3" ixTest="draid3">
+                  {{ 'dRaid3' | translate }}
+                </mat-option>
               </mat-select>
             </mat-form-field>
             <div class="vdev-estimated">

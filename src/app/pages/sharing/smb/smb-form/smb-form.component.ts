@@ -300,14 +300,22 @@ export class SmbFormComponent implements OnInit {
   }
 
   /**
-   *
    * @returns Observable<void> to allow setting warnings for values changes once default or previous preset is applied
    */
   setupAndApplyPurposePresets(): Observable<void> {
     return this.ws.call('sharing.smb.presets').pipe(
       switchMap((presets) => {
-        this.presets = presets;
-        const options = Object.entries(presets).map(([presetName, preset]) => ({
+        const nonClusterPresets = Object.entries(presets).reduce(
+          (acc, [presetName, preset]) => {
+            if (!preset.cluster) {
+              acc[presetName] = preset;
+            }
+            return acc;
+          },
+          {} as SmbPresets,
+        );
+        this.presets = nonClusterPresets;
+        const options = Object.entries(nonClusterPresets).map(([presetName, preset]) => ({
           label: preset.verbose_name,
           value: presetName,
         }));

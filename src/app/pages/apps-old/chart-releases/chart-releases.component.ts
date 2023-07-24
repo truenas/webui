@@ -1,5 +1,5 @@
 import {
-  Component, Output, EventEmitter, OnInit, AfterViewInit, ViewChild, TemplateRef,
+  Component, Output, EventEmitter, OnInit,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -39,7 +39,6 @@ import { ChartUpgradeDialogConfig } from 'app/pages/apps-old/interfaces/chart-up
 import { RedirectService, DialogService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { LayoutService } from 'app/services/layout.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -48,9 +47,7 @@ import { WebSocketService } from 'app/services/ws.service';
   templateUrl: './chart-releases.component.html',
   styleUrls: ['../applications.component.scss'],
 })
-export class ChartReleasesComponent implements AfterViewInit, OnInit {
-  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
-
+export class ChartReleasesComponent implements OnInit {
   @Output() updateTab = new EventEmitter<ApplicationUserEvent>();
   @Output() switchTab = new EventEmitter<string>();
 
@@ -85,7 +82,6 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit {
     private slideInService: IxSlideInService,
     protected ws: WebSocketService,
     private redirect: RedirectService,
-    private layoutService: LayoutService,
     private snackbar: SnackbarService,
     private router: Router,
   ) { }
@@ -110,10 +106,6 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit {
 
   ngOnInit(): void {
     this.addChartReleaseChangedEventListener();
-  }
-
-  ngAfterViewInit(): void {
-    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
   onSearch(query: string): void {

@@ -26,6 +26,7 @@ import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxDynamicFormModule } from 'app/modules/ix-dynamic-form/ix-dynamic-form.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { LayoutModule } from 'app/modules/layout/layout.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { TerminalModule } from 'app/modules/terminal/terminal.module';
@@ -166,6 +167,7 @@ import { KubernetesStatusComponent } from './components/installed-apps/kubernete
     LightboxModule,
     MarkdownModule,
     IxTable2Module,
+    LayoutModule,
   ],
   providers: [
     AppsStore,

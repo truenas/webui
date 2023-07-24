@@ -50,9 +50,7 @@ export default {
   zvol_readonly_tooltip: T('Set to prevent the zvol from being modified.'),
 
   zvol_sparse_placeholder: T('Sparse'),
-  zvol_sparse_tooltip: T('Enable to use <a\
- href="https://searchstorage.techtarget.com/definition/thin-provisioning"\
- target="_blank">thin provisioning</a>\
+  zvol_sparse_tooltip: T('Enable to use thin provisioning\
  where disk space for this volume is allocated <b>‘on demand’</b> as new writes are received.\
  Use caution when enabling this feature, as writes can fail when the pool is low on space.'),
 

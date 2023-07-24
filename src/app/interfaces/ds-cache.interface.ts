@@ -12,6 +12,7 @@ export interface DsUncachedUser {
   attributes: {
     preferences: Preferences;
     dashState: DashConfigItem[];
+    appsAgreement: boolean;
   };
 }
 

@@ -1,5 +1,5 @@
 import {
-  Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild, AfterViewInit, TemplateRef,
+  Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild, AfterViewInit,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSort, Sort } from '@angular/material/sort';
@@ -29,8 +29,6 @@ import { LayoutService } from 'app/services/layout.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DockerImagesListComponent implements OnInit, AfterViewInit {
-  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
-
   dataSource = new MatTableDataSource<ContainerImage>([]);
 
   displayedColumns = ['select', 'id', 'repo_tags', 'size', 'update', 'actions'];
@@ -90,7 +88,6 @@ export class DockerImagesListComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.dataSource.sort = this.sort;
-    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
   onSearch(query: string): void {
