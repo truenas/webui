@@ -105,7 +105,6 @@ export class ManualDiskSelectionStore extends ComponentStore<ManualDiskSelection
         ...newState.vdevs,
         {
           disks: [],
-          rawSize: 0,
           // TODO: Get rid of UUIDs?
           uuid: UUID.UUID(),
         },
