@@ -215,7 +215,10 @@ export class ChartReleasesComponent implements AfterViewInit, OnInit {
             this.showLoadStatus(EmptyType.Errors);
           } else {
             this.appService.getChartReleases().pipe(
-              catchError(() => of(this.showLoadStatus(EmptyType.Errors))),
+              catchError(() => {
+                this.showLoadStatus(EmptyType.Errors);
+                return of(undefined);
+              }),
               untilDestroyed(this),
             ).subscribe((charts) => {
               if (!charts) {

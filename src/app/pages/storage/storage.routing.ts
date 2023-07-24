@@ -2,6 +2,7 @@ import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { PoolsDashboardComponent } from 'app/pages/storage/components/pools-dashboard/pools-dashboard.component';
+import { AddVdevsComponent } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/add-vdevs.component';
 import { ManagerComponent } from './components/manager/manager.component';
 
 export const routes: Routes = [
@@ -36,7 +37,7 @@ export const routes: Routes = [
       },
       {
         path: ':poolId/add-vdevs',
-        component: ManagerComponent,
+        component: AddVdevsComponent,
         data: { title: T('Add Vdevs to Pool'), breadcrumb: T('Add Vdevs to Pool') },
       },
       {

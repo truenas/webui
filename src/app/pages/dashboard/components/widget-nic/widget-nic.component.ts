@@ -1,5 +1,5 @@
 import {
-  Component, AfterViewInit, Input, ViewChild, ElementRef, OnChanges,
+  Component, AfterViewInit, Input, ViewChild, ElementRef, OnInit, ChangeDetectorRef, ChangeDetectionStrategy,
 } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -8,15 +8,13 @@ import {
   tween,
   styler,
 } from 'popmotion';
-import { Subject } from 'rxjs';
-import { filter, throttleTime } from 'rxjs/operators';
+import { filter, map, throttleTime } from 'rxjs/operators';
 import { LinkState, NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
-import { CoreEvent } from 'app/interfaces/events';
-import { NetworkTrafficEvent } from 'app/interfaces/events/network-traffic-event.interface';
+import { deepCloneState } from 'app/helpers/state-select.helper';
 import { NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
-import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { DashboardNicState } from 'app/pages/dashboard/components/dashboard/dashboard.component';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
+import { ResourcesUsageStore } from 'app/pages/dashboard/store/resources-usage-store.service';
 
 interface NetTraffic {
   sent: number;
@@ -46,10 +44,11 @@ enum Path {
     '../widget/widget.component.scss',
     './widget-nic.component.scss',
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class WidgetNicComponent extends WidgetComponent implements AfterViewInit, OnChanges {
-  @Input() stats: Subject<CoreEvent>;
-  @Input() nicState: DashboardNicState;
+export class WidgetNicComponent extends WidgetComponent implements AfterViewInit, OnInit {
+  @Input() nic: string;
+  protected nicState: DashboardNicState;
   @ViewChild('carousel', { static: true }) carousel: ElementRef<HTMLElement>;
   @ViewChild('carouselparent', { static: false }) carouselParent: ElementRef<HTMLElement>;
   traffic: NetTraffic;
@@ -99,27 +98,39 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
   constructor(
     public router: Router,
     public translate: TranslateService,
+    private resourcesUsageStore$: ResourcesUsageStore,
+    private cdr: ChangeDetectorRef,
   ) {
     super(translate);
   }
 
-  ngOnChanges(changes: IxSimpleChanges<this>): void {
-    if (changes.nicState) {
+  ngOnInit(): void {
+    this.resourcesUsageStore$.nics$.pipe(
+      map((nics) => nics.find((nic) => nic.name === this.nic)),
+      filter(Boolean),
+      deepCloneState(),
+      untilDestroyed(this),
+    ).subscribe((nicState) => {
+      this.nicState = nicState.state;
       this.title = this.currentSlide === '0' ? this.defaultTitle : this.nicState.name;
-    }
+      this.cdr.markForCheck();
+    });
   }
 
   ngAfterViewInit(): void {
-    this.stats.pipe(
-      filter((evt) => evt.name === 'NetTraffic_' + this.nicState.name),
+    this.resourcesUsageStore$.interfacesUsage$.pipe(
+      map((nicUsageUpdate) => nicUsageUpdate[this.nic]),
+      filter(Boolean),
       throttleTime(500),
+      deepCloneState(),
       untilDestroyed(this),
-    ).subscribe((evt: NetworkTrafficEvent) => {
+    ).subscribe((nicUpdate) => {
       this.traffic = {
-        sent: evt.data.sent_bytes_rate,
-        received: evt.data.received_bytes_rate,
-        linkState: evt.data.link_state,
+        sent: nicUpdate.sent_bytes_rate,
+        received: nicUpdate.received_bytes_rate,
+        linkState: nicUpdate.link_state,
       };
+      this.cdr.markForCheck();
     });
   }
 

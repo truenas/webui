@@ -79,7 +79,7 @@ const initialTopology = Object.values(VdevType).reduce((topology, value) => {
       hasCustomDiskSelection: false,
     } as PoolManagerTopologyCategory,
   };
-}, {} as PoolManagerState['topology']);
+}, {} as PoolManagerTopology);
 
 export const initialState: PoolManagerState = {
   isLoading: false,

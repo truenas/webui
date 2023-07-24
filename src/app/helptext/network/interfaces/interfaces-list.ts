@@ -9,8 +9,7 @@ export default {
   pending_checkin_dialog_text: T('Network interface changes have been temporarily applied for testing. Keep changes permanently?\
  Changes are automatically reverted after the testing delay if they are not permanently applied.'),
 
-  pending_checkin_text: T('Network interface settings have been temporarily changed for testing. The settings will revert to the previous configuration after'),
-  pending_checkin_text_2: T('seconds unless SAVE CHANGES is chosen to make them permanent.'),
+  pending_checkin_text: T('Network interface settings have been temporarily changed for testing. The settings will revert to the previous configuration after {x} seconds unless SAVE CHANGES is chosen to make them permanent.'),
 
   commit_changes_title: T('Test Changes'),
   commit_changes_warning: T('Test network interface changes? Network connectivity can be interrupted.'),

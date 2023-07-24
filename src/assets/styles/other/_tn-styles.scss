@@ -26,8 +26,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .chats-wrap .conversations-hold .single-conversation.me .conversation-msg,
   .ngx-datatable .datatable-footer .datatable-pager .pager .pages.active a,
   .fileupload-drop-zone.dz-file-over,
-  .toolbar-avatar.online > .status-dot,
-  .cal-open-day-events {
+  .toolbar-avatar.online > .status-dot {
     background: map-get($md-primary, 500) !important;
     color: #fff !important;
   }
@@ -47,24 +46,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   .breadcrumb-bar {
     @include variable(color, --fg1, $fg1, !important);
-  }
-
-  .mat-bg-accent {
-    background-color: map-get($md-accent, 500);
-    color: black;
-  }
-
-  .mat-bg-warn {
-    @include variable(background-color, --red, $red);
-    color: white;
-  }
-
-  .mat-color-accent {
-    @include variable(color, --accent, $accent);
-  }
-
-  .mat-color-warn {
-    @include variable(color, --warn, $warn);
   }
 
   .mat-sidenav-container {
@@ -115,6 +96,14 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     background-color: rgba(0, 0, 0, 0.1);
   }
 
+  .mat-step-header .mat-step-icon:not(.mat-step-icon-state-error) {
+    background-color: var(--alt-bg1);
+  }
+
+  .mat-step-header .mat-step-icon.mat-step-icon-selected {
+    background-color: var(--primary);
+  }
+
   .mat-bg-primary,
   .mat-raised-button.mat-primary,
   .mat-fab.mat-primary,
@@ -124,8 +113,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .ngx-datatable .datatable-footer .datatable-pager .pager .pages.active a,
   .fileupload-drop-zone.dz-file-over,
   .toolbar-avatar.online > .status-dot,
-  .cal-open-day-events,
-  .mat-step-header .mat-step-icon:not(.mat-step-icon-state-error) {
+  .mat-step-header .mat-step-icon:not(.mat-step-icon-state-error):not(.mat-step-icon-state-number):not(.mat-step-icon-state-edit) {
     @include variable(background, --primary, $primary, !important);
     @include variable(color, --primary-txt, $primary-txt, !important);
   }
@@ -190,7 +178,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   .sidebar-panel .mat-nav-list .mat-mdc-list-item,
   .app-user .app-user-name,
-  .text-muted,
   .mat-expansion-panel-header-title,
   .mat-expansion-panel-header-description,
   .mat-mdc-list .mat-mdc-list-item,
@@ -533,12 +520,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     margin-bottom: 15px;
   }
 
-  // For some items on VM Wizard Hard Disks page
-  #disk_radio {
-    max-width: 220px;
-  }
-  // ---------------
-
   // Vertically align header-footer items on datatables
   .datatable-header-cell {
     position: relative;
@@ -851,11 +832,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     opacity: 0.12;
   }
 
-  // Bring theme color to tab underline on Theme Preview
-  #theme-preview .mat-ink-bar {
-    @include variable(background-color, --primary, $primary !important);
-  }
-
   // Bring theme color to small icon buttons
   .mat-icon-button.mat-primary {
     @include variable(color, --primary, $primary !important);
@@ -873,15 +849,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   .ngx-datatable .datatable-header .datatable-header-cell .sort-btn {
     vertical-align: -8px;
-  }
-
-  // Adjustments to checkboxes and header labels on unique tables
-  ix-services .datatable-body-cell .mat-mdc-checkbox {
-    bottom: 7px !important;
-  }
-
-  ix-services .datatable-header-cell-label {
-    margin-left: 15px;
   }
 
   .mat-mdc-progress-bar-fill::after {
@@ -904,10 +871,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   datatable-selection > .empty-row {
     color: var(--alt-fg1);
-  }
-
-  #update-info {
-    color: var(--accent);
   }
 
   .mat-simple-snackbar-action {
@@ -964,11 +927,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   #acme_directory_uri mat-form-field {
     width: 50%;
-  }
-
-  ix-certificate-acme-add #authenticators {
-    position: relative;
-    top: -18px;
   }
 
   mat-radio-group .radio-option-tooltip {
@@ -1161,14 +1119,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   // End slide-in menu ////////////////
-
-  // Remove indentation for form elements on vertical stepper
-  .jw-modal-body ix-entity-wizard {
-    mat-card {
-      margin: 18px 0;
-      padding: 0;
-    }
-  }
 
   a[href*='//'] {
     color: var(--primary);

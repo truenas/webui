@@ -30,6 +30,7 @@ describe('SelectPoolDialogComponent', () => {
     providers: [
       mockProvider(KubernetesStore, {
         updatePoolAndKubernetesConfig: jest.fn(() => of()),
+        updateSelectedPool: jest.fn(() => of()),
       }),
       mockProvider(ApplicationsService, {
         getKubernetesConfig: jest.fn(() => of({})),

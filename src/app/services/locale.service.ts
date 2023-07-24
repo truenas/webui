@@ -11,7 +11,7 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
 @UntilDestroy()
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class LocaleService {
   t24 = T('(24 Hours)');
   timezone: string;

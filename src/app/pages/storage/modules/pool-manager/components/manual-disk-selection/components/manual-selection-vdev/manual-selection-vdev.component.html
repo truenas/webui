@@ -65,12 +65,12 @@
         class="drag-hint"
         [label]="'Drag & drop disks to add or remove them' | translate"
       ></ix-label>
-      <ix-label *ngIf="vdevErrorMessage" class="error" [label]="vdevErrorMessage"></ix-label>
-      <ix-label
-        *ngIf="mixesDisksOfDifferentSizes"
-        class="error"
-        [label]="'Mixing disks of different sizes in a vdev is not recommended.' | translate"
-      ></ix-label>
+      <div *ngIf="vdevErrorMessage" class="error">
+        {{ vdevErrorMessage | translate }}
+      </div>
+      <div *ngIf="mixesDisksOfDifferentSizes" class="error">
+        {{ 'Mixing disks of different sizes in a vdev is not recommended.' | translate }}
+      </div>
     </div>
   </mat-card-content>
 </mat-card>

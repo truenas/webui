@@ -5,8 +5,10 @@ import _ from 'lodash';
 import {
   Observable, combineLatest, map,
 } from 'rxjs';
-import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
+import { CreateVdevLayout, TopologyItemType, VdevType } from 'app/enums/v-dev-type.enum';
 import helptext from 'app/helptext/storage/volumes/manager/manager';
+import { Pool } from 'app/interfaces/pool.interface';
+import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
 import { getNonUniqueSerialDisksWarning } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/pool-warnings/get-non-unique-serial-disks';
 import { DispersalStrategy } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/2-enclosure-wizard-step/enclosure-wizard-step.component';
 import { PoolCreationSeverity } from 'app/pages/storage/modules/pool-manager/enums/pool-creation-severity';
@@ -19,26 +21,37 @@ import { waitForSystemFeatures } from 'app/store/system-info/system-info.selecto
 
 @Injectable()
 export class PoolManagerValidationService {
+  private existingPool: Pool = null;
+
   constructor(
     protected store: PoolManagerStore,
     protected systemStore$: Store<AppState>,
     protected translate: TranslateService,
+    private addVdevsStore: AddVdevsStore,
   ) {}
 
   exportedPoolsWarning = helptext.manager_exportedSelectedDisksWarning;
 
   readonly poolCreationErrors$ = combineLatest([
+    this.addVdevsStore.pool$,
     this.store.name$,
     this.store.topology$,
     this.store.enclosureSettings$,
-    this.store.topology$.pipe(map((topology) => topology[VdevType.Data].vdevs.length > 0)),
     combineLatest([
       this.store.hasMultipleEnclosuresAfterFirstStep$,
       this.systemStore$.pipe(waitForSystemFeatures, map((features) => features.enclosure)),
     ]),
   ])
     .pipe(
-      map(([name, topology, enclosure, hasDataVdevs, [hasMultipleEnclosures, hasEnclosureSupport]]) => {
+      map(([
+        pool, name, topology, enclosure,
+        [hasMultipleEnclosures, hasEnclosureSupport],
+      ]) => {
+        if (pool) {
+          this.existingPool = _.cloneDeep(pool);
+        }
+        const hasAtleastOneVdev = Object.values(VdevType).some((vdevType) => topology[vdevType]?.vdevs.length > 0);
+        const hasDataVdevs = topology[VdevType.Data].vdevs.length > 0;
         const errors: PoolCreationError[] = [];
 
         if (!name) {
@@ -61,7 +74,35 @@ export class PoolManagerValidationService {
           });
         }
 
-        if (!hasDataVdevs) {
+        if (this.existingPool) {
+          let oldDataLayoutType = this.existingPool.topology.data[0].type;
+          if (oldDataLayoutType === TopologyItemType.Disk
+            && !this.existingPool.topology.data[0].children?.length
+          ) {
+            oldDataLayoutType = TopologyItemType.Stripe;
+          }
+
+          if (hasDataVdevs
+            && topology[VdevType.Data].layout
+            !== oldDataLayoutType as unknown as CreateVdevLayout
+          ) {
+            errors.push({
+              text: this.translate.instant(
+                'Mixing Vdev layout types is not allowed. This pool already has some {type} Data Vdevs. You can only add vdevs of {type} type.',
+                { type: oldDataLayoutType },
+              ),
+              severity: PoolCreationSeverity.Error,
+              step: PoolCreationWizardStep.Data,
+            });
+          }
+          if (!hasAtleastOneVdev) {
+            errors.push({
+              text: this.translate.instant('At least 1 vdev is required to make an update to the pool.'),
+              severity: PoolCreationSeverity.Error,
+              step: PoolCreationWizardStep.Review,
+            });
+          }
+        } else if (!hasDataVdevs) {
           errors.push({
             text: this.translate.instant('At least 1 data VDEV is required.'),
             severity: PoolCreationSeverity.Error,
@@ -71,7 +112,12 @@ export class PoolManagerValidationService {
 
         const nonEmptyTopologyCategories = this.filterNonEmptyCategories(topology);
 
-        nonEmptyTopologyCategories.forEach(([typologyCategoryType, typologyCategory]) => {
+        nonEmptyTopologyCategories.forEach((
+          [typologyCategoryType, typologyCategory],
+        ) => {
+          if (this.existingPool) {
+            return;
+          }
           if (
             [VdevType.Dedup, VdevType.Log, VdevType.Special, VdevType.Data].includes(typologyCategoryType)
             && typologyCategory.vdevs.length >= 1 && typologyCategory.layout === CreateVdevLayout.Stripe

@@ -6,7 +6,7 @@
     [hidden]="isLoading"
     (click)="onToggle(row)"
   >
-    <td *ngFor="let column of columns; index as idx">
+    <td *ngFor="let column of displayedColumns; index as idx">
       <ng-container *ngIf="getTemplateByColumnIndex(idx) as template">
         <ng-container
           *ngTemplateOutlet="template; context: { $implicit: row }"
