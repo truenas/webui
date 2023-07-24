@@ -6,6 +6,7 @@ import { DirectoryServicesState } from 'app/interfaces/directory-services-state.
 import { FailoverDisabledReasonEvent } from 'app/interfaces/failover-disabled-reasons.interface';
 import { Group } from 'app/interfaces/group.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { KubernetesStatusData } from 'app/interfaces/kubernetes-status-data.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
 import { PoolScan } from 'app/interfaces/resilver-job.interface';
@@ -37,4 +38,5 @@ export interface ApiEventDirectory {
   'container.image.query': { response: ContainerImage };
   'reporting.realtime': { response: ReportingRealtimeUpdate };
   'smart.test.progress': { response: SmartTestProgressUpdate };
+  'kubernetes.state': { response: KubernetesStatusData };
 }
