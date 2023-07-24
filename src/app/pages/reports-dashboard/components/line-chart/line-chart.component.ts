@@ -6,7 +6,9 @@ import { utcToZonedTime } from 'date-fns-tz';
 import Dygraph, { dygraphs } from 'dygraphs';
 // eslint-disable-next-line
 import smoothPlotter from 'dygraphs/src/extras/smooth-plotter.js';
+import { KiB, MiB } from 'app/constants/bytes.constant';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
+import { ReportingGraphName } from 'app/enums/reporting-graph-name.enum';
 import { ReportingData } from 'app/interfaces/reporting.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { Theme } from 'app/interfaces/theme.interface';
@@ -82,13 +84,9 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
     }
 
     if (this.isReversed) {
-      this.data.legend = this.data.legend.reverse();
-      (this.data.data as number[][]).forEach((row, i) => {
-        (this.data.data as number[][])[i] = row.slice().reverse();
+      (this.data.data as number[][]).forEach((_, i) => {
+        (this.data.data as number[][])[i].shift();
       });
-      this.data.aggregations.min = this.data.aggregations.min.slice().reverse();
-      this.data.aggregations.max = this.data.aggregations.max.slice().reverse();
-      this.data.aggregations.mean = this.data.aggregations.mean.slice().reverse();
     }
 
     const data = this.makeTimeAxis(this.data);
@@ -205,7 +203,11 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
         dateStr = list.join(':');
         const date = new Date(dateStr);
 
-        item[0] = date;
+        if (rd.name === ReportingGraphName.Cpu) {
+          item.unshift(date);
+        } else {
+          item[0] = date;
+        }
         rows.push(item);
       }
 
@@ -229,14 +231,25 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
     // if(this.report.units){ return this.report.units; }
     // Figures out from the label what the unit is
     let units = label;
-    if (label.includes('%')) {
-      units = '%';
-    } else if (label.includes('°')) {
-      units = '°';
-    } else if (label.toLowerCase().includes('bytes')) {
-      units = 'bytes';
-    } else if (label.toLowerCase().includes('bits')) {
-      units = 'bits';
+    switch (true) {
+      case label.includes('%'):
+        units = '%';
+        break;
+      case label.includes('°'):
+        units = '°';
+        break;
+      case label === 'Mebibytes/s':
+        units = 'mebibytes';
+        break;
+      case label === 'Kibibytes/s':
+        units = 'kibibytes';
+        break;
+      case label.toLowerCase().includes('bytes'):
+        units = 'bytes';
+        break;
+      case label.toLowerCase().includes('bits'):
+        units = 'bits';
+        break;
     }
 
     if (typeof units === 'undefined') {
@@ -252,6 +265,12 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
     if (typeof value !== 'number') { return value; }
 
     switch (units.toLowerCase()) {
+      case 'Mebibytes/s':
+        output = this.convertKmgt(value * MiB, units.toLowerCase(), fixed, prefixRules);
+        break;
+      case 'Kibibytes/s':
+        output = this.convertKmgt(value * KiB, units.toLowerCase(), fixed, prefixRules);
+        break;
       case 'bits':
       case 'bytes':
         output = this.convertKmgt(value, units.toLowerCase(), fixed, prefixRules);

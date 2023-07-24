@@ -76,7 +76,6 @@
               [chartId]="chartId"
               [chartColors]="chartColors"
               [data]="data"
-              [stacked]="report.stacked"
               [title]="report.title"
               [timezone]="timezone"
               [labelY]="report.vertical_label"
@@ -150,7 +149,7 @@
               </tr>
             </table>
           </div>
-          <ng-container *ngIf="report?.stacked_show_total && legendData?.stackedTotalHTML">
+          <ng-container *ngIf="legendData?.stackedTotalHTML">
             <h4 class="legend-timestamp" fxFlex="32px" fxLayoutGap="8px">
               <strong>{{ 'Total' | translate }}:</strong>
               <span>{{ legendData.stackedTotalHTML }}</span>

@@ -17,4 +17,6 @@ export enum ReportingGraphName {
   ZfsArcRatio = 'arcratio',
   ZfsArcResult = 'arcresult',
   ZfsArcSize = 'arcsize',
+  ZfsArcRate = 'arcrate',
+  ZfsArcActualRate = 'arcactualrate',
 }
