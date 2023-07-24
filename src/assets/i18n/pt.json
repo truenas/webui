@@ -2125,6 +2125,7 @@
   "Required unless <b>Enable password login</b> is <i>No</i>. Passwords cannot contain a <b>?</b>.": "",
   "Reserved for Dataset": "",
   "Reserved for Dataset & Children": "",
+  "Reset Fields in Step": "",
   "Reset Layout": "",
   "Reset Zoom": "",
   "Reset configuration": "",

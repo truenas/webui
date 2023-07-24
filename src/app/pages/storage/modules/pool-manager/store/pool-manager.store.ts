@@ -98,6 +98,7 @@ export const initialState: PoolManagerState = {
 @Injectable()
 export class PoolManagerStore extends ComponentStore<PoolManagerState> {
   readonly startOver$ = new Subject<void>();
+  readonly resetStep$ = new Subject<VdevType>();
   readonly isLoading$ = this.select((state) => state.isLoading);
   readonly name$ = this.select((state) => state.name);
   readonly encryption$ = this.select((state) => state.encryption);
@@ -185,6 +186,11 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     this.startOver$.next();
     this.setState({ ...initialState, isLoading: true });
     this.loadStateInitialData().pipe(take(1)).subscribe();
+  }
+
+  resetStep(vdevType: VdevType): void {
+    this.resetStep$.next(vdevType);
+    this.updateTopologyCategory(vdevType, initialTopology[vdevType]);
   }
 
   readonly initialize = this.effect((trigger$) => {

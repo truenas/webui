@@ -55,4 +55,8 @@ export class LogWizardStepComponent implements OnInit {
   goToReviewStep(): void {
     this.goToLastStep.emit();
   }
+
+  resetStep(): void {
+    this.store.resetStep(VdevType.Log);
+  }
 }
