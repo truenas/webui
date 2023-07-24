@@ -104,8 +104,7 @@ def click_authorize_and_then_click_grant_access_to_box(driver):
     """click Authorize and then click Grant Access to Box."""
     assert wait_on_element(driver, 5, '//button[@id="consent_accept_button"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="consent_accept_button"]').click()
-    while len(driver.window_handles) != 1:
-        time.sleep(1)
+    assert rsc.wait_For_The_Tab_To_Close(driver) is True
     driver.switch_to.window(driver.window_handles[0])
 
 
