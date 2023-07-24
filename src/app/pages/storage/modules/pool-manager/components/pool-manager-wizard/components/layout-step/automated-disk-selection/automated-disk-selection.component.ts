@@ -102,7 +102,7 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
 
   resetToDefaults(): void {
     this.form.reset({
-      layout: null, // CreateVdevLayout.Stripe,
+      layout: null,
       sizeAndType: [null, null],
       width: null,
       treatDiskSizeAsMinimum: false,
