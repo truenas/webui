@@ -59,6 +59,28 @@ describe('AppDetailsHeaderComponent', () => {
       ]),
     ],
   });
+  describe('no pool set up', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        props: {
+          isLoading$: of(false),
+          app: application,
+        },
+        providers: [
+          mockProvider(KubernetesStore, {
+            selectedPool$: of(null),
+          }),
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+    it('shows Setup Pool To Install instead if pool is not set', async () => {
+      const setupPool = await loader.getHarness(MatButtonHarness.with({ text: 'Setup Pool To Install' }));
+      await setupPool.click();
+
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(SelectPoolDialogComponent);
+    });
+  });
 
   describe('pool is set up', () => {
     beforeEach(() => {
@@ -84,6 +106,13 @@ describe('AppDetailsHeaderComponent', () => {
     });
 
     describe('install button', () => {
+      it('shows warning if user hasnt agreed to apps agreement', async () => {
+        const authService = spectator.inject(AuthService);
+        Object.defineProperty(authService, 'user$', { value: of({ attributes: { appsAgreement: false } }) });
+        const installButton = await loader.getHarness(MatButtonHarness.with({ text: 'Install' }));
+        await installButton.click();
+        expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
+      });
       it('shows an Install button that takes user to installation form', async () => {
         const installButton = await loader.getHarness(MatButtonHarness.with({ text: 'Install' }));
         await installButton.click();
@@ -133,46 +162,6 @@ describe('AppDetailsHeaderComponent', () => {
       it('shows app description', () => {
         expect(spectator.query('.app-description')).toHaveText('Find aliens without leaving your home.');
       });
-    });
-  });
-
-  describe('no pool set up', () => {
-    beforeEach(() => {
-      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      spectator = createComponent({
-        props: {
-          isLoading$: of(false),
-          app: application,
-        },
-        providers: [
-          mockProvider(KubernetesStore, {
-            selectedPool$: of(null),
-          }),
-        ],
-      });
-    });
-    it('shows Setup Pool To Install instead if pool is not set', async () => {
-      const setupPool = await loader.getHarness(MatButtonHarness.with({ text: 'Setup Pool To Install' }));
-      await setupPool.click();
-
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(SelectPoolDialogComponent);
-    });
-  });
-
-  describe('install button', () => {
-    it('shows warning if user hasnt agreed to apps agreement', async () => {
-      const authService = spectator.inject(AuthService);
-      Object.defineProperty(authService, 'user$', { value: of({ attributes: { appsAgreement: false } }) });
-      const installButton = await loader.getHarness(MatButtonHarness.with({ text: 'Install' }));
-      await installButton.click();
-      expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
-    });
-
-    it('shows an Install button that takes user to installation form', async () => {
-      const installButton = await loader.getHarness(MatButtonHarness.with({ text: 'Install' }));
-      await installButton.click();
-
-      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/apps', 'available', 'Truenas', 'stable', 'SETI@home', 'install']);
     });
   });
 });
