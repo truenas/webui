@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { Subject } from 'rxjs';
 import { VdevType } from 'app/enums/v-dev-type.enum';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import {
@@ -12,10 +13,13 @@ import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/p
 describe('CustomLayoutAppliedComponent', () => {
   let spectator: Spectator<CustomLayoutAppliedComponent>;
   let loader: HarnessLoader;
+  const resetStep$ = new Subject<VdevType>();
+
   const createComponent = createComponentFactory({
     component: CustomLayoutAppliedComponent,
     providers: [
       mockProvider(PoolManagerStore, {
+        resetStep$,
         resetTopologyCategory: jest.fn(),
       }),
     ],
@@ -50,9 +54,9 @@ describe('CustomLayoutAppliedComponent', () => {
     expect(spectator.component.manualSelectionClicked.emit).toHaveBeenCalled();
   });
 
-  it('calls resetTopologyCategory when Reset button is pressed', async () => {
-    const resetButton = await loader.getHarness(MatButtonHarness.with({ text: 'Reset' }));
-    await resetButton.click();
+  it('calls resetTopologyCategory when Reset button is pressed', () => {
+    const store = spectator.inject(PoolManagerStore);
+    store.resetStep$.next(spectator.component.type);
 
     expect(spectator.inject(PoolManagerStore).resetTopologyCategory).toHaveBeenCalledWith(VdevType.Data);
   });
