@@ -6,8 +6,6 @@ import {
   QueryList,
   ViewChild,
   ViewChildren,
-  AfterViewInit,
-  TemplateRef,
 } from '@angular/core';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -23,7 +21,6 @@ import { GroupFormComponent } from 'app/pages/account/groups/group-form/group-fo
 import { groupPageEntered, groupRemoved } from 'app/pages/account/groups/store/group.actions';
 import { selectGroupState, selectGroupsTotal, selectGroups } from 'app/pages/account/groups/store/group.selectors';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { LayoutService } from 'app/services/layout.service';
 import { AppState } from 'app/store';
 import { builtinGroupsToggled } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -34,9 +31,8 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
   styleUrls: ['./group-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class GroupListComponent implements OnInit, AfterViewInit {
+export class GroupListComponent implements OnInit {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
-  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   displayedColumns: string[] = ['group', 'gid', 'builtin', 'sudo_commands', 'smb', 'actions'];
   dataSource = new MatTableDataSource<Group>([]);
@@ -74,7 +70,6 @@ export class GroupListComponent implements OnInit, AfterViewInit {
     private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,
-    private layoutService: LayoutService,
     private emptyService: EmptyService,
   ) { }
 
@@ -82,10 +77,6 @@ export class GroupListComponent implements OnInit, AfterViewInit {
     this.store$.dispatch(groupPageEntered());
     this.getPreferences();
     this.getGroups();
-  }
-
-  ngAfterViewInit(): void {
-    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
   getPreferences(): void {
