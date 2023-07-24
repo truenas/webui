@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
 import {
@@ -14,6 +15,8 @@ import {
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
+import { DialogService } from 'app/services';
+import { AuthService } from 'app/services/auth/auth.service';
 
 describe('AppDetailsHeaderComponent', () => {
   let spectator: Spectator<AppDetailsHeaderComponent>;
@@ -45,7 +48,38 @@ describe('AppDetailsHeaderComponent', () => {
         })),
       }),
       mockProvider(Router),
+      mockProvider(DialogService, {
+        confirm: jest.fn(() => of(true)),
+      }),
+      mockProvider(AuthService, {
+        user$: of({ attributes: { appsAgreement: true } }),
+      }),
+      mockWebsocket([
+        mockCall('auth.set_attribute'),
+      ]),
     ],
+  });
+  describe('no pool set up', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        props: {
+          isLoading$: of(false),
+          app: application,
+        },
+        providers: [
+          mockProvider(KubernetesStore, {
+            selectedPool$: of(null),
+          }),
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+    it('shows Setup Pool To Install instead if pool is not set', async () => {
+      const setupPool = await loader.getHarness(MatButtonHarness.with({ text: 'Setup Pool To Install' }));
+      await setupPool.click();
+
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(SelectPoolDialogComponent);
+    });
   });
 
   describe('pool is set up', () => {
@@ -72,6 +106,13 @@ describe('AppDetailsHeaderComponent', () => {
     });
 
     describe('install button', () => {
+      it('shows warning if user hasnt agreed to apps agreement', async () => {
+        const authService = spectator.inject(AuthService);
+        Object.defineProperty(authService, 'user$', { value: of({ attributes: { appsAgreement: false } }) });
+        const installButton = await loader.getHarness(MatButtonHarness.with({ text: 'Install' }));
+        await installButton.click();
+        expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
+      });
       it('shows an Install button that takes user to installation form', async () => {
         const installButton = await loader.getHarness(MatButtonHarness.with({ text: 'Install' }));
         await installButton.click();
@@ -121,31 +162,6 @@ describe('AppDetailsHeaderComponent', () => {
       it('shows app description', () => {
         expect(spectator.query('.app-description')).toHaveText('Find aliens without leaving your home.');
       });
-    });
-  });
-
-  describe('no pool set up', () => {
-    beforeEach(() => {
-      spectator = createComponent({
-        props: {
-          isLoading$: of(false),
-          app: application,
-        },
-        providers: [
-          mockProvider(KubernetesStore, {
-            selectedPool$: of(null),
-          }),
-        ],
-      });
-
-      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    });
-
-    it('shows Setup Pool To Install instead if pool is not set', async () => {
-      const setupPool = await loader.getHarness(MatButtonHarness.with({ text: 'Setup Pool To Install' }));
-      await setupPool.click();
-
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(SelectPoolDialogComponent);
     });
   });
 });
