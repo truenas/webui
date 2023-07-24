@@ -56,7 +56,7 @@ export default {
  Service For Unix 3.0 or 3.5, and <i>sfu20</i> is for Service For Unix 2.0.'),
   activedirectory_enable_tooltip: T('Enable the Active Directory service.\
  The first time this option is set, the Domain Account Password must be entered.'),
-  activedirectory_netbiosname_tooltip: T('Netbios Name of this NAS. This name must differ from\
+  activedirectory_netbiosname_tooltip: T('NetBIOS Name of this NAS. This name must differ from\
  the <i>Workgroup</i> name and be no greater than 15 characters.'),
   activedirectory_netbiosalias_tooltip: T('Alternative names that SMB clients can use when\
  connecting to this NAS. Can be no greater than 15 characters.'),

@@ -704,7 +704,7 @@ export class AppSchemaService {
       formField.disable();
     }
 
-    if (subquestion && (!isNew || isParentImmutable || schema.immutable || subquestion.schema.immutable)) {
+    if (subquestion && (isParentImmutable || schema.immutable || subquestion.schema.immutable)) {
       formField.disable();
     }
   }

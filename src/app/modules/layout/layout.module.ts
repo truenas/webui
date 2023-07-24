@@ -16,7 +16,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { AlertsModule } from 'app/modules/alerts/alerts.module';
-import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { AdminLayoutComponent } from 'app/modules/layout/components/admin-layout/admin-layout.component';
@@ -37,6 +36,7 @@ import { TruecommandModule } from 'app/modules/truecommand/truecommand.module';
 import { JobsIndicatorComponent } from './components/topbar/jobs-indicator/jobs-indicator.component';
 import { PowerMenuComponent } from './components/topbar/power-menu/power-menu.component';
 import { UserMenuComponent } from './components/topbar/user-menu/user-menu.component';
+import { PageHeaderDirective } from './directives/page-header.directive';
 
 @NgModule({
   imports: [
@@ -60,7 +60,6 @@ import { UserMenuComponent } from './components/topbar/user-menu/user-menu.compo
     MatToolbarModule,
     TruecommandModule,
     MatBadgeModule,
-    EntityModule,
     PageHeaderModule,
     TestIdModule,
   ],
@@ -77,6 +76,7 @@ import { UserMenuComponent } from './components/topbar/user-menu/user-menu.compo
     ConsoleFooterComponent,
     DirectoryServicesIndicatorComponent,
     JobsIndicatorComponent,
+    PageHeaderDirective,
   ],
   exports: [
     ChangePasswordDialogComponent,
@@ -85,6 +85,7 @@ import { UserMenuComponent } from './components/topbar/user-menu/user-menu.compo
     NavigationComponent,
     CopyrightLineComponent,
     TopbarComponent,
+    PageHeaderDirective,
   ],
 })
 export class LayoutModule {}

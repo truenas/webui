@@ -51,7 +51,6 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { LayoutService } from 'app/services/layout.service';
 import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
@@ -83,7 +82,6 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
   @ViewChild('newEntityTable', { static: false }) entitytable: TemplateRef<void>;
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
-  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   dataSourceStreamer$ = new Subject<Row[]>();
   dataSource$: Observable<Row[]> = this.dataSourceStreamer$.asObservable();
@@ -203,7 +201,6 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     protected store$: Store<AppState>,
     protected matDialog: MatDialog,
     public changeDetectorRef: ChangeDetectorRef,
-    protected layoutService: LayoutService,
     private snackbar: SnackbarService,
     private errorHandler: ErrorHandlerService,
   ) {
@@ -351,11 +348,6 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
         this.dataSource.data = data;
         this.changeDetectorRef.detectChanges();
       });
-
-    // If actionsConfig was disabled, don't show the default toolbar. like the Table is in a Tab.
-    if (!this.conf.disableActionsConfig) {
-      this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
-    }
   }
 
   // Filter the table by the filter string.

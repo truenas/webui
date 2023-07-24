@@ -70,7 +70,7 @@ export class TextLimiterDirective implements AfterViewInit, OnChanges {
   }
 
   truncate(str: string): string {
-    if (str.length > this.threshold) {
+    if (str?.length > this.threshold) {
       const truncated = str.substring(0, Number(this.threshold) - 3);
       return truncated + '...';
     }

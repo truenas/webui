@@ -32,11 +32,15 @@ import { WidgetMemoryComponent } from 'app/pages/dashboard/components/widget-mem
 import { WidgetNetworkComponent } from 'app/pages/dashboard/components/widget-network/widget-network.component';
 import { WidgetNicComponent } from 'app/pages/dashboard/components/widget-nic/widget-nic.component';
 import { WidgetPoolComponent } from 'app/pages/dashboard/components/widget-pool/widget-pool.component';
+import { WidgetPoolWrapperComponent } from 'app/pages/dashboard/components/widget-pool-wrapper/widget-pool-wrapper.component';
 import { WidgetStorageComponent } from 'app/pages/dashboard/components/widget-storage/widget-storage.component';
 import {
   SimpleFailoverBtnComponent,
 } from 'app/pages/dashboard/components/widget-sys-info/simple-failover-btn.component';
 import { WidgetSysInfoComponent } from 'app/pages/dashboard/components/widget-sys-info/widget-sys-info.component';
+import { DashboardStorageStore } from 'app/pages/dashboard/store/dashboard-storage-store.service';
+import { DashboardStore } from 'app/pages/dashboard/store/dashboard-store.service';
+import { ResourcesUsageStore } from 'app/pages/dashboard/store/resources-usage-store.service';
 import { routing } from './dashboard.routing';
 
 @NgModule({
@@ -72,6 +76,7 @@ import { routing } from './dashboard.routing';
     DashboardFormComponent,
     WidgetSysInfoComponent,
     WidgetNicComponent,
+    WidgetPoolWrapperComponent,
     WidgetCpuComponent,
     WidgetMemoryComponent,
     WidgetHelpComponent,
@@ -80,6 +85,11 @@ import { routing } from './dashboard.routing';
     WidgetNetworkComponent,
     WidgetStorageComponent,
     SimpleFailoverBtnComponent,
+  ],
+  providers: [
+    ResourcesUsageStore,
+    DashboardStorageStore,
+    DashboardStore,
   ],
 })
 export class DashboardModule {
