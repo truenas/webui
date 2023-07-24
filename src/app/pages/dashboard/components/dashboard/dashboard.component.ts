@@ -141,6 +141,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
         this.isLoaded = !isLoading;
       },
     });
+    this.generateDefaultConfig();
   }
 
   startListeners(): void {
@@ -251,6 +252,24 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
     if (startX !== endX) {
       carousel.set('x', endX);
     }
+  }
+
+  private generateDefaultConfig(): void {
+    const conf: DashConfigItem[] = [
+      {
+        name: WidgetName.SystemInformation,
+        rendered: true,
+        id: '0',
+      },
+    ];
+
+    conf.push({ name: WidgetName.Help, rendered: true });
+    conf.push({ name: WidgetName.Cpu, rendered: true, id: conf.length.toString() });
+    conf.push({ name: WidgetName.Memory, rendered: true, id: conf.length.toString() });
+    conf.push({ name: WidgetName.Storage, rendered: true, id: conf.length.toString() });
+    conf.push({ name: WidgetName.Network, rendered: true, id: conf.length.toString() });
+
+    this.availableWidgets = conf;
   }
 
   volumeDataFromConfig(item: DashConfigItem): VolumesData | VolumeData {
