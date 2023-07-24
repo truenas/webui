@@ -40,6 +40,7 @@ export enum SmbPresetType {
 }
 
 export interface SmbPreset {
+  cluster: boolean;
   verbose_name: string;
   params: Partial<SmbShare>;
 }

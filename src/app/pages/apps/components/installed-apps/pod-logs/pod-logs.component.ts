@@ -130,9 +130,10 @@ export class PodLogsComponent implements OnInit {
         title: 'Choose log',
         customSubmit: (logsFormValueDialog: LogsDialogFormValue) => {
           if (isDownload) {
-            return this.download(logsFormValueDialog);
+            this.download(logsFormValueDialog);
+            return;
           }
-          return this.onChooseLogs(logsFormValueDialog);
+          this.onChooseLogs(logsFormValueDialog);
         },
       },
     });

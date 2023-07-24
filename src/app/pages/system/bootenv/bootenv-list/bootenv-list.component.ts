@@ -99,7 +99,7 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
     this.dataSource.sort = this.sort;
   }
 
-  handleSlideInClosed(slideInRef: IxSlideInRef<unknown, unknown>): void {
+  handleSlideInClosed(slideInRef: IxSlideInRef<unknown>): void {
     slideInRef.slideInClosed$.pipe(
       filter((value) => value === true),
       untilDestroyed(this),

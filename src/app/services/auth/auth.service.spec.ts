@@ -29,6 +29,7 @@ const uncachedUser: DsUncachedUser = {
   attributes: {
     preferences: {} as Preferences,
     dashState: [] as DashConfigItem[],
+    appsAgreement: true,
   },
 };
 
@@ -68,7 +69,7 @@ describe('AuthService', () => {
     spectator = createService();
 
     testScheduler = new TestScheduler((actual, expected) => {
-      return expect(actual).toEqual(expected);
+      expect(actual).toEqual(expected);
     });
   });
 

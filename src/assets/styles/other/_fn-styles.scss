@@ -6,32 +6,6 @@
  *
 */
 
-/*
-# Table of contents
-## Globals
-## Common
-## Loader
-## Third pirty adjust
-    Scroll Bar
-    Data table
-## Main Sidenav
-## Collapsed Sidenav
-## Pages
-    Sign in
-    sign up
-    forgot
-    lockscreen
-## Forms
-## Inbox
-## Calendar
-## Chats
-## Gallery
-## Plans & Pricings
-## Users
-## Media queries
-*/
-
-
 /*---- Globals -----*/
 html {
   font-size: 87.5% /* 14px */;
@@ -203,20 +177,6 @@ samp {
   box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
 }
 
-.mat-blue {
-  background: #247ba0;
-  color: #fefefe;
-}
-
-.mat-indigo {
-  background-color: #3f51b5 !important;
-}
-
-.mat-brown {
-  background-color: #785548 !important;
-  color: #fefefe;
-}
-
 .text-center {
   text-align: center;
 }
@@ -227,10 +187,6 @@ samp {
 
 .text-muted {
   color: rgba(0, 0, 0, 0.54) !important;
-}
-
-.text-sm {
-  font-size: 0.813rem;
 }
 
 .material-icons.icon-sm {
@@ -353,12 +309,6 @@ samp {
 .chart {
   display: block;
   width: 100%;
-}
-
-.form-error-msg {
-  color: #f44336;
-  display: block;
-  padding: 5px 0;
 }
 
 .ct-legend {
@@ -778,10 +728,6 @@ input:-webkit-autofill {
 .cal-event-action .material-icons {
   margin: 6px;
   vertical-align: sub;
-}
-
-.cal-open-day-events {
-  box-shadow: none !important;
 }
 
 /*---- Chats -----*/

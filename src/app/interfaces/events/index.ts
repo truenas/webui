@@ -1,4 +1,3 @@
-import { EnclosureLabelChangedEvent } from 'app/interfaces/events/enclosure-events.interface';
 import { LabelDrivesEvent } from 'app/interfaces/events/label-drives-event.interface';
 import { NetworkInterfacesChangedEvent } from 'app/interfaces/events/network-interfaces-changed-event.interface';
 import { NetworkTrafficEvent } from 'app/interfaces/events/network-traffic-event.interface';
@@ -13,5 +12,4 @@ export type CoreEvent =
   | UntypedEvent
   | NetworkInterfacesChangedEvent
   | LabelDrivesEvent
-  | EnclosureLabelChangedEvent
   | NetworkTrafficEvent;

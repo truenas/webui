@@ -1,7 +1,5 @@
 <form [formGroup]="form" (keyup.enter)="hasTwoFactor ? loginWithOtp() : login()">
-  <ng-container
-    *ngIf="!hasTwoFactor"
-  >
+  <ng-container *ngIf="!hasTwoFactor">
     <ix-input
       ixAutofocus
       formControlName="username"
@@ -20,6 +18,9 @@
       [label]="'Password' | translate"
       [required]="true"
     ></ix-input>
+
+    <ix-insecure-connection *ngIf="showSecurityWarning"></ix-insecure-connection>
+
     <button
       class="submit-button"
       mat-button
@@ -32,9 +33,7 @@
       {{ 'Log In' | translate }}
     </button>
   </ng-container>
-  <ng-container
-    *ngIf="hasTwoFactor"
-  >
+  <ng-container *ngIf="hasTwoFactor">
     <ix-input
       formControlName="otp"
       prefixIcon="phonelink"
@@ -42,6 +41,9 @@
       [label]="'Two-Factor Authentication Code' | translate"
       [required]="true"
     ></ix-input>
+
+    <ix-insecure-connection *ngIf="showSecurityWarning"></ix-insecure-connection>
+
     <button
       class="submit-button"
       mat-button
@@ -61,6 +63,5 @@
       [disabled]="isLoading$ | async"
       (click)="cancelOtpLogin()"
     >{{ 'Cancel' | translate }}</button>
-    
   </ng-container>
 </form>

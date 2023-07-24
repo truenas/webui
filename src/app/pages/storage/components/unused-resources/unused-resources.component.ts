@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Subscription } from 'rxjs';
+import { Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
 import { Pool } from 'app/interfaces/pool.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -48,9 +48,15 @@ export class UnusedResourcesComponent implements OnInit {
 
   private subscribeToDiskQuery(): void {
     this.unsubscribeFromDiskQuery();
-    this.diskQuerySubscription = this.ws.subscribe('disk.query').pipe(untilDestroyed(this)).subscribe(() => {
-      this.updateUnusedDisks();
-    });
+    this.diskQuerySubscription = this.ws.subscribe('disk.query')
+      .pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        this.updateUnusedDisks();
+      });
   }
 
   private unsubscribeFromDiskQuery(): void {

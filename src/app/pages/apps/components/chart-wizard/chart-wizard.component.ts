@@ -451,7 +451,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
 
   private addFormControls(chartSchemaNode: ChartSchemaNode): void {
     this.subscription.add(
-      this.appSchemaService.addFormControls({
+      this.appSchemaService.getNewFormControlChangesSubscription({
         chartSchemaNode,
         formGroup: this.form,
         config: this.config,

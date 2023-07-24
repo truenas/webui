@@ -241,7 +241,7 @@ export class MockEnclosure {
     this.enclosureInit();
   }
 
-  addDiskToSlot(diskName: string, slotNumber: number): MockEnclosure {
+  addDiskToSlot(diskName: string, slotNumber: number): this {
     if (!this.data) return this;
 
     const element: EnclosureElement = { ...this.slotTemplate };
@@ -254,7 +254,7 @@ export class MockEnclosure {
     return this;
   }
 
-  addDiskToNextEmptySlot(diskName: string): MockEnclosure {
+  addDiskToNextEmptySlot(diskName: string): this {
     const emptySlots = this.getEmptySlots().map((element: EnclosureElement) => element.slot);
     if (emptySlots.length === 0) {
       console.warn('No open slots available in enclosure');
@@ -264,7 +264,7 @@ export class MockEnclosure {
     return this;
   }
 
-  removeDiskFromSlot(diskName: string, slotNumber: number): MockEnclosure {
+  removeDiskFromSlot(diskName: string, slotNumber: number): this {
     const element: EnclosureElement = { ...this.emptySlotTemplate };
     element.slot = slotNumber;
     const elementData: EnclosureElementData = { ...this.emptySlotTemplate.data };
