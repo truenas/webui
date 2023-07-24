@@ -138,6 +138,8 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
             break;
           case ReportType.Zfs:
             condition = [
+              ReportingGraphName.ZfsArcActualRate,
+              ReportingGraphName.ZfsArcRate,
               ReportingGraphName.ZfsArcSize,
               ReportingGraphName.ZfsArcRatio,
               ReportingGraphName.ZfsArcResult,

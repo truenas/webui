@@ -42,7 +42,6 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
   @Input() report: Report;
   @Input() title: string;
   @Input() timezone: string;
-  @Input() stacked = false;
 
   @Input() legends?: string[];
   @Input() type = 'line';
@@ -67,6 +66,14 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   private utils: ThemeUtils = new ThemeUtils();
   private _data: ReportingData;
+
+  get stacked(): boolean {
+    return [
+      ReportingGraphName.Cpu,
+      ReportingGraphName.Swap,
+      ReportingGraphName.ZfsArcResult,
+    ].includes(this.data?.name as ReportingGraphName);
+  }
 
   constructor(
     private core: CoreService,
