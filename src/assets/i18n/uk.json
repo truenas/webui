@@ -18,7 +18,7 @@
   "Alternatively, you can start by configuring VDEVs in the wizard first and then opening Manual selection to make adjustments.": "",
   "An instance of this app already installed. Click the badge to see installed apps.": "",
   "Application Metadata": "",
-  "Applications allow you to extend the functionality of the TrueNAS server beyond traditional Network Attached Storage (NAS) workloads, and as such are not covered by iXsystems software support contracts unless explicitly stated. Defective or malicious applications can lead to data loss or exposure, as well possible disruptions of core NAS functionality. \n\n          iXsystems makes no warranty of any kind as to the suitability or safety of using applications. Bug reports in which applications are accessing the same data and filesystem paths as core NAS sharing functionality may be closed without further investigation.": "",
+  "Applications allow you to extend the functionality of the TrueNAS server beyond traditional Network Attached Storage (NAS) workloads, and as such are not covered by iXsystems software support contracts unless explicitly stated. Defective or malicious applications can lead to data loss or exposure, as well possible disruptions of core NAS functionality.\n\n          iXsystems makes no warranty of any kind as to the suitability or safety of using applications. Bug reports in which applications are accessing the same data and filesystem paths as core NAS sharing functionality may be closed without further investigation.": "",
   "Apps (Old)": "",
   "Are you sure you want to delete catalog <b>\"{name}\"</b>?": "",
   "Are you sure you want to delete cronjob <b>\"{name}\"</b>?": "",
