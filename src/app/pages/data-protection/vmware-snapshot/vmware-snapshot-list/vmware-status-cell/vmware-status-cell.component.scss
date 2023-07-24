@@ -1,0 +1,25 @@
+:host {
+  border: 2px solid transparent;
+  border-radius: 20px;
+  box-sizing: border-box;
+  display: flex;
+  font-weight: bold;
+  gap: 6px;
+  justify-content: center;
+  padding: 3px 8px;
+
+  &.success {
+    border-color: var(--green);
+    color: var(--green);
+  }
+
+  &.pending {
+    border-color: var(--yellow);
+    color: var(--yellow);
+  }
+
+  &.error {
+    border-color: var(--red);
+    color: var(--red);
+  }
+}

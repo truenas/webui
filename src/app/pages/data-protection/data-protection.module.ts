@@ -7,6 +7,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatStepperModule } from '@angular/material/stepper';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
@@ -42,6 +43,7 @@ import {
 import { SmartTaskFormComponent } from 'app/pages/data-protection/smart-task/smart-task-form/smart-task-form.component';
 import { VmwareSnapshotFormComponent } from 'app/pages/data-protection/vmware-snapshot/vmware-snapshot-form/vmware-snapshot-form.component';
 import { VmwareSnapshotListComponent } from 'app/pages/data-protection/vmware-snapshot/vmware-snapshot-list/vmware-snapshot-list.component';
+import { VmwareStatusCellComponent } from 'app/pages/data-protection/vmware-snapshot/vmware-snapshot-list/vmware-status-cell/vmware-status-cell.component';
 import { CloudsyncFormComponent } from './cloudsync/cloudsync-form/cloudsync-form.component';
 import { CloudsyncListComponent } from './cloudsync/cloudsync-list/cloudsync-list.component';
 import { dataProtectionRoutes } from './data-protection.routing';
@@ -66,6 +68,7 @@ import { SnapshotTaskComponent } from './snapshot/snapshot-task/snapshot-task.co
     EntityModule,
     ReactiveFormsModule,
     MatProgressBarModule,
+    MatTooltipModule,
     MatCardModule,
     TranslateModule,
     IxTable2Module,
@@ -84,6 +87,7 @@ import { SnapshotTaskComponent } from './snapshot/snapshot-task/snapshot-task.co
     SnapshotTaskComponent,
     VmwareSnapshotFormComponent,
     VmwareSnapshotListComponent,
+    VmwareStatusCellComponent,
     RsyncTaskListComponent,
     RsyncTaskFormComponent,
     SmartTaskListComponent,

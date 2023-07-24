@@ -37,6 +37,11 @@ export class VmwareSnapshotListComponent implements AfterViewInit, OnInit {
       sortable: true,
     }),
     textColumn({
+      title: this.translate.instant('State'),
+      propertyName: 'state',
+      sortable: true,
+    }),
+    textColumn({
       title: this.translate.instant('Username'),
       propertyName: 'username',
       sortable: true,
