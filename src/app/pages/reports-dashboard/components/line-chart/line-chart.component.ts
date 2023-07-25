@@ -69,7 +69,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   get stacked(): boolean {
     return [
-      ReportingGraphName.Cpu,
+      ReportingGraphName.Uptime,
       ReportingGraphName.Swap,
       ReportingGraphName.ZfsArcResult,
     ].includes(this.data?.name as ReportingGraphName);
@@ -262,11 +262,15 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
   }
 
   formatLabelValue(value: number, units: string, fixed?: number, prefixRules?: boolean): Conversion {
+    const day = 60 * 60 * 24;
     let output: Conversion = { value };
     if (!fixed) { fixed = -1; }
     if (typeof value !== 'number') { return value; }
 
     switch (units.toLowerCase()) {
+      case 'seconds':
+        output = { value: value / day, shortName: ' days' };
+        break;
       case 'kilobits':
         output = this.convertKmgt(value * 1000, 'bits', fixed, prefixRules);
         break;

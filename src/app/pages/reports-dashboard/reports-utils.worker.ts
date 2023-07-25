@@ -123,11 +123,16 @@ function convertByKilo(input: number): { value: number; suffix: string; shortNam
 }
 
 function formatValue(value: number, units: string): string | number {
+  const day = 60 * 60 * 24;
   let output: string | number = value;
   if (typeof value !== 'number') { return value; }
 
   let converted;
   switch (units.toLowerCase()) {
+    case 'seconds':
+      converted = { value: value / day, shortName: ' days' };
+      output = maxDecimals(converted.value, 0).toString() + converted.shortName;
+      break;
     case 'mebibytes':
       converted = convertKmgt(value * MiB, 'bytes');
       output = maxDecimals(converted.value).toString() + converted.shortName;
