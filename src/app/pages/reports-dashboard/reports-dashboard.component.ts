@@ -132,9 +132,10 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
             condition = report.name.startsWith(ReportingGraphName.Ups);
             break;
           case ReportType.Zfs:
+            // Add when vertical_label value is added
+            // ReportingGraphName.ZfsArcActualRate,
+            // ReportingGraphName.ZfsArcRate,
             condition = [
-              ReportingGraphName.ZfsArcActualRate,
-              ReportingGraphName.ZfsArcRate,
               ReportingGraphName.ZfsArcSize,
               ReportingGraphName.ZfsArcRatio,
               ReportingGraphName.ZfsArcResult,

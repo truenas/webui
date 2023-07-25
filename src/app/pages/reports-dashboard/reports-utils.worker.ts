@@ -1,5 +1,6 @@
 /// <reference lib="webworker" />
 
+import { KiB, MiB } from 'app/constants/bytes.constant';
 import { ReportingData, ReportingAggregationKeys } from 'app/interfaces/reporting.interface';
 
 // Write a bunch of pure functions above
@@ -46,10 +47,16 @@ function avgFromReportData(input: number[][]): number[][] {
 function inferUnits(label: string): string {
   // Figures out from the label what the unit is
   let units = label;
-  if (label.includes('%')) {
+  if (label.includes('%') || label.toLowerCase().includes('percentage')) {
     units = '%';
-  } else if (label.includes('°')) {
+  } else if (label.includes('°') || label.toLowerCase().includes('celsius')) {
     units = '°';
+  } else if (label.toLowerCase().includes('mebibytes')) {
+    units = 'mebibytes';
+  } else if (label.toLowerCase().includes('kibibytes')) {
+    units = 'kibibytes';
+  } else if (label.toLowerCase().includes('kilobits')) {
+    units = 'kilobits';
   } else if (label.toLowerCase().includes('bytes')) {
     units = 'bytes';
   } else if (label.toLowerCase().includes('bits')) {
@@ -121,6 +128,18 @@ function formatValue(value: number, units: string): string | number {
 
   let converted;
   switch (units.toLowerCase()) {
+    case 'mebibytes':
+      converted = convertKmgt(value * MiB, 'bytes');
+      output = maxDecimals(converted.value).toString() + converted.shortName;
+      break;
+    case 'kibibytes':
+      converted = convertKmgt(value * KiB, 'bytes');
+      output = maxDecimals(converted.value).toString() + converted.shortName;
+      break;
+    case 'kilobits':
+      converted = convertByKilo(output * 1000);
+      output = typeof output === 'number' ? maxDecimals(converted.value).toString() + converted.suffix : value;
+      break;
     case 'bits':
     case 'bytes':
       converted = convertKmgt(value, units);
@@ -231,25 +250,6 @@ function optimizeLegend(input: ReportingData): ReportingData {
       output.legend = output.legend.map((label) => label.replace(/geom_queue-/, ''));
       output.legend = output.legend.map((label) => {
         const spl = label.split('_');
-        return spl[1];
-      });
-      break;
-    case 'arcsize':
-      output.legend = output.legend.map((label) => label.replace(/cache_size-/, ''));
-      output.legend = output.legend.map((label) => label.replace(/_value/, ''));
-      break;
-    case 'arcratio':
-      output.legend = output.legend.map((label) => label.replace(/cache_ratio-/, ''));
-      output.legend = output.legend.map((label) => label.replace(/_value/, ''));
-      break;
-    case 'arcresult':
-      output.legend = output.legend.map((label) => {
-        const noPrefix = label.replace(/cache_result-/, '');
-        const noSuffix = noPrefix.replace(/_value/, '');
-        if (noSuffix === 'total') {
-          return noSuffix;
-        }
-        const spl = noSuffix.split('-');
         return spl[1];
       });
       break;

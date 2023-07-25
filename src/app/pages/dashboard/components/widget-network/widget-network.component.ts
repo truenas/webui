@@ -356,10 +356,10 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
 
     this.availableNics.forEach((nic) => {
       const networkInterfaceName = nic.state.name;
-      const params = {
+      const params: ReportingParams = {
         identifier: networkInterfaceName,
         name: 'interface',
-      } as ReportingParams;
+      };
       this.ws.call('reporting.netdata_get_data', [[params], timeFrame]).pipe(
         map((response) => {
           const updatedResponse = response[0];

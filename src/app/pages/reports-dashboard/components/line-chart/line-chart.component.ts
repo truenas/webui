@@ -86,14 +86,8 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   // dygraph renderer
   renderGraph(update?: boolean): void {
-    if (!this.data?.legend) {
+    if (!this.data?.legend?.length) {
       return;
-    }
-
-    if (this.isReversed) {
-      (this.data.data as number[][]).forEach((_, i) => {
-        (this.data.data as number[][])[i].shift();
-      });
     }
 
     const data = this.makeTimeAxis(this.data);
@@ -165,7 +159,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
         return series;
       },
       drawCallback: (dygraph: Dygraph & { axes_: { maxyval: number }[] }) => {
-        if (dygraph.axes_) {
+        if (dygraph.axes_.length) {
           const numero = dygraph.axes_[0].maxyval;
           const converted = this.formatLabelValue(numero, this.inferUnits(this.labelY));
           if (converted.prefix) {
@@ -210,11 +204,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
         dateStr = list.join(':');
         const date = new Date(dateStr);
 
-        if (rd.name === ReportingGraphName.Cpu) {
-          item.unshift(date);
-        } else {
-          item[0] = date;
-        }
+        item[0] = date; // replace unix timestamp with date
         rows.push(item);
       }
 
@@ -239,16 +229,21 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
     // Figures out from the label what the unit is
     let units = label;
     switch (true) {
+      case label.toLowerCase().includes('percentage'):
       case label.includes('%'):
         units = '%';
         break;
+      case label.toLowerCase().includes('celsius'):
       case label.includes('°'):
         units = '°';
         break;
-      case label === 'Mebibytes/s':
+      case label.toLowerCase().includes('mebibytes'):
         units = 'mebibytes';
         break;
-      case label === 'Kibibytes/s':
+      case label.toLowerCase().includes('kilobits'):
+        units = 'kilobits';
+        break;
+      case label.toLowerCase().includes('kibibytes'):
         units = 'kibibytes';
         break;
       case label.toLowerCase().includes('bytes'):
@@ -272,11 +267,14 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
     if (typeof value !== 'number') { return value; }
 
     switch (units.toLowerCase()) {
-      case 'Mebibytes/s':
-        output = this.convertKmgt(value * MiB, units.toLowerCase(), fixed, prefixRules);
+      case 'kilobits':
+        output = this.convertKmgt(value * 1000, 'bits', fixed, prefixRules);
         break;
-      case 'Kibibytes/s':
-        output = this.convertKmgt(value * KiB, units.toLowerCase(), fixed, prefixRules);
+      case 'mebibytes':
+        output = this.convertKmgt(value * MiB, 'bytes', fixed, prefixRules);
+        break;
+      case 'kibibytes':
+        output = this.convertKmgt(value * KiB, 'bytes', fixed, prefixRules);
         break;
       case 'bits':
       case 'bytes':
@@ -286,6 +284,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
       case '°':
       default:
         output = this.convertByKilo(value);
+        break;
     }
 
     return output;
