@@ -16,7 +16,7 @@ export type QueryParams<T, ExtraOptions = Record<string, unknown>> = [
 // eslint-disable-next-line unused-imports/no-unused-vars
 export type QueryFilter<T> = [string, QueryOperator, unknown];
 
-export type QueryOptions<T> = {
+export interface QueryOptions<T> {
   /**
    * Get the number of results returned.
    */
@@ -41,7 +41,7 @@ export type QueryOptions<T> = {
    * Specify which field determines the sort order.
    */
   order_by?: (keyof T | `-${Extract<keyof T, string>}`)[];
-};
+}
 
 export type QueryOperator =
   | '='

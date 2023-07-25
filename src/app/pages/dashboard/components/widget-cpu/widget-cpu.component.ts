@@ -1,5 +1,5 @@
 import {
-  Component, AfterViewInit, Input, ElementRef, OnChanges,
+  Component, AfterViewInit, ElementRef, ChangeDetectionStrategy, ChangeDetectorRef,
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -10,18 +10,18 @@ import {
 } from 'chart.js';
 import { ActiveElement } from 'chart.js/dist/types';
 import * as d3 from 'd3';
-import { Subject, Subscription } from 'rxjs';
 import {
-  filter, map, throttleTime,
+  filter, throttleTime,
 } from 'rxjs/operators';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { ScreenType } from 'app/enums/screen-type.enum';
-import { CoreEvent } from 'app/interfaces/events';
+import { deepCloneState } from 'app/helpers/state-select.helper';
 import { AllCpusUpdate } from 'app/interfaces/reporting.interface';
 import { Theme } from 'app/interfaces/theme.interface';
 import { GaugeConfig, GaugeData } from 'app/modules/charts/components/view-chart-gauge/view-chart-gauge.component';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { WidgetCpuData } from 'app/pages/dashboard/interfaces/widget-data.interface';
+import { ResourcesUsageStore } from 'app/pages/dashboard/store/resources-usage-store.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { AppState } from 'app/store';
 import { selectTheme } from 'app/store/preferences/preferences.selectors';
@@ -35,10 +35,10 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
     '../widget/widget.component.scss',
     './widget-cpu.component.scss',
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit, OnChanges {
-  @Input() data: Subject<CoreEvent>;
-  @Input() cpuModel: string;
+export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit {
+  cpuModel: string;
 
   chart: Chart; // Chart.js instance with per core data
   ctx: CanvasRenderingContext2D; // canvas context for chart.js
@@ -72,7 +72,6 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
 
   protected currentTheme: Theme;
   private utils: ThemeUtils;
-  private dataSubscription: Subscription;
 
   constructor(
     public translate: TranslateService,
@@ -80,10 +79,28 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     private el: ElementRef<HTMLElement>,
     public themeService: ThemeService,
     private store$: Store<AppState>,
+    private resourcesUsageStore$: ResourcesUsageStore,
+    private cdr: ChangeDetectorRef,
   ) {
     super(translate);
 
     this.utils = new ThemeUtils();
+
+    this.resourcesUsageStore$.cpuUsage$.pipe(
+      throttleTime(500),
+      deepCloneState(),
+      untilDestroyed(this),
+    ).subscribe({
+      next: (cpuData) => {
+        if (!cpuData?.average) {
+          return;
+        }
+
+        this.setCpuLoadData(['Load', parseInt(cpuData.average.usage.toFixed(1))]);
+        this.setCpuData(cpuData);
+        this.cdr.markForCheck();
+      },
+    });
 
     mediaObserver.asObservable().pipe(untilDestroyed(this)).subscribe((changes) => {
       const size = {
@@ -101,30 +118,10 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     });
 
     this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((sysInfo) => {
+      this.cpuModel = sysInfo.model;
       this.threadCount = sysInfo.cores;
       this.coreCount = sysInfo.physical_cores;
       this.hyperthread = this.threadCount !== this.coreCount;
-    });
-  }
-
-  ngOnChanges(): void {
-    if (!this.data) {
-      return;
-    }
-
-    this.dataSubscription?.unsubscribe();
-    this.data.pipe(
-      filter((evt) => evt.name === 'CpuStats'),
-      map((evt) => evt.data),
-      throttleTime(500),
-      untilDestroyed(this),
-    ).subscribe((cpuData: AllCpusUpdate) => {
-      if (!cpuData.average) {
-        return;
-      }
-
-      this.setCpuLoadData(['Load', parseInt(cpuData.average.usage.toFixed(1))]);
-      this.setCpuData(cpuData);
     });
   }
 
@@ -154,10 +151,10 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
       const mod = threads.length % 2;
       const temperatureIndex = this.hyperthread ? Math.floor(i / 2 - mod) : i;
 
-      if (cpuData.temperature && cpuData.temperature[temperatureIndex] && !cpuData.temperature_celsius) {
+      if (cpuData.temperature?.[temperatureIndex] && !cpuData.temperature_celsius) {
         const temperatureAsCelsius = (cpuData.temperature[temperatureIndex] / 10 - 273.05).toFixed(0);
         temperatureValues.push(parseInt(temperatureAsCelsius));
-      } else if (cpuData.temperature_celsius && cpuData.temperature_celsius[temperatureIndex]) {
+      } else if (cpuData.temperature_celsius?.[temperatureIndex]) {
         temperatureValues.push(cpuData.temperature_celsius[temperatureIndex].toFixed(0));
       }
     }

@@ -3,18 +3,22 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatStepper } from '@angular/material/stepper';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import _ from 'lodash';
 import { combineLatest, of } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import {
+  filter, map, switchMap, tap,
+} from 'rxjs/operators';
 import { Job } from 'app/interfaces/job.interface';
 import {
-  CreatePool, Pool,
+  CreatePool, Pool, UpdatePool,
 } from 'app/interfaces/pool.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
 import {
   DownloadKeyDialogComponent, DownloadKeyDialogParams,
 } from 'app/pages/storage/modules/pool-manager/components/download-key-dialog/download-key-dialog.component';
@@ -22,6 +26,7 @@ import { PoolCreationWizardStep } from 'app/pages/storage/modules/pool-manager/e
 import { PoolManagerValidationService } from 'app/pages/storage/modules/pool-manager/store/pool-manager-validation.service';
 import { PoolManagerState, PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { topologyToPayload } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
+import { DialogService, WebSocketService } from 'app/services';
 import { AppState } from 'app/store';
 import { waitForSystemFeatures } from 'app/store/system-info/system-info.selectors';
 
@@ -33,15 +38,17 @@ import { waitForSystemFeatures } from 'app/store/system-info/system-info.selecto
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PoolManagerWizardComponent implements OnInit {
+  protected existingPool: Pool = null;
   @Output() stepChanged = new EventEmitter<PoolCreationWizardStep>();
 
   @ViewChild('stepper') stepper: MatStepper;
 
-  isLoading$ = this.store.isLoading$;
+  isLoading$ = combineLatest([this.store.isLoading$, this.addVdevsStore.isLoading$]).pipe(
+    map(([storeLoading, secondaryLoading]) => storeLoading || secondaryLoading),
+  );
 
   activeStep: PoolCreationWizardStep;
   hasEnclosureStep = false;
-
   state: PoolManagerState;
   topLevelWarningsForEachStep: Partial<{ [key in PoolCreationWizardStep]: string | null }>;
   topLevelErrorsForEachStep: Partial<{ [key in PoolCreationWizardStep]: string | null }>;
@@ -62,12 +69,29 @@ export class PoolManagerWizardComponent implements OnInit {
     private router: Router,
     private snackbar: SnackbarService,
     private poolManagerValidation: PoolManagerValidationService,
+    private route: ActivatedRoute,
+    private ws: WebSocketService,
+    private addVdevsStore: AddVdevsStore,
+    private dialogService: DialogService,
   ) {}
 
   ngOnInit(): void {
     this.connectToStore();
     this.checkEnclosureStepAvailability();
     this.listenForStartOver();
+    if (this.route.snapshot.url.toString().includes('add-vdevs')) {
+      this.loadExistingPoolDetails();
+    }
+  }
+
+  loadExistingPoolDetails(): void {
+    this.addVdevsStore.pool$.pipe(
+      tap((pool) => {
+        this.existingPool = _.cloneDeep(pool);
+        this.cdr.markForCheck();
+      }),
+      untilDestroyed(this),
+    ).subscribe();
   }
 
   getTopLevelWarningForStep(step: PoolCreationWizardStep): string | null {
@@ -184,5 +208,46 @@ export class PoolManagerWizardComponent implements OnInit {
     }
 
     return payload;
+  }
+
+  updatePool(): void {
+    const payload: UpdatePool = {
+      topology: topologyToPayload(this.state.topology),
+      allow_duplicate_serials: this.state.diskSettings.allowNonUniqueSerialDisks,
+    };
+
+    const dialogRef = this.matDialog.open(EntityJobComponent, {
+      disableClose: true,
+      data: {
+        title: this.translate.instant('Update Pool'),
+      },
+    });
+    dialogRef.componentInstance.setCall('pool.update', [this.existingPool.id, payload]);
+    dialogRef.componentInstance.success.pipe(
+      untilDestroyed(this),
+    ).subscribe(() => {
+      dialogRef.close(false);
+      this.snackbar.success(this.translate.instant('Pool updated successfully'));
+      this.router.navigate(['/storage']);
+    });
+
+    dialogRef.componentInstance.submit();
+  }
+
+  protected submit(): void {
+    this.dialogService.confirm({
+      title: this.translate.instant('Warning'),
+      message: this.translate.instant('The contents of all added disks will be erased.'),
+    }).pipe(
+      filter(Boolean),
+      untilDestroyed(this),
+    ).subscribe({
+      next: () => {
+        if (!this.existingPool) {
+          this.createPool(); return;
+        }
+        this.updatePool();
+      },
+    });
   }
 }

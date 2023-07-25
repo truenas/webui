@@ -22,7 +22,7 @@ export class EntityTableActionsComponent implements OnInit, OnChanges {
 
   get isSingleAction(): boolean {
     if (!this.actions) return false;
-    const hasGroups = Boolean(this.actions && this.actions[0].actionName);
+    const hasGroups = Boolean(this.actions?.[0]?.actionName);
 
     if (hasGroups) {
       return (this.actions[0].actions?.length === 1);
@@ -35,7 +35,7 @@ export class EntityTableActionsComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
-    if (this.entity.conf.config && this.entity.conf.config.deleteMsg) {
+    if (this.entity.conf.config?.deleteMsg) {
       this.keyProp = this.entity.conf.config.deleteMsg.key_props[0];
     } else if (this.entity.filterColumns) {
       this.keyProp = this.entity.filterColumns[0].prop;

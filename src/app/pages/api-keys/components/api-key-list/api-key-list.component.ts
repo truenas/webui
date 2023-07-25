@@ -1,5 +1,5 @@
 import {
-  Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, TemplateRef, ViewChild, AfterViewInit,
+  Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSort, Sort } from '@angular/material/sort';
@@ -17,7 +17,6 @@ import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { ApiKeyFormDialogComponent } from 'app/pages/api-keys/components/api-key-form-dialog/api-key-form-dialog.component';
 import { ApiKeyComponentStore } from 'app/pages/api-keys/store/api-key.store';
 import { DialogService } from 'app/services';
-import { LayoutService } from 'app/services/layout.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -26,9 +25,8 @@ import { WebSocketService } from 'app/services/ws.service';
   styleUrls: ['./api-key-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ApiKeyListComponent implements OnInit, AfterViewInit {
+export class ApiKeyListComponent implements OnInit {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
-  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   displayedColumns: string[] = ['name', 'created_at', 'actions'];
   dataSource = new MatTableDataSource<ApiKey>([]);
@@ -71,7 +69,6 @@ export class ApiKeyListComponent implements OnInit, AfterViewInit {
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
     private store: ApiKeyComponentStore,
-    private layoutService: LayoutService,
     private matDialog: MatDialog,
     private dialog: DialogService,
     private ws: WebSocketService,
@@ -80,10 +77,6 @@ export class ApiKeyListComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.getApiKeys();
-  }
-
-  ngAfterViewInit(): void {
-    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
   getApiKeys(): void {

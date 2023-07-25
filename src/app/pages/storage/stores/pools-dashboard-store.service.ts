@@ -93,7 +93,7 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
       ({ pools, rootDatasets }) => {
         this.patchState({
           arePoolsLoading: false,
-          pools: this.sorter.tableSorter(pools, 'name', 'asc'),
+          pools: _.sortBy(pools, (pool) => pool.name),
           rootDatasets: _.keyBy(rootDatasets, (dataset) => dataset.id),
         });
       },

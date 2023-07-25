@@ -1,7 +1,7 @@
-<ng-template #pageHeader>
+<ng-template ixPageHeader>
   <ix-page-title-header [pageTitle]="'Installed' | translate">
+    <ix-kubernetes-status></ix-kubernetes-status>
     <div *ngIf="hasUpdates" class="global-update">
-      <span>{{ '{n, plural, one {# available update} other {# available updates} }!' | translate: { n: appsUpdateAvailable } }}</span>
       <button
         mat-button
         ixTest="update-all"
@@ -9,7 +9,10 @@
         (click)="onBulkUpgrade(true)"
       >
         <ix-icon name="mdi-alert-circle"></ix-icon>
-        <span>{{ 'Update All' | translate }}</span>
+        <span>
+          {{ 'Update All' | translate }}
+          <ng-container *ngIf="appsUpdateAvailable">({{appsUpdateAvailable}})</ng-container>
+        </span>
       </button>
     </div>
     <ix-app-settings-button></ix-app-settings-button>

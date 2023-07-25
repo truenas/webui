@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import {
-  AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, TemplateRef, ViewChild,
+  ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
@@ -12,7 +12,6 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { LogsDialogFormValue, PodSelectLogsDialogComponent } from 'app/pages/apps/components/pod-select-logs/pod-select-logs-dialog.component';
 import { DialogService, ShellService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { LayoutService } from 'app/services/layout.service';
 import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -29,9 +28,8 @@ interface PodLogEvent {
   styleUrls: ['./pod-logs.component.scss'],
   providers: [ShellService],
 })
-export class PodLogsComponent implements OnInit, AfterViewInit {
+export class PodLogsComponent implements OnInit {
   @ViewChild('logContainer', { static: true }) logContainer: ElementRef<HTMLElement>;
-  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   fontSize = 14;
   chartReleaseName: string;
@@ -51,7 +49,6 @@ export class PodLogsComponent implements OnInit, AfterViewInit {
     protected aroute: ActivatedRoute,
     protected loader: AppLoaderService,
     protected storageService: StorageService,
-    private layoutService: LayoutService,
     private errorHandler: ErrorHandlerService,
     private mdDialog: MatDialog,
     private cdr: ChangeDetectorRef,
@@ -68,10 +65,6 @@ export class PodLogsComponent implements OnInit, AfterViewInit {
 
       this.reconnect();
     });
-  }
-
-  ngAfterViewInit(): void {
-    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
   // subscribe pod log for selected app, pod and container.
@@ -137,9 +130,10 @@ export class PodLogsComponent implements OnInit, AfterViewInit {
         title: 'Choose log',
         customSubmit: (logsFormValueDialog: LogsDialogFormValue) => {
           if (isDownload) {
-            return this.download(logsFormValueDialog);
+            this.download(logsFormValueDialog);
+            return;
           }
-          return this.onChooseLogs(logsFormValueDialog);
+          this.onChooseLogs(logsFormValueDialog);
         },
       },
     });

@@ -23,7 +23,6 @@ import {
   DiskTemperaturesEvent,
   DriveSelectedEvent,
 } from 'app/interfaces/events/disk-events.interface';
-import { EnclosureLabelChangedEvent } from 'app/interfaces/events/enclosure-events.interface';
 import { LabelDrivesEvent } from 'app/interfaces/events/label-drives-event.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { Disk, TopologyDisk } from 'app/interfaces/storage.interface';
@@ -58,7 +57,7 @@ import {
 } from 'app/pages/system/view-enclosure/components/set-enclosure-label-dialog/set-enclosure-label-dialog.component';
 import { SystemProfile } from 'app/pages/system/view-enclosure/components/view-enclosure/view-enclosure.component';
 import { ViewConfig } from 'app/pages/system/view-enclosure/interfaces/view.config';
-import { EnclosureState } from 'app/pages/system/view-enclosure/stores/enclosure-store.service';
+import { EnclosureState, EnclosureStore } from 'app/pages/system/view-enclosure/stores/enclosure-store.service';
 import { WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -288,6 +287,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
     protected themeService: ThemeService,
     protected diskTemperatureService: DiskTemperatureService,
     protected matDialog: MatDialog,
+    protected enclosureStore: EnclosureStore,
   ) {
     this.themeUtils = new ThemeUtils();
     this.diskTemperatureService.listenForTemperatureUpdates();
@@ -331,7 +331,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
     ).subscribe((theme: Theme) => {
       this.theme = theme;
       this.setCurrentView(this.currentView);
-      if (this.labels && this.labels.events$) {
+      if (this.labels?.events$) {
         this.labels.events$.next({ name: 'ThemeChanged', data: theme, sender: this });
       }
       this.optimizeChassisOpacity();
@@ -390,8 +390,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
                mutation.removedNodes */
             const element = mutation.addedNodes?.[0] as HTMLElement;
             if (
-              !element
-              || !element.classList
+              !element?.classList
               || mutation.addedNodes.length === 0
               || element.classList.length === 0
             ) {
@@ -630,7 +629,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
           }
 
           this.selectedSlotNumber = slotNumber;
-          const isSlotEmpty: boolean = (this.selectedSlot === null || !this.selectedSlot.disk);
+          const isSlotEmpty = !this.selectedSlot?.disk;
 
           if (isSlotEmpty) {
             this.setCurrentView(this.emptySlotView);
@@ -1228,17 +1227,11 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
       .afterClosed()
       .pipe(untilDestroyed(this))
       .subscribe((newLabel: string) => {
-        if (newLabel) {
-          this.core.emit({
-            name: 'EnclosureLabelChanged',
-            sender: this,
-            data: {
-              index: enclosure.number,
-              id: enclosure.id,
-              label: newLabel,
-            },
-          } as EnclosureLabelChangedEvent);
+        if (!newLabel) {
+          return;
         }
+
+        this.enclosureStore.updateLabel(enclosure.id, newLabel);
       });
   }
 }

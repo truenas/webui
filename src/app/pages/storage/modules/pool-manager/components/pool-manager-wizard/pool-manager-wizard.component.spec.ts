@@ -3,17 +3,19 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatStepperHarness } from '@angular/material/stepper/testing';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
 import { BehaviorSubject, Subject, of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import { Pool } from 'app/interfaces/pool.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
 import {
   DownloadKeyDialogComponent,
 } from 'app/pages/storage/modules/pool-manager/components/download-key-dialog/download-key-dialog.component';
@@ -49,6 +51,7 @@ import {
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/9-review-wizard-step/review-wizard-step.component';
 import { PoolManagerValidationService } from 'app/pages/storage/modules/pool-manager/store/pool-manager-validation.service';
 import { PoolManagerState, PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
+import { DialogService } from 'app/services';
 import { selectSystemFeatures } from 'app/store/system-info/system-info.selectors';
 
 describe('PoolManagerWizardComponent', () => {
@@ -115,6 +118,17 @@ describe('PoolManagerWizardComponent', () => {
         hasMultipleEnclosuresAfterFirstStep$: hasMultipleEnclosuresInAllowedDisks$.asObservable(),
         state$: state$.asObservable(),
         startOver$,
+        isLoading$: of(false),
+      }),
+      mockWebsocket([
+        mockCall('pool.query', []),
+      ]),
+      mockProvider(ActivatedRoute, {
+        params: of({}),
+        snapshot: { url: '' },
+      }),
+      mockProvider(DialogService, {
+        confirm: jest.fn(() => of(true)),
       }),
       mockProvider(MatDialog, {
         open: jest.fn((component) => {
@@ -141,6 +155,10 @@ describe('PoolManagerWizardComponent', () => {
             },
           },
         ],
+      }),
+      mockProvider(AddVdevsStore, {
+        pool$: of(null),
+        isLoading$: of(false),
       }),
       mockProvider(Router),
       mockProvider(SnackbarService),

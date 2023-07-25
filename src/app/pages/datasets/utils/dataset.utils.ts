@@ -6,7 +6,7 @@ import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 export const ixApplications = 'ix-applications';
 
 export function getDatasetLabel(dataset: Pick<Dataset, 'name'>): string {
-  if (!dataset || !dataset?.name) {
+  if (!dataset?.name) {
     return '';
   }
   const segments = dataset.name.split('/');
@@ -33,8 +33,7 @@ export function isIocageMounted(dataset: Pick<Dataset, 'mountpoint'>): boolean {
 }
 
 export function isPropertyInherited(property: ZfsProperty<unknown>): boolean {
-  return !property
-    || !property.source
+  return !property?.source
     || property.source === ZfsPropertySource.Inherited
     || property.source === ZfsPropertySource.Default;
 }

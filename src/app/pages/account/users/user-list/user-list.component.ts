@@ -2,10 +2,7 @@ import {
   Component,
   OnInit,
   ChangeDetectorRef,
-  ViewChild,
   ChangeDetectionStrategy,
-  AfterViewInit,
-  TemplateRef,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { select, Store } from '@ngrx/store';
@@ -24,7 +21,6 @@ import { userPageEntered, userRemoved } from 'app/pages/account/users/store/user
 import { selectUsers, selectUserState, selectUsersTotal } from 'app/pages/account/users/store/user.selectors';
 import { UserFormComponent } from 'app/pages/account/users/user-form/user-form.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { LayoutService } from 'app/services/layout.service';
 import { AppState } from 'app/store';
 import { builtinUsersToggled } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -35,9 +31,7 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
   styleUrls: ['./user-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UserListComponent implements OnInit, AfterViewInit {
-  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
-
+export class UserListComponent implements OnInit {
   dataProvider = new ArrayDataProvider<User>();
   columns = createTable<User>([
     textColumn({
@@ -94,7 +88,6 @@ export class UserListComponent implements OnInit, AfterViewInit {
     private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,
-    private layoutService: LayoutService,
     private translate: TranslateService,
     private emptyService: EmptyService,
   ) { }
@@ -104,10 +97,6 @@ export class UserListComponent implements OnInit, AfterViewInit {
     this.getPreferences();
     this.getUsers();
     this.setDefaultSort();
-  }
-
-  ngAfterViewInit(): void {
-    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
   getPreferences(): void {

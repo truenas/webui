@@ -160,6 +160,7 @@ import {
 } from 'app/interfaces/keychain-credential.interface';
 import { KmipConfig, KmipConfigUpdate } from 'app/interfaces/kmip-config.interface';
 import { KubernetesConfig, KubernetesConfigUpdate } from 'app/interfaces/kubernetes-config.interface';
+import { KubernetesStatusData } from 'app/interfaces/kubernetes-status-data.interface';
 import { LdapConfig, LdapConfigUpdate, LdapConfigUpdateResult } from 'app/interfaces/ldap-config.interface';
 import { LldpConfig, LldpConfigUpdate } from 'app/interfaces/lldp-config.interface';
 import { MailConfig, MailConfigUpdate, SendMailParams } from 'app/interfaces/mail-config.interface';
@@ -282,7 +283,7 @@ import { PoolRemoveParams } from './pool-remove.interface';
  * API definitions for `call` and `job` methods.
  * For events from `subscribed` see ApiEventDirectory.
  */
-export type ApiDirectory = {
+export interface ApiDirectory {
   // Active Directory
   'activedirectory.config': { params: void; response: ActiveDirectoryConfig };
   'activedirectory.update': { params: [ActiveDirectoryUpdate]; response: ActiveDirectoryConfig };
@@ -531,6 +532,7 @@ export type ApiDirectory = {
   'kubernetes.config': { params: void; response: KubernetesConfig };
   'kubernetes.update': { params: [Partial<KubernetesConfigUpdate>]; response: KubernetesConfig };
   'kubernetes.bindip_choices': { params: void; response: Choices };
+  'kubernetes.status': { params: void; response: KubernetesStatusData };
 
   // Mail
   'mail.config': { params: void; response: MailConfig };
@@ -1001,7 +1003,7 @@ export type ApiDirectory = {
   'initshutdownscript.create': { params: [CreateInitShutdownScript]; response: InitShutdownScript };
   'initshutdownscript.update': { params: UpdateInitShutdownScriptParams; response: InitShutdownScript };
   'initshutdownscript.delete': { params: [id: number]; response: boolean };
-};
+}
 
 /**
  * Prefer typing like this:

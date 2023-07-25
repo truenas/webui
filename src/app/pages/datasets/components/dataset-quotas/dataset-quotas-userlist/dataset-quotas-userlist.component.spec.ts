@@ -1,12 +1,9 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { TemplateRef } from '@angular/core';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { ActivatedRoute } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import {
-  BehaviorSubject, of, Subject,
-} from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { DatasetQuota } from 'app/interfaces/dataset-quota.interface';
@@ -22,7 +19,6 @@ import {
   AppLoaderService, DialogService, WebSocketService,
 } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { LayoutService } from 'app/services/layout.service';
 import { DatasetQuotasUserlistComponent } from './dataset-quotas-userlist.component';
 
 const fakeUserQuotas: DatasetQuota[] = [{
@@ -65,9 +61,6 @@ describe('DatasetQuotasUserlistComponent', () => {
       }),
       mockProvider(ActivatedRoute, {
         snapshot: { params: { datasetId: 'Test' } },
-      }),
-      mockProvider(LayoutService, {
-        pageHeaderUpdater$: new BehaviorSubject<TemplateRef<unknown>>(null),
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),

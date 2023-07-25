@@ -78,7 +78,7 @@ export class MockStorageGenerator {
     return { poolState: pool, disks };
   }
 
-  addUnassignedDisks(options: AddUnAssignedOptions): MockStorageGenerator {
+  addUnassignedDisks(options: AddUnAssignedOptions): this {
     const offset = this.disks.length;
     for (let i = 0; i < options.repeats; i++) {
       this.disks.push(this.generateDisk(options.diskSize, offset + i, false));
@@ -92,7 +92,7 @@ export class MockStorageGenerator {
     diskSize: 4,
     width: 1,
     repeats: 1,
-  }): MockStorageGenerator {
+  }): this {
     this.addRaidzCapableTopology(VdevType.Data, options);
     return this;
   }
@@ -103,7 +103,7 @@ export class MockStorageGenerator {
     diskSize: 4,
     width: 1,
     repeats: 1,
-  }): MockStorageGenerator {
+  }): this {
     // The redundancy of this device should match the redundancy of the other normal devices in the pool
     this.addRaidzCapableTopology(VdevType.Special, options);
     return this;
@@ -115,7 +115,7 @@ export class MockStorageGenerator {
     diskSize: 4,
     width: 1,
     repeats: 1,
-  }): MockStorageGenerator {
+  }): this {
     // The redundancy of this device should match the redundancy of the other normal devices in the pool
     this.addRaidzCapableTopology(VdevType.Dedup, options);
     return this;
@@ -201,7 +201,7 @@ export class MockStorageGenerator {
   }
 
   // Can create DISK or MIRROR devices. ZFS does not support RAIDZ for log devices
-  addLogTopology(deviceCount: number, isMirror = false, diskSize = 4): MockStorageGenerator {
+  addLogTopology(deviceCount: number, isMirror = false, diskSize = 4): this {
     if (isMirror) {
       this.addRaidzCapableTopology(VdevType.Log, {
         scenario: MockStorageScenario.Uniform,
@@ -217,13 +217,13 @@ export class MockStorageGenerator {
   }
 
   // Can create DISK devices. ZFS does not support RAIDZ or MIRROR for cache devices
-  addCacheTopology(deviceCount: number, diskSize = 4): MockStorageGenerator {
+  addCacheTopology(deviceCount: number, diskSize = 4): this {
     this.addSingleDeviceTopology(VdevType.Cache, deviceCount, diskSize);
     return this;
   }
 
   // Can create DISK devices. ZFS does not support RAIDZ or MIRROR for spares
-  addSpareTopology(deviceCount: number, diskSize = 4): MockStorageGenerator {
+  addSpareTopology(deviceCount: number, diskSize = 4): this {
     this.addSingleDeviceTopology(VdevType.Spare, deviceCount, diskSize);
     return this;
   }
@@ -868,7 +868,7 @@ export class MockStorageGenerator {
     };
   }
 
-  private removeDiskFromEnclosure(disk: Disk): MockStorageGenerator {
+  private removeDiskFromEnclosure(disk: Disk): this {
     const mockEnclosureIndex: number = this.mockEnclosures.findIndex((mockEnclosure: MockEnclosure) => {
       return mockEnclosure.data.number === disk.enclosure.number;
     });

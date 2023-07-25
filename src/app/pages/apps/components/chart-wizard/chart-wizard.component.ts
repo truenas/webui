@@ -1,12 +1,9 @@
 import {
-  AfterViewInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   OnDestroy,
   OnInit,
-  TemplateRef,
-  ViewChild,
 } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -49,7 +46,6 @@ import { ApplicationsService } from 'app/pages/apps/services/applications.servic
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
 import { AppLoaderService, DialogService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { LayoutService } from 'app/services/layout.service';
 import { AppSchemaService } from 'app/services/schema/app-schema.service';
 
 @UntilDestroy()
@@ -58,9 +54,7 @@ import { AppSchemaService } from 'app/services/schema/app-schema.service';
   styleUrls: ['./chart-wizard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
-  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
-
+export class ChartWizardComponent implements OnInit, OnDestroy {
   appId: string;
   catalog: string;
   train: string;
@@ -115,7 +109,6 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
     private cdr: ChangeDetectorRef,
     private activatedRoute: ActivatedRoute,
     private appService: ApplicationsService,
-    private layoutService: LayoutService,
     private loader: AppLoaderService,
     private router: Router,
     private errorHandler: ErrorHandlerService,
@@ -144,10 +137,6 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
         });
       }
     });
-  }
-
-  ngAfterViewInit(): void {
-    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
   ngOnDestroy(): void {
@@ -227,9 +216,7 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
         const keys = fieldToBeDeleted.split('.');
         _.unset(data, keys);
       },
-      complete: () => {
-        this.saveData(data);
-      },
+      complete: () => this.saveData(data),
     });
 
     this.getFieldsHiddenOnForm(data, deleteField$);
@@ -464,7 +451,7 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private addFormControls(chartSchemaNode: ChartSchemaNode): void {
     this.subscription.add(
-      this.appSchemaService.addFormControls({
+      this.appSchemaService.getNewFormControlChangesSubscription({
         chartSchemaNode,
         formGroup: this.form,
         config: this.config,
