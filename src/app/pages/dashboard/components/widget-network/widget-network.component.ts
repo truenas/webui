@@ -354,13 +354,17 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
         identifier: networkInterfaceName,
         name: 'interface',
       } as ReportingParams;
-      this.ws.call('reporting.get_data', [[params], timeFrame]).pipe(
+      this.ws.call('reporting.netdata_get_data', [[params], timeFrame]).pipe(
         map((response) => {
           const updatedResponse = response[0];
           if (this.timezone) {
             updatedResponse.start = utcToZonedTime(updatedResponse.start * 1000, this.timezone).valueOf() / 1000;
             updatedResponse.end = utcToZonedTime(updatedResponse.end * 1000, this.timezone).valueOf() / 1000;
           }
+          (updatedResponse.data as number[][]).forEach((_, index) => {
+            // remove time column
+            (updatedResponse.data as number[][])[index].shift();
+          });
           return updatedResponse;
         }),
         untilDestroyed(this),
