@@ -202,7 +202,6 @@ export class ReportsService implements OnDestroy {
   getDiskMetrics(): Observable<Option[]> {
     return this.diskMetrics$.asObservable().pipe(
       map((options) => {
-        console.info('disk.options', options);
         if (!this.hasDiskTemperature) {
           return options.filter((option) => option.value !== 'disktemp');
         }
