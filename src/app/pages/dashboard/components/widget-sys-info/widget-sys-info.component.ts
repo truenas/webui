@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import { addSeconds } from 'date-fns';
 import { filter, take } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -14,6 +15,7 @@ import { ScreenType } from 'app/enums/screen-type.enum';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
+import { Timeout } from 'app/interfaces/timeout.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import {
   AppLoaderService, DialogService, SystemGeneralService,
@@ -46,6 +48,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
 
   hasOnlyMismatchVersionsReason$ = this.store$.select(selectHasOnlyMismatchVersionsReason);
 
+  timeInterval: Timeout;
   data: SystemInfo;
   ready = false;
   productImage = '';
@@ -177,8 +180,17 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
 
   processSysInfo(systemInfo: SystemInfo): void {
     this.data = systemInfo;
-    const datetime = this.addTimeDiff(this.data.datetime.$date);
+    let datetime = this.addTimeDiff(this.data.datetime.$date);
     this.dateTime = this.locale.getTimeOnly(datetime, false, this.data.timezone);
+
+    if (this.timeInterval) {
+      clearInterval(this.timeInterval);
+    }
+
+    this.timeInterval = setInterval(() => {
+      datetime = addSeconds(datetime, 1).getTime();
+      this.dateTime = this.locale.getTimeOnly(datetime, false, this.data.timezone);
+    }, 1000);
 
     this.setProductImage();
 
