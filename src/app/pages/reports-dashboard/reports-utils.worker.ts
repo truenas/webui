@@ -35,15 +35,6 @@ function arrayAvg(input: number[]): number {
   return maxDecimals(avg);
 }
 
-function avgFromReportData(input: number[][]): number[][] {
-  const output: number[][] = [];
-  input.forEach((item) => {
-    const avg = arrayAvg(item);
-    output.push([avg]);
-  });
-  return output;
-}
-
 function inferUnits(label: string): string {
   // Figures out from the label what the unit is
   let units = label;
@@ -131,7 +122,7 @@ function formatValue(value: number, units: string): string | number {
   switch (units.toLowerCase()) {
     case 'seconds':
       converted = { value: value / day, shortName: ' days' };
-      output = maxDecimals(converted.value, 0).toString() + converted.shortName;
+      output = maxDecimals(converted.value, 1).toString() + converted.shortName;
       break;
     case 'mebibytes':
       converted = convertKmgt(value * MiB, 'bytes');
@@ -262,23 +253,6 @@ function optimizeLegend(input: ReportingData): ReportingData {
   return output;
 }
 
-function avgCpuTempReport(report: ReportingData): ReportingData {
-  const output = { ...report };
-  // Handle Data
-  output.data = avgFromReportData(report.data as number[][]);
-
-  // Handle Legend
-  output.legend = ['Avg Temp'];
-
-  // Handle Aggregations
-  const keys = Object.keys(output.aggregations);
-  keys.forEach((key: ReportingAggregationKeys) => {
-    output.aggregations[key] = [arrayAvg(output.aggregations[key] as number[])];
-  });
-
-  return output;
-}
-
 // Pseudo command line interface
 // we can call the worker's functions
 // using text input. The Unix way ;-)
@@ -301,9 +275,6 @@ const commands = {
     console.log(output);
     return output;
   },
-  avgFromReportData: (input: number[][]) => {
-    return avgFromReportData(input);
-  },
   optimizeLegend: (input: ReportingData) => {
     return optimizeLegend(input);
   },
@@ -313,9 +284,6 @@ const commands = {
       console.warn('You must specify a label to parse. (Usually the Y axis label). Returning input value instead');
     }
     return output;
-  },
-  avgCpuTempReport: (input: ReportingData) => {
-    return avgCpuTempReport(input);
   },
   arrayAvg: (input: number[]) => {
     return arrayAvg(input);

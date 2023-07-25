@@ -1,4 +1,5 @@
 import { LinkState } from 'app/enums/network-interface.enum';
+import { ReportingQueryUnit } from 'app/enums/reporting.enum';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 
 export interface ReportingRealtimeUpdate {
@@ -104,33 +105,25 @@ export interface ReportingConfig {
   id: number;
 }
 
-export interface ReportingTimeFrame {
-  start: number;
-  end: number;
+export interface ReportingQueryOptions {
+  unit?: ReportingQueryUnit;
+  start?: number;
+  end?: number;
 }
 
 export type ReportingConfigUpdate = Omit<ReportingConfig, 'id'>;
 
 export type ReportingQueryParams = [
-  [ReportingParams],
-  ReportingTimeFrame,
+  [ReportingNameAndId],
+  ReportingQueryOptions,
 ];
 
-export interface ReportingParams {
+export interface ReportingNameAndId {
   name: string;
   identifier: string;
 }
 
 export type ReportingAggregationKeys = 'min' | 'mean' | 'max';
-
-export interface ReportingAggregationValueObject {
-  idle: number;
-  iowait: number;
-  nice: number;
-  softirq: number;
-  system: number;
-  user: number;
-}
 
 export type ReportingAggregationValue = (string | number)[];
 
@@ -143,6 +136,7 @@ export interface ReportingData {
   step: number;
   data: number[][] | WebsocketError;
   aggregations: {
+    // TODO: Update this to be a proper type
     [key in ReportingAggregationKeys]: ReportingAggregationValue;
   };
 }

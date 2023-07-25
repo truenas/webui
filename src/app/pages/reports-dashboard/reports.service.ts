@@ -4,7 +4,7 @@ import { addSeconds } from 'date-fns';
 import {
   map, Observable, shareReplay, BehaviorSubject, switchMap, interval,
 } from 'rxjs';
-import { ReportingGraphName } from 'app/enums/reporting-graph-name.enum';
+import { ReportingGraphName } from 'app/enums/reporting.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { ReportDataRequestEvent } from 'app/interfaces/events/reporting-events.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -78,7 +78,7 @@ export class ReportsService implements OnDestroy {
               {
                 command: 'convertAggregations',
                 input: '|',
-                options: [evt.data.report.vertical_label], // units
+                options: [evt.data.report.vertical_label || ''], // units
               },
             ];
 

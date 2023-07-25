@@ -768,10 +768,8 @@ export interface ApiDirectory {
   'rsyncmod.delete': { params: [id: number]; response: boolean };
 
   // Reporting
-  'reporting.get_data': { params: ReportingQueryParams; response: ReportingData[] };
   'reporting.update': { params: [ReportingConfigUpdate]; response: ReportingConfig };
   'reporting.config': { params: void; response: ReportingConfig };
-  'reporting.graphs': { params: QueryParams<ReportingGraph>; response: ReportingGraph[] };
   'reporting.clear': { params: void; response: void };
   'reporting.netdata_get_data': { params: ReportingQueryParams; response: ReportingData[] };
   'reporting.netdata_graphs': { params: QueryParams<ReportingGraph>; response: ReportingGraph[] };

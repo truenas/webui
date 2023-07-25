@@ -20,3 +20,11 @@ export enum ReportingGraphName {
   ZfsArcRate = 'arcrate',
   ZfsArcActualRate = 'arcactualrate',
 }
+
+export enum ReportingQueryUnit {
+  Hour = 'HOUR',
+  Day = 'DAY',
+  Week = 'WEEK',
+  Month = 'MONTH',
+  Year = 'YEAR',
+}

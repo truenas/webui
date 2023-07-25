@@ -16,7 +16,7 @@ import { LinkState, NetworkInterfaceAliasType } from 'app/enums/network-interfac
 import { deepCloneState } from 'app/helpers/state-select.helper';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { BaseNetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
-import { NetworkInterfaceUpdate, ReportingParams } from 'app/interfaces/reporting.interface';
+import { NetworkInterfaceUpdate, ReportingNameAndId } from 'app/interfaces/reporting.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { TableService } from 'app/modules/entity/table/table.service';
@@ -356,7 +356,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
 
     this.availableNics.forEach((nic) => {
       const networkInterfaceName = nic.state.name;
-      const params: ReportingParams = {
+      const params: ReportingNameAndId = {
         identifier: networkInterfaceName,
         name: 'interface',
       };

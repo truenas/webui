@@ -4,7 +4,7 @@ import {
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { ReportingGraphName } from 'app/enums/reporting-graph-name.enum';
+import { ReportingGraphName } from 'app/enums/reporting.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Option } from 'app/interfaces/option.interface';
 import { ReportTab, ReportType } from 'app/pages/reports-dashboard/interfaces/report-tab.interface';
@@ -132,13 +132,12 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
             condition = report.name.startsWith(ReportingGraphName.Ups);
             break;
           case ReportType.Zfs:
-            // Add when vertical_label value is added
-            // ReportingGraphName.ZfsArcActualRate,
-            // ReportingGraphName.ZfsArcRate,
             condition = [
               ReportingGraphName.ZfsArcSize,
               ReportingGraphName.ZfsArcRatio,
               ReportingGraphName.ZfsArcResult,
+              ReportingGraphName.ZfsArcActualRate,
+              ReportingGraphName.ZfsArcRate,
             ].includes(graphName);
             break;
           default:
@@ -214,9 +213,5 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
     });
 
     this.visibleReports = visible;
-  }
-
-  isReportReversed(report: Report): boolean {
-    return report.name === 'cpu';
   }
 }

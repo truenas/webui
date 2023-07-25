@@ -6,9 +6,10 @@ import { utcToZonedTime } from 'date-fns-tz';
 import Dygraph, { dygraphs } from 'dygraphs';
 // eslint-disable-next-line
 import smoothPlotter from 'dygraphs/src/extras/smooth-plotter.js';
-import { KiB, MiB } from 'app/constants/bytes.constant';
+import {
+  GiB, KiB, MiB, TiB,
+} from 'app/constants/bytes.constant';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
-import { ReportingGraphName } from 'app/enums/reporting-graph-name.enum';
 import { ReportingData } from 'app/interfaces/reporting.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { Theme } from 'app/interfaces/theme.interface';
@@ -23,6 +24,7 @@ interface Conversion {
   shortName?: string;
 }
 
+// TODO: Untie from reporting and move to a separate module.
 @Component({
   selector: 'ix-linechart',
   templateUrl: './line-chart.component.html',
@@ -38,10 +40,10 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
   get data(): ReportingData {
     return this._data;
   }
-  @Input() isReversed = false;
   @Input() report: Report;
   @Input() title: string;
   @Input() timezone: string;
+  @Input() stacked = false;
 
   @Input() legends?: string[];
   @Input() type = 'line';
@@ -52,6 +54,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
   @Input() labelY?: string = 'Label Y';
   @Input() interactive = false;
 
+  // TODO: Remove extra library.
   library: 'dygraph' | 'chart.js' = 'dygraph';
 
   chart: Dygraph;
@@ -66,14 +69,6 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   private utils: ThemeUtils = new ThemeUtils();
   private _data: ReportingData;
-
-  get stacked(): boolean {
-    return [
-      ReportingGraphName.Uptime,
-      ReportingGraphName.Swap,
-      ReportingGraphName.ZfsArcResult,
-    ].includes(this.data?.name as ReportingGraphName);
-  }
 
   constructor(
     private core: CoreService,
@@ -97,7 +92,6 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
     const fg2Type = this.utils.getValueType(fg2);
     const fg2Rgb = fg2Type === 'hex' ? this.utils.hexToRgb(this.themeService.currentTheme().fg2).rgb : this.utils.rgbToArray(fg2);
     const gridLineColor = `rgba(${fg2Rgb[0]}, ${fg2Rgb[1]}, ${fg2Rgb[2]}, 0.25)`;
-    const yLabelSuffix = this.labelY === 'Bits/s' ? this.labelY.toLowerCase() : this.labelY;
 
     const options: dygraphs.Options = {
       animatedZooms: true,
@@ -108,7 +102,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
       strokeWidth: 1,
       colors: this.chartColors,
       labels, // time axis
-      ylabel: this.yLabelPrefix + yLabelSuffix,
+      ylabel: this.formatAxisName(),
       gridLineColor,
       showLabelsOnHighlight: false,
       labelsSeparateLines: true,
@@ -181,40 +175,28 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
     }
   }
 
+  // TODO: Line chart should be dumber and should not care about timezones.
   protected makeTimeAxis(rd: ReportingData): dygraphs.DataArray {
     const structure = this.library === 'chart.js' ? 'columns' : 'rows';
-    const step = 10;
     const rowData = rd.data as number[][];
 
     if (structure === 'rows') {
-      // Push dates to row based data...
-      const rows = [];
-      // Add legend with axis to beginning of array
-      const legend = Object.assign([], rd.legend);
-      legend.unshift('x');
-      rows.push(legend);
+      const newRows = rowData.map((row) => {
+        // replace unix timestamp in first column with date
+        const convertedDate = utcToZonedTime(row[0] * 1000, this.timezone);
+        return [convertedDate, ...row.slice(1)];
+      });
 
-      for (let i = 0; i < rowData.length; i++) {
-        const item = Object.assign([], rowData[i]);
-        let dateStr = utcToZonedTime(new Date(rd.start * 1000 + i * step * 1000), this.timezone).toString();
-        // UTC: 2020-12-17T16:33:10Z
-        // Los Angeles: 2020-12-17T08:36:30-08:00
-        // Change dateStr from '2020-12-17T08:36:30-08:00' to '2020-12-17T08:36'
-        const list = dateStr.split(':');
-        dateStr = list.join(':');
-        const date = new Date(dateStr);
-
-        item[0] = date; // replace unix timestamp with date
-        rows.push(item);
-      }
-
-      return rows;
+      return [
+        ['x', ...rd.legend],
+        ...newRows,
+      ] as unknown as dygraphs.DataArray;
     }
     if (structure === 'columns') {
       const columns = [];
 
       for (let i = 0; i < (rd.data as number[][]).length; i++) {
-        const date = new Date(rd.start * 1000 + i * step * 1000);
+        const date = new Date(rd.start * 1000 + i * rd.step * 1000);
         columns.push(date);
       }
 
@@ -259,6 +241,23 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
     }
 
     return units;
+  }
+
+  formatAxisName(): string {
+    switch (true) {
+      case this.labelY.toLowerCase() === 'seconds':
+        return 'Days';
+      case this.labelY.toLowerCase().includes('bits/s'):
+        return `${this.yLabelPrefix}bits/s`;
+      case this.labelY.toLowerCase().includes('bytes/s'):
+        return `${this.yLabelPrefix}bytes/s`;
+      case this.labelY.toLowerCase().includes('bytes'):
+        return `${this.yLabelPrefix}bytes`;
+      case this.labelY.toLowerCase().includes('bits'):
+        return `${this.yLabelPrefix}bits`;
+      default:
+        return this.labelY;
+    }
   }
 
   formatLabelValue(value: number, units: string, fixed?: number, prefixRules?: boolean): Conversion {
@@ -317,31 +316,26 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
   }
 
   convertKmgt(value: number, units: string, fixed?: number, prefixRules?: boolean): Conversion {
-    const kilo = 1024;
-    const mega = kilo * 1024;
-    const giga = mega * 1024;
-    const tera = giga * 1024;
-
     let prefix = '';
     let output: number = value;
     let shortName = '';
 
-    if (value > tera || (prefixRules && this.yLabelPrefix === 'Tera')) {
+    if (value > TiB || (prefixRules && this.yLabelPrefix === 'Tera')) {
       prefix = 'Tera';
       shortName = 'TiB';
-      output = value / tera;
-    } else if ((value < tera && value > giga) || (prefixRules && this.yLabelPrefix === 'Giga')) {
+      output = value / TiB;
+    } else if ((value < TiB && value > GiB) || (prefixRules && this.yLabelPrefix === 'Giga')) {
       prefix = 'Giga';
       shortName = 'GiB';
-      output = value / giga;
-    } else if ((value < giga && value > mega) || (prefixRules && this.yLabelPrefix === 'Mega')) {
+      output = value / GiB;
+    } else if ((value < GiB && value > MiB) || (prefixRules && this.yLabelPrefix === 'Mega')) {
       prefix = 'Mega';
       shortName = 'MiB';
-      output = value / mega;
-    } else if ((value < mega && value > kilo) || (prefixRules && this.yLabelPrefix === 'Kilo')) {
+      output = value / MiB;
+    } else if ((value < MiB && value > KiB) || (prefixRules && this.yLabelPrefix === 'Kilo')) {
       prefix = 'Kilo';
       shortName = 'KB';
-      output = value / kilo;
+      output = value / KiB;
     }
 
     if (units === 'bits') {
