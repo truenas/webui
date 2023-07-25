@@ -78,12 +78,12 @@ export const rootRouterConfig: Routes = [{
     data: { title: T('Applications'), breadcrumb: T('Applications') },
   },
   {
-    path: 'apps-old',
+    path: 'apps-legacy',
     component: ApplicationsComponent,
     data: { title: T('Applications'), breadcrumb: T('Applications') },
   },
   {
-    path: 'apps-old/:tabIndex',
+    path: 'apps-legacy/:tabIndex',
     loadChildren: () => import('app/pages/apps-old/old-apps.module').then((module) => module.OldAppsModule),
     data: { title: T('Applications'), breadcrumb: T('Applications') },
   },

@@ -86,6 +86,7 @@ import { AppNotesCardComponent } from './components/installed-apps/app-notes-car
 import { AppStatusCellComponent } from './components/installed-apps/app-status-cell/app-status-cell.component';
 import { AppUpgradeDialogComponent } from './components/installed-apps/app-upgrade-dialog/app-upgrade-dialog.component';
 import { InstalledAppsComponent } from './components/installed-apps/installed-apps.component';
+import { KubernetesStatusComponent } from './components/installed-apps/kubernetes-status/kubernetes-status.component';
 
 @NgModule({
   declarations: [
@@ -128,6 +129,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     CategoryViewComponent,
     CatalogDeleteDialogComponent,
     CustomAppButtonComponent,
+    KubernetesStatusComponent,
   ],
   imports: [
     CommonModule,
