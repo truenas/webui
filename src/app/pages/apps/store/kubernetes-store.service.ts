@@ -1,14 +1,19 @@
 import { Injectable } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import {
-  Observable, catchError, of, switchMap, tap,
+  Observable, ObservableInput, Subscription, catchError, map, of, switchMap, tap,
 } from 'rxjs';
+import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
+import { KubernetesStatusData } from 'app/interfaces/kubernetes-status-data.interface';
+import { KubernetesStatus } from 'app/pages/apps/enum/kubernetes-status.enum';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 
 export interface KubernetesState {
   kubernetesConfig: KubernetesConfig;
   isKubernetesStarted: boolean;
+  kubernetesStatus: KubernetesStatus | null;
+  kubernetesStatusDescription: string | null;
   isLoading: boolean;
   selectedPool: string;
 }
@@ -18,19 +23,21 @@ const initialState: KubernetesState = {
   isKubernetesStarted: null,
   isLoading: false,
   selectedPool: null,
+  kubernetesStatus: null,
+  kubernetesStatusDescription: null,
 };
 
 @Injectable()
 export class KubernetesStore extends ComponentStore<KubernetesState> {
+  private kubernetesStatusSubscription: Subscription;
+
   readonly isKubernetesStarted$ = this.select((state) => state.isKubernetesStarted);
-
   readonly selectedPool$ = this.select((state) => state.selectedPool);
-
   readonly isLoading$ = this.select((state) => state.isLoading);
+  readonly kubernetesStatus$ = this.select((state) => state.kubernetesStatus);
+  readonly kubernetesStatusDescription$ = this.select((state) => state.kubernetesStatusDescription);
 
-  constructor(
-    private appsService: ApplicationsService,
-  ) {
+  constructor(private appsService: ApplicationsService) {
     super(initialState);
     this.initialize();
   }
@@ -61,7 +68,11 @@ export class KubernetesStore extends ComponentStore<KubernetesState> {
           };
         });
       }),
-      catchError(() => of(this.handleError())),
+      switchMap(() => this.loadKubernetesStatus()),
+      catchError(() => {
+        this.handleError();
+        return of(undefined);
+      }),
     );
   });
 
@@ -93,5 +104,39 @@ export class KubernetesStore extends ComponentStore<KubernetesState> {
         });
       }),
     );
+  }
+
+  loadKubernetesStatus(): Observable<KubernetesStatusData> {
+    return this.appsService.getKubernetesStatus().pipe(
+      tap(({ status, description }: KubernetesStatusData) => {
+        this.listenForKubernetesStatusUpdates();
+
+        this.patchState((state: KubernetesState): KubernetesState => {
+          return {
+            ...state,
+            kubernetesStatus: status,
+            kubernetesStatusDescription: description,
+          };
+        });
+      }),
+    );
+  }
+
+  listenForKubernetesStatusUpdates(): ObservableInput<unknown> {
+    if (this.kubernetesStatusSubscription) {
+      return;
+    }
+
+    this.kubernetesStatusSubscription = this.appsService.getKubernetesStatusUpdates().pipe(
+      map((event: ApiEvent<KubernetesStatusData>) => {
+        this.patchState((state: KubernetesState): KubernetesState => {
+          return {
+            ...state,
+            kubernetesStatus: event.fields.status,
+            kubernetesStatusDescription: event.fields.description,
+          };
+        });
+      }),
+    ).subscribe();
   }
 }

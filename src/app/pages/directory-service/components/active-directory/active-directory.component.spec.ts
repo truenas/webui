@@ -151,7 +151,7 @@ describe('ActiveDirectoryComponent', () => {
       'AD Timeout': '60',
       'DNS Timeout': '10',
       'Winbind NSS Info': 'SFU20',
-      'Netbios Name': 'truenas',
+      'NetBIOS Name': 'truenas',
       'NetBIOS Alias': ['alias1', 'alias2'],
     });
   });

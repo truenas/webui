@@ -1,6 +1,4 @@
-import {
-  AfterViewInit, Component, OnInit, TemplateRef, ViewChild,
-} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter } from 'rxjs/operators';
@@ -17,7 +15,6 @@ import { CatalogAddFormComponent } from 'app/pages/apps-old/forms/catalog-add-fo
 import { CatalogEditFormComponent } from 'app/pages/apps-old/forms/catalog-edit-form/catalog-edit-form.component';
 import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { LayoutService } from 'app/services/layout.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -25,9 +22,7 @@ import { WebSocketService } from 'app/services/ws.service';
   selector: 'ix-manage-catalogs',
   templateUrl: './manage-catalogs.component.html',
 })
-export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnInit, AfterViewInit {
-  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
-
+export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnInit {
   title = 'Catalogs';
   queryCall = 'catalog.query' as const;
   wsDelete = 'catalog.delete' as const;
@@ -70,7 +65,6 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
     private dialogService: DialogService,
     private ws: WebSocketService,
     private slideInService: IxSlideInService,
-    private layoutService: LayoutService,
   ) {}
 
   ngOnInit(): void {
@@ -88,10 +82,6 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
         this.catalogSyncJobIds.splice(this.catalogSyncJobIds.indexOf(jobId));
       }
     });
-  }
-
-  ngAfterViewInit(): void {
-    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
   refresh(): void {

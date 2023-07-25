@@ -1,0 +1,21 @@
+.status-wrapper {
+  align-items: center;
+  display: flex;
+
+  &:hover {
+    cursor: help;
+  }
+
+  mat-spinner {
+    margin-right: 4px;
+  }
+
+  ix-icon {
+    font-size: 20px;
+    margin-right: 4px;
+
+    &.running {
+      color: var(--green);
+    }
+  }
+}

@@ -1,6 +1,6 @@
 import {
   AfterViewInit,
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, TemplateRef, ViewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MAT_SLIDE_TOGGLE_DEFAULT_OPTIONS } from '@angular/material/slide-toggle';
@@ -30,7 +30,6 @@ import { BootenvStatsDialogComponent } from 'app/pages/system/bootenv/bootenv-st
 import { DialogService, WebSocketService, AppLoaderService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { LayoutService } from 'app/services/layout.service';
 
 @UntilDestroy()
 @Component({
@@ -42,7 +41,6 @@ import { LayoutService } from 'app/services/layout.service';
   ],
 })
 export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
-  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
   dataSource = new MatTableDataSource<Bootenv>([]);
   displayedColumns = ['select', 'name', 'active', 'created', 'rawspace', 'keep', 'actions'];
   @ViewChild(MatSort, { static: false }) sort: MatSort;
@@ -89,7 +87,6 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
     private cdr: ChangeDetectorRef,
     private matDialog: MatDialog,
     private slideInService: IxSlideInService,
-    private layoutService: LayoutService,
     private snackbar: SnackbarService,
     private emptyService: EmptyService,
   ) { }
@@ -100,10 +97,9 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.dataSource.sort = this.sort;
-    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
-  handleSlideInClosed(slideInRef: IxSlideInRef<unknown, unknown>): void {
+  handleSlideInClosed(slideInRef: IxSlideInRef<unknown>): void {
     slideInRef.slideInClosed$.pipe(
       filter((value) => value === true),
       untilDestroyed(this),

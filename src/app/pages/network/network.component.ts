@@ -38,7 +38,6 @@ import { AppState } from 'app/store/index';
   styleUrls: ['./network.component.scss'],
 })
 export class NetworkComponent implements OnInit, OnDestroy {
-  protected summaryCall = 'network.general.summary' as const;
   formEvent$: Subject<CoreEvent>;
 
   isHaEnabled = false;
@@ -99,7 +98,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
     this.openInterfaceForEditFromRoute();
   }
 
-  handleSlideInClosed(slideInRef: IxSlideInRef<unknown, unknown>): void {
+  handleSlideInClosed(slideInRef: IxSlideInRef<unknown>): void {
     slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
       this.interfacesStore.loadInterfaces();
       this.checkInterfacePendingChanges();

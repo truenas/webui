@@ -45,8 +45,7 @@ export class SelectPoolDialogComponent implements OnInit {
   ) {}
 
   get canMigrateApplications(): boolean {
-    return Boolean(this.selectedPool)
-      && this.selectedPool !== this.form.value.pool;
+    return Boolean(this.selectedPool) && this.selectedPool !== this.form.value.pool;
   }
 
   ngOnInit(): void {
@@ -66,6 +65,7 @@ export class SelectPoolDialogComponent implements OnInit {
       data: {
         title: helptext.choosePool.jobTitle,
       },
+      disableClose: true,
     });
     dialogRef.componentInstance.setCall('kubernetes.update', [params]);
     dialogRef.componentInstance.submit();
@@ -73,9 +73,13 @@ export class SelectPoolDialogComponent implements OnInit {
       this.snackbar.success(
         this.translate.instant('Using pool {name}', { name: this.form.value.pool }),
       );
+      this.kubernetesStore.updateSelectedPool(this.form.value.pool);
       this.kubernetesStore.updatePoolAndKubernetesConfig().pipe(untilDestroyed(this)).subscribe();
       dialogRef.close();
       this.dialogRef.close(true);
+    });
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
+      this.dialogService.error(this.errorHandler.parseJobError(err));
     });
   }
 

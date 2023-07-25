@@ -1,5 +1,5 @@
 import {
-  Component, OnInit, AfterViewInit, ViewChild, TemplateRef,
+  Component, OnInit, ViewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -41,8 +41,7 @@ interface CatalogSyncJob {
   templateUrl: './catalog.component.html',
   styleUrls: ['../applications.component.scss', 'catalog.component.scss'],
 })
-export class CatalogComponent implements OnInit, AfterViewInit {
-  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
+export class CatalogComponent implements OnInit {
   @ViewChild(CommonAppsToolbarButtonsComponent, { static: false })
   commonAppsToolbarButtons: CommonAppsToolbarButtonsComponent;
 
@@ -94,10 +93,6 @@ export class CatalogComponent implements OnInit, AfterViewInit {
         }
       }
     });
-  }
-
-  ngAfterViewInit(): void {
-    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
   loadCatalogs(): void {

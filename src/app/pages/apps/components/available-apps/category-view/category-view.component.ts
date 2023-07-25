@@ -1,6 +1,5 @@
 import {
-  AfterViewInit,
-  ChangeDetectionStrategy, Component, OnDestroy, OnInit, TemplateRef, ViewChild,
+  ChangeDetectionStrategy, Component, OnDestroy, OnInit,
 } from '@angular/core';
 import {
   ActivatedRoute,
@@ -12,7 +11,6 @@ import {
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { AppsFilterStore } from 'app/pages/apps/store/apps-filter-store.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
-import { LayoutService } from 'app/services/layout.service';
 
 @UntilDestroy()
 @Component({
@@ -20,15 +18,12 @@ import { LayoutService } from 'app/services/layout.service';
   styleUrls: ['./category-view.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CategoryViewComponent implements OnInit, OnDestroy, AfterViewInit {
-  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
-
+export class CategoryViewComponent implements OnInit, OnDestroy {
   pageTitle$ = new BehaviorSubject('Category');
   apps$ = this.appsFilterStore.filteredApps$;
   isLoading$ = this.applicationsStore.isLoading$;
 
   constructor(
-    private layoutService: LayoutService,
     private applicationsStore: AppsStore,
     private route: ActivatedRoute,
     private appsFilterStore: AppsFilterStore,
@@ -42,10 +37,6 @@ export class CategoryViewComponent implements OnInit, OnDestroy, AfterViewInit {
       catalogs: [],
       sort: null,
     });
-  }
-
-  ngAfterViewInit(): void {
-    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
   ngOnDestroy(): void {

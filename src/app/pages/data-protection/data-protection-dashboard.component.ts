@@ -111,7 +111,7 @@ export class DataProtectionDashboardComponent implements OnInit {
     this.refreshAllTables();
   }
 
-  handleSlideInClosed(slideInRef: IxSlideInRef<unknown, unknown>, modalType: unknown): void {
+  handleSlideInClosed(slideInRef: IxSlideInRef<unknown>, modalType: unknown): void {
     slideInRef.slideInClosed$
       .pipe(untilDestroyed(this))
       .subscribe(() => {

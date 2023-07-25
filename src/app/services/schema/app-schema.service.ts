@@ -15,7 +15,9 @@ import {
   KeysRestoredFromFormGroup,
   SerializeFormValue,
 } from 'app/interfaces/app-schema.interface';
-import { ChartFormValue, ChartSchema, ChartSchemaNode } from 'app/interfaces/chart-release.interface';
+import {
+  ChartFormValue, ChartSchema, ChartSchemaNode, ChartSchemaNodeConf,
+} from 'app/interfaces/chart-release.interface';
 import {
   DeleteListItemEvent, DynamicFormSchemaDict, DynamicFormSchemaNode, DynamicWizardSchema,
 } from 'app/interfaces/dynamic-form-schema.interface';
@@ -120,7 +122,7 @@ export class AppSchemaService {
     return newSchema;
   }
 
-  addFormControls(payload: FormControlPayload): Subscription {
+  getNewFormControlChangesSubscription(payload: FormControlPayload): Subscription {
     const { chartSchemaNode } = payload;
     const path = payload.path ? payload.path + '.' + chartSchemaNode.variable : chartSchemaNode.variable;
     const subscription = new Subscription();
@@ -195,7 +197,7 @@ export class AppSchemaService {
     const itemFormGroup = new CustomUntypedFormGroup({});
     event.schema.forEach((item: ChartSchemaNode) => {
       subscriptionEvent.add(
-        this.addFormControls({
+        this.getNewFormControlChangesSubscription({
           isNew,
           chartSchemaNode: item,
           formGroup: itemFormGroup,
@@ -452,7 +454,7 @@ export class AppSchemaService {
     formGroup.addControl(chartSchemaNode.variable, new CustomUntypedFormGroup({}));
     for (const attr of schema.attrs) {
       subscription.add(
-        this.addFormControls({
+        this.getNewFormControlChangesSubscription({
           isNew,
           path,
           chartSchemaNode: attr,
@@ -636,65 +638,74 @@ export class AppSchemaService {
     }));
   }
 
-  private handleSchemaSubQuestions(payload: CommonSchemaAddControl, newFormControl: CustomUntypedFormControl): void {
-    const {
-      schema, isNew, path, subscription, formGroup, config, isParentImmutable,
-    } = payload;
+  private handleSchemaSubQuestions({
+    schema,
+    isNew,
+    path,
+    subscription,
+    formGroup,
+    config,
+    isParentImmutable,
+  }: CommonSchemaAddControl, newFormControl: CustomUntypedFormControl): void {
+    if (!schema.subquestions) {
+      return;
+    }
 
-    if (schema.subquestions) {
-      schema.subquestions.forEach((subquestion) => {
-        subscription.add(
-          this.addFormControls({
-            isNew,
-            path,
-            chartSchemaNode: subquestion,
-            formGroup,
-            config,
-            isParentImmutable: !!schema.immutable || isParentImmutable,
-          }),
-        );
+    for (const subquestion of schema.subquestions) {
+      subscription.add(
+        this.getNewFormControlChangesSubscription({
+          isNew,
+          path,
+          chartSchemaNode: subquestion,
+          formGroup,
+          config,
+          isParentImmutable: !!schema.immutable || isParentImmutable,
+        }),
+      );
 
-        const formField = (formGroup.controls[subquestion.variable] as CustomUntypedFormField);
-        if (!formField.hidden$) {
-          formField.hidden$ = new BehaviorSubject<boolean>(false);
+      const formField = formGroup.controls[subquestion.variable] as CustomUntypedFormField;
+      this.toggleFieldHiddenOrDisabled(formField, newFormControl.value, schema, subquestion, isNew, isParentImmutable);
+    }
+
+    subscription.add(newFormControl.valueChanges.subscribe((value) => {
+      for (const subquestion of schema.subquestions) {
+        const parentControl = formGroup.controls[subquestion.variable].parent as CustomUntypedFormField;
+        if (!parentControl.hidden$) {
+          parentControl.hidden$ = new BehaviorSubject<boolean>(false);
         }
-        if (newFormControl.value === schema.show_subquestions_if) {
-          formField.hidden$.next(false);
-          formField.enable();
-        } else {
-          formField.hidden$.next(true);
-          formField.disable();
-        }
-      });
 
-      subscription.add(newFormControl.valueChanges.subscribe((value) => {
-        schema.subquestions.forEach((subquestion) => {
-          const parentControl = (formGroup.controls[subquestion.variable].parent as CustomUntypedFormField);
-          if (!parentControl.hidden$) {
-            parentControl.hidden$ = new BehaviorSubject<boolean>(false);
+        parentControl.hidden$.pipe(take(1)).subscribe((isParentHidden) => {
+          if (!isParentHidden) {
+            const formField = (formGroup.controls[subquestion.variable] as CustomUntypedFormField);
+            this.toggleFieldHiddenOrDisabled(formField, value, schema, subquestion, isNew, isParentImmutable);
           }
-
-          parentControl.hidden$.pipe(take(1)).subscribe((isParentHidden) => {
-            if (!isParentHidden) {
-              const formField = (formGroup.controls[subquestion.variable] as CustomUntypedFormField);
-              if (!formField.hidden$) {
-                formField.hidden$ = new BehaviorSubject<boolean>(false);
-              }
-              if (value === schema.show_subquestions_if) {
-                formField.hidden$.next(false);
-                if (!isNew && (isParentImmutable || !!schema.immutable || !!subquestion.schema.immutable)) {
-                  formField.disable();
-                } else {
-                  formField.enable();
-                }
-              } else {
-                formField.hidden$.next(true);
-                formField.disable();
-              }
-            }
-          });
         });
-      }));
+      }
+    }));
+  }
+
+  private toggleFieldHiddenOrDisabled(
+    formField: CustomUntypedFormField,
+    value: unknown,
+    schema: ChartSchemaNodeConf,
+    subquestion: ChartSchemaNode,
+    isNew: boolean,
+    isParentImmutable: boolean,
+  ): void {
+    if (!formField.hidden$) {
+      formField.hidden$ = new BehaviorSubject<boolean>(false);
+    }
+
+    if (value === schema.show_subquestions_if) {
+      formField.hidden$.next(false);
+      formField.enable();
+    } else {
+      formField.hidden$.next(true);
+      formField.disable();
+    }
+
+    if (subquestion && (isParentImmutable || schema.immutable || subquestion.schema.immutable)) {
+      formField.disable();
     }
   }
 }

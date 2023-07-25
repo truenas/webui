@@ -71,7 +71,7 @@ export class DatasetDetailsPanelComponent {
     return this.dataset.name === this.systemDataset;
   }
 
-  handleSlideInClosed(slideInRef: IxSlideInRef<unknown, unknown>, modalType: unknown): void {
+  handleSlideInClosed(slideInRef: IxSlideInRef<unknown>, modalType: unknown): void {
     slideInRef.slideInClosed$.pipe(untilDestroyed(this))
       .subscribe((value: { id: string }) => {
         this.datasetStore.datasetUpdated();

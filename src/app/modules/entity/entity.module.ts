@@ -57,6 +57,7 @@ import { TableComponent } from 'app/modules/entity/table/table.component';
 import { TableService } from 'app/modules/entity/table/table.service';
 import { TaskScheduleListComponent } from 'app/modules/entity/task-schedule-list/task-schedule-list.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { LayoutModule } from 'app/modules/layout/layout.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
@@ -115,6 +116,7 @@ import { AppLoaderService } from 'app/services';
     MatNativeDateModule,
     SchedulerModule,
     TestIdModule,
+    LayoutModule,
   ],
   declarations: [
     TaskScheduleListComponent,

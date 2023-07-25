@@ -27,7 +27,7 @@ import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectHasOnlyMismatchVersionsReason, selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { systemInfoUpdated } from 'app/store/system-info/system-info.actions';
-import { selectIsIxHardware, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
+import { selectIsIxHardware, waitForSystemFeatures, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -40,11 +40,11 @@ import { selectIsIxHardware, waitForSystemInfo } from 'app/store/system-info/sys
   providers: [TitleCasePipe],
 })
 export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
-  @Input() isHaLicensed = false;
+  protected isHaLicensed = false;
   @Input() isPassive = false;
-  @Input() enclosureSupport = false;
+  protected enclosureSupport = false;
   @Input() showReorderHandle = false;
-  @Input() systemInfo: SystemInfo;
+  protected systemInfo: SystemInfo;
 
   hasOnlyMismatchVersionsReason$ = this.store$.select(selectHasOnlyMismatchVersionsReason);
 
@@ -104,6 +104,9 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.store$.pipe(waitForSystemFeatures, untilDestroyed(this)).subscribe((features) => {
+      this.enclosureSupport = features.enclosure;
+    });
     if (this.isHaLicensed && this.isPassive) {
       this.store$.select(selectHaStatus).pipe(
         filter((haStatus) => !!haStatus),
@@ -138,6 +141,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
     }
     if (this.sysGenService.getProductType() === ProductType.ScaleEnterprise) {
       this.store$.select(selectIsHaLicensed).pipe(untilDestroyed(this)).subscribe((isHaLicensed) => {
+        this.isHaLicensed = isHaLicensed;
         if (isHaLicensed) {
           this.updateMethod = 'failover.upgrade';
         }
@@ -254,7 +258,10 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
   }
 
   goToEnclosure(): void {
-    if (this.enclosureSupport) this.router.navigate(['/system/viewenclosure']);
+    if (!this.enclosureSupport) {
+      return;
+    }
+    this.router.navigate(['/system/viewenclosure']);
   }
 
   /**
