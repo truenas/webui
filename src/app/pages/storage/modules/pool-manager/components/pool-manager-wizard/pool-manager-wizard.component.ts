@@ -244,7 +244,7 @@ export class PoolManagerWizardComponent implements OnInit {
     ).subscribe({
       next: () => {
         if (!this.existingPool) {
-          this.createPool();
+          this.createPool(); return;
         }
         this.updatePool();
       },
