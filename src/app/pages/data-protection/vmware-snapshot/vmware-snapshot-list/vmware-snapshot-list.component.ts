@@ -1,5 +1,5 @@
 import {
-  AfterViewInit, ChangeDetectorRef, Component, OnInit, TemplateRef, ViewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -17,15 +17,14 @@ import { VmwareSnapshotFormComponent } from 'app/pages/data-protection/vmware-sn
 import { DialogService, WebSocketService } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { LayoutService } from 'app/services/layout.service';
 
 @UntilDestroy()
 @Component({
   templateUrl: './vmware-snapshot-list.component.html',
   styleUrls: ['./vmware-snapshot-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class VmwareSnapshotListComponent implements AfterViewInit, OnInit {
-  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
+export class VmwareSnapshotListComponent implements OnInit {
   private filterString = '';
 
   protected snapshots: VmwareSnapshot[] = [];
@@ -56,10 +55,6 @@ export class VmwareSnapshotListComponent implements AfterViewInit, OnInit {
   isLoading = false;
   emptyType = EmptyType.Loading;
 
-  title = 'VMware Snapshots';
-  queryCall = 'vmware.query' as const;
-  wsDelete = 'vmware.delete' as const;
-
   get emptyConfigService(): EmptyService {
     return this.emptyService;
   }
@@ -68,16 +63,11 @@ export class VmwareSnapshotListComponent implements AfterViewInit, OnInit {
     protected translate: TranslateService,
     private slideInService: IxSlideInService,
     private emptyService: EmptyService,
-    private layoutService: LayoutService,
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
   ) {}
-
-  ngAfterViewInit(): void {
-    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
-  }
 
   ngOnInit(): void {
     this.getSnapshotsData();
