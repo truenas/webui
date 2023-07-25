@@ -1,11 +1,11 @@
-<ng-template #tableAddActions>
-  <ix-entity-table-add-actions [entity]="asGenericTable(this)"></ix-entity-table-add-actions>
-</ng-template>
-
-<ng-template #pageHeader>
+<ng-template *ngIf="!this.conf.disableActionsConfig" ixPageHeader>
   <ix-page-title-header>
     <ng-container *ngIf="!conf.actionsOutOfHeader" [ngTemplateOutlet]="tableAddActions"></ng-container>
   </ix-page-title-header>
+</ng-template>
+
+<ng-template #tableAddActions>
+  <ix-entity-table-add-actions [entity]="asGenericTable(this)"></ix-entity-table-add-actions>
 </ng-template>
 
 <div *ngIf="conf.actionsOutOfHeader" class="actions-out-of-header">

@@ -88,7 +88,6 @@ describe('ManualDiskSelectionComponent', () => {
             };
           }),
           uuid: expect.any(String),
-          rawSize: 0,
         };
       }),
       layout: CreateVdevLayout.Stripe,

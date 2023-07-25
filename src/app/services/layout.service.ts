@@ -8,6 +8,9 @@ import { WINDOW } from 'app/helpers/window.helper';
 export class LayoutService {
   private readonly collapsedMenuClass = 'collapsed-menu';
 
+  /**
+   * Prefer `ixPageHeader` directive.
+   */
   readonly pageHeaderUpdater$ = new BehaviorSubject<TemplateRef<unknown>>(null);
 
   constructor(

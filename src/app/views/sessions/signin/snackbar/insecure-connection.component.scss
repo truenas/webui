@@ -1,16 +1,15 @@
 :host {
   align-items: center;
-  column-gap: 10px;
+  column-gap: 9px;
   display: flex;
+  font-size: 12px;
+  padding: 0 0 5px 8px;
+}
+
+ix-icon {
   font-size: 1rem;
 }
 
 .message {
-  color: var(--fg1);
   flex-grow: 1;
-  margin-right: 50px;
-}
-
-.text-configure {
-  margin: 0 30px;
 }

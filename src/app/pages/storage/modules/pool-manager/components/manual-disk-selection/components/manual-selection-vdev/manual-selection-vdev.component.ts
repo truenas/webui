@@ -12,6 +12,7 @@ import {
 } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/interfaces/manual-disk-selection.interface';
 import { ManualDiskDragToggleStore as ManualDiskSelectionDragToggleStore } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/store/manual-disk-drag-toggle.store';
 import { ManualDiskSelectionStore } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/store/manual-disk-selection.store';
+import { vdevCapacity } from 'app/pages/storage/modules/pool-manager/utils/capacity.utils';
 import { minDisksPerLayout } from 'app/pages/storage/modules/pool-manager/utils/min-disks-per-layout.constant';
 
 @UntilDestroy()
@@ -27,8 +28,10 @@ export class ManualSelectionVdevComponent implements OnChanges {
   @Input() editable = false;
   @Input() swapondrive = 2;
 
-  vdevErrMsg = '';
-  showDiskSizeError = false;
+  protected sizeEstimation = 0;
+
+  vdevErrorMessage = '';
+  mixesDisksOfDifferentSizes = false;
 
   enclosuresDisks = new Map<number, ManualSelectionDisk[]>();
   nonEnclosureDisks: ManualSelectionDisk[] = [];
@@ -47,31 +50,8 @@ export class ManualSelectionVdevComponent implements OnChanges {
   ) { }
 
   ngOnChanges(): void {
-    let vdevErrorMsg: string = null;
-    if (this.vdev.disks?.length < this.minDisks[this.layout]) {
-      const typeKey = Object.entries(CreateVdevLayout).filter(
-        ([, value]) => value === this.layout,
-      ).map(([key]) => key)[0];
-      vdevErrorMsg = this.translate.instant(
-        'Atleast {min} disk(s) are required for {vdevType} vdevs',
-        { min: this.minDisks[this.layout], vdevType: typeKey },
-      );
-    }
-    this.vdevErrMsg = vdevErrorMsg;
-
-    this.enclosuresDisks = new Map();
-    this.nonEnclosureDisks = [];
-    for (const disk of this.vdev?.disks) {
-      if (disk.enclosure?.number || disk.enclosure?.number === 0) {
-        let enclosureDisks = this.enclosuresDisks.get(disk.enclosure.number);
-        if (!enclosureDisks) {
-          enclosureDisks = [];
-        }
-        this.enclosuresDisks.set(disk.enclosure.number, [...enclosureDisks, disk]);
-      } else {
-        this.nonEnclosureDisks.push(disk);
-      }
-    }
+    this.validateVdev();
+    this.groupDisksByEnclosure();
     this.estimateSize(this.vdev);
   }
 
@@ -80,51 +60,6 @@ export class ManualSelectionVdevComponent implements OnChanges {
       ...disk,
       vdevUuid: this.vdev.uuid,
     };
-  }
-
-  estimateSize(vdev: ManualSelectionVdev): void {
-    let totalsize = 0;
-    let stripeSize = 0;
-    let smallestdisk = 0;
-    let estimate = 0;
-    const swapsize = this.swapondrive * GiB;
-    this.showDiskSizeError = false;
-    for (let i = 0; i < vdev.disks.length; i++) {
-      const size = vdev.disks[i].size - swapsize;
-      stripeSize += size;
-      if (i === 0) {
-        smallestdisk = size;
-      }
-      const tenMib = 10 * MiB;
-      if (size > smallestdisk + tenMib || size < smallestdisk - tenMib) {
-        this.showDiskSizeError = true;
-      }
-      if (vdev.disks[i].size < smallestdisk) {
-        smallestdisk = size;
-      }
-    }
-    totalsize = smallestdisk * vdev.disks.length;
-
-    switch (this.layout) {
-      case CreateVdevLayout.Mirror:
-        estimate = smallestdisk;
-        break;
-      case CreateVdevLayout.Raidz1:
-        estimate = totalsize - smallestdisk;
-        break;
-      case CreateVdevLayout.Raidz2:
-        estimate = totalsize - 2 * smallestdisk;
-        break;
-      case CreateVdevLayout.Raidz3:
-        estimate = totalsize - 3 * smallestdisk;
-        break;
-      default:
-        estimate = stripeSize;
-        break;
-    }
-
-    vdev.rawSize = estimate;
-    this.cdr.markForCheck();
   }
 
   onDragStart(): void {
@@ -154,5 +89,54 @@ export class ManualSelectionVdevComponent implements OnChanges {
     this.store$.addDiskToVdev({ disk, vdev: this.vdev });
     this.dragToggleStore$.toggleActivateDrag(false);
     this.cdr.markForCheck();
+  }
+
+  private estimateSize(vdev: ManualSelectionVdev): void {
+    this.sizeEstimation = vdevCapacity({
+      vdev: vdev.disks,
+      layout: this.layout,
+      swapOnDrive: this.swapondrive * GiB,
+    });
+  }
+
+  private groupDisksByEnclosure(): void {
+    this.enclosuresDisks = new Map();
+    this.nonEnclosureDisks = [];
+    for (const disk of this.vdev?.disks) {
+      if (disk.enclosure?.number || disk.enclosure?.number === 0) {
+        let enclosureDisks = this.enclosuresDisks.get(disk.enclosure.number);
+        if (!enclosureDisks) {
+          enclosureDisks = [];
+        }
+        this.enclosuresDisks.set(disk.enclosure.number, [...enclosureDisks, disk]);
+      } else {
+        this.nonEnclosureDisks.push(disk);
+      }
+    }
+  }
+
+  private validateVdev(): void {
+    let vdevErrorMsg: string = null;
+    if (this.vdev.disks?.length < this.minDisks[this.layout]) {
+      const typeKey = Object.entries(CreateVdevLayout).filter(
+        ([, value]) => value === this.layout,
+      ).map(([key]) => key)[0];
+      vdevErrorMsg = this.translate.instant(
+        'Atleast {min} disk(s) are required for {vdevType} vdevs',
+        { min: this.minDisks[this.layout], vdevType: typeKey },
+      );
+    }
+    this.vdevErrorMessage = vdevErrorMsg;
+
+    this.mixesDisksOfDifferentSizes = false;
+    const firstDisk = this.vdev.disks[0];
+    for (const disk of this.vdev.disks) {
+      const threshold = 10 * MiB;
+      if (disk.size < firstDisk.size + threshold && disk.size > firstDisk.size - threshold) {
+        continue;
+      }
+
+      this.mixesDisksOfDifferentSizes = true;
+    }
   }
 }

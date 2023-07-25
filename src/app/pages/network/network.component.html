@@ -27,9 +27,7 @@
             <ng-template #checkIn>
               <div>
                 <p>
-                  {{ helptext.pending_checkin_text | translate }}
-                  {{ checkinRemaining }}
-                  {{ helptext.pending_checkin_text_2 | translate }}
+                  {{ helptext.pending_checkin_text | translate: { x: checkinRemaining } }}
                 </p>
               </div>
             </ng-template>

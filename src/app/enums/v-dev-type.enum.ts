@@ -1,4 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+// eslint-disable-next-line no-restricted-imports
+import helptext from '../helptext/storage/volumes/manager/manager';
 
 // TODO: This may actually be several enums. Consider splitting.
 export enum TopologyItemType {
@@ -24,35 +26,52 @@ export enum CreateVdevLayout {
   Raidz1 = 'RAIDZ1',
   Raidz2 = 'RAIDZ2',
   Raidz3 = 'RAIDZ3',
+  Draid1 = 'DRAID1',
+  Draid2 = 'DRAID2',
+  Draid3 = 'DRAID3',
 }
 
 export const vdevLayoutOptions = [
   {
     label: T('Stripe'),
     value: CreateVdevLayout.Stripe,
-    hoverTooltip: T('Each disk stores data. A stripe requires at least one disk and has no data redundancy.'),
+    hoverTooltip: helptext.stripeTooltip,
   },
   {
     label: T('Mirror'),
     value: CreateVdevLayout.Mirror,
-    hoverTooltip: T('Data is identical in each disk. A mirror requires at least two disks, provides the most redundancy, and has the least capacity.'),
+    hoverTooltip: helptext.mirrorTooltip,
   },
   {
     label: T('RAIDZ1'),
     value: CreateVdevLayout.Raidz1,
-    hoverTooltip: T('Uses one disk for parity while all other disks store data. RAIDZ1 requires at least three disks.'),
+    hoverTooltip: helptext.raidz1Tooltip,
   },
   {
     label: T('RAIDZ2'),
     value: CreateVdevLayout.Raidz2,
-    hoverTooltip: T('Uses two disks for parity while all other disks store data. RAIDZ2 requires at least four disks.'),
+    hoverTooltip: helptext.raidz2Tooltip,
   },
   {
     label: T('RAIDZ3'),
     value: CreateVdevLayout.Raidz3,
-    hoverTooltip: T('Uses three disks for parity while all other disks store data. RAIDZ3 requires at least five disks.'),
+    hoverTooltip: helptext.raidz3Tooltip,
   },
-
+  {
+    label: T('dRAID1'),
+    value: CreateVdevLayout.Draid1,
+    hoverTooltip: helptext.dRaidTooltip,
+  },
+  {
+    label: T('dRAID2'),
+    value: CreateVdevLayout.Draid2,
+    hoverTooltip: helptext.dRaidTooltip,
+  },
+  {
+    label: T('dRAID3'),
+    value: CreateVdevLayout.Draid3,
+    hoverTooltip: helptext.dRaidTooltip,
+  },
 ];
 
 export enum TopologyWarning {

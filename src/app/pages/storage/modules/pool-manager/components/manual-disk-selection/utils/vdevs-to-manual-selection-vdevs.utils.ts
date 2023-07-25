@@ -17,7 +17,6 @@ export function vdevsToManualSelectionVdevs(vdevs: UnusedDisk[][]): ManualSelect
         };
       }),
       uuid: vdevId,
-      rawSize: 0,
     };
   });
 }

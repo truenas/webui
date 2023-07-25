@@ -1005,6 +1005,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       }
     }
     totalsize = smallestdisk * vdev.disks.length;
+    const defaultDraidDataPerGroup = 8;
 
     if (vdev.type === 'mirror') {
       estimate = smallestdisk;
@@ -1014,6 +1015,15 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       estimate = totalsize - 2 * smallestdisk;
     } else if (vdev.type === 'raidz3') {
       estimate = totalsize - 3 * smallestdisk;
+    } else if (vdev.type === 'draid1') {
+      const dataPerGroup = Math.min(defaultDraidDataPerGroup, vdev.disks.length - 1);
+      estimate = vdev.disks.length * (dataPerGroup / (dataPerGroup + 1)) * smallestdisk;
+    } else if (vdev.type === 'draid2') {
+      const dataPerGroup = Math.min(defaultDraidDataPerGroup, vdev.disks.length - 2);
+      estimate = vdev.disks.length * (dataPerGroup / (dataPerGroup + 2)) * smallestdisk;
+    } else if (vdev.type === 'draid3') {
+      const dataPerGroup = Math.min(defaultDraidDataPerGroup, vdev.disks.length - 3);
+      estimate = vdev.disks.length * (dataPerGroup / (dataPerGroup + 3)) * smallestdisk;
     } else {
       estimate = stripeSize; // stripe
     }
