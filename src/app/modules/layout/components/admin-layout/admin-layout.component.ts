@@ -12,7 +12,7 @@ import {
 import { MediaObserver } from '@angular/flex-layout';
 import { MatDrawerMode, MatSidenav } from '@angular/material/sidenav';
 import {
-  NavigationEnd, NavigationStart, Router,
+  NavigationEnd, Router,
 } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -50,7 +50,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   subs: SubMenuItem[];
   copyrightYear$ = this.sysGeneralService.getCopyrightYear$;
 
-  headerPortalOutlet: TemplatePortal = null;
+  protected headerPortalOutlet: TemplatePortal = null;
 
   readonly productTypeLabels = productTypeLabels;
 
@@ -75,9 +75,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {
     // Close sidenav after route change in mobile
     this.router.events.pipe(untilDestroyed(this)).subscribe((routeChange) => {
-      if (routeChange instanceof NavigationStart) {
-        this.headerPortalOutlet = null;
-      }
       if (routeChange instanceof NavigationEnd && this.isMobile) {
         this.sideNav.close();
       }
@@ -129,22 +126,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    this.layoutService.pageHeaderUpdater$
-      .pipe(untilDestroyed(this))
-      .subscribe((headerContent) => {
-        try {
-          if (headerContent) {
-            this.headerPortalOutlet = new TemplatePortal(headerContent, this.viewContainerRef);
-            this.cdr.detectChanges();
-          } else {
-            this.headerPortalOutlet = null;
-          }
-        } catch (error: unknown) {
-          // Prevents an error on one header from breaking headers on all pages.
-          console.error('Error when rendering page header template', error);
-          this.headerPortalOutlet = null;
-        }
-      });
+    this.renderPageHeader();
   }
 
   onSidenavStatusChange(sidenav: SidenavStatusData): void {
@@ -206,5 +188,24 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onAlertsPanelClosed(): void {
     this.store$.dispatch(alertPanelClosed());
+  }
+
+  private renderPageHeader(): void {
+    this.layoutService.pageHeaderUpdater$
+      .pipe(untilDestroyed(this))
+      .subscribe((headerContent) => {
+        try {
+          if (headerContent) {
+            this.headerPortalOutlet = new TemplatePortal(headerContent, this.viewContainerRef);
+            this.cdr.detectChanges();
+          } else {
+            this.headerPortalOutlet = null;
+          }
+        } catch (error: unknown) {
+          // Prevents an error on one header from breaking headers on all pages.
+          console.error('Error when rendering page header template', error);
+          this.headerPortalOutlet = null;
+        }
+      });
   }
 }

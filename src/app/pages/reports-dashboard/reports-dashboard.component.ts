@@ -1,6 +1,6 @@
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import {
-  Component, ElementRef, OnInit, OnDestroy, AfterViewInit, ViewChild, TemplateRef, Inject,
+  Component, ElementRef, OnInit, OnDestroy, ViewChild, Inject,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -18,10 +18,9 @@ import { ReportsService } from './reports.service';
   styleUrls: ['./reports-dashboard.component.scss'],
   templateUrl: './reports-dashboard.component.html',
 })
-export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewInit {
+export class ReportsDashboardComponent implements OnInit, OnDestroy {
   @ViewChild(CdkVirtualScrollViewport, { static: false }) viewport: CdkVirtualScrollViewport;
   @ViewChild('container', { static: true }) container: ElementRef;
-  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   scrollContainer: HTMLElement;
 
@@ -65,10 +64,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
 
         this.activateTabFromUrl();
       });
-  }
-
-  ngAfterViewInit(): void {
-    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
   ngOnDestroy(): void {

@@ -3,8 +3,6 @@ import {
   OnInit,
   ChangeDetectorRef,
   ViewChild, ChangeDetectionStrategy,
-  AfterViewInit,
-  TemplateRef,
   OnDestroy, Inject,
 } from '@angular/core';
 import { MatSort, Sort } from '@angular/material/sort';
@@ -34,7 +32,6 @@ import {
 } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { LayoutService } from 'app/services/layout.service';
 
 @UntilDestroy()
 @Component({
@@ -42,9 +39,8 @@ import { LayoutService } from 'app/services/layout.service';
   styleUrls: ['./dataset-quotas-userlist.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, OnDestroy {
+export class DatasetQuotasUserlistComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
-  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   datasetId: string;
   dataSource = new MatTableDataSource<DatasetQuota>([]);
@@ -74,7 +70,6 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
     private translate: TranslateService,
     private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
-    private layoutService: LayoutService,
     @Inject(WINDOW) private window: Window,
     private emptyService: EmptyService,
   ) { }
@@ -84,10 +79,6 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
     this.datasetId = paramMap.datasetId as string;
     this.useFullFilter = this.window.localStorage.getItem('useFullFilter') !== 'false';
     this.getUserQuotas();
-  }
-
-  ngAfterViewInit(): void {
-    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
   ngOnDestroy(): void {

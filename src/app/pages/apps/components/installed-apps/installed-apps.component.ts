@@ -4,10 +4,7 @@ import {
   ChangeDetectionStrategy,
   OnInit,
   ChangeDetectorRef,
-  TemplateRef,
-  ViewChild,
   AfterViewInit,
-  OnDestroy,
   Inject,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
@@ -38,7 +35,6 @@ import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.se
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
 import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { LayoutService } from 'app/services/layout.service';
 
 @UntilDestroy()
 @Component({
@@ -46,9 +42,7 @@ import { LayoutService } from 'app/services/layout.service';
   styleUrls: ['./installed-apps.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class InstalledAppsComponent implements OnInit, AfterViewInit, OnDestroy {
-  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
-
+export class InstalledAppsComponent implements OnInit, AfterViewInit {
   dataSource: ChartRelease[] = [];
   selectedApp: ChartRelease;
   isLoading = false;
@@ -119,7 +113,6 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit, OnDestroy 
     private cdr: ChangeDetectorRef,
     private activatedRoute: ActivatedRoute,
     private router: Router,
-    private layoutService: LayoutService,
     private matDialog: MatDialog,
     private dialogService: DialogService,
     private snackbar: SnackbarService,
@@ -136,7 +129,6 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit, OnDestroy 
         untilDestroyed(this),
       )
       .subscribe(() => {
-        this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
         if (this.router.getCurrentNavigation()?.extras?.state?.hideMobileDetails) {
           this.closeMobileDetails();
           this.selectedApp = undefined;
@@ -168,16 +160,10 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit, OnDestroy 
         }
         this.cdr.markForCheck();
       });
-
-    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
   trackAppBy(index: number, item: ChartRelease): string {
     return item.name;
-  }
-
-  ngOnDestroy(): void {
-    this.layoutService.pageHeaderUpdater$.next(null);
   }
 
   closeMobileDetails(): void {

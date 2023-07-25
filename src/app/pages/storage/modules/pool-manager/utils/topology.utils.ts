@@ -15,12 +15,6 @@ export function topologyCategoryToDisks(topologyCategory: PoolManagerTopologyCat
   return topologyCategory.vdevs.flat();
 }
 
-export function categoryCapacity(topologyCategory: PoolManagerTopologyCategory): number {
-  return topologyCategory.vdevs.reduce((sum, vdev) => {
-    return sum + vdev.reduce((vdevSum, disk) => vdevSum + disk.size, 0);
-  }, 0);
-}
-
 export function topologyToPayload(topology: PoolManagerTopology): UpdatePoolTopology {
   const payload: UpdatePoolTopology = {};
 

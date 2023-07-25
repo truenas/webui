@@ -87,10 +87,12 @@ describe('SmbFormComponent', () => {
   const presets: SmbPresets = {
     NO_PRESET: {
       verbose_name: 'No presets',
+      cluster: false,
       params: {},
     },
     ENHANCED_TIMEMACHINE: {
       verbose_name: 'Multi-user time machine',
+      cluster: false,
       params: {
         path_suffix: '%U',
         timemachine: true,
@@ -98,9 +100,15 @@ describe('SmbFormComponent', () => {
     },
     PRIVATE_DATASETS: {
       verbose_name: 'Private SMB Datasets and Shares',
+      cluster: false,
       params: {
         path_suffix: '%U',
       },
+    },
+    CLUSTER_PRESET: {
+      verbose_name: 'This will not be shown',
+      cluster: true,
+      params: {},
     },
   };
 
