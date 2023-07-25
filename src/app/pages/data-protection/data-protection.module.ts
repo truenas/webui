@@ -13,6 +13,8 @@ import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import {
@@ -66,7 +68,9 @@ import { SnapshotTaskComponent } from './snapshot/snapshot-task/snapshot-task.co
     MatProgressBarModule,
     MatCardModule,
     TranslateModule,
+    IxTable2Module,
     IxFormsModule,
+    PageHeaderModule,
     SchedulerModule,
     MatButtonModule,
     MatDialogModule,
