@@ -1,6 +1,7 @@
 <div class="step-description">
   {{ description }}
 </div>
+
 <ix-automated-disk-selection
   *ngIf="!topologyCategory.hasCustomDiskSelection; else customLayout"
   class="content-container"

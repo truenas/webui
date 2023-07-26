@@ -30,6 +30,17 @@
   >
     {{ 'Next' | translate }}
   </button>
+
+  <button
+    mat-button
+    color="error"
+    type="button"
+    ixTest="reset-fields-in-step"
+    (click)="resetStep()"
+  >
+    {{ 'Reset Step' | translate }}
+  </button>
+
   <button
     mat-button
     color="accent"
