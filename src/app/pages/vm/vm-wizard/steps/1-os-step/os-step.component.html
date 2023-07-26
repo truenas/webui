@@ -64,19 +64,20 @@
 
   <ng-container *ngIf="form.value.enable_display">
     <ix-select
-      formControlName="display_type"
-      [label]="'Display Type' | translate"
-      [options]="displayTypeOptions$"
-      [required]="true"
-    ></ix-select>
-
-    <ix-select
       formControlName="bind"
       [label]="'Bind' | translate"
       [options]="bindOptions$"
       [required]="true"
       [tooltip]="helptext.display_bind_tooltip | translate"
     ></ix-select>
+
+    <ix-input
+      formControlName="password"
+      type="password"
+      [label]="'Password' | translate"
+      [required]="true"
+      [tooltip]="helptext.password_tooltip | translate"
+    ></ix-input>
   </ng-container>
 
   <ix-form-actions>

@@ -261,7 +261,7 @@ export class VmWizardComponent implements OnInit {
           attributes: {
             port: port.port,
             bind: this.osForm.bind,
-            password: '',
+            password: this.osForm.password,
             web: true,
             type: this.osForm.display_type,
           },

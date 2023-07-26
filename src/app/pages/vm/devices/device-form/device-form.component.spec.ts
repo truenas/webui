@@ -650,7 +650,7 @@ describe('DeviceFormComponent', () => {
         bind: '0.0.0.0',
         password: '12345678',
         web: true,
-        type: VmDisplayType.Vnc,
+        type: VmDisplayType.Spice,
         resolution: '1024x768',
         port: 5900,
       },
@@ -682,7 +682,6 @@ describe('DeviceFormComponent', () => {
         expect(values).toEqual({
           Bind: '0.0.0.0',
           'Device Order': '1002',
-          'Display Type': VmDisplayType.Vnc,
           Password: '12345678',
           Port: '5900',
           Resolution: '1024x768',

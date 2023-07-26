@@ -51,7 +51,7 @@ describe('OsStepComponent', () => {
       'Shutdown Timeout': 90,
       'Start on Boot': true,
       'Enable Display': true,
-      'Display Type': 'VNC',
+      Password: '12345678',
       Bind: '10.10.16.82',
     });
   }
@@ -68,8 +68,9 @@ describe('OsStepComponent', () => {
       shutdown_timeout: 90,
       autostart: true,
       enable_display: true,
-      display_type: VmDisplayType.Vnc,
+      display_type: VmDisplayType.Spice,
       bind: '10.10.16.82',
+      password: '12345678',
       hyperv_enlightenments: false,
     });
   });
