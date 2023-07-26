@@ -206,7 +206,7 @@
         <ix-review-wizard-step
           [isAddingVdevs]="!!existingPool"
           [isStepActive]="activeStep === PoolCreationWizardStep.Review"
-          (createPool)="!!existingPool ? updatePool() : createPool()"
+          (createPool)="submit()"
         ></ix-review-wizard-step>
       </mat-step>
     </mat-vertical-stepper>

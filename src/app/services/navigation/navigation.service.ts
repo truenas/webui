@@ -101,11 +101,11 @@ export class NavigationService {
       isVisible$: this.hasApps$,
     },
     {
-      name: T('Apps (Old)'),
+      name: T('Apps (Legacy)'),
       type: MenuItemType.Link,
       tooltip: T('Apps'),
       icon: 'apps',
-      state: 'apps-old',
+      state: 'apps-legacy',
       isVisible$: this.hasApps$,
     },
     {

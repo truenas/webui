@@ -5,13 +5,14 @@ import { UntypedFormGroup, Validators } from '@angular/forms';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { DnsAuthenticatorType } from 'app/enums/dns-authenticator-type.enum';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
 import { helptextSystemAcme as helptext } from 'app/helptext/system/acme';
 import { AuthenticatorSchema, DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
 import { DynamicFormSchema, DynamicFormSchemaNode } from 'app/interfaces/dynamic-form-schema.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { CustomUntypedFormField } from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -138,9 +139,23 @@ export class AcmednsFormComponent implements OnInit {
   onAuthenticatorTypeChanged(event: DnsAuthenticatorType): void {
     this.dnsAuthenticatorList.forEach((auth) => {
       if (auth.key === event) {
-        auth.variables.forEach((variable) => this.form.controls.attributes.controls[variable].enable());
+        auth.variables.forEach((variable) => {
+          const formField = this.form.controls.attributes.controls[variable] as unknown as CustomUntypedFormField;
+          formField.enable();
+          if (!formField.hidden$) {
+            formField.hidden$ = new BehaviorSubject<boolean>(false);
+          }
+          formField.hidden$.next(false);
+        });
       } else {
-        auth.variables.forEach((variable) => this.form.controls.attributes.controls[variable].disable());
+        auth.variables.forEach((variable) => {
+          const formField = this.form.controls.attributes.controls[variable] as unknown as CustomUntypedFormField;
+          formField.disable();
+          if (!formField.hidden$) {
+            formField.hidden$ = new BehaviorSubject<boolean>(false);
+          }
+          formField.hidden$.next(true);
+        });
       }
     });
   }

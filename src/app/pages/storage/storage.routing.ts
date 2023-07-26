@@ -16,12 +16,12 @@ export const routes: Routes = [
         component: PoolsDashboardComponent,
       },
       {
-        path: 'create',
+        path: 'create-legacy',
         component: ManagerComponent,
-        data: { title: T('Create Pool'), breadcrumb: T('Create Pool') },
+        data: { title: T('Create Pool (Legacy)'), breadcrumb: T('Create Pool (Legacy)') },
       },
       {
-        path: 'create_new',
+        path: 'create',
         loadChildren: () => import('./modules/pool-manager/pool-manager.module').then((module) => module.PoolManagerModule),
         data: { title: T('Pool Creation Wizard'), breadcrumb: T('Pool Creation Wizard') },
       },
@@ -39,6 +39,11 @@ export const routes: Routes = [
         path: ':poolId/add-vdevs',
         component: AddVdevsComponent,
         data: { title: T('Add Vdevs to Pool'), breadcrumb: T('Add Vdevs to Pool') },
+      },
+      {
+        path: ':poolId/add-vdevs-legacy',
+        component: ManagerComponent,
+        data: { title: T('Add Vdevs to Pool (Legacy)'), breadcrumb: T('Add Vdevs to Pool (Legacy)') },
       },
       {
         path: 'disks',

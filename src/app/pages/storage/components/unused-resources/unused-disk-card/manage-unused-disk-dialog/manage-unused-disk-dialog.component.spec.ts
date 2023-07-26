@@ -86,4 +86,20 @@ describe('ManageUnusedDiskDialogComponent', () => {
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/storage', 2, 'add-vdevs']);
   });
+
+  it('redirects to add disks to pool page (Legacy) when choosing Add Disks To Existing Pool (Legacy)', async () => {
+    await form.fillForm({
+      'Add Disks To:': 'Existing Pool (Legacy)',
+    });
+
+    await form.fillForm({
+      'Existing Pool (Legacy)': 'TEST',
+    });
+
+    const addDisksButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add Disks' }));
+    await addDisksButton.click();
+
+    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
+    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/storage', 2, 'add-vdevs-legacy']);
+  });
 });
