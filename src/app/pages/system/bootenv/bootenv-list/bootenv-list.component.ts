@@ -9,10 +9,10 @@ import { MatTableDataSource } from '@angular/material/table';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  Observable, BehaviorSubject, combineLatest, of, Subject,
+  Observable, BehaviorSubject, combineLatest, of,
 } from 'rxjs';
 import {
-  filter, map, tap, switchMap,
+  filter, tap, switchMap,
 } from 'rxjs/operators';
 import { BootEnvironmentAction } from 'app/enums/boot-environment-action.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -49,11 +49,11 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
 
   isLoading$ = new BehaviorSubject(false);
   isError$ = new BehaviorSubject(false);
-  fetchedData$ = new Subject<Bootenv[]>();
+  isNoData$ = new BehaviorSubject(false);
   emptyType$: Observable<EmptyType> = combineLatest([
     this.isLoading$,
     this.isError$,
-    this.fetchedData$.pipe(map((bootenvs) => bootenvs.length === 0)),
+    this.isNoData$,
   ]).pipe(
     switchMap(([isLoading, isError, isNoData]) => {
       if (isLoading) {
@@ -191,8 +191,6 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
           return item.id;
       }
     };
-    this.isLoading$.next(false);
-    this.cdr.markForCheck();
   }
 
   private getBootEnvironments(): void {
@@ -201,11 +199,13 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
     this.cdr.markForCheck();
 
     this.ws.call('bootenv.query').pipe(
-      tap((bootenvs) => this.fetchedData$.next(bootenvs)),
       untilDestroyed(this),
     ).subscribe({
       next: (bootenvs) => {
+        this.isNoData$.next(!bootenvs.length);
         this.createDataSource(bootenvs);
+        this.isLoading$.next(false);
+        this.cdr.markForCheck();
       },
       error: () => {
         this.createDataSource();
