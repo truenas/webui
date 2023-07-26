@@ -102,18 +102,16 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     if (
-      changes.inventory?.currentValue
-      && !_.isEqual(changes.inventory.currentValue, changes.inventory.previousValue)
-    ) {
-      this.updateLayoutOptionsFromLimitedLayouts(this.limitLayouts);
-      this.updateDiskSizeOptions();
-      return;
-    }
-    if (
       changes.limitLayouts?.currentValue
       && !_.isEqual(changes.limitLayouts.currentValue, changes.limitLayouts.previousValue)
     ) {
       this.updateLayoutOptionsFromLimitedLayouts(changes.limitLayouts.currentValue);
+    }
+    if (
+      changes.inventory?.currentValue
+      && !_.isEqual(changes.inventory.currentValue, changes.inventory.previousValue)
+    ) {
+      this.updateDiskSizeOptions();
     }
   }
 
@@ -129,7 +127,8 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
     const isChangeLayoutFalse = this.canChangeLayout !== null
       && this.canChangeLayout !== undefined
       && !this.canChangeLayout;
-    if (isChangeLayoutFalse && limitLayouts.length) {
+    const isValueSame = limitLayouts[0] === this.form.controls.layout.value;
+    if (isChangeLayoutFalse && limitLayouts.length && !isValueSame) {
       this.form.controls.layout.setValue(limitLayouts[0]);
     }
     this.updateWidthOptions();

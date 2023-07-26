@@ -22,16 +22,6 @@
       [columns]="columns"
       [dataProvider]="dataProvider"
     >
-      <ng-template
-        ix-table-cell
-        [columnIndex]="4"
-        [dataProvider]="dataProvider"
-        let-snapshot
-      >
-        <ix-vmware-status-cell
-          [state]="snapshot.state"
-        ></ix-vmware-status-cell>
-      </ng-template>
       <ng-template ix-table-details-row [dataProvider]="dataProvider" let-snapshot>
         <div class="table-details-row-actions">
           <button

@@ -1,5 +1,4 @@
 import { DatasetType } from 'app/enums/dataset.enum';
-import { VmwareState } from 'app/pages/data-protection/vmware-snapshot/vmware-snapshot-list/vmware-status-cell/vmware-status-cell.component';
 
 export interface MatchDatastoresWithDatasets {
   datastores: VmwareDatastore[];
@@ -31,7 +30,6 @@ export interface VmwareSnapshot {
   hostname: string;
   password: string;
   username: string;
-  state: VmwareState;
 }
 
 export type VmwareSnapshotUpdate = Omit<VmwareSnapshot, 'id'>;
