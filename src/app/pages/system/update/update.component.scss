@@ -31,8 +31,14 @@
 }
 
 #upgrades-card-scrollbox {
-  height: 170px;
+  max-height: 170px;
   overflow-y: auto;
+}
+
+.release-notes-link {
+  display: block;
+  margin: 3px;
+  text-decoration: underline;
 }
 
 #changelog-card {
