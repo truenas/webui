@@ -320,21 +320,21 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
     let output: number = value;
     let shortName = '';
 
-    if (value > TiB || (prefixRules && this.yLabelPrefix === 'Tera')) {
-      prefix = 'Tera';
+    if (value > TiB || (prefixRules && this.yLabelPrefix === 'Tebi')) {
+      prefix = 'Tebi';
       shortName = 'TiB';
       output = value / TiB;
-    } else if ((value < TiB && value > GiB) || (prefixRules && this.yLabelPrefix === 'Giga')) {
-      prefix = 'Giga';
+    } else if ((value < TiB && value > GiB) || (prefixRules && this.yLabelPrefix === 'Gibi')) {
+      prefix = 'Gibi';
       shortName = 'GiB';
       output = value / GiB;
-    } else if ((value < GiB && value > MiB) || (prefixRules && this.yLabelPrefix === 'Mega')) {
-      prefix = 'Mega';
+    } else if ((value < GiB && value > MiB) || (prefixRules && this.yLabelPrefix === 'Mebi')) {
+      prefix = 'Mebi';
       shortName = 'MiB';
       output = value / MiB;
-    } else if ((value < MiB && value > KiB) || (prefixRules && this.yLabelPrefix === 'Kilo')) {
-      prefix = 'Kilo';
-      shortName = 'KB';
+    } else if ((value < MiB && value > KiB) || (prefixRules && this.yLabelPrefix === 'Kibi')) {
+      prefix = 'Kibi';
+      shortName = 'KiB';
       output = value / KiB;
     }
 

@@ -69,19 +69,19 @@ function convertKmgt(input: number, units: string): { value: number; prefix: str
   let output: number = input;
 
   if (input > TiB) {
-    prefix = 'Tera';
+    prefix = 'Tebi';
     shortName = ' TiB';
     output = input / TiB;
   } else if (input < TiB && input > GiB) {
-    prefix = 'Giga';
+    prefix = 'Gibi';
     shortName = ' GiB';
     output = input / GiB;
   } else if (input < GiB && input > MiB) {
-    prefix = 'Mega';
+    prefix = 'Mebi';
     shortName = ' MiB';
     output = input / MiB;
   } else if (input < MiB && input > KiB) {
-    prefix = 'Kilo';
+    prefix = 'Kibi';
     shortName = ' KiB';
     output = input / KiB;
   }
