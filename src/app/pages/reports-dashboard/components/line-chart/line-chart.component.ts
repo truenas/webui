@@ -196,7 +196,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
       const columns = [];
 
       for (let i = 0; i < (rd.data as number[][]).length; i++) {
-        const date = new Date(rd.start * 1000 + i * rd.step * 1000);
+        const date = new Date(rd.start * 1000 + i * 1000);
         columns.push(date);
       }
 

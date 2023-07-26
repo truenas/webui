@@ -1,6 +1,8 @@
 /// <reference lib="webworker" />
 
-import { KiB, MiB } from 'app/constants/bytes.constant';
+import {
+  GiB, KiB, MiB, TiB,
+} from 'app/constants/bytes.constant';
 import { ReportingData, ReportingAggregationKeys } from 'app/interfaces/reporting.interface';
 
 // Write a bunch of pure functions above
@@ -62,31 +64,26 @@ function inferUnits(label: string): string {
 }
 
 function convertKmgt(input: number, units: string): { value: number; prefix: string; shortName: string } {
-  const kilo = 1024;
-  const mega = kilo * 1024;
-  const giga = mega * 1024;
-  const tera = giga * 1024;
-
   let prefix = '';
   let shortName = '';
   let output: number = input;
 
-  if (input > tera) {
+  if (input > TiB) {
     prefix = 'Tera';
     shortName = ' TiB';
-    output = input / tera;
-  } else if (input < tera && input > giga) {
+    output = input / TiB;
+  } else if (input < TiB && input > GiB) {
     prefix = 'Giga';
     shortName = ' GiB';
-    output = input / giga;
-  } else if (input < giga && input > mega) {
+    output = input / GiB;
+  } else if (input < GiB && input > MiB) {
     prefix = 'Mega';
     shortName = ' MiB';
-    output = input / mega;
-  } else if (input < mega && input > kilo) {
+    output = input / MiB;
+  } else if (input < MiB && input > KiB) {
     prefix = 'Kilo';
     shortName = ' KiB';
-    output = input / kilo;
+    output = input / KiB;
   }
 
   if (units === 'bits') {

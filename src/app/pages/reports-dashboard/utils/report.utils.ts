@@ -5,7 +5,7 @@ import { ReportingAggregationKeys, ReportingData } from 'app/interfaces/reportin
 
 export function formatInterfaceUnit(value: string): string {
   if (value && value.split(' ', 2)[0] !== '0') {
-    value += value.split(' ', 2)[1] ? '/s' : 'b/s';
+    value += value?.endsWith('b') ? '/s' : 'b/s';
   }
   return value;
 }
@@ -14,7 +14,7 @@ export function formatLegendSeries(
   series: dygraphs.SeriesLegendData[],
   data: ReportingData,
 ): dygraphs.SeriesLegendData[] {
-  if (data.name === 'interface') {
+  if (data.name === ReportingGraphName.NetworkInterface) {
     series.forEach((element) => {
       element.yHTML = formatInterfaceUnit(element.yHTML);
     });

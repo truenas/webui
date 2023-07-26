@@ -133,7 +133,6 @@ export interface ReportingData {
   legend: string[];
   name: string;
   start: number;
-  step: number;
   data: number[][] | WebsocketError;
   aggregations: {
     // TODO: Update this to be a proper type
