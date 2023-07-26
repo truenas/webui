@@ -17,6 +17,7 @@ import { Choices } from 'app/interfaces/choices.interface';
 import { ContainerConfig } from 'app/interfaces/container-config.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
+import { KubernetesStatusData } from 'app/interfaces/kubernetes-status-data.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { QueryFilter, QueryParams } from 'app/interfaces/query-api.interface';
@@ -33,6 +34,14 @@ export function filterIgnoredApps(): OperatorFunction<AvailableApp[], AvailableA
 @Injectable({ providedIn: 'root' })
 export class ApplicationsService {
   constructor(private ws: WebSocketService, private translate: TranslateService) {}
+
+  getKubernetesStatus(): Observable<KubernetesStatusData> {
+    return this.ws.call('kubernetes.status');
+  }
+
+  getKubernetesStatusUpdates(): Observable<ApiEvent<KubernetesStatusData>> {
+    return this.ws.subscribe('kubernetes.state');
+  }
 
   getKubernetesConfig(): Observable<KubernetesConfig> {
     return this.ws.call('kubernetes.config');

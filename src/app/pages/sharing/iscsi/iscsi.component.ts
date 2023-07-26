@@ -5,6 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
 import { IscsiService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { PageTitleService } from 'app/services/page-title.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -51,11 +52,16 @@ export class IscsiComponent implements OnInit {
     protected ws: WebSocketService,
     protected translate: TranslateService,
     private slideInService: IxSlideInService,
+    private pageTitle: PageTitleService,
   ) {}
 
   ngOnInit(): void {
     this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       this.activeTab = params.pk as string;
+      // TODO: Do something better in the future.
+      setTimeout(() => {
+        this.pageTitle.setTitle('iSCSI');
+      }, 0);
     });
   }
 

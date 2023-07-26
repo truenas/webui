@@ -1,6 +1,4 @@
-import {
-  AfterViewInit, Component, TemplateRef, ViewChild,
-} from '@angular/core';
+import { Component } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -36,7 +34,6 @@ import {
 } from 'app/services';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { LayoutService } from 'app/services/layout.service';
 
 const noMemoryError = 'ENOMEM';
 
@@ -46,9 +43,7 @@ const noMemoryError = 'ENOMEM';
   styleUrls: ['./vm-list.component.scss'],
   providers: [VmService],
 })
-export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, AfterViewInit {
-  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
-
+export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
   title = this.translate.instant('Virtual Machines');
   queryCall = 'vm.query' as const;
   wsDelete = 'vm.delete' as const;
@@ -111,7 +106,6 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, Af
     private errorHandler: ErrorHandlerService,
     private vmService: VmService,
     private translate: TranslateService,
-    private layoutService: LayoutService,
     private systemGeneralService: SystemGeneralService,
     private slideInService: IxSlideInService,
   ) {}
@@ -153,10 +147,6 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, Af
         },
       );
     });
-  }
-
-  ngAfterViewInit(): void {
-    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
   getCustomEmptyConfig(emptyType: EmptyType): EmptyConfig {

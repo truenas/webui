@@ -121,6 +121,6 @@ describe('SelectPoolDialogComponent', () => {
       hideCheckbox: true,
       buttonText: helptext.noPool.action,
     });
-    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/storage', 'create']);
+    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/storage', 'create-legacy']);
   });
 });

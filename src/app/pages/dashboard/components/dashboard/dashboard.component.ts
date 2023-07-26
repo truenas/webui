@@ -1,5 +1,5 @@
 import {
-  Component, AfterViewInit, OnDestroy, ElementRef, TemplateRef, ViewChild, Inject, HostListener,
+  Component, AfterViewInit, OnDestroy, ElementRef, Inject, HostListener,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -67,8 +67,6 @@ export interface DashboardNetworkInterfaceAlias extends NetworkInterfaceAlias {
   ],
 })
 export class DashboardComponent implements AfterViewInit, OnDestroy {
-  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
-
   reorderMode = false;
   isSavingState = false;
   screenType = ScreenType.Desktop;
@@ -131,7 +129,6 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
   ) {}
 
   ngAfterViewInit(): void {
-    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
     this.checkScreenSize();
     this.startListeners();
     this.dashboardStore$.isLoading$.pipe(
@@ -141,6 +138,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
         this.isLoaded = !isLoading;
       },
     });
+    this.generateDefaultConfig();
   }
 
   startListeners(): void {
@@ -251,6 +249,24 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
     if (startX !== endX) {
       carousel.set('x', endX);
     }
+  }
+
+  private generateDefaultConfig(): void {
+    const conf: DashConfigItem[] = [
+      {
+        name: WidgetName.SystemInformation,
+        rendered: true,
+        id: '0',
+      },
+    ];
+
+    conf.push({ name: WidgetName.Help, rendered: true });
+    conf.push({ name: WidgetName.Cpu, rendered: true, id: conf.length.toString() });
+    conf.push({ name: WidgetName.Memory, rendered: true, id: conf.length.toString() });
+    conf.push({ name: WidgetName.Storage, rendered: true, id: conf.length.toString() });
+    conf.push({ name: WidgetName.Network, rendered: true, id: conf.length.toString() });
+
+    this.availableWidgets = conf;
   }
 
   volumeDataFromConfig(item: DashConfigItem): VolumesData | VolumeData {

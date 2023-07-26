@@ -26,6 +26,7 @@ import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxDynamicFormModule } from 'app/modules/ix-dynamic-form/ix-dynamic-form.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { LayoutModule } from 'app/modules/layout/layout.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { TerminalModule } from 'app/modules/terminal/terminal.module';
@@ -85,6 +86,7 @@ import { AppNotesCardComponent } from './components/installed-apps/app-notes-car
 import { AppStatusCellComponent } from './components/installed-apps/app-status-cell/app-status-cell.component';
 import { AppUpgradeDialogComponent } from './components/installed-apps/app-upgrade-dialog/app-upgrade-dialog.component';
 import { InstalledAppsComponent } from './components/installed-apps/installed-apps.component';
+import { KubernetesStatusComponent } from './components/installed-apps/kubernetes-status/kubernetes-status.component';
 
 @NgModule({
   declarations: [
@@ -127,6 +129,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     CategoryViewComponent,
     CatalogDeleteDialogComponent,
     CustomAppButtonComponent,
+    KubernetesStatusComponent,
   ],
   imports: [
     CommonModule,
@@ -164,6 +167,7 @@ import { InstalledAppsComponent } from './components/installed-apps/installed-ap
     LightboxModule,
     MarkdownModule,
     IxTable2Module,
+    LayoutModule,
   ],
   providers: [
     AppsStore,

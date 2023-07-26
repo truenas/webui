@@ -1,4 +1,4 @@
-<ng-template #pageHeader>
+<ng-template ixPageHeader>
   <ix-page-title-header>
     <button mat-button ixTest="import-pool" (click)="onImportPool()">
       {{ 'Import Pool' | translate }}
@@ -12,13 +12,8 @@
       {{ 'Create Pool' | translate }}
     </a>
 
-    <a
-      mat-button
-      color="primary"
-      ixTest="create-pool-new"
-      [routerLink]="['/storage', 'create_new']"
-    >
-      {{ 'Create Pool (New)' }}
+    <a mat-button ixTest="create-pool-legacy" [routerLink]="['/storage', 'create-legacy']">
+      {{ 'Create Pool (Legacy)' }}
     </a>
   </ix-page-title-header>
 </ng-template>

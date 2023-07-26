@@ -1,11 +1,8 @@
 import {
-  AfterViewInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   OnInit,
-  TemplateRef,
-  ViewChild,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -19,7 +16,6 @@ import { StorageDashboardDisk } from 'app/interfaces/storage.interface';
 import { ImportPoolComponent } from 'app/pages/storage/components/import-pool/import-pool.component';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { LayoutService } from 'app/services/layout.service';
 
 @UntilDestroy()
 @Component({
@@ -27,9 +23,7 @@ import { LayoutService } from 'app/services/layout.service';
   styleUrls: ['./pools-dashboard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PoolsDashboardComponent implements OnInit, AfterViewInit {
-  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
-
+export class PoolsDashboardComponent implements OnInit {
   pools$ = this.store.pools$;
   allDisksByPool: { [pool: string]: StorageDashboardDisk[] } = {};
   disks$ = this.store.disks$;
@@ -58,7 +52,6 @@ export class PoolsDashboardComponent implements OnInit, AfterViewInit {
 
   constructor(
     protected router: Router,
-    private layoutService: LayoutService,
     private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
     private store: PoolsDashboardStore,
@@ -95,10 +88,6 @@ export class PoolsDashboardComponent implements OnInit, AfterViewInit {
         this.allDisksByPool[disk.pool].push(disk);
       }
     });
-  }
-
-  ngAfterViewInit(): void {
-    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
   onImportPool(): void {
