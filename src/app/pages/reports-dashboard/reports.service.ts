@@ -4,7 +4,7 @@ import { addSeconds } from 'date-fns';
 import {
   map, Observable, shareReplay, BehaviorSubject, switchMap, interval,
 } from 'rxjs';
-import { ReportingGraphName } from 'app/enums/reporting-graph-name.enum';
+import { ReportingGraphName } from 'app/enums/reporting.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { ReportDataRequestEvent } from 'app/interfaces/events/reporting-events.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -44,6 +44,8 @@ export class ReportsService implements OnDestroy {
   private hasUps = false;
   private hasDiskTemperature = false;
   private hasTarget = false;
+  private hasNfs = false;
+  private hasPartitions = false;
 
   constructor(
     private ws: WebSocketService,
@@ -59,7 +61,7 @@ export class ReportsService implements OnDestroy {
       })
       .subscribe((evt: ReportDataRequestEvent) => {
         const chartId = (evt.sender as ReportComponent).chartId;
-        this.ws.call('reporting.get_data', [[evt.data.params], evt.data.timeFrame]).subscribe({
+        this.ws.call('reporting.netdata_get_data', [[evt.data.params], evt.data.timeFrame]).subscribe({
           next: (reportingData) => {
             const processedData = [...reportingData];
 
@@ -76,7 +78,7 @@ export class ReportsService implements OnDestroy {
               {
                 command: 'convertAggregations',
                 input: '|',
-                options: [evt.data.report.vertical_label], // units
+                options: [evt.data.report.vertical_label || ''], // units
               },
             ];
 
@@ -94,9 +96,13 @@ export class ReportsService implements OnDestroy {
       }
     };
 
-    this.ws.call('reporting.graphs').subscribe((reportingGraphs) => {
+    this.ws.call('reporting.netdata_graphs').subscribe((reportingGraphs) => {
       this.hasUps = reportingGraphs.some((graph) => graph.name === ReportingGraphName.Ups);
       this.hasTarget = reportingGraphs.some((graph) => graph.name === ReportingGraphName.Target);
+      this.hasNfs = reportingGraphs.some((graph) => {
+        return [ReportingGraphName.NfsStat, ReportingGraphName.NfsStatBytes].includes(graph.name as ReportingGraphName);
+      });
+      this.hasPartitions = reportingGraphs.some((graph) => graph.name === ReportingGraphName.Partition);
       this.reportingGraphs$.next(reportingGraphs);
     });
 
@@ -153,6 +159,14 @@ export class ReportsService implements OnDestroy {
         }
 
         if (value === ReportType.Target && !this.hasTarget) {
+          return false;
+        }
+
+        if (value === ReportType.Partition && !this.hasPartitions) {
+          return false;
+        }
+
+        if (value === ReportType.Nfs && !this.hasNfs) {
           return false;
         }
 

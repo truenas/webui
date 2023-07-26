@@ -19,6 +19,7 @@ import {
 } from 'rxjs/operators';
 import { toggleMenuDuration } from 'app/constants/toggle-menu-duration';
 import { EmptyType } from 'app/enums/empty-type.enum';
+import { ReportingGraphName } from 'app/enums/reporting.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { LegendEvent, ReportDataEvent } from 'app/interfaces/events/reporting-events.interface';
 import { ReportingData } from 'app/interfaces/reporting.interface';
@@ -54,7 +55,6 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
   @Input() dateFormat?: DateTime;
   @Input() report: Report;
   @Input() identifier?: string;
-  @Input() isReversed?: boolean;
   @ViewChild(LineChartComponent, { static: false }) lineChart: LineChartComponent;
 
   updateReport$ = new BehaviorSubject<IxSimpleChanges<this>>(null);
@@ -100,6 +100,20 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
 
   get currentZoomLevel(): ReportZoomLevel {
     return this.zoomLevels[this.zoomLevelIndex].timespan;
+  }
+
+  get isStacked(): boolean {
+    return [
+      ReportingGraphName.Cpu,
+      ReportingGraphName.Processes,
+      ReportingGraphName.Uptime,
+      ReportingGraphName.Swap,
+      ReportingGraphName.ZfsArcResult,
+    ].includes(this.data?.name as ReportingGraphName);
+  }
+
+  get shouldShowTotal(): boolean {
+    return [ReportingGraphName.ZfsArcResult].includes(this.data?.name as ReportingGraphName);
   }
 
   constructor(
