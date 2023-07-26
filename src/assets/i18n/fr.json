@@ -96,6 +96,7 @@
   "Once an enclosure is selected, all other VDEV creation steps will limit disk selection options to disks in the selected enclosure. If the enclosure selection is changed, all disk selections will be reset.": "",
   "One or more data VDEVs has disks of different sizes.": "",
   "Pause Scrub": "",
+  "Pending": "",
   "Pool updated successfully": "",
   "RAIDZ1": "",
   "RAIDZ2": "",

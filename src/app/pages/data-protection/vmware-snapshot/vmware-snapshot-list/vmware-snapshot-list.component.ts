@@ -50,6 +50,11 @@ export class VmwareSnapshotListComponent implements OnInit {
       propertyName: 'datastore',
       sortable: true,
     }),
+    textColumn({
+      title: this.translate.instant('State'),
+      propertyName: 'state',
+      sortable: true,
+    }),
   ]);
 
   isLoading = false;
