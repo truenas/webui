@@ -11,6 +11,7 @@ import filesize from 'filesize';
 import {
   filter, map, take, throttleTime,
 } from 'rxjs/operators';
+import { KiB } from 'app/constants/bytes.constant';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { LinkState, NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
 import { deepCloneState } from 'app/helpers/state-select.helper';
@@ -367,9 +368,9 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
             updatedResponse.start = utcToZonedTime(updatedResponse.start * 1000, this.timezone).valueOf() / 1000;
             updatedResponse.end = utcToZonedTime(updatedResponse.end * 1000, this.timezone).valueOf() / 1000;
           }
-          (updatedResponse.data as number[][]).forEach((_, index) => {
-            // remove time column
-            (updatedResponse.data as number[][])[index].shift();
+          (updatedResponse.data as number[][]).forEach((row, index) => {
+            // remove first column and convert kilobits/s to bytes
+            (updatedResponse.data as number[][])[index] = row.slice(1).map((value) => value * KiB);
           });
           return updatedResponse;
         }),
