@@ -76,12 +76,11 @@
               [chartId]="chartId"
               [chartColors]="chartColors"
               [data]="data"
-              [stacked]="report.stacked"
+              [stacked]="isStacked"
               [title]="report.title"
               [timezone]="timezone"
-              [labelY]="report.vertical_label"
+              [labelY]="report.vertical_label || ''"
               [interactive]="false"
-              [isReversed]="isReversed"
             ></ix-linechart>
           </div>
 
@@ -143,14 +142,14 @@
 
                 <!-- Aggregations -->
                 <ng-container *ngIf="data?.aggregations">
-                  <td *ngFor="let item of data?.aggregations | keyvalue" class="report-analytics">
+                  <td *ngFor="let item of data.aggregations | keyvalue" class="report-analytics">
                     <span>{{ item.value[i] ? item.value[i] : 'null' }}</span>
                   </td>
                 </ng-container>
               </tr>
             </table>
           </div>
-          <ng-container *ngIf="report?.stacked_show_total && legendData?.stackedTotalHTML">
+          <ng-container *ngIf="legendData?.stackedTotalHTML && shouldShowTotal">
             <h4 class="legend-timestamp" fxFlex="32px" fxLayoutGap="8px">
               <strong>{{ 'Total' | translate }}:</strong>
               <span>{{ legendData.stackedTotalHTML }}</span>

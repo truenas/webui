@@ -9,7 +9,9 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import { combineLatest, of } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
+import {
+  filter, map, switchMap, tap,
+} from 'rxjs/operators';
 import { Job } from 'app/interfaces/job.interface';
 import {
   CreatePool, Pool, UpdatePool,
@@ -24,7 +26,7 @@ import { PoolCreationWizardStep } from 'app/pages/storage/modules/pool-manager/e
 import { PoolManagerValidationService } from 'app/pages/storage/modules/pool-manager/store/pool-manager-validation.service';
 import { PoolManagerState, PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { topologyToPayload } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
-import { WebSocketService } from 'app/services';
+import { DialogService, WebSocketService } from 'app/services';
 import { AppState } from 'app/store';
 import { waitForSystemFeatures } from 'app/store/system-info/system-info.selectors';
 
@@ -70,6 +72,7 @@ export class PoolManagerWizardComponent implements OnInit {
     private route: ActivatedRoute,
     private ws: WebSocketService,
     private addVdevsStore: AddVdevsStore,
+    private dialogService: DialogService,
   ) {}
 
   ngOnInit(): void {
@@ -229,5 +232,22 @@ export class PoolManagerWizardComponent implements OnInit {
     });
 
     dialogRef.componentInstance.submit();
+  }
+
+  protected submit(): void {
+    this.dialogService.confirm({
+      title: this.translate.instant('Warning'),
+      message: this.translate.instant('The contents of all added disks will be erased.'),
+    }).pipe(
+      filter(Boolean),
+      untilDestroyed(this),
+    ).subscribe({
+      next: () => {
+        if (!this.existingPool) {
+          this.createPool(); return;
+        }
+        this.updatePool();
+      },
+    });
   }
 }

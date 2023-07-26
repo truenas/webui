@@ -1,11 +1,13 @@
 import {
   ChangeDetectionStrategy, Component, EventEmitter, Input, Output,
 } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { VdevType } from 'app/enums/v-dev-type.enum';
 import helptext from 'app/helptext/storage/volumes/manager/manager';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 
+@UntilDestroy()
 @Component({
   selector: 'ix-custom-layout-applied',
   templateUrl: './custom-layout-applied.component.html',
@@ -21,7 +23,13 @@ export class CustomLayoutAppliedComponent {
 
   constructor(
     private poolManagerStore: PoolManagerStore,
-  ) {}
+  ) {
+    this.poolManagerStore.resetStep$.pipe(untilDestroyed(this)).subscribe((vdevType: VdevType) => {
+      if (vdevType === this.type) {
+        this.resetLayout();
+      }
+    });
+  }
 
   openManualDiskSelection(): void {
     this.manualSelectionClicked.emit();

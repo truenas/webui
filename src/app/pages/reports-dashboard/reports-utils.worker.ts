@@ -1,5 +1,10 @@
 /// <reference lib="webworker" />
 
+import {
+  GiB, KiB, MiB, TiB,
+} from 'app/constants/bytes.constant';
+import { ReportingData, ReportingAggregationKeys } from 'app/interfaces/reporting.interface';
+
 // Write a bunch of pure functions above
 // and add it to our commands below
 
@@ -7,21 +12,6 @@ export interface CoreEvent {
   name: string;
   sender?: unknown;
   data?: unknown;
-}
-
-export type ReportingAggregationKeys = 'min' | 'mean' | 'max';
-
-export interface ReportingData {
-  end: number;
-  identifier: string;
-  legend: string[];
-  name: string;
-  start: number;
-  step: number;
-  data: number[][];
-  aggregations: {
-    [key in ReportingAggregationKeys]: (string | number)[];
-  };
 }
 
 export interface Command {
@@ -47,22 +37,19 @@ function arrayAvg(input: number[]): number {
   return maxDecimals(avg);
 }
 
-function avgFromReportData(input: number[][]): number[][] {
-  const output: number[][] = [];
-  input.forEach((item) => {
-    const avg = arrayAvg(item);
-    output.push([avg]);
-  });
-  return output;
-}
-
 function inferUnits(label: string): string {
   // Figures out from the label what the unit is
   let units = label;
-  if (label.includes('%')) {
+  if (label.includes('%') || label.toLowerCase().includes('percentage')) {
     units = '%';
-  } else if (label.includes('°')) {
+  } else if (label.includes('°') || label.toLowerCase().includes('celsius')) {
     units = '°';
+  } else if (label.toLowerCase().includes('mebibytes')) {
+    units = 'mebibytes';
+  } else if (label.toLowerCase().includes('kibibytes')) {
+    units = 'kibibytes';
+  } else if (label.toLowerCase().includes('kilobits')) {
+    units = 'kilobits';
   } else if (label.toLowerCase().includes('bytes')) {
     units = 'bytes';
   } else if (label.toLowerCase().includes('bits')) {
@@ -77,31 +64,26 @@ function inferUnits(label: string): string {
 }
 
 function convertKmgt(input: number, units: string): { value: number; prefix: string; shortName: string } {
-  const kilo = 1024;
-  const mega = kilo * 1024;
-  const giga = mega * 1024;
-  const tera = giga * 1024;
-
   let prefix = '';
   let shortName = '';
   let output: number = input;
 
-  if (input > tera) {
-    prefix = 'Tera';
+  if (input > TiB) {
+    prefix = 'Tebi';
     shortName = ' TiB';
-    output = input / tera;
-  } else if (input < tera && input > giga) {
-    prefix = 'Giga';
+    output = input / TiB;
+  } else if (input < TiB && input > GiB) {
+    prefix = 'Gibi';
     shortName = ' GiB';
-    output = input / giga;
-  } else if (input < giga && input > mega) {
-    prefix = 'Mega';
+    output = input / GiB;
+  } else if (input < GiB && input > MiB) {
+    prefix = 'Mebi';
     shortName = ' MiB';
-    output = input / mega;
-  } else if (input < mega && input > kilo) {
-    prefix = 'Kilo';
+    output = input / MiB;
+  } else if (input < MiB && input > KiB) {
+    prefix = 'Kibi';
     shortName = ' KiB';
-    output = input / kilo;
+    output = input / KiB;
   }
 
   if (units === 'bits') {
@@ -129,11 +111,28 @@ function convertByKilo(input: number): { value: number; suffix: string; shortNam
 }
 
 function formatValue(value: number, units: string): string | number {
+  const day = 60 * 60 * 24;
   let output: string | number = value;
   if (typeof value !== 'number') { return value; }
 
   let converted;
   switch (units.toLowerCase()) {
+    case 'seconds':
+      converted = { value: value / day, shortName: ' days' };
+      output = maxDecimals(converted.value, 1).toString() + converted.shortName;
+      break;
+    case 'mebibytes':
+      converted = convertKmgt(value * MiB, 'bytes');
+      output = maxDecimals(converted.value).toString() + converted.shortName;
+      break;
+    case 'kibibytes':
+      converted = convertKmgt(value * KiB, 'bytes');
+      output = maxDecimals(converted.value).toString() + converted.shortName;
+      break;
+    case 'kilobits':
+      converted = convertByKilo(output * 1000);
+      output = typeof output === 'number' ? maxDecimals(converted.value).toString() + converted.suffix : value;
+      break;
     case 'bits':
     case 'bytes':
       converted = convertKmgt(value, units);
@@ -155,9 +154,15 @@ function convertAggregations(input: ReportingData, labelY?: string): ReportingDa
   const keys = Object.keys(output.aggregations);
 
   keys.forEach((key: ReportingAggregationKeys) => {
-    (output.aggregations[key]).forEach((value, index) => {
-      output.aggregations[key][index] = formatValue(value as number, units);
-    });
+    const values = output.aggregations[key];
+
+    if (Array.isArray(values)) {
+      values.forEach((value, index) => {
+        (output.aggregations[key] as (string | number)[])[index] = formatValue(value as number, units);
+      });
+    } else {
+      output.aggregations[key] = Object.values(values).map((value) => formatValue(value as number, units));
+    }
   });
   return output;
 }
@@ -165,6 +170,10 @@ function convertAggregations(input: ReportingData, labelY?: string): ReportingDa
 function optimizeLegend(input: ReportingData): ReportingData {
   const output = input;
   // Do stuff
+  if (output.legend.includes('time')) {
+    // remove `time` legend item
+    output.legend.splice(0, 1);
+  }
   switch (input.name) {
     case 'upsbatterycharge':
       output.legend = ['Percent Charge'];
@@ -237,43 +246,7 @@ function optimizeLegend(input: ReportingData): ReportingData {
         return spl[1];
       });
       break;
-    case 'arcsize':
-      output.legend = output.legend.map((label) => label.replace(/cache_size-/, ''));
-      output.legend = output.legend.map((label) => label.replace(/_value/, ''));
-      break;
-    case 'arcratio':
-      output.legend = output.legend.map((label) => label.replace(/cache_ratio-/, ''));
-      output.legend = output.legend.map((label) => label.replace(/_value/, ''));
-      break;
-    case 'arcresult':
-      output.legend = output.legend.map((label) => {
-        const noPrefix = label.replace(/cache_result-/, '');
-        const noSuffix = noPrefix.replace(/_value/, '');
-        if (noSuffix === 'total') {
-          return noSuffix;
-        }
-        const spl = noSuffix.split('-');
-        return spl[1];
-      });
-      break;
   }
-  return output;
-}
-
-function avgCpuTempReport(report: ReportingData): ReportingData {
-  const output = { ...report };
-  // Handle Data
-  output.data = avgFromReportData(report.data);
-
-  // Handle Legend
-  output.legend = ['Avg Temp'];
-
-  // Handle Aggregations
-  const keys = Object.keys(output.aggregations);
-  keys.forEach((key: ReportingAggregationKeys) => {
-    output.aggregations[key] = [arrayAvg(output.aggregations[key] as number[])];
-  });
-
   return output;
 }
 
@@ -299,9 +272,6 @@ const commands = {
     console.log(output);
     return output;
   },
-  avgFromReportData: (input: number[][]) => {
-    return avgFromReportData(input);
-  },
   optimizeLegend: (input: ReportingData) => {
     return optimizeLegend(input);
   },
@@ -311,9 +281,6 @@ const commands = {
       console.warn('You must specify a label to parse. (Usually the Y axis label). Returning input value instead');
     }
     return output;
-  },
-  avgCpuTempReport: (input: ReportingData) => {
-    return avgCpuTempReport(input);
   },
   arrayAvg: (input: number[]) => {
     return arrayAvg(input);

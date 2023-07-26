@@ -134,6 +134,7 @@ describe('VmWizardComponent', () => {
     await form.fillForm({
       'Guest Operating System': 'Windows',
       Name: 'test',
+      Password: '12345678',
     });
     await nextButton.click();
     await updateStepHarnesses();
@@ -309,9 +310,9 @@ describe('VmWizardComponent', () => {
       vm: 4,
       attributes: {
         bind: '0.0.0.0',
-        password: '',
+        password: '12345678',
         port: 13669,
-        type: VmDisplayType.Vnc,
+        type: VmDisplayType.Spice,
         web: true,
       },
     }]);

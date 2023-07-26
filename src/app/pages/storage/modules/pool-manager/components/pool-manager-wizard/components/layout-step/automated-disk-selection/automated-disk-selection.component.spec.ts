@@ -22,6 +22,7 @@ describe('AutomatedDiskSelection', () => {
   let loader: HarnessLoader;
 
   const startOver$ = new Subject<void>();
+  const resetStep$ = new Subject<VdevType>();
 
   let layoutSelect: IxSelectHarness;
   let widthSelect: IxSelectHarness;
@@ -92,6 +93,7 @@ describe('AutomatedDiskSelection', () => {
       mockProvider(FormBuilder),
       mockProvider(PoolManagerStore, {
         startOver$,
+        resetStep$,
         getLayoutsForVdevType: jest.fn((vdevType: VdevType) => {
           switch (vdevType) {
             case VdevType.Cache:
@@ -350,7 +352,32 @@ describe('AutomatedDiskSelection', () => {
     store.startOver$.next();
 
     expect(form.value).toStrictEqual({
+      layout: null,
+      sizeAndType: [null, null],
+      treatDiskSizeAsMinimum: false,
+      width: null,
+    });
+  });
+
+  it('resets step if Reset Step message received from store', async () => {
+    await layoutSelect.setValue('Stripe');
+    await sizeSelect.setValue('12 TiB (HDD)');
+
+    const form = spectator.component.form;
+    form.patchValue({ treatDiskSizeAsMinimum: true });
+
+    expect(form.value).toStrictEqual({
       layout: CreateVdevLayout.Stripe,
+      sizeAndType: [13194139533312, DiskType.Hdd],
+      treatDiskSizeAsMinimum: true,
+      width: null,
+    });
+
+    const store = spectator.inject(PoolManagerStore);
+    store.resetStep$.next(spectator.component.type);
+
+    expect(form.value).toStrictEqual({
+      layout: null,
       sizeAndType: [null, null],
       treatDiskSizeAsMinimum: false,
       width: null,

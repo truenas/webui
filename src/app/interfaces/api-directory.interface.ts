@@ -160,6 +160,7 @@ import {
 } from 'app/interfaces/keychain-credential.interface';
 import { KmipConfig, KmipConfigUpdate } from 'app/interfaces/kmip-config.interface';
 import { KubernetesConfig, KubernetesConfigUpdate } from 'app/interfaces/kubernetes-config.interface';
+import { KubernetesStatusData } from 'app/interfaces/kubernetes-status-data.interface';
 import { LdapConfig, LdapConfigUpdate, LdapConfigUpdateResult } from 'app/interfaces/ldap-config.interface';
 import { LldpConfig, LldpConfigUpdate } from 'app/interfaces/lldp-config.interface';
 import { MailConfig, MailConfigUpdate, SendMailParams } from 'app/interfaces/mail-config.interface';
@@ -531,6 +532,7 @@ export interface ApiDirectory {
   'kubernetes.config': { params: void; response: KubernetesConfig };
   'kubernetes.update': { params: [Partial<KubernetesConfigUpdate>]; response: KubernetesConfig };
   'kubernetes.bindip_choices': { params: void; response: Choices };
+  'kubernetes.status': { params: void; response: KubernetesStatusData };
 
   // Mail
   'mail.config': { params: void; response: MailConfig };
@@ -766,11 +768,11 @@ export interface ApiDirectory {
   'rsyncmod.delete': { params: [id: number]; response: boolean };
 
   // Reporting
-  'reporting.get_data': { params: ReportingQueryParams; response: ReportingData[] };
   'reporting.update': { params: [ReportingConfigUpdate]; response: ReportingConfig };
   'reporting.config': { params: void; response: ReportingConfig };
-  'reporting.graphs': { params: QueryParams<ReportingGraph>; response: ReportingGraph[] };
   'reporting.clear': { params: void; response: void };
+  'reporting.netdata_get_data': { params: ReportingQueryParams; response: ReportingData[] };
+  'reporting.netdata_graphs': { params: QueryParams<ReportingGraph>; response: ReportingGraph[] };
 
   // SMB
   'smb.bindip_choices': { params: void; response: Choices };

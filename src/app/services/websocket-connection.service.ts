@@ -6,7 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import { environment } from 'environments/environment';
 import {
-  BehaviorSubject, EMPTY, interval, Observable, of, switchMap, tap, timer,
+  BehaviorSubject, EMPTY, interval, NEVER, Observable, of, switchMap, tap, timer,
 } from 'rxjs';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { IncomingApiMessageType, OutgoingApiMessageType } from 'app/enums/api-message-type.enum';
@@ -46,6 +46,7 @@ export class WebsocketConnectionService {
     private translate: TranslateService,
   ) {
     this.initializeWebsocket();
+    this.setupPing();
   }
 
   private initializeWebsocket(): void {
@@ -100,7 +101,7 @@ export class WebsocketConnectionService {
       return;
     }
     this.shutDownInProgress = false;
-    this.setupConnectionEvents();
+    this.sendConnectMessage();
   }
 
   /** TODO: Extract disconnection logic somewhere else */
@@ -145,20 +146,26 @@ export class WebsocketConnectionService {
   }
 
   private setupPing(): void {
-    interval(this.pingTimeoutMillis).pipe(untilDestroyed(this)).subscribe({
-      next: () => {
-        this.ws$.next({ msg: OutgoingApiMessageType.Ping, id: UUID.UUID() });
-      },
+    this.isConnected$.pipe(
+      switchMap((isConnected) => {
+        if (!isConnected) {
+          return NEVER;
+        }
+
+        return interval(this.pingTimeoutMillis);
+      }),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.ws$.next({ msg: OutgoingApiMessageType.Ping, id: UUID.UUID() });
     });
   }
 
-  private setupConnectionEvents(): void {
+  private sendConnectMessage(): void {
     this.ws$.next({
       msg: OutgoingApiMessageType.Connect,
       version: '1',
       support: ['1'],
     });
-    this.setupPing();
   }
 
   private closeAllDialogs(): void {
