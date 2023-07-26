@@ -5,6 +5,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { of, switchMap } from 'rxjs';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { CloudsyncRestoreDialogComponent } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
 import { AppLoaderService, DialogService } from 'app/services';
@@ -41,7 +42,11 @@ export class AddSpnDialogComponent {
       password: this.form.value.password,
     };
 
-    this.ws.call('nfs.add_principal', [payload]).pipe(untilDestroyed(this)).subscribe({
+    this.ws.call('nfs.config').pipe(
+      switchMap((config) => (config.v4_krb ? of({}) : this.ws.call('nfs.update', [{ v4_krb: true }]))),
+      switchMap(() => this.ws.call('nfs.add_principal', [payload])),
+      untilDestroyed(this),
+    ).subscribe({
       next: () => {
         this.loader.close();
         this.dialogRef.close();
