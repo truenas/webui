@@ -74,9 +74,10 @@ export class SelectPoolDialogComponent implements OnInit {
         this.translate.instant('Using pool {name}', { name: this.form.value.pool }),
       );
       this.kubernetesStore.updateSelectedPool(this.form.value.pool);
-      this.kubernetesStore.updatePoolAndKubernetesConfig().pipe(untilDestroyed(this)).subscribe();
-      dialogRef.close();
-      this.dialogRef.close(true);
+      this.kubernetesStore.updatePoolAndKubernetesConfig().pipe(untilDestroyed(this)).subscribe(() => {
+        dialogRef.close();
+        this.dialogRef.close(true);
+      });
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
       this.dialogService.error(this.errorHandler.parseJobError(err));

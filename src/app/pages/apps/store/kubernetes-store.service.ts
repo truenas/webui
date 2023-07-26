@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import {
-  Observable, ObservableInput, Subscription, catchError, map, of, switchMap, tap,
+  Observable, ObservableInput, Subscription, catchError, combineLatest, map, of, switchMap, tap,
 } from 'rxjs';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
@@ -93,15 +93,20 @@ export class KubernetesStore extends ComponentStore<KubernetesState> {
   });
 
   updatePoolAndKubernetesConfig(): Observable<KubernetesConfig> {
-    return this.appsService.getKubernetesConfig().pipe(
-      tap((config: KubernetesConfig) => {
+    return combineLatest([
+      this.appsService.getKubernetesConfig(),
+      this.appsService.getKubernetesServiceStarted(),
+    ]).pipe(
+      map(([config, isKubernetesStarted]) => {
         this.patchState((state: KubernetesState): KubernetesState => {
           return {
             ...state,
             kubernetesConfig: { ...config },
             selectedPool: config.pool,
+            isKubernetesStarted: config.pool ? isKubernetesStarted : false,
           };
         });
+        return config;
       }),
     );
   }

@@ -5,6 +5,7 @@ import globalHelptext from 'app/helptext/global-helptext';
 export default {
   os_tooltip: T('Choose the VM operating system type.'),
   name_tooltip: T('Enter an alphanumeric name for the virtual machine.'),
+  password_tooltip: T('Enter a password for the virtual machine.'),
   description_tooltip: T('Description (optional).'),
   time_tooltip: T('VM system time. Default is <i>Local</i>.'),
   bootloader_tooltip: T('Select <i>UEFI</i> for newer operating systems or\

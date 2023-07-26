@@ -85,7 +85,7 @@ export class DeviceFormComponent implements OnInit {
     resolution: [''],
     bind: [''],
     password: ['', Validators.maxLength(8)],
-    type: [VmDisplayType.Vnc],
+    type: [VmDisplayType.Spice],
     web: [true],
   });
 
@@ -181,10 +181,6 @@ export class DeviceFormComponent implements OnInit {
     { label: this.translate.instant('Default'), value: 0 },
     { label: '512', value: 512 },
     { label: '4096', value: 4096 },
-  ]);
-  readonly displayTypes$ = of([
-    { label: 'VNC', value: VmDisplayType.Vnc },
-    { label: 'SPICE', value: VmDisplayType.Spice },
   ]);
 
   get typeSpecificForm(): DeviceFormComponent['cdromForm']
