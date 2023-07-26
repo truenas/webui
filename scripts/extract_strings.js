@@ -2,7 +2,8 @@
 
 const fs = require('fs');
 const exec = require('child_process').exec;
-
+const stagedFiles = process.argv.slice(2);
+const sourceFiles = stagedFiles.length ? stagedFiles.join(' ') : 'src --clean';
 const translationDir = "src/assets/i18n/";
 
 function getFilePath(language) {
@@ -31,7 +32,7 @@ fs.readdir(translationDir, function (err, files) {
     .map(getFilePath)
     .join(' ');
 
-  exec('ngx-translate-extract --input src --output ' + outputArgument + ' --clean --string-as-default-value --fi "\t"', (err, stdout, stderr) => {
+  exec('ngx-translate-extract --input ' + sourceFiles + ' --output ' + outputArgument + ' --string-as-default-value --fi "\t"', (err, stdout, stderr) => {
     if (err) {
       console.error(err);
       console.error("Error extracting strings.");

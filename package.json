@@ -188,6 +188,7 @@
     "typescript": "~5.1.3"
   },
   "lint-staged": {
+    "*": "yarn extract",
     "*.{ts,html}": "eslint --cache --fix",
     "*.html": "markuplint",
     "*.scss": "stylelint --fix"

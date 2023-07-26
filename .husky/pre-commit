@@ -2,6 +2,5 @@
 . "$(dirname "$0")/_/husky.sh"
 
 yarn lint-staged
-yarn extract
 yarn validate-translations
 git add src/assets/i18n
