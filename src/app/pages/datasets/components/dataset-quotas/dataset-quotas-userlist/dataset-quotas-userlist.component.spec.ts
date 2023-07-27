@@ -14,11 +14,11 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DatasetQuotaEditFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-edit-form/dataset-quota-edit-form.component';
-import {
-  AppLoaderService, DialogService, WebSocketService,
-} from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { DatasetQuotasUserlistComponent } from './dataset-quotas-userlist.component';
 
 const fakeUserQuotas: DatasetQuota[] = [{

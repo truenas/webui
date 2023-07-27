@@ -39,7 +39,7 @@ import { StaticRouteDeleteDialogComponent } from 'app/pages/network/components/s
 import { StaticRouteFormComponent } from 'app/pages/network/components/static-route-form/static-route-form.component';
 import { StaticRoutesCardComponent } from 'app/pages/network/components/static-routes-card/static-routes-card.component';
 import { InterfacesStore } from 'app/pages/network/stores/interfaces.store';
-import { NetworkService } from 'app/services';
+import { NetworkService } from 'app/services/network.service';
 import { NetworkComponent } from './network.component';
 import { routing } from './network.routing';
 

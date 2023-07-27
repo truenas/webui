@@ -8,7 +8,7 @@ import { Observable, of } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
-import { WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 
 export type LogsDialogFormValue = PodSelectLogsDialogComponent['form']['value'];
 

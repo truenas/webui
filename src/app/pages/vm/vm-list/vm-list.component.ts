@@ -22,6 +22,7 @@ import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.com
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { VmEditFormComponent } from 'app/pages/vm/vm-edit-form/vm-edit-form.component';
 import { CloneVmDialogComponent } from 'app/pages/vm/vm-list/clone-vm-dialog/clone-vm-dialog.component';
 import { DeleteVmDialogComponent } from 'app/pages/vm/vm-list/delete-vm-dialog/delete-vm-dialog.component';
@@ -29,11 +30,13 @@ import { DisplayVmDialogComponent } from 'app/pages/vm/vm-list/display-vm-dialog
 import { StopVmDialogComponent } from 'app/pages/vm/vm-list/stop-vm-dialog/stop-vm-dialog.component';
 import { VirtualMachineRow } from 'app/pages/vm/vm-list/virtual-machine-row.interface';
 import { VmWizardComponent } from 'app/pages/vm/vm-wizard/vm-wizard.component';
-import {
-  WebSocketService, StorageService, AppLoaderService, DialogService, VmService, SystemGeneralService,
-} from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { StorageService } from 'app/services/storage.service';
+import { SystemGeneralService } from 'app/services/system-general.service';
+import { VmService } from 'app/services/vm.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 const noMemoryError = 'ENOMEM';
 

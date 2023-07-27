@@ -15,7 +15,7 @@ import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.s
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { CpuValidatorService } from 'app/pages/vm/utils/cpu-validator.service';
 import { vmCpusetPattern, vmNodesetPattern } from 'app/pages/vm/utils/vm-form-patterns.constant';
-import { WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({

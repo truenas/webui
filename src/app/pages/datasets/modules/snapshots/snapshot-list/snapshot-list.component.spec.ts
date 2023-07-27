@@ -18,7 +18,7 @@ import {
   selectSnapshots, selectSnapshotState, selectSnapshotsTotal,
 } from 'app/pages/datasets/modules/snapshots/store/snapshot.selectors';
 import { fakeZfsSnapshotDataSource } from 'app/pages/datasets/modules/snapshots/testing/snapshot-fake-datasource';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { AppState } from 'app/store';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';

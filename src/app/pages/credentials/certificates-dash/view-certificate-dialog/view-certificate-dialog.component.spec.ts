@@ -7,7 +7,7 @@ import { CopyButtonComponent } from 'app/core/components/copy-btn/copy-btn.compo
 import {
   ViewCertificateDialogData,
 } from 'app/pages/credentials/certificates-dash/view-certificate-dialog/view-certificate-dialog-data.interface';
-import { StorageService } from 'app/services';
+import { StorageService } from 'app/services/storage.service';
 import { ViewCertificateDialogComponent } from './view-certificate-dialog.component';
 
 describe('ViewCertificateDialogComponent', () => {

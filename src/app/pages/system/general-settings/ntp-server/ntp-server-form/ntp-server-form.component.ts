@@ -10,7 +10,8 @@ import { CreateNtpServer, NtpServer } from 'app/interfaces/ntp-server.interface'
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { ValidationService, WebSocketService } from 'app/services';
+import { ValidationService } from 'app/services/validation.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({

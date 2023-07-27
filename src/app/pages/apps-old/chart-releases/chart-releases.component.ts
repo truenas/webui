@@ -36,9 +36,10 @@ import { PodSelectDialogComponent } from 'app/pages/apps-old/dialogs/pod-select/
 import { PodSelectDialogType } from 'app/pages/apps-old/enums/pod-select-dialog.enum';
 import { ChartFormComponent } from 'app/pages/apps-old/forms/chart-form/chart-form.component';
 import { ChartUpgradeDialogConfig } from 'app/pages/apps-old/interfaces/chart-upgrade-dialog-config.interface';
-import { RedirectService, DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { RedirectService } from 'app/services/redirect.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()

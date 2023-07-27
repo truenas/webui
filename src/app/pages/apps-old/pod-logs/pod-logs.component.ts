@@ -14,9 +14,10 @@ import {
   LogsDialogFormValue,
   PodSelectLogsDialogComponent,
 } from 'app/pages/apps-old/dialogs/pod-select-logs/pod-select-logs-dialog.component';
-import { DialogService, ShellService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { LayoutService } from 'app/services/layout.service';
+import { ShellService } from 'app/services/shell.service';
 import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 

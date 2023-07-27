@@ -3,7 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import {
   ViewCertificateDialogData,
 } from 'app/pages/credentials/certificates-dash/view-certificate-dialog/view-certificate-dialog-data.interface';
-import { StorageService } from 'app/services';
+import { StorageService } from 'app/services/storage.service';
 
 @Component({
   templateUrl: './view-certificate-dialog.component.html',

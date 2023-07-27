@@ -9,8 +9,9 @@ import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-cront
 import {
   ScrubTaskFormComponent,
 } from 'app/pages/data-protection/scrub-task/scrub-task-form/scrub-task-form.component';
-import { UserService, TaskService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { TaskService } from 'app/services/task.service';
+import { UserService } from 'app/services/user.service';
 import { AppState } from 'app/store';
 
 @UntilDestroy()

@@ -18,7 +18,7 @@ import { forbiddenValues } from 'app/modules/ix-forms/validators/forbidden-value
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { groupAdded, groupChanged } from 'app/pages/account/groups/store/group.actions';
 import { GroupSlice } from 'app/pages/account/groups/store/group.selectors';
-import { UserService } from 'app/services';
+import { UserService } from 'app/services/user.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
