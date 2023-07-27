@@ -43,7 +43,7 @@ export class IxFileUploadService {
     file: File,
     method: ApiMethod,
     params: unknown[] = [],
-    apiEndPoint = this.defaultUploadEndpoint,
+    apiEndPoint: string = null,
   ): void {
     const formData: FormData = new FormData();
     formData.append('data', JSON.stringify({
@@ -51,7 +51,8 @@ export class IxFileUploadService {
       params,
     }));
     formData.append('file', file, file.name);
-    const req = new HttpRequest('POST', apiEndPoint, formData, {
+    const endPoint = apiEndPoint || this.defaultUploadEndpoint;
+    const req = new HttpRequest('POST', endPoint, formData, {
       reportProgress: true,
     });
 
