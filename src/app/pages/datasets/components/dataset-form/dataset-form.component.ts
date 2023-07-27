@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  forkJoin, Observable, of, switchMap, tap,
+  forkJoin, Observable, of, switchMap, map,
 } from 'rxjs';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.interface';
@@ -175,13 +175,11 @@ export class DatasetFormComponent implements OnInit {
       : this.ws.call('pool.dataset.update', [this.existingDataset.id, payload as DatasetUpdate]);
 
     request$.pipe(
-      switchMap(
-        (dataset) => this.checkForAclOnParent(dataset),
-        (dataset) => dataset,
-      ),
+      switchMap((dataset) => forkJoin([of(dataset), this.checkForAclOnParent()])),
+      switchMap(([dataset, isAcl]) => forkJoin([of(dataset), isAcl ? this.aclDialog() : of(false)])),
       untilDestroyed(this),
     ).subscribe({
-      next: (createdDataset) => {
+      next: ([createdDataset, shouldGoToEditor]) => {
         this.isLoading = false;
         this.cdr.markForCheck();
         this.slideInRef.close(createdDataset);
@@ -190,6 +188,11 @@ export class DatasetFormComponent implements OnInit {
             ? this.translate.instant('Switched to new dataset «{name}».', { name: getDatasetLabel(createdDataset) })
             : this.translate.instant('Dataset «{name}» updated.', { name: getDatasetLabel(createdDataset) }),
         );
+        if (shouldGoToEditor) {
+          this.router.navigate(['/', 'datasets', 'acl', 'edit'], {
+            queryParams: { path: createdDataset.mountpoint },
+          });
+        }
       },
       error: (error) => {
         this.isLoading = false;
@@ -209,34 +212,22 @@ export class DatasetFormComponent implements OnInit {
     }, {} as DatasetCreate | DatasetUpdate);
   }
 
-  private checkForAclOnParent(createdDataset: Dataset): Observable<unknown> {
+  private checkForAclOnParent(): Observable<boolean> {
     if (!this.parentDataset) {
-      return of(undefined);
+      return of(false);
     }
 
     const parentPath = `/mnt/${this.parentDataset.id}`;
-    return this.ws.call('filesystem.acl_is_trivial', [parentPath]).pipe(
-      tap((isTrivial) => {
-        if (isTrivial) {
-          return of(undefined);
-        }
+    return this.ws.call('filesystem.acl_is_trivial', [parentPath]).pipe(map((isTrivial) => !isTrivial));
+  }
 
-        return this.dialog.confirm({
-          title: helptext.afterSubmitDialog.title,
-          message: helptext.afterSubmitDialog.message,
-          hideCheckbox: true,
-          buttonText: helptext.afterSubmitDialog.actionBtn,
-          cancelText: helptext.afterSubmitDialog.cancelBtn,
-        }).pipe(
-          tap((shouldGoToEditor) => {
-            if (!shouldGoToEditor) {
-              return;
-            }
-
-            this.router.navigate(['/', 'datasets', 'acl', 'edit', createdDataset.id]);
-          }),
-        );
-      }),
-    );
+  private aclDialog(): Observable<boolean> {
+    return this.dialog.confirm({
+      title: helptext.afterSubmitDialog.title,
+      message: helptext.afterSubmitDialog.message,
+      hideCheckbox: true,
+      buttonText: helptext.afterSubmitDialog.actionBtn,
+      cancelText: helptext.afterSubmitDialog.cancelBtn,
+    });
   }
 }
