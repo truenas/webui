@@ -5,7 +5,6 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { NfsConfig } from 'app/interfaces/nfs-config.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
@@ -25,8 +24,6 @@ describe('AddSpnDialogComponent', () => {
     ],
     providers: [
       mockWebsocket([
-        mockCall('nfs.config', { v4_krb: false } as NfsConfig),
-        mockCall('nfs.update'),
         mockCall('nfs.add_principal'),
       ]),
       mockProvider(MatDialogRef),
@@ -50,9 +47,6 @@ describe('AddSpnDialogComponent', () => {
     const save = await loader.getHarness(MatButtonHarness.with({ text: 'Submit' }));
     await save.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('nfs.update', [{
-      v4_krb: true,
-    }]);
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('nfs.add_principal', [{
       username: 'username',
       password: 'password',
