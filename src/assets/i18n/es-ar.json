@@ -1023,6 +1023,7 @@
   "Save As Preset": "",
   "Save Selection": "",
   "Save current ACL entries as a preset for future use.": "",
+  "Save the 'Require Kerberos for NFSv4' value before adding SMP": "",
   "Scan this QR Code with your authenticator app of choice. The next time you try to login, you will be asked to enter an One Time Password (OTP) from your authenticator app. This step is extremely important. Without the OTP you will be locked out of this system.": "",
   "Scheduled Scrub Task": "",
   "Schema Mode": "",

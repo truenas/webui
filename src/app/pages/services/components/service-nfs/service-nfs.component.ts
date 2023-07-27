@@ -28,6 +28,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class ServiceNfsComponent implements OnInit {
   isFormLoading = false;
+  isAddSpnDisabled = true;
   hasNfsStatus: boolean;
   adHealth: DirectoryServiceState;
 
@@ -107,6 +108,7 @@ export class ServiceNfsComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (config) => {
+          this.isAddSpnDisabled = !config.v4_krb;
           this.form.patchValue(config);
           this.snackbar.success(this.translate.instant('Service configuration saved'));
           this.isFormLoading = false;
