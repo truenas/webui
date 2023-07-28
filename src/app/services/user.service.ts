@@ -63,7 +63,7 @@ export class UserService {
     if (search.length > 0) {
       queryArgs = [['username', '^', search]];
     }
-    return this.ws.call(this.userQuery, [queryArgs, { ...this.queryOptions, offset }]);
+    return this.ws.call(this.userQuery, [queryArgs, { ...this.queryOptions, offset, order_by: ['builtin'] }]);
   }
 
   getUserByName(username: string): Observable<DsUncachedUser> {

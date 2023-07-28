@@ -15,7 +15,9 @@ export class UserComboboxProvider implements IxComboboxProvider {
 
     return this.userService.userQueryDsCache(filterValue, offset)
       .pipe(
-        map((users) => this.userQueryResToOptions(users)),
+        map((users) => {
+          return this.userQueryResToOptions(users);
+        }),
       );
   }
 
@@ -34,5 +36,5 @@ export class UserComboboxProvider implements IxComboboxProvider {
       );
   }
 
-  constructor(private userService: UserService, private optionsValueField: 'username' | 'id' = 'username') {}
+  constructor(private userService: UserService, private optionsValueField: 'username' | 'uid' | 'id' = 'username') {}
 }
