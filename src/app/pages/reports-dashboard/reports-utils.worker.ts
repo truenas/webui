@@ -31,12 +31,6 @@ const maxDecimals = (input: number, max = 2): number => {
   return parseFloat(output as string);
 };
 
-function arrayAvg(input: number[]): number {
-  const sum = input.reduce((acc, cv) => acc + cv);
-  const avg = sum / input.length;
-  return maxDecimals(avg);
-}
-
 function inferUnits(label: string): string {
   // Figures out from the label what the unit is
   let units = label;
@@ -250,28 +244,7 @@ function optimizeLegend(input: ReportingData): ReportingData {
   return output;
 }
 
-// Pseudo command line interface
-// we can call the worker's functions
-// using text input. The Unix way ;-)
 const commands = {
-  // POC commands
-  echo: (input: string) => {
-    // eslint-disable-next-line no-console
-    console.log(input);
-    return input;
-  },
-  toLowerCase: (input: string) => {
-    const output = input.toLowerCase();
-    // eslint-disable-next-line no-console
-    console.log(output);
-    return output;
-  },
-  length: (input: string) => {
-    const output = input.length;
-    // eslint-disable-next-line no-console
-    console.log(output);
-    return output;
-  },
   optimizeLegend: (input: ReportingData) => {
     return optimizeLegend(input);
   },
@@ -281,12 +254,6 @@ const commands = {
       console.warn('You must specify a label to parse. (Usually the Y axis label). Returning input value instead');
     }
     return output;
-  },
-  arrayAvg: (input: number[]) => {
-    return arrayAvg(input);
-  },
-  maxDecimals: (input: number, options?: [number]) => {
-    return options ? maxDecimals(input, ...options) : maxDecimals(input);
   },
 };
 
@@ -317,10 +284,6 @@ addEventListener('message', ({ data }: { data: CoreEvent }) => { // eslint-disab
       emit({ name: 'Response', data: response });
       break;
     }
-    case 'ProcessCommands':
-      output = processCommands(evt.data as Command[]);
-      emit({ name: 'Response', data: output, sender: evt.sender });
-      break;
     case 'ProcessCommandsAsReportData':
       output = processCommands(evt.data as Command[]);
       emit({ name: 'ReportData', data: output, sender: evt.sender });
