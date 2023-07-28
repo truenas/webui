@@ -7,10 +7,10 @@ import { IxEmptyRowComponent } from 'app/modules/ix-tables/components/ix-empty-r
 
 @UntilDestroy()
 @Directive({
-  selector: '[ix-table-empty]',
+  selector: '[ix-table2-empty]',
 })
 export class IxTable2EmptyDirective implements AfterViewInit, OnChanges {
-  @Input('ix-table-empty') showEmptyRow: boolean;
+  @Input('ix-table2-empty') showEmptyRow: boolean;
   @Input() emptyConfig: EmptyConfig;
   componentRef: ComponentRef<IxEmptyRowComponent> = null;
   constructor(
