@@ -8,7 +8,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { PodDialogData } from 'app/interfaces/pod-select-dialog.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
-import { WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({

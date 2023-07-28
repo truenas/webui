@@ -25,10 +25,11 @@ import { forbiddenValues } from 'app/modules/ix-forms/validators/forbidden-value
 import { matchOtherValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { getDatasetLabel } from 'app/pages/datasets/utils/dataset.utils';
-import {
-  CloudCredentialService, DialogService, StorageService, WebSocketService,
-} from 'app/services';
+import { CloudCredentialService } from 'app/services/cloud-credential.service';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { StorageService } from 'app/services/storage.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 interface ZvolFormData {
   name?: string;

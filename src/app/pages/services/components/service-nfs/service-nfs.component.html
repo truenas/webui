@@ -106,13 +106,19 @@
             {{ 'Cancel' | translate }}
           </button>
         </div>
-        <div>
+        <div class="add-spn-container">
+          <ix-tooltip
+            *ngIf="isAddSpnVisible && isAddSpnDisabled"
+            [header]="'Add SPN' | translate"
+            [message]="'Save the \'Require Kerberos for NFSv4\' value before adding SMP' | translate"
+          ></ix-tooltip>
           <button
             *ngIf="isAddSpnVisible"
             mat-button
             type="button"
             color="primary"
             ixTest="add-spn"
+            [disabled]="isAddSpnDisabled"
             (click)="addSpn()"
           >
             {{ 'Add SPN' | translate }}

@@ -6,7 +6,7 @@ import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.util
 import { Pool } from 'app/interfaces/pool.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { DevicesState, DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
-import { WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('DevicesStore', () => {
   let spectator: SpectatorService<DevicesStore>;

@@ -27,7 +27,7 @@ import { GroupComboboxProvider } from 'app/modules/ix-forms/classes/group-combob
 import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
 import { newNfsAce } from 'app/pages/datasets/modules/permissions/utils/new-ace.utils';
-import { UserService } from 'app/services';
+import { UserService } from 'app/services/user.service';
 import {
   NfsFormFlagsType,
   nfsFormFlagsTypeLabels,

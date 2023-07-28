@@ -8,7 +8,7 @@ import { IscsiPortal } from 'app/interfaces/iscsi.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { PortalFormComponent } from 'app/pages/sharing/iscsi/portal/portal-form/portal-form.component';
-import { IscsiService } from 'app/services';
+import { IscsiService } from 'app/services/iscsi.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 type IscsiPortalRow = Overwrite<IscsiPortal, {

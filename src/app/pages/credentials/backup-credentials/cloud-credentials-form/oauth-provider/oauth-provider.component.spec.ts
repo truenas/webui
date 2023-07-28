@@ -11,7 +11,7 @@ import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import {
   OauthProviderComponent, OauthProviderData,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/oauth-provider/oauth-provider.component';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 
 describe('OauthProviderComponent', () => {
   let spectator: Spectator<OauthProviderComponent>;

@@ -9,7 +9,7 @@ import {
 } from 'rxjs/operators';
 import helptext from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
-import { WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 
 /**
  * An async validator.

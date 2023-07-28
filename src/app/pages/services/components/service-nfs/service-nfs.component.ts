@@ -16,7 +16,7 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { rangeValidator, portRangeValidator } from 'app/modules/ix-forms/validators/range-validation/range-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AddSpnDialogComponent } from 'app/pages/services/components/service-nfs/add-spn-dialog/add-spn-dialog.component';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -28,6 +28,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class ServiceNfsComponent implements OnInit {
   isFormLoading = false;
+  isAddSpnDisabled = true;
   hasNfsStatus: boolean;
   adHealth: DirectoryServiceState;
 
@@ -107,6 +108,7 @@ export class ServiceNfsComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (config) => {
+          this.isAddSpnDisabled = !config.v4_krb;
           this.form.patchValue(config);
           this.snackbar.success(this.translate.instant('Service configuration saved'));
           this.isFormLoading = false;

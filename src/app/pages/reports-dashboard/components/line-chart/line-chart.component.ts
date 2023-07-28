@@ -34,12 +34,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
   @ViewChild('wrapper', { static: true }) el: ElementRef;
   @Input() chartId: string;
   @Input() chartColors: string[];
-  @Input() set data(value: ReportingData) {
-    this._data = value;
-  }
-  get data(): ReportingData {
-    return this._data;
-  }
+  @Input() data: ReportingData;
   @Input() report: Report;
   @Input() title: string;
   @Input() timezone: string;
@@ -47,15 +42,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   @Input() legends?: string[];
   @Input() type = 'line';
-  @Input() convertToCelsius?: true;
-  @Input() dataStructure: 'columns'; // rows vs columns
-  @Input() minY?: number = 0;
-  @Input() maxY?: number = 100;
   @Input() labelY?: string = 'Label Y';
-  @Input() interactive = false;
-
-  // TODO: Remove extra library.
-  library: 'dygraph' | 'chart.js' = 'dygraph';
 
   chart: Dygraph;
 
@@ -68,7 +55,6 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
   controlUid = `chart_${UUID.UUID()}`;
 
   private utils: ThemeUtils = new ThemeUtils();
-  private _data: ReportingData;
 
   constructor(
     private core: CoreService,
@@ -79,7 +65,6 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
     this.renderGraph(update);
   }
 
-  // dygraph renderer
   renderGraph(update?: boolean): void {
     if (!this.data?.legend?.length) {
       return;
@@ -177,37 +162,21 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   // TODO: Line chart should be dumber and should not care about timezones.
   protected makeTimeAxis(rd: ReportingData): dygraphs.DataArray {
-    const structure = this.library === 'chart.js' ? 'columns' : 'rows';
     const rowData = rd.data as number[][];
 
-    if (structure === 'rows') {
-      const newRows = rowData.map((row) => {
-        // replace unix timestamp in first column with date
-        const convertedDate = utcToZonedTime(row[0] * 1000, this.timezone);
-        return [convertedDate, ...row.slice(1)];
-      });
+    const newRows = rowData.map((row) => {
+      // replace unix timestamp in first column with date
+      const convertedDate = utcToZonedTime(row[0] * 1000, this.timezone);
+      return [convertedDate, ...row.slice(1)];
+    });
 
-      return [
-        ['x', ...rd.legend],
-        ...newRows,
-      ] as unknown as dygraphs.DataArray;
-    }
-    if (structure === 'columns') {
-      const columns = [];
-
-      for (let i = 0; i < (rd.data as number[][]).length; i++) {
-        const date = new Date(rd.start * 1000 + i * 1000);
-        columns.push(date);
-      }
-
-      return columns as unknown as dygraphs.DataArray;
-    }
-
-    return undefined;
+    return [
+      ['x', ...rd.legend],
+      ...newRows,
+    ] as unknown as dygraphs.DataArray;
   }
 
   inferUnits(label: string): string {
-    // if(this.report.units){ return this.report.units; }
     // Figures out from the label what the unit is
     let units = label;
     switch (true) {

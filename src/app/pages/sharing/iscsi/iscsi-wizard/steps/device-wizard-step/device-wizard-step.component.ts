@@ -8,8 +8,8 @@ import { choicesToOptions, idNameArrayToOptions } from 'app/helpers/options.help
 import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
-import { IscsiService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
+import { IscsiService } from 'app/services/iscsi.service';
 
 @UntilDestroy()
 @Component({

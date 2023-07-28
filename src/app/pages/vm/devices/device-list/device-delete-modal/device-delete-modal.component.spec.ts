@@ -10,8 +10,10 @@ import { mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.ut
 import { VmDeviceType } from 'app/enums/vm.enum';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DeviceDeleteModalComponent, DeviceDeleteModalState } from 'app/pages/vm/devices/device-list/device-delete-modal/device-delete-modal.component';
-import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('DeviceDeleteModalComponent', () => {
   let spectator: Spectator<DeviceDeleteModalComponent>;

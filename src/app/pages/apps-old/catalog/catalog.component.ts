@@ -22,7 +22,7 @@ import { ApplicationsService } from 'app/pages/apps-old/applications.service';
 import { CommonAppsToolbarButtonsComponent } from 'app/pages/apps-old/common-apps-toolbar-buttons/common-apps-toolbar-buttons.component';
 import { CatalogSummaryDialogComponent } from 'app/pages/apps-old/dialogs/catalog-summary/catalog-summary-dialog.component';
 import { ChartFormComponent } from 'app/pages/apps-old/forms/chart-form/chart-form.component';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { WebSocketService } from 'app/services/ws.service';
