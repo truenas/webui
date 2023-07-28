@@ -8,7 +8,7 @@ import {
   from, Observable, Observer, of, Subject,
 } from 'rxjs';
 import {
-  catchError, concatMap, tap, toArray,
+  catchError, concatMap, map, switchMap, toArray,
 } from 'rxjs/operators';
 import { MiB } from 'app/constants/bytes.constant';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
@@ -24,39 +24,33 @@ export class IxFileUploadService {
   private fileUploadProgress$ = new Subject<HttpProgressEvent>();
   private fileUploadSuccess$ = new Subject<HttpResponse<unknown>>();
 
-  private defaultUploadEndpoint: string;
-
   constructor(
     protected http: HttpClient,
     private translate: TranslateService,
     private authService: AuthService,
-  ) {
-    this.authService.authToken$.pipe(
-      tap((token) => {
-        this.defaultUploadEndpoint = '/_upload?auth_token=' + token;
-      }),
-      untilDestroyed(this),
-    ).subscribe();
-  }
+  ) { }
 
   upload(
     file: File,
     method: ApiMethod,
     params: unknown[] = [],
-    apiEndPoint: string = null,
   ): void {
-    const formData: FormData = new FormData();
-    formData.append('data', JSON.stringify({
-      method,
-      params,
-    }));
-    formData.append('file', file, file.name);
-    const endPoint = apiEndPoint || this.defaultUploadEndpoint;
-    const req = new HttpRequest('POST', endPoint, formData, {
-      reportProgress: true,
-    });
-
-    this.http.request(req).pipe(untilDestroyed(this)).subscribe({
+    this.authService.authToken$.pipe(
+      map((token) => {
+        const endPoint = '/_upload?auth_token=' + token;
+        const formData: FormData = new FormData();
+        formData.append('data', JSON.stringify({
+          method,
+          params,
+        }));
+        formData.append('file', file, file.name);
+        return new HttpRequest('POST', endPoint, formData, {
+          reportProgress: true,
+        });
+      }),
+      switchMap((req) => this.http.request(req)),
+      untilDestroyed(this),
+    ).subscribe({
       next: (event: HttpEvent<unknown>) => {
         if (event.type === HttpEventType.UploadProgress) {
           this.fileUploadProgress$.next(event);
