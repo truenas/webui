@@ -23,6 +23,31 @@ describe('SmbAclComponent', () => {
   let spectator: Spectator<SmbAclComponent>;
   let loader: HarnessLoader;
   let entriesList: IxListHarness;
+  const mockAcl = {
+    id: 13,
+    share_name: 'myshare',
+    share_acl: [
+      {
+        ae_who_sid: 'S-1-1-0',
+        ae_type: SmbSharesecType.Allowed,
+        ae_who_id: {
+          id_type: NfsAclTag.Everyone,
+          id: null,
+        },
+        ae_perm: SmbSharesecPermission.Read,
+      },
+      {
+        ae_who_sid: 'S-1-1-1',
+        ae_type: SmbSharesecType.Denied,
+        ae_perm: SmbSharesecPermission.Full,
+        ae_who_id: {
+          id_type: NfsAclTag.User,
+          id: 3001,
+        },
+        ae_who_str: 'myuser',
+      },
+    ],
+  } as SmbSharesec;
   const createComponent = createComponentFactory({
     component: SmbAclComponent,
     imports: [
@@ -31,31 +56,7 @@ describe('SmbAclComponent', () => {
     ],
     providers: [
       mockWebsocket([
-        mockCall('sharing.smb.getacl', {
-          id: 13,
-          share_name: 'myshare',
-          share_acl: [
-            {
-              ae_who_sid: 'S-1-1-0',
-              ae_type: SmbSharesecType.Allowed,
-              ae_who_id: {
-                id_type: NfsAclTag.Everyone,
-                id: null,
-              },
-              ae_perm: SmbSharesecPermission.Read,
-            },
-            {
-              ae_who_sid: 'S-1-1-1',
-              ae_type: SmbSharesecType.Denied,
-              ae_perm: SmbSharesecPermission.Full,
-              ae_who_id: {
-                id_type: NfsAclTag.User,
-                id: 0,
-              },
-              ae_who_str: 'root',
-            },
-          ],
-        } as SmbSharesec),
+        mockCall('sharing.smb.getacl', mockAcl),
         mockCall('sharing.smb.setacl'),
       ]),
       mockProvider(IxSlideInService),
@@ -127,7 +128,7 @@ describe('SmbAclComponent', () => {
       },
       {
         Who: 'User',
-        User: 'root',
+        User: '3001',
         Permission: 'FULL',
         Type: 'DENIED',
       },
@@ -158,7 +159,7 @@ describe('SmbAclComponent', () => {
           ae_perm: SmbSharesecPermission.Full,
           ae_type: SmbSharesecType.Denied,
           ae_who_id: {
-            id: 0,
+            id: 3001,
             id_type: 'USER',
           },
         },
