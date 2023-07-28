@@ -73,7 +73,7 @@ export class SmbAclComponent implements OnInit {
   readonly helptext = helptextSharingSmb;
   readonly nfsAclTag = NfsAclTag;
   readonly userProvider = new UserComboboxProvider(this.userService, 'uid');
-  readonly groupProvider = new GroupComboboxProvider(this.userService, 'id');
+  readonly groupProvider = new GroupComboboxProvider(this.userService, 'gid');
 
   constructor(
     private formBuilder: FormBuilder,
