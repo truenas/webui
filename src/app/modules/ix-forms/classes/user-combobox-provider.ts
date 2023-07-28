@@ -15,9 +15,7 @@ export class UserComboboxProvider implements IxComboboxProvider {
 
     return this.userService.userQueryDsCache(filterValue, offset)
       .pipe(
-        map((users) => {
-          return this.userQueryResToOptions(users);
-        }),
+        map((users) => this.userQueryResToOptions(users)),
       );
   }
 
