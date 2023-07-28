@@ -35,9 +35,10 @@ import {
 import {
   ReplicationWizardComponent,
 } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
-import { ReplicationService, WebSocketService } from 'app/services';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { ReplicationService } from 'app/services/replication.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('ReplicationFormComponent', () => {
   let spectator: Spectator<ReplicationFormComponent>;

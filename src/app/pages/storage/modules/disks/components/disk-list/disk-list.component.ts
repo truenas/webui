@@ -29,10 +29,11 @@ import {
 import {
   ManualTestDialogComponent, ManualTestDialogParams,
 } from 'app/pages/storage/modules/disks/components/manual-test-dialog/manual-test-dialog.component';
-import { WebSocketService, DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { DisksUpdateService } from 'app/services/disks-update.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({

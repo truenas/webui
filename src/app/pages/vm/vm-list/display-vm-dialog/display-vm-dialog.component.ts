@@ -7,9 +7,11 @@ import { of } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
 import { VmDisplayWebUriParams, VmDisplayWebUriParamsOptions } from 'app/interfaces/virtual-machine.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DisplayVmDialogData } from 'app/pages/vm/vm-list/display-vm-dialog/display-vm-dialog-data.interface';
-import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({

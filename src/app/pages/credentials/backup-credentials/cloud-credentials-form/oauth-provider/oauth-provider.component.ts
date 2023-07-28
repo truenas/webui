@@ -6,7 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
 import { OauthMessage } from 'app/interfaces/oauth-message.interface';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 
 export interface OauthProviderData {
   client_id: string;

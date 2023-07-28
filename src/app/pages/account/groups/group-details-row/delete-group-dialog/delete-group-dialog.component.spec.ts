@@ -13,7 +13,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import {
   DeleteGroupDialogComponent,
 } from 'app/pages/account/groups/group-details-row/delete-group-dialog/delete-group-dialog.component';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('DeleteGroupDialogComponent', () => {

@@ -41,8 +41,8 @@ export default {
   ha_enabled_edit_title: T('Cannot Edit while HA is Enabled'),
   ha_enabled_edit_msg: T('Editing interfaces while HA is enabled is not allowed.'),
 
-  ha_enabled_delete_title: T('Cannot Delete while HA is Enabled'),
   ha_enabled_delete_msg: T('Deleting interfaces while HA is enabled is not allowed.'),
+  ha_enabled_reset_msg: T('Resetting interfaces while HA is enabled is not allowed.'),
 
   ha_enabled_text: T('Cannot edit while HA is enabled.'),
   go_to_ha: T('Go to HA settings'),

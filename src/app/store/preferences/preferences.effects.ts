@@ -6,7 +6,7 @@ import {
   catchError, map, mergeMap, switchMap, withLatestFrom,
 } from 'rxjs/operators';
 import { WINDOW } from 'app/helpers/window.helper';
-import { WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { AppState } from 'app/store/index';
 import {

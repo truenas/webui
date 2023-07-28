@@ -27,7 +27,7 @@ import {
 import {
   ViewCertificateDialogComponent,
 } from 'app/pages/credentials/certificates-dash/view-certificate-dialog/view-certificate-dialog.component';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { CertificateEditComponent } from './certificate-edit.component';

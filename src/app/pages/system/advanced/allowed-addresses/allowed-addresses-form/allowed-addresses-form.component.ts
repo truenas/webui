@@ -11,9 +11,11 @@ import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { ipv4Validator } from 'app/modules/ix-forms/validators/ip-validation';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
 

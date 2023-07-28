@@ -8,7 +8,7 @@ import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import {
   CertificateSubjectComponent,
 } from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-subject/certificate-subject.component';
-import { SystemGeneralService } from 'app/services';
+import { SystemGeneralService } from 'app/services/system-general.service';
 
 describe('CertificateSubjectComponent', () => {
   let spectator: Spectator<CertificateSubjectComponent>;

@@ -23,8 +23,9 @@ import { SidenavStatusData } from 'app/interfaces/events/sidenav-status-event.in
 import { SubMenuItem } from 'app/interfaces/menu-item.interface';
 import { alertPanelClosed } from 'app/modules/alerts/store/alert.actions';
 import { selectIsAlertPanelOpen } from 'app/modules/alerts/store/alert.selectors';
-import { SystemGeneralService, LanguageService } from 'app/services';
+import { LanguageService } from 'app/services/language.service';
 import { LayoutService } from 'app/services/layout.service';
+import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { TokenLifetimeService } from 'app/services/token-lifetime.service';
 import { AppState } from 'app/store';

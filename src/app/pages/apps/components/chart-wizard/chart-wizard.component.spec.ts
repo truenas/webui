@@ -17,10 +17,11 @@ import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-sli
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ChartWizardComponent } from 'app/pages/apps/components/chart-wizard/chart-wizard.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
-import { AppLoaderService, DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 describe('ChartWizardComponent', () => {

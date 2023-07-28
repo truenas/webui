@@ -3,7 +3,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import { UUID } from 'angular2-uuid';
 import { map } from 'rxjs';
-import { WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 
 export interface ConsoleMessagesState {
   lines: string[];

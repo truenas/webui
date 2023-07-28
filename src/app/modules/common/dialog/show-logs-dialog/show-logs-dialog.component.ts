@@ -6,8 +6,10 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { untilDestroyed } from '@ngneat/until-destroy';
 import { switchMap, catchError, EMPTY } from 'rxjs';
 import { Job } from 'app/interfaces/job.interface';
-import { WebSocketService, DialogService, StorageService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { StorageService } from 'app/services/storage.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @Component({
   templateUrl: './show-logs-dialog.component.html',

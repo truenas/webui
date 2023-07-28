@@ -34,14 +34,12 @@ import {
 import {
   ReplicationWizardComponent,
 } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
-import {
-  DialogService,
-  ReplicationService,
-  WebSocketService,
-} from 'app/services';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { ReplicationService } from 'app/services/replication.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({

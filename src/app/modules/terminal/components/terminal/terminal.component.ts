@@ -14,8 +14,9 @@ import { ShellConnectedEvent } from 'app/interfaces/shell.interface';
 import { TerminalConfiguration } from 'app/interfaces/terminal.interface';
 import { CopyPasteMessageComponent } from 'app/modules/terminal/components/copy-paste-message/copy-paste-message.component';
 import { XtermAttachAddon } from 'app/modules/terminal/xterm-attach-addon';
-import { ShellService, WebSocketService } from 'app/services';
 import { AuthService } from 'app/services/auth/auth.service';
+import { ShellService } from 'app/services/shell.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 

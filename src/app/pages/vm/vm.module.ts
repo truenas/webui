@@ -25,9 +25,9 @@ import { VmEditFormComponent } from 'app/pages/vm/vm-edit-form/vm-edit-form.comp
 import { DisplayVmDialogComponent } from 'app/pages/vm/vm-list/display-vm-dialog/display-vm-dialog.component';
 import { VmSerialShellComponent } from 'app/pages/vm/vm-serial-shell/vm-serial-shell.component';
 import { VmWizardComponent } from 'app/pages/vm/vm-wizard/vm-wizard.component';
-import {
-  VmService, NetworkService, SystemGeneralService,
-} from 'app/services';
+import { NetworkService } from 'app/services/network.service';
+import { SystemGeneralService } from 'app/services/system-general.service';
+import { VmService } from 'app/services/vm.service';
 import { DeviceListComponent } from './devices/device-list/device-list.component';
 import { CloneVmDialogComponent } from './vm-list/clone-vm-dialog/clone-vm-dialog.component';
 import { DeleteVmDialogComponent } from './vm-list/delete-vm-dialog/delete-vm-dialog.component';

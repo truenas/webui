@@ -13,7 +13,7 @@ import {
 import {
   OneDriveProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/one-drive-provider-form/one-drive-provider-form.component';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('OneDriveProviderFormComponent', () => {

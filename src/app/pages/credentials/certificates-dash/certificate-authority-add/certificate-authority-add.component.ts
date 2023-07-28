@@ -33,8 +33,9 @@ import {
 import {
   CertificateSubjectComponent,
 } from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-subject/certificate-subject.component';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({

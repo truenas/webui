@@ -15,9 +15,10 @@ import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum'
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { DialogService, SystemGeneralService } from 'app/services';
 import { AuthService } from 'app/services/auth/auth.service';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { SystemGeneralService } from 'app/services/system-general.service';
 import { UpdateService } from 'app/services/update.service';
 import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService } from 'app/services/ws.service';

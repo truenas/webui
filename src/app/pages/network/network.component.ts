@@ -14,19 +14,16 @@ import { CoreEvent } from 'app/interfaces/events';
 import { NetworkInterfacesChangedEvent } from 'app/interfaces/events/network-interfaces-changed-event.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { TableService } from 'app/modules/entity/table/table.service';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
 import { InterfacesStore } from 'app/pages/network/stores/interfaces.store';
-import {
-  AppLoaderService,
-  DialogService, SystemGeneralService,
-} from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { AppState } from 'app/store/index';
@@ -57,10 +54,8 @@ export class NetworkComponent implements OnInit, OnDestroy {
     private ws: WebSocketService,
     private router: Router,
     private dialogService: DialogService,
-    private formatter: IxFormatterService,
     private loader: AppLoaderService,
     private translate: TranslateService,
-    private tableService: TableService,
     private slideInService: IxSlideInService,
     private core: CoreService,
     private snackbar: SnackbarService,

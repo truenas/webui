@@ -10,7 +10,7 @@ import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import {
   NetworkInterfaceStepComponent,
 } from 'app/pages/vm/vm-wizard/steps/4-network-interface-step/network-interface-step.component';
-import { WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('NetworkInterfaceStepComponent', () => {
   let spectator: Spectator<NetworkInterfaceStepComponent>;

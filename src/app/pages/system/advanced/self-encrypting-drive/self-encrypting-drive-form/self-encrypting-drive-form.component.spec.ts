@@ -11,8 +11,8 @@ import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-sl
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SelfEncryptingDriveFormComponent } from 'app/pages/system/advanced/self-encrypting-drive/self-encrypting-drive-form/self-encrypting-drive-form.component';
-import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 describe('SedFormComponent', () => {

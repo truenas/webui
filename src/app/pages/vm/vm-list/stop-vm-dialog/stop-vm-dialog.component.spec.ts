@@ -9,7 +9,7 @@ import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { StopVmDialogComponent } from 'app/pages/vm/vm-list/stop-vm-dialog/stop-vm-dialog.component';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 
 describe('StopVmDialogComponent', () => {
   let spectator: Spectator<StopVmDialogComponent>;

@@ -5,7 +5,7 @@ import { EMPTY } from 'rxjs';
 import { map, mergeMap, withLatestFrom } from 'rxjs/operators';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { WINDOW } from 'app/helpers/window.helper';
-import { WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';

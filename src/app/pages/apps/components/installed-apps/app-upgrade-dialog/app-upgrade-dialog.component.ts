@@ -13,7 +13,7 @@ import { ChartUpgradeDialogConfig } from 'app/interfaces/chart-upgrade-dialog-co
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 type Version = Omit<UpgradeSummary, 'upgrade_version' | 'image_update_available' | 'upgrade_human_version'> & { fetched?: boolean };

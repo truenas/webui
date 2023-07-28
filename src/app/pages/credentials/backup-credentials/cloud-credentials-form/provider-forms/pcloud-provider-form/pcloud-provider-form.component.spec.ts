@@ -10,7 +10,7 @@ import {
 import {
   PcloudProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/pcloud-provider-form/pcloud-provider-form.component';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 
 describe('PcloudProviderFormComponent', () => {
   let spectator: Spectator<PcloudProviderFormComponent>;

@@ -7,7 +7,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { IscsiExtentType } from 'app/enums/iscsi.enum';
 import { IscsiExtent } from 'app/interfaces/iscsi.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { AppLoaderService, DialogService } from 'app/services';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 

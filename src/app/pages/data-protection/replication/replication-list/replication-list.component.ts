@@ -25,15 +25,13 @@ import {
   ReplicationRestoreDialogComponent,
 } from 'app/pages/data-protection/replication/replication-restore-dialog/replication-restore-dialog.component';
 import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
-import {
-  DialogService,
-  StorageService,
-  TaskService,
-  KeychainCredentialService,
-  ReplicationService,
-} from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { KeychainCredentialService } from 'app/services/keychain-credential.service';
+import { ReplicationService } from 'app/services/replication.service';
+import { StorageService } from 'app/services/storage.service';
+import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 

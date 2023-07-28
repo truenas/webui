@@ -52,7 +52,7 @@
           </button>
 
           <div
-            [matTooltip]="isHaEnabled ? (helptext.ha_enabled_delete_msg | translate) : ('Reset configuration' | translate)"
+            [matTooltip]="isHaEnabled ? (helptext.ha_enabled_reset_msg | translate) : ('Reset configuration' | translate)"
           >
             <button
               *ngIf="isPhysical(interface)"

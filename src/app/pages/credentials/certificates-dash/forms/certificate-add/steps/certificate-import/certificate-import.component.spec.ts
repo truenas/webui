@@ -9,7 +9,7 @@ import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import {
   CertificateImportComponent,
 } from 'app/pages/credentials/certificates-dash/forms/certificate-add/steps/certificate-import/certificate-import.component';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 
 describe('CertificateImportComponent', () => {
   let spectator: Spectator<CertificateImportComponent>;

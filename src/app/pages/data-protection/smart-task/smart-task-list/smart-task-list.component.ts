@@ -9,9 +9,9 @@ import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-tab
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { SmartTaskFormComponent } from 'app/pages/data-protection/smart-task/smart-task-form/smart-task-form.component';
-import { TaskService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { StorageService } from 'app/services/storage.service';
+import { TaskService } from 'app/services/task.service';
 import { AppState } from 'app/store';
 
 @UntilDestroy()

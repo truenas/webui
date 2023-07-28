@@ -44,14 +44,14 @@ export function forbiddenAsyncValues(
 export function forbiddenValuesError(
   values: string[],
   caseInsensitive: boolean,
-  formControlo: FormControl<string>,
+  formControl: FormControl<string>,
 ): ValidationErrors | null {
   if (caseInsensitive) {
-    const existingValue = values.find((val) => val.toLowerCase().trim() === formControlo.value.toLowerCase().trim());
+    const existingValue = values.find((val) => val.toLowerCase().trim() === formControl.value.toLowerCase().trim());
     return existingValue ? { forbidden: true, value: existingValue } : null;
   }
-  if (values.includes(formControlo.value)) {
-    return { forbidden: true, value: formControlo.value };
+  if (values.includes(formControl.value)) {
+    return { forbidden: true, value: formControl.value };
   }
 
   return null;

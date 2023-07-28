@@ -9,6 +9,7 @@ import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.u
 import { ApiKey } from 'app/interfaces/api-key.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import {
   ApiKeyFormDialogComponent,
 } from 'app/pages/api-keys/components/api-key-form-dialog/api-key-form-dialog.component';
@@ -17,8 +18,8 @@ import {
 } from 'app/pages/api-keys/components/key-created-dialog/key-created-dialog.component';
 import { ApiKeyComponentStore } from 'app/pages/api-keys/store/api-key.store';
 import {
-  AppLoaderService, DialogService,
-} from 'app/services';
+  DialogService,
+} from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('ApiKeyFormDialogComponent', () => {

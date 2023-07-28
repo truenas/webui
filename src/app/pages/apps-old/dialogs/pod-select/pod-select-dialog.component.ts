@@ -10,7 +10,7 @@ import { PodDialogData } from 'app/interfaces/pod-select-dialog.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ApplicationsService } from 'app/pages/apps-old/applications.service';
 import { PodSelectDialogType } from 'app/pages/apps-old/enums/pod-select-dialog.enum';
-import { WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 
 interface PodSelectFormControls {
   pods: FormControl<string>;
