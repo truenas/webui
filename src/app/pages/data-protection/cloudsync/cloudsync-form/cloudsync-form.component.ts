@@ -33,7 +33,8 @@ import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-cront
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { CreateStorjBucketDialogComponent } from 'app/pages/data-protection/cloudsync/create-storj-bucket-dialog/create-storj-bucket-dialog.component';
 import { CustomTransfersDialogComponent } from 'app/pages/data-protection/cloudsync/custom-transfers-dialog/custom-transfers-dialog.component';
-import { CloudCredentialService, DialogService } from 'app/services';
+import { CloudCredentialService } from 'app/services/cloud-credential.service';
+import { DialogService } from 'app/services/dialog.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';

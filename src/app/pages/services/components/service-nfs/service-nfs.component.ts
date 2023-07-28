@@ -16,7 +16,7 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { rangeValidator, portRangeValidator } from 'app/modules/ix-forms/validators/range-validation/range-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AddSpnDialogComponent } from 'app/pages/services/components/service-nfs/add-spn-dialog/add-spn-dialog.component';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 

@@ -12,8 +12,9 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { DatasetQuotaEditFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-edit-form/dataset-quota-edit-form.component';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('DatasetQuotaEditFormComponent', () => {
   let spectator: Spectator<DatasetQuotaEditFormComponent>;

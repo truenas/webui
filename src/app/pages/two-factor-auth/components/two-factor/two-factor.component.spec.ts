@@ -13,8 +13,9 @@ import { User } from 'app/interfaces/user.interface';
 import { IxWarningComponent } from 'app/modules/ix-forms/components/ix-warning/ix-warning.component';
 import { QrDialogComponent } from 'app/pages/two-factor-auth/components/two-factor/qr-dialog/qr-dialog.component';
 import { TwoFactorComponent } from 'app/pages/two-factor-auth/components/two-factor/two-factor.component';
-import { DialogService, WebSocketService } from 'app/services';
 import { AuthService } from 'app/services/auth/auth.service';
+import { DialogService } from 'app/services/dialog.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('TwoFactorComponent', () => {
   let spectator: Spectator<TwoFactorComponent>;

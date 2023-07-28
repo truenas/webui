@@ -22,7 +22,7 @@ import { ChartRelease, ChartReleaseUpgradeParams } from 'app/interfaces/chart-re
 import { Option } from 'app/interfaces/option.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
-import { WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { jobIndicatorPressed } from 'app/store/topbar/topbar.actions';
 

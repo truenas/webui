@@ -12,7 +12,8 @@ import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { usersInitialState, UsersState } from 'app/pages/account/users/store/user.reducer';
 import { selectUsers, selectUserState, selectUsersTotal } from 'app/pages/account/users/store/user.selectors';
 import { UserDetailsRowComponent } from 'app/pages/account/users/user-details-row/user-details-row.component';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { UserListComponent } from './user-list.component';
 

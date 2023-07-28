@@ -18,8 +18,9 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { portRangeValidator } from 'app/modules/ix-forms/validators/range-validation/range-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { DialogService } from 'app/services/dialog.service';
+import { SystemGeneralService } from 'app/services/system-general.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 enum SendMethod {
   Smtp = 'smtp',
@@ -79,7 +80,6 @@ export class EmailFormComponent implements OnInit {
   constructor(
     private ws: WebSocketService,
     private dialogService: DialogService,
-    private errorHandler: ErrorHandlerService,
     private formErrorHandler: FormErrorHandlerService,
     private formBuilder: FormBuilder,
     private cdr: ChangeDetectorRef,

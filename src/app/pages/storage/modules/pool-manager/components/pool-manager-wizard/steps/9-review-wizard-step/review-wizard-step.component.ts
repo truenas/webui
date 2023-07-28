@@ -18,7 +18,7 @@ import {
   PoolManagerStore,
   PoolManagerTopology, PoolManagerTopologyCategory,
 } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 
 @UntilDestroy()
 @Component({

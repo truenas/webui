@@ -13,9 +13,10 @@ import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DatasetCapacitySettingsComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-settings/dataset-capacity-settings.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({

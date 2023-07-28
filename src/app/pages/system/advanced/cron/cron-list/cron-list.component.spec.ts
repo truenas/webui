@@ -14,9 +14,10 @@ import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { CronDeleteDialogComponent } from 'app/pages/system/advanced/cron/cron-delete-dialog/cron-delete-dialog.component';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { CronListComponent } from 'app/pages/system/advanced/cron/cron-list/cron-list.component';
-import { DialogService, TaskService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
+import { TaskService } from 'app/services/task.service';
 
 describe('CronListComponent', () => {
   let spectator: Spectator<CronListComponent>;

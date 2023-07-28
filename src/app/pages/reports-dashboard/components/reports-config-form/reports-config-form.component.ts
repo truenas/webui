@@ -15,7 +15,7 @@ import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-sli
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { rangeValidator } from 'app/modules/ix-forms/validators/range-validation/range-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()

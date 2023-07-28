@@ -31,11 +31,12 @@ import {
 import { SshConnectionFormComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-form/ssh-connection-form.component';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { SshCredentialsNewOption } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard-data.interface';
-import {
-  DialogService, KeychainCredentialService, ReplicationService, WebSocketService,
-} from 'app/services';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
+import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { KeychainCredentialService } from 'app/services/keychain-credential.service';
+import { ReplicationService } from 'app/services/replication.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({

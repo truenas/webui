@@ -11,13 +11,15 @@ import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
 import { AppInfoCardComponent } from 'app/pages/apps/components/installed-apps/app-info-card/app-info-card.component';
 import { AppRollbackModalComponent } from 'app/pages/apps/components/installed-apps/app-rollback-modal/app-rollback-modal.component';
 import { AppUpgradeDialogComponent } from 'app/pages/apps/components/installed-apps/app-upgrade-dialog/app-upgrade-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
-import { AppLoaderService, DialogService, RedirectService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
+import { RedirectService } from 'app/services/redirect.service';
 
 describe('AppInfoCardComponent', () => {
   let spectator: Spectator<AppInfoCardComponent>;

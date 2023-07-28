@@ -26,9 +26,10 @@ import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-sl
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { DeviceFormComponent } from 'app/pages/vm/devices/device-form/device-form.component';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('DeviceFormComponent', () => {
   let spectator: Spectator<DeviceFormComponent>;
@@ -650,7 +651,7 @@ describe('DeviceFormComponent', () => {
         bind: '0.0.0.0',
         password: '12345678',
         web: true,
-        type: VmDisplayType.Vnc,
+        type: VmDisplayType.Spice,
         resolution: '1024x768',
         port: 5900,
       },
@@ -682,7 +683,6 @@ describe('DeviceFormComponent', () => {
         expect(values).toEqual({
           Bind: '0.0.0.0',
           'Device Order': '1002',
-          'Display Type': VmDisplayType.Vnc,
           Password: '12345678',
           Port: '5900',
           Resolution: '1024x768',

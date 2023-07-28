@@ -14,7 +14,7 @@ import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import {
   CatalogAddFormComponent,
 } from 'app/pages/apps/components/catalogs/catalog-add-form/catalog-add-form.component';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 
 describe('CatalogAddFormComponent', () => {
   let spectator: Spectator<CatalogAddFormComponent>;

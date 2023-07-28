@@ -8,8 +8,9 @@ import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import {
   PermissionsCardState,
 } from 'app/pages/datasets/modules/permissions/interfaces/permissions-sidebar-state.interface';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 const initialState: PermissionsCardState = {
   isLoading: false,

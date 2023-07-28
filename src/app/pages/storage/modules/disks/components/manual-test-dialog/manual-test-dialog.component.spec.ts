@@ -13,7 +13,8 @@ import { ManualSmartTest } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { ManualTestDialogComponent, ManualTestDialogParams } from './manual-test-dialog.component';
 
 describe('ManualTestDialogComponent', () => {

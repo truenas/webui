@@ -33,4 +33,8 @@ export class DedupWizardStepComponent {
   goToReviewStep(): void {
     this.goToLastStep.emit();
   }
+
+  resetStep(): void {
+    this.store.resetStep(VdevType.Dedup);
+  }
 }

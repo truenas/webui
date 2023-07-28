@@ -14,8 +14,8 @@ import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service, ServiceRow } from 'app/interfaces/service.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
-import { IscsiService } from 'app/services/';
 import { DialogService } from 'app/services/dialog.service';
+import { IscsiService } from 'app/services/iscsi.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()

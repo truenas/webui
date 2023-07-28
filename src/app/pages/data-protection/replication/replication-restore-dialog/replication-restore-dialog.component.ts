@@ -7,7 +7,7 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext_replication from 'app/helptext/data-protection/replication/replication';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { AppLoaderService } from 'app/services';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
 import { WebSocketService } from 'app/services/ws.service';
 

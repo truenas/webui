@@ -58,11 +58,11 @@ import { TableService } from 'app/modules/entity/table/table.service';
 import { TaskScheduleListComponent } from 'app/modules/entity/task-schedule-list/task-schedule-list.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
-import { AppLoaderService } from 'app/services';
 
 @NgModule({
   imports: [

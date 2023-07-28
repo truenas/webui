@@ -12,6 +12,7 @@ import { filter, tap } from 'rxjs/operators';
 import { GiB } from 'app/constants/bytes.constant';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { FileTicketFormComponent } from 'app/pages/system/file-ticket/file-ticket-form/file-ticket-form.component';
 import {
@@ -25,10 +26,11 @@ import {
   SetProductionStatusDialogResult,
 } from 'app/pages/system/general-settings/support/set-production-status-dialog/set-production-status-dialog.component';
 import { SystemInfoInSupport } from 'app/pages/system/general-settings/support/system-info-in-support.interface';
-import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ProductImageService } from 'app/services/product-image.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 

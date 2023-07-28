@@ -51,7 +51,7 @@ import {
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/9-review-wizard-step/review-wizard-step.component';
 import { PoolManagerValidationService } from 'app/pages/storage/modules/pool-manager/store/pool-manager-validation.service';
 import { PoolManagerState, PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { selectSystemFeatures } from 'app/store/system-info/system-info.selectors';
 
 describe('PoolManagerWizardComponent', () => {

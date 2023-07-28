@@ -15,7 +15,8 @@ import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { DisplayVmDialogData } from 'app/pages/vm/vm-list/display-vm-dialog/display-vm-dialog-data.interface';
 import { DisplayVmDialogComponent } from 'app/pages/vm/vm-list/display-vm-dialog/display-vm-dialog.component';
 import { VirtualMachineRow } from 'app/pages/vm/vm-list/virtual-machine-row.interface';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('DisplayVmDialogComponent', () => {
   let spectator: Spectator<DisplayVmDialogComponent>;
@@ -67,7 +68,7 @@ describe('DisplayVmDialogComponent', () => {
         id: 1,
         attributes: {
           password_configured: false,
-          type: VmDisplayType.Vnc,
+          type: VmDisplayType.Spice,
         },
       }] as VmDisplayDevice[],
     });
@@ -84,7 +85,7 @@ describe('DisplayVmDialogComponent', () => {
         id: 1,
         attributes: {
           password_configured: true,
-          type: VmDisplayType.Vnc,
+          type: VmDisplayType.Spice,
         },
       }] as VmDisplayDevice[],
     });
@@ -117,8 +118,8 @@ describe('DisplayVmDialogComponent', () => {
       displayDevices: [{
         id: 1,
         attributes: {
-          password_configured: true,
-          type: VmDisplayType.Vnc,
+          password_configured: false,
+          type: VmDisplayType.Spice,
         },
       }, {
         id: 2,
@@ -130,11 +131,6 @@ describe('DisplayVmDialogComponent', () => {
     });
 
     expect(await form.getValues()).toEqual({
-      'Display Device': VmDisplayType.Vnc,
-      'Enter password': '',
-    });
-
-    await form.fillForm({
       'Display Device': VmDisplayType.Spice,
     });
 
@@ -142,7 +138,7 @@ describe('DisplayVmDialogComponent', () => {
     await openButton.click();
 
     expect(websocket.call).toHaveBeenCalledWith('vm.get_display_web_uri', [7, 'localhost', { protocol: 'HTTP' }]);
-    expect(spectator.inject<Window>(WINDOW).open).toHaveBeenLastCalledWith('http://localhost:4200/vm/display/2/vnc.html', '_blank');
+    expect(spectator.inject<Window>(WINDOW).open).toHaveBeenLastCalledWith('http://localhost:4200/vm/display/1/vnc.html', '_blank');
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
   });
 
@@ -152,8 +148,8 @@ describe('DisplayVmDialogComponent', () => {
       displayDevices: [{
         id: 1,
         attributes: {
-          password_configured: false,
-          type: VmDisplayType.Vnc,
+          password_configured: true,
+          type: VmDisplayType.Spice,
         },
       }, {
         id: 2,
@@ -165,7 +161,8 @@ describe('DisplayVmDialogComponent', () => {
     });
 
     expect(await form.getValues()).toEqual({
-      'Display Device': VmDisplayType.Vnc,
+      'Display Device': VmDisplayType.Spice,
+      'Enter password': '',
     });
 
     await form.fillForm({ 'Display Device': VmDisplayType.Spice });
@@ -176,12 +173,12 @@ describe('DisplayVmDialogComponent', () => {
 
     expect(websocket.call).toHaveBeenCalledWith('vm.get_display_web_uri', [7, 'localhost', {
       devices_passwords: [{
-        device_id: 2,
+        device_id: 1,
         password: 'password123456',
       }],
       protocol: 'HTTP',
     }]);
-    expect(spectator.inject<Window>(WINDOW).open).toHaveBeenLastCalledWith('http://localhost:4200/vm/display/2/vnc.html', '_blank');
+    expect(spectator.inject<Window>(WINDOW).open).toHaveBeenLastCalledWith('http://localhost:4200/vm/display/1/vnc.html', '_blank');
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
   });
 

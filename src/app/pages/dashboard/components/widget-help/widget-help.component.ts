@@ -6,7 +6,7 @@ import { ProductType, productTypeLabels } from 'app/enums/product-type.enum';
 import { ScreenType } from 'app/enums/screen-type.enum';
 import helptext from 'app/helptext/about';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
-import { SystemGeneralService } from 'app/services';
+import { SystemGeneralService } from 'app/services/system-general.service';
 
 @UntilDestroy()
 @Component({

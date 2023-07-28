@@ -90,13 +90,23 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
     this.initControls();
 
     this.store.startOver$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.form.reset({
-        layout: CreateVdevLayout.Stripe,
-        sizeAndType: [null, null],
-        width: null,
-        treatDiskSizeAsMinimum: false,
-        vdevsNumber: null,
-      });
+      this.resetToDefaults();
+    });
+
+    this.store.resetStep$.pipe(untilDestroyed(this)).subscribe((vdevType: VdevType) => {
+      if (vdevType === this.type) {
+        this.resetToDefaults();
+      }
+    });
+  }
+
+  resetToDefaults(): void {
+    this.form.reset({
+      layout: null,
+      sizeAndType: [null, null],
+      width: null,
+      treatDiskSizeAsMinimum: false,
+      vdevsNumber: null,
     });
   }
 

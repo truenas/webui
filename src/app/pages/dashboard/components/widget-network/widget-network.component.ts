@@ -11,12 +11,13 @@ import filesize from 'filesize';
 import {
   filter, map, take, throttleTime,
 } from 'rxjs/operators';
+import { KiB } from 'app/constants/bytes.constant';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { LinkState, NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
 import { deepCloneState } from 'app/helpers/state-select.helper';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { BaseNetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
-import { NetworkInterfaceUpdate, ReportingParams } from 'app/interfaces/reporting.interface';
+import { NetworkInterfaceUpdate, ReportingNameAndId } from 'app/interfaces/reporting.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { TableService } from 'app/modules/entity/table/table.service';
@@ -356,24 +357,28 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
 
     this.availableNics.forEach((nic) => {
       const networkInterfaceName = nic.state.name;
-      const params = {
+      const params: ReportingNameAndId = {
         identifier: networkInterfaceName,
         name: 'interface',
-      } as ReportingParams;
-      this.ws.call('reporting.get_data', [[params], timeFrame]).pipe(
+      };
+      this.ws.call('reporting.netdata_get_data', [[params], timeFrame]).pipe(
         map((response) => {
           const updatedResponse = response[0];
           if (this.timezone) {
             updatedResponse.start = utcToZonedTime(updatedResponse.start * 1000, this.timezone).valueOf() / 1000;
             updatedResponse.end = utcToZonedTime(updatedResponse.end * 1000, this.timezone).valueOf() / 1000;
           }
+          (updatedResponse.data as number[][]).forEach((row, index) => {
+            // remove first column and convert kilobits/s to bytes
+            (updatedResponse.data as number[][])[index] = row.slice(1).map((value) => value * KiB);
+          });
           return updatedResponse;
         }),
         untilDestroyed(this),
       ).subscribe({
         next: (response) => {
           const labels: number[] = (response.data as number[][]).map((_, index) => {
-            return (response.start + index * response.step) * 1000;
+            return (response.start + index) * 1000;
           });
 
           const chartData: ChartData<'line'> = {

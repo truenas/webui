@@ -12,13 +12,15 @@ import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { SystemInfo, SystemLicense } from 'app/interfaces/system-info.interface';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import {
   SetProductionStatusDialogComponent,
   SetProductionStatusDialogResult,
 } from 'app/pages/system/general-settings/support/set-production-status-dialog/set-production-status-dialog.component';
 import { SupportCardComponent } from 'app/pages/system/general-settings/support/support-card/support-card.component';
 import { SysInfoComponent } from 'app/pages/system/general-settings/support/sys-info/sys-info.component';
-import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 const systemInfo = {

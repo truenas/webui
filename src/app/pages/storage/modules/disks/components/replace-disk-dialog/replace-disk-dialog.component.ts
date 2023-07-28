@@ -12,7 +12,8 @@ import { Option } from 'app/interfaces/option.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 export interface ReplaceDiskDialogData {
   diskName: string;

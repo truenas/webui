@@ -7,7 +7,7 @@ import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.u
 import { SnmpConfig } from 'app/interfaces/snmp-config.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { ServiceSnmpComponent } from './service-snmp.component';
 

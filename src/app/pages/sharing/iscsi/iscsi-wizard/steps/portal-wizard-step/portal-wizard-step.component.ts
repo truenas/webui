@@ -12,7 +12,7 @@ import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { ipv4Validator } from 'app/modules/ix-forms/validators/ip-validation';
 import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
-import { IscsiService } from 'app/services';
+import { IscsiService } from 'app/services/iscsi.service';
 
 @UntilDestroy()
 @Component({

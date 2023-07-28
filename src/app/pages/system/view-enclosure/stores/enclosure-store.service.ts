@@ -20,9 +20,11 @@ import {
   Disk, TopologyDisk, TopologyItem, VDev,
 } from 'app/interfaces/storage.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { DialogService, StorageService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { DisksUpdateService } from 'app/services/disks-update.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { StorageService } from 'app/services/storage.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 export interface EnclosureState {
   areEnclosuresLoading: boolean;

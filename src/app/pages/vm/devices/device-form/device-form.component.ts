@@ -21,10 +21,11 @@ import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-sli
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import {
-  DialogService, NetworkService, VmService, WebSocketService,
-} from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { FilesystemService } from 'app/services/filesystem.service';
+import { NetworkService } from 'app/services/network.service';
+import { VmService } from 'app/services/vm.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 const specifyCustom = 'Specify custom';
 
@@ -85,7 +86,7 @@ export class DeviceFormComponent implements OnInit {
     resolution: [''],
     bind: [''],
     password: ['', Validators.maxLength(8)],
-    type: [VmDisplayType.Vnc],
+    type: [VmDisplayType.Spice],
     web: [true],
   });
 
@@ -181,10 +182,6 @@ export class DeviceFormComponent implements OnInit {
     { label: this.translate.instant('Default'), value: 0 },
     { label: '512', value: 512 },
     { label: '4096', value: 4096 },
-  ]);
-  readonly displayTypes$ = of([
-    { label: 'VNC', value: VmDisplayType.Vnc },
-    { label: 'SPICE', value: VmDisplayType.Spice },
   ]);
 
   get typeSpecificForm(): DeviceFormComponent['cdromForm']

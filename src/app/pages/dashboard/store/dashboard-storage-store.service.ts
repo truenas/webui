@@ -10,7 +10,7 @@ import { Dataset } from 'app/interfaces/dataset.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { PoolScan } from 'app/interfaces/resilver-job.interface';
 import { VolumesData } from 'app/interfaces/volume-data.interface';
-import { WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 
 export interface DashboardStorageState {
   pools: Pool[];

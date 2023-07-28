@@ -18,9 +18,10 @@ import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { JobItemComponent } from 'app/modules/jobs/components/job-item/job-item.component';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { FileTicketFormComponent } from 'app/pages/system/file-ticket/file-ticket-form/file-ticket-form.component';
-import { DialogService, SystemGeneralService } from 'app/services';
 import { AuthService } from 'app/services/auth/auth.service';
+import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { JiraOauthComponent } from './components/jira-oauth/jira-oauth.component';
 

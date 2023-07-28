@@ -7,8 +7,8 @@ import { SmartTestResultPageType } from 'app/enums/smart-test-results-page-type.
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { SmartTestResult, SmartTestResults } from 'app/interfaces/smart-test.interface';
 import { EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
-import { WebSocketService } from 'app/services';
 import { PageTitleService } from 'app/services/page-title.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 interface SmartTestResultsRow extends SmartTestResult {
   disk: string;

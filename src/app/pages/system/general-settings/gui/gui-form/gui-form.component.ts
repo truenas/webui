@@ -23,9 +23,8 @@ import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-sli
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { ipValidator } from 'app/modules/ix-forms/validators/ip-validation';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import {
-  DialogService, SystemGeneralService,
-} from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
+import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService } from 'app/services/ws.service';

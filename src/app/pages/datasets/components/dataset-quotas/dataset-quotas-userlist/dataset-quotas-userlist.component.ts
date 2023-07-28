@@ -25,13 +25,14 @@ import { QueryFilter, QueryParams } from 'app/interfaces/query-api.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DatasetQuotaAddFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-add-form/dataset-quota-add-form.component';
 import { DatasetQuotaEditFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-edit-form/dataset-quota-edit-form.component';
-import {
-  AppLoaderService, DialogService, StorageService, WebSocketService,
-} from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { StorageService } from 'app/services/storage.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
