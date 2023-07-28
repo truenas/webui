@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { productTypeLabels } from 'app/enums/product-type.enum';
 import helptext from 'app/helptext/about';
-import { SystemGeneralService } from 'app/services';
+import { SystemGeneralService } from 'app/services/system-general.service';
 
 @Component({
   templateUrl: './about-dialog.component.html',

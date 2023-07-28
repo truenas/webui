@@ -9,9 +9,9 @@ import { Choices } from 'app/interfaces/choices.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { LocalizationCardComponent } from 'app/pages/system/general-settings/localization/localization-card/localization-card.component';
 import { LocalizationFormComponent } from 'app/pages/system/general-settings/localization/localization-form/localization-form.component';
-import { SystemGeneralService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
+import { SystemGeneralService } from 'app/services/system-general.service';
 import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
 describe('LocalizationCardComponent', () => {

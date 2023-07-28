@@ -10,7 +10,7 @@ import helptextIpmi from 'app/helptext/network/ipmi/ipmi';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { ipv4Validator } from 'app/modules/ix-forms/validators/ip-validation';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 

@@ -25,7 +25,8 @@ import {
   SelectPresetModalConfig,
 } from 'app/pages/datasets/modules/permissions/interfaces/select-preset-modal-config.interface';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
-import { DialogService, UserService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
+import { UserService } from 'app/services/user.service';
 
 @UntilDestroy()
 @Component({

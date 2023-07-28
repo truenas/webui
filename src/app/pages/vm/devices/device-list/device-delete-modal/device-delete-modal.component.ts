@@ -9,8 +9,10 @@ import { VmDeviceType } from 'app/enums/vm.enum';
 import { VmDevice, VmDeviceDelete, VmDiskDevice } from 'app/interfaces/vm-device.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
-import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 export interface DeviceDeleteModalState {
   row: VmDevice;

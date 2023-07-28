@@ -17,17 +17,18 @@ import { AllNetworkInterfacesUpdate } from 'app/interfaces/reporting.interface';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { createTable } from 'app/modules/ix-table2/utils';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
 import {
   IpAddressesCellComponent,
 } from 'app/pages/network/components/interfaces-card/ip-addresses-cell/ip-addresses-cell.component';
 import { InterfacesStore } from 'app/pages/network/stores/interfaces.store';
-import {
-  AppLoaderService, DialogService, NetworkService, WebSocketService,
-} from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { NetworkService } from 'app/services/network.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({

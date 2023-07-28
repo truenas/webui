@@ -12,8 +12,9 @@ import { KmipConfigUpdate } from 'app/interfaces/kmip-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService, SystemGeneralService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()

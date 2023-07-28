@@ -16,8 +16,9 @@ import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interf
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import { AppLoaderService, DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 

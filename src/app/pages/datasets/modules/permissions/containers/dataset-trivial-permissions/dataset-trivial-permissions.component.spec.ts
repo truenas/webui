@@ -13,9 +13,9 @@ import { Dataset } from 'app/interfaces/dataset.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
-import {
-  DialogService, StorageService, UserService,
-} from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
+import { StorageService } from 'app/services/storage.service';
+import { UserService } from 'app/services/user.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { DatasetTrivialPermissionsComponent } from './dataset-trivial-permissions.component';
 

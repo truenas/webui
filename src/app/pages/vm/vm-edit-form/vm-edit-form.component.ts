@@ -23,10 +23,11 @@ import { byVmPciSlots } from 'app/pages/vm/utils/by-vm-pci-slots';
 import { CpuValidatorService } from 'app/pages/vm/utils/cpu-validator.service';
 import { vmCpusetPattern, vmNodesetPattern } from 'app/pages/vm/utils/vm-form-patterns.constant';
 import { VmGpuService } from 'app/pages/vm/utils/vm-gpu.service';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { GpuService } from 'app/services/gpu/gpu.service';
 import { IsolatedGpuValidatorService } from 'app/services/gpu/isolated-gpu-validator.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({

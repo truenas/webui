@@ -39,8 +39,9 @@ import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { TreeDataSource } from 'app/modules/ix-tree/tree-datasource';
 import { TreeFlattener } from 'app/modules/ix-tree/tree-flattener';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import { WebSocketService, DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectIsSystemHaCapable } from 'app/store/system-info/system-info.selectors';
 

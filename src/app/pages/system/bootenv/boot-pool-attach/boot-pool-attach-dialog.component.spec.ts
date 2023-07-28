@@ -9,7 +9,7 @@ import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { BootPoolAttachDialogComponent } from './boot-pool-attach-dialog.component';
 

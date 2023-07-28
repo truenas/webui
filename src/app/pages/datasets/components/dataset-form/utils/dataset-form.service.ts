@@ -9,8 +9,9 @@ import { inherit } from 'app/enums/with-inherit.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @Injectable({
   providedIn: 'root',

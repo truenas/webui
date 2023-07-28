@@ -4,7 +4,8 @@ import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.u
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { WINDOW } from 'app/helpers/window.helper';
 import { TrueCommandConnectionState } from 'app/interfaces/true-command-config.interface';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
+import { WebSocketService } from 'app/services/ws.service';
 import {
   TrueCommandStatusComponent,
 } from 'app/views/sessions/signin/true-command-status/true-command-status.component';

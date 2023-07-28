@@ -9,7 +9,8 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import {
   DownloadKeyDialogComponent, DownloadKeyDialogParams,
 } from 'app/pages/storage/modules/pool-manager/components/download-key-dialog/download-key-dialog.component';
-import { StorageService, WebSocketService } from 'app/services';
+import { StorageService } from 'app/services/storage.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('DownloadKeyDialogComponent', () => {
   let spectator: Spectator<DownloadKeyDialogComponent>;

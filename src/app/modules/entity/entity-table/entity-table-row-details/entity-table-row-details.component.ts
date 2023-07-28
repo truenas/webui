@@ -4,7 +4,7 @@ import {
 import * as _ from 'lodash';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableColumn } from 'app/modules/entity/entity-table/entity-table.interface';
-import { TaskService } from 'app/services';
+import { TaskService } from 'app/services/task.service';
 
 @Component({
   selector: 'ix-entity-table-row-details',

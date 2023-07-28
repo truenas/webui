@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { lastValueFrom } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 
 @Injectable({
   providedIn: 'root',

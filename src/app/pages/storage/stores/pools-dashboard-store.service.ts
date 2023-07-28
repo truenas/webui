@@ -13,8 +13,10 @@ import { Pool } from 'app/interfaces/pool.interface';
 import { SmartTestResults } from 'app/interfaces/smart-test.interface';
 import { Disk, DiskTemperatureAgg, StorageDashboardDisk } from 'app/interfaces/storage.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { DialogService, StorageService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { StorageService } from 'app/services/storage.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 export interface PoolsDashboardState {
   arePoolsLoading: boolean;

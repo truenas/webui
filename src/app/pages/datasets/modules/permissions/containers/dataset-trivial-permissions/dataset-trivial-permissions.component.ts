@@ -16,10 +16,10 @@ import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.com
 import { GroupComboboxProvider } from 'app/modules/ix-forms/classes/group-combobox-provider';
 import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
-import {
-  DialogService, StorageService, UserService,
-} from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { StorageService } from 'app/services/storage.service';
+import { UserService } from 'app/services/user.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()

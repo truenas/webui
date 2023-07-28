@@ -8,7 +8,7 @@ import {
 import { toLoadingState } from 'app/helpers/to-loading-state.helper';
 import { MemoryStatsEventData } from 'app/interfaces/events/memory-stats-event.interface';
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
-import { WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({

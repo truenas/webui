@@ -10,11 +10,13 @@ import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.u
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnapshotCloneDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-clone-dialog/snapshot-clone-dialog.component';
 import { SnapshotDetailsRowComponent } from 'app/pages/datasets/modules/snapshots/snapshot-details-row/snapshot-details-row.component';
 import { SnapshotRollbackDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
 import { fakeZfsSnapshot } from 'app/pages/datasets/modules/snapshots/testing/snapshot-fake-datasource';
-import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('SnapshotDetailsRowComponent', () => {
   let spectator: SpectatorRouting<SnapshotDetailsRowComponent>;

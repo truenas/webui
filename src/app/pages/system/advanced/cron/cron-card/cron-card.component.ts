@@ -11,9 +11,10 @@ import { AppTableAction, AppTableConfig } from 'app/modules/entity/table/table.c
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { CronjobRow } from 'app/pages/system/advanced/cron/cron-list/cronjob-row.interface';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({

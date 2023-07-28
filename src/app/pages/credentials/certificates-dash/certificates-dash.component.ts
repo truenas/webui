@@ -31,9 +31,11 @@ import {
   CertificateAddComponent,
 } from 'app/pages/credentials/certificates-dash/forms/certificate-add/certificate-add.component';
 import { SignCsrDialogComponent } from 'app/pages/credentials/certificates-dash/sign-csr-dialog/sign-csr-dialog.component';
-import { WebSocketService, DialogService, StorageService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { StorageService } from 'app/services/storage.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { CertificateEditComponent } from './certificate-edit/certificate-edit.component';
 
 @UntilDestroy()

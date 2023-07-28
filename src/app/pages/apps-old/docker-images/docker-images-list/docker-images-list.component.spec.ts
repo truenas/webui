@@ -12,7 +12,7 @@ import {
   DockerImagesState,
 } from 'app/pages/apps-old/docker-images/docker-images.store';
 import { fakeDockerImagesDataSource } from 'app/pages/apps-old/docker-images/test/fake-docker-images';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { DockerImagesListComponent } from './docker-images-list.component';

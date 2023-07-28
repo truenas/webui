@@ -26,7 +26,7 @@ import { CustomUntypedFormField } from 'app/modules/ix-dynamic-form/components/i
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { AppSchemaService } from 'app/services/schema/app-schema.service';
 

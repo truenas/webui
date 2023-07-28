@@ -17,7 +17,7 @@ import {
   TopologyDisk,
   TopologyItem,
 } from 'app/interfaces/storage.interface';
-import { StorageService } from 'app/services';
+import { StorageService } from 'app/services/storage.service';
 
 interface TopologyState {
   data: string;

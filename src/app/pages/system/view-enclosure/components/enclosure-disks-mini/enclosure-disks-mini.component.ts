@@ -15,11 +15,11 @@ import {
   EnclosureDisksComponent,
 } from 'app/pages/system/view-enclosure/components/enclosure-disks/enclosure-disks.component';
 import { EnclosureStore } from 'app/pages/system/view-enclosure/stores/enclosure-store.service';
-import { WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 import { DiskTemperatureService } from 'app/services/disk-temperature.service';
 import { ThemeService } from 'app/services/theme/theme.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store/index';
 
 @Component({

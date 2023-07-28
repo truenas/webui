@@ -14,9 +14,10 @@ import { CoreBulkQuery, CoreBulkResponse } from 'app/interfaces/core-bulk.interf
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DockerImageDeleteDialogComponent } from 'app/pages/apps-old/docker-images/docker-image-delete-dialog/docker-image-delete-dialog.component';
 import { fakeDockerImagesDataSource } from 'app/pages/apps-old/docker-images/test/fake-docker-images';
-import { AppLoaderService, DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 const mockSuccessBulkResponse = [{

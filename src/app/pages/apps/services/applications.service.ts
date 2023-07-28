@@ -21,7 +21,7 @@ import { KubernetesStatusData } from 'app/interfaces/kubernetes-status-data.inte
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { QueryFilter, QueryParams } from 'app/interfaces/query-api.interface';
-import { WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 
 const ignoredAppsList = [ixChartApp];
 

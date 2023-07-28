@@ -11,9 +11,10 @@ import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators
 import { matchOtherValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService, WebSocketService } from 'app/services';
 import { AuthService } from 'app/services/auth/auth.service';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({

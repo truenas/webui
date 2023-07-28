@@ -42,13 +42,11 @@ import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsy
 import { ScrubTaskFormComponent } from 'app/pages/data-protection/scrub-task/scrub-task-form/scrub-task-form.component';
 import { SmartTaskFormComponent } from 'app/pages/data-protection/smart-task/smart-task-form/smart-task-form.component';
 import { SnapshotTaskComponent } from 'app/pages/data-protection/snapshot/snapshot-task/snapshot-task.component';
-import {
-  DialogService,
-  StorageService,
-  TaskService,
-} from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { StorageService } from 'app/services/storage.service';
+import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 

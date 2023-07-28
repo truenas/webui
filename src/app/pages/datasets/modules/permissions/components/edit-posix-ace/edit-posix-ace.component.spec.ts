@@ -10,7 +10,7 @@ import { IxComboboxHarness } from 'app/modules/ix-forms/components/ix-combobox/i
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
-import { UserService } from 'app/services';
+import { UserService } from 'app/services/user.service';
 import { EditPosixAceComponent } from './edit-posix-ace.component';
 
 describe('EditPosixAceComponent', () => {

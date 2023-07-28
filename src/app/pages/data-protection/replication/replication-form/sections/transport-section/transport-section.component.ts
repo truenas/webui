@@ -13,7 +13,7 @@ import helptext from 'app/helptext/data-protection/replication/replication';
 import globalHelptext from 'app/helptext/global-helptext';
 import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
-import { KeychainCredentialService } from 'app/services';
+import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 
 @Component({
   selector: 'ix-replication-transport-section',

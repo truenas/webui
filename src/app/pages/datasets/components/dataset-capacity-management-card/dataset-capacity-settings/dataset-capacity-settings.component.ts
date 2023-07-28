@@ -15,7 +15,7 @@ import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.s
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { isPropertyInherited, isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
-import { WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({

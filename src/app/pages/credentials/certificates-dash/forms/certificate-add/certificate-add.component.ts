@@ -1,7 +1,6 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewChild,
 } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
@@ -26,8 +25,9 @@ import {
 import {
   CertificateSubjectComponent,
 } from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-subject/certificate-subject.component';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -50,7 +50,6 @@ export class CertificateAddComponent {
   summary: SummarySection[];
 
   constructor(
-    private formBuilder: FormBuilder,
     private ws: WebSocketService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,

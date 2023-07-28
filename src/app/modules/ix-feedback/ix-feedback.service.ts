@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import {
   AddReview, AttachmentAddedResponse,
 } from 'app/modules/ix-feedback/interfaces/feedback.interface';
-import { WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 import { ReviewAddedResponse } from './interfaces/feedback.interface';
 
 @Injectable()

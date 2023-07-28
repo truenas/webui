@@ -38,15 +38,13 @@ import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-sl
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { forbiddenValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   StartServiceDialogComponent, StartServiceDialogResult,
 } from 'app/pages/sharing/components/start-service-dialog/start-service-dialog.component';
 import { RestartSmbDialogComponent } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
-import {
-  AppLoaderService,
-  DialogService,
-} from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { WebSocketService } from 'app/services/ws.service';

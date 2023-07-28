@@ -10,7 +10,7 @@ import { ContainerConfig } from 'app/interfaces/container-config.interface';
 import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { Pool } from 'app/interfaces/pool.interface';
-import { WebSocketService } from 'app/services/index';
+import { WebSocketService } from 'app/services/ws.service';
 
 @Injectable({ providedIn: 'root' })
 export class ApplicationsService {

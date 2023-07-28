@@ -25,10 +25,10 @@ import {
 import {
   LeaveDomainDialogComponent,
 } from 'app/pages/directory-service/components/leave-domain-dialog/leave-domain-dialog.component';
-import {
-  DialogService, SystemGeneralService, WebSocketService,
-} from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SystemGeneralService } from 'app/services/system-general.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('ActiveDirectoryComponent', () => {
   let spectator: Spectator<ActiveDirectoryComponent>;

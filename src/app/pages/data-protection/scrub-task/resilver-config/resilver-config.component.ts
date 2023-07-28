@@ -11,9 +11,10 @@ import helptext from 'app/helptext/storage/resilver/resilver';
 import { ResilverConfigUpdate } from 'app/interfaces/resilver-config.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService, TaskService } from 'app/services';
 import { CalendarService } from 'app/services/calendar.service';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()

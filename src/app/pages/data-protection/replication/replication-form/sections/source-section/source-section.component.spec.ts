@@ -15,7 +15,7 @@ import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import {
   SourceSectionComponent,
 } from 'app/pages/data-protection/replication/replication-form/sections/source-section/source-section.component';
-import { LanguageService } from 'app/services';
+import { LanguageService } from 'app/services/language.service';
 import { LocaleService } from 'app/services/locale.service';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 

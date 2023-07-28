@@ -8,8 +8,10 @@ import _ from 'lodash';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { IscsiGlobalSession } from 'app/interfaces/iscsi-global-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { DialogService, NetworkService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { NetworkService } from 'app/services/network.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 interface InitiatorItem {
   id: string;

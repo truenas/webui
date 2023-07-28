@@ -13,8 +13,9 @@ import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { SummaryProvider, SummarySection } from 'app/modules/common/summary/summary.interface';
 import { matchOtherValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
 import { getCertificatePreview } from 'app/pages/credentials/certificates-dash/utils/get-certificate-preview.utils';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({

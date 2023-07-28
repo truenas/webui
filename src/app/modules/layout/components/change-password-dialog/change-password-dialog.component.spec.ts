@@ -10,8 +10,9 @@ import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.u
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
-import { DialogService, WebSocketService } from 'app/services';
 import { AuthService } from 'app/services/auth/auth.service';
+import { DialogService } from 'app/services/dialog.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { ChangePasswordDialogComponent } from './change-password-dialog.component';
 
 const loggedInUser = {

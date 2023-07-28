@@ -13,7 +13,9 @@ import { PodDialogFormValue } from 'app/interfaces/pod-select-dialog.interface';
 import { TerminalConfiguration } from 'app/interfaces/terminal.interface';
 import { PodSelectDialogComponent } from 'app/pages/apps-old/dialogs/pod-select/pod-select-dialog.component';
 import { PodSelectDialogType } from 'app/pages/apps-old/enums/pod-select-dialog.enum';
-import { DialogService, ShellService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
+import { ShellService } from 'app/services/shell.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({

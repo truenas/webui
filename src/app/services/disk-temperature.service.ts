@@ -6,7 +6,7 @@ import { Disk, DiskTemperatures } from 'app/interfaces/storage.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { CoreService } from 'app/services/core-service/core.service';
 import { DisksUpdateService } from 'app/services/disks-update.service';
-import { WebSocketService } from 'app/services/index';
+import { WebSocketService } from 'app/services/ws.service';
 
 export interface Temperature {
   keys: string[];

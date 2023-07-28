@@ -24,8 +24,9 @@ import {
   topologyCategoryToDisks,
   topologyToDisks,
 } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
