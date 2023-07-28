@@ -14,8 +14,9 @@ import { IxListHarness } from 'app/modules/ix-forms/components/ix-list/ix-list.h
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { DialogService, UserService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { UserService } from 'app/services/user.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { SmbAclComponent } from './smb-acl.component';
 

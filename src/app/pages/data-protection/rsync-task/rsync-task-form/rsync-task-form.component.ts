@@ -24,8 +24,9 @@ import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedu
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SshConnectionFormComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-form/ssh-connection-form.component';
-import { KeychainCredentialService, UserService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
+import { KeychainCredentialService } from 'app/services/keychain-credential.service';
+import { UserService } from 'app/services/user.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()

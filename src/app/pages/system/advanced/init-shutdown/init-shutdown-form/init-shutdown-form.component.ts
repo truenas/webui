@@ -14,8 +14,8 @@ import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-sli
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { WebSocketService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy({ arrayName: 'subscriptions' })
 @Component({

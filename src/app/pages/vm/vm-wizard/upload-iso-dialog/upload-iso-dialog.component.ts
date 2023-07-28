@@ -7,7 +7,7 @@ import { mntPath } from 'app/enums/mnt-path.enum';
 import helptext from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxFileUploadService } from 'app/services/ix-file-upload.service';

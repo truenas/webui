@@ -19,7 +19,8 @@ import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedu
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { StorageService, TaskService } from 'app/services';
+import { StorageService } from 'app/services/storage.service';
+import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()

@@ -13,7 +13,7 @@ import { Service } from 'app/interfaces/service.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { TargetGlobalConfigurationComponent } from './target-global-configuration.component';

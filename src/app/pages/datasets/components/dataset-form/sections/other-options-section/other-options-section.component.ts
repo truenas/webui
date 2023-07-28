@@ -46,7 +46,9 @@ import {
   specialSmallBlockSizeOptions,
 } from 'app/pages/datasets/components/dataset-form/utils/special-small-block-size-options.constant';
 import { getFieldValue } from 'app/pages/datasets/components/dataset-form/utils/zfs-property.utils';
-import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
+import { SystemGeneralService } from 'app/services/system-general.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 

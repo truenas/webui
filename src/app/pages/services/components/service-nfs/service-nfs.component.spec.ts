@@ -15,7 +15,7 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { AddSpnDialogComponent } from 'app/pages/services/components/service-nfs/add-spn-dialog/add-spn-dialog.component';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 

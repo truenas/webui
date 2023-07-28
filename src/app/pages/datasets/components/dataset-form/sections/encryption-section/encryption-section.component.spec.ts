@@ -14,7 +14,7 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import {
   EncryptionSectionComponent,
 } from 'app/pages/datasets/components/dataset-form/sections/encryption-section/encryption-section.component';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 
 describe('EncryptionSectionComponent', () => {
   let spectator: Spectator<EncryptionSectionComponent>;

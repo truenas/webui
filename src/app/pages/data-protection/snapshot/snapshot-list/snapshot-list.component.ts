@@ -14,11 +14,10 @@ import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-tab
 import { EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { SnapshotTaskComponent } from 'app/pages/data-protection/snapshot/snapshot-task/snapshot-task.component';
-import {
-  DialogService, StorageService,
-} from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { StorageService } from 'app/services/storage.service';
 import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';

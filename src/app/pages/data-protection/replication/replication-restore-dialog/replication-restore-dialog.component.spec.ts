@@ -11,8 +11,8 @@ import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import {
   ReplicationRestoreDialogComponent,
 } from 'app/pages/data-protection/replication/replication-restore-dialog/replication-restore-dialog.component';
-import { DialogService } from 'app/services';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
+import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('ReplicationRestoreDialogComponent', () => {

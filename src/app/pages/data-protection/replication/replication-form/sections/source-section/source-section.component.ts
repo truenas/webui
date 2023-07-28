@@ -17,7 +17,8 @@ import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-cront
 import {
   PropertiesOverrideValidatorService,
 } from 'app/pages/data-protection/replication/replication-form/properties-override-validator/properties-override-validator.service';
-import { TaskService, WebSocketService } from 'app/services';
+import { TaskService } from 'app/services/task.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @Component({
   selector: 'ix-replication-source-section',

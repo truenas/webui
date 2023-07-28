@@ -19,10 +19,11 @@ import {
   SshConnectionFormComponent,
 } from 'app/pages/credentials/backup-credentials/ssh-connection-form/ssh-connection-form.component';
 import { SshKeypairFormComponent } from 'app/pages/credentials/backup-credentials/ssh-keypair-form/ssh-keypair-form.component';
-import {
-  KeychainCredentialService, ReplicationService, StorageService, CloudCredentialService,
-} from 'app/services';
+import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { KeychainCredentialService } from 'app/services/keychain-credential.service';
+import { ReplicationService } from 'app/services/replication.service';
+import { StorageService } from 'app/services/storage.service';
 
 @UntilDestroy()
 @Component({

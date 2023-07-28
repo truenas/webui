@@ -16,7 +16,8 @@ import {
   SelectPresetModalConfig,
 } from 'app/pages/datasets/modules/permissions/interfaces/select-preset-modal-config.interface';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { SelectPresetModalComponent } from './select-preset-modal.component';
 
 describe('SelectPresetModalComponent', () => {

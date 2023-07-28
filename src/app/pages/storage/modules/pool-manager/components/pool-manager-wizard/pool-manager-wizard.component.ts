@@ -26,7 +26,8 @@ import { PoolCreationWizardStep } from 'app/pages/storage/modules/pool-manager/e
 import { PoolManagerValidationService } from 'app/pages/storage/modules/pool-manager/store/pool-manager-validation.service';
 import { PoolManagerState, PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { topologyToPayload } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { waitForSystemFeatures } from 'app/store/system-info/system-info.selectors';
 

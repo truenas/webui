@@ -18,7 +18,7 @@ import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import {
   CertificateAcmeAddComponent,
 } from 'app/pages/credentials/certificates-dash/certificate-acme-add/certificate-acme-add.component';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('CertificateAcmeAddComponent', () => {

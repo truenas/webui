@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
-import { UserService } from 'app/services';
+import { UserService } from 'app/services/user.service';
 
 @Injectable()
 export class IxUserComboboxService {

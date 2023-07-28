@@ -30,8 +30,10 @@ import { abortJobPressed } from 'app/modules/jobs/store/job.actions';
 import {
   JobSlice, selectJobState, selectJobs, selectFailedJobs, selectRunningJobs,
 } from 'app/modules/jobs/store/job.selectors';
-import { DialogService, StorageService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { StorageService } from 'app/services/storage.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { JobTab } from './job-tab.enum';
 
 @UntilDestroy()

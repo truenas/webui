@@ -10,10 +10,12 @@ import {
   Acl, AclTemplateByPath, AclTemplateCreateParams, NfsAclItem, PosixAclItem,
 } from 'app/interfaces/acl.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SaveAsPresetModalConfig } from 'app/pages/datasets/modules/permissions/interfaces/save-as-preset-modal-config.interface';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
-import { WebSocketService, AppLoaderService, DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({

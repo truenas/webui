@@ -15,7 +15,8 @@ import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-sl
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
-import { DialogService, KeychainCredentialService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
+import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { SshConnectionFormComponent } from './ssh-connection-form.component';
 

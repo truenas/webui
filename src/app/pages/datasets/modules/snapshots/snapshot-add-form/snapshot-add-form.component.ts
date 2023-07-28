@@ -23,7 +23,7 @@ import { atLeastOne } from 'app/modules/ix-forms/validators/at-least-one-validat
 import { requiredEmpty } from 'app/modules/ix-forms/validators/required-empty-validation';
 import { snapshotExcludeBootQueryFilter } from 'app/pages/datasets/modules/snapshots/constants/snapshot-exclude-boot.constant';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import { WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({

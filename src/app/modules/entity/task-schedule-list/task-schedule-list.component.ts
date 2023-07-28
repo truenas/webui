@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
-import { TaskService } from 'app/services';
+import { TaskService } from 'app/services/task.service';
 
 interface TaskScheduleRowConfig {
   schedule?: string;

@@ -11,9 +11,10 @@ import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-sett
 import {
   AllowedAddressesFormComponent,
 } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses-form/allowed-addresses-form.component';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
 

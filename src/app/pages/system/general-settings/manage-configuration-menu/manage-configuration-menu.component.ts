@@ -10,7 +10,7 @@ import {
 import {
   UploadConfigDialogComponent,
 } from 'app/pages/system/general-settings/upload-config-dialog/upload-config-dialog.component';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 
 @UntilDestroy()
 @Component({

@@ -33,7 +33,6 @@ import { FeedbackDialogComponent } from 'app/modules/ix-feedback/feedback-dialog
 import { topbarDialogPosition } from 'app/modules/layout/components/topbar/topbar-dialog-position.constant';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { WebSocketService } from 'app/services';
 import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -41,6 +40,7 @@ import { LayoutService } from 'app/services/layout.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { selectHaStatus, selectIsHaLicensed, selectIsUpgradePending } from 'app/store/ha-info/ha-info.selectors';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 import { alertIndicatorPressed, sidenavUpdated } from 'app/store/topbar/topbar.actions';

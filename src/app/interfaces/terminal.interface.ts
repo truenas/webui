@@ -1,5 +1,5 @@
 import { Observable, Subject } from 'rxjs';
-import { ShellService } from 'app/services';
+import { ShellService } from 'app/services/shell.service';
 
 export interface TerminalConfiguration {
   reconnectShell$?: Subject<void>;

@@ -4,7 +4,7 @@ import { map } from 'rxjs/operators';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
-import { WebSocketService } from 'app/services/index';
+import { WebSocketService } from 'app/services/ws.service';
 
 @Injectable({ providedIn: 'root' })
 export class DatasetService {

@@ -14,7 +14,7 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import {
   TransportSectionComponent,
 } from 'app/pages/data-protection/replication/replication-form/sections/transport-section/transport-section.component';
-import { KeychainCredentialService } from 'app/services';
+import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 
 describe('TransportSectionComponent', () => {
   let spectator: Spectator<TransportSectionComponent>;

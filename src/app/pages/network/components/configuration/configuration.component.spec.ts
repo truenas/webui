@@ -14,10 +14,10 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { NetworkConfigurationComponent } from 'app/pages/network/components/configuration/configuration.component';
-import {
-  DialogService, LanguageService, SystemGeneralService,
-} from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { LanguageService } from 'app/services/language.service';
+import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('NetworkConfigurationComponent', () => {
@@ -69,7 +69,6 @@ describe('NetworkConfigurationComponent', () => {
         } as NetworkConfiguration),
         mockCall('network.configuration.update'),
       ]),
-      mockProvider(IxSlideInService),
       mockProvider(IxSlideInService),
       mockProvider(FormErrorHandlerService),
       mockProvider(DialogService),

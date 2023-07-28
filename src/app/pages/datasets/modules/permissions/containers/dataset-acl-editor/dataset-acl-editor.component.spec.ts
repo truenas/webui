@@ -41,7 +41,9 @@ import {
   DatasetAclEditorComponent,
 } from 'app/pages/datasets/modules/permissions/containers/dataset-acl-editor/dataset-acl-editor.component';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
-import { DialogService, StorageService, UserService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
+import { StorageService } from 'app/services/storage.service';
+import { UserService } from 'app/services/user.service';
 
 describe('DatasetAclEditorComponent', () => {
   let spectator: SpectatorRouting<DatasetAclEditorComponent>;

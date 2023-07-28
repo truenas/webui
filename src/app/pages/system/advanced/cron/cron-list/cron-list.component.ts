@@ -17,12 +17,12 @@ import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-cront
 import { CronDeleteDialogComponent } from 'app/pages/system/advanced/cron/cron-delete-dialog/cron-delete-dialog.component';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { CronjobRow } from 'app/pages/system/advanced/cron/cron-list/cronjob-row.interface';
-import {
-  DialogService, TaskService, WebSocketService,
-} from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
+import { TaskService } from 'app/services/task.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({

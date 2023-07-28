@@ -3,7 +3,7 @@ import { map } from 'rxjs/operators';
 import { Group } from 'app/interfaces/group.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { IxComboboxProvider } from 'app/modules/ix-forms/components/ix-combobox/ix-combobox-provider';
-import { UserService } from 'app/services';
+import { UserService } from 'app/services/user.service';
 
 export class GroupComboboxProvider implements IxComboboxProvider {
   private page = 1;

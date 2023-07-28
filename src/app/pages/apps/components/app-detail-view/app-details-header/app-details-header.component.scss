@@ -86,7 +86,8 @@ $app-image-size: 144px;
 }
 
 .description-wrapper {
-  word-wrap: pre-line;
+  font-size: 13px;
+  white-space: pre-line;
 }
 
 .app-info {

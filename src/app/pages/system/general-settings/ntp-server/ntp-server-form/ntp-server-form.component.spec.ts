@@ -9,8 +9,9 @@ import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-sli
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
-import { WebSocketService, DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { NtpServerFormComponent } from './ntp-server-form.component';
 
 describe('NtpServerFormComponent', () => {
