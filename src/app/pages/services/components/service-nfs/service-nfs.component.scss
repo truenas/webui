@@ -25,3 +25,12 @@
   margin-right: auto;
   max-width: 960px;
 }
+
+.add-spn-container {
+  display: flex;
+  gap: 10px;
+
+  ::ng-deep ix-icon {
+    font-size: 25px !important;
+  }
+}

@@ -105,6 +105,7 @@
   "Resetting interfaces while HA is enabled is not allowed.": "",
   "Resilvering:": "",
   "SMB": "",
+  "Save the 'Require Kerberos for NFSv4' value before adding SMP": "",
   "Sort": "",
   "Special": "",
   "Standby: TrueNAS Controller {id}": "",

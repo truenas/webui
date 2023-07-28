@@ -2733,6 +2733,7 @@
   "Save configuration settings from this machine before updating?": "",
   "Save current ACL entries as a preset for future use.": "",
   "Save network interface changes?": "",
+  "Save the 'Require Kerberos for NFSv4' value before adding SMP": "",
   "Saving Debug": "",
   "Saving KMIP Config": "",
   "Saving Permissions": "",
