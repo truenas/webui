@@ -114,9 +114,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
         this.onChange(this.value);
       }
       if (!this.selectedOption && this.value !== null && this.value !== '') {
-        const setOption = this.options.find((option: Option) => {
-          return option.value === this.value;
-        });
+        const setOption = this.options.find((option: Option) => option.value === this.value);
         if (setOption) {
           this.selectedOption = setOption ? { ...setOption } : null;
           if (this.selectedOption) {
@@ -201,7 +199,6 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
   }
 
   onChanged(changedValue: string): void {
-    console.warn(changedValue);
     if (this.selectedOption || this.value) {
       this.resetInput();
     }
