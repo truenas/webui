@@ -3,16 +3,19 @@ import {
   ActivatedRouteSnapshot, RouterStateSnapshot, Router, CanActivateChild,
 } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
   BehaviorSubject,
-  Observable, combineLatest, filter, of, switchMap, take, tap,
+  Observable, combineLatest, filter, map, of, switchMap, take, tap,
 } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
 import { TwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { AppState } from 'app/store';
+import { selectHaStatus, selectIsHaLicensed, selectIsUpgradePending } from 'app/store/ha-info/ha-info.selectors';
 
 @UntilDestroy()
 @Injectable()
@@ -29,6 +32,7 @@ export class TwoFactorGuardService implements CanActivateChild {
     private dialogService: DialogService,
     private translateService: TranslateService,
     private ws: WebSocketService,
+    private store$: Store<AppState>,
   ) { }
 
   updateGlobalConfig(): void {
@@ -40,6 +44,8 @@ export class TwoFactorGuardService implements CanActivateChild {
 
   canActivateChild(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
     return combineLatest([
+      this.getIsHaEnabled(),
+      this.store$.select(selectIsUpgradePending).pipe(take(1)),
       this.authService.isAuthenticated$,
       this.authService.user$.pipe(filter(Boolean)),
       this.globalTwoFactorConfig$.pipe(
@@ -52,9 +58,12 @@ export class TwoFactorGuardService implements CanActivateChild {
       ),
     ]).pipe(
       take(1),
-      switchMap(([isAuthenticated, loggedInUser, globalTwoFactorConfig]) => {
+      switchMap(([isHaEnabled, isUpgradePending, isAuthenticated, loggedInUser, globalTwoFactorConfig]) => {
         if (!isAuthenticated) {
           return of(false);
+        }
+        if (isHaEnabled && isUpgradePending) {
+          return of(true);
         }
         if (
           globalTwoFactorConfig.enabled
@@ -74,6 +83,16 @@ export class TwoFactorGuardService implements CanActivateChild {
         }
         return of(true);
       }),
+    );
+  }
+
+  getIsHaEnabled(): Observable<boolean> {
+    return combineLatest([
+      this.store$.select(selectIsHaLicensed),
+      this.store$.select(selectHaStatus).pipe(filter(Boolean)),
+    ]).pipe(
+      take(1),
+      map(([isHa, { hasHa }]) => isHa && hasHa),
     );
   }
 }
