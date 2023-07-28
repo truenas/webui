@@ -29,7 +29,6 @@ import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { TokenLifetimeService } from 'app/services/token-lifetime.service';
 import { AppState } from 'app/store';
-import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { selectHasConsoleFooter, waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -116,8 +115,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     this.isSidenavCollapsed = this.layoutService.isMenuCollapsed;
-
-    this.store$.dispatch(adminUiInitialized());
 
     this.tokenLifetimeService.start();
   }
