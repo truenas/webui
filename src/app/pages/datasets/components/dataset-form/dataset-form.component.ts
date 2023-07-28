@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  forkJoin, Observable, of, switchMap, map,
+  forkJoin, Observable, of, switchMap, map, combineLatest,
 } from 'rxjs';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.interface';
@@ -175,23 +175,27 @@ export class DatasetFormComponent implements OnInit {
       : this.ws.call('pool.dataset.update', [this.existingDataset.id, payload as DatasetUpdate]);
 
     request$.pipe(
-      switchMap((dataset) => forkJoin([of(dataset), this.checkForAclOnParent()])),
-      switchMap(([dataset, isAcl]) => forkJoin([of(dataset), isAcl ? this.aclDialog() : of(false)])),
+      switchMap((dataset) => {
+        return this.checkForAclOnParent().pipe(
+          switchMap((isAcl) => combineLatest([of(dataset), isAcl ? this.aclDialog() : of(false)])),
+        );
+      }),
       untilDestroyed(this),
     ).subscribe({
       next: ([createdDataset, shouldGoToEditor]) => {
         this.isLoading = false;
         this.cdr.markForCheck();
         this.slideInRef.close(createdDataset);
-        this.snackbar.success(
-          this.isNew
-            ? this.translate.instant('Switched to new dataset «{name}».', { name: getDatasetLabel(createdDataset) })
-            : this.translate.instant('Dataset «{name}» updated.', { name: getDatasetLabel(createdDataset) }),
-        );
         if (shouldGoToEditor) {
           this.router.navigate(['/', 'datasets', 'acl', 'edit'], {
             queryParams: { path: createdDataset.mountpoint },
           });
+        } else {
+          this.snackbar.success(
+            this.isNew
+              ? this.translate.instant('Switched to new dataset «{name}».', { name: getDatasetLabel(createdDataset) })
+              : this.translate.instant('Dataset «{name}» updated.', { name: getDatasetLabel(createdDataset) }),
+          );
         }
       },
       error: (error) => {
