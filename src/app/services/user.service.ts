@@ -41,7 +41,7 @@ export class UserService {
     }
     return combineLatest([
       this.groupQueryDsCacheByName(search),
-      this.ws.call(this.groupQuery, [queryArgs, { ...this.queryOptions, offset }]),
+      this.ws.call(this.groupQuery, [queryArgs, { ...this.queryOptions, offset, order_by: ['builtin'] }]),
     ]).pipe(map(([groupSearchedByName, groups]) => {
       const groupIds = groupSearchedByName.map((groupsByName) => groupsByName.id);
       groups = groups.filter(
