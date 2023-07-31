@@ -12,7 +12,6 @@ import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
@@ -47,7 +46,6 @@ describe('SelectPoolDialogComponent', () => {
         open: jest.fn(() => mockEntityJobComponentRef),
       }),
       mockProvider(MatDialogRef),
-      mockProvider(AppLoaderService),
       mockProvider(Router),
     ],
   });
