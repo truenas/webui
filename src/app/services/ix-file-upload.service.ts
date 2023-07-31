@@ -11,7 +11,7 @@ import {
   catchError, concatMap, tap, toArray,
 } from 'rxjs/operators';
 import { MiB } from 'app/constants/bytes.constant';
-import { ApiMethod } from 'app/interfaces/api-directory.interface';
+import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { ValidatedFile } from 'app/interfaces/validated-file.interface';
 import { AuthService } from 'app/services/auth/auth.service';
 
@@ -41,7 +41,7 @@ export class IxFileUploadService {
 
   upload(
     file: File,
-    method: ApiMethod,
+    method: ApiJobMethod,
     params: unknown[] = [],
     apiEndPoint = this.defaultUploadEndpoint,
   ): void {

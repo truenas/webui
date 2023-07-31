@@ -4,9 +4,11 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
-import { filter } from 'rxjs/operators';
+import { EMPTY } from 'rxjs';
+import { catchError, filter, switchMap } from 'rxjs/operators';
 import { helptextSystemCa } from 'app/helptext/system/ca';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
+import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
@@ -15,6 +17,7 @@ import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AppTableAction, AppTableConfig, TableComponent } from 'app/modules/entity/table/table.component';
 import { TableService } from 'app/modules/entity/table/table.service';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import {
   CertificateAcmeAddComponent,
 } from 'app/pages/credentials/certificates-dash/certificate-acme-add/certificate-acme-add.component';
@@ -56,6 +59,7 @@ export class CertificatesDashComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private tableService: TableService,
     private translate: TranslateService,
+    private loader: AppLoaderService,
   ) { }
 
   ngOnInit(): void {
@@ -124,7 +128,7 @@ export class CertificatesDashComponent implements OnInit {
                 }
                 this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: this.translate.instant('Deleting...') }, disableClose: true });
                 this.dialogRef.componentInstance.setCall(
-                  table.tableConf.deleteCall,
+                  table.tableConf.deleteCall as ApiJobMethod,
                   [item.id, (result as { force: boolean }).force],
                 );
                 this.dialogRef.componentInstance.submit();
@@ -406,18 +410,21 @@ export class CertificatesDashComponent implements OnInit {
           cancelText: this.translate.instant('Cancel'),
           hideCheckbox: true,
         })
-          .pipe(filter(Boolean), untilDestroyed(this))
+          .pipe(
+            filter(Boolean),
+            switchMap(() => {
+              this.loader.open();
+              return this.ws.call('certificateauthority.update', [rowInner.id, { revoked: true }]).pipe(
+                catchError((error) => {
+                  this.dialogService.error(this.errorHandler.parseWsError(error));
+                  return EMPTY;
+                }),
+              );
+            }),
+            untilDestroyed(this),
+          )
           .subscribe(() => {
-            this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: this.translate.instant('Revoking Certificate') } });
-            this.dialogRef.componentInstance.setCall('certificateauthority.update', [rowInner.id, { revoked: true }]);
-            this.dialogRef.componentInstance.submit();
-            this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-              this.dialog.closeAll();
-            });
-            this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((failedJob) => {
-              this.dialog.closeAll();
-              this.dialogService.error(this.errorHandler.parseJobError(failedJob));
-            });
+            this.loader.close();
           });
       },
     };

@@ -11,7 +11,7 @@ import { VmBootloader, VmDeviceType } from 'app/enums/vm.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/vm/vm-list';
 import wizardHelptext from 'app/helptext/vm/vm-wizard/vm-wizard';
-import { ApiParams } from 'app/interfaces/api-directory.interface';
+import { ApiCallParams } from 'app/interfaces/api/api-call-directory.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import {
   VirtualizationDetails,
@@ -255,10 +255,10 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
       });
   }
 
-  doRowAction<T extends 'vm.start' | 'vm.update' | 'vm.restart' | 'vm.poweroff'>(
+  doRowAction<T extends 'vm.start' | 'vm.update' | 'vm.poweroff'>(
     row: VirtualMachineRow,
     method: T,
-    params: ApiParams<T> = [row.id],
+    params: ApiCallParams<T> = [row.id],
     updateTable = false,
   ): void {
     this.loader.open();
@@ -321,7 +321,19 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
       icon: 'replay',
       label: this.translate.instant('Restart'),
       onClick: (vm: VirtualMachineRow) => {
-        this.doRowAction(vm, this.wsMethods.restart);
+        this.loader.open();
+        this.ws.startJob(this.wsMethods.restart, [vm.id]).pipe(untilDestroyed(this)).subscribe({
+          complete: () => {
+            this.updateRows([row]).then(() => {
+              this.loader.close();
+            });
+            this.checkMemory();
+          },
+          error: (error: WebsocketError) => {
+            this.loader.close();
+            this.dialogService.error(this.errorHandler.parseWsError(error));
+          },
+        });
       },
     },
     {

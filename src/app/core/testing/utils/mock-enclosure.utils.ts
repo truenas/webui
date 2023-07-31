@@ -1,7 +1,8 @@
 import { environment } from 'environments/environment';
 import { MockEnclosureConfig } from 'app/core/testing/interfaces/mock-enclosure-utils.interface';
+import { ApiCallMethod } from 'app/interfaces/api/api-call-directory.interface';
+import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
-import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { IncomingWebsocketMessage, ResultMessage } from 'app/interfaces/api-message.interface';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { Disk, UnusedDisk } from 'app/interfaces/storage.interface';
@@ -42,7 +43,7 @@ export class MockEnclosureUtils {
     }
   }
 
-  overrideMessage<K extends ApiMethod>(data: ResultMessage, method: K): ResultMessage {
+  overrideMessage<K extends ApiCallMethod | ApiJobMethod>(data: ResultMessage, method: K): ResultMessage {
     const mockData = this.enclosureOverrides(data.result, method);
     const mockMessage: IncomingWebsocketMessage = {
       id: data.id,
@@ -52,7 +53,7 @@ export class MockEnclosureUtils {
     return mockMessage;
   }
 
-  private enclosureOverrides<K extends ApiMethod>(data: unknown, method: K): unknown {
+  private enclosureOverrides<K extends ApiCallMethod | ApiJobMethod>(data: unknown, method: K): unknown {
     let mockPayload: unknown;
     const enclosureData: Enclosure[] = this.mockStorage.enclosures;
     switch (method) {

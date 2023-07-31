@@ -9,6 +9,7 @@ import {
   catchError, filter, switchMap, take, tap,
 } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
+import { tapOnce } from 'app/helpers/tap-once.operator';
 import helptext from 'app/helptext/data-protection/cloudsync/cloudsync-form';
 import globalHelptext from 'app/helptext/global-helptext';
 import { CloudSyncTask, CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
@@ -151,13 +152,12 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
           }).pipe(
             filter(Boolean),
             tap(() => row.state = { state: JobState.Running }),
-            switchMap(() => this.ws.call('cloudsync.sync', [row.id])),
-            tap(() => this.snackbar.success(
+            switchMap(() => this.ws.job('cloudsync.sync', [row.id])),
+            tapOnce(() => this.snackbar.success(
               this.translate.instant('Cloud sync «{name}» has started.', { name: row.description }),
             )),
-            switchMap((id) => this.store$.select(selectJob(id)).pipe(filter(Boolean))),
-            catchError((error: WebsocketError) => {
-              this.dialog.error(this.errorHandler.parseWsError(error));
+            catchError((error: Job) => {
+              this.dialog.error(this.errorHandler.parseJobError(error));
               return EMPTY;
             }),
             untilDestroyed(this),
@@ -209,13 +209,12 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
             hideCheckbox: true,
           }).pipe(
             filter(Boolean),
-            switchMap(() => this.ws.call('cloudsync.sync', [row.id, { dry_run: true }])),
+            switchMap(() => this.ws.job('cloudsync.sync', [row.id, { dry_run: true }])),
             tap(() => this.snackbar.success(
               this.translate.instant('Cloud sync «{name}» has started.', { name: row.description }),
             )),
-            switchMap((id) => this.store$.select(selectJob(id)).pipe(filter(Boolean))),
-            catchError((error: WebsocketError) => {
-              this.dialog.error(this.errorHandler.parseWsError(error));
+            catchError((error: Job) => {
+              this.dialog.error(this.errorHandler.parseJobError(error));
               return EMPTY;
             }),
             untilDestroyed(this),

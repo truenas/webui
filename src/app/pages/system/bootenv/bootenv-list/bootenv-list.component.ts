@@ -147,7 +147,7 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
     }).pipe(
       filter(Boolean),
       tap(() => this.loader.open()),
-      switchMap(() => this.ws.call('boot.scrub')),
+      switchMap(() => this.ws.startJob('boot.scrub')),
       untilDestroyed(this),
     ).subscribe({
       next: () => {

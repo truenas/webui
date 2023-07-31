@@ -8,10 +8,10 @@ import {
   catchError, EMPTY, filter, switchMap, take, tap,
 } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
+import { tapOnce } from 'app/helpers/tap-once.operator';
 import globalHelptext from 'app/helptext/global-helptext';
 import { Job } from 'app/interfaces/job.interface';
 import { RsyncTaskUi } from 'app/interfaces/rsync-task.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ShowLogsDialogComponent } from 'app/modules/common/dialog/show-logs-dialog/show-logs-dialog.component';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
@@ -112,15 +112,14 @@ export class RsyncTaskListComponent implements EntityTableConfig<RsyncTaskUi> {
         }).pipe(
           filter(Boolean),
           tap(() => row.state = { state: JobState.Running }),
-          switchMap(() => this.ws.call('rsynctask.run', [row.id])),
-          tap(() => this.snackbar.success(
+          switchMap(() => this.ws.job('rsynctask.run', [row.id])),
+          tapOnce(() => this.snackbar.success(
             this.translate.instant('Rsync task «{name}» has started.', {
               name: `${row.remotehost} - ${row.remotemodule}`,
             }),
           )),
-          switchMap((id) => this.store$.select(selectJob(id)).pipe(filter(Boolean))),
-          catchError((error: WebsocketError) => {
-            this.dialog.error(this.errorHandler.parseWsError(error));
+          catchError((error: Job) => {
+            this.dialog.error(this.errorHandler.parseJobError(error));
             return EMPTY;
           }),
           untilDestroyed(this),

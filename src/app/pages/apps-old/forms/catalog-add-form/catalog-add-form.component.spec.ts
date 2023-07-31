@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -24,7 +24,7 @@ describe('CatalogAddFormComponent', () => {
     ],
     providers: [
       mockWebsocket([
-        mockCall('catalog.create'),
+        mockJob('catalog.create'),
       ]),
       mockProvider(IxSlideInRef),
       mockProvider(FormErrorHandlerService),
@@ -51,7 +51,7 @@ describe('CatalogAddFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.call).toHaveBeenCalledWith('catalog.create', [{
+    expect(ws.startJob).toHaveBeenCalledWith('catalog.create', [{
       label: 'truecharts',
       force: true,
       branch: 'main',
