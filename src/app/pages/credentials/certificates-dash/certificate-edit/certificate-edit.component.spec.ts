@@ -8,7 +8,7 @@ import {
 } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -56,7 +56,7 @@ describe('CertificateEditComponent', () => {
     ],
     providers: [
       mockWebsocket([
-        mockCall('certificate.update'),
+        mockJob('certificate.update'),
       ]),
       mockProvider(MatDialog),
       mockProvider(IxSlideInService),
@@ -106,7 +106,7 @@ describe('CertificateEditComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('certificate.update', [1, { name: 'New Name' }]);
+      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('certificate.update', [1, { name: 'New Name' }]);
       expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
     });
 

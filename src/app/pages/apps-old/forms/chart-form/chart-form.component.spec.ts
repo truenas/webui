@@ -4,7 +4,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
 import {
   ChartFormValue, ChartRelease, ChartSchemaNodeConf,
@@ -341,8 +341,8 @@ describe('ChartFormComponent', () => {
       mockProvider(IxSlideInRef),
       mockProvider(DialogService),
       mockWebsocket([
-        mockCall('chart.release.create'),
-        mockCall('chart.release.update'),
+        mockJob('chart.release.create'),
+        mockJob('chart.release.update'),
       ]),
       mockProvider(MatDialog, {
         open: jest.fn(() => mockDialogRef),
