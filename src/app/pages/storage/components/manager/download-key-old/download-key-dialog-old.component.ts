@@ -41,26 +41,26 @@ export class DownloadKeyDialogOldComponent {
     this.loader.open();
     if (this.new) { // new is ZoL encryption
       mimetype = 'application/json';
-      this.ws.call('core.download', ['pool.dataset.export_keys', [this.volumeName], this.fileName]).pipe(untilDestroyed(this)).subscribe({
-        next: ([, url]) => {
-          this.loader.close();
-          this.storage.streamDownloadFile(url, this.fileName, mimetype)
-            .pipe(untilDestroyed(this))
-            .subscribe({
-              next: (file) => {
-                this.storage.downloadBlob(file, this.fileName);
-                this.isDownloaded = true;
-              },
-              error: (error: HttpErrorResponse) => {
-                this.dialog.error(this.errorHandler.parseHttpError(error));
-              },
-            });
-        },
-        error: (error: WebsocketError) => {
-          this.loader.close();
-          this.dialog.error(this.errorHandler.parseWsError(error));
-        },
-      });
+      this.ws.call('core.download', ['pool.dataset.export_keys', [this.volumeName], this.fileName])
+        .pipe(this.loader.withLoader(), untilDestroyed(this))
+        .subscribe({
+          next: ([, url]) => {
+            this.storage.streamDownloadFile(url, this.fileName, mimetype)
+              .pipe(untilDestroyed(this))
+              .subscribe({
+                next: (file) => {
+                  this.storage.downloadBlob(file, this.fileName);
+                  this.isDownloaded = true;
+                },
+                error: (error: HttpErrorResponse) => {
+                  this.dialog.error(this.errorHandler.parseHttpError(error));
+                },
+              });
+          },
+          error: (error: WebsocketError) => {
+            this.dialog.error(this.errorHandler.parseWsError(error));
+          },
+        });
     } else {
       mimetype = 'application/octet-stream';
       this.ws.call('pool.download_encryption_key', payload).pipe(untilDestroyed(this)).subscribe({

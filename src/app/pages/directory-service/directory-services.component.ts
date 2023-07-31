@@ -89,12 +89,10 @@ export class DirectoryServicesComponent implements OnInit {
             }).pipe(
               filter(Boolean),
               switchMap(() => {
-                this.loader.open();
-                return this.ws.call('idmap.delete', [row.id]);
+                return this.ws.call('idmap.delete', [row.id]).pipe(this.loader.withLoader());
               }),
               untilDestroyed(this),
             ).subscribe(() => {
-              this.loader.close();
               this.refreshTables();
             });
           },
@@ -184,17 +182,14 @@ export class DirectoryServicesComponent implements OnInit {
   }
 
   refreshCards(): void {
-    this.loader.open();
     forkJoin([
       this.ws.call('directoryservices.get_state'),
       this.ws.call('activedirectory.config'),
       this.ws.call('ldap.config'),
       this.ws.call('kerberos.config'),
     ])
-      .pipe(untilDestroyed(this))
+      .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe(([servicesState, activeDirectoryConfig, ldapConfig, kerberosSettings]) => {
-        this.loader.close();
-
         this.isActiveDirectoryEnabled = servicesState.activedirectory !== DirectoryServiceState.Disabled;
         this.isLdapEnabled = servicesState.ldap !== DirectoryServiceState.Disabled;
 

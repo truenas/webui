@@ -74,31 +74,30 @@ export class PodSelectDialogComponent implements OnInit {
   loadPods(): void {
     this.podList = [];
     this.podDetails = {};
-    this.loader.open();
-    this.ws.call('chart.release.pod_console_choices', [this.selectedAppName]).pipe(untilDestroyed(this)).subscribe({
-      next: (consoleChoices) => {
-        this.loader.close();
-        this.podDetails = { ...consoleChoices };
-        this.podList = Object.keys(this.podDetails);
-        if (this.podList.length) {
-          this.pods$ = of(this.podList.map((item) => ({ label: item, value: item })));
-          this.containers$ = of(this.podDetails[this.podList[0]].map((item) => ({ label: item, value: item })));
-          this.form.controls.pods.patchValue(this.podList[0]);
-          this.form.controls.containers.patchValue(this.podDetails[this.podList[0]][0]);
+    this.ws.call('chart.release.pod_console_choices', [this.selectedAppName])
+      .pipe(this.loader.withLoader(), untilDestroyed(this))
+      .subscribe({
+        next: (consoleChoices) => {
+          this.podDetails = { ...consoleChoices };
+          this.podList = Object.keys(this.podDetails);
+          if (this.podList.length) {
+            this.pods$ = of(this.podList.map((item) => ({ label: item, value: item })));
+            this.containers$ = of(this.podDetails[this.podList[0]].map((item) => ({ label: item, value: item })));
+            this.form.controls.pods.patchValue(this.podList[0]);
+            this.form.controls.containers.patchValue(this.podDetails[this.podList[0]][0]);
 
-          this.form.controls.pods.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
-            this.containers$ = of(this.podDetails[value].map((item) => ({ label: item, value: item })));
-            this.form.controls.containers.patchValue(this.podDetails[value][0]);
-          });
-        } else {
+            this.form.controls.pods.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
+              this.containers$ = of(this.podDetails[value].map((item) => ({ label: item, value: item })));
+              this.form.controls.containers.patchValue(this.podDetails[value][0]);
+            });
+          } else {
+            this.hasPool = false;
+          }
+        },
+        error: () => {
           this.hasPool = false;
-        }
-      },
-      error: () => {
-        this.hasPool = false;
-        this.loader.close();
-      },
-    });
+        },
+      });
   }
 
   onPodSelect(): void {

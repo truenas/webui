@@ -84,7 +84,6 @@ export class ExtendDialogComponent implements OnInit {
 
   onSubmit(event: SubmitEvent): void {
     event.preventDefault();
-    this.loader.open();
 
     const payload = {
       new_disk: this.newDiskControl.value,
@@ -97,19 +96,17 @@ export class ExtendDialogComponent implements OnInit {
     }
 
     this.ws.job('pool.attach', [this.data.poolId, payload])
-      .pipe(untilDestroyed(this))
+      .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: (job) => {
           if (job.state !== JobState.Success) {
             return;
           }
 
-          this.loader.close();
           this.snackbar.success(this.translate.instant('Vdev successfully extended.'));
           this.dialogRef.close(true);
         },
         error: (error: WebsocketError) => {
-          this.loader.close();
           this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });

@@ -6,7 +6,6 @@ import _ from 'lodash';
 import {
   Observable, combineLatest, filter, switchMap, takeWhile, tap,
 } from 'rxjs';
-import { deepCloneState } from 'app/helpers/state-select.helper';
 import { SystemFeatures, SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
@@ -15,6 +14,7 @@ import { DashboardNetworkInterface, WidgetName } from 'app/pages/dashboard/compo
 import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
 import { DashboardStorageStore } from 'app/pages/dashboard/store/dashboard-storage-store.service';
 import { ResourcesUsageStore } from 'app/pages/dashboard/store/resources-usage-store.service';
+import { deepCloneState } from 'app/pages/dashboard/utils/deep-clone-state.helper';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { PreferencesState } from 'app/store/preferences/preferences.reducer';

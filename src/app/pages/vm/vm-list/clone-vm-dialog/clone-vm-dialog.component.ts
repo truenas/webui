@@ -30,21 +30,18 @@ export class CloneVmDialogComponent {
   ) { }
 
   onClone(): void {
-    this.loader.open();
     const params = [this.vm.id] as VmCloneParams;
     if (this.nameControl.value) {
       params.push(this.nameControl.value);
     }
 
     this.ws.call('vm.clone', params)
-      .pipe(untilDestroyed(this))
+      .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: () => {
-          this.loader.close();
           this.dialogRef.close(true);
         },
         error: (error: WebsocketError) => {
-          this.loader.close();
           this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });

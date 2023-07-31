@@ -64,8 +64,6 @@ export class SaveConfigDialogComponent {
   }
 
   onSubmit(): void {
-    this.loader.open();
-
     this.store$.pipe(
       waitForSystemInfo,
       switchMap((systemInfo) => {
@@ -83,18 +81,17 @@ export class SaveConfigDialogComponent {
         }
 
         return this.ws.call('core.download', ['config.save', [{ secretseed: this.exportSeedCheckbox.value }], fileName]).pipe(
+          this.loader.withLoader(),
           switchMap(([, url]) => this.storage.downloadUrl(url, fileName, mimeType)),
         );
       }),
       untilDestroyed(this),
     ).subscribe({
       next: () => {
-        this.loader.close();
         this.dialogRef.close(true);
       },
       error: (error: WebsocketError) => {
         this.dialogService.error(this.errorHandler.parseWsError(error));
-        this.loader.close();
         this.dialogRef.close(false);
       },
     });

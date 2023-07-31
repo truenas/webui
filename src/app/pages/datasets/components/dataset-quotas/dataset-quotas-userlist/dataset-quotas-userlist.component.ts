@@ -215,14 +215,14 @@ export class DatasetQuotasUserlistComponent implements OnInit, OnDestroy {
   removeInvalidQuotas(): void {
     this.getRemovalConfirmation().pipe(
       filter(Boolean),
-      tap(() => this.loader.open()),
-      switchMap(() => this.setQuota(this.getRemoveQuotaPayload(this.invalidQuotas))),
+      switchMap(() => {
+        const payload = this.getRemoveQuotaPayload(this.invalidQuotas);
+        return this.setQuota(payload).pipe(this.loader.withLoader());
+      }),
       tap(() => {
-        this.loader.close();
         this.getUserQuotas();
       }),
       catchError((error: WebsocketError | Job) => {
-        this.loader.close();
         this.handleError(error);
         return EMPTY;
       }),
@@ -261,14 +261,14 @@ export class DatasetQuotasUserlistComponent implements OnInit, OnDestroy {
   doDelete(row: DatasetQuota): void {
     this.confirmDelete(row.name).pipe(
       filter(Boolean),
-      tap(() => this.loader.open()),
-      switchMap(() => this.setQuota(this.getRemoveQuotaPayload([row]))),
+      switchMap(() => {
+        const payload = this.getRemoveQuotaPayload([row]);
+        return this.setQuota(payload).pipe(this.loader.withLoader());
+      }),
       tap(() => {
-        this.loader.close();
         this.getUserQuotas();
       }),
       catchError((error: WebsocketError | Job) => {
-        this.loader.close();
         this.handleError(error);
         return EMPTY;
       }),

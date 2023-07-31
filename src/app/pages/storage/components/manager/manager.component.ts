@@ -89,7 +89,6 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   dirty = false;
   protected existingPools: Pool[] = [];
   poolError: string = null;
-  loaderOpen = false;
   help = helptext;
   exportedPoolsWarnings: string[] = [];
 
@@ -353,57 +352,54 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     this.addVdev('data', new ManagerVdev(this.firstDataVdevDisktype, 'data'));
     this.dirty = false;
 
-    this.loader.open();
-    this.loaderOpen = true;
-    this.ws.call('disk.get_unused', []).pipe(untilDestroyed(this)).subscribe({
-      next: (unusedDisks) => {
-        this.loader.close();
-        this.loaderOpen = false;
-        this.disks = unusedDisks.map((disk) => {
-          const details: Option[] = [];
-          if (disk.rotationrate) {
-            details.push({ label: this.translate.instant('Rotation Rate'), value: disk.rotationrate });
-          }
-          details.push({ label: this.translate.instant('Model'), value: disk.model });
-          details.push({ label: this.translate.instant('Serial'), value: disk.serial });
-          if (disk.enclosure) {
-            details.push({ label: this.translate.instant('Enclosure'), value: disk.enclosure.number });
-          }
-          return {
-            ...disk,
-            details,
-            real_capacity: disk.size,
-            capacity: filesize(disk.size, { standard: 'iec' }),
-          };
-        });
+    this.ws.call('disk.get_unused', [])
+      .pipe(this.loader.withLoader(), untilDestroyed(this))
+      .subscribe({
+        next: (unusedDisks) => {
+          this.disks = unusedDisks.map((disk) => {
+            const details: Option[] = [];
+            if (disk.rotationrate) {
+              details.push({ label: this.translate.instant('Rotation Rate'), value: disk.rotationrate });
+            }
+            details.push({ label: this.translate.instant('Model'), value: disk.model });
+            details.push({ label: this.translate.instant('Serial'), value: disk.serial });
+            if (disk.enclosure) {
+              details.push({ label: this.translate.instant('Enclosure'), value: disk.enclosure.number });
+            }
+            return {
+              ...disk,
+              details,
+              real_capacity: disk.size,
+              capacity: filesize(disk.size, { standard: 'iec' }),
+            };
+          });
 
-        this.disks = this.sorter.tableSorter(this.disks, 'devname', 'asc');
-        this.originalDisks = Array.from(this.disks);
+          this.disks = this.sorter.tableSorter(this.disks, 'devname', 'asc');
+          this.originalDisks = Array.from(this.disks);
 
-        // assign disks for suggested layout
-        let largestCapacity = 0;
-        this.disks.forEach((disk) => {
-          if (disk.real_capacity > largestCapacity) {
-            largestCapacity = disk.real_capacity;
-          }
-        });
-        this.disks.forEach((disk) => {
-          if (disk.real_capacity === largestCapacity) {
-            this.suggestableDisks.push(disk);
-          }
-        });
-        this.originalSuggestableDisks = Array.from(this.suggestableDisks);
+          // assign disks for suggested layout
+          let largestCapacity = 0;
+          this.disks.forEach((disk) => {
+            if (disk.real_capacity > largestCapacity) {
+              largestCapacity = disk.real_capacity;
+            }
+          });
+          this.disks.forEach((disk) => {
+            if (disk.real_capacity === largestCapacity) {
+              this.suggestableDisks.push(disk);
+            }
+          });
+          this.originalSuggestableDisks = Array.from(this.suggestableDisks);
 
-        this.temp = [...this.disks];
-        this.nonUniqueSerialDisks = this.disks.filter((disk) => disk.duplicate_serial.length);
-        this.disks = this.disks.filter((disk) => !disk.duplicate_serial.length);
-        this.getDuplicableDisks();
-      },
-      error: (error) => {
-        this.loader.close();
-        this.errorHandler.reportError(error);
-      },
-    });
+          this.temp = [...this.disks];
+          this.nonUniqueSerialDisks = this.disks.filter((disk) => disk.duplicate_serial.length);
+          this.disks = this.disks.filter((disk) => !disk.duplicate_serial.length);
+          this.getDuplicableDisks();
+        },
+        error: (error) => {
+          this.errorHandler.reportError(error);
+        },
+      });
   }
 
   addVdev(

@@ -93,12 +93,9 @@ export class CommonAppsToolbarButtonsComponent implements OnInit {
   }
 
   onLaunchDockerImage(): void {
-    this.loader.open();
     this.appService.getCatalogItem(ixChartApp, officialCatalog, chartsTrain)
-      .pipe(untilDestroyed(this))
+      .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe((catalogApp) => {
-        this.loader.close();
-
         const catalogAppInfo = {
           ...catalogApp,
           catalog: {

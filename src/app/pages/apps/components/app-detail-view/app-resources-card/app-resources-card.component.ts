@@ -5,7 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
   Observable, filter, map, switchMap, throttleTime,
 } from 'rxjs';
-import { toLoadingState } from 'app/helpers/to-loading-state.helper';
+import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { MemoryStatsEventData } from 'app/interfaces/events/memory-stats-event.interface';
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
 import { WebSocketService } from 'app/services/ws.service';

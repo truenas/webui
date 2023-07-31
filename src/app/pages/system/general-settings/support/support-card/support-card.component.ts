@@ -176,22 +176,19 @@ export class SupportCardComponent implements OnInit {
 
     request$.pipe(
       switchMap((result) => {
-        this.loader.open();
         const attachDebug = (_.isObject(result) && result.sendInitialDebug) || false;
 
-        return this.ws.call('truenas.set_production', [event.checked, attachDebug]);
+        return this.ws.call('truenas.set_production', [event.checked, attachDebug]).pipe(this.loader.withLoader());
       }),
       untilDestroyed(this),
     )
       .subscribe({
         next: () => {
-          this.loader.close();
           this.snackbar.success(
             this.translate.instant(helptext.is_production_dialog.message),
           );
         },
         error: (error: WebsocketError) => {
-          this.loader.close();
           this.dialog.error(this.errorHandler.parseWsError(error));
         },
       });

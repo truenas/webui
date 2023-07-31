@@ -44,21 +44,17 @@ export class SnapshotCloneDialogComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.loader.open();
-
     this.ws.call('zfs.snapshot.clone', [{
       snapshot: this.snapshotName,
       dataset_dst: this.datasetName,
     }])
-      .pipe(untilDestroyed(this))
+      .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: () => {
-          this.loader.close();
           this.wasDatasetCloned = true;
           this.cdr.markForCheck();
         },
         error: (error) => {
-          this.loader.close();
           this.errorHandler.handleWsFormError(error, this.form);
         },
       });

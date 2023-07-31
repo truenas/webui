@@ -12,7 +12,7 @@ import {
   Observable, BehaviorSubject, combineLatest, of,
 } from 'rxjs';
 import {
-  filter, tap, switchMap,
+  filter, switchMap,
 } from 'rxjs/operators';
 import { BootEnvironmentAction } from 'app/enums/boot-environment-action.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -146,17 +146,14 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
       buttonText: this.translate.instant('Start Scrub'),
     }).pipe(
       filter(Boolean),
-      tap(() => this.loader.open()),
-      switchMap(() => this.ws.call('boot.scrub')),
+      switchMap(() => this.ws.call('boot.scrub').pipe(this.loader.withLoader())),
       untilDestroyed(this),
     ).subscribe({
       next: () => {
-        this.loader.close();
         this.snackbar.success(this.translate.instant('Scrub Started'));
       },
       error: (error: WebsocketError) => {
         this.dialogService.error(this.errorHandler.parseWsError(error));
-        this.loader.close();
       },
     });
   }
@@ -225,18 +222,17 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
       buttonText: helptextSystemBootenv.list_dialog_activate_action,
     }).pipe(
       filter(Boolean),
-      tap(() => this.loader.open()),
-      switchMap(() => this.ws.call('bootenv.activate', [bootenv.id])),
+      switchMap(() => {
+        return this.ws.call('bootenv.activate', [bootenv.id]).pipe(this.loader.withLoader());
+      }),
       untilDestroyed(this),
     ).subscribe({
       next: () => {
         this.getBootEnvironments();
-        this.loader.close();
         this.checkboxColumn.clearSelection();
       },
       error: (error: WebsocketError) => {
         this.dialogService.error(this.errorHandler.parseWsError(error));
-        this.loader.close();
       },
     });
   }
@@ -248,19 +244,17 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
         message: this.translate.instant('Keep this Boot Environment?'),
         buttonText: this.translate.instant('Set Keep Flag'),
       }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-        this.loader.open();
         this.ws.call('bootenv.set_attribute', [bootenv.id, { keep: true }]).pipe(
+          this.loader.withLoader(),
           untilDestroyed(this),
         ).subscribe(
           {
             next: () => {
               this.getBootEnvironments();
-              this.loader.close();
               this.checkboxColumn.clearSelection();
             },
             error: (error: WebsocketError) => {
               this.dialogService.error(this.errorHandler.parseWsError(error));
-              this.loader.close();
             },
           },
         );
@@ -272,18 +266,18 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
         buttonText: this.translate.instant('Remove Keep Flag'),
       }).pipe(
         filter(Boolean),
-        tap(() => this.loader.open()),
-        switchMap(() => this.ws.call('bootenv.set_attribute', [bootenv.id, { keep: false }])),
+        switchMap(() => {
+          return this.ws.call('bootenv.set_attribute', [bootenv.id, { keep: false }])
+            .pipe(this.loader.withLoader());
+        }),
         untilDestroyed(this),
       ).subscribe({
         next: () => {
           this.getBootEnvironments();
-          this.loader.close();
           this.checkboxColumn.selection.clear();
         },
         error: (error: WebsocketError) => {
           this.dialogService.error(this.errorHandler.parseWsError(error));
-          this.loader.close();
         },
       });
     }

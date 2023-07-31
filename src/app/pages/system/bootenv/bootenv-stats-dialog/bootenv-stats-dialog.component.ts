@@ -59,19 +59,16 @@ export class BootenvStatsDialogComponent implements OnInit {
 
   onSubmit(): void {
     const interval = this.form.value.interval;
-    this.loader.open();
     this.ws.call('boot.set_scrub_interval', [interval])
-      .pipe(untilDestroyed(this))
+      .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: () => {
-          this.loader.close();
           this.dialogRef.close();
           this.snackbar.success(
             this.translate.instant('Scrub interval set to {scrubIntervalValue} days', { scrubIntervalValue: interval }),
           );
         },
         error: (error) => {
-          this.loader.close();
           this.formErrorHandler.handleWsFormError(error, this.form);
         },
       });
@@ -84,13 +81,11 @@ export class BootenvStatsDialogComponent implements OnInit {
   }
 
   private loadBootState(): void {
-    this.loader.open();
     this.ws.call('boot.get_state')
-      .pipe(untilDestroyed(this))
+      .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: (state) => {
           this.state = state;
-          this.loader.close();
           this.cdr.markForCheck();
         },
         error: (error: WebsocketError) => {

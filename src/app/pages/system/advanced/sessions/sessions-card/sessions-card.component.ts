@@ -4,7 +4,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { format, formatDuration, intervalToDuration } from 'date-fns';
 import { filter, map } from 'rxjs/operators';
-import { toLoadingState } from 'app/helpers/to-loading-state.helper';
+import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { AuthSession, AuthSessionCredentialsData } from 'app/interfaces/auth-session.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
@@ -118,14 +118,11 @@ export class SessionsCardComponent {
   }
 
   private terminateOtherSessions(): void {
-    this.loader.open();
-    this.ws.call('auth.terminate_other_sessions').pipe(untilDestroyed(this)).subscribe({
+    this.ws.call('auth.terminate_other_sessions').pipe(this.loader.withLoader(), untilDestroyed(this)).subscribe({
       next: () => {
-        this.loader.close();
         this.updateSessions();
       },
       error: (error: WebsocketError) => {
-        this.loader.close();
         this.dialogService.error(this.errorHandler.parseWsError(error));
       },
     });
@@ -150,14 +147,11 @@ export class SessionsCardComponent {
   }
 
   private terminateSession(sessionId: string): void {
-    this.loader.open();
-    this.ws.call('auth.terminate_session', [sessionId]).pipe(untilDestroyed(this)).subscribe({
+    this.ws.call('auth.terminate_session', [sessionId]).pipe(this.loader.withLoader(), untilDestroyed(this)).subscribe({
       next: () => {
-        this.loader.close();
         this.updateSessions();
       },
       error: (error: WebsocketError) => {
-        this.loader.close();
         this.dialogService.error(this.errorHandler.parseWsError(error));
       },
     });

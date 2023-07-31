@@ -202,28 +202,27 @@ export class NetworkComponent implements OnInit, OnDestroy {
           })
           .pipe(untilDestroyed(this))
           .subscribe((confirm: boolean) => {
-            if (confirm) {
-              this.loader.open();
-              this.ws
-                .call('interface.commit', [{ checkin_timeout: this.checkinTimeout }])
-                .pipe(untilDestroyed(this))
-                .subscribe({
-                  next: async () => {
-                    this.core.emit({
-                      name: 'NetworkInterfacesChanged',
-                      data: { commit: true, checkin: false },
-                      sender: this,
-                    });
-                    this.interfacesStore.loadInterfaces();
-                    this.loader.close();
-                    this.handleWaitingCheckin(await this.getCheckinWaitingSeconds());
-                  },
-                  error: (error: WebsocketError) => {
-                    this.loader.close();
-                    this.dialogService.error(this.errorHandler.parseWsError(error));
-                  },
-                });
+            if (!confirm) {
+              return;
             }
+
+            this.ws
+              .call('interface.commit', [{ checkin_timeout: this.checkinTimeout }])
+              .pipe(this.loader.withLoader(), untilDestroyed(this))
+              .subscribe({
+                next: async () => {
+                  this.core.emit({
+                    name: 'NetworkInterfacesChanged',
+                    data: { commit: true, checkin: false },
+                    sender: this,
+                  });
+                  this.interfacesStore.loadInterfaces();
+                  this.handleWaitingCheckin(await this.getCheckinWaitingSeconds());
+                },
+                error: (error: WebsocketError) => {
+                  this.dialogService.error(this.errorHandler.parseWsError(error));
+                },
+              });
           });
       });
   }
@@ -260,14 +259,12 @@ export class NetworkComponent implements OnInit, OnDestroy {
   }
 
   finishCheckin(): void {
-    this.loader.open();
     this.ws
       .call('interface.checkin')
-      .pipe(untilDestroyed(this))
+      .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: () => {
           this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: true, checkin: true }, sender: this });
-          this.loader.close();
           this.snackbar.success(
             this.translate.instant(helptext.checkin_complete_message),
           );
@@ -277,7 +274,6 @@ export class NetworkComponent implements OnInit, OnDestroy {
           this.checkinRemaining = null;
         },
         error: (error: WebsocketError) => {
-          this.loader.close();
           this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });
@@ -293,28 +289,29 @@ export class NetworkComponent implements OnInit, OnDestroy {
       })
       .pipe(untilDestroyed(this))
       .subscribe((confirm: boolean) => {
-        if (confirm) {
-          this.loader.open();
-          this.ws
-            .call('interface.rollback')
-            .pipe(untilDestroyed(this))
-            .subscribe({
-              next: () => {
-                this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: false }, sender: this });
-                this.interfacesStore.loadInterfaces();
-                this.hasPendingChanges = false;
-                this.checkinWaiting = false;
-                this.loader.close();
-                this.snackbar.success(
-                  this.translate.instant(helptext.changes_rolled_back),
-                );
-              },
-              error: (error: WebsocketError) => {
-                this.loader.close();
-                this.dialogService.error(this.errorHandler.parseWsError(error));
-              },
-            });
+        if (!confirm) {
+          return;
         }
+
+        this.ws
+          .call('interface.rollback')
+          .pipe(this.loader.withLoader(), untilDestroyed(this))
+          .subscribe({
+            next: () => {
+              this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: false }, sender: this });
+              this.interfacesStore.loadInterfaces();
+              this.hasPendingChanges = false;
+              this.checkinWaiting = false;
+              this.loader.close();
+              this.snackbar.success(
+                this.translate.instant(helptext.changes_rolled_back),
+              );
+            },
+            error: (error: WebsocketError) => {
+              this.loader.close();
+              this.dialogService.error(this.errorHandler.parseWsError(error));
+            },
+          });
       });
   }
 
@@ -335,12 +332,10 @@ export class NetworkComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.loader.open();
     this.ws.call('interface.query', [[['id', '=', state.editInterface]]])
-      .pipe(untilDestroyed(this))
+      .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: (interfaces) => {
-          this.loader.close();
           if (!interfaces[0]) {
             return;
           }
@@ -349,7 +344,6 @@ export class NetworkComponent implements OnInit, OnDestroy {
           this.handleSlideInClosed(slideInRef);
         },
         error: (error: WebsocketError) => {
-          this.loader.close();
           this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });

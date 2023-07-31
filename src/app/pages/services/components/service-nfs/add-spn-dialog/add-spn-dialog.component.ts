@@ -35,26 +35,24 @@ export class AddSpnDialogComponent {
   ) { }
 
   onSubmit(): void {
-    this.loader.open();
-
     const payload = {
       username: this.form.value.username,
       password: this.form.value.password,
     };
 
-    this.ws.call('nfs.add_principal', [payload]).pipe(untilDestroyed(this)).subscribe({
-      next: () => {
-        this.loader.close();
-        this.dialogRef.close();
-        this.dialogService.info(
-          this.translate.instant('Success'),
-          this.translate.instant('You have successfully added credentials.'),
-        );
-      },
-      error: (error: WebsocketError) => {
-        this.loader.close();
-        this.dialogService.error(this.errorHandler.parseWsError(error));
-      },
-    });
+    this.ws.call('nfs.add_principal', [payload])
+      .pipe(this.loader.withLoader(), untilDestroyed(this))
+      .subscribe({
+        next: () => {
+          this.dialogRef.close();
+          this.dialogService.info(
+            this.translate.instant('Success'),
+            this.translate.instant('You have successfully added credentials.'),
+          );
+        },
+        error: (error: WebsocketError) => {
+          this.dialogService.error(this.errorHandler.parseWsError(error));
+        },
+      });
   }
 }

@@ -43,19 +43,16 @@ export class AutotrimDialogComponent implements OnInit {
 
   onSubmit(event: SubmitEvent): void {
     event.preventDefault();
-    this.loader.open();
     this.ws.job('pool.update', [this.pool.id, { autotrim: this.autotrimControl.value ? OnOff.On : OnOff.Off }])
-      .pipe(untilDestroyed(this))
+      .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         complete: () => {
           this.snackbar.success(
             this.translate.instant('Pool options for {poolName} successfully saved.', { poolName: this.pool.name }),
           );
-          this.loader.close();
           this.dialogRef.close(true);
         },
         error: (error: WebsocketError) => {
-          this.loader.close();
           this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });

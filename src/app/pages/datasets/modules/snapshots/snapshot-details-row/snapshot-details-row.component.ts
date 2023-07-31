@@ -5,12 +5,14 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
+import { EMPTY } from 'rxjs';
 import {
-  filter, switchMap, tap, map,
+  filter, switchMap, tap, map, catchError,
 } from 'rxjs/operators';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SnapshotCloneDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-clone-dialog/snapshot-clone-dialog.component';
 import { SnapshotRollbackDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
 import { DialogService } from 'app/services/dialog.service';
@@ -40,6 +42,7 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
     private errorHandler: ErrorHandlerService,
     private matDialog: MatDialog,
     private cdr: ChangeDetectorRef,
+    private snackbar: SnackbarService,
   ) {}
 
   ngOnInit(): void {
@@ -94,17 +97,19 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
       buttonText: this.translate.instant('Delete'),
     }).pipe(
       filter(Boolean),
-      tap(() => this.loader.open()),
-      switchMap(() => this.ws.call('zfs.snapshot.delete', [snapshot.name])),
+      switchMap(() => {
+        return this.ws.call('zfs.snapshot.delete', [snapshot.name]).pipe(
+          this.loader.withLoader(),
+          tap(() => {
+            this.snackbar.success(this.translate.instant('Snapshot deleted.'));
+          }),
+          catchError((error: WebsocketError) => {
+            this.dialogService.error(this.errorHandler.parseWsError(error));
+            return EMPTY;
+          }),
+        );
+      }),
       untilDestroyed(this),
-    ).subscribe({
-      next: () => {
-        this.loader.close();
-      },
-      error: (error: WebsocketError) => {
-        this.dialogService.error(this.errorHandler.parseWsError(error));
-        this.loader.close();
-      },
-    });
+    ).subscribe();
   }
 }

@@ -84,20 +84,18 @@ export class KubernetesSettingsComponent implements OnInit {
     this.showReInitConfirm(values).pipe(
       filter(Boolean),
       switchMap(() => {
-        this.loader.open();
         return forkJoin([
           this.ws.job('kubernetes.update', [values]),
           this.appService.updateContainerConfig(enableContainerImageUpdate),
         ]).pipe(
+          this.loader.withLoader(),
           tap(([job]) => {
             if (job.state !== JobState.Success) {
               return;
             }
-            this.loader.close();
             this.slideInRef.close();
           }),
           catchError((error) => {
-            this.loader.close();
             this.formErrorHandler.handleWsFormError(error, this.form);
             return EMPTY;
           }),

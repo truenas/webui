@@ -32,19 +32,17 @@ export class ExportAllKeysDialogComponent {
   onDownload(): void {
     const fileName = 'dataset_' + this.dataset.name + '_keys.json';
     const mimetype = 'application/json';
-    this.loader.open();
     this.ws.call('core.download', ['pool.dataset.export_keys', [this.dataset.name], fileName])
       .pipe(
+        this.loader.withLoader(),
         switchMap(([, url]) => this.storageService.downloadUrl(url, fileName, mimetype)),
         untilDestroyed(this),
       )
       .subscribe({
         next: () => {
-          this.loader.close();
           this.dialogRef.close();
         },
         error: (error: WebsocketError) => {
-          this.loader.close();
           this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });

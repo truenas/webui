@@ -35,12 +35,10 @@ export class ChartEventsDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loader.open();
     forkJoin([
       this.appService.getChartReleaseWithResources(this.catalogApp.name),
       this.appService.getChartReleaseEvents(this.catalogApp.name),
-    ]).pipe(untilDestroyed(this)).subscribe(([charts, events]) => {
-      this.loader.close();
+    ]).pipe(this.loader.withLoader(), untilDestroyed(this)).subscribe(([charts, events]) => {
       if (charts) {
         this.catalogApp = charts[0];
       }
@@ -87,13 +85,13 @@ export class ChartEventsDialogComponent implements OnInit {
   }
 
   refreshEvents(): void {
-    this.loader.open();
-    this.appService.getChartReleaseEvents(this.catalogApp.name).pipe(untilDestroyed(this)).subscribe((evt) => {
-      this.loader.close();
-      this.chartEvents = [...evt].sort((a, b) => {
-        return b.metadata.creation_timestamp?.$date - a.metadata.creation_timestamp?.$date;
+    this.appService.getChartReleaseEvents(this.catalogApp.name)
+      .pipe(this.loader.withLoader(), untilDestroyed(this))
+      .subscribe((evt) => {
+        this.chartEvents = [...evt].sort((a, b) => {
+          return b.metadata.creation_timestamp?.$date - a.metadata.creation_timestamp?.$date;
+        });
+        this.eventsPanel.open();
       });
-      this.eventsPanel.open();
-    });
   }
 }

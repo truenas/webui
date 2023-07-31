@@ -41,22 +41,19 @@ export class SignCsrDialogComponent {
   ) {}
 
   onSubmit(): void {
-    this.loader.open();
     const params = {
       ...this.form.value,
       ca_id: this.caId,
     };
 
     this.ws.call('certificateauthority.ca_sign_csr', [params as CertificateAuthoritySignRequest])
-      .pipe(untilDestroyed(this))
+      .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: () => {
           this.snackbar.success(this.translate.instant('Certificate request signed'));
-          this.loader.close();
           this.dialogRef.close();
         },
         error: (error) => {
-          this.loader.close();
           this.errorHandler.handleWsFormError(error, this.form);
         },
       });

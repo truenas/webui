@@ -92,10 +92,8 @@ export class PodSelectLogsDialogComponent implements OnInit {
   }
 
   loadPodLogs(appName: string): void {
-    this.loader.open();
-
     this.ws.call('chart.release.pod_logs_choices', [appName])
-      .pipe(untilDestroyed(this)).subscribe({
+      .pipe(this.loader.withLoader(), untilDestroyed(this)).subscribe({
         next: (podLogs) => {
           this.podLogsDetails = { ...podLogs };
           const logsList = Object.keys(this.podLogsDetails);
@@ -107,12 +105,10 @@ export class PodSelectLogsDialogComponent implements OnInit {
           } else {
             this.hasPool = false;
           }
-          this.loader.close();
           this.cdr.markForCheck();
         },
         error: () => {
           this.hasPool = false;
-          this.loader.close();
           this.cdr.markForCheck();
         },
       });

@@ -10,7 +10,7 @@ import {
   catchError,
   filter, shareReplay, switchMap, take, tap,
 } from 'rxjs/operators';
-import { toLoadingState } from 'app/helpers/to-loading-state.helper';
+import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { helptext } from 'app/helptext/system/2fa';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { ErrorReport } from 'app/interfaces/error-report.interface';

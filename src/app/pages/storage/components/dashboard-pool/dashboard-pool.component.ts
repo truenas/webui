@@ -73,19 +73,16 @@ export class DashboardPoolComponent {
       .pipe(
         filter(Boolean),
         switchMap(() => {
-          this.loader.open();
-          return this.ws.job('pool.expand', [this.pool.id]);
+          return this.ws.job('pool.expand', [this.pool.id]).pipe(this.loader.withLoader());
         }),
         filter((job) => job.state === JobState.Success),
         tap(() => {
-          this.loader.close();
           this.snackbar.success(
             this.translate.instant('Successfully expanded pool {name}.', { name: this.pool.name }),
           );
           this.store.loadDashboard();
         }),
         catchError((error: WebsocketError) => {
-          this.loader.close();
           this.dialogService.error(this.errorHandler.parseWsError(error));
           return EMPTY;
         }),
@@ -101,18 +98,15 @@ export class DashboardPoolComponent {
     }).pipe(
       filter(Boolean),
       switchMap(() => {
-        this.loader.open();
-        return this.ws.call('pool.upgrade', [this.pool.id]);
+        return this.ws.call('pool.upgrade', [this.pool.id]).pipe(this.loader.withLoader());
       }),
       tap(() => {
-        this.loader.close();
         this.snackbar.success(
           this.translate.instant('Pool {name} successfully upgraded.', { name: this.pool.name }),
         );
         this.store.loadDashboard();
       }),
       catchError((error: WebsocketError) => {
-        this.loader.close();
         this.dialogService.error(this.errorHandler.parseWsError(error));
         return EMPTY;
       }),

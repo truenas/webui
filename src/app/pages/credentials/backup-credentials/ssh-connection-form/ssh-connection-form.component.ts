@@ -156,7 +156,6 @@ export class SshConnectionFormComponent implements OnInit {
   }
 
   onDiscoverRemoteHostKeyPressed(): void {
-    this.loader.open();
     const requestParams = {
       host: this.form.controls.host.value,
       port: this.form.controls.port.value,
@@ -164,16 +163,14 @@ export class SshConnectionFormComponent implements OnInit {
     };
 
     this.ws.call('keychaincredential.remote_ssh_host_key_scan', [requestParams])
-      .pipe(untilDestroyed(this))
+      .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: (remoteHostKey) => {
-          this.loader.close();
           this.form.patchValue({
             remote_host_key: remoteHostKey,
           });
         },
         error: (error) => {
-          this.loader.close();
           this.errorHandler.handleWsFormError(error, this.form);
         },
       });

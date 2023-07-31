@@ -157,10 +157,9 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
   loadApplicationForCreation(): void {
     this.isNew = true;
     this.isLoading = true;
-    this.loader.open();
     this.appService
       .getCatalogItem(this.appId, this.catalog, this.train)
-      .pipe(untilDestroyed(this))
+      .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: (app) => {
           app.schema = app.versions[app.latest_version].schema;
@@ -294,10 +293,9 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
   private loadApplicationForEdit(): void {
     this.isNew = false;
     this.isLoading = true;
-    this.loader.open();
     this.appService
       .getChartRelease(this.appId)
-      .pipe(untilDestroyed(this))
+      .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: (releases) => {
           this.setChartForEdit(releases[0]);
@@ -423,13 +421,11 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
   private afterAppLoaded(): void {
     this.appsLoaded = true;
     this.isLoading = false;
-    this.loader.close();
     this.checkIfPoolIsSet();
     this.cdr.markForCheck();
   }
 
   private afterAppLoadError(error: WebsocketError): void {
-    this.loader.close();
     this.router.navigate(['/apps', 'available']).then(() => {
       this.dialogService.error(this.errorHandler.parseWsError(error));
     });

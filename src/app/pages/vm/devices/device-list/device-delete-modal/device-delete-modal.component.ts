@@ -90,7 +90,6 @@ export class DeviceDeleteModalComponent implements OnInit {
 
   onSubmit(): void {
     const value = this.form.value as VmDeviceDelete;
-    this.loader.open();
     this.ws.call('vm.device.delete', [
       this.data.row.id,
       {
@@ -99,15 +98,13 @@ export class DeviceDeleteModalComponent implements OnInit {
         force: value.force,
       },
     ])
-      .pipe(untilDestroyed(this))
+      .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: () => {
           this.dialogRef.close(true);
-          this.loader.close();
         },
         error: (error: WebsocketError) => {
           this.dialogService.error(this.errorHandler.parseWsError(error));
-          this.loader.close();
         },
       });
   }

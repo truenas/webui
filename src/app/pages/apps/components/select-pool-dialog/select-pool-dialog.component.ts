@@ -86,16 +86,13 @@ export class SelectPoolDialogComponent implements OnInit {
   }
 
   private loadPools(): void {
-    this.loader.open();
-
     forkJoin(([
       this.appService.getKubernetesConfig(),
       this.appService.getPoolList(),
     ]))
-      .pipe(untilDestroyed(this))
+      .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: ([config, pools]) => {
-          this.loader.close();
           this.selectedPool = config.pool;
           this.form.patchValue({
             pool: this.selectedPool,
@@ -112,7 +109,6 @@ export class SelectPoolDialogComponent implements OnInit {
           }
         },
         error: (error) => {
-          this.loader.close();
           this.dialogService.error(this.errorHandler.parseWsError(error));
           this.dialogRef.close(false);
         },

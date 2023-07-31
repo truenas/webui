@@ -33,18 +33,15 @@ export class CronDeleteDialogComponent {
   ) { }
 
   onDelete(): void {
-    this.loader.open();
     this.ws.call('cronjob.delete', [this.cronjob.id])
-      .pipe(untilDestroyed(this))
+      .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: () => {
           this.snackbar.success(this.translate.instant('Cronjob deleted'));
           this.dialogRef.close(true);
-          this.loader.close();
         },
         error: (error: WebsocketError) => {
           this.dialogService.error(this.errorHandler.parseWsError(error));
-          this.loader.close();
         },
       });
   }
