@@ -18,11 +18,7 @@ import {
   Enclosure, EnclosureElement, EnclosureSlot, EnclosureView,
 } from 'app/interfaces/enclosure.interface';
 import { CoreEvent } from 'app/interfaces/events';
-import {
-  CanvasExtractEvent,
-  DiskTemperaturesEvent,
-  DriveSelectedEvent,
-} from 'app/interfaces/events/disk-events.interface';
+import { CanvasExtractEvent, DriveSelectedEvent } from 'app/interfaces/events/disk-events.interface';
 import { LabelDrivesEvent } from 'app/interfaces/events/label-drives-event.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { Disk, TopologyDisk } from 'app/interfaces/storage.interface';
@@ -58,7 +54,6 @@ import {
 import { SystemProfile } from 'app/pages/system/view-enclosure/components/view-enclosure/view-enclosure.component';
 import { ViewConfig } from 'app/pages/system/view-enclosure/interfaces/view.config';
 import { EnclosureState, EnclosureStore } from 'app/pages/system/view-enclosure/stores/enclosure-store.service';
-import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 import { DiskTemperatureService, Temperature } from 'app/services/disk-temperature.service';
 import { ThemeService } from 'app/services/theme/theme.service';
@@ -278,7 +273,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   readonly EnclosureLocation = EnclosureLocation;
 
   constructor(
-    protected core: CoreService,
     public cdr: ChangeDetectorRef,
     public dialogService: DialogService,
     protected translate: TranslateService,
@@ -292,11 +286,11 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
     this.themeUtils = new ThemeUtils();
     this.diskTemperatureService.listenForTemperatureUpdates();
 
-    core.register({ observerClass: this, eventName: 'DiskTemperatures' }).pipe(untilDestroyed(this)).subscribe((evt: DiskTemperaturesEvent) => {
+    this.diskTemperatureService.temperature$.pipe(untilDestroyed(this)).subscribe((data) => {
       const chassisView: ChassisView = this.chassisView && this.view === 'rear' ? this.chassis?.rear : this.chassis?.front;
       if (!this.chassis || !chassisView?.driveTrayObjects) { return; }
 
-      const clone: Temperature = { ...evt.data };
+      const clone: Temperature = { ...data };
       clone.values = {};
       clone.keys = [];
 
@@ -309,7 +303,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
 
           if (disk) {
             clone.keys.push(disk.name);
-            clone.values[disk.name] = evt.data.values[disk.name];
+            clone.values[disk.name] = data.values[disk.name];
           }
         });
       } else {
@@ -322,7 +316,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
 
       this.temperatures = clone;
     });
-    core.emit({ name: 'DiskTemperaturesSubscribe', sender: this });
+    this.diskTemperatureService.diskTemperaturesSubscribe();
 
     this.store$.select(selectTheme).pipe(
       filter(Boolean),
@@ -438,8 +432,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
 
   // Component Cleanup
   ngOnDestroy(): void {
-    this.core.emit({ name: 'DiskTemperaturesUnsubscribe', sender: this });
-    this.core.unregister({ observerClass: this });
+    this.diskTemperatureService.diskTemperaturesUnsubscribe();
     this.destroyAllEnclosures();
     this.app.stage.destroy(true);
     this.app.destroy(true);

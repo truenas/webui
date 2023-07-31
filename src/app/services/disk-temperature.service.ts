@@ -4,7 +4,6 @@ import { map, Subject } from 'rxjs';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { Disk, DiskTemperatures } from 'app/interfaces/storage.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
-import { CoreService } from 'app/services/core-service/core.service';
 import { DisksUpdateService } from 'app/services/disks-update.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -26,27 +25,14 @@ export class DiskTemperatureService implements OnDestroy {
 
   private disksUpdateSubscriptionId: string;
 
+  temperature$ = new Subject<Temperature>();
+
   constructor(
-    protected core: CoreService,
     protected websocket: WebSocketService,
     private disksUpdateService: DisksUpdateService,
   ) { }
 
   listenForTemperatureUpdates(): void {
-    this.core.register({ observerClass: this, eventName: 'DiskTemperaturesSubscribe' }).subscribe(() => {
-      this.subscribers++;
-      if (!this.broadcast) {
-        this.start();
-      }
-    });
-
-    this.core.register({ observerClass: this, eventName: 'DiskTemperaturesUnsubscribe' }).subscribe(() => {
-      this.subscribers--;
-      if (this.subscribers === 0) {
-        this.stop();
-      }
-    });
-
     this.websocket.call('disk.query', [[], { select: ['name', 'type'] }]).subscribe((disks) => {
       this.disks = disks;
       if (this.subscribers > 0) this.start();
@@ -64,6 +50,20 @@ export class DiskTemperatureService implements OnDestroy {
       if (this.subscribers > 0) this.start();
     });
     this.disksUpdateSubscriptionId = this.disksUpdateService.addSubscriber(disksUpdateTrigger$, true);
+  }
+
+  diskTemperaturesSubscribe(): void {
+    this.subscribers++;
+    if (!this.broadcast) {
+      this.start();
+    }
+  }
+
+  diskTemperaturesUnsubscribe(): void {
+    this.subscribers--;
+    if (this.subscribers === 0) {
+      this.stop();
+    }
   }
 
   start(): void {
@@ -86,7 +86,7 @@ export class DiskTemperatureService implements OnDestroy {
         unit: 'Celsius',
         symbolText: '°',
       };
-      this.core.emit({ name: 'DiskTemperatures', data, sender: this });
+      this.temperature$.next(data);
     });
   }
 

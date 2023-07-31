@@ -15,7 +15,6 @@ import {
   EnclosureDisksComponent,
 } from 'app/pages/system/view-enclosure/components/enclosure-disks/enclosure-disks.component';
 import { EnclosureStore } from 'app/pages/system/view-enclosure/stores/enclosure-store.service';
-import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 import { DiskTemperatureService } from 'app/services/disk-temperature.service';
 import { ThemeService } from 'app/services/theme/theme.service';
@@ -38,7 +37,6 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
   }
 
   constructor(
-    protected core: CoreService,
     public cdr: ChangeDetectorRef,
     public dialogService: DialogService,
     protected translate: TranslateService,
@@ -50,7 +48,6 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
     protected enclosureStore: EnclosureStore,
   ) {
     super(
-      core,
       cdr,
       dialogService,
       translate,
