@@ -15,7 +15,7 @@ import { abortJobPressed, jobPanelClosed } from 'app/modules/jobs/store/job.acti
 import {
   JobSlice, selectJobState, selectRunningJobsCount, selectWaitingJobsCount, selectFailedJobsCount, selectJobsPanelSlice,
 } from 'app/modules/jobs/store/job.selectors';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 
 @UntilDestroy()
 @Component({

@@ -5,8 +5,8 @@ import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { PowerMenuComponent } from 'app/modules/layout/components/topbar/power-menu/power-menu.component';
-import { DialogService } from 'app/services';
 import { AuthService } from 'app/services/auth/auth.service';
+import { DialogService } from 'app/services/dialog.service';
 import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
 
 describe('PowerMenuComponent', () => {

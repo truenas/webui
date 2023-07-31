@@ -34,7 +34,8 @@ import {
 import {
   CertificateSubjectComponent,
 } from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-subject/certificate-subject.component';
-import { SystemGeneralService, WebSocketService } from 'app/services';
+import { SystemGeneralService } from 'app/services/system-general.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { CsrAddComponent } from './csr-add.component';
 
 describe('CsrAddComponent', () => {

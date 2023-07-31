@@ -24,10 +24,11 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { requiredIdmapDomains } from 'app/pages/directory-service/utils/required-idmap-domains.utils';
-import {
-  DialogService, IdmapService, ValidationService, WebSocketService,
-} from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { IdmapService } from 'app/services/idmap.service';
+import { ValidationService } from 'app/services/validation.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 const minAllowedRange = 1000;
 const maxAllowedRange = 2147483647;

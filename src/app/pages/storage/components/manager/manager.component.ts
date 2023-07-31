@@ -37,9 +37,10 @@ import { ExportedPoolsDialogComponent } from 'app/pages/storage/components/manag
 import {
   RepeatVdevDialogComponent, RepeatVdevDialogData,
 } from 'app/pages/storage/components/manager/repeat-vdev-dialog/repeat-vdev-dialog.component';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { StorageService } from 'app/services/storage.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 import { ManagerDisk } from './manager-disk.interface';

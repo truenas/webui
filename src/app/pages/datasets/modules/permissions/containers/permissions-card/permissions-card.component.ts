@@ -14,7 +14,7 @@ import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { PermissionsCardStore } from 'app/pages/datasets/modules/permissions/stores/permissions-card.store';
 import { isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 @UntilDestroy()

@@ -7,7 +7,7 @@ import { DatasetUnlockParams } from 'app/interfaces/dataset-lock.interface';
 import {
   DatasetUnlockComponent,
 } from 'app/pages/datasets/modules/encryption/components/dataset-unlock/dataset-unlock.component';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 
 @Component({
   templateUrl: './unlock-summary-dialog.component.html',

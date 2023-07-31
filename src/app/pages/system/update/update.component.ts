@@ -25,10 +25,12 @@ import {
   SaveConfigDialogComponent, SaveConfigDialogMessages,
 } from 'app/pages/system/general-settings/save-config-dialog/save-config-dialog.component';
 import { updateAgainCode } from 'app/pages/system/update/update-again-code.constant';
-import { StorageService, SystemGeneralService, WebSocketService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { StorageService } from 'app/services/storage.service';
+import { SystemGeneralService } from 'app/services/system-general.service';
 import { UpdateService } from 'app/services/update.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -42,7 +44,7 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 export class UpdateComponent implements OnInit {
   packages: { operation: string; name: string }[] = [];
   status: SystemUpdateStatus;
-  releaseNotes = '';
+  releaseNotesUrl = '';
   changeLog = '';
   updating = false;
   updated = false;
@@ -298,7 +300,7 @@ export class UpdateComponent implements OnInit {
   check(): void {
     // Reset the template
     this.updatesAvailable = false;
-    this.releaseNotes = '';
+    this.releaseNotesUrl = '';
 
     this.showSpinner = true;
     this.pendingUpdates();
@@ -347,8 +349,8 @@ export class UpdateComponent implements OnInit {
           if (update.changelog) {
             this.changeLog = update.changelog.replace(/\n/g, '<br>');
           }
-          if (update.notes) {
-            this.releaseNotes = update.notes.ReleaseNotes;
+          if (update.release_notes_url) {
+            this.releaseNotesUrl = update.release_notes_url;
           }
         }
         if (this.currentTrainDescription && this.currentTrainDescription.includes('[release]')) {
@@ -466,8 +468,8 @@ export class UpdateComponent implements OnInit {
           if (update.changelog) {
             this.changeLog = update.changelog.replace(/\n/g, '<br>');
           }
-          if (update.notes) {
-            this.releaseNotes = update.notes.ReleaseNotes;
+          if (update.release_notes_url) {
+            this.releaseNotesUrl = update.release_notes_url;
           }
           this.updateType = 'standard';
           this.saveConfigurationIfNecessary()

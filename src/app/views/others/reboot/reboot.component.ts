@@ -28,22 +28,6 @@ export class RebootComponent implements OnInit {
   ) {
   }
 
-  isWsConnected(): void {
-    this.wsManager.isConnected$.pipe(untilDestroyed(this)).subscribe({
-      next: (isConnected) => {
-        if (isConnected) {
-          this.loader.close();
-          // ws is connected
-          this.router.navigate(['/sessions/signin']);
-        } else {
-          setTimeout(() => {
-            this.isWsConnected();
-          }, 5000);
-        }
-      },
-    });
-  }
-
   ngOnInit(): void {
     // Replace URL so that we don't reboot again if page is refreshed.
     this.location.replaceState('/sessions/signin');
@@ -59,10 +43,10 @@ export class RebootComponent implements OnInit {
       },
       complete: () => { // show reboot screen
         this.wsManager.prepareShutdown();
-        this.loader.open();
+        this.wsManager.closeWebsocketConnection();
         setTimeout(() => {
-          this.isWsConnected();
-        }, 3000);
+          this.router.navigate(['/sessions/signin']);
+        }, 5000);
       },
     });
   }

@@ -8,7 +8,8 @@ import { EmptyType } from 'app/enums/empty-type.enum';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AppTableConfirmDeleteDialog, TableComponent } from 'app/modules/entity/table/table.component';
-import { DialogService, AppLoaderService } from 'app/services';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 

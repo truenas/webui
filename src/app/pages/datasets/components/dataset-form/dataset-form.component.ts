@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  forkJoin, Observable, of, switchMap, tap,
+  forkJoin, Observable, of, switchMap, map, combineLatest,
 } from 'rxjs';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.interface';
@@ -27,8 +27,9 @@ import {
 } from 'app/pages/datasets/components/dataset-form/sections/quotas-section/quotas-section.component';
 import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/utils/dataset-form.service';
 import { getDatasetLabel } from 'app/pages/datasets/utils/dataset.utils';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -175,21 +176,28 @@ export class DatasetFormComponent implements OnInit {
       : this.ws.call('pool.dataset.update', [this.existingDataset.id, payload as DatasetUpdate]);
 
     request$.pipe(
-      switchMap(
-        (dataset) => this.checkForAclOnParent(dataset),
-        (dataset) => dataset,
-      ),
+      switchMap((dataset) => {
+        return this.checkForAclOnParent().pipe(
+          switchMap((isAcl) => combineLatest([of(dataset), isAcl ? this.aclDialog() : of(false)])),
+        );
+      }),
       untilDestroyed(this),
     ).subscribe({
-      next: (createdDataset) => {
+      next: ([createdDataset, shouldGoToEditor]) => {
         this.isLoading = false;
         this.cdr.markForCheck();
         this.slideInRef.close(createdDataset);
-        this.snackbar.success(
-          this.isNew
-            ? this.translate.instant('Switched to new dataset «{name}».', { name: getDatasetLabel(createdDataset) })
-            : this.translate.instant('Dataset «{name}» updated.', { name: getDatasetLabel(createdDataset) }),
-        );
+        if (shouldGoToEditor) {
+          this.router.navigate(['/', 'datasets', 'acl', 'edit'], {
+            queryParams: { path: createdDataset.mountpoint },
+          });
+        } else {
+          this.snackbar.success(
+            this.isNew
+              ? this.translate.instant('Switched to new dataset «{name}».', { name: getDatasetLabel(createdDataset) })
+              : this.translate.instant('Dataset «{name}» updated.', { name: getDatasetLabel(createdDataset) }),
+          );
+        }
       },
       error: (error) => {
         this.isLoading = false;
@@ -209,34 +217,22 @@ export class DatasetFormComponent implements OnInit {
     }, {} as DatasetCreate | DatasetUpdate);
   }
 
-  private checkForAclOnParent(createdDataset: Dataset): Observable<unknown> {
+  private checkForAclOnParent(): Observable<boolean> {
     if (!this.parentDataset) {
-      return of(undefined);
+      return of(false);
     }
 
     const parentPath = `/mnt/${this.parentDataset.id}`;
-    return this.ws.call('filesystem.acl_is_trivial', [parentPath]).pipe(
-      tap((isTrivial) => {
-        if (isTrivial) {
-          return of(undefined);
-        }
+    return this.ws.call('filesystem.acl_is_trivial', [parentPath]).pipe(map((isTrivial) => !isTrivial));
+  }
 
-        return this.dialog.confirm({
-          title: helptext.afterSubmitDialog.title,
-          message: helptext.afterSubmitDialog.message,
-          hideCheckbox: true,
-          buttonText: helptext.afterSubmitDialog.actionBtn,
-          cancelText: helptext.afterSubmitDialog.cancelBtn,
-        }).pipe(
-          tap((shouldGoToEditor) => {
-            if (!shouldGoToEditor) {
-              return;
-            }
-
-            this.router.navigate(['/', 'datasets', 'acl', 'edit', createdDataset.id]);
-          }),
-        );
-      }),
-    );
+  private aclDialog(): Observable<boolean> {
+    return this.dialog.confirm({
+      title: helptext.afterSubmitDialog.title,
+      message: helptext.afterSubmitDialog.message,
+      hideCheckbox: true,
+      buttonText: helptext.afterSubmitDialog.actionBtn,
+      cancelText: helptext.afterSubmitDialog.cancelBtn,
+    });
   }
 }

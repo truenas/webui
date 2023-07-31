@@ -12,7 +12,7 @@ import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.com
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { BootPoolReplaceDialogComponent } from './boot-pool-replace-dialog.component';
 
 describe('BootPoolReplaceDialogComponent', () => {

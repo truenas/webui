@@ -10,7 +10,7 @@ import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import {
   ScheduleSectionComponent,
 } from 'app/pages/data-protection/replication/replication-form/sections/schedule-section/schedule-section.component';
-import { LanguageService } from 'app/services';
+import { LanguageService } from 'app/services/language.service';
 import { LocaleService } from 'app/services/locale.service';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 

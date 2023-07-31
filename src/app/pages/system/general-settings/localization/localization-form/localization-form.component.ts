@@ -18,8 +18,10 @@ import { IxComboboxProvider } from 'app/modules/ix-forms/components/ix-combobox/
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { LanguageService, SystemGeneralService, WebSocketService } from 'app/services';
+import { LanguageService } from 'app/services/language.service';
 import { LocaleService } from 'app/services/locale.service';
+import { SystemGeneralService } from 'app/services/system-general.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { localizationFormSubmitted } from 'app/store/preferences/preferences.actions';
 import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';

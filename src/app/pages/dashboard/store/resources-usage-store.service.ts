@@ -9,7 +9,7 @@ import { MemoryStatsEventData } from 'app/interfaces/events/memory-stats-event.i
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { AllCpusUpdate, AllNetworkInterfacesUpdate, ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
 import { DashboardNetworkInterface, DashboardNetworkInterfaceAlias } from 'app/pages/dashboard/components/dashboard/dashboard.component';
-import { WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 
 export interface ResourcesUsageState {
   cpuUsageUpdate: AllCpusUpdate;

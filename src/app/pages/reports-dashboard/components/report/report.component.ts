@@ -344,7 +344,7 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
     switch (timespan) {
       case ReportZoomLevel.HalfYear:
         durationUnit = 'months';
-        value = 5;
+        value = 6;
         break;
       case ReportZoomLevel.Month:
         durationUnit = 'months';

@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select';
-import { NetworkService } from 'app/services';
+import { NetworkService } from 'app/services/network.service';
 
 @Component({
   selector: 'ix-ip-input-with-netmask',

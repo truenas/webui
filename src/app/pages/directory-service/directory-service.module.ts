@@ -24,7 +24,7 @@ import {
 } from 'app/pages/directory-service/components/leave-domain-dialog/leave-domain-dialog.component';
 import { routing } from 'app/pages/directory-service/directory-service.routing';
 import { DirectoryServicesComponent } from 'app/pages/directory-service/directory-services.component';
-import { SystemGeneralService } from 'app/services';
+import { SystemGeneralService } from 'app/services/system-general.service';
 import { IdmapListComponent } from './components/idmap-list/idmap-list.component';
 import { KerberosRealmsFormComponent } from './components/kerberos-realms-form/kerberos-realms-form.component';
 import { LdapComponent } from './components/ldap/ldap.component';

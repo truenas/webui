@@ -16,12 +16,14 @@ import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { Timeout } from 'app/interfaces/timeout.interface';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import {
-  AppLoaderService, DialogService, SystemGeneralService,
-} from 'app/services';
+  DialogService,
+} from 'app/services/dialog.service';
 import { LocaleService } from 'app/services/locale.service';
 import { ProductImageService } from 'app/services/product-image.service';
+import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
