@@ -18,6 +18,7 @@ import {
   delay, distinctUntilChanged, filter, switchMap, throttleTime,
 } from 'rxjs/operators';
 import { toggleMenuDuration } from 'app/constants/toggle-menu-duration';
+import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { ReportingGraphName } from 'app/enums/reporting.enum';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -124,6 +125,7 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
     private core: CoreService,
     private store$: Store<AppState>,
     private themeService: ThemeService,
+    private formatDateTimePipe: FormatDateTimePipe,
     @Inject(WINDOW) private window: Window,
   ) {
     super(translate);
@@ -236,8 +238,14 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
 
   formatTime(stamp: string): string {
     const parsed = Date.parse(stamp);
-    const result = this.localeService.formatDateTimeWithNoTz(new Date(parsed));
+    const result = this.formatDateTimePipe.transform(parsed);
     return result.toLowerCase() !== 'invalid date' ? result : null;
+  }
+
+  onZoomChange(interval: number[]): void {
+    const [startDate, endDate] = interval;
+    this.currentStartDate = startDate;
+    this.currentEndDate = endDate;
   }
 
   setChartInteractive(value: boolean): void {
@@ -316,7 +324,7 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
     this.fetchReport$.next({ rrdOptions, identifier, report: this.report });
   }
 
-  // Convert timespan to start/end options for RRDTool
+  // Convert timespan to start/end options
   convertTimespan(
     timespan: ReportZoomLevel,
     direction = ReportStepDirection.Backward,
@@ -372,7 +380,7 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
 
     // if endDate is in the future, reset with endDate to now
     if (endDate.getTime() >= now.getTime()) {
-      endDate = new Date();
+      endDate = now;
       startDate = sub(endDate, { [durationUnit]: value });
       this.stepForwardDisabled = true;
     } else {
