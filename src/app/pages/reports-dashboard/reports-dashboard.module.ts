@@ -12,6 +12,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
+import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
@@ -45,7 +46,6 @@ import { ReportsGlobalControlsComponent } from './components/reports-global-cont
     MatCardModule,
     FlexLayoutModule,
     CommonDirectivesModule,
-    EntityModule,
     LayoutModule,
     MatButtonToggleModule,
     MatSlideToggleModule,
@@ -58,5 +58,6 @@ import { ReportsGlobalControlsComponent } from './components/reports-global-cont
     ReportsDashboardComponent,
     ReportsGlobalControlsComponent,
   ],
+  providers: [FormatDateTimePipe],
 })
 export class ReportsDashboardModule {}

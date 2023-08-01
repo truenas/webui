@@ -1,5 +1,5 @@
 import {
-  Component, Input, AfterViewInit, OnDestroy, OnChanges, ViewChild, ElementRef,
+  Component, Input, AfterViewInit, OnDestroy, OnChanges, ViewChild, ElementRef, EventEmitter, Output,
 } from '@angular/core';
 import { UUID } from 'angular2-uuid';
 import { utcToZonedTime } from 'date-fns-tz';
@@ -53,6 +53,8 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
   timeFormat = '%H:%M';
   culling = 6;
   controlUid = `chart_${UUID.UUID()}`;
+
+  @Output() zoomChange = new EventEmitter<number[]>();
 
   private utils: ThemeUtils = new ThemeUtils();
 
@@ -149,6 +151,9 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
         } else {
           console.warn('axes not found');
         }
+      },
+      zoomCallback: (startDate: number, endDate: number) => {
+        this.zoomChange.emit([startDate, endDate]);
       },
       stackedGraph: this.stacked,
     } as unknown as dygraphs.Options;
