@@ -18,6 +18,7 @@ import { AppRollbackModalComponent } from 'app/pages/apps/components/installed-a
 import { AppUpgradeDialogComponent } from 'app/pages/apps/components/installed-apps/app-upgrade-dialog/app-upgrade-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
+import { AppCatalogPipe } from 'app/pages/apps/utils/app-catalog.pipe';
 import { DialogService } from 'app/services/dialog.service';
 import { RedirectService } from 'app/services/redirect.service';
 
@@ -62,6 +63,7 @@ describe('AppInfoCardComponent', () => {
 
   const createComponent = createComponentFactory({
     component: AppInfoCardComponent,
+    imports: [AppCatalogPipe],
     declarations: [
       MockComponents(
         AppCardLogoComponent,
@@ -132,7 +134,7 @@ describe('AppInfoCardComponent', () => {
       },
       {
         label: 'Catalog:',
-        value: 'TRUENAS',
+        value: 'TrueNAS',
       },
       {
         label: 'Train:',
