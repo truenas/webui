@@ -1,9 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 import _ from 'lodash';
-import {
-  filter, switchMap, tap,
-} from 'rxjs';
+import { filter, switchMap, tap } from 'rxjs';
 import { Pool, PoolTopology } from 'app/interfaces/pool.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -37,6 +35,10 @@ export class AddVdevsStore extends ComponentStore<AddVdevsState> {
     private errorHandler: ErrorHandlerService,
   ) {
     super(initialState);
+  }
+
+  resetStoreToInitialState(): void {
+    this.patchState({ ...initialState });
   }
 
   initialize = this.effect((trigger$) => {
