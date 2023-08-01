@@ -246,6 +246,7 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
     const [startDate, endDate] = interval;
     this.currentStartDate = startDate;
     this.currentEndDate = endDate;
+    this.stepForwardDisabled = false;
   }
 
   setChartInteractive(value: boolean): void {
