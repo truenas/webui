@@ -821,6 +821,7 @@
   "Invalid format or character": "",
   "Invalid format. Expected format: <property>=<value>": "",
   "Invalid image": "",
+  "Invalid or expired OTP. Please try again.": "",
   "Invalid value. Must be greater than or equal to ": "",
   "Invalid value. Must be less than or equal to ": "",
   "Invisible": "",
