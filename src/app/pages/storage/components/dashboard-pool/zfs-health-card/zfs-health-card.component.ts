@@ -154,7 +154,7 @@ export class ZfsHealthCardComponent implements OnChanges {
     })
       .pipe(
         filter(Boolean),
-        switchMap(() => this.ws.call('pool.scrub', [this.pool.id, PoolScrubAction.Start])),
+        switchMap(() => this.ws.startJob('pool.scrub', [this.pool.id, PoolScrubAction.Start])),
         catchError((error: WebsocketError) => {
           this.dialogService.error(this.errorHandler.parseWsError(error));
           return EMPTY;
@@ -172,7 +172,7 @@ export class ZfsHealthCardComponent implements OnChanges {
       buttonText: this.translate.instant('Stop Scrub'),
     }).pipe(
       filter(Boolean),
-      switchMap(() => this.ws.call('pool.scrub', [this.pool.id, PoolScrubAction.Stop])),
+      switchMap(() => this.ws.startJob('pool.scrub', [this.pool.id, PoolScrubAction.Stop])),
       catchError((error: WebsocketError) => {
         this.dialogService.error(this.errorHandler.parseWsError(error));
         return EMPTY;
@@ -182,13 +182,13 @@ export class ZfsHealthCardComponent implements OnChanges {
   }
 
   onPauseScrub(): void {
-    this.ws.call('pool.scrub', [this.pool.id, PoolScrubAction.Pause])
+    this.ws.startJob('pool.scrub', [this.pool.id, PoolScrubAction.Pause])
       .pipe(untilDestroyed(this))
       .subscribe();
   }
 
   onResumeScrub(): void {
-    this.ws.call('pool.scrub', [this.pool.id, PoolScrubAction.Start])
+    this.ws.startJob('pool.scrub', [this.pool.id, PoolScrubAction.Start])
       .pipe(untilDestroyed(this))
       .subscribe();
   }

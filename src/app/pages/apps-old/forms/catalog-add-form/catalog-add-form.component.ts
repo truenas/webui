@@ -47,7 +47,7 @@ export class CatalogAddFormComponent {
     const values = this.form.value;
 
     this.isFormLoading = true;
-    this.ws.call('catalog.create', [values as CatalogCreate])
+    this.ws.startJob('catalog.create', [values as CatalogCreate])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {

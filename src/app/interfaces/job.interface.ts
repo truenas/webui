@@ -1,7 +1,7 @@
 import { JobState } from 'app/enums/job-state.enum';
 import { ResponseErrorType } from 'app/enums/response-error-type.enum';
+import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
-import { ApiMethod } from 'app/interfaces/api-directory.interface';
 
 export interface Job<R = unknown, A = unknown[]> {
   abortable: boolean;
@@ -19,7 +19,7 @@ export interface Job<R = unknown, A = unknown[]> {
   id: number;
   logs_excerpt: string;
   logs_path: string;
-  method: ApiMethod;
+  method: ApiJobMethod;
   progress: JobProgress;
   result: R;
   state: JobState;

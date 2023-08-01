@@ -33,7 +33,7 @@ export class RebootComponent implements OnInit {
     this.location.replaceState('/sessions/signin');
 
     this.dialog.closeAll();
-    this.ws.call('system.reboot').pipe(untilDestroyed(this)).subscribe({
+    this.ws.job('system.reboot').pipe(untilDestroyed(this)).subscribe({
       error: (error: WebsocketError) => { // error on reboot
         this.dialogService.error(this.errorHandler.parseWsError(error))
           .pipe(untilDestroyed(this))

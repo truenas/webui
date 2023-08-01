@@ -89,6 +89,7 @@ describe('ZfsHealthCardComponent', () => {
 
           return of(undefined);
         }),
+        startJob: jest.fn(() => of(undefined)),
       }),
     ],
     declarations: [
@@ -150,7 +151,7 @@ describe('ZfsHealthCardComponent', () => {
       await scrubButton.click();
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
-      expect(websocket.call).toHaveBeenCalledWith('pool.scrub', [45, PoolScrubAction.Start]);
+      expect(websocket.startJob).toHaveBeenCalledWith('pool.scrub', [45, PoolScrubAction.Start]);
     });
 
     it('shows information about an active scan task', async () => {
@@ -185,7 +186,7 @@ describe('ZfsHealthCardComponent', () => {
       await stopScrubButton.click();
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
-      expect(websocket.call).toHaveBeenCalledWith('pool.scrub', [45, PoolScrubAction.Stop]);
+      expect(websocket.startJob).toHaveBeenCalledWith('pool.scrub', [45, PoolScrubAction.Stop]);
     });
 
     it('shows information about an active resilver', () => {
@@ -233,7 +234,7 @@ describe('ZfsHealthCardComponent', () => {
       const pauseButton = await loader.getHarness(MatButtonHarness.with({ text: 'Pause Scrub' }));
       await pauseButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.scrub', [45, PoolScrubAction.Pause]);
+      expect(spectator.inject(WebSocketService).startJob).toHaveBeenCalledWith('pool.scrub', [45, PoolScrubAction.Pause]);
     });
 
     it('resumes scrub after it was previously paused and Resume was pressed', async () => {
@@ -256,7 +257,7 @@ describe('ZfsHealthCardComponent', () => {
       const resumeButton = await loader.getHarness(MatButtonHarness.with({ text: 'Resume Scrub' }));
       await resumeButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.scrub', [45, PoolScrubAction.Start]);
+      expect(spectator.inject(WebSocketService).startJob).toHaveBeenCalledWith('pool.scrub', [45, PoolScrubAction.Start]);
     });
   });
 });

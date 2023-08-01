@@ -8,6 +8,7 @@ import { MockPipe } from 'ng-mocks';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { BulkListItemComponent } from 'app/core/components/bulk-list-item/bulk-list-item.component';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
+import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
@@ -121,8 +122,8 @@ describe('AppBulkUpgradeComponent', () => {
       mockProvider(SnackbarService),
       mockWebsocket([
         mockJob('core.bulk'),
-        mockCall('chart.release.upgrade', fakeAppOne),
         mockCall('chart.release.upgrade_summary', fakeUpgradeSummary),
+        mockJob('chart.release.upgrade', fakeSuccessfulJob(fakeAppOne)),
       ]),
     ],
   });

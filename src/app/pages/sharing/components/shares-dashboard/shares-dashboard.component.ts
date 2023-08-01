@@ -10,7 +10,7 @@ import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { assertUnreachable } from 'app/helpers/assert-unreachable.utils';
 import { helptextSharingSmb, helptextSharingNfs } from 'app/helptext/sharing';
-import { ApiDirectory } from 'app/interfaces/api-directory.interface';
+import { ApiCallDirectory } from 'app/interfaces/api/api-call-directory.interface';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { Service } from 'app/interfaces/service.interface';
@@ -449,7 +449,7 @@ export class SharesDashboardComponent implements AfterViewInit {
   }
 
   onSlideToggle(card: ShareType, row: ShareTableRow, param: 'enabled' | 'ro'): void {
-    let updateCall: keyof ApiDirectory;
+    let updateCall: keyof ApiCallDirectory;
     switch (card) {
       case ShareType.Smb:
         updateCall = 'sharing.smb.update';

@@ -8,7 +8,7 @@ import { Spectator } from '@ngneat/spectator';
 import { mockProvider, createComponentFactory } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
 import { ChartFormValue, ChartRelease, ChartSchemaNodeConf } from 'app/interfaces/chart-release.interface';
 import { IxDynamicFormModule } from 'app/modules/ix-dynamic-form/ix-dynamic-form.module';
@@ -341,8 +341,8 @@ describe('ChartWizardComponent', () => {
       }),
       mockProvider(AppLoaderService),
       mockWebsocket([
-        mockCall('chart.release.create'),
-        mockCall('chart.release.update'),
+        mockJob('chart.release.create'),
+        mockJob('chart.release.update'),
         mockCall('catalog.get_item_details', existingCatalogApp),
         mockCall('chart.release.query', [existingChartEdit]),
       ]),

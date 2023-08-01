@@ -179,12 +179,12 @@ export class SupportCardComponent implements OnInit {
         this.loader.open();
         const attachDebug = (_.isObject(result) && result.sendInitialDebug) || false;
 
-        return this.ws.call('truenas.set_production', [event.checked, attachDebug]);
+        return this.ws.job('truenas.set_production', [event.checked, attachDebug]);
       }),
       untilDestroyed(this),
     )
       .subscribe({
-        next: () => {
+        complete: () => {
           this.loader.close();
           this.snackbar.success(
             this.translate.instant(helptext.is_production_dialog.message),
