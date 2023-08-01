@@ -569,19 +569,20 @@ export class DataProtectionDashboardComponent implements OnInit {
               );
             }),
             switchMap((id: number) => this.store$.select(selectJob(id)).pipe(filter(Boolean))),
-            catchError((error: WebsocketError) => {
-              this.dialogService.error(this.errorHandler.parseWsError(error));
+            tap((job) => {
+              if (!([JobState.Running, JobState.Pending].includes(job.state))) {
+                this.refreshTable(TaskCardId.Replication); return;
+              }
+              row.state.state = job.state;
+              row.job = { ...job };
+              this.jobStates.set(job.id, job.state);
+            }),
+            catchError((error: Job) => {
+              this.dialogService.error(this.errorHandler.parseJobError(error));
               return EMPTY;
             }),
             untilDestroyed(this),
-          ).subscribe((job: Job) => {
-            row.state.state = job.state;
-            row.job = { ...job };
-            if (this.jobStates.get(job.id) !== job.state) {
-              this.refreshTable(TaskCardId.Replication);
-            }
-            this.jobStates.set(job.id, job.state);
-          });
+          ).subscribe();
         },
       },
       {
