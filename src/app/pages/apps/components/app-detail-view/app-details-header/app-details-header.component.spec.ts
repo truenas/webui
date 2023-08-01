@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
+import { officialCatalog } from 'app/constants/catalog.constants';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
@@ -25,7 +26,7 @@ describe('AppDetailsHeaderComponent', () => {
     icon_url: 'http://github.com/truenas/icon.png',
     name: 'SETI@home',
     latest_app_version: '1.0.0',
-    catalog: 'Truenas',
+    catalog: officialCatalog,
     tags: ['aliens', 'ufo'],
     train: 'stable',
     home: 'https://www.seti.org',
@@ -117,7 +118,7 @@ describe('AppDetailsHeaderComponent', () => {
         const installButton = await loader.getHarness(MatButtonHarness.with({ text: 'Install' }));
         await installButton.click();
 
-        expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/apps', 'available', 'Truenas', 'stable', 'SETI@home', 'install']);
+        expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/apps', 'available', 'TRUENAS', 'stable', 'SETI@home', 'install']);
       });
 
       it('shows Install Another Instance and installed badge when app is installed', async () => {
@@ -130,7 +131,7 @@ describe('AppDetailsHeaderComponent', () => {
         expect(installButton).toExist();
 
         await installButton.click();
-        expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/apps', 'available', 'Truenas', 'stable', 'SETI@home', 'install']);
+        expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/apps', 'available', 'TRUENAS', 'stable', 'SETI@home', 'install']);
 
         const installedBadge = spectator.query('.installed-badge');
         expect(installedBadge).toExist();
@@ -140,7 +141,7 @@ describe('AppDetailsHeaderComponent', () => {
 
     describe('other elements', () => {
       it('shows app catalog', () => {
-        expect(spectator.query('.catalog-container')).toHaveText('Truenas Catalog');
+        expect(spectator.query('.catalog-container')).toHaveText('TrueNAS Catalog');
       });
 
       it('shows app version', () => {
