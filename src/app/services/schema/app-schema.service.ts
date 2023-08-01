@@ -3,7 +3,7 @@ import { Validators, AbstractControl, FormGroup } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { parseString } from 'cron-parser';
 import _ from 'lodash';
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { BehaviorSubject, Subscription, timer } from 'rxjs';
 import { debounceTime, take } from 'rxjs/operators';
 import { ChartSchemaType } from 'app/enums/chart-schema-type.enum';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
@@ -67,6 +67,7 @@ export class AppSchemaService {
 
   transformNode(chartSchemaNode: ChartSchemaNode, isNew: boolean, isParentImmutable: boolean): DynamicFormSchemaNode[] {
     const schema = chartSchemaNode.schema;
+
     let newSchema: DynamicFormSchemaNode[] = [];
     const transformPayload: CommonSchemaTransform = {
       schema, chartSchemaNode, isNew, isParentImmutable, newSchema,
@@ -410,7 +411,7 @@ export class AppSchemaService {
     }
 
     const nullValidator = Validators.nullValidator;
-    const defaultValue = schema.default !== undefined ? schema.default : altDefault;
+    const defaultValue = isNew && schema.default !== undefined ? schema.default : altDefault;
     const isValidCrontab = this.checkIsValidCrontab(defaultValue?.toString());
 
     const newFormControl = new CustomUntypedFormControl(defaultValue, [
@@ -431,6 +432,7 @@ export class AppSchemaService {
       newFormControl.disable();
     }
   }
+
   private addCronSchemaTypeControl(payload: CommonSchemaAddControl): void {
     const { schema, formGroup, chartSchemaNode } = payload;
 
@@ -523,13 +525,14 @@ export class AppSchemaService {
   }
 
   private handleAddFormControlWithSchemaVisible(payload: CommonSchemaAddControl): void {
-    const { schema, formGroup } = payload;
+    const { schema, subscription, formGroup } = payload;
 
     const relations: Relation[] = schema.show_if.map((item) => ({
       fieldName: item[0],
       operatorName: item[1],
       operatorValue: item[2],
     }));
+
     relations.forEach((relation) => {
       let control = formGroup.controls[relation.fieldName];
       if (!control) {
@@ -544,10 +547,14 @@ export class AppSchemaService {
       }
 
       if (relation.operatorName === '=') {
-        this.handleEqualOperatorNameSubscription(payload, relation);
+        subscription.add(
+          timer(0).pipe(take(1)).subscribe(() => this.handleEqualOperatorNameSubscription(payload, relation)),
+        );
       }
       if (relation.operatorName === '!=') {
-        this.handleNonEqualOperatorNameSubscription(payload, relation);
+        subscription.add(
+          timer(0).pipe(take(1)).subscribe(() => this.handleNonEqualOperatorNameSubscription(payload, relation)),
+        );
       }
     });
   }
@@ -664,7 +671,7 @@ export class AppSchemaService {
       );
 
       const formField = formGroup.controls[subquestion.variable] as CustomUntypedFormField;
-      this.toggleFieldHiddenOrDisabled(formField, newFormControl.value, schema, subquestion, isNew, isParentImmutable);
+      this.toggleFieldHiddenOrDisabled(formField, newFormControl.value, schema, subquestion, isParentImmutable);
     }
 
     subscription.add(newFormControl.valueChanges.subscribe((value) => {
@@ -677,7 +684,7 @@ export class AppSchemaService {
         parentControl.hidden$.pipe(take(1)).subscribe((isParentHidden) => {
           if (!isParentHidden) {
             const formField = (formGroup.controls[subquestion.variable] as CustomUntypedFormField);
-            this.toggleFieldHiddenOrDisabled(formField, value, schema, subquestion, isNew, isParentImmutable);
+            this.toggleFieldHiddenOrDisabled(formField, value, schema, subquestion, isParentImmutable);
           }
         });
       }
@@ -689,7 +696,6 @@ export class AppSchemaService {
     value: unknown,
     schema: ChartSchemaNodeConf,
     subquestion: ChartSchemaNode,
-    isNew: boolean,
     isParentImmutable: boolean,
   ): void {
     if (!formField.hidden$) {
