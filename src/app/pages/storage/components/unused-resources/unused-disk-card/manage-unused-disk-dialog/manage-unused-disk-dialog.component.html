@@ -29,14 +29,6 @@
         [required]="true"
         [options]="poolOptions$"
       ></ix-select>
-
-      <ix-select
-        *ngIf="isExistingLegacyMode"
-        formControlName="poolLegacy"
-        [label]="'Existing Pool (Legacy)' | translate"
-        [required]="true"
-        [options]="poolOptions$"
-      ></ix-select>
     </ix-fieldset>
   </div>
 

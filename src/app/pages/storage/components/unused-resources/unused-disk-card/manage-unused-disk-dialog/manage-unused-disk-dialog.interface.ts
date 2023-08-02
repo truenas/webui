@@ -9,5 +9,4 @@ export interface ManageUnusedDiskDialogResource {
 export enum AddToPoolType {
   New = 'NEW',
   Existing = 'EXISTING',
-  ExistingLegacy = 'EXISTING_LEGACY',
 }
