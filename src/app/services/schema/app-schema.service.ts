@@ -52,7 +52,7 @@ import {
   transformPathSchemaType,
   transformStringSchemaType,
   transformUriSchemaType,
-} from 'app/services/schema/app-shema.transformer';
+} from 'app/services/schema/app-schema.transformer';
 import { UrlValidationService } from 'app/services/url-validation.service';
 
 @UntilDestroy()
