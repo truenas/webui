@@ -141,8 +141,8 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
       untilDestroyed(this),
     ).subscribe((evt: LegendEvent) => {
       const clone = { ...evt.data };
-      clone.xHTML = this.formatTime(evt.data.xHTML);
       clone.series = formatLegendSeries(evt.data.series, this.data);
+      clone.xHTML = this.formatTime(evt.data.x);
       this.legendData = clone as LegendDataWithStackedTotalHtml;
     });
 
@@ -236,9 +236,8 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
     this.core.unregister({ observerClass: this });
   }
 
-  formatTime(stamp: string): string {
-    const parsed = Date.parse(stamp);
-    const result = this.formatDateTimePipe.transform(parsed);
+  formatTime(stamp: number): string {
+    const result = this.localeService.formatDateTimeWithNoTz(new Date(stamp));
     return result.toLowerCase() !== 'invalid date' ? result : null;
   }
 
