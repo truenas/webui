@@ -34,18 +34,6 @@ export const routes: Routes = [
     component: ReportsDashboardComponent,
   },
   {
-    path: 'nfs',
-    pathMatch: 'full',
-    data: { title: T('NFS'), breadcrumb: T('NFS') },
-    component: ReportsDashboardComponent,
-  },
-  {
-    path: 'partition',
-    pathMatch: 'full',
-    data: { title: T('Partition'), breadcrumb: T('Partition') },
-    component: ReportsDashboardComponent,
-  },
-  {
     path: 'system',
     pathMatch: 'full',
     data: { title: T('System'), breadcrumb: T('System') },

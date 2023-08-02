@@ -119,6 +119,6 @@ describe('PoolUsageCardComponent', () => {
 
   it('should pre-select disks when user click "View Disk Space Reports" link', () => {
     const href = spectator.query(byText('View Disk Space Reports')).getAttribute('href');
-    expect(href).toBe('/reportsdashboard/partition?disks=sda&disks=sdb');
+    expect(href).toBe('/reportsdashboard/disks?disk=sda&disks=sdb');
   });
 });
