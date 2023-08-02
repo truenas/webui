@@ -33,18 +33,15 @@ export class CatalogDeleteDialogComponent {
   ) { }
 
   onDelete(): void {
-    this.loader.open();
     this.ws.call('catalog.delete', [this.catalog.id])
-      .pipe(untilDestroyed(this))
+      .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: () => {
           this.snackbar.success(this.translate.instant('Catalog deleted'));
           this.dialogRef.close(true);
-          this.loader.close();
         },
         error: (error: WebsocketError) => {
           this.dialogService.error(this.errorHandler.parseWsError(error));
-          this.loader.close();
         },
       });
   }

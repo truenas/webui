@@ -428,10 +428,8 @@ export class UpdateComponent implements OnInit {
 
   startUpdate(): void {
     this.error = null;
-    this.loader.open();
-    this.ws.call('update.check_available').pipe(untilDestroyed(this)).subscribe({
+    this.ws.call('update.check_available').pipe(this.loader.withLoader(), untilDestroyed(this)).subscribe({
       next: (update) => {
-        this.loader.close();
         this.status = update.status;
         if (update.status === SystemUpdateStatus.Available) {
           this.packages = [];
@@ -480,7 +478,6 @@ export class UpdateComponent implements OnInit {
         }
       },
       error: (error: WebsocketError) => {
-        this.loader.close();
         this.dialogService.error({
           title: this.translate.instant('Error checking for updates.'),
           message: error.reason,

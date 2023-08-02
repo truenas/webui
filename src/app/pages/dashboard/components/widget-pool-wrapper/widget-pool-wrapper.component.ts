@@ -2,8 +2,8 @@ import {
   Component, EventEmitter, Input, Output,
 } from '@angular/core';
 import { filter, map } from 'rxjs';
-import { deepCloneState } from 'app/helpers/state-select.helper';
 import { DashboardStorageStore } from 'app/pages/dashboard/store/dashboard-storage-store.service';
+import { deepCloneState } from 'app/pages/dashboard/utils/deep-clone-state.helper';
 
 @Component({
   selector: 'ix-widget-pool-wrapper',

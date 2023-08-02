@@ -78,7 +78,6 @@ export class DisplayVmDialogComponent {
   }
 
   private openDisplayDevice(displayDeviceId: number, password?: string): void {
-    this.loader.open();
     let displayOptions = {
       protocol: this.window.location.protocol.replace(':', '').toUpperCase(),
     } as VmDisplayWebUriParamsOptions;
@@ -99,10 +98,9 @@ export class DisplayVmDialogComponent {
     ];
 
     this.ws.call('vm.get_display_web_uri', requestParams)
-      .pipe(untilDestroyed(this))
+      .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: (webUris) => {
-          this.loader.close();
           const webUri = webUris[displayDeviceId];
           if (webUri.error) {
             this.dialogService.warn(this.translate.instant('Error'), webUri.error);
@@ -112,7 +110,6 @@ export class DisplayVmDialogComponent {
           this.dialogRef.close(true);
         },
         error: (error: WebsocketError) => {
-          this.loader.close();
           this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });

@@ -46,20 +46,16 @@ export class DeleteVmDialogComponent implements OnInit {
   }
 
   onDelete(): void {
-    this.loader.open();
-
     this.ws.call('vm.delete', [this.vm.id, {
       force: this.form.value.force,
       zvols: this.form.value.zvols,
     }])
-      .pipe(untilDestroyed(this))
+      .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: () => {
-          this.loader.close();
           this.dialogRef.close(true);
         },
         error: (error: WebsocketError) => {
-          this.loader.close();
           this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });

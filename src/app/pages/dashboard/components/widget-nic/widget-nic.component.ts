@@ -10,11 +10,11 @@ import {
 } from 'popmotion';
 import { filter, map, throttleTime } from 'rxjs/operators';
 import { LinkState, NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
-import { deepCloneState } from 'app/helpers/state-select.helper';
 import { NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
 import { DashboardNicState } from 'app/pages/dashboard/components/dashboard/dashboard.component';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { ResourcesUsageStore } from 'app/pages/dashboard/store/resources-usage-store.service';
+import { deepCloneState } from 'app/pages/dashboard/utils/deep-clone-state.helper';
 
 interface NetTraffic {
   sent: number;

@@ -85,20 +85,19 @@ export class SshKeypairFormComponent implements OnInit {
   }
 
   onGenerateButtonPressed(): void {
-    this.loader.open();
-    this.ws.call('keychaincredential.generate_ssh_key_pair').pipe(untilDestroyed(this)).subscribe({
-      next: (keyPair) => {
-        this.loader.close();
-        this.form.patchValue({
-          public_key: keyPair.public_key,
-          private_key: keyPair.private_key,
-        });
-      },
-      error: (err: WebsocketError) => {
-        this.loader.close();
-        this.dialogService.error(this.errorHandler.parseWsError(err));
-      },
-    });
+    this.ws.call('keychaincredential.generate_ssh_key_pair')
+      .pipe(this.loader.withLoader(), untilDestroyed(this))
+      .subscribe({
+        next: (keyPair) => {
+          this.form.patchValue({
+            public_key: keyPair.public_key,
+            private_key: keyPair.private_key,
+          });
+        },
+        error: (err: WebsocketError) => {
+          this.dialogService.error(this.errorHandler.parseWsError(err));
+        },
+      });
   }
 
   onDownloadKey(keyType: 'private_key' | 'public_key'): void {

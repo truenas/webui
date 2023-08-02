@@ -43,18 +43,16 @@ export class DownloadKeyDialogComponent {
   }
 
   downloadKey(): void {
-    this.loader.open();
     this.ws.call('core.download', ['pool.dataset.export_keys', [this.data.name], this.filename]).pipe(
+      this.loader.withLoader(),
       switchMap(([, url]) => {
         return this.storage.streamDownloadFile(url, this.filename, 'application/json').pipe(
           tap((file) => {
             this.storage.downloadBlob(file, this.filename);
             this.wasDownloaded = true;
             this.cdr.markForCheck();
-            this.loader.close();
           }),
           catchError((error) => {
-            this.loader.close();
             this.dialog.error(this.errorHandler.parseHttpError(error));
             return EMPTY;
           }),

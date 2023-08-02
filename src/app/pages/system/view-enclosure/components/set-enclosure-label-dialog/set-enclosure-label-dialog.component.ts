@@ -58,19 +58,16 @@ export class SetEnclosureLabelDialogComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.loader.open();
     const formValues = this.form.value;
     const newLabel = formValues.resetToDefault ? this.data.defaultLabel : formValues.label;
 
     this.ws.call('enclosure.update', [this.data.enclosureId, { label: newLabel }])
-      .pipe(untilDestroyed(this))
+      .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: () => {
-          this.loader.close();
           this.dialogRef.close(newLabel);
         },
         error: (error: WebsocketError) => {
-          this.loader.close();
           this.dialogService.error(this.errorHandler.parseWsError(error));
           this.dialogRef.close();
         },

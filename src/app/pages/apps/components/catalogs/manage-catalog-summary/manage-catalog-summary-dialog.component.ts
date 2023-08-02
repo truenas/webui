@@ -39,12 +39,10 @@ export class ManageCatalogSummaryDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loader.open();
     this.ws.call('catalog.items', [this.catalog.label])
-      .pipe(untilDestroyed(this))
+      .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: (result: CatalogItems) => {
-          this.loader.close();
           this.catalogItems = [];
           this.trainOptions = ['All'];
           if (result) {
@@ -64,7 +62,6 @@ export class ManageCatalogSummaryDialogComponent implements OnInit {
           }
         },
         error: (err: WebsocketError) => {
-          this.loader.close();
           this.dialogService.error(this.errorHandler.parseWsError(err));
         },
       });

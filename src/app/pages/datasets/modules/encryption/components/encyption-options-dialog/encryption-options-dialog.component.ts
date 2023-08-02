@@ -9,7 +9,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { of, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { DatasetEncryptionType } from 'app/enums/dataset.enum';
-import { combineLatestIsAny } from 'app/helpers/combine-latest-is-any.helper';
+import { combineLatestIsAny } from 'app/helpers/operators/combine-latest-is-any.helper';
 import dataset_helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { DatasetChangeKeyParams } from 'app/interfaces/dataset-change-key.interface';
 import { Dataset } from 'app/interfaces/dataset.interface';
@@ -125,17 +125,14 @@ export class EncryptionOptionsDialogComponent implements OnInit {
   }
 
   private setToInherit(): void {
-    this.loader.open();
     this.ws.call('pool.dataset.inherit_parent_encryption_properties', [this.data.dataset.id])
-      .pipe(untilDestroyed(this))
+      .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: () => {
-          this.loader.close();
           this.showSuccessDialog();
           this.dialogRef.close(true);
         },
         error: (error: WebsocketError) => {
-          this.loader.close();
           this.formErrorHandler.handleWsFormError(error, this.form);
         },
       });
@@ -184,13 +181,10 @@ export class EncryptionOptionsDialogComponent implements OnInit {
   }
 
   private loadPbkdf2iters(): void {
-    this.loader.open();
-
     this.ws.call('pool.dataset.query', [[['id', '=', this.data.dataset.id]]])
-      .pipe(untilDestroyed(this))
+      .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: (datasets: Dataset[]) => {
-          this.loader.close();
           const pbkdf2iters = datasets[0].pbkdf2iters;
 
           if (!pbkdf2iters || pbkdf2iters.rawvalue === '0') {
@@ -202,7 +196,6 @@ export class EncryptionOptionsDialogComponent implements OnInit {
           });
         },
         error: (error: WebsocketError) => {
-          this.loader.close();
           this.dialog.error(this.errorHandler.parseWsError(error));
         },
       });

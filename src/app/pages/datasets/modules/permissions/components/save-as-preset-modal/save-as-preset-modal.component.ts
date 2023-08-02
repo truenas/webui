@@ -60,7 +60,6 @@ export class SaveAsPresetModalComponent implements OnInit {
   }
 
   private loadOptions(): void {
-    this.loader.open();
     this.ws.call('filesystem.acltemplate.by_path', [{
       path: this.data.datasetPath,
       'format-options': {
@@ -68,15 +67,13 @@ export class SaveAsPresetModalComponent implements OnInit {
         resolve_names: true,
       },
     }])
-      .pipe(untilDestroyed(this))
+      .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: (presets) => {
           this.presets = this.sortPresets(presets);
           this.cdr.markForCheck();
-          this.loader.close();
         },
         error: (error: WebsocketError) => {
-          this.loader.close();
           this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });
@@ -100,30 +97,31 @@ export class SaveAsPresetModalComponent implements OnInit {
       }) as NfsAclItem[] | PosixAclItem[],
     };
 
-    this.loader.open();
-    this.ws.call('filesystem.acltemplate.create', [payload]).pipe(untilDestroyed(this)).subscribe({
-      next: () => {
-        this.loader.close();
-        this.dialogRef.close();
-      },
-      error: (error: WebsocketError) => {
-        this.loader.close();
-        this.dialogService.error(this.errorHandler.parseWsError(error));
-      },
-    });
+    this.ws.call('filesystem.acltemplate.create', [payload])
+      .pipe(
+        this.loader.withLoader(),
+        untilDestroyed(this),
+      )
+      .subscribe({
+        next: () => {
+          this.dialogRef.close();
+        },
+        error: (error: WebsocketError) => {
+          this.dialogService.error(this.errorHandler.parseWsError(error));
+        },
+      });
   }
 
   onRemovePreset(preset: AclTemplateByPath): void {
-    this.loader.open();
-    this.ws.call('filesystem.acltemplate.delete', [preset.id]).pipe(untilDestroyed(this)).subscribe({
-      next: () => {
-        this.loadOptions();
-        this.loader.close();
-      },
-      error: (error: WebsocketError) => {
-        this.loader.close();
-        this.dialogService.error(this.errorHandler.parseWsError(error));
-      },
-    });
+    this.ws.call('filesystem.acltemplate.delete', [preset.id])
+      .pipe(this.loader.withLoader(), untilDestroyed(this))
+      .subscribe({
+        next: () => {
+          this.loadOptions();
+        },
+        error: (error: WebsocketError) => {
+          this.dialogService.error(this.errorHandler.parseWsError(error));
+        },
+      });
   }
 }

@@ -38,10 +38,9 @@ export class LeaveDomainDialogComponent {
 
   onSubmit(): void {
     const params = this.form.value;
-    this.loader.open();
 
     this.ws.job('activedirectory.leave', [params as LeaveActiveDirectory])
-      .pipe(untilDestroyed(this))
+      .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: (job) => {
           if (job.state !== JobState.Success) {
@@ -52,11 +51,9 @@ export class LeaveDomainDialogComponent {
             this.translate.instant(helptext.ad_leave_domain_dialog.success_msg),
           );
 
-          this.loader.close();
           this.dialogRef.close(true);
         },
         error: (error: Job) => {
-          this.loader.close();
           this.dialogService.error(this.errorHandler.parseJobError(error));
         },
       });

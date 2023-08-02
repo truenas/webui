@@ -74,7 +74,6 @@ export class SelectPresetModalComponent implements OnInit {
   }
 
   private loadOptions(): void {
-    this.loader.open();
     this.ws.call('filesystem.acltemplate.by_path', [{
       path: this.data.datasetPath,
       'format-options': {
@@ -82,7 +81,7 @@ export class SelectPresetModalComponent implements OnInit {
         resolve_names: true,
       },
     }])
-      .pipe(untilDestroyed(this))
+      .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: (presets) => {
           this.presets = presets;
@@ -90,10 +89,8 @@ export class SelectPresetModalComponent implements OnInit {
             label: preset.name,
             value: preset.name,
           })));
-          this.loader.close();
         },
         error: (error: WebsocketError) => {
-          this.loader.close();
           this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });

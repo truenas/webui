@@ -37,17 +37,13 @@ export class ReplicationRestoreDialogComponent {
   ) {}
 
   onSubmit(): void {
-    this.loader.open();
-
     this.ws.call('replication.restore', [this.parentTaskId, this.form.value])
-      .pipe(untilDestroyed(this))
+      .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: () => {
-          this.loader.close();
           this.dialogRef.close();
         },
         error: (error) => {
-          this.loader.close();
           this.errorHandler.handleWsFormError(error, this.form);
         },
       });
