@@ -27,7 +27,7 @@ export class ShutdownComponent implements OnInit {
     // Replace URL so that we don't shutdown again if page is refreshed.
     this.location.replaceState('/sessions/signin');
 
-    this.ws.call('system.shutdown', {}).pipe(untilDestroyed(this)).subscribe({
+    this.ws.job('system.shutdown', {}).pipe(untilDestroyed(this)).subscribe({
       error: (error: WebsocketError) => { // error on shutdown
         this.dialogService.error(this.errorHandler.parseWsError(error))
           .pipe(untilDestroyed(this))

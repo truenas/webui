@@ -3,7 +3,6 @@ import { RouterModule, Routes } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { PoolsDashboardComponent } from 'app/pages/storage/components/pools-dashboard/pools-dashboard.component';
 import { AddVdevsComponent } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/add-vdevs.component';
-import { ManagerComponent } from './components/manager/manager.component';
 
 export const routes: Routes = [
   {
@@ -14,11 +13,6 @@ export const routes: Routes = [
         path: '',
         data: { title: T('Storage Dashboard'), breadcrumb: T('Storage Dashboard') },
         component: PoolsDashboardComponent,
-      },
-      {
-        path: 'create-legacy',
-        component: ManagerComponent,
-        data: { title: T('Create Pool (Legacy)'), breadcrumb: T('Create Pool (Legacy)') },
       },
       {
         path: 'create',
@@ -39,11 +33,6 @@ export const routes: Routes = [
         path: ':poolId/add-vdevs',
         component: AddVdevsComponent,
         data: { title: T('Add Vdevs to Pool'), breadcrumb: T('Add Vdevs to Pool') },
-      },
-      {
-        path: ':poolId/add-vdevs-legacy',
-        component: ManagerComponent,
-        data: { title: T('Add Vdevs to Pool (Legacy)'), breadcrumb: T('Add Vdevs to Pool (Legacy)') },
       },
       {
         path: 'disks',

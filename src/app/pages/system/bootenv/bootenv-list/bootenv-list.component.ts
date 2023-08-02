@@ -146,7 +146,7 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
       buttonText: this.translate.instant('Start Scrub'),
     }).pipe(
       filter(Boolean),
-      switchMap(() => this.ws.call('boot.scrub').pipe(this.loader.withLoader())),
+      switchMap(() => this.ws.startJob('boot.scrub').pipe(this.loader.withLoader())),
       untilDestroyed(this),
     ).subscribe({
       next: () => {

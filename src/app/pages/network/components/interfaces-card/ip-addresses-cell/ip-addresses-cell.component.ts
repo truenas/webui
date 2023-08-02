@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy, Component,
 } from '@angular/core';
+import _ from 'lodash';
 import { NetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
 import { ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.interface';
 
@@ -18,30 +19,28 @@ export class IpAddressesCellComponent extends ColumnComponent<NetworkInterface> 
   }
 
   extractAddresses(row: NetworkInterface): string[] {
-    const addresses = new Set<string>([]);
-    let aliasesToProcess: NetworkInterfaceAlias[] = row.aliases;
+    const addresses = this.aliasesToAddress(row.aliases);
 
     if (row.ipv4_dhcp || row.ipv6_auto) {
-      aliasesToProcess = [...aliasesToProcess, ...row.state.aliases];
+      addresses.push(...this.aliasesToAddress(row.state.aliases));
     }
 
     if (row.hasOwnProperty('failover_aliases')) {
-      aliasesToProcess = [...aliasesToProcess, ...row.failover_aliases];
+      addresses.push(...this.aliasesToAddress(row.failover_aliases));
     }
 
-    aliasesToProcess.forEach((alias) => {
-      // TODO: See if checks can be removed or replace with enum.
-      if (!alias.type.startsWith('INET')) {
-        return;
-      }
+    if (row.hasOwnProperty('failover_virtual_aliases')) {
+      const virtualAddresses = row.failover_virtual_aliases.map((alias) => `${alias.address}/${alias.netmask} (VIP)`);
+      addresses.push(...virtualAddresses);
+    }
 
-      addresses.add(this.aliasToAddress(alias));
-    });
-
-    return Array.from(addresses);
+    return _.uniq(addresses);
   }
 
-  private aliasToAddress(alias: NetworkInterfaceAlias): string {
-    return `${alias.address}/${alias.netmask}`;
+  private aliasesToAddress(aliases: NetworkInterfaceAlias[]): string[] {
+    return aliases
+      // TODO: See if checks can be removed or replace with enum.
+      .filter((alias) => alias.type.startsWith('INET'))
+      .map((alias) => `${alias.address}/${alias.netmask}`);
   }
 }

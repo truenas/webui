@@ -7,7 +7,8 @@ import { Observable, Subject } from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { LinkState } from 'app/enums/network-interface.enum';
-import { ApiDirectory } from 'app/interfaces/api-directory.interface';
+import { ApiCallMethod } from 'app/interfaces/api/api-call-directory.interface';
+import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { TableService } from 'app/modules/entity/table/table.service';
 
@@ -67,9 +68,9 @@ export interface AppTableConfig<P = unknown> {
   title?: string;
   titleHref?: string;
   columns: AppTableColumn[];
-  queryCall: keyof ApiDirectory;
+  queryCall: ApiCallMethod;
   queryCallOption?: unknown;
-  deleteCall?: keyof ApiDirectory;
+  deleteCall?: ApiCallMethod | ApiJobMethod;
   deleteCallIsJob?: boolean;
   complex?: boolean;
   hideHeader?: boolean; // hide table header row
