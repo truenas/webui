@@ -664,6 +664,10 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .fn-theme-tooltip {
     @import 'ngx-popperjs/scss/theme';
     @include ngx-popperjs-theme(var(--primary), var(--primary-txt), 400px, 20001);
+
+    .ngxp__container {
+      display: block !important;
+    }
   }
 
   .fn-theme-red {
