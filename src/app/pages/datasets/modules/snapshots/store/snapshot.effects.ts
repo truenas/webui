@@ -47,7 +47,7 @@ export class SnapshotEffects {
     switchMap(() => {
       return this.ws.subscribe('zfs.snapshot.query').pipe(
         filter((event) => event.msg !== IncomingApiMessageType.Removed),
-        // event.fields is not sent for some reason and that's why list is not updated, so this gonna jelp
+        // event.fields is not sent for some reason and that's why list is not updated, so this gonna help
         map(() => snapshotPageEntered()),
       );
     }),
