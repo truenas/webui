@@ -57,21 +57,21 @@ export const vdevLayoutOptions = [
     value: CreateVdevLayout.Raidz3,
     hoverTooltip: helptext.raidz3Tooltip,
   },
-  {
-    label: T('dRAID1'),
-    value: CreateVdevLayout.Draid1,
-    hoverTooltip: helptext.dRaidTooltip,
-  },
-  {
-    label: T('dRAID2'),
-    value: CreateVdevLayout.Draid2,
-    hoverTooltip: helptext.dRaidTooltip,
-  },
-  {
-    label: T('dRAID3'),
-    value: CreateVdevLayout.Draid3,
-    hoverTooltip: helptext.dRaidTooltip,
-  },
+  // {
+  //   label: T('dRAID1'),
+  //   value: CreateVdevLayout.Draid1,
+  //   hoverTooltip: helptext.dRaidTooltip,
+  // },
+  // {
+  //   label: T('dRAID2'),
+  //   value: CreateVdevLayout.Draid2,
+  //   hoverTooltip: helptext.dRaidTooltip,
+  // },
+  // {
+  //   label: T('dRAID3'),
+  //   value: CreateVdevLayout.Draid3,
+  //   hoverTooltip: helptext.dRaidTooltip,
+  // },
 ];
 
 export enum TopologyWarning {
