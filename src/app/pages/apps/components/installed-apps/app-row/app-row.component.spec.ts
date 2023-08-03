@@ -7,6 +7,7 @@ import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
 import { AppStatusCellComponent } from 'app/pages/apps/components/installed-apps/app-status-cell/app-status-cell.component';
 import { AppStatus } from 'app/pages/apps/enum/app-status.enum';
+import { AppCatalogPipe } from 'app/pages/apps/utils/app-catalog.pipe';
 
 describe('AppRowComponent', () => {
   let spectator: Spectator<AppRowComponent>;
@@ -21,7 +22,7 @@ describe('AppRowComponent', () => {
 
   const createComponent = createComponentFactory({
     component: AppRowComponent,
-    imports: [ImgFallbackModule],
+    imports: [ImgFallbackModule, AppCatalogPipe],
     declarations: [
       MockComponents(AppStatusCellComponent),
     ],
@@ -36,7 +37,7 @@ describe('AppRowComponent', () => {
   it('checks app logo, name and catalog', () => {
     expect(spectator.query('.app-logo img')).toHaveAttribute('src', 'https://image/');
     expect(spectator.query('.app-name')).toHaveText('app_name');
-    expect(spectator.query('.app-catalog')).toHaveText('Truenas');
+    expect(spectator.query('.app-catalog')).toHaveText('TrueNAS');
   });
 
   it('checks app status column', () => {

@@ -5,7 +5,7 @@
   <ngx-skeleton-loader *ngIf="isLoading$ | async; else catalog"></ngx-skeleton-loader>
   <ng-template #catalog>
     <ng-container *ngIf="app?.catalog; else notAvailable">
-      {{ app?.catalog }}
+      {{ app.catalog | appCatalog }}
     </ng-container>
   </ng-template>
 </div>
