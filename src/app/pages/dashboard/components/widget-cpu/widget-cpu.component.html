@@ -7,46 +7,47 @@
       fxLayoutAlign="space-between stretch"
     >
       <mat-card-content>
-        <mat-toolbar-row [class.drag-handle]="showReorderHandle">
+        <ix-drag-handle [showReorderHandle]="showReorderHandle">
           <ng-content [select]="[cdkDragHandle]"></ng-content>
 
-          <!-- Mobile Only: Exit widget -->
-          <button
-            *ngIf="screenType === ScreenType.Mobile"
-            class="mat-card-title-text primary-nav"
-            mat-icon-button
-            color="default"
-            ixTest="cpu-back"
-            (click)="goBack()"
-          >
-            <ix-icon name="chevron_left" class="back-arrow"></ix-icon>
-          </button>
-
-          <h3 class="mat-card-title-text">
-            <div
-              class="card-title-text"
-              [class.drag-handle]="showReorderHandle"
-            >
-              <span *ngIf="showReorderHandle" class="grip"></span>
-              <span>{{ 'CPU' | translate }}</span>
-            </div>
-          </h3>
-
-          <div class="controls">
-            <a
+          <mat-toolbar-row>
+            <!-- Mobile Only: Exit widget -->
+            <button
+              *ngIf="screenType === ScreenType.Mobile"
+              class="mat-card-title-text primary-nav"
               mat-icon-button
-              ixTest="cpu-reports"
-              [routerLink]="['/reportsdashboard/cpu']"
+              color="default"
+              ixTest="cpu-back"
+              (click)="goBack()"
             >
-              <ix-icon
-                name="insert_chart"
-                aria-label="CPU Reports"
-                matTooltipPosition="above"
-                [matTooltip]="'CPU Reports' | translate"
-              ></ix-icon>
-            </a>
-          </div>
-        </mat-toolbar-row>
+              <ix-icon name="chevron_left" class="back-arrow"></ix-icon>
+            </button>
+
+            <h3 class="mat-card-title-text">
+              <ix-drag-handle [showReorderHandle]="showReorderHandle">
+                <div class="card-title-text">
+                  <span *ngIf="showReorderHandle" class="grip"></span>
+                  <span>{{ 'CPU' | translate }}</span>
+                </div>
+              </ix-drag-handle>
+            </h3>
+
+            <div class="controls">
+              <a
+                mat-icon-button
+                ixTest="cpu-reports"
+                [routerLink]="['/reportsdashboard/cpu']"
+              >
+                <ix-icon
+                  name="insert_chart"
+                  aria-label="CPU Reports"
+                  matTooltipPosition="above"
+                  [matTooltip]="'CPU Reports' | translate"
+                ></ix-icon>
+              </a>
+            </div>
+          </mat-toolbar-row>
+        </ix-drag-handle>
 
         <div *ngIf="screenType === ScreenType.Desktop" class="cpu-model top">
           {{ cpuModel ? cpuModel : ('Unknown CPU' | translate) }}

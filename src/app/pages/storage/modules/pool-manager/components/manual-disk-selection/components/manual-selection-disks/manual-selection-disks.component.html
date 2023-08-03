@@ -2,7 +2,7 @@
   (filtersUpdated)="filtersUpdated.next($event)"
 ></ix-manual-selection-disk-filters>
 
-<div 
+<div
   class="dnd-wrapper"
   dndDropzone
   [ngClass]="{'drag-active': (dragToggleStore$.dragActive$ | async)}"
@@ -19,26 +19,28 @@
         treeNodeToggle
         routerLinkActive="selected"
       >
-        <div
-          class="unused-disk drag-handle"
-          [ngClass]="{ 'grabbed': dragToggleStore$.dragActive$ | async }"
-          [dndDraggable]="asDisk(disk)"
-          [dndEffectAllowed]="'move'"
-          (dndStart)="onDragStart()"
-          (dndCanceled)="onDragCanceled()"
-          (dndEnd)="onDragEnd()"
-        >
-          <ix-disk-icon
-            class="disk-icon"
-            dndDragImageRef
-            [disk]="asDisk(disk)"
-          ></ix-disk-icon>
+        <ix-drag-handle [showReorderHandle]="true">
+          <div
+            class="unused-disk"
+            [ngClass]="{ 'grabbed': dragToggleStore$.dragActive$ | async }"
+            [dndDraggable]="asDisk(disk)"
+            [dndEffectAllowed]="'move'"
+            (dndStart)="onDragStart()"
+            (dndCanceled)="onDragCanceled()"
+            (dndEnd)="onDragEnd()"
+          >
+            <ix-disk-icon
+              class="disk-icon"
+              dndDragImageRef
+              [disk]="asDisk(disk)"
+            ></ix-disk-icon>
 
-          <ix-disk-info
-            class="disk-info"
-            [disk]="asDisk(disk)"
-          ></ix-disk-info>
-        </div>
+            <ix-disk-info
+              class="disk-info"
+              [disk]="asDisk(disk)"
+            ></ix-disk-info>
+          </div>
+        </ix-drag-handle>
       </ix-tree-node>
 
       <ix-nested-tree-node

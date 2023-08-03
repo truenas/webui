@@ -7,75 +7,74 @@
       fxLayoutAlign="space-between stretch"
     >
       <mat-card-content *ngIf="nicState; else notAvailable" #carouselparent>
-        <mat-toolbar-row
-          [class]="'view-' + currentSlideName"
-          [class.drag-handle]="showReorderHandle"
-        >
+        <ix-drag-handle [showReorderHandle]="showReorderHandle">
           <ng-content [select]="[cdkDragHandle]"></ng-content>
 
-          <!-- Mobile Only: Exit Widget -->
-          <button
-            *ngIf="currentSlide === '0'"
-            fxHide.gt-xs
-            mat-icon-button
-            color="default"
-            class="mat-card-title-text primary-nav"
-            ixTest="nic-back"
-            (click)="goBack(); updateSlide(path[previousSlide].name, true, previousSlide)"
-          >
-            <ix-icon name="chevron_left" class="back-arrow"></ix-icon>
-          </button>
-
-          <!-- Back to previous slide -->
-          <button
-            *ngIf="currentSlide !== '0'"
-            mat-icon-button
-            color="default"
-            class="mat-card-title-text primary-nav"
-            [ixTest]="['nic-widget', 'back']"
-            (click)="updateSlide(path[previousSlide].name, true, previousSlide)"
-          >
-            <ix-icon name="chevron_left" class="back-arrow"></ix-icon>
-          </button>
-
-          <h3 class="mat-card-title-text">
-            <div
-              class="card-title-text"
-              [class.drag-handle]="showReorderHandle"
+          <mat-toolbar-row [class]="'view-' + currentSlideName">
+            <!-- Mobile Only: Exit Widget -->
+            <button
+              *ngIf="currentSlide === '0'"
+              fxHide.gt-xs
+              mat-icon-button
+              color="default"
+              class="mat-card-title-text primary-nav"
+              ixTest="nic-back"
+              (click)="goBack(); updateSlide(path[previousSlide].name, true, previousSlide)"
             >
-              <span *ngIf="showReorderHandle" class="grip"></span>
-              <span>{{ title | translate }} </span>
+              <ix-icon name="chevron_left" class="back-arrow"></ix-icon>
+            </button>
+
+            <!-- Back to previous slide -->
+            <button
+              *ngIf="currentSlide !== '0'"
+              mat-icon-button
+              color="default"
+              class="mat-card-title-text primary-nav"
+              [ixTest]="['nic-widget', 'back']"
+              (click)="updateSlide(path[previousSlide].name, true, previousSlide)"
+            >
+              <ix-icon name="chevron_left" class="back-arrow"></ix-icon>
+            </button>
+
+            <h3 class="mat-card-title-text">
+              <ix-drag-handle [showReorderHandle]="showReorderHandle">
+                <div class="card-title-text">
+                  <span *ngIf="showReorderHandle" class="grip"></span>
+                  <span>{{ title | translate }} </span>
+                </div>
+              </ix-drag-handle>
+            </h3>
+
+            <div class="controls">
+              <button
+                mat-icon-button
+                [ixTest]="['nic-widget', 'configure-interface', nicState.name]"
+                (click)="manageInterface(nicState)"
+              >
+                <ix-icon
+                  name="edit"
+                  matTooltipPosition="above"
+                  aria-label="Configure Interface"
+                  [matTooltip]="'Configure {name}' | translate: { name: nicState.name }"
+                ></ix-icon>
+              </button>
+
+              <button
+                mat-icon-button
+                [ixTest]="['nic-widget', 'network-reports', nicState.name]"
+                (click)="router.navigate(['reportsdashboard/network'])"
+              >
+                <ix-icon
+                  name="insert_chart"
+                  matTooltipPosition="above"
+                  aria-label="Network Reports"
+                  [matTooltip]="'Network Reports' | translate"
+                ></ix-icon>
+              </button>
             </div>
-          </h3>
+          </mat-toolbar-row>
+        </ix-drag-handle>
 
-          <div class="controls">
-            <button
-              mat-icon-button
-              [ixTest]="['nic-widget', 'configure-interface', nicState.name]"
-              (click)="manageInterface(nicState)"
-            >
-              <ix-icon
-                name="edit"
-                matTooltipPosition="above"
-                aria-label="Configure Interface"
-                [matTooltip]="'Configure {name}' | translate: { name: nicState.name }"
-              ></ix-icon>
-            </button>
-
-            <button
-              mat-icon-button
-              [ixTest]="['nic-widget', 'network-reports', nicState.name]"
-              (click)="router.navigate(['reportsdashboard/network'])"
-            >
-              <ix-icon
-                name="insert_chart"
-                matTooltipPosition="above"
-                aria-label="Network Reports"
-                [matTooltip]="'Network Reports' | translate"
-              ></ix-icon>
-            </button>
-          </div>
-        </mat-toolbar-row>
         <!-- Carousel -->
         <div #carousel class="carousel" [class.lagg]="nicState.lagg_ports">
           <div
