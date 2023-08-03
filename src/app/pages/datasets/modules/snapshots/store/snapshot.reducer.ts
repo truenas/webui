@@ -14,8 +14,8 @@ export interface SnapshotsState extends EntityState<ZfsSnapshot> {
 }
 
 export const adapter = createEntityAdapter<ZfsSnapshot>({
-  selectId: (snapshot) => snapshot.name,
-  sortComparer: (a, b) => a.snapshot_name.localeCompare(b.snapshot_name),
+  selectId: (snapshot) => snapshot?.name,
+  sortComparer: (a, b) => a?.snapshot_name?.localeCompare(b?.snapshot_name),
 });
 
 export const snapshotsInitialState = adapter.getInitialState({
@@ -32,7 +32,7 @@ export const snapshotReducer = createReducer(
 
   on(snapshotAdded, (state, { snapshot }) => adapter.addOne(snapshot, state)),
   on(snapshotChanged, (state, { snapshot }) => adapter.updateOne({
-    id: snapshot.name,
+    id: snapshot?.name,
     changes: snapshot,
   }, state)),
   on(snapshotRemoved, (state, { id }) => adapter.removeOne(id, state)),
