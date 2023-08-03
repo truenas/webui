@@ -192,13 +192,14 @@ export function transformListSchemaType(
       itemsSchema = itemsSchema.concat(item);
     }
   });
+
   return {
     ...buildCommonSchemaBase(payload),
     type: DynamicFormSchemaType.List,
     items,
     itemsSchema,
     tooltip: payload.chartSchemaNode.description,
-    default: schema.default as unknown[],
+    default: isNew ? schema.default as unknown[] : [],
     dependsOn: schema.show_if?.map((conditional) => conditional[0]),
   };
 }

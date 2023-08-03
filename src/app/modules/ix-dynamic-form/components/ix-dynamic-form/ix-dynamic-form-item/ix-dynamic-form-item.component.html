@@ -44,10 +44,12 @@
       [default]="dynamicSchema.default"
       [itemsSchema]="dynamicSchema.itemsSchema"
       [isEditMode]="isEditMode"
+      [canAdd]="!isAllListControlsDisabled"
       (add)="addControl($event)"
     >
       <ix-list-item
         *ngFor="let element of getFormArray.controls; let i = index"
+        [canDelete]="!isAllListControlsDisabled"
         (delete)="removeControl(i)"
       >
         <ix-dynamic-form-item
