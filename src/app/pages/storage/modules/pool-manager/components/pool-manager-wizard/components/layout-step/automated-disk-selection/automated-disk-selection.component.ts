@@ -112,16 +112,18 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     if (
+      changes.inventory?.currentValue
+      && !_.isEqual(changes.inventory.currentValue, changes.inventory.previousValue)
+    ) {
+      this.updateLayoutOptionsFromLimitedLayouts(this.limitLayouts);
+      this.updateDiskSizeOptions();
+      return;
+    }
+    if (
       changes.limitLayouts?.currentValue
       && !_.isEqual(changes.limitLayouts.currentValue, changes.limitLayouts.previousValue)
     ) {
       this.updateLayoutOptionsFromLimitedLayouts(changes.limitLayouts.currentValue);
-    }
-    if (
-      changes.inventory?.currentValue
-      && !_.isEqual(changes.inventory.currentValue, changes.inventory.previousValue)
-    ) {
-      this.updateDiskSizeOptions();
     }
   }
 
