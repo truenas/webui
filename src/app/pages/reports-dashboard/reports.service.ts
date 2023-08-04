@@ -29,7 +29,6 @@ export class ReportsService implements OnDestroy {
   serverTime: Date;
   private reportingGraphs$ = new BehaviorSubject<ReportingGraph[]>([]);
   private diskMetrics$ = new BehaviorSubject<Option[]>([]);
-  private reportsUtils: Worker;
   private hasUps = false;
   private hasDiskTemperature = false;
   private hasTarget = false;
@@ -41,8 +40,6 @@ export class ReportsService implements OnDestroy {
     private core: CoreService,
     private store$: Store<AppState>,
   ) {
-    this.reportsUtils = new Worker(new URL('./reports-utils.worker', import.meta.url), { type: 'module' });
-
     this.core
       .register({
         observerClass: this,
@@ -109,7 +106,6 @@ export class ReportsService implements OnDestroy {
 
   ngOnDestroy(): void {
     this.core.unregister({ observerClass: this });
-    this.reportsUtils.terminate();
   }
 
   truncateData(data: number[][]): number[][] {

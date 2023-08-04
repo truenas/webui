@@ -130,7 +130,6 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
     this.core.register({ observerClass: this, eventName: `ReportData-${this.chartId}` }).pipe(
       untilDestroyed(this),
     ).subscribe((evt: ReportDataEvent) => {
-      console.info('evt', evt);
       this.data = formatData(evt.data);
       this.handleError(evt);
     });
