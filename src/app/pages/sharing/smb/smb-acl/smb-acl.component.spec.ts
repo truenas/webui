@@ -8,7 +8,9 @@ import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { NfsAclTag } from 'app/enums/nfs-acl.enum';
 import { SmbSharesecPermission, SmbSharesecType } from 'app/enums/smb-sharesec.enum';
+import { Group } from 'app/interfaces/group.interface';
 import { SmbSharesec } from 'app/interfaces/smb-share.interface';
+import { User as TnUser } from 'app/interfaces/user.interface';
 import { IxComboboxHarness } from 'app/modules/ix-forms/components/ix-combobox/ix-combobox.harness';
 import { IxListHarness } from 'app/modules/ix-forms/components/ix-list/ix-list.harness';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -49,6 +51,13 @@ describe('SmbAclComponent', () => {
       },
     ],
   } as SmbSharesec;
+
+  const rootUser: Partial<TnUser> = {
+    id: 0,
+    uid: 0,
+    username: 'root',
+  };
+
   const createComponent = createComponentFactory({
     component: SmbAclComponent,
     imports: [
@@ -59,17 +68,19 @@ describe('SmbAclComponent', () => {
       mockWebsocket([
         mockCall('sharing.smb.getacl', mockAcl),
         mockCall('sharing.smb.setacl'),
+        mockCall('user.query', [rootUser] as TnUser[]),
+        mockCall('group.query', [{ group: 'wheel', id: 1, gid: 1 }] as Group[]),
       ]),
       mockProvider(IxSlideInService),
       mockProvider(DialogService),
       mockProvider(IxSlideInRef),
       mockProvider(UserService, {
         userQueryDsCache: () => of([
-          { username: 'root', id: 0 },
+          { username: 'root', id: 0, uid: 0 },
           { username: 'trunk' },
         ] as User[]),
         groupQueryDsCache: () => of([
-          { group: 'wheel', id: 1 },
+          { group: 'wheel', id: 1, gid: 1 },
           { group: 'vip' },
         ]),
       }),
