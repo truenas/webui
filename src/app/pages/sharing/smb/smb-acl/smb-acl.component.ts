@@ -196,8 +196,8 @@ export class SmbAclComponent implements OnInit {
       const queryArgs: QueryFilter<Group>[] = [['uid', '=', ace.ae_who_id?.id]];
       return this.ws.call('user.query', [queryArgs]);
     }
-    // False positive. Linter thinks it's a conditional statement
-    return of([]); // NOSONAR
+
+    return of([]);
   }
 
   private extractOptionFromAcl(shareAcl: SmbSharesecAce[]): void {
