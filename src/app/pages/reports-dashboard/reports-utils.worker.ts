@@ -1,22 +1,11 @@
 /// <reference lib="webworker" />
 
-import { ReportingData } from 'app/interfaces/reporting.interface';
+import { CoreEvent } from 'app/interfaces/events';
+import { Command, ReportingData } from 'app/interfaces/reporting.interface';
 import { optimizeLegend, convertAggregations } from 'app/pages/reports-dashboard/utils/report.utils';
 
 // Write a bunch of pure functions above
 // and add it to our commands below
-
-export interface CoreEvent {
-  name: string;
-  sender?: unknown;
-  data?: unknown;
-}
-
-export interface Command {
-  command: string; // Use '|' or '--pipe' to use the output of previous command as input
-  input: unknown;
-  options?: unknown[]; // Function parameters
-}
 
 const commands = {
   optimizeLegend: (input: ReportingData) => {

@@ -22,17 +22,6 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
  * and reports page components.
  * */
 
-export interface Command {
-  command: string; // Use '|' or '--pipe' to use the output of previous command as input
-  input: unknown;
-  options?: unknown[]; // Function parameters
-}
-
-export enum ReportingDatabaseError {
-  FailedExport = 22,
-  InvalidTimestamp = 206,
-}
-
 @Injectable({
   providedIn: 'root',
 })
