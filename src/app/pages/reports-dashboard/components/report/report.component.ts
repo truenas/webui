@@ -112,7 +112,10 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
   }
 
   get shouldShowTotal(): boolean {
-    return [ReportingGraphName.ZfsArcResult].includes(this.data?.name as ReportingGraphName);
+    return [
+      ReportingGraphName.ZfsArcResult,
+      ReportingGraphName.Memory,
+    ].includes(this.data?.name as ReportingGraphName);
   }
 
   constructor(
