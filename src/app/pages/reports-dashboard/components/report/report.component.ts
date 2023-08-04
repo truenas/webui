@@ -130,6 +130,7 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
     this.core.register({ observerClass: this, eventName: `ReportData-${this.chartId}` }).pipe(
       untilDestroyed(this),
     ).subscribe((evt: ReportDataEvent) => {
+      console.info('evt', evt);
       this.data = formatData(evt.data);
       this.handleError(evt);
     });
@@ -415,14 +416,14 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
 
   handleError(evt: ReportDataEvent): void {
     const err = evt.data.data as WebsocketError;
-    if ((evt.data?.data as WebsocketError)?.error === ReportingDatabaseError.FailedExport) {
+    if (err?.error === ReportingDatabaseError.FailedExport) {
       this.report.errorConf = {
         type: EmptyType.Errors,
         title: this.translate.instant('Error getting chart data'),
         message: err.reason,
       };
     }
-    if (evt.data?.name === 'FetchingError' && (evt.data?.data as WebsocketError)?.error === ReportingDatabaseError.InvalidTimestamp) {
+    if (evt.data?.name === 'FetchingError' && err?.error === ReportingDatabaseError.InvalidTimestamp) {
       this.report.errorConf = {
         type: EmptyType.Errors,
         title: this.translate.instant('The reporting database is broken'),
