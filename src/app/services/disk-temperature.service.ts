@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { map, Subject } from 'rxjs';
+import { map, Observable, Subject } from 'rxjs';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { Disk, DiskTemperatures } from 'app/interfaces/storage.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
@@ -25,7 +25,11 @@ export class DiskTemperatureService implements OnDestroy {
 
   private disksUpdateSubscriptionId: string;
 
-  temperature$ = new Subject<Temperature>();
+  private _temperature$ = new Subject<Temperature>();
+
+  get temperature$(): Observable<Temperature> {
+    return this._temperature$.asObservable();
+  }
 
   constructor(
     protected websocket: WebSocketService,
@@ -49,6 +53,9 @@ export class DiskTemperatureService implements OnDestroy {
       this.disks = disks;
       if (this.subscribers > 0) this.start();
     });
+    if (this.disksUpdateSubscriptionId) {
+      this.disksUpdateService.removeSubscriber(this.disksUpdateSubscriptionId);
+    }
     this.disksUpdateSubscriptionId = this.disksUpdateService.addSubscriber(disksUpdateTrigger$, true);
   }
 
@@ -86,7 +93,7 @@ export class DiskTemperatureService implements OnDestroy {
         unit: 'Celsius',
         symbolText: '°',
       };
-      this.temperature$.next(data);
+      this._temperature$.next(data);
     });
   }
 
