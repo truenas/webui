@@ -34,6 +34,7 @@
         ></ix-select>
 
         <ix-select
+          *ngIf="!isSpareVdev"
           formControlName="vdevsNumber"
           [label]="'Number of VDEVs' | translate"
           [options]="numberOptions$"
