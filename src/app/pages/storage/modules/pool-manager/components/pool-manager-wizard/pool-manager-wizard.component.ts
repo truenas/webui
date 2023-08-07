@@ -89,6 +89,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
 
   loadExistingPoolDetails(): void {
     this.addVdevsStore.pool$.pipe(
+      filter(Boolean),
       tap((pool) => {
         this.existingPool = _.cloneDeep(pool);
         this.cdr.markForCheck();
