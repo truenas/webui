@@ -46,7 +46,7 @@
               ><ix-icon name="mdi-magnify-minus"></ix-icon></mat-button-toggle>
 
               <mat-button-toggle
-                [disabled]="zoomLevelIndex === zoomLevelMax && stepForwardDisabled"
+                [disabled]="zoomLevelIndex === zoomLevelMax && stepForwardDisabled && !customZoom"
                 [matTooltip]="'Reset Zoom' | translate"
                 [matTooltipShowDelay]="1000"
                 (click)="timeZoomReset()"
@@ -87,12 +87,18 @@
           <div class="legend-wrapper timestamps">
             <h4 *ngIf="currentStartDate" class="legend-timestamp">
               <strong>{{ 'Start' | translate }}:</strong>
-              <span class="font-normal">{{ currentStartDate | formatDateTime }}</span>
+              <span class="font-normal">
+                <ng-container *ngIf="customZoom">{{ currentStartDate | formatDateTime:null }}</ng-container>
+                <ng-container *ngIf="!customZoom">{{ currentStartDate | formatDateTime }}</ng-container>
+              </span>
               <small>({{ timezone }})</small>
             </h4>
             <h4 *ngIf="currentEndDate" class="legend-timestamp">
               <strong>{{ 'End' | translate }}:</strong>
-              <span class="font-normal">{{ currentEndDate | formatDateTime }}</span>
+              <span class="font-normal">
+                <ng-container *ngIf="customZoom">{{ currentEndDate | formatDateTime:null }}</ng-container>
+                <ng-container *ngIf="!customZoom">{{ currentEndDate | formatDateTime }}</ng-container>
+              </span>
             </h4>
           </div>
         </div>
