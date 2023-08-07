@@ -303,15 +303,16 @@ export class ReplicationWizardComponent {
     schema: string = null,
     regex: string = null,
   ): ReplicationCreate {
+    const values = { ...data };
     if (schemaOrRegex === SnapshotNamingOption.NamingSchema) {
-      data.naming_schema = schema ? [schema] : [this.defaultNamingSchema];
-      delete data.name_regex;
+      values.naming_schema = schema ? [schema] : [this.defaultNamingSchema];
+      delete values.name_regex;
     } else {
-      data.name_regex = regex;
-      delete data.naming_schema;
-      delete data.also_include_naming_schema;
+      values.name_regex = regex;
+      delete values.naming_schema;
+      delete values.also_include_naming_schema;
     }
-    return data;
+    return values;
   }
 
   handleError(err: WebsocketError): void {
