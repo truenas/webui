@@ -136,10 +136,8 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
         error: (error) => {
           console.error('System Info not available', error);
         },
-        complete: () => {
-          this.checkForUpdate();
-        },
       });
+      this.checkForUpdate();
     }
     if (this.sysGenService.getProductType() === ProductType.ScaleEnterprise) {
       this.store$.select(selectIsHaLicensed).pipe(untilDestroyed(this)).subscribe((isHaLicensed) => {
