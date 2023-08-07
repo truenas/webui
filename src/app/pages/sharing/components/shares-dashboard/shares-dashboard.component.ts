@@ -91,17 +91,22 @@ export class SharesDashboardComponent implements AfterViewInit {
   }
 
   loadClusteredState(): void {
-    this.ws.call('cluster.utils.is_clustered').pipe(untilDestroyed(this)).subscribe((isClustered) => {
-      this.isClustered = isClustered;
-      if (this.isClustered) {
-        this.smbTableConf.addActionDisabled = true;
-        this.smbTableConf.deleteActionDisabled = true;
-        this.smbTableConf.tooltip = {
-          header: this.translate.instant('Windows (SMB) Shares'),
-          message: this.translate.instant('This share is configured through TrueCommand'),
-        };
-        _.find(this.smbTableConf.columns, { name: helptextSharingSmb.column_enabled }).disabled = true;
-      }
+    this.ws.call('cluster.utils.is_clustered').pipe(untilDestroyed(this)).subscribe({
+      next: (isClustered) => {
+        this.isClustered = isClustered;
+        if (this.isClustered) {
+          this.smbTableConf.addActionDisabled = true;
+          this.smbTableConf.deleteActionDisabled = true;
+          this.smbTableConf.tooltip = {
+            header: this.translate.instant('Windows (SMB) Shares'),
+            message: this.translate.instant('This share is configured through TrueCommand'),
+          };
+          _.find(this.smbTableConf.columns, { name: helptextSharingSmb.column_enabled }).disabled = true;
+        }
+      },
+      error: (error: WebsocketError) => {
+        this.dialogService.error(this.errorHandler.parseError(error));
+      },
     });
   }
 
@@ -109,11 +114,16 @@ export class SharesDashboardComponent implements AfterViewInit {
     this.ws
       .call('service.query', [])
       .pipe(untilDestroyed(this))
-      .subscribe((services) => {
-        this.servicesToCheck.forEach((service) => {
-          this.updateTableServiceStatus(_.find(services, { service }));
-        });
-        this.subscribeToServiceUpdates();
+      .subscribe({
+        next: (services) => {
+          this.servicesToCheck.forEach((service) => {
+            this.updateTableServiceStatus(_.find(services, { service }));
+          });
+          this.subscribeToServiceUpdates();
+        },
+        error: (error: WebsocketError) => {
+          this.dialogService.error(this.errorHandler.parseError(error));
+        },
       });
   }
 
@@ -125,8 +135,13 @@ export class SharesDashboardComponent implements AfterViewInit {
         filter((service) => this.servicesToCheck.includes(service.service)),
         untilDestroyed(this),
       )
-      .subscribe((service: Service) => {
-        this.updateTableServiceStatus(service);
+      .subscribe({
+        next: (service: Service) => {
+          this.updateTableServiceStatus(service);
+        },
+        error: (error: WebsocketError) => {
+          this.dialogService.error(this.errorHandler.parseError(error));
+        },
       });
   }
 
@@ -339,22 +354,31 @@ export class SharesDashboardComponent implements AfterViewInit {
                 matTooltip: helptextSharingSmb.action_share_acl,
                 disabled: this.isClustered,
                 onClick: (row: SmbShare) => {
-                  this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).pipe(untilDestroyed(this)).subscribe(
-                    (isLocked) => {
-                      if (isLocked) {
-                        this.lockedPathDialog(row.path);
-                      } else {
-                        // A home share has a name (homes) set; row.name works for other shares
-                        const searchName = row.home ? 'homes' : row.name;
-                        this.ws.call('sharing.smb.getacl', [{ share_name: searchName }])
-                          .pipe(untilDestroyed(this))
-                          .subscribe((shareAcl) => {
-                            const slideInRef = this.slideInService.open(SmbAclComponent, { data: shareAcl.share_name });
-                            this.handleSlideInClosed(slideInRef, SmbAclComponent);
-                          });
-                      }
-                    },
-                  );
+                  this.ws.call('pool.dataset.path_in_locked_datasets', [row.path])
+                    .pipe(untilDestroyed(this)).subscribe(
+                      {
+                        next: (isLocked) => {
+                          if (isLocked) {
+                            this.lockedPathDialog(row.path);
+                          } else {
+                            // A home share has a name (homes) set; row.name works for other shares
+                            const searchName = row.home ? 'homes' : row.name;
+                            this.ws.call('sharing.smb.getacl', [{ share_name: searchName }])
+                              .pipe(untilDestroyed(this))
+                              .subscribe((shareAcl) => {
+                                const slideInRef = this.slideInService.open(
+                                  SmbAclComponent,
+                                  { data: shareAcl.share_name },
+                                );
+                                this.handleSlideInClosed(slideInRef, SmbAclComponent);
+                              });
+                          }
+                        },
+                        error: (error: WebsocketError) => {
+                          this.dialogService.error(this.errorHandler.parseError(error));
+                        },
+                      },
+                    );
                 },
               },
               {
@@ -363,16 +387,21 @@ export class SharesDashboardComponent implements AfterViewInit {
                 matTooltip: helptextSharingSmb.action_edit_acl,
                 onClick: (row: SmbShare) => {
                   this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).pipe(untilDestroyed(this)).subscribe(
-                    (isLocked) => {
-                      if (isLocked) {
-                        this.lockedPathDialog(row.path);
-                      } else {
-                        this.router.navigate(['/', 'datasets', 'acl', 'edit'], {
-                          queryParams: {
-                            path: row.path_local,
-                          },
-                        });
-                      }
+                    {
+                      next: (isLocked) => {
+                        if (isLocked) {
+                          this.lockedPathDialog(row.path);
+                        } else {
+                          this.router.navigate(['/', 'datasets', 'acl', 'edit'], {
+                            queryParams: {
+                              path: row.path_local,
+                            },
+                          });
+                        }
+                      },
+                      error: (error: WebsocketError) => {
+                        this.dialogService.error(this.errorHandler.parseError(error));
+                      },
                     },
                   );
                 },
