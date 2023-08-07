@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import _ from 'lodash';
 import {
-  Observable, filter, map, switchMap, tap,
+  Observable, filter, map, of, switchMap, tap,
 } from 'rxjs';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
@@ -67,7 +67,7 @@ export class DashboardStorageStore extends ComponentStore<DashboardStorageState>
         if (pools?.length) {
           return this.loadVolumeData();
         }
-        return pools;
+        return of(pools);
       }),
     );
   }
