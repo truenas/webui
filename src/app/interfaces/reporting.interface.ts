@@ -143,12 +143,6 @@ export interface ReportingData {
   aggregations: ReportingAggregations;
 }
 
-export interface Command {
-  command: string; // Use '|' or '--pipe' to use the output of previous command as input
-  input: unknown;
-  options?: unknown[]; // Function parameters
-}
-
 export enum ReportingDatabaseError {
   FailedExport = 22,
   InvalidTimestamp = 206,
