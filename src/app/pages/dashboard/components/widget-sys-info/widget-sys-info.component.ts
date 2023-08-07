@@ -21,6 +21,7 @@ import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.co
 import {
   DialogService,
 } from 'app/services/dialog.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { LocaleService } from 'app/services/locale.service';
 import { ProductImageService } from 'app/services/product-image.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -83,6 +84,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
     public loader: AppLoaderService,
     public dialogService: DialogService,
     private titleCase: TitleCasePipe,
+    private errorHandler: ErrorHandlerService,
     @Inject(WINDOW) private window: Window,
   ) {
     super(translate);
@@ -282,15 +284,20 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
     this.ws.call('update.check_available').pipe(
       take(1),
       untilDestroyed(this),
-    ).subscribe((update) => {
-      if (update.status !== SystemUpdateStatus.Available) {
-        this.updateAvailable = false;
-        sessionStorage.updateAvailable = 'false';
-        return;
-      }
+    ).subscribe({
+      next: (update) => {
+        if (update.status !== SystemUpdateStatus.Available) {
+          this.updateAvailable = false;
+          sessionStorage.updateAvailable = 'false';
+          return;
+        }
 
-      this.updateAvailable = true;
-      sessionStorage.updateAvailable = 'true';
+        this.updateAvailable = true;
+        sessionStorage.updateAvailable = 'true';
+      },
+      error: (err) => {
+        this.errorHandler.logToSentry(err);
+      },
     });
   }
 }
