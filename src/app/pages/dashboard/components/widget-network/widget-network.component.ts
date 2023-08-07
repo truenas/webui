@@ -16,7 +16,7 @@ import { EmptyType } from 'app/enums/empty-type.enum';
 import { LinkState, NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { BaseNetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
-import { NetworkInterfaceUpdate, ReportingNameAndId } from 'app/interfaces/reporting.interface';
+import { NetworkInterfaceUpdate, ReportingDatabaseError, ReportingNameAndId } from 'app/interfaces/reporting.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { TableService } from 'app/modules/entity/table/table.service';
@@ -24,7 +24,7 @@ import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.s
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { ResourcesUsageStore } from 'app/pages/dashboard/store/resources-usage-store.service';
 import { deepCloneState } from 'app/pages/dashboard/utils/deep-clone-state.helper';
-import { ReportingDatabaseError, ReportsService } from 'app/pages/reports-dashboard/reports.service';
+import { ReportsService } from 'app/pages/reports-dashboard/reports.service';
 import { DialogService } from 'app/services/dialog.service';
 import { LocaleService } from 'app/services/locale.service';
 import { ThemeService } from 'app/services/theme/theme.service';

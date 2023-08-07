@@ -22,7 +22,7 @@ import { EmptyType } from 'app/enums/empty-type.enum';
 import { ReportingGraphName } from 'app/enums/reporting.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { LegendEvent, ReportDataEvent } from 'app/interfaces/events/reporting-events.interface';
-import { ReportingData } from 'app/interfaces/reporting.interface';
+import { ReportingData, ReportingDatabaseError } from 'app/interfaces/reporting.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
@@ -33,7 +33,6 @@ import {
   DateTime, LegendDataWithStackedTotalHtml, Report, FetchReportParams, TimeAxisData, TimeData,
 } from 'app/pages/reports-dashboard/interfaces/report.interface';
 import { refreshInterval } from 'app/pages/reports-dashboard/reports.constants';
-import { ReportingDatabaseError } from 'app/pages/reports-dashboard/reports.service';
 import { formatData, formatLegendSeries } from 'app/pages/reports-dashboard/utils/report.utils';
 import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -113,7 +112,10 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
   }
 
   get shouldShowTotal(): boolean {
-    return [ReportingGraphName.ZfsArcResult].includes(this.data?.name as ReportingGraphName);
+    return [
+      ReportingGraphName.ZfsArcResult,
+      ReportingGraphName.Memory,
+    ].includes(this.data?.name as ReportingGraphName);
   }
 
   constructor(
@@ -416,14 +418,14 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
 
   handleError(evt: ReportDataEvent): void {
     const err = evt.data.data as WebsocketError;
-    if ((evt.data?.data as WebsocketError)?.error === ReportingDatabaseError.FailedExport) {
+    if (err?.error === ReportingDatabaseError.FailedExport) {
       this.report.errorConf = {
         type: EmptyType.Errors,
         title: this.translate.instant('Error getting chart data'),
         message: err.reason,
       };
     }
-    if (evt.data?.name === 'FetchingError' && (evt.data?.data as WebsocketError)?.error === ReportingDatabaseError.InvalidTimestamp) {
+    if (evt.data?.name === 'FetchingError' && err?.error === ReportingDatabaseError.InvalidTimestamp) {
       this.report.errorConf = {
         type: EmptyType.Errors,
         title: this.translate.instant('The reporting database is broken'),
