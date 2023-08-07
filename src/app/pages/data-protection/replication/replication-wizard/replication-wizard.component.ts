@@ -258,8 +258,11 @@ export class ReplicationWizardComponent {
         payload = this.setSchemaOrRegexForObject(payload, data.schema_or_regex, data.naming_schema, data.name_regex);
       } else if (data.schema_or_regex === SnapshotNamingOption.NamingSchema) {
         payload.also_include_naming_schema = data.naming_schema ? [data.naming_schema] : [this.defaultNamingSchema];
-      } else {
+      } else if (data.name_regex) {
         payload.name_regex = data.name_regex;
+      } else {
+        // fallback when no other data to rely on
+        payload.also_include_naming_schema = [this.defaultNamingSchema];
       }
     }
 
