@@ -46,7 +46,7 @@
               ><ix-icon name="mdi-magnify-minus"></ix-icon></mat-button-toggle>
 
               <mat-button-toggle
-                [disabled]="zoomLevelIndex === zoomLevelMax && stepForwardDisabled"
+                [disabled]="zoomLevelIndex === zoomLevelMax && stepForwardDisabled && !customZoom"
                 [matTooltip]="'Reset Zoom' | translate"
                 [matTooltipShowDelay]="1000"
                 (click)="timeZoomReset()"
@@ -80,18 +80,25 @@
               [title]="report.title"
               [timezone]="timezone"
               [labelY]="report.vertical_label || ''"
+              (zoomChange)="onZoomChange($event)"
             ></ix-linechart>
           </div>
 
           <div class="legend-wrapper timestamps">
             <h4 *ngIf="currentStartDate" class="legend-timestamp">
               <strong>{{ 'Start' | translate }}:</strong>
-              <span class="font-normal">{{ currentStartDate | formatDateTime:timezone }}</span>
+              <span class="font-normal">
+                <ng-container *ngIf="customZoom">{{ currentStartDate | formatDateTime:null }}</ng-container>
+                <ng-container *ngIf="!customZoom">{{ currentStartDate | formatDateTime }}</ng-container>
+              </span>
               <small>({{ timezone }})</small>
             </h4>
             <h4 *ngIf="currentEndDate" class="legend-timestamp">
               <strong>{{ 'End' | translate }}:</strong>
-              <span class="font-normal">{{ currentEndDate | formatDateTime:timezone }}</span>
+              <span class="font-normal">
+                <ng-container *ngIf="customZoom">{{ currentEndDate | formatDateTime:null }}</ng-container>
+                <ng-container *ngIf="!customZoom">{{ currentEndDate | formatDateTime }}</ng-container>
+              </span>
             </h4>
           </div>
         </div>
@@ -100,7 +107,7 @@
           <div *ngIf="report && data?.legend" class="legend-timestamp" fxFlex="32px" fxLayoutAlign="start center">
             <h4 *ngIf="data && legendData?.xHTML" fxLayoutGap="8px" fxLayoutAlign="start center">
               <strong>{{ 'Time' | translate }}:</strong>
-              <span *ngIf="legendData && legendData.xHTML" class="font-normal">
+              <span *ngIf="legendData?.xHTML" class="font-normal">
                 {{ legendData.xHTML }}
               </span>
             </h4>

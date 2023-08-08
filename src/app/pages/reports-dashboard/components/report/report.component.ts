@@ -18,6 +18,7 @@ import {
   delay, distinctUntilChanged, filter, switchMap, throttleTime,
 } from 'rxjs/operators';
 import { toggleMenuDuration } from 'app/constants/toggle-menu-duration';
+import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { ReportingGraphName } from 'app/enums/reporting.enum';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -73,6 +74,7 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
   timezone: string;
   currentStartDate: number;
   currentEndDate: number;
+  customZoom = false;
   zoomLevelMax = Object.keys(ReportZoomLevel).length - 1;
   zoomLevelMin = 0;
   zoomLevelIndex = this.zoomLevelMax;
@@ -124,6 +126,7 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
     private core: CoreService,
     private store$: Store<AppState>,
     private themeService: ThemeService,
+    private formatDateTimePipe: FormatDateTimePipe,
     @Inject(WINDOW) private window: Window,
   ) {
     super(translate);
@@ -139,8 +142,8 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
       untilDestroyed(this),
     ).subscribe((evt: LegendEvent) => {
       const clone = { ...evt.data };
-      clone.xHTML = this.formatTime(evt.data.xHTML);
       clone.series = formatLegendSeries(evt.data.series, this.data);
+      clone.xHTML = this.formatTime(evt.data.x);
       this.legendData = clone as LegendDataWithStackedTotalHtml;
     });
 
@@ -234,10 +237,16 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
     this.core.unregister({ observerClass: this });
   }
 
-  formatTime(stamp: string): string {
-    const parsed = Date.parse(stamp);
-    const result = this.localeService.formatDateTimeWithNoTz(new Date(parsed));
+  formatTime(stamp: number): string {
+    const result = this.localeService.formatDateTimeWithNoTz(new Date(stamp));
     return result.toLowerCase() !== 'invalid date' ? result : null;
+  }
+
+  onZoomChange(interval: number[]): void {
+    const [startDate, endDate] = interval;
+    this.currentStartDate = startDate;
+    this.currentEndDate = endDate;
+    this.customZoom = true;
   }
 
   setChartInteractive(value: boolean): void {
@@ -249,6 +258,7 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
     const rrdOptions = this.convertTimespan(this.currentZoomLevel);
     this.currentStartDate = rrdOptions.start;
     this.currentEndDate = rrdOptions.end;
+    this.customZoom = false;
 
     const identifier = this.report.identifiers ? this.report.identifiers[0] : null;
     this.fetchReport$.next({ rrdOptions, identifier, report: this.report });
@@ -263,6 +273,7 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
     const rrdOptions = this.convertTimespan(this.currentZoomLevel);
     this.currentStartDate = rrdOptions.start;
     this.currentEndDate = rrdOptions.end;
+    this.customZoom = false;
 
     const identifier = this.report.identifiers ? this.report.identifiers[0] : null;
     this.fetchReport$.next({ rrdOptions, identifier, report: this.report });
@@ -277,6 +288,7 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
     const rrdOptions = this.convertTimespan(this.currentZoomLevel);
     this.currentStartDate = rrdOptions.start;
     this.currentEndDate = rrdOptions.end;
+    this.customZoom = false;
 
     const identifier = this.report.identifiers ? this.report.identifiers[0] : null;
     this.fetchReport$.next({ rrdOptions, identifier, report: this.report });
@@ -316,19 +328,17 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
     this.fetchReport$.next({ rrdOptions, identifier, report: this.report });
   }
 
-  // Convert timespan to start/end options for RRDTool
+  // Convert timespan to start/end options
   convertTimespan(
     timespan: ReportZoomLevel,
     direction = ReportStepDirection.Backward,
     currentDate?: number,
   ): TimeData {
-    let durationUnit: keyof Duration;
-    let value: number;
-
+    const duration = this.getTimespan(timespan);
     const now = new Date();
-
     let startDate: Date;
     let endDate: Date;
+
     if (direction === ReportStepDirection.Backward && !currentDate) {
       endDate = now;
     } else if (direction === ReportStepDirection.Backward && currentDate) {
@@ -341,7 +351,39 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
       );
     }
 
-    switch (timespan) {
+    if (direction === ReportStepDirection.Backward) {
+      startDate = sub(endDate, duration);
+    } else if (direction === ReportStepDirection.Forward) {
+      endDate = add(startDate, duration);
+    }
+
+    // if endDate is in the future, reset with endDate to now
+    if (endDate.getTime() >= now.getTime()) {
+      endDate = now;
+      startDate = sub(endDate, duration);
+      this.stepForwardDisabled = true;
+    } else {
+      this.stepForwardDisabled = false;
+    }
+
+    if (startDate.getFullYear() <= 1999) {
+      this.stepBackDisabled = true;
+    } else {
+      this.stepBackDisabled = false;
+    }
+
+    return {
+      start: startDate.getTime(),
+      end: endDate.getTime(),
+      step: '10',
+    };
+  }
+
+  getTimespan(zoomLevel: ReportZoomLevel): { [x: string]: number } {
+    let durationUnit: keyof Duration;
+    let value: number;
+
+    switch (zoomLevel) {
       case ReportZoomLevel.HalfYear:
         durationUnit = 'months';
         value = 6;
@@ -363,33 +405,7 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
         value = 60;
         break;
     }
-
-    if (direction === ReportStepDirection.Backward) {
-      startDate = sub(endDate, { [durationUnit]: value });
-    } else if (direction === ReportStepDirection.Forward) {
-      endDate = add(startDate, { [durationUnit]: value });
-    }
-
-    // if endDate is in the future, reset with endDate to now
-    if (endDate.getTime() >= now.getTime()) {
-      endDate = new Date();
-      startDate = sub(endDate, { [durationUnit]: value });
-      this.stepForwardDisabled = true;
-    } else {
-      this.stepForwardDisabled = false;
-    }
-
-    if (startDate.getFullYear() <= 1999) {
-      this.stepBackDisabled = true;
-    } else {
-      this.stepBackDisabled = false;
-    }
-
-    return {
-      start: startDate.getTime(),
-      end: endDate.getTime(),
-      step: '10',
-    };
+    return { [durationUnit]: value };
   }
 
   fetchReportData(fetchParams: FetchReportParams): void {
@@ -416,14 +432,14 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
 
   handleError(evt: ReportDataEvent): void {
     const err = evt.data.data as WebsocketError;
-    if ((evt.data?.data as WebsocketError)?.error === ReportingDatabaseError.FailedExport) {
+    if (err?.error === ReportingDatabaseError.FailedExport) {
       this.report.errorConf = {
         type: EmptyType.Errors,
         title: this.translate.instant('Error getting chart data'),
         message: err.reason,
       };
     }
-    if (evt.data?.name === 'FetchingError' && (evt.data?.data as WebsocketError)?.error === ReportingDatabaseError.InvalidTimestamp) {
+    if (evt.data?.name === 'FetchingError' && err?.error === ReportingDatabaseError.InvalidTimestamp) {
       this.report.errorConf = {
         type: EmptyType.Errors,
         title: this.translate.instant('The reporting database is broken'),
