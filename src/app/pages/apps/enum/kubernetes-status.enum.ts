@@ -11,11 +11,11 @@ export enum KubernetesStatus {
 }
 
 export const kubernetesStatusLabels = new Map<KubernetesStatus, string>([
-  [KubernetesStatus.Running, T('Cluster Running')],
-  [KubernetesStatus.Initializing, T('Initializing Cluster')],
-  [KubernetesStatus.Failed, T('Error In Cluster')],
-  [KubernetesStatus.Stopped, T('Cluster Stopped')],
-  [KubernetesStatus.Stopping, T('Stopping Cluster')],
-  [KubernetesStatus.Pending, T('Cluster Pending')],
-  [KubernetesStatus.Unconfigured, T('Cluster Not Configured')],
+  [KubernetesStatus.Running, T('Apps Service Running')],
+  [KubernetesStatus.Initializing, T('Initializing Apps Service')],
+  [KubernetesStatus.Failed, T('Error In Apps Service')],
+  [KubernetesStatus.Stopped, T('Apps Service Stopped')],
+  [KubernetesStatus.Stopping, T('Stopping Apps Service')],
+  [KubernetesStatus.Pending, T('Apps Service Pending')],
+  [KubernetesStatus.Unconfigured, T('Apps Service Not Configured')],
 ]);

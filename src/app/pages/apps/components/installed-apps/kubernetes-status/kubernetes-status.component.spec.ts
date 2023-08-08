@@ -26,37 +26,37 @@ describe('KubernetesStatusComponent', () => {
 
   it('checks status for Running kubernetes status', () => {
     setupTest(KubernetesStatus.Running);
-    expect(spectator.query('.status-wrapper span')).toHaveText('Cluster Running');
+    expect(spectator.query('.status-wrapper span')).toHaveText('Apps Service Running');
   });
 
   it('checks status for Initializing kubernetes status', () => {
     setupTest(KubernetesStatus.Initializing);
-    expect(spectator.query('.status-wrapper span')).toHaveText('Initializing Cluster');
+    expect(spectator.query('.status-wrapper span')).toHaveText('Initializing Apps Service');
   });
 
   it('checks status for Failed kubernetes status', () => {
     setupTest(KubernetesStatus.Failed);
-    expect(spectator.query('.status-wrapper span')).toHaveText('Error In Cluster');
+    expect(spectator.query('.status-wrapper span')).toHaveText('Error In Apps Service');
   });
 
   it('checks status for Stopped kubernetes status', () => {
     setupTest(KubernetesStatus.Stopped);
-    expect(spectator.query('.status-wrapper span')).toHaveText('Cluster Stopped');
+    expect(spectator.query('.status-wrapper span')).toHaveText('Apps Service Stopped');
   });
 
   it('checks status for Stopping kubernetes status', () => {
     setupTest(KubernetesStatus.Stopping);
-    expect(spectator.query('.status-wrapper span')).toHaveText('Stopping Cluster');
+    expect(spectator.query('.status-wrapper span')).toHaveText('Stopping Apps Service');
   });
 
   it('checks status for Pending kubernetes status', () => {
     setupTest(KubernetesStatus.Pending);
-    expect(spectator.query('.status-wrapper span')).toHaveText('Cluster Pending');
+    expect(spectator.query('.status-wrapper span')).toHaveText('Apps Service Pending');
   });
 
   it('checks status for Unconfigured kubernetes status', () => {
     setupTest(KubernetesStatus.Unconfigured);
-    expect(spectator.query('.status-wrapper span')).toHaveText('Cluster Not Configured');
+    expect(spectator.query('.status-wrapper span')).toHaveText('Apps Service Not Configured');
   });
 
   it('hides kubernetes status when it is not set', () => {
