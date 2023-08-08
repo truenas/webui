@@ -38,7 +38,7 @@
     <ngx-skeleton-loader *ngIf="isLoading$ | async; else catalog"></ngx-skeleton-loader>
     <ng-template #catalog>
       <ng-container *ngIf="app?.catalog">
-        {{ "{catalog} Catalog" | translate: { catalog: app.catalog } }}
+        {{ "{catalog} Catalog" | translate: { catalog: app.catalog | appCatalog } }}
       </ng-container>
     </ng-template>
   </div>

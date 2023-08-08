@@ -40,7 +40,7 @@ describe('CatalogEditFormComponent', () => {
 
     spectator.component.setCatalogForEdit({
       id: 'truenas',
-      label: 'Truenas',
+      label: 'TrueNAS',
       trains: {
         test: {},
         stable: {},
@@ -55,7 +55,7 @@ describe('CatalogEditFormComponent', () => {
     const values = await form.getValues();
 
     expect(values).toEqual({
-      'Catalog Name': 'Truenas',
+      'Catalog Name': 'TrueNAS',
       'Preferred Trains': ['test'],
     });
   });
