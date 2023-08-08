@@ -32,6 +32,9 @@
     >
       {{ 'Log In' | translate }}
     </button>
+    <div *ngIf="isLastLoginAttemptFailed" class="error">
+      <p>{{ 'Wrong username or password. Please try again.' | translate }}</p>
+    </div>
   </ng-container>
   <ng-container *ngIf="hasTwoFactor">
     <ix-input
@@ -44,24 +47,29 @@
 
     <ix-insecure-connection *ngIf="showSecurityWarning"></ix-insecure-connection>
 
-    <button
-      class="submit-button"
-      mat-button
-      type="button"
-      color="primary"
-      ixTest="log-in"
-      [disabled]="isLoading$ | async"
-      (click)="loginWithOtp()"
-    >
-      {{ 'Proceed' | translate }}
-    </button>
-    <button
-      class="submit-button"
-      mat-button
-      type="button"
-      ixTest="otp-log-in"
-      [disabled]="isLoading$ | async"
-      (click)="cancelOtpLogin()"
-    >{{ 'Cancel' | translate }}</button>
+    <div>
+      <button
+        class="submit-button"
+        mat-button
+        type="button"
+        color="primary"
+        ixTest="log-in"
+        [disabled]="isLoading$ | async"
+        (click)="loginWithOtp()"
+      >
+        {{ 'Proceed' | translate }}
+      </button>
+      <button
+        class="submit-button"
+        mat-button
+        type="button"
+        ixTest="otp-log-in"
+        [disabled]="isLoading$ | async"
+        (click)="cancelOtpLogin()"
+      >{{ 'Cancel' | translate }}</button>
+    </div>
+    <div *ngIf="isLastOtpAttemptFailed" class="error">
+      <p>{{ 'Invalid or expired OTP. Please try again.' | translate }}</p>
+    </div>
   </ng-container>
 </form>

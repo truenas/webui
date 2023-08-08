@@ -1,10 +1,12 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import _ from 'lodash';
 import {
+  distinctUntilChanged,
   filter, of, switchMap, tap,
 } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -20,9 +22,12 @@ import { SigninStore } from 'app/views/sessions/signin/store/signin.store';
   styleUrls: ['./signin-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SigninFormComponent {
+export class SigninFormComponent implements OnInit {
   hasTwoFactor = false;
   showSecurityWarning = false;
+
+  protected isLastLoginAttemptFailed = false;
+  protected isLastOtpAttemptFailed = false;
 
   form = this.formBuilder.group({
     username: ['', Validators.required],
@@ -47,9 +52,24 @@ export class SigninFormComponent {
     }
   }
 
+  ngOnInit(): void {
+    this.form.valueChanges.pipe(
+      distinctUntilChanged(_.isEqual),
+      untilDestroyed(this),
+    ).subscribe({
+      next: () => {
+        this.isLastLoginAttemptFailed = false;
+        this.isLastOtpAttemptFailed = false;
+        this.cdr.markForCheck();
+      },
+    });
+  }
+
   login(): void {
+    this.isLastLoginAttemptFailed = false;
     this.signinStore.setLoadingState(true);
     const formValues = this.form.value;
+    this.cdr.markForCheck();
     this.ws.call('auth.two_factor_auth', [formValues.username, formValues.password]).pipe(
       switchMap((isTwoFactorEnabled) => {
         this.hasTwoFactor = isTwoFactorEnabled;
@@ -87,6 +107,8 @@ export class SigninFormComponent {
   }
 
   private handleFailedLogin(): void {
+    this.isLastLoginAttemptFailed = true;
+    this.cdr.markForCheck();
     const message: string = this.translate.instant('Wrong username or password. Please try again.');
     this.signinStore.showSnackbar(message);
   }
@@ -96,6 +118,8 @@ export class SigninFormComponent {
     this.signinStore.showSnackbar(message);
     this.form.patchValue({ otp: '' });
     this.form.controls.otp.updateValueAndValidity();
+    this.isLastOtpAttemptFailed = true;
+    this.cdr.markForCheck();
   }
 
   private clearForm(): void {
