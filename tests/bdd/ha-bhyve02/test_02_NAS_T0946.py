@@ -388,11 +388,10 @@ def navigate_to_dashboard_wait_for_ha_to_be_online(driver):
     """navigate to dashboard, wait for HA to be online."""
     assert wait_on_element(driver, 7, xpaths.side_Menu.dashboard, 'clickable')
     driver.find_element_by_xpath(xpaths.side_Menu.dashboard).click()
-    driver.refresh()
     rsc.Verify_The_Dashboard(driver)
+    assert wait_on_element(driver, 240, xpaths.toolbar.ha_Enabled)
     assert wait_on_element(driver, 15, '//span[contains(.,"Hostname:") and contains(.,"truenas")]')
-    assert wait_on_element(driver, 300, '//span[contains(.,"Hostname:") and contains(.,"truenas-b")]')
-    assert wait_on_element(driver, 30, xpaths.toolbar.ha_Enabled)
+    assert wait_on_element(driver, 15, '//span[contains(.,"Hostname:") and contains(.,"truenas-b")]')
     time.sleep(5)
 
 
