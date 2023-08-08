@@ -127,7 +127,7 @@ def create_pool_should_appear_while_the_pool_is_being_created(driver):
 @then('you should be returned to the list of Pools')
 def you_should_be_returned_to_the_list_of_pools(driver):
     """you should be returned to the list of Pools."""
-    assert wait_on_element(driver, 7, '//h1[text()="Storage Dashboard"]')
+    assert wait_on_element(driver, 7, xpaths.storage.title)
 
 
 @then(parsers.parse('the {pool_name} pool should be on the Pools list'))

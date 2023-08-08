@@ -140,12 +140,12 @@ def the_changed_permissions_should_be_what_they_were_changed_to(driver):
     assert attribute_value_exist(driver, xpaths.add_User.home_Mode_Owner_Write_Checkbox, 'class', 'mat-mdc-checkbox-checked')
     assert attribute_value_exist(driver, xpaths.add_User.home_Mode_Owner_Read_Checkbox, 'class', 'mat-mdc-checkbox-checked')
     assert attribute_value_exist(driver, xpaths.add_User.home_Mode_Owner_Exec_Checkbox, 'class', 'mat-mdc-checkbox-checked')
-    assert attribute_value_exist(driver, xpaths.add_User.home_Mode_Group_Read_Checkbox, 'class', 'mat-mdc-checkbox-checked')
+    assert attribute_value_exist(driver, xpaths.add_User.home_Mode_Group_Read_Checkbox, 'class', 'mat-mdc-checkbox-checked') is False
     assert attribute_value_exist(driver, xpaths.add_User.home_Mode_Group_Write_Checkbox, 'class', 'mat-mdc-checkbox-checked')
-    assert attribute_value_exist(driver, xpaths.add_User.home_Mode_Group_Exec_Checkbox, 'class', 'mat-mdc-checkbox-checked') is False
-    assert attribute_value_exist(driver, xpaths.add_User.home_Mode_Other_Read_Checkbox, 'class', 'mat-mdc-checkbox-checked')
+    assert attribute_value_exist(driver, xpaths.add_User.home_Mode_Group_Exec_Checkbox, 'class', 'mat-mdc-checkbox-checked')
+    assert attribute_value_exist(driver, xpaths.add_User.home_Mode_Other_Read_Checkbox, 'class', 'mat-mdc-checkbox-checked') is False
     assert attribute_value_exist(driver, xpaths.add_User.home_Mode_Other_Write_Checkbox, 'class', 'mat-mdc-checkbox-checked')
-    assert attribute_value_exist(driver, xpaths.add_User.home_Mode_Other_Exec_Checkbox, 'class', 'mat-mdc-checkbox-checked') is False
+    assert attribute_value_exist(driver, xpaths.add_User.home_Mode_Other_Exec_Checkbox, 'class', 'mat-mdc-checkbox-checked')
     # setting back the original permission for future test
     assert wait_on_element(driver, 2, xpaths.add_User.home_Mode_Group_Write_Checkbox, 'clickable')
     driver.find_element_by_xpath(xpaths.add_User.home_Mode_Group_Write_Checkbox).click()

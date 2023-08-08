@@ -27,7 +27,7 @@ def test_change_the_permissions_of_a_user_home_directory():
 @given('the browser is open, the TrueNAS URL and logged in')
 def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_password, request):
     """the browser is open, the TrueNAS URL and logged in."""
-    #depends(request, ['First_User', 'First_User_Home'], scope='session')
+    depends(request, ['First_User', 'First_User_Home'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, xpaths.login.user_Input)
@@ -104,12 +104,12 @@ def reopen_the_user_edit_page_and_verify_all_permissions_are_save_properly(drive
     assert attribute_value_exist(driver, xpaths.add_User.home_Mode_Owner_Write_Checkbox, 'class', 'mat-mdc-checkbox-checked')
     assert attribute_value_exist(driver, xpaths.add_User.home_Mode_Owner_Read_Checkbox, 'class', 'mat-mdc-checkbox-checked')
     assert attribute_value_exist(driver, xpaths.add_User.home_Mode_Owner_Exec_Checkbox, 'class', 'mat-mdc-checkbox-checked')
-    assert attribute_value_exist(driver, xpaths.add_User.home_Mode_Group_Read_Checkbox, 'class', 'mat-mdc-checkbox-checked')
+    assert attribute_value_exist(driver, xpaths.add_User.home_Mode_Group_Read_Checkbox, 'class', 'mat-mdc-checkbox-checked') is False
     assert attribute_value_exist(driver, xpaths.add_User.home_Mode_Group_Write_Checkbox, 'class', 'mat-mdc-checkbox-checked')
-    assert attribute_value_exist(driver, xpaths.add_User.home_Mode_Group_Exec_Checkbox, 'class', 'mat-mdc-checkbox-checked') is False
-    assert attribute_value_exist(driver, xpaths.add_User.home_Mode_Other_Read_Checkbox, 'class', 'mat-mdc-checkbox-checked')
+    assert attribute_value_exist(driver, xpaths.add_User.home_Mode_Group_Exec_Checkbox, 'class', 'mat-mdc-checkbox-checked')
+    assert attribute_value_exist(driver, xpaths.add_User.home_Mode_Other_Read_Checkbox, 'class', 'mat-mdc-checkbox-checked') is False
     assert attribute_value_exist(driver, xpaths.add_User.home_Mode_Other_Write_Checkbox, 'class', 'mat-mdc-checkbox-checked')
-    assert attribute_value_exist(driver, xpaths.add_User.home_Mode_Other_Exec_Checkbox, 'class', 'mat-mdc-checkbox-checked') is False
+    assert attribute_value_exist(driver, xpaths.add_User.home_Mode_Other_Exec_Checkbox, 'class', 'mat-mdc-checkbox-checked')
 
 
 @then('revert your changes, click save, and return to dashboard')
