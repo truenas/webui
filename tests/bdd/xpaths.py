@@ -487,7 +487,15 @@ class login:
 class network:
     title = '//h1[contains(.,"Network")]'
     global_Configuration_Title = '//h3[text()="Global Configuration"]'
-    interface = '//ix-icon[@id="enp0s8"]'
+    interface_Card_Title = '//h3[contains(.,"Interfaces")]'
+    test_Changes_Button = '//*[@data-test="button-test-changes"]'
+    test_Changes_Dialog_Title = '//h1[contains(text(),"Test Changes")]'
+
+    def interface_Row(interface):
+        return f'//td[contains(.,"{interface}")]'
+
+    def interface_Edit_Button(interface):
+        return f'//*[@data-test="button-edit-interface-{interface}"]'
 
 
 class pool_manager:
@@ -615,7 +623,7 @@ class smb_Service:
 
 class storage:
     title = '//h1[contains(text(),"Storage Dashboard")]'
-    create_Pool_Button = '//a[contains(.,"Create Pool")]'
+    create_Pool_Button = '//*[@data-test="link-create-pool-legacy"]'
     disks_Button = '//a[*/text()=" Disks "]'
     encrypted_Pool = '//h2[text()="encrypted_pool"]'
     export_Disconnect_Button = '//ix-dashboard-pool[contains(.,"encrypted_pool")]//button[contains(.,"Export/Disconnect")]'
