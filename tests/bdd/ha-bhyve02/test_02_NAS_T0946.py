@@ -260,9 +260,9 @@ def click_apply_and_please_wait_should_appear_while_settings_are_being_applied(d
 @then('click Test Changes, check Confirm, click Test Changes again')
 def click_test_changes_check_confirm_click_test_changes_again(driver):
     """click Test Changes, check Confirm, click Test Changes again."""
-    assert wait_on_element(driver, 7, '//button[contains(.,"Test Changes")]', 'clickable')
-    driver.find_element_by_xpath('//button[contains(.,"Test Changes")]').click()
-    assert wait_on_element(driver, 7, '//h1[contains(.,"Test Changes")]', 'clickable')
+    assert wait_on_element(driver, 7, xpaths.network.test_Changes_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.network.test_Changes_Button).click()
+    assert wait_on_element(driver, 10, xpaths.network.test_Changes_Dialog_Title)
     driver.find_element_by_xpath(xpaths.checkbox.new_Confirm).click()
     driver.find_element_by_xpath(xpaths.button.Continue).click()
     assert wait_on_element(driver, 5, xpaths.popup.please_Wait)
@@ -388,6 +388,7 @@ def navigate_to_dashboard_wait_for_ha_to_be_online(driver):
     """navigate to dashboard, wait for HA to be online."""
     assert wait_on_element(driver, 7, xpaths.side_Menu.dashboard, 'clickable')
     driver.find_element_by_xpath(xpaths.side_Menu.dashboard).click()
+    driver.refresh()
     rsc.Verify_The_Dashboard(driver)
     assert wait_on_element(driver, 15, '//span[contains(.,"Hostname:") and contains(.,"truenas")]')
     assert wait_on_element(driver, 300, '//span[contains(.,"Hostname:") and contains(.,"truenas-b")]')

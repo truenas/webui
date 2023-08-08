@@ -488,6 +488,8 @@ class network:
     title = '//h1[contains(.,"Network")]'
     global_Configuration_Title = '//h3[text()="Global Configuration"]'
     interface_Card_Title = '//h3[contains(.,"Interfaces")]'
+    test_Changes_Button = '//*[@data-test="button-test-changes"]'
+    test_Changes_Dialog_Title = '//h1[contains(text(),"Test Changes")]'
 
     def interface_Row(interface):
         return f'//td[contains(.,"{interface}")]'
