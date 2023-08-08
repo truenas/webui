@@ -628,10 +628,6 @@ ul.nested-list li {
   position: absolute;
   top: 0;
 
-  &[aria-hidden='true'] {
-    visibility: hidden;
-  }
-
   &[data-popper-placement=right] {
     margin-left: 13px !important;
   }
