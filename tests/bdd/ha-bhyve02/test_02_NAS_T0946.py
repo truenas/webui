@@ -326,9 +326,9 @@ def wipe_all_disk_without_a_pool(driver):
 def navigate_to_storage_click_create(driver):
     """navigate to Storage click Create"""
     driver.find_element_by_xpath(xpaths.side_Menu.storage).click()
-    assert wait_on_element(driver, 7, '//h1[text()="Storage Dashboard"]')
-    assert wait_on_element(driver, 7, '//button[contains(.,"Create pool")]', 'clickable')
-    driver.find_element_by_xpath('//button[contains(.,"Create pool")]').click()
+    assert wait_on_element(driver, 7, xpaths.storage.title)
+    assert wait_on_element(driver, 7, xpaths.storage.create_Pool_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.storage.create_Pool_Button).click()
 
 
 @then('enter tank for pool name, click the checkbox beside the first disk')
@@ -363,7 +363,7 @@ def create_pool_should_appear_while_pool_is_being_created_you_should_be_returned
     """Create Pool should appear while pool is being created. You should be returned to the Storage page."""
     assert wait_on_element(driver, 7, '//h1[contains(.,"Create Pool")]')
     assert wait_on_element_disappear(driver, 120, '//h1[contains(.,"Create Pool")]')
-    assert wait_on_element(driver, 7, '//h1[text()="Storage Dashboard"]')
+    assert wait_on_element(driver, 7, xpaths.storage.title)
     assert wait_on_element(driver, 7, '//h2[text()="tank"]')
 
 
