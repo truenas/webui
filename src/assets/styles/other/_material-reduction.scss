@@ -629,7 +629,10 @@ ix-tooltip {
 
 .ngxp__container {
   border-radius: 6px !important;
-  display: block !important;
+
+  &[aria-hidden='false'] {
+    display: block !important;
+  }
 
   &[data-popper-placement=right] {
     margin-left: 13px !important;
