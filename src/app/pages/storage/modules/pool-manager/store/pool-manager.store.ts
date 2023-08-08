@@ -191,7 +191,11 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     super(initialState);
   }
 
-  reset(): void {
+  resetStoreToInitialState(): void {
+    this.setState({ ...initialState });
+  }
+
+  startOver(): void {
     this.startOver$.next();
     this.setState({ ...initialState, isLoading: true });
     this.loadStateInitialData().pipe(take(1)).subscribe();

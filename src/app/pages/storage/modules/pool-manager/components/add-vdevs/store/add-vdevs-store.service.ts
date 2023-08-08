@@ -38,7 +38,7 @@ export class AddVdevsStore extends ComponentStore<AddVdevsState> {
   }
 
   resetStoreToInitialState(): void {
-    this.patchState({ ...initialState });
+    this.setState({ ...initialState });
   }
 
   initialize = this.effect((trigger$) => {
