@@ -200,7 +200,7 @@ def Verify_Element_Text(driver, xpath, value):
 
 def Verify_The_Dashboard(driver):
     assert wait_on_element(driver, 10, xpaths.dashboard.title)
-    # assert wait_on_element(driver, 15, xpaths.dashboard.system_Info_Card_Title)
+    assert wait_on_element(driver, 15, xpaths.dashboard.system_Info_Card_Title)
 
 
 def Wait_For_Inputable_And_Input_Value(driver, xpath, value):
