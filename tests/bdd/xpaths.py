@@ -615,7 +615,7 @@ class smb_Service:
 
 class storage:
     title = '//h1[contains(text(),"Storage Dashboard")]'
-    create_Pool_Button = '//a[contains(.,"Create Pool")]'
+    create_Pool_Button = '//*[@data-test="link-create-pool-legacy"]'
     disks_Button = '//a[*/text()=" Disks "]'
     encrypted_Pool = '//h2[text()="encrypted_pool"]'
     export_Disconnect_Button = '//ix-dashboard-pool[contains(.,"encrypted_pool")]//button[contains(.,"Export/Disconnect")]'
