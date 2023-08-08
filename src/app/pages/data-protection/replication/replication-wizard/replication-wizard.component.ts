@@ -258,8 +258,11 @@ export class ReplicationWizardComponent {
         payload = this.setSchemaOrRegexForObject(payload, data.schema_or_regex, data.naming_schema, data.name_regex);
       } else if (data.schema_or_regex === SnapshotNamingOption.NamingSchema) {
         payload.also_include_naming_schema = data.naming_schema ? [data.naming_schema] : [this.defaultNamingSchema];
-      } else {
+      } else if (data.name_regex) {
         payload.name_regex = data.name_regex;
+      } else {
+        // fallback when no other data to rely on
+        payload.also_include_naming_schema = [this.defaultNamingSchema];
       }
     }
 
@@ -300,15 +303,16 @@ export class ReplicationWizardComponent {
     schema: string = null,
     regex: string = null,
   ): ReplicationCreate {
+    const values = { ...data };
     if (schemaOrRegex === SnapshotNamingOption.NamingSchema) {
-      data.naming_schema = schema ? [schema] : [this.defaultNamingSchema];
-      delete data.name_regex;
+      values.naming_schema = schema ? [schema] : [this.defaultNamingSchema];
+      delete values.name_regex;
     } else {
-      data.name_regex = regex;
-      delete data.naming_schema;
-      delete data.also_include_naming_schema;
+      values.name_regex = regex;
+      delete values.naming_schema;
+      delete values.also_include_naming_schema;
     }
-    return data;
+    return values;
   }
 
   handleError(err: WebsocketError): void {
