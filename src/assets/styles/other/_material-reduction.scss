@@ -623,6 +623,14 @@ ul.nested-list li {
 
 .ngxp__container {
   border-radius: 6px !important;
+  display: block !important;
+  left: 0;
+  position: absolute;
+  top: 0;
+
+  &[aria-hidden='true'] {
+    visibility: hidden;
+  }
 
   &[data-popper-placement=right] {
     margin-left: 13px !important;
