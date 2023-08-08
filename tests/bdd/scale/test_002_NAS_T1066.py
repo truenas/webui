@@ -97,8 +97,10 @@ def please_wait_should_appear_changes_should_be_saved_without_errors_the_network
 @then('click the interface field, uncheck dhcp and click add and enter IP and click Apply.')
 def click_the_interface_field_uncheck_dhcp_and_click_add_and_enter_ip_and_click_apply(driver, nas_ip):
     """click the interface field, uncheck dhcp and click add and enter IP and click Apply.."""
-    assert wait_on_element(driver, 7, xpaths.network.interface, 'clickable')
-    driver.find_element_by_xpath(xpaths.network.interface).click()
+    assert wait_on_element(driver, 7, xpaths.network.interface_Card_Title)
+    assert wait_on_element(driver, 7, xpaths.network.interface_Row('enp0s8'))
+    assert wait_on_element(driver, 7, xpaths.network.interface_Edit_Button('enp-0-s-8'), 'clickable')
+    driver.find_element_by_xpath(xpaths.network.interface_Edit_Button('enp-0-s-8')).click()
     assert wait_on_element(driver, 7, xpaths.interface.title)
     assert wait_on_element(driver, 7, xpaths.interface.dhcp_Checkbox, 'clickable')
     if attribute_value_exist(driver, xpaths.interface.dhcp_Checkbox, 'class', 'mat-mdc-checkbox-checked'):

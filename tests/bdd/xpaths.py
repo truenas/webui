@@ -487,7 +487,13 @@ class login:
 class network:
     title = '//h1[contains(.,"Network")]'
     global_Configuration_Title = '//h3[text()="Global Configuration"]'
-    interface = '//ix-icon[@id="enp0s8"]'
+    interface_Card_Title = '//h3[contains(.,"Interfaces")]'
+
+    def interface_Row(interface):
+        return f'//td[contains(.,"{interface}")]'
+
+    def interface_Edit_Button(interface):
+        return f'//*[@data-test="button-edit-interface-{interface}"]'
 
 
 class pool_manager:
