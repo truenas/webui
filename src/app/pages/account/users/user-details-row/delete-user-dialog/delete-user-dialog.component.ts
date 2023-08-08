@@ -43,19 +43,15 @@ export class DeleteUserDialogComponent implements OnInit {
   }
 
   onDelete(): void {
-    this.loader.open();
     this.ws.call('user.delete', [this.user.id, { delete_group: this.deleteGroupCheckbox.value }])
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: () => {
-          this.loader.close();
-          this.snackbar.success(this.translate.instant('User deleted'));
-          this.dialogRef.close(true);
-        },
-        error: (error: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-          this.loader.close();
-        },
+      .pipe(
+        this.loader.withLoader(),
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        this.snackbar.success(this.translate.instant('User deleted'));
+        this.dialogRef.close(true);
       });
   }
 

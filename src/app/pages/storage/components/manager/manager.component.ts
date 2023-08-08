@@ -262,66 +262,75 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   }
 
   getPoolData(): void {
-    this.ws.call(this.queryCall, [[['id', '=', this.pk]]]).pipe(untilDestroyed(this)).subscribe({
-      next: (searchedPools) => {
-        if (!searchedPools[0]) {
-          return;
-        }
+    this.ws.call(this.queryCall, [[['id', '=', this.pk]]])
+      .pipe(this.errorHandler.catchError(), untilDestroyed(this))
+      .subscribe({
+        next: (searchedPools) => {
+          if (!searchedPools[0]) {
+            return;
+          }
 
-        this.firstDataVdevType = searchedPools[0].topology.data[0].type.toLowerCase();
-        if (this.firstDataVdevType === 'raidz1') {
-          this.firstDataVdevType = 'raidz';
-        }
-        this.firstDataVdevDisknum = searchedPools[0].topology.data[0].children.length;
+          this.firstDataVdevType = searchedPools[0].topology.data[0].type.toLowerCase();
+          if (this.firstDataVdevType === 'raidz1') {
+            this.firstDataVdevType = 'raidz';
+          }
+          this.firstDataVdevDisknum = searchedPools[0].topology.data[0].children.length;
 
-        let firstDisk: TopologyDisk;
-        if (this.firstDataVdevDisknum === 0 && this.firstDataVdevType === 'disk') {
-          this.firstDataVdevDisknum = 1;
-          this.firstDataVdevType = 'stripe';
-          firstDisk = searchedPools[0].topology.data[0] as TopologyDisk;
-        } else {
-          firstDisk = searchedPools[0].topology.data[0].children[0];
-        }
-        this.ws.call('disk.query', [[['name', '=', firstDisk.disk]]]).pipe(untilDestroyed(this)).subscribe({
-          next: (disk) => {
-            if (disk[0]) {
-              this.firstDataVdevDisksize = disk[0].size;
-              this.firstDataVdevDisktype = disk[0].type;
-            }
-            this.getDuplicableDisks();
-          },
-          error: (error) => this.errorHandler.reportError(error),
-        });
-        this.nameControl.setValue(searchedPools[0].name);
-        this.volEncrypt = searchedPools[0].encrypt;
-        this.ws.call(this.datasetQueryCall, [[['id', '=', searchedPools[0].name]]]).pipe(untilDestroyed(this)).subscribe({
-          next: (datasets) => {
-            if (datasets[0]) {
-              this.extendedAvailable = datasets[0].available.parsed;
-              this.size = filesize(this.extendedAvailable, { standard: 'iec' });
-            }
-          },
-          error: (error) => this.errorHandler.reportError(error),
-        });
-      },
-      error: (error) => this.errorHandler.reportError(error),
-    });
+          let firstDisk: TopologyDisk;
+          if (this.firstDataVdevDisknum === 0 && this.firstDataVdevType === 'disk') {
+            this.firstDataVdevDisknum = 1;
+            this.firstDataVdevType = 'stripe';
+            firstDisk = searchedPools[0].topology.data[0] as TopologyDisk;
+          } else {
+            firstDisk = searchedPools[0].topology.data[0].children[0];
+          }
+          this.ws.call('disk.query', [[['name', '=', firstDisk.disk]]])
+            .pipe(
+              this.errorHandler.catchError(),
+              untilDestroyed(this),
+            )
+            .subscribe({
+              next: (disk) => {
+                if (disk[0]) {
+                  this.firstDataVdevDisksize = disk[0].size;
+                  this.firstDataVdevDisktype = disk[0].type;
+                }
+                this.getDuplicableDisks();
+              },
+            });
+          this.nameControl.setValue(searchedPools[0].name);
+          this.volEncrypt = searchedPools[0].encrypt;
+          this.ws.call(this.datasetQueryCall, [[['id', '=', searchedPools[0].name]]])
+            .pipe(
+              this.errorHandler.catchError(),
+              untilDestroyed(this),
+            )
+            .subscribe({
+              next: (datasets) => {
+                if (datasets[0]) {
+                  this.extendedAvailable = datasets[0].available.parsed;
+                  this.size = filesize(this.extendedAvailable, { standard: 'iec' });
+                }
+              },
+            });
+        },
+      });
   }
 
   ngOnInit(): void {
-    this.ws.call('pool.dataset.encryption_algorithm_choices').pipe(untilDestroyed(this)).subscribe({
-      next: (algorithms) => {
-        Object.keys(algorithms).forEach((algorithm) => {
-          this.encryptionAlgorithmOptions.push({ label: algorithm, value: algorithm });
-        });
-      },
-      error: (error) => this.errorHandler.reportError(error),
-    });
+    this.ws.call('pool.dataset.encryption_algorithm_choices')
+      .pipe(this.errorHandler.catchError(), untilDestroyed(this))
+      .subscribe({
+        next: (algorithms) => {
+          Object.keys(algorithms).forEach((algorithm) => {
+            this.encryptionAlgorithmOptions.push({ label: algorithm, value: algorithm });
+          });
+        },
+      });
     this.store$.pipe(waitForAdvancedConfig, untilDestroyed(this)).subscribe({
       next: (config) => {
         this.swapondrive = config.swapondrive;
       },
-      error: (error) => this.errorHandler.reportError(error),
     });
     this.route.params.pipe(untilDestroyed(this)).subscribe((params) => {
       if (params.poolId) {
@@ -335,13 +344,12 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       this.sizeMessage = this.extendedSizeMessage;
       this.getPoolData();
     } else {
-      this.ws.call(this.queryCall, []).pipe(untilDestroyed(this)).subscribe({
+      this.ws.call(this.queryCall, []).pipe(this.errorHandler.catchError(), untilDestroyed(this)).subscribe({
         next: (pools) => {
           if (pools) {
             this.existingPools = pools;
           }
         },
-        error: (error) => this.errorHandler.reportError(error),
       });
     }
     this.nameFilter = new RegExp('');
@@ -353,7 +361,11 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     this.dirty = false;
 
     this.ws.call('disk.get_unused', [])
-      .pipe(this.loader.withLoader(), untilDestroyed(this))
+      .pipe(
+        this.loader.withLoader(),
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
       .subscribe({
         next: (unusedDisks) => {
           this.disks = unusedDisks.map((disk) => {
@@ -395,9 +407,6 @@ export class ManagerComponent implements OnInit, AfterViewInit {
           this.nonUniqueSerialDisks = this.disks.filter((disk) => disk.duplicate_serial.length);
           this.disks = this.disks.filter((disk) => !disk.duplicate_serial.length);
           this.getDuplicableDisks();
-        },
-        error: (error) => {
-          this.errorHandler.reportError(error);
         },
       });
   }
@@ -754,7 +763,6 @@ export class ManagerComponent implements OnInit, AfterViewInit {
           .pipe(untilDestroyed(this)).subscribe(
             {
               next: () => {},
-              error: (error) => this.errorHandler.reportError(error),
               complete: () => {
                 dialogRef.close(false);
                 this.goBack();
@@ -764,9 +772,8 @@ export class ManagerComponent implements OnInit, AfterViewInit {
         dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe({
           next: (error) => {
             dialogRef.close(false);
-            this.errorHandler.reportError(error);
+            this.dialog.error(this.errorHandler.parseJobError(error));
           },
-          error: (error) => this.errorHandler.reportError(error),
         });
         dialogRef.componentInstance.submit();
       });

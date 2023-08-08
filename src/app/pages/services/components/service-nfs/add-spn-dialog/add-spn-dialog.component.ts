@@ -5,7 +5,6 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { CloudsyncRestoreDialogComponent } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
 import { DialogService } from 'app/services/dialog.service';
@@ -41,18 +40,17 @@ export class AddSpnDialogComponent {
     };
 
     this.ws.call('nfs.add_principal', [payload])
-      .pipe(this.loader.withLoader(), untilDestroyed(this))
-      .subscribe({
-        next: () => {
-          this.dialogRef.close();
-          this.dialogService.info(
-            this.translate.instant('Success'),
-            this.translate.instant('You have successfully added credentials.'),
-          );
-        },
-        error: (error: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-        },
+      .pipe(
+        this.errorHandler.catchError(),
+        this.loader.withLoader(),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        this.dialogRef.close();
+        this.dialogService.info(
+          this.translate.instant('Success'),
+          this.translate.instant('You have successfully added credentials.'),
+        );
       });
   }
 }
