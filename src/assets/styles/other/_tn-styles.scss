@@ -456,6 +456,15 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     max-height: calc(100vh - 100px);
     overflow: auto !important;
     padding-top: 0;
+
+    .mdc-card {
+      border: 0 !important;
+      margin: 0 !important;
+    }
+
+    ix-modal-header .ix-slidein-title-bar {
+      margin: 0 !important;
+    }
   }
 
   .mat-mdc-dialog-title {
