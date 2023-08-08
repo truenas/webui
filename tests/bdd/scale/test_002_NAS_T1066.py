@@ -122,15 +122,15 @@ def please_wait_should_appear_while_settings_are_being_applied(driver):
     """"Please wait" should appear while settings are being applied."""
     assert wait_on_element_disappear(driver, 20, xpaths.progress.progressbar)
     assert wait_on_element(driver, 10, xpaths.network.title)
-    assert wait_on_element(driver, 7, xpaths.network.interface, 'clickable')
+    assert wait_on_element(driver, 7, xpaths.network.interface_Row('enp0s8'))
 
 
 @then('click Test Changes, check Confirm, click Test Changes again')
 def click_test_changes_check_confirm_click_test_changes_again(driver, nas_ip):
     """click Test Changes, check Confirm, click Test Changes again."""
-    assert wait_on_element(driver, 7, '//button[@data-test="button-test-changes"]', 'clickable')
-    driver.find_element_by_xpath('//button[@data-test="button-test-changes"]').click()
-    assert wait_on_element(driver, 10, '//h1[contains(.,"Test Changes")]')
+    assert wait_on_element(driver, 7, xpaths.network.test_Changes_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.network.test_Changes_Button).click()
+    assert wait_on_element(driver, 10, xpaths.network.test_Changes_Dialog_Title)
     assert wait_on_element(driver, 7, xpaths.checkbox.new_Confirm, 'clickable')
     driver.find_element_by_xpath(xpaths.checkbox.new_Confirm).click()
     assert wait_on_element(driver, 7, xpaths.button.Continue, 'clickable')
