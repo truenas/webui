@@ -135,7 +135,7 @@ export class SmbFormComponent implements OnInit {
     If there is both a *Hosts Allow* and *Hosts Deny* list, then allow all hosts \
     that are on the *Hosts Allow* list. <br><br> \
     If there is a host not on the *Hosts Allow* and not on the *Hosts Deny* list, \
-    then allow it.', { url: 'https://www.samba.org/samba/docs/current/man-html/smb.conf.5.html#HOSTSALLOW' });
+    then allow it.', { url: 'https://wiki.samba.org/index.php/1.4_Samba_Security' });
 
   form = this.formBuilder.group({
     path: ['', Validators.required],
