@@ -154,4 +154,4 @@ def the_changes_should_be_successfully_saved(driver):
     """the changes should be successfully saved."""
     assert wait_on_element(driver, 10, '//div[contains(.,"Network interface changes have been made permanent.")]')
     assert wait_on_element(driver, 10, xpaths.network.title)
-    assert wait_on_element(driver, 7, xpaths.network.interface, 'clickable')
+    assert wait_on_element(driver, 7, xpaths.network.interface_Row('enp0s8'))
