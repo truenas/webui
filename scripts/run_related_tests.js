@@ -23,3 +23,7 @@ jestProcess.stdout.on('data', (data) => {
 jestProcess.stderr.on('data', (data) => {
   process.stderr.write(data);
 });
+
+jestProcess.on('close', (code) => {
+  process.exit(code);
+});
