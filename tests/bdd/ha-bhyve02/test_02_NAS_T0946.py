@@ -210,11 +210,11 @@ def navigate_to_network_then_under_interfacesclick_enp0s6f0(driver):
     """navigate to Network then under Interfaces click enp0s6f0."""
     assert wait_on_element(driver, 7, xpaths.side_Menu.network, 'clickable')
     driver.find_element_by_xpath(xpaths.side_Menu.network).click()
-    assert wait_on_element(driver, 7, '//h1[contains(.,"Network")]')
-    assert wait_on_element(driver, 7, '//h3[contains(.,"Interfaces")]')
-    assert wait_on_element(driver, 7, '//td[contains(.,"enp0s6f0")]')
-    assert wait_on_element(driver, 7, '//ix-icon[@id="enp0s6f0"]')
-    driver.find_element_by_xpath('//ix-icon[@id="enp0s6f0"]').click()
+    assert wait_on_element(driver, 7, xpaths.network.title)
+    assert wait_on_element(driver, 7, xpaths.network.interface_Card_Title)
+    assert wait_on_element(driver, 7, xpaths.network.interface_Row('enp0s6f0'))
+    assert wait_on_element(driver, 7, xpaths.network.interface_Edit_Button('enp-0-s-6-f-0'))
+    driver.find_element_by_xpath(xpaths.network.interface_Edit_Button('enp-0-s-6-f-0')).click()
 
 
 @then('the Edit Interface should appear')
