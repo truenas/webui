@@ -113,11 +113,8 @@ export class ZfsInfoCardComponent {
       switchMap(() => {
         return this.ws.call('pool.offline', [this.poolId, { label: this.topologyItem.guid }]).pipe(
           this.loader.withLoader(),
+          this.errorHandler.catchError(),
           tap(() => this.devicesStore.reloadList()),
-          catchError((error: WebsocketError) => {
-            this.dialogService.error(this.errorHandler.parseWsError(error));
-            return EMPTY;
-          }),
           untilDestroyed(this),
         );
       }),
@@ -135,11 +132,8 @@ export class ZfsInfoCardComponent {
       switchMap(() => {
         return this.ws.call('pool.online', [this.poolId, { label: this.topologyItem.guid }]).pipe(
           this.loader.withLoader(),
+          this.errorHandler.catchError(),
           tap(() => this.devicesStore.reloadList()),
-          catchError((error: WebsocketError) => {
-            this.dialogService.error(this.errorHandler.parseWsError(error));
-            return EMPTY;
-          }),
         );
       }),
       untilDestroyed(this),
@@ -156,11 +150,8 @@ export class ZfsInfoCardComponent {
       switchMap(() => {
         return this.ws.call('pool.detach', [this.poolId, { label: this.topologyItem.guid }]).pipe(
           this.loader.withLoader(),
+          this.errorHandler.catchError(),
           tap(() => this.devicesStore.reloadList()),
-          catchError((error: WebsocketError) => {
-            this.dialogService.error(this.errorHandler.parseWsError(error));
-            return EMPTY;
-          }),
         );
       }),
       untilDestroyed(this),
@@ -189,9 +180,6 @@ export class ZfsInfoCardComponent {
         next: () => {
           this.devicesStore.reloadList();
           this.dialogService.closeAllDialogs();
-        },
-        error: (error: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });
     });

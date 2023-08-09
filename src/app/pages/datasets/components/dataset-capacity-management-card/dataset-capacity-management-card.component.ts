@@ -123,7 +123,6 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
       },
       error: (error: WebsocketError) => {
         this.dialogService.error(this.errorHandler.parseWsError(error));
-        this.cdr.markForCheck();
       },
     });
   }

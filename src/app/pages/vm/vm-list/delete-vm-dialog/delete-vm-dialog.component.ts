@@ -50,14 +50,13 @@ export class DeleteVmDialogComponent implements OnInit {
       force: this.form.value.force,
       zvols: this.form.value.zvols,
     }])
-      .pipe(this.loader.withLoader(), untilDestroyed(this))
-      .subscribe({
-        next: () => {
-          this.dialogRef.close(true);
-        },
-        error: (error: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-        },
+      .pipe(
+        this.loader.withLoader(),
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        this.dialogRef.close(true);
       });
   }
 

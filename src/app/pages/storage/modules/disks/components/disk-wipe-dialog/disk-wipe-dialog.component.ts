@@ -88,9 +88,6 @@ export class DiskWipeDialogComponent {
           hideCancel: true,
         });
       },
-      error: (error: WebsocketError) => {
-        this.dialogService.error(this.errorHandler.parseWsError(error));
-      },
     });
 
     jobComponent.submit();

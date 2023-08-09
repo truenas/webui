@@ -98,20 +98,19 @@ export class DisplayVmDialogComponent {
     ];
 
     this.ws.call('vm.get_display_web_uri', requestParams)
-      .pipe(this.loader.withLoader(), untilDestroyed(this))
-      .subscribe({
-        next: (webUris) => {
-          const webUri = webUris[displayDeviceId];
-          if (webUri.error) {
-            this.dialogService.warn(this.translate.instant('Error'), webUri.error);
-            return;
-          }
-          this.window.open(webUri.uri, '_blank');
-          this.dialogRef.close(true);
-        },
-        error: (error: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-        },
+      .pipe(
+        this.loader.withLoader(),
+        this.errorHandler.catchError(),
+        untilDestroyed(this)
+      )
+      .subscribe((webUris) => {
+        const webUri = webUris[displayDeviceId];
+        if (webUri.error) {
+          this.dialogService.warn(this.translate.instant('Error'), webUri.error);
+          return;
+        }
+        this.window.open(webUri.uri, '_blank');
+        this.dialogRef.close(true);
       });
   }
 }

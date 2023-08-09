@@ -112,20 +112,18 @@ export class OneDriveProviderFormComponent extends BaseProviderFormComponent imp
       client_secret: this.oauthComponent.form.value.client_secret,
       token: this.form.value.token,
     }])
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: (drives) => {
-          this.drives = drives;
-          this.drives$ = of(
-            drives.map((drive) => ({
-              label: `${drive.drive_type} - ${drive.drive_id}`,
-              value: drive.drive_id,
-            })),
-          );
-        },
-        error: (error: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-        },
+      .pipe(
+        this.errorHandler.catchError(),
+        untilDestroyed(this)
+      )
+      .subscribe((drives) => {
+        this.drives = drives;
+        this.drives$ = of(
+          drives.map((drive) => ({
+            label: `${drive.drive_type} - ${drive.drive_id}`,
+            value: drive.drive_id,
+          })),
+        );
       });
   }
 }

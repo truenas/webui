@@ -9,7 +9,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { SystemInfo, SystemLicense } from 'app/interfaces/system-info.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -44,7 +44,7 @@ describe('SupportCardComponent', () => {
       mockProvider(AppLoaderService),
       mockWebsocket([
         mockCall('truenas.is_production', true),
-        mockCall('truenas.set_production'),
+        mockJob('truenas.set_production'),
       ]),
       provideMockStore({
         selectors: [
@@ -103,13 +103,13 @@ describe('SupportCardComponent', () => {
         await isProductionSystemCheckbox.check();
 
         expect(matDialog.open).toHaveBeenCalledWith(SetProductionStatusDialogComponent);
-        expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('truenas.set_production', [true, true]);
+        expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('truenas.set_production', [true, true]);
       });
 
       it('sets production status to false when checkbox is unticked', async () => {
         await isProductionSystemCheckbox.uncheck();
 
-        expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('truenas.set_production', [false, false]);
+        expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('truenas.set_production', [false, false]);
       });
     });
   });

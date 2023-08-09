@@ -82,16 +82,14 @@ export class BootenvStatsDialogComponent implements OnInit {
 
   private loadBootState(): void {
     this.ws.call('boot.get_state')
-      .pipe(this.loader.withLoader(), untilDestroyed(this))
-      .subscribe({
-        next: (state) => {
-          this.state = state;
-          this.cdr.markForCheck();
-        },
-        error: (error: WebsocketError) => {
-          this.dialogRef.close();
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-        },
+      .pipe(
+        this.loader.withLoader(),
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe((state) => {
+        this.state = state;
+        this.cdr.markForCheck();
       });
   }
 }

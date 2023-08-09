@@ -7,48 +7,49 @@
       fxLayoutAlign="space-between stretch"
     >
       <mat-card-content>
-        <mat-toolbar-row [class.drag-handle]="showReorderHandle">
+        <ix-drag-handle [showReorderHandle]="showReorderHandle">
           <ng-content [select]="[cdkDragHandle]"></ng-content>
 
-          <!-- Mobile Only: Exit widget -->
-          <button
-            fxHide.gt-xs
-            class="mat-card-title-text primary-nav"
-            mat-icon-button
-            color="default"
-            ixTest="memory-back"
-            (click)="goBack()"
-          >
-            <ix-icon name="chevron_left" class="back-arrow"></ix-icon>
-          </button>
-
-          <span fxHide.gt-xs>&nbsp;&nbsp;</span>
-
-          <h3 class="mat-card-title-text">
-            <div
-              class="card-title-text"
-              [class.drag-handle]="showReorderHandle"
-            >
-              <span *ngIf="showReorderHandle" class="grip"></span>
-              <span>{{ 'Memory' | translate }}</span>
-            </div>
-          </h3>
-
-          <div class="controls">
+          <mat-toolbar-row>
+            <!-- Mobile Only: Exit widget -->
             <button
+              fxHide.gt-xs
+              class="mat-card-title-text primary-nav"
               mat-icon-button
-              ixTest="memory-go-to-reports"
-              (click)="router.navigate(['reportsdashboard/memory'])"
+              color="default"
+              ixTest="memory-back"
+              (click)="goBack()"
             >
-              <ix-icon
-                aria-label="Memory Reports"
-                name="insert_chart"
-                matTooltipPosition="above"
-                [matTooltip]="'Memory Reports' | translate"
-              ></ix-icon>
+              <ix-icon name="chevron_left" class="back-arrow"></ix-icon>
             </button>
-          </div>
-        </mat-toolbar-row>
+
+            <span fxHide.gt-xs>&nbsp;&nbsp;</span>
+
+            <h3 class="mat-card-title-text">
+              <ix-drag-handle [showReorderHandle]="showReorderHandle">
+                <div class="card-title-text">
+                  <span *ngIf="showReorderHandle" class="grip"></span>
+                  <span>{{ 'Memory' | translate }}</span>
+                </div>
+              </ix-drag-handle>
+            </h3>
+
+            <div class="controls">
+              <button
+                mat-icon-button
+                ixTest="memory-go-to-reports"
+                (click)="router.navigate(['reportsdashboard/memory'])"
+              >
+                <ix-icon
+                  aria-label="Memory Reports"
+                  name="insert_chart"
+                  matTooltipPosition="above"
+                  [matTooltip]="'Memory Reports' | translate"
+                ></ix-icon>
+              </button>
+            </div>
+          </mat-toolbar-row>
+        </ix-drag-handle>
 
         <div
           class="bar-chart-wrapper"

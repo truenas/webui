@@ -100,12 +100,9 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
       switchMap(() => {
         return this.ws.call('zfs.snapshot.delete', [snapshot.name]).pipe(
           this.loader.withLoader(),
+          this.errorHandler.catchError(),
           tap(() => {
             this.snackbar.success(this.translate.instant('Snapshot deleted.'));
-          }),
-          catchError((error: WebsocketError) => {
-            this.dialogService.error(this.errorHandler.parseWsError(error));
-            return EMPTY;
           }),
         );
       }),

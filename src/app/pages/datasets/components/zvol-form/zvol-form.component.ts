@@ -244,28 +244,26 @@ export class ZvolFormComponent implements OnInit {
           parentDatasetId.pop();
           parentDatasetId = parentDatasetId.join('/');
 
-          this.ws.call('pool.dataset.query', [[['id', '=', parentDatasetId]]]).pipe(untilDestroyed(this)).subscribe({
-            next: (parentDataset) => {
-              this.form.controls.sparse.disable();
-              this.form.controls.volblocksize.disable();
+          this.ws.call('pool.dataset.query', [[['id', '=', parentDatasetId]]]).pipe(
+            this.errorHandler.catchError(),
+            untilDestroyed(this),
+          ).subscribe((parentDataset) => {
+            this.form.controls.sparse.disable();
+            this.form.controls.volblocksize.disable();
 
-              this.customFilter = [[['id', '=', this.parentId]]];
+            this.customFilter = [[['id', '=', this.parentId]]];
 
-              this.copyParentProperties(parent);
+            this.copyParentProperties(parent);
 
-              this.inheritSyncSource(parent, parentDataset);
+            this.inheritSyncSource(parent, parentDataset);
 
-              this.inheritCompression(parent, parentDataset);
+            this.inheritCompression(parent, parentDataset);
 
-              this.inheritDeduplication(parent, parentDataset);
+            this.inheritDeduplication(parent, parentDataset);
 
-              this.inheritSnapdev(parent, parentDataset);
+            this.inheritSnapdev(parent, parentDataset);
 
-              this.cdr.markForCheck();
-            },
-            error: (error: WebsocketError): void => {
-              this.dialogService.error(this.errorHandler.parseWsError(error));
-            },
+            this.cdr.markForCheck();
           });
         }
         this.isLoading = false;
@@ -702,14 +700,12 @@ export class ZvolFormComponent implements OnInit {
 
   private loadRecommendedBlocksize(): void {
     const root = this.parentId.split('/')[0];
-    this.ws.call('pool.dataset.recommended_zvol_blocksize', [root]).pipe(untilDestroyed(this)).subscribe({
-      next: (recommendedSize) => {
-        this.form.controls.volblocksize.setValue(recommendedSize);
-        this.minimumRecommendedBlockSize = recommendedSize;
-      },
-      error: (error: WebsocketError): void => {
-        this.dialogService.error(this.errorHandler.parseWsError(error));
-      },
+    this.ws.call('pool.dataset.recommended_zvol_blocksize', [root]).pipe(
+      this.errorHandler.catchError(),
+      untilDestroyed(this),
+    ).subscribe((recommendedSize) => {
+      this.form.controls.volblocksize.setValue(recommendedSize);
+      this.minimumRecommendedBlockSize = recommendedSize;
     });
   }
 

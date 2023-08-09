@@ -7,44 +7,46 @@
       fxLayoutAlign="space-between stretch"
     >
       <mat-card-content #carouselparent>
-        <mat-toolbar-row [class.drag-handle]="showReorderHandle">
+        <ix-drag-handle [showReorderHandle]="showReorderHandle">
           <ng-content [select]="[cdkDragHandle]"></ng-content>
 
-          <!-- Mobile Only: Exit Widget -->
-          <button
-            fxHide.gt-xs
-            class="mat-card-title-text primary-nav"
-            mat-icon-button
-            color="default"
-            ixTest="network-back"
-            (click)="goBack()"
-          >
-            <ix-icon name="chevron_left" class="back-arrow"></ix-icon>
-          </button>
-
-          <h3 class="mat-card-title-text">
-            <div
-              class="card-title-text"
-              [class.drag-handle]="showReorderHandle"
-            >
-              <span *ngIf="showReorderHandle" class="grip"></span>
-              <span>{{ 'Network' | translate }}</span>
-            </div>
-          </h3>
-
-          <div class="controls">
-            <a
+          <mat-toolbar-row>
+            <!-- Mobile Only: Exit Widget -->
+            <button
+              fxHide.gt-xs
+              class="mat-card-title-text primary-nav"
               mat-icon-button
-              matTooltipPosition="above"
-              aria-label="Network Reports"
-              ixTest="network-reports"
-              [routerLink]="['/reportsdashboard/network']"
-              [matTooltip]="'Network Reports' | translate"
+              color="default"
+              ixTest="network-back"
+              (click)="goBack()"
             >
-              <ix-icon name="insert_chart"></ix-icon>
-            </a>
-          </div>
-        </mat-toolbar-row>
+              <ix-icon name="chevron_left" class="back-arrow"></ix-icon>
+            </button>
+
+            <h3 class="mat-card-title-text">
+              <ix-drag-handle [showReorderHandle]="showReorderHandle">
+                <div class="card-title-text">
+                  <span *ngIf="showReorderHandle" class="grip"></span>
+                  <span>{{ 'Network' | translate }}</span>
+                </div>
+              </ix-drag-handle>
+            </h3>
+
+            <div class="controls">
+              <a
+                mat-icon-button
+                matTooltipPosition="above"
+                aria-label="Network Reports"
+                ixTest="network-reports"
+                [routerLink]="['/reportsdashboard/network']"
+                [matTooltip]="'Network Reports' | translate"
+              >
+                <ix-icon name="insert_chart"></ix-icon>
+              </a>
+            </div>
+          </mat-toolbar-row>
+        </ix-drag-handle>
+
         <ng-container *ngIf="!availableNics.length">
           <div class="empty-state">
             <h3>{{ 'No active interfaces are found' | translate }}</h3>

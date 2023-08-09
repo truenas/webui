@@ -53,29 +53,27 @@ export class ManageDiskSedDialogComponent implements OnInit {
 
   private loadDiskSedInfo(): void {
     this.ws.call('disk.query', [[['devname', '=', this.diskName]], { extra: { passwords: true } }])
-      .pipe(this.loader.withLoader(), untilDestroyed(this))
-      .subscribe({
-        next: (disks) => {
-          this.disk = disks[0];
-          this.passwordControl.setValue(this.disk.passwd);
-        },
-        error: (error: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-        },
+      .pipe(
+        this.loader.withLoader(),
+        this.errorHandler.catchError(),
+        untilDestroyed(this)
+      )
+      .subscribe((disks) => {
+        this.disk = disks[0];
+        this.passwordControl.setValue(this.disk.passwd);
       });
   }
 
   setNewPassword(password: string): void {
     this.ws.call('disk.update', [this.disk.identifier, { passwd: password }])
-      .pipe(this.loader.withLoader(), untilDestroyed(this))
-      .subscribe({
-        next: () => {
-          this.dialogRef.close(true);
-          this.snackbar.success(this.translate.instant('SED password updated.'));
-        },
-        error: (error: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-        },
+      .pipe(
+        this.loader.withLoader(),
+        this.errorHandler.catchError(),
+        untilDestroyed(this)
+      )
+      .subscribe(() => {
+        this.dialogRef.close(true);
+        this.snackbar.success(this.translate.instant('SED password updated.'));
       });
   }
 }

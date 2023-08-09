@@ -92,15 +92,10 @@ export class DatasetDetailsCardComponent {
 
   promoteDataset(): void {
     this.ws.call('pool.dataset.promote', [this.dataset.id])
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: () => {
-          this.snackbar.success(this.translate.instant('Dataset promoted successfully.'));
-          this.datasetStore.datasetUpdated();
-        },
-        error: (error: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-        },
+      .pipe(this.errorHandler.catchError(), untilDestroyed(this))
+      .subscribe(() => {
+        this.snackbar.success(this.translate.instant('Dataset promoted successfully.'));
+        this.datasetStore.datasetUpdated();
       });
   }
 

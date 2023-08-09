@@ -13,7 +13,7 @@ import { SystemUpdateOperationType, SystemUpdateStatus } from 'app/enums/system-
 import { WINDOW } from 'app/helpers/window.helper';
 import globalHelptext from 'app/helptext/global-helptext';
 import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
-import { ApiMethod } from 'app/interfaces/api-directory.interface';
+import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { SystemUpdateTrain } from 'app/interfaces/system-update.interface';
@@ -63,7 +63,7 @@ export class UpdateComponent implements OnInit {
   trainDescriptionOnPageLoad: string;
   fullTrainList: { [name: string]: SystemUpdateTrain };
   isUpdateRunning = false;
-  updateMethod: ApiMethod = 'update.update';
+  updateMethod: ApiJobMethod = 'update.update';
   isHa = false;
   productType: ProductType;
   failoverUpgradePending = false;
@@ -396,18 +396,15 @@ export class UpdateComponent implements OnInit {
   }
 
   downloadUpdate(): void {
-    this.ws.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', JobState.Running]]]).pipe(untilDestroyed(this)).subscribe({
-      next: (jobs) => {
+    this.ws.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', JobState.Running]]])
+      .pipe(this.errorHandler.catchError(), untilDestroyed(this))
+      .subscribe((jobs) => {
         if (jobs[0]) {
           this.showRunningUpdate(jobs[0].id);
         } else {
           this.startUpdate();
         }
-      },
-      error: (error: WebsocketError) => {
-        this.dialogService.error(this.errorHandler.parseWsError(error));
-      },
-    });
+      });
   }
 
   applyPendingUpdate(): void {

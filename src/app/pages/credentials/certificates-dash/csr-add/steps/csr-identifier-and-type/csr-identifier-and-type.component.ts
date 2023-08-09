@@ -91,17 +91,12 @@ export class CsrIdentifierAndTypeComponent implements OnInit, SummaryProvider {
 
   private loadProfiles(): void {
     this.ws.call('certificate.profiles')
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: (profiles) => {
-          this.profiles = profiles;
-          const profileOptions = Object.keys(profiles).map((name) => ({ label: name, value: name }));
-          this.profileOptions$ = of(profileOptions);
-          this.cdr.markForCheck();
-        },
-        error: (error: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-        },
+      .pipe(this.errorHandler.catchError(), untilDestroyed(this))
+      .subscribe((profiles) => {
+        this.profiles = profiles;
+        const profileOptions = Object.keys(profiles).map((name) => ({ label: name, value: name }));
+        this.profileOptions$ = of(profileOptions);
+        this.cdr.markForCheck();
       });
   }
 

@@ -5,7 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
@@ -40,7 +40,7 @@ describe('EncryptionOptionsDialogComponent', () => {
         open: jest.fn(() => mockEntityJobComponentRef),
       }),
       mockWebsocket([
-        mockCall('pool.dataset.change_key'),
+        mockJob('pool.dataset.change_key'),
         mockCall('pool.dataset.inherit_parent_encryption_properties'),
         mockCall('pool.dataset.query', [{
           pbkdf2iters: {

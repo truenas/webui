@@ -37,6 +37,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
   @Input() tooltip: string;
   @Input() allowCustomValue = false;
   @Input() provider: IxComboboxProvider;
+  @Input() initialValue?: Option | null;
 
   @ViewChild('ixInput') inputElementRef: ElementRef<HTMLInputElement>;
   @ViewChild('auto') autoCompleteRef: MatAutocomplete;
@@ -120,6 +121,13 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
           if (this.selectedOption) {
             this.filterChanged$.next('');
           }
+        } else if (this.initialValue?.value) {
+          /**
+           * Workaround!
+           * TODO: Redesign ix-combobox provider to reliably fetch initial values without needing fake options
+           * */
+          this.options.push(this.initialValue);
+          this.selectedOption = this.initialValue;
         } else {
           /**
            * We are adding a custom fake option here so we can show the current value of the control even

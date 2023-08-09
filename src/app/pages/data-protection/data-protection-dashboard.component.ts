@@ -9,6 +9,7 @@ import {
   filter, switchMap, tap, catchError,
 } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
+import { tapOnce } from 'app/helpers/tap-once.operator';
 import helptext_cloudsync from 'app/helptext/data-protection/cloudsync/cloudsync-form';
 import helptext from 'app/helptext/data-protection/data-protection-dashboard/data-protection-dashboard';
 import helptext_smart from 'app/helptext/data-protection/smart/smart';
@@ -562,26 +563,26 @@ export class DataProtectionDashboardComponent implements OnInit {
           }).pipe(
             filter(Boolean),
             tap(() => row.state.state = JobState.Running),
-            switchMap(() => this.ws.call('replication.run', [row.id])),
-            tap(() => {
+            switchMap(() => this.ws.job('replication.run', [row.id])),
+            tapOnce(() => {
               this.snackbar.success(
                 this.translate.instant('Replication «{name}» has started.', { name: row.name }),
               );
             }),
-            switchMap((id: number) => this.store$.select(selectJob(id)).pipe(filter(Boolean))),
-            catchError((error: WebsocketError) => {
-              this.dialogService.error(this.errorHandler.parseWsError(error));
+            tap((job) => {
+              if (!([JobState.Running, JobState.Pending].includes(job.state))) {
+                this.refreshTable(TaskCardId.Replication); return;
+              }
+              row.state.state = job.state;
+              row.job = { ...job };
+              this.jobStates.set(job.id, job.state);
+            }),
+            catchError((error: Job) => {
+              this.dialogService.error(this.errorHandler.parseJobError(error));
               return EMPTY;
             }),
             untilDestroyed(this),
-          ).subscribe((job: Job) => {
-            row.state.state = job.state;
-            row.job = { ...job };
-            if (this.jobStates.get(job.id) !== job.state) {
-              this.refreshTable(TaskCardId.Replication);
-            }
-            this.jobStates.set(job.id, job.state);
-          });
+          ).subscribe();
         },
       },
       {
@@ -615,13 +616,12 @@ export class DataProtectionDashboardComponent implements OnInit {
           }).pipe(
             filter(Boolean),
             tap(() => row.state = { state: JobState.Running }),
-            switchMap(() => this.ws.call('cloudsync.sync', [row.id])),
-            tap(() => this.snackbar.success(
+            switchMap(() => this.ws.job('cloudsync.sync', [row.id])),
+            tapOnce(() => this.snackbar.success(
               this.translate.instant('Cloud sync «{name}» has started.', { name: row.description }),
             )),
-            switchMap((id) => this.store$.select(selectJob(id)).pipe(filter(Boolean))),
-            catchError((error: WebsocketError) => {
-              this.dialogService.error(this.errorHandler.parseWsError(error));
+            catchError((error: Job) => {
+              this.dialogService.error(this.errorHandler.parseJobError(error));
               return EMPTY;
             }),
             untilDestroyed(this),
@@ -648,20 +648,19 @@ export class DataProtectionDashboardComponent implements OnInit {
             })
             .pipe(
               filter(Boolean),
-              switchMap(() => this.ws.call('cloudsync.abort', [row.id])),
+              switchMap(() => {
+                return this.ws.call('cloudsync.abort', [row.id]).pipe(
+                  this.errorHandler.catchError(),
+                );
+              }),
               untilDestroyed(this),
             )
-            .subscribe({
-              next: () => {
-                this.dialogService.info(
-                  this.translate.instant('Task Stopped'),
-                  this.translate.instant('Cloud sync «{name}» stopped.', { name: row.description }),
-                  true,
-                );
-              },
-              error: (error: WebsocketError) => {
-                this.dialogService.error(this.errorHandler.parseWsError(error));
-              },
+            .subscribe(() => {
+              this.dialogService.info(
+                this.translate.instant('Task Stopped'),
+                this.translate.instant('Cloud sync «{name}» stopped.', { name: row.description }),
+                true,
+              );
             });
         },
       },
@@ -676,13 +675,12 @@ export class DataProtectionDashboardComponent implements OnInit {
             hideCheckbox: true,
           }).pipe(
             filter(Boolean),
-            switchMap(() => this.ws.call('cloudsync.sync', [row.id, { dry_run: true }])),
-            tap(() => this.snackbar.success(
+            switchMap(() => this.ws.job('cloudsync.sync', [row.id, { dry_run: true }])),
+            tapOnce(() => this.snackbar.success(
               this.translate.instant('Cloud sync «{name}» has started.', { name: row.description }),
             )),
-            switchMap((id) => this.store$.select(selectJob(id)).pipe(filter(Boolean))),
-            catchError((error: WebsocketError) => {
-              this.dialogService.error(this.errorHandler.parseWsError(error));
+            catchError((error: Job) => {
+              this.dialogService.error(this.errorHandler.parseJobError(error));
               return EMPTY;
             }),
             untilDestroyed(this),
@@ -727,15 +725,14 @@ export class DataProtectionDashboardComponent implements OnInit {
           }).pipe(
             filter(Boolean),
             tap(() => row.state = { state: JobState.Running }),
-            switchMap(() => this.ws.call('rsynctask.run', [row.id])),
-            tap(() => this.snackbar.success(
+            switchMap(() => this.ws.job('rsynctask.run', [row.id])),
+            tapOnce(() => this.snackbar.success(
               this.translate.instant('Rsync task «{name}» has started.', {
                 name: `${row.remotehost} – ${row.remotemodule}`,
               }),
             )),
-            switchMap((id) => this.store$.select(selectJob(id)).pipe(filter(Boolean))),
-            catchError((error: WebsocketError) => {
-              this.dialogService.error(this.errorHandler.parseWsError(error));
+            catchError((error: Job) => {
+              this.dialogService.error(this.errorHandler.parseJobError(error));
               return EMPTY;
             }),
             untilDestroyed(this),

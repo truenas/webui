@@ -34,7 +34,7 @@ export class AppUpgradeDialogComponent {
 
   constructor(
     public dialogRef: MatDialogRef<AppUpgradeDialogComponent>,
-    private appLoaderService: AppLoaderService,
+    private loader: AppLoaderService,
     private errorHandler: ErrorHandlerService,
     private appService: ApplicationsService,
     public dialogService: DialogService,
@@ -74,20 +74,19 @@ export class AppUpgradeDialogComponent {
   onVersionOptionChanged(): void {
     this.selectedVersion = this.versionOptions.get(this.selectedVersionKey);
     if (!this.selectedVersion.fetched) {
-      this.appLoaderService.open();
-      this.appService.getChartUpgradeSummary(this.dialogConfig.appInfo.name, this.selectedVersionKey)
-        .pipe(untilDestroyed(this)).subscribe({
-          next: (summary: UpgradeSummary) => {
-            this.appLoaderService.close();
-            this.selectedVersion.changelog = summary.changelog;
-            this.selectedVersion.container_images_to_update = summary.container_images_to_update;
-            this.selectedVersion.item_update_available = summary.item_update_available;
-            this.selectedVersion.fetched = true;
-          },
-          error: (error: WebsocketError) => {
-            this.appLoaderService.close();
-            this.dialogService.error(this.errorHandler.parseWsError(error));
-          },
+      this.appService.getChartUpgradeSummary(
+        this.dialogConfig.appInfo.name,
+        this.selectedVersionKey
+      )
+        .pipe(
+          this.loader.withLoader(),
+          this.errorHandler.catchError(),
+          untilDestroyed(this),
+        ).subscribe((summary: UpgradeSummary) => {
+          this.selectedVersion.changelog = summary.changelog;
+          this.selectedVersion.container_images_to_update = summary.container_images_to_update;
+          this.selectedVersion.item_update_available = summary.item_update_available;
+          this.selectedVersion.fetched = true;
         });
     }
   }

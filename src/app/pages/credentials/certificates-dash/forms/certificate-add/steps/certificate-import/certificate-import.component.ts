@@ -101,21 +101,16 @@ export class CertificateImportComponent implements OnInit, SummaryProvider {
 
   private loadCsrs(): void {
     this.ws.call('certificate.query', [[['CSR', '!=', null]]])
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: (csrs) => {
-          this.csrs = csrs;
-          this.csrOptions$ = of(
-            csrs.map((csr) => ({
-              label: csr.name,
-              value: csr.id,
-            })),
-          );
-          this.cdr.markForCheck();
-        },
-        error: (error: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-        },
+      .pipe(this.errorHandler.catchError(), untilDestroyed(this))
+      .subscribe((csrs) => {
+        this.csrs = csrs;
+        this.csrOptions$ = of(
+          csrs.map((csr) => ({
+            label: csr.name,
+            value: csr.id,
+          })),
+        );
+        this.cdr.markForCheck();
       });
   }
 

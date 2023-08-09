@@ -114,10 +114,10 @@ export class CertificateEditComponent implements OnInit {
   onSubmit(): void {
     this.isLoading = true;
 
-    this.ws.call('certificate.update', [this.certificate.id, this.form.value])
+    this.ws.job('certificate.update', [this.certificate.id, this.form.value])
       .pipe(untilDestroyed(this))
       .subscribe({
-        next: () => {
+        complete: () => {
           this.isLoading = false;
           this.cdr.markForCheck();
           this.slideInRef.close(true);

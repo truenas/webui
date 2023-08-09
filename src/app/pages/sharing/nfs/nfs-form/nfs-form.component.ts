@@ -211,10 +211,7 @@ export class NfsFormComponent implements OnInit {
 
             return undefined;
           }),
-          catchError((error: WebsocketError) => {
-            this.dialogService.error(this.errorHandler.parseWsError(error));
-            return EMPTY;
-          }),
+          this.errorHandler.catchError(),
         );
       }),
     );

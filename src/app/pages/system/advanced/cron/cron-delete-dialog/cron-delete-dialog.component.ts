@@ -34,15 +34,14 @@ export class CronDeleteDialogComponent {
 
   onDelete(): void {
     this.ws.call('cronjob.delete', [this.cronjob.id])
-      .pipe(this.loader.withLoader(), untilDestroyed(this))
-      .subscribe({
-        next: () => {
-          this.snackbar.success(this.translate.instant('Cronjob deleted'));
-          this.dialogRef.close(true);
-        },
-        error: (error: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-        },
+      .pipe(
+        this.loader.withLoader(),
+        this.errorHandler.catchError(),
+        untilDestroyed(this)
+      )
+      .subscribe(() => {
+        this.snackbar.success(this.translate.instant('Cronjob deleted'));
+        this.dialogRef.close(true);
       });
   }
 }

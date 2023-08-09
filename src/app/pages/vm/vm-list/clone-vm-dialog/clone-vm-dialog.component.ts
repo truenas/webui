@@ -36,14 +36,13 @@ export class CloneVmDialogComponent {
     }
 
     this.ws.call('vm.clone', params)
-      .pipe(this.loader.withLoader(), untilDestroyed(this))
-      .subscribe({
-        next: () => {
-          this.dialogRef.close(true);
-        },
-        error: (error: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-        },
+      .pipe(
+        this.loader.withLoader(),
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        this.dialogRef.close(true);
       });
   }
 }

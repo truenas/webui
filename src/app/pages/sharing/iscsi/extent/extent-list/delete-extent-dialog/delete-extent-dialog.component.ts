@@ -42,14 +42,13 @@ export class DeleteExtentDialogComponent {
     const { remove, force } = this.form.value;
 
     this.ws.call('iscsi.extent.delete', [this.extent.id, remove, force])
-      .pipe(this.loader.withLoader(), untilDestroyed(this))
-      .subscribe({
-        next: () => {
-          this.dialogRef.close(true);
-        },
-        error: (error: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-        },
+      .pipe(
+        this.loader.withLoader(),
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        this.dialogRef.close(true);
       });
   }
 }

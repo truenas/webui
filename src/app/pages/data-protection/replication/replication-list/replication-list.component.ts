@@ -9,6 +9,7 @@ import {
   filter, switchMap, tap,
 } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
+import { tapOnce } from 'app/helpers/tap-once.operator';
 import globalHelptext from 'app/helptext/global-helptext';
 import { Job } from 'app/interfaces/job.interface';
 import { ReplicationTask, ReplicationTaskUi } from 'app/interfaces/replication-task.interface';
@@ -17,7 +18,6 @@ import { ShowLogsDialogComponent } from 'app/modules/common/dialog/show-logs-dia
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
-import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
@@ -126,11 +126,10 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
           }).pipe(
             filter(Boolean),
             tap(() => row.state = { state: JobState.Running }),
-            switchMap(() => this.ws.call('replication.run', [row.id])),
-            tap(() => this.snackbar.success(
+            switchMap(() => this.ws.job('replication.run', [row.id])),
+            tapOnce(() => this.snackbar.success(
               this.translate.instant('Replication «{name}» has started.', { name: row.name }),
             )),
-            switchMap((id: number) => this.store$.select(selectJob(id)).pipe(filter(Boolean))),
             untilDestroyed(this),
           ).subscribe({
             next: (job: Job) => {
@@ -138,8 +137,8 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
               row.job = { ...job };
               this.cdr.markForCheck();
             },
-            error: (err: WebsocketError) => {
-              this.dialog.error(this.errorHandler.parseWsError(err));
+            error: (error: Job) => {
+              this.dialog.error(this.errorHandler.parseJobError(error));
             },
           });
         },

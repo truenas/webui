@@ -56,19 +56,15 @@ export class DeleteUserDialogComponent implements OnInit {
   }
 
   private checkIfLastGroupMember(): void {
-    this.loader.open();
     this.ws.call('group.query', [[['id', '=', this.user.group.id]]])
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: (groups) => {
-          this.isLastGroupMember = groups[0].users.length === 1;
-          this.cdr.markForCheck();
-          this.loader.close();
-        },
-        error: (error: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-          this.loader.close();
-        },
+      .pipe(
+        this.loader.withLoader(),
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe((groups) => {
+        this.isLastGroupMember = groups[0].users.length === 1;
+        this.cdr.markForCheck();
       });
   }
 }

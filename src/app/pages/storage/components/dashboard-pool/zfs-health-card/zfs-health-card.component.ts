@@ -154,11 +154,8 @@ export class ZfsHealthCardComponent implements OnChanges {
     })
       .pipe(
         filter(Boolean),
-        switchMap(() => this.ws.call('pool.scrub', [this.pool.id, PoolScrubAction.Start])),
-        catchError((error: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-          return EMPTY;
-        }),
+        switchMap(() => this.ws.startJob('pool.scrub', [this.pool.id, PoolScrubAction.Start])),
+        this.errorHandler.catchError(),
         untilDestroyed(this),
       )
       .subscribe();
@@ -172,23 +169,20 @@ export class ZfsHealthCardComponent implements OnChanges {
       buttonText: this.translate.instant('Stop Scrub'),
     }).pipe(
       filter(Boolean),
-      switchMap(() => this.ws.call('pool.scrub', [this.pool.id, PoolScrubAction.Stop])),
-      catchError((error: WebsocketError) => {
-        this.dialogService.error(this.errorHandler.parseWsError(error));
-        return EMPTY;
-      }),
+      switchMap(() => this.ws.startJob('pool.scrub', [this.pool.id, PoolScrubAction.Stop])),
+      this.errorHandler.catchError(),
       untilDestroyed(this),
     ).subscribe();
   }
 
   onPauseScrub(): void {
-    this.ws.call('pool.scrub', [this.pool.id, PoolScrubAction.Pause])
+    this.ws.startJob('pool.scrub', [this.pool.id, PoolScrubAction.Pause])
       .pipe(untilDestroyed(this))
       .subscribe();
   }
 
   onResumeScrub(): void {
-    this.ws.call('pool.scrub', [this.pool.id, PoolScrubAction.Start])
+    this.ws.startJob('pool.scrub', [this.pool.id, PoolScrubAction.Start])
       .pipe(untilDestroyed(this))
       .subscribe();
   }
@@ -209,16 +203,12 @@ export class ZfsHealthCardComponent implements OnChanges {
       .pipe(
         map((apiEvent) => apiEvent.fields),
         filter((scan) => scan.name === this.pool.name),
+        this.errorHandler.catchError(),
         untilDestroyed(this),
       )
-      .subscribe({
-        next: (scan) => {
-          this.scan = scan.scan;
-          this.cdr.markForCheck();
-        },
-        error: (error: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-        },
+      .subscribe((scan) => {
+        this.scan = scan.scan;
+        this.cdr.markForCheck();
       });
   }
 

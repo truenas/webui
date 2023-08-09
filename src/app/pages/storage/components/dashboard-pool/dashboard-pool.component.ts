@@ -82,10 +82,7 @@ export class DashboardPoolComponent {
           );
           this.store.loadDashboard();
         }),
-        catchError((error: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-          return EMPTY;
-        }),
+        this.errorHandler.catchError(),
         untilDestroyed(this),
       )
       .subscribe();
@@ -106,10 +103,7 @@ export class DashboardPoolComponent {
         );
         this.store.loadDashboard();
       }),
-      catchError((error: WebsocketError) => {
-        this.dialogService.error(this.errorHandler.parseWsError(error));
-        return EMPTY;
-      }),
+      this.errorHandler.catchError(),
       untilDestroyed(this),
     ).subscribe();
   }

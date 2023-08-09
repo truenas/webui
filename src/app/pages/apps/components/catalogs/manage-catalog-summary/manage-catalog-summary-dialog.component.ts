@@ -40,30 +40,29 @@ export class ManageCatalogSummaryDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.ws.call('catalog.items', [this.catalog.label])
-      .pipe(this.loader.withLoader(), untilDestroyed(this))
-      .subscribe({
-        next: (result: CatalogItems) => {
-          this.catalogItems = [];
-          this.trainOptions = ['All'];
-          if (result) {
-            Object.keys(result).forEach((trainKey) => {
-              const train = result[trainKey];
-              this.trainOptions.push(trainKey);
-              Object.keys(train).forEach((appKey) => {
-                const app = train[appKey];
-                this.catalogItems.push({
-                  train: trainKey,
-                  app: appKey,
-                  healthy: app.healthy,
-                });
+      .pipe(
+        this.loader.withLoader(),
+        this.errorHandler.catchError(),
+        untilDestroyed(this)
+      )
+      .subscribe((result: CatalogItems) => {
+        this.catalogItems = [];
+        this.trainOptions = ['All'];
+        if (result) {
+          Object.keys(result).forEach((trainKey) => {
+            const train = result[trainKey];
+            this.trainOptions.push(trainKey);
+            Object.keys(train).forEach((appKey) => {
+              const app = train[appKey];
+              this.catalogItems.push({
+                train: trainKey,
+                app: appKey,
+                healthy: app.healthy,
               });
             });
-            this.filteredItems = this.catalogItems;
-          }
-        },
-        error: (err: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(err));
-        },
+          });
+          this.filteredItems = this.catalogItems;
+        }
       });
   }
 

@@ -100,7 +100,7 @@ export class PodShellComponent implements TerminalConfiguration {
     });
   }
 
-  onChooseShell(value: PodDialogFormValue): void {
+  onChooseShell(value: { [key: string]: string }): void {
     this.podName = value.pods;
     this.containerName = value.containers;
     this.command = value.command;

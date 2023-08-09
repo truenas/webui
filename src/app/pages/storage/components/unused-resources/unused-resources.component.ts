@@ -35,14 +35,9 @@ export class UnusedResourcesComponent implements OnInit {
   }
 
   updateUnusedDisks(): void {
-    this.ws.call('disk.get_unused').pipe(untilDestroyed(this)).subscribe({
-      next: (disks) => {
-        this.unusedDisks = disks;
-        this.cdr.markForCheck();
-      },
-      error: (error: WebsocketError) => {
-        this.dialogService.error(this.errorHandler.parseWsError(error));
-      },
+    this.ws.call('disk.get_unused').pipe(this.errorHandler.catchError(), untilDestroyed(this)).subscribe((disks) => {
+      this.unusedDisks = disks;
+      this.cdr.markForCheck();
     });
   }
 

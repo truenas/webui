@@ -38,10 +38,18 @@
           </div>
         </div>
         <div class="details-item">
-          <div class="label">{{ 'Version' | translate }}:</div>
+          <div class="label">{{ 'App Version' | translate }}:</div>
           <div class="value">
-            <ng-container *ngIf="app?.human_version; else notAvailable">
-              {{ app.human_version }}
+            <ng-container *ngIf="app?.chart_metadata?.appVersion; else notAvailable">
+              {{ app.chart_metadata.appVersion }}
+            </ng-container>
+          </div>
+        </div>
+        <div class="details-item">
+          <div class="label">{{ 'Chart Version' | translate }}:</div>
+          <div class="value">
+            <ng-container *ngIf="app?.chart_metadata?.version; else notAvailable">
+              {{ app.chart_metadata.version }}
             </ng-container>
           </div>
         </div>
@@ -85,7 +93,7 @@
           <div class="label">{{ 'Catalog' | translate }}:</div>
           <div class="value">
             <ng-container *ngIf="app?.catalog; else notAvailable">
-              {{ app.catalog }}
+              {{ app.catalog | appCatalog }}
             </ng-container>
           </div>
         </div>

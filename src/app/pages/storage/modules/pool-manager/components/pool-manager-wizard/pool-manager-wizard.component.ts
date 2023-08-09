@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnInit, Output, ViewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatStepper } from '@angular/material/stepper';
@@ -27,7 +27,6 @@ import { PoolManagerValidationService } from 'app/pages/storage/modules/pool-man
 import { PoolManagerState, PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { topologyToPayload } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
 import { DialogService } from 'app/services/dialog.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { waitForSystemFeatures } from 'app/store/system-info/system-info.selectors';
 
@@ -38,7 +37,7 @@ import { waitForSystemFeatures } from 'app/store/system-info/system-info.selecto
   styleUrls: ['./pool-manager-wizard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PoolManagerWizardComponent implements OnInit {
+export class PoolManagerWizardComponent implements OnInit, OnDestroy {
   protected existingPool: Pool = null;
   @Output() stepChanged = new EventEmitter<PoolCreationWizardStep>();
 
@@ -71,7 +70,6 @@ export class PoolManagerWizardComponent implements OnInit {
     private snackbar: SnackbarService,
     private poolManagerValidation: PoolManagerValidationService,
     private route: ActivatedRoute,
-    private ws: WebSocketService,
     private addVdevsStore: AddVdevsStore,
     private dialogService: DialogService,
   ) {}
@@ -83,6 +81,10 @@ export class PoolManagerWizardComponent implements OnInit {
     if (this.route.snapshot.url.toString().includes('add-vdevs')) {
       this.loadExistingPoolDetails();
     }
+  }
+
+  ngOnDestroy(): void {
+    this.addVdevsStore.resetStoreToInitialState();
   }
 
   loadExistingPoolDetails(): void {

@@ -96,33 +96,27 @@ export class ExtendDialogComponent implements OnInit {
     }
 
     this.ws.job('pool.attach', [this.data.poolId, payload])
-      .pipe(this.loader.withLoader(), untilDestroyed(this))
-      .subscribe({
-        next: (job) => {
-          if (job.state !== JobState.Success) {
-            return;
-          }
+      .pipe(
+        this.loader.withLoader(),
+        this.errorHandler.catchError(),
+        untilDestroyed(this)
+      )
+      .subscribe((job) => {
+        if (job.state !== JobState.Success) {
+          return;
+        }
 
-          this.snackbar.success(this.translate.instant('Vdev successfully extended.'));
-          this.dialogRef.close(true);
-        },
-        error: (error: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-        },
+        this.snackbar.success(this.translate.instant('Vdev successfully extended.'));
+        this.dialogRef.close(true);
       });
   }
 
   private loadUnusedDisks(): void {
     this.ws.call('disk.get_unused')
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: (disks) => {
-          this.unusedDisks = disks;
-          this.disksWithDuplicateSerials = disks.filter((disk) => disk.duplicate_serial.length);
-        },
-        error: (error: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-        },
+      .pipe(this.errorHandler.catchError(), untilDestroyed(this))
+      .subscribe((disks) => {
+        this.unusedDisks = disks;
+        this.disksWithDuplicateSerials = disks.filter((disk) => disk.duplicate_serial.length);
       });
   }
 }

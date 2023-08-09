@@ -129,15 +129,12 @@ export class AlertConfigFormComponent implements OnInit {
         }
       });
 
-    this.ws.call('alertclasses.update', [payload]).pipe(untilDestroyed(this)).subscribe({
-      next: () => {
-        this.snackbarService.success(this.translate.instant('Settings saved.'));
-        this.cdr.markForCheck();
-      },
-      error: (error: WebsocketError) => {
-        this.dialogService.error(this.errorHandler.parseWsError(error));
-        this.cdr.markForCheck();
-      },
+    this.ws.call('alertclasses.update', [payload]).pipe(
+      this.errorHandler.catchError(),
+      untilDestroyed(this)
+    ).subscribe(() => {
+      this.snackbarService.success(this.translate.instant('Settings saved.'));
+      this.cdr.markForCheck();
     }).add(() => {
       this.isFormLoading = false;
       this.cdr.markForCheck();

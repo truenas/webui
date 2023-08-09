@@ -81,18 +81,17 @@ export class SelectPresetModalComponent implements OnInit {
         resolve_names: true,
       },
     }])
-      .pipe(this.loader.withLoader(), untilDestroyed(this))
-      .subscribe({
-        next: (presets) => {
-          this.presets = presets;
-          this.presetOptions$ = of(presets.map((preset) => ({
-            label: preset.name,
-            value: preset.name,
-          })));
-        },
-        error: (error: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-        },
+      .pipe(
+        this.loader.withLoader(),
+        this.errorHandler.catchError(),
+        untilDestroyed(this)
+      )
+      .subscribe((presets) => {
+        this.presets = presets;
+        this.presetOptions$ = of(presets.map((preset) => ({
+          label: preset.name,
+          value: preset.name,
+        })));
       });
   }
 

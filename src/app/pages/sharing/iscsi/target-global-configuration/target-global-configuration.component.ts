@@ -131,10 +131,7 @@ export class TargetGlobalConfigurationComponent implements OnInit {
               this.translate.instant('The {service} service has been enabled.', { service: 'iSCSI' }),
             );
           }),
-          catchError((error: WebsocketError) => {
-            this.dialogService.error(this.errorHandler.parseWsError(error));
-            return EMPTY;
-          }),
+          this.errorHandler.catchError(),
         );
       }),
     );

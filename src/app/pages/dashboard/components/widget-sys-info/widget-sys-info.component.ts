@@ -95,7 +95,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
       this.screenType = currentScreenType;
     });
 
-    this.hasHa = this.window.sessionStorage.getItem('ha_status') === 'true';
+    this.hasHa = this.window.localStorage.getItem('ha_status') === 'true';
   }
 
   get licenseString(): string {

@@ -18,6 +18,7 @@ import { AppRollbackModalComponent } from 'app/pages/apps/components/installed-a
 import { AppUpgradeDialogComponent } from 'app/pages/apps/components/installed-apps/app-upgrade-dialog/app-upgrade-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
+import { AppCatalogPipe } from 'app/pages/apps/utils/app-catalog.pipe';
 import { DialogService } from 'app/services/dialog.service';
 import { RedirectService } from 'app/services/redirect.service';
 
@@ -41,6 +42,8 @@ describe('AppInfoCardComponent', () => {
       sources: [
         'http://github.com/ix-test-app/ix-test-app/',
       ],
+      version: '1.2.3',
+      appVersion: '3.2.1',
     },
     catalog: 'TRUENAS',
     catalog_train: 'charts',
@@ -62,6 +65,7 @@ describe('AppInfoCardComponent', () => {
 
   const createComponent = createComponentFactory({
     component: AppInfoCardComponent,
+    imports: [AppCatalogPipe],
     declarations: [
       MockComponents(
         AppCardLogoComponent,
@@ -113,8 +117,12 @@ describe('AppInfoCardComponent', () => {
         value: 'ix-test-app',
       },
       {
-        label: 'Version:',
-        value: '1.2.3_3.2.1',
+        label: 'App Version:',
+        value: '3.2.1',
+      },
+      {
+        label: 'Chart Version:',
+        value: '1.2.3',
       },
       // TODO: https://ixsystems.atlassian.net/browse/NAS-121706
       {
@@ -132,7 +140,7 @@ describe('AppInfoCardComponent', () => {
       },
       {
         label: 'Catalog:',
-        value: 'TRUENAS',
+        value: 'TrueNAS',
       },
       {
         label: 'Train:',

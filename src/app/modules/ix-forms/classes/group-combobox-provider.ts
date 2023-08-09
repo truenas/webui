@@ -32,5 +32,5 @@ export class GroupComboboxProvider implements IxComboboxProvider {
       );
   }
 
-  constructor(private userService: UserService, private optionsValueField: 'group' | 'id' = 'group') {}
+  constructor(private userService: UserService, private optionsValueField: 'group' | 'gid' | 'id' = 'group') {}
 }

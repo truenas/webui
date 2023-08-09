@@ -7,47 +7,48 @@
       fxLayoutAlign="space-between stretch"
     >
       <mat-card-content>
-        <mat-toolbar-row [class.drag-handle]="showReorderHandle">
+        <ix-drag-handle [showReorderHandle]="showReorderHandle">
           <ng-content [select]="[cdkDragHandle]"></ng-content>
 
-          <!-- Mobile Only: Exit widget -->
-          <button
-            fxHide.gt-xs
-            class="mat-card-title-text primary-nav"
-            mat-icon-button
-            color="default"
-            [ixTest]="['widget-storage', 'back']"
-            (click)="goBack()"
-          >
-            <ix-icon name="chevron_left" class="back-arrow"></ix-icon>
-          </button>
-
-          <span fxHide.gt-xs>&nbsp;&nbsp;</span>
-
-          <h3 class="mat-card-title-text">
-            <div
-              class="card-title-text"
-              [class.drag-handle]="showReorderHandle"
-            >
-              <span *ngIf="showReorderHandle" class="grip"></span>
-              <span>{{ 'Storage' | translate }}</span>
-            </div>
-          </h3>
-          <div class="controls">
-            <a
+          <mat-toolbar-row>
+            <!-- Mobile Only: Exit widget -->
+            <button
+              fxHide.gt-xs
+              class="mat-card-title-text primary-nav"
               mat-icon-button
-              ixTest="storage-reports"
-              [routerLink]="['/reportsdashboard/disk']"
+              color="default"
+              [ixTest]="['widget-storage', 'back']"
+              (click)="goBack()"
             >
-              <ix-icon
-                name="insert_chart"
-                matTooltipPosition="above"
-                aria-label="Disk Reports"
-                [matTooltip]="'Disk Reports' | translate"
-              ></ix-icon>
-            </a>
-          </div>
-        </mat-toolbar-row>
+              <ix-icon name="chevron_left" class="back-arrow"></ix-icon>
+            </button>
+
+            <span fxHide.gt-xs>&nbsp;&nbsp;</span>
+
+            <h3 class="mat-card-title-text">
+              <ix-drag-handle [showReorderHandle]="showReorderHandle">
+                <div class="card-title-text">
+                  <span *ngIf="showReorderHandle" class="grip"></span>
+                  <span>{{ 'Storage' | translate }}</span>
+                </div>
+              </ix-drag-handle>
+            </h3>
+            <div class="controls">
+              <a
+                mat-icon-button
+                ixTest="storage-reports"
+                [routerLink]="['/reportsdashboard/disk']"
+              >
+                <ix-icon
+                  name="insert_chart"
+                  matTooltipPosition="above"
+                  aria-label="Disk Reports"
+                  [matTooltip]="'Disk Reports' | translate"
+                ></ix-icon>
+              </a>
+            </div>
+          </mat-toolbar-row>
+        </ix-drag-handle>
 
         <div>
           <div

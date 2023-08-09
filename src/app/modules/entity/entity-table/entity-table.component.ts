@@ -33,6 +33,8 @@ import {
 } from 'rxjs/operators';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
+import { ApiCallMethod, ApiCallParams } from 'app/interfaces/api/api-call-directory.interface';
+import { ApiJobMethod, ApiJobParams } from 'app/interfaces/api/api-job-directory.interface';
 import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -520,14 +522,17 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     if (this.conf.queryCall) {
       if (this.conf.queryCallJob) {
         if (this.conf.queryCallOption) {
-          this.getFunction = this.ws.job(this.conf.queryCall, this.conf.queryCallOption);
+          this.getFunction = this.ws.job(this.conf.queryCall as ApiJobMethod, this.conf.queryCallOption);
         } else {
-          this.getFunction = this.ws.job(this.conf.queryCall, []);
+          this.getFunction = this.ws.job(this.conf.queryCall as ApiJobMethod, []);
         }
       } else if (this.conf.queryCallOption) {
-        this.getFunction = this.ws.call(this.conf.queryCall, this.conf.queryCallOption);
+        this.getFunction = this.ws.call(
+          this.conf.queryCall as ApiCallMethod,
+          this.conf.queryCallOption as ApiCallParams<ApiCallMethod>,
+        );
       } else {
-        this.getFunction = this.ws.call(this.conf.queryCall, []);
+        this.getFunction = this.ws.call(this.conf.queryCall as ApiCallMethod, []);
       }
     } else {
       this.getFunction = EMPTY;
@@ -860,8 +865,12 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     this.loader.open();
     this.loaderOpen = true;
     this.busy = this.ws.call(
-      this.conf.wsDelete,
-      this.conf.wsDeleteParams ? this.conf.wsDeleteParams(this.toDeleteRow, id) : [id],
+      this.conf.wsDelete as ApiCallMethod,
+      (
+        this.conf.wsDeleteParams
+          ? this.conf.wsDeleteParams(this.toDeleteRow, id)
+          : [id]
+      ) as ApiCallParams<ApiCallMethod>,
     ).pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.getData();
@@ -905,7 +914,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
         }),
         switchMap(() => {
           const params = this.conf.wsDeleteParams ? this.conf.wsDeleteParams(this.toDeleteRow, id) : [id];
-          return this.ws.call(this.conf.wsDelete, params).pipe(
+          return this.ws.call(this.conf.wsDelete as ApiCallMethod, params as ApiCallParams<ApiCallMethod>).pipe(
             take(1),
             catchError((error) => {
               this.dialogService.error(this.errorHandler.parseWsError(error));
@@ -990,7 +999,10 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
       if (this.conf.wsMultiDelete) {
         // ws to do multi-delete
         if (this.conf.wsMultiDeleteParams) {
-          this.busy = this.ws.job(this.conf.wsMultiDelete, this.conf.wsMultiDeleteParams(selected))
+          this.busy = this.ws.job(
+            this.conf.wsMultiDelete,
+            this.conf.wsMultiDeleteParams(selected) as ApiJobParams<ApiJobMethod>,
+          )
             .pipe(untilDestroyed(this))
             .subscribe({
               next: (res1: Job<CoreBulkResponse[]>) => {
