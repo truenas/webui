@@ -8,7 +8,6 @@ import { of } from 'rxjs';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { AclTemplateByPath } from 'app/interfaces/acl.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import {
@@ -84,7 +83,7 @@ export class SelectPresetModalComponent implements OnInit {
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.catchError(),
-        untilDestroyed(this)
+        untilDestroyed(this),
       )
       .subscribe((presets) => {
         this.presets = presets;

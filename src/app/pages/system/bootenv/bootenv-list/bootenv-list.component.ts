@@ -18,7 +18,6 @@ import { BootEnvironmentAction } from 'app/enums/boot-environment-action.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { helptextSystemBootenv } from 'app/helptext/system/boot-env';
 import { Bootenv } from 'app/interfaces/bootenv.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { IxCheckboxColumnComponent } from 'app/modules/ix-tables/components/ix-checkbox-column/ix-checkbox-column.component';

@@ -6,7 +6,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
 import { VmDisplayWebUriParams, VmDisplayWebUriParamsOptions } from 'app/interfaces/virtual-machine.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DisplayVmDialogData } from 'app/pages/vm/vm-list/display-vm-dialog/display-vm-dialog-data.interface';
 import { DialogService } from 'app/services/dialog.service';
@@ -101,7 +100,7 @@ export class DisplayVmDialogComponent {
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.catchError(),
-        untilDestroyed(this)
+        untilDestroyed(this),
       )
       .subscribe((webUris) => {
         const webUri = webUris[displayDeviceId];

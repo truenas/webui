@@ -7,7 +7,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import helptext from 'app/helptext/storage/disks/disks';
 import { Disk } from 'app/interfaces/storage.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -56,7 +55,7 @@ export class ManageDiskSedDialogComponent implements OnInit {
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.catchError(),
-        untilDestroyed(this)
+        untilDestroyed(this),
       )
       .subscribe((disks) => {
         this.disk = disks[0];
@@ -69,7 +68,7 @@ export class ManageDiskSedDialogComponent implements OnInit {
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.catchError(),
-        untilDestroyed(this)
+        untilDestroyed(this),
       )
       .subscribe(() => {
         this.dialogRef.close(true);

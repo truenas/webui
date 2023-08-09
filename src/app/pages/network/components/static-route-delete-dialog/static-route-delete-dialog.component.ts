@@ -6,7 +6,6 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { StaticRoute } from 'app/interfaces/static-route.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -37,7 +36,7 @@ export class StaticRouteDeleteDialogComponent {
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.catchError(),
-        untilDestroyed(this)
+        untilDestroyed(this),
       )
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Static route deleted'));

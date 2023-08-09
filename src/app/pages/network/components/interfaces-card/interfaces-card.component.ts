@@ -139,7 +139,7 @@ export class InterfacesCardComponent implements OnInit {
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.catchError(),
-        untilDestroyed(this)
+        untilDestroyed(this),
       )
       .subscribe(() => {
         this.interfacesUpdated.emit();

@@ -13,7 +13,6 @@ import {
   KeychainCredentialUpdate,
   KeychainSshKeyPair,
 } from 'app/interfaces/keychain-credential.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -89,7 +88,7 @@ export class SshKeypairFormComponent implements OnInit {
       .pipe(
         this.loader.withLoader(),
         this.errorHandler.catchError(),
-        untilDestroyed(this)
+        untilDestroyed(this),
       )
       .subscribe((keyPair) => {
         this.form.patchValue({

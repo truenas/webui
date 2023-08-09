@@ -79,7 +79,7 @@ export class CaIdentifierAndTypeComponent implements OnInit, SummaryProvider {
     this.ws.call('certificateauthority.profiles')
       .pipe(
         this.errorHandler.catchError(),
-        untilDestroyed(this)
+        untilDestroyed(this),
       )
       .subscribe((profiles) => {
         this.profiles = profiles;

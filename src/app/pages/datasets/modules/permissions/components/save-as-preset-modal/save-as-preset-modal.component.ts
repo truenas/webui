@@ -9,7 +9,6 @@ import { AclType } from 'app/enums/acl-type.enum';
 import {
   Acl, AclTemplateByPath, AclTemplateCreateParams, NfsAclItem, PosixAclItem,
 } from 'app/interfaces/acl.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SaveAsPresetModalConfig } from 'app/pages/datasets/modules/permissions/interfaces/save-as-preset-modal-config.interface';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';

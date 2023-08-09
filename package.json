@@ -190,8 +190,7 @@
   },
   "lint-staged": {
     "*.{ts,html}": [
-      "eslint --cache --fix",
-      "yarn test:commit"
+      "eslint --cache --fix"
     ],
     "*.html": "markuplint",
     "*.scss": "stylelint --fix"

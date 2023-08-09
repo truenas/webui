@@ -6,7 +6,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { filter, switchMap, tap } from 'rxjs/operators';
 import helptext from 'app/helptext/topbar';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { matchOtherValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';

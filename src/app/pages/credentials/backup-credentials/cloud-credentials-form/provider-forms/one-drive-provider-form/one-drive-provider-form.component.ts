@@ -9,7 +9,6 @@ import { OneDriveType } from 'app/enums/cloudsync-provider.enum';
 import { CloudCredential } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudsyncOneDriveDrive } from 'app/interfaces/cloudsync-credential.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import {
   OauthProviderComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/oauth-provider/oauth-provider.component';
@@ -114,7 +113,7 @@ export class OneDriveProviderFormComponent extends BaseProviderFormComponent imp
     }])
       .pipe(
         this.errorHandler.catchError(),
-        untilDestroyed(this)
+        untilDestroyed(this),
       )
       .subscribe((drives) => {
         this.drives = drives;

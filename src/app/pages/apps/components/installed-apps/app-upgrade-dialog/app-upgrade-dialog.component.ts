@@ -10,7 +10,6 @@ import helptext from 'app/helptext/apps/apps';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { ChartContainerImage } from 'app/interfaces/chart-release.interface';
 import { ChartUpgradeDialogConfig } from 'app/interfaces/chart-upgrade-dialog-config.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -76,7 +75,7 @@ export class AppUpgradeDialogComponent {
     if (!this.selectedVersion.fetched) {
       this.appService.getChartUpgradeSummary(
         this.dialogConfig.appInfo.name,
-        this.selectedVersionKey
+        this.selectedVersionKey,
       )
         .pipe(
           this.loader.withLoader(),

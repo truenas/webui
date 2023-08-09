@@ -6,10 +6,8 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { formatDuration } from 'date-fns';
-import { EMPTY, Observable, Subscription } from 'rxjs';
-import {
-  catchError, filter, map, switchMap,
-} from 'rxjs/operators';
+import { Observable, Subscription } from 'rxjs';
+import { filter, map, switchMap } from 'rxjs/operators';
 import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
@@ -19,7 +17,6 @@ import { LoadingState, toLoadingState } from 'app/helpers/operators/to-loading-s
 import { secondsToDuration } from 'app/helpers/time.helpers';
 import { Pool, PoolScanUpdate } from 'app/interfaces/pool.interface';
 import { TopologyItem } from 'app/interfaces/storage.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import {
   AutotrimDialogComponent,
 } from 'app/pages/storage/components/dashboard-pool/zfs-health-card/autotrim-dialog/autotrim-dialog.component';

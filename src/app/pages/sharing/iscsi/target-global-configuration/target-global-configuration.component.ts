@@ -9,9 +9,7 @@ import * as _ from 'lodash';
 import {
   EMPTY, forkJoin, Observable,
 } from 'rxjs';
-import {
-  catchError, filter, switchMap, tap,
-} from 'rxjs/operators';
+import { filter, switchMap, tap } from 'rxjs/operators';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingIscsi, shared } from 'app/helptext/sharing';
 import { IscsiGlobalConfigUpdate } from 'app/interfaces/iscsi-global-config.interface';

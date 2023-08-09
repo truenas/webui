@@ -5,9 +5,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
-import { EMPTY } from 'rxjs';
 import {
-  filter, switchMap, tap, map, catchError,
+  filter, switchMap, tap, map,
 } from 'rxjs/operators';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';

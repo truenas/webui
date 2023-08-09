@@ -131,7 +131,7 @@ export class AlertConfigFormComponent implements OnInit {
 
     this.ws.call('alertclasses.update', [payload]).pipe(
       this.errorHandler.catchError(),
-      untilDestroyed(this)
+      untilDestroyed(this),
     ).subscribe(() => {
       this.snackbarService.success(this.translate.instant('Settings saved.'));
       this.cdr.markForCheck();
