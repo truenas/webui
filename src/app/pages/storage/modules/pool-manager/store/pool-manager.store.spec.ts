@@ -123,7 +123,7 @@ describe('PoolManagerStore', () => {
 
   describe('start over functionality', () => {
     it('reverts state to initial state', async () => {
-      spectator.service.reset();
+      spectator.service.startOver();
 
       expect(await firstValueFrom(spectator.service.state$)).toMatchObject({
         ...initialState,
