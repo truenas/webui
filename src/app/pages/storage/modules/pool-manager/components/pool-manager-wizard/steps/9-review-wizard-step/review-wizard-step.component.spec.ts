@@ -182,7 +182,7 @@ describe('ReviewWizardStepComponent', () => {
       }));
 
       const store = spectator.inject(PoolManagerStore);
-      expect(store.reset).toHaveBeenCalled();
+      expect(store.startOver).toHaveBeenCalled();
     });
   });
 
