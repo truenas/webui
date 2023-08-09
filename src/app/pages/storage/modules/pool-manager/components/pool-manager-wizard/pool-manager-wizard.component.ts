@@ -85,6 +85,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.addVdevsStore.resetStoreToInitialState();
+    this.store.resetStoreToInitialState();
   }
 
   loadExistingPoolDetails(): void {

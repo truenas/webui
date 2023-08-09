@@ -114,7 +114,7 @@ export class ReviewWizardStepComponent implements OnInit {
         filter(Boolean),
         untilDestroyed(this),
       ).subscribe(() => {
-        this.store.reset();
+        this.store.startOver();
       });
   }
 }
