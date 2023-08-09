@@ -74,6 +74,10 @@ export class DiskTemperatureService implements OnDestroy {
   }
 
   start(): void {
+    if (this.broadcast) {
+      return;
+    }
+
     this.fetch(this.disks.map((disk) => disk.name));
     this.broadcast = setInterval(() => {
       this.fetch(this.disks.map((disk) => disk.name));
