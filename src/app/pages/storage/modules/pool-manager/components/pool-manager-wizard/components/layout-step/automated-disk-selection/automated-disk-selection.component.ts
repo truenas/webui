@@ -102,7 +102,7 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
 
   resetToDefaults(): void {
     this.form.reset({
-      layout: CreateVdevLayout.Stripe,
+      layout: null,
       sizeAndType: [null, null],
       width: null,
       treatDiskSizeAsMinimum: false,
@@ -234,7 +234,7 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
 
     const isValueNull = this.form.controls.layout.value === null;
     if (!isValueNull && !layoutOptions.some((option) => option.value === this.form.controls.layout.value)) {
-      this.form.controls.layout.setValue(CreateVdevLayout.Stripe, { emitEvent: false });
+      this.form.controls.layout.setValue(null, { emitEvent: false });
     }
     this.store.getLayoutsForVdevType(this.type)
       .pipe(
