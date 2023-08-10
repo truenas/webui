@@ -30,7 +30,9 @@ export class IxDynamicFormItemComponent implements OnInit {
   readonly DynamicFormSchemaType = DynamicFormSchemaType;
 
   get isAllListControlsDisabled(): boolean {
-    return (this.dynamicSchema as DynamicFormSchemaList).items.every((item) => !item.editable);
+    return (this.dynamicSchema as DynamicFormSchemaList).items.every((item) => {
+      return item.editable !== undefined && item.editable !== null && !item.editable;
+    });
   }
 
   constructor(
