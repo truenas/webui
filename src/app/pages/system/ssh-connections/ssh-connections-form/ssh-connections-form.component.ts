@@ -56,7 +56,7 @@ export class SshConnectionsFormComponent {
               label: 'Manual',
               value: 'manual',
             }, {
-              label: 'Semi-automatic (FreeNAS only)',
+              label: 'Semi-automatic (TrueNAS only)',
               value: 'semiautomatic',
             },
           ],

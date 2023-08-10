@@ -81,7 +81,7 @@ export const helptext_sharing_smb = {
  Windows Server version 1903. Additional client-side configuration is \
  required to provide guest access to these clients.<br><br> \
  <i>MacOS clients:</i> Attempting to connect as a user that does not \
- exist in FreeNAS <i>does not</i> automatically connect as the guest \
+ exist in TrueNAS <i>does not</i> automatically connect as the guest \
  account. The <b>Connect As:</b> <i>Guest</i> option must be \
  specifically chosen in MacOS to log in as the guest account. See the \
  <a href="https://support.apple.com/guide/mac-help/connect-mac-shared-computers-servers-mchlp1140/" target="_blank">Apple documentation</a> \

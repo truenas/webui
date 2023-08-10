@@ -69,7 +69,7 @@ export default {
   activedirectory_dns_updates_tooltip: T('Set to enable Samba to do DNS updates when joining a domain.'),
 
   activedirectory_disable_fn_cache_name: 'disable_freenas_cache',
-  activedirectory_disable_fn_cache_placeholder: T('Disable FreeNAS Cache'),
+  activedirectory_disable_fn_cache_placeholder: T('Disable TrueNAS Cache'),
   activedirectory_disable_fn_cache_tooltip: T('Set to disable caching AD users and groups. This can\
  help when unable to bind to a domain with a large number of users or groups.'),
 

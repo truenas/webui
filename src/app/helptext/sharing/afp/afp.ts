@@ -67,7 +67,7 @@ export const helptext_sharing_afp = {
 
   placeholder_timemachine: T('Time Machine'),
   tooltip_timemachine: T(
-    'Set to advertise FreeNAS as a Time\
+    'Set to advertise TrueNAS as a Time\
  Machine disk so it can be found by Macs.\
  Setting multiple shares for <b>Time Machine</b> use\
  is not recommended. When multiple Macs share the\
