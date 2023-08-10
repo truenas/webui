@@ -36,7 +36,6 @@ export class ErrorHandlerService implements ErrorHandler {
     const parsedError = this.parseError(error);
     if (parsedError) {
       error = parsedError;
-      this.dialog?.error(parsedError);
     }
     this.logToSentry(error);
   }
