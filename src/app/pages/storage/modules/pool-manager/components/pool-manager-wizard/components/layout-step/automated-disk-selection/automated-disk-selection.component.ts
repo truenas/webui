@@ -41,7 +41,7 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
 
   @Output() manualSelectionClicked = new EventEmitter<void>();
 
-  protected form = this.formBuilder.group({
+  form = this.formBuilder.group({
     layout: [CreateVdevLayout.Stripe, Validators.required],
     sizeAndType: [[null, null] as SizeAndType, Validators.required],
     width: [{ value: null as number, disabled: true }, Validators.required],
