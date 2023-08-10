@@ -114,16 +114,16 @@ describe('AlertsPanelComponent', () => {
     const unreadAlertComponents = alertPanel.unreadAlertComponents;
 
     expect(unreadAlertComponents).toHaveLength(2);
-    expect(unreadAlertComponents[0].alert).toEqual(unreadAlerts[1]);
-    expect(unreadAlertComponents[1].alert).toEqual(unreadAlerts[0]);
+    expect(unreadAlertComponents[0].alert).toEqual(unreadAlerts[0]);
+    expect(unreadAlertComponents[1].alert).toEqual(unreadAlerts[1]);
   });
 
   it('shows a list of dismissed alerts', () => {
     const dismissedAlertComponents = alertPanel.dismissedAlertComponents;
 
     expect(dismissedAlertComponents).toHaveLength(2);
-    expect(dismissedAlertComponents[0].alert).toEqual(dismissedAlerts[1]);
-    expect(dismissedAlertComponents[1].alert).toEqual(dismissedAlerts[0]);
+    expect(dismissedAlertComponents[0].alert).toEqual(dismissedAlerts[0]);
+    expect(dismissedAlertComponents[1].alert).toEqual(dismissedAlerts[1]);
   });
 
   it('dismisses all alerts when Dismiss All Alerts is pressed', () => {

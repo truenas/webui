@@ -23,12 +23,12 @@ export const selectIsAlertPanelOpen = createSelector(
 
 export const selectUnreadAlerts = createSelector(
   selectAlerts,
-  (alerts) => alerts.filter((alert) => !alert.dismissed),
+  (alerts) => alerts.filter((alert) => !alert.dismissed).sort((a, b) => b.datetime.$date - a.datetime.$date),
 );
 
 export const selectDismissedAlerts = createSelector(
   selectAlerts,
-  (alerts) => alerts.filter((alert) => alert.dismissed),
+  (alerts) => alerts.filter((alert) => alert.dismissed).sort((a, b) => b.datetime.$date - a.datetime.$date),
 );
 
 export const selectImportantUnreadAlertsCount = createSelector(
