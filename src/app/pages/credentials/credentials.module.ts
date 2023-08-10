@@ -77,6 +77,7 @@ import { WebdavProviderFormComponent } from './backup-credentials/cloud-credenti
 import { CertificateAuthorityAddComponent } from './certificates-dash/certificate-authority-add/certificate-authority-add.component';
 import { CaIdentifierAndTypeComponent } from './certificates-dash/certificate-authority-add/steps/ca-identifier-and-type/ca-identifier-and-type.component';
 import { CertificateAuthorityEditComponent } from './certificates-dash/certificate-authority-edit/certificate-authority-edit.component';
+import { CertificateAuthorityListComponent } from './certificates-dash/certificate-authority-list/certificate-authority-list.component';
 import { CertificateEditComponent } from './certificates-dash/certificate-edit/certificate-edit.component';
 import { CertificateListComponent } from './certificates-dash/certificate-list/certificate-list.component';
 import { CertificatesDashComponent } from './certificates-dash/certificates-dash.component';
@@ -133,6 +134,7 @@ import { CertificateSubjectComponent } from './certificates-dash/forms/common-st
     CsrImportComponent,
     CertificateListComponent,
     CertificateSigningRequestsListComponent,
+    CertificateAuthorityListComponent,
   ],
   imports: [
     AppCommonModule,
