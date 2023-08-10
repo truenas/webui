@@ -462,8 +462,16 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
       margin: 0 !important;
     }
 
-    ix-modal-header .ix-slidein-title-bar {
-      margin: 0 !important;
+    ix-modal-header {
+      // reset width to avoid horizontal scrolling
+      .mat-mdc-progress-bar {
+        left: 0;
+        max-width: 100%;
+      }
+
+      .ix-slidein-title-bar {
+        margin: 0 !important;
+      }
     }
   }
 
