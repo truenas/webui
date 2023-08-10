@@ -64,26 +64,30 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
     protected store: PoolManagerStore,
   ) {}
 
-  get selectedDiskSize(): number {
+  protected get selectedDiskSize(): number {
     return this.form.controls.sizeAndType.value?.[0];
   }
 
-  get isSizeSelected(): boolean {
+  protected get isSizeSelected(): boolean {
     return !!this.form.value.sizeAndType?.length
       && !!this.form.value.sizeAndType[0]
       && !!this.form.value.sizeAndType[1];
   }
 
-  get isLayoutSelected(): boolean {
+  protected get isLayoutSelected(): boolean {
     return !!this.form.value.layout;
   }
 
-  get isWidthSelected(): boolean {
+  protected get isWidthSelected(): boolean {
     return !!this.form.value.width;
   }
 
-  get selectedDiskType(): DiskType {
+  protected get selectedDiskType(): DiskType {
     return this.form.controls.sizeAndType.value?.[1];
+  }
+
+  protected get isSpareVdev(): boolean {
+    return this.type === VdevType.Spare;
   }
 
   ngOnInit(): void {
@@ -98,9 +102,13 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
         this.resetToDefaults();
       }
     });
+
+    if (this.isSpareVdev) {
+      this.form.controls.vdevsNumber.disable();
+    }
   }
 
-  resetToDefaults(): void {
+  private resetToDefaults(): void {
     this.form.reset({
       layout: null,
       sizeAndType: [null, null],
@@ -127,7 +135,7 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
     }
   }
 
-  updateLayoutOptionsFromLimitedLayouts(limitLayouts: CreateVdevLayout[]): void {
+  private updateLayoutOptionsFromLimitedLayouts(limitLayouts: CreateVdevLayout[]): void {
     this.vdevLayoutOptions$ = of(
       limitLayouts.map(
         (layout) => ({
@@ -146,7 +154,7 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
     this.updateWidthOptions();
   }
 
-  openManualDiskSelection(): void {
+  protected openManualDiskSelection(): void {
     this.manualSelectionClicked.emit();
   }
 
@@ -166,7 +174,7 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
         if (this.form.controls.treatDiskSizeAsMinimum.disabled) {
           this.form.controls.treatDiskSizeAsMinimum.enable();
         }
-        if (this.isWidthSelected && this.form.controls.vdevsNumber.disabled) {
+        if (this.isWidthSelected && this.form.controls.vdevsNumber.disabled && !this.isSpareVdev) {
           this.form.controls.vdevsNumber.enable();
         }
       }
@@ -185,7 +193,7 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
         if (this.form.controls.treatDiskSizeAsMinimum.disabled) {
           this.form.controls.treatDiskSizeAsMinimum.enable();
         }
-        if (this.isWidthSelected && this.form.controls.vdevsNumber.disabled) {
+        if (this.isWidthSelected && this.form.controls.vdevsNumber.disabled && !this.isSpareVdev) {
           this.form.controls.vdevsNumber.enable();
         }
       }
@@ -197,7 +205,13 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
       distinctUntilChanged(),
       untilDestroyed(this),
     ).subscribe((width) => {
-      if (this.isSizeSelected && this.isLayoutSelected && !!width && this.form.controls.vdevsNumber.disabled) {
+      if (
+        this.isSizeSelected
+        && this.isLayoutSelected
+        && !!width
+        && this.form.controls.vdevsNumber.disabled
+        && !this.isSpareVdev
+      ) {
         this.form.controls.vdevsNumber.enable();
       }
       this.updateNumberOptions();
@@ -222,7 +236,7 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
       diskSize: this.selectedDiskSize,
       diskType: this.selectedDiskType,
       width: values.width,
-      vdevsNumber: values.vdevsNumber,
+      vdevsNumber: this.isSpareVdev ? 1 : values.vdevsNumber,
       treatDiskSizeAsMinimum: values.treatDiskSizeAsMinimum,
     });
   }
