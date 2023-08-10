@@ -284,20 +284,15 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
     this.ws.call('update.check_available').pipe(
       take(1),
       untilDestroyed(this),
-    ).subscribe({
-      next: (update) => {
-        if (update.status !== SystemUpdateStatus.Available) {
-          this.updateAvailable = false;
-          sessionStorage.updateAvailable = 'false';
-          return;
-        }
+    ).subscribe((update) => {
+      if (update.status !== SystemUpdateStatus.Available) {
+        this.updateAvailable = false;
+        sessionStorage.updateAvailable = 'false';
+        return;
+      }
 
-        this.updateAvailable = true;
-        sessionStorage.updateAvailable = 'true';
-      },
-      error: (err) => {
-        this.errorHandler.logToSentry(err);
-      },
+      this.updateAvailable = true;
+      sessionStorage.updateAvailable = 'true';
     });
   }
 }
