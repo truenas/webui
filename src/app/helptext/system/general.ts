@@ -40,7 +40,7 @@ export const helptextSystemGeneral = {
       'Allow configuring a non-standard port to access the GUI\
  over <i>HTTP</i>. Changing this setting might require\
  changing a <a\
- href="https://www.redbrick.dcu.ie/~d_fens/articles/Firefox:_This_Address_is_Restricted"\
+ href="https://support.mozilla.org/en-US/kb/connection-settings-firefox"\
  target="_blank">Firefox configuration setting</a>.',
     ),
   },

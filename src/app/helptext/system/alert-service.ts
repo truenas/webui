@@ -38,7 +38,7 @@ export default {
   InfluxDB_series_name_tooltip: T('InfluxDB time series name for collected points.'),
 
   Mattermost_url_tooltip: T('Enter or paste the <a\
- href="https://docs.mattermost.com/developer/webhooks-incoming.html"\
+ href="https://docs.mattermost.com/configure/integrations-configuration-settings.html#integrate-enableincomingwebhooks"\
  target="_blank">incoming webhook</a> URL associated with\
  this service.'),
 
@@ -63,7 +63,7 @@ export default {
  Integrations/Configured Integrations. Click the desired\
  integration, Settings, and read the API Key field.'),
 
-  OpsGenie_api_url_tooltip: T('Leave empty for default (<a href="https://api.opsgenie.com" target="_blank">OpsGenie API</a>)'),
+  OpsGenie_api_url_tooltip: T('Leave empty for default (<a href="https://docs.opsgenie.com/docs/api-overview" target="_blank">OpsGenie API</a>)'),
 
   PagerDuty_service_key_tooltip: T('Enter or paste the "integration/service" key for this\
  system to access the <a\
@@ -86,7 +86,7 @@ export default {
   SNMPTrap_v3_tooltip: T('Enable the SNMPv3 security model.'),
 
   SNMPTrap_v3_username_tooltip: T('Username of the SNMP \
- <a href="http://snmplabs.com/pysnmp/docs/api-reference.html#pysnmp.hlapi.UsmUserData" \
+ <a href="https://pysnmp.readthedocs.io/en/latest/docs/pysnmp-hlapi-tutorial.html" \
  target="_blank">User-based Security Model (USM)</a> user.'),
 
   SNMPTrap_v3_authkey_tooltip: T('Initial secret authentication key. \
