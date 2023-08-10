@@ -45,6 +45,7 @@ import { ConfirmForceDeleteCertificateComponent } from 'app/pages/credentials/ce
 import {
   CsrImportComponent,
 } from 'app/pages/credentials/certificates-dash/csr-add/steps/csr-import/csr-import.component';
+import { CertificateSigningRequestsListComponent } from 'app/pages/credentials/certificates-dash/csr-list/csr-list.component';
 import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/forms/acmedns-form/acmedns-form.component';
 import {
   CertificateAddComponent,
@@ -131,6 +132,7 @@ import { CertificateSubjectComponent } from './certificates-dash/forms/common-st
     CsrIdentifierAndTypeComponent,
     CsrImportComponent,
     CertificateListComponent,
+    CertificateSigningRequestsListComponent,
   ],
   imports: [
     AppCommonModule,
