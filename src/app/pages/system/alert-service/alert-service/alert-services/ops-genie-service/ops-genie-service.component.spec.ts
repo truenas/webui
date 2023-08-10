@@ -26,26 +26,26 @@ describe('OpsGenieServiceComponent', () => {
   it('renders a form with alert service values', async () => {
     spectator.component.form.patchValue({
       api_key: '12345',
-      api_url: 'https://api.opsgenie.com/v2/alerts',
+      api_url: 'https://docs.opsgenie.com/docs/api-overview/v2/alerts',
     });
 
     const values = await form.getValues();
     expect(values).toEqual({
       'API Key': '12345',
-      'API URL': 'https://api.opsgenie.com/v2/alerts',
+      'API URL': 'https://docs.opsgenie.com/docs/api-overview/v2/alerts',
     });
   });
 
   it('returns alert service form values when getSubmitAttributes is called', async () => {
     await form.fillForm({
       'API Key': '123456',
-      'API URL': 'https://api.opsgenie.com/v3/alerts',
+      'API URL': 'https://docs.opsgenie.com/docs/api-overview/v3/alerts',
     });
 
     const submittedValues = spectator.component.getSubmitAttributes();
     expect(submittedValues).toEqual({
       api_key: '123456',
-      api_url: 'https://api.opsgenie.com/v3/alerts',
+      api_url: 'https://docs.opsgenie.com/docs/api-overview/v3/alerts',
     });
   });
 });
