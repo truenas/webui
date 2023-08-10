@@ -9,6 +9,8 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatStepperModule } from '@angular/material/stepper';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
@@ -17,6 +19,7 @@ import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxDynamicFormModule } from 'app/modules/ix-dynamic-form/ix-dynamic-form.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import {
   CloudCredentialsFormComponent,
@@ -74,6 +77,7 @@ import { CertificateAuthorityAddComponent } from './certificates-dash/certificat
 import { CaIdentifierAndTypeComponent } from './certificates-dash/certificate-authority-add/steps/ca-identifier-and-type/ca-identifier-and-type.component';
 import { CertificateAuthorityEditComponent } from './certificates-dash/certificate-authority-edit/certificate-authority-edit.component';
 import { CertificateEditComponent } from './certificates-dash/certificate-edit/certificate-edit.component';
+import { CertificateListComponent } from './certificates-dash/certificate-list/certificate-list.component';
 import { CertificatesDashComponent } from './certificates-dash/certificates-dash.component';
 import { CsrAddComponent } from './certificates-dash/csr-add/csr-add.component';
 import { CsrIdentifierAndTypeComponent } from './certificates-dash/csr-add/steps/csr-identifier-and-type/csr-identifier-and-type.component';
@@ -126,29 +130,33 @@ import { CertificateSubjectComponent } from './certificates-dash/forms/common-st
     CsrAddComponent,
     CsrIdentifierAndTypeComponent,
     CsrImportComponent,
+    CertificateListComponent,
   ],
   imports: [
-    CommonModule,
-    MatCardModule,
-    MatButtonModule,
-    FlexLayoutModule,
-    MatDividerModule,
-    TranslateModule,
-    IxIconModule,
-    MatMenuModule,
-    EntityModule,
-    CommonDirectivesModule,
-    IxDynamicFormModule,
-    ReactiveFormsModule,
-    MatDialogModule,
-    MatButtonModule,
-    CoreComponents,
-    MatProgressBarModule,
-    RouterModule,
-    MatStepperModule,
     AppCommonModule,
-    TestIdModule,
+    CommonDirectivesModule,
+    CommonModule,
+    CoreComponents,
+    EntityModule,
+    FlexLayoutModule,
+    IxDynamicFormModule,
+    IxIconModule,
+    IxTable2Module,
+    MatButtonModule,
+    MatButtonModule,
+    MatCardModule,
+    MatDialogModule,
+    MatDividerModule,
+    MatMenuModule,
+    MatProgressBarModule,
+    MatStepperModule,
+    MatToolbarModule,
+    MatTooltipModule,
+    ReactiveFormsModule,
+    RouterModule,
     routing,
+    TestIdModule,
+    TranslateModule,
   ],
 })
 export class CredentialsModule { }
