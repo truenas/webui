@@ -42,6 +42,8 @@ describe('AppInfoCardComponent', () => {
       sources: [
         'http://github.com/ix-test-app/ix-test-app/',
       ],
+      version: '1.2.3',
+      appVersion: '3.2.1',
     },
     catalog: 'TRUENAS',
     catalog_train: 'charts',
@@ -115,8 +117,12 @@ describe('AppInfoCardComponent', () => {
         value: 'ix-test-app',
       },
       {
-        label: 'Version:',
-        value: '1.2.3_3.2.1',
+        label: 'App Version:',
+        value: '3.2.1',
+      },
+      {
+        label: 'Chart Version:',
+        value: '1.2.3',
       },
       // TODO: https://ixsystems.atlassian.net/browse/NAS-121706
       {
