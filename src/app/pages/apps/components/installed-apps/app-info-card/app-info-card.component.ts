@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
+  ChangeDetectionStrategy, Component, Input,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -11,7 +11,6 @@ import helptext from 'app/helptext/apps/apps';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { ChartUpgradeDialogConfig } from 'app/interfaces/chart-upgrade-dialog-config.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { AppRollbackModalComponent } from 'app/pages/apps/components/installed-apps/app-rollback-modal/app-rollback-modal.component';
@@ -35,9 +34,8 @@ export class AppInfoCardComponent {
   readonly isEmpty = isEmpty;
 
   constructor(
-    private appLoaderService: AppLoaderService,
+    private loader: AppLoaderService,
     private redirect: RedirectService,
-    private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
     private appService: ApplicationsService,
     private matDialog: MatDialog,
@@ -62,44 +60,39 @@ export class AppInfoCardComponent {
   updateButtonPressed(): void {
     const name = this.app.name;
 
-    this.appLoaderService.open();
-    this.appService.getChartUpgradeSummary(name).pipe(untilDestroyed(this)).subscribe({
-      next: (summary: UpgradeSummary) => {
-        this.appLoaderService.close();
-
-        const dialogRef = this.matDialog.open(AppUpgradeDialogComponent, {
-          width: '50vw',
-          minWidth: '500px',
-          maxWidth: '750px',
+    this.appService.getChartUpgradeSummary(name).pipe(
+      this.loader.withLoader(),
+      this.errorHandler.catchError(),
+      untilDestroyed(this),
+    ).subscribe((summary: UpgradeSummary) => {
+      const dialogRef = this.matDialog.open(AppUpgradeDialogComponent, {
+        width: '50vw',
+        minWidth: '500px',
+        maxWidth: '750px',
+        data: {
+          appInfo: this.app,
+          upgradeSummary: summary,
+        } as ChartUpgradeDialogConfig,
+      });
+      dialogRef.afterClosed().pipe(
+        filter(Boolean),
+        untilDestroyed(this),
+      ).subscribe((version: string) => {
+        const jobDialogRef = this.matDialog.open(EntityJobComponent, {
           data: {
-            appInfo: this.app,
-            upgradeSummary: summary,
-          } as ChartUpgradeDialogConfig,
+            title: helptext.charts.upgrade_dialog.job,
+          },
         });
-        dialogRef.afterClosed().pipe(
-          filter(Boolean),
-          untilDestroyed(this),
-        ).subscribe((version: string) => {
-          const jobDialogRef = this.matDialog.open(EntityJobComponent, {
-            data: {
-              title: helptext.charts.upgrade_dialog.job,
-            },
-          });
-          jobDialogRef.componentInstance.setCall('chart.release.upgrade', [name, { item_version: version }]);
-          jobDialogRef.componentInstance.submit();
-          jobDialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-            this.dialogService.closeAllDialogs();
-          });
-          jobDialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
-            this.dialogService.closeAllDialogs();
-            this.dialogService.error(this.errorHandler.parseJobError(error));
-          });
+        jobDialogRef.componentInstance.setCall('chart.release.upgrade', [name, { item_version: version }]);
+        jobDialogRef.componentInstance.submit();
+        jobDialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+          this.dialogService.closeAllDialogs();
         });
-      },
-      error: (error: WebsocketError) => {
-        this.appLoaderService.close();
-        this.dialogService.error(this.errorHandler.parseWsError(error));
-      },
+        jobDialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
+          this.dialogService.closeAllDialogs();
+          this.dialogService.error(this.errorHandler.parseJobError(error));
+        });
+      });
     });
   }
 
@@ -120,11 +113,11 @@ export class AppInfoCardComponent {
       .subscribe((result) => {
         const deleteUnusedImages = result.secondaryCheckbox;
         if (result.secondaryCheckbox) {
-          this.appLoaderService.open();
+          this.loader.open();
           this.appService.getChartReleaesUsingChartReleaseImages(name)
             .pipe(untilDestroyed(this))
             .subscribe((imagesNotTobeDeleted) => {
-              this.appLoaderService.close();
+              this.loader.close();
               const imageNames = Object.keys(imagesNotTobeDeleted);
               if (imageNames.length > 0) {
                 const imageMessage = imageNames.reduce((prev: string, current: string) => {

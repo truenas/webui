@@ -5,9 +5,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
-import { EMPTY } from 'rxjs';
 import {
-  filter, switchMap, tap, map, catchError,
+  filter, switchMap, tap, map,
 } from 'rxjs/operators';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
@@ -100,12 +99,9 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
       switchMap(() => {
         return this.ws.call('zfs.snapshot.delete', [snapshot.name]).pipe(
           this.loader.withLoader(),
+          this.errorHandler.catchError(),
           tap(() => {
             this.snackbar.success(this.translate.instant('Snapshot deleted.'));
-          }),
-          catchError((error: WebsocketError) => {
-            this.dialogService.error(this.errorHandler.parseWsError(error));
-            return EMPTY;
           }),
         );
       }),

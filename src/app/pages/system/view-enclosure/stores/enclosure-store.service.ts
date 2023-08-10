@@ -120,12 +120,7 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
         if (Object.keys(error).length) {
           this.dialogService.error(this.errorHandler.parseWsError(error));
         } else {
-          this.dialogService.warn(
-            'Error with error',
-            `Yo dawg we heard you like errors so we made your error have an error. (Empty websocket error)
-            * Source: enclosure-store.service.ts
-            `,
-          );
+          console.error('Empty websocket error');
         }
       },
     );

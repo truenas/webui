@@ -118,13 +118,12 @@ export class SessionsCardComponent {
   }
 
   private terminateOtherSessions(): void {
-    this.ws.call('auth.terminate_other_sessions').pipe(this.loader.withLoader(), untilDestroyed(this)).subscribe({
-      next: () => {
-        this.updateSessions();
-      },
-      error: (error: WebsocketError) => {
-        this.dialogService.error(this.errorHandler.parseWsError(error));
-      },
+    this.ws.call('auth.terminate_other_sessions').pipe(
+      this.loader.withLoader(),
+      this.errorHandler.catchError(),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.updateSessions();
     });
   }
 
@@ -147,13 +146,12 @@ export class SessionsCardComponent {
   }
 
   private terminateSession(sessionId: string): void {
-    this.ws.call('auth.terminate_session', [sessionId]).pipe(this.loader.withLoader(), untilDestroyed(this)).subscribe({
-      next: () => {
-        this.updateSessions();
-      },
-      error: (error: WebsocketError) => {
-        this.dialogService.error(this.errorHandler.parseWsError(error));
-      },
+    this.ws.call('auth.terminate_session', [sessionId]).pipe(
+      this.loader.withLoader(),
+      this.errorHandler.catchError(),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.updateSessions();
     });
   }
 }

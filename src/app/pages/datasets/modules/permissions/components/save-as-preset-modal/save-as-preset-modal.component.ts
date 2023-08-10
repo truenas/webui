@@ -9,7 +9,6 @@ import { AclType } from 'app/enums/acl-type.enum';
 import {
   Acl, AclTemplateByPath, AclTemplateCreateParams, NfsAclItem, PosixAclItem,
 } from 'app/interfaces/acl.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SaveAsPresetModalConfig } from 'app/pages/datasets/modules/permissions/interfaces/save-as-preset-modal-config.interface';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
@@ -67,15 +66,14 @@ export class SaveAsPresetModalComponent implements OnInit {
         resolve_names: true,
       },
     }])
-      .pipe(this.loader.withLoader(), untilDestroyed(this))
-      .subscribe({
-        next: (presets) => {
-          this.presets = this.sortPresets(presets);
-          this.cdr.markForCheck();
-        },
-        error: (error: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-        },
+      .pipe(
+        this.loader.withLoader(),
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe((presets) => {
+        this.presets = this.sortPresets(presets);
+        this.cdr.markForCheck();
       });
   }
 
@@ -100,28 +98,23 @@ export class SaveAsPresetModalComponent implements OnInit {
     this.ws.call('filesystem.acltemplate.create', [payload])
       .pipe(
         this.loader.withLoader(),
+        this.errorHandler.catchError(),
         untilDestroyed(this),
       )
-      .subscribe({
-        next: () => {
-          this.dialogRef.close();
-        },
-        error: (error: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-        },
+      .subscribe(() => {
+        this.dialogRef.close();
       });
   }
 
   onRemovePreset(preset: AclTemplateByPath): void {
     this.ws.call('filesystem.acltemplate.delete', [preset.id])
-      .pipe(this.loader.withLoader(), untilDestroyed(this))
-      .subscribe({
-        next: () => {
-          this.loadOptions();
-        },
-        error: (error: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-        },
+      .pipe(
+        this.errorHandler.catchError(),
+        this.loader.withLoader(),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        this.loadOptions();
       });
   }
 }

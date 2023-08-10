@@ -9,7 +9,6 @@ import { OneDriveType } from 'app/enums/cloudsync-provider.enum';
 import { CloudCredential } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudsyncOneDriveDrive } from 'app/interfaces/cloudsync-credential.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import {
   OauthProviderComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/oauth-provider/oauth-provider.component';
@@ -112,20 +111,18 @@ export class OneDriveProviderFormComponent extends BaseProviderFormComponent imp
       client_secret: this.oauthComponent.form.value.client_secret,
       token: this.form.value.token,
     }])
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: (drives) => {
-          this.drives = drives;
-          this.drives$ = of(
-            drives.map((drive) => ({
-              label: `${drive.drive_type} - ${drive.drive_id}`,
-              value: drive.drive_id,
-            })),
-          );
-        },
-        error: (error: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-        },
+      .pipe(
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe((drives) => {
+        this.drives = drives;
+        this.drives$ = of(
+          drives.map((drive) => ({
+            label: `${drive.drive_type} - ${drive.drive_id}`,
+            value: drive.drive_id,
+          })),
+        );
       });
   }
 }

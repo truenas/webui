@@ -255,16 +255,14 @@ export class DatasetQuotasGrouplistComponent implements OnInit, OnDestroy {
     this.confirmDelete(row).pipe(
       filter(Boolean),
       switchMap(() => {
-        return this.setQuota(row).pipe(this.loader.withLoader());
+        return this.setQuota(row).pipe(
+          this.loader.withLoader(),
+          this.errorHandler.catchError(),
+        );
       }),
       untilDestroyed(this),
-    ).subscribe({
-      next: () => {
-        this.getGroupQuotas();
-      },
-      error: (error: WebsocketError) => {
-        this.dialogService.error(this.errorHandler.parseWsError(error));
-      },
+    ).subscribe(() => {
+      this.getGroupQuotas();
     });
   }
 

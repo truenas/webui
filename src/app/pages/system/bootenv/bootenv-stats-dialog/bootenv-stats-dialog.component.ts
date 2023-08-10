@@ -8,7 +8,6 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { PoolStatus, poolStatusLabels } from 'app/enums/pool-status.enum';
 import { PoolInstance } from 'app/interfaces/pool.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -82,16 +81,14 @@ export class BootenvStatsDialogComponent implements OnInit {
 
   private loadBootState(): void {
     this.ws.call('boot.get_state')
-      .pipe(this.loader.withLoader(), untilDestroyed(this))
-      .subscribe({
-        next: (state) => {
-          this.state = state;
-          this.cdr.markForCheck();
-        },
-        error: (error: WebsocketError) => {
-          this.dialogRef.close();
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-        },
+      .pipe(
+        this.loader.withLoader(),
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe((state) => {
+        this.state = state;
+        this.cdr.markForCheck();
       });
   }
 }

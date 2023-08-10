@@ -40,6 +40,7 @@ import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarModule } from 'app/modules/snackbar/snackbar.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 jest.setTimeout(30 * 1000);
 
@@ -107,6 +108,9 @@ defineGlobalsInjections({
     },
     mockProvider(AppLoaderService, {
       withLoader: () => (source$: Observable<unknown>) => source$,
+    }),
+    mockProvider(ErrorHandlerService, {
+      catchError: () => (source$: Observable<unknown>) => source$,
     }),
   ],
 });

@@ -159,26 +159,22 @@ export class PodLogsComponent implements OnInit {
       ],
     ).pipe(
       this.loader.withLoader(),
+      this.errorHandler.catchError(),
       untilDestroyed(this),
-    ).subscribe({
-      next: (download) => {
-        const [, url] = download;
-        this.storageService.streamDownloadFile(url, fileName, mimetype)
-          .pipe(untilDestroyed(this))
-          .subscribe({
-            next: (file: Blob) => {
-              if (download !== null) {
-                this.storageService.downloadBlob(file, fileName);
-              }
-            },
-            error: (error: HttpErrorResponse) => {
-              this.dialogService.error(this.errorHandler.parseHttpError(error));
-            },
-          });
-      },
-      error: (error) => {
-        this.dialogService.error(this.errorHandler.parseWsError(error));
-      },
+    ).subscribe((download) => {
+      const [, url] = download;
+      this.storageService.streamDownloadFile(url, fileName, mimetype)
+        .pipe(untilDestroyed(this))
+        .subscribe({
+          next: (file: Blob) => {
+            if (download !== null) {
+              this.storageService.downloadBlob(file, fileName);
+            }
+          },
+          error: (error: HttpErrorResponse) => {
+            this.dialogService.error(this.errorHandler.parseHttpError(error));
+          },
+        });
     });
   }
 

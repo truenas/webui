@@ -18,7 +18,6 @@ import { BootEnvironmentAction } from 'app/enums/boot-environment-action.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { helptextSystemBootenv } from 'app/helptext/system/boot-env';
 import { Bootenv } from 'app/interfaces/bootenv.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { IxCheckboxColumnComponent } from 'app/modules/ix-tables/components/ix-checkbox-column/ix-checkbox-column.component';
@@ -146,15 +145,15 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
       buttonText: this.translate.instant('Start Scrub'),
     }).pipe(
       filter(Boolean),
-      switchMap(() => this.ws.startJob('boot.scrub').pipe(this.loader.withLoader())),
+      switchMap(() => {
+        return this.ws.startJob('boot.scrub').pipe(
+          this.loader.withLoader(),
+          this.errorHandler.catchError(),
+        );
+      }),
       untilDestroyed(this),
-    ).subscribe({
-      next: () => {
-        this.snackbar.success(this.translate.instant('Scrub Started'));
-      },
-      error: (error: WebsocketError) => {
-        this.dialogService.error(this.errorHandler.parseWsError(error));
-      },
+    ).subscribe(() => {
+      this.snackbar.success(this.translate.instant('Scrub Started'));
     });
   }
 
@@ -223,17 +222,15 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
     }).pipe(
       filter(Boolean),
       switchMap(() => {
-        return this.ws.call('bootenv.activate', [bootenv.id]).pipe(this.loader.withLoader());
+        return this.ws.call('bootenv.activate', [bootenv.id]).pipe(
+          this.loader.withLoader(),
+          this.errorHandler.catchError(),
+        );
       }),
       untilDestroyed(this),
-    ).subscribe({
-      next: () => {
-        this.getBootEnvironments();
-        this.checkboxColumn.clearSelection();
-      },
-      error: (error: WebsocketError) => {
-        this.dialogService.error(this.errorHandler.parseWsError(error));
-      },
+    ).subscribe(() => {
+      this.getBootEnvironments();
+      this.checkboxColumn.clearSelection();
     });
   }
 
@@ -246,18 +243,12 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
       }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
         this.ws.call('bootenv.set_attribute', [bootenv.id, { keep: true }]).pipe(
           this.loader.withLoader(),
+          this.errorHandler.catchError(),
           untilDestroyed(this),
-        ).subscribe(
-          {
-            next: () => {
-              this.getBootEnvironments();
-              this.checkboxColumn.clearSelection();
-            },
-            error: (error: WebsocketError) => {
-              this.dialogService.error(this.errorHandler.parseWsError(error));
-            },
-          },
-        );
+        ).subscribe(() => {
+          this.getBootEnvironments();
+          this.checkboxColumn.clearSelection();
+        });
       });
     } else {
       this.dialogService.confirm({
@@ -267,18 +258,15 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
       }).pipe(
         filter(Boolean),
         switchMap(() => {
-          return this.ws.call('bootenv.set_attribute', [bootenv.id, { keep: false }])
-            .pipe(this.loader.withLoader());
+          return this.ws.call('bootenv.set_attribute', [bootenv.id, { keep: false }]).pipe(
+            this.loader.withLoader(),
+            this.errorHandler.catchError(),
+          );
         }),
         untilDestroyed(this),
-      ).subscribe({
-        next: () => {
-          this.getBootEnvironments();
-          this.checkboxColumn.selection.clear();
-        },
-        error: (error: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-        },
+      ).subscribe(() => {
+        this.getBootEnvironments();
+        this.checkboxColumn.selection.clear();
       });
     }
   }

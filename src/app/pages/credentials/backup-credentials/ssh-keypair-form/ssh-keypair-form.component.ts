@@ -13,7 +13,6 @@ import {
   KeychainCredentialUpdate,
   KeychainSshKeyPair,
 } from 'app/interfaces/keychain-credential.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -86,17 +85,16 @@ export class SshKeypairFormComponent implements OnInit {
 
   onGenerateButtonPressed(): void {
     this.ws.call('keychaincredential.generate_ssh_key_pair')
-      .pipe(this.loader.withLoader(), untilDestroyed(this))
-      .subscribe({
-        next: (keyPair) => {
-          this.form.patchValue({
-            public_key: keyPair.public_key,
-            private_key: keyPair.private_key,
-          });
-        },
-        error: (err: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(err));
-        },
+      .pipe(
+        this.loader.withLoader(),
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe((keyPair) => {
+        this.form.patchValue({
+          public_key: keyPair.public_key,
+          private_key: keyPair.private_key,
+        });
       });
   }
 

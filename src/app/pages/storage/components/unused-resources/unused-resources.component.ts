@@ -5,7 +5,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subscription, debounceTime, distinctUntilChanged } from 'rxjs';
 import { Pool } from 'app/interfaces/pool.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -35,14 +34,9 @@ export class UnusedResourcesComponent implements OnInit {
   }
 
   updateUnusedDisks(): void {
-    this.ws.call('disk.get_unused').pipe(untilDestroyed(this)).subscribe({
-      next: (disks) => {
-        this.unusedDisks = disks;
-        this.cdr.markForCheck();
-      },
-      error: (error: WebsocketError) => {
-        this.dialogService.error(this.errorHandler.parseWsError(error));
-      },
+    this.ws.call('disk.get_unused').pipe(this.errorHandler.catchError(), untilDestroyed(this)).subscribe((disks) => {
+      this.unusedDisks = disks;
+      this.cdr.markForCheck();
     });
   }
 

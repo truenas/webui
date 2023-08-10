@@ -396,18 +396,15 @@ export class UpdateComponent implements OnInit {
   }
 
   downloadUpdate(): void {
-    this.ws.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', JobState.Running]]]).pipe(untilDestroyed(this)).subscribe({
-      next: (jobs) => {
+    this.ws.call('core.get_jobs', [[['method', '=', this.updateMethod], ['state', '=', JobState.Running]]])
+      .pipe(this.errorHandler.catchError(), untilDestroyed(this))
+      .subscribe((jobs) => {
         if (jobs[0]) {
           this.showRunningUpdate(jobs[0].id);
         } else {
           this.startUpdate();
         }
-      },
-      error: (error: WebsocketError) => {
-        this.dialogService.error(this.errorHandler.parseWsError(error));
-      },
-    });
+      });
   }
 
   applyPendingUpdate(): void {

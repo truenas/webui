@@ -648,20 +648,19 @@ export class DataProtectionDashboardComponent implements OnInit {
             })
             .pipe(
               filter(Boolean),
-              switchMap(() => this.ws.call('cloudsync.abort', [row.id])),
+              switchMap(() => {
+                return this.ws.call('cloudsync.abort', [row.id]).pipe(
+                  this.errorHandler.catchError(),
+                );
+              }),
               untilDestroyed(this),
             )
-            .subscribe({
-              next: () => {
-                this.dialogService.info(
-                  this.translate.instant('Task Stopped'),
-                  this.translate.instant('Cloud sync «{name}» stopped.', { name: row.description }),
-                  true,
-                );
-              },
-              error: (error: WebsocketError) => {
-                this.dialogService.error(this.errorHandler.parseWsError(error));
-              },
+            .subscribe(() => {
+              this.dialogService.info(
+                this.translate.instant('Task Stopped'),
+                this.translate.instant('Cloud sync «{name}» stopped.', { name: row.description }),
+                true,
+              );
             });
         },
       },
