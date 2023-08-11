@@ -1,65 +1,39 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockWebsocket, mockCall, mockJob } from 'app/core/testing/utils/mock-websocket.utils';
-import { Certificate } from 'app/interfaces/certificate.interface';
+import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
-import { CertificateEditComponent } from 'app/pages/credentials/certificates-dash/certificate-edit/certificate-edit.component';
-import { ConfirmForceDeleteCertificateComponent } from 'app/pages/credentials/certificates-dash/confirm-force-delete-dialog/confirm-force-delete-dialog.component';
-import { CertificateSigningRequestsListComponent } from 'app/pages/credentials/certificates-dash/csr-list/csr-list.component';
-import { CertificateAddComponent } from 'app/pages/credentials/certificates-dash/forms/certificate-add/certificate-add.component';
+import { AcmeDnsAuthenticatorListComponent } from 'app/pages/credentials/certificates-dash/acme-dns-authenticator-list/acme-dns-authenticator-list.component';
+import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/forms/acmedns-form/acmedns-form.component';
 import { DialogService } from 'app/services/dialog.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { StorageService } from 'app/services/storage.service';
+import { WebSocketService } from 'app/services/ws.service';
 
-const certificates = Array.from({ length: 10 }).map((_, index) => ({
+const authenticators = Array.from({ length: 10 }).map((_, index) => ({
   id: index + 1,
-  type: 8,
-  name: `cert_default_${index}`,
-  certificate: '-----BEGIN CERTIFICATE-----\nMIIDrTCCApWgAwIBAgIENFgbaDANBgkqhkiG9w0BAQsFADCBgDELMAkGA1UEBhMC\n-----END CERTIFICATE-----\n',
-  privatekey: '-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCWjoaj0WEOn1yQ\n-----END PRIVATE KEY-----\n',
-  CSR: null,
-  revoked_date: null,
-  cert_type: 'CERTIFICATE',
-  revoked: false,
-  can_be_revoked: false,
-  issuer: 'external',
-  key_length: 2048,
-  key_type: 'RSA',
-  common: 'localhost',
-  san: [
-    'DNS:localhost',
-  ],
-  digest_algorithm: 'SHA256',
-  lifetime: 397,
-  from: 'Tue Jun 20 06:55:04 2023',
-  until: 'Sun Jul 21 06:55:04 2024',
-  serial: 878189416,
-  chain: false,
-  expired: false,
-  parsed: true,
-})) as unknown as Certificate[];
+  name: `dns-authenticator-${index}`,
+  authenticator: `tn-${index}`,
+})) as unknown as DnsAuthenticator[];
 
-describe('CertificateSigningRequestsListComponent', () => {
-  let spectator: Spectator<CertificateSigningRequestsListComponent>;
+describe('AcmeDnsAuthenticatorListComponent', () => {
+  let spectator: Spectator<AcmeDnsAuthenticatorListComponent>;
   let loader: HarnessLoader;
 
   const createComponent = createComponentFactory({
-    component: CertificateSigningRequestsListComponent,
+    component: AcmeDnsAuthenticatorListComponent,
     imports: [
       IxTable2Module,
     ],
     providers: [
       mockWebsocket([
-        mockCall('certificate.query', certificates),
-        mockJob('certificate.delete', fakeSuccessfulJob()),
+        mockCall('acme.dns.authenticator.query', authenticators),
+        mockCall('acme.dns.authenticator.delete', true),
       ]),
       mockProvider(DialogService, {
         confirm: () => of(true),
@@ -73,13 +47,6 @@ describe('CertificateSigningRequestsListComponent', () => {
       mockProvider(IxSlideInRef, {
         slideInClosed$: of(true),
       }),
-      mockProvider(MatDialog, {
-        open: jest.fn(() => ({
-          afterClosed: () => of(true),
-        })),
-      }),
-      mockProvider(StorageService),
-      mockProvider(ErrorHandlerService),
     ],
   });
 
@@ -90,36 +57,43 @@ describe('CertificateSigningRequestsListComponent', () => {
 
   it('checks page title', () => {
     const title = spectator.query('h3');
-    expect(title).toHaveText('Certificate Signing Requests');
+    expect(title).toHaveText('ACME DNS-Authenticators');
   });
 
-  it('opens static route form when "Add" button is pressed', async () => {
+  it('opens acme dns authenticator form when "Add" button is pressed', async () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(CertificateAddComponent);
+    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(AcmednsFormComponent);
   });
 
-  it('opens static route form when "Edit" button is pressed', async () => {
+  it('opens acme dns authenticator form when "Edit" button is pressed', async () => {
     const editButton = await loader.getHarness(MatButtonHarness.with({ selector: '[aria-label="Edit"]' }));
     await editButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(CertificateEditComponent, {
-      data: {
-        cert: {},
-      },
+    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(AcmednsFormComponent, {
+      data: authenticators[0],
     });
   });
 
-  it('opens static route delete dialog when "Delete" button is pressed', async () => {
+  it('opens delete dialog when "Delete" button is pressed', async () => {
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ selector: '[aria-label="Delete"]' }));
     await deleteButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ConfirmForceDeleteCertificateComponent, {
-      data: {
-        title: 'Deleting...',
-      },
-      disableClose: true,
-    });
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('acme.dns.authenticator.delete', [1]);
+  });
+
+  it('should show table rows', async () => {
+    const expectedRows = [
+      ['Name', 'Authenticator', ''],
+      ['dns-authenticator-0', 'tn-0', ''],
+      ['dns-authenticator-1', 'tn-1', ''],
+      ['dns-authenticator-2', 'tn-2', ''],
+      ['dns-authenticator-3', 'tn-3', ''],
+    ];
+
+    const table = await loader.getHarness(IxTable2Harness);
+    const cells = await table.getCellTexts();
+    expect(cells).toEqual(expectedRows);
   });
 });

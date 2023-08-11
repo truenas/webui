@@ -15,7 +15,6 @@ import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
@@ -23,7 +22,6 @@ import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { CertificateAuthorityAddComponent } from 'app/pages/credentials/certificates-dash/certificate-authority-add/certificate-authority-add.component';
 import { CertificateAuthorityEditComponent } from 'app/pages/credentials/certificates-dash/certificate-authority-edit/certificate-authority-edit.component';
-import { ConfirmForceDeleteCertificateComponent } from 'app/pages/credentials/certificates-dash/confirm-force-delete-dialog/confirm-force-delete-dialog.component';
 import { SignCsrDialogComponent } from 'app/pages/credentials/certificates-dash/sign-csr-dialog/sign-csr-dialog.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -41,7 +39,7 @@ import { WebSocketService } from 'app/services/ws.service';
 export class CertificateAuthorityListComponent implements OnInit {
   filterString = '';
   dataProvider = new ArrayDataProvider<CertificateAuthority>();
-  certificates: CertificateAuthority[] = [];
+  authorities: CertificateAuthority[] = [];
   columns = createTable<CertificateAuthority>([
     textColumn({
       title: this.translate.instant('Name'),
@@ -103,24 +101,22 @@ export class CertificateAuthorityListComponent implements OnInit {
     this.ws
       .call('certificateauthority.query')
       .pipe(
-        map((certificates) => {
-          return certificates
-            .map((certificate) => {
-              if (isObject(certificate.issuer)) {
-                certificate.issuer = certificate.issuer.name;
-              }
-              return certificate;
-            })
-            .filter((certificate) => certificate.certificate !== null);
+        map((authorities) => {
+          return authorities.map((authority) => {
+            if (isObject(authority.issuer)) {
+              authority.issuer = authority.issuer.name;
+            }
+            return authority;
+          });
         }),
         untilDestroyed(this),
       )
       .subscribe({
-        next: (certificates) => {
-          this.certificates = certificates;
-          this.dataProvider.setRows(this.certificates);
+        next: (authorities) => {
+          this.authorities = authorities;
+          this.dataProvider.setRows(this.authorities);
           this.isLoading$.next(false);
-          this.isNoData$.next(!this.certificates.length);
+          this.isNoData$.next(!this.authorities.length);
           this.setDefaultSort();
           this.cdr.markForCheck();
         },
@@ -136,7 +132,7 @@ export class CertificateAuthorityListComponent implements OnInit {
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
     this.dataProvider.setRows(
-      this.certificates.filter((certificate) => [certificate.name.toLowerCase()].includes(this.filterString)),
+      this.authorities.filter((certificate) => [certificate.name.toLowerCase()].includes(this.filterString)),
     );
   }
 
@@ -162,8 +158,8 @@ export class CertificateAuthorityListComponent implements OnInit {
     });
   }
 
-  doDelete(certificate: CertificateAuthority): void {
-    if (certificate.signed_certificates) {
+  doDelete(authority: CertificateAuthority): void {
+    if (authority.signed_certificates) {
       this.dialogService.confirm({
         title: helptextSystemCa.delete_error.title,
         message: helptextSystemCa.delete_error.message,
@@ -171,29 +167,24 @@ export class CertificateAuthorityListComponent implements OnInit {
         buttonText: helptextSystemCa.delete_error.button,
         hideCancel: true,
       });
-      return;
-    }
-    const dialogRef = this.matDialog.open(ConfirmForceDeleteCertificateComponent, { data: { cert: certificate } });
-    dialogRef
-      .afterClosed()
-      .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe((data: { force: boolean }) => {
-        const jobDialogRef = this.matDialog.open(EntityJobComponent, {
-          data: {
-            title: this.translate.instant('Deleting...'),
-          },
-          disableClose: true,
-        });
-        jobDialogRef.componentInstance.setCall('certificate.delete', [certificate.id, data.force]);
-        jobDialogRef.componentInstance.submit();
-        jobDialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-          jobDialogRef.close(true);
+    } else {
+      this.dialogService
+        .confirm({
+          title: this.translate.instant('Delete Certificate Authority'),
+          message: this.translate.instant('Are you sure you want to delete the <b>{name}</b> certificate authority?', {
+            name: authority.name,
+          }),
+          buttonText: this.translate.instant('Delete'),
+        })
+        .pipe(
+          filter(Boolean),
+          switchMap(() => this.ws.call('certificateauthority.delete', [authority.id])),
+          untilDestroyed(this),
+        )
+        .subscribe(() => {
           this.getCertificates();
         });
-        jobDialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
-          this.dialogService.error(this.errorHandler.parseJobError(err));
-        });
-      });
+    }
   }
 
   doDownload(certificate: CertificateAuthority): void {
@@ -256,13 +247,16 @@ export class CertificateAuthorityListComponent implements OnInit {
   }
 
   doRevoke(certificate: CertificateAuthority): void {
-    this.dialogService.confirm({
-      title: this.translate.instant('Revoke Certificate Authority'),
-      message: this.translate.instant('Revoking this CA will revoke the complete CA chain. This is a one way action and cannot be reversed. Are you sure you want to revoke this CA?'),
-      buttonText: this.translate.instant('Revoke'),
-      cancelText: this.translate.instant('Cancel'),
-      hideCheckbox: true,
-    })
+    this.dialogService
+      .confirm({
+        title: this.translate.instant('Revoke Certificate Authority'),
+        message: this.translate.instant(
+          'Revoking this CA will revoke the complete CA chain. This is a one way action and cannot be reversed. Are you sure you want to revoke this CA?',
+        ),
+        buttonText: this.translate.instant('Revoke'),
+        cancelText: this.translate.instant('Cancel'),
+        hideCheckbox: true,
+      })
       .pipe(
         filter(Boolean),
         switchMap(() => {
@@ -280,8 +274,11 @@ export class CertificateAuthorityListComponent implements OnInit {
 
   doSignCsr(certificate: CertificateAuthority): void {
     const dialog = this.matDialog.open(SignCsrDialogComponent, { data: certificate.id });
-    dialog.afterClosed().pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-      this.getCertificates();
-    });
+    dialog
+      .afterClosed()
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe(() => {
+        this.getCertificates();
+      });
   }
 }

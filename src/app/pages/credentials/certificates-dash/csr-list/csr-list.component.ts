@@ -140,7 +140,7 @@ export class CertificateSigningRequestsListComponent implements OnInit {
   doEdit(certificate: Certificate): void {
     const slideInRef = this.slideInService.open(CertificateEditComponent, {
       wide: true,
-      data: { certificate },
+      data: certificate,
     });
     slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.getCertificates();
@@ -148,7 +148,7 @@ export class CertificateSigningRequestsListComponent implements OnInit {
   }
 
   doDelete(certificate: Certificate): void {
-    const dialogRef = this.matDialog.open(ConfirmForceDeleteCertificateComponent, { data: { cert: certificate } });
+    const dialogRef = this.matDialog.open(ConfirmForceDeleteCertificateComponent, { data: certificate });
     dialogRef
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))

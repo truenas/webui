@@ -1,7 +1,6 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
@@ -14,12 +13,9 @@ import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
-import { ConfirmForceDeleteCertificateComponent } from 'app/pages/credentials/certificates-dash/confirm-force-delete-dialog/confirm-force-delete-dialog.component';
 import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/forms/acmedns-form/acmedns-form.component';
 import { DialogService } from 'app/services/dialog.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -68,15 +64,12 @@ export class AcmeDnsAuthenticatorListComponent implements OnInit {
   );
 
   constructor(
-    private matDialog: MatDialog,
     private ws: WebSocketService,
     private slideInService: IxSlideInService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
     protected emptyService: EmptyService,
-    private storageService: StorageService,
-    private dialogService: DialogService,
-    private errorHandler: ErrorHandlerService,
+    private dialog: DialogService,
   ) {}
 
   ngOnInit(): void {
@@ -127,24 +120,29 @@ export class AcmeDnsAuthenticatorListComponent implements OnInit {
     });
   }
 
-  doEdit(certificate: DnsAuthenticator): void {
-    const slideInRef = this.slideInService.open(AcmednsFormComponent, { data: certificate });
+  doEdit(authenticator: DnsAuthenticator): void {
+    const slideInRef = this.slideInService.open(AcmednsFormComponent, { data: authenticator });
     slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.getAuthenticators();
     });
   }
 
-  doDelete(certificate: DnsAuthenticator): void {
-    const dialogRef = this.matDialog.open(ConfirmForceDeleteCertificateComponent, { data: { cert: certificate } });
-    dialogRef
-      .afterClosed()
+  doDelete(authenticator: DnsAuthenticator): void {
+    this.dialog
+      .confirm({
+        title: this.translate.instant('Delete DNS Authenticator'),
+        message: this.translate.instant('Are you sure you want to delete the <b>{name}</b> DNS Authenticator?', {
+          name: authenticator.name,
+        }),
+        buttonText: this.translate.instant('Delete'),
+      })
       .pipe(
         filter(Boolean),
-        switchMap(() => this.ws.call('acme.dns.authenticator.delete', [certificate.id])),
+        switchMap(() => this.ws.call('acme.dns.authenticator.delete', [authenticator.id])),
         untilDestroyed(this),
       )
       .subscribe(() => {
-        console.info('ACME DNS Authenticator is deleted');
+        this.getAuthenticators();
       });
   }
 }

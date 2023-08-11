@@ -63,7 +63,7 @@ describe('CertificateListComponent', () => {
     providers: [
       mockWebsocket([
         mockCall('certificate.query', certificates),
-        mockJob('certificate.delete', fakeSuccessfulJob()),
+        mockJob('certificate.delete', fakeSuccessfulJob(true)),
       ]),
       mockProvider(DialogService, {
         confirm: () => of(true),
@@ -97,33 +97,29 @@ describe('CertificateListComponent', () => {
     expect(title).toHaveText('Certificates');
   });
 
-  it('opens static route form when "Add" button is pressed', async () => {
+  it('opens certificate add form when "Add" button is pressed', async () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(CertificateAddComponent);
   });
 
-  it('opens static route form when "Edit" button is pressed', async () => {
+  it('opens certificate edit form when "Edit" button is pressed', async () => {
     const editButton = await loader.getHarness(MatButtonHarness.with({ selector: '[aria-label="Edit"]' }));
     await editButton.click();
 
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(CertificateEditComponent, {
-      data: {
-        cert: {},
-      },
+      data: certificates[0],
+      wide: true,
     });
   });
 
-  it('opens static route delete dialog when "Delete" button is pressed', async () => {
+  it('opens delete dialog when "Delete" button is pressed', async () => {
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ selector: '[aria-label="Delete"]' }));
     await deleteButton.click();
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ConfirmForceDeleteCertificateComponent, {
-      data: {
-        title: 'Deleting...',
-      },
-      disableClose: true,
+      data: certificates[0],
     });
   });
 });

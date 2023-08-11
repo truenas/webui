@@ -20,7 +20,6 @@ import {
 import {
   CertificateDetailsComponent,
 } from 'app/pages/credentials/certificates-dash/certificate-details/certificate-details.component';
-import { CertificatesDashComponent } from 'app/pages/credentials/certificates-dash/certificates-dash.component';
 import {
   ViewCertificateDialogData,
 } from 'app/pages/credentials/certificates-dash/view-certificate-dialog/view-certificate-dialog-data.interface';
@@ -35,7 +34,6 @@ import { CertificateEditComponent } from './certificate-edit.component';
 describe('CertificateEditComponent', () => {
   let spectator: Spectator<CertificateEditComponent>;
   let loader: HarnessLoader;
-  const mockCertificatesDashComponent = {} as CertificatesDashComponent;
   const certificate = {
     id: 1,
     name: 'ray',
@@ -75,7 +73,7 @@ describe('CertificateEditComponent', () => {
     beforeEach(() => {
       spectator = createComponent({
         providers: [
-          { provide: SLIDE_IN_DATA, useValue: { certificatesDash: mockCertificatesDashComponent, certificate } },
+          { provide: SLIDE_IN_DATA, useValue: certificate },
         ],
       });
       spectator.detectChanges();
@@ -144,7 +142,6 @@ describe('CertificateEditComponent', () => {
           {
             provide: SLIDE_IN_DATA,
             useValue: {
-              certificatesDash: mockCertificatesDashComponent,
               certificate: {
                 ...certificate,
                 acme: true,
@@ -170,7 +167,6 @@ describe('CertificateEditComponent', () => {
           {
             provide: SLIDE_IN_DATA,
             useValue: {
-              certificatesDash: mockCertificatesDashComponent,
               certificate: certificateCsr,
             },
           },
