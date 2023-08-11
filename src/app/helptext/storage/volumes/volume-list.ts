@@ -49,8 +49,8 @@ the system dataset transfers back to the TrueNAS operating system device.'),
 
   pool_options_dialog: {
     autotrim_tooltip: T('Enable for TrueNAS to periodically review data blocks and identify\
- empty blocks of obsolete blocks that can be deleted. Unset to incorporate day block\
- overwrites when a device write is started (default).'),
+ empty blocks of obsolete blocks that can be deleted. Unset to use dirty block\
+ overwrites (default).'),
   },
   lock_dataset_dialog: {
     button: T('Lock'),
