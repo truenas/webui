@@ -1,14 +1,16 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockWebsocket, mockCall, mockJob } from 'app/core/testing/utils/mock-websocket.utils';
 import { Certificate } from 'app/interfaces/certificate.interface';
+import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { CertificateEditComponent } from 'app/pages/credentials/certificates-dash/certificate-edit/certificate-edit.component';
 import { ConfirmForceDeleteCertificateComponent } from 'app/pages/credentials/certificates-dash/confirm-force-delete-dialog/confirm-force-delete-dialog.component';
@@ -38,12 +40,25 @@ const certificates = Array.from({ length: 10 }).map((_, index) => ({
   digest_algorithm: 'SHA256',
   lifetime: 397,
   from: 'Tue Jun 20 06:55:04 2023',
-  until: 'Sun Jul 21 06:55:04 2024',
+  until: 'Sun Jun 20 06:55:04 2024',
 })) as unknown as Certificate[];
 
 describe('CertificateSigningRequestsListComponent', () => {
   let spectator: Spectator<CertificateSigningRequestsListComponent>;
   let loader: HarnessLoader;
+
+  const mockDialogRef = {
+    componentInstance: {
+      setDescription: jest.fn(),
+      setCall: jest.fn(),
+      submit: jest.fn(),
+      success: of(fakeSuccessfulJob(true)),
+      failure: of(),
+      wspost: jest.fn(),
+    },
+    close: jest.fn(),
+    afterClosed: () => of(true),
+  } as unknown as MatDialogRef<EntityJobComponent>;
 
   const createComponent = createComponentFactory({
     component: CertificateSigningRequestsListComponent,
@@ -68,9 +83,7 @@ describe('CertificateSigningRequestsListComponent', () => {
         slideInClosed$: of(true),
       }),
       mockProvider(MatDialog, {
-        open: jest.fn(() => ({
-          afterClosed: () => of(true),
-        })),
+        open: jest.fn(() => mockDialogRef),
       }),
       mockProvider(StorageService),
       mockProvider(ErrorHandlerService),
@@ -111,5 +124,19 @@ describe('CertificateSigningRequestsListComponent', () => {
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ConfirmForceDeleteCertificateComponent, {
       data: certificates[0],
     });
+  });
+
+  it('should show table rows', async () => {
+    const expectedRows = [
+      ['Name', 'CN', ''],
+      ['Name:cert_default_0Issuer:external', 'CN:localhostSAN:DNS:localhost', ''],
+      ['Name:cert_default_1Issuer:external', 'CN:localhostSAN:DNS:localhost', ''],
+      ['Name:cert_default_2Issuer:external', 'CN:localhostSAN:DNS:localhost', ''],
+      ['Name:cert_default_3Issuer:external', 'CN:localhostSAN:DNS:localhost', ''],
+    ];
+
+    const table = await loader.getHarness(IxTable2Harness);
+    const cells = await table.getCellTexts();
+    expect(cells).toEqual(expectedRows);
   });
 });
