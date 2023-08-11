@@ -94,6 +94,8 @@ export function poolTopologyToStoreTopology(topology: PoolTopology, disks: Disk[
         },
       ),
       treatDiskSizeAsMinimum: false,
+      draidDataDisks: null,
+      draidSpareDisks: null,
     };
   }
   return poolManagerTopology;

@@ -46,6 +46,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
   isLoading$ = combineLatest([this.store.isLoading$, this.addVdevsStore.isLoading$]).pipe(
     map(([storeLoading, secondaryLoading]) => storeLoading || secondaryLoading),
   );
+  usesDraidLayout$ = this.store.usesDraidLayout$;
 
   activeStep: PoolCreationWizardStep;
   hasEnclosureStep = false;

@@ -1,62 +1,31 @@
-<ng-container [formGroup]="form">
-  <div *ngIf="canChangeLayout" class="layout-container">
-    <ix-select
-      formControlName="layout"
-      [label]="'Layout' | translate"
-      [tooltip]="'Select VDEV layout. This is the first step in setting up your VDEVs.' | translate"
-      [options]="vdevLayoutOptions$"
-      [required]="true"
-    ></ix-select>
-  </div>
-  <div class="content-container">
-    <div class="automated-disk-selection-container">
-      <h3>{{ 'Automated Disk Selection' | translate }}</h3>
-      <ix-select
-        formControlName="sizeAndType"
-        [label]="'Disk Size' | translate"
-        [options]="diskSizeAndTypeOptions$"
-        [required]="true"
-        [compareWith]="compareSizeAndTypeWith"
-      ></ix-select>
+<div *ngIf="canChangeLayout" class="layout-container">
+  <ix-select
+    [formControl]="layoutControl"
+    [label]="'Layout' | translate"
+    [tooltip]="'Select VDEV layout. This is the first step in setting up your VDEVs.' | translate"
+    [options]="vdevLayoutOptions$"
+    [required]="true"
+  ></ix-select>
+</div>
 
-      <ix-checkbox
-        formControlName="treatDiskSizeAsMinimum"
-        [label]="'Treat Disk Size as Minimum' | translate"
-        [tooltip]="'If checked, disks of the selected size or larger will be used. If unchecked, only disks of the selected size will be used.' | translate"
-      ></ix-checkbox>
+<p *ngIf="isLayoutSelected" class="required-disks-hint">
+  {{ minDisksMessage }}
+</p>
 
-      <ng-container *ngIf="!!form.value.sizeAndType?.length">
-        <ix-select
-          formControlName="width"
-          [label]="'Width' | translate"
-          [options]="widthOptions$"
-          [required]="true"
-        ></ix-select>
+<ix-draid-selection
+  *ngIf="usesDraidLayout; else normalSelection"
+  [layout]="layoutControl.value | cast"
+  [inventory]="inventory"
+  [type]="type"
+  [isStepActive]="isStepActive"
+></ix-draid-selection>
 
-        <ix-select
-          *ngIf="!isSpareVdev"
-          formControlName="vdevsNumber"
-          [label]="'Number of VDEVs' | translate"
-          [options]="numberOptions$"
-          [required]="true"
-        ></ix-select>
-      </ng-container>
-    </div>
-    <div class="advanced-options-container">
-      <h3>{{ 'Advanced Options' | translate }}</h3>
-
-      <p>{{ 'Manual disk selection allows you to create VDEVs and add disks to those VDEVs individually.' | translate }}</p>
-
-      <button
-        mat-button
-        type="button"
-        class="manual-disk-selection"
-        ixTest="manual"
-        [disabled]="!isLayoutSelected"
-        (click)="openManualDiskSelection()"
-      >
-        {{ 'Manual Disk Selection' | translate }}
-      </button>
-    </div>
-  </div>
-</ng-container>
+<ng-template #normalSelection>
+  <ix-normal-selection
+    [layout]="layoutControl.value"
+    [inventory]="inventory"
+    [type]="type"
+    [isStepActive]="isStepActive"
+    (manualSelectionClicked)="manualSelectionClicked.emit()"
+  ></ix-normal-selection>
+</ng-template>

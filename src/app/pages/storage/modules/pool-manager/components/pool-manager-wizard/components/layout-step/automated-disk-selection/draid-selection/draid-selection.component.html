@@ -1,0 +1,64 @@
+<div class="content-container" [formGroup]="form">
+  <h3>{{ 'Automated Disk Selection' | translate }}</h3>
+  <div class="left-column disk-selection">
+    <ix-disk-size-dropdowns
+      [inventory]="inventory"
+      [type]="type"
+      (disksSelected)="onDisksSelected($event)"
+    ></ix-disk-size-dropdowns>
+  </div>
+
+  <h4>{{ 'dRAID VDEV' | translate }}</h4>
+  <div class="left-column">
+    <ix-select
+      formControlName="width"
+      [label]="'Number Of Disks To Use' | translate"
+      [required]="true"
+      [options]="widthOptions$"
+    ></ix-select>
+  </div>
+
+  <div class="redundancy-group">
+    <div class="group-label">
+      {{ 'Each\n Redundancy Group:' | translate }}
+    </div>
+    <ix-select
+      class="select"
+      formControlName="dataDevicesPerGroup"
+      [label]="'Data Devices' | translate"
+      [options]="dataDevicesPerGroupOptions$"
+      [required]="true"
+    ></ix-select>
+
+    <div class="symbol">+</div>
+
+    <div class="parity">
+      <div class="parity-label">{{ 'Parity' | translate }}</div>
+      <div class="parity-number">{{ parityDevices }}</div>
+    </div>
+  </div>
+
+  <div class="spares">
+    <div class="left-column">
+      <ix-select
+        class="select"
+        formControlName="spares"
+        [label]="'Distributed Hot Spares' | translate"
+        [options]="sparesOptions$"
+        [required]="true"
+      ></ix-select>
+    </div>
+  </div>
+
+  <div class="left-column">
+    <!-- TODO: Add explanation of what's going to be created -->
+    <!-- TODO: Group visually -->
+
+    <ix-select
+      formControlName="vdevsNumber"
+      [label]="'Number of VDEVs' | translate"
+      [options]="vdevsNumberOptions$"
+      [required]="true"
+    ></ix-select>
+  </div>
+</div>

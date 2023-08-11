@@ -1,0 +1,59 @@
+.content-container {
+  border: 1px solid var(--lines);
+  margin: 20px 0;
+  padding: 20px 30px;
+}
+
+.left-column {
+  padding-right: 30px;
+  width: 50%;
+}
+
+.disk-selection {
+  margin-bottom: 30px;
+}
+
+.redundancy-group {
+  display: flex;
+
+  .group-label {
+    font-weight: bolder;
+    margin-right: 12px;
+    margin-top: 25px;
+    white-space: pre-line;
+  }
+
+  .select {
+    flex-shrink: 0;
+    margin-top: 0;
+    width: 120px;
+  }
+
+  .symbol {
+    flex-shrink: 0;
+    font-size: 24px;
+    margin: 30px 9px 0;
+  }
+}
+
+.spares {
+  border-bottom: 1px solid var(--lines);
+}
+
+.parity {
+  flex-shrink: 0;
+  margin-left: -3px;
+  margin-right: -3px;
+  padding-top: 12px;
+
+  .parity-label {
+    font-size: x-small;
+  }
+
+  .parity-number {
+    font-size: 24px;
+    line-height: 42px;
+    margin-left: 2px;
+    text-align: center;
+  }
+}

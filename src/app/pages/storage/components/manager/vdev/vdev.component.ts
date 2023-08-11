@@ -50,14 +50,7 @@ export class VdevComponent implements OnInit {
   vdevTypeDisabled = false;
   private tenMib = 10 * MiB;
   protected mindisks: { [key: string]: number } = {
-    stripe: 1,
-    mirror: 2,
-    raidz: 3,
-    raidz2: 4,
-    raidz3: 5,
-    draid1: 2,
-    draid2: 3,
-    draid3: 4,
+    stripe: 1, mirror: 2, raidz: 3, raidz2: 4, raidz3: 5,
   };
 
   startingHeight: number;
@@ -198,7 +191,6 @@ export class VdevComponent implements OnInit {
       }
     }
     totalsize = smallestdisk * this.disks.length;
-    const defaultDraidDataPerGroup = 8;
 
     // do the same as getType() to prevent issues while repeating
     if (this.typeControl.value === undefined || this.typeControl.value === null) {
@@ -212,15 +204,6 @@ export class VdevComponent implements OnInit {
       estimate = totalsize - 2 * smallestdisk;
     } else if (this.typeControl.value === 'raidz3') {
       estimate = totalsize - 3 * smallestdisk;
-    } else if (this.typeControl.value === 'draid1') {
-      const dataPerGroup = Math.min(defaultDraidDataPerGroup, this.disks.length - 1);
-      estimate = this.disks.length * (dataPerGroup / (dataPerGroup + 1)) * smallestdisk;
-    } else if (this.typeControl.value === 'draid2') {
-      const dataPerGroup = Math.min(defaultDraidDataPerGroup, this.disks.length - 2);
-      estimate = this.disks.length * (dataPerGroup / (dataPerGroup + 2)) * smallestdisk;
-    } else if (this.typeControl.value === 'draid3') {
-      const dataPerGroup = Math.min(defaultDraidDataPerGroup, this.disks.length - 3);
-      estimate = this.disks.length * (dataPerGroup / (dataPerGroup + 3)) * smallestdisk;
     } else {
       estimate = stripeSize; // stripe
     }

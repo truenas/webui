@@ -24,6 +24,8 @@ const defaultCategory: PoolManagerTopologyCategory = {
   treatDiskSizeAsMinimum: false,
   vdevs: [],
   hasCustomDiskSelection: false,
+  draidSpareDisks: null,
+  draidDataDisks: null,
 };
 @UntilDestroy()
 @Component({
@@ -41,10 +43,6 @@ export class ExistingConfigurationPreviewComponent implements OnChanges {
   @Input() size: number;
   @Input() disks: Disk[];
   protected poolTopology: PoolManagerTopology;
-
-  getCategory(key: string): VdevType {
-    return key as VdevType;
-  }
 
   constructor(
     private translate: TranslateService,
