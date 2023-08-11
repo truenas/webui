@@ -5,6 +5,7 @@ import {
   Input,
   OnDestroy,
   OnInit,
+  Renderer2,
   Type,
   ViewChild,
   ViewContainerRef,
@@ -37,7 +38,8 @@ export class IxSlideInComponent implements OnInit, OnDestroy {
 
   constructor(
     private el: ElementRef,
-    protected slideInService: IxSlideInService,
+    private slideInService: IxSlideInService,
+    private renderer: Renderer2,
   ) {
     this.element = this.el.nativeElement;
   }
@@ -67,6 +69,7 @@ export class IxSlideInComponent implements OnInit, OnDestroy {
 
   closeSlideIn(): void {
     this.isSlideInOpen = false;
+    this.renderer.removeStyle(document.body, 'overflow');
     this.wasBodyCleared = true;
 
     this.timeOutOfClear = timer(200).pipe(untilDestroyed(this)).subscribe(() => {
@@ -79,6 +82,7 @@ export class IxSlideInComponent implements OnInit, OnDestroy {
 
   openSlideIn<T>(componentType: Type<T>, params?: { wide: boolean }): T {
     this.isSlideInOpen = true;
+    this.renderer.setStyle(document.body, 'overflow', 'hidden');
     this.wide = !!params?.wide;
 
     if (this.wasBodyCleared) {

@@ -896,8 +896,18 @@ ul.nested-list li {
   padding: 0;
 }
 
+ix-tooltip {
+  popper-content {
+    display: none;
+  }
+}
+
 .ngxp__container {
   border-radius: 6px !important;
+
+  &[aria-hidden='false'] {
+    display: block !important;
+  }
 
   &[data-popper-placement=right] {
     margin-left: 13px !important;
