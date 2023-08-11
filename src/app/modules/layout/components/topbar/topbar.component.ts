@@ -6,6 +6,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
@@ -19,7 +20,6 @@ import { WINDOW } from 'app/helpers/window.helper';
 import network_interfaces_helptext from 'app/helptext/network/interfaces/interfaces-list';
 import helptext from 'app/helptext/topbar';
 import { HaStatus } from 'app/interfaces/events/ha-status-event.interface';
-import { NetworkInterfacesChangedEvent } from 'app/interfaces/events/network-interfaces-changed-event.interface';
 import { SidenavStatusData } from 'app/interfaces/events/sidenav-status-event.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -39,8 +39,8 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { LayoutService } from 'app/services/layout.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
-import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { adminNetworkInterfacesChanged } from 'app/store/admin-panel/admin.actions';
 import { selectHaStatus, selectIsHaLicensed, selectIsUpgradePending } from 'app/store/ha-info/ha-info.selectors';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 import { alertIndicatorPressed, sidenavUpdated } from 'app/store/topbar/topbar.actions';
@@ -84,7 +84,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
     public themeService: ThemeService,
     private router: Router,
     private ws: WebSocketService,
-    private wsManager: WebsocketConnectionService,
     private dialogService: DialogService,
     private systemGeneralService: SystemGeneralService,
     private dialog: MatDialog,
@@ -96,6 +95,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
     private core: CoreService,
     private snackbar: SnackbarService,
     private errorHandler: ErrorHandlerService,
+    private actions$: Actions,
     @Inject(WINDOW) private window: Window,
   ) {
     this.systemGeneralService.getProductType$.pipe(untilDestroyed(this)).subscribe((productType) => {
@@ -161,17 +161,19 @@ export class TopbarComponent implements OnInit, OnDestroy {
 
     this.checkNetworkChangesPending();
     this.checkNetworkCheckinWaiting();
-    this.core.register({ observerClass: this, eventName: 'NetworkInterfacesChanged' }).pipe(untilDestroyed(this)).subscribe((evt: NetworkInterfacesChangedEvent) => {
-      if (evt && evt.data.commit) {
-        this.pendingNetworkChanges = false;
-        this.checkNetworkCheckinWaiting();
-      } else {
-        this.checkNetworkChangesPending();
-      }
-      if (evt && evt.data.checkin && this.checkinInterval) {
-        clearInterval(this.checkinInterval);
-      }
-    });
+
+    this.actions$.pipe(ofType(adminNetworkInterfacesChanged), untilDestroyed(this))
+      .subscribe(({ commit, checkIn }) => {
+        if (commit) {
+          this.pendingNetworkChanges = false;
+          this.checkNetworkCheckinWaiting();
+        } else {
+          this.checkNetworkChangesPending();
+        }
+        if (checkIn && this.checkinInterval) {
+          clearInterval(this.checkinInterval);
+        }
+      });
 
     this.ws.subscribe('zfs.pool.scan').pipe(untilDestroyed(this)).subscribe((resilverJob) => {
       const scan = resilverJob.fields.scan;
@@ -301,7 +303,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
       this.loader.open();
       this.ws.call('interface.checkin').pipe(untilDestroyed(this)).subscribe({
         next: () => {
-          this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: true, checkin: true }, sender: this });
+          this.store$.dispatch(adminNetworkInterfacesChanged({ commit: true, checkIn: true }));
           this.loader.close();
           this.snackbar.success(
             this.translate.instant(network_interfaces_helptext.checkin_complete_message),
