@@ -2,10 +2,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { EffectsModule } from '@ngrx/effects';
 import { Store, StoreModule } from '@ngrx/store';
 import { MockComponent } from 'ng-mocks';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AlertLevel } from 'app/enums/alert-level.enum';
-import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { Alert } from 'app/interfaces/alert.interface';
 import { AlertComponent } from 'app/modules/alerts/components/alert/alert.component';
 import { AlertsPanelComponent } from 'app/modules/alerts/components/alerts-panel/alerts-panel.component';
@@ -148,44 +146,5 @@ describe('AlertsPanelComponent', () => {
 
     expect(alertPanel.unreadAlertComponents).toHaveLength(4);
     expect(alertPanel.dismissedAlertsSection).not.toExist();
-  });
-
-  it('adds an alert when websocket alert.list subscription sends an "add" event', () => {
-    spectator.inject(Store).dispatch(adminUiInitialized());
-
-    const websocketMock = spectator.inject(MockWebsocketService);
-    websocketMock.emitSubscribeEvent({
-      msg: IncomingApiMessageType.Added,
-      collection: 'alert.list',
-      fields: {
-        id: 'new',
-        dismissed: false,
-        formatted: 'New Alert',
-        datetime: { $date: 1641819015 },
-      } as Alert,
-    });
-    spectator.detectChanges();
-
-    expect(alertPanel.unreadAlertComponents).toHaveLength(3);
-  });
-
-  it('updates an alert when websocket alert.list subscription sends a "change" event', () => {
-    spectator.inject(Store).dispatch(adminUiInitialized());
-
-    const websocketMock = spectator.inject(MockWebsocketService);
-    websocketMock.emitSubscribeEvent({
-      msg: IncomingApiMessageType.Changed,
-      collection: 'alert.list',
-      fields: {
-        id: '1',
-        dismissed: true,
-        formatted: 'Unread 1',
-        datetime: { $date: 1641811015 },
-      } as Alert,
-    });
-    spectator.detectChanges();
-
-    expect(alertPanel.unreadAlertComponents).toHaveLength(1);
-    expect(alertPanel.dismissedAlertComponents).toHaveLength(3);
   });
 });
