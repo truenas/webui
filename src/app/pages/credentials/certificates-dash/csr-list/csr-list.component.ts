@@ -5,7 +5,6 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { isObject } from 'lodash';
 import {
   BehaviorSubject, Observable, combineLatest, switchMap, of, filter, map,
 } from 'rxjs';
@@ -95,16 +94,7 @@ export class CertificateSigningRequestsListComponent implements OnInit {
     this.ws
       .call('certificate.query')
       .pipe(
-        map((certificates) => {
-          return certificates
-            .map((certificate) => {
-              if (isObject(certificate.issuer)) {
-                certificate.issuer = certificate.issuer.name;
-              }
-              return certificate;
-            })
-            .filter((certificate) => certificate.CSR !== null);
-        }),
+        map((certificates) => certificates.filter((certificate) => certificate.CSR !== null)),
         untilDestroyed(this),
       )
       .subscribe({

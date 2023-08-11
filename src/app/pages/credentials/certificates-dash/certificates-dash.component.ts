@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -44,6 +44,8 @@ import { CertificateEditComponent } from './certificate-edit/certificate-edit.co
 @UntilDestroy()
 @Component({
   templateUrl: './certificates-dash.component.html',
+  styleUrls: ['./certificates-dash.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CertificatesDashComponent implements OnInit {
   cards: { name: string; tableConf: AppTableConfig<CertificatesDashComponent> }[];

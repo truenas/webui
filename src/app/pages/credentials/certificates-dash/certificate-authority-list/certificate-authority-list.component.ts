@@ -10,6 +10,7 @@ import {
   BehaviorSubject, Observable, combineLatest, switchMap, of, filter, map, EMPTY, catchError,
 } from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
+import { helptextSystemCa } from 'app/helptext/system/ca';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -79,6 +80,8 @@ export class CertificateAuthorityListComponent implements OnInit {
       return of(EmptyType.NoSearchResults);
     }),
   );
+
+  helptextSystemCa = helptextSystemCa;
 
   constructor(
     private matDialog: MatDialog,
@@ -166,6 +169,16 @@ export class CertificateAuthorityListComponent implements OnInit {
   }
 
   doDelete(certificate: CertificateAuthority): void {
+    if (certificate.signed_certificates) {
+      this.dialogService.confirm({
+        title: helptextSystemCa.delete_error.title,
+        message: helptextSystemCa.delete_error.message,
+        hideCheckbox: true,
+        buttonText: helptextSystemCa.delete_error.button,
+        hideCancel: true,
+      });
+      return;
+    }
     const dialogRef = this.matDialog.open(ConfirmForceDeleteCertificateComponent, { data: { cert: certificate } });
     dialogRef
       .afterClosed()

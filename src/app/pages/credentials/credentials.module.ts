@@ -32,6 +32,7 @@ import {
 import { TokenProviderFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/token-provider-form/token-provider-form.component';
 import { SshConnectionFormComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-form/ssh-connection-form.component';
 import { SshKeypairFormComponent } from 'app/pages/credentials/backup-credentials/ssh-keypair-form/ssh-keypair-form.component';
+import { AcmeDnsAuthenticatorListComponent } from 'app/pages/credentials/certificates-dash/acme-dns-authenticator-list/acme-dns-authenticator-list.component';
 import {
   CertificateAcmeAddComponent,
 } from 'app/pages/credentials/certificates-dash/certificate-acme-add/certificate-acme-add.component';
@@ -135,6 +136,7 @@ import { CertificateSubjectComponent } from './certificates-dash/forms/common-st
     CertificateListComponent,
     CertificateSigningRequestsListComponent,
     CertificateAuthorityListComponent,
+    AcmeDnsAuthenticatorListComponent,
   ],
   imports: [
     AppCommonModule,
