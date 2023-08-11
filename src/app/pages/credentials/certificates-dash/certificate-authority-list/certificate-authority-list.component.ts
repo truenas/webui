@@ -156,13 +156,7 @@ export class CertificateAuthorityListComponent implements OnInit {
   }
 
   doEdit(certificate: CertificateAuthority): void {
-    const slideInRef = this.slideInService.open(CertificateAuthorityEditComponent, {
-      wide: true,
-      data: {
-        certificatesDash: this,
-        certificate,
-      },
-    });
+    const slideInRef = this.slideInService.open(CertificateAuthorityEditComponent, { wide: true, data: certificate });
     slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.getCertificates();
     });
