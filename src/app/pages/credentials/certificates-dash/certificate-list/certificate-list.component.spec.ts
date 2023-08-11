@@ -5,6 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockWebsocket, mockCall, mockJob } from 'app/core/testing/utils/mock-websocket.utils';
 import { Certificate } from 'app/interfaces/certificate.interface';
@@ -55,6 +56,9 @@ describe('CertificateListComponent', () => {
     component: CertificateListComponent,
     imports: [
       IxTable2Module,
+    ],
+    declarations: [
+      FakeFormatDateTimePipe,
     ],
     providers: [
       mockWebsocket([

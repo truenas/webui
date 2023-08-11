@@ -140,10 +140,7 @@ export class CertificateSigningRequestsListComponent implements OnInit {
   doEdit(certificate: Certificate): void {
     const slideInRef = this.slideInService.open(CertificateEditComponent, {
       wide: true,
-      data: {
-        certificatesDash: this,
-        certificate,
-      },
+      data: { certificate },
     });
     slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.getCertificates();
