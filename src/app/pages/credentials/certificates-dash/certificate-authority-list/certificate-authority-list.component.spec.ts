@@ -91,10 +91,19 @@ describe('CertificateAuthorityListComponent', () => {
   });
 
   it('opens delete dialog when "Delete" button is pressed', async () => {
+    const dialog = spectator.inject(DialogService);
+    jest.spyOn(dialog, 'confirm');
     const deleteButtons = await loader.getAllHarnesses(MatButtonHarness.with({ selector: '[aria-label="Delete"]' }));
     await deleteButtons[0].click();
 
-    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
+    expect(dialog.confirm).toHaveBeenCalledWith({
+      buttonText: 'Delete',
+      message: 'Are you sure you want to delete the <b>certificate-authority-0</b> certificate authority?',
+      title: 'Delete Certificate Authority',
+    });
+
+    await deleteButtons[1].click();
+    expect(dialog.confirm).toHaveBeenCalledWith({
       buttonText: 'Close',
       hideCancel: true,
       hideCheckbox: true,

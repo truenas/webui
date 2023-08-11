@@ -142,10 +142,8 @@ describe('CertificateEditComponent', () => {
           {
             provide: SLIDE_IN_DATA,
             useValue: {
-              certificate: {
-                ...certificate,
-                acme: true,
-              },
+              ...certificate,
+              acme: true,
             },
           },
         ],
@@ -166,9 +164,7 @@ describe('CertificateEditComponent', () => {
         providers: [
           {
             provide: SLIDE_IN_DATA,
-            useValue: {
-              certificate: certificateCsr,
-            },
+            useValue: certificateCsr,
           },
         ],
       });
