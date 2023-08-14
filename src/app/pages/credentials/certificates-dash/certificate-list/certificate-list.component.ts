@@ -165,7 +165,7 @@ export class CertificateListComponent implements OnInit {
     const dialogRef = this.matDialog.open(ConfirmForceDeleteCertificateComponent, { data: certificate });
     dialogRef
       .afterClosed()
-      .pipe(untilDestroyed(this))
+      .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe((data: { force: boolean }) => {
         const jobDialogRef = this.matDialog.open(EntityJobComponent, {
           data: {
