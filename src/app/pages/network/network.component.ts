@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { Navigation, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
@@ -13,7 +14,6 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import helptext from 'app/helptext/network/interfaces/interfaces-list';
 import { CoreEvent } from 'app/interfaces/events';
-import { NetworkInterfacesChangedEvent } from 'app/interfaces/events/network-interfaces-changed-event.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -26,6 +26,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { adminNetworkInterfacesChanged } from 'app/store/admin-panel/admin.actions';
 import { selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { AppState } from 'app/store/index';
 
@@ -64,6 +65,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
     private errorHandler: ErrorHandlerService,
     private systemGeneralService: SystemGeneralService,
     private interfacesStore: InterfacesStore,
+    private actions$: Actions,
     @Inject(WINDOW) private window: Window,
   ) {
     this.navigation = this.router.getCurrentNavigation();
@@ -71,11 +73,10 @@ export class NetworkComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.checkInterfacePendingChanges();
-    this.core
-      .register({ observerClass: this, eventName: 'NetworkInterfacesChanged' })
-      .pipe(untilDestroyed(this))
-      .subscribe((evt: NetworkInterfacesChangedEvent) => {
-        if (!evt || !evt.data.checkin) {
+
+    this.actions$.pipe(ofType(adminNetworkInterfacesChanged), untilDestroyed(this))
+      .subscribe(({ checkIn }) => {
+        if (!checkIn) {
           return;
         }
 
@@ -216,11 +217,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
                 untilDestroyed(this),
               )
               .subscribe((checkInSeconds) => {
-                this.core.emit({
-                  name: 'NetworkInterfacesChanged',
-                  data: { commit: true, checkin: false },
-                  sender: this,
-                });
+                this.store$.dispatch(adminNetworkInterfacesChanged({ commit: true, checkIn: false }));
                 this.interfacesStore.loadInterfaces();
                 this.handleWaitingCheckin(checkInSeconds);
               });
@@ -268,7 +265,8 @@ export class NetworkComponent implements OnInit, OnDestroy {
         untilDestroyed(this),
       )
       .subscribe(() => {
-        this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: true, checkin: true }, sender: this });
+        this.store$.dispatch(adminNetworkInterfacesChanged({ commit: true, checkIn: true }));
+
         this.snackbar.success(
           this.translate.instant(helptext.checkin_complete_message),
         );
@@ -301,7 +299,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
             untilDestroyed(this),
           )
           .subscribe(() => {
-            this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: false }, sender: this });
+            this.store$.dispatch(adminNetworkInterfacesChanged({ commit: false }));
             this.interfacesStore.loadInterfaces();
             this.hasPendingChanges = false;
             this.checkinWaiting = false;
