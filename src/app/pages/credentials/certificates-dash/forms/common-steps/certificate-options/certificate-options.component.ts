@@ -11,7 +11,8 @@ import {
   certificateKeyLengths,
 } from 'app/enums/certificate-digest-algorithm.enum';
 import { CertificateKeyType, certificateKeyTypeLabels } from 'app/enums/certificate-key-type.enum';
-import { choicesToOptions, idNameArrayToOptions, mapToOptions } from 'app/helpers/options.helper';
+import { choicesToOptions, idNameArrayToOptions } from 'app/helpers/operators/options.operators';
+import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { Option } from 'app/interfaces/option.interface';
 import { SummaryProvider, SummarySection } from 'app/modules/common/summary/summary.interface';

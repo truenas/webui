@@ -7,7 +7,7 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { map } from 'rxjs/operators';
-import { idNameArrayToOptions, singleArrayToOptions } from 'app/helpers/options.helper';
+import { idNameArrayToOptions, singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import helptext from 'app/helptext/directory-service/ldap';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';

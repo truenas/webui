@@ -15,7 +15,6 @@ import {
 import {
   BaseProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/base-provider-form';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -69,7 +68,6 @@ export class OneDriveProviderFormComponent extends BaseProviderFormComponent imp
     private errorHandler: ErrorHandlerService,
     private formBuilder: FormBuilder,
     private ws: WebSocketService,
-    private dialogService: DialogService,
   ) {
     super();
   }

@@ -20,8 +20,6 @@ import { MultiErrorDialogComponent } from 'app/modules/common/dialog/multi-error
   providedIn: 'root',
 })
 export class DialogService {
-  protected loaderOpen = false;
-
   constructor(private dialog: MatDialog) { }
 
   confirm(confirmOptions: ConfirmOptions): Observable<boolean>;

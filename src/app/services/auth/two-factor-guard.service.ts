@@ -17,9 +17,6 @@ import { WebSocketService } from 'app/services/ws.service';
 @UntilDestroy()
 @Injectable()
 export class TwoFactorGuardService implements CanActivateChild {
-  isAuthenticated = false;
-  show2FaWarning = false;
-
   private globalTwoFactorConfig$ = new BehaviorSubject<TwoFactorConfig>(null);
 
   constructor(

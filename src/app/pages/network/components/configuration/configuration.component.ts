@@ -7,7 +7,7 @@ import { Store } from '@ngrx/store';
 import { of } from 'rxjs';
 import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
 import { ProductType } from 'app/enums/product-type.enum';
-import { arrayToOptions } from 'app/helpers/options.helper';
+import { arrayToOptions } from 'app/helpers/operators/options.operators';
 import helptext from 'app/helptext/network/configuration/configuration';
 import {
   NetworkConfiguration, NetworkConfigurationActivity, NetworkConfigurationConfig, NetworkConfigurationUpdate,

@@ -5,21 +5,19 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { tween, styler } from 'popmotion';
-import { Subject } from 'rxjs';
 import { take, tap } from 'rxjs/operators';
 import { Styler } from 'stylefire';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { ScreenType } from 'app/enums/screen-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
-import { CoreEvent } from 'app/interfaces/events';
 import { SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import {
   NetworkInterface, NetworkInterfaceAlias,
   NetworkInterfaceState,
 } from 'app/interfaces/network-interface.interface';
 import { Pool } from 'app/interfaces/pool.interface';
-import { VolumesData, VolumeData } from 'app/interfaces/volume-data.interface';
+import { VolumesData } from 'app/interfaces/volume-data.interface';
 import { DashboardFormComponent } from 'app/pages/dashboard/components/dashboard-form/dashboard-form.component';
 import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
 import { DashboardStore } from 'app/pages/dashboard/store/dashboard-store.service';
@@ -114,8 +112,6 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
   volumeData: VolumesData;
 
   nics: DashboardNetworkInterface[];
-
-  initialLoading = true;
 
   constructor(
     protected ws: WebSocketService,
@@ -267,71 +263,6 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
     conf.push({ name: WidgetName.Network, rendered: true, id: conf.length.toString() });
 
     this.availableWidgets = conf;
-  }
-
-  volumeDataFromConfig(item: DashConfigItem): VolumesData | VolumeData {
-    let spl: string[];
-    let key: string;
-    let value: string;
-    if (item.identifier) {
-      spl = item.identifier.split(',');
-      key = spl[0] as keyof Pool;
-      value = spl[1];
-    }
-
-    if (item.name === WidgetName.Storage) {
-      return this.volumeData;
-    }
-
-    const dashboardPool = this.pools.find((pool) => pool[key as keyof Pool] === value.split(':')[1]);
-    if (!dashboardPool) {
-      console.warn(`Pool for ${item.name} [${item.identifier}] widget is not available!`);
-      return undefined;
-    }
-    return this.volumeData?.[dashboardPool.name];
-  }
-
-  dataFromConfig(item: DashConfigItem): Subject<CoreEvent> | DashboardNicState | Pool | Pool[] {
-    let spl: string[];
-    let key: string;
-    let value: string;
-    if (item.identifier) {
-      spl = item.identifier.split(',');
-      key = spl[0];
-      value = spl[1];
-    }
-
-    // TODO: Convoluted typing, split apart.
-    // eslint-disable-next-line rxjs/finnish
-    let data: Subject<CoreEvent> | DashboardNicState | Pool | Pool[];
-
-    switch (item.name) {
-      case WidgetName.Pool:
-        if (spl) {
-          const pools = this.pools.filter((pool) => pool[key as keyof Pool] === value.split(':')[1]);
-          if (pools.length) { data = pools[0]; }
-        } else {
-          console.warn('DashConfigItem has no identifier!');
-        }
-        break;
-      case WidgetName.Interface:
-        if (spl) {
-          const nics = this.nics.filter((nic) => nic[key as keyof DashboardNetworkInterface] === value);
-          if (nics.length) { data = nics[0].state; }
-        } else {
-          console.warn('DashConfigItem has no identifier!');
-        }
-        break;
-      case WidgetName.Storage:
-        data = this.pools;
-        break;
-    }
-
-    if (!data) {
-      console.warn(`Data for ${item.name} [${item.identifier}] widget is not available!`);
-    }
-
-    return data;
   }
 
   showConfigForm(): void {

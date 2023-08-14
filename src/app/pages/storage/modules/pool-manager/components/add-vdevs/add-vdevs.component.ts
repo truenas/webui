@@ -24,8 +24,6 @@ export class AddVdevsComponent implements OnInit {
   protected poolDisks: Disk[] = [];
   protected topology: PoolManagerTopology = null;
 
-  readonly poolTopologyToStoreTopology = poolTopologyToStoreTopology;
-
   constructor(
     private addVdevsStore: AddVdevsStore,
     private activatedRoute: ActivatedRoute,

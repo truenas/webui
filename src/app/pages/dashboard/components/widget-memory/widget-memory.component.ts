@@ -13,7 +13,6 @@ import {
   Chart, Color, ChartDataset, ChartOptions,
 } from 'chart.js';
 import { ChartConfiguration } from 'chart.js/dist/types';
-import { Subscription } from 'rxjs';
 import { throttleTime } from 'rxjs/operators';
 import { GiB } from 'app/constants/bytes.constant';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
@@ -51,7 +50,6 @@ export class WidgetMemoryComponent extends WidgetComponent implements OnInit {
   readonly ScreenType = ScreenType;
 
   private utils: ThemeUtils;
-  private dataSubscription: Subscription;
 
   constructor(
     public router: Router,
