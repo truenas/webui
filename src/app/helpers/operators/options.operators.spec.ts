@@ -24,7 +24,7 @@ describe('choicesToOptions', () => {
 
 describe('arrayToOptions', () => {
   it('converts array of labels and values to array of options', async () => {
-    const array = [['label1', 'value1'], ['label2', 'value2']];
+    const array = [['value1', 'label1'], ['value2', 'label2']];
 
     const options = await lastValueFrom(of(array).pipe(arrayToOptions()));
 
