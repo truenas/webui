@@ -61,6 +61,7 @@ import { PodShellComponent } from 'app/pages/apps/components/installed-apps/pod-
 import { PodSelectDialogComponent } from 'app/pages/apps/components/pod-select-dialog/pod-select-dialog.component';
 import { PodSelectLogsDialogComponent } from 'app/pages/apps/components/pod-select-logs/pod-select-logs-dialog.component';
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
+import { AppsNavigateAwayGuard } from 'app/pages/apps/guards/apps-navigate-away.guard';
 import { CustomFormsModule } from 'app/pages/apps/modules/custom-forms/custom-forms.module';
 import { AppsFilterStore } from 'app/pages/apps/store/apps-filter-store.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
@@ -176,6 +177,7 @@ import { KubernetesStatusComponent } from './components/installed-apps/kubernete
     AppsFilterStore,
     KubernetesStore,
     InstalledAppsStore,
+    AppsNavigateAwayGuard,
   ],
 })
 export class AppsModule { }
