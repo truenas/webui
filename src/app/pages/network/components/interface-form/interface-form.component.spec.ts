@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
-import { StoreModule } from '@ngrx/store';
+import { Store, StoreModule } from '@ngrx/store';
 import { of } from 'rxjs';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
@@ -32,6 +32,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { NetworkService } from 'app/services/network.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { adminNetworkInterfacesChanged } from 'app/store/admin-panel/admin.actions';
 import { haInfoReducer } from 'app/store/ha-info/ha-info.reducer';
 import { haInfoStateKey } from 'app/store/ha-info/ha-info.selectors';
 
@@ -79,6 +80,12 @@ describe('InterfaceFormComponent', () => {
       DefaultGatewayDialogComponent,
     ],
     providers: [
+      {
+        provide: Store,
+        useValue: {
+          dispatch: jest.fn(),
+        },
+      },
       mockWebsocket([
         mockCall('interface.xmit_hash_policy_choices', {
           [XmitHashPolicy.Layer2]: XmitHashPolicy.Layer2,
@@ -169,11 +176,10 @@ describe('InterfaceFormComponent', () => {
         mtu: 1500,
       }]);
       expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
-      expect(spectator.inject(CoreService).emit).toHaveBeenCalledWith({
-        name: 'NetworkInterfacesChanged',
-        data: { commit: false, checkin: false },
-        sender: expect.any(InterfaceFormComponent),
-      });
+
+      const store$ = spectator.inject(Store);
+      expect(store$.dispatch).toHaveBeenCalledWith(adminNetworkInterfacesChanged({ commit: false, checkIn: false }));
+
       expect(ws.call).toHaveBeenCalledWith('interface.default_route_will_be_removed');
 
       expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
@@ -218,11 +224,10 @@ describe('InterfaceFormComponent', () => {
         mtu: 1600,
         xmit_hash_policy: XmitHashPolicy.Layer2Plus3,
       }]);
-      expect(spectator.inject(CoreService).emit).toHaveBeenCalledWith({
-        name: 'NetworkInterfacesChanged',
-        data: { commit: false, checkin: false },
-        sender: expect.any(InterfaceFormComponent),
-      });
+
+      const store$ = spectator.inject(Store);
+      expect(store$.dispatch).toHaveBeenCalledWith(adminNetworkInterfacesChanged({ commit: false, checkIn: false }));
+
       expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
       expect(ws.call).toHaveBeenCalledWith('interface.default_route_will_be_removed');
 

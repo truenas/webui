@@ -53,14 +53,13 @@ export class ApiKeyFormDialogComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.loader.open();
     const values = this.form.value;
     const request$ = this.isNew
       ? this.ws.call('api_key.create', [{ name: values.name, allowlist: [{ method: '*', resource: '*' }] }])
       : this.ws.call('api_key.update', [this.editingRow.id, values] as UpdateApiKeyRequest);
 
     request$
-      .pipe(untilDestroyed(this))
+      .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: (apiKey) => {
           if (this.isNew) {
@@ -68,7 +67,6 @@ export class ApiKeyFormDialogComponent implements OnInit {
           } else {
             this.store.apiKeyEdited(apiKey);
           }
-          this.loader.close();
           this.dialogRef.close(true);
 
           if (apiKey.key) {
@@ -78,7 +76,6 @@ export class ApiKeyFormDialogComponent implements OnInit {
           }
         },
         error: (error) => {
-          this.loader.close();
           this.errorHandler.handleWsFormError(error, this.form);
         },
       });

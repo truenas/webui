@@ -2,7 +2,7 @@ import {
   ChangeDetectorRef, Directive, Input, OnDestroy, TemplateRef, ViewContainerRef,
 } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
-import { LoadingState } from 'app/helpers/to-loading-state.helper';
+import { LoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import {
   WithLoadingStateErrorComponent,
 } from 'app/modules/loader/directives/with-loading-state/with-loading-state-error/with-loading-state-error.component';

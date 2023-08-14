@@ -110,20 +110,15 @@ export class IpmiFormComponent implements OnInit {
 
   toggleFlashing(): void {
     this.ws.call('ipmi.chassis.identify', [this.isFlashing ? OnOff.Off : OnOff.On])
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: () => {
-          this.snackbar.success(
-            this.isFlashing
-              ? this.translate.instant('Identify light is now off.')
-              : this.translate.instant('Identify light is now flashing.'),
-          );
-          this.isFlashing = !this.isFlashing;
-          this.cdr.markForCheck();
-        },
-        error: (error: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-        },
+      .pipe(this.errorHandler.catchError(), untilDestroyed(this))
+      .subscribe(() => {
+        this.snackbar.success(
+          this.isFlashing
+            ? this.translate.instant('Identify light is now off.')
+            : this.translate.instant('Identify light is now flashing.'),
+        );
+        this.isFlashing = !this.isFlashing;
+        this.cdr.markForCheck();
       });
   }
 

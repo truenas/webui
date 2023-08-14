@@ -11,6 +11,7 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { Choices } from 'app/interfaces/choices.interface';
+import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
@@ -170,8 +171,8 @@ export class SystemGeneralService {
     return this.ws.call('system.general.ui_httpsprotocols_choices');
   }
 
-  refreshDirServicesCache(): Observable<void> {
-    return this.ws.call('directoryservices.cache_refresh');
+  refreshDirServicesCache(): Observable<Job> {
+    return this.ws.job('directoryservices.cache_refresh');
   }
 
   updateDone(): void {

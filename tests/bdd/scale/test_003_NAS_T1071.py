@@ -46,8 +46,7 @@ def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_passw
 @when('you should be on the dashboard, click Storage on the side menu')
 def you_should_be_on_the_dashboard_click_storage_on_the_side_menu(driver):
     """you should be on the dashboard, click Storage on the side menu."""
-    assert wait_on_element(driver, 10, xpaths.dashboard.title)
-    assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
+    rsc.Verify_The_Dashboard(driver)
     assert wait_on_element(driver, 10, xpaths.side_Menu.storage, 'clickable')
     driver.find_element_by_xpath(xpaths.side_Menu.storage).click()
 

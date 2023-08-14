@@ -17,7 +17,7 @@ export const helptextSystemCloudcredentials = {
   access_key_id_s3: {
     tooltip: T(
       'Amazon Web Services Key ID. This is found on \
- <a href="https://aws.amazon.com/" target="_blank">Amazon AWS</a> by \
+ <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html" target="_blank">Amazon AWS</a> by \
  going through <i>My account -> Security Credentials -> Access Keys \
  (Access Key ID and Secret Access Key)</i>. Must be alphanumeric and \
  between 5 and 20 characters.',
@@ -70,14 +70,14 @@ export const helptextSystemCloudcredentials = {
   },
   account_b2: {
     tooltip: T('Alphanumeric \
-<a href="https://www.backblaze.com/b2/cloud-storage.html" \
+<a href="https://www.backblaze.com/docs/cloud-storage-application-keys?highlight=application%20key" \
 target="_blank">Backblaze B2</a> Application Key ID. To \
 generate a new application key, log in to the Backblaze account, \
 go to the <i>App Keys</i> page, and add a new application key. \
 Copy the application <i>keyID</i> string to this field.'),
   },
   key_b2: {
-    tooltip: T('<a href="https://www.backblaze.com/b2/cloud-storage.html" \
+    tooltip: T('<a href="https://www.backblaze.com/docs/cloud-storage-application-keys?highlight=application%20key" \
 target="_blank">Backblaze B2</a> Application Key. To generate \
 a new application key, log in to the Backblaze account, go to the \
 <i>App Keys</i> page, and add a new application key. Copy the \
@@ -87,7 +87,7 @@ a new application key, log in to the Backblaze account, go to the \
     tooltip: T(
       'A User Access Token for <a href="https://developer.box.com/" \
  target="_blank">Box</a>. An \
- <a href="https://developer.box.com/reference#token" \
+ <a href="https://developer.box.com/guides/authentication/tokens/access-tokens/" \
  target="_blank">access token</a> enables Box to verify a request \
  belongs to an authorized session. Example token: \
  <i>T9cE5asGnuyYCCqIZFoWjFHvNbvVqHjl</i>.',
@@ -227,11 +227,11 @@ target="_blank">OpenStack credentials file</a>.'),
   },
   user_id_openstack_swift: {
     tooltip: T('User ID to log in - optional - most swift systems use user and leave this blank \
-<a href="https://rclone.org/swift/#standard-options" target="_blank">(rclone documentation)</a>.'),
+<a href="https://rclone.org/swift/#swift-region" target="_blank">(rclone documentation)</a>.'),
   },
   domain_openstack_swift: {
     tooltip: T('User domain - optional \
-<a href="https://rclone.org/swift/#standard-options" target="_blank">(rclone documentation)</a>.'),
+<a href="https://rclone.org/swift/#swift-region" target="_blank">(rclone documentation)</a>.'),
   },
   tenant_openstack_swift: {
     tooltip: T('This is the OS_TENANT_NAME from an \
@@ -240,40 +240,40 @@ target="_blank">OpenStack credentials file</a>.'),
   },
   tenant_id_openstack_swift: {
     tooltip: T('Tenant ID - optional for v1 auth, this or tenant required otherwise \
-<a href="https://rclone.org/swift/#standard-options" target="_blank">(rclone documentation)</a>.'),
+<a href="https://rclone.org/swift/#swift-region" target="_blank">(rclone documentation)</a>.'),
   },
   tenant_domain_openstack_swift: {
     tooltip: T('Tenant domain - optional \
-<a href="https://rclone.org/swift/#standard-options" target="_blank">(rclone documentation)</a>.'),
+<a href="https://rclone.org/swift/#swift-region" target="_blank">(rclone documentation)</a>.'),
   },
   region_openstack_swift: {
     tooltip: T('Region name - optional \
-<a href="https://rclone.org/swift/#standard-options" target="_blank">(rclone documentation)</a>.'),
+<a href="https://rclone.org/swift/#swift-region" target="_blank">(rclone documentation)</a>.'),
   },
   storage_url_openstack_swift: {
     tooltip: T('Storage URL - optional \
-<a href="https://rclone.org/swift/#standard-options" target="_blank">(rclone documentation)</a>.'),
+<a href="https://rclone.org/swift/#swift-region" target="_blank">(rclone documentation)</a>.'),
   },
   auth_token_openstack_swift: {
     tooltip: T('Auth Token from alternate authentication - optional \
-<a href="https://rclone.org/swift/#standard-options" target="_blank">(rclone documentation)</a>.'),
+<a href="https://rclone.org/swift/#swift-region" target="_blank">(rclone documentation)</a>.'),
   },
   application_credential_id_openstack_swift: {
-    tooltip: T('<a href="https://rclone.org/swift/#standard-options" target="_blank">(rclone documentation)</a>.'),
+    tooltip: T('<a href="https://rclone.org/swift/#swift-region" target="_blank">(rclone documentation)</a>.'),
   },
   application_credential_name_openstack_swift: {
-    tooltip: T('<a href="https://rclone.org/swift/#standard-options" target="_blank">(rclone documentation)</a>.'),
+    tooltip: T('<a href="https://rclone.org/swift/#swift-region" target="_blank">(rclone documentation)</a>.'),
   },
   application_credential_secret_openstack_swift: {
-    tooltip: T('<a href="https://rclone.org/swift/#standard-options" target="_blank">(rclone documentation)</a>.'),
+    tooltip: T('<a href="https://rclone.org/swift/#swift-region" target="_blank">(rclone documentation)</a>.'),
   },
   auth_version_openstack_swift: {
     tooltip: T('AuthVersion - optional - set to (1,2,3) if your auth URL has no version \
-<a href="https://rclone.org/swift/#standard-options" target="_blank">(rclone documentation)</a>.'),
+<a href="https://rclone.org/swift/#swift-region" target="_blank">(rclone documentation)</a>.'),
   },
   endpoint_type_openstack_swift: {
     tooltip: T('Endpoint type to choose from the service catalogue. <i>Public</i> is recommended, see the \
-<a href="https://rclone.org/swift/#standard-options" target="_blank">rclone documentation</a>.'),
+<a href="https://rclone.org/swift/#swift-region" target="_blank">rclone documentation</a>.'),
   },
   token_pcloud: {
     tooltip: T(

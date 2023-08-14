@@ -456,6 +456,23 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     max-height: calc(100vh - 100px);
     overflow: auto !important;
     padding-top: 0;
+
+    .mdc-card {
+      border: 0 !important;
+      margin: 0 !important;
+    }
+
+    ix-modal-header {
+      // reset width to avoid horizontal scrolling
+      .mat-mdc-progress-bar {
+        left: 0;
+        max-width: 100%;
+      }
+
+      .ix-slidein-title-bar {
+        margin: 0 !important;
+      }
+    }
   }
 
   .mat-mdc-dialog-title {

@@ -9,7 +9,6 @@ import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.u
 import { ApiKey } from 'app/interfaces/api-key.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import {
   ApiKeyFormDialogComponent,
 } from 'app/pages/api-keys/components/api-key-form-dialog/api-key-form-dialog.component';
@@ -42,7 +41,6 @@ describe('ApiKeyFormDialogComponent', () => {
         apiKeyEdited: jest.fn(),
       }),
       mockProvider(MatDialogRef),
-      mockProvider(AppLoaderService),
       mockProvider(DialogService),
       {
         provide: MAT_DIALOG_DATA,

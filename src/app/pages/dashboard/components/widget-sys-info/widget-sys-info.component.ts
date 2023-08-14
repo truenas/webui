@@ -21,6 +21,7 @@ import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.co
 import {
   DialogService,
 } from 'app/services/dialog.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { LocaleService } from 'app/services/locale.service';
 import { ProductImageService } from 'app/services/product-image.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -83,6 +84,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
     public loader: AppLoaderService,
     public dialogService: DialogService,
     private titleCase: TitleCasePipe,
+    private errorHandler: ErrorHandlerService,
     @Inject(WINDOW) private window: Window,
   ) {
     super(translate);
@@ -95,7 +97,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
       this.screenType = currentScreenType;
     });
 
-    this.hasHa = this.window.sessionStorage.getItem('ha_status') === 'true';
+    this.hasHa = this.window.localStorage.getItem('ha_status') === 'true';
   }
 
   get licenseString(): string {
@@ -136,10 +138,8 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
         error: (error) => {
           console.error('System Info not available', error);
         },
-        complete: () => {
-          this.checkForUpdate();
-        },
       });
+      this.checkForUpdate();
     }
     if (this.sysGenService.getProductType() === ProductType.ScaleEnterprise) {
       this.store$.select(selectIsHaLicensed).pipe(untilDestroyed(this)).subscribe((isHaLicensed) => {

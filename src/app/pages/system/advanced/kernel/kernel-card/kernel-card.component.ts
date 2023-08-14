@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { map } from 'rxjs/operators';
-import { toLoadingState } from 'app/helpers/to-loading-state.helper';
+import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { KernelFormComponent } from 'app/pages/system/advanced/kernel/kernel-form/kernel-form.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';

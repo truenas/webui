@@ -11,6 +11,7 @@ import {
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SnapshotCloneDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-clone-dialog/snapshot-clone-dialog.component';
 import { SnapshotRollbackDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
 import { DialogService } from 'app/services/dialog.service';
@@ -40,6 +41,7 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
     private errorHandler: ErrorHandlerService,
     private matDialog: MatDialog,
     private cdr: ChangeDetectorRef,
+    private snackbar: SnackbarService,
   ) {}
 
   ngOnInit(): void {
@@ -94,17 +96,16 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
       buttonText: this.translate.instant('Delete'),
     }).pipe(
       filter(Boolean),
-      tap(() => this.loader.open()),
-      switchMap(() => this.ws.call('zfs.snapshot.delete', [snapshot.name])),
+      switchMap(() => {
+        return this.ws.call('zfs.snapshot.delete', [snapshot.name]).pipe(
+          this.loader.withLoader(),
+          this.errorHandler.catchError(),
+          tap(() => {
+            this.snackbar.success(this.translate.instant('Snapshot deleted.'));
+          }),
+        );
+      }),
       untilDestroyed(this),
-    ).subscribe({
-      next: () => {
-        this.loader.close();
-      },
-      error: (error: WebsocketError) => {
-        this.dialogService.error(this.errorHandler.parseWsError(error));
-        this.loader.close();
-      },
-    });
+    ).subscribe();
   }
 }

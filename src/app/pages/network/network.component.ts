@@ -3,17 +3,18 @@ import {
 } from '@angular/core';
 import { Navigation, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { combineLatest, lastValueFrom, Subject } from 'rxjs';
+import {
+  combineLatest, lastValueFrom, Subject, switchMap,
+} from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { ProductType } from 'app/enums/product-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import helptext from 'app/helptext/network/interfaces/interfaces-list';
 import { CoreEvent } from 'app/interfaces/events';
-import { NetworkInterfacesChangedEvent } from 'app/interfaces/events/network-interfaces-changed-event.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -25,6 +26,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { adminNetworkInterfacesChanged } from 'app/store/admin-panel/admin.actions';
 import { selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { AppState } from 'app/store/index';
 
@@ -63,6 +65,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
     private errorHandler: ErrorHandlerService,
     private systemGeneralService: SystemGeneralService,
     private interfacesStore: InterfacesStore,
+    private actions$: Actions,
     @Inject(WINDOW) private window: Window,
   ) {
     this.navigation = this.router.getCurrentNavigation();
@@ -70,11 +73,10 @@ export class NetworkComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.checkInterfacePendingChanges();
-    this.core
-      .register({ observerClass: this, eventName: 'NetworkInterfacesChanged' })
-      .pipe(untilDestroyed(this))
-      .subscribe((evt: NetworkInterfacesChangedEvent) => {
-        if (!evt || !evt.data.checkin) {
+
+    this.actions$.pipe(ofType(adminNetworkInterfacesChanged), untilDestroyed(this))
+      .subscribe(({ checkIn }) => {
+        if (!checkIn) {
           return;
         }
 
@@ -202,28 +204,23 @@ export class NetworkComponent implements OnInit, OnDestroy {
           })
           .pipe(untilDestroyed(this))
           .subscribe((confirm: boolean) => {
-            if (confirm) {
-              this.loader.open();
-              this.ws
-                .call('interface.commit', [{ checkin_timeout: this.checkinTimeout }])
-                .pipe(untilDestroyed(this))
-                .subscribe({
-                  next: async () => {
-                    this.core.emit({
-                      name: 'NetworkInterfacesChanged',
-                      data: { commit: true, checkin: false },
-                      sender: this,
-                    });
-                    this.interfacesStore.loadInterfaces();
-                    this.loader.close();
-                    this.handleWaitingCheckin(await this.getCheckinWaitingSeconds());
-                  },
-                  error: (error: WebsocketError) => {
-                    this.loader.close();
-                    this.dialogService.error(this.errorHandler.parseWsError(error));
-                  },
-                });
+            if (!confirm) {
+              return;
             }
+
+            this.ws
+              .call('interface.commit', [{ checkin_timeout: this.checkinTimeout }])
+              .pipe(
+                this.loader.withLoader(),
+                this.errorHandler.catchError(),
+                switchMap(() => this.getCheckinWaitingSeconds()),
+                untilDestroyed(this),
+              )
+              .subscribe((checkInSeconds) => {
+                this.store$.dispatch(adminNetworkInterfacesChanged({ commit: true, checkIn: false }));
+                this.interfacesStore.loadInterfaces();
+                this.handleWaitingCheckin(checkInSeconds);
+              });
           });
       });
   }
@@ -260,26 +257,23 @@ export class NetworkComponent implements OnInit, OnDestroy {
   }
 
   finishCheckin(): void {
-    this.loader.open();
     this.ws
       .call('interface.checkin')
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: () => {
-          this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: true, checkin: true }, sender: this });
-          this.loader.close();
-          this.snackbar.success(
-            this.translate.instant(helptext.checkin_complete_message),
-          );
-          this.hasPendingChanges = false;
-          this.checkinWaiting = false;
-          clearInterval(this.checkinInterval);
-          this.checkinRemaining = null;
-        },
-        error: (error: WebsocketError) => {
-          this.loader.close();
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-        },
+      .pipe(
+        this.loader.withLoader(),
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        this.store$.dispatch(adminNetworkInterfacesChanged({ commit: true, checkIn: true }));
+
+        this.snackbar.success(
+          this.translate.instant(helptext.checkin_complete_message),
+        );
+        this.hasPendingChanges = false;
+        this.checkinWaiting = false;
+        clearInterval(this.checkinInterval);
+        this.checkinRemaining = null;
       });
   }
 
@@ -293,28 +287,26 @@ export class NetworkComponent implements OnInit, OnDestroy {
       })
       .pipe(untilDestroyed(this))
       .subscribe((confirm: boolean) => {
-        if (confirm) {
-          this.loader.open();
-          this.ws
-            .call('interface.rollback')
-            .pipe(untilDestroyed(this))
-            .subscribe({
-              next: () => {
-                this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: false }, sender: this });
-                this.interfacesStore.loadInterfaces();
-                this.hasPendingChanges = false;
-                this.checkinWaiting = false;
-                this.loader.close();
-                this.snackbar.success(
-                  this.translate.instant(helptext.changes_rolled_back),
-                );
-              },
-              error: (error: WebsocketError) => {
-                this.loader.close();
-                this.dialogService.error(this.errorHandler.parseWsError(error));
-              },
-            });
+        if (!confirm) {
+          return;
         }
+
+        this.ws
+          .call('interface.rollback')
+          .pipe(
+            this.loader.withLoader(),
+            this.errorHandler.catchError(),
+            untilDestroyed(this),
+          )
+          .subscribe(() => {
+            this.store$.dispatch(adminNetworkInterfacesChanged({ commit: false }));
+            this.interfacesStore.loadInterfaces();
+            this.hasPendingChanges = false;
+            this.checkinWaiting = false;
+            this.snackbar.success(
+              this.translate.instant(helptext.changes_rolled_back),
+            );
+          });
       });
   }
 
@@ -335,23 +327,19 @@ export class NetworkComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.loader.open();
     this.ws.call('interface.query', [[['id', '=', state.editInterface]]])
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: (interfaces) => {
-          this.loader.close();
-          if (!interfaces[0]) {
-            return;
-          }
+      .pipe(
+        this.loader.withLoader(),
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe((interfaces) => {
+        if (!interfaces[0]) {
+          return;
+        }
 
-          const slideInRef = this.slideInService.open(InterfaceFormComponent, { data: interfaces[0] });
-          this.handleSlideInClosed(slideInRef);
-        },
-        error: (error: WebsocketError) => {
-          this.loader.close();
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-        },
+        const slideInRef = this.slideInService.open(InterfaceFormComponent, { data: interfaces[0] });
+        this.handleSlideInClosed(slideInRef);
       });
   }
 }

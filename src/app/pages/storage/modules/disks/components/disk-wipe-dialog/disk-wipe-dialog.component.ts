@@ -7,7 +7,6 @@ import { of } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { DiskWipeMethod } from 'app/enums/disk-wipe-method.enum';
 import helptext from 'app/helptext/storage/disks/disks';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -87,9 +86,6 @@ export class DiskWipeDialogComponent {
           message: helptext.diskWipeDialogForm.infoContent,
           hideCancel: true,
         });
-      },
-      error: (error: WebsocketError) => {
-        this.dialogService.error(this.errorHandler.parseWsError(error));
       },
     });
 

@@ -6,7 +6,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
 import { VmDisplayWebUriParams, VmDisplayWebUriParamsOptions } from 'app/interfaces/virtual-machine.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DisplayVmDialogData } from 'app/pages/vm/vm-list/display-vm-dialog/display-vm-dialog-data.interface';
 import { DialogService } from 'app/services/dialog.service';
@@ -78,7 +77,6 @@ export class DisplayVmDialogComponent {
   }
 
   private openDisplayDevice(displayDeviceId: number, password?: string): void {
-    this.loader.open();
     let displayOptions = {
       protocol: this.window.location.protocol.replace(':', '').toUpperCase(),
     } as VmDisplayWebUriParamsOptions;
@@ -99,22 +97,19 @@ export class DisplayVmDialogComponent {
     ];
 
     this.ws.call('vm.get_display_web_uri', requestParams)
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: (webUris) => {
-          this.loader.close();
-          const webUri = webUris[displayDeviceId];
-          if (webUri.error) {
-            this.dialogService.warn(this.translate.instant('Error'), webUri.error);
-            return;
-          }
-          this.window.open(webUri.uri, '_blank');
-          this.dialogRef.close(true);
-        },
-        error: (error: WebsocketError) => {
-          this.loader.close();
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-        },
+      .pipe(
+        this.loader.withLoader(),
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe((webUris) => {
+        const webUri = webUris[displayDeviceId];
+        if (webUri.error) {
+          this.dialogService.warn(this.translate.instant('Error'), webUri.error);
+          return;
+        }
+        this.window.open(webUri.uri, '_blank');
+        this.dialogRef.close(true);
       });
   }
 }

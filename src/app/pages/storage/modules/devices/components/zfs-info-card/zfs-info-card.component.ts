@@ -2,11 +2,10 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter } from 'rxjs/operators';
+import { filter, switchMap, tap } from 'rxjs/operators';
 import { VdevType, TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { Disk, isTopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import {
@@ -107,22 +106,16 @@ export class ZfsInfoCardComponent {
       buttonText: this.translate.instant('Offline'),
     }).pipe(
       filter(Boolean),
+      switchMap(() => {
+        return this.ws.call('pool.offline', [this.poolId, { label: this.topologyItem.guid }]).pipe(
+          this.loader.withLoader(),
+          this.errorHandler.catchError(),
+          tap(() => this.devicesStore.reloadList()),
+          untilDestroyed(this),
+        );
+      }),
       untilDestroyed(this),
-    ).subscribe(() => {
-      this.loader.open();
-      this.ws.call('pool.offline', [this.poolId, { label: this.topologyItem.guid }]).pipe(
-        untilDestroyed(this),
-      ).subscribe({
-        next: () => {
-          this.devicesStore.reloadList();
-          this.loader.close();
-        },
-        error: (error: WebsocketError) => {
-          this.loader.close();
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-        },
-      });
-    });
+    ).subscribe();
   }
 
   onOnline(): void {
@@ -132,22 +125,15 @@ export class ZfsInfoCardComponent {
       buttonText: this.translate.instant('Online'),
     }).pipe(
       filter(Boolean),
+      switchMap(() => {
+        return this.ws.call('pool.online', [this.poolId, { label: this.topologyItem.guid }]).pipe(
+          this.loader.withLoader(),
+          this.errorHandler.catchError(),
+          tap(() => this.devicesStore.reloadList()),
+        );
+      }),
       untilDestroyed(this),
-    ).subscribe(() => {
-      this.loader.open();
-      this.ws.call('pool.online', [this.poolId, { label: this.topologyItem.guid }]).pipe(
-        untilDestroyed(this),
-      ).subscribe({
-        next: () => {
-          this.devicesStore.reloadList();
-          this.loader.close();
-        },
-        error: (error: WebsocketError) => {
-          this.loader.close();
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-        },
-      });
-    });
+    ).subscribe();
   }
 
   onDetach(): void {
@@ -157,22 +143,15 @@ export class ZfsInfoCardComponent {
       buttonText: this.translate.instant('Detach'),
     }).pipe(
       filter(Boolean),
+      switchMap(() => {
+        return this.ws.call('pool.detach', [this.poolId, { label: this.topologyItem.guid }]).pipe(
+          this.loader.withLoader(),
+          this.errorHandler.catchError(),
+          tap(() => this.devicesStore.reloadList()),
+        );
+      }),
       untilDestroyed(this),
-    ).subscribe(() => {
-      this.loader.open();
-      this.ws.call('pool.detach', [this.poolId, { label: this.topologyItem.guid }]).pipe(
-        untilDestroyed(this),
-      ).subscribe({
-        next: () => {
-          this.devicesStore.reloadList();
-          this.loader.close();
-        },
-        error: (error: WebsocketError) => {
-          this.loader.close();
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-        },
-      });
-    });
+    ).subscribe();
   }
 
   onRemove(): void {
@@ -197,9 +176,6 @@ export class ZfsInfoCardComponent {
         next: () => {
           this.devicesStore.reloadList();
           this.dialogService.closeAllDialogs();
-        },
-        error: (error: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });
     });

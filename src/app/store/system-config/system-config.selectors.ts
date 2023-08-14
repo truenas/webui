@@ -1,5 +1,5 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
-import { selectNotNull } from 'app/helpers/select-not-null.helper';
+import { selectNotNull } from 'app/helpers/operators/select-not-null.helper';
 import { SystemConfigState } from 'app/store/system-config/system-config.reducer';
 
 export const systemConfigStateKey = 'systemConfig';

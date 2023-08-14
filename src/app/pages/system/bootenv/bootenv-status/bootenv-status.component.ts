@@ -106,21 +106,19 @@ export class BootStatusListComponent implements OnInit {
 
   detach(diskPath: string): void {
     const disk = diskPath.substring(5, diskPath.length);
-    this.loader.open();
-    this.ws.call('boot.detach', [disk]).pipe(untilDestroyed(this)).subscribe({
-      next: () => {
-        this.loader.close();
+    this.ws.call('boot.detach', [disk])
+      .pipe(
+        this.loader.withLoader(),
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
         this.router.navigate(['/', 'system', 'boot']);
         this.dialogService.info(
           this.translate.instant('Device detached'),
           this.translate.instant('<i>{disk}</i> has been detached.', { disk }),
         );
-      },
-      error: (error: WebsocketError) => {
-        this.loader.close();
-        this.dialogService.error(this.errorHandler.parseWsError(error));
-      },
-    });
+      });
   }
 
   doAction(event: BootPoolActionEvent): void {

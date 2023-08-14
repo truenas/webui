@@ -8,7 +8,6 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { PoolStatus, poolStatusLabels } from 'app/enums/pool-status.enum';
 import { PoolInstance } from 'app/interfaces/pool.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -59,19 +58,16 @@ export class BootenvStatsDialogComponent implements OnInit {
 
   onSubmit(): void {
     const interval = this.form.value.interval;
-    this.loader.open();
     this.ws.call('boot.set_scrub_interval', [interval])
-      .pipe(untilDestroyed(this))
+      .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: () => {
-          this.loader.close();
           this.dialogRef.close();
           this.snackbar.success(
             this.translate.instant('Scrub interval set to {scrubIntervalValue} days', { scrubIntervalValue: interval }),
           );
         },
         error: (error) => {
-          this.loader.close();
           this.formErrorHandler.handleWsFormError(error, this.form);
         },
       });
@@ -84,19 +80,15 @@ export class BootenvStatsDialogComponent implements OnInit {
   }
 
   private loadBootState(): void {
-    this.loader.open();
     this.ws.call('boot.get_state')
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: (state) => {
-          this.state = state;
-          this.loader.close();
-          this.cdr.markForCheck();
-        },
-        error: (error: WebsocketError) => {
-          this.dialogRef.close();
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-        },
+      .pipe(
+        this.loader.withLoader(),
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe((state) => {
+        this.state = state;
+        this.cdr.markForCheck();
       });
   }
 }

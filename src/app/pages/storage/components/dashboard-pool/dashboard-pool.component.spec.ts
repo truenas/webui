@@ -11,7 +11,6 @@ import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import helptext from 'app/helptext/storage/volumes/volume-list';
 import { Pool } from 'app/interfaces/pool.interface';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DashboardPoolComponent } from 'app/pages/storage/components/dashboard-pool/dashboard-pool.component';
 import { DiskHealthCardComponent } from 'app/pages/storage/components/dashboard-pool/disk-health-card/disk-health-card.component';
@@ -51,7 +50,6 @@ describe('DashboardPoolComponent', () => {
         open: jest.fn(() => ({ afterClosed: jest.fn(() => of()) })),
       }),
       mockProvider(SnackbarService),
-      mockProvider(AppLoaderService),
       mockProvider(PoolsDashboardStore, {
         loadDashboard: jest.fn(),
       }),

@@ -1,6 +1,5 @@
 import { HttpErrorResponse, HttpEventType, HttpHeaders } from '@angular/common/http';
 import { Injector } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
@@ -96,15 +95,9 @@ describe('ErrorHandlerService', () => {
       expect(spectator.service.logToSentry).toHaveBeenCalledWith(error);
     });
 
-    it('logs websocket error via dialog', () => {
-      spectator.inject(MatDialog);
+    it('logs websocket error', () => {
       spectator.service.handleError(wsError);
 
-      expect(spectator.service.dialog.error).toHaveBeenCalledWith({
-        backtrace: 'FORMATTED',
-        message: 'SOME REASON',
-        title: 'CLASS',
-      });
       expect(spectator.service.logToSentry).toHaveBeenCalledWith({
         backtrace: 'FORMATTED',
         message: 'SOME REASON',
@@ -112,15 +105,9 @@ describe('ErrorHandlerService', () => {
       });
     });
 
-    it('logs job error via dialog', () => {
-      spectator.inject(MatDialog);
+    it('logs job error', () => {
       spectator.service.handleError(failedJob);
 
-      expect(spectator.service.dialog.error).toHaveBeenCalledWith([{
-        backtrace: 'EXCEPTION',
-        message: 'DUMMY_ERROR',
-        title: 'Error: path',
-      }]);
       expect(spectator.service.logToSentry).toHaveBeenCalledWith([{
         backtrace: 'EXCEPTION',
         message: 'DUMMY_ERROR',

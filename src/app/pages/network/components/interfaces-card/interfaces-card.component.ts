@@ -8,6 +8,7 @@ import {
   Output,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 import { NetworkInterfaceType } from 'app/enums/network-interface.enum';
@@ -23,12 +24,13 @@ import {
   IpAddressesCellComponent,
 } from 'app/pages/network/components/interfaces-card/ip-addresses-cell/ip-addresses-cell.component';
 import { InterfacesStore } from 'app/pages/network/stores/interfaces.store';
-import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { NetworkService } from 'app/services/network.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { AppState } from 'app/store';
+import { adminNetworkInterfacesChanged } from 'app/store/admin-panel/admin.actions';
 
 @UntilDestroy()
 @Component({
@@ -66,14 +68,14 @@ export class InterfacesCardComponent implements OnInit {
   readonly helptext = helptext;
 
   constructor(
-    private store: InterfacesStore,
+    private interfacesStore$: InterfacesStore,
+    private store$: Store<AppState>,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private slideIn: IxSlideInService,
     private dialogService: DialogService,
     private ws: WebSocketService,
     private loader: AppLoaderService,
-    private core: CoreService,
     private errorHandler: ErrorHandlerService,
     private networkService: NetworkService,
   ) {}
@@ -83,9 +85,9 @@ export class InterfacesCardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.store.loadInterfaces();
+    this.interfacesStore$.loadInterfaces();
     this.subscribeToUpdates();
-    this.store.state$.pipe(untilDestroyed(this)).subscribe((state) => {
+    this.interfacesStore$.state$.pipe(untilDestroyed(this)).subscribe((state) => {
       this.isLoading = state.isLoading;
       this.dataProvider.setRows(state.interfaces);
       this.cdr.markForCheck();
@@ -98,7 +100,7 @@ export class InterfacesCardComponent implements OnInit {
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => {
         this.interfacesUpdated.emit();
-        this.store.loadInterfaces();
+        this.interfacesStore$.loadInterfaces();
       });
   }
 
@@ -110,7 +112,7 @@ export class InterfacesCardComponent implements OnInit {
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => {
         this.interfacesUpdated.emit();
-        this.store.loadInterfaces();
+        this.interfacesStore$.loadInterfaces();
       });
   }
 
@@ -135,19 +137,17 @@ export class InterfacesCardComponent implements OnInit {
   }
 
   private makeDeleteCall(row: NetworkInterface): void {
-    this.loader.open();
-    this.ws.call('interface.delete', [row.id]).pipe(untilDestroyed(this)).subscribe({
-      next: () => {
-        this.loader.close();
+    this.ws.call('interface.delete', [row.id])
+      .pipe(
+        this.loader.withLoader(),
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
         this.interfacesUpdated.emit();
-        this.store.loadInterfaces();
-        this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: false, checkin: false }, sender: this });
-      },
-      error: (error) => {
-        this.dialogService.error(this.errorHandler.parseWsError(error));
-        this.loader.close();
-      },
-    });
+        this.interfacesStore$.loadInterfaces();
+        this.store$.dispatch(adminNetworkInterfacesChanged({ commit: false, checkIn: false }));
+      });
   }
 
   private subscribeToUpdates(): void {

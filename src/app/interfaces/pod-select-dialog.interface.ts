@@ -1,5 +1,5 @@
-import { PodSelectDialogComponent } from 'app/pages/apps-old/dialogs/pod-select/pod-select-dialog.component';
-import { PodSelectDialogType } from 'app/pages/apps-old/enums/pod-select-dialog.enum';
+import { PodSelectDialogType } from 'app/enums/pod-select-dialog.enum';
+import { PodSelectDialogComponent } from 'app/pages/apps/components/pod-select-dialog/pod-select-dialog.component';
 
 export interface PodDialogData {
   type: PodSelectDialogType;

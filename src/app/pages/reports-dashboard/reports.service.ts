@@ -5,13 +5,13 @@ import {
   map, Observable, shareReplay, BehaviorSubject, switchMap, interval,
 } from 'rxjs';
 import { ReportingGraphName } from 'app/enums/reporting.enum';
-import { CoreEvent } from 'app/interfaces/events';
 import { ReportDataRequestEvent } from 'app/interfaces/events/reporting-events.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { ReportingGraph } from 'app/interfaces/reporting-graph.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ReportComponent } from 'app/pages/reports-dashboard/components/report/report.component';
 import { ReportTab, reportTypeLabels, ReportType } from 'app/pages/reports-dashboard/interfaces/report-tab.interface';
+import { convertAggregations, optimizeLegend } from 'app/pages/reports-dashboard/utils/report.utils';
 import { CoreService } from 'app/services/core-service/core.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
@@ -22,17 +22,6 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
  * and reports page components.
  * */
 
-export interface Command {
-  command: string; // Use '|' or '--pipe' to use the output of previous command as input
-  input: unknown;
-  options?: unknown[]; // Function parameters
-}
-
-export enum ReportingDatabaseError {
-  FailedExport = 22,
-  InvalidTimestamp = 206,
-}
-
 @Injectable({
   providedIn: 'root',
 })
@@ -40,7 +29,6 @@ export class ReportsService implements OnDestroy {
   serverTime: Date;
   private reportingGraphs$ = new BehaviorSubject<ReportingGraph[]>([]);
   private diskMetrics$ = new BehaviorSubject<Option[]>([]);
-  private reportsUtils: Worker;
   private hasUps = false;
   private hasDiskTemperature = false;
   private hasTarget = false;
@@ -52,8 +40,6 @@ export class ReportsService implements OnDestroy {
     private core: CoreService,
     private store$: Store<AppState>,
   ) {
-    this.reportsUtils = new Worker(new URL('./reports-utils.worker', import.meta.url), { type: 'module' });
-
     this.core
       .register({
         observerClass: this,
@@ -61,40 +47,34 @@ export class ReportsService implements OnDestroy {
       })
       .subscribe((evt: ReportDataRequestEvent) => {
         const chartId = (evt.sender as ReportComponent).chartId;
-        this.ws.call('reporting.netdata_get_data', [[evt.data.params], evt.data.timeFrame]).subscribe({
-          next: (reportingData) => {
-            const processedData = [...reportingData];
+        this.ws.call('reporting.netdata_get_data', [[evt.data.params], evt.data.timeFrame])
+          .pipe(
+            map((reportingData) => reportingData[0]),
+            map((reportingData) => {
+              if (evt.data.truncate) {
+                reportingData.data = this.truncateData(reportingData.data as number[][]);
+              }
 
-            const truncateTrailingNullValues = evt.data.truncate;
-            if (truncateTrailingNullValues) {
-              processedData[0].data = this.truncateData(reportingData[0].data as number[][]);
-            }
-
-            const commands = [
-              {
-                command: 'optimizeLegend',
-                input: processedData[0],
-              },
-              {
-                command: 'convertAggregations',
-                input: '|',
-                options: [evt.data.report.vertical_label || ''], // units
-              },
-            ];
-
-            this.reportsUtils.postMessage({ name: 'ProcessCommandsAsReportData', data: commands, sender: chartId });
-          },
-          error: (err: WebsocketError) => {
-            this.reportsUtils.postMessage({ name: 'FetchingError', data: err, sender: chartId });
-          },
-        });
+              return reportingData;
+            }),
+            map((reportingData) => optimizeLegend(reportingData)),
+            map((reportingData) => convertAggregations(reportingData, evt.data.report.vertical_label || '')),
+          )
+          .subscribe({
+            next: (reportingData) => {
+              this.core.emit({ name: 'ReportData', data: reportingData, sender: chartId });
+            },
+            error: (err: WebsocketError) => {
+              this.core.emit({ name: 'FetchingError', data: err, sender: chartId });
+            },
+          });
       });
-
-    this.reportsUtils.onmessage = ({ data }: { data: CoreEvent }) => {
-      if (data.name === 'ReportData') {
-        this.core.emit({ name: `ReportData-${String(data.sender)}`, data: data.data, sender: this });
-      }
-    };
+    this.core.register({
+      observerClass: this,
+      eventName: 'ReportData',
+    }).subscribe((event) => {
+      this.core.emit({ name: `ReportData-${String(event.sender)}`, data: event.data, sender: event.sender });
+    });
 
     this.ws.call('reporting.netdata_graphs').subscribe((reportingGraphs) => {
       this.hasUps = reportingGraphs.some((graph) => graph.name === ReportingGraphName.Ups);
@@ -126,7 +106,6 @@ export class ReportsService implements OnDestroy {
 
   ngOnDestroy(): void {
     this.core.unregister({ observerClass: this });
-    this.reportsUtils.terminate();
   }
 
   truncateData(data: number[][]): number[][] {

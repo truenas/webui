@@ -10,7 +10,6 @@ import { DatasetType } from 'app/enums/dataset.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
 import { DeleteDatasetDialogComponent } from 'app/pages/datasets/components/delete-dataset-dialog/delete-dataset-dialog.component';
@@ -92,15 +91,10 @@ export class DatasetDetailsCardComponent {
 
   promoteDataset(): void {
     this.ws.call('pool.dataset.promote', [this.dataset.id])
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: () => {
-          this.snackbar.success(this.translate.instant('Dataset promoted successfully.'));
-          this.datasetStore.datasetUpdated();
-        },
-        error: (error: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-        },
+      .pipe(this.errorHandler.catchError(), untilDestroyed(this))
+      .subscribe(() => {
+        this.snackbar.success(this.translate.instant('Dataset promoted successfully.'));
+        this.datasetStore.datasetUpdated();
       });
   }
 

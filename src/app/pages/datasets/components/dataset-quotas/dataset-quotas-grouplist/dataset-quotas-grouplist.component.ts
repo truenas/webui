@@ -11,7 +11,7 @@ import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
-import { filter, switchMap, tap } from 'rxjs/operators';
+import { filter, switchMap } from 'rxjs/operators';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -222,17 +222,16 @@ export class DatasetQuotasGrouplistComponent implements OnInit, OnDestroy {
     }).pipe(
       filter(Boolean),
       switchMap(() => {
-        this.loader.open();
-        return this.ws.call('pool.dataset.set_quota', [this.datasetId, this.getRemoveQuotaPayload(this.invalidQuotas)]);
+        return this.ws.call('pool.dataset.set_quota', [this.datasetId, this.getRemoveQuotaPayload(this.invalidQuotas)]).pipe(
+          this.loader.withLoader(),
+        );
       }),
       untilDestroyed(this),
     ).subscribe({
       next: () => {
-        this.loader.close();
         this.getGroupQuotas();
       },
       error: (error) => {
-        this.loader.close();
         this.handleError(error);
       },
     });
@@ -255,18 +254,15 @@ export class DatasetQuotasGrouplistComponent implements OnInit, OnDestroy {
   doDelete(row: DatasetQuota): void {
     this.confirmDelete(row).pipe(
       filter(Boolean),
-      tap(() => this.loader.open()),
-      switchMap(() => this.setQuota(row)),
+      switchMap(() => {
+        return this.setQuota(row).pipe(
+          this.loader.withLoader(),
+          this.errorHandler.catchError(),
+        );
+      }),
       untilDestroyed(this),
-    ).subscribe({
-      next: () => {
-        this.loader.close();
-        this.getGroupQuotas();
-      },
-      error: (error: WebsocketError) => {
-        this.loader.close();
-        this.dialogService.error(this.errorHandler.parseWsError(error));
-      },
+    ).subscribe(() => {
+      this.getGroupQuotas();
     });
   }
 

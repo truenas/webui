@@ -24,9 +24,6 @@ import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { TreeModule } from 'app/modules/ix-tree/tree.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
-import {
-  DownloadKeyDialogOldComponent,
-} from 'app/pages/storage/components/manager/download-key-old/download-key-dialog-old.component';
 import { AddVdevsComponent } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/add-vdevs.component';
 import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
 import { ConfigurationPreviewComponent } from 'app/pages/storage/modules/pool-manager/components/configuration-preview/configuration-preview.component';
@@ -125,7 +122,6 @@ import { DataWizardStepComponent } from './components/pool-manager-wizard/steps/
     DataWizardStepComponent,
     PoolWarningsComponent,
     DownloadKeyDialogComponent,
-    DownloadKeyDialogOldComponent,
     InspectVdevsDialogComponent,
     TopologyCategoryDescriptionPipe,
   ],

@@ -83,6 +83,7 @@ export class PermissionsCardComponent implements OnInit, OnChanges {
         },
         error: (error: WebsocketError) => {
           this.isLoading = false;
+          this.cdr.markForCheck();
           this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });

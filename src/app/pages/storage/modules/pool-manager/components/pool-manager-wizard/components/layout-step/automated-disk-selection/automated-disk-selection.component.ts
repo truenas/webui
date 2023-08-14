@@ -102,7 +102,7 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
 
   resetToDefaults(): void {
     this.form.reset({
-      layout: null,
+      layout: this.canChangeLayout ? null : this.limitLayouts[0],
       sizeAndType: [null, null],
       width: null,
       treatDiskSizeAsMinimum: false,
@@ -112,16 +112,18 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     if (
+      changes.inventory?.currentValue
+      && !_.isEqual(changes.inventory.currentValue, changes.inventory.previousValue)
+    ) {
+      this.updateLayoutOptionsFromLimitedLayouts(this.limitLayouts);
+      this.updateDiskSizeOptions();
+      return;
+    }
+    if (
       changes.limitLayouts?.currentValue
       && !_.isEqual(changes.limitLayouts.currentValue, changes.limitLayouts.previousValue)
     ) {
       this.updateLayoutOptionsFromLimitedLayouts(changes.limitLayouts.currentValue);
-    }
-    if (
-      changes.inventory?.currentValue
-      && !_.isEqual(changes.inventory.currentValue, changes.inventory.previousValue)
-    ) {
-      this.updateDiskSizeOptions();
     }
   }
 
@@ -232,7 +234,7 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
 
     const isValueNull = this.form.controls.layout.value === null;
     if (!isValueNull && !layoutOptions.some((option) => option.value === this.form.controls.layout.value)) {
-      this.form.controls.layout.setValue(null, { emitEvent: false });
+      this.form.controls.layout.setValue(this.canChangeLayout ? null : this.limitLayouts[0], { emitEvent: false });
     }
     this.store.getLayoutsForVdevType(this.type)
       .pipe(

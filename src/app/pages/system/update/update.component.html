@@ -105,17 +105,14 @@
         </tr>
       </tbody>
     </table>
-  </mat-card-content>
-</mat-card>
 
-<mat-card *ngIf="releaseNotes" class="p-0">
-  <mat-card-title>
-    <div class="mat-toolbar mat-card-toolbar">
-      <div class="mat-card-title-text">{{ 'Release Notes' | translate }}</div>
-    </div>
-  </mat-card-title>
-  <mat-card-content>
-    <a mat-button target="_blank" ixTest="check-release-notes" [href]="releaseNotes">
+    <a
+      *ngIf="releaseNotesUrl"
+      class="release-notes-link"
+      target="_blank"
+      ixTest="check-release-notes"
+      [href]="releaseNotesUrl"
+    >
       {{ 'Check Release Notes' | translate }}
     </a>
   </mat-card-content>

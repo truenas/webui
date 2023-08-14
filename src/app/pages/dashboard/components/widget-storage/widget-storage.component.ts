@@ -9,12 +9,12 @@ import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { countDisksTotal } from 'app/helpers/count-disks-total.helper';
-import { deepCloneState } from 'app/helpers/state-select.helper';
 import { Pool } from 'app/interfaces/pool.interface';
 import { isTopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
 import { VolumesData } from 'app/interfaces/volume-data.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { DashboardStorageStore } from 'app/pages/dashboard/store/dashboard-storage-store.service';
+import { deepCloneState } from 'app/pages/dashboard/utils/deep-clone-state.helper';
 
 interface ItemInfo {
   icon: StatusIcon;

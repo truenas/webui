@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable, of } from 'rxjs';
-import { LoadingState, toLoadingState } from 'app/helpers/to-loading-state.helper';
+import { LoadingState, toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { helptextSystemEmail } from 'app/helptext/system/email';
 import { MailConfig } from 'app/interfaces/mail-config.interface';
 import { EmailFormComponent } from 'app/pages/system/general-settings/email/email-form/email-form.component';

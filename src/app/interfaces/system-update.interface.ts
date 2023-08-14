@@ -5,10 +5,8 @@ export interface SystemUpdate {
   changes: SystemUpdateChange[];
   checksum: string;
   filename: string;
-  notes?: {
-    ReleaseNotes: string;
-  };
   notice: string;
+  release_notes_url: string;
   status: SystemUpdateStatus;
   version: string;
 }

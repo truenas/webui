@@ -5,6 +5,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 import { EmptyType } from 'app/enums/empty-type.enum';
+import { ApiCallMethod, ApiCallParams } from 'app/interfaces/api/api-call-directory.interface';
+import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AppTableConfirmDeleteDialog, TableComponent } from 'app/modules/entity/table/table.component';
@@ -30,7 +32,10 @@ export class TableService {
 
   // get table data source
   getData(table: TableComponent): void {
-    this.ws.call(table.tableConf.queryCall, table.tableConf.queryCallOption)
+    this.ws.call(
+      table.tableConf.queryCall,
+      table.tableConf.queryCallOption as ApiCallParams<ApiCallMethod>,
+    )
       .pipe(untilDestroyed(this))
       .subscribe((response: unknown[]) => {
         if (table.tableConf.dataSourceHelper) {
@@ -142,22 +147,23 @@ export class TableService {
     const params = table.tableConf.getDeleteCallParams ? table.tableConf.getDeleteCallParams(item, id) : [id];
 
     if (!table.tableConf.deleteCallIsJob) {
-      this.ws.call(table.tableConf.deleteCall, params).pipe(untilDestroyed(this)).subscribe({
-        next: () => {
-          this.getData(table);
-          if (table.tableConf.afterDelete) {
-            table.tableConf.afterDelete();
-          }
-        },
-        error: (error: WebsocketError) => {
-          this.dialog.error(this.errorHandler.parseWsError(error));
-          this.loader.close();
-          table.loaderOpen = false;
-        },
-      });
+      this.ws.call(table.tableConf.deleteCall as ApiCallMethod, params as ApiCallParams<ApiCallMethod>)
+        .pipe(untilDestroyed(this)).subscribe({
+          next: () => {
+            this.getData(table);
+            if (table.tableConf.afterDelete) {
+              table.tableConf.afterDelete();
+            }
+          },
+          error: (error: WebsocketError) => {
+            this.dialog.error(this.errorHandler.parseWsError(error));
+            this.loader.close();
+            table.loaderOpen = false;
+          },
+        });
     } else {
       this.dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: T('Deleting...') } });
-      this.dialogRef.componentInstance.setCall(table.tableConf.deleteCall, params);
+      this.dialogRef.componentInstance.setCall(table.tableConf.deleteCall as ApiJobMethod, params);
       this.dialogRef.componentInstance.submit();
       this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
         this.dialogRef.close(true);

@@ -58,8 +58,6 @@ export class DeleteDatasetDialogComponent implements OnInit {
   }
 
   onDelete(): void {
-    this.loader.open();
-
     this.deleteDataset().pipe(
       catchError((error: WebsocketError) => {
         if (error.reason.includes('Device busy')) {
@@ -68,8 +66,8 @@ export class DeleteDatasetDialogComponent implements OnInit {
 
         return throwError(() => error);
       }),
+      this.loader.withLoader(),
       tap(() => {
-        this.loader.close();
         this.dialogRef.close(true);
       }),
       catchError(this.handleDeleteError.bind(this)),
@@ -110,27 +108,23 @@ export class DeleteDatasetDialogComponent implements OnInit {
       message: error.reason,
       backtrace: error.stack,
     });
-    this.loader.close();
     this.dialogRef.close(true);
     return EMPTY;
   }
 
   private loadDatasetRelatedEntities(): void {
-    this.loader.open();
     combineLatest([
       this.ws.call('pool.dataset.attachments', [this.dataset.id]),
       this.ws.call('pool.dataset.processes', [this.dataset.id]),
-    ]).pipe(untilDestroyed(this))
+    ]).pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: ([attachments, processes]) => {
           this.attachments = attachments;
           this.setProcesses(processes);
 
           this.cdr.markForCheck();
-          this.loader.close();
         },
         error: (error: WebsocketError) => {
-          this.loader.close();
           this.dialogRef.close(false);
           this.dialog.error(this.errorHandler.parseWsError(error));
         },

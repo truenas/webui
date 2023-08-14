@@ -7,7 +7,8 @@ import {
   MockWebsocketCallResponse, MockWebsocketJobResponse,
   MockWebsocketResponseType,
 } from 'app/core/testing/interfaces/mock-websocket-responses.interface';
-import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface';
+import { ApiCallDirectory, ApiCallMethod } from 'app/interfaces/api/api-call-directory.interface';
+import { ApiJobDirectory, ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -50,7 +51,10 @@ export function mockWebsocket(
           if (mockResponse.type === MockWebsocketResponseType.Call) {
             mockWebsocketService.mockCall(mockResponse.method, mockResponse.response);
           } else if (mockResponse.type === MockWebsocketResponseType.Job) {
-            mockWebsocketService.mockJob(mockResponse.method, mockResponse.response);
+            mockWebsocketService.mockJob(
+              mockResponse.method,
+              mockResponse.response as Job<ApiJobDirectory[ApiJobMethod]['response']>,
+            );
           }
         });
         return mockWebsocketService;
@@ -68,9 +72,9 @@ export function mockWebsocket(
   ];
 }
 
-export function mockCall<M extends ApiMethod>(
+export function mockCall<M extends ApiCallMethod>(
   method: M,
-  response: ApiDirectory[M]['response'] = undefined,
+  response: ApiCallDirectory[M]['response'] = undefined,
 ): MockWebsocketCallResponse {
   return {
     response,
@@ -83,9 +87,9 @@ export function mockCall<M extends ApiMethod>(
  * Mocks immediate call() and job() responses and core.get_jobs when id is queried.
  * @see MockWebsocketService.mockJob()
  */
-export function mockJob<M extends ApiMethod>(
+export function mockJob<M extends ApiJobMethod>(
   method: M,
-  response: Job<ApiDirectory[M]['response']> = undefined,
+  response: Job<ApiJobDirectory[M]['response']> = undefined,
 ): MockWebsocketJobResponse {
   return {
     response,

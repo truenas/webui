@@ -27,9 +27,6 @@ export class ManageUnusedDiskDialogComponent implements OnInit {
     }, {
       label: this.translate.instant('Existing Pool'),
       value: AddToPoolType.Existing,
-    }, {
-      label: this.translate.instant('Existing Pool (Legacy)'),
-      value: AddToPoolType.ExistingLegacy,
     },
   ]);
 
@@ -47,15 +44,6 @@ export class ManageUnusedDiskDialogComponent implements OnInit {
       [
         this.validatorsService.validateOnCondition(
           (control: AbstractControl) => control.parent?.get('toPool').value === AddToPoolType.Existing,
-          Validators.required,
-        ),
-      ],
-    ],
-    poolLegacy: [
-      null as number,
-      [
-        this.validatorsService.validateOnCondition(
-          (control: AbstractControl) => control.parent?.get('toPool').value === AddToPoolType.ExistingLegacy,
           Validators.required,
         ),
       ],
@@ -94,17 +82,11 @@ export class ManageUnusedDiskDialogComponent implements OnInit {
     return this.form.controls.toPool.value === AddToPoolType.Existing;
   }
 
-  get isExistingLegacyMode(): boolean {
-    return this.form.controls.toPool.value === AddToPoolType.ExistingLegacy;
-  }
-
   ngOnInit(): void {
     this.form.controls.toPool.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
       if (value === AddToPoolType.New) {
         this.form.controls.pool.reset();
         this.form.controls.pool.setErrors(null);
-        this.form.controls.poolLegacy.reset();
-        this.form.controls.poolLegacy.setErrors(null);
       }
       this.cdr.detectChanges();
     });
@@ -113,11 +95,9 @@ export class ManageUnusedDiskDialogComponent implements OnInit {
   onSubmit(): void {
     this.dialogRef.close();
 
-    const { toPool, pool, poolLegacy } = this.form.value;
+    const { toPool, pool } = this.form.value;
     if (toPool === AddToPoolType.Existing) {
       this.router.navigate(['/storage', pool, 'add-vdevs']);
-    } else if (toPool === AddToPoolType.ExistingLegacy) {
-      this.router.navigate(['/storage', poolLegacy, 'add-vdevs-legacy']);
     } else {
       this.router.navigate(['/storage', 'create']);
     }

@@ -1,8 +1,8 @@
 # coding=utf-8
 """SCALE UI feature tests."""
 
+import reusableSeleniumCode as rsc
 import xpaths
-
 from function import (
     wait_on_element,
     is_element_present,
@@ -49,8 +49,7 @@ def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_passw
 @when('you see the dashboard click Network on the side menu')
 def you_see_the_dashboard_click_network_on_the_side_menu(driver):
     """you see the dashboard click Network on the side menu."""
-    assert wait_on_element(driver, 10, xpaths.dashboard.title)
-    assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
+    rsc.Verify_The_Dashboard(driver)
     assert wait_on_element(driver, 10, xpaths.side_Menu.network, 'clickable')
     driver.find_element_by_xpath(xpaths.side_Menu.network).click()
 
@@ -98,8 +97,10 @@ def please_wait_should_appear_changes_should_be_saved_without_errors_the_network
 @then('click the interface field, uncheck dhcp and click add and enter IP and click Apply.')
 def click_the_interface_field_uncheck_dhcp_and_click_add_and_enter_ip_and_click_apply(driver, nas_ip):
     """click the interface field, uncheck dhcp and click add and enter IP and click Apply.."""
-    assert wait_on_element(driver, 7, xpaths.network.interface, 'clickable')
-    driver.find_element_by_xpath(xpaths.network.interface).click()
+    assert wait_on_element(driver, 7, xpaths.network.interface_Card_Title)
+    assert wait_on_element(driver, 7, xpaths.network.interface_Row('enp0s8'))
+    assert wait_on_element(driver, 7, xpaths.network.interface_Edit_Button('enp-0-s-8'), 'clickable')
+    driver.find_element_by_xpath(xpaths.network.interface_Edit_Button('enp-0-s-8')).click()
     assert wait_on_element(driver, 7, xpaths.interface.title)
     assert wait_on_element(driver, 7, xpaths.interface.dhcp_Checkbox, 'clickable')
     if attribute_value_exist(driver, xpaths.interface.dhcp_Checkbox, 'class', 'mat-mdc-checkbox-checked'):
@@ -121,15 +122,15 @@ def please_wait_should_appear_while_settings_are_being_applied(driver):
     """"Please wait" should appear while settings are being applied."""
     assert wait_on_element_disappear(driver, 20, xpaths.progress.progressbar)
     assert wait_on_element(driver, 10, xpaths.network.title)
-    assert wait_on_element(driver, 7, xpaths.network.interface, 'clickable')
+    assert wait_on_element(driver, 7, xpaths.network.interface_Row('enp0s8'))
 
 
 @then('click Test Changes, check Confirm, click Test Changes again')
 def click_test_changes_check_confirm_click_test_changes_again(driver, nas_ip):
     """click Test Changes, check Confirm, click Test Changes again."""
-    assert wait_on_element(driver, 7, '//button[@data-test="button-test-changes"]', 'clickable')
-    driver.find_element_by_xpath('//button[@data-test="button-test-changes"]').click()
-    assert wait_on_element(driver, 10, '//h1[contains(.,"Test Changes")]')
+    assert wait_on_element(driver, 7, xpaths.network.test_Changes_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.network.test_Changes_Button).click()
+    assert wait_on_element(driver, 10, xpaths.network.test_Changes_Dialog_Title)
     assert wait_on_element(driver, 7, xpaths.checkbox.new_Confirm, 'clickable')
     driver.find_element_by_xpath(xpaths.checkbox.new_Confirm).click()
     assert wait_on_element(driver, 7, xpaths.button.Continue, 'clickable')
@@ -153,4 +154,4 @@ def the_changes_should_be_successfully_saved(driver):
     """the changes should be successfully saved."""
     assert wait_on_element(driver, 10, '//div[contains(.,"Network interface changes have been made permanent.")]')
     assert wait_on_element(driver, 10, xpaths.network.title)
-    assert wait_on_element(driver, 7, xpaths.network.interface, 'clickable')
+    assert wait_on_element(driver, 7, xpaths.network.interface_Row('enp0s8'))

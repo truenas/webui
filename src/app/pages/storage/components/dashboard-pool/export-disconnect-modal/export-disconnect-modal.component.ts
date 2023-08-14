@@ -222,24 +222,20 @@ export class ExportDisconnectModalComponent implements OnInit {
   }
 
   private loadRelatedEntities(): void {
-    this.loader.open();
-
     forkJoin([
       this.ws.call('pool.attachments', [this.pool.id]),
       this.ws.call('pool.processes', [this.pool.id]),
       this.ws.call('systemdataset.config'),
     ])
-      .pipe(untilDestroyed(this))
+      .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: ([attachments, processes, systemConfig]) => {
-          this.loader.close();
           this.attachments = attachments;
           this.processes = processes;
           this.systemConfig = systemConfig;
           this.prepareForm();
         },
         error: (error: WebsocketError) => {
-          this.loader.close();
           this.dialogService.error({
             title: helptext.exportError,
             message: error.reason,

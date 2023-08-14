@@ -148,7 +148,6 @@ export class PodLogsComponent implements OnInit {
 
     this.dialogService.closeAllDialogs();
 
-    this.loader.open();
     const fileName = `${chartReleaseName}_${podName}_${containerName}.log`;
     const mimetype = 'application/octet-stream';
     this.ws.call(
@@ -158,27 +157,24 @@ export class PodLogsComponent implements OnInit {
         [chartReleaseName, { pod_name: podName, container_name: containerName, tail_lines: tailLines }],
         fileName,
       ],
-    ).pipe(untilDestroyed(this)).subscribe({
-      next: (download) => {
-        this.loader.close();
-        const [, url] = download;
-        this.storageService.streamDownloadFile(url, fileName, mimetype)
-          .pipe(untilDestroyed(this))
-          .subscribe({
-            next: (file: Blob) => {
-              if (download !== null) {
-                this.storageService.downloadBlob(file, fileName);
-              }
-            },
-            error: (error: HttpErrorResponse) => {
-              this.dialogService.error(this.errorHandler.parseHttpError(error));
-            },
-          });
-      },
-      error: (error) => {
-        this.loader.close();
-        this.dialogService.error(this.errorHandler.parseWsError(error));
-      },
+    ).pipe(
+      this.loader.withLoader(),
+      this.errorHandler.catchError(),
+      untilDestroyed(this),
+    ).subscribe((download) => {
+      const [, url] = download;
+      this.storageService.streamDownloadFile(url, fileName, mimetype)
+        .pipe(untilDestroyed(this))
+        .subscribe({
+          next: (file: Blob) => {
+            if (download !== null) {
+              this.storageService.downloadBlob(file, fileName);
+            }
+          },
+          error: (error: HttpErrorResponse) => {
+            this.dialogService.error(this.errorHandler.parseHttpError(error));
+          },
+        });
     });
   }
 

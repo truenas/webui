@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDividerModule } from '@angular/material/divider';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
@@ -21,6 +22,7 @@ import { IxCellTextComponent } from 'app/modules/ix-table2/components/ix-table-b
 import { IxCellToggleComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
 import { IxCellYesNoComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table2/components/ix-table-body/ix-table-body.component';
+import { IxTableExpandableRowComponent } from 'app/modules/ix-table2/components/ix-table-expandable-row/ix-table-expandable-row.component';
 import { IxHeaderCellCheckboxComponent } from 'app/modules/ix-table2/components/ix-table-head/head-cells/ix-header-cell-checkbox/ix-header-cell-checkbox.component';
 import { IxHeaderCellTextComponent } from 'app/modules/ix-table2/components/ix-table-head/head-cells/ix-header-cell-text/ix-header-cell-text.component';
 import { IxTableHeadComponent } from 'app/modules/ix-table2/components/ix-table-head/ix-table-head.component';
@@ -50,6 +52,7 @@ import { IxTableColumnsSelectorComponent } from './components/ix-table-columns-s
     TestIdModule,
     CoreComponents,
     MatMenuModule,
+    MatDividerModule,
   ],
   declarations: [
     IxTable2Component,
@@ -74,6 +77,7 @@ import { IxTableColumnsSelectorComponent } from './components/ix-table-columns-s
     IxTable2EmptyRowComponent,
     IxTableColumnsSelectorComponent,
     IxTablePagerShowMoreComponent,
+    IxTableExpandableRowComponent,
   ],
   exports: [
     IxTable2Component,
@@ -98,6 +102,7 @@ import { IxTableColumnsSelectorComponent } from './components/ix-table-columns-s
     IxTable2EmptyRowComponent,
     IxTableColumnsSelectorComponent,
     IxTablePagerShowMoreComponent,
+    IxTableExpandableRowComponent,
   ],
 })
 export class IxTable2Module {}

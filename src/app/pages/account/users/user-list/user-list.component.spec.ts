@@ -8,7 +8,6 @@ import { User } from 'app/interfaces/user.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
-import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { usersInitialState, UsersState } from 'app/pages/account/users/store/user.reducer';
 import { selectUsers, selectUserState, selectUsersTotal } from 'app/pages/account/users/store/user.selectors';
 import { UserDetailsRowComponent } from 'app/pages/account/users/user-details-row/user-details-row.component';
@@ -71,7 +70,6 @@ describe('UserListComponent', () => {
     component: UserListComponent,
     imports: [
       EntityModule,
-      IxTableModule,
       CoreComponents,
       IxTable2Module,
     ],

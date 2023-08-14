@@ -15,7 +15,7 @@ import {
   BehaviorSubject, of, Subject, Subscription, timer,
 } from 'rxjs';
 import {
-  filter, map, take,
+  filter, map, take, tap,
 } from 'rxjs/operators';
 import { ixChartApp } from 'app/constants/catalog.constants';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
@@ -41,7 +41,7 @@ import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.com
 import { CustomUntypedFormField } from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
-import { forbiddenAsyncValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
+import { forbiddenAsyncValues, forbiddenValuesError } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
@@ -157,10 +157,9 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
   loadApplicationForCreation(): void {
     this.isNew = true;
     this.isLoading = true;
-    this.loader.open();
     this.appService
       .getCatalogItem(this.appId, this.catalog, this.train)
-      .pipe(untilDestroyed(this))
+      .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: (app) => {
           app.schema = app.versions[app.latest_version].schema;
@@ -294,10 +293,9 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
   private loadApplicationForEdit(): void {
     this.isNew = false;
     this.isLoading = true;
-    this.loader.open();
     this.appService
       .getChartRelease(this.appId)
-      .pipe(untilDestroyed(this))
+      .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: (releases) => {
           this.setChartForEdit(releases[0]);
@@ -378,6 +376,18 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
 
     if (this.catalogApp.name !== ixChartApp) {
       this.form.patchValue({ release_name: this.catalogApp.name });
+      this.forbiddenAppNames$.pipe(
+        map((forbiddenNames) => {
+          return forbiddenValuesError(forbiddenNames, false, this.form.controls.release_name);
+        }),
+        tap((errors) => {
+          this.form.controls.release_name.setErrors(errors);
+          this.form.controls.release_name.markAsDirty();
+          this.form.controls.release_name.markAsTouched();
+          this.cdr.markForCheck();
+        }),
+        untilDestroyed(this),
+      ).subscribe();
     }
   }
 
@@ -411,13 +421,11 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
   private afterAppLoaded(): void {
     this.appsLoaded = true;
     this.isLoading = false;
-    this.loader.close();
     this.checkIfPoolIsSet();
     this.cdr.markForCheck();
   }
 
   private afterAppLoadError(error: WebsocketError): void {
-    this.loader.close();
     this.router.navigate(['/apps', 'available']).then(() => {
       this.dialogService.error(this.errorHandler.parseWsError(error));
     });

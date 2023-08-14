@@ -12,7 +12,6 @@ import { helptextSystemCa } from 'app/helptext/system/ca';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { CertificateProfile, CertificateProfiles } from 'app/interfaces/certificate.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { SummaryProvider, SummarySection } from 'app/modules/common/summary/summary.interface';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -91,17 +90,12 @@ export class CsrIdentifierAndTypeComponent implements OnInit, SummaryProvider {
 
   private loadProfiles(): void {
     this.ws.call('certificate.profiles')
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: (profiles) => {
-          this.profiles = profiles;
-          const profileOptions = Object.keys(profiles).map((name) => ({ label: name, value: name }));
-          this.profileOptions$ = of(profileOptions);
-          this.cdr.markForCheck();
-        },
-        error: (error: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-        },
+      .pipe(this.errorHandler.catchError(), untilDestroyed(this))
+      .subscribe((profiles) => {
+        this.profiles = profiles;
+        const profileOptions = Object.keys(profiles).map((name) => ({ label: name, value: name }));
+        this.profileOptions$ = of(profileOptions);
+        this.cdr.markForCheck();
       });
   }
 

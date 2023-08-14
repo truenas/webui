@@ -211,14 +211,12 @@
                   <ng-template #actionButtons>
                     <button
                       mat-icon-button
+                      [matTooltip]="rowAction.matTooltip"
                       [ixTest]="['row-action', _tableConf.name, rowAction.name]"
                       [disabled]="rowAction.disabled || rowAction.disabledCondition?.(element)"
                       (click)="$event.stopPropagation(); rowAction.onClick(element)"
                     >
-                      <ix-icon
-                        [name]="rowAction.icon"
-                        [matTooltip]="rowAction.matTooltip"
-                      ></ix-icon>
+                      <ix-icon [name]="rowAction.icon"></ix-icon>
                     </button>
                   </ng-template>
                 </ng-container>
@@ -226,14 +224,12 @@
               <button
                 *ngIf="_tableConf.deleteCall"
                 mat-icon-button
+                [matTooltip]="'Delete' | translate"
                 [ixTest]="['table', _tableConf.name, 'delete']"
                 [disabled]="_tableConf.deleteActionDisabled"
                 (click)="$event.stopPropagation(); deleteRow(element)"
               >
-                <ix-icon
-                  name="delete"
-                  [matTooltip]="'Delete' | translate"
-                ></ix-icon>
+                <ix-icon name="delete"></ix-icon>
               </button>
             </div>
           </td>

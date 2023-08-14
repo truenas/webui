@@ -20,25 +20,23 @@
         fxLayoutAlign="space-between start"
         fxFlex="100"
       >
-        <mat-toolbar-row
-          fxHide.xs
-          class="view-overview"
-          [class.drag-handle]="showReorderHandle"
-        >
+        <ix-drag-handle [showReorderHandle]="showReorderHandle">
           <ng-content [select]="[cdkDragHandle]"></ng-content>
-          <span *ngIf="showReorderHandle" class="grip"></span>
-          <h3 fxHide.xs class="mat-card-title-text">
-            <span
-              class="card-title-text"
-              [class.drag-handle]="showReorderHandle"
-            >
-              <span>{{ 'System Information' | translate }}</span>
-              <span *ngIf="isPassive" class="passive">
-                {{ 'Standby' | translate }}
-              </span>
-            </span>
-          </h3>
-        </mat-toolbar-row>
+
+          <mat-toolbar-row fxHide.xs class="view-overview">
+            <span *ngIf="showReorderHandle" class="grip"></span>
+            <h3 fxHide.xs class="mat-card-title-text">
+              <ix-drag-handle [showReorderHandle]="showReorderHandle">
+                <span class="card-title-text">
+                  <span>{{ 'System Information' | translate }}</span>
+                  <span *ngIf="isPassive" class="passive">
+                    {{ 'Standby' | translate }}
+                  </span>
+                </span>
+              </ix-drag-handle>
+            </h3>
+          </mat-toolbar-row>
+        </ix-drag-handle>
 
         <div class="carousel">
           <div
@@ -273,7 +271,6 @@
           </div>
           <!-- end slide -->
         </div>
-        <!-- end carousel -->
       </mat-card-content>
     </mat-card>
   </div>

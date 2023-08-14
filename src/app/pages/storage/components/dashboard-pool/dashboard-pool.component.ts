@@ -4,16 +4,12 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { EMPTY } from 'rxjs';
-import {
-  catchError, filter, switchMap, tap,
-} from 'rxjs/operators';
+import { filter, switchMap, tap } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/storage/volumes/volume-list';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { StorageDashboardDisk } from 'app/interfaces/storage.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
@@ -73,22 +69,16 @@ export class DashboardPoolComponent {
       .pipe(
         filter(Boolean),
         switchMap(() => {
-          this.loader.open();
-          return this.ws.job('pool.expand', [this.pool.id]);
+          return this.ws.job('pool.expand', [this.pool.id]).pipe(this.loader.withLoader());
         }),
         filter((job) => job.state === JobState.Success),
         tap(() => {
-          this.loader.close();
           this.snackbar.success(
             this.translate.instant('Successfully expanded pool {name}.', { name: this.pool.name }),
           );
           this.store.loadDashboard();
         }),
-        catchError((error: WebsocketError) => {
-          this.loader.close();
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-          return EMPTY;
-        }),
+        this.errorHandler.catchError(),
         untilDestroyed(this),
       )
       .subscribe();
@@ -101,21 +91,15 @@ export class DashboardPoolComponent {
     }).pipe(
       filter(Boolean),
       switchMap(() => {
-        this.loader.open();
-        return this.ws.call('pool.upgrade', [this.pool.id]);
+        return this.ws.call('pool.upgrade', [this.pool.id]).pipe(this.loader.withLoader());
       }),
       tap(() => {
-        this.loader.close();
         this.snackbar.success(
           this.translate.instant('Pool {name} successfully upgraded.', { name: this.pool.name }),
         );
         this.store.loadDashboard();
       }),
-      catchError((error: WebsocketError) => {
-        this.loader.close();
-        this.dialogService.error(this.errorHandler.parseWsError(error));
-        return EMPTY;
-      }),
+      this.errorHandler.catchError(),
       untilDestroyed(this),
     ).subscribe();
   }

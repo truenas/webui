@@ -127,6 +127,12 @@ export type ReportingAggregationKeys = 'min' | 'mean' | 'max';
 
 export type ReportingAggregationValue = (string | number)[];
 
+export interface ReportingAggregations {
+  min: ReportingAggregationValue;
+  mean: ReportingAggregationValue;
+  max: ReportingAggregationValue;
+}
+
 export interface ReportingData {
   end: number;
   identifier: string;
@@ -134,8 +140,10 @@ export interface ReportingData {
   name: string;
   start: number;
   data: number[][] | WebsocketError;
-  aggregations: {
-    // TODO: Update this to be a proper type
-    [key in ReportingAggregationKeys]: ReportingAggregationValue;
-  };
+  aggregations: ReportingAggregations;
+}
+
+export enum ReportingDatabaseError {
+  FailedExport = 22,
+  InvalidTimestamp = 206,
 }

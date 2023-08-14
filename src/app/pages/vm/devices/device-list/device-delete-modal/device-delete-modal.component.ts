@@ -7,7 +7,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { VmDeviceType } from 'app/enums/vm.enum';
 import { VmDevice, VmDeviceDelete, VmDiskDevice } from 'app/interfaces/vm-device.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -90,7 +89,6 @@ export class DeviceDeleteModalComponent implements OnInit {
 
   onSubmit(): void {
     const value = this.form.value as VmDeviceDelete;
-    this.loader.open();
     this.ws.call('vm.device.delete', [
       this.data.row.id,
       {
@@ -99,16 +97,13 @@ export class DeviceDeleteModalComponent implements OnInit {
         force: value.force,
       },
     ])
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: () => {
-          this.dialogRef.close(true);
-          this.loader.close();
-        },
-        error: (error: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-          this.loader.close();
-        },
+      .pipe(
+        this.loader.withLoader(),
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        this.dialogRef.close(true);
       });
   }
 
