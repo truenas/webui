@@ -42,10 +42,6 @@ export class ExistingConfigurationPreviewComponent implements OnChanges {
   @Input() disks: Disk[];
   protected poolTopology: PoolManagerTopology;
 
-  getCategory(key: string): VdevType {
-    return key as VdevType;
-  }
-
   constructor(
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,

@@ -8,8 +8,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Observable, of } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { IscsiAuthMethod } from 'app/enums/iscsi.enum';
-import { choicesToOptions, tagArrayToOptions } from 'app/helpers/options.helper';
+import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { IscsiInterface, IscsiPortal } from 'app/interfaces/iscsi.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -76,7 +77,14 @@ export class PortalFormComponent implements OnInit {
       value: IscsiAuthMethod.ChapMutual,
     },
   ]);
-  readonly authgroupOptions$ = this.iscsiService.getAuth().pipe(tagArrayToOptions());
+  readonly authgroupOptions$ = this.iscsiService.getAuth().pipe(
+    map((auth) => {
+      return auth.map((item) => ({
+        label: String(item.tag),
+        value: item.tag,
+      }));
+    }),
+  );
   readonly listenOptions$ = this.iscsiService.getIpChoices().pipe(choicesToOptions());
 
   private ipAddressFromControls = [

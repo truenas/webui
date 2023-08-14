@@ -98,8 +98,6 @@ export interface UpdatePoolTopology {
   spares?: string[];
 }
 
-export type UpdatePoolTopologyGroup = keyof UpdatePoolTopology;
-
 export interface PoolAttachParams {
   target_vdev?: string;
   new_disk?: string;
