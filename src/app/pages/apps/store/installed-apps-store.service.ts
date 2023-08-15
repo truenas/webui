@@ -137,16 +137,16 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> {
           };
         });
 
-        const updateInstalledApps = (apps: AvailableApp[]): AvailableApp[] => apps.map((app) => {
+        const updateApps = (apps: AvailableApp[]): AvailableApp[] => apps.map((app) => {
           return app.name === chartReleases[0].id ? { ...app, installed: true } : app;
         });
 
         this.appsStore.patchState((state) => {
           return {
             ...state,
-            availableApps: updateInstalledApps(state.availableApps),
-            recommendedApps: updateInstalledApps(state.recommendedApps),
-            latestApps: updateInstalledApps(state.latestApps),
+            availableApps: updateApps(state.availableApps),
+            recommendedApps: updateApps(state.recommendedApps),
+            latestApps: updateApps(state.latestApps),
           };
         });
       }),
