@@ -136,27 +136,17 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> {
             }),
           };
         });
+
+        const updateInstalledApps = (apps: AvailableApp[]): AvailableApp[] => apps.map((app) => {
+          return app.name === chartReleases[0].id ? { ...app, installed: true } : app;
+        });
+
         this.appsStore.patchState((state) => {
           return {
             ...state,
-            availableApps: state.availableApps.map((app) => {
-              if (app.name === chartReleases[0].id) {
-                return { ...app, installed: true };
-              }
-              return app;
-            }),
-            recommendedApps: state.recommendedApps.map((app) => {
-              if (app.name === chartReleases[0].id) {
-                return { ...app, installed: true };
-              }
-              return app;
-            }),
-            latestApps: state.latestApps.map((app) => {
-              if (app.name === chartReleases[0].id) {
-                return { ...app, installed: true };
-              }
-              return app;
-            }),
+            availableApps: updateInstalledApps(state.availableApps),
+            recommendedApps: updateInstalledApps(state.recommendedApps),
+            latestApps: updateInstalledApps(state.latestApps),
           };
         });
       }),
