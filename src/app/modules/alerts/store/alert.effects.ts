@@ -18,6 +18,7 @@ import {
   alertReceivedWhenPanelIsOpen,
   alertAdded,
   alertsLoaded,
+  alertChanged,
 } from 'app/modules/alerts/store/alert.actions';
 import {
   AlertSlice, selectDismissedAlerts, selectIsAlertPanelOpen, selectUnreadAlerts,
@@ -51,18 +52,20 @@ export class AlertEffects {
         switchMap((event) => {
           return this.store$.select(selectIsAlertPanelOpen).pipe(
             switchMap((isAlertsPanelOpen) => {
-              if (
-                [IncomingApiMessageType.Added, IncomingApiMessageType.Changed].includes(event.msg) && isAlertsPanelOpen
-              ) {
-                return of(alertReceivedWhenPanelIsOpen());
+              switch (true) {
+                case [
+                  IncomingApiMessageType.Added, IncomingApiMessageType.Changed,
+                ].includes(event.msg) && isAlertsPanelOpen:
+                  return of(alertReceivedWhenPanelIsOpen());
+                case event.msg === IncomingApiMessageType.Added && !isAlertsPanelOpen:
+                  return of(alertAdded({ alert: event.fields }));
+                case event.msg === IncomingApiMessageType.Changed && !isAlertsPanelOpen:
+                  return of(alertChanged({ alert: event.fields }));
+                case event.msg === IncomingApiMessageType.Removed:
+                  return of(alertRemoved({ id: event.id.toString() }));
+                default:
+                  return EMPTY;
               }
-              if (event.msg === IncomingApiMessageType.Added && !isAlertsPanelOpen) {
-                return of(alertAdded({ alert: event.fields }));
-              }
-              if (event.msg === IncomingApiMessageType.Removed) {
-                return of(alertRemoved({ id: event.id.toString() }));
-              }
-              return EMPTY;
             }),
           );
         }),

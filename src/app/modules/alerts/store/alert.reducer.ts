@@ -4,6 +4,7 @@ import { AlertLevel } from 'app/enums/alert-level.enum';
 import { Alert } from 'app/interfaces/alert.interface';
 import {
   alertAdded,
+  alertChanged,
   alertPanelClosed,
   alertRemoved,
   alertsLoaded,
@@ -46,6 +47,10 @@ export const alertReducer = createReducer(
   on(alertsNotLoaded, (state, { error }) => ({ ...state, error, isLoading: true })),
 
   on(alertAdded, (state, { alert }) => adapter.addOne(alert, state)),
+  on(alertChanged, (state, { alert }) => adapter.updateOne({
+    id: alert.id,
+    changes: alert,
+  }, state)),
   on(alertRemoved, (state, { id }) => adapter.removeOne(id, state)),
 
   on(dismissAlertPressed, (state, { id }) => adapter.updateOne({
