@@ -170,6 +170,26 @@ describe('AlertsPanelComponent', () => {
     expect(alertPanel.unreadAlertComponents).toHaveLength(3);
   });
 
+  it('updates an alert when websocket alert.list subscription sends a "change" event', () => {
+    spectator.inject(Store).dispatch(adminUiInitialized());
+
+    const websocketMock = spectator.inject(MockWebsocketService);
+    websocketMock.emitSubscribeEvent({
+      msg: IncomingApiMessageType.Changed,
+      collection: 'alert.list',
+      fields: {
+        id: '1',
+        dismissed: true,
+        formatted: 'Unread 1',
+        datetime: { $date: 1641811015 },
+      } as Alert,
+    });
+    spectator.detectChanges();
+
+    expect(alertPanel.unreadAlertComponents).toHaveLength(1);
+    expect(alertPanel.dismissedAlertComponents).toHaveLength(3);
+  });
+
   it('calls alert.list when alerts panel is open', () => {
     spectator.inject(Store).dispatch(alertIndicatorPressed());
     expect(websocket.call).toHaveBeenCalledWith('alert.list');
