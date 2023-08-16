@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
+import { MatInputHarness } from '@angular/material/input/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   Spectator, createComponentFactory, createRoutingFactory, mockProvider,
@@ -26,7 +27,11 @@ import { AppDetailsHeaderComponent } from 'app/pages/apps/components/app-detail-
 import { AppDetailsSimilarComponent } from 'app/pages/apps/components/app-detail-view/app-details-similar/app-details-similar.component';
 import { AppHelmChartCardComponent } from 'app/pages/apps/components/app-detail-view/app-helm-chart-card/app-helm-chart-card.component';
 import { AppResourcesCardComponent } from 'app/pages/apps/components/app-detail-view/app-resources-card/app-resources-card.component';
+import { AppCardComponent } from 'app/pages/apps/components/available-apps/app-card/app-card.component';
+import { AvailableAppsHeaderComponent } from 'app/pages/apps/components/available-apps/available-apps-header/available-apps-header.component';
+import { AvailableAppsComponent } from 'app/pages/apps/components/available-apps/available-apps.component';
 import { ChartWizardComponent } from 'app/pages/apps/components/chart-wizard/chart-wizard.component';
+import { AppsFilterStore } from 'app/pages/apps/store/apps-filter-store.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
@@ -503,9 +508,66 @@ const appsResponse = [{
   name: 'webdav',
   catalog: 'TRUENAS',
   train: 'community',
-  app_readme: '<h1>WebDAV</h1>\n<p> When application is installed and is selected on at least 1 share\na container will be launched with <strong>root</strong> privileges. This is required in order to apply\nthe correct permissions to the <code>WebDAV</code> shares/directories.\nAfterward, the <code>WebDAV</code> container will run as a <strong>non</strong>-root user (Default: <code>666</code>).\n<code>Chown</code> will only apply if the parent directory does not match the configured user and group.</p>\n</blockquote>',
+  description: 'webdav',
+  app_readme: '<h1>WebDAV</h1>\n<p> When application ...</p>',
   last_update: { $date: 452 },
 }] as AvailableApp[];
+
+describe('Finding app', () => {
+  let spectator: Spectator<AvailableAppsComponent>;
+  let loader: HarnessLoader;
+  let searchInput: MatInputHarness;
+
+  const createComponent = createComponentFactory({
+    component: AvailableAppsComponent,
+    imports: [
+      IxFormsModule,
+      ReactiveFormsModule,
+      AppCatalogPipe,
+    ],
+    declarations: [
+      AvailableAppsHeaderComponent,
+      AppCardComponent,
+      AppCardLogoComponent,
+    ],
+    providers: [
+      KubernetesStore,
+      InstalledAppsStore,
+      mockWebsocket([]),
+      mockProvider(AppsStore, {
+        isLoading$: of(false),
+        availableApps$: of([]),
+        catalogs$: of([]),
+      }),
+      mockProvider(AppsFilterStore, {
+        isFilterApplied$: of(false),
+        filterValues$: of({}),
+        applySearchQuery: jest.fn(),
+        searchedApps$: of([{ apps: appsResponse }]),
+        searchQuery$: of('webdav'),
+      }),
+    ],
+  });
+
+  beforeEach(async () => {
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    searchInput = await loader.getHarness(MatInputHarness.with({ placeholder: 'Search' }));
+  });
+
+  it('find app', async () => {
+    await searchInput.setValue('webdav');
+    expect(spectator.inject(AppsFilterStore).applySearchQuery).toHaveBeenLastCalledWith('webdav');
+
+    expect(spectator.query('.section-title').textContent.trim()).toBe('Search Results for «webdav»');
+  });
+
+  it('redirect to details app when app card is pressed', () => {
+    const href = spectator.query('ix-app-card').getAttribute('ng-reflect-router-link').replace(/,/g, '/');
+    const appPath = '/apps/available/TRUENAS/community/webdav';
+    expect(appPath.startsWith(href)).toBeTruthy();
+  });
+});
 
 describe('Redirect to install app', () => {
   let spectator: Spectator<AppDetailViewComponent>;
