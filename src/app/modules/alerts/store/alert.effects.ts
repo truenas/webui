@@ -2,7 +2,9 @@ import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { EMPTY, forkJoin, of } from 'rxjs';
+import {
+  EMPTY, forkJoin, of,
+} from 'rxjs';
 import {
   catchError, map, mergeMap, pairwise, switchMap, withLatestFrom,
 } from 'rxjs/operators';
@@ -12,10 +14,10 @@ import {
   reopenAlertPressed,
   reopenAllAlertsPressed,
   alertRemoved,
-  alertsLoaded,
   alertsNotLoaded,
   alertReceivedWhenPanelIsOpen,
   alertAdded,
+  alertsLoaded,
 } from 'app/modules/alerts/store/alert.actions';
 import {
   AlertSlice, selectDismissedAlerts, selectIsAlertPanelOpen, selectUnreadAlerts,
@@ -45,7 +47,7 @@ export class AlertEffects {
   subscribeToUpdates$ = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized),
     withLatestFrom(this.store$.select(selectIsAlertPanelOpen).pipe(pairwise())),
-    switchMap(([, isAlertsPanelOpen]) => {
+    switchMap(([, [isAlertsPanelOpen]]) => {
       return this.ws.subscribe('alert.list').pipe(
         switchMap((event) => {
           if ([IncomingApiMessageType.Added, IncomingApiMessageType.Changed].includes(event.msg) && isAlertsPanelOpen) {
