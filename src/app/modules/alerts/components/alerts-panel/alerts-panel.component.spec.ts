@@ -2,8 +2,10 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { EffectsModule } from '@ngrx/effects';
 import { Store, StoreModule } from '@ngrx/store';
 import { MockComponent } from 'ng-mocks';
+import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AlertLevel } from 'app/enums/alert-level.enum';
+import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { Alert } from 'app/interfaces/alert.interface';
 import { AlertComponent } from 'app/modules/alerts/components/alert/alert.component';
 import { AlertsPanelComponent } from 'app/modules/alerts/components/alerts-panel/alerts-panel.component';
@@ -16,6 +18,7 @@ import { WebSocketService } from 'app/services/ws.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { haInfoReducer } from 'app/store/ha-info/ha-info.reducer';
 import { haInfoStateKey } from 'app/store/ha-info/ha-info.selectors';
+import { alertIndicatorPressed } from 'app/store/topbar/topbar.actions';
 
 const unreadAlerts = [
   {
@@ -146,5 +149,29 @@ describe('AlertsPanelComponent', () => {
 
     expect(alertPanel.unreadAlertComponents).toHaveLength(4);
     expect(alertPanel.dismissedAlertsSection).not.toExist();
+  });
+
+  it('adds an alert when websocket alert.list subscription sends an "add" event', () => {
+    spectator.inject(Store).dispatch(adminUiInitialized());
+
+    const websocketMock = spectator.inject(MockWebsocketService);
+    websocketMock.emitSubscribeEvent({
+      msg: IncomingApiMessageType.Added,
+      collection: 'alert.list',
+      fields: {
+        id: 'new',
+        dismissed: false,
+        formatted: 'New Alert',
+        datetime: { $date: 1641819015 },
+      } as Alert,
+    });
+    spectator.detectChanges();
+
+    expect(alertPanel.unreadAlertComponents).toHaveLength(3);
+  });
+
+  it('calls alert.list when alerts panel is open', () => {
+    spectator.inject(Store).dispatch(alertIndicatorPressed());
+    expect(websocket.call).toHaveBeenCalledWith('alert.list');
   });
 });

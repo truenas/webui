@@ -29,7 +29,7 @@ import { alertIndicatorPressed } from 'app/store/topbar/topbar.actions';
 @Injectable()
 export class AlertEffects {
   loadAlerts$ = createEffect(() => this.actions$.pipe(
-    ofType(adminUiInitialized, alertIndicatorPressed),
+    ofType(adminUiInitialized, alertIndicatorPressed, alertReceivedWhenPanelIsOpen),
     switchMap(() => {
       return this.ws.call('alert.list').pipe(
         map((alerts) => alertsLoaded({ alerts })),
@@ -46,20 +46,25 @@ export class AlertEffects {
 
   subscribeToUpdates$ = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized),
-    withLatestFrom(this.store$.select(selectIsAlertPanelOpen).pipe(pairwise())),
-    switchMap(([, [isAlertsPanelOpen]]) => {
+    switchMap(() => {
       return this.ws.subscribe('alert.list').pipe(
         switchMap((event) => {
-          if ([IncomingApiMessageType.Added, IncomingApiMessageType.Changed].includes(event.msg) && isAlertsPanelOpen) {
-            return of(alertReceivedWhenPanelIsOpen());
-          }
-          if (event.msg === IncomingApiMessageType.Added && !isAlertsPanelOpen) {
-            return of(alertAdded({ alert: event.fields }));
-          }
-          if (event.msg === IncomingApiMessageType.Removed) {
-            return of(alertRemoved({ id: event.id.toString() }));
-          }
-          return EMPTY;
+          return this.store$.select(selectIsAlertPanelOpen).pipe(
+            switchMap((isAlertsPanelOpen) => {
+              if (
+                [IncomingApiMessageType.Added, IncomingApiMessageType.Changed].includes(event.msg) && isAlertsPanelOpen
+              ) {
+                return of(alertReceivedWhenPanelIsOpen());
+              }
+              if (event.msg === IncomingApiMessageType.Added && !isAlertsPanelOpen) {
+                return of(alertAdded({ alert: event.fields }));
+              }
+              if (event.msg === IncomingApiMessageType.Removed) {
+                return of(alertRemoved({ id: event.id.toString() }));
+              }
+              return EMPTY;
+            }),
+          );
         }),
       );
     }),
