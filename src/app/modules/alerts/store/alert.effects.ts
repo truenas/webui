@@ -14,9 +14,12 @@ import {
   alertRemoved,
   alertsLoaded,
   alertsNotLoaded,
-  alertReceived,
+  alertReceivedWhenPanelIsOpen,
+  alertAdded,
 } from 'app/modules/alerts/store/alert.actions';
-import { AlertSlice, selectDismissedAlerts, selectUnreadAlerts } from 'app/modules/alerts/store/alert.selectors';
+import {
+  AlertSlice, selectDismissedAlerts, selectIsAlertPanelOpen, selectUnreadAlerts,
+} from 'app/modules/alerts/store/alert.selectors';
 import { WebSocketService } from 'app/services/ws.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { alertIndicatorPressed } from 'app/store/topbar/topbar.actions';
@@ -24,7 +27,7 @@ import { alertIndicatorPressed } from 'app/store/topbar/topbar.actions';
 @Injectable()
 export class AlertEffects {
   loadAlerts$ = createEffect(() => this.actions$.pipe(
-    ofType(adminUiInitialized, alertIndicatorPressed, alertReceived),
+    ofType(adminUiInitialized, alertIndicatorPressed),
     switchMap(() => {
       return this.ws.call('alert.list').pipe(
         map((alerts) => alertsLoaded({ alerts })),
@@ -41,18 +44,20 @@ export class AlertEffects {
 
   subscribeToUpdates$ = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized),
-    switchMap(() => {
+    withLatestFrom(this.store$.select(selectIsAlertPanelOpen).pipe(pairwise())),
+    switchMap(([, isAlertsPanelOpen]) => {
       return this.ws.subscribe('alert.list').pipe(
         switchMap((event) => {
-          switch (event.msg) {
-            case IncomingApiMessageType.Removed:
-              return of(alertRemoved({ id: event.id.toString() }));
-            case IncomingApiMessageType.Added:
-            case IncomingApiMessageType.Changed:
-              return of(alertReceived());
-            default:
-              return EMPTY;
+          if ([IncomingApiMessageType.Added, IncomingApiMessageType.Changed].includes(event.msg) && isAlertsPanelOpen) {
+            return of(alertReceivedWhenPanelIsOpen());
           }
+          if (event.msg === IncomingApiMessageType.Added && !isAlertsPanelOpen) {
+            return of(alertAdded({ alert: event.fields }));
+          }
+          if (event.msg === IncomingApiMessageType.Removed) {
+            return of(alertRemoved({ id: event.id.toString() }));
+          }
+          return EMPTY;
         }),
       );
     }),
