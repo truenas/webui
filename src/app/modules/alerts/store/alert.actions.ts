@@ -7,6 +7,7 @@ export const alertsLoaded = createAction('[Alerts API] Loaded', props<{ alerts: 
 export const alertsNotLoaded = createAction('[Alerts API] Not Loaded', props<{ error: string }>());
 
 export const alertAdded = createAction('[Alerts API] Alert Added', props<{ alert: Alert }>());
+export const alertChanged = createAction('[Alerts API] Alert Changed', props<{ alert: Alert }>());
 export const alertReceivedWhenPanelIsOpen = createAction('[Alerts API] Alert Received (when alerts panel is open)');
 export const alertRemoved = createAction('[Alerts API] Alert Removed', props<{ id: string }>());
 
