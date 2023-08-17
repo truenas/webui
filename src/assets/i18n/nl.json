@@ -2787,7 +2787,6 @@
   "Quotas set for {n, plural, one {# group} other {# groups}}": "Quota ingesteld voor {n, plural, one {# groep} other {# groepen}}",
   "Quotas set for {n, plural, one {# user} other {# users}}": "Quota ingesteld voor {n, plural, one {# gebruiker} other {# gebruikers}}",
   "Quotas updated": "Auota zijn geüpdatet",
-  "RAM": "RAM",
   "REAR": "ACHTERKANT",
   "REMOTE": "EXTERN",
   "REQUIRE": "EISEN",
