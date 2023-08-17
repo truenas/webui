@@ -1453,7 +1453,6 @@
   "Enable GMail OAuth authentication.": "启用GMail OAuth身份验证。",
   "Enable GPU support": "启用 GPU 支持",
   "Enable HTTPS Redirect": "启用 HTTPS 重定向",
-  "Enable Host Path Safety Checks": "启用主机路径 (Host Path) 安全检查",
   "Enable Hyper-V Enlightenments": "启用 Hyper-V Enlightenments",
   "Enable Integrated Loadbalancer": "启用集成负载均衡器",
   "Enable S.M.A.R.T.": "启用S.M.A.R.T.",
