@@ -232,7 +232,11 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
 
   timeZoomReset(): void {
     this.zoomLevelIndex = this.zoomLevelMax;
-    const rrdOptions = this.convertTimespan(this.currentZoomLevel, ReportStepDirection.Backward, this.currentEndDate);
+    const rrdOptions = this.convertTimespan(
+      this.currentZoomLevel,
+      ReportStepDirection.Backward,
+      (this.currentStartDate + this.currentEndDate) / 2,
+    );
     this.currentStartDate = rrdOptions.start;
     this.currentEndDate = rrdOptions.end;
 
@@ -246,7 +250,11 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
       return;
     }
     this.zoomLevelIndex += 1;
-    const rrdOptions = this.convertTimespan(this.currentZoomLevel, ReportStepDirection.Backward, this.currentEndDate);
+    const rrdOptions = this.convertTimespan(
+      this.currentZoomLevel,
+      ReportStepDirection.Backward,
+      (this.currentStartDate + this.currentEndDate) / 2,
+    );
     this.currentStartDate = rrdOptions.start;
     this.currentEndDate = rrdOptions.end;
 
@@ -260,7 +268,11 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
       return;
     }
     this.zoomLevelIndex -= 1;
-    const rrdOptions = this.convertTimespan(this.currentZoomLevel, ReportStepDirection.Backward, this.currentEndDate);
+    const rrdOptions = this.convertTimespan(
+      this.currentZoomLevel,
+      ReportStepDirection.Backward,
+      (this.currentStartDate + this.currentEndDate) / 2,
+    );
     this.currentStartDate = rrdOptions.start;
     this.currentEndDate = rrdOptions.end;
 
