@@ -340,7 +340,6 @@
   "Editing interface will result in default gateway being removed, which may result in TrueNAS being inaccessible. You can provide new default gateway now:": "",
   "Elements": "",
   "Empty": "",
-  "Enable Host Path Safety Checks": "",
   "Enable Hyper-V Enlightenments": "",
   "Enable Two Factor Authentication Globally": "",
   "Enable Two Factor Authentication for SSH": "",

@@ -1325,7 +1325,6 @@
   "Enable GMail OAuth authentication.": "Activer l’authentification GMail OAuth.",
   "Enable GPU support": "Activer le support des processeurs graphiques",
   "Enable HTTPS Redirect": "Activer la redirection HTTPS",
-  "Enable Host Path Safety Checks": "Activer les vérifications de sécurité du chemin d'accès hôte",
   "Enable Hyper-V Enlightenments": "Activer les enlightenments Hyper-V",
   "Enable Integrated Loadbalancer": "Activer l'équilibreur de charge interne",
   "Enable S.M.A.R.T.": "Activer S.M.A.A.R.T.",
