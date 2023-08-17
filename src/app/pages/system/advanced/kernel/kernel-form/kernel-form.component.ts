@@ -41,7 +41,7 @@ export class KernelFormComponent implements OnInit {
     private translate: TranslateService,
     private snackbar: SnackbarService,
     private store$: Store<AppState>,
-    @Inject(SLIDE_IN_DATA) private debugkernel: boolean = false,
+    @Inject(SLIDE_IN_DATA) private debugkernel = false,
   ) {}
 
   ngOnInit(): void {

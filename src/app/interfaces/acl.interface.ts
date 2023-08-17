@@ -145,7 +145,7 @@ export interface BaseAclTemplateByPath {
   comment: string;
 }
 
-export interface NfsAclTemplateByPath extends BaseAclTemplateByPath{
+export interface NfsAclTemplateByPath extends BaseAclTemplateByPath {
   acltype: AclType.Nfs4;
   acl: NfsAclItem[];
 }
