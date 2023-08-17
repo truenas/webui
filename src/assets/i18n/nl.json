@@ -77,6 +77,7 @@
   "Docker Registry Authentication": "",
   "Drive reserved for inserting into DATA pool VDEVs when an active drive has failed.": "",
   "Each disk stores data. A stripe requires at least one disk and has no data redundancy.": "",
+  "Enable Host Path Safety Checks": "",
   "Enable Two Factor Authentication Globally": "",
   "Enable Two Factor Authentication for SSH": "",
   "Enable to use thin provisioning where disk space for this volume is allocated <b>‘on demand’</b> as new writes are received. Use caution when enabling this feature, as writes can fail when the pool is low on space.": "",

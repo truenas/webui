@@ -1175,6 +1175,7 @@
   "Enable GMail OAuth authentication.": "",
   "Enable GPU support": "",
   "Enable HTTPS Redirect": "",
+  "Enable Host Path Safety Checks": "",
   "Enable Hyper-V Enlightenments": "",
   "Enable Integrated Loadbalancer": "",
   "Enable S.M.A.R.T.": "",
