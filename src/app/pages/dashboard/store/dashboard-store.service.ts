@@ -242,12 +242,15 @@ export class DashboardStore extends ComponentStore<DashboardState> {
   ): DashConfigItem[] {
     const updatedDashboardStateWithLatestPools = [
       ...dashboardState?.filter((widget) => widget.name !== WidgetName.Pool),
-      ...pools.map((pool) => ({
-        name: WidgetName.Pool,
-        identifier: `name,Pool:${pool.name}`,
-        rendered: dashboardState
-          .find((widget) => widget.identifier === `name,Pool:${pool.name}`)?.rendered || false,
-      })),
+      ...pools.map((pool) => {
+        const existingWidget = dashboardState.find((widget) => widget.identifier === `name,Pool:${pool.name}`);
+        return {
+          id: existingWidget?.id || pool.id,
+          name: WidgetName.Pool,
+          identifier: `name,Pool:${pool.name}`,
+          rendered: existingWidget?.rendered || false,
+        };
+      }),
     ] as DashConfigItem[];
 
     return updatedDashboardStateWithLatestPools?.filter((widget) => {
