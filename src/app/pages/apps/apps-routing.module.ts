@@ -8,6 +8,7 @@ import { ChartWizardComponent } from 'app/pages/apps/components/chart-wizard/cha
 import { InstalledAppsComponent } from 'app/pages/apps/components/installed-apps/installed-apps.component';
 import { PodLogsComponent } from 'app/pages/apps/components/installed-apps/pod-logs/pod-logs.component';
 import { PodShellComponent } from 'app/pages/apps/components/installed-apps/pod-shell/pod-shell.component';
+import { AppsNavigateAwayGuard } from 'app/pages/apps/guards/apps-navigate-away.guard';
 import { appNameResolver } from 'app/pages/apps/resolvers/app-name.resolver';
 import { AppDetailViewComponent } from './components/app-detail-view/app-detail-view.component';
 import { AppRouterOutletComponent } from './components/app-router-outlet/app-router-outlet.component';
@@ -15,6 +16,7 @@ import { AppRouterOutletComponent } from './components/app-router-outlet/app-rou
 const routes: Routes = [
   {
     path: '',
+    canDeactivate: [AppsNavigateAwayGuard],
     data: { breadcrumb: T('Applications') },
     children: [
       {
