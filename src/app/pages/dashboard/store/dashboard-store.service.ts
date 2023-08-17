@@ -240,7 +240,17 @@ export class DashboardStore extends ComponentStore<DashboardState> {
     pools: Pool[],
     nics: DashboardNetworkInterface[],
   ): DashConfigItem[] {
-    return dashboardState?.filter((widget) => {
+    const updatedDashboardStateWithLatestPools = [
+      ...dashboardState?.filter((widget) => widget.name !== WidgetName.Pool),
+      ...pools.map((pool) => ({
+        name: WidgetName.Pool,
+        identifier: `name,Pool:${pool.name}`,
+        rendered: dashboardState
+          .find((widget) => widget.identifier === `name,Pool:${pool.name}`)?.rendered || false,
+      })),
+    ] as DashConfigItem[];
+
+    return updatedDashboardStateWithLatestPools?.filter((widget) => {
       if ([WidgetName.Cpu, WidgetName.Memory].includes(widget.name)) {
         return true;
       }
