@@ -1,7 +1,7 @@
 <ng-container *ngFor="let row of dataProvider.currentPage$ | async">
   <tr
-    ixTest="row"
     class="row"
+    [ixTest]="getTestAttr(row)"
     [ngStyle]="{ cursor: detailsTemplate ? 'pointer' : 'auto' }"
     [hidden]="isLoading"
     (click)="onToggle(row)"
