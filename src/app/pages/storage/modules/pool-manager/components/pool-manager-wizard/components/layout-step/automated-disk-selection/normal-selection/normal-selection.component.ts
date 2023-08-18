@@ -1,15 +1,10 @@
 import {
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  OnInit,
-  Output,
+  ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, OnInit, Output,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { of } from 'rxjs';
+import { merge, of } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import { generateOptionsRange } from 'app/helpers/options.helper';
 import { Option, SelectOption } from 'app/interfaces/option.interface';
@@ -54,8 +49,9 @@ export class NormalSelectionComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
-    this.setControlRelations();
+    this.updateControlOptionsOnChanges();
     this.updateStoreOnChanges();
+    this.listenForResetEvents();
   }
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
@@ -64,13 +60,45 @@ export class NormalSelectionComponent implements OnInit, OnChanges {
     }
   }
 
+  get isSpareVdev(): boolean {
+    return this.type === VdevType.Spare;
+  }
+
   protected onDisksSelected(disks: UnusedDisk[]): void {
     this.selectedDisks = disks;
     this.updateWidthOptions();
+    this.updateDisabledStatuses();
   }
 
-  private setControlRelations(): void {
+  private listenForResetEvents(): void {
+    merge(
+      this.store.startOver$,
+      this.store.resetStep$.pipe(filter((vdevType) => vdevType === this.type)),
+    )
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.form.setValue({
+          width: null,
+          vdevsNumber: null,
+        });
+      });
+  }
 
+  private updateDisabledStatuses(): void {
+    const fields = ['width', 'vdevsNumber'] as const;
+    fields.forEach((field) => {
+      if (this.selectedDisks.length) {
+        this.form.controls[field].enable({ emitEvent: false });
+      } else {
+        this.form.controls[field].disable({ emitEvent: false });
+      }
+    });
+  }
+
+  private updateControlOptionsOnChanges(): void {
+    this.form.controls.width.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+      this.updateNumberOptions();
+    });
   }
 
   private updateStoreOnChanges(): void {
@@ -84,73 +112,26 @@ export class NormalSelectionComponent implements OnInit, OnChanges {
     });
   }
 
-  /**
-   * Dependency between selects as follows:
-   * size -> layout -> width -> number
-   */
-  private initControls(): void {
-    // this.form.controls.layout.valueChanges.pipe(
-    //   distinctUntilChanged(),
-    //   untilDestroyed(this),
-    // ).subscribe((layout) => {
-    //   if (this.isSizeSelected && !!layout) {
-    //     if (this.form.controls.width.disabled) {
-    //       this.form.controls.width.enable();
-    //     }
-    //     if (this.isWidthSelected && this.form.controls.vdevsNumber.disabled) {
-    //       this.form.controls.vdevsNumber.enable();
-    //     }
-    //   }
-    // });
-    //
-    // this.form.controls.sizeAndType.valueChanges.pipe(
-    //   distinctUntilChanged(),
-    //   untilDestroyed(this),
-    // ).subscribe((sizeAndType) => {
-    //   if (sizeAndType?.length && this.isLayoutSelected) {
-    //     if (this.form.controls.width.disabled) {
-    //       this.form.controls.width.enable();
-    //     }
-    //     if (this.isWidthSelected && this.form.controls.vdevsNumber.disabled) {
-    //       this.form.controls.vdevsNumber.enable();
-    //     }
-    //   }
-    // });
-    //
-    // this.form.controls.width.valueChanges.pipe(
-    //   distinctUntilChanged(),
-    //   untilDestroyed(this),
-    // ).subscribe((width) => {
-    //   if (this.isSizeSelected && this.isLayoutSelected && !!width && this.form.controls.vdevsNumber.disabled) {
-    //     this.form.controls.vdevsNumber.enable();
-    //   }
-    //   this.updateNumberOptions();
-    // });
-  }
-
   private updateWidthOptions(): void {
     const availableDisks = this.selectedDisks.length;
     if (!availableDisks) {
       return;
     }
     const minRequired = minDisksPerLayout[this.layout];
-    let widthOptions: Option[];
+    let nextOptions: Option[] = [];
 
     if (availableDisks && minRequired && availableDisks >= minRequired) {
-      widthOptions = generateOptionsRange(minRequired, availableDisks);
-    } else {
-      widthOptions = [];
+      nextOptions = generateOptionsRange(minRequired, availableDisks);
     }
 
-    this.widthOptions$ = of(widthOptions);
-    const isValueNull = this.form.controls.width.value === null;
+    this.widthOptions$ = of(nextOptions);
 
-    if (!isValueNull && !widthOptions.some((option) => option.value === this.form.controls.width.value)) {
+    if (!nextOptions.some((option) => option.value === this.form.controls.vdevsNumber.value)) {
       this.form.controls.width.setValue(null, { emitEvent: false });
     }
 
-    if (widthOptions.length === 1 && this.isStepActive) {
-      this.form.controls.width.setValue(+widthOptions[0].value, { emitEvent: false });
+    if (nextOptions.length === 1 && this.isStepActive) {
+      this.form.controls.width.setValue(+nextOptions[0].value, { emitEvent: false });
     }
 
     this.updateNumberOptions();
@@ -163,24 +144,21 @@ export class NormalSelectionComponent implements OnInit, OnChanges {
     }
 
     const width = this.form.controls.width.value;
-    let nextNumberOptions: SelectOption[];
+    let nextOptions: Option[] = [];
 
-    if (width && availableDisks) {
+    if (width) {
       const maxNumber = Math.floor(availableDisks / width);
-      nextNumberOptions = generateOptionsRange(1, maxNumber);
-    } else {
-      nextNumberOptions = [];
+      nextOptions = generateOptionsRange(1, maxNumber);
     }
 
-    this.numberOptions$ = of(nextNumberOptions);
-    const isValueNull = this.form.controls.vdevsNumber.value === null;
+    this.numberOptions$ = of(nextOptions);
 
-    if (!isValueNull && !nextNumberOptions.some((option) => option.value === this.form.controls.vdevsNumber.value)) {
+    if (!nextOptions.some((option) => option.value === this.form.controls.vdevsNumber.value)) {
       this.form.controls.vdevsNumber.setValue(null, { emitEvent: false });
     }
 
-    if (nextNumberOptions.length === 1 && this.isStepActive) {
-      this.form.controls.vdevsNumber.setValue(+nextNumberOptions[0].value, { emitEvent: false });
+    if (nextOptions.length === 1 && this.isStepActive) {
+      this.form.controls.vdevsNumber.setValue(+nextOptions[0].value, { emitEvent: false });
     }
   }
 }

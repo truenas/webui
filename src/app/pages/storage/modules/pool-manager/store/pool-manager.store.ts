@@ -39,7 +39,7 @@ export interface PoolManagerTopologyCategory {
   vdevs: UnusedDisk[][];
   hasCustomDiskSelection: boolean;
 
-  // TODO: Only used for data step when dRAID is selected.
+  // Only used for data step when dRAID is selected.
   draidDataDisks: number;
   draidSpareDisks: number;
 }
@@ -192,7 +192,8 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
       this.topology$,
       (inventory, topology) => {
         const disksUsedInCategory = topologyCategoryToDisks(topology[type]);
-        return [...inventory, ...disksUsedInCategory];
+        return [...inventory, ...disksUsedInCategory]
+          .sort((a, b) => a.identifier.localeCompare(b.identifier));
       },
     );
   }
@@ -235,6 +236,27 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
       this.ws.call('enclosure.query'),
     ]).pipe(
       tapResponse(([allDisks, enclosures]) => {
+        // TODO: Remove me
+        for (let i = 0; i < 10; i++) {
+          allDisks.push({
+            devname: 'pizza' + i,
+            size: Math.random() * 100 * GiB,
+            type: DiskType.Hdd,
+            identifier: 'pizza' + i,
+          } as UnusedDisk);
+        }
+        allDisks.push({
+          devname: 'x1',
+          size: 200 * GiB,
+          type: DiskType.Hdd,
+          identifier: 'x1',
+        } as UnusedDisk);
+        allDisks.push({
+          devname: 'x2',
+          size: 200 * GiB,
+          type: DiskType.Hdd,
+          identifier: 'x2',
+        } as UnusedDisk);
         this.patchState({
           isLoading: false,
           allDisks,
@@ -313,7 +335,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
         return;
       }
 
-      this.resetStep(VdevType.Spare);
+      this.resetTopologyCategory(VdevType.Spare);
     });
   }
 

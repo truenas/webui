@@ -87,4 +87,6 @@ export default {
   raidz1Tooltip: T('Uses one disk for parity while all other disks store data. RAIDZ1 requires at least three disks. RAIDZ is a traditional ZFS data protection scheme. \nChoose RAIDZ over dRAID when managing a smaller set of drives, where simplicity of setup and predictable disk usage are primary considerations.'),
   raidz2Tooltip: T('Uses two disks for parity while all other disks store data. RAIDZ2 requires at least four disks. RAIDZ is a traditional ZFS data protection scheme. \nChoose RAIDZ over dRAID when managing a smaller set of drives, where simplicity of setup and predictable disk usage are primary considerations.'),
   raidz3Tooltip: T('Uses three disks for parity while all other disks store data. RAIDZ3 requires at least five disks. RAIDZ is a traditional ZFS data protection scheme. \nChoose RAIDZ over dRAID when managing a smaller set of drives, where simplicity of setup and predictable disk usage are primary considerations.'),
+
+  dRaidChildrenExplanation: T('The number of children must at the minimum accomodate the total number of disks required for the previous configuration options including parity drives.'),
 };

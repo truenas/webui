@@ -1,4 +1,6 @@
-import { ComponentHarness, parallel } from '@angular/cdk/testing';
+import {
+  BaseHarnessFilters, ComponentHarness, HarnessPredicate, parallel,
+} from '@angular/cdk/testing';
 import { IxFormControlHarness } from 'app/modules/ix-forms/interfaces/ix-form-control-harness.interface';
 import {
   supportedFormControlSelectors,
@@ -12,6 +14,10 @@ import {
  */
 export class IxFormHarness extends ComponentHarness {
   static hostSelector = 'form';
+
+  static with(options: BaseHarnessFilters): HarnessPredicate<IxFormHarness> {
+    return new HarnessPredicate(IxFormHarness, options);
+  }
 
   getControlHarnesses = this.locatorForAll(...supportedFormControlSelectors);
 

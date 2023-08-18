@@ -7,7 +7,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import filesize from 'filesize';
 import _ from 'lodash';
-import { of } from 'rxjs';
+import { merge, of } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { VdevType } from 'app/enums/v-dev-type.enum';
@@ -27,7 +27,6 @@ import { getDiskTypeSizeMap } from 'app/pages/storage/modules/pool-manager/utils
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DiskSizeSelectsComponent implements OnInit, OnChanges {
-  // TODO: Too many things are being passed-in through multiple components. Extract to a service.
   @Input({ required: true }) type: VdevType;
   @Input({ required: true }) inventory: UnusedDisk[];
   @Input() isStepActive = false;
@@ -60,6 +59,7 @@ export class DiskSizeSelectsComponent implements OnInit, OnChanges {
     this.setControlRelations();
     this.updateStoreOnChanges();
     this.emitUpdatesOnChanges();
+    this.listenForResetEvents();
   }
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
@@ -69,6 +69,20 @@ export class DiskSizeSelectsComponent implements OnInit, OnChanges {
     ) {
       this.updateOptions();
     }
+  }
+
+  private listenForResetEvents(): void {
+    merge(
+      this.store.startOver$,
+      this.store.resetStep$.pipe(filter((vdevType) => vdevType === this.type)),
+    )
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.form.setValue({
+          sizeAndType: [null, null],
+          treatDiskSizeAsMinimum: false,
+        });
+      });
   }
 
   private setControlRelations(): void {
@@ -107,12 +121,16 @@ export class DiskSizeSelectsComponent implements OnInit, OnChanges {
         value: [Number(size), DiskType.Ssd],
       }));
 
-    const options = [...hddOptions, ...ssdOptions].sort((a, b) => a.value[0] - b.value[0]);
+    const nextOptions = [...hddOptions, ...ssdOptions].sort((a, b) => a.value[0] - b.value[0]);
 
-    this.diskSizeAndTypeOptions$ = of(options);
+    this.diskSizeAndTypeOptions$ = of(nextOptions);
 
-    if (options.length === 1 && this.isStepActive) {
-      this.form.controls.sizeAndType.setValue(options[0].value, { emitEvent: false });
+    if (!nextOptions.some((option) => option.value === this.form.controls.sizeAndType.value)) {
+      this.form.controls.sizeAndType.setValue(null, { emitEvent: false });
+    }
+
+    if (nextOptions.length === 1 && this.isStepActive) {
+      this.form.controls.sizeAndType.setValue(nextOptions[0].value);
     }
   }
 
@@ -124,6 +142,10 @@ export class DiskSizeSelectsComponent implements OnInit, OnChanges {
   }
 
   private getSuitableDisks(): UnusedDisk[] {
+    if (!this.selectedDiskSize) {
+      return [];
+    }
+
     if (!this.form.controls.treatDiskSizeAsMinimum.value) {
       return this.sizeDisksMap[this.selectedDiskType][this.selectedDiskSize];
     }

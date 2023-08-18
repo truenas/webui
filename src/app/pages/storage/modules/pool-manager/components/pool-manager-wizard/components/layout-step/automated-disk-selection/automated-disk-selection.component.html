@@ -8,10 +8,6 @@
   ></ix-select>
 </div>
 
-<p *ngIf="isLayoutSelected" class="required-disks-hint">
-  {{ minDisksMessage }}
-</p>
-
 <ix-draid-selection
   *ngIf="usesDraidLayout; else normalSelection"
   [layout]="layoutControl.value | cast"

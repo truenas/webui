@@ -72,6 +72,8 @@ describe('vdevCapacity', () => {
       vdev,
       layout: CreateVdevLayout.Draid1,
       swapOnDrive: 2 * GiB,
+      draidDataDisks: 2,
+      draidSpareDisks: 1,
     })).toBe(4 * GiB);
   });
 
@@ -80,6 +82,8 @@ describe('vdevCapacity', () => {
       vdev,
       layout: CreateVdevLayout.Draid2,
       swapOnDrive: 2 * GiB,
+      draidDataDisks: 2,
+      draidSpareDisks: 1,
     })).toBe(3 * GiB);
   });
 
@@ -88,6 +92,8 @@ describe('vdevCapacity', () => {
       vdev,
       layout: CreateVdevLayout.Draid3,
       swapOnDrive: 2 * GiB,
+      draidDataDisks: 2,
+      draidSpareDisks: 1,
     })).toBe(2 * GiB);
   });
 });
