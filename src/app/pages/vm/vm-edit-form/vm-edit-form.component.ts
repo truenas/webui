@@ -9,7 +9,8 @@ import { MiB } from 'app/constants/bytes.constant';
 import {
   VmBootloader, VmCpuMode, VmDeviceType, VmTime, vmTimeNames,
 } from 'app/enums/vm.enum';
-import { choicesToOptions, mapToOptions } from 'app/helpers/options.helper';
+import { choicesToOptions } from 'app/helpers/operators/options.operators';
+import { mapToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { VirtualMachine, VirtualMachineUpdate } from 'app/interfaces/virtual-machine.interface';
 import { VmPciPassthroughDevice } from 'app/interfaces/vm-device.interface';

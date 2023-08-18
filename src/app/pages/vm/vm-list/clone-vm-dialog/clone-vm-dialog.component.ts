@@ -6,7 +6,6 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { VirtualMachine, VmCloneParams } from 'app/interfaces/virtual-machine.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -25,7 +24,6 @@ export class CloneVmDialogComponent {
     private loader: AppLoaderService,
     @Inject(MAT_DIALOG_DATA) public vm: VirtualMachine,
     private dialogRef: MatDialogRef<CloneVmDialogComponent>,
-    private dialogService: DialogService,
   ) { }
 
   onClone(): void {

@@ -7,7 +7,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { IscsiExtentType } from 'app/enums/iscsi.enum';
 import { IscsiExtent } from 'app/interfaces/iscsi.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -30,7 +29,6 @@ export class DeleteExtentDialogComponent {
     private formBuilder: FormBuilder,
     @Inject(MAT_DIALOG_DATA) public extent: IscsiExtent,
     private dialogRef: MatDialogRef<DeleteExtentDialogComponent>,
-    private dialogService: DialogService,
   ) { }
 
   get isFile(): boolean {

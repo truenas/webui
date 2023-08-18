@@ -7,7 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { map, of } from 'rxjs';
 import { SshSftpLogFacility, SshSftpLogLevel, SshWeakCipher } from 'app/enums/ssh.enum';
-import { choicesToOptions } from 'app/helpers/options.helper';
+import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import helptext from 'app/helptext/services/components/service-ssh';
 import { SshConfigUpdate } from 'app/interfaces/ssh-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';

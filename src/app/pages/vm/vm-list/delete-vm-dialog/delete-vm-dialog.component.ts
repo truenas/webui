@@ -9,7 +9,6 @@ import helptext from 'app/helptext/vm/vm-list';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { VirtualMachineRow } from 'app/pages/vm/vm-list/virtual-machine-row.interface';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -36,7 +35,6 @@ export class DeleteVmDialogComponent implements OnInit {
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
     private loader: AppLoaderService,
-    private dialogService: DialogService,
     @Inject(MAT_DIALOG_DATA) public vm: VirtualMachineRow,
   ) { }
 

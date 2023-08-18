@@ -9,7 +9,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { SshConnectionsSetupMethod } from 'app/enums/ssh-connections-setup-method.enum';
-import { idNameArrayToOptions } from 'app/helpers/options.helper';
+import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
 import helptext from 'app/helptext/system/ssh-connections';
 import {
   KeychainCredentialUpdate,

@@ -9,7 +9,7 @@ import {
   filter, switchMap, tap, catchError,
 } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
-import { tapOnce } from 'app/helpers/tap-once.operator';
+import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import helptext_cloudsync from 'app/helptext/data-protection/cloudsync/cloudsync-form';
 import helptext from 'app/helptext/data-protection/data-protection-dashboard/data-protection-dashboard';
 import helptext_smart from 'app/helptext/data-protection/smart/smart';

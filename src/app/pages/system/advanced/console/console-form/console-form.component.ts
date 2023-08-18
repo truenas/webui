@@ -6,7 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { of, Subscription } from 'rxjs';
-import { choicesToOptions } from 'app/helpers/options.helper';
+import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSystemAdvanced as helptext } from 'app/helptext/system/advanced';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';

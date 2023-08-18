@@ -7,7 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { UpsMode } from 'app/enums/ups-mode.enum';
-import { choicesToOptions, singleArrayToOptions } from 'app/helpers/options.helper';
+import { choicesToOptions, singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import helptext from 'app/helptext/services/components/service-ups';
 import { UpsConfigUpdate } from 'app/interfaces/ups-config.interface';
 import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
