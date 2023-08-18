@@ -28,6 +28,7 @@ import { StorageService } from 'app/services/storage.service';
 @UntilDestroy()
 @Component({
   templateUrl: './backup-credentials.component.html',
+  styleUrls: ['./backup-credentials.component.scss'],
   providers: [KeychainCredentialService, ReplicationService, CloudCredentialService],
 })
 export class BackupCredentialsComponent implements OnInit {
