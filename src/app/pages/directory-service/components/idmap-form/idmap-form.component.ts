@@ -11,7 +11,7 @@ import { filter, switchMap } from 'rxjs/operators';
 import {
   IdmapBackend, IdmapLinkedService, IdmapName, IdmapSchemaMode, IdmapSslEncryptionMode,
 } from 'app/enums/idmap.enum';
-import { idNameArrayToOptions } from 'app/helpers/options.helper';
+import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
 import helptext from 'app/helptext/directory-service/idmap';
 import { IdmapBackendOption, IdmapBackendOptions } from 'app/interfaces/idmap-backend-options.interface';
 import { Idmap, IdmapUpdate } from 'app/interfaces/idmap.interface';

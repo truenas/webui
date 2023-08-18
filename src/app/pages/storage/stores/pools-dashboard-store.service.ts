@@ -15,7 +15,6 @@ import { Disk, DiskTemperatureAgg, StorageDashboardDisk } from 'app/interfaces/s
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 export interface PoolsDashboardState {
@@ -51,7 +50,6 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
     private errorHandler: ErrorHandlerService,
     private ws: WebSocketService,
     private dialogService: DialogService,
-    private sorter: StorageService,
   ) {
     super(initialState);
   }

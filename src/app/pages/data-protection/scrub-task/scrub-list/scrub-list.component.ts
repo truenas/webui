@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { ScrubTaskUi } from 'app/interfaces/scrub-task.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
@@ -12,7 +11,6 @@ import {
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { TaskService } from 'app/services/task.service';
 import { UserService } from 'app/services/user.service';
-import { AppState } from 'app/store';
 
 @UntilDestroy()
 @Component({
@@ -59,7 +57,6 @@ export class ScrubListComponent implements EntityTableConfig {
     protected taskService: TaskService,
     protected slideInService: IxSlideInService,
     protected translate: TranslateService,
-    private store$: Store<AppState>,
   ) {}
 
   afterInit(entityList: EntityTableComponent): void {

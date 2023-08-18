@@ -58,19 +58,17 @@ export class TokenLifetimeService {
       this.actionWaitTimeout = setTimeout(() => {
         this.stop();
         const showConfirmTime = 30000;
+
         this.terminateCancelTimeout = setTimeout(() => {
-          this.authService.logout().pipe(untilDestroyed(this)).subscribe({
-            next: () => {
-              this.authService.clearAuthToken();
-              this.router.navigate(['/sessions/signin']);
-              this.dialogService.closeAllDialogs();
-              this.snackbar.open(
-                this.translate.instant('Token expired'),
-                this.translate.instant('Close'),
-                { duration: 4000, verticalPosition: 'bottom' },
-              );
-            },
-          });
+          this.authService.clearAuthToken();
+          this.router.navigate(['/sessions/signin']);
+          this.dialogService.closeAllDialogs();
+          this.snackbar.open(
+            this.translate.instant('Token expired'),
+            this.translate.instant('Close'),
+            { duration: 4000, verticalPosition: 'bottom' },
+          );
+          this.authService.logout().pipe(untilDestroyed(this)).subscribe();
         }, showConfirmTime);
         this.dialogService.confirm({
           title: this.translate.instant('Logout'),

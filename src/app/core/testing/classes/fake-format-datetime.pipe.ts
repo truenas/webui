@@ -5,5 +5,7 @@ import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export const FakeFormatDateTimePipe = MockPipe(
   FormatDateTimePipe,
-  jest.fn((date) => format(date, 'yyyy-MM-dd HH:mm:ss')),
+  jest.fn((date) => {
+    return format(typeof date === 'string' ? Date.parse(date) : date, 'yyyy-MM-dd HH:mm:ss');
+  }),
 );

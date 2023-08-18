@@ -10,7 +10,7 @@ import {
   catchError, filter, map, switchMap, tap,
 } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
-import { choicesToOptions } from 'app/helpers/options.helper';
+import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import helptext from 'app/helptext/apps/apps';
 import { KubernetesConfig, KubernetesConfigUpdate } from 'app/interfaces/kubernetes-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -40,7 +40,6 @@ export class KubernetesSettingsComponent implements OnInit {
     enable_container_image_update: [true],
     configure_gpus: [true],
     servicelb: [true],
-    validate_host_path: [true],
     cluster_cidr: ['', Validators.required],
     service_cidr: ['', Validators.required],
     cluster_dns_ip: ['', Validators.required],
@@ -118,7 +117,6 @@ export class KubernetesSettingsComponent implements OnInit {
         });
 
         this.oldConfig = kubernetesConfig;
-        this.setHostPathCheckWarning();
         this.isFormLoading = false;
         this.cdr.markForCheck();
       },
@@ -127,25 +125,6 @@ export class KubernetesSettingsComponent implements OnInit {
         this.cdr.markForCheck();
         this.dialogService.error(this.errorHandler.parseWsError(error));
       },
-    });
-  }
-
-  private setHostPathCheckWarning(): void {
-    this.form.controls.validate_host_path.valueChanges.pipe(
-      filter((value) => !value),
-      switchMap(() => {
-        return this.dialogService.confirm({
-          title: helptext.kubForm.validateHostPath.title,
-          message: helptext.kubForm.validateHostPath.warning,
-        });
-      }),
-      untilDestroyed(this),
-    ).subscribe((confirmed) => {
-      if (confirmed) {
-        return;
-      }
-
-      this.form.patchValue({ validate_host_path: true });
     });
   }
 

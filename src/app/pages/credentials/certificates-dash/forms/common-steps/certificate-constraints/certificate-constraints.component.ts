@@ -7,7 +7,8 @@ import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import { of } from 'rxjs';
 import { ExtendedKeyUsageFlag } from 'app/enums/extended-key-usage-flag.enum';
-import { choicesToOptions, findLabelsByValue } from 'app/helpers/options.helper';
+import { choicesToOptions } from 'app/helpers/operators/options.operators';
+import { findLabelsByValue } from 'app/helpers/options.helper';
 import { translateOptions } from 'app/helpers/translate.helper';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import {
