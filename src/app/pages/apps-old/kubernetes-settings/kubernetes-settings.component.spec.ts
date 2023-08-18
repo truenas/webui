@@ -41,7 +41,7 @@ describe('KubernetesSettingsComponent', () => {
           cluster_cidr: '172.16.0.0/16',
           service_cidr: '172.17.0.0/16',
           cluster_dns_ip: '172.17.0.1',
-        } as KubernetesConfig),
+        } as unknown as KubernetesConfig),
         mockJob('kubernetes.update'),
       ]),
       mockProvider(ApplicationsService, {

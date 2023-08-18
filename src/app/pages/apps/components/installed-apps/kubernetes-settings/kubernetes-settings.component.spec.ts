@@ -37,7 +37,6 @@ describe('KubernetesSettingsComponent', () => {
           route_v4_gateway: '10.123.45.1',
           configure_gpus: true,
           servicelb: true,
-          validate_host_path: true,
           cluster_cidr: '172.16.0.0/16',
           service_cidr: '172.17.0.0/16',
           cluster_dns_ip: '172.17.0.1',
@@ -85,7 +84,6 @@ describe('KubernetesSettingsComponent', () => {
       'Enable Container Image Updates': true,
       'Enable GPU support': true,
       'Enable Integrated Loadbalancer': true,
-      'Enable Host Path Safety Checks': true,
       'Cluster CIDR': '172.16.0.0/16',
       'Service CIDR': '172.17.0.0/16',
       'Cluster DNS IP': '172.17.0.1',
@@ -115,7 +113,6 @@ describe('KubernetesSettingsComponent', () => {
       route_v4_gateway: '10.123.45.13',
       configure_gpus: false,
       servicelb: false,
-      validate_host_path: true,
       cluster_cidr: '172.16.0.0/16',
       service_cidr: '172.17.0.0/16',
       cluster_dns_ip: '172.17.0.1',
@@ -150,18 +147,7 @@ describe('KubernetesSettingsComponent', () => {
       service_cidr: '172.17.1.0/16',
       cluster_dns_ip: '172.17.1.1',
       servicelb: true,
-      validate_host_path: true,
       force: false,
     }]);
-  });
-
-  it('shows warning when Enable Host Path Safety Checks is disabled', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({ 'Enable Host Path Safety Checks': false });
-
-    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
-      title: helptext.kubForm.validateHostPath.title,
-      message: helptext.kubForm.validateHostPath.warning,
-    });
   });
 });
