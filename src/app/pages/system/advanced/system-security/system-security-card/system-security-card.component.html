@@ -17,7 +17,7 @@
   <mat-card-content>
     <mat-list>
       <mat-list-item>
-        <span class="label">{{ 'Enable fips' | translate }}:</span>
+        <span class="label">{{ 'Enable FIPS' | translate }}:</span>
         <span *ixWithLoadingState="systemSecurityConfig$ as systemSecurityConfig" class="value">
           {{ systemSecurityConfig?.enable_fips ? ('Yes' | translate) : ('No' | translate) }}
         </span>

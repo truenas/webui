@@ -68,7 +68,7 @@ describe('SystemSecurityFormComponent', () => {
 
     it('saves SMTP config when form is filled and Save is pressed', async () => {
       await form.fillForm({
-        'Enable fips': true,
+        'Enable FIPS': true,
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -86,7 +86,7 @@ describe('SystemSecurityFormComponent', () => {
       const values = await form.getValues();
 
       expect(values).toEqual({
-        'Enable fips': false,
+        'Enable FIPS': false,
       });
     });
   });

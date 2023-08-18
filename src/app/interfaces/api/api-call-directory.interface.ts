@@ -749,6 +749,7 @@ export interface ApiCallDirectory {
   'system.set_time': { params: [number]; response: void };
   'system.security.config': { params: void; response: SystemSecurityConfig };
   'system.security.update': { params: [SystemSecurityConfig]; response: void };
+  'system.license': { params: void; response: null | object };
 
   // Replication
   'replication.config.config': { params: void; response: ReplicationConfig };

@@ -39,7 +39,7 @@ describe('SystemSecurityCardComponent', () => {
     const itemTexts = await parallel(() => items.map((item) => item.getFullText()));
 
     expect(itemTexts).toEqual([
-      'Enable fips: No',
+      'Enable FIPS: No',
     ]);
   });
 
