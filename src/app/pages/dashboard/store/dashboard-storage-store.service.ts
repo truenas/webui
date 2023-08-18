@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import _ from 'lodash';
 import {
@@ -24,6 +25,7 @@ const initialState: DashboardStorageState = {
   volumesData: {},
 };
 
+@UntilDestroy()
 @Injectable()
 export class DashboardStorageStore extends ComponentStore<DashboardStorageState> {
   readonly pools$ = this.select((state) => state.pools);
@@ -48,8 +50,10 @@ export class DashboardStorageStore extends ComponentStore<DashboardStorageState>
         ...state,
         isLoading: false,
       }))),
-      switchMap(() => this.listenForScanUpdates()),
-      switchMap(() => this.listenToPoolUpdates()),
+      tap(() => {
+        this.listenForScanUpdates().pipe(untilDestroyed(this)).subscribe();
+        this.listenToPoolUpdates().pipe(untilDestroyed(this)).subscribe();
+      }),
     );
   });
 
