@@ -10,7 +10,7 @@ import {
   BehaviorSubject,
   debounceTime, distinctUntilChanged, filter, map, Observable, of, take, tap,
 } from 'rxjs';
-import { singleArrayToOptions } from 'app/helpers/options.helper';
+import { singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import helptext from 'app/helptext/apps/apps';
 import { AppsFiltersSort } from 'app/interfaces/apps-filters-values.interface';
 import { Option } from 'app/interfaces/option.interface';

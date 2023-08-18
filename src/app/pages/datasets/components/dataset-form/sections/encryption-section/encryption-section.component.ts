@@ -8,7 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { of, switchMap } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
 import { DatasetEncryptionType } from 'app/enums/dataset.enum';
-import { choicesToOptions } from 'app/helpers/options.helper';
+import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
 import { matchOtherValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';

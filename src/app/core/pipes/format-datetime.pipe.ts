@@ -63,12 +63,15 @@ export class FormatDateTimePipe implements PipeTransform {
     });
   }
 
-  transform(value: Date | number, timezone?: string, dateFormat?: string, timeFormat?: string): string {
+  transform(value: Date | number | string, timezone?: string, dateFormat?: string, timeFormat?: string): string {
     if (dateFormat) {
       this.dateFormat = dateFormat;
     }
     if (timeFormat) {
       this.timeFormat = timeFormat;
+    }
+    if (typeof value === 'string') {
+      return this.formatDateTime(Date.parse(value), timezone);
     }
 
     return this.formatDateTime(value, timezone);

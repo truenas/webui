@@ -11,7 +11,7 @@ import {
   Observable, combineLatest, of, merge,
 } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { singleArrayToOptions } from 'app/helpers/options.helper';
+import { singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import helptext from 'app/helptext/storage/snapshots/snapshots';
 import { Option } from 'app/interfaces/option.interface';
 import { CreateZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';

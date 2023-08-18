@@ -2,7 +2,6 @@ import {
   Component,
   Input,
   ViewChild,
-  OnDestroy,
   OnChanges,
   OnInit, Inject,
 } from '@angular/core';
@@ -18,11 +17,9 @@ import {
   delay, distinctUntilChanged, filter, switchMap, throttleTime,
 } from 'rxjs/operators';
 import { toggleMenuDuration } from 'app/constants/toggle-menu-duration';
-import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { ReportingGraphName } from 'app/enums/reporting.enum';
 import { WINDOW } from 'app/helpers/window.helper';
-import { LegendEvent, ReportDataEvent } from 'app/interfaces/events/reporting-events.interface';
 import { ReportingData, ReportingDatabaseError } from 'app/interfaces/reporting.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -34,8 +31,8 @@ import {
   DateTime, LegendDataWithStackedTotalHtml, Report, FetchReportParams, TimeAxisData, TimeData,
 } from 'app/pages/reports-dashboard/interfaces/report.interface';
 import { refreshInterval } from 'app/pages/reports-dashboard/reports.constants';
+import { ReportsService } from 'app/pages/reports-dashboard/reports.service';
 import { formatData, formatLegendSeries } from 'app/pages/reports-dashboard/utils/report.utils';
-import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 import { LocaleService } from 'app/services/locale.service';
 import { ThemeService } from 'app/services/theme/theme.service';
@@ -50,7 +47,7 @@ import { selectTimezone } from 'app/store/system-config/system-config.selectors'
   templateUrl: './report.component.html',
   styleUrls: ['./report.component.scss'],
 })
-export class ReportComponent extends WidgetComponent implements OnInit, OnChanges, OnDestroy {
+export class ReportComponent extends WidgetComponent implements OnInit, OnChanges {
   @Input() localControls?: boolean = true;
   @Input() dateFormat?: DateTime;
   @Input() report: Report;
@@ -125,28 +122,19 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
     private ws: WebSocketService,
     protected localeService: LocaleService,
     private dialog: DialogService,
-    private core: CoreService,
     private store$: Store<AppState>,
     private themeService: ThemeService,
-    private formatDateTimePipe: FormatDateTimePipe,
     @Inject(WINDOW) private window: Window,
+    private reportsService: ReportsService,
   ) {
     super(translate);
-
-    this.core.register({ observerClass: this, eventName: `ReportData-${this.chartId}` }).pipe(
-      untilDestroyed(this),
-    ).subscribe((evt: ReportDataEvent) => {
-      this.data = formatData(evt.data);
-      this.handleError(evt);
-    });
-
-    this.core.register({ observerClass: this, eventName: `LegendEvent-${this.chartId}` }).pipe(
-      untilDestroyed(this),
-    ).subscribe((evt: LegendEvent) => {
-      const clone = { ...evt.data };
-      clone.series = formatLegendSeries(evt.data.series, this.data);
-      clone.xHTML = this.formatTime(evt.data.x);
-      this.legendData = clone as LegendDataWithStackedTotalHtml;
+    this.reportsService.legendEventEmitterObs$.pipe(untilDestroyed(this)).subscribe({
+      next: (data: LegendDataWithStackedTotalHtml) => {
+        const clone = { ...data };
+        clone.series = formatLegendSeries(data.series, this.data);
+        clone.xHTML = this.formatTime(data.x);
+        this.legendData = clone as LegendDataWithStackedTotalHtml;
+      },
     });
 
     this.store$.select(selectTheme).pipe(
@@ -233,10 +221,6 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
     if (wasReportChanged) {
       this.updateReport$.next(changes);
     }
-  }
-
-  ngOnDestroy(): void {
-    this.core.unregister({ observerClass: this });
   }
 
   formatTime(stamp: number): string {
@@ -420,20 +404,24 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
     const end = Math.floor(rrdOptions.end / 1000);
     const timeFrame = { start, end };
 
-    this.core.emit({
-      name: 'ReportDataRequest',
-      data: {
-        report,
-        params,
-        timeFrame,
-        truncate: this.stepForwardDisabled,
+    this.reportsService.getNetData({
+      report,
+      params,
+      timeFrame,
+      truncate: this.stepForwardDisabled,
+    }).pipe(
+      untilDestroyed(this),
+    ).subscribe({
+      next: (event) => {
+        this.data = formatData(event);
       },
-      sender: this,
+      error: (err: WebsocketError) => {
+        this.handleError(err);
+      },
     });
   }
 
-  handleError(evt: ReportDataEvent): void {
-    const err = evt.data.data as WebsocketError;
+  handleError(err: WebsocketError): void {
     if (err?.error === ReportingDatabaseError.FailedExport) {
       this.report.errorConf = {
         type: EmptyType.Errors,
@@ -441,7 +429,7 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
         message: err.reason,
       };
     }
-    if (evt.data?.name === 'FetchingError' && err?.error === ReportingDatabaseError.InvalidTimestamp) {
+    if (err?.error === ReportingDatabaseError.InvalidTimestamp) {
       this.report.errorConf = {
         type: EmptyType.Errors,
         title: this.translate.instant('The reporting database is broken'),

@@ -8,7 +8,7 @@ import {
   catchError, EMPTY, filter, switchMap, take, tap,
 } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
-import { tapOnce } from 'app/helpers/tap-once.operator';
+import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import globalHelptext from 'app/helptext/global-helptext';
 import { Job } from 'app/interfaces/job.interface';
 import { RsyncTaskUi } from 'app/interfaces/rsync-task.interface';

@@ -9,7 +9,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { forkJoin, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
-import { singleArrayToOptions } from 'app/helpers/options.helper';
+import { singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import helptext from 'app/helptext/directory-service/active-directory';
 import { NssInfoType } from 'app/interfaces/active-directory.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';

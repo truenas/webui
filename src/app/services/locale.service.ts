@@ -125,23 +125,4 @@ export class LocaleService {
     }
     return dateFnsFormat;
   }
-
-  getPreferredDateFormatForChart(): string {
-    return this.formatDateTimeToChart(this.dateFormat);
-  }
-
-  getPreferredTimeFormatForChart(): string {
-    return this.formatDateTimeToChart(this.timeFormat);
-  }
-
-  /** Revert DateFns for Chart DateTime format */
-  formatDateTimeToChart(dateTimeFormat: string): string {
-    return dateTimeFormat
-      .replace('yyyy', 'YYYY')
-      .replace('y', 'YY')
-      .replace('dd', 'DD')
-      .replace('d', 'D')
-      .replace(' aaaaa\'m\'', ' a')
-      .replace(' aa', ' A');
-  }
 }

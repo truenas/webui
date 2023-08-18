@@ -14,7 +14,7 @@ import { combineLatest, of } from 'rxjs';
 import {
   filter, switchMap, takeUntil, tap,
 } from 'rxjs/operators';
-import { choicesToOptions } from 'app/helpers/options.helper';
+import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { SystemGeneralConfig, SystemGeneralConfigUpdate } from 'app/interfaces/system-config.interface';

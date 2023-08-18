@@ -11,7 +11,7 @@ import {
   VmDeviceType, VmDiskMode, VmDisplayType, VmNicType,
 } from 'app/enums/vm.enum';
 import { assertUnreachable } from 'app/helpers/assert-unreachable.utils';
-import { arrayToOptions, choicesToOptions } from 'app/helpers/options.helper';
+import { arrayToOptions, choicesToOptions } from 'app/helpers/operators/options.operators';
 import helptext from 'app/helptext/vm/devices/device-add-edit';
 import {
   VmDevice, VmDeviceUpdate,
