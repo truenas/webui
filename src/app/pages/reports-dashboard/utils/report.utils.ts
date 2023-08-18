@@ -7,8 +7,8 @@ import { ReportingGraphName } from 'app/enums/reporting.enum';
 import { ReportingAggregationKeys, ReportingData } from 'app/interfaces/reporting.interface';
 
 export function formatInterfaceUnit(value: string): string {
-  if (value && value.split(' ', 2)[0] !== '0') {
-    value += value?.endsWith('b') ? '/s' : 'b/s';
+  if (value && value.split(' ', 2)[0] !== '0' && !value?.endsWith('/s')) {
+    value += value?.endsWith('b') || value?.endsWith('B') ? '/s' : 'b/s';
   }
   return value;
 }
@@ -17,7 +17,7 @@ export function formatLegendSeries(
   series: dygraphs.SeriesLegendData[],
   data: ReportingData,
 ): dygraphs.SeriesLegendData[] {
-  if (data.name === ReportingGraphName.NetworkInterface) {
+  if (data?.name === ReportingGraphName.NetworkInterface) {
     series.forEach((element) => {
       element.yHTML = formatInterfaceUnit(element.yHTML);
     });
@@ -28,6 +28,7 @@ export function formatLegendSeries(
 // TODO: Messy. Nuke.
 export function formatData(data: ReportingData): ReportingData {
   if (data.name === ReportingGraphName.NetworkInterface && data.aggregations) {
+    delete data.aggregations.min; // Will always be showing bogus small values
     Object.keys(data.aggregations).forEach((key) => {
       _.set(data.aggregations, key, (data.aggregations[key as ReportingAggregationKeys] as string[]).map(
         (value) => formatInterfaceUnit(value),
@@ -61,7 +62,8 @@ export const maxDecimals = (input: number, max = 2): number => {
   }
   const decimals = str[1].length;
   const output = decimals > max ? input.toFixed(max) : input;
-  return parseFloat(output as string);
+  const prepareInput = parseFloat(output as string);
+  return prepareInput < 1000 ? Number(prepareInput.toString().slice(0, 4)) : Math.round(prepareInput);
 };
 
 export function inferUnits(label: string): string {
