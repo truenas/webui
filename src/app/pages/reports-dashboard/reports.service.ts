@@ -1,18 +1,16 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { addSeconds } from 'date-fns';
 import {
-  map, Observable, shareReplay, BehaviorSubject, switchMap, interval,
+  map, Observable, shareReplay, BehaviorSubject, switchMap, interval, Subject,
 } from 'rxjs';
 import { ReportingGraphName } from 'app/enums/reporting.enum';
-import { ReportDataRequestEvent } from 'app/interfaces/events/reporting-events.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { ReportingGraph } from 'app/interfaces/reporting-graph.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { ReportComponent } from 'app/pages/reports-dashboard/components/report/report.component';
+import { ReportingData } from 'app/interfaces/reporting.interface';
 import { ReportTab, reportTypeLabels, ReportType } from 'app/pages/reports-dashboard/interfaces/report-tab.interface';
+import { LegendDataWithStackedTotalHtml, Report } from 'app/pages/reports-dashboard/interfaces/report.interface';
 import { convertAggregations, optimizeLegend } from 'app/pages/reports-dashboard/utils/report.utils';
-import { CoreService } from 'app/services/core-service/core.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -25,7 +23,7 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 @Injectable({
   providedIn: 'root',
 })
-export class ReportsService implements OnDestroy {
+export class ReportsService {
   serverTime: Date;
   private reportingGraphs$ = new BehaviorSubject<ReportingGraph[]>([]);
   private diskMetrics$ = new BehaviorSubject<Option[]>([]);
@@ -35,47 +33,13 @@ export class ReportsService implements OnDestroy {
   private hasNfs = false;
   private hasPartitions = false;
 
+  private legendEventEmitter$ = new Subject<LegendDataWithStackedTotalHtml>();
+  readonly legendEventEmitterObs$ = this.legendEventEmitter$.asObservable();
+
   constructor(
     private ws: WebSocketService,
-    private core: CoreService,
     private store$: Store<AppState>,
   ) {
-    this.core
-      .register({
-        observerClass: this,
-        eventName: 'ReportDataRequest',
-      })
-      .subscribe((evt: ReportDataRequestEvent) => {
-        const chartId = (evt.sender as ReportComponent).chartId;
-        this.ws.call('reporting.netdata_get_data', [[evt.data.params], evt.data.timeFrame])
-          .pipe(
-            map((reportingData) => reportingData[0]),
-            map((reportingData) => {
-              if (evt.data.truncate) {
-                reportingData.data = this.truncateData(reportingData.data as number[][]);
-              }
-
-              return reportingData;
-            }),
-            map((reportingData) => optimizeLegend(reportingData)),
-            map((reportingData) => convertAggregations(reportingData, evt.data.report.vertical_label || '')),
-          )
-          .subscribe({
-            next: (reportingData) => {
-              this.core.emit({ name: 'ReportData', data: reportingData, sender: chartId });
-            },
-            error: (err: WebsocketError) => {
-              this.core.emit({ name: 'FetchingError', data: err, sender: chartId });
-            },
-          });
-      });
-    this.core.register({
-      observerClass: this,
-      eventName: 'ReportData',
-    }).subscribe((event) => {
-      this.core.emit({ name: `ReportData-${String(event.sender)}`, data: event.data, sender: event.sender });
-    });
-
     this.ws.call('reporting.netdata_graphs').subscribe((reportingGraphs) => {
       this.hasUps = reportingGraphs.some((graph) => graph.name === ReportingGraphName.Ups);
       this.hasTarget = reportingGraphs.some((graph) => graph.name === ReportingGraphName.Target);
@@ -104,8 +68,32 @@ export class ReportsService implements OnDestroy {
       });
   }
 
-  ngOnDestroy(): void {
-    this.core.unregister({ observerClass: this });
+  emitLegendEvent(data: LegendDataWithStackedTotalHtml): void {
+    this.legendEventEmitter$.next(data);
+  }
+
+  getNetData(
+    queryData: {
+      report: Report;
+      params: { name: string; identifier?: string };
+      timeFrame: { start: number; end: number };
+      truncate: boolean;
+    },
+  ): Observable<ReportingData> {
+    return this.ws.call(
+      'reporting.netdata_get_data', [[queryData.params], queryData.timeFrame],
+    ).pipe(
+      map((reportingData) => reportingData[0]),
+      map((reportingData) => {
+        if (queryData.truncate) {
+          reportingData.data = this.truncateData(reportingData.data as number[][]);
+        }
+
+        return reportingData;
+      }),
+      map((reportingData) => optimizeLegend(reportingData)),
+      map((reportingData) => convertAggregations(reportingData, queryData.report.vertical_label || '')),
+    );
   }
 
   truncateData(data: number[][]): number[][] {

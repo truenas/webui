@@ -15,7 +15,6 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import {
   CertificateAcmeAddComponent,
 } from 'app/pages/credentials/certificates-dash/certificate-acme-add/certificate-acme-add.component';
-import { CertificatesDashComponent } from 'app/pages/credentials/certificates-dash/certificates-dash.component';
 import {
   ViewCertificateDialogData,
 } from 'app/pages/credentials/certificates-dash/view-certificate-dialog/view-certificate-dialog-data.interface';
@@ -24,11 +23,6 @@ import {
 } from 'app/pages/credentials/certificates-dash/view-certificate-dialog/view-certificate-dialog.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
-
-export interface SlideInDataCertificateEdit {
-  certificatesDash: CertificatesDashComponent;
-  certificate: Certificate;
-}
 
 @UntilDestroy()
 @Component({
@@ -58,7 +52,7 @@ export class CertificateEditComponent implements OnInit {
     private slideInRef: IxSlideInRef<CertificateEditComponent>,
     private errorHandler: FormErrorHandlerService,
     private matDialog: MatDialog,
-    @Inject(SLIDE_IN_DATA) private slideInData: SlideInDataCertificateEdit,
+    @Inject(SLIDE_IN_DATA) private data: Certificate,
   ) {}
 
   get isCsr(): boolean {
@@ -71,7 +65,7 @@ export class CertificateEditComponent implements OnInit {
   }
 
   setCertificate(): void {
-    this.certificate = this.slideInData.certificate;
+    this.certificate = this.data;
     this.form.patchValue(this.certificate);
     this.cdr.markForCheck();
   }
@@ -108,7 +102,7 @@ export class CertificateEditComponent implements OnInit {
     slideInRef.slideInClosed$.pipe(
       filter(Boolean),
       untilDestroyed(this),
-    ).subscribe(() => this.slideInData.certificatesDash.getCards());
+    ).subscribe(() => this.slideInRef.close(true));
   }
 
   onSubmit(): void {

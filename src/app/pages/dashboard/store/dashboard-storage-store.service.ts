@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import _ from 'lodash';
 import {
@@ -23,6 +24,7 @@ const initialState: DashboardStorageState = {
   volumesData: {},
 };
 
+@UntilDestroy()
 @Injectable()
 export class DashboardStorageStore extends ComponentStore<DashboardStorageState> {
   readonly pools$ = this.select((state) => state.pools);
