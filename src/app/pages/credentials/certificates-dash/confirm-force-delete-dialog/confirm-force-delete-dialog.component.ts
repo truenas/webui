@@ -14,7 +14,7 @@ export class ConfirmForceDeleteCertificateComponent {
   constructor(
     private formBuilder: FormBuilder,
     private dialogRef: MatDialogRef<ConfirmForceDeleteCertificateComponent>,
-    @Inject(MAT_DIALOG_DATA) protected data: { cert: Certificate },
+    @Inject(MAT_DIALOG_DATA) protected data: Certificate,
   ) { }
 
   onSubmit(): void {
