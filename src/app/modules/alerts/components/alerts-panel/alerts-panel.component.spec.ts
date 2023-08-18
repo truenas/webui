@@ -178,4 +178,9 @@ describe('AlertsPanelComponent', () => {
     expect(alertPanel.unreadAlertComponents).toHaveLength(1);
     expect(alertPanel.dismissedAlertComponents).toHaveLength(3);
   });
+
+  it('calls alert.list when alerts panel is open', () => {
+    spectator.inject(Store).dispatch(alertIndicatorPressed());
+    expect(websocket.call).toHaveBeenCalledWith('alert.list');
+  });
 });
