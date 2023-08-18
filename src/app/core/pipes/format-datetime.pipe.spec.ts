@@ -96,4 +96,13 @@ describe('FormatDateTimePipe', () => {
     });
     expect(spectator.element).toHaveExactText('2021-09-28 03:22 PM');
   });
+
+  it('converts date string using user time format', () => {
+    spectator = createPipe('{{ inputValue | formatDateTime }}', {
+      hostProps: {
+        inputValue: 'Tue Jun 20 06:55:04 2023',
+      },
+    });
+    expect(spectator.element).toHaveExactText('2023-06-20 06:55:04');
+  });
 });

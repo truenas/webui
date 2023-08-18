@@ -12,7 +12,6 @@ export interface KubernetesConfig {
   route_v6_interface: string;
   service_cidr: string;
   servicelb: boolean;
-  validate_host_path: boolean;
 }
 
 export interface KubernetesConfigUpdate {
@@ -25,6 +24,5 @@ export interface KubernetesConfigUpdate {
   service_cidr: string;
   migrate_applications?: boolean;
   configure_gpus?: boolean;
-  validate_host_path?: boolean;
   force?: boolean;
 }

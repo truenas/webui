@@ -106,50 +106,18 @@ export class AppInfoCardComponent {
     this.dialogService.confirm({
       title: helptext.charts.delete_dialog.title,
       message: this.translate.instant('Delete {name}?', { name }),
-      secondaryCheckbox: true,
-      secondaryCheckboxText: this.translate.instant('Delete docker images used by the app'),
     })
-      .pipe(filter((result) => result.confirmed), untilDestroyed(this))
-      .subscribe((result) => {
-        const deleteUnusedImages = result.secondaryCheckbox;
-        if (result.secondaryCheckbox) {
-          this.loader.open();
-          this.appService.getChartReleaesUsingChartReleaseImages(name)
-            .pipe(untilDestroyed(this))
-            .subscribe((imagesNotTobeDeleted) => {
-              this.loader.close();
-              const imageNames = Object.keys(imagesNotTobeDeleted);
-              if (imageNames.length > 0) {
-                const imageMessage = imageNames.reduce((prev: string, current: string) => {
-                  return prev + '<li>' + current + '</li>';
-                }, '<ul>') + '</ul>';
-                this.dialogService.confirm({
-                  title: this.translate.instant('Images not to be deleted'),
-                  message: this.translate.instant('These images will not be removed as there are other apps which are consuming them')
-              + imageMessage,
-                  disableClose: true,
-                  buttonText: this.translate.instant('OK'),
-                }).pipe(filter(Boolean), untilDestroyed(this))
-                  .subscribe(() => {
-                    this.executeDelete(name, deleteUnusedImages);
-                  });
-              } else {
-                this.executeDelete(name, deleteUnusedImages);
-              }
-            });
-        } else {
-          this.executeDelete(name, deleteUnusedImages);
-        }
-      });
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe(() => this.executeDelete(name));
   }
 
-  executeDelete(name: string, deleteUnusedImages: boolean): void {
+  executeDelete(name: string): void {
     const dialogRef = this.matDialog.open(EntityJobComponent, {
       data: {
         title: helptext.charts.delete_dialog.job,
       },
     });
-    dialogRef.componentInstance.setCall('chart.release.delete', [name, { delete_unused_images: deleteUnusedImages }]);
+    dialogRef.componentInstance.setCall('chart.release.delete', [name, { delete_unused_images: true }]);
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.installedAppsStore.installedApps$.pipe(

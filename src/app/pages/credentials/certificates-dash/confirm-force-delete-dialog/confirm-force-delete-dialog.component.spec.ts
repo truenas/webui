@@ -25,11 +25,9 @@ describe('ConfirmForceDeleteCertificateComponent', () => {
       {
         provide: MAT_DIALOG_DATA,
         useValue: {
-          cert: {
-            id: 'cert1',
-            name: 'Cert Name',
-          } as Partial<Certificate>,
-        },
+          id: 'cert1',
+          name: 'Cert Name',
+        } as Partial<Certificate>,
       },
     ],
   });

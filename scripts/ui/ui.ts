@@ -154,6 +154,10 @@ program
   .command('remote')
   .description('Set the server WebUI communicates with')
   .option('-i, --ip <ip_address>', 'Sets IP address of your server')
+  .hook('preAction', () => {
+    setMockEnabled(false);
+    console.info('Disabling global mock due to remote change.');
+  })
   .action(() => {
     const remoteCommand = program.commands.find((command: Command) => command.name() === 'remote');
     const remoteOptions = commandOpts(remoteCommand);
