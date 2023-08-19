@@ -111,7 +111,9 @@ export class AppSchemaService {
         });
       }
     } else if (schema.type === ChartSchemaType.Dict) {
-      newSchema.push(transformDictSchemaType(transformPayload, this.transformNode.bind(this)));
+      if (transformPayload.chartSchemaNode.schema.attrs?.length) {
+        newSchema.push(transformDictSchemaType(transformPayload, this.transformNode.bind(this)));
+      }
     } else if (schema.type === ChartSchemaType.List) {
       newSchema.push(transformListSchemaType(transformPayload, this.transformNode.bind(this)));
     } else if (schema.type === ChartSchemaType.Cron) {
