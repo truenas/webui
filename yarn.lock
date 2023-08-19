@@ -3895,13 +3895,6 @@
     pkg-dir "^5.0.0"
     pluralize "^8.0.0"
 
-"@siemens/ngx-datatable@~21.4.1":
-  version "21.4.1"
-  resolved "https://registry.yarnpkg.com/@siemens/ngx-datatable/-/ngx-datatable-21.4.1.tgz#e0d3fe6b82633080f3d13a9f3c8ec353fcce78fc"
-  integrity sha512-aOC1OBK9YaT7VqhKjintZ5978ax+eEx0J9SLObwEjYonW8wWeECMhAe3DRtgzimUshCJo54hiXPdcTlFTJijuQ==
-  dependencies:
-    tslib "^2.0.0"
-
 "@sigstore/protobuf-specs@^0.1.0":
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/@sigstore/protobuf-specs/-/protobuf-specs-0.1.0.tgz#957cb64ea2f5ce527cc9cf02a096baeb0d2b99b4"

@@ -78,7 +78,6 @@
     "@sentry/angular": "5.30.0",
     "@sentry/utils": "~7.42.0",
     "@shopify/eslint-plugin": "~42.0.1",
-    "@siemens/ngx-datatable": "~21.4.1",
     "@types/dygraphs": "^2.1.2",
     "@types/fontfaceobserver": "^0.0.6",
     "@types/jest": "~28.1.3",
