@@ -5,6 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { EMPTY } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { toLoadingState } from 'app/helpers/to-loading-state.helper';
 import helptext from 'app/helptext/network/configuration/configuration';
 import helptextIpmi from 'app/helptext/network/ipmi/ipmi';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -33,6 +34,10 @@ export class DefaultGatewayDialogComponent {
       ],
     ],
   });
+
+  currentGateway$ = this.ws.call('network.general.summary').pipe(
+    toLoadingState(),
+  );
 
   readonly helptext = helptext;
 
