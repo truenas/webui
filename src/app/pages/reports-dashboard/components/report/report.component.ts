@@ -10,7 +10,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
-import { add, sub } from 'date-fns';
+import { add, isToday, sub } from 'date-fns';
 import {
   BehaviorSubject, Subscription, timer,
 } from 'rxjs';
@@ -309,8 +309,9 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
     const rrdOptions = this.convertTimeSpan(
       this.currentZoomLevel,
       ReportStepDirection.Backward,
-      this.lastEndDateForCurrentZoomLevel[this.currentZoomLevel]
-        || ((this.currentStartDate + this.currentEndDate) / 2) + halfPeriodMilliseconds,
+      isToday(this.currentEndDate) ? this.currentEndDate
+        : (this.lastEndDateForCurrentZoomLevel[this.currentZoomLevel]
+        || ((this.currentStartDate + this.currentEndDate) / 2) + halfPeriodMilliseconds),
     );
 
     this.currentStartDate = rrdOptions.start;
