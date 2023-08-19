@@ -32,15 +32,11 @@
       [matAutocomplete]="auto"
       [matChipInputFor]="chipList"
       [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-      (blur)="onInputBlur($event)"
       (matChipInputTokenEnd)="onAdd($event.value)"
     />
   </mat-chip-grid>
 
-  <mat-autocomplete
-    #auto="matAutocomplete"
-    (optionSelected)="onAdd($event.option.value)"
-  >
+  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onAdd($event.option.value)">
     <ng-container *ngIf="suggestions$">
       <mat-option
         *ngFor="let suggestion of suggestions$ | async"
