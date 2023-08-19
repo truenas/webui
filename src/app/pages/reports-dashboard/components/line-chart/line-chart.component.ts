@@ -14,7 +14,7 @@ import { ReportingData } from 'app/interfaces/reporting.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { Theme } from 'app/interfaces/theme.interface';
 import { Report, LegendDataWithStackedTotalHtml } from 'app/pages/reports-dashboard/interfaces/report.interface';
-import { CoreService } from 'app/services/core-service/core.service';
+import { ReportsService } from 'app/pages/reports-dashboard/reports.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 
 interface Conversion {
@@ -59,8 +59,8 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
   private utils: ThemeUtils = new ThemeUtils();
 
   constructor(
-    private core: CoreService,
     public themeService: ThemeService,
+    private reportsService: ReportsService,
   ) {}
 
   render(update?: boolean): void {
@@ -128,7 +128,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
           const suffix = getSuffix(converted);
           clone.stackedTotalHTML = `${this.limitDecimals(converted.value)} ${suffix}`;
         }
-        this.core.emit({ name: `LegendEvent-${this.chartId}`, data: clone, sender: this });
+        this.reportsService.emitLegendEvent(clone);
         return '';
       },
       series: () => {
@@ -337,7 +337,6 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
   }
 
   ngOnDestroy(): void {
-    this.core.unregister({ observerClass: this });
     this.chart?.destroy();
   }
 }

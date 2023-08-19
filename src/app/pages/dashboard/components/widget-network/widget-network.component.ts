@@ -1,5 +1,5 @@
 import {
-  Component, AfterViewInit, OnDestroy, OnInit,
+  Component, AfterViewInit, OnInit,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -8,6 +8,7 @@ import { ChartData, ChartOptions } from 'chart.js';
 import { sub } from 'date-fns';
 import { utcToZonedTime } from 'date-fns-tz';
 import filesize from 'filesize';
+import { Subscription, timer } from 'rxjs';
 import {
   filter, map, take, throttleTime,
 } from 'rxjs/operators';
@@ -17,7 +18,6 @@ import { LinkState, NetworkInterfaceAliasType } from 'app/enums/network-interfac
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { BaseNetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
 import { NetworkInterfaceUpdate, ReportingDatabaseError, ReportingNameAndId } from 'app/interfaces/reporting.interface';
-import { Interval } from 'app/interfaces/timeout.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { TableService } from 'app/modules/entity/table/table.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
@@ -56,7 +56,7 @@ interface NicInfoMap {
     './widget-network.component.scss',
   ],
 })
-export class WidgetNetworkComponent extends WidgetComponent implements OnInit, AfterViewInit, OnDestroy {
+export class WidgetNetworkComponent extends WidgetComponent implements OnInit, AfterViewInit {
   readonly emptyTypes = EmptyType;
   protected readonly LinkState = LinkState;
 
@@ -74,7 +74,8 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
 
   minSizeToActiveTrafficArrowIcon = 1024;
 
-  interval: Interval;
+  fetchDataIntervalSubscription: Subscription;
+
   availableNics: BaseNetworkInterface[] = [];
   chartOptions: ChartOptions<'line'> = {
     responsive: true,
@@ -166,12 +167,6 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
     });
   }
 
-  ngOnDestroy(): void {
-    if (this.interval) {
-      clearInterval(this.interval);
-    }
-  }
-
   ngOnInit(): void {
     this.resourcesUsageStore$.nics$.pipe(
       deepCloneState(),
@@ -184,17 +179,16 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
     });
 
     this.updateGridInfo();
-    this.fetchReportData();
-
-    if (this.interval) {
-      clearInterval(this.interval);
-    }
   }
 
   ngAfterViewInit(): void {
-    this.interval = setInterval(() => {
-      this.fetchReportData();
-    }, 10000);
+    if (!this.fetchDataIntervalSubscription || this.fetchDataIntervalSubscription.closed) {
+      this.fetchDataIntervalSubscription = timer(0, 10000).pipe(
+        untilDestroyed(this),
+      ).subscribe(() => {
+        this.fetchReportData();
+      });
+    }
 
     this.availableNics.forEach((nic) => {
       this.resourcesUsageStore$.interfacesUsage$.pipe(
