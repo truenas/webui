@@ -20,6 +20,7 @@ export interface SshConnectionSetup {
     otp_token?: string;
     sudo?: boolean;
   };
+  verify_ssl?: boolean;
 }
 
 export interface RemoteSshScanParams {
