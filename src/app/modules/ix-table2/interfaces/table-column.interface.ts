@@ -1,6 +1,7 @@
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
 
 export abstract class ColumnComponent<T> {
+  identifier?: boolean;
   propertyName: keyof T;
   title?: string;
   sortBy?: (row: T) => string | number;
