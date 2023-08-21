@@ -6,7 +6,7 @@ import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dial
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
-import { Observable, delay, of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import helptext from 'app/helptext/storage/volumes/volume-status';
 import { Option } from 'app/interfaces/option.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
@@ -57,7 +57,7 @@ export class ReplaceDiskDialogComponent implements OnInit {
   }
 
   loadUnusedDisks(): void {
-    this.ws.call('disk.get_unused').pipe(delay(5000), untilDestroyed(this)).subscribe((unusedDisks) => {
+    this.ws.call('disk.get_unused').pipe(untilDestroyed(this)).subscribe((unusedDisks) => {
       this.unusedDisks = unusedDisks;
       const unusedDiskOptions = unusedDisks.map((disk) => {
         const exportedPool = disk.exported_zpool ? ` (${disk.exported_zpool})` : '';
