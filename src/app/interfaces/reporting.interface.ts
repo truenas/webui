@@ -120,7 +120,7 @@ export type ReportingQueryParams = [
 
 export interface ReportingNameAndId {
   name: string;
-  identifier: string;
+  identifier?: string;
 }
 
 export type ReportingAggregationKeys = 'min' | 'mean' | 'max';
