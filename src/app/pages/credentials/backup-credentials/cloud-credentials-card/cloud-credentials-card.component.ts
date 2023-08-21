@@ -14,6 +14,7 @@ import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { CloudCredentialsFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/cloud-credentials-form.component';
+import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -24,9 +25,11 @@ import { WebSocketService } from 'app/services/ws.service';
   templateUrl: './cloud-credentials-card.component.html',
   styleUrls: ['./cloud-credentials-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [CloudCredentialService],
 })
 export class CloudCredentialsCardComponent implements OnInit {
   dataProvider = new ArrayDataProvider<CloudsyncCredential>();
+  providers = new Map<string, string>();
   credentials: CloudsyncCredential[] = [];
   columns = createTable<CloudsyncCredential>([
     textColumn({
@@ -69,9 +72,11 @@ export class CloudCredentialsCardComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     protected emptyService: EmptyService,
     private dialog: DialogService,
+    private cloudCredentialService: CloudCredentialService,
   ) {}
 
   ngOnInit(): void {
+    this.getProviders();
     this.getCredentials();
   }
 
@@ -95,6 +100,12 @@ export class CloudCredentialsCardComponent implements OnInit {
           this.cdr.markForCheck();
         },
       });
+  }
+
+  getProviders(): void {
+    this.cloudCredentialService.getProviders().pipe(untilDestroyed(this)).subscribe((providers) => {
+      providers.forEach((provider) => this.providers.set(provider.name, provider.title));
+    });
   }
 
   setDefaultSort(): void {
@@ -123,7 +134,7 @@ export class CloudCredentialsCardComponent implements OnInit {
     this.dialog
       .confirm({
         title: this.translate.instant('Delete Cloud Credential'),
-        message: this.translate.instant('Are you sure you want to delete the <b>{name}</b> Cloud Credential?', {
+        message: this.translate.instant('Are you sure you want to delete the <b>{name}</b>?', {
           name: credential.name,
         }),
         buttonText: this.translate.instant('Delete'),

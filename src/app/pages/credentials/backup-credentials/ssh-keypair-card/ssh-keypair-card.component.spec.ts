@@ -5,17 +5,42 @@ import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { KeychainSshKeyPair } from 'app/interfaces/keychain-credential.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
-import { SshConnectionFormComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-form/ssh-connection-form.component';
 import { SshKeypairCardComponent } from 'app/pages/credentials/backup-credentials/ssh-keypair-card/ssh-keypair-card.component';
+import { SshKeypairFormComponent } from 'app/pages/credentials/backup-credentials/ssh-keypair-form/ssh-keypair-form.component';
 import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
+import { StorageService } from 'app/services/storage.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('SshKeypairCardComponent', () => {
   let spectator: Spectator<SshKeypairCardComponent>;
   let loader: HarnessLoader;
+
+  const credentials = [
+    {
+      id: 10,
+      name: 'test1234',
+      type: 'SSH_KEY_PAIR',
+      attributes: {
+        private_key: 'test1234_private_key',
+        public_key: 'test1234_public_key',
+      },
+    },
+    {
+      id: 11,
+      name: 'test4321',
+      type: 'SSH_KEY_PAIR',
+      attributes: {
+        private_key: 'test4321_private_key',
+        public_key: 'test4321_public_key',
+      },
+    },
+  ] as KeychainSshKeyPair[];
 
   const createComponent = createComponentFactory({
     component: SshKeypairCardComponent,
@@ -24,13 +49,16 @@ describe('SshKeypairCardComponent', () => {
     ],
     providers: [
       mockWebsocket([
-        mockCall('keychaincredential.query', []),
+        mockCall('keychaincredential.query', credentials),
         mockCall('keychaincredential.delete'),
       ]),
       mockProvider(DialogService, {
-        confirm: () => of(true),
+        confirm: jest.fn(() => of(true)),
       }),
       mockProvider(IxSlideInService, {
+        open: jest.fn(() => {
+          return { slideInClosed$: of(true) };
+        }),
         onClose$: of(),
       }),
       mockProvider(IxSlideInRef),
@@ -39,7 +67,9 @@ describe('SshKeypairCardComponent', () => {
           afterClosed: () => of(true),
         })),
       }),
-      mockProvider(KeychainCredentialService),
+      mockProvider(KeychainCredentialService, {
+        getSshKeys: jest.fn(() => of(credentials)),
+      }),
     ],
   });
 
@@ -50,31 +80,51 @@ describe('SshKeypairCardComponent', () => {
 
   it('checks page title', () => {
     const title = spectator.query('h3');
-    expect(title).toHaveText('SSH Connections');
+    expect(title).toHaveText('SSH Keypairs');
   });
 
-  it('opens static route form when "Add" button is pressed', async () => {
+  it('opens form when "Add" button is pressed', async () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(SshConnectionFormComponent);
+    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(SshKeypairFormComponent);
   });
 
-  it('opens static route form when "Edit" button is pressed', async () => {
+  it('opens form when "Edit" button is pressed', async () => {
     const editButton = await loader.getHarness(MatButtonHarness.with({ selector: '[aria-label="Edit"]' }));
     await editButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(SshConnectionFormComponent, {
-      data: {},
+    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(SshKeypairFormComponent, {
+      data: credentials[0],
     });
   });
 
-  it('opens static route delete dialog when "Delete" button is pressed', async () => {
+  it('opens delete dialog when "Delete" button is pressed', async () => {
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ selector: '[aria-label="Delete"]' }));
     await deleteButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith('', {
-      data: {},
-    });
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('keychaincredential.delete', [10]);
+  });
+
+  it('checks when "Download" button is pressed', async () => {
+    const storage = spectator.inject(StorageService);
+    jest.spyOn(storage, 'downloadBlob').mockImplementation();
+    const downloadButton = await loader.getHarness(MatButtonHarness.with({ selector: '[aria-label="Download"]' }));
+    await downloadButton.click();
+
+    expect(storage.downloadBlob).toHaveBeenCalledWith(new Blob(), 'test1234_private_key_rsa');
+    expect(storage.downloadBlob).toHaveBeenCalledWith(new Blob(), 'test1234_public_key_rsa');
+  });
+
+  it('should show table rows', async () => {
+    const expectedRows = [
+      ['Name', ''],
+      ['test1234', ''],
+      ['test4321', ''],
+    ];
+
+    const table = await loader.getHarness(IxTable2Harness);
+    const cells = await table.getCellTexts();
+    expect(cells).toEqual(expectedRows);
   });
 });

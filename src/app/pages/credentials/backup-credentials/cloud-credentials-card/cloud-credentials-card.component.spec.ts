@@ -5,16 +5,52 @@ import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
+import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { CloudCredentialsCardComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-card/cloud-credentials-card.component';
 import { CloudCredentialsFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/cloud-credentials-form.component';
+import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('CloudCredentialsCardComponent', () => {
   let spectator: Spectator<CloudCredentialsCardComponent>;
   let loader: HarnessLoader;
+
+  const credentials = [
+    {
+      id: 1,
+      name: 'GDrive',
+      provider: 'GOOGLE_DRIVE',
+      attributes: {
+        client_id: 'client_id',
+        client_secret: 'client_secret',
+        token: '{"access_token":"<token>","expiry":"2023-08-10T01:59:50.96113807-07:00"}',
+        team_drive: '',
+      },
+    },
+    {
+      id: 2,
+      name: 'BB2',
+      provider: 'B2',
+      attributes: {
+        account: '<account>',
+        key: '<key>',
+      },
+    },
+  ] as CloudsyncCredential[];
+
+  const providers = [{
+    name: 'GOOGLE_DRIVE',
+    title: 'Google Drive',
+  }, {
+    name: 'B2',
+    title: 'Backblaze B2',
+  }] as CloudsyncProvider[];
 
   const createComponent = createComponentFactory({
     component: CloudCredentialsCardComponent,
@@ -23,13 +59,17 @@ describe('CloudCredentialsCardComponent', () => {
     ],
     providers: [
       mockWebsocket([
-        mockCall('cloudsync.credentials.query', []),
+        mockCall('cloudsync.providers', providers),
+        mockCall('cloudsync.credentials.query', credentials),
         mockCall('cloudsync.credentials.delete'),
       ]),
       mockProvider(DialogService, {
         confirm: () => of(true),
       }),
       mockProvider(IxSlideInService, {
+        open: jest.fn(() => {
+          return { slideInClosed$: of(true) };
+        }),
         onClose$: of(),
       }),
       mockProvider(IxSlideInRef),
@@ -37,6 +77,9 @@ describe('CloudCredentialsCardComponent', () => {
         open: jest.fn(() => ({
           afterClosed: () => of(true),
         })),
+      }),
+      mockProvider(CloudCredentialService, {
+        getProviders: jest.fn(() => of(providers)),
       }),
     ],
   });
@@ -63,7 +106,7 @@ describe('CloudCredentialsCardComponent', () => {
     await editButton.click();
 
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(CloudCredentialsFormComponent, {
-      data: {},
+      data: credentials[0],
     });
   });
 
@@ -71,8 +114,18 @@ describe('CloudCredentialsCardComponent', () => {
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ selector: '[aria-label="Delete"]' }));
     await deleteButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith('', {
-      data: {},
-    });
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.credentials.delete', [1]);
+  });
+
+  it('should show table rows', async () => {
+    const expectedRows = [
+      ['Name', 'Provider', ''],
+      ['GDrive', 'Google Drive', ''],
+      ['BB2', 'Backblaze B2', ''],
+    ];
+
+    const table = await loader.getHarness(IxTable2Harness);
+    const cells = await table.getCellTexts();
+    expect(cells).toEqual(expectedRows);
   });
 });
