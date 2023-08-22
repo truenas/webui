@@ -76,6 +76,8 @@ import { TunableFormComponent } from 'app/pages/system/advanced/sysctl/tunable-f
 import { TunableListComponent } from 'app/pages/system/advanced/sysctl/tunable-list/tunable-list.component';
 import { SyslogCardComponent } from 'app/pages/system/advanced/syslog/syslog-card/syslog-card.component';
 import { SyslogFormComponent } from 'app/pages/system/advanced/syslog/syslog-form/syslog-form.component';
+import { SystemSecurityCardComponent } from 'app/pages/system/advanced/system-security/system-security-card/system-security-card.component';
+import { SystemSecurityFormComponent } from 'app/pages/system/advanced/system-security/system-security-form/system-security-form.component';
 import { AlertConfigFormComponent } from 'app/pages/system/alert-config-form/alert-config-form.component';
 import { AlertServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-service.component';
 import { AwsSnsServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-services/aws-sns-service/aws-sns-service.component';
@@ -193,6 +195,8 @@ import { routing } from './system.routing';
     CronDeleteDialogComponent,
     EmailFormComponent,
     EmailCardComponent,
+    SystemSecurityFormComponent,
+    SystemSecurityCardComponent,
     EulaComponent,
     FailoverSettingsComponent,
     GeneralSettingsComponent,
