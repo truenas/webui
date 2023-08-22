@@ -97,4 +97,34 @@ describe('topologyToPayload', () => {
       spares: ['ada7'],
     });
   });
+
+  it('converts dRAID layout to websocket payload', () => {
+    const disk1 = { devname: 'ada1' } as UnusedDisk;
+    const disk2 = { devname: 'ada2' } as UnusedDisk;
+    const disk3 = { devname: 'ada3' } as UnusedDisk;
+    const disk4 = { devname: 'ada4' } as UnusedDisk;
+
+    const topology = {
+      [VdevType.Data]: {
+        layout: CreateVdevLayout.Draid1,
+        vdevs: [
+          [disk1, disk2],
+          [disk3, disk4],
+        ],
+        draidSpareDisks: 1,
+        draidDataDisks: 1,
+      },
+    } as PoolManagerTopology;
+
+    expect(topologyToPayload(topology)).toEqual({
+      data: [
+        {
+          type: CreateVdevLayout.Draid1, disks: ['ada1', 'ada2'], draid_data_disks: 1, draid_spare_disks: 1,
+        },
+        {
+          type: CreateVdevLayout.Draid1, disks: ['ada3', 'ada4'], draid_data_disks: 1, draid_spare_disks: 1,
+        },
+      ],
+    });
+  });
 });

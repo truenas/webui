@@ -98,7 +98,7 @@ export class DiskSizeSelectsComponent implements OnInit, OnChanges {
     this.form.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       const values = this.form.value;
 
-      this.store.setAutomaticTopologyCategory(this.type, {
+      this.store.setTopologyCategoryDiskSizes(this.type, {
         diskSize: this.selectedDiskSize,
         diskType: this.selectedDiskType,
         treatDiskSizeAsMinimum: values.treatDiskSizeAsMinimum,

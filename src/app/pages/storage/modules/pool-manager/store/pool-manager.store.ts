@@ -22,7 +22,11 @@ import { filterAllowedDisks } from 'app/pages/storage/modules/pool-manager/utils
 import {
   GenerateVdevsService,
 } from 'app/pages/storage/modules/pool-manager/utils/generate-vdevs/generate-vdevs.service';
-import { topologyCategoryToDisks, topologyToDisks } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
+import {
+  isDraidLayout,
+  topologyCategoryToDisks,
+  topologyToDisks,
+} from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -237,26 +241,26 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     ]).pipe(
       tapResponse(([allDisks, enclosures]) => {
         // TODO: Remove me
-        for (let i = 0; i < 10; i++) {
-          allDisks.push({
-            devname: 'pizza' + i,
-            size: Math.random() * 100 * GiB,
-            type: DiskType.Hdd,
-            identifier: 'pizza' + i,
-          } as UnusedDisk);
-        }
-        allDisks.push({
-          devname: 'x1',
-          size: 200 * GiB,
-          type: DiskType.Hdd,
-          identifier: 'x1',
-        } as UnusedDisk);
-        allDisks.push({
-          devname: 'x2',
-          size: 200 * GiB,
-          type: DiskType.Hdd,
-          identifier: 'x2',
-        } as UnusedDisk);
+        // for (let i = 0; i < 10; i++) {
+        //   allDisks.push({
+        //     devname: 'pizza' + i,
+        //     size: Math.random() * 100 * GiB,
+        //     type: DiskType.Hdd,
+        //     identifier: 'pizza' + i,
+        //   } as UnusedDisk);
+        // }
+        // allDisks.push({
+        //   devname: 'x1',
+        //   size: 200 * GiB,
+        //   type: DiskType.Hdd,
+        //   identifier: 'x1',
+        // } as UnusedDisk);
+        // allDisks.push({
+        //   devname: 'x2',
+        //   size: 200 * GiB,
+        //   type: DiskType.Hdd,
+        //   identifier: 'x2',
+        // } as UnusedDisk);
         this.patchState({
           isLoading: false,
           allDisks,
@@ -310,9 +314,26 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     this.resetTopologyIfNotEnoughDisks();
   }
 
+  setTopologyCategoryDiskSizes(
+    type: VdevType,
+    updates: Pick<TopologyCategoryUpdate, 'diskSize' | 'treatDiskSizeAsMinimum' | 'diskType'>,
+  ): void {
+    this.updateTopologyCategory(type, updates);
+  }
+
+  setTopologyCategoryLayout(
+    type: VdevType,
+    layout: CreateVdevLayout,
+  ): void {
+    this.updateTopologyCategory(type, { layout });
+
+    if (isDraidLayout(layout)) {
+      this.resetTopologyCategory(VdevType.Spare);
+    }
+  }
+
   setAutomaticTopologyCategory(type: VdevType, updates: TopologyCategoryUpdate): void {
     this.updateTopologyCategory(type, updates);
-    this.handleDraidSelection();
 
     this.regenerateVdevs();
   }
@@ -324,19 +345,6 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     });
 
     this.regenerateVdevs();
-  }
-
-  /**
-   * dRAID layout has its own spares.
-   */
-  private handleDraidSelection(): void {
-    this.usesDraidLayout$.pipe(take(1)).subscribe((usesDraidLayout) => {
-      if (!usesDraidLayout) {
-        return;
-      }
-
-      this.resetTopologyCategory(VdevType.Spare);
-    });
   }
 
   private updateTopologyCategory(type: VdevType, update: Partial<PoolManagerTopologyCategory>): void {

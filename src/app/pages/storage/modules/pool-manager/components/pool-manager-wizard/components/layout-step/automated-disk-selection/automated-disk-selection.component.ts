@@ -18,6 +18,7 @@ import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { minDisksPerLayout } from 'app/pages/storage/modules/pool-manager/utils/min-disks-per-layout.constant';
+import { isDraidLayout } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
 
 // TODO: Is this component useless?
 @UntilDestroy()
@@ -47,11 +48,7 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
   ) {}
 
   protected get usesDraidLayout(): boolean {
-    return [
-      CreateVdevLayout.Draid1,
-      CreateVdevLayout.Draid2,
-      CreateVdevLayout.Draid3,
-    ].includes(this.layoutControl.value);
+    return isDraidLayout(this.layoutControl.value);
   }
 
   ngOnInit(): void {
@@ -61,7 +58,7 @@ export class AutomatedDiskSelectionComponent implements OnInit, OnChanges {
 
   private updateStoreOnChanges(): void {
     this.layoutControl.valueChanges.pipe(untilDestroyed(this)).subscribe((layout) => {
-      this.store.setAutomaticTopologyCategory(this.type, { layout });
+      this.store.setTopologyCategoryLayout(this.type, layout);
     });
   }
 

@@ -69,7 +69,6 @@ describe('AutomatedDiskSelection', () => {
     expect(normalSelection).not.toBeNull();
     expect(normalSelection.type).toBe(VdevType.Data);
     expect(normalSelection.inventory).toBe(inventory);
-    expect(normalSelection.layout).toBe(CreateVdevLayout.Stripe);
     expect(normalSelection.isStepActive).toBe(false);
 
     await layoutSelect.setValue('Mirror');
@@ -107,5 +106,14 @@ describe('AutomatedDiskSelection', () => {
     startOver$.next();
 
     expect(await layoutSelect.getValue()).toBe('');
+  });
+
+  it('updates layout in store when it is changed', async () => {
+    await layoutSelect.setValue('Mirror');
+
+    expect(spectator.inject(PoolManagerStore).setTopologyCategoryLayout).toHaveBeenCalledWith(
+      VdevType.Data,
+      CreateVdevLayout.Mirror,
+    );
   });
 });

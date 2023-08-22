@@ -12,6 +12,7 @@ import helptext from 'app/helptext/storage/volumes/manager/manager';
 import { Option, SelectOption } from 'app/interfaces/option.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
+import { unsetControlIfNoMatchingOption } from 'app/pages/storage/modules/pool-manager/utils/form.utils';
 
 const parityDisksPerGroup = {
   [CreateVdevLayout.Draid1]: 1,
@@ -144,10 +145,7 @@ export class DraidSelectionComponent implements OnInit, OnChanges {
       nextOptions = generateOptionsRange(1, maxPossibleGroups);
     }
 
-    // TODO: Same code?
-    if (!nextOptions.some((option) => option.value === this.form.controls.dataDevicesPerGroup.value)) {
-      this.form.controls.dataDevicesPerGroup.setValue(null, { emitEvent: false });
-    }
+    unsetControlIfNoMatchingOption(this.form.controls.dataDevicesPerGroup, nextOptions);
 
     if (nextOptions.length === 1 && this.isStepActive) {
       this.form.controls.dataDevicesPerGroup.setValue(Number(nextOptions[0].value), { emitEvent: false });
@@ -165,7 +163,6 @@ export class DraidSelectionComponent implements OnInit, OnChanges {
       nextOptions = generateOptionsRange(0, maxPossibleSpares);
     }
 
-    // TODO: Same code
     if (!nextOptions.some((option) => option.value === this.form.controls.spares.value)) {
       this.form.controls.spares.setValue(0, { emitEvent: false });
     }
@@ -201,10 +198,7 @@ export class DraidSelectionComponent implements OnInit, OnChanges {
       }
     }
 
-    // TODO: Same code?
-    if (!nextOptions.some((option) => option.value === this.form.controls.children.value)) {
-      this.form.controls.children.setValue(null, { emitEvent: false });
-    }
+    unsetControlIfNoMatchingOption(this.form.controls.children, nextOptions);
 
     // TODO: Bug - this.form.controls.width.value is empty even if value is selected.
     if (this.isStepActive) {
@@ -234,10 +228,7 @@ export class DraidSelectionComponent implements OnInit, OnChanges {
       nextOptions = generateOptionsRange(1, maxPossibleVdevs);
     }
 
-    // TODO: Same code
-    if (!nextOptions.some((option) => option.value === this.form.controls.vdevsNumber.value)) {
-      this.form.controls.vdevsNumber.setValue(null, { emitEvent: false });
-    }
+    unsetControlIfNoMatchingOption(this.form.controls.vdevsNumber, nextOptions);
 
     if (nextOptions.length === 1 && this.isStepActive) {
       this.form.controls.vdevsNumber.setValue(Number(nextOptions[0].value), { emitEvent: false });

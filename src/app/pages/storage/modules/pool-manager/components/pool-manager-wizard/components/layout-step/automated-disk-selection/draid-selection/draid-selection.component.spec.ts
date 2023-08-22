@@ -176,9 +176,7 @@ describe('DraidSelectionComponent', () => {
     });
 
     const store = spectator.inject(PoolManagerStore);
-    // 6 calls after immediate changes in controls and one extra after disks were selected
-    // and values were pre-populated.
-    expect(store.setAutomaticTopologyCategory).toHaveBeenCalledTimes(6 + 1);
+    expect(store.setAutomaticTopologyCategory).toHaveBeenCalledTimes(4);
     expect(store.setAutomaticTopologyCategory).toHaveBeenLastCalledWith(
       VdevType.Spare,
       {

@@ -11,6 +11,7 @@ import { Option, SelectOption } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
+import { unsetControlIfNoMatchingOption } from 'app/pages/storage/modules/pool-manager/utils/form.utils';
 import { minDisksPerLayout } from 'app/pages/storage/modules/pool-manager/utils/min-disks-per-layout.constant';
 
 @UntilDestroy()
@@ -126,9 +127,7 @@ export class NormalSelectionComponent implements OnInit, OnChanges {
 
     this.widthOptions$ = of(nextOptions);
 
-    if (!nextOptions.some((option) => option.value === this.form.controls.vdevsNumber.value)) {
-      this.form.controls.width.setValue(null, { emitEvent: false });
-    }
+    unsetControlIfNoMatchingOption(this.form.controls.width, nextOptions);
 
     if (nextOptions.length === 1 && this.isStepActive) {
       this.form.controls.width.setValue(+nextOptions[0].value, { emitEvent: false });
@@ -153,9 +152,7 @@ export class NormalSelectionComponent implements OnInit, OnChanges {
 
     this.numberOptions$ = of(nextOptions);
 
-    if (!nextOptions.some((option) => option.value === this.form.controls.vdevsNumber.value)) {
-      this.form.controls.vdevsNumber.setValue(null, { emitEvent: false });
-    }
+    unsetControlIfNoMatchingOption(this.form.controls.vdevsNumber, nextOptions);
 
     if (nextOptions.length === 1 && this.isStepActive) {
       this.form.controls.vdevsNumber.setValue(+nextOptions[0].value, { emitEvent: false });

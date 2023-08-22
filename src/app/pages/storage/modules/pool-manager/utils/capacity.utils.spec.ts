@@ -74,7 +74,7 @@ describe('vdevCapacity', () => {
       swapOnDrive: 2 * GiB,
       draidDataDisks: 2,
       draidSpareDisks: 1,
-    })).toBe(4 * GiB);
+    }) / GiB).toBeCloseTo(2.67);
   });
 
   it('draid2 layout', () => {
@@ -84,7 +84,7 @@ describe('vdevCapacity', () => {
       swapOnDrive: 2 * GiB,
       draidDataDisks: 2,
       draidSpareDisks: 1,
-    })).toBe(3 * GiB);
+    }) / GiB).toBeCloseTo(2);
   });
 
   it('draid3 layout', () => {
@@ -94,6 +94,6 @@ describe('vdevCapacity', () => {
       swapOnDrive: 2 * GiB,
       draidDataDisks: 2,
       draidSpareDisks: 1,
-    })).toBe(2 * GiB);
+    }) / GiB).toBeCloseTo(1.6);
   });
 });

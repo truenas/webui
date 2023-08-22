@@ -1,6 +1,6 @@
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, TopologyItemType, VdevType } from 'app/enums/v-dev-type.enum';
-import { PoolTopology, UpdatePoolTopology } from 'app/interfaces/pool.interface';
+import { DataPoolTopologyUpdate, PoolTopology, UpdatePoolTopology } from 'app/interfaces/pool.interface';
 import { Disk, UnusedDisk } from 'app/interfaces/storage.interface';
 import {
   PoolManagerTopology,
@@ -27,10 +27,20 @@ export function topologyToPayload(topology: PoolManagerTopology): UpdatePoolTopo
     }
 
     payload[vdevType] = category.vdevs.map((vdev) => {
-      return {
+      let typePayload = {
         type: category.layout,
         disks: vdev.map((disk) => disk.devname),
       };
+
+      if (isDraidLayout(category.layout)) {
+        typePayload = {
+          ...typePayload,
+          draid_data_disks: category.draidDataDisks,
+          draid_spare_disks: category.draidSpareDisks,
+        } as DataPoolTopologyUpdate;
+      }
+
+      return typePayload;
     });
   });
 
@@ -75,7 +85,7 @@ export function poolTopologyToStoreTopology(topology: PoolTopology, disks: Disk[
       layout: layoutType as unknown as CreateVdevLayout,
       vdevsNumber: vdevs.length,
       width,
-      hasCustomDiskSelection: vdevs.some((vdev2) => vdevs[0].children.length !== vdev2.children.length),
+      hasCustomDiskSelection: vdevs.some((vdev) => vdevs[0].children.length !== vdev.children.length),
       vdevs: topology[category as VdevType].map(
         (topologyItem) => {
           if (topologyItem.children.length) {
@@ -99,4 +109,13 @@ export function poolTopologyToStoreTopology(topology: PoolTopology, disks: Disk[
     };
   }
   return poolManagerTopology;
+}
+
+export function isDraidLayout(layout: CreateVdevLayout | TopologyItemType): boolean {
+  return [
+    CreateVdevLayout.Draid1,
+    CreateVdevLayout.Draid2,
+    CreateVdevLayout.Draid3,
+    TopologyItemType.Draid,
+  ].includes(layout);
 }

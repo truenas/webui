@@ -68,7 +68,7 @@ describe('DiskSizeSelectsComponent', () => {
     it('updates value in store when disk type/size is selected', async () => {
       await diskSizeSelect.setValue('20 GiB (HDD)');
 
-      expect(spectator.inject(PoolManagerStore).setAutomaticTopologyCategory).toHaveBeenCalledWith(
+      expect(spectator.inject(PoolManagerStore).setTopologyCategoryDiskSizes).toHaveBeenCalledWith(
         VdevType.Spare,
         {
           diskType: DiskType.Hdd,
@@ -97,7 +97,7 @@ describe('DiskSizeSelectsComponent', () => {
       await diskSizeSelect.setValue('20 GiB (HDD)');
       await minimumCheckbox.setValue(true);
 
-      expect(spectator.inject(PoolManagerStore).setAutomaticTopologyCategory).toHaveBeenLastCalledWith(
+      expect(spectator.inject(PoolManagerStore).setTopologyCategoryDiskSizes).toHaveBeenLastCalledWith(
         VdevType.Spare,
         {
           diskSize: 20 * GiB,
@@ -120,7 +120,7 @@ describe('DiskSizeSelectsComponent', () => {
     spectator.setInput('inventory', [singleDisk]);
 
     expect(await diskSizeSelect.getValue()).toBe('10 GiB (HDD)');
-    expect(spectator.inject(PoolManagerStore).setAutomaticTopologyCategory).toHaveBeenCalledWith(
+    expect(spectator.inject(PoolManagerStore).setTopologyCategoryDiskSizes).toHaveBeenCalledWith(
       VdevType.Spare,
       {
         diskType: DiskType.Hdd,

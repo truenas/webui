@@ -89,18 +89,20 @@ export interface UpdatePool {
 
 // TODO: Maybe replace first 5 keys with VdevType enum once old pool manager is removed.
 export interface UpdatePoolTopology {
-  data?: {
-    type: CreateVdevLayout;
-    disks: string[];
-    draid_data_disks?: number;
-    draid_spare_disks?: number;
-  }[];
+  data?: DataPoolTopologyUpdate[];
   special?: { type: CreateVdevLayout; disks: string[] }[];
   dedup?: { type: CreateVdevLayout; disks: string[] }[];
   cache?: { type: CreateVdevLayout; disks: string[] }[];
   log?: { type: CreateVdevLayout; disks: string[] }[];
   // Note that here spares is a correct name, not spare.
   spares?: string[];
+}
+
+export interface DataPoolTopologyUpdate {
+  type: CreateVdevLayout;
+  disks: string[];
+  draid_data_disks?: number;
+  draid_spare_disks?: number;
 }
 
 export type UpdatePoolTopologyGroup = keyof UpdatePoolTopology;

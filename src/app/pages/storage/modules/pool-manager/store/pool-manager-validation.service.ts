@@ -2,19 +2,28 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
-import {
-  Observable, combineLatest, map,
-} from 'rxjs';
+import { combineLatest, map, Observable } from 'rxjs';
 import { CreateVdevLayout, TopologyItemType, VdevType } from 'app/enums/v-dev-type.enum';
 import helptext from 'app/helptext/storage/volumes/manager/manager';
-import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
-import { getNonUniqueSerialDisksWarning } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/pool-warnings/get-non-unique-serial-disks';
-import { DispersalStrategy } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/2-enclosure-wizard-step/enclosure-wizard-step.component';
+import {
+  AddVdevsStore,
+} from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
+import {
+  getNonUniqueSerialDisksWarning,
+} from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/pool-warnings/get-non-unique-serial-disks';
+import {
+  DispersalStrategy,
+} from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/2-enclosure-wizard-step/enclosure-wizard-step.component';
 import { PoolCreationSeverity } from 'app/pages/storage/modules/pool-manager/enums/pool-creation-severity';
 import { PoolCreationWizardStep } from 'app/pages/storage/modules/pool-manager/enums/pool-creation-wizard-step.enum';
 import { PoolCreationError } from 'app/pages/storage/modules/pool-manager/interfaces/pool-creation-error';
-import { PoolManagerStore, PoolManagerTopology, PoolManagerTopologyCategory } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
+import {
+  PoolManagerStore,
+  PoolManagerTopology,
+  PoolManagerTopologyCategory,
+} from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { hasExportedPool, hasNonUniqueSerial } from 'app/pages/storage/modules/pool-manager/utils/disk.utils';
+import { isDraidLayout } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
 import { AppState } from 'app/store';
 import { waitForSystemFeatures } from 'app/store/system-info/system-info.selectors';
 
@@ -100,23 +109,27 @@ export class PoolManagerValidationService {
 
         const nonEmptyTopologyCategories = this.filterNonEmptyCategories(topology);
 
-        nonEmptyTopologyCategories.forEach(([typologyCategoryType, typologyCategory]) => {
+        nonEmptyTopologyCategories.forEach(([topologyCategoryType, topologyCategory]) => {
           if (existingPool) {
             return;
           }
 
+          if (topologyCategoryType === VdevType.Data && isDraidLayout(topologyCategory.layout)) {
+            errors.push(...this.validateDraid(topologyCategory));
+          }
+
           if (
-            [VdevType.Dedup, VdevType.Log, VdevType.Special, VdevType.Data].includes(typologyCategoryType)
-            && typologyCategory.vdevs.length >= 1 && typologyCategory.layout === CreateVdevLayout.Stripe
+            [VdevType.Dedup, VdevType.Log, VdevType.Special, VdevType.Data].includes(topologyCategoryType)
+            && topologyCategory.vdevs.length >= 1 && topologyCategory.layout === CreateVdevLayout.Stripe
           ) {
-            if (typologyCategoryType === VdevType.Log) {
+            if (topologyCategoryType === VdevType.Log) {
               errors.push({
                 text: this.translate.instant('A stripe log VDEV may result in data loss if it fails combined with a power outage.'),
                 severity: PoolCreationSeverity.Warning,
                 step: PoolCreationWizardStep.Log,
               });
             } else {
-              const vdevType = typologyCategoryType === 'special' ? 'metadata' : typologyCategoryType;
+              const vdevType = topologyCategoryType === 'special' ? 'metadata' : topologyCategoryType;
 
               errors.push({
                 text: this.translate.instant('A stripe {vdevType} VDEV is highly discouraged and will result in data loss if it fails', { vdevType }),
@@ -126,7 +139,7 @@ export class PoolManagerValidationService {
             }
           }
 
-          const nonUniqueSerialDisks = typologyCategory.vdevs.flat().filter(hasNonUniqueSerial);
+          const nonUniqueSerialDisks = topologyCategory.vdevs.flat().filter(hasNonUniqueSerial);
 
           if (nonUniqueSerialDisks?.length) {
             errors.push({
@@ -136,7 +149,7 @@ export class PoolManagerValidationService {
             });
           }
 
-          const disksWithExportedPools = typologyCategory.vdevs.flat().filter(hasExportedPool);
+          const disksWithExportedPools = topologyCategory.vdevs.flat().filter(hasExportedPool);
 
           if (disksWithExportedPools?.length) {
             errors.push({
@@ -204,5 +217,35 @@ export class PoolManagerValidationService {
       }
       return acc;
     }, [] as [VdevType, PoolManagerTopologyCategory][]);
+  }
+
+  private validateDraid(topologyCategory: PoolManagerTopologyCategory): PoolCreationError[] {
+    const errors: PoolCreationError[] = [];
+    const powerOfTwo = Math.log2(topologyCategory.draidDataDisks);
+    if (powerOfTwo < 1 || !Number.isInteger(powerOfTwo)) {
+      errors.push({
+        text: this.translate.instant('Recommended number of data disks for optimal space allocation should be power of 2 (2, 4, 8, 16...).'),
+        severity: PoolCreationSeverity.Warning,
+        step: PoolCreationWizardStep.Data,
+      });
+    }
+
+    if (topologyCategory.width < 10) {
+      errors.push({
+        text: this.translate.instant('In order for dRAID to overweight its benefits over RaidZ the minimum recommended number of disks per dRAID vdev is 10.'),
+        severity: PoolCreationSeverity.Warning,
+        step: PoolCreationWizardStep.Data,
+      });
+    }
+
+    if (!topologyCategory.draidSpareDisks) {
+      errors.push({
+        text: this.translate.instant('At least one spare is recommended for dRAID. Spares cannot be added later.'),
+        severity: PoolCreationSeverity.Warning,
+        step: PoolCreationWizardStep.Data,
+      });
+    }
+
+    return errors;
   }
 }
