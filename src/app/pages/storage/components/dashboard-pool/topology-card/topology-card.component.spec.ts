@@ -88,7 +88,7 @@ describe('TopologyCardComponent', () => {
 
     // Redundancy level should match data VDEVs
     expect(captions[1]).toHaveText('Metadata');
-    expect(values[1]).toHaveText('Redundancy Mismatch');
+    expect(values[1]).toHaveText('1 x MIRROR | 3 wide | 4 TiB');
     expect(captions[5]).toHaveText('Dedup VDEVs');
     expect(values[5]).toHaveText('VDEVs not assigned');
   });
