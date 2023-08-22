@@ -806,7 +806,7 @@ export class DataProtectionDashboardComponent implements OnInit {
         this.dialogService.error({ title: row.state.state, message: `<pre>${list}</pre>` });
       } else if (row.state.error) {
         this.dialogService.error({ title: row.state.state, message: `<pre>${row.state.error}</pre>` });
-      } else if (row.job) {
+      } else {
         this.matDialog.open(ShowLogsDialogComponent, { data: row.job });
       }
     } else {
