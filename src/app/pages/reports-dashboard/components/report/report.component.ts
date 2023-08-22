@@ -269,13 +269,15 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
     }
 
     this.lastEndDateForCurrentZoomLevel[this.currentZoomLevel] = this.currentEndDate;
-
     this.zoomLevelIndex += 1;
-    const rrdOptions = this.convertTimeSpan(
-      this.currentZoomLevel,
-      ReportStepDirection.Backward,
-      (this.currentStartDate + this.currentEndDate) / 2,
-    );
+
+    let currentDate = (this.currentStartDate + this.currentEndDate) / 2;
+
+    if (this.stepForwardDisabled || isToday(this.currentEndDate)) {
+      currentDate = this.currentEndDate;
+    }
+
+    const rrdOptions = this.convertTimeSpan(this.currentZoomLevel, ReportStepDirection.Backward, currentDate);
 
     this.currentStartDate = rrdOptions.start;
     this.currentEndDate = rrdOptions.end;
@@ -292,17 +294,14 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
 
     const halfPeriodMilliseconds = this.getHalfPeriodMilliseconds();
 
-    const rrdOptions = this.convertTimeSpan(
-      this.currentZoomLevel,
-      ReportStepDirection.Backward,
-      isToday(this.currentEndDate)
-        ? this.currentEndDate
-        : (
-          this.lastEndDateForCurrentZoomLevel[this.currentZoomLevel]
-          ||
-          ((this.currentStartDate + this.currentEndDate) / 2) + halfPeriodMilliseconds
-        ),
-    );
+    let currentDate = this.lastEndDateForCurrentZoomLevel[this.currentZoomLevel] ||
+      ((this.currentStartDate + this.currentEndDate) / 2) + halfPeriodMilliseconds;
+
+    if (this.stepForwardDisabled || isToday(this.currentEndDate)) {
+      currentDate = this.currentEndDate;
+    }
+
+    const rrdOptions = this.convertTimeSpan(this.currentZoomLevel, ReportStepDirection.Backward, currentDate);
 
     this.currentStartDate = rrdOptions.start;
     this.currentEndDate = rrdOptions.end;
