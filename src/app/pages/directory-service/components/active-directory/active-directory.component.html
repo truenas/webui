@@ -28,6 +28,13 @@
               [label]="'Domain Account Password' | translate"
               [tooltip]="helptext.activedirectory_bindpw_tooltip | translate"
             ></ix-input>
+
+            <ix-input
+              formControlName="netbiosname"
+              [label]="'NetBIOS Name' | translate"
+              [tooltip]="helptext.activedirectory_netbiosname_tooltip | translate"
+              [required]="true"
+            ></ix-input>
           </ng-container>
 
           <ix-checkbox
@@ -120,13 +127,6 @@
             [tooltip]="helptext.activedirectory_nss_info_tooltip | translate"
             [options]="nssOptions$"
           ></ix-select>
-
-          <ix-input
-            formControlName="netbiosname"
-            [label]="'NetBIOS Name' | translate"
-            [tooltip]="helptext.activedirectory_netbiosname_tooltip | translate"
-            [required]="true"
-          ></ix-input>
 
           <ix-chips
             formControlName="netbiosalias"
