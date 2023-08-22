@@ -5,6 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { of } from 'rxjs';
 import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -45,7 +46,9 @@ describe('SystemSecurityFormComponent', () => {
       mockWebsocket([
         mockCall('system.security.update'),
       ]),
-      mockProvider(DialogService),
+      mockProvider(DialogService, {
+        confirm: jest.fn(() => of()),
+      }),
       mockProvider(SnackbarService),
       mockProvider(MatDialog, {
         open: jest.fn(() => mockEntityJobComponentRef),
