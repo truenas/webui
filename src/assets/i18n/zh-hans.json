@@ -224,6 +224,8 @@
   "Resetting interfaces while HA is enabled is not allowed.": "",
   "Resilver configuration saved": "",
   "Resilvering:": "",
+  "Restart is recommended after changing this setting": "",
+  "Restart is recommended for new FIPS setting to take effect. Would you like to restart now?“": "",
   "Resume Scrub": "",
   "Review": "",
   "Run As Context": "",

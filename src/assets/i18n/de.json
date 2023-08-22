@@ -1929,6 +1929,8 @@
   "Resilvering pool: ": "",
   "Resilvering:": "",
   "Restart Service": "",
+  "Restart is recommended after changing this setting": "",
+  "Restart is recommended for new FIPS setting to take effect. Would you like to restart now?“": "",
   "Restore Default": "",
   "Restrict share visibility to users with read or write access to the share. See the <a href=\"https://www.samba.org/samba/docs/current/man-html/smb.conf.5.html\" target=_blank>smb.conf</a> manual page.": "",
   "Restricted": "",

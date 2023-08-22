@@ -2542,6 +2542,8 @@
   "Restart SMB Service?": "",
   "Restart Service": "",
   "Restart Web Service": "",
+  "Restart is recommended after changing this setting": "",
+  "Restart is recommended for new FIPS setting to take effect. Would you like to restart now?“": "",
   "Restart the system?": "",
   "Restore": "",
   "Restore Cloud Sync Task": "",

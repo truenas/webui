@@ -1991,6 +1991,8 @@
   "Resilvering pool: ": "",
   "Resilvering:": "",
   "Resolution": "",
+  "Restart is recommended after changing this setting": "",
+  "Restart is recommended for new FIPS setting to take effect. Would you like to restart now?“": "",
   "Restore Cloud Sync Task": "",
   "Restore Replication Task": "",
   "Restrict PAM": "",

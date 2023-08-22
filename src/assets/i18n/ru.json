@@ -1378,6 +1378,8 @@
   "Resilvering pool: ": "",
   "Resilvering:": "",
   "Restart Service": "",
+  "Restart is recommended after changing this setting": "",
+  "Restart is recommended for new FIPS setting to take effect. Would you like to restart now?“": "",
   "Restore": "",
   "Restore Cloud Sync Task": "",
   "Restore Default": "",

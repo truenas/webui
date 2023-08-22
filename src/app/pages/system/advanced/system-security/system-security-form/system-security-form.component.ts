@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
@@ -9,6 +10,7 @@ import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-sli
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -31,7 +33,9 @@ export class SystemSecurityFormComponent implements OnInit {
     private formBuilder: FormBuilder,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
+    private dialogService: DialogService,
     private snackbar: SnackbarService,
+    private router: Router,
     private slideInRef: IxSlideInRef<SystemSecurityFormComponent>,
     @Inject(SLIDE_IN_DATA) private systemSecurityConfig: SystemSecurityConfig,
   ) {}
@@ -50,8 +54,8 @@ export class SystemSecurityFormComponent implements OnInit {
       .subscribe({
         next: () => {
           this.isLoading = false;
+          this.promptReboot();
           this.snackbar.success(this.translate.instant('System Security Settings Updated.'));
-          this.slideInRef.close();
           this.cdr.markForCheck();
         },
         error: (error) => {
@@ -65,5 +69,20 @@ export class SystemSecurityFormComponent implements OnInit {
   private initSystemSecurityForm(): void {
     this.form.patchValue(this.systemSecurityConfig);
     this.cdr.markForCheck();
+  }
+
+  private promptReboot(): void {
+    this.dialogService.confirm({
+      title: this.translate.instant('Restart'),
+      message: this.translate.instant('Restart is recommended for new FIPS setting to take effect. Would you like to restart now?“'),
+      buttonText: this.translate.instant('Restart'),
+    }).pipe(
+      untilDestroyed(this),
+    ).subscribe((approved) => {
+      if (approved) {
+        this.router.navigate(['/others/reboot'], { skipLocationChange: true });
+      }
+      this.slideInRef.close();
+    });
   }
 }

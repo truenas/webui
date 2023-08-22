@@ -94,6 +94,8 @@
   "Renew 2FA secret": "",
   "Resetting interfaces while HA is enabled is not allowed.": "",
   "Resilvering:": "",
+  "Restart is recommended after changing this setting": "",
+  "Restart is recommended for new FIPS setting to take effect. Would you like to restart now?“": "",
   "SMB": "",
   "SSH": "",
   "Save the 'Require Kerberos for NFSv4' value before adding SMP": "",
