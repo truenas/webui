@@ -36,6 +36,7 @@ module.exports = {
         "@shopify",
         "unused-imports",
         "sonarjs",
+        "import",
       ],
       "rules": {
         // Conflicts with ngx-translate-extract
