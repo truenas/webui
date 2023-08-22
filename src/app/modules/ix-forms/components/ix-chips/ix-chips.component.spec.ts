@@ -92,12 +92,12 @@ describe('IxChipsComponent', () => {
     expect(formControl.value).toEqual(['operator', 'root']);
   });
 
-  it('creates chip after leaving the focus of the input', async () => {
+  it('does not create chip after leaving the focus of the input', async () => {
     const input = await matChipList.getInput();
     await input.setValue('www-date');
     await input.blur();
 
-    expect(formControl.value).toEqual(['www-date']);
+    expect(formControl.value).toEqual([]);
   });
 
   it('expected chip to be removed by clicking on the button with \'matChipRemove\' directive', async () => {
