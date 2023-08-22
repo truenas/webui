@@ -24,7 +24,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .mat-bg-primary,
   .sidebar-panel.mat-sidenav .sidebar-list-item.open md-icon:not(.menu-caret),
   .chats-wrap .conversations-hold .single-conversation.me .conversation-msg,
-  .ngx-datatable .datatable-footer .datatable-pager .pager .pages.active a,
   .fileupload-drop-zone.dz-file-over,
   .toolbar-avatar.online > .status-dot {
     background: map-get($md-primary, 500) !important;
@@ -110,16 +109,11 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .mat-mini-fab.mat-primary,
   .sidebar-panel.mat-sidenav .sidebar-list-item.open md-icon:not(.menu-caret),
   .chats-wrap .conversations-hold .single-conversation.me .conversation-msg,
-  .ngx-datatable .datatable-footer .datatable-pager .pager .pages.active a,
   .fileupload-drop-zone.dz-file-over,
   .toolbar-avatar.online > .status-dot,
   .mat-step-header .mat-step-icon:not(.mat-step-icon-state-error):not(.mat-step-icon-state-number):not(.mat-step-icon-state-edit) {
     @include variable(background, --primary, $primary, !important);
     @include variable(color, --primary-txt, $primary-txt, !important);
-  }
-
-  .ngx-datatable.material {
-    background: none;
   }
 
   .datatable-header,
@@ -139,8 +133,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .mat-bg-accent,
   .mat-raised-button.mat-accent,
   .mat-fab.mat-accent,
-  .mat-mini-fab.mat-accent,
-  .ngx-datatable .datatable-footer .datatable-pager .pager .pages.active a {
+  .mat-mini-fab.mat-accent {
     @include variable(background, --accent, $accent, !important);
     @include variable(color, #000, #000, !important);
     background-color: map-get($md-accent, 500);
@@ -346,17 +339,9 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .mat-mdc-select-panel .mat-mdc-option:hover,
   .mat-mdc-menu-content button.mat-mdc-menu-item:hover,
   .mat-mdc-menu-content button.mat-mdc-menu-item:hover .mat-icon:not(.theme-picker-swatch-icon),
-  .ngx-datatable .datatable-body .datatable-row-wrapper:hover,
-  .ngx-datatable .datatable-body .datatable-row-wrapper:hover .plugin-buttons,
-  .ngx-datatable .datatable-body .datatable-row-wrapper:hover .plugin-icons,
   .mat-mdc-menu-content button.mat-mdc-menu-item:focus,
-  .mat-mdc-menu-content button.mat-mdc-menu-item:focus .mat-icon:not(.theme-picker-swatch-icon),
-  .ngx-datatable .datatable-body .datatable-row-wrapper:focus {
+  .mat-mdc-menu-content button.mat-mdc-menu-item:focus .mat-icon:not(.theme-picker-swatch-icon) {
     background-color: var(--hover-bg);
-  }
-
-  .ngx-datatable .datatable-body .datatable-row-wrapper:hover .mat-mdc-slide-toggle:not(.mat-checked) .mat-mdc-slide-toggle-bar {
-    @include variable(background, --bg1, $bg1, !important);
   }
 
   // Treelists in storage/volumes
@@ -550,11 +535,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     top: 7px;
   }
 
-  // Fix bug where ngx-datatable rows get stuck at original window width
-  .datatable-scroll {
-    min-width: 100%;
-  }
-
   // Style the ix logo with the primary theme color
   .ix-logo {
     @include variable(fill, --primary, $primary);
@@ -664,11 +644,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   ix-iscsi .mat-ink-bar,
   ix-reports-dashboard .mat-ink-bar {
     opacity: 0;
-  }
-
-  // Adjustment of highlight over page number on pager in footer
-  .ngx-datatable .datatable-footer .datatable-pager .pager .pages.active a {
-    padding-top: 1px;
   }
 
   // Helper styles for red,blue,green,cyan,orange,magenta,violet,yellow
@@ -864,10 +839,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     margin-left: 5px;
   }
 
-  .ngx-datatable .datatable-header .datatable-header-cell .sort-btn {
-    vertical-align: -8px;
-  }
-
   .mat-mdc-progress-bar-fill::after {
     @include variable(background-color, --primary, $primary);
   }
@@ -925,13 +896,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     text-overflow: ellipsis;
     vertical-align: middle;
     white-space: nowrap;
-  }
-
-  .ngx-datatable .datatable-header .datatable-header-cell .resize-handle {
-    @include variable(border-color, --primary-txt, $primary-txt);
-    border-right: 1px solid !important;
-    opacity: 0.25;
-    visibility: visible !important;
   }
 
   .datatable-header-inner {

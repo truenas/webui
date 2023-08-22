@@ -809,7 +809,7 @@ export interface ApiCallDirectory {
 
   // Tunable
   'tunable.tunable_type_choices': { params: void; response: Choices };
-  'tunable.query': { params: QueryParams<Tunable>; response: Tunable };
+  'tunable.query': { params: QueryParams<Tunable>; response: Tunable[] };
 
   // FTP
   'ftp.update': { params: [FtpConfigUpdate]; response: FtpConfig };

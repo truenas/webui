@@ -1,12 +1,12 @@
 import {
-  ChangeDetectionStrategy, Component, Inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
-import { of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import helptext from 'app/helptext/storage/volumes/volume-status';
 import { Option } from 'app/interfaces/option.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
@@ -35,7 +35,7 @@ export class ReplaceDiskDialogComponent implements OnInit {
 
   unusedDisks: UnusedDisk[] = [];
 
-  unusedDisksOptions$ = of<Option[]>([]);
+  unusedDisksOptions$: Observable<Option[]>;
 
   readonly helptext = helptext;
 
@@ -48,6 +48,7 @@ export class ReplaceDiskDialogComponent implements OnInit {
     private snackbar: SnackbarService,
     @Inject(MAT_DIALOG_DATA) public data: ReplaceDiskDialogData,
     private dialogService: DialogService,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
@@ -68,6 +69,7 @@ export class ReplaceDiskDialogComponent implements OnInit {
         };
       });
       this.unusedDisksOptions$ = of(unusedDiskOptions);
+      this.cdr.markForCheck();
     });
   }
 
