@@ -19,7 +19,11 @@
       <div class="vdev-line">
         <b>{{ 'Data VDEVs' | translate }}</b>
         <div class="vdev-stats">
-          <span *ngIf="isTopologyWarning(topologyState.data)" class="warning">
+          <span
+            *ngIf="isTopologyWarning(topologyWarningsState.data)"
+            class="warning"
+            [matTooltip]="topologyWarningsState.data"
+          >
             <ix-icon name="error" class="pool-icon icon-warning"></ix-icon>
           </span>
           <span class="vdev-value">{{ topologyState.data }}</span>
@@ -27,8 +31,12 @@
       </div>
       <div class="vdev-line">
         <b>{{ 'Metadata VDEVs' | translate }}</b>
-        <div class="vdevs-stats">
-          <span *ngIf="isTopologyWarning(topologyState.metadata)" class="warning">
+        <div class="vdev-stats">
+          <span
+            *ngIf="isTopologyWarning(topologyWarningsState.metadata)"
+            class="warning"
+            [matTooltip]="topologyWarningsState.metadata"
+          >
             <ix-icon name="error" class="pool-icon icon-warning"></ix-icon>
           </span>
           <span class="vdev-value">{{ topologyState.metadata }}</span>
@@ -37,7 +45,11 @@
       <div class="vdev-line">
         <b>{{ 'Log VDEVs' | translate }}</b>
         <div class="vdev-stats">
-          <span *ngIf="isTopologyWarning(topologyState.log)" class="warning">
+          <span
+            *ngIf="isTopologyWarning(topologyWarningsState.log)"
+            class="warning"
+            [matTooltip]="topologyWarningsState.log"
+          >
             <ix-icon name="error" class="pool-icon icon-warning"></ix-icon>
           </span>
           <span class="vdev-value">{{ topologyState.log }}</span>
@@ -46,7 +58,11 @@
       <div class="vdev-line">
         <b>{{ 'Cache VDEVs' | translate }}</b>
         <div class="vdev-stats">
-          <span *ngIf="isTopologyWarning(topologyState.cache)" class="warning">
+          <span
+            *ngIf="isTopologyWarning(topologyWarningsState.cache)"
+            class="warning"
+            [matTooltip]="topologyWarningsState.cache"
+          >
             <ix-icon name="error" class="pool-icon icon-warning"></ix-icon>
           </span>
           <span class="vdev-value">{{ topologyState.cache }}</span>
@@ -55,7 +71,11 @@
       <div class="vdev-line">
         <b>{{ 'Spare VDEVs' | translate }}</b>
         <div class="vdev-stats">
-          <span *ngIf="isTopologyWarning(topologyState.spare)" class="warning">
+          <span
+            *ngIf="isTopologyWarning(topologyWarningsState.spare)"
+            class="warning"
+            [matTooltip]="topologyWarningsState.spare"
+          >
             <ix-icon name="error" class="pool-icon icon-warning"></ix-icon>
           </span>
           <span class="vdev-value">{{ topologyState.spare }}</span>
@@ -64,7 +84,11 @@
       <div class="vdev-line">
         <b>{{ 'Dedup VDEVs' | translate }}</b>
         <div class="vdev-stats">
-          <span *ngIf="isTopologyWarning(topologyState.dedup)" class="warning">
+          <span
+            *ngIf="isTopologyWarning(topologyWarningsState.dedup)"
+            class="warning"
+            [matTooltip]="topologyWarningsState.dedup"
+          >
             <ix-icon name="error" class="pool-icon icon-warning"></ix-icon>
           </span>
           <span class="vdev-value">{{ topologyState.dedup }}</span>
