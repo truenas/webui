@@ -39,7 +39,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { TreeModule } from '@bugsplat/angular-tree-component';
 import { TranslateModule } from '@ngx-translate/core';
-import { NgxDatatableModule } from '@siemens/ngx-datatable';
 import { NgxFilesizeModule } from 'ngx-filesize';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
@@ -71,7 +70,6 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
     ReactiveFormsModule,
     DragDropModule,
     RouterModule,
-    NgxDatatableModule,
     CdkTableModule,
     TreeModule,
     MatListModule,
