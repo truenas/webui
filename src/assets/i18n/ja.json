@@ -314,6 +314,7 @@
   "Are you sure you want to delete the group quota <b>{name}</b>?": "",
   "Are you sure you want to delete the user quota <b>{name}</b>?": "",
   "Are you sure you want to delete this idmap?": "",
+  "Are you sure you want to delete this record?": "",
   "Are you sure you want to delete this snapshot?": "",
   "Are you sure you want to delete user <b>\"{user}\"</b>?": "",
   "Are you sure you want to deregister TrueCommand Cloud Service?": "",

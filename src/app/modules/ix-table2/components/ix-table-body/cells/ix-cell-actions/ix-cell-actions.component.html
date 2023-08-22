@@ -1,0 +1,11 @@
+<div class="actions">
+  <button
+    *ngFor="let action of actions"
+    mat-icon-button
+    ixTest="row-edit"
+    [matTooltip]="action.tooltip || ''"
+    (click)="$event.stopPropagation(); action.onClick(row)"
+  >
+    <ix-icon [name]="action.iconName"></ix-icon>
+  </button>
+</div>

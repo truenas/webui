@@ -194,6 +194,7 @@
   "Are you sure you want to delete static route <b>\"{name}\"</b>?": "",
   "Are you sure you want to delete the <b>{name}</b> DNS Authenticator?": "",
   "Are you sure you want to delete the <b>{name}</b> certificate authority?": "",
+  "Are you sure you want to delete this record?": "",
   "Are you sure you want to delete this snapshot?": "",
   "Are you sure you want to deregister TrueCommand Cloud Service?": "",
   "Are you sure you want to start over?": "",
