@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import _ from 'lodash';
 import {
-  Observable, filter, map, of, switchMap, tap,
+  Observable, map, of, switchMap, tap,
 } from 'rxjs';
-import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Pool } from 'app/interfaces/pool.interface';
@@ -24,6 +24,7 @@ const initialState: DashboardStorageState = {
   volumesData: {},
 };
 
+@UntilDestroy()
 @Injectable()
 export class DashboardStorageStore extends ComponentStore<DashboardStorageState> {
   readonly pools$ = this.select((state) => state.pools);
@@ -35,6 +36,8 @@ export class DashboardStorageStore extends ComponentStore<DashboardStorageState>
   ) {
     super(initialState);
     this.initialize();
+    this.listenToPoolUpdates().subscribe();
+    this.listenForScanUpdates().subscribe();
   }
 
   initialize = this.effect((trigger$) => {
@@ -48,8 +51,6 @@ export class DashboardStorageStore extends ComponentStore<DashboardStorageState>
         ...state,
         isLoading: false,
       }))),
-      switchMap(() => this.listenForScanUpdates()),
-      switchMap(() => this.listenToPoolUpdates()),
     );
   });
 
@@ -99,7 +100,6 @@ export class DashboardStorageStore extends ComponentStore<DashboardStorageState>
 
   private listenToPoolUpdates(): Observable<unknown> {
     return this.ws.subscribe('pool.query').pipe(
-      filter((event) => event.msg !== IncomingApiMessageType.Removed),
       switchMap(() => this.loadPoolData()),
     );
   }
