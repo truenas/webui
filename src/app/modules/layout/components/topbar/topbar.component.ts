@@ -1,5 +1,5 @@
 import {
-  Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output,
+  Component, EventEmitter, Inject, Input, OnInit, Output,
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -33,7 +33,6 @@ import { FeedbackDialogComponent } from 'app/modules/ix-feedback/feedback-dialog
 import { topbarDialogPosition } from 'app/modules/layout/components/topbar/topbar-dialog-position.constant';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { LayoutService } from 'app/services/layout.service';
@@ -51,7 +50,7 @@ import { alertIndicatorPressed, sidenavUpdated } from 'app/store/topbar/topbar.a
   templateUrl: './topbar.component.html',
   styleUrls: ['./topbar.component.scss'],
 })
-export class TopbarComponent implements OnInit, OnDestroy {
+export class TopbarComponent implements OnInit {
   @Input() sidenav: MatSidenav;
   @Output() sidenavStatusChange = new EventEmitter<SidenavStatusData>();
 
@@ -92,7 +91,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
     private mediaObserver: MediaObserver,
     private layoutService: LayoutService,
     private store$: Store<AlertSlice>,
-    private core: CoreService,
     private snackbar: SnackbarService,
     private errorHandler: ErrorHandlerService,
     private actions$: Actions,
@@ -187,10 +185,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
     this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((sysInfo) => {
       this.hostname = sysInfo.hostname;
     });
-  }
-
-  ngOnDestroy(): void {
-    this.core.unregister({ observerClass: this });
   }
 
   onAlertIndicatorPressed(): void {

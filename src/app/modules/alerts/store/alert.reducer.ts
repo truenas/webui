@@ -4,7 +4,8 @@ import { AlertLevel } from 'app/enums/alert-level.enum';
 import { Alert } from 'app/interfaces/alert.interface';
 import {
   alertAdded,
-  alertChanged, alertPanelClosed,
+  alertChanged,
+  alertPanelClosed,
   alertRemoved,
   alertsLoaded,
   alertsNotLoaded, dismissAlertPressed, dismissAllAlertsPressed, reopenAlertPressed, reopenAllAlertsPressed,

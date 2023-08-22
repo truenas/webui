@@ -48,7 +48,7 @@ ix-fake-progress-bar {
   margin: 8px 0;
   min-height: 40px;
 
-  @media (max-width: $breakpoint-tablet) {
+  @media (max-width: $breakpoint-md) {
     flex-wrap: wrap;
   }
 }

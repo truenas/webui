@@ -20,7 +20,6 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
 import { InterfacesStore } from 'app/pages/network/stores/interfaces.store';
-import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -59,7 +58,6 @@ export class NetworkComponent implements OnInit, OnDestroy {
     private loader: AppLoaderService,
     private translate: TranslateService,
     private slideInService: IxSlideInService,
-    private core: CoreService,
     private snackbar: SnackbarService,
     private store$: Store<AppState>,
     private errorHandler: ErrorHandlerService,
@@ -318,7 +316,6 @@ export class NetworkComponent implements OnInit, OnDestroy {
     if (this.formEvent$) {
       this.formEvent$.complete();
     }
-    this.core.unregister({ observerClass: this });
   }
 
   private openInterfaceForEditFromRoute(): void {

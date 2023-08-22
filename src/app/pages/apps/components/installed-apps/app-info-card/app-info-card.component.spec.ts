@@ -179,8 +179,6 @@ describe('AppInfoCardComponent', () => {
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Delete',
       message: 'Delete ix-test-app?',
-      secondaryCheckbox: true,
-      secondaryCheckboxText: 'Delete docker images used by the app',
     });
   });
 

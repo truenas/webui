@@ -90,18 +90,6 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
     this.updateValues([...this.values, newValue]);
   }
 
-  /**
-   * Adding chips on blur manually instead of [matChipInputAddOnBlur] to support autocomplete.
-   */
-  onInputBlur(event: FocusEvent): void {
-    const target: HTMLElement = event.relatedTarget as HTMLElement;
-    if (target?.tagName === 'MAT-OPTION') {
-      return;
-    }
-
-    this.onAdd(this.chipInput.nativeElement.value);
-  }
-
   private setAutocomplete(): void {
     if (!this.autocompleteProvider) {
       this.suggestions$ = null;

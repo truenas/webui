@@ -26,16 +26,7 @@
     (click)="statusPressed(); $event.stopPropagation()"
   ></ix-app-status-cell>
 </div>
-<!-- TODO: Waiting for the https://ixsystems.atlassian.net/browse/NAS-121614 -->
-<div class="cell cell-cpu">
-  <span [ngTemplateOutlet]="notAvailable"></span>
-</div>
-<div class="cell cell-ram">
-  <span [ngTemplateOutlet]="notAvailable"></span>
-</div>
-<div class="cell cell-disk">
-  <span [ngTemplateOutlet]="notAvailable"></span>
-</div>
+<!-- TODO: Waiting for the https://ixsystems.atlassian.net/browse/NAS-121614 CPU / RAM / DISK -->
 <div class="cell cell-update">
   <ng-container *ngIf="hasUpdates; else upToDate">
     <span>{{ 'Update available' | translate }}</span>
@@ -64,16 +55,12 @@
     matTooltipPosition="above"
     [ixTest]="[app.name, 'stop']"
     [matTooltip]="'Stop' | translate"
-    [disabled]="inProgress"
+    [disabled]="isStartingOrStopping"
     (click)="stop(); $event.stopPropagation()"
   >
     <ix-icon name="mdi-stop"></ix-icon>
   </button>
 </div>
-
-<ng-template #notAvailable>
-  {{ 'N/A' | translate }}
-</ng-template>
 
 <ng-template #upToDate>
   {{ 'Up to date' | translate }}

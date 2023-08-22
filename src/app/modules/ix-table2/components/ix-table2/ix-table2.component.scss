@@ -1,7 +1,13 @@
+:host {
+  display: block;
+  max-width: 100%;
+}
+
 table {
   background: var(--contrast-darker);
   border: solid 1px var(--contrast-lighter);
   border-collapse: collapse;
   color: var(--fg2);
+  table-layout: fixed;
   width: 100%;
 }

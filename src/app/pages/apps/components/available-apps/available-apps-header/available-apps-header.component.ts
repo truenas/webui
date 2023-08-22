@@ -84,7 +84,7 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
     ).subscribe((searchQuery) => {
       this.appsFilterStore.applySearchQuery(searchQuery);
     });
-    this.appsFilterStore.filterValues$.pipe(untilDestroyed(this)).subscribe({
+    this.appsFilterStore.filterValues$.pipe(take(1), untilDestroyed(this)).subscribe({
       next: (filterValues) => {
         if (filterValues.categories?.length) {
           this.form.controls.categories.setValue(filterValues.categories, { emitEvent: false });
