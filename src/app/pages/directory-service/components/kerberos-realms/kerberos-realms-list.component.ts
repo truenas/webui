@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
@@ -22,9 +22,13 @@ import { WebSocketService } from 'app/services/ws.service';
 @UntilDestroy()
 @Component({
   templateUrl: './kerberos-realms-list.component.html',
+  selector: 'ix-kerberos-realms-list',
+  styleUrls: ['./kerberos-realms-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class KerberosRealmsListComponent implements OnInit {
+  @Input() paginator = true;
+  @Input() toolbar = false;
   filterString = '';
   dataProvider = new ArrayDataProvider<KerberosRealmRow>();
   kerberosRealsm: KerberosRealmRow[] = [];

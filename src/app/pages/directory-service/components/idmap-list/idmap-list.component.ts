@@ -156,8 +156,8 @@ export default class IdmapListComponent implements OnInit {
           return this.ws.call('idmap.query');
         }
       }),
-      map((ipdmaps) => {
-        const transformed = [...ipdmaps] as IdmapRow[];
+      map((idmaps) => {
+        const transformed = [...idmaps] as IdmapRow[];
         transformed.forEach((row) => {
           if (row.certificate) {
             row.cert_name = row.certificate.cert_name;

@@ -9,8 +9,8 @@
 
 <div class="table-container">
   <mat-toolbar *ngIf="toolbar" class="table-header">
-    <div class="heading">
-      <h3>Idmap</h3>
+    <div class="heading" [routerLink]="['/', 'directoryservice', 'idmap']">
+      <h3>{{ 'Idmap' | translate }}</h3>
       <ix-icon name="open_in_new"></ix-icon>
     </div>
     <div class="action">

@@ -57,8 +57,8 @@
   <div class="advanced-settings-cards">
     <ix-idmaps-list [paginator]="false" [toolbar]="true"></ix-idmaps-list>
     <ng-container *ngTemplateOutlet="dataCard; context: { card: kerberosSettingsDataCard }"></ng-container>
-    <ix-conf-table [conf]="kerberosRealmsTableConf"></ix-conf-table>
-    <ix-conf-table [conf]="kerberosKeytabTableConf"></ix-conf-table>
+    <ix-kerberos-realms-list [paginator]="false" [toolbar]="true"></ix-kerberos-realms-list>
+    <ix-kerberos-keytabs-list [paginator]="false" [toolbar]="true"></ix-kerberos-keytabs-list>
   </div>
 </cdk-accordion-item>
 
