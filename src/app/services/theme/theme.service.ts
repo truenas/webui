@@ -48,7 +48,13 @@ export class ThemeService {
 
   onThemeChanged(theme: string): void {
     this.activeTheme = theme;
-    this.setCssVars(this.findTheme(this.activeTheme, true));
+    const selectedTheme = this.findTheme(this.activeTheme, true);
+
+    this.setCssVars(selectedTheme);
+
+    this.window.localStorage.setItem('theme', String(theme));
+    this.window.localStorage.setItem('bg1', selectedTheme?.bg1);
+    this.window.localStorage.setItem('fg1', selectedTheme?.fg1);
   }
 
   resetToDefaultTheme(): void {
