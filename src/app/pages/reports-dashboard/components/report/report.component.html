@@ -41,21 +41,18 @@
               <mat-button-toggle
                 [disabled]="zoomLevelIndex === zoomLevelMin"
                 [matTooltip]="'Zoom Out' | translate"
-                [matTooltipShowDelay]="1000"
                 (click)="timeZoomOut()"
               ><ix-icon name="mdi-magnify-minus"></ix-icon></mat-button-toggle>
 
               <mat-button-toggle
                 [disabled]="zoomLevelIndex === zoomLevelMax && stepForwardDisabled && !customZoom"
                 [matTooltip]="'Reset Zoom' | translate"
-                [matTooltipShowDelay]="1000"
                 (click)="timeZoomReset()"
               >{{ currentZoomLevel | mapValue: zoomLevelLabels | translate }}</mat-button-toggle>
 
               <mat-button-toggle
                 [disabled]="zoomLevelIndex === zoomLevelMax"
                 [matTooltip]="'Zoom In' | translate"
-                [matTooltipShowDelay]="1000"
                 (click)="timeZoomIn()"
               ><ix-icon name="mdi-magnify-plus"></ix-icon></mat-button-toggle>
             </mat-button-toggle-group>
