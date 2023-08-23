@@ -18,7 +18,6 @@ import {
   delay, distinctUntilChanged, filter, switchMap, throttleTime,
 } from 'rxjs/operators';
 import { toggleMenuDuration } from 'app/constants/toggle-menu-duration';
-import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { ReportingGraphName } from 'app/enums/reporting.enum';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -133,7 +132,6 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
     private core: CoreService,
     private store$: Store<AppState>,
     private themeService: ThemeService,
-    private formatDateTimePipe: FormatDateTimePipe,
     @Inject(WINDOW) private window: Window,
   ) {
     super(translate);
@@ -308,8 +306,8 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
 
     const halfPeriodMilliseconds = this.getHalfPeriodMilliseconds();
 
-    let currentDate = this.lastEndDateForCurrentZoomLevel[this.currentZoomLevel] ||
-      ((this.currentStartDate + this.currentEndDate) / 2) + halfPeriodMilliseconds;
+    let currentDate = this.lastEndDateForCurrentZoomLevel[this.currentZoomLevel]
+      || ((this.currentStartDate + this.currentEndDate) / 2) + halfPeriodMilliseconds;
 
     if (this.stepForwardDisabled || isToday(this.currentEndDate)) {
       currentDate = this.currentEndDate;
