@@ -4031,7 +4031,6 @@
   "Are you sure you want to delete the <b>{name}</b> API Key?": "정말로 <b>{name}</b> API 키를 삭제하시겠습니까?",
   "Are you sure you want to delete the group quota <b>{name}</b>?": "정말로 그룹 할당량 <b>{name}</b>을(를) 삭제하시겠습니까?",
   "Are you sure you want to delete the user quota <b>{name}</b>?": "정말로 사용자 할당량 <b>{name}</b>을(를) 삭제하시겠습니까?",
-  "Are you sure you want to delete this idmap?": "이 ID 매핑을 삭제하시겠습니까?",
   "Are you sure you want to delete user <b>\"{user}\"</b>?": "<b>\"{user}\"</b> 사용자를 삭제하시겠습니까?",
   "Are you sure you want to deregister TrueCommand Cloud Service?": "TrueCommand Cloud 서비스 등록을 해제하시겠습니까?",
   "Are you sure you want to stop connecting to the TrueCommand Cloud Service?": "TrueCommand Cloud 서비스와의 연결을 끊으시겠습니까?",

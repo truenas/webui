@@ -1,5 +1,5 @@
 import { CdkAccordionItem } from '@angular/cdk/accordion';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
@@ -7,7 +7,6 @@ import {
 } from 'rxjs';
 import { filter, switchMap } from 'rxjs/operators';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
-import { IdmapName } from 'app/enums/idmap.enum';
 import helptext from 'app/helptext/directory-service/dashboard';
 import idmapHelptext from 'app/helptext/directory-service/idmap';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
@@ -18,10 +17,9 @@ import { Option } from 'app/interfaces/option.interface';
 import { AppTableConfig } from 'app/modules/entity/table/table.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ActiveDirectoryComponent } from 'app/pages/directory-service/components/active-directory/active-directory.component';
-import { IdmapFormComponent } from 'app/pages/directory-service/components/idmap-form/idmap-form.component';
+import IdmapListComponent from 'app/pages/directory-service/components/idmap-list/idmap-list.component';
 import { KerberosKeytabsFormComponent } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-form/kerberos-keytabs-form.component';
 import { KerberosSettingsComponent } from 'app/pages/directory-service/components/kerberos-settings/kerberos-settings.component';
-import { requiredIdmapDomains } from 'app/pages/directory-service/utils/required-idmap-domains.utils';
 import { DialogService } from 'app/services/dialog.service';
 import { IdmapService } from 'app/services/idmap.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -48,66 +46,8 @@ export class DirectoryServicesComponent implements OnInit {
   ldapDataCard: DataCard;
   kerberosSettingsDataCard: DataCard;
 
-  idmapTableConf: AppTableConfig<this> = {
-    title: helptext.idmap.title,
-    titleHref: '/directoryservice/idmap',
-    queryCall: 'idmap.query',
-    emptyEntityLarge: false,
-    parent: this,
-    columns: [
-      { name: this.translate.instant('Name'), prop: 'name' },
-      { name: this.translate.instant('Backend'), prop: 'idmap_backend' },
-      { name: this.translate.instant('DNS Domain Name'), prop: 'dns_domain_name' },
-      { name: this.translate.instant('Range Low'), prop: 'range_low' },
-      { name: this.translate.instant('Range High'), prop: 'range_high' },
-      { name: this.translate.instant('Certificate'), prop: 'cert_name' },
-
-    ],
-    add: () => {
-      this.ensureActiveDirectoryIsEnabledForIdmap()
-        .pipe(untilDestroyed(this))
-        .subscribe(() => {
-          const slideInRef = this.slideInService.open(IdmapFormComponent);
-          slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.refreshCards());
-        });
-    },
-    edit: (row: Idmap) => {
-      const slideInRef = this.slideInService.open(IdmapFormComponent, { data: row });
-      slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.refreshCards());
-    },
-    getActions: () => {
-      return [
-        {
-          id: 'delete',
-          label: this.translate.instant('Delete'),
-          name: 'delete',
-          icon: 'delete',
-          onClick: (row: Idmap) => {
-            this.dialog.confirm({
-              title: this.translate.instant('Delete'),
-              message: this.translate.instant('Are you sure you want to delete this idmap?'),
-            }).pipe(
-              filter(Boolean),
-              switchMap(() => {
-                return this.ws.call('idmap.delete', [row.id]).pipe(this.loader.withLoader());
-              }),
-              untilDestroyed(this),
-            ).subscribe(() => {
-              this.refreshTables();
-            });
-          },
-        },
-      ];
-    },
-    isActionVisible(actionId: string, row: Idmap) {
-      if (actionId === 'delete' && requiredIdmapDomains.includes(row.name as IdmapName)) {
-        return false;
-      }
-
-      return true;
-    },
-
-  };
+  protected idmapQueryCall: Observable<Idmap[]> = this.ws.call('idmap.query');
+  @ViewChild(IdmapListComponent) idmapListComponent: IdmapListComponent;
 
   kerberosRealmsTableConf: AppTableConfig<this> = {
     title: helptext.kerberosRealms.title,
@@ -248,14 +188,6 @@ export class DirectoryServicesComponent implements OnInit {
           onSettingsPressed: () => this.openKerberosSettingsForm(),
         };
 
-        if (this.isLdapEnabled) {
-          this.idmapTableConf.queryCallOption = [[['name', '=', IdmapName.DsTypeLdap]]];
-        } else if (this.isActiveDirectoryEnabled) {
-          this.idmapTableConf.queryCallOption = [[['name', '!=', IdmapName.DsTypeLdap]]];
-        } else {
-          this.idmapTableConf.queryCallOption = undefined;
-        }
-
         this.refreshTables();
       });
   }
@@ -291,7 +223,10 @@ export class DirectoryServicesComponent implements OnInit {
   }
 
   refreshTables(): void {
-    [this.kerberosRealmsTableConf, this.idmapTableConf, this.kerberosKeytabTableConf].forEach((config) => {
+    if (this.idmapListComponent) {
+      this.idmapListComponent.getIdmaps();
+    }
+    [this.kerberosRealmsTableConf, this.kerberosKeytabTableConf].forEach((config) => {
       if (config.tableComponent) {
         config.tableComponent.getData();
       }

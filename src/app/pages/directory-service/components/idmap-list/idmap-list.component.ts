@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
@@ -16,7 +16,7 @@ import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { ActiveDirectoryComponent } from 'app/pages/directory-service/components/active-directory/active-directory.component';
 import { IdmapFormComponent } from 'app/pages/directory-service/components/idmap-form/idmap-form.component';
-import { IdmapRow } from 'app/pages/directory-service/components/idmap-list2/idmap-row.interface';
+import { IdmapRow } from 'app/pages/directory-service/components/idmap-list/idmap-row.interface';
 import { requiredIdmapDomains } from 'app/pages/directory-service/utils/required-idmap-domains.utils';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -26,11 +26,14 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-idmaps-list',
   templateUrl: './idmap-list.component.html',
   styleUrls: ['./idmap-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export default class IdmapListComponent implements OnInit {
+  @Input() paginator = true;
+  @Input() toolbar = false;
   requiredIdmapDomains = requiredIdmapDomains as string[];
   IdmapName = IdmapName;
   filterString = '';
@@ -81,6 +84,9 @@ export default class IdmapListComponent implements OnInit {
         },
         {
           iconName: 'delete',
+          hidden: (row) => {
+            return of(requiredIdmapDomains.includes(row.name as IdmapName));
+          },
           tooltip: this.translateService.instant('Delete'),
           onClick: (row) => {
             this.dialogService.confirm({

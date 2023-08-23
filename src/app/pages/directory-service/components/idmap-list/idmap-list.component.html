@@ -8,6 +8,17 @@
 </ng-template>
 
 <div class="table-container">
+  <mat-toolbar *ngIf="toolbar" class="table-header">
+    <div class="heading">
+      <h3>Idmap</h3>
+      <ix-icon name="open_in_new"></ix-icon>
+    </div>
+    <div class="action">
+      <button mat-button ixTest="add-idmap" (click)="doAdd()">
+        {{ 'Add' | translate }}
+      </button>
+    </div>
+  </mat-toolbar>
   <ix-table2
     [ix-table2-empty]="!dataProvider.rows.length"
     [emptyConfig]="emptyService.defaultEmptyConfig(emptyType$ | async)"
@@ -24,5 +35,5 @@
     >
     </tbody>
   </ix-table2>
-  <ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>
+  <ix-table-pager *ngIf="paginator" [dataProvider]="dataProvider"></ix-table-pager>
 </div>

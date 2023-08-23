@@ -701,7 +701,6 @@
   "Are you sure you want to delete the <b>{name}</b> API Key?": "您确定要删除 <b>{name}</b> API 密钥吗？",
   "Are you sure you want to delete the group quota <b>{name}</b>?": "确定要删除组配额 <b>{name}</b>？",
   "Are you sure you want to delete the user quota <b>{name}</b>?": "您确定要删除用户配额 <b>{name}</b> 吗？",
-  "Are you sure you want to delete this idmap?": "您确定要删除此idmap吗？",
   "Are you sure you want to delete user <b>\"{user}\"</b>?": "您确定要删除用户 <b>\"{user}\"</b> 吗？",
   "Are you sure you want to deregister TrueCommand Cloud Service?": "您确定要注销TrueCommand云服务吗？",
   "Are you sure you want to stop connecting to the TrueCommand Cloud Service?": "您确定要停止连接到TrueCommand云服务吗？",

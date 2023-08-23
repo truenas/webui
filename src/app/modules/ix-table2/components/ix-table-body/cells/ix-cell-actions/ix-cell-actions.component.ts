@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Observable } from 'rxjs';
 import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.interface';
 
 @Component({
@@ -10,6 +11,7 @@ export class IxCellActionsComponent<T> extends ColumnComponent<T> {
     iconName: string;
     onClick: (row: T) => void;
     tooltip?: string;
+    hidden?: (row: T) => Observable<boolean>;
   }[];
 }
 

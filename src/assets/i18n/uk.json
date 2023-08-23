@@ -676,7 +676,6 @@
   "Are you sure you want to delete the <b>{name}</b> API Key?": "Ви впевнені, що хочете видалити ключ <b>{name} </b>?",
   "Are you sure you want to delete the group quota <b>{name}</b>?": "Ви впевнені, що хочете видалити групову квоту <b>{name} </b>?",
   "Are you sure you want to delete the user quota <b>{name}</b>?": "Ви впевнені, що хочете видалити квоту користувача <b>{name} </b>?",
-  "Are you sure you want to delete this idmap?": "Ви впевнені, що хочете видалити цей IDMAP?",
   "Are you sure you want to delete user <b>\"{user}\"</b>?": "Ви впевнені, що бажаєте видалити користувача <b>\"{user}\"</b>?",
   "Are you sure you want to deregister TrueCommand Cloud Service?": "Ви впевнені, що хочете скасувати реєстрацію хмарних служб TrueCommand?",
   "Are you sure you want to stop connecting to the TrueCommand Cloud Service?": "Ви впевнені, що хочете перестати підключатися до хмарного сервісу TrueCommand?",

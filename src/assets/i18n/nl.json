@@ -604,7 +604,6 @@
   "Are you sure you want to delete the <b>{name}</b> API Key?": "Weet u zeker dat u de <b>{name}</b> API-sleutel wilt verwijderen?",
   "Are you sure you want to delete the group quota <b>{name}</b>?": "Weet u zeker dat u het groepsquotum <b>{name}</b> wilt verwijderen?",
   "Are you sure you want to delete the user quota <b>{name}</b>?": "Weet u zeker dat u het gebruikersquotum <b>{name}</b> wilt verwijderen?",
-  "Are you sure you want to delete this idmap?": "Weet u zeker dat u deze idmap wilt verwijderen?",
   "Are you sure you want to delete user <b>\"{user}\"</b>?": "Weet u zeker dat u gebruiker <b>\"{user}\"</b> wilt verwijderen?",
   "Are you sure you want to deregister TrueCommand Cloud Service?": "Weet u zeker dat u TrueCommand Cloud Service wilt afmelden?",
   "Are you sure you want to stop connecting to the TrueCommand Cloud Service?": "Weet u zeker dat u geen verbinding meer wilt maken met de TrueCommand Cloud Service?",

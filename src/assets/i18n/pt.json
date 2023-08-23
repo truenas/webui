@@ -3377,7 +3377,6 @@
   "Are you sure you want to delete the <b>{name}</b> API Key?": "Tem certeza de que deseja apagar a Chave API <b>{name}</b>?",
   "Are you sure you want to delete the group quota <b>{name}</b>?": "Tem certeza de que deseja apagar a cota do grupo <b>{name}</b>",
   "Are you sure you want to delete the user quota <b>{name}</b>?": "Tem certeza de que deseja apagar a cota de utilizador <b>{name}</b>",
-  "Are you sure you want to delete this idmap?": "Tem certeza de que deseja apagar este idmap",
   "Are you sure you want to delete user <b>\"{user}\"</b>?": "Tem certeza de que deseja apagar o utilizador <b>\"{user}\"</b>?",
   "Are you sure you want to stop connecting to the TrueCommand Cloud Service?": "Tem certeza de que deseja parar a ligação para o Serviço Cloud TrueCommand? ",
   "Are you sure you want to sync from peer?": "Tem certeza de que deseja sincronizar do peer?",
