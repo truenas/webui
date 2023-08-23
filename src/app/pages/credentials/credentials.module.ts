@@ -20,6 +20,7 @@ import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxDynamicFormModule } from 'app/modules/ix-dynamic-form/ix-dynamic-form.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { LayoutModule } from 'app/modules/layout/layout.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import {
   CloudCredentialsFormComponent,
@@ -31,6 +32,7 @@ import {
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/storj-provider-form/storj-provider-form.component';
 import { TokenProviderFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/token-provider-form/token-provider-form.component';
 import { SshConnectionFormComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-form/ssh-connection-form.component';
+import { SshKeypairCardComponent } from 'app/pages/credentials/backup-credentials/ssh-keypair-card/ssh-keypair-card.component';
 import { SshKeypairFormComponent } from 'app/pages/credentials/backup-credentials/ssh-keypair-form/ssh-keypair-form.component';
 import { AcmeDnsAuthenticatorListComponent } from 'app/pages/credentials/certificates-dash/acme-dns-authenticator-list/acme-dns-authenticator-list.component';
 import {
@@ -63,6 +65,7 @@ import {
 import { routing } from 'app/pages/credentials/credentials.routing';
 import { KmipComponent } from 'app/pages/credentials/kmip/kmip.component';
 import { BackupCredentialsComponent } from './backup-credentials/backup-credentials.component';
+import { CloudCredentialsCardComponent } from './backup-credentials/cloud-credentials-card/cloud-credentials-card.component';
 import { AzureProviderFormComponent } from './backup-credentials/cloud-credentials-form/provider-forms/azure-provider-form/azure-provider-form.component';
 import { FtpProviderFormComponent } from './backup-credentials/cloud-credentials-form/provider-forms/ftp-provider-form/ftp-provider-form.component';
 import { GoogleCloudProviderFormComponent } from './backup-credentials/cloud-credentials-form/provider-forms/google-cloud-provider-form/google-cloud-provider-form.component';
@@ -75,6 +78,7 @@ import { PcloudProviderFormComponent } from './backup-credentials/cloud-credenti
 import { S3ProviderFormComponent } from './backup-credentials/cloud-credentials-form/provider-forms/s3-provider-form/s3-provider-form.component';
 import { SftpProviderFormComponent } from './backup-credentials/cloud-credentials-form/provider-forms/sftp-provider-form/sftp-provider-form.component';
 import { WebdavProviderFormComponent } from './backup-credentials/cloud-credentials-form/provider-forms/webdav-provider-form/webdav-provider-form.component';
+import { SshConnectionCardComponent } from './backup-credentials/ssh-connection-card/ssh-connection-card.component';
 import { CertificateAuthorityAddComponent } from './certificates-dash/certificate-authority-add/certificate-authority-add.component';
 import { CaIdentifierAndTypeComponent } from './certificates-dash/certificate-authority-add/steps/ca-identifier-and-type/ca-identifier-and-type.component';
 import { CertificateAuthorityEditComponent } from './certificates-dash/certificate-authority-edit/certificate-authority-edit.component';
@@ -137,6 +141,9 @@ import { CertificateSubjectComponent } from './certificates-dash/forms/common-st
     CertificateSigningRequestsListComponent,
     CertificateAuthorityListComponent,
     AcmeDnsAuthenticatorListComponent,
+    SshConnectionCardComponent,
+    SshKeypairCardComponent,
+    CloudCredentialsCardComponent,
   ],
   imports: [
     AppCommonModule,
@@ -144,6 +151,7 @@ import { CertificateSubjectComponent } from './certificates-dash/forms/common-st
     CommonModule,
     CoreComponents,
     EntityModule,
+    LayoutModule,
     FlexLayoutModule,
     IxDynamicFormModule,
     IxIconModule,

@@ -3,7 +3,6 @@ import { Component, ChangeDetectorRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
   filter, switchMap, tap,
@@ -33,7 +32,6 @@ import { ReplicationService } from 'app/services/replication.service';
 import { StorageService } from 'app/services/storage.service';
 import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
 
 @UntilDestroy()
 @Component({
@@ -83,14 +81,13 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
 
   constructor(
     private ws: WebSocketService,
-    private dialog: DialogService,
+    private dialogService: DialogService,
     protected loader: AppLoaderService,
     private slideInService: IxSlideInService,
     private translate: TranslateService,
     private matDialog: MatDialog,
     private errorHandler: ErrorHandlerService,
     private route: ActivatedRoute,
-    private store$: Store<AppState>,
     private snackbar: SnackbarService,
     private cdr: ChangeDetectorRef,
   ) {
@@ -119,7 +116,7 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
         name: 'run',
         label: this.translate.instant('Run Now'),
         onClick: (row: ReplicationTaskUi) => {
-          this.dialog.confirm({
+          this.dialogService.confirm({
             title: this.translate.instant('Run Now'),
             message: this.translate.instant('Replicate «{name}» now?', { name: row.name }),
             hideCheckbox: true,
@@ -138,7 +135,7 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
               this.cdr.markForCheck();
             },
             error: (error: Job) => {
-              this.dialog.error(this.errorHandler.parseJobError(error));
+              this.dialogService.error(this.errorHandler.parseJobError(error));
             },
           });
         },
@@ -205,23 +202,23 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
         });
         dialogRef.componentInstance.aborted.pipe(untilDestroyed(this)).subscribe(() => {
           dialogRef.close();
-          this.dialog.info(this.translate.instant('Task Aborted'), '');
+          this.dialogService.info(this.translate.instant('Task Aborted'), '');
         });
       } else if (row.state.state === JobState.Hold) {
-        this.dialog.info(this.translate.instant('Task is on hold'), row.state.reason);
+        this.dialogService.info(this.translate.instant('Task is on hold'), row.state.reason);
       } else if (row.state.warnings && row.state.warnings.length > 0) {
         let list = '';
         row.state.warnings.forEach((warning: string) => {
           list += warning + '\n';
         });
-        this.dialog.error({ title: row.state.state, message: `<pre>${list}</pre>` });
+        this.dialogService.error({ title: row.state.state, message: `<pre>${list}</pre>` });
       } else if (row.state.error) {
-        this.dialog.error({ title: row.state.state, message: `<pre>${row.state.error}</pre>` });
-      } else if (row.job) {
+        this.dialogService.error({ title: row.state.state, message: `<pre>${row.state.error}</pre>` });
+      } else {
         this.matDialog.open(ShowLogsDialogComponent, { data: row.job });
       }
     } else {
-      this.dialog.warn(globalHelptext.noLogDialog.title, globalHelptext.noLogDialog.message);
+      this.dialogService.warn(globalHelptext.noLogDialog.title, globalHelptext.noLogDialog.message);
     }
   }
 
@@ -235,7 +232,7 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
       },
       error: (err: WebsocketError) => {
         row.enabled = !row.enabled;
-        this.dialog.error(this.errorHandler.parseWsError(err));
+        this.dialogService.error(this.errorHandler.parseWsError(err));
       },
     });
   }

@@ -1,9 +1,12 @@
+<ix-modal-header
+  [title]="'Email Options' | translate"
+  [loading]="isLoading"
+></ix-modal-header>
+
 <mat-card class="card">
   <mat-card-content>
-    <mat-progress-bar *ngIf="isLoading" mode="indeterminate"></mat-progress-bar>
-
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-      <ix-fieldset [title]="'Email Options' | translate">
+      <ix-fieldset>
         <ix-radio-group
           [label]="'Send Mail Method' | translate"
           [formControl]="sendMethodControl"

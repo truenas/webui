@@ -15,7 +15,6 @@ import { WebSocketService } from 'app/services/ws.service';
   selector: 'ix-email-card',
   templateUrl: './email-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  styleUrls: ['./email-card.component.scss'],
 })
 export class EmailCardComponent {
   readonly helptext = helptextSystemEmail;
