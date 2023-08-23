@@ -1,22 +1,33 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
+import { WINDOW } from 'app/helpers/window.helper';
 import { Theme } from 'app/interfaces/theme.interface';
 import { LanguageService } from 'app/services/language.service';
 import { defaultTheme } from 'app/services/theme/theme.constants';
+import { ThemeService } from 'app/services/theme/theme.service';
 
 @Component({
   selector: 'ix-auth-layout',
   templateUrl: './auth-layout.component.html',
 })
 export class AuthLayoutComponent implements OnInit {
-  private theme: Theme = defaultTheme;
-
-  constructor(public language: LanguageService) {
+  constructor(
+    public language: LanguageService,
+    private themeService: ThemeService,
+    @Inject(WINDOW) private window: Window,
+  ) {
     // Translator init
     language.setLanguageFromBrowser();
   }
 
   ngOnInit(): void {
-    this.setCssVars(this.theme);
+    let theme: Theme = defaultTheme;
+    const storedTheme = this.window.localStorage.getItem('theme');
+
+    if (storedTheme) {
+      theme = this.themeService.findTheme(storedTheme);
+    }
+
+    this.setCssVars(theme);
   }
 
   setCssVars(theme: Theme): void {
