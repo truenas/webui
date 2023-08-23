@@ -1,8 +1,6 @@
-import { Component, OnInit, Inject } from '@angular/core';
-import { WINDOW } from 'app/helpers/window.helper';
+import { Component, OnInit } from '@angular/core';
 import { Theme } from 'app/interfaces/theme.interface';
 import { LanguageService } from 'app/services/language.service';
-import { defaultTheme } from 'app/services/theme/theme.constants';
 import { ThemeService } from 'app/services/theme/theme.service';
 
 @Component({
@@ -13,21 +11,13 @@ export class AuthLayoutComponent implements OnInit {
   constructor(
     public language: LanguageService,
     private themeService: ThemeService,
-    @Inject(WINDOW) private window: Window,
   ) {
     // Translator init
     language.setLanguageFromBrowser();
   }
 
   ngOnInit(): void {
-    let theme: Theme = defaultTheme;
-    const storedTheme = this.window.localStorage.getItem('theme');
-
-    if (storedTheme) {
-      theme = this.themeService.findTheme(storedTheme);
-    }
-
-    this.setCssVars(theme);
+    this.setCssVars(this.themeService.getActiveTheme());
   }
 
   setCssVars(theme: Theme): void {

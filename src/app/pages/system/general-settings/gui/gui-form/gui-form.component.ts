@@ -115,11 +115,6 @@ export class GuiFormComponent {
       tap(() => {
         this.store$.dispatch(guiFormSubmitted({ theme: values.theme }));
 
-        // save theme to localStorage
-        this.window.localStorage.setItem('theme', String(values.theme));
-        this.window.localStorage.setItem('bg1', this.themeService.findTheme(values.theme)?.bg1);
-        this.window.localStorage.setItem('fg1', this.themeService.findTheme(values.theme)?.fg1);
-
         // prevent to revert momentarily to previous value due to `guiFormSubmitted`
         this.formGroup.controls.ui_httpsredirect.setValue(values.ui_httpsredirect);
       }),
@@ -140,6 +135,8 @@ export class GuiFormComponent {
         this.cdr.markForCheck();
       },
     });
+
+    this.themeService.updateThemeInLocalStorage(this.themeService.findTheme(values.theme));
   }
 
   getIsServiceRestartRequired(current: SystemGeneralConfig, next: SystemGeneralConfigUpdate): boolean {
