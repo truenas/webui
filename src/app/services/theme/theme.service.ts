@@ -22,6 +22,10 @@ export class ThemeService {
   private utils: ThemeUtils;
   loadTheme$ = new Subject<string>();
 
+  get isDefaultTheme(): boolean {
+    return this.activeTheme === this.defaultTheme;
+  }
+
   constructor(
     private store$: Store<AppState>,
     @Inject(WINDOW) private window: Window,
@@ -48,15 +52,20 @@ export class ThemeService {
 
   onThemeChanged(theme: string): void {
     this.activeTheme = theme;
-    this.setCssVars(this.findTheme(this.activeTheme, true));
+    const selectedTheme = this.findTheme(this.activeTheme, true);
+
+    this.setCssVars(selectedTheme);
+    this.updateThemeInLocalStorage(selectedTheme);
+  }
+
+  updateThemeInLocalStorage(theme: Theme): void {
+    this.window.localStorage.setItem('theme', theme.name);
+    this.window.localStorage.setItem('bg1', theme?.bg1);
+    this.window.localStorage.setItem('fg1', theme?.fg1);
   }
 
   resetToDefaultTheme(): void {
     this.store$.dispatch(themeNotFound());
-  }
-
-  get isDefaultTheme(): boolean {
-    return this.activeTheme === this.defaultTheme;
   }
 
   currentTheme(): Theme {
@@ -196,5 +205,16 @@ export class ThemeService {
       return this.utils.hexToRgb(bgColor).rgb;
     }
     return this.utils.rgbToArray(bgColor);
+  }
+
+  getActiveTheme(): Theme {
+    let theme: Theme = defaultTheme;
+    const storedTheme = this.window.localStorage.getItem('theme');
+
+    if (storedTheme) {
+      theme = this.findTheme(storedTheme);
+    }
+
+    return theme;
   }
 }
