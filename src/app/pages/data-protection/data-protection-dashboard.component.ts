@@ -800,15 +800,16 @@ export class DataProtectionDashboardComponent implements OnInit {
           dialogRef.close();
           this.dialogService.info(this.translate.instant('Task Aborted'), '');
         });
+      } else if (row.state.state === JobState.Hold) {
+        this.dialogService.info(this.translate.instant('Task is on hold'), row.state.reason);
       } else if (row.state.warnings && row.state.warnings.length > 0) {
         let list = '';
         row.state.warnings.forEach((warning: string) => {
           list += warning + '\n';
         });
-        this.dialogService.error({
-          title: this.translate.instant('Warning'),
-          message: `<pre>${list}</pre>`,
-        });
+        this.dialogService.error({ title: row.state.state, message: `<pre>${list}</pre>` });
+      } else if (row.state.error) {
+        this.dialogService.error({ title: row.state.state, message: `<pre>${row.state.error}</pre>` });
       } else {
         this.matDialog.open(ShowLogsDialogComponent, { data: row.job });
       }
