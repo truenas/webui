@@ -89,7 +89,6 @@ import { AppStatusCellComponent } from './components/installed-apps/app-status-c
 import { AppUpgradeDialogComponent } from './components/installed-apps/app-upgrade-dialog/app-upgrade-dialog.component';
 import { InstalledAppsComponent } from './components/installed-apps/installed-apps.component';
 import { KubernetesStatusComponent } from './components/installed-apps/kubernetes-status/kubernetes-status.component';
-import { FallbackImageDirective } from './utils/fallback-image.directive';
 
 @NgModule({
   declarations: [
@@ -172,7 +171,6 @@ import { FallbackImageDirective } from './utils/fallback-image.directive';
     IxTable2Module,
     LayoutModule,
     AppCatalogPipe,
-    FallbackImageDirective,
   ],
   providers: [
     AppsStore,
