@@ -46,6 +46,7 @@
           type="submit"
           color="primary"
           ixTest="save"
+          [disabled]="!isFormValid"
           (click)="onSubmit(); $event.preventDefault();"
         >{{ 'Save' | translate }}</button>
         <button
