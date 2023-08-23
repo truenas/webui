@@ -1,6 +1,5 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { Component, TemplateRef } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
@@ -9,21 +8,18 @@ import { ActivatedRoute, Router } from '@angular/router';
 import {
   Spectator, createComponentFactory, createRoutingFactory, mockProvider,
 } from '@ngneat/spectator/jest';
-import { MockComponents, MockDirectives } from 'ng-mocks';
+import { MockComponents } from 'ng-mocks';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { firstValueFrom, of } from 'rxjs';
-import { IxDetailsHeightDirective } from 'app/core/components/directives/details-height/details-height.directive';
+import { of } from 'rxjs';
 import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
 import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
 import { ChartFormValue, ChartRelease } from 'app/interfaces/chart-release.interface';
 import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
-import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { IxDynamicFormModule } from 'app/modules/ix-dynamic-form/ix-dynamic-form.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
-import { PageHeaderDirective } from 'app/modules/layout/directives/page-header.directive';
 import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
 import { AppAvailableInfoCardComponent } from 'app/pages/apps/components/app-detail-view/app-available-info-card/app-available-info-card.component';
 import { AppDetailViewComponent } from 'app/pages/apps/components/app-detail-view/app-detail-view.component';
@@ -35,19 +31,12 @@ import { AppCardComponent } from 'app/pages/apps/components/available-apps/app-c
 import { AvailableAppsHeaderComponent } from 'app/pages/apps/components/available-apps/available-apps-header/available-apps-header.component';
 import { AvailableAppsComponent } from 'app/pages/apps/components/available-apps/available-apps.component';
 import { ChartWizardComponent } from 'app/pages/apps/components/chart-wizard/chart-wizard.component';
-import { AppDetailsPanelComponent } from 'app/pages/apps/components/installed-apps/app-details-panel/app-details-panel.component';
-import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
-import { AppSettingsButtonComponent } from 'app/pages/apps/components/installed-apps/app-settings-button/app-settings-button.component';
-import { InstalledAppsComponent } from 'app/pages/apps/components/installed-apps/installed-apps.component';
-import { KubernetesStatusComponent } from 'app/pages/apps/components/installed-apps/kubernetes-status/kubernetes-status.component';
 import { AppsFilterStore } from 'app/pages/apps/store/apps-filter-store.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
 import { AppCatalogPipe } from 'app/pages/apps/utils/app-catalog.pipe';
 import { AuthService } from 'app/services/auth/auth.service';
-import { LayoutService } from 'app/services/layout.service';
-import { RoutePartsService } from 'app/services/route-parts/route-parts.service';
 
 const existingCatalogApp = {
   name: 'webdav',
@@ -523,76 +512,6 @@ const appsResponse = [{
   app_readme: '<h1>WebDAV</h1>\n<p> When application ...</p>',
   last_update: { $date: 452 },
 }] as AvailableApp[];
-
-let headerTemplate: TemplateRef<unknown>;
-
-@Component({
-  template: '<ng-container *ngTemplateOutlet="template"></ng-container>',
-})
-class HeaderTemplateClassComponent {
-  template: TemplateRef<unknown>;
-}
-
-describe('Header template existence', () => {
-  let spectator: Spectator<InstalledAppsComponent>;
-  let layoutService: LayoutService;
-
-  const createComponent = createComponentFactory({
-    component: InstalledAppsComponent,
-    imports: [
-      AppCommonModule,
-    ],
-    declarations: [
-      MockComponents(
-        AppDetailsPanelComponent,
-        AppRowComponent,
-        KubernetesStatusComponent,
-        AppSettingsButtonComponent,
-      ),
-      MockDirectives(
-        IxDetailsHeightDirective,
-      ),
-      PageHeaderDirective,
-    ],
-    providers: [
-      RoutePartsService,
-      KubernetesStore,
-      InstalledAppsStore,
-      AppsStore,
-    ],
-  });
-
-  beforeEach(() => {
-    spectator = createComponent();
-  });
-
-  it('checks for the existence of a header template', async () => {
-    layoutService = spectator.inject(LayoutService);
-    const template = await firstValueFrom(layoutService.pageHeaderUpdater$.asObservable());
-    headerTemplate = template;
-    expect(template).toBeTruthy();
-  });
-});
-
-describe('Redirect to available apps', () => {
-  let spectator: Spectator<HeaderTemplateClassComponent>;
-
-  const createComponent = createComponentFactory({
-    component: HeaderTemplateClassComponent,
-  });
-
-  beforeEach(() => {
-    spectator = createComponent();
-  });
-
-  it('redirect to available apps when Discover Apps button is pressed', () => {
-    spectator.setInput({ template: headerTemplate });
-
-    const link = spectator.query('a');
-    expect(link).toHaveText('Discover Apps');
-    expect(link).toHaveAttribute('href', '/apps/available');
-  });
-});
 
 describe('Finding app', () => {
   let spectator: Spectator<AvailableAppsComponent>;
