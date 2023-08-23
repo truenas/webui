@@ -50,7 +50,6 @@
                 ix-auto-identifier="{{ reportTitle }}_zoomOut"
                 [disabled]="zoomLevelIndex === zoomLevelMin"
                 [matTooltip]="'Zoom Out' | translate"
-                [matTooltipShowDelay]="1000"
                 (click)="timeZoomOut()"
               ><ix-icon name="mdi-magnify-minus"></ix-icon></mat-button-toggle>
 
@@ -60,7 +59,6 @@
                 ix-auto-identifier="{{ reportTitle }}_zoomReset"
                 [disabled]="zoomLevelIndex === zoomLevelMax && stepForwardDisabled"
                 [matTooltip]="'Reset Zoom' | translate"
-                [matTooltipShowDelay]="1000"
                 (click)="timeZoomReset()"
               >{{ currentZoomLevel | mapValue: zoomLevelLabels }}</mat-button-toggle>
 
@@ -70,7 +68,6 @@
                 ix-auto-identifier="{{ reportTitle }}_zoomIn"
                 [disabled]="zoomLevelIndex === zoomLevelMax"
                 [matTooltip]="'Zoom In' | translate"
-                [matTooltipShowDelay]="1000"
                 (click)="timeZoomIn()"
               ><ix-icon name="mdi-magnify-plus"></ix-icon></mat-button-toggle>
             </mat-button-toggle-group>
