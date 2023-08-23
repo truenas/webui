@@ -11,7 +11,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
-import { add, sub } from 'date-fns';
+import { add, isToday, sub } from 'date-fns';
 import {
   BehaviorSubject, Subscription, timer,
 } from 'rxjs';
@@ -71,6 +71,13 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
   stepForwardDisabled = true;
   stepBackDisabled = false;
   timezone: string;
+  lastEndDateForCurrentZoomLevel = {
+    [ReportZoomLevel.Hour]: null as unknown,
+    [ReportZoomLevel.Day]: null as unknown,
+    [ReportZoomLevel.Week]: null as unknown,
+    [ReportZoomLevel.Month]: null as unknown,
+    [ReportZoomLevel.HalfYear]: null as unknown,
+  };
   currentStartDate: number;
   currentEndDate: number;
   zoomLevelMax = Object.keys(ReportZoomLevel).length - 1;
@@ -184,7 +191,7 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
       filter(() => this.autoRefreshEnabled),
       untilDestroyed(this),
     ).subscribe(() => {
-      const rrdOptions = this.convertTimespan(this.currentZoomLevel);
+      const rrdOptions = this.convertTimeSpan(this.currentZoomLevel);
       this.currentStartDate = rrdOptions.start;
       this.currentEndDate = rrdOptions.end;
 
@@ -194,7 +201,7 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
   }
 
   ngOnInit(): void {
-    const { start, end } = this.convertTimespan(this.currentZoomLevel);
+    const { start, end } = this.convertTimeSpan(this.currentZoomLevel);
     this.currentStartDate = start;
     this.currentEndDate = end;
     this.stepForwardDisabled = true;
@@ -232,38 +239,62 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
 
   timeZoomReset(): void {
     this.zoomLevelIndex = this.zoomLevelMax;
-    const rrdOptions = this.convertTimespan(this.currentZoomLevel);
+    const rrdOptions = this.convertTimeSpan(this.currentZoomLevel);
     this.currentStartDate = rrdOptions.start;
     this.currentEndDate = rrdOptions.end;
-
     const identifier = this.report.identifiers ? this.report.identifiers[0] : null;
     this.fetchReport$.next({ rrdOptions, identifier, report: this.report });
+    this.clearLastEndDateForCurrentZoomLevel();
+  }
+
+  clearLastEndDateForCurrentZoomLevel(): void {
+    Object.keys(this.lastEndDateForCurrentZoomLevel).forEach((key: ReportZoomLevel) => {
+      this.lastEndDateForCurrentZoomLevel[key] = null;
+    });
   }
 
   timeZoomIn(): void {
-    // more detail
     if (this.zoomLevelIndex === this.zoomLevelMax) {
       return;
     }
+
+    this.lastEndDateForCurrentZoomLevel[this.currentZoomLevel] = this.currentEndDate;
     this.zoomLevelIndex += 1;
-    const rrdOptions = this.convertTimespan(this.currentZoomLevel);
+
+    let currentDate = (this.currentStartDate + this.currentEndDate) / 2;
+
+    if (this.stepForwardDisabled || isToday(this.currentEndDate)) {
+      currentDate = this.currentEndDate;
+    }
+
+    const rrdOptions = this.convertTimeSpan(this.currentZoomLevel, ReportStepDirection.Backward, currentDate);
+
     this.currentStartDate = rrdOptions.start;
     this.currentEndDate = rrdOptions.end;
-
     const identifier = this.report.identifiers ? this.report.identifiers[0] : null;
     this.fetchReport$.next({ rrdOptions, identifier, report: this.report });
   }
 
   timeZoomOut(): void {
-    // less detail
     if (this.zoomLevelIndex === this.zoomLevelMin) {
       return;
     }
     this.zoomLevelIndex -= 1;
-    const rrdOptions = this.convertTimespan(this.currentZoomLevel);
+
+    const halfPeriodMilliseconds = this.getHalfPeriodMilliseconds();
+
+    let currentDate = this.lastEndDateForCurrentZoomLevel[this.currentZoomLevel]
+      || ((this.currentStartDate + this.currentEndDate) / 2) + halfPeriodMilliseconds;
+
+    if (this.stepForwardDisabled || isToday(this.currentEndDate)) {
+      currentDate = this.currentEndDate;
+    }
+
+    const rrdOptions = this.convertTimeSpan(this.currentZoomLevel, ReportStepDirection.Backward, +currentDate);
+
     this.currentStartDate = rrdOptions.start;
     this.currentEndDate = rrdOptions.end;
-
+    this.lastEndDateForCurrentZoomLevel[this.currentZoomLevel] = null;
     const identifier = this.report.identifiers ? this.report.identifiers[0] : null;
     this.fetchReport$.next({ rrdOptions, identifier, report: this.report });
   }
@@ -273,7 +304,9 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
       return;
     }
 
-    const rrdOptions = this.convertTimespan(
+    this.clearLastEndDateForCurrentZoomLevel();
+
+    const rrdOptions = this.convertTimeSpan(
       this.currentZoomLevel,
       ReportStepDirection.Backward,
       this.currentStartDate,
@@ -290,7 +323,9 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
       return;
     }
 
-    const rrdOptions = this.convertTimespan(
+    this.clearLastEndDateForCurrentZoomLevel();
+
+    const rrdOptions = this.convertTimeSpan(
       this.currentZoomLevel,
       ReportStepDirection.Forward,
       this.currentEndDate,
@@ -303,7 +338,7 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
   }
 
   // Convert timespan to start/end options for RRDTool
-  convertTimespan(
+  convertTimeSpan(
     timespan: ReportZoomLevel,
     direction = ReportStepDirection.Backward,
     currentDate?: number,
@@ -437,8 +472,25 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
   }
 
   private applyChanges(changes: SimpleChanges): void {
-    const rrdOptions = this.convertTimespan(this.currentZoomLevel);
+    const rrdOptions = this.convertTimeSpan(this.currentZoomLevel);
     const identifier = changes.report.currentValue.identifiers ? changes.report.currentValue.identifiers[0] : null;
     this.fetchReport$.next({ rrdOptions, identifier, report: changes.report.currentValue });
+  }
+
+  private getHalfPeriodMilliseconds(): number {
+    switch (this.currentZoomLevel) {
+      case ReportZoomLevel.Hour:
+        return (1 * 60 * 60 * 1000) / 2;
+      case ReportZoomLevel.Day:
+        return (1 * 24 * 60 * 60 * 1000) / 2;
+      case ReportZoomLevel.Week:
+        return (7 * 24 * 60 * 60 * 1000) / 2;
+      case ReportZoomLevel.Month:
+        return (30 * 24 * 60 * 60 * 1000) / 2;
+      case ReportZoomLevel.HalfYear:
+        return (365 * 24 * 60 * 60 * 1000) / 2;
+      default:
+        return 0;
+    }
   }
 }
