@@ -44,6 +44,8 @@ export class TopologyCardComponent implements OnInit, OnChanges {
     dedup: notAssignedDev,
   };
 
+  topologyWarningsState: TopologyState = { ...this.topologyState };
+
   get iconType(): PoolCardIconType {
     if (this.isStatusError(this.poolState)) {
       return PoolCardIconType.Error;
@@ -87,26 +89,22 @@ export class TopologyCardComponent implements OnInit, OnChanges {
     this.topologyState.log = this.parseDevs(topology.log, PoolTopologyCategory.Log);
     this.topologyState.cache = this.parseDevs(topology.cache, PoolTopologyCategory.Cache);
     this.topologyState.spare = this.parseDevs(topology.spare, PoolTopologyCategory.Spare);
+    this.topologyState.metadata = this.parseDevs(topology.special, PoolTopologyCategory.Special);
+    this.topologyState.dedup = this.parseDevs(topology.dedup, PoolTopologyCategory.Dedup);
 
-    this.topologyState.metadata = this.parseDevs(
-      topology.special,
-      PoolTopologyCategory.Special,
-      topology.data,
+    this.topologyWarningsState.data = this.parseDevsWarnings(topology.data, PoolTopologyCategory.Data);
+    this.topologyWarningsState.log = this.parseDevsWarnings(topology.log, PoolTopologyCategory.Log);
+    this.topologyWarningsState.cache = this.parseDevsWarnings(topology.cache, PoolTopologyCategory.Cache);
+    this.topologyWarningsState.spare = this.parseDevsWarnings(topology.spare, PoolTopologyCategory.Spare);
+    this.topologyWarningsState.metadata = this.parseDevsWarnings(
+      topology.special, PoolTopologyCategory.Special, topology.data,
     );
-    this.topologyState.dedup = this.parseDevs(
-      topology.dedup,
-      PoolTopologyCategory.Dedup,
-      topology.data,
+    this.topologyWarningsState.dedup = this.parseDevsWarnings(
+      topology.dedup, PoolTopologyCategory.Dedup, topology.data,
     );
   }
 
-  private parseDevs(
-    vdevs: TopologyItem[],
-    category: PoolTopologyCategory,
-    dataVdevs?: TopologyItem[],
-  ): string {
-    const warnings = this.storageService.validateVdevs(category, vdevs, this.disks, dataVdevs);
-
+  private parseDevs(vdevs: TopologyItem[], category: PoolTopologyCategory): string {
     let outputString = vdevs.length ? '' : notAssignedDev;
 
     // Check VDEV Widths
@@ -127,18 +125,9 @@ export class TopologyCardComponent implements OnInit, OnChanges {
       vdevWidth = allVdevWidths.values().next().value;
     }
 
-    if (warnings.length === 1) {
-      return warnings[0];
-    }
-
-    if (warnings.length > 1) {
-      return warnings.length.toString() + ' ' + multiWarning;
-    }
-
-    if (!warnings.length && outputString && outputString === notAssignedDev) {
+    if (outputString && outputString === notAssignedDev) {
       return outputString;
     }
-
     const type = vdevs[0]?.type;
     const size = vdevs[0]?.children.length
       ? this.disks.find((disk) => disk.name === vdevs[0]?.children[0]?.disk)?.size
@@ -152,7 +141,20 @@ export class TopologyCardComponent implements OnInit, OnChanges {
     } else {
       outputString += '?';
     }
+    return outputString;
+  }
 
+  private parseDevsWarnings(vdevs: TopologyItem[], category: PoolTopologyCategory, dataVdevs?: TopologyItem[]): string {
+    let outputString = '';
+    const warnings = this.storageService.validateVdevs(category, vdevs, this.disks, dataVdevs);
+
+    if (warnings.length === 1) {
+      outputString = warnings[0];
+    }
+
+    if (warnings.length > 1) {
+      outputString = warnings.length.toString() + ' ' + multiWarning;
+    }
     return outputString;
   }
 
@@ -173,12 +175,12 @@ export class TopologyCardComponent implements OnInit, OnChanges {
     ].includes(poolState.status);
   }
 
-  isTopologyWarning(topologyState: string): boolean {
-    if (topologyState.includes(multiWarning)) {
+  isTopologyWarning(topologyWarningState: string): boolean {
+    if (topologyWarningState.includes(multiWarning)) {
       return true;
     }
 
-    switch (topologyState) {
+    switch (topologyWarningState) {
       case TopologyWarning.NoRedundancy:
       case TopologyWarning.RedundancyMismatch:
       case TopologyWarning.MixedVdevLayout:
