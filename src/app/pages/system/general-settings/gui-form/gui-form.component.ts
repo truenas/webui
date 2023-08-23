@@ -52,7 +52,7 @@ export class GuiFormComponent {
     ui_httpsport: [null as number, [Validators.required, Validators.min(1), Validators.max(65535)]],
     ui_httpsprotocols: [[] as string[], [Validators.required]],
     ui_httpsredirect: [false],
-    crash_reporting: [false, [Validators.required]],
+    crash_reporting: [false],
     usage_collection: [false, [Validators.required]],
     ui_consolemsg: [false, [Validators.required]],
   });
@@ -76,9 +76,9 @@ export class GuiFormComponent {
     private ws: WebSocketService,
     private dialog: DialogService,
     private loader: AppLoaderService,
-    private router: Router,
     private translate: TranslateService,
     private errorHandler: FormErrorHandlerService,
+    private router: Router,
     private store$: Store<AppState>,
     @Inject(WINDOW) private window: Window,
   ) {
@@ -118,6 +118,7 @@ export class GuiFormComponent {
       filter(Boolean),
       tap(() => {
         this.store$.dispatch(guiFormSubmitted({ theme: values.theme }));
+
         // prevent to revert momentarily to previous value due to `guiFormSubmitted`
         this.formGroup.controls.ui_httpsredirect.setValue(values.ui_httpsredirect);
       }),
@@ -138,6 +139,8 @@ export class GuiFormComponent {
         this.cdr.markForCheck();
       },
     });
+
+    this.themeService.updateThemeInLocalStorage(this.themeService.findTheme(values.theme));
   }
 
   certificatesLinkClicked(): void {

@@ -30,8 +30,8 @@ export class PreferencesEffects {
     mergeMap(() => {
       return this.ws.call('user.query', [[['id', '=', rootUserId]]]).pipe(
         map(([user]) => {
-          const preferences = user.attributes.preferences;
-          const dashboardState = user.attributes.dashState;
+          const preferences = user.attributes?.preferences;
+          const dashboardState = user.attributes?.dashState;
 
           if (dashboardState) {
             this.store$.dispatch(dashboardStateLoaded({ dashboardState }));
