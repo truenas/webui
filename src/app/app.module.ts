@@ -78,7 +78,7 @@ import { WebSocketService } from './services/ws.service';
       useHash: false,
       preloadingStrategy: PreloadAllModules,
     }),
-    NgxPopperjsModule.forRoot({ appendTo: 'body' }),
+    NgxPopperjsModule.forRoot({ appendTo: 'body', hideOnScroll: true }),
     MarkdownModule.forRoot(),
     CoreComponents,
     MatSnackBarModule,
