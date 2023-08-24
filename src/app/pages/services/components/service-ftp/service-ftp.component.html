@@ -1,10 +1,7 @@
+<ix-modal-header [title]="'FTP' | translate" [loading]="isFormLoading"></ix-modal-header>
+
 <mat-card class="card">
   <mat-card-content>
-    <mat-progress-bar
-      *ngIf="isFormLoading"
-      mode="indeterminate"
-    ></mat-progress-bar>
-
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <div class="form-columns">
         <div class="column">
