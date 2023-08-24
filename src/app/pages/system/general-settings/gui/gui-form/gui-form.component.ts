@@ -6,7 +6,6 @@ import {
   FormBuilder,
   Validators,
 } from '@angular/forms';
-import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -76,7 +75,6 @@ export class GuiFormComponent {
     private wsManager: WebsocketConnectionService,
     private dialog: DialogService,
     private loader: AppLoaderService,
-    private router: Router,
     private translate: TranslateService,
     private errorHandler: FormErrorHandlerService,
     private store$: Store<AppState>,
@@ -116,6 +114,7 @@ export class GuiFormComponent {
       filter(Boolean),
       tap(() => {
         this.store$.dispatch(guiFormSubmitted({ theme: values.theme }));
+
         // prevent to revert momentarily to previous value due to `guiFormSubmitted`
         this.formGroup.controls.ui_httpsredirect.setValue(values.ui_httpsredirect);
       }),
@@ -136,6 +135,8 @@ export class GuiFormComponent {
         this.cdr.markForCheck();
       },
     });
+
+    this.themeService.updateThemeInLocalStorage(this.themeService.findTheme(values.theme));
   }
 
   getIsServiceRestartRequired(current: SystemGeneralConfig, next: SystemGeneralConfigUpdate): boolean {

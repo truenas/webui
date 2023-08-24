@@ -32,11 +32,11 @@ export class AppRowComponent {
   }
 
   get inProgress(): boolean {
-    return [
-      AppStatus.Deploying,
-      AppStatus.Starting,
-      AppStatus.Stopping,
-    ].includes(this.appStatus);
+    return [AppStatus.Deploying].includes(this.appStatus) || this.isStartingOrStopping;
+  }
+
+  get isStartingOrStopping(): boolean {
+    return [AppStatus.Starting, AppStatus.Stopping].includes(this.appStatus);
   }
 
   get appStatus(): AppStatus {
@@ -62,10 +62,16 @@ export class AppRowComponent {
       if (this.job.state === JobState.Running && params.replica_count === 0) {
         status = AppStatus.Stopping;
       }
-      if (this.job.state === JobState.Success && params.replica_count >= 1) {
+      if (
+        this.job.state === JobState.Success && params.replica_count >= 1
+        && this.app.status !== ChartReleaseStatus.Deploying
+      ) {
         status = AppStatus.Started;
       }
-      if (this.job.state === JobState.Success && params.replica_count === 0) {
+      if (
+        this.job.state === JobState.Success
+        && params.replica_count === 0 && this.app.status !== ChartReleaseStatus.Deploying
+      ) {
         status = AppStatus.Stopped;
       }
     }
