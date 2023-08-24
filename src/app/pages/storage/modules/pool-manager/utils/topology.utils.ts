@@ -79,6 +79,16 @@ export function poolTopologyToStoreTopology(topology: PoolTopology, disks: Disk[
     }
     const minSize = Math.min(...(disks.map((disk) => disk.size)));
 
+    let draidDataDisks: number = null;
+    let draidSpareDisks: number = null;
+
+    if (vdevs[0].type === TopologyItemType.Draid) {
+      const parsedDraidInfo = parseDraidVdevName(vdevs[0].name);
+      draidDataDisks = parsedDraidInfo.dataDisks;
+      draidSpareDisks = parsedDraidInfo.spareDisks;
+      layoutType = parsedDraidInfo.layout as unknown as TopologyItemType;
+    }
+
     poolManagerTopology[category as VdevType] = {
       diskType: disks[0].type,
       diskSize: minSize,
@@ -104,8 +114,8 @@ export function poolTopologyToStoreTopology(topology: PoolTopology, disks: Disk[
         },
       ),
       treatDiskSizeAsMinimum: false,
-      draidDataDisks: null,
-      draidSpareDisks: null,
+      draidDataDisks,
+      draidSpareDisks,
     };
   }
   return poolManagerTopology;
@@ -118,4 +128,31 @@ export function isDraidLayout(layout: CreateVdevLayout | TopologyItemType): bool
     CreateVdevLayout.Draid3,
     TopologyItemType.Draid,
   ].includes(layout);
+}
+
+export function parseDraidVdevName(
+  vdevName: string,
+): { layout: CreateVdevLayout; dataDisks: number; spareDisks: number } {
+  const regex = /draid(\d+):(\d)d:\dc:(\d)s/;
+  const match = vdevName.match(regex);
+
+  if (!match) {
+    throw new Error('Invalid dRAID vdev name');
+  }
+
+  const [, parityLevelNumber, dataDisks, spareDisk] = match;
+  let parityLevel = CreateVdevLayout.Draid1;
+  if (parityLevelNumber === '2') {
+    parityLevel = CreateVdevLayout.Draid2;
+  } else if (parityLevelNumber === '3') {
+    parityLevel = CreateVdevLayout.Draid3;
+  } else {
+    parityLevel = CreateVdevLayout.Draid1;
+  }
+
+  return {
+    layout: parityLevel,
+    dataDisks: Number(dataDisks),
+    spareDisks: Number(spareDisk),
+  };
 }

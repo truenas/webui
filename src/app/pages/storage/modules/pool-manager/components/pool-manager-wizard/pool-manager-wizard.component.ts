@@ -61,6 +61,10 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
     return Boolean(this.state.encryption);
   }
 
+  get alreadyHasSpare(): boolean {
+    return Boolean(this.existingPool?.topology?.spare?.length);
+  }
+
   constructor(
     private store: PoolManagerStore,
     private systemStore$: Store<AppState>,

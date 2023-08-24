@@ -81,7 +81,12 @@ export class PoolManagerValidationService {
             oldDataLayoutType = TopologyItemType.Stripe;
           }
 
-          if (hasDataVdevs && topology[VdevType.Data].layout !== oldDataLayoutType as unknown as CreateVdevLayout) {
+          // TODO: How is this even possible?
+          if (
+            hasDataVdevs
+            && topology[VdevType.Data].layout !== oldDataLayoutType as unknown as CreateVdevLayout
+            && !isDraidLayout(oldDataLayoutType)
+          ) {
             errors.push({
               text: this.translate.instant(
                 'Mixing Vdev layout types is not allowed. This pool already has some {type} Data Vdevs. You can only add vdevs of {type} type.',

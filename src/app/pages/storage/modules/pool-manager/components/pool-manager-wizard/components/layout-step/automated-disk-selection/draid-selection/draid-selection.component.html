@@ -4,7 +4,9 @@
     <div class="column">
       <ix-disk-size-dropdowns
         [inventory]="inventory"
+        [layout]="layout"
         [type]="type"
+        [isStepActive]="isStepActive"
         (disksSelected)="onDisksSelected($event)"
       ></ix-disk-size-dropdowns>
 

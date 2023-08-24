@@ -10,9 +10,14 @@ import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import { generateOptionsRange } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/storage/volumes/manager/manager';
 import { Option, SelectOption } from 'app/interfaces/option.interface';
+import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
-import { unsetControlIfNoMatchingOption } from 'app/pages/storage/modules/pool-manager/utils/form.utils';
+import {
+  hasDeepChanges,
+  setValueIfNotSame,
+  unsetControlIfNoMatchingOption,
+} from 'app/pages/storage/modules/pool-manager/utils/form.utils';
 
 const parityDisksPerGroup = {
   [CreateVdevLayout.Draid1]: 1,
@@ -72,9 +77,11 @@ export class DraidSelectionComponent implements OnInit, OnChanges {
     this.listenForResetEvents();
   }
 
-  ngOnChanges(): void {
-    this.updateDataDevicesOptions();
-    this.updateDisabledStatuses();
+  ngOnChanges(changes: IxSimpleChanges<this>): void {
+    if (hasDeepChanges(changes, 'layout') || hasDeepChanges(changes, 'inventory')) {
+      this.updateDataDevicesOptions();
+      this.updateDisabledStatuses();
+    }
   }
 
   protected onDisksSelected(disks: UnusedDisk[]): void {
@@ -148,7 +155,10 @@ export class DraidSelectionComponent implements OnInit, OnChanges {
     unsetControlIfNoMatchingOption(this.form.controls.dataDevicesPerGroup, nextOptions);
 
     if (nextOptions.length === 1 && this.isStepActive) {
-      this.form.controls.dataDevicesPerGroup.setValue(Number(nextOptions[0].value), { emitEvent: false });
+      setValueIfNotSame(
+        this.form.controls.dataDevicesPerGroup,
+        Number(nextOptions[0].value),
+      );
     }
 
     this.dataDevicesPerGroupOptions$ = of(nextOptions);
@@ -164,7 +174,10 @@ export class DraidSelectionComponent implements OnInit, OnChanges {
     }
 
     if (!nextOptions.some((option) => option.value === this.form.controls.spares.value)) {
-      this.form.controls.spares.setValue(0, { emitEvent: false });
+      setValueIfNotSame(
+        this.form.controls.spares,
+        0,
+      );
     }
 
     this.sparesOptions$ = of(nextOptions);
@@ -200,15 +213,20 @@ export class DraidSelectionComponent implements OnInit, OnChanges {
 
     unsetControlIfNoMatchingOption(this.form.controls.children, nextOptions);
 
-    // TODO: Bug - this.form.controls.width.value is empty even if value is selected.
     if (this.isStepActive) {
       const hasOptimalOption = nextOptions.some((option) => option.value === optimalMaximum);
       if (nextOptions.length === 1) {
         // If there is one option, pick it.
-        this.form.controls.children.setValue(Number(nextOptions[0].value), { emitEvent: false });
+        setValueIfNotSame(
+          this.form.controls.children,
+          Number(nextOptions[0].value),
+        );
       } else if (hasOptimalOption) {
         // Or try to default to normal maximum number of groups and spares.
-        this.form.controls.children.setValue(optimalMaximum, { emitEvent: false });
+        setValueIfNotSame(
+          this.form.controls.children,
+          optimalMaximum,
+        );
       }
     }
 
@@ -231,7 +249,10 @@ export class DraidSelectionComponent implements OnInit, OnChanges {
     unsetControlIfNoMatchingOption(this.form.controls.vdevsNumber, nextOptions);
 
     if (nextOptions.length === 1 && this.isStepActive) {
-      this.form.controls.vdevsNumber.setValue(Number(nextOptions[0].value), { emitEvent: false });
+      setValueIfNotSame(
+        this.form.controls.vdevsNumber,
+        Number(nextOptions[0].value),
+      );
     }
 
     this.vdevsNumberOptions$ = of(nextOptions);

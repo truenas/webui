@@ -5,6 +5,7 @@ import {
   PoolManagerTopologyCategory,
 } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import {
+  parseDraidVdevName,
   topologyCategoryToDisks,
   topologyToDisks, topologyToPayload,
 } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
@@ -125,6 +126,16 @@ describe('topologyToPayload', () => {
           type: CreateVdevLayout.Draid1, disks: ['ada3', 'ada4'], draid_data_disks: 1, draid_spare_disks: 1,
         },
       ],
+    });
+  });
+});
+
+describe('parseDraidVdevName', () => {
+  it('parses dRAID vdev name into layout, data disks and spare', () => {
+    expect(parseDraidVdevName('draid3:1d:6c:2s-0')).toEqual({
+      layout: CreateVdevLayout.Draid3,
+      dataDisks: 1,
+      spareDisks: 2,
     });
   });
 });

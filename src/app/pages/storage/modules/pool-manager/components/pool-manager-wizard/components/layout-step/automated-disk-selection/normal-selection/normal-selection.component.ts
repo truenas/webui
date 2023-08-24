@@ -11,7 +11,11 @@ import { Option, SelectOption } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
-import { unsetControlIfNoMatchingOption } from 'app/pages/storage/modules/pool-manager/utils/form.utils';
+import {
+  hasDeepChanges,
+  setValueIfNotSame,
+  unsetControlIfNoMatchingOption,
+} from 'app/pages/storage/modules/pool-manager/utils/form.utils';
 import { minDisksPerLayout } from 'app/pages/storage/modules/pool-manager/utils/min-disks-per-layout.constant';
 
 @UntilDestroy()
@@ -56,7 +60,7 @@ export class NormalSelectionComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
-    if (changes.layout) {
+    if (hasDeepChanges(changes, 'inventory') || hasDeepChanges(changes, 'layout')) {
       this.updateWidthOptions();
     }
   }
@@ -108,7 +112,7 @@ export class NormalSelectionComponent implements OnInit, OnChanges {
 
       this.store.setAutomaticTopologyCategory(this.type, {
         width: values.width,
-        vdevsNumber: values.vdevsNumber,
+        vdevsNumber: this.isSpareVdev ? 1 : values.vdevsNumber,
       });
     });
   }
@@ -130,7 +134,7 @@ export class NormalSelectionComponent implements OnInit, OnChanges {
     unsetControlIfNoMatchingOption(this.form.controls.width, nextOptions);
 
     if (nextOptions.length === 1 && this.isStepActive) {
-      this.form.controls.width.setValue(+nextOptions[0].value, { emitEvent: false });
+      setValueIfNotSame(this.form.controls.width, Number(nextOptions[0].value));
     }
 
     this.updateNumberOptions();
@@ -155,7 +159,7 @@ export class NormalSelectionComponent implements OnInit, OnChanges {
     unsetControlIfNoMatchingOption(this.form.controls.vdevsNumber, nextOptions);
 
     if (nextOptions.length === 1 && this.isStepActive) {
-      this.form.controls.vdevsNumber.setValue(+nextOptions[0].value, { emitEvent: false });
+      setValueIfNotSame(this.form.controls.vdevsNumber, Number(nextOptions[0].value));
     }
   }
 }

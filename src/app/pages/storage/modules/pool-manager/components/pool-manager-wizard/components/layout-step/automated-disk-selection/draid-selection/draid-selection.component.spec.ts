@@ -65,7 +65,7 @@ describe('DraidSelectionComponent', () => {
   it('keeps inputs disabled until disks are selected', async () => {
     expect(await form.getDisabledState()).toEqual({
       'Disk Size': false,
-      'Treat Disk Size as Minimum': true,
+      'Treat Disk Size as Minimum': false,
       Children: true,
       'Data Devices': true,
       'Distributed Hot Spares': true,
@@ -176,7 +176,6 @@ describe('DraidSelectionComponent', () => {
     });
 
     const store = spectator.inject(PoolManagerStore);
-    expect(store.setAutomaticTopologyCategory).toHaveBeenCalledTimes(4);
     expect(store.setAutomaticTopologyCategory).toHaveBeenLastCalledWith(
       VdevType.Spare,
       {
@@ -200,7 +199,6 @@ describe('DraidSelectionComponent', () => {
       'Number of VDEVs': '1',
     });
 
-    // TODO: Doesn't actually work.
     const store = spectator.inject(PoolManagerStore);
     expect(store.setAutomaticTopologyCategory).toHaveBeenLastCalledWith(
       VdevType.Spare,

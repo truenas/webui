@@ -3,6 +3,7 @@
     <h3>{{ 'Automated Disk Selection' | translate }}</h3>
     <ix-disk-size-dropdowns
       [type]="type"
+      [layout]="layout"
       [inventory]="inventory"
       [isStepActive]="isStepActive"
       (disksSelected)="onDisksSelected($event)"
@@ -16,6 +17,7 @@
     ></ix-select>
 
     <ix-select
+      *ngIf="!isSpareVdev"
       formControlName="vdevsNumber"
       [label]="'Number of VDEVs' | translate"
       [options]="numberOptions$"

@@ -1,22 +1,21 @@
 import {
-  ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, OnInit, Output,
+  ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output,
 } from '@angular/core';
-import {
-  FormBuilder, Validators,
-} from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import filesize from 'filesize';
-import _ from 'lodash';
+import _, { isEqual } from 'lodash';
 import { merge, of } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { DiskType } from 'app/enums/disk-type.enum';
-import { VdevType } from 'app/enums/v-dev-type.enum';
+import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import { SelectOption } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { DiskTypeSizeMap } from 'app/pages/storage/modules/pool-manager/interfaces/disk-type-size-map.interface';
 import { SizeAndType } from 'app/pages/storage/modules/pool-manager/interfaces/size-and-type.interface';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
+import { hasDeepChanges, setValueIfNotSame } from 'app/pages/storage/modules/pool-manager/utils/form.utils';
 import { getDiskTypeSizeMap } from 'app/pages/storage/modules/pool-manager/utils/get-disk-type-size-map.utils';
 
 @UntilDestroy()
@@ -26,7 +25,8 @@ import { getDiskTypeSizeMap } from 'app/pages/storage/modules/pool-manager/utils
   styleUrls: ['./disk-size-selects.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DiskSizeSelectsComponent implements OnInit, OnChanges {
+export class DiskSizeSelectsComponent implements OnChanges {
+  @Input({ required: true }) layout: CreateVdevLayout;
   @Input({ required: true }) type: VdevType;
   @Input({ required: true }) inventory: UnusedDisk[];
   @Input() isStepActive = false;
@@ -34,7 +34,7 @@ export class DiskSizeSelectsComponent implements OnInit, OnChanges {
 
   protected diskSizeAndTypeOptions$ = of<SelectOption[]>([]);
 
-  private sizeDisksMap: DiskTypeSizeMap = { [DiskType.Hdd]: {}, [DiskType.Ssd]: {} };
+  protected sizeDisksMap: DiskTypeSizeMap = { [DiskType.Hdd]: {}, [DiskType.Ssd]: {} };
   protected compareSizeAndTypeWith = _.isEqual;
 
   protected form = this.formBuilder.group({
@@ -45,7 +45,12 @@ export class DiskSizeSelectsComponent implements OnInit, OnChanges {
   constructor(
     private formBuilder: FormBuilder,
     private store: PoolManagerStore,
-  ) {}
+  ) {
+    this.setControlRelations();
+    this.updateStoreOnChanges();
+    this.emitUpdatesOnChanges();
+    this.listenForResetEvents();
+  }
 
   get selectedDiskSize(): number {
     return this.form.controls.sizeAndType.value?.[0];
@@ -55,18 +60,8 @@ export class DiskSizeSelectsComponent implements OnInit, OnChanges {
     return this.form.controls.sizeAndType.value?.[1];
   }
 
-  ngOnInit(): void {
-    this.setControlRelations();
-    this.updateStoreOnChanges();
-    this.emitUpdatesOnChanges();
-    this.listenForResetEvents();
-  }
-
   ngOnChanges(changes: IxSimpleChanges<this>): void {
-    if (
-      changes.inventory?.currentValue
-      && !_.isEqual(changes.inventory.currentValue, changes.inventory.previousValue)
-    ) {
+    if (hasDeepChanges(changes, 'inventory') || hasDeepChanges(changes, 'layout')) {
       this.updateOptions();
     }
   }
@@ -125,12 +120,12 @@ export class DiskSizeSelectsComponent implements OnInit, OnChanges {
 
     this.diskSizeAndTypeOptions$ = of(nextOptions);
 
-    if (!nextOptions.some((option) => option.value === this.form.controls.sizeAndType.value)) {
-      this.form.controls.sizeAndType.setValue(null, { emitEvent: false });
+    if (!nextOptions.some((option) => isEqual(option.value, this.form.controls.sizeAndType.value))) {
+      setValueIfNotSame(this.form.controls.sizeAndType, [null, null]);
     }
 
     if (nextOptions.length === 1 && this.isStepActive) {
-      this.form.controls.sizeAndType.setValue(nextOptions[0].value);
+      setValueIfNotSame(this.form.controls.sizeAndType, nextOptions[0].value);
     }
   }
 

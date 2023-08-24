@@ -192,12 +192,16 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
   // TODO: Check if this needs to be optimized
   getInventoryForStep(type: VdevType): Observable<UnusedDisk[]> {
     return this.select(
-      this.inventory$,
+      this.allowedDisks$,
       this.topology$,
-      (inventory, topology) => {
-        const disksUsedInCategory = topologyCategoryToDisks(topology[type]);
-        return [...inventory, ...disksUsedInCategory]
-          .sort((a, b) => a.identifier.localeCompare(b.identifier));
+      (allowedDisks, topology) => {
+        const disksUsedInOtherCategories = Object.values(topology).flatMap((category) => {
+          if (category === topology[type]) {
+            return [];
+          }
+          return topologyCategoryToDisks(category);
+        });
+        return _.differenceBy(allowedDisks, disksUsedInOtherCategories, (disk) => disk.devname);
       },
     );
   }
@@ -223,8 +227,8 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
   }
 
   resetStep(vdevType: VdevType): void {
-    this.resetStep$.next(vdevType);
     this.resetTopologyCategory(vdevType);
+    this.resetStep$.next(vdevType);
   }
 
   readonly initialize = this.effect((trigger$) => {
@@ -240,27 +244,6 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
       this.ws.call('enclosure.query'),
     ]).pipe(
       tapResponse(([allDisks, enclosures]) => {
-        // TODO: Remove me
-        // for (let i = 0; i < 10; i++) {
-        //   allDisks.push({
-        //     devname: 'pizza' + i,
-        //     size: Math.random() * 100 * GiB,
-        //     type: DiskType.Hdd,
-        //     identifier: 'pizza' + i,
-        //   } as UnusedDisk);
-        // }
-        // allDisks.push({
-        //   devname: 'x1',
-        //   size: 200 * GiB,
-        //   type: DiskType.Hdd,
-        //   identifier: 'x1',
-        // } as UnusedDisk);
-        // allDisks.push({
-        //   devname: 'x2',
-        //   size: 200 * GiB,
-        //   type: DiskType.Hdd,
-        //   identifier: 'x2',
-        // } as UnusedDisk);
         this.patchState({
           isLoading: false,
           allDisks,
@@ -323,11 +306,17 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
 
   setTopologyCategoryLayout(
     type: VdevType,
-    layout: CreateVdevLayout,
+    newLayout: CreateVdevLayout,
   ): void {
-    this.updateTopologyCategory(type, { layout });
+    const isNewLayoutDraid = isDraidLayout(newLayout);
+    const isOldLayoutDraid = isDraidLayout(this.get().topology[type].layout);
+    if (isNewLayoutDraid !== isOldLayoutDraid) {
+      this.resetTopologyCategory(type);
+    }
 
-    if (isDraidLayout(layout)) {
+    this.updateTopologyCategory(type, { layout: newLayout });
+
+    if (isDraidLayout(newLayout)) {
       this.resetTopologyCategory(VdevType.Spare);
     }
   }
