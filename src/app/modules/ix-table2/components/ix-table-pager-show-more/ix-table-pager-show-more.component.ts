@@ -1,5 +1,5 @@
 import {
-  AfterContentChecked, ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit,
+  AfterContentChecked, ChangeDetectionStrategy, ChangeDetectorRef, Component, HostBinding, Input, OnInit,
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
@@ -19,7 +19,7 @@ export class IxTablePagerShowMoreComponent<T> implements OnInit, AfterContentChe
   totalItems = 0;
   expanded = false;
 
-  get collapsible(): boolean {
+  @HostBinding('class.collapsible') get collapsible(): boolean {
     return this.totalItems > this.pageSize;
   }
 
