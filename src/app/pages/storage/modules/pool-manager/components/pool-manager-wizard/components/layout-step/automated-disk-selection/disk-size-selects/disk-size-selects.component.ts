@@ -22,7 +22,6 @@ import { getDiskTypeSizeMap } from 'app/pages/storage/modules/pool-manager/utils
 @Component({
   selector: 'ix-disk-size-dropdowns',
   templateUrl: './disk-size-selects.component.html',
-  styleUrls: ['./disk-size-selects.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DiskSizeSelectsComponent implements OnChanges {
