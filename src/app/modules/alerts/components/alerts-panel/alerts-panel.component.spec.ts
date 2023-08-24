@@ -15,6 +15,7 @@ import { adapter, alertReducer, alertsInitialState } from 'app/modules/alerts/st
 import { alertStateKey } from 'app/modules/alerts/store/alert.selectors';
 import { SystemGeneralService, WebSocketService } from 'app/services';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
+import { alertIndicatorPressed } from 'app/store/topbar/topbar.actions';
 
 const unreadAlerts = [
   {
