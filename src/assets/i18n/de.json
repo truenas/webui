@@ -3079,7 +3079,7 @@
   "Block size": "Blockgröße",
   "Boot Environments": "Boot Umgebungen",
   "Boot Loader Type": "Bootloadertyp",
-  "Boot Method": "Moot Methode",
+  "Boot Method": "Boot Methode",
   "Boot environment name. Alphanumeric characters, dashes (-), underscores (_),     and periods (.) are allowed.": "Name der Boot-Umgebung. Alphanumerische Zeichen, Bindestriche (-), Unterstriche (_) und Punkte (.) sind zulässig.",
   "Boot environment to be cloned.": "Boot-Umgebung, die geklont werden soll.",
   "Bridge Members": "Bridge-Mitglieder",
