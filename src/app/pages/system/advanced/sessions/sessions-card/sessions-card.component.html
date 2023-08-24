@@ -57,7 +57,11 @@
         [dataProvider]="dataProvider"
         let-session
       >
-        <div class="actions" [matTooltip]="" [matTooltipDisabled]="!session.current">
+        <div
+          class="actions"
+          [matTooltip]="'This session is current and cannot be terminated' | translate"
+          [matTooltipDisabled]="!session.current"
+        >
           <button
             mat-icon-button
             [matTooltip]="'Terminate session' | translate"
