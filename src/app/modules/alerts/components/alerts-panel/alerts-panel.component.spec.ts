@@ -15,6 +15,7 @@ import { adapter, alertReducer, alertsInitialState } from 'app/modules/alerts/st
 import { alertStateKey } from 'app/modules/alerts/store/alert.selectors';
 import { SystemGeneralService, WebSocketService } from 'app/services';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
+import { alertIndicatorPressed } from 'app/store/topbar/topbar.actions';
 
 const unreadAlerts = [
   {
@@ -177,5 +178,10 @@ describe('AlertsPanelComponent', () => {
 
     expect(alertPanel.unreadAlertComponents).toHaveLength(1);
     expect(alertPanel.dismissedAlertComponents).toHaveLength(3);
+  });
+
+  it('calls alert.list when alerts panel is open', () => {
+    spectator.inject(Store).dispatch(alertIndicatorPressed());
+    expect(websocket.call).toHaveBeenCalledWith('alert.list');
   });
 });
