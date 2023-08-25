@@ -29,7 +29,12 @@
           *ngIf="serviceLoadingMap.get(service.service); else slider"
           matTooltipPosition="right"
           [diameter]="30"
-          [matTooltip]="(service.state === ServiceStatus.Running ? 'Stopping' : 'Starting') | uppercase | translate"
+          [matTooltip]="
+            (service.state === ServiceStatus.Running
+              ? ('Stopping' | uppercase | translate)
+              : ('Starting' | uppercase | translate)
+            )
+          "
         ></mat-spinner>
 
         <ng-template #slider>
@@ -68,7 +73,7 @@
           matTooltipPosition="left"
           [ixTest]="[service.service, 'edit']"
           [attr.aria-label]="'Edit' | translate"
-          [attr.aria-service]="service.name"
+          [attr.name]="service.name"
           [matTooltip]="'Configure' | translate"
           (click)="configureService(service)"
         >

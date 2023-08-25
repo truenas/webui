@@ -306,10 +306,6 @@
           {{ 'Save' | translate }}
         </button>
 
-        <button mat-button type="button" ixTest="cancel" [routerLink]="['/services']">
-          {{ 'Cancel' | translate }}
-        </button>
-
         <button
           *ngIf="isAdvancedMode; else basicModeButton"
           mat-button
