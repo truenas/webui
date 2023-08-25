@@ -70,7 +70,6 @@
   "Enter a unique name for the dataset. The dataset name length is calculated by adding the length of this field's value and the length of the parent path field value. The length of 'Parent Path' and 'Name' added together cannot exceed 200 characters. Because of this length validation on this field accounts for the parent path as well. Furthermore, the maximum nested directory levels allowed is 50. You can't create a dataset that's at the 51st level in the directory hierarchy after you account for the nested levels in the parent path.": "",
   "Error In Apps Service": "",
   "Estimated raw capacity:": "",
-  "Existing Pool (Legacy)": "",
   "Exported Pool": "",
   "Filesystem": "",
   "Filter disks by capacity": "",
