@@ -26,6 +26,7 @@ export class PoolManagerComponent implements OnInit {
   ngOnInit(): void {
     this.addVdevsStore.pool$.pipe(
       tap((pool) => {
+        // TODO: Figure out why cloning is here and remove.
         this.existingPool = _.cloneDeep(pool);
       }),
       untilDestroyed(this),

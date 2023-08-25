@@ -1,0 +1,25 @@
+.content-container {
+  border: 1px solid var(--lines);
+  margin: 20px 0;
+  padding: 20px 30px;
+}
+
+.columns {
+  display: flex;
+
+  .column {
+    border-right: 1px solid var(--lines);
+    flex: 1;
+    padding-right: 30px;
+
+    &:last-of-type {
+      border-right-width: 0;
+      padding-left: 30px;
+      padding-right: 0;
+    }
+  }
+}
+
+.explanation {
+  color: var(--fg2);
+}
