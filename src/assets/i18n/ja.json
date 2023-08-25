@@ -3819,7 +3819,6 @@
   "Create new disk image": "新しいディスクイメージの作成",
   "Created Date": "作成日",
   "Creating or editing a <i>sysctl</i> immediately updates the Variable to the configured Value. A restart is required to apply <i>loader</i> or <i>rc.conf</i> tunables. Configured tunables remain in effect until deleted or Enabled is unset.": "<i>sysctl</i>を作成または編集すると、すぐに変数が設定された値に更新されます。<i>loader</i>または<i>rc.conf</i>調整パラメータを適用するには、再起動が必要です。構成された調整可能パラメータは、削除されるか有効が設定解除されるまで有効です。",
-  "Cron Job": "Cron ジョブ",
   "Current Password": "現在のパスワード",
   "Current Train:": "現在のトレイン:",
   "Dashboard": "ダッシュボード",

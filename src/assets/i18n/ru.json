@@ -2716,7 +2716,6 @@
   "Critical Extension": "Критическое расширение",
   "Critical applications": "Критические приложения",
   "Criticality": "Критичность",
-  "Cron Job": "Задание Cron",
   "Cryptographic protocols for securing client/server connections. Select which <a href=\"https://en.wikipedia.org/wiki/Transport_Layer_Security\" target=\"_blank\">Transport Layer Security (TLS)</a> versions TrueNAS can use for connection security.": "Криптографические протоколы для защиты клиент-серверных соединений. Выберите, какие <a href=\"https://en.wikipedia.org/wiki/Transport_Layer_Security\" target=\"_blank\">версии транспортного уровня (TLS)</a> TrueNAS может использовать для обеспечения безопасности соединения.",
   "Current Password": "Текущий пароль",
   "Current Train:": "Текущий поезд:",

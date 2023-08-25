@@ -8,7 +8,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { CronjobRow } from 'app/pages/system/advanced/cron/cron-list/cronjob-row.interface';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -25,7 +24,6 @@ export class CronDeleteDialogComponent {
     private ws: WebSocketService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
-    private dialogService: DialogService,
     private dialogRef: MatDialogRef<CronDeleteDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public cronjob: CronjobRow,
     private errorHandler: ErrorHandlerService,
