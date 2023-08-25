@@ -1106,7 +1106,6 @@
   "Critical Extension": "Критичне розширення",
   "Critical applications": "Критичні програми",
   "Criticality": "Критичність",
-  "Cron Job": "Завдання Cron",
   "Cron Jobs": "Роботи Cron",
   "Cryptographic protocols for securing client/server connections. Select which <a href=\"https://en.wikipedia.org/wiki/Transport_Layer_Security\" target=\"_blank\">Transport Layer Security (TLS)</a> versions TrueNAS can use for connection security.": "Криптографічні протоколи захисту клієнт-серверних з'єднань. Виберіть, які <a href=\"https://en.wikipedia.org/wiki/Transport_Layer_Security\" target=\"_blank\">версії транспортного рівня (TLS)</a> TrueNAS може використовуватись для забезпечення безпеки з'єднання.",
   "Current Password": "Поточний пароль",
