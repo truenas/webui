@@ -72,7 +72,9 @@ describe('vdevCapacity', () => {
       vdev,
       layout: CreateVdevLayout.Draid1,
       swapOnDrive: 2 * GiB,
-    })).toBe(4 * GiB);
+      draidDataDisks: 2,
+      draidSpareDisks: 1,
+    }) / GiB).toBeCloseTo(2.67);
   });
 
   it('draid2 layout', () => {
@@ -80,7 +82,9 @@ describe('vdevCapacity', () => {
       vdev,
       layout: CreateVdevLayout.Draid2,
       swapOnDrive: 2 * GiB,
-    })).toBe(3 * GiB);
+      draidDataDisks: 2,
+      draidSpareDisks: 1,
+    }) / GiB).toBeCloseTo(2);
   });
 
   it('draid3 layout', () => {
@@ -88,6 +92,8 @@ describe('vdevCapacity', () => {
       vdev,
       layout: CreateVdevLayout.Draid3,
       swapOnDrive: 2 * GiB,
-    })).toBe(2 * GiB);
+      draidDataDisks: 2,
+      draidSpareDisks: 1,
+    }) / GiB).toBeCloseTo(1.6);
   });
 });

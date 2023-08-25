@@ -17,6 +17,7 @@ import {
   TopologyDisk,
   TopologyItem,
 } from 'app/interfaces/storage.interface';
+import { isDraidLayout } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
 import { StorageService } from 'app/services/storage.service';
 
 interface TopologyState {
@@ -141,7 +142,14 @@ export class TopologyCardComponent implements OnInit, OnChanges {
       : this.disks?.find((disk) => disk.name === (vdevs[0] as TopologyDisk)?.disk)?.size;
 
     outputString = `${vdevs.length} x `;
-    outputString += vdevWidth ? `${type} | ${vdevWidth} wide | ` : '';
+    // TODO: Needs to be translated.
+    if (vdevWidth) {
+      if (isDraidLayout(type)) {
+        outputString += `${type} | ${vdevWidth} children | `;
+      } else {
+        outputString += `${type} | ${vdevWidth} wide | `;
+      }
+    }
 
     if (size) {
       outputString += filesize(size, { standard: 'iec' });

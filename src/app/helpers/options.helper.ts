@@ -52,3 +52,10 @@ export function findLabelsByValue(options: Option[]): (value: string) => string 
     return selectedOption?.label;
   };
 }
+
+export function generateOptionsRange(start: number, end: number): Option[] {
+  return Array.from({ length: end - start + 1 }, (_, index) => {
+    const value = start + index;
+    return { label: String(value), value };
+  });
+}

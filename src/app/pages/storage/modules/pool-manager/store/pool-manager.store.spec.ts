@@ -32,7 +32,7 @@ describe('PoolManagerStore', () => {
       type: DiskType.Ssd,
       enclosure: {
         number: 1,
-        slot: 1,
+        slot: 2,
       },
     },
     {
@@ -98,9 +98,9 @@ describe('PoolManagerStore', () => {
       spectator.service.setManualTopologyCategory(VdevType.Data, [[disks[0]]]);
 
       const inventory = await firstValueFrom(spectator.service.getInventoryForStep(VdevType.Data));
-      expect(inventory).toHaveLength(3);
+      expect(inventory).toHaveLength(2);
       const diskNames = inventory.map((disk) => disk.devname).sort();
-      expect(diskNames).toEqual(['sda', 'sdb', 'sdc']);
+      expect(diskNames).toEqual(['sdb', 'sdc']);
     });
   });
 
@@ -217,6 +217,8 @@ describe('PoolManagerStore', () => {
         vdevsNumber: 1,
         width: 1,
         vdevs: [[disks[2]]],
+        draidDataDisks: 0,
+        draidSpareDisks: 0,
       });
     });
 
