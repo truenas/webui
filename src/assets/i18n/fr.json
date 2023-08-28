@@ -125,6 +125,7 @@
   "Sysctl \"{name}\" deleted": "",
   "System Security": "",
   "System Security Settings Updated.": "",
+  "This session is current and cannot be terminated": "",
   "The number of children must at the minimum accomodate the total number of disks required for the previous configuration options including parity drives.": "",
   "VDEVs": "",
   "Windows": "",
