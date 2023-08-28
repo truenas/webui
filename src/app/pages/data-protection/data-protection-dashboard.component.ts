@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -606,14 +607,20 @@ export class DataProtectionDashboardComponent implements OnInit {
         matTooltip: this.translate.instant('Download encryption keys'),
         icon: 'download',
         onClick: (row) => {
-          this.ws.call('pool.dataset.export_keys_for_replication', [row.id]).pipe(
-            untilDestroyed(this),
-          ).subscribe({
-            next: (keys: unknown) => {
-              const name = row.name;
-              const key = keys;
-              const blob = new Blob([key as string], { type: 'text/plain' });
-              this.storageService.downloadBlob(blob, `${name}_replication_encryption_keys.json`);
+          this.ws.call('core.download', ['pool.dataset.export_keys_for_replication', [row.id], `${row.name}_encryption_keys.json`]).pipe(untilDestroyed(this)).subscribe({
+            next: ([, url]) => {
+              const mimetype = 'application/json';
+              this.storage.streamDownloadFile(url, `${row.name}_encryption_keys.json`, mimetype).pipe(untilDestroyed(this)).subscribe({
+                next: (file) => {
+                  this.storage.downloadBlob(file, `${row.name}_encryption_keys.json`);
+                },
+                error: (err: HttpErrorResponse) => {
+                  this.dialogService.error(this.errorHandler.parseHttpError(err));
+                },
+              });
+            },
+            error: (err) => {
+              this.dialogService.error(this.errorHandler.parseWsError(err));
             },
           });
         },
