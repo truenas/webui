@@ -33,7 +33,6 @@ export class LayoutStepComponent implements OnInit {
   @Input() canChangeLayout = false;
   @Input() limitLayouts: CreateVdevLayout[];
 
-  // TODO: Limit to certain disks for certain vdev types.
   @Input() inventory: UnusedDisk[];
 
   protected topologyCategory: PoolManagerTopologyCategory;

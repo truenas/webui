@@ -16,6 +16,7 @@ export enum TopologyItemType {
   Raidz1 = 'RAIDZ1',
   Raidz2 = 'RAIDZ2',
   Raidz3 = 'RAIDZ3',
+  Draid = 'DRAID',
   L2Cache = 'L2CACHE',
   Replacing = 'REPLACING',
 }

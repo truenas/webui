@@ -24,6 +24,8 @@ const defaultCategory: PoolManagerTopologyCategory = {
   treatDiskSizeAsMinimum: false,
   vdevs: [],
   hasCustomDiskSelection: false,
+  draidSpareDisks: null,
+  draidDataDisks: null,
 };
 @UntilDestroy()
 @Component({
