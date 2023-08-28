@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, Inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -34,7 +34,7 @@ export class ReplaceDiskDialogComponent implements OnInit {
 
   unusedDisks: UnusedDisk[] = [];
 
-  unusedDisksOptions$: Observable<Option[]> = of([]);
+  unusedDisksOptions$: Observable<Option[]>;
 
   readonly helptext = helptext;
 
@@ -47,6 +47,7 @@ export class ReplaceDiskDialogComponent implements OnInit {
     private snackbar: SnackbarService,
     @Inject(MAT_DIALOG_DATA) public data: ReplaceDiskDialogData,
     private dialogService: DialogService,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
@@ -67,6 +68,7 @@ export class ReplaceDiskDialogComponent implements OnInit {
         };
       });
       this.unusedDisksOptions$ = of(unusedDiskOptions);
+      this.cdr.markForCheck();
     });
   }
 
