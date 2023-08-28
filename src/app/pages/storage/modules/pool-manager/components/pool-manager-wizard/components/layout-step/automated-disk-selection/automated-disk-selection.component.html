@@ -1,4 +1,4 @@
-<div *ngIf="canChangeLayout" class="layout-container">
+<div *ngIf="canChangeLayout; else showLayoutInfo" class="layout-container">
   <ix-select
     [formControl]="layoutControl"
     [label]="'Layout' | translate"
@@ -7,6 +7,16 @@
     [required]="true"
   ></ix-select>
 </div>
+<ng-template #showLayoutInfo>
+  <ix-input
+    *ngIf="isDataVdev"
+    [formControl]="layoutControl"
+    [label]="'Layout' | translate"
+    [readonly]="true"
+    [tooltip]="dataLayoutTooltip"
+    [required]="false"
+  ></ix-input>
+</ng-template>
 
 <ix-draid-selection
   *ngIf="usesDraidLayout; else normalSelection"

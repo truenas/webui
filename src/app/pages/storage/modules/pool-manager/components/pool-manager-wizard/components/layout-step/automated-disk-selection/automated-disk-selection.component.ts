@@ -36,6 +36,18 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
 
   readonly layoutControl = new FormControl(null as CreateVdevLayout, Validators.required);
 
+  get isDataVdev(): boolean {
+    return this.type === VdevType.Data;
+  }
+
+  get dataLayoutTooltip(): string {
+    if (this.isDataVdev) {
+      return 'Read only field: The layout of this device has been preselected to match the layout of the existing Data devices in the pool';
+    }
+
+    return '';
+  }
+
   protected vdevLayoutOptions$ = of<SelectOption<CreateVdevLayout>[]>([]);
 
   constructor(
