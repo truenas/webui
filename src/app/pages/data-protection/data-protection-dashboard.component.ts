@@ -96,6 +96,7 @@ export class DataProtectionDashboardComponent implements OnInit {
     private translate: TranslateService,
     private store$: Store<AppState>,
     private snackbar: SnackbarService,
+    private storageService: StorageService,
   ) {
     this.storage
       .listDisks()
@@ -247,6 +248,7 @@ export class DataProtectionDashboardComponent implements OnInit {
         tableConf: {
           title: helptext.fieldset_replication_tasks,
           titleHref: '/tasks/replication',
+          queryCallOption: [[], { extra: { check_dataset_encryption_keys: true } }],
           queryCall: 'replication.query',
           deleteCall: 'replication.delete',
           deleteMsg: {
@@ -599,6 +601,23 @@ export class DataProtectionDashboardComponent implements OnInit {
             .subscribe(() => this.refreshTable(TaskCardId.Replication));
         },
       },
+      {
+        name: 'download_keys',
+        matTooltip: this.translate.instant('Download encryption keys'),
+        icon: 'download',
+        onClick: (row) => {
+          this.ws.call('pool.dataset.export_keys_for_replication', [row.id]).pipe(
+            untilDestroyed(this),
+          ).subscribe({
+            next: (keys: unknown) => {
+              const name = row.name;
+              const key = keys;
+              const blob = new Blob([key as string], { type: 'text/plain' });
+              this.storageService.downloadBlob(blob, `${name}_replication_encryption_keys.json`);
+            },
+          });
+        },
+      },
     ];
   }
 
@@ -754,6 +773,9 @@ export class DataProtectionDashboardComponent implements OnInit {
       return false;
     }
     if (name === 'stop' && (row.job ? row.job && row.job.state !== JobState.Running : true)) {
+      return false;
+    }
+    if (name === 'download_keys' && !(row.has_encrypted_dataset_keys)) {
       return false;
     }
     return true;

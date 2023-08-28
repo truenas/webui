@@ -11,6 +11,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import globalHelptext from 'app/helptext/global-helptext';
 import { Job } from 'app/interfaces/job.interface';
+import { QueryParams } from 'app/interfaces/query-api.interface';
 import { ReplicationTask, ReplicationTaskUi } from 'app/interfaces/replication-task.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ShowLogsDialogComponent } from 'app/modules/common/dialog/show-logs-dialog/show-logs-dialog.component';
@@ -51,6 +52,7 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
   routeAdd: string[] = ['tasks', 'replication', 'wizard'];
   routeEdit: string[] = ['tasks', 'replication', 'edit'];
   routeSuccess: string[] = ['tasks', 'replication'];
+  queryCallOption: QueryParams<void> = [[], { extra: { check_dataset_encryption_keys: true } }];
   entityList: EntityTableComponent<ReplicationTaskUi>;
   filterValue = '';
 

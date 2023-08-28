@@ -37,6 +37,7 @@
   "Delete Sysctl": "",
   "Distributed Hot Spares": "",
   "Do not enable ALUA on TrueNAS unless it is also supported     by and enabled on the client computers. ALUA only works when enabled     on both the client and server.": "",
+  "Download encryption keys": "",
   "Drive reserved for inserting into DATA pool VDEVs when an active drive has failed.": "",
   "Editing interface will result in default gateway being removed, which may result in TrueNAS being inaccessible. You can provide new default gateway now:": "",
   "Enable FIPS": "",
