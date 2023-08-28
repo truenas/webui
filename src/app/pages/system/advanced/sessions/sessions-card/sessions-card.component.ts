@@ -2,12 +2,13 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { format, formatDuration, intervalToDuration } from 'date-fns';
+import { formatDuration, intervalToDuration } from 'date-fns';
 import { filter, map } from 'rxjs/operators';
 import { toLoadingState } from 'app/helpers/to-loading-state.helper';
 import { AuthSession, AuthSessionCredentialsData } from 'app/interfaces/auth-session.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { dateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-date/ix-cell-date.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -45,7 +46,7 @@ export class SessionsCardComponent {
       title: this.translate.instant('Username'),
       propertyName: 'credentials_data',
     }),
-    textColumn({
+    dateColumn({
       title: this.translate.instant('Start session time'),
       propertyName: 'created_at',
     }),
@@ -136,10 +137,6 @@ export class SessionsCardComponent {
     return formatDuration(duration, {
       format: ['hours', 'minutes', 'seconds'],
     });
-  }
-
-  getDate(date: number): string {
-    return format(date, 'Pp');
   }
 
   getUsername(credentialsData: AuthSessionCredentialsData): string {

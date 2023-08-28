@@ -1,4 +1,8 @@
-:host {
+:host:not(.collapsible) {
+  display: none;
+}
+
+:host.collapsible {
   align-items: center;
   display: flex;
   justify-content: center;

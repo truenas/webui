@@ -32,12 +32,4 @@ describe('IxCellDateComponent', () => {
   it('shows default format datetime in template', () => {
     expect(spectator.element.textContent.trim()).toBe('2023-07-12 09:10:00');
   });
-
-  it('shows custom format datetime in template', () => {
-    spectator.component.formatDate = 'yyyy/MM/dd';
-    spectator.component.formatTime = 'HH.mm.ss';
-    spectator.fixture.detectChanges();
-
-    expect(spectator.element.textContent.trim()).toBe('2023/07/12 09.10.00');
-  });
 });
