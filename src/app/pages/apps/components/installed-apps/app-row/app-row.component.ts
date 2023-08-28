@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component, EventEmitter, Input, Output,
 } from '@angular/core';
+import { appImagePlaceholder } from 'app/constants/catalog.constants';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ChartScaleQueryParams, ChartScaleResult } from 'app/interfaces/chart-release-event.interface';
@@ -22,6 +23,8 @@ export class AppRowComponent {
   @Output() startApp = new EventEmitter<void>();
   @Output() stopApp = new EventEmitter<void>();
   @Output() clickStatus = new EventEmitter<void>();
+
+  readonly imagePlaceholder = appImagePlaceholder;
 
   get hasUpdates(): boolean {
     return this.app.update_available || this.app.container_images_update_available;
