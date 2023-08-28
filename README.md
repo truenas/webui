@@ -29,7 +29,7 @@ NOTE: Pull requests are also generated as Docker images and can be used for test
 # Development requirements
 
   - yarn >= 1.12
-  - Node.js >= 8.9
+  - Node.js >= 14
   - Running TrueNAS CORE or TrueNAS SCALE Nightly Machine (VM is fine)
 
 

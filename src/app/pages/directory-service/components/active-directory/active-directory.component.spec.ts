@@ -110,6 +110,7 @@ describe('ActiveDirectoryComponent', () => {
       'Domain Account Password': '',
       'Domain Name': 'AD.IXSYSTEMS.NET',
       'Enable (requires password or Kerberos principal)': false,
+      'NetBIOS Name': 'truenas',
     });
   });
 

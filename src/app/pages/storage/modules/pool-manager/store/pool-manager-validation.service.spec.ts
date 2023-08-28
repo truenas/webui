@@ -1,14 +1,25 @@
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { of } from 'rxjs';
+import { firstValueFrom, of } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.utils';
-import { VdevType } from 'app/enums/v-dev-type.enum';
+import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import { Pool } from 'app/interfaces/pool.interface';
-import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
-import { DispersalStrategy } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/2-enclosure-wizard-step/enclosure-wizard-step.component';
-import { PoolManagerValidationService } from 'app/pages/storage/modules/pool-manager/store/pool-manager-validation.service';
-import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
+import {
+  AddVdevsStore,
+} from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
+import {
+  DispersalStrategy,
+} from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/2-enclosure-wizard-step/enclosure-wizard-step.component';
+import { PoolCreationSeverity } from 'app/pages/storage/modules/pool-manager/enums/pool-creation-severity';
+import { PoolCreationWizardStep } from 'app/pages/storage/modules/pool-manager/enums/pool-creation-wizard-step.enum';
+import {
+  PoolManagerValidationService,
+} from 'app/pages/storage/modules/pool-manager/store/pool-manager-validation.service';
+import {
+  PoolManagerStore,
+  PoolManagerTopologyCategory,
+} from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { selectSystemFeatures } from 'app/store/system-info/system-info.selectors';
 
 describe('PoolManagerValidationService', () => {
@@ -396,6 +407,84 @@ describe('PoolManagerValidationService', () => {
             },
           ],
         });
+      });
+    });
+  });
+
+  describe('dRAID validation', () => {
+    let spectator: SpectatorService<PoolManagerValidationService>;
+
+    const mockName$ = of('Pool');
+    const mockTopology$ = of({
+      [VdevType.Data]: {
+        hasCustomDiskSelection: false,
+        layout: CreateVdevLayout.Draid1,
+        vdevs: [[{}]],
+        draidDataDisks: 1,
+        draidSpareDisks: 0,
+        width: 9,
+      } as PoolManagerTopologyCategory,
+    });
+    const mockEnclosureSettings$ = of({
+      limitToSingleEnclosure: null,
+      dispersalStrategy: DispersalStrategy.None,
+    });
+    const mockHasMultipleEnclosuresAfterFirstStep$ = of(true);
+
+    const createService = createServiceFactory({
+      service: PoolManagerValidationService,
+      providers: [
+        mockProvider(PoolManagerStore, {
+          name$: mockName$,
+          enclosureSettings$: mockEnclosureSettings$,
+          topology$: mockTopology$,
+          hasMultipleEnclosuresAfterFirstStep$: mockHasMultipleEnclosuresAfterFirstStep$,
+        }),
+        mockProvider(AddVdevsStore, {
+          pool$: of(null),
+        }),
+        provideMockStore({
+          selectors: [
+            {
+              selector: selectSystemFeatures,
+              value: {
+                enclosure: true,
+              },
+            },
+          ],
+        }),
+      ],
+    });
+
+    beforeEach(() => {
+      spectator = createService();
+    });
+
+    // TODO: Spit apart and add more boundary checks.
+    it('adds a warning when dRAID data disk is not a power of two', async () => {
+      const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
+      expect(errors).toContainEqual({
+        text: 'Recommended number of data disks for optimal space allocation should be power of 2 (2, 4, 8, 16...).',
+        severity: PoolCreationSeverity.Warning,
+        step: PoolCreationWizardStep.Data,
+      });
+    });
+
+    it('adds a warning when dRAID children is less than 10', async () => {
+      const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
+      expect(errors).toContainEqual({
+        text: 'In order for dRAID to overweight its benefits over RaidZ the minimum recommended number of disks per dRAID vdev is 10.',
+        severity: PoolCreationSeverity.Warning,
+        step: PoolCreationWizardStep.Data,
+      });
+    });
+
+    it('adds a warning when dRAID does not have spares added', async () => {
+      const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
+      expect(errors).toContainEqual({
+        text: 'At least one spare is recommended for dRAID. Spares cannot be added later.',
+        severity: PoolCreationSeverity.Warning,
+        step: PoolCreationWizardStep.Data,
       });
     });
   });
