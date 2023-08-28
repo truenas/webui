@@ -7,6 +7,7 @@ import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { startCase, isEmpty } from 'lodash';
 import { filter, map, take } from 'rxjs';
+import { appImagePlaceholder } from 'app/constants/catalog.constants';
 import helptext from 'app/helptext/apps/apps';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
@@ -31,6 +32,7 @@ import { RedirectService } from 'app/services/redirect.service';
 export class AppInfoCardComponent {
   @Input() app: ChartRelease;
 
+  readonly imagePlaceholder = appImagePlaceholder;
   readonly isEmpty = isEmpty;
 
   constructor(
