@@ -9,8 +9,7 @@ import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import {
-  ManualDiskSelectionComponent,
-  ManualDiskSelectionParams,
+  ManualDiskSelectionComponent, ManualDiskSelectionParams,
 } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/manual-disk-selection.component';
 import {
   PoolManagerStore,
@@ -38,6 +37,10 @@ export class LayoutStepComponent implements OnInit {
   protected topologyCategory: PoolManagerTopologyCategory;
   private enclosures: Enclosure[] = [];
 
+  get isSpareVdev(): boolean {
+    return this.type === VdevType.Spare;
+  }
+
   constructor(
     private store: PoolManagerStore,
     private dialog: MatDialog,
@@ -60,6 +63,7 @@ export class LayoutStepComponent implements OnInit {
         layout: this.topologyCategory.layout,
         enclosures: this.enclosures,
         vdevs: this.topologyCategory.vdevs,
+        vdevsLimit: this.isSpareVdev ? 1 : null,
       } as ManualDiskSelectionParams,
       panelClass: 'manual-selection-dialog',
     })
