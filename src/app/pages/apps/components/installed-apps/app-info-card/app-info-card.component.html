@@ -32,8 +32,8 @@
         <div class="details-item">
           <div class="label">{{ 'Name' | translate }}:</div>
           <div class="value">
-            <ng-container *ngIf="app?.chart_metadata?.name; else notAvailable">
-              {{ app.chart_metadata.name }}
+            <ng-container *ngIf="app?.name; else notAvailable">
+              {{ app.name }}
             </ng-container>
           </div>
         </div>
