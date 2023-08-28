@@ -1,11 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  Output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { merge, of } from 'rxjs';
@@ -35,6 +28,16 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
   @Output() manualSelectionClicked = new EventEmitter<void>();
 
   readonly layoutControl = new FormControl(null as CreateVdevLayout, Validators.required);
+
+  get isDataVdev(): boolean {
+    return this.type === VdevType.Data;
+  }
+
+  get dataLayoutTooltip(): string {
+    if (this.isDataVdev) {
+      return 'Read only field: The layout of this device has been preselected to match the layout of the existing Data devices in the pool';
+    }
+  }
 
   protected vdevLayoutOptions$ = of<SelectOption<CreateVdevLayout>[]>([]);
 
