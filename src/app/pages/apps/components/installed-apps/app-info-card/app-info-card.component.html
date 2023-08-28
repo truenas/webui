@@ -40,8 +40,14 @@
         <div class="details-item">
           <div class="label">{{ 'App Version' | translate }}:</div>
           <div class="value">
-            <ng-container *ngIf="app?.chart_metadata?.appVersion; else notAvailable">
-              {{ app.chart_metadata.appVersion }}
+            <ng-container *ngIf="!ixChartApp">
+              <ng-container *ngIf="app?.chart_metadata?.appVersion; else notAvailable">
+                {{ app.chart_metadata.appVersion }}
+              </ng-container>
+            </ng-container>
+            <ng-container *ngIf="ixChartApp">
+              <!-- Show docker image tag as version for custom apps -->
+              {{ app.human_version.split(':')[1].split('_')[0] }}
             </ng-container>
           </div>
         </div>
