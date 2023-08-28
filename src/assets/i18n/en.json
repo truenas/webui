@@ -3680,6 +3680,7 @@
   "This option controls how metadata and alternate data streams read write to disks. Only enable this when the share configuration was migrated from the deprecated Apple Filing Protocol (AFP). Do not attempt to force a previous AFP share to behave like a pure SMB share or file corruption can occur.": "",
   "This pool contains the system dataset that stores critical data like debugging core files, encryption keys for pools, and Samba 4 metadata such as the user/group cache and share level permissions. Exporting this pool will transfer the system dataset to another available pool. If the only available pool is encrypted, that pool will no longer be able to be locked. When no other pools exist, the system dataset transfers back to the TrueNAS operating system device.": "",
   "This process continues in the background after closing this dialog.": "",
+  "This session is current and cannot be terminated": "",
   "This share is configured through TrueCommand": "",
   "This system cannot communicate externally.": "",
   "This system will restart when the update completes.": "",
