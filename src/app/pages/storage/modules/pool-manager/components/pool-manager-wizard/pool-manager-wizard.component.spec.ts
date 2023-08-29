@@ -211,6 +211,7 @@ describe('PoolManagerWizardComponent', () => {
     const stepLabels = await Promise.all(steps.map((step) => step.getLabel()));
     expect(stepLabels).toEqual([
       'General Info',
+      'Enclosure Options',
       'Data',
       'Log (Optional)',
       'Spare (Optional)',
@@ -219,7 +220,7 @@ describe('PoolManagerWizardComponent', () => {
       'Dedup (Optional)',
       'Review',
     ]);
-    expect(spectator.query(EnclosureWizardStepComponent)).not.toExist();
+    expect(spectator.query(EnclosureWizardStepComponent)).toExist();
   });
 
   describe('creating a pool', () => {
