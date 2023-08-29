@@ -1,14 +1,14 @@
 import { Overlay, OverlayRef, OverlayPositionBuilder } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
 import {
-  Directive, Input, AfterViewInit, ElementRef, HostListener, ComponentRef,
+  Directive, Input, AfterViewInit, ElementRef, HostListener, ComponentRef, OnDestroy,
 } from '@angular/core';
 import { HtmlTooltipComponent } from 'app/core/components/directives/html-tooltip/html-tooltip.component';
 
 @Directive({
   selector: '[htmlTooltip]',
 })
-export class HtmlTooltipDirective implements AfterViewInit {
+export class HtmlTooltipDirective implements AfterViewInit, OnDestroy {
   @Input() htmlTooltip: string;
   private overlayRef: OverlayRef;
 
@@ -34,8 +34,6 @@ export class HtmlTooltipDirective implements AfterViewInit {
   ) {}
 
   ngAfterViewInit(): void {
-    this.overlayRef = this.overlay.create({});
-
     const positionStrategy = this.overlayPositionBuilder
       // Create position attached to the elementRef
       .flexibleConnectedTo(this.el)
@@ -51,5 +49,10 @@ export class HtmlTooltipDirective implements AfterViewInit {
 
     // Connect position strategy
     this.overlayRef = this.overlay.create({ positionStrategy });
+  }
+
+  ngOnDestroy(): void {
+    this.overlayRef.detach();
+    this.overlayRef.dispose();
   }
 }
