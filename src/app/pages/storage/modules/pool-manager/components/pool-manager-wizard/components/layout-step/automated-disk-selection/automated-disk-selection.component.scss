@@ -1,26 +1,8 @@
-.content-container {
-  border: 1px solid var(--lines);
-  display: flex;
-  margin: 20px 0;
-  padding: 20px 0;
-
-  .automated-disk-selection-container {
-    border-right: 1px solid var(--lines);
-    padding: 0 30px;
-    width: 100%;
-  }
-
-  .advanced-options-container {
-    padding: 0 30px;
-    width: 100%;
-  }
-}
-
 .layout-container {
   max-width: 50%;
   padding: 0 30px;
 }
 
-.manual-disk-selection {
-  margin-top: 25px;
+.required-disks-hint {
+  padding-left: 30px;
 }

@@ -2,13 +2,13 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import helptext from 'app/helptext/services/components/service-snmp';
 import { SnmpConfigUpdate } from 'app/interfaces/snmp-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -76,11 +76,11 @@ export class ServiceSnmpComponent implements OnInit {
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
-    private router: Router,
     private formErrorHandler: FormErrorHandlerService,
     private validation: IxValidatorsService,
     private snackbar: SnackbarService,
     private translate: TranslateService,
+    private slideInRef: IxSlideInRef<ServiceSnmpComponent>,
   ) {}
 
   ngOnInit(): void {
@@ -101,8 +101,9 @@ export class ServiceSnmpComponent implements OnInit {
     this.ws.call('snmp.update', [values as SnmpConfigUpdate]).pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isFormLoading = false;
+        this.snackbar.success(this.translate.instant('Service configuration saved'));
+        this.slideInRef.close();
         this.cdr.markForCheck();
-        this.router.navigate(['/services']);
       },
       error: (error) => {
         this.isFormLoading = false;
@@ -117,7 +118,6 @@ export class ServiceSnmpComponent implements OnInit {
     this.ws.call('snmp.config').pipe(untilDestroyed(this)).subscribe({
       next: (config) => {
         this.isFormLoading = false;
-        this.snackbar.success(this.translate.instant('Service configuration saved'));
         this.form.patchValue(config);
         this.cdr.markForCheck();
       },

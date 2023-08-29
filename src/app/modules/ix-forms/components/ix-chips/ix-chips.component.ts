@@ -90,6 +90,14 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
     this.updateValues([...this.values, newValue]);
   }
 
+  onInputBlur(): void {
+    if (this.autocompleteProvider) {
+      this.chipInput.nativeElement.value = null;
+      return;
+    }
+    this.onAdd(this.chipInput.nativeElement.value);
+  }
+
   private setAutocomplete(): void {
     if (!this.autocompleteProvider) {
       this.suggestions$ = null;

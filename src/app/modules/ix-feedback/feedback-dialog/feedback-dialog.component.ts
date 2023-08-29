@@ -45,7 +45,7 @@ export class FeedbackDialogComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
     private dialogRef: MatDialogRef<FeedbackDialogComponent>,
     private feedbackService: IxFeedbackService,
     private store$: Store<AppState>,
@@ -75,7 +75,7 @@ export class FeedbackDialogComponent implements OnInit {
 
   openFileTicketForm(): void {
     this.dialogRef.close();
-    this.slideIn.open(FileTicketFormComponent);
+    this.slideInService.open(FileTicketFormComponent);
   }
 
   onSubmit(): void {
