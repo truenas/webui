@@ -1664,8 +1664,6 @@
   "Enter or paste the <b>public</b> SSH key of the user for any key-based authentication. <b>Do not paste the private key.</b>": "输入或粘贴用户的<b>公共</b> SSH密钥以进行基于密钥的身份验证。<b>请勿粘贴私钥。</b>",
   "Enter or paste the API key provided from <a href=\"https://portal.ixsystems.com/portal/login/\" target=\"_blank\">iXsystems Account Services</a>. Login or signup is required.": "输入或粘贴<a href=\"https://portal.ixsystems.com/portal/login/\" target=\"_blank\">iXsystems帐户服务</a>提供的API密钥。需要登录或注册。",
   "Enter or select the cloud storage location to use for this task.": "输入或选择要用于此任务的云存储位置。",
-  "Enter password": "输入密码",
-  "Enter password to unlock this display device": "输入密码解锁此显示设备",
   "Enter password.": "输入密码。",
   "Enter the <a href=\"https://docs.aws.amazon.com/sns/latest/dg/sms_supported-countries.html\" target=\"_blank\">AWS account region</a>.": "输入<a href=\"https://docs.aws.amazon.com/sns/latest/dg/sms_supported-countries.html\" target=\"_blank\">AWS账户区域</a> 。",
   "Enter the <a href=\"https://docs.influxdata.com/influxdb/\" target=\"_blank\">InfluxDB</a> hostname.": "输入<a href=\"https://docs.influxdata.com/influxdb/\" target=\"_blank\">InfluxDB</a>主机名。",
