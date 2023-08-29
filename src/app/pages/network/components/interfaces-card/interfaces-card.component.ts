@@ -72,7 +72,7 @@ export class InterfacesCardComponent implements OnInit {
     private store$: Store<AppState>,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
     private dialogService: DialogService,
     private ws: WebSocketService,
     private loader: AppLoaderService,
@@ -95,7 +95,7 @@ export class InterfacesCardComponent implements OnInit {
   }
 
   onAddNew(): void {
-    this.slideIn.open(InterfaceFormComponent)
+    this.slideInService.open(InterfaceFormComponent)
       .slideInClosed$
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => {
@@ -105,7 +105,7 @@ export class InterfacesCardComponent implements OnInit {
   }
 
   onEdit(row: NetworkInterface): void {
-    this.slideIn.open(InterfaceFormComponent, {
+    this.slideInService.open(InterfaceFormComponent, {
       data: row,
     })
       .slideInClosed$

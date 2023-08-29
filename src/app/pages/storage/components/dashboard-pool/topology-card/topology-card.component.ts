@@ -17,6 +17,7 @@ import {
   TopologyDisk,
   TopologyItem,
 } from 'app/interfaces/storage.interface';
+import { isDraidLayout } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
 import { StorageService } from 'app/services/storage.service';
 
 interface TopologyState {
@@ -53,6 +54,8 @@ export class TopologyCardComponent implements OnInit, OnChanges {
     spare: notAssignedDev,
     dedup: notAssignedDev,
   };
+
+  topologyWarningsState: TopologyState = { ...this.topologyState };
 
   get iconType(): PoolCardIconType {
     if (this.isStatusError(this.poolState)) {
@@ -97,29 +100,18 @@ export class TopologyCardComponent implements OnInit, OnChanges {
     this.topologyState.log = this.parseDevs(topology.log, VdevType.Log);
     this.topologyState.cache = this.parseDevs(topology.cache, VdevType.Cache);
     this.topologyState.spare = this.parseDevs(topology.spare, VdevType.Spare);
+    this.topologyState.metadata = this.parseDevs(topology.special, VdevType.Special);
+    this.topologyState.dedup = this.parseDevs(topology.dedup, VdevType.Dedup);
 
-    this.topologyState.metadata = this.parseDevs(
-      topology.special,
-      VdevType.Special,
-      topology.data,
-    );
-    this.topologyState.dedup = this.parseDevs(
-      topology.dedup,
-      VdevType.Dedup,
-      topology.data,
-    );
+    this.topologyWarningsState.data = this.parseDevsWarnings(topology.data, VdevType.Data);
+    this.topologyWarningsState.log = this.parseDevsWarnings(topology.log, VdevType.Log);
+    this.topologyWarningsState.cache = this.parseDevsWarnings(topology.cache, VdevType.Cache);
+    this.topologyWarningsState.spare = this.parseDevsWarnings(topology.spare, VdevType.Spare);
+    this.topologyWarningsState.metadata = this.parseDevsWarnings(topology.special, VdevType.Special, topology.data);
+    this.topologyWarningsState.dedup = this.parseDevsWarnings(topology.dedup, VdevType.Dedup, topology.data);
   }
 
-  private parseDevs(
-    vdevs: TopologyItem[],
-    category: VdevType,
-    dataVdevs?: TopologyItem[],
-  ): string {
-    const disks: Disk[] = this.disks.map((disk: StorageDashboardDisk) => {
-      return this.dashboardDiskToDisk(disk);
-    });
-    const warnings = this.storageService.validateVdevs(category, vdevs, disks, dataVdevs);
-
+  private parseDevs(vdevs: TopologyItem[], category: VdevType): string {
     let outputString = vdevs.length ? '' : notAssignedDev;
 
     // Check VDEV Widths
@@ -140,15 +132,7 @@ export class TopologyCardComponent implements OnInit, OnChanges {
       vdevWidth = Array.from(allVdevWidths.values())[0];
     }
 
-    if (warnings.length === 1) {
-      return warnings[0];
-    }
-
-    if (warnings.length > 1) {
-      return warnings.length.toString() + ' ' + multiWarning;
-    }
-
-    if (!warnings.length && outputString && outputString === notAssignedDev) {
+    if (outputString && outputString === notAssignedDev) {
       return outputString;
     }
 
@@ -158,7 +142,14 @@ export class TopologyCardComponent implements OnInit, OnChanges {
       : this.disks?.find((disk) => disk.name === (vdevs[0] as TopologyDisk)?.disk)?.size;
 
     outputString = `${vdevs.length} x `;
-    outputString += vdevWidth ? `${type} | ${vdevWidth} wide | ` : '';
+    // TODO: Needs to be translated.
+    if (vdevWidth) {
+      if (isDraidLayout(type)) {
+        outputString += `${type} | ${vdevWidth} children | `;
+      } else {
+        outputString += `${type} | ${vdevWidth} wide | `;
+      }
+    }
 
     if (size) {
       outputString += filesize(size, { standard: 'iec' });
@@ -166,6 +157,21 @@ export class TopologyCardComponent implements OnInit, OnChanges {
       outputString += '?';
     }
 
+    return outputString;
+  }
+
+  private parseDevsWarnings(vdevs: TopologyItem[], category: VdevType, dataVdevs?: TopologyItem[]): string {
+    let outputString = '';
+    const disks: Disk[] = this.disks.map((disk: StorageDashboardDisk) => {
+      return this.dashboardDiskToDisk(disk);
+    });
+    const warnings = this.storageService.validateVdevs(category, vdevs, disks, dataVdevs);
+    if (warnings.length === 1) {
+      outputString = warnings[0];
+    }
+    if (warnings.length > 1) {
+      outputString = warnings.length.toString() + ' ' + multiWarning;
+    }
     return outputString;
   }
 
@@ -186,12 +192,12 @@ export class TopologyCardComponent implements OnInit, OnChanges {
     ].includes(poolState.status);
   }
 
-  isTopologyWarning(topologyState: string): boolean {
-    if (topologyState.includes(multiWarning)) {
+  isTopologyWarning(topologyWarningState: string): boolean {
+    if (topologyWarningState.includes(multiWarning)) {
       return true;
     }
 
-    switch (topologyState) {
+    switch (topologyWarningState) {
       case TopologyWarning.NoRedundancy:
       case TopologyWarning.RedundancyMismatch:
       case TopologyWarning.MixedVdevLayout:

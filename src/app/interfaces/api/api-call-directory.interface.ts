@@ -229,6 +229,7 @@ import {
 import { SystemGeneralConfig, SystemGeneralConfigUpdate } from 'app/interfaces/system-config.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
+import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import {
   SystemUpdate,
   SystemUpdateChange,
@@ -746,6 +747,9 @@ export interface ApiCallDirectory {
   'system.is_stable': { params: void; response: boolean };
   'system.environment': { params: void; response: string };
   'system.set_time': { params: [number]; response: void };
+  'system.security.config': { params: void; response: SystemSecurityConfig };
+  'system.security.update': { params: [SystemSecurityConfig]; response: void };
+  'system.license': { params: void; response: null | object };
 
   // Replication
   'replication.config.config': { params: void; response: ReplicationConfig };

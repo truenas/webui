@@ -56,7 +56,7 @@
                   </ng-container>
                 </div>
                 <div
-                  *ngIf="app.status === chartReleaseStatus.Active"
+                  *ngIf="app.status === chartReleaseStatus.Active || app.status === chartReleaseStatus.Deploying"
                   class="container-action"
                 >
                   <button

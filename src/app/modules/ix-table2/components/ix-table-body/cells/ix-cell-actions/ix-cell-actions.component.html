@@ -1,0 +1,15 @@
+<div class="actions">
+  <ng-container
+    *ngFor="let action of actions"
+  >
+    <button
+      *ngIf="action.hidden ? !(action.hidden(row) | async) : true"
+      mat-icon-button
+      ixTest="row-edit"
+      [matTooltip]="action.tooltip || ''"
+      (click)="$event.stopPropagation(); action.onClick(row)"
+    >
+      <ix-icon [name]="action.iconName"></ix-icon>
+    </button>
+  </ng-container>
+</div>
