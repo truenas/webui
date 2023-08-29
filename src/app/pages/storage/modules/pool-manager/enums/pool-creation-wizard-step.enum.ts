@@ -14,7 +14,7 @@ export type PoolCreationWizardRequiredStep = PoolCreationWizardStep.General
 | PoolCreationWizardStep.EnclosureOptions
 | PoolCreationWizardStep.Data;
 
-export const getPoolCreationWizardStepIndex: { [key: string]: number } = {
+export const getPoolCreationWizardStepIndex: Record<PoolCreationWizardStep, number> = {
   [PoolCreationWizardStep.General]: 0,
   [PoolCreationWizardStep.EnclosureOptions]: 1,
   [PoolCreationWizardStep.Data]: 2,
