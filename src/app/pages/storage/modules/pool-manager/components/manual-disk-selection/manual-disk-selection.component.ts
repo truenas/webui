@@ -59,13 +59,14 @@ export class ManualDiskSelectionComponent implements OnInit {
         }
       }
 
-      this.hideAddVdevButton = this.data.vdevsLimit && vdevs.length >= this.data.vdevsLimit;
-
       return vdevError || diskSizeError;
     }),
   );
 
-  hideAddVdevButton = false;
+  hideAddVdevButton$ = this.manualDiskSelectionStore.vdevs$.pipe(map((vdevs) => {
+    return this.data.vdevsLimit && vdevs.length >= this.data.vdevsLimit;
+  }));
+
   protected currentVdevs: ManualSelectionVdev[];
   private oldVdevs: UnusedDisk[][] = [];
 

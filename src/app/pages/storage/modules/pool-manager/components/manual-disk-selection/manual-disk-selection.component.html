@@ -13,7 +13,7 @@
           <h3>{{ 'VDEVs' | translate }}</h3>
           <div class="header-actions">
             <button
-              *ngIf="!hideAddVdevButton"
+              *ngIf="!(hideAddVdevButton$ | async)"
               mat-button
               class="mat-button"
               ixTest="add"
