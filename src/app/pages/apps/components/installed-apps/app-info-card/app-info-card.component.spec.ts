@@ -28,7 +28,7 @@ describe('AppInfoCardComponent', () => {
 
   const app = {
     id: 'ix-test-app',
-    name: 'ix-test-app',
+    name: 'test-user-app-name',
     human_version: '1.2.3_3.2.1',
     history: {
       '1.0.11': {
@@ -114,7 +114,7 @@ describe('AppInfoCardComponent', () => {
     expect(details).toEqual([
       {
         label: 'Name:',
-        value: 'ix-test-app',
+        value: 'test-user-app-name',
       },
       {
         label: 'App Version:',
@@ -180,7 +180,7 @@ describe('AppInfoCardComponent', () => {
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Delete',
-      message: 'Delete ix-test-app?',
+      message: 'Delete test-user-app-name?',
     });
   });
 
