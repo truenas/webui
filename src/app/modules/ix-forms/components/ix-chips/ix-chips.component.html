@@ -32,6 +32,7 @@
       [matAutocomplete]="auto"
       [matChipInputFor]="chipList"
       [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+      (blur)="onInputBlur()"
       (matChipInputTokenEnd)="onAdd($event.value)"
     />
   </mat-chip-grid>

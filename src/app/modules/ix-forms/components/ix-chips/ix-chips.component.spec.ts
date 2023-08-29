@@ -92,7 +92,8 @@ describe('IxChipsComponent', () => {
     expect(formControl.value).toEqual(['operator', 'root']);
   });
 
-  it('does not create chip after leaving the focus of the input', async () => {
+  it('does not create chip after leaving the focus of the input if there is provider with autocomplete', async () => {
+    spectator.setInput('autocompleteProvider', jest.fn(() => of(['sys', 'staff'])));
     const input = await matChipList.getInput();
     await input.setValue('www-date');
     await input.blur();

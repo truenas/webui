@@ -344,6 +344,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   .mat-mdc-select-panel .mat-mdc-option:hover,
+  .mat-mdc-option-active,
   .mat-mdc-menu-content button.mat-mdc-menu-item:hover,
   .mat-mdc-menu-content button.mat-mdc-menu-item:hover .mat-icon:not(.theme-picker-swatch-icon),
   .ngx-datatable .datatable-body .datatable-row-wrapper:hover,
