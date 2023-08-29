@@ -8,9 +8,11 @@
     </span>
   </div>
   <div class="cell cell-used">
-    {{ dataset.used.parsed | filesize: { standard: 'iec', round: 0 } }}
-    /
-    {{ dataset.available.parsed | filesize: { standard: 'iec', round: 0 } }}
+    <div class="cell-used-content">
+      <span>{{ dataset.used.parsed | filesize: { standard: 'iec', round: 2 } }}</span>
+      /
+      <span>{{ dataset.available.parsed | filesize: { standard: 'iec', round: 2 } }}</span>
+    </div>
   </div>
   <div class="cell cell-encryption">
     <ix-dataset-encryption-cell
