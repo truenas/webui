@@ -257,7 +257,7 @@ export class SshConnectionFormComponent implements OnInit {
             }),
             switchMap((retry) => {
               if (retry) {
-                params.verify_ssl = false;
+                params.semi_automatic_setup.verify_ssl = false;
                 return this.ws.call('keychaincredential.setup_ssh_connection', [params]);
               }
               return throwError(() => error);
