@@ -1,14 +1,14 @@
 import { Overlay, OverlayRef, OverlayPositionBuilder } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
 import {
-  Directive, Input, AfterViewInit, ElementRef, HostListener, ComponentRef, OnChanges,
+  Directive, Input, AfterViewInit, ElementRef, HostListener, ComponentRef, OnChanges, OnDestroy,
 } from '@angular/core';
 import { TextLimiterTooltipComponent } from './text-limiter-tooltip/text-limiter-tooltip.component';
 
 @Directive({
   selector: '[textLimiter]',
 })
-export class TextLimiterDirective implements AfterViewInit, OnChanges {
+export class TextLimiterDirective implements AfterViewInit, OnChanges, OnDestroy {
   @Input() popup = true;
   @Input() threshold: number;
   @Input() content = '';
@@ -50,7 +50,6 @@ export class TextLimiterDirective implements AfterViewInit, OnChanges {
 
   ngAfterViewInit(): void {
     this.applyTruncate();
-    this.overlayRef = this.overlay.create({});
 
     const positionStrategy = this.overlayPositionBuilder
       // Create position attached to the elementRef
@@ -67,6 +66,11 @@ export class TextLimiterDirective implements AfterViewInit, OnChanges {
 
     // Connect position strategy
     this.overlayRef = this.overlay.create({ positionStrategy });
+  }
+
+  ngOnDestroy(): void {
+    this.overlayRef.detach();
+    this.overlayRef.dispose();
   }
 
   truncate(str: string): string {
