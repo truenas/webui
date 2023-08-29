@@ -7,7 +7,7 @@ import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { startCase, isEmpty } from 'lodash';
 import { filter, map, take } from 'rxjs';
-import { appImagePlaceholder } from 'app/constants/catalog.constants';
+import { appImagePlaceholder, ixChartApp } from 'app/constants/catalog.constants';
 import helptext from 'app/helptext/apps/apps';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
@@ -49,6 +49,10 @@ export class AppInfoCardComponent {
 
   get hasUpdates(): boolean {
     return this.app?.update_available || this.app?.container_images_update_available;
+  }
+
+  get ixChartApp(): boolean {
+    return this.app.chart_metadata.name === ixChartApp;
   }
 
   portalName(name = 'web_portal'): string {
