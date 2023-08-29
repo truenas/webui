@@ -4,6 +4,7 @@ import {
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { uniqBy } from 'lodash';
 import { ReportingGraphName } from 'app/enums/reporting.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Option } from 'app/interfaces/option.interface';
@@ -148,7 +149,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
       },
     );
 
-    this.activeReports = this.flattenReports(reportCategories);
+    this.activeReports = uniqBy(this.flattenReports(reportCategories), 'name');
 
     if (activeTab.value !== ReportType.Disk) {
       this.visibleReports = Object.keys(this.activeReports).map((reportIndex) => parseInt(reportIndex));
