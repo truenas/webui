@@ -22,7 +22,7 @@ import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components
 import {
   DownloadKeyDialogComponent, DownloadKeyDialogParams,
 } from 'app/pages/storage/modules/pool-manager/components/download-key-dialog/download-key-dialog.component';
-import { PoolCreationWizardStep } from 'app/pages/storage/modules/pool-manager/enums/pool-creation-wizard-step.enum';
+import { PoolCreationWizardStep, getPoolCreationWizardStepIndex } from 'app/pages/storage/modules/pool-manager/enums/pool-creation-wizard-step.enum';
 import { PoolManagerValidationService } from 'app/pages/storage/modules/pool-manager/store/pool-manager-validation.service';
 import { PoolManagerState, PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { topologyToPayload } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
@@ -48,7 +48,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
   );
   usesDraidLayout$ = this.store.usesDraidLayout$;
 
-  activeStep: PoolCreationWizardStep;
+  activeStep: PoolCreationWizardStep = PoolCreationWizardStep.General;
   hasEnclosureStep = false;
   state: PoolManagerState;
   topLevelWarningsForEachStep: Partial<{ [key in PoolCreationWizardStep]: string | null }>;
@@ -151,7 +151,6 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
   onStepActivated(step: PoolCreationWizardStep): void {
     this.activeStep = step;
     this.stepChanged.emit(step);
-
     this.activatedSteps[step] = true;
 
     if (step === PoolCreationWizardStep.Review) {
@@ -199,6 +198,10 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
       untilDestroyed(this),
     ).subscribe((result) => {
       this.hasEnclosureStep = result;
+      if (result) {
+        setTimeout(() => this.stepper.selectedIndex = getPoolCreationWizardStepIndex[this.activeStep]);
+      }
+      this.cdr.markForCheck();
     });
   }
 
