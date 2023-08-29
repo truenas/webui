@@ -7,12 +7,13 @@
 
   font-size: 1.5rem;
   height: 48px;
-  left: 0;
   padding: 0 8px;
-  position: absolute;
   text-align: left;
   width: 100%;
-  z-index: 4;
+
+  * {
+    z-index: 99;
+  }
 
   &.view-overview {
     padding: 0 16px;
@@ -37,6 +38,7 @@
 .carousel {
   height: 100%;
   position: absolute;
+  top: 0;
   width: 300%;
 }
 

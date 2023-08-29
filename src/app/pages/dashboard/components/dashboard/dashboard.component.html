@@ -132,12 +132,10 @@
             <ix-widget-pool-wrapper
               *ngSwitchCase="WidgetType.Pool"
               fxFlex.xs="100"
-              ixDrag
               [fxFlex]="widgetWidth + 'px'"
               [pool]="(widget.identifier.split(',')[1]).split(':')[1]"
               [showReorderHandle]="reorderMode"
             >
-              <span ixDragHandle></span>
             </ix-widget-pool-wrapper>
 
             <ix-widget-storage
