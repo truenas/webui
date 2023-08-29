@@ -20,7 +20,7 @@
         <b>{{ 'Data VDEVs' | translate }}</b>
         <div class="vdev-stats">
           <span
-            *ngIf="isTopologyWarning(topologyWarningsState.data)"
+            *ngIf="!!topologyWarningsState.data"
             class="warning"
             [matTooltip]="topologyWarningsState.data"
           >
@@ -33,7 +33,7 @@
         <b>{{ 'Metadata VDEVs' | translate }}</b>
         <div class="vdev-stats">
           <span
-            *ngIf="isTopologyWarning(topologyWarningsState.metadata)"
+            *ngIf="!!topologyWarningsState.metadata"
             class="warning"
             [matTooltip]="topologyWarningsState.metadata"
           >
@@ -46,7 +46,7 @@
         <b>{{ 'Log VDEVs' | translate }}</b>
         <div class="vdev-stats">
           <span
-            *ngIf="isTopologyWarning(topologyWarningsState.log)"
+            *ngIf="!!topologyWarningsState.log"
             class="warning"
             [matTooltip]="topologyWarningsState.log"
           >
@@ -59,7 +59,7 @@
         <b>{{ 'Cache VDEVs' | translate }}</b>
         <div class="vdev-stats">
           <span
-            *ngIf="isTopologyWarning(topologyWarningsState.cache)"
+            *ngIf="!!topologyWarningsState.cache"
             class="warning"
             [matTooltip]="topologyWarningsState.cache"
           >
@@ -72,7 +72,7 @@
         <b>{{ 'Spare VDEVs' | translate }}</b>
         <div class="vdev-stats">
           <span
-            *ngIf="isTopologyWarning(topologyWarningsState.spare)"
+            *ngIf="!!topologyWarningsState.spare"
             class="warning"
             [matTooltip]="topologyWarningsState.spare"
           >
@@ -85,7 +85,7 @@
         <b>{{ 'Dedup VDEVs' | translate }}</b>
         <div class="vdev-stats">
           <span
-            *ngIf="isTopologyWarning(topologyWarningsState.dedup)"
+            *ngIf="!!topologyWarningsState.dedup"
             class="warning"
             [matTooltip]="topologyWarningsState.dedup"
           >
