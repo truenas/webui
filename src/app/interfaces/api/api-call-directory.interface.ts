@@ -669,6 +669,7 @@ export interface ApiCallDirectory {
   'replication.list_datasets': { params: [transport: TransportMode, credentials?: number]; response: string[] };
   'replication.create': { params: [ReplicationCreate]; response: ReplicationTask };
   'replication.query': { params: QueryParams<ReplicationTask>; response: ReplicationTask[] };
+  'pool.dataset.export_keys_for_replication': { params: [id: number]; response: unknown };
   'replication.restore': { params: [id: number, params: { name: string; target_dataset: string }]; response: void };
   'replication.delete': { params: [id: number]; response: boolean };
   'replication.count_eligible_manual_snapshots': { params: [CountManualSnapshotsParams]; response: EligibleManualSnapshotsCount };

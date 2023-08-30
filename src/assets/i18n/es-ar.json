@@ -336,6 +336,8 @@
   "Don't Allow": "",
   "Download Authorized Keys": "",
   "Download Keys": "",
+  "Download encryption keys": "",
+  "Download keys": "",
   "Drag & drop disks to add or remove them": "",
   "Drive reserved for inserting into DATA pool VDEVs when an active drive has failed.": "",
   "EC2 Instance ID": "",
