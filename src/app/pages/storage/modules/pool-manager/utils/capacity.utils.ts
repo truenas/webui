@@ -4,7 +4,7 @@ import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { PoolManagerTopologyCategory } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 
 export function categoryCapacity(topologyCategory: PoolManagerTopologyCategory, swapOnDrive: number): number {
-  return topologyCategory.vdevs.reduce((sum, vdev) => {
+  return topologyCategory?.vdevs?.reduce((sum, vdev) => {
     return sum + vdevCapacity({
       vdev,
       layout: topologyCategory.layout,

@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { switchMap, tap } from 'rxjs';
 import { vdevTypeLabels } from 'app/enums/v-dev-type.enum';
 import {
   PoolManagerStore,
@@ -20,7 +21,14 @@ export class ConfigurationPreviewComponent {
 
   protected name$ = this.store.name$;
   protected encryption$ = this.store.encryption$;
-  protected topology$ = this.store.topology$;
+  protected topology$ = this.store.usesDraidLayout$.pipe(switchMap((usesDraidLayout) => {
+    return this.store.topology$.pipe(tap((topology) => {
+      if (usesDraidLayout) {
+        delete topology.spare;
+      }
+      return topology;
+    }));
+  }));
   protected totalCapacity$ = this.store.totalUsableCapacity$;
 
   constructor(
