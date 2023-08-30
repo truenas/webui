@@ -13,6 +13,7 @@ import { PoolWarningsComponent } from 'app/pages/storage/modules/pool-manager/co
 import {
   GeneralWizardStepComponent,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/1-general-wizard-step/general-wizard-step.component';
+import { PoolWizardNameAsyncValidatorService } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/1-general-wizard-step/pool-wizard-name-validation.service';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { DialogService } from 'app/services/dialog.service';
 
@@ -39,6 +40,9 @@ describe('GeneralWizardStepComponent', () => {
           'AES-128-GCM': 'AES-128-GCM',
         }),
       ]),
+      mockProvider(PoolWizardNameAsyncValidatorService, {
+        validatePoolName: () => of(null),
+      }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),

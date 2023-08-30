@@ -173,6 +173,8 @@
   "Interval (in seconds)": "",
   "Invalid format. Expected format: <property>=<value>": "",
   "Invalid or expired OTP. Please try again.": "",
+  "Invalid pool name": "",
+  "Invalid pool name (please refer to <a href=\"https://openzfs.github.io/openzfs-docs/man/8/zpool-create.8.html#DESCRIPTION\" target=\"_blank\">the documentation</a> for valid rules for pool name)": "",
   "It is not recommended to create a pool with VDEVs containing different numbers of disks. Continue?": "",
   "It is not recommended to extend a pool with one or more VDEVs containing different numbers of disks. Continue?": "",
   "Items per page": "",

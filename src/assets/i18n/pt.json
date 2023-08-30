@@ -1294,6 +1294,8 @@
   "Invalid format or character": "",
   "Invalid network address list. Check for typos or missing CIDR netmasks and      separate addresses by pressing <code>Enter</code>.": "",
   "Invalid or expired OTP. Please try again.": "",
+  "Invalid pool name": "",
+  "Invalid pool name (please refer to <a href=\"https://openzfs.github.io/openzfs-docs/man/8/zpool-create.8.html#DESCRIPTION\" target=\"_blank\">the documentation</a> for valid rules for pool name)": "",
   "Invalid value. Missing numerical value or invalid numerical value/unit.": "",
   "Invalid value. Must be greater than or equal to ": "",
   "Invalid value. Must be less than or equal to ": "",

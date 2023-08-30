@@ -11,4 +11,5 @@ export enum DefaultValidationError {
   Number = 'number',
   Cron = 'cron',
   Ip2 = 'ip2',
+  InvalidPoolName = 'invalidPoolName',
 }

@@ -664,6 +664,7 @@ export interface ApiCallDirectory {
   'pool.unlock_services_restart_choices': { params: [id: number]; response: Choices };
   'pool.upgrade': { params: [id: number]; response: boolean };
   'pool.get_instance_by_name': { params: PoolInstanceParams; response: PoolInstance };
+  'pool.validate_name': { params: string[]; response: boolean | { error: boolean } };
 
   // Replication
   'replication.list_datasets': { params: [transport: TransportMode, credentials?: number]; response: string[] };
