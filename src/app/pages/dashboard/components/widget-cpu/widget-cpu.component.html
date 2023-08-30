@@ -95,16 +95,19 @@
                 <span class="label">
                   <strong> {{ 'Highest Usage' | translate }}: </strong>
                 </span>
-                {{ usageMax }}% &nbsp;
-                <span class="subtext">
-                  ({{
-                    usageMaxThreads.length === 0
-                      ? ('All Threads' | translate)
-                      : usageMaxThreads.length < 2
-                        ? ('Thread #' | translate) + usageMaxThreads.toString()
-                        : usageMaxThreads.length + (' threads at ' | translate) + usageMax + '%'
-                  }})
-                </span>
+
+                <ng-container *ngIf="usageMax > 0; else noDataProvided">
+                  {{ usageMax }}% &nbsp;
+                  <span class="subtext">
+                    ({{
+                      usageMaxThreads.length === 0
+                        ? ('All Threads' | translate)
+                        : usageMaxThreads.length < 2
+                          ? ('Thread #' | translate) + usageMaxThreads.toString()
+                          : usageMaxThreads.length + (' threads at ' | translate) + usageMax + '%'
+                    }})
+                  </span>
+                </ng-container>
               </mat-list-item>
               <mat-list-item>
                 <div
@@ -117,7 +120,7 @@
                 <span class="label">
                   <strong>{{ 'Hottest' | translate }}:</strong>
                 </span>
-                <ng-container *ngIf="tempAvailable; else notemps">
+                <ng-container *ngIf="tempMax > 0; else noDataProvided">
                   <span>{{ tempMax }}°C &nbsp;</span>
                   <span class="subtext">
                     ({{
@@ -129,9 +132,6 @@
                     }})
                   </span>
                 </ng-container>
-                <ng-template #notemps>
-                  {{ 'Data not provided' | translate }}
-                </ng-template>
               </mat-list-item>
             </mat-list>
           </div>
@@ -179,7 +179,7 @@
               </span>
             </div>
             <mat-list>
-              <ng-container *ngIf="tempAvailable">
+              <ng-container *ngIf="tempMax > 0; else noDataProvided">
                 <mat-list-item>
                   <span class="label">{{ 'Hottest:' | translate }}</span>
                   {{ tempMax }}°C &nbsp;&nbsp;
@@ -193,6 +193,8 @@
                     }})
                   </span>
                 </mat-list-item>
+              </ng-container>
+              <ng-container *ngIf="tempMin > 0; else noDataProvided">
                 <mat-list-item>
                   <span class="label">{{ 'Coolest:' | translate }}</span>
                   {{ tempMin }}°C &nbsp;&nbsp;
@@ -209,16 +211,18 @@
               </ng-container>
               <mat-list-item>
                 <span class="label">{{ 'Highest Usage:' | translate }}</span>
-                {{ usageMax }}% &nbsp;&nbsp;
-                <span class="subtext">
-                  ({{
-                    usageMaxThreads.length === 0
-                      ? ('All Threads' | translate)
-                      : usageMaxThreads.length < 2
-                        ? ('Thread #' | translate) + usageMaxThreads.toString()
-                        : usageMaxThreads.length + (' threads at ' | translate) + usageMax + '%'
-                  }})
-                </span>
+                <ng-container *ngIf="usageMax > 0; else noDataProvided">
+                  {{ usageMax }}% &nbsp;&nbsp;
+                  <span class="subtext">
+                    ({{
+                      usageMaxThreads.length === 0
+                        ? ('All Threads' | translate)
+                        : usageMaxThreads.length < 2
+                          ? ('Thread #' | translate) + usageMaxThreads.toString()
+                          : usageMaxThreads.length + (' threads at ' | translate) + usageMax + '%'
+                    }})
+                  </span>
+                </ng-container>
               </mat-list-item>
               <mat-list-item>
                 <span class="label">{{ 'Lowest Usage:' | translate }}</span>
@@ -272,7 +276,7 @@
                 {{ legendData[0].data[legendIndex] }}%
               </div>
 
-              <ng-container *ngIf="tempAvailable">
+              <ng-container *ngIf="tempMin && tempMax">
                 <div
                   *ngIf="legendData[1]"
                   fxFlex="32"
@@ -317,7 +321,7 @@
                 <span class="label">{{ 'Usage' | translate }}</span>
               </div>
 
-              <ng-container *ngIf="tempAvailable">
+              <ng-container *ngIf="usageMin && usageMax">
                 <div
                   fxFlex="32"
                   fxFlex.xs="calc(50% - 16px)"
@@ -347,3 +351,7 @@
     </mat-card>
   </div>
 </div>
+
+<ng-template #noDataProvided>
+  <ngx-skeleton-loader></ngx-skeleton-loader>
+</ng-template>

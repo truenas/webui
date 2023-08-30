@@ -1026,7 +1026,6 @@
   "Data Written": "Donnée sauvegardée",
   "Data is identical in each disk. A mirror requires at least two disks, provides the most redundancy, and has the least capacity.": "Les données sont identiques sur chaque disque. Un miroir nécessite au moins deux disques, fournit la plus grande redondance et a la plus petite capacité.",
   "Data not available": "Données non disponibles",
-  "Data not provided": "Données non fournies",
   "Data transfer security. The connection is  authenticated with SSH. Data can be encrypted during transfer for  security or left unencrypted to maximize transfer speed. Encryption is  recommended, but can be disabled for increased speed on secure networks.": "Sécurité du transfert des données. La connexion est authentifiée avec SSH. Les données peuvent être chiffrées pendant le transfert pour des raisons de sécurité ou laissées non chiffrées pour maximiser la vitesse de transfert. Le chiffrement est recommandé, mais peut être désactivé pour augmenter la vitesse sur les réseaux sécurisés.",
   "Database": "Base de données",
   "Dataset Details": "Détails du dataset",
