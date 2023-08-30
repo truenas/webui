@@ -24,7 +24,6 @@ export class PoolWizardNameValidationService {
           switchMap((isValid) => isValid === true ? of(null) : of({ invalidPoolName: true })),
         );
       }),
-
     );
   };
 }
