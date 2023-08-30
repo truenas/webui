@@ -2798,7 +2798,6 @@
   "Data Protection": "Защита данных",
   "Data Quota": "Квота данных",
   "Data not available": "Данные не доступны",
-  "Data not provided": "Данные не предоставлены",
   "Data transfer security. The connection is  authenticated with SSH. Data can be encrypted during transfer for  security or left unencrypted to maximize transfer speed. Encryption is  recommended, but can be disabled for increased speed on secure networks.": "Безопасность передачи данных. Соединение аутентифицируется с помощью SSH, после чего данные могут быть зашифрованы во время передачи для максимальной защиты или оставлены незашифрованными для максимизации скорости передачи. Передача данных без шифрования рекомендуется только для защищенных сетей.",
   "Database": "База данных",
   "Dataset": "Набор данных",

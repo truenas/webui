@@ -1217,7 +1217,6 @@
   "Data VDEVs": "数据 VDEV",
   "Data Written": "数据写入",
   "Data not available": "数据不可用",
-  "Data not provided": "未提供数据",
   "Data transfer security. The connection is  authenticated with SSH. Data can be encrypted during transfer for  security or left unencrypted to maximize transfer speed. Encryption is  recommended, but can be disabled for increased speed on secure networks.": "数据传输安全性。连接已通过SSH验证。为了安全起见，可以在传输过程中对数据进行加密，也可以不加密以最大化传输速度。建议使用加密，不过在安全网络的情况下可以禁用加密以提高传输速度。",
   "Database": "数据库",
   "Dataset": "数据集",

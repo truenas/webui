@@ -1209,7 +1209,6 @@
   "Data VDEVs": "Дані VDEVs",
   "Data Written": "Дані записано",
   "Data not available": "Дані недоступні",
-  "Data not provided": "Дані не надані",
   "Data transfer security. The connection is  authenticated with SSH. Data can be encrypted during transfer for  security or left unencrypted to maximize transfer speed. Encryption is  recommended, but can be disabled for increased speed on secure networks.": "Безпека передачі. З'єднання аутентифікується за допомогою SSH, після чого дані можуть бути зашифровані під час передачі для максимального захисту або залишені незашифрованими для максимізації швидкості передачі. Передача даних без шифрування рекомендується лише для захищених мереж.",
   "Database": "База даних",
   "Dataset": "Набір даних",
