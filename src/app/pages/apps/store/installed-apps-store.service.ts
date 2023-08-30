@@ -74,7 +74,7 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> {
   private handleRemovedApps(updatedAppName: string, allApps: AvailableApp[]): AvailableApp[] {
     return allApps.map((app) => {
       if (app.name === updatedAppName) {
-        return { ...app as object, installed: false } as AvailableApp;
+        return { ...app, installed: false } as AvailableApp;
       }
       return app;
     });
