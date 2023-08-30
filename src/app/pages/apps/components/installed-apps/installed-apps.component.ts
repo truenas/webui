@@ -385,16 +385,16 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
         status = AppStatus.Stopping;
       }
       if (
-        job.state === JobState.Success &&
-          params.replica_count >= 1 &&
-          app.status !== ChartReleaseStatus.Deploying
+        job.state === JobState.Success
+          && params.replica_count >= 1
+          && app.status !== ChartReleaseStatus.Deploying
       ) {
         status = AppStatus.Started;
       }
       if (
-        job.state === JobState.Success &&
-          params.replica_count === 0 &&
-          app.status !== ChartReleaseStatus.Deploying
+        job.state === JobState.Success
+          && params.replica_count === 0
+          && app.status !== ChartReleaseStatus.Deploying
       ) {
         status = AppStatus.Stopped;
       }
