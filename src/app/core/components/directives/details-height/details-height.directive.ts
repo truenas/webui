@@ -48,6 +48,7 @@ export class IxDetailsHeightDirective implements OnInit, OnDestroy, OnChanges {
 
     this.element.nativeElement.style.height = this.heightCssValue;
     this.window.addEventListener('scroll', this.onScrollHandler, true);
+    setTimeout(() => this.onScroll());
   }
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
