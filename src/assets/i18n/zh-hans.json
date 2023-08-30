@@ -126,6 +126,7 @@
   "Docker Registry Authentication": "",
   "Don't Allow": "",
   "Download encryption keys": "",
+  "Download keys": "",
   "Drag & drop disks to add or remove them": "",
   "Drive reserved for inserting into DATA pool VDEVs when an active drive has failed.": "",
   "Each disk stores data. A stripe requires at least one disk and has no data redundancy.": "",
