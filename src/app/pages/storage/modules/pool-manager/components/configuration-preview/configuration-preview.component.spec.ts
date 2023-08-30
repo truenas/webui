@@ -27,6 +27,7 @@ describe('ConfigurationPreviewComponent', () => {
         name$: of('tank'),
         encryption$: of('AES-256'),
         totalUsableCapacity$: of(10 * GiB),
+        usesDraidLayout$: of(false),
         topology$: of({
           [VdevType.Data]: {
             diskSize: 2 * GiB,
