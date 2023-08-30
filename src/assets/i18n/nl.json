@@ -233,6 +233,7 @@
   "Warnings": "",
   "With this configuration, the existing directory {path} will be used as a home directory without creating a new directory for the user.": "",
   "Workloads": "",
+  "Would you like to ignore this error and try again?": "",
   "Wrong username or password. Please try again.": "",
   "You are using an insecure connection. <a href=\"{url}\">Switch to HTTPS</a> for secure access.": "",
   "ZFS L2ARC read-cache that can be used with fast devices to accelerate read operations.": "",

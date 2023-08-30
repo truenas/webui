@@ -133,6 +133,7 @@
   "Windows": "",
   "Wizard iSCSI": "",
   "Workloads": "",
+  "Would you like to ignore this error and try again?": "",
   "dRAID is a ZFS feature that boosts resilver speed and load distribution. Due to fixed strip width disk space efficiency may be substantially worse with small files. \nOpt for dRAID over RAID-Z when handling large-capacity drives and extensive disk environments for enhanced performance.": "",
   "dRAID1": "",
   "dRAID2": "",
