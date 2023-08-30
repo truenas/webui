@@ -116,7 +116,7 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
   }
 
   getActions(parentrow: ReplicationTaskUi): EntityTableAction[] {
-    const actions: EntityTableAction[] =  [
+    const actions: EntityTableAction[] = [
       {
         id: parentrow.name,
         icon: 'play_arrow',
@@ -176,8 +176,6 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
           this.doEdit(row.id);
         },
       },
-
-
     ];
     if (parentrow.has_encrypted_dataset_keys) {
       actions.push({
