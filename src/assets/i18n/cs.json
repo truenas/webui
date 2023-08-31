@@ -818,7 +818,6 @@
   "Data Written": "",
   "Data is identical in each disk. A mirror requires at least two disks, provides the most redundancy, and has the least capacity.": "",
   "Data not available": "",
-  "Data not provided": "",
   "Data transfer security. The connection is  authenticated with SSH. Data can be encrypted during transfer for  security or left unencrypted to maximize transfer speed. Encryption is  recommended, but can be disabled for increased speed on secure networks.": "",
   "Database": "",
   "Dataset": "",
