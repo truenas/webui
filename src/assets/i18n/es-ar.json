@@ -544,6 +544,8 @@
   "Invalid format. Expected format: <property>=<value>": "",
   "Invalid image": "",
   "Invalid or expired OTP. Please try again.": "",
+  "Invalid pool name": "",
+  "Invalid pool name (please refer to <a href=\"https://openzfs.github.io/openzfs-docs/man/8/zpool-create.8.html#DESCRIPTION\" target=\"_blank\">the documentation</a> for valid rules for pool name)": "",
   "Invalid value. Must be greater than or equal to ": "",
   "Invalid value. Must be less than or equal to ": "",
   "Invisible": "",
