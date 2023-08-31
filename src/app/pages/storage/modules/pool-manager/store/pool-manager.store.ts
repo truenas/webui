@@ -58,7 +58,7 @@ interface PoolManagerDiskSettings {
   allowExportedPools: string[];
 }
 
-interface PoolManagerEnclosureSettings {
+export interface PoolManagerEnclosureSettings {
   limitToSingleEnclosure: number | null;
   maximizeEnclosureDispersal: boolean;
   dispersalStrategy: DispersalStrategy;
