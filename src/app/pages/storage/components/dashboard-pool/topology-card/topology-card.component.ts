@@ -17,7 +17,6 @@ import {
   TopologyDisk,
   TopologyItem,
 } from 'app/interfaces/storage.interface';
-import { isDraidLayout } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
 import { StorageService } from 'app/services/storage.service';
 
 interface TopologyState {
@@ -74,6 +73,10 @@ export class TopologyCardComponent implements OnInit, OnChanges {
       return this.translate.instant('Pool is not healthy');
     }
     return this.translate.instant('Everything is fine');
+  }
+
+  get isDraidLayoutDataVdevs(): boolean {
+    return /\bDRAID\b/.test(this.topologyState.data);
   }
 
   constructor(
@@ -143,11 +146,7 @@ export class TopologyCardComponent implements OnInit, OnChanges {
     outputString = `${vdevs.length} x `;
     // TODO: Needs to be translated.
     if (vdevWidth) {
-      if (isDraidLayout(type)) {
-        outputString += `${type} | ${vdevWidth} children | `;
-      } else {
-        outputString += `${type} | ${vdevWidth} wide | `;
-      }
+      outputString += `${type} | ${vdevWidth} wide | `;
     }
 
     if (size) {
