@@ -55,7 +55,6 @@ export class IxErrorsComponent implements OnChanges {
     number: () => this.translate.instant('Value must be a number'),
     cron: () => this.translate.instant('Invalid cron expression'),
     ip2: () => this.translate.instant('Invalid IP address'),
-    invalidPoolName: () => this.translate.instant('Invalid pool name (please refer to <a href="https://openzfs.github.io/openzfs-docs/man/8/zpool-create.8.html#DESCRIPTION" target="_blank">the documentation</a> for valid rules for pool name)'),
   };
 
   constructor(
@@ -122,8 +121,6 @@ export class IxErrorsComponent implements OnChanges {
         return this.defaultErrMessages.cron();
       case DefaultValidationError.Ip2:
         return this.defaultErrMessages.ip2();
-      case DefaultValidationError.InvalidPoolName:
-        return this.defaultErrMessages.invalidPoolName();
       default:
         return undefined;
     }
