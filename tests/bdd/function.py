@@ -297,3 +297,40 @@ def word_xor(data, key):
         result += (data[i] ^ key[i % length]).to_bytes(1, 'little')
 
     return result
+
+
+def wait_On_Job(hostname, auth, job_id, max_timeout):
+    global job_results
+    timeout = 0
+    while True:
+        job_results = get(hostname, f'/core/get_jobs/?id={job_id}', auth)
+        job_state = job_results.json()[0]['state']
+        if job_state in ('RUNNING', 'WAITING'):
+            time.sleep(5)
+        elif job_state in ('SUCCESS', 'FAILED'):
+            return {'state': job_state, 'results': job_results.json()[0]}
+        if timeout >= max_timeout:
+            return {'state': 'TIMEOUT', 'results': job_results.json()[0]}
+        timeout += 5
+
+
+def create_Pool(hostname, auth, pool_name):
+    boot_pool_disks = get(hostname, '/boot/get_disks/', auth).json()
+    all_disks = list(post(hostname, '/device/get_info/', auth, 'DISK').json().keys())
+    pool_disks = sorted(list(set(all_disks) - set(boot_pool_disks)))
+    tank_pool_disks = [pool_disks[0]]
+    payload = {
+        "name": pool_name,
+        "encryption": False,
+        "topology": {
+            "data": [
+                {"type": "STRIPE", "disks": tank_pool_disks}
+            ],
+        },
+        "allow_duplicate_serials": True,
+    }
+    results = post(hostname, "/pool/", auth, payload)
+    assert results.status_code == 200, results.text
+    job_id = results.json()
+    job_status = wait_On_Job(hostname, auth, job_id, 180)
+    assert job_status['state'] == 'SUCCESS', str(job_status['results'])
