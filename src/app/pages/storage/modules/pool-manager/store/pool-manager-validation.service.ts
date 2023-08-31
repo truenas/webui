@@ -40,7 +40,7 @@ export class PoolManagerValidationService {
 
   readonly poolCreationErrors$ = combineLatest([
     this.addVdevsStore.pool$,
-    this.store.name$,
+    this.store.nameErrors$,
     this.store.topology$,
     this.store.enclosureSettings$,
     combineLatest([
@@ -49,14 +49,22 @@ export class PoolManagerValidationService {
     ]),
   ])
     .pipe(
-      map(([existingPool, name, topology, enclosure, [hasMultipleEnclosures, hasEnclosureSupport]]) => {
-        const hasAtleastOneVdev = Object.values(VdevType).some((vdevType) => topology[vdevType]?.vdevs?.length > 0);
-        const hasDataVdevs = topology[VdevType.Data].vdevs.length > 0;
+      map(([existingPool, nameErrors, topology, enclosure, [hasMultipleEnclosures, hasEnclosureSupport]]) => {
+        const hasAtleastOneVdev = Object.values(VdevType).some((vdevType) => topology[vdevType]?.vdevs.length > 0);
+        const hasDataVdevs = topology[VdevType.Data]?.vdevs?.length > 0;
         const errors: PoolCreationError[] = [];
 
-        if (!name) {
+        if (nameErrors?.required) {
           errors.push({
             text: this.translate.instant('Name not added'),
+            severity: PoolCreationSeverity.Error,
+            step: PoolCreationWizardStep.General,
+          });
+        }
+
+        if (nameErrors?.invalidPoolName) {
+          errors.push({
+            text: this.translate.instant('Invalid pool name'),
             severity: PoolCreationSeverity.Error,
             step: PoolCreationWizardStep.General,
           });

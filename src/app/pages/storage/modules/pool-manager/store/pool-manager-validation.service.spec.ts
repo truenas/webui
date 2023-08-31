@@ -43,6 +43,9 @@ describe('PoolManagerValidationService', () => {
       providers: [
         mockProvider(PoolManagerStore, {
           name$: mockName$,
+          nameErrors$: of({
+            required: true,
+          }),
           enclosureSettings$: mockEnclosureSettings$,
           topology$: mockTopology$,
           hasMultipleEnclosuresAfterFirstStep$: mockHasMultipleEnclosuresAfterFirstStep$,
@@ -116,6 +119,7 @@ describe('PoolManagerValidationService', () => {
     let testScheduler: TestScheduler;
 
     const mockName$ = of('No error for name');
+    const mockNameErrors$ = of(null);
     const mockTopology$ = of({
       [VdevType.Data]: {
         hasCustomDiskSelection: false,
@@ -173,6 +177,7 @@ describe('PoolManagerValidationService', () => {
       providers: [
         mockProvider(PoolManagerStore, {
           name$: mockName$,
+          nameErrors$: mockNameErrors$,
           enclosureSettings$: mockEnclosureSettings$,
           topology$: mockTopology$,
           hasMultipleEnclosuresAfterFirstStep$: mockHasMultipleEnclosuresAfterFirstStep$,
@@ -302,12 +307,14 @@ describe('PoolManagerValidationService', () => {
       dispersalStrategy: DispersalStrategy.None,
     });
     const mockHasMultipleEnclosuresAfterFirstStep$ = of(true);
+    const mockNameErrors$ = of(null);
 
     const createService = createServiceFactory({
       service: PoolManagerValidationService,
       providers: [
         mockProvider(PoolManagerStore, {
           name$: mockName$,
+          nameErrors$: mockNameErrors$,
           enclosureSettings$: mockEnclosureSettings$,
           topology$: mockTopology$,
           hasMultipleEnclosuresAfterFirstStep$: mockHasMultipleEnclosuresAfterFirstStep$,
@@ -365,12 +372,14 @@ describe('PoolManagerValidationService', () => {
       dispersalStrategy: DispersalStrategy.None,
     });
     const mockHasMultipleEnclosuresAfterFirstStep$ = of(true);
+    const mockNameErrors$ = of(null);
 
     const createService = createServiceFactory({
       service: PoolManagerValidationService,
       providers: [
         mockProvider(PoolManagerStore, {
           name$: mockName$,
+          nameErrors$: mockNameErrors$,
           enclosureSettings$: mockEnclosureSettings$,
           topology$: mockTopology$,
           hasMultipleEnclosuresAfterFirstStep$: mockHasMultipleEnclosuresAfterFirstStep$,
@@ -430,12 +439,14 @@ describe('PoolManagerValidationService', () => {
       dispersalStrategy: DispersalStrategy.None,
     });
     const mockHasMultipleEnclosuresAfterFirstStep$ = of(true);
+    const mockNameErrors$ = of(null);
 
     const createService = createServiceFactory({
       service: PoolManagerValidationService,
       providers: [
         mockProvider(PoolManagerStore, {
           name$: mockName$,
+          nameErrors$: mockNameErrors$,
           enclosureSettings$: mockEnclosureSettings$,
           topology$: mockTopology$,
           hasMultipleEnclosuresAfterFirstStep$: mockHasMultipleEnclosuresAfterFirstStep$,

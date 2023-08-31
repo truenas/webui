@@ -232,3 +232,10 @@
   display: flex;
   justify-content: center;
 }
+
+ngx-skeleton-loader {
+  display: inline-block;
+  flex: 1;
+  height: 20px;
+  max-width: 40%;
+}

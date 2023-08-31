@@ -13,6 +13,7 @@ import { PoolWarningsComponent } from 'app/pages/storage/modules/pool-manager/co
 import {
   GeneralWizardStepComponent,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/1-general-wizard-step/general-wizard-step.component';
+import { PoolWizardNameValidationService } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/1-general-wizard-step/pool-wizard-name-validation.service';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { DialogService } from 'app/services/dialog.service';
 
@@ -39,6 +40,9 @@ describe('GeneralWizardStepComponent', () => {
           'AES-128-GCM': 'AES-128-GCM',
         }),
       ]),
+      mockProvider(PoolWizardNameValidationService, {
+        validatePoolName: () => of(null),
+      }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
@@ -67,6 +71,7 @@ describe('GeneralWizardStepComponent', () => {
     expect(spectator.inject(PoolManagerStore).setGeneralOptions).toHaveBeenCalledWith({
       name: 'newpool',
       encryption: null,
+      nameErrors: null,
     });
   });
 
@@ -83,12 +88,16 @@ describe('GeneralWizardStepComponent', () => {
     await encryptionCheckbox.setValue(true);
     spectator.detectChanges();
 
+    const nameInput = await loader.getHarness(IxInputHarness.with({ label: 'Name' }));
+    await nameInput.setValue('test');
+
     const encryptionStandards = await loader.getHarness(IxSelectHarness.with({ label: 'Encryption Standard' }));
     await encryptionStandards.setValue('AES-128-GCM');
 
     expect(spectator.inject(PoolManagerStore).setGeneralOptions).toHaveBeenCalledWith({
-      name: '',
+      name: 'test',
       encryption: 'AES-128-GCM',
+      nameErrors: null,
     });
   });
 
