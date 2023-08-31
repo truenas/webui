@@ -1144,7 +1144,6 @@
   "Data VDEVs": "Data VDEVs",
   "Data Written": "Geschreven aan data",
   "Data not available": "Data is niet beschikbaar",
-  "Data not provided": "Data is niet verstrekt",
   "Data transfer security. The connection is  authenticated with SSH. Data can be encrypted during transfer for  security or left unencrypted to maximize transfer speed. Encryption is  recommended, but can be disabled for increased speed on secure networks.": "Beveiliging van data-overdracht. De verbinding wordt geverifieerd met SSH. Data kan worden versleuteld tijdens de overdracht voor beveiliging of onversleuteld worden gelaten om de overdrachtssnelheid te maximaliseren. Versleuteling wordt aanbevolen, maar kan worden uitgeschakeld voor hogere snelheid op beveiligde netwerken.",
   "Database": "Database",
   "Dataset": "Dataset",

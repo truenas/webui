@@ -2280,7 +2280,6 @@
   "Data Protection": "Protección de datos",
   "Data Quota": "Cuota de datos",
   "Data not available": "Datos no disponibles",
-  "Data not provided": "Datos no proporcionados",
   "Data transfer security. The connection is  authenticated with SSH. Data can be encrypted during transfer for  security or left unencrypted to maximize transfer speed. Encryption is  recommended, but can be disabled for increased speed on secure networks.": "Seguridad de transferencia de datos. La conexión se autentica con SSH. Los datos se pueden cifrar durante la transferencia por seguridad o no se cifran para maximizar la velocidad de transferencia. Se recomienda el cifrado, pero se puede deshabilitar para aumentar la velocidad en redes seguras.",
   "Database": "Base de datos",
   "Dataset": "Conjunto de datos",
