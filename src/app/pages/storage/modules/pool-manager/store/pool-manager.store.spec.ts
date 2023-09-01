@@ -7,7 +7,7 @@ import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { DispersalStrategy } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/2-enclosure-wizard-step/enclosure-wizard-step.component';
-import { initialState, PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
+import { initialState, PoolManagerState, PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import {
   GenerateVdevsService,
 } from 'app/pages/storage/modules/pool-manager/utils/generate-vdevs/generate-vdevs.service';
@@ -138,13 +138,15 @@ describe('PoolManagerStore', () => {
       const generalOptions = {
         name: 'tank',
         encryption: 'AES-128',
-      };
+        nameErrors: null,
+      } as PoolManagerState;
       spectator.service.setGeneralOptions(generalOptions);
 
       expect(await firstValueFrom(spectator.service.state$)).toMatchObject({
         ...initialState,
         name: generalOptions.name,
         encryption: generalOptions.encryption,
+        nameErrors: null,
       });
     });
 

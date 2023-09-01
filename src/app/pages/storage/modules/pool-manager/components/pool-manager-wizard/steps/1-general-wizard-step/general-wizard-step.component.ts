@@ -12,6 +12,7 @@ import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import helptext from 'app/helptext/storage/volumes/manager/manager';
 import { Pool } from 'app/interfaces/pool.interface';
 import { forbiddenAsyncValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
+import { PoolWizardNameValidationService } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/1-general-wizard-step/pool-wizard-name-validation.service';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -51,6 +52,7 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
     private translate: TranslateService,
     private store: PoolManagerStore,
     private cdr: ChangeDetectorRef,
+    private poolWizardNameValidationService: PoolWizardNameValidationService,
   ) { }
 
   ngOnChanges(): void {
@@ -61,7 +63,10 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
       this.form.controls.name.removeAsyncValidators(this.oldNameForbiddenValidator);
       this.form.controls.name.updateValueAndValidity();
     } else {
-      this.form.controls.name.addAsyncValidators(this.oldNameForbiddenValidator);
+      this.form.controls.name.addAsyncValidators([
+        this.oldNameForbiddenValidator,
+        this.poolWizardNameValidationService.validatePoolName,
+      ]);
       this.form.controls.name.updateValueAndValidity();
     }
   }
@@ -101,12 +106,14 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
 
   private connectGeneralOptionsToStore(): void {
     combineLatest([
+      this.form.controls.name.statusChanges,
       this.form.controls.name.valueChanges.pipe(startWith('')),
       this.form.controls.encryption.valueChanges.pipe(startWith(false)),
       this.form.controls.encryptionStandard.valueChanges.pipe(startWith('AES-256-GCM')),
-    ]).pipe(untilDestroyed(this)).subscribe(([name, encryption, encryptionStandard]) => {
+    ]).pipe(untilDestroyed(this)).subscribe(([, name, encryption, encryptionStandard]) => {
       this.store.setGeneralOptions({
         name,
+        nameErrors: this.form.controls.name.errors,
         encryption: encryption ? encryptionStandard : null,
       });
     });
