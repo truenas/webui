@@ -155,6 +155,10 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
     }
   }
 
+  convertToTitleCase(input: string): string {
+    return input.split('_') .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+  }
+
   /**
    * Based on identifiers, create a single dimensional array of reports to render
    * @param list Report[]
@@ -168,7 +172,11 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
         report.identifiers.forEach((identifier, index) => {
           const flattenedReport = { ...report };
 
-          flattenedReport.title = `${flattenedReport.title} - ${identifier}`;
+          if (flattenedReport.title.includes('{identifier}')) {
+            flattenedReport.title = flattenedReport.title.replace(/{identifier}/, identifier);
+          } else {
+            flattenedReport.title = `${flattenedReport.title} - ${this.convertToTitleCase(identifier)}`;
+          }
 
           flattenedReport.identifiers = [identifier];
           if (report.isRendered[index]) {
