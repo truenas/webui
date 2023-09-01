@@ -50,7 +50,7 @@ export class DisplayVmDialogComponent {
   ) {
     if (this.isSingleDevice) {
       this.dialogRef.close(true);
-      this.openDisplayDevice(this.data.displayDevices[0].id);
+      this.openDisplayDevice();
       return;
     }
 
@@ -60,10 +60,10 @@ export class DisplayVmDialogComponent {
   }
 
   onOpen(): void {
-    this.openDisplayDevice(this.form.value.display_device);
+    this.openDisplayDevice();
   }
 
-  private openDisplayDevice(displayDeviceId: number): void {
+  private openDisplayDevice(): void {
     this.loader.open();
     const displayOptions = {
       protocol: this.window.location.protocol.replace(':', '').toUpperCase(),
@@ -78,9 +78,8 @@ export class DisplayVmDialogComponent {
     this.ws.call('vm.get_display_web_uri', requestParams)
       .pipe(untilDestroyed(this))
       .subscribe({
-        next: (webUris) => {
+        next: (webUri) => {
           this.loader.close();
-          const webUri = webUris[displayDeviceId];
           if (webUri.error) {
             this.dialogService.warn(this.translate.instant('Error'), webUri.error);
             return;
