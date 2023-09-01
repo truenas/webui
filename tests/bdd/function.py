@@ -314,23 +314,48 @@ def wait_On_Job(hostname, auth, job_id, max_timeout):
         timeout += 5
 
 
-def create_Pool(hostname, auth, pool_name):
+def single_Disk(hostname, auth):
     boot_pool_disks = get(hostname, '/boot/get_disks/', auth).json()
     all_disks = list(post(hostname, '/device/get_info/', auth, 'DISK').json().keys())
     pool_disks = sorted(list(set(all_disks) - set(boot_pool_disks)))
-    tank_pool_disks = [pool_disks[0]]
-    payload = {
-        "name": pool_name,
-        "encryption": False,
-        "topology": {
-            "data": [
-                {"type": "STRIPE", "disks": tank_pool_disks}
-            ],
-        },
-        "allow_duplicate_serials": True,
-    }
+    return [pool_disks[0]]
+
+
+def post_Pool(hostname, auth, pool_name, payload):
     results = post(hostname, "/pool/", auth, payload)
     assert results.status_code == 200, results.text
     job_id = results.json()
     job_status = wait_On_Job(hostname, auth, job_id, 180)
     assert job_status['state'] == 'SUCCESS', str(job_status['results'])
+
+
+def create_Pool(hostname, auth, pool_name):
+    payload = {
+        "name": pool_name,
+        "encryption": False,
+        "topology": {
+            "data": [
+                {"type": "STRIPE", "disks": single_Disk(hostname, auth)}
+            ],
+        },
+        "allow_duplicate_serials": True,
+    }
+    post_Pool(hostname, auth, pool_name, payload)
+
+
+def create_Encrypted_Pool(hostname, auth, pool_name):
+    payload = {
+        'name': pool_name,
+        'encryption': True,
+        # 'encryption_options': {
+        #     'algorithm': 'AES-128-CCM',
+        #     'key': pool_token_hex,
+        # },
+        'topology': {
+            'data': [
+                {'type': 'STRIPE', 'disks': single_Disk(hostname, auth)}
+            ],
+        },
+        "allow_duplicate_serials": True,
+    }
+    post_Pool(hostname, auth, pool_name, payload)
