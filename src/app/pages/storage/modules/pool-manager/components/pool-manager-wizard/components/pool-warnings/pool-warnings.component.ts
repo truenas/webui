@@ -30,7 +30,6 @@ export class PoolWarningsComponent implements OnInit {
   });
 
   exportedPoolsWarning = helptext.manager_exportedDisksWarning;
-  exportedPoolsTooltip = helptext.manager_exportedPoolsTooltip;
 
   nonUniqueSerialDisks: UnusedDisk[] = [];
   nonUniqueSerialDisksTooltip: string;

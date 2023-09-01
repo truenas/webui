@@ -50,6 +50,10 @@ export class IxSelectHarness extends ComponentHarness implements IxFormControlHa
     const select = (await this.getSelectHarness());
     await select.open();
 
+    if (!await this.hasOptions(newLabels)) {
+      throw new Error(`Option with label "${String(newLabels)}" not found in select ${await this.getLabelText()}`);
+    }
+
     if (await select.isMultiple()) {
       // Unselect old options manually
       if (!(await select.isEmpty())) {
@@ -77,5 +81,11 @@ export class IxSelectHarness extends ComponentHarness implements IxFormControlHa
     const options = await matSelect.getOptions();
 
     return parallel(() => options.map((option) => option.getText()));
+  }
+
+  async hasOptions(labels: string | string[]): Promise<boolean> {
+    const optionLabels = await this.getOptionLabels();
+    const labelsToCheck = Array.isArray(labels) ? labels : [labels];
+    return labelsToCheck.every((label) => optionLabels.includes(label));
   }
 }

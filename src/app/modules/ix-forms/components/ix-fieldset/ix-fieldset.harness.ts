@@ -1,11 +1,10 @@
 import {
   BaseHarnessFilters, ComponentHarness, HarnessPredicate, parallel,
 } from '@angular/cdk/testing';
-import { IxFormControlHarness } from 'app/modules/ix-forms/interfaces/ix-form-control-harness.interface';
 import {
   supportedFormControlSelectors,
   SupportedFormControlHarness,
-  indexControlsByLabel, getControlValues, IxFormBasicValueType, fillControlValues,
+  indexControlsByLabel, getControlValues, IxFormBasicValueType, fillControlValues, getDisabledStates,
 } from 'app/modules/ix-forms/testing/control-harnesses.helpers';
 
 export interface IxFieldsetHarnessFilters extends BaseHarnessFilters {
@@ -73,16 +72,7 @@ export class IxFieldsetHarness extends ComponentHarness {
   }
 
   async getDisabledState(): Promise<{ [label: string]: boolean }> {
-    const controlsDict = await this.getControlHarnessesDict();
-
-    const result: { [label: string]: boolean } = {};
-    // eslint-disable-next-line guard-for-in,no-restricted-syntax
-    for (const label in controlsDict) {
-      const control = controlsDict[label] as IxFormControlHarness;
-
-      result[label] = await control.isDisabled();
-    }
-
-    return result;
+    const controls = await this.getControlHarnessesDict();
+    return getDisabledStates(controls);
   }
 }
