@@ -129,7 +129,7 @@ describe('AvailableAppsHeaderComponent', () => {
   });
 
   it('calls applyFilters when user selects categories', async () => {
-    await categoriesSelect.setValue(['storage']);
+    await categoriesSelect.selectSuggestionValue('storage');
 
     expect(appsFilterStore.applyFilters).toHaveBeenLastCalledWith({
       catalogs: ['TRUENAS', 'TEST'],
