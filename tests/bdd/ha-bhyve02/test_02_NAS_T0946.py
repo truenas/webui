@@ -400,6 +400,7 @@ def navigate_to_dashboard_wait_for_ha_to_be_online(driver):
     rsc.Verify_The_Dashboard(driver)
     assert wait_on_element(driver, 240, xpaths.toolbar.ha_Enabled)
     assert wait_on_element(driver, 15, '//span[contains(.,"Hostname:") and contains(.,"truenas")]')
+    # assert wait_on_element(driver, 15, '//span[contains(.,"Hostname:") and contains(.,"truenas-b")]')
     time.sleep(5)
 
 
@@ -424,6 +425,7 @@ def navigate_to_dashboard_verify_both_contorler_hostname(driver):
     rsc.Verify_The_Dashboard(driver)
     assert wait_on_element(driver, 15, xpaths.toolbar.ha_Enabled)
     assert wait_on_element(driver, 15, '//span[contains(.,"Hostname:") and contains(.,"tn-bhyve06-nodea")]')
+    # assert wait_on_element(driver, 15, '//span[contains(.,"Hostname:") and contains(.,"tn-bhyve06-nodeb")]')
 
 
 @then('both controllers should show version and license on the dashboard')
