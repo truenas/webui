@@ -2774,6 +2774,7 @@
   "Snapshot schedule for this  replication task. Choose from previously configured  <b>Periodic Snapshot Tasks</b>. This replication task must have the  same <b>Recursive</b> and <b>Exclude Child Datasets</b> values  as the chosen periodic snapshot task. Selecting a periodic snapshot  schedule removes the <b>Schedule</b> field.": "",
   "Snapshots": "",
   "Snapshots could not be loaded": "",
+  "Snapshots must not have dependent clones": "",
   "Snapshots will be created automatically.": "",
   "Some authentication tools default to 30 seconds and do not support custom intervals.": "",
   "Some of the disks are attached to the exported pools\n  mentioned in this list. Checking a pool name means you want to\n  allow reallocation of the disks attached to that pool.": "",
