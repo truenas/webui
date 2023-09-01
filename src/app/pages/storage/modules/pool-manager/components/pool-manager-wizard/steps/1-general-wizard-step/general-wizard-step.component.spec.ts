@@ -34,6 +34,7 @@ describe('GeneralWizardStepComponent', () => {
     providers: [
       mockWebsocket([
         mockCall('pool.query', []),
+        mockCall('pool.validate_name', true),
         mockCall('pool.dataset.encryption_algorithm_choices', {
           'AES-192-GCM': 'AES-192-GCM',
           'AES-128-GCM': 'AES-128-GCM',
