@@ -141,6 +141,12 @@ def Restart_SMB_Service(driver):
     driver.find_element_by_xpath(xpaths.popup.smb_Restart_Button).click()
 
 
+def Return_To_Pool_list(driver):
+    if wait_on_element(driver, 15, '//h1[contains(text(),"Set ACL for this dataset")]'):
+        assert wait_on_element(driver, 5, xpaths.button.dialog_Cancel, 'clickable')
+        driver.find_element_by_xpath(xpaths.button.dialog_Cancel).click()
+
+
 def Scroll_To(driver, xpath):
     element = driver.find_element_by_xpath(xpath)
     driver.execute_script("arguments[0].scrollIntoView();", element)

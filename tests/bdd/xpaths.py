@@ -168,6 +168,7 @@ class button:
     initiate_Failover = '//button[contains(*/text(),"Initiate Failover") and contains(@class,"mat-default")]'
     leave_Domain = '//button[contains(.,"Leave Domain")]'
     reload_Now = '//button[@data-test="button-dialog-confirm"]'
+    dialog_Cancel = '//button[@data-test="button-dialog-cancel"]'
 
 
 class certificates:
