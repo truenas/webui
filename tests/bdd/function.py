@@ -314,15 +314,12 @@ def wait_On_Job(hostname, auth, job_id, max_timeout):
         timeout += 5
 
 
-def single_Disk(hostname, auth):
-    boot_pool_disks = get(hostname, '/boot/get_disks/', auth).json()
-    all_disks = list(post(hostname, '/device/get_info/', auth, 'DISK').json().keys())
-    pool_disks = sorted(list(set(all_disks) - set(boot_pool_disks)))
-    return [pool_disks[0]]
+def get_Singl_Unused_Disk(hostname, auth):
+    return [post(hostname, '/disk/get_unused/', auth).json()[0]['name']]
 
 
 def post_Pool(hostname, auth, pool_name, payload):
-    results = post(hostname, "/pool/", auth, payload)
+    results = post(hostname, '/pool/', auth, payload)
     assert results.status_code == 200, results.text
     job_id = results.json()
     job_status = wait_On_Job(hostname, auth, job_id, 180)
@@ -331,14 +328,16 @@ def post_Pool(hostname, auth, pool_name, payload):
 
 def create_Pool(hostname, auth, pool_name):
     payload = {
-        "name": pool_name,
-        "encryption": False,
-        "topology": {
-            "data": [
-                {"type": "STRIPE", "disks": single_Disk(hostname, auth)}
+        'name': pool_name,
+        'encryption': False,
+        'topology': {
+            'data': [
+                {
+                    'type': 'STRIPE',
+                    'disks': get_Singl_Unused_Disk(hostname, auth)
+                }
             ],
-        },
-        "allow_duplicate_serials": True,
+        }
     }
     post_Pool(hostname, auth, pool_name, payload)
 
@@ -353,9 +352,11 @@ def create_Encrypted_Pool(hostname, auth, pool_name):
         # },
         'topology': {
             'data': [
-                {'type': 'STRIPE', 'disks': single_Disk(hostname, auth)}
+                {
+                    'type': 'STRIPE',
+                    'disks': get_Singl_Unused_Disk(hostname, auth)
+                }
             ],
-        },
-        "allow_duplicate_serials": True,
+        }
     }
     post_Pool(hostname, auth, pool_name, payload)
