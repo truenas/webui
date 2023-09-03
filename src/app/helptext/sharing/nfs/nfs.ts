@@ -7,12 +7,13 @@ export const helptextSharingNfs = {
   column_enabled: T('Enabled'),
 
   // NFSFormComponent
-  tooltip_path: T('Full path to the pool or dataset to share. Mandatory.'),
+  tooltip_path: T('Full path to the pool, dataset or directory to share. \
+  The path must reside within a pool. Mandatory.'),
   error_alias: T('The <i>Alias</i> field can either be left empty or \
  have an alias defined for each path in the share.'),
   tooltip_comment: T(
-    'Set the share name. If left empty, share name is the\
- list of selected <b>Path</b> entries.',
+    'Provide helpful notations related to the share, e.g. ‘Shared to everybody’. \
+    Maximum length is 120 characters.',
   ),
   tooltip_alldirs: T(
     'Set to allow the client to mount any\
@@ -28,15 +29,11 @@ export const helptextSharingNfs = {
   tooltip_enabled: T('Enable this NFS share. Unset to disable this NFS share \
  without deleting it.'),
   tooltip_network: T(
-    'Space-delimited list of allowed networks in\
- network/mask CIDR notation.\
- Example: <i>1.2.3.0/24</i>. Leave empty\
- to allow all.',
+    'Allowed network in network/mask CIDR notation (example <i>1.2.3.4/24<i>).\
+     One entry per field. Leave empty to allow everybody.',
   ),
   tooltip_hosts: T(
-    'Space-delimited list of allowed IP addresses\
- <i>(192.168.1.10)</i> or hostnames\
- <i>(www.freenas.com)</i>. Leave empty to allow all.',
+    'Allowed IP address or hostname. One entry per field. Leave empty to allow everybody.',
   ),
   tooltip_maproot_user: T(
     'When a user is selected, the <i>root</i> user is\

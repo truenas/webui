@@ -306,6 +306,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     updates: Pick<TopologyCategoryUpdate, 'diskSize' | 'treatDiskSizeAsMinimum' | 'diskType'>,
   ): void {
     this.updateTopologyCategory(type, updates);
+    this.regenerateVdevs();
   }
 
   setTopologyCategoryLayout(
@@ -358,10 +359,12 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
 
   private resetTopologyIfNotEnoughDisks(): void {
     this.allowedDisks$.pipe(take(1)).subscribe((allowedDisks) => {
-      const usedDisks = topologyToDisks(this.get().topology);
-      if (usedDisks.length > allowedDisks.length) {
-        this.resetTopology();
-      }
+      Object.entries(this.get().topology).forEach(([type, category]) => {
+        const usedDisks = topologyCategoryToDisks(category);
+        if (usedDisks.some((disk) => !allowedDisks.includes(disk))) {
+          this.resetStep(type as VdevType);
+        }
+      });
     });
   }
 
