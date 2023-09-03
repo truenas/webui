@@ -15,7 +15,6 @@ import {
   AddVdevsStore,
 } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
-import { parseDraidVdevName } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
 
 @UntilDestroy()
 @Component({
@@ -53,8 +52,17 @@ export class DataWizardStepComponent implements OnInit {
       if (type === TopologyItemType.Disk && !dataTopology[0].children.length) {
         type = TopologyItemType.Stripe;
       } else if (type === TopologyItemType.Draid) {
-        const parsedVdevName = parseDraidVdevName(dataTopology[0].name);
-        type = parsedVdevName.layout as unknown as TopologyItemType;
+        switch (dataTopology[0].stats.draid_parity) {
+          case 2:
+            type = CreateVdevLayout.Draid2 as unknown as TopologyItemType;
+            break;
+          case 3:
+            type = CreateVdevLayout.Draid3 as unknown as TopologyItemType;
+            break;
+          default:
+            type = CreateVdevLayout.Draid1 as unknown as TopologyItemType;
+            break;
+        }
       }
       this.allowedLayouts = [type] as unknown as CreateVdevLayout[];
       this.canChangeLayout = false;
