@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { ValidationErrors } from '@angular/forms';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 import { Store } from '@ngrx/store';
 import _ from 'lodash';
@@ -67,6 +68,7 @@ export interface PoolManagerState {
   isLoading: boolean;
   enclosures: Enclosure[];
   name: string;
+  nameErrors: ValidationErrors | null;
   encryption: string | null;
   allDisks: UnusedDisk[];
   diskSettings: PoolManagerDiskSettings;
@@ -99,6 +101,7 @@ export const initialState: PoolManagerState = {
   allDisks: [],
   enclosures: [],
   name: '',
+  nameErrors: null,
   encryption: null,
 
   diskSettings: {
@@ -120,6 +123,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
   readonly resetStep$ = new Subject<VdevType>();
   readonly isLoading$ = this.select((state) => state.isLoading);
   readonly name$ = this.select((state) => state.name);
+  readonly nameErrors$ = this.select((state) => state.nameErrors);
   readonly encryption$ = this.select((state) => state.encryption);
   readonly enclosures$ = this.select((state) => state.enclosures);
   readonly allDisks$ = this.select((state) => state.allDisks);
@@ -274,7 +278,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     };
   });
 
-  readonly setGeneralOptions = this.updater((state, options: Pick<PoolManagerState, 'name' | 'encryption'>) => {
+  readonly setGeneralOptions = this.updater((state, options: Pick<PoolManagerState, 'nameErrors' | 'name' | 'encryption'>) => {
     return {
       ...state,
       ...options,
@@ -302,6 +306,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     updates: Pick<TopologyCategoryUpdate, 'diskSize' | 'treatDiskSizeAsMinimum' | 'diskType'>,
   ): void {
     this.updateTopologyCategory(type, updates);
+    this.regenerateVdevs();
   }
 
   setTopologyCategoryLayout(
@@ -354,10 +359,12 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
 
   private resetTopologyIfNotEnoughDisks(): void {
     this.allowedDisks$.pipe(take(1)).subscribe((allowedDisks) => {
-      const usedDisks = topologyToDisks(this.get().topology);
-      if (usedDisks.length > allowedDisks.length) {
-        this.resetTopology();
-      }
+      Object.entries(this.get().topology).forEach(([type, category]) => {
+        const usedDisks = topologyCategoryToDisks(category);
+        if (usedDisks.some((disk) => !allowedDisks.includes(disk))) {
+          this.resetStep(type as VdevType);
+        }
+      });
     });
   }
 

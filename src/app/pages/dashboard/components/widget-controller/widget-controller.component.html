@@ -39,7 +39,7 @@
                   </span>
                   &nbsp;&nbsp;
                   <span *ngIf="widget.identifier && nameFromIdentifier(widget.identifier).length">
-                    {{ nameFromIdentifier(widget.identifier) }}
+                    {{ nameFromIdentifier(widget.identifier, widget.name) }}
                   </span>
                   <ix-icon class="next-slide" name="chevron_right"></ix-icon>
                 </mat-list-item>

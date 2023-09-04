@@ -131,6 +131,7 @@
             <ix-app-row
               routerLinkActive="selected"
               [app]="app"
+              [status]="getAppStatus(app.name)"
               [selected]="app.selected"
               [job]="appJobs.get(app.name)"
               [routerLink]="['/apps/installed', app.catalog, app.catalog_train, app.id]"

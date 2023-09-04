@@ -6,6 +6,7 @@
 
   .details-item .value {
     display: inline-flex;
+    white-space: normal;
   }
 
   ::ng-deep ngx-skeleton-loader {

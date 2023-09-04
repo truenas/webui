@@ -23,6 +23,7 @@ export interface ManualDiskSelectionParams {
   enclosures: Enclosure[];
   inventory: UnusedDisk[];
   vdevs: UnusedDisk[][];
+  vdevsLimit: number | null;
 }
 
 @UntilDestroy()
@@ -61,6 +62,10 @@ export class ManualDiskSelectionComponent implements OnInit {
       return vdevError || diskSizeError;
     }),
   );
+
+  hideAddVdevButton$ = this.manualDiskSelectionStore.vdevs$.pipe(map((vdevs) => {
+    return this.data.vdevsLimit && vdevs.length >= this.data.vdevsLimit;
+  }));
 
   protected currentVdevs: ManualSelectionVdev[];
   private oldVdevs: UnusedDisk[][] = [];

@@ -76,6 +76,9 @@
     }
   }
 
+  .cell-used-content span {
+    white-space: nowrap;
+  }
 }
 
 // TODO: Fragile (at least with css selectors)

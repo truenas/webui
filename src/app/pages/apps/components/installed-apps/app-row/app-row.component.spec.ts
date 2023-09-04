@@ -18,7 +18,7 @@ describe('AppRowComponent', () => {
     catalog: officialCatalog,
   } as ChartRelease;
 
-  const appStatus = AppStatus.Started;
+  const status = AppStatus.Started;
 
   const createComponent = createComponentFactory({
     component: AppRowComponent,
@@ -30,7 +30,7 @@ describe('AppRowComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent({
-      props: { app, appStatus },
+      props: { app, status },
     });
   });
 
@@ -43,7 +43,7 @@ describe('AppRowComponent', () => {
   it('checks app status column', () => {
     const statusCell = spectator.query(AppStatusCellComponent);
     expect(statusCell).toBeTruthy();
-    expect(statusCell.appStatus).toBe(appStatus);
+    expect(statusCell.appStatus).toBe(status);
   });
 
   it('checks app update column', () => {
