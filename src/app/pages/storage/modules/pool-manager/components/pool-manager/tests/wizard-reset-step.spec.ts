@@ -1,5 +1,6 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatStepperModule } from '@angular/material/stepper';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
@@ -153,8 +154,8 @@ describe('PoolManagerComponent – wizard step reset', () => {
       'Number of VDEVs': '1',
     });
     expect(await wizard.getConfigurationPreviewSummary()).toMatchObject({ 'Data:': '1 × STRIPE | 1 × 20 GiB (HDD)' });
-    const resetDataStepButton = spectator.query('#reset-data-step') ;
-    spectator.click(resetDataStepButton);
+    const resetDataButton = (await (await wizard.getActiveStep()).getHarness(MatButtonHarness.with({ text: 'Reset Step' })));
+    await resetDataButton.click();
     expect(await wizard.getStepValues()).toStrictEqual({
       'Disk Size': '',
       'Layout': '',
@@ -173,8 +174,8 @@ describe('PoolManagerComponent – wizard step reset', () => {
       'Number of VDEVs': '1',
     });
     expect(await wizard.getConfigurationPreviewSummary()).toMatchObject({ 'Log:': '1 × STRIPE | 1 × 20 GiB (HDD)' });
-    const resetLogStepButton = spectator.query('#reset-log-step') ;
-    spectator.click(resetLogStepButton);
+    const resetLogButton = (await (await wizard.getActiveStep()).getHarness(MatButtonHarness.with({ text: 'Reset Step' })));
+    await resetLogButton.click();
     expect(await wizard.getStepValues()).toStrictEqual({
       'Disk Size': '',
       'Layout': '',
@@ -191,8 +192,8 @@ describe('PoolManagerComponent – wizard step reset', () => {
       Width: '1',
     });
     expect(await wizard.getConfigurationPreviewSummary()).toMatchObject({ 'Spare:': '1 × STRIPE | 1 × 20 GiB (HDD)' });
-    const resetSpareStepButton = spectator.query('#reset-spare-step') ;
-    spectator.click(resetSpareStepButton);
+    const resetSpareButton = (await (await wizard.getActiveStep()).getHarness(MatButtonHarness.with({ text: 'Reset Step' })));
+    await resetSpareButton.click();
     expect(await wizard.getStepValues()).toStrictEqual({
       'Disk Size': '',
       'Width': '',
@@ -208,8 +209,8 @@ describe('PoolManagerComponent – wizard step reset', () => {
       'Number of VDEVs': '1',
     });
     expect(await wizard.getConfigurationPreviewSummary()).toMatchObject({ 'Cache:': '1 × STRIPE | 1 × 20 GiB (HDD)' });
-    const resetCacheStepButton = spectator.query('#reset-cache-step') ;
-    spectator.click(resetCacheStepButton);
+    const resetCacheButton = (await (await wizard.getActiveStep()).getHarness(MatButtonHarness.with({ text: 'Reset Step' })));
+    await resetCacheButton.click();
     expect(await wizard.getStepValues()).toStrictEqual({
       'Disk Size': '',
       'Number of VDEVs': '',
