@@ -119,6 +119,7 @@ describe('PoolManagerComponent – unsetting on fewer disks', () => {
         ] as Enclosure[]),
         mockCall('pool.query', []),
         mockCall('pool.dataset.encryption_algorithm_choices', {}),
+        mockCall('pool.validate_name', true),
       ]),
     ],
   });
