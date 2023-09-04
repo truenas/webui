@@ -53,6 +53,10 @@ export class PoolManagerHarness extends ComponentHarness {
     await (await this.getBackButton()).click();
   }
 
+  async clickStartOver(): Promise<void> {
+    await (await this.getStartOverButton()).click();
+  }
+
   async fillStep(values: Record<string, unknown>): Promise<void> {
     const controls = await this.getControlHarnessesInStep();
     return fillControlValues(controls, values);

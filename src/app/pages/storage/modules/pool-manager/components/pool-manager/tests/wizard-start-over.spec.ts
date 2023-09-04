@@ -220,8 +220,7 @@ describe('PoolManagerComponent – start over functionality', () => {
 
     // REVIEW step activated
     expect(await (await wizard.getActiveStep()).getLabel()).toBe('Review');
-    const startOver = await wizard.getStartOverButton();
-    await startOver.click();
+    await wizard.clickStartOver();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
       title: 'Start Over',
