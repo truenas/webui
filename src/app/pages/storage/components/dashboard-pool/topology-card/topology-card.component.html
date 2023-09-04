@@ -52,7 +52,7 @@
           <span class="vdev-value">{{ topologyState.cache }}</span>
         </div>
       </div>
-      <div class="vdev-line">
+      <div *ngIf="!isDraidLayoutDataVdevs" class="vdev-line">
         <b>{{ 'Spare VDEVs' | translate }}</b>
         <div class="vdev-stats">
           <span *ngIf="!!topologyWarningsState.spare" class="warning" [matTooltip]="topologyWarningsState.spare">
