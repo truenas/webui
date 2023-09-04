@@ -162,7 +162,6 @@ describe('PoolManagerComponent – wizard step reset', () => {
       'Treat Disk Size as Minimum': false,
       'Width': '',
     });
-    // await wizard.clickNext();
     await wizard.clickNext();
 
     // LOG step activated
