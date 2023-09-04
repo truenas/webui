@@ -21,13 +21,11 @@ import { ReportsConfigFormComponent } from './reports-config-form.component';
 const mockInitialConfig = {
   graph_age: 12,
   graph_points: 1200,
-  graphite: '',
 } as ReportingConfig;
 
 const mockUserConfig = {
   graph_age: 24,
   graph_points: 2048,
-  graphite: '127.0.0.1',
 } as ReportingConfig;
 
 describe('ReportsConfigFormComponent', () => {
@@ -68,25 +66,9 @@ describe('ReportsConfigFormComponent', () => {
 
     expect(ws.call).toHaveBeenCalledWith('reporting.config');
     expect(values).toEqual({
-      'Remote Graphite Server Hostname': '127.0.0.1',
       'Graph Age in Months': '24',
       'Number of Graph Points': '2048',
     });
-  });
-
-  it('updates reporting config and refreshes settings when form is saved', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      'Remote Graphite Server Hostname': 'localhost',
-    });
-
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    await saveButton.click();
-
-    expect(ws.call).toHaveBeenCalledWith('reporting.update', [{
-      ...mockUserConfig,
-      graphite: 'localhost',
-    }]);
   });
 
   it('should warn user about clearing report history when it is required form is saved', async () => {
@@ -107,7 +89,6 @@ describe('ReportsConfigFormComponent', () => {
       confirm_rrd_destroy: true,
       graph_age: 18,
       graph_points: 2048,
-      graphite: '127.0.0.1',
     }]);
   });
 
@@ -115,7 +96,6 @@ describe('ReportsConfigFormComponent', () => {
     const form = await loader.getHarness(IxFormHarness);
 
     expect(await form.getValues()).toEqual({
-      'Remote Graphite Server Hostname': '127.0.0.1',
       'Graph Age in Months': '24',
       'Number of Graph Points': '2048',
     });
@@ -124,7 +104,6 @@ describe('ReportsConfigFormComponent', () => {
     await resetButton.click();
 
     expect(await form.getValues()).toEqual({
-      'Remote Graphite Server Hostname': '',
       'Graph Age in Months': '12',
       'Number of Graph Points': '1200',
     });
