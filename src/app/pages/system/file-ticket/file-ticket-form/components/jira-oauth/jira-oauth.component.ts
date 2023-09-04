@@ -56,6 +56,9 @@ export class JiraOauthComponent implements ControlValueAccessor {
 
   doAuth(message: OauthJiraMessage): void {
     const token = message.data as string;
+    if (typeof token !== 'string') {
+      return;
+    }
     this.input(token);
     this.cdr.markForCheck();
   }
