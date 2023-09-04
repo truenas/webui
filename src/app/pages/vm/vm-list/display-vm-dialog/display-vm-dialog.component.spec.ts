@@ -43,8 +43,8 @@ describe('DisplayVmDialogComponent', () => {
       }),
       mockWebsocket([
         mockCall('vm.get_display_web_uri', {
-          1: { error: null, uri: 'http://localhost:4200/vm/display/1/vnc.html' },
-          2: { error: null, uri: 'http://localhost:4200/vm/display/2/vnc.html' },
+          error: null,
+          uri: 'http://localhost:4200/vm/display/1/vnc.html',
         }),
       ]),
     ],
