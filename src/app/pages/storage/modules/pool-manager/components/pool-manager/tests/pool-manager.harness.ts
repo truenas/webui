@@ -17,6 +17,7 @@ export class PoolManagerHarness extends ComponentHarness {
   getStepper = this.locatorFor(MatStepperHarness);
   getNextButton = this.locatorFor(MatButtonHarness.with({ text: 'Next' }));
   getBackButton = this.locatorFor(MatButtonHarness.with({ text: 'Back' }));
+  createPoolButton = this.locatorFor(MatButtonHarness.with({ text: 'Create Pool' }));
 
   getConfigurationPreview = this.locatorFor(ConfigurationPreviewHarness);
 
