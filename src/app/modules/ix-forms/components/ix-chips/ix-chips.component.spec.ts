@@ -45,6 +45,7 @@ describe('IxChipsComponent', () => {
         hostProps: { formControl },
       },
     );
+    spectator.setInput('allowNewEntries', true);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     matChipList = await loader.getHarness(MatChipGridHarness);
     matAutocomplete = await loader.getHarness(MatAutocompleteHarness);
@@ -92,11 +93,20 @@ describe('IxChipsComponent', () => {
     expect(formControl.value).toEqual(['operator', 'root']);
   });
 
-  it('does not create chip after leaving the focus of the input if there is provider with autocomplete', async () => {
-    spectator.setInput('autocompleteProvider', jest.fn(() => of(['sys', 'staff'])));
+  it('does not create chip after leaving the focus of the input if there is [allowNewEntries]=false', async () => {
+    spectator.setInput('allowNewEntries', false);
     const input = await matChipList.getInput();
     await input.setValue('www-date');
     await input.blur();
+
+    expect(formControl.value).toEqual([]);
+  });
+
+  it('does not create chip in any way if there is [allowNewEntries]=false', async () => {
+    spectator.setInput('allowNewEntries', false);
+    const input = await matChipList.getInput();
+    await input.setValue('www-date');
+    await input.sendSeparatorKey(TestKey.ENTER);
 
     expect(formControl.value).toEqual([]);
   });

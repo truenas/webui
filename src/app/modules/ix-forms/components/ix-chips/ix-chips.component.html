@@ -33,7 +33,7 @@
       [matChipInputFor]="chipList"
       [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
       (blur)="onInputBlur()"
-      (matChipInputTokenEnd)="onAdd($event.value)"
+      (matChipInputTokenEnd)="allowNewEntries ? onAdd($event.value) : null"
     />
   </mat-chip-grid>
 

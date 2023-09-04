@@ -78,6 +78,13 @@
                 [tooltip]="helptext.rsync_remotehost_tooltip | translate"
               ></ix-input>
 
+              <ix-slide-toggle
+                *ngIf="isRemoteHostSpecified"
+                formControlName="ssh_keyscan"
+                [label]="'SSH Keyscan' | translate"
+                [tooltip]="helptext.ssh_keyscan_tooltip | translate"
+              ></ix-slide-toggle>
+
               <ix-input
                 formControlName="remoteport"
                 type="number"
