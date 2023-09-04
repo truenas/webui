@@ -172,7 +172,7 @@ describe('PoolManagerComponent – creating dRAID pool', () => {
 
     expect(await (await wizard.getActiveStep()).getLabel()).toBe('Review');
 
-    await (await wizard.createPoolButton()).click();
+    await wizard.clickCreatePoolButton();
 
     const dialog = spectator.inject(MatDialog);
 
