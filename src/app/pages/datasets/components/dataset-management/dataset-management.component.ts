@@ -264,6 +264,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
       return new Intl.Collator(undefined, {
         numeric: true,
         sensitivity: 'accent',
+        ignorePunctuation: true,
       }).compare(a.name, b.name);
     };
     this.dataSource.data = datasets;
