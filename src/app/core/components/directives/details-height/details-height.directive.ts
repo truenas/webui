@@ -48,6 +48,7 @@ export class IxDetailsHeightDirective implements OnInit, OnDestroy, OnChanges {
 
     this.element.nativeElement.style.height = this.heightCssValue;
     this.window.addEventListener('scroll', this.onScrollHandler, true);
+    setTimeout(() => this.onScroll());
   }
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
@@ -89,7 +90,7 @@ export class IxDetailsHeightDirective implements OnInit, OnDestroy, OnChanges {
   }
 
   private getInitialTopPosition(element: HTMLElement): number {
-    return element.getBoundingClientRect().top;
+    return Math.floor(element.getBoundingClientRect().top);
   }
 
   private getBaseOffset(): number {
@@ -97,16 +98,14 @@ export class IxDetailsHeightDirective implements OnInit, OnDestroy, OnChanges {
     result += this.parentPadding;
     if (this.hasConsoleFooter) {
       result += this.footerHeight;
-    } else {
-      result += this.parentPadding;
     }
-    return result;
+    return Math.floor(result);
   }
 
   private getScrollBreakingPoint(): number {
     let result = this.getInitialTopPosition(this.element.nativeElement);
     result -= this.parentPadding;
     result -= this.headerHeight;
-    return result;
+    return Math.floor(result);
   }
 }

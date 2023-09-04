@@ -35,6 +35,7 @@
           [formControl]="form.controls.categories"
           [label]="'Categories' | translate"
           [autocompleteProvider]="categoriesProvider$"
+          [allowNewEntries]="false"
         ></ix-chips>
         <div class="info-container">
           <ix-icon name="info"></ix-icon>

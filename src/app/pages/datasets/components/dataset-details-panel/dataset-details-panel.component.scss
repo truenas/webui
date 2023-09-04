@@ -121,6 +121,7 @@
 
   @media (min-width: $breakpoint-hidden) and (max-width: calc($breakpoint-dualcolumn-slim - 1px)) {
     border-bottom: solid 1px var(--lines);
+    flex-shrink: 0;
     flex-wrap: wrap;
     margin-bottom: 8px;
     padding: 0;

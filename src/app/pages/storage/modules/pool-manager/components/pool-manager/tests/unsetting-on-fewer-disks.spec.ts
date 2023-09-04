@@ -2,7 +2,8 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { MatStepperModule } from '@angular/material/stepper';
-import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { CoreComponents } from 'app/core/core-components.module';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
@@ -21,6 +22,7 @@ import {
 import {
   PoolManagerHarness,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager/tests/pool-manager.harness';
+import { PoolWizardNameValidationService } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/1-general-wizard-step/pool-wizard-name-validation.service';
 
 describe('PoolManagerComponent – unsetting on fewer disks', () => {
   let spectator: Spectator<PoolManagerComponent>;
@@ -39,6 +41,7 @@ describe('PoolManagerComponent – unsetting on fewer disks', () => {
     providers: [
       ...commonProviders,
       mockWebsocket([
+        mockCall('pool.validate_name', true),
         mockCall('disk.get_unused', [
           {
             devname: 'ada0',
@@ -121,6 +124,9 @@ describe('PoolManagerComponent – unsetting on fewer disks', () => {
         mockCall('pool.dataset.encryption_algorithm_choices', {}),
         mockCall('pool.validate_name', true),
       ]),
+      mockProvider(PoolWizardNameValidationService, {
+        validatePoolName: () => of(null),
+      }),
     ],
   });
 
