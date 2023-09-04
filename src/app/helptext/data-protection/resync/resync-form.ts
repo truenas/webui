@@ -12,6 +12,7 @@ export default {
  system that will store the copy. Use the format\
  <i>username@remote_host</i> if the username differs\
  on the remote host.'),
+  ssh_keyscan_tooltip: T('Scan remote host key.'),
   rsync_remoteport_tooltip: T('Enter the SSH Port of the remote system.'),
   rsync_mode_tooltip: T('Choose to either use a custom-defined remote module \
  of the rsync server or to use an SSH configuration for the rsync task.'),
