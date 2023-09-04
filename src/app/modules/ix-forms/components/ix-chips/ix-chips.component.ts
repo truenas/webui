@@ -31,6 +31,7 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
   @Input() hint: string;
   @Input() tooltip: string;
   @Input() required: boolean;
+  @Input() allowNewEntries = true;
   @Input() autocompleteProvider: ChipsProvider;
 
   @ViewChild('chipInput', { static: true }) chipInput: ElementRef<HTMLInputElement>;
@@ -91,7 +92,7 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
   }
 
   onInputBlur(): void {
-    if (this.autocompleteProvider) {
+    if (!this.allowNewEntries) {
       this.chipInput.nativeElement.value = null;
       return;
     }

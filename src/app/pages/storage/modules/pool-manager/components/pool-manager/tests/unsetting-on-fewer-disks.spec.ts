@@ -41,6 +41,7 @@ describe('PoolManagerComponent – unsetting on fewer disks', () => {
     providers: [
       ...commonProviders,
       mockWebsocket([
+        mockCall('pool.validate_name', true),
         mockCall('disk.get_unused', [
           {
             devname: 'ada0',
