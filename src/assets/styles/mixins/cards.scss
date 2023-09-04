@@ -9,8 +9,8 @@
   width: 100%;
 
   .scroll-window {
-    column-gap: 8px;
     columns: calc(50vw / 2.7);
+    gap: 8px;
     min-height: 100vh;
 
     @media (max-width: $breakpoint-tablet) {
@@ -25,8 +25,11 @@
 
     > * {
       display: inline-block;
-      margin-bottom: 8px;
       width: 100%;
+      
+      &:not(:last-child) {
+        margin-bottom: 8px;
+      }
     }
   }
 }
@@ -34,6 +37,7 @@
 @mixin details-card {
   border: none;
   border-radius: 0;
+  margin: 0;
 
   mat-card-header {
     align-items: center;
