@@ -1,4 +1,5 @@
 import { DatePipe } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, ChangeDetectorRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
@@ -11,6 +12,7 @@ import {
 import { JobState } from 'app/enums/job-state.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import { Job } from 'app/interfaces/job.interface';
+import { QueryParams } from 'app/interfaces/query-api.interface';
 import { ReplicationTask, ReplicationTaskUi } from 'app/interfaces/replication-task.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ShowLogsDialogComponent } from 'app/modules/common/dialog/show-logs-dialog/show-logs-dialog.component';
@@ -53,6 +55,7 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
   routeAdd: string[] = ['tasks', 'replication', 'wizard'];
   routeEdit: string[] = ['tasks', 'replication', 'edit'];
   routeSuccess: string[] = ['tasks', 'replication'];
+  queryCallOption: QueryParams<void> = [[], { extra: { check_dataset_encryption_keys: true } }];
   entityList: EntityTableComponent<ReplicationTaskUi>;
   filterValue = '';
 
@@ -93,6 +96,7 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
     private store$: Store<AppState>,
     private snackbar: SnackbarService,
     private cdr: ChangeDetectorRef,
+    private storage: StorageService,
   ) {
     this.filterValue = this.route.snapshot.paramMap.get('dataset') || '';
   }
@@ -112,7 +116,7 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
   }
 
   getActions(parentrow: ReplicationTaskUi): EntityTableAction[] {
-    return [
+    const actions: EntityTableAction[] = [
       {
         id: parentrow.name,
         icon: 'play_arrow',
@@ -172,16 +176,46 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
           this.doEdit(row.id);
         },
       },
-      {
-        id: parentrow.name,
-        icon: 'delete',
-        name: 'delete',
-        label: this.translate.instant('Delete'),
-        onClick: (row: ReplicationTaskUi) => {
-          this.entityList.doDelete(row);
-        },
-      },
     ];
+    if (parentrow.has_encrypted_dataset_keys) {
+      actions.push({
+        id: parentrow.name,
+        icon: 'download',
+        name: 'download_keys',
+        label: this.translate.instant('Download keys'),
+        onClick: (row) => {
+          this.loader.open();
+          this.ws.call('core.download', ['pool.dataset.export_keys_for_replication', [row.id], `${row.name}_encryption_keys.json`]).pipe(untilDestroyed(this)).subscribe({
+            next: ([, url]) => {
+              this.loader.close();
+              const mimetype = 'application/json';
+              this.storage.streamDownloadFile(url, `${row.name}_encryption_keys.json`, mimetype).pipe(untilDestroyed(this)).subscribe({
+                next: (file) => {
+                  this.storage.downloadBlob(file, `${row.name}_encryption_keys.json`);
+                },
+                error: (err: HttpErrorResponse) => {
+                  this.dialogService.error(this.errorHandler.parseHttpError(err));
+                },
+              });
+            },
+            error: (err) => {
+              this.loader.close();
+              this.dialogService.error(this.errorHandler.parseWsError(err));
+            },
+          });
+        },
+      });
+    }
+    actions.push({
+      id: parentrow.name,
+      icon: 'delete',
+      name: 'delete',
+      label: this.translate.instant('Delete'),
+      onClick: (row: ReplicationTaskUi) => {
+        this.entityList.doDelete(row);
+      },
+    });
+    return actions;
   }
 
   onButtonClick(row: ReplicationTaskUi): void {
