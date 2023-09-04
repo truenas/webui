@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
+import { ValidationErrors } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import { combineLatest, map, Observable } from 'rxjs';
-import { CreateVdevLayout, TopologyItemType, VdevType } from 'app/enums/v-dev-type.enum';
+import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import helptext from 'app/helptext/storage/volumes/manager/manager';
+import { Pool } from 'app/interfaces/pool.interface';
 import {
   AddVdevsStore,
 } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
@@ -20,6 +22,7 @@ import { PoolCreationError } from 'app/pages/storage/modules/pool-manager/interf
 import {
   PoolManagerStore,
   PoolManagerTopology,
+  PoolManagerEnclosureSettings,
   PoolManagerTopologyCategory,
 } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { hasExportedPool, hasNonUniqueSerial } from 'app/pages/storage/modules/pool-manager/utils/disk.utils';
@@ -50,128 +53,14 @@ export class PoolManagerValidationService {
   ])
     .pipe(
       map(([existingPool, nameErrors, topology, enclosure, [hasMultipleEnclosures, hasEnclosureSupport]]) => {
-        const hasAtleastOneVdev = Object.values(VdevType).some((vdevType) => topology[vdevType]?.vdevs.length > 0);
-        const hasDataVdevs = topology[VdevType.Data].vdevs.length > 0;
         const errors: PoolCreationError[] = [];
 
-        if (nameErrors?.required) {
-          errors.push({
-            text: this.translate.instant('Name not added'),
-            severity: PoolCreationSeverity.Error,
-            step: PoolCreationWizardStep.General,
-          });
+        errors.push(...this.parseNameErrors(nameErrors));
+        errors.push(...this.parseEnclosureErrors(enclosure, hasMultipleEnclosures, hasEnclosureSupport));
+        errors.push(...this.validateMinVdevsLimit(existingPool, topology));
+        if (!existingPool) {
+          errors.push(...this.validateNewPoolVdevs(topology));
         }
-
-        if (nameErrors?.invalidPoolName) {
-          errors.push({
-            text: this.translate.instant('Invalid pool name'),
-            severity: PoolCreationSeverity.Error,
-            step: PoolCreationWizardStep.General,
-          });
-        }
-
-        if (
-          enclosure.limitToSingleEnclosure === null
-          && enclosure.dispersalStrategy === DispersalStrategy.LimitToSingle
-          && (hasMultipleEnclosures && hasEnclosureSupport)
-        ) {
-          errors.push({
-            text: this.translate.instant('No Enclosure selected for a Limit Pool To A Single Enclosure.'),
-            severity: PoolCreationSeverity.Error,
-            step: PoolCreationWizardStep.EnclosureOptions,
-          });
-        }
-
-        if (existingPool) {
-          let oldDataLayoutType = existingPool.topology.data[0].type;
-
-          if (oldDataLayoutType === TopologyItemType.Disk && !existingPool.topology.data[0].children?.length) {
-            oldDataLayoutType = TopologyItemType.Stripe;
-          }
-
-          // TODO: How is this even possible?
-          if (
-            hasDataVdevs
-            && topology[VdevType.Data].layout !== oldDataLayoutType as unknown as CreateVdevLayout
-            && !isDraidLayout(oldDataLayoutType)
-          ) {
-            errors.push({
-              text: this.translate.instant(
-                'Mixing Vdev layout types is not allowed. This pool already has some {type} Data Vdevs. You can only add vdevs of {type} type.',
-                { type: oldDataLayoutType },
-              ),
-              severity: PoolCreationSeverity.Error,
-              step: PoolCreationWizardStep.Data,
-            });
-          }
-
-          if (!hasAtleastOneVdev) {
-            errors.push({
-              text: this.translate.instant('At least 1 vdev is required to make an update to the pool.'),
-              severity: PoolCreationSeverity.Error,
-              step: PoolCreationWizardStep.Review,
-            });
-          }
-        } else if (!hasDataVdevs) {
-          errors.push({
-            text: this.translate.instant('At least 1 data VDEV is required.'),
-            severity: PoolCreationSeverity.Error,
-            step: PoolCreationWizardStep.Data,
-          });
-        }
-
-        const nonEmptyTopologyCategories = this.filterNonEmptyCategories(topology);
-
-        nonEmptyTopologyCategories.forEach(([topologyCategoryType, topologyCategory]) => {
-          if (existingPool) {
-            return;
-          }
-
-          if (topologyCategoryType === VdevType.Data && isDraidLayout(topologyCategory.layout)) {
-            errors.push(...this.validateDraid(topologyCategory));
-          }
-
-          if (
-            [VdevType.Dedup, VdevType.Log, VdevType.Special, VdevType.Data].includes(topologyCategoryType)
-            && topologyCategory.vdevs.length >= 1 && topologyCategory.layout === CreateVdevLayout.Stripe
-          ) {
-            if (topologyCategoryType === VdevType.Log) {
-              errors.push({
-                text: this.translate.instant('A stripe log VDEV may result in data loss if it fails combined with a power outage.'),
-                severity: PoolCreationSeverity.Warning,
-                step: PoolCreationWizardStep.Log,
-              });
-            } else {
-              const vdevType = topologyCategoryType === 'special' ? 'metadata' : topologyCategoryType;
-
-              errors.push({
-                text: this.translate.instant('A stripe {vdevType} VDEV is highly discouraged and will result in data loss if it fails', { vdevType }),
-                severity: PoolCreationSeverity.ErrorWarning,
-                step: vdevType as PoolCreationWizardStep,
-              });
-            }
-          }
-
-          const nonUniqueSerialDisks = topologyCategory.vdevs.flat().filter(hasNonUniqueSerial);
-
-          if (nonUniqueSerialDisks?.length) {
-            errors.push({
-              text: getNonUniqueSerialDisksWarning(nonUniqueSerialDisks, this.translate),
-              severity: PoolCreationSeverity.Warning,
-              step: PoolCreationWizardStep.Review,
-            });
-          }
-
-          const disksWithExportedPools = topologyCategory.vdevs.flat().filter(hasExportedPool);
-
-          if (disksWithExportedPools?.length) {
-            errors.push({
-              text: this.exportedPoolsWarning,
-              severity: PoolCreationSeverity.Warning,
-              step: PoolCreationWizardStep.Review,
-            });
-          }
-        });
 
         return _.uniqBy(errors, 'text')
           .sort((a, b) => {
@@ -181,6 +70,143 @@ export class PoolManagerValidationService {
           });
       }),
     );
+
+  private parseNameErrors(nameErrors: ValidationErrors): PoolCreationError[] {
+    const errors: PoolCreationError[] = [];
+
+    if (nameErrors?.required) {
+      errors.push({
+        text: this.translate.instant('Name not added'),
+        severity: PoolCreationSeverity.Error,
+        step: PoolCreationWizardStep.General,
+      });
+    }
+
+    if (nameErrors?.invalidPoolName) {
+      errors.push({
+        text: this.translate.instant('Invalid pool name'),
+        severity: PoolCreationSeverity.Error,
+        step: PoolCreationWizardStep.General,
+      });
+    }
+    return errors;
+  }
+
+  private validateNewPoolVdevs(topology: PoolManagerTopology): PoolCreationError[] {
+    const errors: PoolCreationError[] = [];
+    const nonEmptyTopologyCategories = this.filterNonEmptyCategories(topology);
+
+    nonEmptyTopologyCategories.forEach(([topologyCategoryType, topologyCategory]) => {
+      if (topologyCategoryType === VdevType.Data && isDraidLayout(topologyCategory.layout)) {
+        errors.push(...this.validateDraid(topologyCategory));
+      }
+      errors.push(...this.validateStripeVdevsWarning(topologyCategory, topologyCategoryType));
+      errors.push(...this.validateDuplicateSerialDiskVdevs(topologyCategory));
+      errors.push(...this.validateExportedPoolDiskVdevs(topologyCategory));
+    });
+    return errors;
+  }
+
+  private parseEnclosureErrors(
+    enclosure: PoolManagerEnclosureSettings,
+    hasMultipleEnclosures: boolean,
+    hasEnclosureSupport: boolean,
+  ): PoolCreationError[] {
+    const errors: PoolCreationError[] = [];
+    if (
+      enclosure.limitToSingleEnclosure === null
+      && enclosure.dispersalStrategy === DispersalStrategy.LimitToSingle
+      && (hasMultipleEnclosures && hasEnclosureSupport)
+    ) {
+      errors.push({
+        text: this.translate.instant('An enclosure must be selected when \'Limit Pool to a Single Enclosure\' is enabled.'),
+        severity: PoolCreationSeverity.Error,
+        step: PoolCreationWizardStep.EnclosureOptions,
+      });
+    }
+    return errors;
+  }
+
+  private validateMinVdevsLimit(
+    existingPool: Pool,
+    topology: PoolManagerTopology,
+  ): PoolCreationError[] {
+    const errors: PoolCreationError[] = [];
+    if (existingPool) {
+      const hasAtleastOneVdev = Object.values(VdevType).some((vdevType) => topology[vdevType]?.vdevs.length > 0);
+      if (!hasAtleastOneVdev) {
+        errors.push({
+          text: this.translate.instant('At least 1 vdev is required to make an update to the pool.'),
+          severity: PoolCreationSeverity.Error,
+          step: PoolCreationWizardStep.Review,
+        });
+      }
+    } else if (!(topology[VdevType.Data].vdevs.length > 0)) {
+      errors.push({
+        text: this.translate.instant('At least 1 data VDEV is required.'),
+        severity: PoolCreationSeverity.Error,
+        step: PoolCreationWizardStep.Data,
+      });
+    }
+    return errors;
+  }
+
+  private validateDuplicateSerialDiskVdevs(topologyCategory: PoolManagerTopologyCategory): PoolCreationError[] {
+    const errors: PoolCreationError[] = [];
+    const nonUniqueSerialDisks = topologyCategory.vdevs.flat().filter(hasNonUniqueSerial);
+
+    if (nonUniqueSerialDisks?.length) {
+      errors.push({
+        text: getNonUniqueSerialDisksWarning(nonUniqueSerialDisks, this.translate),
+        severity: PoolCreationSeverity.Warning,
+        step: PoolCreationWizardStep.Review,
+      });
+    }
+    return errors;
+  }
+
+  private validateStripeVdevsWarning(
+    topologyCategory: PoolManagerTopologyCategory,
+    topologyCategoryType: VdevType,
+  ): PoolCreationError[] {
+    const errors: PoolCreationError[] = [];
+    const hasVdevs = topologyCategory.vdevs.length >= 1;
+    const hasStripeLayout = topologyCategory.layout === CreateVdevLayout.Stripe;
+    if (hasVdevs && hasStripeLayout) {
+      if (topologyCategoryType === VdevType.Log) {
+        errors.push({
+          text: this.translate.instant(
+            'A stripe log VDEV may result in data loss if it fails combined with a power outage.',
+          ),
+          severity: PoolCreationSeverity.Warning,
+          step: PoolCreationWizardStep.Log,
+        });
+      }
+      if ([VdevType.Dedup, VdevType.Special, VdevType.Data].includes(topologyCategoryType)) {
+        const vdevType = topologyCategoryType === 'special' ? 'metadata' : topologyCategoryType;
+        errors.push({
+          text: this.translate.instant('A stripe {vdevType} VDEV is highly discouraged and will result in data loss if it fails', { vdevType }),
+          severity: PoolCreationSeverity.ErrorWarning,
+          step: vdevType as PoolCreationWizardStep,
+        });
+      }
+    }
+    return errors;
+  }
+
+  private validateExportedPoolDiskVdevs(topologyCategory: PoolManagerTopologyCategory): PoolCreationError[] {
+    const errors: PoolCreationError[] = [];
+    const disksWithExportedPools = topologyCategory.vdevs.flat().filter(hasExportedPool);
+
+    if (disksWithExportedPools?.length) {
+      errors.push({
+        text: this.exportedPoolsWarning,
+        severity: PoolCreationSeverity.Warning,
+        step: PoolCreationWizardStep.Review,
+      });
+    }
+    return errors;
+  }
 
   getPoolCreationErrors(): Observable<PoolCreationError[]> {
     return this.poolCreationErrors$;
