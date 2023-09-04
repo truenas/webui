@@ -24,7 +24,7 @@ import {
 import { PoolWizardNameValidationService } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/1-general-wizard-step/pool-wizard-name-validation.service';
 import { DialogService } from 'app/services/dialog.service';
 
-describe('PoolManagerComponent – creating dRAID pool', () => {
+describe('PoolManagerComponent – start over functionality', () => {
   let spectator: Spectator<PoolManagerComponent>;
   let wizard: PoolManagerHarness;
   const createComponent = createComponentFactory({
