@@ -57,6 +57,7 @@ export class RsyncTaskFormComponent implements OnInit {
       (control) => control.parent && this.isModuleMode,
       Validators.required,
     )],
+    ssh_keyscan: [false],
     remoteport: [22, portRangeValidator()],
     remotemodule: ['', this.validatorsService.validateOnCondition(
       (control) => control.parent && this.isModuleMode,
@@ -132,6 +133,10 @@ export class RsyncTaskFormComponent implements OnInit {
     return this.form.value.mode === RsyncMode.Module;
   }
 
+  get isRemoteHostSpecified(): boolean {
+    return this.form.controls.remotehost.valid;
+  }
+
   get isSshConnectionPrivateMode(): boolean {
     return this.form.value.sshconnectmode === RsyncSshConnectMode.PrivateKey;
   }
@@ -194,6 +199,7 @@ export class RsyncTaskFormComponent implements OnInit {
       delete values.remotepath;
       delete values.validate_rpath;
       delete values.ssh_credentials;
+      delete values.ssh_keyscan;
     } else {
       delete values.remotemodule;
       if (values.sshconnectmode === RsyncSshConnectMode.PrivateKey) {
@@ -201,6 +207,7 @@ export class RsyncTaskFormComponent implements OnInit {
       } else {
         values.remotehost = null;
         values.remoteport = null;
+        delete values.ssh_keyscan;
       }
     }
     delete values.sshconnectmode;
