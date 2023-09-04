@@ -59,6 +59,9 @@ export interface TopologyItemStats {
   configured_ashift: number;
   logical_ashift: number;
   physical_ashift: number;
+  draid_data_disks?: number;
+  draid_spare_disks?: number;
+  draid_parity?: number;
 }
 
 export interface EnclosureAndSlot {

@@ -30,8 +30,12 @@ export class WidgetControllerComponent {
 
   @Output() launcher = new EventEmitter<DashConfigItem>();
 
-  nameFromIdentifier(identifier: string): string {
+  nameFromIdentifier(identifier: string, widgetName?: WidgetName): string {
     const [key, value] = identifier.split(',');
+
+    if (widgetName === WidgetName.Pool) {
+      return value.split(':')[1];
+    }
 
     if (key === 'name') {
       return value;

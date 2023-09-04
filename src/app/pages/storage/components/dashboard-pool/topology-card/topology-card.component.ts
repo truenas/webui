@@ -7,7 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
 import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
-import { VdevType, TopologyWarning } from 'app/enums/v-dev-type.enum';
+import { VdevType } from 'app/enums/v-dev-type.enum';
 import { Pool, PoolTopology } from 'app/interfaces/pool.interface';
 import { SmartTestResult } from 'app/interfaces/smart-test.interface';
 import {
@@ -17,7 +17,6 @@ import {
   TopologyDisk,
   TopologyItem,
 } from 'app/interfaces/storage.interface';
-import { isDraidLayout } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
 import { StorageService } from 'app/services/storage.service';
 
 interface TopologyState {
@@ -34,7 +33,6 @@ export interface EmptyDiskObject {
 }
 
 const notAssignedDev = 'VDEVs not assigned';
-const multiWarning = 'warnings';
 
 @UntilDestroy()
 @Component({
@@ -75,6 +73,10 @@ export class TopologyCardComponent implements OnInit, OnChanges {
       return this.translate.instant('Pool is not healthy');
     }
     return this.translate.instant('Everything is fine');
+  }
+
+  get isDraidLayoutDataVdevs(): boolean {
+    return /\bDRAID\b/.test(this.topologyState.data);
   }
 
   constructor(
@@ -144,11 +146,7 @@ export class TopologyCardComponent implements OnInit, OnChanges {
     outputString = `${vdevs.length} x `;
     // TODO: Needs to be translated.
     if (vdevWidth) {
-      if (isDraidLayout(type)) {
-        outputString += `${type} | ${vdevWidth} children | `;
-      } else {
-        outputString += `${type} | ${vdevWidth} wide | `;
-      }
+      outputString += `${type} | ${vdevWidth} wide | `;
     }
 
     if (size) {
@@ -170,7 +168,7 @@ export class TopologyCardComponent implements OnInit, OnChanges {
       outputString = warnings[0];
     }
     if (warnings.length > 1) {
-      outputString = warnings.length.toString() + ' ' + multiWarning;
+      outputString = warnings.join(', ');
     }
     return outputString;
   }
@@ -190,24 +188,6 @@ export class TopologyCardComponent implements OnInit, OnChanges {
       PoolStatus.Offline,
       PoolStatus.Degraded,
     ].includes(poolState.status);
-  }
-
-  isTopologyWarning(topologyWarningState: string): boolean {
-    if (topologyWarningState.includes(multiWarning)) {
-      return true;
-    }
-
-    switch (topologyWarningState) {
-      case TopologyWarning.NoRedundancy:
-      case TopologyWarning.RedundancyMismatch:
-      case TopologyWarning.MixedVdevLayout:
-      case TopologyWarning.MixedVdevCapacity:
-      case TopologyWarning.MixedDiskCapacity:
-      case TopologyWarning.MixedVdevWidth:
-        return true;
-      default:
-        return false;
-    }
   }
 
   dashboardDiskToDisk(dashDisk: StorageDashboardDisk): Disk {
