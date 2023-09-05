@@ -26,7 +26,17 @@
     (click)="statusPressed(); $event.stopPropagation()"
   ></ix-app-status-cell>
 </div>
-<!-- TODO: Waiting for the https://ixsystems.atlassian.net/browse/NAS-121614 CPU / RAM / DISK -->
+<div class="cell cell-cpu">
+  <span *ngIf="app.stats?.cpu; else notAvailable">{{ app.stats.cpu }}</span>
+</div>
+<div class="cell cell-ram">
+  <span *ngIf="app.stats?.memory; else notAvailable">{{ app.stats.memory }}</span>
+</div>
+<div class="cell cell-network">
+  <span *ngIf="app.stats?.network?.incoming; else notAvailable">
+    {{ app.stats?.network?.incoming }} / {{ app.stats?.network?.outgoing }}
+  </span>
+</div>
 <div class="cell cell-update">
   <ng-container *ngIf="hasUpdates; else upToDate">
     <span>{{ 'Update available' | translate }}</span>
@@ -64,4 +74,8 @@
 
 <ng-template #upToDate>
   {{ 'Up to date' | translate }}
+</ng-template>
+
+<ng-template #notAvailable>
+  {{ 'N/A' | translate }}
 </ng-template>

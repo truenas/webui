@@ -135,7 +135,7 @@ export class ApplicationsService {
   }
 
   getAllChartReleases(): Observable<ChartRelease[]> {
-    const secondOption = { extra: { history: true } };
+    const secondOption = { extra: { history: true, stats: true } };
     return this.ws.call('chart.release.query', [[], secondOption]);
   }
 
@@ -147,6 +147,10 @@ export class ApplicationsService {
 
   getInstalledAppsUpdates(): Observable<ApiEvent> {
     return this.ws.subscribe('chart.release.query');
+  }
+
+  getInstalledAppsStatisticsUpdates(): Observable<ApiEvent> {
+    return this.ws.subscribe('chart.release.statistics');
   }
 
   getInstalledAppsStatusUpdates(): Observable<ApiEvent<Job<ChartScaleResult, ChartScaleQueryParams>>> {

@@ -89,7 +89,7 @@
 
     <div class="app-search">
       <ix-fake-progress-bar *ngIf="!showMobileDetails" [loading]="isLoading"></ix-fake-progress-bar>
-    
+
       <ix-search-input
         [disabled]="!dataSource.length"
         [value]="filterString"
@@ -113,7 +113,9 @@
             </span>
           </div>
           <div>{{ 'Status' | translate }}</div>
-          <!-- TODO: Waiting for the https://ixsystems.atlassian.net/browse/NAS-121614 CPU / RAM / DISK -->
+          <div>{{ 'CPU' | translate }}</div>
+          <div>{{ 'RAM' | translate }}</div>
+          <div>{{ 'Network' | translate }}</div>
           <div class="app-update-header">
             <span>{{ 'Updates' | translate }}</span>
             <ix-icon
