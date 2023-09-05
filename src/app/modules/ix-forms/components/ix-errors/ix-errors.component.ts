@@ -71,6 +71,9 @@ export class IxErrorsComponent implements OnChanges {
         untilDestroyed(this),
       ).subscribe(() => {
         const newErrors: string[] = Object.keys(this.control.errors || []).map((error) => {
+          if (error === 'ixManualValidateError') {
+            return;
+          }
           const message = (this.control.errors[error] as SomeError).message as string;
           if (message) {
             return message;
@@ -124,5 +127,13 @@ export class IxErrorsComponent implements OnChanges {
       default:
         return undefined;
     }
+  }
+
+  removeManualError(): void {
+    delete this.control.errors?.ixManualValidateError;
+    delete this.control.errors?.manualValidateError;
+    delete this.control.errors?.manualValidateErrorMsg;
+    this.control.updateValueAndValidity();
+    this.cdr.markForCheck();
   }
 }
