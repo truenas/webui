@@ -211,7 +211,6 @@ def refresh_and_wait_for_the_second_node_to_be_up(driver):
     """refresh and wait for the second node to be up"""
     assert wait_on_element(driver, 45, xpaths.toolbar.ha_Disabled)
     assert wait_on_element(driver, 180, xpaths.toolbar.ha_Enabled)
-    # assert wait_on_element(driver, 60, '//span[contains(.,"Hostname:") and contains(.,"tn-bhyve06-nodeb")]')
     # 5 second to let the system get ready for the next step.
     time.sleep(5)
 
@@ -243,7 +242,6 @@ def wait_for_the_login_and_the_HA_enabled_status_and_login(driver):
 
     # Make sure HA is enable before going forward
     assert wait_on_element(driver, 120, xpaths.toolbar.ha_Enabled)
-    # assert wait_on_element(driver, 120, '//span[contains(.,"Hostname:") and contains(.,"tn-bhyve06-nodea")]')
     rsc.License_Agrement(driver)
     time.sleep(5)
 
