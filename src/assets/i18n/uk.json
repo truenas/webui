@@ -1636,8 +1636,6 @@
   "Enter or paste the <b>public</b> SSH key of the user for any key-based authentication. <b>Do not paste the private key.</b>": "Введіть або вставте <b>відкритий</b> ключ SSH для будь-якої аутентифікації на основі ключів. <b>Не вставляйте закритий ключ.</b>",
   "Enter or paste the API key provided from <a href=\"https://portal.ixsystems.com/portal/login/\" target=\"_blank\">iXsystems Account Services</a>. Login or signup is required.": "Введіть або вставте ключ API, наданий із <a href=\"https://portal.ixsystems.com/portal/login/\" target=\"_blank\">iXsystems Account Services</a>. Необхідно ввійти або зареєструватися.",
   "Enter or select the cloud storage location to use for this task.": "Введіть або виберіть хмарне сховище, яке буде використано для цього завдання.",
-  "Enter password": "Введіть пароль",
-  "Enter password to unlock this display device": "Введіть пароль, щоб розблокувати цей пристрій",
   "Enter password.": "Введіть пароль.",
   "Enter the <a href=\"https://docs.aws.amazon.com/sns/latest/dg/sms_supported-countries.html\" target=\"_blank\">AWS account region</a>.": "Введіть <a href=\"https://docs.aws.amazon.com/sns/latest/dg/sms_supported-countries.html\" target=\"_blank\"> регіон облікового запису AWS </a>.",
   "Enter the <a href=\"https://docs.influxdata.com/influxdb/\" target=\"_blank\">InfluxDB</a> hostname.": "Введіть назву хоста <a href=\"https://docs.influxdata.com/influxdb/\" target=\"_blank\"> InfluxDB </a>.",
