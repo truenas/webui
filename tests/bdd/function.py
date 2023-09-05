@@ -346,10 +346,9 @@ def create_Encrypted_Pool(hostname, auth, pool_name):
     payload = {
         'name': pool_name,
         'encryption': True,
-        # 'encryption_options': {
-        #     'algorithm': 'AES-128-CCM',
-        #     'key': pool_token_hex,
-        # },
+        'encryption_options': {
+            'generate_key': True
+        },
         'topology': {
             'data': [
                 {
