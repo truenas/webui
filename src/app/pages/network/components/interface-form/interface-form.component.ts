@@ -47,7 +47,7 @@ import { NetworkService } from 'app/services/network.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
-import { adminNetworkInterfacesChanged } from 'app/store/admin-panel/admin.actions';
+import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
 
 @UntilDestroy()
 @Component({
@@ -234,7 +234,7 @@ export class InterfaceFormComponent implements OnInit {
       next: () => {
         this.isLoading = false;
         this.snackbar.success(this.translate.instant('Network interface updated'));
-        this.store$.dispatch(adminNetworkInterfacesChanged({ commit: false, checkIn: false }));
+        this.store$.dispatch(networkInterfacesChanged({ commit: false, checkIn: false }));
         this.slideInRef.close(true);
 
         this.ws.call('interface.default_route_will_be_removed').pipe(
