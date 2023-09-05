@@ -20,7 +20,6 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class DockerImageDeleteDialogComponent {
   form = this.fb.group({
-    force: [false],
     confirm: [false, [Validators.requiredTrue]],
   });
   isJobCompleted = false;
@@ -48,9 +47,7 @@ export class DockerImageDeleteDialogComponent {
   }
 
   onSubmit(): void {
-    const { force } = this.form.value;
-
-    const deleteParams = this.images.map((image) => [image.id, { force }]);
+    const deleteParams = this.images.map((image) => [image.id]);
 
     this.images.forEach((image) => {
       this.bulkItems.set(image.id, { state: BulkListItemState.Running, item: image });

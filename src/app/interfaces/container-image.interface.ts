@@ -11,7 +11,6 @@ export interface PullContainerImageParams {
 
 export type DeleteContainerImageParams = [
   id: string,
-  params?: { force: boolean },
 ];
 
 export interface PullContainerImageResponse {

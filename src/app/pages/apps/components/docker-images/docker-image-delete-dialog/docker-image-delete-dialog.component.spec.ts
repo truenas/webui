@@ -77,8 +77,8 @@ describe('DockerImageDeleteDialogComponent', () => {
     const jobArguments = [
       'container.image.delete',
       [
-        ['sha256:test1', { force: false }],
-        ['sha256:test2', { force: false }],
+        ['sha256:test1'],
+        ['sha256:test2'],
       ],
     ];
     spectator.inject(MockWebsocketService).mockJob('core.bulk', fakeSuccessfulJob(mockSuccessBulkResponse, jobArguments));
@@ -104,15 +104,14 @@ describe('DockerImageDeleteDialogComponent', () => {
     const jobArguments = [
       'container.image.delete',
       [
-        ['sha256:test1', { force: true }],
-        ['sha256:test2', { force: true }],
+        ['sha256:test1'],
+        ['sha256:test2'],
       ],
     ];
     spectator.inject(MockWebsocketService).mockJob('core.bulk', fakeSuccessfulJob(mockSuccessBulkResponse, jobArguments));
 
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
-      'Force delete': true,
       Confirm: true,
     });
 
@@ -130,8 +129,8 @@ describe('DockerImageDeleteDialogComponent', () => {
     const jobArguments: CoreBulkQuery = [
       'container.image.delete',
       [
-        ['sha256:test1', { force: false }],
-        ['sha256:test2', { force: false }],
+        ['sha256:test1'],
+        ['sha256:test2'],
       ],
     ];
     spectator.inject(MockWebsocketService).mockJob('core.bulk', fakeSuccessfulJob(mockFailedBulkResponse, jobArguments));

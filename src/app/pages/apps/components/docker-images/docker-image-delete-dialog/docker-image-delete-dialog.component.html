@@ -29,12 +29,6 @@
     <div class="form-actions-cell">
       <ix-checkbox
         *ngIf="!isJobCompleted"
-        formControlName="force"
-        [label]="'Force delete' | translate"
-      ></ix-checkbox>
-
-      <ix-checkbox
-        *ngIf="!isJobCompleted"
         formControlName="confirm"
         [label]="'Confirm' | translate"
         [required]="true"
