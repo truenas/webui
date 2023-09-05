@@ -41,6 +41,7 @@ describe('PoolManagerComponent – unsetting on fewer disks', () => {
     providers: [
       ...commonProviders,
       mockWebsocket([
+        mockCall('pool.validate_name', true),
         mockCall('disk.get_unused', [
           {
             devname: 'ada0',
@@ -121,6 +122,7 @@ describe('PoolManagerComponent – unsetting on fewer disks', () => {
         ] as Enclosure[]),
         mockCall('pool.query', []),
         mockCall('pool.dataset.encryption_algorithm_choices', {}),
+        mockCall('pool.validate_name', true),
       ]),
       mockProvider(PoolWizardNameValidationService, {
         validatePoolName: () => of(null),

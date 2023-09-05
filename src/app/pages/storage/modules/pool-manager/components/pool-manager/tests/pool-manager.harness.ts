@@ -15,6 +15,7 @@ export class PoolManagerHarness extends ComponentHarness {
   static hostSelector = 'ix-pool-manager';
 
   getStepper = this.locatorFor(MatStepperHarness);
+  getStartOverButton = this.locatorFor(MatButtonHarness.with({ text: 'Start Over' }));
   getNextButton = this.locatorFor(MatButtonHarness.with({ text: 'Next' }));
   getBackButton = this.locatorFor(MatButtonHarness.with({ text: 'Back' }));
   getCreatePoolButton = this.locatorFor(MatButtonHarness.with({ text: 'Create Pool' }));
@@ -55,6 +56,10 @@ export class PoolManagerHarness extends ComponentHarness {
 
   async clickCreatePoolButton(): Promise<void> {
     await (await this.getCreatePoolButton()).click();
+  }
+
+  async clickStartOver(): Promise<void> {
+    await (await this.getStartOverButton()).click();
   }
 
   async fillStep(values: Record<string, unknown>): Promise<void> {

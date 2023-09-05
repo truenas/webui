@@ -101,7 +101,6 @@ export interface ReportingConfig {
   confirm_rrd_destroy?: boolean;
   graph_age: number;
   graph_points: number;
-  graphite: string;
   id: number;
 }
 

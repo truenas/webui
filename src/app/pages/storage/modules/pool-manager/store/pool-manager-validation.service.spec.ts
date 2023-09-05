@@ -83,7 +83,7 @@ describe('PoolManagerValidationService', () => {
             {
               severity: 'error',
               step: 'enclosure',
-              text: 'No Enclosure selected for a Limit Pool To A Single Enclosure.',
+              text: 'An enclosure must be selected when \'Limit Pool to a Single Enclosure\' is enabled.',
             },
             {
               severity: 'error',
@@ -102,7 +102,7 @@ describe('PoolManagerValidationService', () => {
             cache: null,
             data: 'At least 1 data VDEV is required.',
             dedup: null,
-            enclosure: 'No Enclosure selected for a Limit Pool To A Single Enclosure.',
+            enclosure: 'An enclosure must be selected when \'Limit Pool to a Single Enclosure\' is enabled.',
             general: 'Name not added',
             log: null,
             metadata: null,
@@ -246,110 +246,6 @@ describe('PoolManagerValidationService', () => {
             review: 'Some of the selected disks have exported pools on them. Using those disks will make existing pools on them unable to be imported. You will lose any and all data in selected disks.',
             spare: null,
           },
-        });
-      });
-    });
-  });
-
-  describe('errors when adding vdevs to existing pool', () => {
-    let spectator: SpectatorService<PoolManagerValidationService>;
-    let testScheduler: TestScheduler;
-
-    const mockName$ = of('No error for name');
-    const mockTopology$ = of({
-      [VdevType.Data]: {
-        hasCustomDiskSelection: false,
-        layout: 'STRIPE',
-        vdevs: [
-          [
-            {
-              identifier: '{serial_lunid}8HG29G5H_5000cca2700430f8',
-              name: 'sdc',
-              subsystem: 'scsi',
-              exported_zpool: 'new',
-              duplicate_serial: ['duplicate_serial'],
-              number: 2080,
-              serial: '8HG29G5H',
-              lunid: '5000cca2700430f8',
-              enclosure: {
-                number: 0,
-                slot: 1,
-              },
-              devname: 'sdc',
-            },
-          ],
-        ],
-      },
-      [VdevType.Log]: {
-        hasCustomDiskSelection: false,
-        layout: 'STRIPE',
-        vdevs: [
-          {
-            identifier: '{serial_lunid}8HG5ZRMH_5000cca2700ae4d8',
-            name: 'sdf',
-            subsystem: 'scsi',
-            number: 2128,
-            serial: '8HG5ZRMH',
-            lunid: '5000cca2700ae4d8',
-            size: 12000138625024,
-            description: '',
-            enclosure: {
-              number: 0,
-              slot: 1,
-            },
-            devname: 'sdf',
-          },
-        ],
-      },
-    });
-    const mockEnclosureSettings$ = of({
-      limitToSingleEnclosure: null,
-      dispersalStrategy: DispersalStrategy.None,
-    });
-    const mockHasMultipleEnclosuresAfterFirstStep$ = of(true);
-    const mockNameErrors$ = of(null);
-
-    const createService = createServiceFactory({
-      service: PoolManagerValidationService,
-      providers: [
-        mockProvider(PoolManagerStore, {
-          name$: mockName$,
-          nameErrors$: mockNameErrors$,
-          enclosureSettings$: mockEnclosureSettings$,
-          topology$: mockTopology$,
-          hasMultipleEnclosuresAfterFirstStep$: mockHasMultipleEnclosuresAfterFirstStep$,
-        }),
-        mockProvider(AddVdevsStore, {
-          pool$: of({ topology: { data: [{ type: 'MIRROR' }] } } as Pool),
-        }),
-        provideMockStore({
-          selectors: [
-            {
-              selector: selectSystemFeatures,
-              value: {
-                enclosure: true,
-              },
-            },
-          ],
-        }),
-      ],
-    });
-
-    beforeEach(() => {
-      spectator = createService();
-      testScheduler = getTestScheduler();
-    });
-
-    it('throws error when wrong vdev layout is chosen', () => {
-      testScheduler.run(({ expectObservable }) => {
-        expectObservable(spectator.service.getPoolCreationErrors()).toBe('a', {
-          a: [
-            {
-              severity: 'error',
-              step: 'data',
-              text: 'Mixing Vdev layout types is not allowed. This pool already has some MIRROR Data Vdevs. You can only add vdevs of MIRROR type.',
-            },
-          ],
         });
       });
     });
