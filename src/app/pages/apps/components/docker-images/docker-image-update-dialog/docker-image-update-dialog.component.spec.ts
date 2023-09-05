@@ -8,7 +8,7 @@ import { BulkListItemComponent } from 'app/core/components/bulk-list-item/bulk-l
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { PullContainerImageResponse } from 'app/interfaces/container-image.interface';
 import { CoreBulkQuery, CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -60,7 +60,7 @@ describe('DockerImageUpdateDialogComponent', () => {
       mockProvider(DialogService),
       mockWebsocket([
         mockJob('core.bulk'),
-        mockCall('container.image.pull'),
+        mockJob('container.image.pull', fakeSuccessfulJob()),
       ]),
     ],
   });
