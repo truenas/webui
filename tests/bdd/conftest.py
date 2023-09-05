@@ -138,8 +138,6 @@ def pytest_runtest_makereport(item):
                         web_driver.find_element_by_xpath('//ix-icon[@id="ix-close-icon"]').click()
                     except ElementClickInterceptedException:
                         pass
-            if is_element_present(web_driver, xpaths.alert.close_Button):
-                web_driver.find_element_by_xpath(xpaths.alert.close_Button).click()
 
 
 def save_screenshot(name):
