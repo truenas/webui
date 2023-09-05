@@ -16,6 +16,14 @@ describe('AppRowComponent', () => {
     status: ChartReleaseStatus.Active,
     chart_metadata: { icon: 'https://image/' },
     catalog: officialCatalog,
+    stats: {
+      cpu: 50,
+      memory: 20,
+      network: {
+        incoming: 50000000,
+        outgoing: 55500000,
+      },
+    },
   } as ChartRelease;
 
   const status = AppStatus.Started;
@@ -48,5 +56,11 @@ describe('AppRowComponent', () => {
 
   it('checks app update column', () => {
     expect(spectator.query('.cell-update')).toHaveText('Up to date');
+  });
+
+  it('checks usage columns', () => {
+    expect(spectator.query('.cell-cpu')).toHaveText('50%');
+    expect(spectator.query('.cell-ram')).toHaveText('20 MiB');
+    expect(spectator.query('.cell-network')).toHaveText('47.68 MiB / 52.93 MiB');
   });
 });
