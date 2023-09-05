@@ -27,14 +27,14 @@
   ></ix-app-status-cell>
 </div>
 <div class="cell cell-cpu">
-  <span *ngIf="app.stats?.cpu >= 0; else notAvailable">{{ app.stats.cpu }}</span>
+  <span *ngIf="app.stats && app.stats.cpu !== undefined; else notAvailable">{{ app.stats.cpu }}</span>
 </div>
 <div class="cell cell-ram">
-  <span *ngIf="app.stats?.memory >= 0; else notAvailable">{{ app.stats.memory }}</span>
+  <span *ngIf="app.stats && app.stats.memory !== undefined; else notAvailable">{{ app.stats.memory }}</span>
 </div>
 <div class="cell cell-network">
-  <span *ngIf="app.stats?.network?.incoming >= 0; else notAvailable">
-    {{ app.stats?.network?.incoming }} / {{ app.stats?.network?.outgoing }}
+  <span *ngIf="app.stats && app.stats.network?.incoming !== undefined; else notAvailable">
+    {{ app.stats.network.incoming }} / {{ app.stats.network.outgoing }}
   </span>
 </div>
 <div class="cell cell-update">
