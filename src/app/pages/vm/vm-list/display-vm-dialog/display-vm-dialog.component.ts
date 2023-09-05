@@ -12,6 +12,8 @@ import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
+// TODO: Dialog is useless now because only SPICE is supported.
+// TODO: Check with middleware if vm.get_display_web_uri can be replaced with a property in vm.get_display_devices.
 @UntilDestroy()
 @Component({
   templateUrl: './display-vm-dialog.component.html',
@@ -21,7 +23,6 @@ import { WebSocketService } from 'app/services/ws.service';
 export class DisplayVmDialogComponent {
   form = this.formBuilder.group({
     display_device: [null as number, Validators.required],
-    password: ['', Validators.required],
   });
 
   optionsDevice$ = of(
@@ -35,10 +36,6 @@ export class DisplayVmDialogComponent {
     return this.data.displayDevices.length === 1;
   }
 
-  get isPasswordConfigured(): boolean {
-    return this.form.controls.password.enabled;
-  }
-
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DisplayVmDialogData,
     @Inject(WINDOW) private window: Window,
@@ -50,45 +47,26 @@ export class DisplayVmDialogComponent {
     private translate: TranslateService,
     private loader: AppLoaderService,
   ) {
-    if (this.isSingleDevice && !this.data.displayDevices[0].attributes.password_configured) {
+    if (this.isSingleDevice) {
       this.dialogRef.close(true);
-      this.openDisplayDevice(this.data.displayDevices[0].id);
+      this.openDisplayDevice();
       return;
     }
 
-    this.form.controls.display_device.valueChanges.pipe(untilDestroyed(this)).subscribe((selectDeviceId: number) => {
-      this.form.controls.password.patchValue('');
-      if (this.data.displayDevices.find((device) => device.id === selectDeviceId).attributes.password_configured) {
-        this.form.controls.password.enable();
-      } else {
-        this.form.controls.password.disable();
-      }
-    });
-
     if (this.data.displayDevices.length) {
       this.form.controls.display_device.patchValue(this.data.displayDevices[0].id);
-    } else {
-      this.form.controls.password.disable();
     }
   }
 
   onOpen(): void {
-    this.openDisplayDevice(this.form.value.display_device, this.form.value.password);
+    this.openDisplayDevice();
   }
 
-  private openDisplayDevice(displayDeviceId: number, password?: string): void {
-    let displayOptions = {
+  private openDisplayDevice(): void {
+    this.loader.open();
+    const displayOptions = {
       protocol: this.window.location.protocol.replace(':', '').toUpperCase(),
     } as VmDisplayWebUriParamsOptions;
-
-    if (password) {
-      displayOptions = {
-        ...displayOptions,
-        devices_passwords: [
-          { device_id: displayDeviceId, password },
-        ],
-      };
-    }
 
     const requestParams: VmDisplayWebUriParams = [
       this.data.vm.id,
@@ -97,19 +75,21 @@ export class DisplayVmDialogComponent {
     ];
 
     this.ws.call('vm.get_display_web_uri', requestParams)
-      .pipe(
-        this.loader.withLoader(),
-        this.errorHandler.catchError(),
-        untilDestroyed(this),
-      )
-      .subscribe((webUris) => {
-        const webUri = webUris[displayDeviceId];
-        if (webUri.error) {
-          this.dialogService.warn(this.translate.instant('Error'), webUri.error);
-          return;
-        }
-        this.window.open(webUri.uri, '_blank');
-        this.dialogRef.close(true);
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: (webUri) => {
+          this.loader.close();
+          if (webUri.error) {
+            this.dialogService.warn(this.translate.instant('Error'), webUri.error);
+            return;
+          }
+          this.window.open(webUri.uri, '_blank');
+          this.dialogRef.close(true);
+        },
+        error: (error: WebsocketError) => {
+          this.loader.close();
+          this.dialogService.error(this.errorHandler.parseWsError(error));
+        },
       });
   }
 }
