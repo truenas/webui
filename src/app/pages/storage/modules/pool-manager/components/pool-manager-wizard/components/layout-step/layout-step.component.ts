@@ -37,8 +37,8 @@ export class LayoutStepComponent implements OnInit {
   protected topologyCategory: PoolManagerTopologyCategory;
   private enclosures: Enclosure[] = [];
 
-  get isSpareVdev(): boolean {
-    return this.type === VdevType.Spare;
+  get isVdevsLimitedToOne(): boolean {
+    return this.type === VdevType.Spare || this.type === VdevType.Cache || this.type === VdevType.Log;
   }
 
   constructor(
@@ -63,7 +63,7 @@ export class LayoutStepComponent implements OnInit {
         layout: this.topologyCategory.layout,
         enclosures: this.enclosures,
         vdevs: this.topologyCategory.vdevs,
-        vdevsLimit: this.isSpareVdev ? 1 : null,
+        vdevsLimit: this.isVdevsLimitedToOne ? 1 : null,
       } as ManualDiskSelectionParams,
       panelClass: 'manual-selection-dialog',
     })

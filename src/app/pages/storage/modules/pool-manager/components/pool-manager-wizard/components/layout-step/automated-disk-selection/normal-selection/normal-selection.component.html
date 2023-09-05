@@ -17,7 +17,7 @@
     ></ix-select>
 
     <ix-select
-      *ngIf="!isSpareVdev"
+      *ngIf="!isNumberOfVdevsLimitedToOne"
       formControlName="vdevsNumber"
       [label]="'Number of VDEVs' | translate"
       [options]="numberOptions$"
