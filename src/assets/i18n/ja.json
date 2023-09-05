@@ -1110,8 +1110,6 @@
   "Enter or paste the <a href=\"https://help.victorops.com/knowledge-base/api/\" target=\"_blank\">VictorOps API key</a>.": "",
   "Enter or paste the API key provided from <a href=\"https://portal.ixsystems.com/portal/login/\" target=\"_blank\">iXsystems Account Services</a>. Login or signup is required.": "",
   "Enter or select the cloud storage location to use for this task.": "",
-  "Enter password": "",
-  "Enter password to unlock this display device": "",
   "Enter password.": "",
   "Enter the <a href=\"https://docs.influxdata.com/influxdb/\" target=\"_blank\">InfluxDB</a> hostname.": "",
   "Enter the IP address or hostname of the remote system that will store the copy. Use the format <i>username@remote_host</i> if the username differs on the remote host.": "",

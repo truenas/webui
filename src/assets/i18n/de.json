@@ -936,8 +936,6 @@
   "Enter or paste the <b>public</b> SSH key of the user for any key-based authentication. <b>Do not paste the private key.</b>": "",
   "Enter or paste the API key provided from <a href=\"https://portal.ixsystems.com/portal/login/\" target=\"_blank\">iXsystems Account Services</a>. Login or signup is required.": "",
   "Enter or select the cloud storage location to use for this task.": "",
-  "Enter password": "",
-  "Enter password to unlock this display device": "",
   "Enter the <a href=\"https://docs.aws.amazon.com/sns/latest/dg/sms_supported-countries.html\" target=\"_blank\">AWS account region</a>.": "",
   "Enter the <a href=\"https://docs.influxdata.com/influxdb/\" target=\"_blank\">InfluxDB</a> hostname.": "",
   "Enter the <a href=\"https://kb.iu.edu/d/aiuv\" target=\"_blank\">fully-qualified hostname (FQDN)</a> of the system. This name must be unique within a certificate chain.": "",

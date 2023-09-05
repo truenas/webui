@@ -1550,8 +1550,6 @@
   "Enter or paste the <b>public</b> SSH key of the user for any key-based authentication. <b>Do not paste the private key.</b>": "Entrez ou collez la clé <b>publique</b> SSH de l'utilisateur pour toute authentification par clé. <b>Ne collez pas la clé privée.</b>",
   "Enter or paste the API key provided from <a href=\"https://portal.ixsystems.com/portal/login/\" target=\"_blank\">iXsystems Account Services</a>. Login or signup is required.": "Saisissez ou collez la clé API fournie par les <a href=\"https://portal.ixsystems.com/portal/login/\" target=\"_blank\">services de comptes d'iXsystems</a>. La connexion ou l'inscription est requise.",
   "Enter or select the cloud storage location to use for this task.": "Entrez ou sélectionnez l’emplacement de stockage dans le cloud à utiliser pour cette tâche.",
-  "Enter password": "Entrez le mot de passe",
-  "Enter password to unlock this display device": "Entrez le mot de passe pour déverrouiller ce périphérique d'affichage",
   "Enter password.": "Entrez le mot de passe.",
   "Enter the <a href=\"https://docs.aws.amazon.com/sns/latest/dg/sms_supported-countries.html\" target=\"_blank\">AWS account region</a>.": "Entrez la <a href=\"https://docs.aws.amazon.com/sns/latest/dg/sms_supported-countries.html\" target=\"_blank\">région du compte AWS</a>.",
   "Enter the <a href=\"https://docs.influxdata.com/influxdb/\" target=\"_blank\">InfluxDB</a> hostname.": "Entrez le nom d'hôte <a href=\"https://docs.influxdata.com/influxdb/\" target=\"_blank\">InfluxDB</a>.",
