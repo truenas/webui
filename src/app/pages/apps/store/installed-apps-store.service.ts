@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
+import { isEqual } from 'lodash';
 import {
   Observable, Subscription, catchError, combineLatest, filter, of, switchMap, tap,
 } from 'rxjs';
@@ -169,6 +170,10 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> {
               ...state,
               installedApps: state.installedApps.map(app => {
                 const appWithUpdatedStats = apiEvent.fields.find(item => item.id === app.id);
+                if (isEqual(appWithUpdatedStats.stats, app.stats)) {
+                  return app;
+                }
+
                 return {
                   ...app,
                   stats: appWithUpdatedStats.stats || app.stats,
