@@ -1,0 +1,54 @@
+<ix-modal-header
+  [title]="'Pull Image' | translate"
+  [loading]="isFormLoading"
+></ix-modal-header>
+
+<mat-card>
+  <mat-card-content>
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+      <ix-fieldset>
+        <ix-input
+          formControlName="from_image"
+          [label]="'Image Name' | translate"
+          [required]="true"
+          [tooltip]="tooltips.from_image | translate"
+        ></ix-input>
+
+        <ix-input
+          formControlName="tag"
+          [label]="'Image Tag' | translate"
+          [tooltip]="tooltips.tag | translate"
+        ></ix-input>
+      </ix-fieldset>
+      <ix-fieldset [title]="'Docker Registry Authentication' | translate">
+        <p class="hint">
+          {{ 'Optional. Only needed for private images.' | translate }}
+        </p>
+        <ix-input
+          formControlName="username"
+          [label]="'Username' | translate"
+          [tooltip]="tooltips.username | translate"
+        ></ix-input>
+
+        <ix-input
+          formControlName="password"
+          type="password"
+          [label]="'Password' | translate"
+          [tooltip]="tooltips.password | translate"
+        ></ix-input>
+      </ix-fieldset>
+
+      <ix-form-actions>
+        <button
+          mat-button
+          type="submit"
+          color="primary"
+          ixTest="save"
+          [disabled]="form.invalid || isFormLoading"
+        >
+          {{ 'Save' | translate }}
+        </button>
+      </ix-form-actions>
+    </form>
+  </mat-card-content>
+</mat-card>
