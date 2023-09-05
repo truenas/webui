@@ -15,7 +15,7 @@ import { EnclosureSlotStatus } from 'app/enums/enclosure-slot-status.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import {
-  Enclosure, EnclosureElement, EnclosureSlot, EnclosureView,
+  Enclosure, EnclosureElement, EnclosureElementsGroup, EnclosureSlot, EnclosureView,
 } from 'app/interfaces/enclosure.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import {
@@ -1233,5 +1233,13 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
 
         this.enclosureStore.updateLabel(enclosure.id, newLabel);
       });
+  }
+
+  omitDescriptor(group: EnclosureElementsGroup | EnclosureElement): EnclosureElementsGroup | EnclosureElement {
+    const returnValue = { ...group as EnclosureElementsGroup };
+    if (returnValue.header) {
+      returnValue.header = returnValue.header.filter(header => header !== 'Descriptor');
+    }
+    return returnValue;
   }
 }
