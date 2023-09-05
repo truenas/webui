@@ -1,0 +1,134 @@
+<ng-template ixPageHeader>
+  <ix-page-title-header>
+    <ix-search-input (search)="onSearch($event)"></ix-search-input>
+
+    <button mat-button ixTest="pull-image" (click)="doAdd()">{{ 'Pull Image' | translate }}</button>
+  </ix-page-title-header>
+</ng-template>
+
+<div *ngIf="checkboxColumn?.selection.selected.length" class="bulk-actions-toolbar">
+  <div class="title">
+    <strong>{{ 'Bulk Operations' | translate }}</strong>
+  </div>
+
+  <div class="actions">
+    <button
+      mat-button
+      ixTest="update-selected"
+      [disabled]="!selectionHasUpdates"
+      (click)="doUpdate(checkboxColumn?.selection.selected)"
+    >
+      <ix-icon name="update"></ix-icon>
+      {{ 'Update' | translate }}
+    </button>
+    <button mat-button ixTest="delete-selected" (click)="doDelete(checkboxColumn?.selection.selected)">
+      <ix-icon name="delete"></ix-icon>
+      {{ 'Delete' | translate }}
+    </button>
+  </div>
+</div>
+
+<table
+  ix-table
+  matSort
+  matSortDisableClear="true"
+  ixTest="docker-images-table"
+  [ix-table-empty]="!dataSource.filteredData.length"
+  [emptyConfig]="emptyConfigService.defaultEmptyConfig((emptyType$ | async))"
+  [dataSource]="dataSource"
+  [matSortActive]="defaultSort.active"
+  [matSortDirection]="defaultSort.direction"
+  [fixedLayout]="true"
+>
+  <ix-checkbox-column></ix-checkbox-column>
+
+  <ng-container matColumnDef="repo_tags">
+    <th *matHeaderCellDef mat-header-cell mat-sort-header>
+      {{ 'Tags' | translate }}
+    </th>
+    <td
+      *matCellDef="let image; dataSource: dataSource"
+      mat-cell
+      [title]="image.repo_tags"
+    >
+      {{ image.repo_tags.join(', ') }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="id">
+    <th *matHeaderCellDef mat-header-cell mat-sort-header>
+      {{ 'Image ID' | translate }}
+    </th>
+    <td
+      *matCellDef="let image; dataSource: dataSource"
+      mat-cell
+      [title]="image.id"
+    >
+      {{ image.id }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="size">
+    <th *matHeaderCellDef mat-header-cell mat-sort-header>
+      {{ 'Image Size' | translate }}
+    </th>
+    <td *matCellDef="let image; dataSource: dataSource" mat-cell>
+      {{ image.size ? formatter.convertBytesToHumanReadable(image.size) : ('Unknown' | translate) }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="update">
+    <th *matHeaderCellDef mat-header-cell mat-sort-header>
+      {{ 'State' | translate }}
+    </th>
+    <td *matCellDef="let image; dataSource: dataSource" mat-cell>
+      {{
+        image.update_available ? ('Update available' | translate) : ('Up to date' | translate)
+      }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="actions">
+    <th *matHeaderCellDef mat-header-cell></th>
+    <td *matCellDef="let image; dataSource: dataSource" mat-cell>
+      <button
+        mat-icon-button
+        [ixTest]="['image-actions', image.repo_tags.join(', ')]"
+        [title]="'Settings' | translate"
+        [matMenuTriggerFor]="actionsMenu"
+      >
+        <ix-icon name="more_vert"></ix-icon>
+      </button>
+      <mat-menu #actionsMenu="matMenu">
+        <button
+          mat-menu-item
+          [ixTest]="['update', image.repo_tags.join(', ')]"
+          [disabled]="!image.update_available"
+          (click)="doUpdate([image])"
+        >
+          {{ image.update_available ? ('Update available' | translate) : ('Up to date' | translate) }}
+        </button>
+        <button
+          mat-menu-item
+          [ixTest]="['delete', image.repo_tags.join(', ')]"
+          (click)="doDelete([image])"
+        >
+          {{ 'Delete' | translate }}
+        </button>
+      </mat-menu>
+    </td>
+  </ng-container>
+
+  <tr *matHeaderRowDef="displayedColumns" mat-header-row ixTest="table-header"></tr>
+  <tr
+    *matRowDef="let image; columns: displayedColumns; dataSource: dataSource"
+    mat-row
+    [ixTest]="image.repo_tags.join(', ')"
+  ></tr>
+
+</table>
+
+<ix-table-paginator
+  [dataSource]="dataSource"
+  [pageSize]="10"
+></ix-table-paginator>
