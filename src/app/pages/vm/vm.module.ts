@@ -22,7 +22,6 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { DeviceFormComponent } from 'app/pages/vm/devices/device-form/device-form.component';
 import { DeviceDeleteModalComponent } from 'app/pages/vm/devices/device-list/device-delete-modal/device-delete-modal.component';
 import { VmEditFormComponent } from 'app/pages/vm/vm-edit-form/vm-edit-form.component';
-import { DisplayVmDialogComponent } from 'app/pages/vm/vm-list/display-vm-dialog/display-vm-dialog.component';
 import { VmSerialShellComponent } from 'app/pages/vm/vm-serial-shell/vm-serial-shell.component';
 import { VmWizardComponent } from 'app/pages/vm/vm-wizard/vm-wizard.component';
 import { NetworkService } from 'app/services/network.service';
@@ -74,7 +73,6 @@ import { routing } from './vm.routing';
     DeviceDeleteModalComponent,
     DeleteVmDialogComponent,
     StopVmDialogComponent,
-    DisplayVmDialogComponent,
     CloneVmDialogComponent,
     VmEditFormComponent,
     OsStepComponent,
