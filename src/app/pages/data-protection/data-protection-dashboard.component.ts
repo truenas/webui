@@ -43,7 +43,7 @@ import { ReplicationWizardComponent } from 'app/pages/data-protection/replicatio
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
 import { ScrubTaskFormComponent } from 'app/pages/data-protection/scrub-task/scrub-task-form/scrub-task-form.component';
 import { SmartTaskFormComponent } from 'app/pages/data-protection/smart-task/smart-task-form/smart-task-form.component';
-import { SnapshotTaskComponent } from 'app/pages/data-protection/snapshot/snapshot-task/snapshot-task.component';
+import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -127,7 +127,7 @@ export class DataProtectionDashboardComponent implements OnInit {
           case ScrubTaskFormComponent:
             this.refreshTable(TaskCardId.Scrub);
             break;
-          case SnapshotTaskComponent:
+          case SnapshotTaskFormComponent:
             this.refreshTable(TaskCardId.Snapshot);
             break;
           case RsyncTaskFormComponent:
@@ -218,12 +218,12 @@ export class DataProtectionDashboardComponent implements OnInit {
           isActionVisible: this.isActionVisible,
           parent: this,
           add: () => {
-            const slideInRef = this.slideInService.open(SnapshotTaskComponent, { wide: true });
-            this.handleSlideInClosed(slideInRef, SnapshotTaskComponent);
+            const slideInRef = this.slideInService.open(SnapshotTaskFormComponent, { wide: true });
+            this.handleSlideInClosed(slideInRef, SnapshotTaskFormComponent);
           },
           edit: (row: PeriodicSnapshotTaskUi) => {
-            const slideInRef = this.slideInService.open(SnapshotTaskComponent, { wide: true, data: row });
-            this.handleSlideInClosed(slideInRef, SnapshotTaskComponent);
+            const slideInRef = this.slideInService.open(SnapshotTaskFormComponent, { wide: true, data: row });
+            this.handleSlideInClosed(slideInRef, SnapshotTaskFormComponent);
           },
           tableFooterActions: [
             {
