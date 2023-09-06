@@ -8,8 +8,9 @@ import { environment } from 'environments/environment';
 import {
   BehaviorSubject, EMPTY, interval, NEVER, Observable, of, switchMap, tap, timer,
 } from 'rxjs';
-import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
+import { webSocket as rxjsWebsocket, WebSocketSubject } from 'rxjs/webSocket';
 import { IncomingApiMessageType, OutgoingApiMessageType } from 'app/enums/api-message-type.enum';
+import { WEBSOCKET } from 'app/helpers/websocket.helper';
 import { WINDOW } from 'app/helpers/window.helper';
 import { ApiEvent, IncomingWebsocketMessage } from 'app/interfaces/api-message.interface';
 import { DialogService } from 'app/services/dialog.service';
@@ -40,6 +41,7 @@ export class WebsocketConnectionService {
 
   constructor(
     @Inject(WINDOW) protected window: Window,
+    @Inject(WEBSOCKET) private webSocket: typeof rxjsWebsocket,
     protected router: Router,
     private dialog: MatDialog,
     private dialogService: DialogService,
@@ -54,7 +56,7 @@ export class WebsocketConnectionService {
       this.ws$.complete();
     }
 
-    this.ws$ = webSocket({
+    this.ws$ = this.webSocket({
       url: this.connectionUrl,
       openObserver: {
         next: this.onOpen.bind(this),
