@@ -1,7 +1,7 @@
 <p align="center">
  <a href="https://discord.gg/Q3St5fPETd"><img alt="Join Discord" src="https://badgen.net/discord/members/Q3St5fPETd/?icon=discord&label=Join%20the%20TrueNAS%20Community" /></a>
  <a href="https://www.truenas.com/community/"><img alt="Join Forums" src="https://badgen.net/badge/Forums/Post%20Now//purple" /></a> 
- <a href="https://jira.ixsystems.com"><img alt="File Issue" src="https://badgen.net/badge/Jira/File%20Issue//red?icon=jira" /></a>
+ <a href="https://ixsystems.atlassian.net/browse/NAS/"><img alt="File Issue" src="https://badgen.net/badge/Jira/File%20Issue//red?icon=jira" /></a>
 </p>
 
 TrueNAS WebUI
@@ -29,7 +29,7 @@ NOTE: Pull requests are also generated as Docker images and can be used for test
 # Development requirements
 
   - yarn >= 1.12
-  - Node.js >= 8.9
+  - Node.js >= 14
   - Running TrueNAS CORE or TrueNAS SCALE Nightly Machine (VM is fine)
 
 
@@ -50,7 +50,13 @@ Install yarn packages:
 $ yarn install
 ```
 
-Run the environment configuration script
+Generate an environment file
+
+```sh
+$ yarn check-env
+```
+
+Configure the remote TrueNAS system you'd like to connect to. 
 (if your ip address changes later you may repeat this step)
 
 ```sh
@@ -62,10 +68,6 @@ To start run
 
 This runs a local webserver with the new WebUI, by default at http://localhost:4200.
 If this webserver is kept running, changes to the project will be rebuilt incrementally.
-
-To test AOT in dev mode run
-
-```yarn run start:dev:aot```
 
 To run the production build, run
 
