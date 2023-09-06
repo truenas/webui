@@ -10,7 +10,6 @@ import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { snapshotExcludeBootQueryFilter } from 'app/pages/datasets/modules/snapshots/constants/snapshot-exclude-boot.constant';
 import {
-  snapshotAdded, snapshotChanged,
   snapshotPageEntered,
   snapshotRemoved, snapshotsLoaded, snapshotsNotLoaded,
 } from 'app/pages/datasets/modules/snapshots/store/snapshot.actions';
@@ -49,14 +48,7 @@ export class SnapshotEffects {
     switchMap(() => {
       return this.ws.subscribe('zfs.snapshot.query').pipe(
         filter((event) => event.msg !== IncomingApiMessageType.Removed),
-        map((event) => {
-          switch (event.msg) {
-            case IncomingApiMessageType.Added:
-              return snapshotAdded({ snapshot: event.fields });
-            case IncomingApiMessageType.Changed:
-              return snapshotChanged({ snapshot: event.fields });
-          }
-        }),
+        map(() => snapshotPageEntered()),
       );
     }),
   ));
