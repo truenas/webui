@@ -79,7 +79,11 @@ export class MockMini30Eplus extends MockEnclosure {
   processSlotTemplate(template: EnclosureElement): EnclosureElement {
     const updatedTemplate = { ...template };
     const original = { ...template.original };
-    original.slot = template.slot;
+    if (template.slot > 4) {
+      original.slot = template.slot - 4;
+    } else {
+      original.slot = template.slot;
+    }
     updatedTemplate.original = original;
     return updatedTemplate;
   }
