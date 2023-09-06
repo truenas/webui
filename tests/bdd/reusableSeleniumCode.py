@@ -187,6 +187,9 @@ def Verify_Degraded_Alert(driver):
         assert wait_on_element(driver, 7, xpaths.alert.title)
         if wait_on_element(driver, 3, xpaths.alert.degraded_Critical_Level):
             break
+        assert wait_on_element(driver, 7, xpaths.alert.close_Button, 'clickable')
+        driver.find_element_by_xpath(xpaths.alert.close_Button).click()
+
     assert wait_on_element(driver, 7, xpaths.alert.degraded_Pool_Text)
     assert wait_on_element(driver, 7, xpaths.alert.close_Button, 'clickable')
     driver.find_element_by_xpath(xpaths.alert.close_Button).click()
