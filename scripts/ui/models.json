@@ -24,6 +24,10 @@
       "model": "MINI-R",
       "systemProduct": "TRUENAS-MINI-R"
     },
+    "MINI-X": {
+      "model": "MINI-3.0-X",
+      "systemProduct": "TRUENAS-MINI-3.0-X"
+    },
     "MINI-XL+": {
       "model": "MINI-3.0-XL+",
       "systemProduct": "TRUENAS-MINI-3.0-XL+"
