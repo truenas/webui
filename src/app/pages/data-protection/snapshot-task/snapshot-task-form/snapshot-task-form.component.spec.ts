@@ -13,13 +13,13 @@ import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-sl
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
+import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
 import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { StorageService } from 'app/services/storage.service';
 import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
-import { SnapshotTaskComponent } from './snapshot-task.component';
 
 describe('SnapshotTaskComponent', () => {
   const existingTask = {
@@ -47,11 +47,11 @@ describe('SnapshotTaskComponent', () => {
     vmware_sync: false,
   } as PeriodicSnapshotTask;
 
-  let spectator: Spectator<SnapshotTaskComponent>;
+  let spectator: Spectator<SnapshotTaskFormComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
   const createComponent = createComponentFactory({
-    component: SnapshotTaskComponent,
+    component: SnapshotTaskFormComponent,
     imports: [
       IxFormsModule,
       SchedulerModule,

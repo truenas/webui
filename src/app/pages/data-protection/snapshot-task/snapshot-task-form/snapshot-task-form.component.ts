@@ -25,11 +25,11 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
-  templateUrl: './snapshot-task.component.html',
-  styleUrls: ['./snapshot-task.component.scss'],
+  templateUrl: './snapshot-task-form.component.html',
+  styleUrls: ['./snapshot-task-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SnapshotTaskComponent implements OnInit {
+export class SnapshotTaskFormComponent implements OnInit {
   get isNew(): boolean {
     return !this.editingTask;
   }
@@ -97,7 +97,7 @@ export class SnapshotTaskComponent implements OnInit {
     private taskService: TaskService,
     private snackbar: SnackbarService,
     protected storageService: StorageService,
-    private slideInRef: IxSlideInRef<SnapshotTaskComponent>,
+    private slideInRef: IxSlideInRef<SnapshotTaskFormComponent>,
     @Inject(SLIDE_IN_DATA) private editingTask: PeriodicSnapshotTask,
   ) {}
 
