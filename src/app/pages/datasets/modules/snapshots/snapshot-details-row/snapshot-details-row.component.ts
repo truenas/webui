@@ -34,7 +34,7 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
   snapshotInfo: ZfsSnapshot;
 
   get hasClones(): boolean {
-    return !!this.snapshot.properties.clones?.value;
+    return !!this.snapshotInfo.properties?.clones?.value;
   }
 
   constructor(
