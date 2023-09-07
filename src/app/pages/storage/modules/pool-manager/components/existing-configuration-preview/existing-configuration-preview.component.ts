@@ -115,4 +115,8 @@ export class ExistingConfigurationPreviewComponent implements OnChanges {
   get unknownProp(): string {
     return this.translate.instant('None');
   }
+
+  isTopologyLimitedToOneLayout(type: string): boolean {
+    return type === VdevType.Spare || type === VdevType.Cache;
+  }
 }
