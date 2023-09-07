@@ -26,8 +26,8 @@ export class WebsocketConnectionService {
   private readonly reconnectTimeoutMillis = 5 * 1000;
   private pendingCallsBeforeConnectionReady = new Map<string, unknown>();
 
-  private isTryingReconnect = false;
-  private shutDownInProgress = false;
+  isTryingReconnect = false;
+  shutDownInProgress = false;
   private connectionUrl = (this.window.location.protocol === 'https:' ? 'wss://' : 'ws://') + environment.remote + '/websocket';
 
   private isConnectionReady = false;
