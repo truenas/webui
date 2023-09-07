@@ -44,6 +44,9 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
   @Input() type = 'line';
   @Input() labelY?: string = 'Label Y';
 
+  lastMinDate: number;
+  lastMaxDate: number;
+
   chart: Dygraph;
 
   units = '';
@@ -74,7 +77,6 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
 
     const data = this.makeTimeAxis(this.data);
     const labels = data.shift();
-
     const fg2 = this.themeService.currentTheme().fg2;
     const fg2Type = this.utils.getValueType(fg2);
     const fg2Rgb = fg2Type === 'hex' ? this.utils.hexToRgb(this.themeService.currentTheme().fg2).rgb : this.utils.rgbToArray(fg2);
@@ -153,6 +155,16 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
         }
       },
       zoomCallback: (startDate: number, endDate: number) => {
+        const maxZoomLevel = 5 * 60 * 1000;
+        const zoomRange = endDate - startDate;
+
+        if (zoomRange < maxZoomLevel) {
+          this.chart.updateOptions({ dateWindow: [this.lastMinDate, this.lastMaxDate] });
+          return;
+        }
+
+        this.lastMinDate = startDate;
+        this.lastMaxDate = endDate;
         this.zoomChange.emit([startDate, endDate]);
       },
       stackedGraph: this.stacked,
@@ -169,9 +181,13 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
   protected makeTimeAxis(rd: ReportingData): dygraphs.DataArray {
     const rowData = rd.data as number[][];
 
-    const newRows = rowData.map((row) => {
+    const newRows = rowData.map((row, index) => {
       // replace unix timestamp in first column with date
       const convertedDate = utcToZonedTime(row[0] * 1000, this.timezone);
+
+      if (index === 0) { this.lastMinDate = convertedDate.getTime(); }
+      if (index === rowData.length - 1) { this.lastMaxDate = convertedDate.getTime(); }
+
       return [convertedDate, ...row.slice(1)];
     });
 
