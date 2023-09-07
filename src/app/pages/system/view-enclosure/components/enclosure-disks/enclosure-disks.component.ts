@@ -1263,4 +1263,12 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         }
       });
   }
+
+  omitDescriptor(group: EnclosureElementsGroup | EnclosureElement): EnclosureElementsGroup | EnclosureElement {
+    const returnValue = { ...group as EnclosureElementsGroup };
+    if (returnValue.header) {
+      returnValue.header = returnValue.header.filter((header) => header !== 'Descriptor');
+    }
+    return returnValue;
+  }
 }
