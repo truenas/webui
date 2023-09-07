@@ -837,7 +837,7 @@ export interface ApiCallDirectory {
   'vm.create': { params: [VirtualMachineUpdate]; response: VirtualMachine };
   'vm.delete': { params: VmDeleteParams; response: boolean };
   'vm.resolution_choices': { params: void; response: Choices };
-  'vm.get_display_web_uri': { params: VmDisplayWebUriParams; response: { [id: number]: VmDisplayWebUri } };
+  'vm.get_display_web_uri': { params: VmDisplayWebUriParams; response: VmDisplayWebUri };
   'vm.device.passthrough_device_choices': { params: void; response: { [id: string]: VmPassthroughDeviceChoice } };
   'vm.device.usb_passthrough_choices': { params: void; response: { [id: string]: VmUsbPassthroughDeviceChoice } };
   'vm.device.usb_controller_choices': { params: void; response: Choices };

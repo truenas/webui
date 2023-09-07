@@ -39,8 +39,8 @@ import { LayoutService } from 'app/services/layout.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { adminNetworkInterfacesChanged } from 'app/store/admin-panel/admin.actions';
 import { selectHaStatus, selectIsHaLicensed, selectIsUpgradePending } from 'app/store/ha-info/ha-info.selectors';
+import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 import { alertIndicatorPressed, sidenavUpdated } from 'app/store/topbar/topbar.actions';
 
@@ -160,7 +160,7 @@ export class TopbarComponent implements OnInit {
     this.checkNetworkChangesPending();
     this.checkNetworkCheckinWaiting();
 
-    this.actions$.pipe(ofType(adminNetworkInterfacesChanged), untilDestroyed(this))
+    this.actions$.pipe(ofType(networkInterfacesChanged), untilDestroyed(this))
       .subscribe(({ commit, checkIn }) => {
         if (commit) {
           this.pendingNetworkChanges = false;
@@ -297,7 +297,7 @@ export class TopbarComponent implements OnInit {
       this.loader.open();
       this.ws.call('interface.checkin').pipe(untilDestroyed(this)).subscribe({
         next: () => {
-          this.store$.dispatch(adminNetworkInterfacesChanged({ commit: true, checkIn: true }));
+          this.store$.dispatch(networkInterfacesChanged({ commit: true, checkIn: true }));
           this.loader.close();
           this.snackbar.success(
             this.translate.instant(network_interfaces_helptext.checkin_complete_message),

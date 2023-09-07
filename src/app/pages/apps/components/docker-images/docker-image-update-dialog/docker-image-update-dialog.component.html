@@ -1,0 +1,75 @@
+<h1 matDialogTitle>{{ 'Update' | translate }}</h1>
+<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+  <p *ngIf="!isJobCompleted">
+    <strong>
+      {{ 'The following { n, plural, one {docker image} other {# docker images} } will be updated. Are you sure you want to proceed?' | translate: { n: bulkItems.size } }}
+    </strong>
+  </p>
+  <p *ngIf="isJobCompleted">
+    <strong *ngIf="failedCount">
+      {{ 'Warning: {n} of {total} docker images could not be updated.' | translate: { n: failedCount, total: bulkItems.size } }}
+    </strong>
+    <strong *ngIf="successCount">
+      {{ '{n, plural, one {# docker image} other {# docker images}} has been updated.' | translate: { n: successCount } }}
+    </strong>
+  </p>
+
+  <div class="bulk-list">
+    <ix-bulk-list-item
+      *ngFor="let bulkItem of bulkItems | keyvalue; trackBy: trackByKey"
+      [item]="bulkItem.value"
+    >
+      {{ bulkItem.value.item.repo_tags.length ? bulkItem.value.item.repo_tags.join(', ') : bulkItem.value.item.id }}
+
+      <div class="version">
+        <ix-icon name="arrow_right_alt"></ix-icon>
+        <ix-select
+          *ngIf="options.has(bulkItem.key) && !wasSubmitted"
+          [formControlName]="bulkItem.key"
+          [label]="'Select Image Tag' | translate"
+          [required]="true"
+          [tooltip]="tooltips.tag | translate"
+          [options]="options.get(bulkItem.key)"
+        ></ix-select>
+        <span *ngIf="(wasSubmitted || !options.has(bulkItem.key)) && !isJobCompleted">
+          {{ form.get(bulkItem.key).value }}
+        </span>
+        <span *ngIf="isJobCompleted && bulkItem?.value?.message">
+          {{ bulkItem.value.message }}
+        </span>
+      </div>
+    </ix-bulk-list-item>
+  </div>
+
+  <div class="form-actions">
+    <button
+      *ngIf="!wasSubmitted"
+      mat-button
+      type="submit"
+      color="primary"
+      ixTest="update"
+      [disabled]="form.invalid"
+    >
+      {{ 'Update' | translate }}
+    </button>
+    <button
+      *ngIf="!wasSubmitted"
+      mat-button
+      type="button"
+      matDialogClose
+      ixTest="cancel"
+    >
+      {{ 'Cancel' | translate }}
+    </button>
+    <button
+      *ngIf="wasSubmitted"
+      mat-button
+      type="button"
+      ixTest="close"
+      [matDialogClose]="true"
+      [disabled]="!isJobCompleted"
+    >
+      {{ 'Close' | translate }}
+    </button>
+  </div>
+</form>
