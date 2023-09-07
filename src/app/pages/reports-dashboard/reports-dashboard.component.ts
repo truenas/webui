@@ -156,7 +156,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
   }
 
   convertToTitleCase(input: string): string {
-    return input.split('_') .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+    return input.split('_').map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
   }
 
   /**

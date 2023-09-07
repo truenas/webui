@@ -18,6 +18,7 @@ export class PoolManagerHarness extends ComponentHarness {
   getStartOverButton = this.locatorFor(MatButtonHarness.with({ text: 'Start Over' }));
   getNextButton = this.locatorFor(MatButtonHarness.with({ text: 'Next' }));
   getBackButton = this.locatorFor(MatButtonHarness.with({ text: 'Back' }));
+  getCreatePoolButton = this.locatorFor(MatButtonHarness.with({ text: 'Create Pool' }));
 
   getConfigurationPreview = this.locatorFor(ConfigurationPreviewHarness);
 
@@ -51,6 +52,10 @@ export class PoolManagerHarness extends ComponentHarness {
 
   async clickBack(): Promise<void> {
     await (await this.getBackButton()).click();
+  }
+
+  async clickCreatePoolButton(): Promise<void> {
+    await (await this.getCreatePoolButton()).click();
   }
 
   async clickStartOver(): Promise<void> {

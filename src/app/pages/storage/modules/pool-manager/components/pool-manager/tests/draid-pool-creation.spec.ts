@@ -1,15 +1,18 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatDialog } from '@angular/material/dialog';
 import { MatStepperModule } from '@angular/material/stepper';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { CoreComponents } from 'app/core/core-components.module';
+import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DiskType } from 'app/enums/disk-type.enum';
+import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
+import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import {
   PoolManagerComponent,
@@ -24,7 +27,7 @@ import {
 import { PoolWizardNameValidationService } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/1-general-wizard-step/pool-wizard-name-validation.service';
 import { DialogService } from 'app/services/dialog.service';
 
-describe('PoolManagerComponent – wizard step reset', () => {
+describe('PoolManagerComponent – creating dRAID pool', () => {
   let spectator: Spectator<PoolManagerComponent>;
   let wizard: PoolManagerHarness;
   const createComponent = createComponentFactory({
@@ -107,21 +110,6 @@ describe('PoolManagerComponent – wizard step reset', () => {
             },
             exported_zpool: 'anotherpool',
           },
-          {
-            devname: 'sda5',
-            size: 20 * GiB,
-            type: DiskType.Hdd,
-          },
-          {
-            devname: 'sda6',
-            size: 20 * GiB,
-            type: DiskType.Hdd,
-          },
-          {
-            devname: 'sda7',
-            size: 20 * GiB,
-            type: DiskType.Hdd,
-          },
         ] as UnusedDisk[]),
         mockCall('enclosure.query', [] as Enclosure[]),
         mockCall('pool.query', []),
@@ -133,6 +121,18 @@ describe('PoolManagerComponent – wizard step reset', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
+      mockProvider(MatDialog, {
+        open: jest.fn(() => {
+          return {
+            ...mockEntityJobComponentRef,
+            componentInstance: {
+              ...mockEntityJobComponentRef.componentInstance,
+              success: of(),
+            },
+            afterClosed: () => of(undefined),
+          };
+        }),
+      }),
     ],
   });
 
@@ -141,85 +141,67 @@ describe('PoolManagerComponent – wizard step reset', () => {
     wizard = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, PoolManagerHarness);
   });
 
-  it('sets wizard steps and then resets them', async () => {
+  it('creates dRAID1 Pool', async () => {
+    await wizard.fillStep({
+      Name: 'dRAID',
+    });
+
     await wizard.clickNext();
     await wizard.clickNext();
 
-    // DATA step activated
     expect(await (await wizard.getActiveStep()).getLabel()).toBe('Data');
+
     await wizard.fillStep({
-      Layout: 'Stripe',
+      Layout: 'dRAID1',
+    });
+
+    await wizard.fillStep({
       'Disk Size': '20 GiB (HDD)',
-      Width: '1',
+      'Data Devices': '1',
+      'Distributed Hot Spares': '1',
+      'Children': '3',
       'Number of VDEVs': '1',
-    });
-    expect(await wizard.getConfigurationPreviewSummary()).toMatchObject({ 'Data:': '1 × STRIPE | 1 × 20 GiB (HDD)' });
-    const resetDataButton = (await (await wizard.getActiveStep()).getHarness(MatButtonHarness.with({ text: 'Reset Step' })));
-    await resetDataButton.click();
-    expect(await wizard.getStepValues()).toStrictEqual({
-      'Disk Size': '',
-      Layout: '',
-      'Number of VDEVs': '',
-      'Treat Disk Size as Minimum': false,
-      Width: '',
-    });
-    await wizard.clickNext();
-
-    // LOG step activated
-    expect(await (await wizard.getActiveStep()).getLabel()).toBe('Log (Optional)');
-    await wizard.fillStep({
-      Layout: 'Stripe',
-      'Disk Size': '20 GiB (HDD)',
-      Width: '1',
-    });
-    expect(await wizard.getConfigurationPreviewSummary()).toMatchObject({ 'Log:': '1 × STRIPE | 1 × 20 GiB (HDD)' });
-    const resetLogButton = (await (await wizard.getActiveStep()).getHarness(MatButtonHarness.with({ text: 'Reset Step' })));
-    await resetLogButton.click();
-    expect(await wizard.getStepValues()).toStrictEqual({
-      'Disk Size': '',
-      'Layout': '',
-      'Treat Disk Size as Minimum': false,
-      Width: '',
-    });
-    await wizard.clickNext();
-
-    // SPARE step activated
-    expect(await (await wizard.getActiveStep()).getLabel()).toBe('Spare (Optional)');
-    await wizard.fillStep({
-      'Disk Size': '20 GiB (HDD)',
-      Width: '1',
-    });
-    expect(await wizard.getConfigurationPreviewSummary()).toMatchObject({ 'Spare:': '1 × STRIPE | 1 × 20 GiB (HDD)' });
-    const resetSpareButton = (await (await wizard.getActiveStep()).getHarness(MatButtonHarness.with({ text: 'Reset Step' })));
-    await resetSpareButton.click();
-    expect(await wizard.getStepValues()).toStrictEqual({
-      'Disk Size': '',
-      Width: '',
-      'Treat Disk Size as Minimum': false,
-    });
-    await wizard.clickNext();
-
-    // CACHE step activated
-    expect(await (await wizard.getActiveStep()).getLabel()).toBe('Cache (Optional)');
-    await wizard.fillStep({
-      'Disk Size': '20 GiB (HDD)',
-      Width: '1',
-    });
-    expect(await wizard.getConfigurationPreviewSummary()).toMatchObject({ 'Cache:': '1 × STRIPE | 1 × 20 GiB (HDD)' });
-    const resetCacheButton = (await (await wizard.getActiveStep()).getHarness(MatButtonHarness.with({ text: 'Reset Step' })));
-    await resetCacheButton.click();
-    expect(await wizard.getStepValues()).toStrictEqual({
-      'Disk Size': '',
-      'Treat Disk Size as Minimum': false,
-      Width: '',
     });
 
     expect(await wizard.getConfigurationPreviewSummary()).toMatchObject({
-      'Data:': 'None',
-      'Log:': 'None',
-      'Spare:': 'None',
-      'Cache:': 'None',
-      'Dedup:': 'None',
+      'Data:': '1 × DRAID1 | 3 × 20 GiB (HDD)',
     });
+
+    const stepper = await wizard.getStepper();
+    await stepper.selectStep({ label: 'Review' });
+
+    expect(await (await wizard.getActiveStep()).getLabel()).toBe('Review');
+
+    await wizard.clickCreatePoolButton();
+
+    const dialog = spectator.inject(MatDialog);
+
+    expect(dialog.open).toHaveBeenCalledWith(EntityJobComponent, {
+      disableClose: true,
+      data: {
+        title: 'Create Pool',
+      },
+    });
+
+    expect(mockEntityJobComponentRef.componentInstance.setCall).toHaveBeenCalledWith('pool.create', [{
+      name: 'dRAID',
+      allow_duplicate_serials: false,
+      encryption: false,
+      topology: {
+        data: [
+          {
+            disks: ['sda3', 'sda0', 'sda1'],
+            type: CreateVdevLayout.Draid1,
+            draid_data_disks: 1,
+            draid_spare_disks: 1,
+          },
+        ],
+        cache: [],
+        dedup: [],
+        log: [],
+        spares: [],
+        special: [],
+      },
+    }]);
   });
 });
