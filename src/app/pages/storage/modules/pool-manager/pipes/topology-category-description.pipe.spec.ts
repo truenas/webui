@@ -40,4 +40,16 @@ describe('TopologyCategoryDescriptionPipe', () => {
       vdevs: [[{}], [{}]],
     } as PoolManagerTopologyCategory)).toBe('2 × STRIPE | 3 × 2 GiB (HDD)');
   });
+
+  it('returns a string describing Typology which has layout limit', () => {
+    expect(spectator.service.transform({
+      diskSize: 2 * GiB,
+      vdevsNumber: 2,
+      layout: CreateVdevLayout.Stripe,
+      width: 3,
+      diskType: DiskType.Hdd,
+      vdevs: [[{}], [{}]],
+    } as PoolManagerTopologyCategory, false),
+    ).toBe('3 × 2 GiB (HDD)');
+  });
 });

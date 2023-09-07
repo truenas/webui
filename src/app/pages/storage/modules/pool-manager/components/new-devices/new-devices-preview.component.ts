@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { vdevTypeLabels } from 'app/enums/v-dev-type.enum';
+import { VdevType, vdevTypeLabels } from 'app/enums/v-dev-type.enum';
 import {
   PoolManagerStore,
 } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
@@ -27,5 +27,9 @@ export class NewDevicesPreviewComponent {
 
   get unknownProp(): string {
     return this.translate.instant('None');
+  }
+
+  isTopologyLimitedToOneLayout(type: string): boolean {
+    return type === VdevType.Spare || type === VdevType.Cache;
   }
 }

@@ -24,7 +24,7 @@
             {{ category[0] | mapValue: vdevTypeLabels | translate }}
           </div>
           <div class="value">
-            {{ category[1] | ixTopologyCategoryDescription }}
+            {{ category[1] | ixTopologyCategoryDescription: !isTopologyLimitedToOneLayout(category[0]) }}
           </div>
         </div>
       </ng-container>
