@@ -9,6 +9,14 @@
       [tooltip]="'Pick a display device to open' | translate"
       [required]="true"
     ></ix-select>
+    <ix-input
+      *ngIf="isPasswordConfigured"
+      formControlName="password"
+      type="password"
+      [label]="'Enter password' | translate"
+      [tooltip]="'Enter password to unlock this display device' | translate"
+      [required]="true"
+    ></ix-input>
   </form>
 </div>
 <div mat-dialog-actions class="buttons">
