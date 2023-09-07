@@ -26,7 +26,6 @@ import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxDynamicFormModule } from 'app/modules/ix-dynamic-form/ix-dynamic-form.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
-import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
@@ -51,11 +50,6 @@ import {
   ManageCatalogSummaryDialogComponent,
 } from 'app/pages/apps/components/catalogs/manage-catalog-summary/manage-catalog-summary-dialog.component';
 import { ChartWizardComponent } from 'app/pages/apps/components/chart-wizard/chart-wizard.component';
-import { DockerImageDeleteDialogComponent } from 'app/pages/apps/components/docker-images/docker-image-delete-dialog/docker-image-delete-dialog.component';
-import { DockerImageUpdateDialogComponent } from 'app/pages/apps/components/docker-images/docker-image-update-dialog/docker-image-update-dialog.component';
-import { DockerImagesListComponent } from 'app/pages/apps/components/docker-images/docker-images-list/docker-images-list.component';
-import { DockerImagesComponentStore } from 'app/pages/apps/components/docker-images/docker-images.store';
-import { PullImageFormComponent } from 'app/pages/apps/components/docker-images/pull-image-form/pull-image-form.component';
 import { AppBulkUpgradeComponent } from 'app/pages/apps/components/installed-apps/app-bulk-upgrade/app-bulk-upgrade.component';
 import { AppInfoCardComponent } from 'app/pages/apps/components/installed-apps/app-info-card/app-info-card.component';
 import { AppRollbackModalComponent } from 'app/pages/apps/components/installed-apps/app-rollback-modal/app-rollback-modal.component';
@@ -136,10 +130,6 @@ import { KubernetesStatusComponent } from './components/installed-apps/kubernete
     CatalogDeleteDialogComponent,
     CustomAppButtonComponent,
     KubernetesStatusComponent,
-    DockerImagesListComponent,
-    DockerImageUpdateDialogComponent,
-    DockerImageDeleteDialogComponent,
-    PullImageFormComponent,
   ],
   imports: [
     CommonModule,
@@ -176,7 +166,6 @@ import { KubernetesStatusComponent } from './components/installed-apps/kubernete
     GalleryModule,
     LightboxModule,
     MarkdownModule,
-    IxTableModule,
     IxTable2Module,
     LayoutModule,
   ],
@@ -185,7 +174,6 @@ import { KubernetesStatusComponent } from './components/installed-apps/kubernete
     AppsFilterStore,
     KubernetesStore,
     InstalledAppsStore,
-    DockerImagesComponentStore,
   ],
 })
 export class AppsModule { }
