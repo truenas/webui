@@ -65,8 +65,8 @@ export class NormalSelectionComponent implements OnInit, OnChanges {
     }
   }
 
-  get isSpareVdev(): boolean {
-    return this.type === VdevType.Spare;
+  get isNumberOfVdevsLimitedToOne(): boolean {
+    return this.type === VdevType.Spare || this.type === VdevType.Cache || this.type === VdevType.Log;
   }
 
   protected onDisksSelected(disks: UnusedDisk[]): void {
@@ -112,7 +112,7 @@ export class NormalSelectionComponent implements OnInit, OnChanges {
 
       this.store.setAutomaticTopologyCategory(this.type, {
         width: values.width,
-        vdevsNumber: this.isSpareVdev ? 1 : values.vdevsNumber,
+        vdevsNumber: this.isNumberOfVdevsLimitedToOne ? 1 : values.vdevsNumber,
       });
     });
   }
