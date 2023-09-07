@@ -213,6 +213,7 @@
   "RAIDZ2": "",
   "RAIDZ3": "",
   "Recommended number of data disks for optimal space allocation should be power of 2 (2, 4, 8, 16...).": "",
+  "Remove this error to try again": "",
   "Renew 2FA Secret": "",
   "Renew 2FA secret": "",
   "Renew Certificate Days Before Expiry": "",

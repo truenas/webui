@@ -171,7 +171,6 @@ describe('PoolManagerComponent – start over functionality', () => {
       Layout: 'Stripe',
       'Disk Size': '20 GiB (HDD)',
       Width: '1',
-      'Number of VDEVs': '1',
     });
     await wizard.clickNext();
 
@@ -188,7 +187,6 @@ describe('PoolManagerComponent – start over functionality', () => {
     await wizard.fillStep({
       'Disk Size': '20 GiB (HDD)',
       Width: '1',
-      'Number of VDEVs': '1',
     });
     await wizard.clickNext();
 
@@ -247,10 +245,10 @@ describe('PoolManagerComponent – start over functionality', () => {
     expect(await (await wizard.getActiveStep()).getLabel()).toBe('Data');
     expect(await wizard.getStepValues()).toStrictEqual({
       'Disk Size': '',
-      'Layout': '',
+      Layout: '',
       'Number of VDEVs': '',
       'Treat Disk Size as Minimum': false,
-      'Width': '',
+      Width: '',
     });
     await wizard.clickNext();
 
@@ -259,9 +257,8 @@ describe('PoolManagerComponent – start over functionality', () => {
     expect(await wizard.getStepValues()).toStrictEqual({
       'Disk Size': '',
       'Layout': '',
-      'Number of VDEVs': '',
       'Treat Disk Size as Minimum': false,
-      'Width': '',
+      Width: '',
     });
     await wizard.clickNext();
 
@@ -269,7 +266,7 @@ describe('PoolManagerComponent – start over functionality', () => {
     expect(await (await wizard.getActiveStep()).getLabel()).toBe('Spare (Optional)');
     expect(await wizard.getStepValues()).toStrictEqual({
       'Disk Size': '',
-      'Width': '',
+      Width: '',
       'Treat Disk Size as Minimum': false,
     });
     await wizard.clickNext();
@@ -278,9 +275,8 @@ describe('PoolManagerComponent – start over functionality', () => {
     expect(await (await wizard.getActiveStep()).getLabel()).toBe('Cache (Optional)');
     expect(await wizard.getStepValues()).toStrictEqual({
       'Disk Size': '',
-      'Number of VDEVs': '',
       'Treat Disk Size as Minimum': false,
-      'Width': '',
+      Width: '',
     });
     await wizard.clickNext();
 
@@ -290,7 +286,7 @@ describe('PoolManagerComponent – start over functionality', () => {
       'Disk Size': '',
       'Number of VDEVs': '',
       'Treat Disk Size as Minimum': false,
-      'Width': '',
+      Width: '',
     });
     await wizard.clickNext();
 
@@ -300,7 +296,7 @@ describe('PoolManagerComponent – start over functionality', () => {
       'Disk Size': '',
       'Number of VDEVs': '',
       'Treat Disk Size as Minimum': false,
-      'Width': '',
+      Width: '',
     });
 
     expect(await wizard.getConfigurationPreviewSummary()).toMatchObject({

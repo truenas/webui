@@ -75,10 +75,6 @@ To start run
 This runs a local webserver with the new WebUI, by default at http://localhost:4200.
 If this webserver is kept running, changes to the project will be rebuilt incrementally.
 
-To test AOT in dev mode run
-
-```yarn run start:dev:aot```
-
 To run the production build, run
 
 ```yarn run build:prod:aot```
