@@ -1,4 +1,3 @@
-import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -96,7 +95,6 @@ export class DataProtectionDashboardComponent implements OnInit {
     private translate: TranslateService,
     private store$: Store<AppState>,
     private snackbar: SnackbarService,
-    private storageService: StorageService,
   ) {
     this.storage
       .listDisks()
@@ -248,7 +246,6 @@ export class DataProtectionDashboardComponent implements OnInit {
         tableConf: {
           title: helptext.fieldset_replication_tasks,
           titleHref: '/tasks/replication',
-          queryCallOption: [[], { extra: { check_dataset_encryption_keys: true } }],
           queryCall: 'replication.query',
           deleteCall: 'replication.delete',
           deleteMsg: {
@@ -601,29 +598,6 @@ export class DataProtectionDashboardComponent implements OnInit {
             .subscribe(() => this.refreshTable(TaskCardId.Replication));
         },
       },
-      {
-        name: 'download_keys',
-        matTooltip: this.translate.instant('Download encryption keys'),
-        icon: 'download',
-        onClick: (row) => {
-          this.ws.call('core.download', ['pool.dataset.export_keys_for_replication', [row.id], `${row.name}_encryption_keys.json`]).pipe(untilDestroyed(this)).subscribe({
-            next: ([, url]) => {
-              const mimetype = 'application/json';
-              this.storage.streamDownloadFile(url, `${row.name}_encryption_keys.json`, mimetype).pipe(untilDestroyed(this)).subscribe({
-                next: (file) => {
-                  this.storage.downloadBlob(file, `${row.name}_encryption_keys.json`);
-                },
-                error: (err: HttpErrorResponse) => {
-                  this.dialogService.error(this.errorHandler.parseHttpError(err));
-                },
-              });
-            },
-            error: (err) => {
-              this.dialogService.error(this.errorHandler.parseWsError(err));
-            },
-          });
-        },
-      },
     ];
   }
 
@@ -783,9 +757,6 @@ export class DataProtectionDashboardComponent implements OnInit {
       return false;
     }
     if (name === 'stop' && (row.job ? row.job && row.job.state !== JobState.Running : true)) {
-      return false;
-    }
-    if (name === 'download_keys' && !(row.has_encrypted_dataset_keys)) {
       return false;
     }
     return true;
