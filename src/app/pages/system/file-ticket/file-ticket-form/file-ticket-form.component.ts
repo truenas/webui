@@ -25,6 +25,7 @@ import {
 } from 'app/interfaces/support.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { GeneralDialogConfig } from 'app/modules/common/dialog/general-dialog/general-dialog.component';
+import { ixManualValidateError } from 'app/modules/ix-forms/components/ix-errors/ix-errors.component';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -110,7 +111,7 @@ export class FileTicketFormComponent implements OnInit {
       this.screenshots = validScreenshots;
       if (invalidFiles.length) {
         const message = invalidFiles.map((error) => `${error.name} – ${error.errorMessage}`).join('\n');
-        this.form.controls.screenshot.setErrors({ ixManualValidateError: { message } });
+        this.form.controls.screenshot.setErrors({ [ixManualValidateError]: { message } });
       } else {
         this.form.controls.screenshot.setErrors(null);
       }
