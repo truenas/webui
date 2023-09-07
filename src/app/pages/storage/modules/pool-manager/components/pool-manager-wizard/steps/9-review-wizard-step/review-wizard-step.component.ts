@@ -117,4 +117,8 @@ export class ReviewWizardStepComponent implements OnInit {
         this.store.startOver();
       });
   }
+
+  isTopologyLimitedToOneLayout(type: string): boolean {
+    return type === VdevType.Spare || type === VdevType.Cache;
+  }
 }
