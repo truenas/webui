@@ -1238,7 +1238,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   omitDescriptor(group: EnclosureElementsGroup | EnclosureElement): EnclosureElementsGroup | EnclosureElement {
     const returnValue = { ...group as EnclosureElementsGroup };
     if (returnValue.header) {
-      returnValue.header = returnValue.header.filter(header => header !== 'Descriptor');
+      returnValue.header = returnValue.header.filter((header) => header !== 'Descriptor');
     }
     return returnValue;
   }
