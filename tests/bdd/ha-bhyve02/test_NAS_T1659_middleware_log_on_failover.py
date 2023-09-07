@@ -2,6 +2,7 @@
 
 import pytest
 import reusableSeleniumCode as rsc
+import time
 from function import (
     ssh_cmd,
     post
@@ -53,6 +54,7 @@ def on_the_dashboard_verify_the_middleware_logs_exist(driver, logs_data):
     middlewared_log = ssh_cmd(cmd, admin_User, admin_Password, nas_Hostname)
     assert middlewared_log['result'] is True, str(middlewared_log)
     logs_data['middleware_log_line'] = middlewared_log['output'].splitlines()[-1]
+    time.sleep(5)
 
 
 @then('click Initiate Failover on the standby controller')
