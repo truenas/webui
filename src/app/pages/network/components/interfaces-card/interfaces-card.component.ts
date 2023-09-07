@@ -30,7 +30,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { NetworkService } from 'app/services/network.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
-import { adminNetworkInterfacesChanged } from 'app/store/admin-panel/admin.actions';
+import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
 
 @UntilDestroy()
 @Component({
@@ -146,7 +146,7 @@ export class InterfacesCardComponent implements OnInit {
       .subscribe(() => {
         this.interfacesUpdated.emit();
         this.interfacesStore$.loadInterfaces();
-        this.store$.dispatch(adminNetworkInterfacesChanged({ commit: false, checkIn: false }));
+        this.store$.dispatch(networkInterfacesChanged({ commit: false, checkIn: false }));
       });
   }
 

@@ -171,7 +171,6 @@ describe('PoolManagerComponent – wizard step reset', () => {
       Layout: 'Stripe',
       'Disk Size': '20 GiB (HDD)',
       Width: '1',
-      'Number of VDEVs': '1',
     });
     expect(await wizard.getConfigurationPreviewSummary()).toMatchObject({ 'Log:': '1 × STRIPE | 1 × 20 GiB (HDD)' });
     const resetLogButton = (await (await wizard.getActiveStep()).getHarness(MatButtonHarness.with({ text: 'Reset Step' })));
@@ -179,7 +178,6 @@ describe('PoolManagerComponent – wizard step reset', () => {
     expect(await wizard.getStepValues()).toStrictEqual({
       'Disk Size': '',
       'Layout': '',
-      'Number of VDEVs': '',
       'Treat Disk Size as Minimum': false,
       'Width': '',
     });
@@ -206,14 +204,12 @@ describe('PoolManagerComponent – wizard step reset', () => {
     await wizard.fillStep({
       'Disk Size': '20 GiB (HDD)',
       Width: '1',
-      'Number of VDEVs': '1',
     });
     expect(await wizard.getConfigurationPreviewSummary()).toMatchObject({ 'Cache:': '1 × STRIPE | 1 × 20 GiB (HDD)' });
     const resetCacheButton = (await (await wizard.getActiveStep()).getHarness(MatButtonHarness.with({ text: 'Reset Step' })));
     await resetCacheButton.click();
     expect(await wizard.getStepValues()).toStrictEqual({
       'Disk Size': '',
-      'Number of VDEVs': '',
       'Treat Disk Size as Minimum': false,
       'Width': '',
     });

@@ -242,7 +242,6 @@ describe('PoolManagerComponent – unsetting on fewer disks', () => {
     expect(await wizard.getStepValues()).toMatchObject({
       'Disk Size': '',
       Width: '',
-      'Number of VDEVs': '',
     });
   });
 
