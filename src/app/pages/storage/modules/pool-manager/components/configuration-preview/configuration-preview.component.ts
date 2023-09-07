@@ -24,7 +24,7 @@ export class ConfigurationPreviewComponent {
 
   protected topology$ = this.store.topology$.pipe(
     map((topology) => {
-      if (this.store.isUsingDraidLayoutCheck(topology)) {
+      if (this.store.isUsingDraidLayout(topology)) {
         delete topology.spare;
       }
       return topology;
