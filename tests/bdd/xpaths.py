@@ -103,6 +103,7 @@ class advanced:
 
 class alert():
     title = '//h3[text()="Alerts"]'
+    panel_Open = '//mat-sidenav[contains(.,"Alerts") and contains(@class,"mat-drawer-opened")]'
     degraded_Critical_Level = '//ix-alert[contains(.,"DEGRADED")]//h3[contains(.,"Critical")]'
     degraded_Pool_Text = '//h4[contains(.,"Pool tank state is DEGRADED")]'
     close_Button = '//button[contains(.,"clear")]'
