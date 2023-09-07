@@ -6,6 +6,12 @@
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
   <ix-fieldset>
     <ix-input
+      formControlName="graphite"
+      [label]="'Remote Graphite Server Hostname' | translate"
+      [tooltip]="tooltips.graphite | translate"
+    ></ix-input>
+
+    <ix-input
       formControlName="graph_age"
       type="number"
       [label]="'Graph Age in Months' | translate"
