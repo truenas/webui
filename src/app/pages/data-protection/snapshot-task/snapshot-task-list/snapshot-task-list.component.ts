@@ -12,7 +12,7 @@ import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
-import { SnapshotTaskComponent } from 'app/pages/data-protection/snapshot/snapshot-task/snapshot-task.component';
+import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -25,7 +25,7 @@ import { WebSocketService } from 'app/services/ws.service';
   template: '<ix-entity-table [title]="title" [conf]="this"></ix-entity-table>',
   providers: [TaskService, StorageService],
 })
-export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshotTaskUi> {
+export class SnapshotTaskListComponent implements EntityTableConfig<PeriodicSnapshotTaskUi> {
   title = this.translate.instant('Periodic Snapshot Tasks');
   queryCall = 'pool.snapshottask.query' as const;
   updateCall = 'pool.snapshottask.update' as const;
@@ -131,13 +131,13 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
   }
 
   doAdd(): void {
-    const slideInRef = this.slideInService.open(SnapshotTaskComponent, { wide: true });
+    const slideInRef = this.slideInService.open(SnapshotTaskFormComponent, { wide: true });
     slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
   }
 
   doEdit(id: number): void {
     const snapshotTask = this.entityList.rows.find((row) => row.id === id);
-    const slideInRef = this.slideInService.open(SnapshotTaskComponent, { wide: true, data: snapshotTask });
+    const slideInRef = this.slideInService.open(SnapshotTaskFormComponent, { wide: true, data: snapshotTask });
     slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
   }
 }
