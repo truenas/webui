@@ -60,8 +60,8 @@ export class LayoutStepComponent implements OnInit {
     this.dialog.open(ManualDiskSelectionComponent, {
       data: {
         inventory,
-        enclosures: this.enclosures,
         layout: this.topologyCategory.layout,
+        enclosures: this.enclosures,
         vdevs: this.topologyCategory.vdevs,
         vdevsLimit: this.isSpareVdev ? 1 : null,
       } as ManualDiskSelectionParams,
