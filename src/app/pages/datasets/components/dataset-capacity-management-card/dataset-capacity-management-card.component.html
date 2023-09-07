@@ -60,9 +60,8 @@
             {{ 'Space Available to Dataset' | translate }}
           </ng-container>
           <ng-container *ngIf="isZvol">
-            {{ 'Space Available to Zvol' | translate }}
+            {{ 'Space Available to Zvol' | translate }}:
           </ng-container>
-          :
         </div>
         <div class="value">
           {{ dataset.available.parsed | filesize: { standard: 'iec', round: 0 } }}
