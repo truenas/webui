@@ -57,7 +57,7 @@ export class ReviewWizardStepComponent implements OnInit {
 
   get hasVdevs(): boolean {
     return Object.keys(this.state.topology).some((type) => {
-      return this.state.topology?.[type as VdevType]?.vdevs?.length > 0;
+      return this.state.topology[type as VdevType].vdevs.length > 0;
     });
   }
 
@@ -95,7 +95,7 @@ export class ReviewWizardStepComponent implements OnInit {
   private filterNonEmptyCategories(topology: PoolManagerTopology): [VdevType, PoolManagerTopologyCategory][] {
     return Object.keys(topology).reduce((acc, type) => {
       const category = topology[type as VdevType];
-      if (category?.vdevs?.length > 0) {
+      if (category.vdevs.length > 0) {
         acc.push([type as VdevType, category]);
       }
       return acc;

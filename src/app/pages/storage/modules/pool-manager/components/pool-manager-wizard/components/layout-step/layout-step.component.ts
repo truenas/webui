@@ -61,8 +61,8 @@ export class LayoutStepComponent implements OnInit {
       data: {
         inventory,
         enclosures: this.enclosures,
-        layout: this.topologyCategory?.layout,
-        vdevs: this.topologyCategory?.vdevs,
+        layout: this.topologyCategory.layout,
+        vdevs: this.topologyCategory.vdevs,
         vdevsLimit: this.isSpareVdev ? 1 : null,
       } as ManualDiskSelectionParams,
       panelClass: 'manual-selection-dialog',

@@ -51,7 +51,7 @@ export class PoolManagerValidationService {
     .pipe(
       map(([existingPool, nameErrors, topology, enclosure, [hasMultipleEnclosures, hasEnclosureSupport]]) => {
         const hasAtleastOneVdev = Object.values(VdevType).some((vdevType) => topology[vdevType]?.vdevs.length > 0);
-        const hasDataVdevs = topology[VdevType.Data]?.vdevs?.length > 0;
+        const hasDataVdevs = topology[VdevType.Data].vdevs.length > 0;
         const errors: PoolCreationError[] = [];
 
         if (nameErrors?.required) {
@@ -133,7 +133,7 @@ export class PoolManagerValidationService {
 
           if (
             [VdevType.Dedup, VdevType.Log, VdevType.Special, VdevType.Data].includes(topologyCategoryType)
-            && topologyCategory?.vdevs?.length >= 1 && topologyCategory.layout === CreateVdevLayout.Stripe
+            && topologyCategory.vdevs.length >= 1 && topologyCategory.layout === CreateVdevLayout.Stripe
           ) {
             if (topologyCategoryType === VdevType.Log) {
               errors.push({
@@ -152,7 +152,7 @@ export class PoolManagerValidationService {
             }
           }
 
-          const nonUniqueSerialDisks = topologyCategory?.vdevs?.flat()?.filter(hasNonUniqueSerial);
+          const nonUniqueSerialDisks = topologyCategory.vdevs.flat().filter(hasNonUniqueSerial);
 
           if (nonUniqueSerialDisks?.length) {
             errors.push({
@@ -162,7 +162,7 @@ export class PoolManagerValidationService {
             });
           }
 
-          const disksWithExportedPools = topologyCategory?.vdevs?.flat()?.filter(hasExportedPool);
+          const disksWithExportedPools = topologyCategory.vdevs.flat().filter(hasExportedPool);
 
           if (disksWithExportedPools?.length) {
             errors.push({
@@ -225,7 +225,7 @@ export class PoolManagerValidationService {
   private filterNonEmptyCategories(topology: PoolManagerTopology): [VdevType, PoolManagerTopologyCategory][] {
     return Object.keys(topology).reduce((acc, type) => {
       const category = topology[type as VdevType];
-      if (category?.vdevs?.length > 0) {
+      if (category.vdevs.length > 0) {
         acc.push([type as VdevType, category]);
       }
       return acc;

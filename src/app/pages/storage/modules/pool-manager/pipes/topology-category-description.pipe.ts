@@ -12,7 +12,7 @@ export class TopologyCategoryDescriptionPipe implements PipeTransform {
   ) {}
 
   transform(category: PoolManagerTopologyCategory): string {
-    if (category.vdevs?.length === 0 || !category.vdevs) {
+    if (category.vdevs.length === 0 || !category.vdevs) {
       return this.translate.instant('None');
     }
 

@@ -12,7 +12,7 @@ export function topologyToDisks(topology: PoolManagerTopology): UnusedDisk[] {
 }
 
 export function topologyCategoryToDisks(topologyCategory: PoolManagerTopologyCategory): UnusedDisk[] {
-  return topologyCategory?.vdevs?.flat();
+  return topologyCategory.vdevs.flat();
 }
 
 export function topologyToPayload(topology: PoolManagerTopology): UpdatePoolTopology {

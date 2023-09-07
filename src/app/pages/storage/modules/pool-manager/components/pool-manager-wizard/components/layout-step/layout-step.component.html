@@ -3,7 +3,7 @@
 </div>
 
 <ix-automated-disk-selection
-  *ngIf="!topologyCategory?.hasCustomDiskSelection; else customLayout"
+  *ngIf="!topologyCategory.hasCustomDiskSelection; else customLayout"
   class="content-container"
   [limitLayouts]="limitLayouts"
   [type]="type"
