@@ -211,6 +211,7 @@ def refresh_and_wait_for_the_second_node_to_be_up(driver):
     """refresh and wait for the second node to be up"""
     assert wait_on_element(driver, 45, xpaths.toolbar.ha_Disabled)
     assert wait_on_element(driver, 180, xpaths.toolbar.ha_Enabled)
+    driver.refresh()
     # 5 second to let the system get ready for the next step.
     time.sleep(5)
 
