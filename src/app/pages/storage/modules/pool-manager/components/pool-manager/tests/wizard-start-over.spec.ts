@@ -210,8 +210,8 @@ describe('PoolManagerComponent – start over functionality', () => {
     expect(await wizard.getConfigurationPreviewSummary()).toMatchObject({
       'Data:': '1 × STRIPE | 1 × 20 GiB (HDD)',
       'Log:': '1 × STRIPE | 1 × 20 GiB (HDD)',
-      'Spare:': '1 × STRIPE | 1 × 20 GiB (HDD)',
-      'Cache:': '1 × STRIPE | 1 × 20 GiB (HDD)',
+      'Spare:': '1 × 20 GiB (HDD)',
+      'Cache:': '1 × 20 GiB (HDD)',
       'Dedup:': '1 × STRIPE | 1 × 20 GiB (HDD)',
     });
     await wizard.clickNext();
