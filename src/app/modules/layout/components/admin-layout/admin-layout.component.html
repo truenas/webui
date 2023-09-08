@@ -49,12 +49,10 @@
 
       <div *ngIf="!isSidenavCollapsed" class="sidenav-copyright-txt">
         <div
-          *ngIf="hostname"
+          *ngIf="hostname$ | async as hostname"
           class="hostname-label"
-          [matTooltip]="'Hostname: ' + hostname"
-        >
-          {{ hostname }}
-        </div>
+          [matTooltip]="'Hostname: {hostname}' | translate: { hostname }"
+        >{{ hostname }}</div>
         <ix-copyright-line class="copyright-line"></ix-copyright-line>
       </div>
       <div
@@ -73,7 +71,7 @@
     [fxFlex]="'calc(100% - ' + sidenavWidth + ')'"
     [style.margin-left]="sidenavWidth"
   >
-    <ix-topbar [sidenav]="sidenav" (sidenavStatusChange)="onSidenavStatusChange($event)"></ix-topbar>
+    <ix-topbar></ix-topbar>
 
     <div class="slidein-nav slidein-nav-md" [class.slidein-open]="isOpen">
       <ix-secondary-menu

@@ -1,9 +1,8 @@
 import {
-  Component, EventEmitter, Inject, Input, OnInit, Output,
+  Component, Inject, OnInit,
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { MatSidenav } from '@angular/material/sidenav';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Actions, ofType } from '@ngrx/effects';
@@ -20,7 +19,6 @@ import { WINDOW } from 'app/helpers/window.helper';
 import network_interfaces_helptext from 'app/helptext/network/interfaces/interfaces-list';
 import helptext from 'app/helptext/topbar';
 import { HaStatus } from 'app/interfaces/events/ha-status-event.interface';
-import { SidenavStatusData } from 'app/interfaces/events/sidenav-status-event.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AlertSlice, selectImportantUnreadAlertsCount } from 'app/modules/alerts/store/alert.selectors';
@@ -35,14 +33,12 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { LayoutService } from 'app/services/layout.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { selectHaStatus, selectIsHaLicensed, selectIsUpgradePending } from 'app/store/ha-info/ha-info.selectors';
 import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
-import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
-import { alertIndicatorPressed, sidenavUpdated } from 'app/store/topbar/topbar.actions';
+import { alertIndicatorPressed, sidenavIndicatorPressed } from 'app/store/topbar/topbar.actions';
 
 @UntilDestroy()
 @Component({
@@ -51,9 +47,6 @@ import { alertIndicatorPressed, sidenavUpdated } from 'app/store/topbar/topbar.a
   styleUrls: ['./topbar.component.scss'],
 })
 export class TopbarComponent implements OnInit {
-  @Input() sidenav: MatSidenav;
-  @Output() sidenavStatusChange = new EventEmitter<SidenavStatusData>();
-
   updateIsDone: Subscription;
 
   showResilvering = false;
@@ -64,7 +57,6 @@ export class TopbarComponent implements OnInit {
   haDisabledReasons: FailoverDisabledReason[] = [];
   isFailoverLicensed = false;
   upgradeWaitingToFinish = false;
-  hostname: string;
   checkinRemaining: number;
   checkinInterval: Interval;
   updateIsRunning = false;
@@ -89,7 +81,6 @@ export class TopbarComponent implements OnInit {
     private translate: TranslateService,
     private loader: AppLoaderService,
     private mediaObserver: MediaObserver,
-    private layoutService: LayoutService,
     private store$: Store<AlertSlice>,
     private snackbar: SnackbarService,
     private errorHandler: ErrorHandlerService,
@@ -181,35 +172,14 @@ export class TopbarComponent implements OnInit {
 
       this.showResilvering = scan.state !== PoolScanState.Finished;
     });
-
-    this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((sysInfo) => {
-      this.hostname = sysInfo.hostname;
-    });
   }
 
   onAlertIndicatorPressed(): void {
     this.store$.dispatch(alertIndicatorPressed());
   }
 
-  toggleCollapse(): void {
-    if (this.layoutService.isMobile) {
-      this.sidenav.toggle();
-    } else {
-      this.sidenav.open();
-      this.layoutService.isMenuCollapsed = !this.layoutService.isMenuCollapsed;
-    }
-
-    const data: SidenavStatusData = {
-      isOpen: this.sidenav.opened,
-      mode: this.sidenav.mode,
-      isCollapsed: this.layoutService.isMenuCollapsed,
-    };
-
-    if (!this.layoutService.isMobile) {
-      this.store$.dispatch(sidenavUpdated(data));
-    }
-
-    this.sidenavStatusChange.emit(data);
+  onSidenavIndicatorPressed(): void {
+    this.store$.dispatch(sidenavIndicatorPressed());
   }
 
   getLogoIcon(): string {

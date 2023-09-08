@@ -776,6 +776,7 @@
   "Hostname (TrueNAS Controller 2)": "",
   "Hostname Database:": "",
   "Hostname:": "",
+  "Hostname: {hostname}": "",
   "Hour(s)": "",
   "How to configure the connection:<br><br>  <i>Manual</i> requires configuring authentication on the remote system.  This can include copying SSH keys and modifying the <i>root</i> user  account on that system.<br><br>  <i>Semi-automatic</i> only works when configuring an SSH connection  with a remote TrueNAS system. This method uses the URL and login  credentials of the remote system to connect and exchange SSH keys.": "",
   "How would you rate this page?": "",

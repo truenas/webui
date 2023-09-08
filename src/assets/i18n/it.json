@@ -1481,6 +1481,7 @@
   "Hostname or IP address of the remote system. A  valid URL scheme is required. Example:  <b>https://<i>10.231.3.76</i></b>": "",
   "Hostname or IP address of the system to  receive SNMP trap notifications.": "",
   "Hostname:": "",
+  "Hostname: {hostname}": "",
   "Hostnames or IP addresses of the  ISNS servers to be registered with the iSCSI targets and portals of  the system. Separate entries by pressing <code>Enter</code>.": "",
   "Hosts": "",
   "Hosts Allow": "",

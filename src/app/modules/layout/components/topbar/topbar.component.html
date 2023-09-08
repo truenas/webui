@@ -7,7 +7,7 @@
       matTooltipPosition="right"
       ixTest="toggle-sidenav"
       [matTooltip]="tooltips.toggle_collapse | translate"
-      (click)="toggleCollapse()"
+      (click)="onSidenavIndicatorPressed()"
     >
       <ix-icon name="menu"></ix-icon>
     </button>
@@ -16,15 +16,8 @@
 
     <a class="mobile-logo" routerLink="/" ixTest="mobile-logo">
       <div class="mobile-logo-container">
-        <ix-icon
-          name="ix:logo_truenas_scale_mark_color"
-          class="logomark"
-        ></ix-icon>
-
-        <ix-icon
-          name="ix:logo_truenas_scale_type_color"
-          class="logotype"
-        ></ix-icon>
+        <ix-icon name="ix:logo_truenas_scale_mark_color" class="logomark"></ix-icon>
+        <ix-icon name="ix:logo_truenas_scale_type_color" class="logotype"></ix-icon>
       </div>
     </a>
 
