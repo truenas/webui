@@ -191,17 +191,25 @@ def Verify_Degraded_Alert(driver):
         driver.find_element_by_xpath(xpaths.alert.close_Button).click()
         assert wait_on_element_disappear(driver, 5, xpaths.alert.panel_Open)
 
-    assert wait_on_element(driver, 7, xpaths.alert.degraded_Pool_Text)
-    assert wait_on_element(driver, 7, xpaths.alert.close_Button, 'clickable')
+    assert is_element_present(driver, xpaths.alert.degraded_Pool_Text)
+    assert wait_on_element(driver, 5, xpaths.alert.close_Button, 'clickable')
     driver.find_element_by_xpath(xpaths.alert.close_Button).click()
     time.sleep(0.5)
 
 
 def Verify_Degraded_Alert_Is_Gone(driver):
-    driver.find_element_by_xpath(xpaths.toolbar.notification_Button).click()
-    assert wait_on_element(driver, 7, xpaths.alert.title)
-    assert is_element_present(driver, xpaths.alert.degraded_Critical_Level) is False
-    assert wait_on_element(driver, 7, xpaths.alert.close_Button, 'clickable')
+    for _ in range(180):
+        assert wait_on_element(driver, 5, xpaths.toolbar.notification_Button, 'clickable')
+        driver.find_element_by_xpath(xpaths.toolbar.notification_Button).click()
+        assert wait_on_element(driver, 5, xpaths.alert.panel_Open)
+        if is_element_present(driver, xpaths.alert.degraded_Critical_Level) is False:
+            break
+        assert wait_on_element(driver, 5, xpaths.alert.close_Button, 'clickable')
+        driver.find_element_by_xpath(xpaths.alert.close_Button).click()
+        assert wait_on_element_disappear(driver, 5, xpaths.alert.panel_Open)
+
+    assert is_element_present(driver, xpaths.alert.degraded_Pool_Text) is False
+    assert wait_on_element(driver, 5, xpaths.alert.close_Button, 'clickable')
     driver.find_element_by_xpath(xpaths.alert.close_Button).click()
     time.sleep(0.5)
 

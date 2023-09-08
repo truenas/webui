@@ -104,9 +104,6 @@ def on_the_dashboard_verify_the_alert_exists_after_failover_with_the_right_volum
 
     rsc.Verify_Degraded_Alert(driver)
 
-    element_text = driver.find_element_by_xpath(xpaths.toolbar.notification_Text).text
-    notification['now'] = element_text
-
 
 @then('fix the degraded pool and verify that the pool is fixed')
 def fix_the_degraded_pool_and_verify_that_the_pool_is_fixed():
@@ -124,7 +121,6 @@ def fix_the_degraded_pool_and_verify_that_the_pool_is_fixed():
 @then('then wait for the alert to disappear and trigger failover again')
 def then_wait_for_the_alert_to_disappear_and_trigger_failover_again(driver, notification):
     """then wait for the alert to disappear and trigger failover again."""
-    assert wait_on_element_disappear(driver, 180, xpaths.toolbar.notification_Count(notification["now"]))
 
     rsc.Verify_Degraded_Alert_Is_Gone(driver)
 
