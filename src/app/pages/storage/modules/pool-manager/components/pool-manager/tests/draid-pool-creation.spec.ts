@@ -159,7 +159,7 @@ describe('PoolManagerComponent – creating dRAID pool', () => {
       'Disk Size': '20 GiB (HDD)',
       'Data Devices': '1',
       'Distributed Hot Spares': '1',
-      'Children': '3',
+      Children: '3',
       'Number of VDEVs': '1',
     });
 
@@ -199,7 +199,6 @@ describe('PoolManagerComponent – creating dRAID pool', () => {
         cache: [],
         dedup: [],
         log: [],
-        spares: [],
         special: [],
       },
     }]);
