@@ -3,13 +3,13 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { DataProtectionDashboardComponent } from 'app/pages/data-protection/data-protection-dashboard.component';
 import { RsyncTaskListComponent } from 'app/pages/data-protection/rsync-task/rsync-task-list/rsync-task-list.component';
 import { SmartTaskListComponent } from 'app/pages/data-protection/smart-task/smart-task-list/smart-task-list.component';
+import { SnapshotTaskListComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-list/snapshot-task-list.component';
 import { VmwareSnapshotListComponent } from 'app/pages/data-protection/vmware-snapshot/vmware-snapshot-list/vmware-snapshot-list.component';
 import { CloudsyncListComponent } from './cloudsync/cloudsync-list/cloudsync-list.component';
 import { ReplicationListComponent } from './replication/replication-list/replication-list.component';
 import { ReplicationWizardComponent } from './replication/replication-wizard/replication-wizard.component';
 import { ResilverConfigComponent } from './scrub-task/resilver-config/resilver-config.component';
 import { ScrubListComponent } from './scrub-task/scrub-list/scrub-list.component';
-import { SnapshotListComponent } from './snapshot/snapshot-list/snapshot-list.component';
 
 export const dataProtectionRoutes: Routes = [{
   path: '',
@@ -36,7 +36,7 @@ export const dataProtectionRoutes: Routes = [{
       data: { title: T('Periodic Snapshot Tasks'), breadcrumb: T('Periodic Snapshot Tasks'), icon: 'event_note' },
       children: [{
         path: '',
-        component: SnapshotListComponent,
+        component: SnapshotTaskListComponent,
         data: { title: T('Periodic Snapshot Tasks'), breadcrumb: T('Periodic Snapshot Tasks') },
       }],
     }, {
@@ -44,7 +44,7 @@ export const dataProtectionRoutes: Routes = [{
       data: { title: T('Periodic Snapshot Tasks'), breadcrumb: T('Periodic Snapshot Tasks'), icon: 'event_note' },
       children: [{
         path: '',
-        component: SnapshotListComponent,
+        component: SnapshotTaskListComponent,
         data: { title: T('Periodic Snapshot Tasks'), breadcrumb: T('Periodic Snapshot Tasks') },
       }],
     }, {

@@ -77,11 +77,6 @@ export class MockMini30Xl extends MockEnclosure {
   }
 
   processSlotTemplate(template: EnclosureElement): EnclosureElement {
-    // console.warn({...template});
-    /* const original = {
-      enclosure_id: '0',
-      slot: 0,
-    }; */
     const updatedTemplate = { ...template };
     const original = { ...template.original };
     if (template.slot === 1) {

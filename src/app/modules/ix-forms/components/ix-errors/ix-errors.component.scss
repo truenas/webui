@@ -3,5 +3,20 @@
 .mat-mdc-form-field-error {
   display: block;
   font-size: 12px;
+  height: 100%;
   margin-top: 3px;
+}
+
+.manual-error {
+  display: flex;
+
+  .manual-message {
+    width: 100%;
+  }
+
+  .close-icon {
+    cursor: pointer;
+    font-size: 18px;
+    margin: 0 4px;
+  }
 }

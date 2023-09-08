@@ -2,4 +2,13 @@
   <mat-error *ngFor="let message of messages">
     <span [innerHTML]="message"></span>
   </mat-error>
+  <mat-error *ngIf="control.errors && control.errors[ixManualValidateError]" class="manual-error">
+    <span class="manual-message" [innerHTML]="control.errors && control.errors[ixManualValidateError]?.message"></span>
+    <ix-icon
+      class="close-icon"
+      [matTooltip]="'Remove this error to try again' | translate"
+      [name]="'close'"
+      (click)="removeManualError()"
+    ></ix-icon>
+  </mat-error>
 </div>
