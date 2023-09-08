@@ -77,12 +77,7 @@
       ixTest="delete-dataset"
       [disabled]="form.invalid"
     >
-      <ng-container *ngIf="isZvol">
-        {{ 'Delete Zvol' | translate }}
-      </ng-container>
-      <ng-container *ngIf="!isZvol">
-        {{ 'Delete Dataset' | translate }}
-      </ng-container>
+      {{ 'Delete' | translate }} {{ isZvol ? ('Zvol' | translate) : ('Dataset' | translate) }}
     </button>
   </ix-form-actions>
 </form>
