@@ -112,6 +112,24 @@ describe('WebsocketConnectionService', () => {
     discardPeriodicTasks();
   }));
 
+  it('resumes calls that were paused because of broken connection', () => {
+    jest.spyOn(nextFakeSocket$, 'next');
+    spectator.service.isConnected$.next(true);
+    spectator.service.send('message-1');
+
+    spectator.service.isConnected$.next(false);
+    spectator.service.send('message-2');
+    spectator.service.send('message-3');
+
+    expect(nextFakeSocket$.next).toHaveBeenCalledWith('message-1');
+    expect(nextFakeSocket$.next).not.toHaveBeenCalledWith('message-2');
+    expect(nextFakeSocket$.next).not.toHaveBeenCalledWith('message-3');
+
+    spectator.service.isConnected$.next(true);
+    expect(nextFakeSocket$.next).toHaveBeenCalledWith('message-2');
+    expect(nextFakeSocket$.next).toHaveBeenCalledWith('message-3');
+  });
+
   it('redirect to signin page when close connection and isTryingReconnect is false', () => {
     fakeSocketConfig.openObserver.next({} as Event);
     spectator.service.isConnected$.next(true);
