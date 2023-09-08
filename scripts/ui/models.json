@@ -8,9 +8,17 @@
       "model": "M40",
       "systemProduct": "TRUENAS-M40"
     },
+    "R10": {
+      "model": "R10",
+      "systemProduct": "TRUENAS-R10"
+    },
     "R20": {
       "model": "R20",
       "systemProduct": "TRUENAS-R20"
+    },
+    "R30": {
+      "model": "R30",
+      "systemProduct": "TRUENAS-R30"
     },
     "R40": {
       "model": "R40",
