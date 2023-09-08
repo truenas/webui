@@ -1,0 +1,33 @@
+<ix-modal-header
+  [title]="'System Security' | translate"
+  [loading]="isLoading"
+></ix-modal-header>
+
+<mat-card class="card">
+  <mat-card-content>
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+      <ix-slide-toggle
+        formControlName="enable_fips"
+        color="primary"
+        [label]="'Enable FIPS' | translate"
+        [tooltip]="'Enforce the use of FIPS 140-2 compliant algorithms' | translate"
+      ></ix-slide-toggle>
+
+      <p>
+        {{ 'Restart is recommended after changing this setting' | translate }}
+      </p>
+
+      <div class="form-actions">
+        <button
+          mat-button
+          type="submit"
+          color="primary"
+          ixTest="save"
+          [disabled]="!form.valid"
+        >
+          {{ 'Save' | translate }}
+        </button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

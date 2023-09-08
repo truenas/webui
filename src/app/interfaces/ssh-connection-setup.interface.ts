@@ -19,6 +19,7 @@ export interface SshConnectionSetup {
     token?: string;
     otp_token?: string;
     sudo?: boolean;
+    verify_ssl?: boolean;
   };
 }
 

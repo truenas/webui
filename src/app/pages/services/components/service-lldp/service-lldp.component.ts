@@ -2,14 +2,15 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { choicesToOptions } from 'app/helpers/options.helper';
+import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import helptext from 'app/helptext/services/components/service-lldp';
 import { LldpConfigUpdate } from 'app/interfaces/lldp-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -64,7 +65,6 @@ export class ServiceLldpComponent implements OnInit {
   locationProvider = new SimpleAsyncComboboxProvider(this.ws.call('lldp.country_choices').pipe(choicesToOptions()));
 
   constructor(
-    protected router: Router,
     protected route: ActivatedRoute,
     protected ws: WebSocketService,
     private errorHandler: ErrorHandlerService,
@@ -74,6 +74,7 @@ export class ServiceLldpComponent implements OnInit {
     private translate: TranslateService,
     private dialogService: DialogService,
     private formErrorHandler: FormErrorHandlerService,
+    private slideInRef: IxSlideInRef<ServiceLldpComponent>,
   ) { }
 
   ngOnInit(): void {
@@ -105,7 +106,7 @@ export class ServiceLldpComponent implements OnInit {
         next: () => {
           this.isFormLoading = false;
           this.snackbar.success(this.translate.instant('Service configuration saved'));
-          this.router.navigate(['/services']);
+          this.slideInRef.close();
           this.cdr.markForCheck();
         },
         error: (error) => {

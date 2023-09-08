@@ -1,5 +1,5 @@
 import {
-  Component, EventEmitter, Inject, Input, OnDestroy, OnInit, Output,
+  Component, EventEmitter, Inject, Input, OnInit, Output,
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -33,15 +33,14 @@ import { FeedbackDialogComponent } from 'app/modules/ix-feedback/feedback-dialog
 import { topbarDialogPosition } from 'app/modules/layout/components/topbar/topbar-dialog-position.constant';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { LayoutService } from 'app/services/layout.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { adminNetworkInterfacesChanged } from 'app/store/admin-panel/admin.actions';
 import { selectHaStatus, selectIsHaLicensed, selectIsUpgradePending } from 'app/store/ha-info/ha-info.selectors';
+import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 import { alertIndicatorPressed, sidenavUpdated } from 'app/store/topbar/topbar.actions';
 
@@ -51,7 +50,7 @@ import { alertIndicatorPressed, sidenavUpdated } from 'app/store/topbar/topbar.a
   templateUrl: './topbar.component.html',
   styleUrls: ['./topbar.component.scss'],
 })
-export class TopbarComponent implements OnInit, OnDestroy {
+export class TopbarComponent implements OnInit {
   @Input() sidenav: MatSidenav;
   @Output() sidenavStatusChange = new EventEmitter<SidenavStatusData>();
 
@@ -92,7 +91,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
     private mediaObserver: MediaObserver,
     private layoutService: LayoutService,
     private store$: Store<AlertSlice>,
-    private core: CoreService,
     private snackbar: SnackbarService,
     private errorHandler: ErrorHandlerService,
     private actions$: Actions,
@@ -162,7 +160,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
     this.checkNetworkChangesPending();
     this.checkNetworkCheckinWaiting();
 
-    this.actions$.pipe(ofType(adminNetworkInterfacesChanged), untilDestroyed(this))
+    this.actions$.pipe(ofType(networkInterfacesChanged), untilDestroyed(this))
       .subscribe(({ commit, checkIn }) => {
         if (commit) {
           this.pendingNetworkChanges = false;
@@ -187,10 +185,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
     this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((sysInfo) => {
       this.hostname = sysInfo.hostname;
     });
-  }
-
-  ngOnDestroy(): void {
-    this.core.unregister({ observerClass: this });
   }
 
   onAlertIndicatorPressed(): void {
@@ -303,7 +297,7 @@ export class TopbarComponent implements OnInit, OnDestroy {
       this.loader.open();
       this.ws.call('interface.checkin').pipe(untilDestroyed(this)).subscribe({
         next: () => {
-          this.store$.dispatch(adminNetworkInterfacesChanged({ commit: true, checkIn: true }));
+          this.store$.dispatch(networkInterfacesChanged({ commit: true, checkIn: true }));
           this.loader.close();
           this.snackbar.success(
             this.translate.instant(network_interfaces_helptext.checkin_complete_message),

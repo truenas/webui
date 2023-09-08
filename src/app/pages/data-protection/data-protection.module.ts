@@ -14,6 +14,7 @@ import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { LayoutModule } from 'app/modules/layout/layout.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
@@ -40,6 +41,8 @@ import {
   ScrubTaskFormComponent,
 } from 'app/pages/data-protection/scrub-task/scrub-task-form/scrub-task-form.component';
 import { SmartTaskFormComponent } from 'app/pages/data-protection/smart-task/smart-task-form/smart-task-form.component';
+import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
+import { SnapshotTaskListComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-list/snapshot-task-list.component';
 import { VmwareSnapshotFormComponent } from 'app/pages/data-protection/vmware-snapshot/vmware-snapshot-form/vmware-snapshot-form.component';
 import { VmwareSnapshotListComponent } from 'app/pages/data-protection/vmware-snapshot/vmware-snapshot-list/vmware-snapshot-list.component';
 import { CloudsyncFormComponent } from './cloudsync/cloudsync-form/cloudsync-form.component';
@@ -55,8 +58,6 @@ import { ReplicationWizardComponent } from './replication/replication-wizard/rep
 import { ResilverConfigComponent } from './scrub-task/resilver-config/resilver-config.component';
 import { ScrubListComponent } from './scrub-task/scrub-list/scrub-list.component';
 import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-list.component';
-import { SnapshotListComponent } from './snapshot/snapshot-list/snapshot-list.component';
-import { SnapshotTaskComponent } from './snapshot/snapshot-task/snapshot-task.component';
 
 @NgModule({
   imports: [
@@ -78,10 +79,11 @@ import { SnapshotTaskComponent } from './snapshot/snapshot-task/snapshot-task.co
     TestIdModule,
     MatStepperModule,
     AppCommonModule,
+    LayoutModule,
   ],
   declarations: [
-    SnapshotListComponent,
-    SnapshotTaskComponent,
+    SnapshotTaskListComponent,
+    SnapshotTaskFormComponent,
     VmwareSnapshotFormComponent,
     VmwareSnapshotListComponent,
     RsyncTaskListComponent,

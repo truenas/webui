@@ -3,15 +3,16 @@ import {
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { forkJoin, of } from 'rxjs';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { NfsProtocol, nfsProtocolLabels } from 'app/enums/nfs-protocol.enum';
-import { choicesToOptions, mapToOptions } from 'app/helpers/options.helper';
+import { choicesToOptions } from 'app/helpers/operators/options.operators';
+import { mapToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-nfs';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { rangeValidator, portRangeValidator } from 'app/modules/ix-forms/validators/range-validation/range-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -70,9 +71,9 @@ export class ServiceNfsComponent implements OnInit {
     private fb: FormBuilder,
     private translate: TranslateService,
     private dialogService: DialogService,
-    private router: Router,
     private snackbar: SnackbarService,
     private matDialog: MatDialog,
+    private slideInRef: IxSlideInRef<ServiceNfsComponent>,
   ) {}
 
   ngOnInit(): void {
@@ -92,8 +93,8 @@ export class ServiceNfsComponent implements OnInit {
         next: () => {
           this.isFormLoading = false;
           this.snackbar.success(this.translate.instant('Service configuration saved'));
+          this.slideInRef.close();
           this.cdr.markForCheck();
-          this.router.navigate(['/services']);
         },
         error: (error) => {
           this.isFormLoading = false;
@@ -110,7 +111,6 @@ export class ServiceNfsComponent implements OnInit {
         next: (config) => {
           this.isAddSpnDisabled = !config.v4_krb;
           this.form.patchValue(config);
-          this.snackbar.success(this.translate.instant('Service configuration saved'));
           this.isFormLoading = false;
           this.cdr.markForCheck();
         },

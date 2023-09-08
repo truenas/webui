@@ -8,13 +8,13 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import {
-  combineLatest, from, Observable, of, Subscription,
+  from, Observable, of, Subscription,
 } from 'rxjs';
 import {
   debounceTime, filter, map, switchMap, take,
 } from 'rxjs/operators';
 import { allCommands } from 'app/constants/all-commands.constant';
-import { choicesToOptions } from 'app/helpers/options.helper';
+import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import helptext from 'app/helptext/account/user-form';
 import { Option } from 'app/interfaces/option.interface';
 import { User, UserUpdate } from 'app/interfaces/user.interface';
@@ -416,14 +416,9 @@ export class UserFormComponent implements OnInit {
     ]]).pipe(
       filter((shares) => !!shares.length),
       map((shares) => shares[0].path),
-      switchMap((homeSharePath) => {
-        this.form.patchValue({ home: homeSharePath });
-
-        return combineLatest([of(homeSharePath), this.form.controls.username.valueChanges]);
-      }),
       untilDestroyed(this),
-    ).subscribe(([homeSharePath, username]) => {
-      this.form.patchValue({ home: `${homeSharePath}/${username}` });
+    ).subscribe((homeSharePath) => {
+      this.form.patchValue({ home: homeSharePath });
     });
   }
 

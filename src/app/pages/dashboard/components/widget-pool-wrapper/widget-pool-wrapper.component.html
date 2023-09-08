@@ -1,6 +1,10 @@
 <ix-widget-pool
   *ngIf="!(isLoading$ | async)"
+  ixDrag
+  [showReorderHandle]="showReorderHandle"
   [poolState]="poolState$ | async"
   [volumeData]="volumeData$ | async"
   (back)="onMobileBack()"
-></ix-widget-pool>
+>
+  <span ixDragHandle></span>
+</ix-widget-pool>

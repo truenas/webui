@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { ValidationErrors } from '@angular/forms';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 import { Store } from '@ngrx/store';
 import _ from 'lodash';
@@ -14,13 +15,16 @@ import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { DispersalStrategy } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/2-enclosure-wizard-step/enclosure-wizard-step.component';
+import {
+  DispersalStrategy,
+} from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/2-enclosure-wizard-step/enclosure-wizard-step.component';
 import { categoryCapacity } from 'app/pages/storage/modules/pool-manager/utils/capacity.utils';
 import { filterAllowedDisks } from 'app/pages/storage/modules/pool-manager/utils/disk.utils';
 import {
   GenerateVdevsService,
 } from 'app/pages/storage/modules/pool-manager/utils/generate-vdevs/generate-vdevs.service';
 import {
+  isDraidLayout,
   topologyCategoryToDisks,
   topologyToDisks,
 } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
@@ -39,6 +43,10 @@ export interface PoolManagerTopologyCategory {
   treatDiskSizeAsMinimum: boolean;
   vdevs: UnusedDisk[][];
   hasCustomDiskSelection: boolean;
+
+  // Only used for data step when dRAID is selected.
+  draidDataDisks: number;
+  draidSpareDisks: number;
 }
 
 export type PoolManagerTopology = {
@@ -50,7 +58,7 @@ interface PoolManagerDiskSettings {
   allowExportedPools: string[];
 }
 
-interface PoolManagerEnclosureSettings {
+export interface PoolManagerEnclosureSettings {
   limitToSingleEnclosure: number | null;
   maximizeEnclosureDispersal: boolean;
   dispersalStrategy: DispersalStrategy;
@@ -60,12 +68,15 @@ export interface PoolManagerState {
   isLoading: boolean;
   enclosures: Enclosure[];
   name: string;
+  nameErrors: ValidationErrors | null;
   encryption: string | null;
   allDisks: UnusedDisk[];
   diskSettings: PoolManagerDiskSettings;
   enclosureSettings: PoolManagerEnclosureSettings;
   topology: PoolManagerTopology;
 }
+
+type TopologyCategoryUpdate = Partial<Omit<PoolManagerTopologyCategory, 'vdevs' | 'hasCustomDiskSelection'>>;
 
 const initialTopology = Object.values(VdevType).reduce((topology, value) => {
   return {
@@ -78,6 +89,9 @@ const initialTopology = Object.values(VdevType).reduce((topology, value) => {
       treatDiskSizeAsMinimum: false,
       vdevs: [],
       hasCustomDiskSelection: false,
+
+      draidDataDisks: 0,
+      draidSpareDisks: 0,
     } as PoolManagerTopologyCategory,
   };
 }, {} as PoolManagerTopology);
@@ -87,6 +101,7 @@ export const initialState: PoolManagerState = {
   allDisks: [],
   enclosures: [],
   name: '',
+  nameErrors: null,
   encryption: null,
 
   diskSettings: {
@@ -108,6 +123,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
   readonly resetStep$ = new Subject<VdevType>();
   readonly isLoading$ = this.select((state) => state.isLoading);
   readonly name$ = this.select((state) => state.name);
+  readonly nameErrors$ = this.select((state) => state.nameErrors);
   readonly encryption$ = this.select((state) => state.encryption);
   readonly enclosures$ = this.select((state) => state.enclosures);
   readonly allDisks$ = this.select((state) => state.allDisks);
@@ -143,6 +159,16 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     },
   );
 
+  readonly usesDraidLayout$ = this.select(
+    this.topology$,
+    (topology) => this.isUsingDraidLayout(topology),
+  );
+
+  isUsingDraidLayout(topology: PoolManagerTopology): boolean {
+    const dataCategory = topology[VdevType.Data];
+    return [CreateVdevLayout.Draid1, CreateVdevLayout.Draid2, CreateVdevLayout.Draid3].includes(dataCategory.layout);
+  }
+
   getLayoutsForVdevType(vdevType: VdevType): Observable<CreateVdevLayout[]> {
     switch (vdevType) {
       case VdevType.Cache:
@@ -172,11 +198,16 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
   // TODO: Check if this needs to be optimized
   getInventoryForStep(type: VdevType): Observable<UnusedDisk[]> {
     return this.select(
-      this.inventory$,
+      this.allowedDisks$,
       this.topology$,
-      (inventory, topology) => {
-        const disksUsedInCategory = topologyCategoryToDisks(topology[type]);
-        return [...inventory, ...disksUsedInCategory];
+      (allowedDisks, topology) => {
+        const disksUsedInOtherCategories = Object.values(topology).flatMap((category) => {
+          if (category === topology[type]) {
+            return [];
+          }
+          return topologyCategoryToDisks(category);
+        });
+        return _.differenceBy(allowedDisks, disksUsedInOtherCategories, (disk) => disk.devname);
       },
     );
   }
@@ -202,8 +233,8 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
   }
 
   resetStep(vdevType: VdevType): void {
+    this.resetTopologyCategory(vdevType);
     this.resetStep$.next(vdevType);
-    this.updateTopologyCategory(vdevType, initialTopology[vdevType]);
   }
 
   readonly initialize = this.effect((trigger$) => {
@@ -249,7 +280,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     };
   });
 
-  readonly setGeneralOptions = this.updater((state, options: Pick<PoolManagerState, 'name' | 'encryption'>) => {
+  readonly setGeneralOptions = this.updater((state, options: Pick<PoolManagerState, 'nameErrors' | 'name' | 'encryption'>) => {
     return {
       ...state,
       ...options,
@@ -272,7 +303,32 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     this.resetTopologyIfNotEnoughDisks();
   }
 
-  setAutomaticTopologyCategory(type: VdevType, updates: Omit<PoolManagerTopologyCategory, 'vdevs' | 'hasCustomDiskSelection'>): void {
+  setTopologyCategoryDiskSizes(
+    type: VdevType,
+    updates: Pick<TopologyCategoryUpdate, 'diskSize' | 'treatDiskSizeAsMinimum' | 'diskType'>,
+  ): void {
+    this.updateTopologyCategory(type, updates);
+    this.regenerateVdevs();
+  }
+
+  setTopologyCategoryLayout(
+    type: VdevType,
+    newLayout: CreateVdevLayout,
+  ): void {
+    const isNewLayoutDraid = isDraidLayout(newLayout);
+    const isOldLayoutDraid = isDraidLayout(this.get().topology[type].layout);
+    if (isNewLayoutDraid !== isOldLayoutDraid) {
+      this.resetTopologyCategory(type);
+    }
+
+    this.updateTopologyCategory(type, { layout: newLayout });
+
+    if (isDraidLayout(newLayout)) {
+      this.resetTopologyCategory(VdevType.Spare);
+    }
+  }
+
+  setAutomaticTopologyCategory(type: VdevType, updates: TopologyCategoryUpdate): void {
     this.updateTopologyCategory(type, updates);
 
     this.regenerateVdevs();
@@ -305,10 +361,12 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
 
   private resetTopologyIfNotEnoughDisks(): void {
     this.allowedDisks$.pipe(take(1)).subscribe((allowedDisks) => {
-      const usedDisks = topologyToDisks(this.get().topology);
-      if (usedDisks.length > allowedDisks.length) {
-        this.resetTopology();
-      }
+      Object.entries(this.get().topology).forEach(([type, category]) => {
+        const usedDisks = topologyCategoryToDisks(category);
+        if (usedDisks.some((disk) => !allowedDisks.includes(disk))) {
+          this.resetStep(type as VdevType);
+        }
+      });
     });
   }
 

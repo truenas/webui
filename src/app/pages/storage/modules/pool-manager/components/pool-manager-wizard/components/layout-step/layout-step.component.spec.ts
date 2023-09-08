@@ -122,6 +122,7 @@ describe('LayoutStepComponent', () => {
         inventory: [expect.objectContaining({ devname: 'sdb' })],
         vdevs: topologyCategory.vdevs,
         layout: topologyCategory.layout,
+        vdevsLimit: null,
       } as ManualDiskSelectionParams,
       panelClass: 'manual-selection-dialog',
     });

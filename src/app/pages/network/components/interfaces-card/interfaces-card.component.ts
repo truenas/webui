@@ -30,7 +30,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { NetworkService } from 'app/services/network.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
-import { adminNetworkInterfacesChanged } from 'app/store/admin-panel/admin.actions';
+import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
 
 @UntilDestroy()
 @Component({
@@ -72,7 +72,7 @@ export class InterfacesCardComponent implements OnInit {
     private store$: Store<AppState>,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
     private dialogService: DialogService,
     private ws: WebSocketService,
     private loader: AppLoaderService,
@@ -95,7 +95,7 @@ export class InterfacesCardComponent implements OnInit {
   }
 
   onAddNew(): void {
-    this.slideIn.open(InterfaceFormComponent)
+    this.slideInService.open(InterfaceFormComponent)
       .slideInClosed$
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => {
@@ -105,7 +105,7 @@ export class InterfacesCardComponent implements OnInit {
   }
 
   onEdit(row: NetworkInterface): void {
-    this.slideIn.open(InterfaceFormComponent, {
+    this.slideInService.open(InterfaceFormComponent, {
       data: row,
     })
       .slideInClosed$
@@ -146,7 +146,7 @@ export class InterfacesCardComponent implements OnInit {
       .subscribe(() => {
         this.interfacesUpdated.emit();
         this.interfacesStore$.loadInterfaces();
-        this.store$.dispatch(adminNetworkInterfacesChanged({ commit: false, checkIn: false }));
+        this.store$.dispatch(networkInterfacesChanged({ commit: false, checkIn: false }));
       });
   }
 

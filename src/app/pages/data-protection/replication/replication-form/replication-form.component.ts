@@ -120,6 +120,10 @@ export class ReplicationFormComponent implements OnInit {
     return this.sourceSection.form.controls.schema_or_regex.value === SnapshotNamingOption.NameRegex;
   }
 
+  get isFormValid(): boolean {
+    return this.sections.every((section) => section.form.valid);
+  }
+
   setForEdit(): void {
     this.cdr.markForCheck();
   }

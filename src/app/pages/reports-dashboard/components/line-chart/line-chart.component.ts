@@ -14,7 +14,7 @@ import { ReportingData } from 'app/interfaces/reporting.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { Theme } from 'app/interfaces/theme.interface';
 import { Report, LegendDataWithStackedTotalHtml } from 'app/pages/reports-dashboard/interfaces/report.interface';
-import { CoreService } from 'app/services/core-service/core.service';
+import { ReportsService } from 'app/pages/reports-dashboard/reports.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 
 interface Conversion {
@@ -59,8 +59,8 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
   private utils: ThemeUtils = new ThemeUtils();
 
   constructor(
-    private core: CoreService,
     public themeService: ThemeService,
+    private reportsService: ReportsService,
   ) {}
 
   render(update?: boolean): void {
@@ -97,7 +97,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
         y: {
           yRangePad: 24,
           axisLabelFormatter: (numero: number) => {
-            const converted = this.formatLabelValue(numero, this.inferUnits(this.labelY), 1, true);
+            const converted = this.formatLabelValue(numero, this.inferUnits(this.labelY), 1, true, true);
             const suffix = converted.suffix ? converted.suffix : '';
             return `${this.limitDecimals(converted.value)} ${suffix}`;
           },
@@ -128,7 +128,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
           const suffix = getSuffix(converted);
           clone.stackedTotalHTML = `${this.limitDecimals(converted.value)} ${suffix}`;
         }
-        this.core.emit({ name: `LegendEvent-${this.chartId}`, data: clone, sender: this });
+        this.reportsService.emitLegendEvent(clone);
         return '';
       },
       series: () => {
@@ -234,7 +234,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
     }
   }
 
-  formatLabelValue(value: number, units: string, fixed?: number, prefixRules?: boolean): Conversion {
+  formatLabelValue(value: number, units: string, fixed?: number, prefixRules?: boolean, axis = false): Conversion {
     const day = 60 * 60 * 24;
     let output: Conversion = { value };
     if (!fixed) { fixed = -1; }
@@ -246,16 +246,28 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
         break;
       case 'kilobits':
         output = this.convertKmgt(value * 1000, 'bits', fixed, prefixRules);
+        if (axis) {
+          output.value = this.getValueForAxis(value * 1000, output.prefix);
+        }
         break;
       case 'mebibytes':
         output = this.convertKmgt(value * MiB, 'bytes', fixed, prefixRules);
+        if (axis) {
+          output.value = this.getValueForAxis(value * 1000 * 1000, output.prefix);
+        }
         break;
       case 'kibibytes':
         output = this.convertKmgt(value * KiB, 'bytes', fixed, prefixRules);
+        if (axis) {
+          output.value = this.getValueForAxis(value * 1000, output.prefix);
+        }
         break;
       case 'bits':
       case 'bytes':
         output = this.convertKmgt(value, units.toLowerCase(), fixed, prefixRules);
+        if (axis) {
+          output.value = this.getValueForAxis(value, output.prefix);
+        }
         break;
       case '%':
       case '°':
@@ -284,9 +296,18 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
   }
 
   limitDecimals(numero: number): string | number {
-    const subZero = numero.toString().split('.');
-    const decimalPlaces = subZero?.[1] ? subZero[1].length : 0;
-    return decimalPlaces > 2 ? numero.toFixed(2) : numero;
+    if (numero < 1024) {
+      return Number(numero.toString().slice(0, 4));
+    }
+    return Math.round(numero);
+  }
+
+  getValueForAxis(value: number, prefix: string): number {
+    if (prefix === 'Tebi') return value / 1000 ** 4;
+    if (prefix === 'Gibi') return value / 1000 ** 3;
+    if (prefix === 'Mebi') return value / 1000 ** 2;
+    if (prefix === 'Kibi') return value / 1000;
+    return value;
   }
 
   convertKmgt(value: number, units: string, fixed?: number, prefixRules?: boolean): Conversion {
@@ -337,7 +358,6 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
   }
 
   ngOnDestroy(): void {
-    this.core.unregister({ observerClass: this });
     this.chart?.destroy();
   }
 }

@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -9,7 +10,7 @@ import {
   filter, switchMap, tap, catchError,
 } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
-import { tapOnce } from 'app/helpers/tap-once.operator';
+import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import helptext_cloudsync from 'app/helptext/data-protection/cloudsync/cloudsync-form';
 import helptext from 'app/helptext/data-protection/data-protection-dashboard/data-protection-dashboard';
 import helptext_smart from 'app/helptext/data-protection/smart/smart';
@@ -42,7 +43,7 @@ import { ReplicationWizardComponent } from 'app/pages/data-protection/replicatio
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
 import { ScrubTaskFormComponent } from 'app/pages/data-protection/scrub-task/scrub-task-form/scrub-task-form.component';
 import { SmartTaskFormComponent } from 'app/pages/data-protection/smart-task/smart-task-form/smart-task-form.component';
-import { SnapshotTaskComponent } from 'app/pages/data-protection/snapshot/snapshot-task/snapshot-task.component';
+import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -96,6 +97,7 @@ export class DataProtectionDashboardComponent implements OnInit {
     private translate: TranslateService,
     private store$: Store<AppState>,
     private snackbar: SnackbarService,
+    private storageService: StorageService,
   ) {
     this.storage
       .listDisks()
@@ -125,7 +127,7 @@ export class DataProtectionDashboardComponent implements OnInit {
           case ScrubTaskFormComponent:
             this.refreshTable(TaskCardId.Scrub);
             break;
-          case SnapshotTaskComponent:
+          case SnapshotTaskFormComponent:
             this.refreshTable(TaskCardId.Snapshot);
             break;
           case RsyncTaskFormComponent:
@@ -216,12 +218,12 @@ export class DataProtectionDashboardComponent implements OnInit {
           isActionVisible: this.isActionVisible,
           parent: this,
           add: () => {
-            const slideInRef = this.slideInService.open(SnapshotTaskComponent, { wide: true });
-            this.handleSlideInClosed(slideInRef, SnapshotTaskComponent);
+            const slideInRef = this.slideInService.open(SnapshotTaskFormComponent, { wide: true });
+            this.handleSlideInClosed(slideInRef, SnapshotTaskFormComponent);
           },
           edit: (row: PeriodicSnapshotTaskUi) => {
-            const slideInRef = this.slideInService.open(SnapshotTaskComponent, { wide: true, data: row });
-            this.handleSlideInClosed(slideInRef, SnapshotTaskComponent);
+            const slideInRef = this.slideInService.open(SnapshotTaskFormComponent, { wide: true, data: row });
+            this.handleSlideInClosed(slideInRef, SnapshotTaskFormComponent);
           },
           tableFooterActions: [
             {
@@ -247,6 +249,7 @@ export class DataProtectionDashboardComponent implements OnInit {
         tableConf: {
           title: helptext.fieldset_replication_tasks,
           titleHref: '/tasks/replication',
+          queryCallOption: [[], { extra: { check_dataset_encryption_keys: true } }],
           queryCall: 'replication.query',
           deleteCall: 'replication.delete',
           deleteMsg: {
@@ -599,6 +602,29 @@ export class DataProtectionDashboardComponent implements OnInit {
             .subscribe(() => this.refreshTable(TaskCardId.Replication));
         },
       },
+      {
+        name: 'download_keys',
+        matTooltip: this.translate.instant('Download encryption keys'),
+        icon: 'download',
+        onClick: (row) => {
+          this.ws.call('core.download', ['pool.dataset.export_keys_for_replication', [row.id], `${row.name}_encryption_keys.json`]).pipe(untilDestroyed(this)).subscribe({
+            next: ([, url]) => {
+              const mimetype = 'application/json';
+              this.storage.streamDownloadFile(url, `${row.name}_encryption_keys.json`, mimetype).pipe(untilDestroyed(this)).subscribe({
+                next: (file) => {
+                  this.storage.downloadBlob(file, `${row.name}_encryption_keys.json`);
+                },
+                error: (err: HttpErrorResponse) => {
+                  this.dialogService.error(this.errorHandler.parseHttpError(err));
+                },
+              });
+            },
+            error: (err) => {
+              this.dialogService.error(this.errorHandler.parseWsError(err));
+            },
+          });
+        },
+      },
     ];
   }
 
@@ -756,6 +782,9 @@ export class DataProtectionDashboardComponent implements OnInit {
     if (name === 'stop' && (row.job ? row.job && row.job.state !== JobState.Running : true)) {
       return false;
     }
+    if (name === 'download_keys' && !(row.has_encrypted_dataset_keys)) {
+      return false;
+    }
     return true;
   }
 
@@ -796,15 +825,16 @@ export class DataProtectionDashboardComponent implements OnInit {
           dialogRef.close();
           this.dialogService.info(this.translate.instant('Task Aborted'), '');
         });
+      } else if (row.state.state === JobState.Hold) {
+        this.dialogService.info(this.translate.instant('Task is on hold'), row.state.reason);
       } else if (row.state.warnings && row.state.warnings.length > 0) {
         let list = '';
         row.state.warnings.forEach((warning: string) => {
           list += warning + '\n';
         });
-        this.dialogService.error({
-          title: this.translate.instant('Warning'),
-          message: `<pre>${list}</pre>`,
-        });
+        this.dialogService.error({ title: row.state.state, message: `<pre>${list}</pre>` });
+      } else if (row.state.error) {
+        this.dialogService.error({ title: row.state.state, message: `<pre>${row.state.error}</pre>` });
       } else {
         this.matDialog.open(ShowLogsDialogComponent, { data: row.job });
       }

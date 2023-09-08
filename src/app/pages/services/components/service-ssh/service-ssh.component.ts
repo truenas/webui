@@ -2,16 +2,16 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { map, of } from 'rxjs';
 import { SshSftpLogFacility, SshSftpLogLevel, SshWeakCipher } from 'app/enums/ssh.enum';
-import { choicesToOptions } from 'app/helpers/options.helper';
+import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import helptext from 'app/helptext/services/components/service-ssh';
 import { SshConfigUpdate } from 'app/interfaces/ssh-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ChipsProvider } from 'app/modules/ix-forms/components/ix-chips/chips-provider';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -74,11 +74,11 @@ export class ServiceSshComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private formErrorHandler: FormErrorHandlerService,
     private fb: FormBuilder,
-    private router: Router,
     private dialogService: DialogService,
     private userService: UserService,
     private translate: TranslateService,
     private snackbar: SnackbarService,
+    private slideInRef: IxSlideInRef<ServiceSshComponent>,
   ) {}
 
   ngOnInit(): void {
@@ -111,7 +111,7 @@ export class ServiceSshComponent implements OnInit {
         next: () => {
           this.isFormLoading = false;
           this.snackbar.success(this.translate.instant('Service configuration saved'));
-          this.router.navigate(['/services']);
+          this.slideInRef.close();
           this.cdr.markForCheck();
         },
         error: (error) => {

@@ -65,6 +65,7 @@ export interface ReplicationTask {
   target_dataset: string;
   target_dataset_from: string;
   transport: TransportMode;
+  has_encrypted_dataset_keys?: boolean;
 }
 
 export interface ReplicationTaskUi extends ReplicationTask {

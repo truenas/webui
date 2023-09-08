@@ -20,15 +20,14 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
 import { InterfacesStore } from 'app/pages/network/stores/interfaces.store';
-import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { adminNetworkInterfacesChanged } from 'app/store/admin-panel/admin.actions';
 import { selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { AppState } from 'app/store/index';
+import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
 
 @UntilDestroy()
 @Component({
@@ -59,7 +58,6 @@ export class NetworkComponent implements OnInit, OnDestroy {
     private loader: AppLoaderService,
     private translate: TranslateService,
     private slideInService: IxSlideInService,
-    private core: CoreService,
     private snackbar: SnackbarService,
     private store$: Store<AppState>,
     private errorHandler: ErrorHandlerService,
@@ -74,7 +72,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.checkInterfacePendingChanges();
 
-    this.actions$.pipe(ofType(adminNetworkInterfacesChanged), untilDestroyed(this))
+    this.actions$.pipe(ofType(networkInterfacesChanged), untilDestroyed(this))
       .subscribe(({ checkIn }) => {
         if (!checkIn) {
           return;
@@ -217,7 +215,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
                 untilDestroyed(this),
               )
               .subscribe((checkInSeconds) => {
-                this.store$.dispatch(adminNetworkInterfacesChanged({ commit: true, checkIn: false }));
+                this.store$.dispatch(networkInterfacesChanged({ commit: true, checkIn: false }));
                 this.interfacesStore.loadInterfaces();
                 this.handleWaitingCheckin(checkInSeconds);
               });
@@ -265,7 +263,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
         untilDestroyed(this),
       )
       .subscribe(() => {
-        this.store$.dispatch(adminNetworkInterfacesChanged({ commit: true, checkIn: true }));
+        this.store$.dispatch(networkInterfacesChanged({ commit: true, checkIn: true }));
 
         this.snackbar.success(
           this.translate.instant(helptext.checkin_complete_message),
@@ -299,7 +297,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
             untilDestroyed(this),
           )
           .subscribe(() => {
-            this.store$.dispatch(adminNetworkInterfacesChanged({ commit: false }));
+            this.store$.dispatch(networkInterfacesChanged({ commit: false }));
             this.interfacesStore.loadInterfaces();
             this.hasPendingChanges = false;
             this.checkinWaiting = false;
@@ -318,7 +316,6 @@ export class NetworkComponent implements OnInit, OnDestroy {
     if (this.formEvent$) {
       this.formEvent$.complete();
     }
-    this.core.unregister({ observerClass: this });
   }
 
   private openInterfaceForEditFromRoute(): void {

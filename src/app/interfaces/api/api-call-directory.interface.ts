@@ -229,6 +229,7 @@ import {
 import { SystemGeneralConfig, SystemGeneralConfigUpdate } from 'app/interfaces/system-config.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
+import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import {
   SystemUpdate,
   SystemUpdateChange,
@@ -663,11 +664,13 @@ export interface ApiCallDirectory {
   'pool.unlock_services_restart_choices': { params: [id: number]; response: Choices };
   'pool.upgrade': { params: [id: number]; response: boolean };
   'pool.get_instance_by_name': { params: PoolInstanceParams; response: PoolInstance };
+  'pool.validate_name': { params: string[]; response: boolean | { error: boolean } };
 
   // Replication
   'replication.list_datasets': { params: [transport: TransportMode, credentials?: number]; response: string[] };
   'replication.create': { params: [ReplicationCreate]; response: ReplicationTask };
   'replication.query': { params: QueryParams<ReplicationTask>; response: ReplicationTask[] };
+  'pool.dataset.export_keys_for_replication': { params: [id: number]; response: unknown };
   'replication.restore': { params: [id: number, params: { name: string; target_dataset: string }]; response: void };
   'replication.delete': { params: [id: number]; response: boolean };
   'replication.count_eligible_manual_snapshots': { params: [CountManualSnapshotsParams]; response: EligibleManualSnapshotsCount };
@@ -746,6 +749,9 @@ export interface ApiCallDirectory {
   'system.is_stable': { params: void; response: boolean };
   'system.environment': { params: void; response: string };
   'system.set_time': { params: [number]; response: void };
+  'system.security.config': { params: void; response: SystemSecurityConfig };
+  'system.security.update': { params: [SystemSecurityConfig]; response: void };
+  'system.license': { params: void; response: null | object };
 
   // Replication
   'replication.config.config': { params: void; response: ReplicationConfig };
@@ -805,7 +811,7 @@ export interface ApiCallDirectory {
 
   // Tunable
   'tunable.tunable_type_choices': { params: void; response: Choices };
-  'tunable.query': { params: QueryParams<Tunable>; response: Tunable };
+  'tunable.query': { params: QueryParams<Tunable>; response: Tunable[] };
 
   // FTP
   'ftp.update': { params: [FtpConfigUpdate]; response: FtpConfig };
@@ -831,7 +837,7 @@ export interface ApiCallDirectory {
   'vm.create': { params: [VirtualMachineUpdate]; response: VirtualMachine };
   'vm.delete': { params: VmDeleteParams; response: boolean };
   'vm.resolution_choices': { params: void; response: Choices };
-  'vm.get_display_web_uri': { params: VmDisplayWebUriParams; response: { [id: number]: VmDisplayWebUri } };
+  'vm.get_display_web_uri': { params: VmDisplayWebUriParams; response: VmDisplayWebUri };
   'vm.device.passthrough_device_choices': { params: void; response: { [id: string]: VmPassthroughDeviceChoice } };
   'vm.device.usb_passthrough_choices': { params: void; response: { [id: string]: VmUsbPassthroughDeviceChoice } };
   'vm.device.usb_controller_choices': { params: void; response: Choices };

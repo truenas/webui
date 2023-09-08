@@ -12,7 +12,8 @@ import {
   VmTime,
   vmTimeNames,
 } from 'app/enums/vm.enum';
-import { choicesToOptions, mapToOptions } from 'app/helpers/options.helper';
+import { choicesToOptions } from 'app/helpers/operators/options.operators';
+import { mapToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { SummaryProvider, SummarySection } from 'app/modules/common/summary/summary.interface';
 import {

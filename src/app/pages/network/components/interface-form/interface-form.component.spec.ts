@@ -16,6 +16,7 @@ import {
 } from 'app/enums/network-interface.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
+import { NetworkSummary } from 'app/interfaces/network-summary.interface';
 import { IxListHarness } from 'app/modules/ix-forms/components/ix-list/ix-list.harness';
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -26,15 +27,14 @@ import {
   DefaultGatewayDialogComponent,
 } from 'app/pages/network/components/default-gateway-dialog/default-gateway-dialog.component';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
-import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { NetworkService } from 'app/services/network.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { adminNetworkInterfacesChanged } from 'app/store/admin-panel/admin.actions';
 import { haInfoReducer } from 'app/store/ha-info/ha-info.reducer';
 import { haInfoStateKey } from 'app/store/ha-info/ha-info.selectors';
+import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
 
 describe('InterfaceFormComponent', () => {
   let spectator: Spectator<InterfaceFormComponent>;
@@ -97,6 +97,9 @@ describe('InterfaceFormComponent', () => {
         }),
         mockCall('interface.create'),
         mockCall('interface.update'),
+        mockCall('network.general.summary', {
+          default_routes: ['1.1.1.1'],
+        } as NetworkSummary),
         mockCall('interface.default_route_will_be_removed', true),
         mockCall('failover.licensed', false),
         mockCall('failover.node', 'A'),
@@ -123,7 +126,6 @@ describe('InterfaceFormComponent', () => {
           { label: '24', value: '24' },
         ],
       }),
-      mockProvider(CoreService),
       mockProvider(DialogService),
       mockProvider(IxSlideInService),
       mockProvider(SystemGeneralService, {
@@ -178,7 +180,7 @@ describe('InterfaceFormComponent', () => {
       expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
 
       const store$ = spectator.inject(Store);
-      expect(store$.dispatch).toHaveBeenCalledWith(adminNetworkInterfacesChanged({ commit: false, checkIn: false }));
+      expect(store$.dispatch).toHaveBeenCalledWith(networkInterfacesChanged({ commit: false, checkIn: false }));
 
       expect(ws.call).toHaveBeenCalledWith('interface.default_route_will_be_removed');
 
@@ -226,7 +228,7 @@ describe('InterfaceFormComponent', () => {
       }]);
 
       const store$ = spectator.inject(Store);
-      expect(store$.dispatch).toHaveBeenCalledWith(adminNetworkInterfacesChanged({ commit: false, checkIn: false }));
+      expect(store$.dispatch).toHaveBeenCalledWith(networkInterfacesChanged({ commit: false, checkIn: false }));
 
       expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
       expect(ws.call).toHaveBeenCalledWith('interface.default_route_will_be_removed');

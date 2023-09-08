@@ -31,6 +31,7 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
   @Input() hint: string;
   @Input() tooltip: string;
   @Input() required: boolean;
+  @Input() allowNewEntries = true;
   @Input() autocompleteProvider: ChipsProvider;
 
   @ViewChild('chipInput', { static: true }) chipInput: ElementRef<HTMLInputElement>;
@@ -90,15 +91,11 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
     this.updateValues([...this.values, newValue]);
   }
 
-  /**
-   * Adding chips on blur manually instead of [matChipInputAddOnBlur] to support autocomplete.
-   */
-  onInputBlur(event: FocusEvent): void {
-    const target: HTMLElement = event.relatedTarget as HTMLElement;
-    if (target?.tagName === 'MAT-OPTION') {
+  onInputBlur(): void {
+    if (!this.allowNewEntries) {
+      this.chipInput.nativeElement.value = null;
       return;
     }
-
     this.onAdd(this.chipInput.nativeElement.value);
   }
 

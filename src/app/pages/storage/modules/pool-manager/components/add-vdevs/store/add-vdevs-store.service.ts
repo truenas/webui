@@ -26,6 +26,7 @@ const initialState: AddVdevsState = {
 @Injectable()
 export class AddVdevsStore extends ComponentStore<AddVdevsState> {
   readonly isLoading$ = this.select((state) => state.isLoading);
+  // TODO: Remove clone deep.
   readonly pool$ = this.select((state) => _.cloneDeep(state.pool));
   readonly poolDisks$ = this.select((state) => state.poolDisks);
 

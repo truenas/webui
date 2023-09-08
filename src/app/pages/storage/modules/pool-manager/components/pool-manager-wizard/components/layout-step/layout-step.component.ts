@@ -9,8 +9,7 @@ import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import {
-  ManualDiskSelectionComponent,
-  ManualDiskSelectionParams,
+  ManualDiskSelectionComponent, ManualDiskSelectionParams,
 } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/manual-disk-selection.component';
 import {
   PoolManagerStore,
@@ -33,11 +32,14 @@ export class LayoutStepComponent implements OnInit {
   @Input() canChangeLayout = false;
   @Input() limitLayouts: CreateVdevLayout[];
 
-  // TODO: Limit to certain disks for certain vdev types.
   @Input() inventory: UnusedDisk[];
 
   protected topologyCategory: PoolManagerTopologyCategory;
   private enclosures: Enclosure[] = [];
+
+  get isVdevsLimitedToOne(): boolean {
+    return this.type === VdevType.Spare || this.type === VdevType.Cache || this.type === VdevType.Log;
+  }
 
   constructor(
     private store: PoolManagerStore,
@@ -61,6 +63,7 @@ export class LayoutStepComponent implements OnInit {
         layout: this.topologyCategory.layout,
         enclosures: this.enclosures,
         vdevs: this.topologyCategory.vdevs,
+        vdevsLimit: this.isVdevsLimitedToOne ? 1 : null,
       } as ManualDiskSelectionParams,
       panelClass: 'manual-selection-dialog',
     })

@@ -6,10 +6,12 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, of, throwError } from 'rxjs';
+import {
+  catchError, map, switchMap,
+} from 'rxjs/operators';
 import { SshConnectionsSetupMethod } from 'app/enums/ssh-connections-setup-method.enum';
-import { idNameArrayToOptions } from 'app/helpers/options.helper';
+import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
 import helptext from 'app/helptext/system/ssh-connections';
 import {
   KeychainCredentialUpdate,
@@ -17,6 +19,7 @@ import {
 } from 'app/interfaces/keychain-credential.interface';
 import { SshConnectionSetup } from 'app/interfaces/ssh-connection-setup.interface';
 import { SshCredentials } from 'app/interfaces/ssh-credentials.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -24,10 +27,13 @@ import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.s
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { DialogService } from 'app/services/dialog.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 const generateNewKeyValue = 'GENERATE_NEW_KEY';
+const sslCertificationError = 'ESSLCERTVERIFICATIONERROR';
 
 @UntilDestroy()
 @Component({
@@ -122,12 +128,14 @@ export class SshConnectionFormComponent implements OnInit {
     private translate: TranslateService,
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
-    private errorHandler: FormErrorHandlerService,
+    private formErrorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
     private keychainCredentialService: KeychainCredentialService,
     private loader: AppLoaderService,
     private validatorsService: IxValidatorsService,
     private slideInRef: IxSlideInRef<SshConnectionFormComponent>,
     public formatter: IxFormatterService,
+    private dialogService: DialogService,
     private snackbar: SnackbarService,
     @Optional() public dialogRef: MatDialogRef<SshConnectionFormComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: { dialog: boolean },
@@ -171,7 +179,7 @@ export class SshConnectionFormComponent implements OnInit {
           });
         },
         error: (error) => {
-          this.errorHandler.handleWsFormError(error, this.form);
+          this.formErrorHandler.handleWsFormError(error, this.form);
         },
       });
   }
@@ -201,7 +209,7 @@ export class SshConnectionFormComponent implements OnInit {
       error: (error) => {
         this.isLoading = false;
         this.cdr.markForCheck();
-        this.errorHandler.handleWsFormError(error, this.form);
+        this.formErrorHandler.handleWsFormError(error, this.form);
       },
     });
   }
@@ -237,7 +245,28 @@ export class SshConnectionFormComponent implements OnInit {
       };
     }
 
-    return this.ws.call('keychaincredential.setup_ssh_connection', [params]);
+    return this.ws.call('keychaincredential.setup_ssh_connection', [params]).pipe(
+      catchError((error: WebsocketError) => {
+        if (error.errname.includes(sslCertificationError) || error.reason.includes(sslCertificationError)) {
+          return this.dialogService.error(this.errorHandler.parseWsError(error)).pipe(
+            switchMap(() => {
+              return this.dialogService.confirm({
+                title: this.translate.instant('Confirm'),
+                message: this.translate.instant('Would you like to ignore this error and try again?'),
+              });
+            }),
+            switchMap((retry) => {
+              if (retry) {
+                params.semi_automatic_setup.verify_ssl = false;
+                return this.ws.call('keychaincredential.setup_ssh_connection', [params]);
+              }
+              return throwError(() => error);
+            }),
+          );
+        }
+        return throwError(() => error);
+      }),
+    );
   }
 
   private prepareUpdateRequest(): Observable<unknown> {

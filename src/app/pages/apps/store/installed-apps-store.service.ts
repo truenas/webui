@@ -74,7 +74,7 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> {
   private handleRemovedApps(updatedAppName: string, allApps: AvailableApp[]): AvailableApp[] {
     return allApps.map((app) => {
       if (app.name === updatedAppName) {
-        return { ...app as object, installed: false } as AvailableApp;
+        return { ...app, installed: false } as AvailableApp;
       }
       return app;
     });
@@ -136,27 +136,17 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> {
             }),
           };
         });
+
+        const updateApps = (apps: AvailableApp[]): AvailableApp[] => apps.map((app) => {
+          return app.name === chartReleases[0].id ? { ...app, installed: true } : app;
+        });
+
         this.appsStore.patchState((state) => {
           return {
             ...state,
-            availableApps: state.availableApps.map((app) => {
-              if (app.name === chartReleases[0].id) {
-                return { ...app, installed: true };
-              }
-              return app;
-            }),
-            recommendedApps: state.recommendedApps.map((app) => {
-              if (app.name === chartReleases[0].id) {
-                return { ...app, installed: true };
-              }
-              return app;
-            }),
-            latestApps: state.latestApps.map((app) => {
-              if (app.name === chartReleases[0].id) {
-                return { ...app, installed: true };
-              }
-              return app;
-            }),
+            availableApps: updateApps(state.availableApps),
+            recommendedApps: updateApps(state.recommendedApps),
+            latestApps: updateApps(state.latestApps),
           };
         });
       }),

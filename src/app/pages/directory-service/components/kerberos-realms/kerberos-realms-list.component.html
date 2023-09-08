@@ -1,0 +1,39 @@
+<ng-template ixPageHeader>
+  <ix-page-title-header>
+    <ix-search-input (search)="onListFiltered($event)"></ix-search-input>
+    <button mat-button color="primary" ixTest="add-kerberos-realms" (click)="doAdd()">
+      {{ 'Add' | translate }}
+    </button>
+  </ix-page-title-header>
+</ng-template>
+
+<div class="table-container">
+  <mat-toolbar *ngIf="toolbar" class="table-header">
+    <div class="heading" [routerLink]="['/', 'directoryservice', 'kerberosrealms']">
+      <h3>{{ 'Kerberos Realms' | translate }}</h3>
+      <ix-icon name="open_in_new"></ix-icon>
+    </div>
+    <div class="action">
+      <button mat-button ixTest="add-idmap" (click)="doAdd()">
+        {{ 'Add' | translate }}
+      </button>
+    </div>
+  </mat-toolbar>
+  <ix-table2
+    [ix-table2-empty]="!dataProvider.rows.length"
+    [emptyConfig]="emptyService.defaultEmptyConfig(emptyType$ | async)"
+  >
+    <thead
+      ix-table-head
+      [columns]="columns"
+      [dataProvider]="dataProvider"
+    ></thead>
+    <tbody
+      ix-table-body
+      [columns]="columns"
+      [dataProvider]="dataProvider"
+    >
+    </tbody>
+  </ix-table2>
+  <ix-table-pager *ngIf="paginator" [dataProvider]="dataProvider"></ix-table-pager>
+</div>

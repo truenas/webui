@@ -21,9 +21,6 @@ import { selectIsUpgradePending } from 'app/store/ha-info/ha-info.selectors';
 @UntilDestroy()
 @Injectable()
 export class TwoFactorGuardService implements CanActivateChild {
-  isAuthenticated = false;
-  show2FaWarning = false;
-
   private globalTwoFactorConfig$ = new BehaviorSubject<TwoFactorConfig>(null);
 
   constructor(

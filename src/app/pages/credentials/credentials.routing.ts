@@ -38,7 +38,7 @@ export const routes: Routes = [{
     {
       path: 'certificates',
       component: CertificatesDashComponent,
-      data: { title: T('Certificates'), breadcrumb: T('Certificates') },
+      data: { title: T('Certificates') },
     },
     {
       path: 'two-factor',

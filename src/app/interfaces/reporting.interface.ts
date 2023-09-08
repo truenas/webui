@@ -101,7 +101,6 @@ export interface ReportingConfig {
   confirm_rrd_destroy?: boolean;
   graph_age: number;
   graph_points: number;
-  graphite: string;
   id: number;
 }
 
@@ -120,7 +119,7 @@ export type ReportingQueryParams = [
 
 export interface ReportingNameAndId {
   name: string;
-  identifier: string;
+  identifier?: string;
 }
 
 export type ReportingAggregationKeys = 'min' | 'mean' | 'max';

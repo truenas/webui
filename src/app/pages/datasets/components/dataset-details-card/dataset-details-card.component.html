@@ -1,101 +1,99 @@
-<div>
-  <mat-card class="card">
-    <mat-card-header>
-      <h3 *ngIf="isFilesystem" mat-card-title>
-        {{ 'Dataset Details' | translate }}
-      </h3>
-      <button
-        *ngIf="isFilesystem"
-        mat-button
-        ixTest="edit-dataset"
-        (click)="editDataset()"
-      >
-        {{ 'Edit' | translate }}
-      </button>
+<mat-card class="card">
+  <mat-card-header>
+    <h3 *ngIf="isFilesystem" mat-card-title>
+      {{ 'Dataset Details' | translate }}
+    </h3>
+    <button
+      *ngIf="isFilesystem"
+      mat-button
+      ixTest="edit-dataset"
+      (click)="editDataset()"
+    >
+      {{ 'Edit' | translate }}
+    </button>
 
-      <h3 *ngIf="isZvol" mat-card-title>{{ 'Zvol Details' | translate }}</h3>
-      <button *ngIf="isZvol" mat-button ixTest="edit-zvol" (click)="editZvol()">
-        {{ 'Edit Zvol' | translate }}
-      </button>
-    </mat-card-header>
-    <mat-card-content>
-      <div class="details-item">
-        <div class="label">{{ 'Type' | translate }}:</div>
-        <div class="value">
-          <ng-container *ngIf="dataset.type; else notAvailable">
-            {{ dataset.type }}
-          </ng-container>
-        </div>
+    <h3 *ngIf="isZvol" mat-card-title>{{ 'Zvol Details' | translate }}</h3>
+    <button *ngIf="isZvol" mat-button ixTest="edit-zvol" (click)="editZvol()">
+      {{ 'Edit Zvol' | translate }}
+    </button>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="details-item">
+      <div class="label">{{ 'Type' | translate }}:</div>
+      <div class="value">
+        <ng-container *ngIf="dataset.type; else notAvailable">
+          {{ dataset.type }}
+        </ng-container>
       </div>
-      <div class="details-item">
-        <div class="label">{{ 'Sync' | translate }}:</div>
-        <div class="value">
-          <ng-container *ngIf="dataset?.sync?.value; else notAvailable">
-            {{ dataset.sync.value }}
-          </ng-container>
-        </div>
+    </div>
+    <div class="details-item">
+      <div class="label">{{ 'Sync' | translate }}:</div>
+      <div class="value">
+        <ng-container *ngIf="dataset?.sync?.value; else notAvailable">
+          {{ dataset.sync.value }}
+        </ng-container>
       </div>
-      <div class="details-item">
-        <div class="label">{{ 'Compression Level' | translate }}:</div>
-        <div class="value">
-          <ng-container *ngIf="datasetCompression; else notAvailable">
-            {{ datasetCompression }}
-          </ng-container>
-        </div>
+    </div>
+    <div class="details-item">
+      <div class="label">{{ 'Compression Level' | translate }}:</div>
+      <div class="value">
+        <ng-container *ngIf="datasetCompression; else notAvailable">
+          {{ datasetCompression }}
+        </ng-container>
       </div>
-      <div *ngIf="!isZvol" class="details-item">
-        <div class="label">{{ 'Enable Atime' | translate }}:</div>
-        <div class="value">
-          {{ (dataset.atime ? OnOff.On : OnOff.Off) | translate }}
-        </div>
+    </div>
+    <div *ngIf="!isZvol" class="details-item">
+      <div class="label">{{ 'Enable Atime' | translate }}:</div>
+      <div class="value">
+        {{ (dataset.atime ? OnOff.On : OnOff.Off) | translate }}
       </div>
-      <div class="details-item">
-        <div class="label">{{ 'ZFS Deduplication' | translate }}:</div>
-        <div class="value">
-          <ng-container *ngIf="dataset?.deduplication?.value; else notAvailable">
-            {{ dataset.deduplication.value }}
-          </ng-container>
-        </div>
+    </div>
+    <div class="details-item">
+      <div class="label">{{ 'ZFS Deduplication' | translate }}:</div>
+      <div class="value">
+        <ng-container *ngIf="dataset?.deduplication?.value; else notAvailable">
+          {{ dataset.deduplication.value }}
+        </ng-container>
       </div>
-      <div class="details-item">
-        <div class="label">{{ 'Case Sensitivity' | translate }}:</div>
-        <div class="value">
-          {{ (dataset.casesensitive ? OnOff.On : OnOff.Off) | translate }}
-        </div>
+    </div>
+    <div class="details-item">
+      <div class="label">{{ 'Case Sensitivity' | translate }}:</div>
+      <div class="value">
+        {{ (dataset.casesensitive ? OnOff.On : OnOff.Off) | translate }}
       </div>
-      <div class="details-item">
-        <div class="label">{{ 'Path' | translate }}:</div>
-        <div
-          *ngIf="!isLoading"
-          matTooltipPosition="above"
-          class="value dataset-path"
-          [matTooltip]="dataset.name"
-          [matTooltipClass]="['dataset-path-tooltip']"
-        >
-          {{ dataset.name }}
-        </div>
-        <ix-copy-btn [text]="dataset.name"></ix-copy-btn>
-      </div>
-      <div *ngIf="!isLoading && hasComments" class="details-item">
-        <div class="label">{{ 'Comments' | translate }}:</div>
-        <div class="value dataset-comments">{{ dataset.comments.value }}</div>
-      </div>
-    </mat-card-content>
-    <mat-card-actions *ngIf="dataset.id !== dataset.pool">
-      <button
-        *ngIf="canBePromoted"
-        mat-button
-        ixTest="promote-dataset"
-        (click)="promoteDataset()"
+    </div>
+    <div class="details-item">
+      <div class="label">{{ 'Path' | translate }}:</div>
+      <div
+        *ngIf="!isLoading"
+        matTooltipPosition="above"
+        class="value dataset-path"
+        [matTooltip]="dataset.name"
+        [matTooltipClass]="['dataset-path-tooltip']"
       >
-        {{ 'Promote' | translate }}
-      </button>
-      <button mat-button ixTest="delete-dataset" (click)="deleteDataset()">
-        {{ 'Delete' | translate }}
-      </button>
-    </mat-card-actions>
-  </mat-card>
-</div>
+        {{ dataset.name }}
+      </div>
+      <ix-copy-btn [text]="dataset.name"></ix-copy-btn>
+    </div>
+    <div *ngIf="!isLoading && hasComments" class="details-item">
+      <div class="label">{{ 'Comments' | translate }}:</div>
+      <div class="value dataset-comments">{{ dataset.comments.value }}</div>
+    </div>
+  </mat-card-content>
+  <mat-card-actions *ngIf="dataset.id !== dataset.pool">
+    <button
+      *ngIf="canBePromoted"
+      mat-button
+      ixTest="promote-dataset"
+      (click)="promoteDataset()"
+    >
+      {{ 'Promote' | translate }}
+    </button>
+    <button mat-button ixTest="delete-dataset" (click)="deleteDataset()">
+      {{ 'Delete' | translate }}
+    </button>
+  </mat-card-actions>
+</mat-card>
 
 <ng-template #notAvailable>
   {{ 'N/A' | translate }}

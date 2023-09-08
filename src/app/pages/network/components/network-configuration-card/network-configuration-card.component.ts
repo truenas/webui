@@ -13,7 +13,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { NetworkConfigurationComponent } from 'app/pages/network/components/configuration/configuration.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { adminNetworkInterfacesChanged } from 'app/store/admin-panel/admin.actions';
+import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
 
 @UntilDestroy()
 @Component({
@@ -38,7 +38,7 @@ export class NetworkConfigurationCardComponent implements OnInit {
   ngOnInit(): void {
     this.loadNetworkConfigAndSummary();
 
-    this.actions$.pipe(ofType(adminNetworkInterfacesChanged), untilDestroyed(this))
+    this.actions$.pipe(ofType(networkInterfacesChanged), untilDestroyed(this))
       .subscribe(() => this.loadNetworkConfigAndSummary());
   }
 

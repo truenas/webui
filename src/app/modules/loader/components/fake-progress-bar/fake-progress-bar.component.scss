@@ -6,4 +6,5 @@
 
 mat-progress-bar {
   height: 100%;
+  overflow-y: hidden; // removes 4px preserved for scrollbar
 }

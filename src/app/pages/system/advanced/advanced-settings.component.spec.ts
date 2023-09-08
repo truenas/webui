@@ -1,5 +1,6 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AdvancedSettingsComponent } from 'app/pages/system/advanced/advanced-settings.component';
 import {
   AllowedAddressesCardComponent,
@@ -24,6 +25,7 @@ import { SessionsCardComponent } from 'app/pages/system/advanced/sessions/sessio
 import { StorageCardComponent } from 'app/pages/system/advanced/storage/storage-card/storage-card.component';
 import { SysctlCardComponent } from 'app/pages/system/advanced/sysctl/sysctl-card/sysctl-card.component';
 import { SyslogCardComponent } from 'app/pages/system/advanced/syslog/syslog-card/syslog-card.component';
+import { SystemSecurityCardComponent } from 'app/pages/system/advanced/system-security/system-security-card/system-security-card.component';
 
 describe('AdvancedSettingsComponent', () => {
   let spectator: Spectator<AdvancedSettingsComponent>;
@@ -44,7 +46,13 @@ describe('AdvancedSettingsComponent', () => {
         SelfEncryptingDriveCardComponent,
         IsolatedGpusCardComponent,
         GlobalTwoFactorAuthCardComponent,
+        SystemSecurityCardComponent,
       ),
+    ],
+    providers: [
+      mockWebsocket([
+        mockCall('system.license', {}),
+      ]),
     ],
   });
 
@@ -66,5 +74,6 @@ describe('AdvancedSettingsComponent', () => {
     expect(spectator.query(SelfEncryptingDriveCardComponent)).toExist();
     expect(spectator.query(IsolatedGpusCardComponent)).toExist();
     expect(spectator.query(GlobalTwoFactorAuthCardComponent)).toExist();
+    expect(spectator.query(SystemSecurityCardComponent)).toExist();
   });
 });
