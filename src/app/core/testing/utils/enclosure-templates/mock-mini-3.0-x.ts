@@ -4,8 +4,8 @@ import {
 } from 'app/interfaces/enclosure.interface';
 import { MockEnclosure } from './mock-enclosure-template';
 
-export class MockMini30Xl extends MockEnclosure {
-  readonly totalSlotsFront: number = 9;
+export class MockMini30X extends MockEnclosure {
+  readonly totalSlotsFront: number = 7;
   readonly totalSlotsRear: number = 0;
   readonly totalSlotsInternal: number = 0;
 
@@ -48,26 +48,27 @@ export class MockMini30Xl extends MockEnclosure {
   };
 
   data = {
-    id: 'mapped_enclosure_0',
-    name: 'Drive Bays',
-    model: 'FREENAS-MINI-3.0-XL+',
-    controller: true,
-    elements: [
+    'id': 'mapped_enclosure_0',
+    'bsg': 'bsg/4:0:0:0',
+    'name': 'Drive Bays',
+    'model': 'FREENAS-MINI-3.0-X',
+    'controller': true,
+    'elements': [
       {
-        name: 'Array Device Slot',
-        descriptor: 'Drive Slots',
-        header: [
+        'name': 'Array Device Slot',
+        'descriptor': 'Drive Slots',
+        'header': [
           'Descriptor',
           'Status',
           'Value',
           'Device',
         ],
-        elements: [],
-        has_slot_status: false,
+        'elements': [],
+        'has_slot_status': false,
       },
     ],
-    number: this.enclosureNumber,
-    label: 'Drive Bays',
+    'number': 0,
+    'label': 'Drive Bays',
   } as Enclosure;
 
   constructor(number: number) {
@@ -79,14 +80,14 @@ export class MockMini30Xl extends MockEnclosure {
   processSlotTemplate(template: EnclosureElement): EnclosureElement {
     const updatedTemplate = { ...template };
     const original = { ...template.original };
-    if (template.slot === 1) {
-      original.slot = 6;
+    if (template.slot === 7) {
+      original.slot = 4;
       original.enclosure_id = '3000000000000002';
-    } else if (template.slot === 10) {
-      original.slot = 5;
+    } else if (template.slot > 4) {
+      original.slot = template.slot - 4;
       original.enclosure_id = '3000000000000002';
     } else {
-      original.slot = template.slot - 1;
+      original.slot = template.slot;
       original.enclosure_id = '3000000000000001';
     }
 
