@@ -32,6 +32,7 @@ import { TreeModule } from 'app/modules/ix-tree/tree.module';
 import { JobsModule } from 'app/modules/jobs/jobs.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import { OauthButtonModule } from 'app/modules/oauth-button/oauth-button.module';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
@@ -178,6 +179,7 @@ import { routing } from './system.routing';
     AppLoaderModule,
     TestIdModule,
     IxTable2Module,
+    OauthButtonModule,
   ],
   declarations: [
     AdvancedSettingsComponent,

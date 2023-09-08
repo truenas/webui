@@ -83,15 +83,14 @@
             {{ 'Log in to Gmail to set up Oauth credentials.' | translate }}
           </ng-template>
         </div>
-        <button
-          mat-button
-          type="button"
-          class="oauth-button"
-          ixTest="login-to-gmail"
-          (click)="onLoginToGmailPressed()"
-        >
-          {{ hasOauthAuthorization ? ('Log In To Gmail Again' | translate) : ('Log In To Gmail' | translate) }}
-        </button>
+
+        <ix-oauth-button
+          testId="login-to-gmail"
+          [oauthType]="oauthType.Gmail"
+          [oauthUrl]="'https://truenas.com/oauth/gmail?origin='"
+          [isLoggedIn]="hasOauthAuthorization"
+          (loggedIn)="onLoggedIn($event)"
+        ></ix-oauth-button>
       </ng-template>
 
       <div class="form-actions">
