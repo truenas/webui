@@ -157,4 +157,4 @@ def open_shell_and_run_su_user(driver):
 @then('User should be able to use Sudo')
 def user_should_be_able_to_use_sudo(driver):
     """User should be able to use Sudo."""
-    assert "lectured" in sudo_results, str(sudo_results)
+    assert 'lectured' in sudo_results, str(sudo_results)
