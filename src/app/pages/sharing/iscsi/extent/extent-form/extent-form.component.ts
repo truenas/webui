@@ -16,6 +16,7 @@ import { IscsiExtent } from 'app/interfaces/iscsi.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IscsiService } from 'app/services/iscsi.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -80,6 +81,7 @@ export class ExtentFormComponent implements OnInit {
 
   constructor(
     protected iscsiService: IscsiService,
+    protected formatter: IxFormatterService,
     private translate: TranslateService,
     private formBuilder: FormBuilder,
     private errorHandler: FormErrorHandlerService,

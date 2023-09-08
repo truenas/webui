@@ -86,12 +86,13 @@
 
             <ix-input
               formControlName="filesize"
-              type="number"
               [label]="helptext.extent_placeholder_filesize | translate"
               [tooltip]="helptext.extent_tooltip_filesize | translate"
               [placeholder]="helptext.extent_placeholder_filesize | translate"
               [required]="true"
               [fxHide]="isDevice"
+              [parse]="formatter.memorySizeParsing"
+              [format]="formatter.memorySizeFormatting"
             ></ix-input>
 
             <ix-input
