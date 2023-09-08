@@ -48,27 +48,27 @@ export class MockMini30X extends MockEnclosure {
   };
 
   data = {
-    'id': 'mapped_enclosure_0',
-    'bsg': 'bsg/4:0:0:0',
-    'name': 'Drive Bays',
-    'model': 'FREENAS-MINI-3.0-X',
-    'controller': true,
-    'elements': [
+    id: 'mapped_enclosure_0',
+    bsg: 'bsg/4:0:0:0',
+    name: 'Drive Bays',
+    model: 'FREENAS-MINI-3.0-X',
+    controller: true,
+    elements: [
       {
-        'name': 'Array Device Slot',
-        'descriptor': 'Drive Slots',
-        'header': [
+        name: 'Array Device Slot',
+        descriptor: 'Drive Slots',
+        header: [
           'Descriptor',
           'Status',
           'Value',
           'Device',
         ],
-        'elements': [],
-        'has_slot_status': false,
+        elements: [],
+        has_slot_status: false,
       },
     ],
-    'number': 0,
-    'label': 'Drive Bays',
+    number: 0,
+    label: 'Drive Bays',
   } as Enclosure;
 
   constructor(number: number) {
