@@ -3,9 +3,11 @@
 import pytest
 import reusableSeleniumCode as rsc
 import time
+import xpaths
 from function import (
     ssh_cmd,
-    post
+    post,
+    wait_on_element
 )
 from pytest_bdd import (
     given,
@@ -81,6 +83,9 @@ def wait_for_the_login_to_appear_and_ha_to_be_enabled_login_with_user_and_passwo
 def on_the_dashboard_verify_the_middleware_logs_still_exist_and_contain_details_from_before_failover(driver, logs_data):
     """on the Dashboard, verify the middleware logs still exist and contain details from before failover."""
     rsc.Verify_The_Dashboard(driver)
+    assert wait_on_element(driver, 180, xpaths.toolbar.ha_Enabled)
+    # if there is prefious the License Agrement might show up
+    rsc.License_Agrement(driver)
 
     results = post(nas_Hostname, '/filesystem/stat/',
                    (admin_User, admin_Password), '/var/log/middlewared.log')
