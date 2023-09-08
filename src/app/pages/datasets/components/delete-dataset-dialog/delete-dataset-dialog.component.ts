@@ -10,6 +10,7 @@ import {
   combineLatest, EMPTY, Observable, of, throwError,
 } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
+import { DatasetType } from 'app/enums/dataset.enum';
 import { DatasetAttachment } from 'app/interfaces/pool-attachment.interface';
 import { Process } from 'app/interfaces/process.interface';
 import { VolumesListDataset } from 'app/interfaces/volumes-list-pool.interface';
@@ -37,6 +38,10 @@ export class DeleteDatasetDialogComponent implements OnInit {
   });
 
   deleteMessage: string;
+
+  get isZvol(): boolean {
+    return this.dataset.type === DatasetType.Volume;
+  }
 
   constructor(
     private loader: AppLoaderService,
@@ -152,18 +157,30 @@ export class DeleteDatasetDialogComponent implements OnInit {
   }
 
   private setConfirmValidator(): void {
+    let confirmMessage = this.translate.instant('Enter dataset name to continue.');
+    if (this.isZvol) {
+      confirmMessage = this.translate.instant('Enter zvol name to continue.');
+    }
+
     this.form.controls.confirmDatasetName.setValidators(
       this.validators.confirmValidator(
         this.dataset.name,
-        this.translate.instant('Enter dataset name to continue.'),
+        confirmMessage,
       ),
     );
   }
 
   private setDeleteMessage(): void {
-    this.deleteMessage = this.translate.instant(
-      'The <i><b>{name}</b></i> dataset and all snapshots stored with it <b>will be permanently deleted</b>.',
-      { name: this.dataset.name },
-    );
+    if (this.isZvol) {
+      this.deleteMessage = this.translate.instant(
+        'The <i><b>{name}</b></i> zvol and all snapshots stored with it <b>will be permanently deleted</b>.',
+        { name: this.dataset.name },
+      );
+    } else {
+      this.deleteMessage = this.translate.instant(
+        'The <i><b>{name}</b></i> dataset and all snapshots stored with it <b>will be permanently deleted</b>.',
+        { name: this.dataset.name },
+      );
+    }
   }
 }
