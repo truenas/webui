@@ -189,7 +189,7 @@ describe('PoolManagerComponent – wizard step reset', () => {
       'Disk Size': '20 GiB (HDD)',
       Width: '1',
     });
-    expect(await wizard.getConfigurationPreviewSummary()).toMatchObject({ 'Spare:': '1 × STRIPE | 1 × 20 GiB (HDD)' });
+    expect(await wizard.getConfigurationPreviewSummary()).toMatchObject({ 'Spare:': '1 × 20 GiB (HDD)' });
     const resetSpareButton = (await (await wizard.getActiveStep()).getHarness(MatButtonHarness.with({ text: 'Reset Step' })));
     await resetSpareButton.click();
     expect(await wizard.getStepValues()).toStrictEqual({
@@ -205,7 +205,7 @@ describe('PoolManagerComponent – wizard step reset', () => {
       'Disk Size': '20 GiB (HDD)',
       Width: '1',
     });
-    expect(await wizard.getConfigurationPreviewSummary()).toMatchObject({ 'Cache:': '1 × STRIPE | 1 × 20 GiB (HDD)' });
+    expect(await wizard.getConfigurationPreviewSummary()).toMatchObject({ 'Cache:': '1 × 20 GiB (HDD)' });
     const resetCacheButton = (await (await wizard.getActiveStep()).getHarness(MatButtonHarness.with({ text: 'Reset Step' })));
     await resetCacheButton.click();
     expect(await wizard.getStepValues()).toStrictEqual({
