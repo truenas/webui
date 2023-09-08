@@ -40,7 +40,6 @@ import { MockR30 } from './enclosure-templates/mock-r30';
 import { MockR40 } from './enclosure-templates/mock-r40';
 import { MockR50 } from './enclosure-templates/mock-r50';
 
-
 export class MockStorageGenerator {
   poolState: PoolInstance;
   disks: Disk[];
