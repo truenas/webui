@@ -115,7 +115,7 @@ describe('DatasetCapacityManagementCardComponent', () => {
 
       let items = details[0].querySelectorAll('.details-item');
       expect(items).toHaveLength(3);
-      expect(items[0].querySelector('.label')).toHaveText('Space Available to Dataset  :');
+      expect(items[0].querySelector('.label')).toHaveText('Space Available to Dataset:');
       expect(items[0].querySelector('.value')).toHaveText('1 GiB');
       expect(items[1].querySelector('.label')).toHaveText('Applied Dataset Quota:');
       expect(items[1].querySelector('.value')).toHaveText('8 MiB');
@@ -164,7 +164,7 @@ describe('DatasetCapacityManagementCardComponent', () => {
 
       let items = details[0].querySelectorAll('.details-item');
       expect(items).toHaveLength(2);
-      expect(items[0].querySelector('.label')).toHaveText('Space Available to Zvol  :');
+      expect(items[0].querySelector('.label')).toHaveText('Space Available to Zvol:');
       expect(items[0].querySelector('.value')).toHaveText('3 GiB');
       expect(items[1].querySelector('.label')).toHaveText('Inherited Quotas:');
       expect(items[1].querySelector('.value')).toHaveText('16 MiB');

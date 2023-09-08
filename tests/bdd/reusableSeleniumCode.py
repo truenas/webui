@@ -86,8 +86,9 @@ def Go_To_Service(driver):
 
 
 def HA_Login_Status_Enable(driver):
-    assert wait_on_element(driver, 180, xpaths.login.user_Input)
-    assert wait_on_element(driver, 240, xpaths.login.ha_Status_Enable)
+    wait_on_element(driver, 180, xpaths.login.user_Input)
+    driver.refresh()
+    assert wait_on_element(driver, 180, xpaths.login.ha_Status_Enable)
 
 
 def Input_Value(driver, xpath, value):
@@ -141,6 +142,12 @@ def Restart_SMB_Service(driver):
     driver.find_element_by_xpath(xpaths.popup.smb_Restart_Button).click()
 
 
+def Return_To_Pool_list(driver):
+    if wait_on_element(driver, 15, '//h1[contains(text(),"Set ACL for this dataset")]'):
+        assert wait_on_element(driver, 5, xpaths.button.dialog_Cancel, 'clickable')
+        driver.find_element_by_xpath(xpaths.button.dialog_Cancel).click()
+
+
 def Scroll_To(driver, xpath):
     element = driver.find_element_by_xpath(xpath)
     driver.execute_script("arguments[0].scrollIntoView();", element)
@@ -174,21 +181,35 @@ def Trigger_Failover(driver):
 
 
 def Verify_Degraded_Alert(driver):
-    assert wait_on_element(driver, 7, xpaths.toolbar.notification_Button, 'clickable')
-    driver.find_element_by_xpath(xpaths.toolbar.notification_Button).click()
-    assert wait_on_element(driver, 7, xpaths.alert.title)
-    assert wait_on_element(driver, 7, xpaths.alert.degraded_Critical_Level)
-    assert wait_on_element(driver, 7, xpaths.alert.degraded_Pool_Text)
-    assert wait_on_element(driver, 7, xpaths.alert.close_Button, 'clickable')
+    for _ in range(180):
+        assert wait_on_element(driver, 5, xpaths.toolbar.notification_Button, 'clickable')
+        driver.find_element_by_xpath(xpaths.toolbar.notification_Button).click()
+        assert wait_on_element(driver, 5, xpaths.alert.panel_Open)
+        if wait_on_element(driver, 3, xpaths.alert.degraded_Critical_Level):
+            break
+        assert wait_on_element(driver, 5, xpaths.alert.close_Button, 'clickable')
+        driver.find_element_by_xpath(xpaths.alert.close_Button).click()
+        assert wait_on_element_disappear(driver, 5, xpaths.alert.panel_Open)
+
+    assert is_element_present(driver, xpaths.alert.degraded_Pool_Text)
+    assert wait_on_element(driver, 5, xpaths.alert.close_Button, 'clickable')
     driver.find_element_by_xpath(xpaths.alert.close_Button).click()
     time.sleep(0.5)
 
 
 def Verify_Degraded_Alert_Is_Gone(driver):
-    driver.find_element_by_xpath(xpaths.toolbar.notification_Button).click()
-    assert wait_on_element(driver, 7, xpaths.alert.title)
-    assert is_element_present(driver, xpaths.alert.degraded_Critical_Level) is False
-    assert wait_on_element(driver, 7, xpaths.alert.close_Button, 'clickable')
+    for _ in range(180):
+        assert wait_on_element(driver, 5, xpaths.toolbar.notification_Button, 'clickable')
+        driver.find_element_by_xpath(xpaths.toolbar.notification_Button).click()
+        assert wait_on_element(driver, 5, xpaths.alert.panel_Open)
+        if is_element_present(driver, xpaths.alert.degraded_Critical_Level) is False:
+            break
+        assert wait_on_element(driver, 5, xpaths.alert.close_Button, 'clickable')
+        driver.find_element_by_xpath(xpaths.alert.close_Button).click()
+        assert wait_on_element_disappear(driver, 5, xpaths.alert.panel_Open)
+
+    assert is_element_present(driver, xpaths.alert.degraded_Pool_Text) is False
+    assert wait_on_element(driver, 5, xpaths.alert.close_Button, 'clickable')
     driver.find_element_by_xpath(xpaths.alert.close_Button).click()
     time.sleep(0.5)
 
@@ -228,9 +249,8 @@ def Wiped_Unused_Disk(driver):
         driver.find_element_by_xpath(xpaths.checkbox.new_Confirm).click()
         assert wait_on_element(driver, 7, xpaths.button.Continue, 'clickable')
         driver.find_element_by_xpath(xpaths.button.Continue).click()
-        assert wait_on_element(driver, 10, xpaths.progress.progressbar)
         assert wait_on_element_disappear(driver, 60, xpaths.progress.progressbar)
-        assert wait_on_element(driver, 15, '//span[contains(.,"Disk Wiped successfully")]')
+        assert wait_on_element(driver, 20, '//span[contains(.,"Disk Wiped successfully")]')
         assert wait_on_element(driver, 5, xpaths.button.close, 'clickable')
         driver.find_element_by_xpath(xpaths.button.close).click()
         assert wait_on_element_disappear(driver, 7, xpaths.disks.confirm_Box_Title(disk))

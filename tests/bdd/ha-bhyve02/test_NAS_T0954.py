@@ -136,7 +136,7 @@ def updated_value_should_be_visible(driver):
 def try_login_with_ssh(driver):
     """Try login with ssh."""
     time.sleep(1)
-    assert ssh_sudo_exptext('ls /tmp', host, 'ericbsd', 'testing', 'collectd-boot')
+    assert ssh_sudo_exptext('ls /var/lib/sudo', host, 'ericbsd', 'testing', 'lectured')
 
 
 @then('User should be able to login')

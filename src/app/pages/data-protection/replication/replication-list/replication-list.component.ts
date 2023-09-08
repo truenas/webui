@@ -176,7 +176,6 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
           this.doEdit(row.id);
         },
       },
-
     ];
     if (parentrow.has_encrypted_dataset_keys) {
       actions.push({

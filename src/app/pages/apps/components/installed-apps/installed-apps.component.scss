@@ -3,14 +3,10 @@
 $singlecolumn-max-width: ($card-width-slim + $gap * 2);
 $dualcolumn-slim-max-width: ($card-width-slim * 2 + $gap * 2);
 $scrollbar-offset: 20px;
-$header-height: 200px;
+$header-height: 193px;
 
 :host {
   display: block;
-}
-
-.loader-bar {
-  height: 2px;
 }
 
 .container {
@@ -96,6 +92,15 @@ $header-height: 200px;
 .app-search {
   background-color: var(--bg2);
   padding: 16px;
+  position: relative;
+  
+  ix-fake-progress-bar {
+    height: 2px;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
 }
 
 .app-wrapper {
