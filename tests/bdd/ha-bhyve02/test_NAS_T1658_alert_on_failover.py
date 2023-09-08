@@ -5,7 +5,6 @@ import reusableSeleniumCode as rsc
 import xpaths
 from function import (
     wait_on_element,
-    wait_on_element_disappear,
     ssh_cmd,
     get
 )
@@ -101,7 +100,9 @@ def wait_for_the_login_to_appear_and_ha_to_be_enabled_login_with_user_and_passwo
 def on_the_dashboard_verify_the_alert_exists_after_failover_with_the_right_volume_and_state(driver, notification):
     """on the Dashboard, verify the alert exists after failover with the right volume and state."""
     rsc.Verify_The_Dashboard(driver)
-
+    assert wait_on_element(driver, 180, xpaths.toolbar.ha_Enabled)
+    # if there is prefious the License Agrement might show up
+    rsc.License_Agrement(driver)
     rsc.Verify_Degraded_Alert(driver)
 
 
