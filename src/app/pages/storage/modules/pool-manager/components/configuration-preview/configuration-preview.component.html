@@ -13,7 +13,7 @@
           {{ category.key | mapValue: vdevTypeLabels | translate }}:
         </div>
         <div class="value">
-          {{ category.value | ixTopologyCategoryDescription: !isTopologyLimitedToOneLayout(category.key) }}
+          {{ category.value | ixTopologyCategoryDescription: !isLimitedToOneLayout(category.key) }}
         </div>
       </div>
       <div class="details-item">

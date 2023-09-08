@@ -7,6 +7,7 @@ import _ from 'lodash';
 import {
   CreateVdevLayout, TopologyItemType, VdevType, vdevTypeLabels,
 } from 'app/enums/v-dev-type.enum';
+import { isTopologyLimitedToOneLayout } from 'app/helpers/storage.helper';
 import { PoolTopology } from 'app/interfaces/pool.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import {
@@ -35,14 +36,20 @@ const defaultCategory: PoolManagerTopologyCategory = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ExistingConfigurationPreviewComponent implements OnChanges {
-  protected readonly vdevTypeLabels = vdevTypeLabels;
-
-  VdevType = VdevType;
   @Input() name: string;
   @Input() topology: PoolTopology;
   @Input() size: number;
   @Input() disks: Disk[];
+
+  VdevType = VdevType;
+
+  protected readonly vdevTypeLabels = vdevTypeLabels;
   protected poolTopology: PoolManagerTopology;
+  protected isLimitedToOneLayout = isTopologyLimitedToOneLayout;
+
+  get unknownProp(): string {
+    return this.translate.instant('None');
+  }
 
   constructor(
     private translate: TranslateService,
@@ -65,6 +72,7 @@ export class ExistingConfigurationPreviewComponent implements OnChanges {
       dedup: _.cloneDeep(defaultCategory),
       special: _.cloneDeep(defaultCategory),
     };
+
     for (const [, value] of Object.entries(VdevType)) {
       if (!topology[value]?.length) {
         continue;
@@ -110,13 +118,5 @@ export class ExistingConfigurationPreviewComponent implements OnChanges {
       }
     }
     return poolManagerTopology;
-  }
-
-  get unknownProp(): string {
-    return this.translate.instant('None');
-  }
-
-  isTopologyLimitedToOneLayout(type: string): boolean {
-    return type === VdevType.Spare || type === VdevType.Cache;
   }
 }
