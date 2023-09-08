@@ -1,5 +1,10 @@
 <h1 matDialogTitle>
-  {{ 'Delete dataset {name}' | translate: { name: dataset.name } }}
+  <ng-container *ngIf="isZvol">
+    {{ 'Delete zvol {name}' | translate: { name: dataset.name } }}
+  </ng-container>
+  <ng-container *ngIf="!isZvol">
+    {{ 'Delete dataset {name}' | translate: { name: dataset.name } }}
+  </ng-container>
 </h1>
 <form class="ix-form-container" [formGroup]="form" (submit)="onDelete()">
   <p [innerHTML]="deleteMessage"></p>
@@ -72,7 +77,7 @@
       ixTest="delete-dataset"
       [disabled]="form.invalid"
     >
-      {{ 'Delete Dataset' | translate }}
+      {{ 'Delete' | translate }} {{ isZvol ? ('Zvol' | translate) : ('Dataset' | translate) }}
     </button>
   </ix-form-actions>
 </form>
