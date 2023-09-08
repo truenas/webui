@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { IscsiExtentType } from 'app/enums/iscsi.enum';
 import { IscsiExtent } from 'app/interfaces/iscsi.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
@@ -31,6 +32,11 @@ export class ExtentListComponent implements EntityTableConfig<IscsiExtent> {
     {
       name: this.translate.instant('Extent Name'),
       prop: 'name',
+      always_display: true,
+    },
+    {
+      name: this.translate.instant('Device/File'),
+      prop: 'deviceOrFile',
       always_display: true,
     },
     {
@@ -64,6 +70,13 @@ export class ExtentListComponent implements EntityTableConfig<IscsiExtent> {
     private translate: TranslateService,
     private dialog: MatDialog,
   ) {}
+
+  resourceTransformIncomingRestData(extents: IscsiExtent[]): (IscsiExtent & { deviceOrFile: string })[] {
+    return extents.map((extent) => ({
+      ...extent,
+      deviceOrFile: extent.type === IscsiExtentType.Disk ? extent.disk : extent.path,
+    }));
+  }
 
   afterInit(entityList: EntityTableComponent<IscsiExtent>): void {
     this.entityTable = entityList;
