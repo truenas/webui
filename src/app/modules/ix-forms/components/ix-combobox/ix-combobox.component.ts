@@ -21,7 +21,7 @@ import {
   debounceTime, distinctUntilChanged, map, takeUntil,
 } from 'rxjs/operators';
 import { Option } from 'app/interfaces/option.interface';
-import { IxComboboxProvider } from 'app/modules/ix-forms/components/ix-combobox/ix-combobox-provider';
+import { IxComboboxProvider, MappedIxComboboxProvider } from 'app/modules/ix-forms/components/ix-combobox/ix-combobox-provider';
 
 @UntilDestroy()
 @Component({
@@ -36,8 +36,11 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
   @Input() required: boolean;
   @Input() tooltip: string;
   @Input() allowCustomValue = false;
-  @Input() provider: IxComboboxProvider;
-  @Input() initialValue?: Option | null;
+  @Input() set provider(comboboxProvider: IxComboboxProvider) {
+    this.comboboxProviderHandler = new MappedIxComboboxProvider(comboboxProvider);
+    this.cdr.markForCheck();
+  }
+  private comboboxProviderHandler: MappedIxComboboxProvider;
 
   @ViewChild('ixInput') inputElementRef: ElementRef<HTMLInputElement>;
   @ViewChild('auto') autoCompleteRef: MatAutocomplete;
@@ -97,7 +100,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
   filterOptions(filterValue: string): void {
     this.loading = true;
     this.cdr.markForCheck();
-    this.provider?.fetch(filterValue).pipe(
+    this.comboboxProviderHandler?.fetch(filterValue).pipe(
       catchError(() => {
         this.hasErrorInOptions = true;
         return EMPTY;
@@ -117,17 +120,10 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
       if (!this.selectedOption && this.value !== null && this.value !== '') {
         const setOption = this.options.find((option: Option) => option.value === this.value);
         if (setOption) {
-          this.selectedOption = setOption ? { ...setOption } : null;
+          this.selectedOption = { ...setOption };
           if (this.selectedOption) {
             this.filterChanged$.next('');
           }
-        } else if (this.initialValue?.value) {
-          /**
-           * Workaround!
-           * TODO: Redesign ix-combobox provider to reliably fetch initial values without needing fake options
-           * */
-          this.options.push(this.initialValue);
-          this.selectedOption = this.initialValue;
         } else {
           /**
            * We are adding a custom fake option here so we can show the current value of the control even
@@ -179,7 +175,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
 
           this.loading = true;
           this.cdr.markForCheck();
-          this.provider?.nextPage(this.filterValue !== null || this.filterValue !== undefined ? this.filterValue : '')
+          this.comboboxProviderHandler?.nextPage(this.filterValue !== null || this.filterValue !== undefined ? this.filterValue : '')
             .pipe(untilDestroyed(this)).subscribe((options: Option[]) => {
               this.loading = false;
               this.cdr.markForCheck();
