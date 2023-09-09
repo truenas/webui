@@ -125,15 +125,6 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
             this.filterChanged$.next('');
           }
         } else {
-          /**
-           * We are adding a custom fake option here so we can show the current value of the control even
-           * if we haven't found the correct option in the list of options fetched so far. The assumption
-           * is that the correct option exists in one of the following pages of list of options
-           */
-          if (!this.allowCustomValue) {
-            this.options.push({ label: this.value as string, value: this.value });
-          }
-
           this.selectedOption = { label: this.value as string, value: this.value };
           if (this.selectedOption.value) {
             this.filterChanged$.next('');
