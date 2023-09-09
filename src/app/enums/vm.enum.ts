@@ -42,7 +42,6 @@ export enum VmDiskMode {
 }
 
 export enum VmDisplayType {
-  Vnc = 'VNC',
   Spice = 'SPICE',
 }
 
