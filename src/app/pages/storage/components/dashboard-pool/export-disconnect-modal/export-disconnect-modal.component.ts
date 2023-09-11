@@ -101,7 +101,6 @@ export class ExportDisconnectModalComponent implements OnInit {
     this.dialogRef.close(false);
   }
 
-  // TODO: Break apart into smaller methods
   startExportDisconnectJob(): void {
     const value = this.form.value;
     const entityJobRef = this.setupDisconnectJob(value);
@@ -137,7 +136,7 @@ export class ExportDisconnectModalComponent implements OnInit {
 
     entityJobRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe({
       next: () => {
-        this.handleSucessExportDisconnect(value);
+        this.handleDisconnectJobSuccess(value);
         entityJobRef.close(true);
       },
       error: (error: WebsocketError | Job) => {
@@ -233,7 +232,7 @@ export class ExportDisconnectModalComponent implements OnInit {
     });
   }
 
-  handleSucessExportDisconnect(value: Partial<{
+  handleDisconnectJobSuccess(value: Partial<{
     destroy: boolean;
     cascade: boolean;
     confirm: boolean;
