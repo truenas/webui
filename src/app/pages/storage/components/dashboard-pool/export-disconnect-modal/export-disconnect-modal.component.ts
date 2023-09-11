@@ -104,6 +104,18 @@ export class ExportDisconnectModalComponent implements OnInit {
   // TODO: Break apart into smaller methods
   startExportDisconnectJob(): void {
     const value = this.form.value;
+    const entityJobRef = this.setupDisconnectJob(value);
+    entityJobRef.componentInstance.submit();
+
+    this.datasetStore.resetDatasets();
+  }
+
+  setupDisconnectJob(value: Partial<{
+    destroy: boolean;
+    cascade: boolean;
+    confirm: boolean;
+    nameInput: string;
+  }>): MatDialogRef<EntityJobComponent> {
     const entityJobRef = this.matDialog.open(EntityJobComponent, {
       data: { title: helptext.exporting },
       disableClose: true,
@@ -122,7 +134,6 @@ export class ExportDisconnectModalComponent implements OnInit {
       ],
     );
 
-    entityJobRef.componentInstance.submit();
 
     entityJobRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe({
       next: () => {
@@ -139,27 +150,13 @@ export class ExportDisconnectModalComponent implements OnInit {
         this.dialogRef.close(true);
         this.isFormLoading = false;
         entityJobRef.close(true);
-        if (failureData.error) {
-          if (
-            _.isObject(failureData.exc_info.extra)
-            && !Array.isArray(failureData.exc_info.extra)
-            && failureData.exc_info.extra.code === 'control_services'
-          ) {
-            this.showServicesErrorsDialog(failureData); return;
-          } else {
-            if (failureData.extra && failureData.extra.code === 'unstoppable_processes') {
-              this.showUnstoppableErrorDialog(failureData); return;
-            }
-          }
-        }
-        this.showExportErrorDialog(failureData);
+        this.handleDisconnectJobFailure(failureData);
       },
       error: (error: WebsocketError | Job) => {
         this.dialogService.error(this.errorHandler.parseError(error));
       },
     });
-
-    this.datasetStore.resetDatasets();
+    return entityJobRef;
   }
 
   showExportErrorDialog(failureData: Job): void {
@@ -168,6 +165,23 @@ export class ExportDisconnectModalComponent implements OnInit {
       message: failureData.error,
       backtrace: failureData.exception,
     });
+  }
+
+  handleDisconnectJobFailure(failureData: Job): void {
+    if (failureData.error) {
+      if (
+        _.isObject(failureData.exc_info.extra)
+        && !Array.isArray(failureData.exc_info.extra)
+        && failureData.exc_info.extra.code === 'control_services'
+      ) {
+        this.showServicesErrorsDialog(failureData); return;
+      } else {
+        if (failureData.extra && failureData.extra.code === 'unstoppable_processes') {
+          this.showUnstoppableErrorDialog(failureData); return;
+        }
+      }
+    }
+    this.showExportErrorDialog(failureData);
   }
 
   showUnstoppableErrorDialog(failureData: Job): void {
