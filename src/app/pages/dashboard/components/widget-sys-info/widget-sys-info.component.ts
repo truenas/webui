@@ -31,7 +31,6 @@ import { ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectHasOnlyMismatchVersionsReason, selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
-import { systemInfoUpdated } from 'app/store/system-info/system-info.actions';
 import { selectIsIxHardware, waitForSystemFeatures, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
@@ -129,41 +128,23 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
     this.store$.pipe(waitForSystemFeatures, untilDestroyed(this)).subscribe((features) => {
       this.enclosureSupport = features.enclosure;
     });
-    if (this.isHaLicensed && this.isPassive) {
-      this.store$.select(selectHaStatus).pipe(
-        filter((haStatus) => !!haStatus),
-        untilDestroyed(this),
-      ).subscribe((haStatus) => {
-        if (haStatus.hasHa) {
-          this.data = null;
-
-          this.ws.call('failover.call_remote', ['system.info'])
-            .pipe(untilDestroyed(this))
-            .subscribe((systemInfo: SystemInfo) => {
-              this.processSysInfo(systemInfo);
-            });
-        } else if (!haStatus.hasHa) {
-          this.productImage = '';
-        }
-        this.hasHa = haStatus.hasHa;
-      });
-    } else {
-      this.store$.dispatch(systemInfoUpdated());
-      this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe({
-        next: (systemInfo) => {
-          this.processSysInfo(systemInfo);
-        },
-        error: (error) => {
-          console.error('System Info not available', error);
-        },
-      });
-      this.checkForUpdate();
-    }
+    this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe({
+      next: (systemInfo) => {
+        this.processSysInfo(systemInfo);
+      },
+      error: (error) => {
+        console.error('System Info not available', error);
+      },
+    });
+    this.checkForUpdate();
     if (this.sysGenService.getProductType() === ProductType.ScaleEnterprise) {
       this.store$.select(selectIsHaLicensed).pipe(untilDestroyed(this)).subscribe((isHaLicensed) => {
         this.isHaLicensed = isHaLicensed;
         if (isHaLicensed) {
           this.updateMethod = 'failover.upgrade';
+        }
+        if (isHaLicensed && this.isPassive) {
+          this.loadSystemInfoForPassive();
         }
         this.checkForRunningUpdate();
       });
@@ -171,6 +152,26 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
     this.store$.select(selectIsIxHardware).pipe(untilDestroyed(this)).subscribe((isIxHardware) => {
       this.isIxHardware = isIxHardware;
       this.setProductImage();
+    });
+  }
+
+  loadSystemInfoForPassive(): void {
+    this.store$.select(selectHaStatus).pipe(
+      filter((haStatus) => !!haStatus),
+      untilDestroyed(this),
+    ).subscribe((haStatus) => {
+      if (haStatus.hasHa) {
+        this.data = null;
+
+        this.ws.call('failover.call_remote', ['system.info'])
+          .pipe(untilDestroyed(this))
+          .subscribe((systemInfo: SystemInfo) => {
+            this.processSysInfo(systemInfo);
+          });
+      } else if (!haStatus.hasHa) {
+        this.productImage = '';
+      }
+      this.hasHa = haStatus.hasHa;
     });
   }
 
