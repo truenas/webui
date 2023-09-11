@@ -1,5 +1,4 @@
 import { Inject, Injectable } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -70,7 +69,6 @@ export class SigninStore extends ComponentStore<SigninState> {
     private errorHandler: ErrorHandlerService,
     private authService: AuthService,
     private updateService: UpdateService,
-    private mdDialog: MatDialog,
     @Inject(WINDOW) private window: Window,
   ) {
     super(initialState);
@@ -92,18 +90,16 @@ export class SigninStore extends ComponentStore<SigninState> {
           this.updateFailoverStatusOnDisconnect();
         }),
         switchMap(() => this.authService.loginWithToken()),
-        tap((wasLoggedIn) => {
+        tap((wasLoggedIn: boolean) => {
           if (!wasLoggedIn) {
             this.authService.clearAuthToken();
-            this.setLoadingState(false);
             return;
           }
           this.handleSuccessfulLogin();
         }),
         tapResponse(
-          () => this.setLoadingState(false),
+          () => {},
           (error: WebsocketError) => {
-            this.setLoadingState(false);
             this.dialogService.error(this.errorHandler.parseWsError(error));
           },
         ),
@@ -189,6 +185,7 @@ export class SigninStore extends ComponentStore<SigninState> {
     return this.ws.call('failover.status').pipe(
       switchMap((status) => {
         this.setFailoverStatus(status);
+        this.setLoadingState(false);
 
         if (status === FailoverStatus.Single) {
           return of(null);

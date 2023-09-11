@@ -1,10 +1,13 @@
 <p class="failover-status-message">{{ statusMessage }}</p>
+<ngx-skeleton-loader *ngIf="!disabledReasons"></ngx-skeleton-loader>
 <div *ngIf="areReasonsShown" class="failover-reasons">
   <p *ngFor="let reason of disabledReasons">
     {{ reasonText[reason] | translate}}
   </p>
 </div>
+
 <p class="failover-status">{{ statusDescriptions[status] }}</p>
+<ngx-skeleton-loader *ngIf="!failoverIps"></ngx-skeleton-loader>
 <div *ngIf="failoverIps?.length" class="failover-ips">
   <p>{{ 'Active IP Addresses' | translate }}: {{ failoverIps.join(", ") }}</p>
 </div>

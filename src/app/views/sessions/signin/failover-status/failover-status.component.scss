@@ -7,3 +7,10 @@ p {
   margin-bottom: 0.4rem;
   margin-top: 0.4rem;
 }
+
+ngx-skeleton-loader {
+  display: inline-block;
+  flex: 0;
+  height: 20px;
+  width: 80%;
+}
