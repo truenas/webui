@@ -39,18 +39,17 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 })
 export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChildren(MatSidenav) private sideNavs: QueryList<MatSidenav>;
-  isOpen = false;
+  isOpenSecondaryMenu = false;
   menuName: string;
   subs: SubMenuItem[];
 
   protected headerPortalOutlet: TemplatePortal = null;
+  readonly hostname$ = this.store$.pipe(waitForSystemInfo, map(({ hostname }) => hostname));
+  readonly isAlertPanelOpen$ = this.store$.select(selectIsAlertPanelOpen);
+  readonly hasConsoleFooter$ = this.store$.select(selectHasConsoleFooter);
+  readonly productType$ = this.sysGeneralService.getProductType$;
+  readonly copyrightYear$ = this.sysGeneralService.getCopyrightYear$;
   readonly productTypeLabels = productTypeLabels;
-
-  isAlertPanelOpen$ = this.store$.select(selectIsAlertPanelOpen);
-  hasConsoleFooter$ = this.store$.select(selectHasConsoleFooter);
-  productType$ = this.sysGeneralService.getProductType$;
-  copyrightYear$ = this.sysGeneralService.getCopyrightYear$;
-  hostname$ = this.store$.pipe(waitForSystemInfo, map(({ hostname }) => hostname));
 
   get sidenavWidth(): string {
     return this.sidenavService.sidenavWidth;
@@ -68,9 +67,13 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.sidenavService.isOpen;
   }
 
+  get isDefaultTheme(): boolean {
+    return this.themeService.isDefaultTheme;
+  }
+
   constructor(
     private router: Router,
-    public themeService: ThemeService,
+    private themeService: ThemeService,
     private sysGeneralService: SystemGeneralService,
     private layoutService: LayoutService,
     private sidenavService: SidenavService,
@@ -105,25 +108,25 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
 
   listenToSidenavChanges(): void {
     this.sideNavs?.changes.pipe(untilDestroyed(this)).subscribe(() => {
-      this.sidenavService.setSidenav(this.sideNavs?.first);
+      this.sidenavService.setSidenav(this.sideNavs.first);
     });
   }
 
   // For the slide-in menu
   toggleMenu(menuInfo?: [string, SubMenuItem[]]): void {
     const [state, subItems] = menuInfo || [];
-    if ((this.isOpen && !menuInfo) || (this.isOpen && state === this.menuName)) {
-      this.isOpen = false;
+    if ((this.isOpenSecondaryMenu && !menuInfo) || (this.isOpenSecondaryMenu && state === this.menuName)) {
+      this.isOpenSecondaryMenu = false;
       this.subs = [];
     } else if (menuInfo) {
       this.menuName = state;
       this.subs = subItems;
-      this.isOpen = true;
+      this.isOpenSecondaryMenu = true;
     }
   }
 
   onMenuClosed(): void {
-    this.isOpen = false;
+    this.isOpenSecondaryMenu = false;
   }
 
   onAlertsPanelClosed(): void {

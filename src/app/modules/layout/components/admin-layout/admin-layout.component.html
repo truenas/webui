@@ -18,17 +18,17 @@
     (closedStart)="onMenuClosed()"
   >
     <div id="scroll-area" class="navigation-hold" fxLayout="column">
-      <div [class]="['branding', 'topbar', 'truenas-' + (productType$ | async | lowercase)]">
+      <div [ngClass]="['branding', 'topbar', 'truenas-' + (productType$ | async | lowercase)]">
         <a routerLink="/dashboard" class="logo" ixTest="main-logo">
           <ix-icon
             class="app-logo"
-            [name]="themeService.isDefaultTheme ? 'ix:logo_truenas_scale_mark_color': 'ix:logo_truenas_scale_mark'"
+            [name]="isDefaultTheme ? 'ix:logo_truenas_scale_mark_color': 'ix:logo_truenas_scale_mark'"
           ></ix-icon>
         </a>
         <a routerLink="/dashboard" class="logo-text" ixTest="main-logo">
           <ix-icon
             class="app-logo-text"
-            [name]="themeService.isDefaultTheme? 'ix:logo_truenas_scale_type_color': 'ix:logo_truenas_scale_type'"
+            [name]="isDefaultTheme ? 'ix:logo_truenas_scale_type_color': 'ix:logo_truenas_scale_type'"
           ></ix-icon>
         </a>
       </div>
@@ -39,7 +39,7 @@
         (menuClosed)="toggleMenu()"
       ></ix-navigation>
 
-      <div class="slidein-nav slidein-nav-sm" [class.slidein-open]="isOpen">
+      <div class="slidein-nav slidein-nav-sm" [class.slidein-open]="isOpenSecondaryMenu">
         <ix-secondary-menu
           [subMenuItems]="subs"
           [menuName]="menuName"
@@ -73,29 +73,24 @@
   >
     <ix-topbar></ix-topbar>
 
-    <div class="slidein-nav slidein-nav-md" [class.slidein-open]="isOpen">
+    <div class="slidein-nav slidein-nav-md" [class.slidein-open]="isOpenSecondaryMenu">
       <ix-secondary-menu
         [subMenuItems]="subs"
         [menuName]="menuName"
         (toggleMenu)="toggleMenu()"
       ></ix-secondary-menu>
     </div>
-    <div class="overlay" [class.isdark]="isOpen" (click)="toggleMenu()"></div>
+    <div class="overlay" [class.isdark]="isOpenSecondaryMenu" (click)="toggleMenu()"></div>
 
     <!-- App content -->
-    <div
-      class="rightside-content-hold"
-      [class.has-footer]="hasConsoleFooter$ | async"
-    >
+    <div class="rightside-content-hold" [class.has-footer]="hasConsoleFooter$ | async">
       <ix-page-title-header *ngIf="!headerPortalOutlet"></ix-page-title-header>
-      <ng-template
-        *ngIf="headerPortalOutlet"
-        [cdkPortalOutlet]="headerPortalOutlet"
-      ></ng-template>
+      <ng-template *ngIf="headerPortalOutlet" [cdkPortalOutlet]="headerPortalOutlet"></ng-template>
       <router-outlet></router-outlet>
     </div>
     <ix-console-footer *ngIf="hasConsoleFooter$ | async"></ix-console-footer>
   </mat-sidenav-content>
+
   <!-- Alert bar -->
   <mat-sidenav
     class="alert-sidenav"
