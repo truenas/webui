@@ -10,6 +10,7 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
@@ -48,6 +49,7 @@ import { SigninComponent } from './signin/signin.component';
     AppCommonModule,
     CommonDirectivesModule,
     TestIdModule,
+    NgxSkeletonLoaderModule,
   ],
   declarations: [
     SigninComponent,
