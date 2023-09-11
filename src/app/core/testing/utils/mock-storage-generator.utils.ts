@@ -32,11 +32,17 @@ import { MockF60 } from './enclosure-templates/mock-f60';
 import { MockM40 } from './enclosure-templates/mock-m40';
 import { MockM50 } from './enclosure-templates/mock-m50';
 import { MockM50Rear } from './enclosure-templates/mock-m50-rear';
+import { MockMini30Eplus } from './enclosure-templates/mock-mini-3.0-e+';
+import { MockMini30X } from './enclosure-templates/mock-mini-3.0-x';
+import { MockMini30Xplus } from './enclosure-templates/mock-mini-3.0-x+';
 import { MockMini30Xl } from './enclosure-templates/mock-mini-3.0-xl+';
 import { MockMiniR } from './enclosure-templates/mock-mini-r';
+import { MockR10 } from './enclosure-templates/mock-r10';
 import { MockR20 } from './enclosure-templates/mock-r20';
+import { MockR30 } from './enclosure-templates/mock-r30';
 import { MockR40 } from './enclosure-templates/mock-r40';
 import { MockR50 } from './enclosure-templates/mock-r50';
+
 
 export class MockStorageGenerator {
   poolState: PoolInstance;
@@ -652,6 +658,15 @@ export class MockStorageGenerator {
       case 'MINI-R':
         chassis = new MockMiniR(enclosureNumber);
         break;
+      case 'MINI-3.0-E+':
+        chassis = new MockMini30Eplus(enclosureNumber);
+        break;
+      case 'MINI-3.0-X':
+        chassis = new MockMini30X(enclosureNumber);
+        break;
+      case 'MINI-3.0-X+':
+        chassis = new MockMini30Xplus(enclosureNumber);
+        break;
       case 'MINI-3.0-XL+':
         chassis = new MockMini30Xl(enclosureNumber);
         break;
@@ -670,8 +685,14 @@ export class MockStorageGenerator {
       case 'M40':
         chassis = new MockM40(enclosureNumber);
         break;
+      case 'R10':
+        chassis = new MockR10(enclosureNumber);
+        break;
       case 'R20':
         chassis = new MockR20(enclosureNumber);
+        break;
+      case 'R30':
+        chassis = new MockR30(enclosureNumber);
         break;
       case 'R40':
         chassis = new MockR40(enclosureNumber);

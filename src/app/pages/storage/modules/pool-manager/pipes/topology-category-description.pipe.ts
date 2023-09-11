@@ -11,7 +11,7 @@ export class TopologyCategoryDescriptionPipe implements PipeTransform {
     private translate: TranslateService,
   ) {}
 
-  transform(category: PoolManagerTopologyCategory): string {
+  transform(category: PoolManagerTopologyCategory, notLimitedToOneLayout = true): string {
     if (category.vdevs.length === 0) {
       return this.translate.instant('None');
     }
@@ -20,7 +20,9 @@ export class TopologyCategoryDescriptionPipe implements PipeTransform {
       return `${this.translate.instant('Manual layout')} | ${category.vdevs.length} VDEVs`;
     }
 
+    const layoutTypeData = notLimitedToOneLayout ? `${category.vdevsNumber} × ${category.layout} | ` : '';
+
     const diskSize = filesize(Number(category.diskSize || 0), { standard: 'iec' });
-    return `${category.vdevsNumber} × ${category.layout} | ${category.width} × ${diskSize} (${category.diskType})`;
+    return `${layoutTypeData}${category.width} × ${diskSize} (${category.diskType})`;
   }
 }

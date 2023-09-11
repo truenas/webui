@@ -18,6 +18,8 @@
           formControlName="volsize"
           [label]="helptext.zvol_volsize_placeholder | translate"
           [tooltip]="helptext.zvol_volsize_tooltip | translate"
+          [format]="formatter.memorySizeFormatting"
+          [parse]="formatter.memorySizeParsing"
           [required]="true"
         ></ix-input>
         <ix-checkbox

@@ -109,7 +109,8 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
           }),
         );
       }),
-      untilDestroyed(this),
+    // Deliberately not unsubscribing to make sure "Snapshot deleted" message is shown.
+    // eslint-disable-next-line rxjs-angular/prefer-takeuntil
     ).subscribe();
   }
 }

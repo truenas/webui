@@ -32,9 +32,9 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { NetworkService } from 'app/services/network.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { adminNetworkInterfacesChanged } from 'app/store/admin-panel/admin.actions';
 import { haInfoReducer } from 'app/store/ha-info/ha-info.reducer';
 import { haInfoStateKey } from 'app/store/ha-info/ha-info.selectors';
+import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
 
 describe('InterfaceFormComponent', () => {
   let spectator: Spectator<InterfaceFormComponent>;
@@ -180,7 +180,7 @@ describe('InterfaceFormComponent', () => {
       expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
 
       const store$ = spectator.inject(Store);
-      expect(store$.dispatch).toHaveBeenCalledWith(adminNetworkInterfacesChanged({ commit: false, checkIn: false }));
+      expect(store$.dispatch).toHaveBeenCalledWith(networkInterfacesChanged({ commit: false, checkIn: false }));
 
       expect(ws.call).toHaveBeenCalledWith('interface.default_route_will_be_removed');
 
@@ -228,7 +228,7 @@ describe('InterfaceFormComponent', () => {
       }]);
 
       const store$ = spectator.inject(Store);
-      expect(store$.dispatch).toHaveBeenCalledWith(adminNetworkInterfacesChanged({ commit: false, checkIn: false }));
+      expect(store$.dispatch).toHaveBeenCalledWith(networkInterfacesChanged({ commit: false, checkIn: false }));
 
       expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
       expect(ws.call).toHaveBeenCalledWith('interface.default_route_will_be_removed');
