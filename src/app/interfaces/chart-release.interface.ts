@@ -73,9 +73,19 @@ export interface ChartRelease {
   chart_schema: ChartSchema;
   history: { [key: string]: ChartReleaseVersion };
   resources?: ChartResources;
+  stats?: ChartReleaseStats;
 
   // TODO: Frontend field, move to another interface.
   selected?: boolean;
+}
+
+export interface ChartReleaseStats {
+  cpu: number;
+  memory: number;
+  network: {
+    incoming: number;
+    outgoing: number;
+  };
 }
 
 export interface ChartReleaseVersion {
@@ -114,6 +124,7 @@ export type ChartReleaseQueryParams = QueryParams<ChartRelease, {
     retrieve_resources?: boolean;
     include_chart_schema?: boolean;
     history?: boolean;
+    stats?: boolean;
   };
 }>;
 
