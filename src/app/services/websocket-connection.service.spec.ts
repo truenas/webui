@@ -1,13 +1,9 @@
 import { discardPeriodicTasks, fakeAsync, tick } from '@angular/core/testing';
-import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
-import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
-import { TranslateService } from '@ngx-translate/core';
+import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { UUID } from 'angular2-uuid';
 import { WebSocketSubject, WebSocketSubjectConfig } from 'rxjs/webSocket';
 import { OutgoingApiMessageType } from 'app/enums/api-message-type.enum';
 import { WEBSOCKET } from 'app/helpers/websocket.helper';
-import { DialogService } from 'app/services/dialog.service';
 import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
 
 const fakeSocketUrl = 'ws://localhost:1234';
@@ -29,12 +25,6 @@ describe('WebsocketConnectionService', () => {
   const createService = createServiceFactory({
     service: WebsocketConnectionService,
     providers: [
-      mockProvider(Router),
-      mockProvider(MatDialog, {
-        openDialogs: [],
-      }),
-      mockProvider(DialogService),
-      mockProvider(TranslateService),
       {
         provide: WEBSOCKET,
         useFactory: () => fakeSocket,
@@ -130,12 +120,26 @@ describe('WebsocketConnectionService', () => {
     expect(nextFakeSocket$.next).toHaveBeenCalledWith('message-3');
   });
 
-  it('redirect to signin page when close connection and isTryingReconnect is false', () => {
+  it('sets isResetUi when close connection and isTryingReconnect is false', () => {
     fakeSocketConfig.openObserver.next({} as Event);
     spectator.service.isConnected$.next(true);
 
     fakeSocketConfig.closeObserver.next({ code: 1006 } as CloseEvent);
-    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/sessions/signin']);
+
+    let isResetUi;
+    spectator.service.isResetUi$.subscribe((value) => isResetUi = value);
+    expect(isResetUi).toBe(true);
+  });
+
+  it('sets isAccessRestricted when close connection with code 1008', () => {
+    fakeSocketConfig.openObserver.next({} as Event);
+    spectator.service.isConnected$.next(true);
+
+    fakeSocketConfig.closeObserver.next({ code: 1008 } as CloseEvent);
+
+    let isAccessRestricted;
+    spectator.service.isAccessRestricted$.subscribe((value) => isAccessRestricted = value);
+    expect(isAccessRestricted).toBe(true);
   });
 
   it('trying to reconnect when close connection and isTryingReconnect is false', fakeAsync(() => {
@@ -167,7 +171,10 @@ describe('WebsocketConnectionService', () => {
 
     expect(fakeSocketsList).toHaveLength(1);
     expect(fakeSocketsList[0].complete).not.toHaveBeenCalled();
-    expect(spectator.inject(Router).navigate).not.toHaveBeenCalledWith(['/sessions/signin']);
+
+    let isResetUi;
+    spectator.service.isResetUi$.subscribe((value) => isResetUi = value);
+    expect(isResetUi).toBe(false);
 
     discardPeriodicTasks();
   }));

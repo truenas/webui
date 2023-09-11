@@ -1,8 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import { environment } from 'environments/environment';
 import {
@@ -13,7 +10,6 @@ import { IncomingApiMessageType, OutgoingApiMessageType } from 'app/enums/api-me
 import { WEBSOCKET } from 'app/helpers/websocket.helper';
 import { WINDOW } from 'app/helpers/window.helper';
 import { ApiEvent, IncomingWebsocketMessage } from 'app/interfaces/api-message.interface';
-import { DialogService } from 'app/services/dialog.service';
 
 @UntilDestroy()
 @Injectable({
@@ -38,14 +34,12 @@ export class WebsocketConnectionService {
   }
 
   readonly isConnected$ = new BehaviorSubject(false);
+  readonly isResetUi$ = new BehaviorSubject(false);
+  readonly isAccessRestricted$ = new BehaviorSubject(false);
 
   constructor(
     @Inject(WINDOW) protected window: Window,
     @Inject(WEBSOCKET) private webSocket: typeof rxjsWebsocket,
-    protected router: Router,
-    private dialog: MatDialog,
-    private dialogService: DialogService,
-    private translate: TranslateService,
   ) {
     this.initializeWebsocket();
     this.setupPing();
@@ -113,34 +107,21 @@ export class WebsocketConnectionService {
     }
     this.isTryingReconnect = true;
     this.isConnected$.next(false);
-    this.resetUi();
+    this.isResetUi$.next(true);
     if (event.code === 1008) {
-      this.dialogService.fullScreenDialog(
-        this.translate.instant('Access restricted'),
-        this.translate.instant('Access from your IP is restricted'),
-      ).pipe(untilDestroyed(this)).subscribe(() => {
-        timer(this.reconnectTimeoutMillis).pipe(untilDestroyed(this)).subscribe({
-          next: () => {
-            this.isTryingReconnect = false;
-            this.initializeWebsocket();
-          },
-        });
-      });
+      this.isAccessRestricted$.next(true);
     } else {
-      timer(this.reconnectTimeoutMillis).pipe(untilDestroyed(this)).subscribe({
-        next: () => {
-          this.isTryingReconnect = false;
-          this.initializeWebsocket();
-        },
-      });
+      this.reconnect();
     }
   }
 
-  resetUi(): void {
-    this.closeAllDialogs();
-    if (!this.shutDownInProgress) {
-      this.router.navigate(['/sessions/signin']);
-    }
+  reconnect(): void {
+    timer(this.reconnectTimeoutMillis).pipe(untilDestroyed(this)).subscribe({
+      next: () => {
+        this.isTryingReconnect = false;
+        this.initializeWebsocket();
+      },
+    });
   }
 
   private hasAuthError(data: IncomingWebsocketMessage): boolean {
@@ -168,12 +149,6 @@ export class WebsocketConnectionService {
       version: '1',
       support: ['1'],
     });
-  }
-
-  private closeAllDialogs(): void {
-    for (const openDialog of this.dialog.openDialogs) {
-      openDialog.close();
-    }
   }
 
   buildSubscriber(name: string): Observable<unknown> {
