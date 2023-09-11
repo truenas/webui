@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, map, switchMap } from 'rxjs';
+import { filter, from, map, switchMap } from 'rxjs';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { Cronjob } from 'app/interfaces/cronjob.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -12,6 +12,7 @@ import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells
 import { yesNoColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
+import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { CronDeleteDialogComponent } from 'app/pages/system/advanced/cron/cron-delete-dialog/cron-delete-dialog.component';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { CronjobRow } from 'app/pages/system/advanced/cron/cron-list/cronjob-row.interface';
@@ -70,10 +71,15 @@ export class CronCardComponent implements OnInit {
     private taskService: TaskService,
     private cdr: ChangeDetectorRef,
     private matDialog: MatDialog,
+    private advancedSettings: AdvancedSettingsService,
   ) {}
 
   ngOnInit(): void {
     this.getCronJobs();
+  }
+
+  onAdd(): void {
+    this.openForm();
   }
 
   getCronJobs(): void {
@@ -86,6 +92,7 @@ export class CronCardComponent implements OnInit {
           next_run: this.taskService.getTaskNextRun(scheduleToCrontab(job.schedule)),
         }));
       }),
+      this.errorHandler.catchError(),
       untilDestroyed(this),
     ).subscribe((cronjobs) => {
       this.cronjobs = cronjobs;
@@ -129,9 +136,15 @@ export class CronCardComponent implements OnInit {
   }
 
   doEdit(row: CronjobRow): void {
-    const slideInRef = this.slideInService.open(CronFormComponent, { data: row });
-    slideInRef.slideInClosed$
-      .pipe(filter(Boolean), untilDestroyed(this))
+    this.openForm(row);
+  }
+
+  private openForm(row?: CronjobRow): void {
+    from(this.advancedSettings.showFirstTimeWarningIfNeeded()).pipe(
+      switchMap(() => this.slideInService.open(CronFormComponent, { data: row }).slideInClosed$),
+      filter(Boolean),
+      untilDestroyed(this),
+    )
       .subscribe(() => {
         this.getCronJobs();
       });

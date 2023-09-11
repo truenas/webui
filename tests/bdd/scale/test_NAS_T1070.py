@@ -120,11 +120,11 @@ def updated_value_should_be_visible(driver):
 def open_a_shell_and_run_su_user_to_become_that_user(driver, nas_ip):
     """open a shell and run su user to become that user."""
     global sudo_results
-    cmd = 'ls /tmp'
+    cmd = 'sudo ls /var/lib/sudo'
     sudo_results = ssh_sudo(cmd, nas_ip, 'ericbsd', 'testing')
 
 
 @then('the user should be able to use Sudo')
 def the_user_should_be_able_to_use_sudo(driver):
     """the user should be able to use Sudo."""
-    assert "collectd-boot" in sudo_results, str(sudo_results)
+    assert 'lectured' in sudo_results, str(sudo_results)

@@ -1,6 +1,6 @@
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { Alert } from 'app/interfaces/alert.interface';
-import { ChartRelease } from 'app/interfaces/chart-release.interface';
+import { ChartRelease, ChartReleaseStats } from 'app/interfaces/chart-release.interface';
 import { PullContainerImageResponse, PullContainerImageParams, ContainerImage } from 'app/interfaces/container-image.interface';
 import { DirectoryServicesState } from 'app/interfaces/directory-services-state.interface';
 import { FailoverDisabledReasonEvent } from 'app/interfaces/failover-disabled-reasons.interface';
@@ -21,6 +21,7 @@ import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 export interface ApiEventDirectory {
   'alert.list': { response: Alert };
   'chart.release.query': { response: ChartRelease };
+  'chart.release.statistics': { response: { id: string; stats: ChartReleaseStats } }; // KARPOV
   'core.get_jobs': { response: Job };
   'directoryservices.status': { response: DirectoryServicesState };
   'failover.status': { response: FailoverStatus };

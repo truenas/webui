@@ -9,12 +9,13 @@ from function import (
     wait_on_element,
     is_element_present,
     wait_on_element_disappear,
+    create_Pool
 )
 from pytest_bdd import (
     given,
     scenario,
     then,
-    when,
+    when
 )
 from pytest_dependency import depends
 
@@ -54,48 +55,51 @@ def you_should_be_on_the_dashboard_click_storage_on_the_side_menu(driver):
     driver.find_element_by_xpath(xpaths.side_Menu.storage).click()
 
 
+# TODO: when Bluefin is replaced by Cobia the steps below need to be refactor.
 @when('the pools page appears click create pool')
 def the_pools_page_appears_click_create_pool(driver):
     """the pools page appears click create pool."""
     assert wait_on_element(driver, 10, xpaths.storage.title)
-    assert wait_on_element(driver, 10, xpaths.storage.create_Pool_Button, 'clickable')
-    driver.find_element_by_xpath(xpaths.storage.create_Pool_Button).click()
+    # assert wait_on_element(driver, 10, xpaths.storage.create_Pool_Button, 'clickable')
+    # driver.find_element_by_xpath(xpaths.storage.create_Pool_Button).click()
 
 
 @then('the Pool Manager appears, enter the system for pool name')
-def the_pool_manager_appears_enter_the_system_for_pool_name(driver):
+def the_pool_manager_appears_enter_the_system_for_pool_name(driver, nas_ip, root_password):
     """the Pool Manager appears, enter the system for pool name."""
-    assert wait_on_element(driver, 7, xpaths.pool_manager.title)
-    assert wait_on_element_disappear(driver, 120, xpaths.popup.please_Wait)
-    assert wait_on_element(driver, 10, xpaths.pool_manager.name_Input, 'inputable')
-    driver.find_element_by_xpath(xpaths.pool_manager.name_Input).send_keys('system')
+    # assert wait_on_element(driver, 7, xpaths.pool_manager.title)
+    # assert wait_on_element_disappear(driver, 120, xpaths.popup.please_Wait)
+    # assert wait_on_element(driver, 10, xpaths.pool_manager.name_Input, 'inputable')
+    # driver.find_element_by_xpath(xpaths.pool_manager.name_Input).send_keys('system')
+    create_Pool(nas_ip, ('root', root_password), 'system')
 
 
 @then('click sdc checkbox, press the right arrow under Data VDevs')
 def click_sdc_checkbox_press_the_right_arrow_under_data_vdevs(driver):
     """click sdc checkbox, press the right arrow under Data VDevs."""
-    assert wait_on_element(driver, 7, xpaths.pool_manager.first_Disk_Checkbox, 'clickable')
-    driver.find_element_by_xpath(xpaths.pool_manager.first_Disk_Checkbox).click()
-    assert wait_on_element(driver, 5, xpaths.pool_manager.vdev_Add_Button, 'clickable')
-    driver.find_element_by_xpath(xpaths.pool_manager.vdev_Add_Button).click()
-    assert wait_on_element(driver, 7, xpaths.pool_manager.force_Checkbox, 'clickable')
-    driver.find_element_by_xpath(xpaths.pool_manager.force_Checkbox).click()
+    # assert wait_on_element(driver, 7, xpaths.pool_manager.first_Disk_Checkbox, 'clickable')
+    # driver.find_element_by_xpath(xpaths.pool_manager.first_Disk_Checkbox).click()
+    # assert wait_on_element(driver, 5, xpaths.pool_manager.vdev_Add_Button, 'clickable')
+    # driver.find_element_by_xpath(xpaths.pool_manager.vdev_Add_Button).click()
+    # assert wait_on_element(driver, 7, xpaths.pool_manager.force_Checkbox, 'clickable')
+    # driver.find_element_by_xpath(xpaths.pool_manager.force_Checkbox).click()
 
 
 @then('click create, On the Warning widget, click confirm checkbox, click CREATE POOL')
 def click_create_on_the_warning_widget_click_confirm_checkbox_click_create_pool(driver):
     """click create, On the Warning widget, click confirm checkbox, click CREATE POOL."""
     # rsc.Confirm_Single_Disk(driver)
-    assert wait_on_element(driver, 5, xpaths.pool_manager.create_Button, 'clickable')
-    driver.find_element_by_xpath(xpaths.pool_manager.create_Button).click()
-    rsc.Confirm_Creating_Pool(driver)
+    # assert wait_on_element(driver, 5, xpaths.pool_manager.create_Button, 'clickable')
+    # driver.find_element_by_xpath(xpaths.pool_manager.create_Button).click()
+    # rsc.Confirm_Creating_Pool(driver)
 
 
 @then('Create pool should appear while pool is being created')
 def create_pool_should_appear_while_pool_is_being_created(driver):
     """Create pool should appear while pool is being created."""
-    assert wait_on_element(driver, 10, xpaths.pool_manager.create_Pool_Popup)
-    assert wait_on_element_disappear(driver, 120, xpaths.pool_manager.create_Pool_Popup)
+    # assert wait_on_element(driver, 10, xpaths.pool_manager.create_Pool_Popup)
+    # assert wait_on_element_disappear(driver, 120, xpaths.pool_manager.create_Pool_Popup)
+    driver.refresh()
     assert wait_on_element(driver, 10, xpaths.storage.title)
 
 

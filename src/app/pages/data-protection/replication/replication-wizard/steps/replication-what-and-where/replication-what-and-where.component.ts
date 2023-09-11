@@ -23,6 +23,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { SummaryProvider, SummarySection } from 'app/modules/common/summary/summary.interface';
+import { ixManualValidateError } from 'app/modules/ix-forms/components/ix-errors/ix-errors.component';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import {
@@ -583,7 +584,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
         },
         error: (error: WebsocketError) => {
           this.snapshotsText = '';
-          this.form.controls.source_datasets.setErrors({ ixManualValidateError: { message: error.reason } });
+          this.form.controls.source_datasets.setErrors({ [ixManualValidateError]: { message: error.reason } });
           this.cdr.markForCheck();
         },
       });

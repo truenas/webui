@@ -161,11 +161,13 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
 
   readonly usesDraidLayout$ = this.select(
     this.topology$,
-    (topology) => {
-      const dataCategory = topology[VdevType.Data];
-      return [CreateVdevLayout.Draid1, CreateVdevLayout.Draid2, CreateVdevLayout.Draid3].includes(dataCategory.layout);
-    },
+    (topology) => this.isUsingDraidLayout(topology),
   );
+
+  isUsingDraidLayout(topology: PoolManagerTopology): boolean {
+    const dataCategory = topology[VdevType.Data];
+    return [CreateVdevLayout.Draid1, CreateVdevLayout.Draid2, CreateVdevLayout.Draid3].includes(dataCategory.layout);
+  }
 
   getLayoutsForVdevType(vdevType: VdevType): Observable<CreateVdevLayout[]> {
     switch (vdevType) {
