@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { switchMap, from } from 'rxjs';
+import { switchMap, from, filter } from 'rxjs';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
@@ -99,6 +99,7 @@ export class InitShutdownCardComponent implements OnInit {
     })
       .pipe(
         switchMap(() => this.ws.call('initshutdownscript.delete', [row.id])),
+        filter(Boolean),
         this.errorHandler.catchError(),
         untilDestroyed(this),
       )
@@ -115,6 +116,7 @@ export class InitShutdownCardComponent implements OnInit {
   private openForm(row?: InitShutdownScript): void {
     from(this.advancedSettings.showFirstTimeWarningIfNeeded()).pipe(
       switchMap(() => this.slideInService.open(InitShutdownFormComponent, { data: row }).slideInClosed$),
+      filter(Boolean),
       untilDestroyed(this),
     )
       .subscribe(() => {
