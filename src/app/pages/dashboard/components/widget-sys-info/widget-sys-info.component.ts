@@ -8,11 +8,13 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { addSeconds } from 'date-fns';
-import { filter, take } from 'rxjs/operators';
+import { iif, of } from 'rxjs';
+import { filter, map, switchMap, take } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ScreenType } from 'app/enums/screen-type.enum';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
+import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { WINDOW } from 'app/helpers/window.helper';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { Timeout } from 'app/interfaces/timeout.interface';
@@ -70,6 +72,22 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
 
   readonly ProductType = ProductType;
   readonly ScreenType = ScreenType;
+
+  hostname$ = this.store$.pipe(waitForSystemInfo).pipe(
+    switchMap(() => iif(() => this.hasHa, this.ws.call('network.configuration.config'), of(this.data.hostname))),
+    map((value) => {
+      if (typeof value === 'object') {
+        if (this.isPassive) {
+          return this.data.hostname === value.hostname ? value.hostname_b : value.hostname;
+        } else {
+          return this.data.hostname;
+        }
+      }
+      return value;
+    }),
+    toLoadingState(),
+    untilDestroyed(this),
+  );
 
   constructor(
     public router: Router,
