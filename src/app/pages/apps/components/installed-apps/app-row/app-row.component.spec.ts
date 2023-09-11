@@ -17,7 +17,7 @@ describe('AppRowComponent', () => {
     chart_metadata: { icon: 'https://image/' },
     catalog: officialCatalog,
     stats: {
-      cpu: 50,
+      cpu: 50.155,
       memory: 20,
       network: {
         incoming: 50000000,
