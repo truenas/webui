@@ -17,17 +17,17 @@ export class WebsocketConnectionGuard {
     private dialogService: DialogService,
     private translate: TranslateService,
   ) {
-    this.wsManager.isResetUi$.pipe(untilDestroyed(this)).subscribe((isResetUi) => {
-      if (isResetUi) {
+    this.wsManager.isClosed$.pipe(untilDestroyed(this)).subscribe((isClosed) => {
+      if (isClosed) {
         this.resetUi();
-        this.wsManager.isResetUi$.next(false);
+        this.wsManager.isClosed$ = false;
       }
     });
 
     this.wsManager.isAccessRestricted$.pipe(untilDestroyed(this)).subscribe((isRestricted) => {
       if (isRestricted) {
         this.showAccessRestrictedDialog();
-        this.wsManager.isAccessRestricted$.next(false);
+        this.wsManager.isAccessRestricted$ = false;
       }
     });
   }

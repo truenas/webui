@@ -34,8 +34,24 @@ export class WebsocketConnectionService {
   }
 
   readonly isConnected$ = new BehaviorSubject(false);
-  readonly isResetUi$ = new BehaviorSubject(false);
-  readonly isAccessRestricted$ = new BehaviorSubject(false);
+  private readonly _isClosed$ = new BehaviorSubject(false);
+  private readonly _isAccessRestricted$ = new BehaviorSubject(false);
+
+  set isClosed$(value: boolean) {
+    this._isClosed$.next(value);
+  }
+
+  get isClosed$(): Observable<boolean> {
+    return this._isClosed$;
+  }
+
+  set isAccessRestricted$(value: boolean) {
+    this._isAccessRestricted$.next(value);
+  }
+
+  get isAccessRestricted$(): Observable<boolean> {
+    return this._isAccessRestricted$;
+  }
 
   constructor(
     @Inject(WINDOW) protected window: Window,
@@ -107,9 +123,9 @@ export class WebsocketConnectionService {
     }
     this.isTryingReconnect = true;
     this.isConnected$.next(false);
-    this.isResetUi$.next(true);
+    this.isClosed$ = true;
     if (event.code === 1008) {
-      this.isAccessRestricted$.next(true);
+      this.isAccessRestricted$ = true;
     } else {
       this.reconnect();
     }

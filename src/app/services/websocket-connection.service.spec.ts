@@ -120,15 +120,15 @@ describe('WebsocketConnectionService', () => {
     expect(nextFakeSocket$.next).toHaveBeenCalledWith('message-3');
   });
 
-  it('sets isResetUi when close connection and isTryingReconnect is false', () => {
+  it('sets isClosed when close connection and isTryingReconnect is false', () => {
     fakeSocketConfig.openObserver.next({} as Event);
     spectator.service.isConnected$.next(true);
 
     fakeSocketConfig.closeObserver.next({ code: 1006 } as CloseEvent);
 
-    let isResetUi;
-    spectator.service.isResetUi$.subscribe((value) => isResetUi = value);
-    expect(isResetUi).toBe(true);
+    let isClosed;
+    spectator.service.isClosed$.subscribe((value) => isClosed = value);
+    expect(isClosed).toBe(true);
   });
 
   it('sets isAccessRestricted when close connection with code 1008', () => {
@@ -172,9 +172,9 @@ describe('WebsocketConnectionService', () => {
     expect(fakeSocketsList).toHaveLength(1);
     expect(fakeSocketsList[0].complete).not.toHaveBeenCalled();
 
-    let isResetUi;
-    spectator.service.isResetUi$.subscribe((value) => isResetUi = value);
-    expect(isResetUi).toBe(false);
+    let isClosed;
+    spectator.service.isClosed$.subscribe((value) => isClosed = value);
+    expect(isClosed).toBe(false);
 
     discardPeriodicTasks();
   }));
