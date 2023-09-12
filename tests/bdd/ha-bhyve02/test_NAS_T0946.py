@@ -409,7 +409,9 @@ def navigate_to_dashboard_wait_for_ha_to_be_online(driver):
     driver.find_element_by_xpath(xpaths.side_Menu.dashboard).click()
     assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
     assert wait_on_element(driver, 15, '//span[contains(.,"Hostname:") and contains(.,"truenas")]')
-    assert wait_on_element(driver, 300, '//span[contains(.,"Hostname:") and contains(.,"truenas-b")]')
+    # Do a refresh to see if it is a cache issue
+    driver.refresh()
+    assert wait_on_element(driver, 180, '//span[contains(.,"Hostname:") and contains(.,"truenas-b")]')
     assert wait_on_element(driver, 30, xpaths.toolbar.ha_Enabled)
     time.sleep(5)
 
