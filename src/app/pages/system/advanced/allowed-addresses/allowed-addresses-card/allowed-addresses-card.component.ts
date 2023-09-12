@@ -60,16 +60,12 @@ export class AllowedAddressesCardComponent implements OnInit {
     this.getAllowedAddresses();
   }
 
-  onConfigure(): void {
-    const handleWarningMessageOrConfigure = async (): Promise<void> => {
-      await this.advancedSettings.showFirstTimeWarningIfNeeded();
-      const slideInRef = this.slideInService.open(AllowedAddressesFormComponent);
-      slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
-        this.getAllowedAddresses();
-      });
-    };
-
-    handleWarningMessageOrConfigure();
+  async onConfigure(): Promise<void> {
+    await this.advancedSettings.showFirstTimeWarningIfNeeded();
+    const slideInRef = this.slideInService.open(AllowedAddressesFormComponent);
+    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.getAllowedAddresses();
+    });
   }
 
   promptDeleteAllowedAddress(row: AllowedAddressRow): void {
