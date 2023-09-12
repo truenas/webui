@@ -6,7 +6,7 @@ import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-
 })
 export class IxCellSizeComponent<T> extends ColumnComponent<T> {
   get size(): number {
-    return this.row[this.propertyName] as number;
+    return this.value as number;
   }
 }
 
