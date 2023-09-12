@@ -159,7 +159,10 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
         const zoomRange = endDate - startDate;
 
         if (zoomRange < maxZoomLevel) {
-          this.chart.updateOptions({ dateWindow: [this.lastMinDate, this.lastMaxDate] });
+          this.chart.updateOptions({
+            dateWindow: [this.lastMinDate, this.lastMaxDate],
+            animatedZooms: false,
+          });
           return;
         }
 
