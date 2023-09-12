@@ -58,6 +58,7 @@
   "Delete Static Route": "",
   "Delete Sysctl": "",
   "Delete zvol {name}": "",
+  "Device/File": "",
   "Distributed Hot Spares": "",
   "Do not enable ALUA on TrueNAS unless it is also supported     by and enabled on the client computers. ALUA only works when enabled     on both the client and server.": "",
   "Docker Registry Authentication": "",
