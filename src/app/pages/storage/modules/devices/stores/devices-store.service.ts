@@ -80,7 +80,6 @@ export class DevicesStore extends ComponentStore<DevicesState> {
             if (!pools?.length) {
               return of([]);
             }
-            // TODO: Handle pool not found.
             return this.ws.call('disk.query', [[['pool', '=', pools[0].name]], { extra: { pools: true } }]).pipe(
               tap((disks) => {
                 this.patchState({
