@@ -107,18 +107,17 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.checkForUpdate();
     this.store$.pipe(waitForSystemFeatures, untilDestroyed(this)).subscribe((features) => {
       this.enclosureSupport = features.enclosure;
     });
-    this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe({
-      next: (systemInfo) => {
-        this.processSysInfo(systemInfo);
-      },
-      error: (error) => {
-        console.error('System Info not available', error);
-      },
+    this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((systemInfo) => {
+      this.processSysInfo(systemInfo);
     });
-    this.checkForUpdate();
+    this.store$.select(selectIsIxHardware).pipe(untilDestroyed(this)).subscribe((isIxHardware) => {
+      this.isIxHardware = isIxHardware;
+      this.setProductImage();
+    });
     if (this.sysGenService.getProductType() === ProductType.ScaleEnterprise) {
       this.store$.select(selectIsHaLicensed).pipe(untilDestroyed(this)).subscribe((isHaLicensed) => {
         this.isHaLicensed = isHaLicensed;
@@ -131,10 +130,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
         this.checkForRunningUpdate();
       });
     }
-    this.store$.select(selectIsIxHardware).pipe(untilDestroyed(this)).subscribe((isIxHardware) => {
-      this.isIxHardware = isIxHardware;
-      this.setProductImage();
-    });
   }
 
   loadSystemInfoForPassive(): void {
