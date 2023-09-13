@@ -760,6 +760,7 @@
   "Delete NTP Server": "",
   "Delete SSH Keypair": "",
   "Delete Script": "",
+  "Delete Scrub Task <b>\"{name}\"</b>?": "",
   "Delete Static Route": "",
   "Delete Sysctl": "",
   "Delete User": "",
