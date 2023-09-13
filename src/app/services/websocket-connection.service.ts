@@ -1,18 +1,15 @@
 import { Inject, Injectable } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import { environment } from 'environments/environment';
 import {
   BehaviorSubject, EMPTY, interval, NEVER, Observable, of, switchMap, tap, timer,
 } from 'rxjs';
-import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
+import { webSocket as rxjsWebsocket, WebSocketSubject } from 'rxjs/webSocket';
 import { IncomingApiMessageType, OutgoingApiMessageType } from 'app/enums/api-message-type.enum';
+import { WEBSOCKET } from 'app/helpers/websocket.helper';
 import { WINDOW } from 'app/helpers/window.helper';
 import { ApiEvent, IncomingWebsocketMessage } from 'app/interfaces/api-message.interface';
-import { DialogService } from 'app/services/dialog.service';
 
 @UntilDestroy()
 @Injectable({
@@ -25,8 +22,8 @@ export class WebsocketConnectionService {
   private readonly reconnectTimeoutMillis = 5 * 1000;
   private pendingCallsBeforeConnectionReady = new Map<string, unknown>();
 
-  private isTryingReconnect = false;
-  private shutDownInProgress = false;
+  isTryingReconnect = false;
+  shutDownInProgress = false;
   private connectionUrl = (this.window.location.protocol === 'https:' ? 'wss://' : 'ws://') + environment.remote + '/websocket';
 
   private isConnectionReady = false;
@@ -37,13 +34,28 @@ export class WebsocketConnectionService {
   }
 
   readonly isConnected$ = new BehaviorSubject(false);
+  private readonly _isClosed$ = new BehaviorSubject(false);
+  private readonly _isAccessRestricted$ = new BehaviorSubject(false);
+
+  set isClosed$(value: boolean) {
+    this._isClosed$.next(value);
+  }
+
+  get isClosed$(): Observable<boolean> {
+    return this._isClosed$;
+  }
+
+  set isAccessRestricted$(value: boolean) {
+    this._isAccessRestricted$.next(value);
+  }
+
+  get isAccessRestricted$(): Observable<boolean> {
+    return this._isAccessRestricted$;
+  }
 
   constructor(
     @Inject(WINDOW) protected window: Window,
-    protected router: Router,
-    private dialog: MatDialog,
-    private dialogService: DialogService,
-    private translate: TranslateService,
+    @Inject(WEBSOCKET) private webSocket: typeof rxjsWebsocket,
   ) {
     this.initializeWebsocket();
     this.setupPing();
@@ -54,7 +66,7 @@ export class WebsocketConnectionService {
       this.ws$.complete();
     }
 
-    this.ws$ = webSocket({
+    this.ws$ = this.webSocket({
       url: this.connectionUrl,
       openObserver: {
         next: this.onOpen.bind(this),
@@ -111,34 +123,21 @@ export class WebsocketConnectionService {
     }
     this.isTryingReconnect = true;
     this.isConnected$.next(false);
-    this.resetUi();
+    this.isClosed$ = true;
     if (event.code === 1008) {
-      this.dialogService.fullScreenDialog(
-        this.translate.instant('Access restricted'),
-        this.translate.instant('Access from your IP is restricted'),
-      ).pipe(untilDestroyed(this)).subscribe(() => {
-        timer(this.reconnectTimeoutMillis).pipe(untilDestroyed(this)).subscribe({
-          next: () => {
-            this.isTryingReconnect = false;
-            this.initializeWebsocket();
-          },
-        });
-      });
+      this.isAccessRestricted$ = true;
     } else {
-      timer(this.reconnectTimeoutMillis).pipe(untilDestroyed(this)).subscribe({
-        next: () => {
-          this.isTryingReconnect = false;
-          this.initializeWebsocket();
-        },
-      });
+      this.reconnect();
     }
   }
 
-  resetUi(): void {
-    this.closeAllDialogs();
-    if (!this.shutDownInProgress) {
-      this.router.navigate(['/sessions/signin']);
-    }
+  reconnect(): void {
+    timer(this.reconnectTimeoutMillis).pipe(untilDestroyed(this)).subscribe({
+      next: () => {
+        this.isTryingReconnect = false;
+        this.initializeWebsocket();
+      },
+    });
   }
 
   private hasAuthError(data: IncomingWebsocketMessage): boolean {
@@ -166,12 +165,6 @@ export class WebsocketConnectionService {
       version: '1',
       support: ['1'],
     });
-  }
-
-  private closeAllDialogs(): void {
-    for (const openDialog of this.dialog.openDialogs) {
-      openDialog.close();
-    }
   }
 
   buildSubscriber(name: string): Observable<unknown> {
