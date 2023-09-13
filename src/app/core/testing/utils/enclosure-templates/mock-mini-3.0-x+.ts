@@ -4,8 +4,8 @@ import {
 } from 'app/interfaces/enclosure.interface';
 import { MockEnclosure } from './mock-enclosure-template';
 
-export class MockMini30Xl extends MockEnclosure {
-  readonly totalSlotsFront: number = 9;
+export class MockMini30Xplus extends MockEnclosure {
+  readonly totalSlotsFront: number = 7;
   readonly totalSlotsRear: number = 0;
   readonly totalSlotsInternal: number = 0;
 
@@ -42,7 +42,7 @@ export class MockMini30Xl extends MockEnclosure {
     value: 'None',
     value_raw: '0x1000000',
     original: {
-      enclosure_id: '3000000000000002',
+      enclosure_id: '3000000000000001',
       slot: 6,
     },
   };
@@ -50,7 +50,7 @@ export class MockMini30Xl extends MockEnclosure {
   data = {
     id: 'mapped_enclosure_0',
     name: 'Drive Bays',
-    model: 'FREENAS-MINI-3.0-XL+',
+    model: 'FREENAS-MINI-3.0-X+',
     controller: true,
     elements: [
       {
@@ -66,7 +66,7 @@ export class MockMini30Xl extends MockEnclosure {
         has_slot_status: false,
       },
     ],
-    number: this.enclosureNumber,
+    number: 0,
     label: 'Drive Bays',
   } as Enclosure;
 
@@ -79,17 +79,7 @@ export class MockMini30Xl extends MockEnclosure {
   processSlotTemplate(template: EnclosureElement): EnclosureElement {
     const updatedTemplate = { ...template };
     const original = { ...template.original };
-    if (template.slot === 1) {
-      original.slot = 6;
-      original.enclosure_id = '3000000000000002';
-    } else if (template.slot === 10) {
-      original.slot = 5;
-      original.enclosure_id = '3000000000000002';
-    } else {
-      original.slot = template.slot - 1;
-      original.enclosure_id = '3000000000000001';
-    }
-
+    original.slot = template.slot;
     updatedTemplate.original = original;
     return updatedTemplate;
   }
