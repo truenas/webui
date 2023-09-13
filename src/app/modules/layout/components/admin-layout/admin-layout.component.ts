@@ -10,12 +10,9 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 import { MatDrawerMode, MatSidenav } from '@angular/material/sidenav';
-import {
-  NavigationEnd, Router,
-} from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { filter, map } from 'rxjs';
+import { map } from 'rxjs';
 import { productTypeLabels } from 'app/enums/product-type.enum';
 import { SubMenuItem } from 'app/interfaces/menu-item.interface';
 import { alertPanelClosed } from 'app/modules/alerts/store/alert.actions';
@@ -39,9 +36,6 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 })
 export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChildren(MatSidenav) private sideNavs: QueryList<MatSidenav>;
-  isOpenSecondaryMenu = false;
-  menuName: string;
-  subs: SubMenuItem[];
 
   protected headerPortalOutlet: TemplatePortal = null;
   readonly hostname$ = this.store$.pipe(waitForSystemInfo, map(({ hostname }) => hostname));
@@ -71,8 +65,19 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     return this.themeService.isDefaultTheme;
   }
 
+  get isOpenSecondaryMenu(): boolean {
+    return this.sidenavService.isOpenSecondaryMenu;
+  }
+
+  get subs(): SubMenuItem[] {
+    return this.sidenavService.subs;
+  }
+
+  get menuName(): string {
+    return this.sidenavService.menuName;
+  }
+
   constructor(
-    private router: Router,
     private themeService: ThemeService,
     private sysGeneralService: SystemGeneralService,
     private layoutService: LayoutService,
@@ -82,9 +87,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     private cdr: ChangeDetectorRef,
     private languageService: LanguageService,
     private tokenLifetimeService: TokenLifetimeService,
-  ) {
-    this.listenToRouteChange();
-  }
+  ) {}
 
   ngOnInit(): void {
     this.tokenLifetimeService.start();
@@ -94,7 +97,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
       this.languageService.setLanguage(config.language);
     });
     this.store$.dispatch(adminUiInitialized());
-    this.listenToSidenavChanges();
+    this.listenForSidenavChanges();
   }
 
   ngOnDestroy(): void {
@@ -106,27 +109,18 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     this.renderPageHeader();
   }
 
-  listenToSidenavChanges(): void {
+  listenForSidenavChanges(): void {
     this.sideNavs?.changes.pipe(untilDestroyed(this)).subscribe(() => {
       this.sidenavService.setSidenav(this.sideNavs.first);
     });
   }
 
-  // For the slide-in menu
   toggleMenu(menuInfo?: [string, SubMenuItem[]]): void {
-    const [state, subItems] = menuInfo || [];
-    if ((this.isOpenSecondaryMenu && !menuInfo) || (this.isOpenSecondaryMenu && state === this.menuName)) {
-      this.isOpenSecondaryMenu = false;
-      this.subs = [];
-    } else if (menuInfo) {
-      this.menuName = state;
-      this.subs = subItems;
-      this.isOpenSecondaryMenu = true;
-    }
+    this.sidenavService.toggleSecondaryMenu(menuInfo);
   }
 
   onMenuClosed(): void {
-    this.isOpenSecondaryMenu = false;
+    this.sidenavService.closeSecondaryMenu();
   }
 
   onAlertsPanelClosed(): void {
@@ -150,14 +144,5 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
           this.headerPortalOutlet = null;
         }
       });
-  }
-
-  private listenToRouteChange(): void {
-    this.router.events.pipe(
-      filter((routeChange) => routeChange instanceof NavigationEnd && this.sidenavService.isMobile),
-      untilDestroyed(this),
-    ).subscribe(() => {
-      this.sideNavs?.first?.close();
-    });
   }
 }

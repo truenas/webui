@@ -1,12 +1,14 @@
 import { Inject, Injectable } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
 import { MatDrawerMode, MatSidenav } from '@angular/material/sidenav';
+import { Router, NavigationEnd } from '@angular/router';
+import { untilDestroyed } from '@ngneat/until-destroy';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { take, filter, distinctUntilChanged } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
 import { SidenavStatusData } from 'app/interfaces/events/sidenav-status-event.interface';
-import { LayoutService } from 'app/services/layout.service';
+import { SubMenuItem } from 'app/interfaces/menu-item.interface';
 import { AppState } from 'app/store';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 import { sidenavIndicatorPressed, sidenavUpdated } from 'app/store/topbar/topbar.actions';
@@ -21,6 +23,9 @@ export class SidenavService {
   isOpen = true;
   isCollapsed = false;
   mode: MatDrawerMode = 'over';
+  isOpenSecondaryMenu = false;
+  menuName: string;
+  subs: SubMenuItem[];
 
   get sidenavWidth(): string {
     const iconified = this.isMenuCollapsed;
@@ -33,15 +38,38 @@ export class SidenavService {
     return '0px';
   }
 
+  get isMobile(): boolean {
+    return this.window.innerWidth < 960;
+  }
+
+  get isMenuCollapsed(): boolean {
+    return document.getElementsByClassName(collapsedMenuClass).length === 1;
+  }
+
+  set isMenuCollapsed(isCollapsed: boolean) {
+    const appBody = document.body;
+
+    if (isCollapsed) {
+      appBody.classList.add(collapsedMenuClass);
+    } else {
+      appBody.classList.remove(collapsedMenuClass);
+    }
+
+    for (const element of document.getElementsByClassName('has-submenu') as HTMLCollectionOf<HTMLElement>) {
+      element.classList.remove('open');
+    }
+  }
+
   constructor(
-    private layoutService: LayoutService,
+    private router: Router,
     private mediaService: MediaObserver,
     private store$: Store<AppState>,
     private actions$: Actions,
     @Inject(WINDOW) private window: Window,
   ) {
     this.listenForScreenSizeChanges();
-    this.listenForSidenavToggle();
+    this.listenForRouteChanges();
+    this.listenForSidenavIndicatorPressed();
   }
 
   setSidenav(sidenav: MatSidenav): void {
@@ -56,6 +84,22 @@ export class SidenavService {
     this.isOpen = sidenav.isOpen;
     this.mode = sidenav.mode;
     this.isCollapsed = sidenav.isCollapsed;
+  }
+
+  toggleSecondaryMenu(menuInfo?: [string, SubMenuItem[]]): void {
+    const [state, subItems] = menuInfo || [];
+    if ((this.isOpenSecondaryMenu && !menuInfo) || (this.isOpenSecondaryMenu && state === this.menuName)) {
+      this.isOpenSecondaryMenu = false;
+      this.subs = [];
+    } else if (menuInfo) {
+      this.menuName = state;
+      this.subs = subItems;
+      this.isOpenSecondaryMenu = true;
+    }
+  }
+
+  closeSecondaryMenu(): void {
+    this.isOpenSecondaryMenu = false;
   }
 
   private listenForScreenSizeChanges(): void {
@@ -82,7 +126,7 @@ export class SidenavService {
     });
   }
 
-  private listenForSidenavToggle(): void {
+  private listenForSidenavIndicatorPressed(): void {
     this.actions$
       .pipe(
         ofType(sidenavIndicatorPressed),
@@ -90,28 +134,6 @@ export class SidenavService {
       ).subscribe(() => {
         this.toggleSidenav();
       });
-  }
-
-  get isMobile(): boolean {
-    return this.window.innerWidth < 960;
-  }
-
-  get isMenuCollapsed(): boolean {
-    return document.getElementsByClassName(collapsedMenuClass).length === 1;
-  }
-
-  set isMenuCollapsed(isCollapsed: boolean) {
-    const appBody = document.body;
-
-    if (isCollapsed) {
-      appBody.classList.add(collapsedMenuClass);
-    } else {
-      appBody.classList.remove(collapsedMenuClass);
-    }
-
-    for (const element of document.getElementsByClassName('has-submenu') as HTMLCollectionOf<HTMLElement>) {
-      element.classList.remove('open');
-    }
   }
 
   private toggleSidenav(): void {
@@ -133,5 +155,14 @@ export class SidenavService {
     }
 
     this.setSidenavStatus(data);
+  }
+
+  private listenForRouteChanges(): void {
+    this.router.events.pipe(
+      filter((routeChange) => routeChange instanceof NavigationEnd && this.isMobile),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.sidenav.close();
+    });
   }
 }
