@@ -25,7 +25,7 @@ export interface IxComboboxProvider {
   mapOptions?(options: Option[]): Option[];
 }
 
-export class IxMappedComboboxProvider {
+export class IxComboboxProviderManager {
   constructor(private provider: IxComboboxProvider) { }
   fetch(filterValue: string): Observable<Option[]> {
     return this.provider.fetch(filterValue).pipe(
