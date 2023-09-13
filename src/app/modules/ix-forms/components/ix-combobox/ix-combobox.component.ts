@@ -79,6 +79,10 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
   }
 
   ngOnInit(): void {
+    if (this.controlDirective.value) {
+      this.textContent = this.controlDirective.value as string;
+    }
+
     this.filterChanged$.pipe(
       debounceTime(300),
       distinctUntilChanged(),
