@@ -7,6 +7,7 @@ export abstract class ColumnComponent<T> {
   sortBy?: (row: T) => string | number;
   sortable?: boolean;
   hidden = false;
+  cssClass?: string;
 
   protected row: T;
   getRow(): T {

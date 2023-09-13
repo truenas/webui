@@ -1,0 +1,26 @@
+<div *ngIf="service">
+  <button
+    mat-icon-button
+    aria-label="Table Actions of Expandable Table"
+    [ixTest]="[service?.id, 'actions-menu']"
+    [matMenuTriggerFor]="rowActions"
+  >
+    <ix-icon name="more_vert"></ix-icon>
+  </button>
+  <mat-menu #rowActions="matMenu">
+    <button
+      mat-menu-item
+      [ixTest]="[service?.service, 'actions-menu', serviceStateLabel]"
+      (click)="changeServiceState(service)"
+    >
+      {{ serviceStateLabel | translate }}
+    </button>
+    <button
+      mat-menu-item
+      [ixTest]="[service?.service, 'actions-menu', configServiceLabel]"
+      (click)="configureService(service)"
+    >
+      {{ configServiceLabel | translate }}
+    </button>
+  </mat-menu>
+</div>

@@ -1,0 +1,8 @@
+<button
+  mat-stroked-button
+  [ixTest]="['service-status', service?.service]"
+  [matTooltip]="'Service Status' | translate"
+  [ngClass]="statusClass"
+>
+  {{ service?.state || serviceStatus.Loading }}
+</button>
