@@ -1,5 +1,10 @@
 @import 'mixins/cards';
 
+:host {
+  display: block;
+  margin-right: 16px;
+}
+
 .optional-text {
   color: var((--grey));
   margin-left: 5px;
