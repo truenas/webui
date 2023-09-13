@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -18,9 +18,12 @@ import { selectTheme } from 'app/store/preferences/preferences.selectors';
 export class ThemeService {
   defaultTheme = defaultTheme.name;
   activeTheme = this.defaultTheme;
+  activeTheme$ = new BehaviorSubject<string>(this.defaultTheme);
+
   allThemes: Theme[] = allThemes;
-  private utils: ThemeUtils;
   loadTheme$ = new Subject<string>();
+
+  private utils: ThemeUtils;
 
   get isDefaultTheme(): boolean {
     return this.activeTheme === this.defaultTheme;
@@ -52,6 +55,7 @@ export class ThemeService {
 
   onThemeChanged(theme: string): void {
     this.activeTheme = theme;
+    this.activeTheme$.next(theme);
     const selectedTheme = this.findTheme(this.activeTheme, true);
 
     this.setCssVars(selectedTheme);

@@ -29,14 +29,7 @@
     </a>
 
     <div class="topbar-mobile-footer">
-      <div class="ix-systems-logo-icon">
-        <ix-icon
-          tabindex="0"
-          [class]="['ix-logo', screenSize, getLogoIcon()]"
-          [name]="getLogoIcon()"
-          (click)="openIx()"
-        ></ix-icon>
-      </div>
+      <ix-logo></ix-logo>
 
       <button
         *ixIfNightly
@@ -98,38 +91,7 @@
       >
         <ix-icon class="fa-spin" name="autorenew"></ix-icon>
       </button>
-      <!-- HA Status -->
-      <span *ngIf="isFailoverLicensed && haStatusText">
-        <button
-          *ngIf="haDisabledReasons.length === 0"
-          mat-icon-button
-          id="ha"
-          class="topbar-button-right"
-          ixTest="ha-indicator-enabled"
-          [matTooltip]="haStatusText | translate"
-          (click)="showHaStatus()"
-        >
-          <ix-icon name="ix:ha_enabled"></ix-icon>
-        </button>
-        <button
-          *ngIf="haDisabledReasons.length > 0"
-          mat-icon-button
-          id="ha"
-          class="topbar-button-right"
-          ixTest="ha-indicator-disabled"
-          [matTooltip]="haStatusText | translate"
-          (click)="showHaStatus()"
-        >
-          <ng-container *ngIf="haDisabledReasons[0] === FailoverDisabledReason.NoSystemReady; else haDisabledIcon">
-            <ix-icon name="ix:ha_reconnecting"></ix-icon>
-          </ng-container>
-
-          <ng-template #haDisabledIcon>
-            <ix-icon name="ix:ha_disabled"></ix-icon>
-          </ng-template>
-        </button>
-      </span>
-
+      <ix-ha-status-icon></ix-ha-status-icon>
       <ix-directory-services-indicator></ix-directory-services-indicator>
       <ix-jobs-indicator></ix-jobs-indicator>
 

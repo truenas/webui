@@ -1,0 +1,26 @@
+.ix-logo {
+  cursor: pointer;
+  fill: none !important;
+  height: 48px;
+  position: relative;
+  right: -10px;
+  top: 4px;
+  width: 175px;
+
+  &.xs {
+    height: 50px;
+    right: 0;
+    width: 50px;
+  }
+
+  &.ix_full_logo,
+  &.ix_logomark {
+    fill: var(--topbar-txt) !important;
+  }
+
+  &:focus-visible {
+    background: var(--focus-bg);
+    box-shadow: 0 0 0 1px var(--focus-brd) inset !important;
+    outline-width: 0;
+  }
+}
