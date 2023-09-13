@@ -26,7 +26,6 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { VmEditFormComponent } from 'app/pages/vm/vm-edit-form/vm-edit-form.component';
 import { CloneVmDialogComponent } from 'app/pages/vm/vm-list/clone-vm-dialog/clone-vm-dialog.component';
 import { DeleteVmDialogComponent } from 'app/pages/vm/vm-list/delete-vm-dialog/delete-vm-dialog.component';
-import { DisplayVmDialogComponent } from 'app/pages/vm/vm-list/display-vm-dialog/display-vm-dialog.component';
 import { StopVmDialogComponent } from 'app/pages/vm/vm-list/stop-vm-dialog/stop-vm-dialog.component';
 import { VirtualMachineRow } from 'app/pages/vm/vm-list/virtual-machine-row.interface';
 import { VmWizardComponent } from 'app/pages/vm/vm-wizard/vm-wizard.component';
@@ -414,9 +413,8 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
       onClick: (vm: VirtualMachineRow) => {
         this.loader.open();
         this.ws.call('vm.get_display_devices', [vm.id]).pipe(untilDestroyed(this)).subscribe({
-          next: (displayDevices) => {
-            this.loader.close();
-            this.dialog.open(DisplayVmDialogComponent, { data: { vm, displayDevices } });
+          next: () => {
+            this.vmService.openDisplayWebUri(vm.id);
           },
           error: (error: WebsocketError) => {
             this.loader.close();

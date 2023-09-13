@@ -265,7 +265,6 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     ).subscribe({
       next: ([,,charts]) => {
         this.dataSource = charts;
-
         this.selectAppForDetails(this.activatedRoute.snapshot.paramMap.get('appId'));
         this.cdr.markForCheck();
       },

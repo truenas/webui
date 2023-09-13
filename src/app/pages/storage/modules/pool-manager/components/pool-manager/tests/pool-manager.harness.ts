@@ -10,6 +10,7 @@ import {
 import {
   ConfigurationPreviewHarness,
 } from 'app/pages/storage/modules/pool-manager/components/configuration-preview/configuration-preview.harness';
+import { ReviewWizardStepHarness } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/9-review-wizard-step/review-wizard-step.harness';
 
 export class PoolManagerHarness extends ComponentHarness {
   static hostSelector = 'ix-pool-manager';
@@ -21,6 +22,8 @@ export class PoolManagerHarness extends ComponentHarness {
   getCreatePoolButton = this.locatorFor(MatButtonHarness.with({ text: 'Create Pool' }));
 
   getConfigurationPreview = this.locatorFor(ConfigurationPreviewHarness);
+
+  getReviewWizardStep = this.locatorFor(ReviewWizardStepHarness);
 
   async getActiveStep(): Promise<MatStepHarness> {
     const stepper = await this.getStepper();

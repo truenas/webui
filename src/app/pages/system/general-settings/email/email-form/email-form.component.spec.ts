@@ -19,6 +19,7 @@ import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-sli
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
+import { OauthButtonModule } from 'app/modules/oauth-button/oauth-button.module';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services/dialog.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -50,6 +51,7 @@ describe('EmailFormComponent', () => {
     imports: [
       ReactiveFormsModule,
       IxFormsModule,
+      OauthButtonModule,
     ],
     providers: [
       provideMockStore({
@@ -137,6 +139,18 @@ describe('EmailFormComponent', () => {
         expect.any(Function),
         false,
       );
+    });
+
+    it('calls removeEventListener when oAuth callback is called', async () => {
+      await form.fillForm({
+        'Send Mail Method': 'GMail OAuth',
+      });
+
+      const loginButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In To Gmail' }));
+      await loginButton.click();
+
+      expect(spectator.inject<Window>(WINDOW).removeEventListener)
+        .toHaveBeenCalledWith('message', expect.any(Function), false);
     });
 
     it('saves Gmail Oauth config when user authorizes via Gmail and saves the form', async () => {
