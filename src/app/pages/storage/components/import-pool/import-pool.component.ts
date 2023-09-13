@@ -8,7 +8,7 @@ import {
   UntilDestroy, untilDestroyed,
 } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, map, of, switchMap } from 'rxjs';
+import { Observable, UnaryFunction, map, of, pipe, switchMap } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/storage/volumes/volume-import-wizard';
 import { Dataset } from 'app/interfaces/dataset.interface';
@@ -56,8 +56,7 @@ export class ImportPoolComponent implements OnInit {
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
     private router: Router,
-  ) {
-  }
+  ) { }
 
   ngOnInit(): void {
     this.isLoading = true;
@@ -99,23 +98,7 @@ export class ImportPoolComponent implements OnInit {
     dialogRef.componentInstance.setCall('pool.import_pool', [{ guid: this.formGroup.value.guid }]);
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.pipe(
-      switchMap(() => {
-        return this.ws.call(
-          'pool.dataset.query',
-          [[['name', '=', this.importablePools.find((importablePool) => importablePool.guid === this.formGroup.value.guid).name]]],
-        );
-      }),
-      switchMap((poolDatasets): Observable<[Dataset[], boolean]> => {
-        if (poolDatasets[0].locked && poolDatasets[0].encryption_root === poolDatasets[0].id) {
-          return this.dialogService.confirm({
-            title: this.translate.instant('Unlock Pool'),
-            message: this.translate.instant('This pool has an encrypted root dataset which is locked. Do you want to unlock it?'),
-          }).pipe(
-            map((confirmed) => [poolDatasets, confirmed]),
-          );
-        }
-        return of([poolDatasets, false]);
-      }),
+      this.checkIfUnlockNeeded(),
       untilDestroyed(this),
     ).subscribe({
       next: ([datasets, shouldTryUnlocking]) => {
@@ -158,5 +141,28 @@ export class ImportPoolComponent implements OnInit {
     } else {
       console.error(error);
     }
+  }
+
+  checkIfUnlockNeeded(): UnaryFunction<Observable<unknown>, Observable<[Dataset[], boolean]>> {
+    return pipe(
+      switchMap(() => {
+        return this.ws.call(
+          'pool.dataset.query',
+          [[['name', '=', this.importablePools.find((importablePool) => importablePool.guid === this.formGroup.value.guid).name]]],
+        );
+      }),
+      switchMap((poolDatasets): Observable<[Dataset[], boolean]> => {
+        if (poolDatasets[0].locked && poolDatasets[0].encryption_root === poolDatasets[0].id) {
+          return this.dialogService.confirm({
+            title: this.translate.instant('Unlock Pool'),
+            message: this.translate.instant('This pool has an encrypted root dataset which is locked. Do you want to unlock it?'),
+            hideCheckbox: true,
+          }).pipe(
+            map((confirmed) => [poolDatasets, confirmed]),
+          );
+        }
+        return of([poolDatasets, false]);
+      }),
+    );
   }
 }
