@@ -21,7 +21,7 @@ import {
   debounceTime, distinctUntilChanged, map, takeUntil,
 } from 'rxjs/operators';
 import { Option } from 'app/interfaces/option.interface';
-import { IxComboboxProvider, MappedIxComboboxProvider } from 'app/modules/ix-forms/components/ix-combobox/ix-combobox-provider';
+import { IxComboboxProvider, IxMappedComboboxProvider } from 'app/modules/ix-forms/components/ix-combobox/ix-combobox-provider';
 
 @UntilDestroy()
 @Component({
@@ -37,10 +37,10 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
   @Input() tooltip: string;
   @Input() allowCustomValue = false;
   @Input() set provider(comboboxProvider: IxComboboxProvider) {
-    this.comboboxProviderHandler = new MappedIxComboboxProvider(comboboxProvider);
+    this.comboboxProviderHandler = new IxMappedComboboxProvider(comboboxProvider);
     this.cdr.markForCheck();
   }
-  private comboboxProviderHandler: MappedIxComboboxProvider;
+  private comboboxProviderHandler: IxMappedComboboxProvider;
 
   @ViewChild('ixInput') inputElementRef: ElementRef<HTMLInputElement>;
   @ViewChild('auto') autoCompleteRef: MatAutocomplete;
