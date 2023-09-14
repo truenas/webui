@@ -25,6 +25,12 @@ export function singleArrayToOptions(): OperatorFunction<(string | number)[], Op
   });
 }
 
+export function redundantListToUniqueOptions(): OperatorFunction<string[], Option[]> {
+  return map((redundantArray) => {
+    return redundantArray.map((item: string) => ({ label: item, value: item }));
+  });
+}
+
 export function idNameArrayToOptions(): OperatorFunction<{ id: number; name: string }[], Option[]> {
   return map((options) => {
     return options.map((option) => ({ label: option.name, value: option.id }));
