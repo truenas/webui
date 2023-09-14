@@ -126,7 +126,8 @@ export class FeedbackDialogComponent implements OnInit {
       .subscribe({
         next: () => this.onSuccess(),
         error: (error: HttpErrorResponse) => {
-          console.error(error);
+          this.isLoading = false;
+          this.cdr.markForCheck();
           this.dialogService.error({
             title: this.translate.instant('Uploading failed.'),
             message: error.message,
