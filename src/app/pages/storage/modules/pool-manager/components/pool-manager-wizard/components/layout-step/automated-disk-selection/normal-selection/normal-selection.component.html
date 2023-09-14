@@ -35,7 +35,7 @@
       class="manual-disk-selection"
       ixTest="manual"
       [disabled]="!layout"
-      (click)="openManualDiskSelection()"
+      (click)="store.openManualSelectionDialog(type)"
     >
       {{ 'Manual Disk Selection' | translate }}
     </button>

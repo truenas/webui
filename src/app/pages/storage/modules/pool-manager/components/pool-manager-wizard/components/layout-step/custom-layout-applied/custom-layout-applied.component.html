@@ -8,7 +8,7 @@
         type="button"
         class="manual-disk-selection"
         ixTest="manual"
-        (click)="openManualDiskSelection()"
+        (click)="poolManagerStore.openManualSelectionDialog(type)"
       >
         {{ 'Edit Manual Disk Selection' | translate }}
       </button>
