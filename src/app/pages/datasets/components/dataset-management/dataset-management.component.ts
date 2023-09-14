@@ -40,11 +40,10 @@ import { IxNestedTreeDataSource } from 'app/modules/ix-tree/ix-nested-tree-datas
 import { flattenTreeWithFilter } from 'app/modules/ix-tree/utils/flattern-tree-with-filter';
 import { ImportDataComponent } from 'app/pages/datasets/components/import-data/import-data.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import { isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
+import { datasetNameSortComparer, isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
 import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
-import { datasetNameSortComparer } from 'app/pages/datasets/utils/dataset.utils';
 import { AppState } from 'app/store';
 import { selectHaStatus, selectIsSystemHaCapable } from 'app/store/system-info/system-info.selectors';
 
