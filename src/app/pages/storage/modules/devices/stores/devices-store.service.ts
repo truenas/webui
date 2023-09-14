@@ -33,7 +33,6 @@ const initialState: DevicesState = {
 @Injectable()
 export class DevicesStore extends ComponentStore<DevicesState> {
   readonly isLoading$ = this.select((state) => state.isLoading);
-  // TODO
   readonly error$ = this.select((state) => state.error);
   readonly nodes$ = this.select((state) => state.nodes);
   readonly diskDictionary$ = this.select((state) => state.diskDictionary);
