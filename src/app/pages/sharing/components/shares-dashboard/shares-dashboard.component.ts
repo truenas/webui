@@ -25,6 +25,7 @@ import {
   AppTableHeaderAction,
 } from 'app/modules/entity/table/table.component';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
@@ -85,6 +86,7 @@ export class SharesDashboardComponent implements AfterViewInit {
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
     private slideInService: IxSlideInService,
+    private appLoader: AppLoaderService,
   ) {
     this.getInitialServiceStatus();
     this.loadClusteredState();
@@ -339,16 +341,19 @@ export class SharesDashboardComponent implements AfterViewInit {
                 matTooltip: helptextSharingSmb.action_share_acl,
                 disabled: this.isClustered,
                 onClick: (row: SmbShare) => {
+                  this.appLoader.open();
                   this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).pipe(untilDestroyed(this)).subscribe(
                     (isLocked) => {
                       if (isLocked) {
                         this.lockedPathDialog(row.path);
+                        this.appLoader.close();
                       } else {
                         // A home share has a name (homes) set; row.name works for other shares
                         const searchName = row.home ? 'homes' : row.name;
                         this.ws.call('sharing.smb.getacl', [{ share_name: searchName }])
                           .pipe(untilDestroyed(this))
                           .subscribe((shareAcl) => {
+                            this.appLoader.close();
                             const slideInRef = this.slideInService.open(SmbAclComponent, { data: shareAcl.share_name });
                             this.handleSlideInClosed(slideInRef, SmbAclComponent);
                           });
