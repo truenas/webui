@@ -1,0 +1,16 @@
+<ng-container *ngIf="(isFailoverLicensed$ | async) && statusText">
+  <button
+    mat-icon-button
+    id="ha"
+    class="topbar-button-right"
+    [ixTest]="failoverDisabledReasons.length > 0 ? 'ha-indicator-enabled' : 'ha-indicator-disabled'"
+    [matTooltip]="statusText | translate"
+    (click)="showHaPopover()"
+  >
+    <ng-container [ngSwitch]="true">
+      <ix-icon *ngSwitchCase="isReconnecting" name="ix:ha_reconnecting"></ix-icon>
+      <ix-icon *ngSwitchCase="failoverDisabledReasons.length" name="ix:ha_disabled"></ix-icon>
+      <ix-icon *ngSwitchDefault name="ix:ha_enabled"></ix-icon>
+    </ng-container>
+  </button>
+</ng-container>

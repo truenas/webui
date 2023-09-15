@@ -6,16 +6,18 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
-import { Observable, of } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { IscsiExtentRpm, IscsiExtentType } from 'app/enums/iscsi.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { IscsiExtent } from 'app/interfaces/iscsi.interface';
+import { Option } from 'app/interfaces/option.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IscsiService } from 'app/services/iscsi.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -65,14 +67,23 @@ export class ExtentFormComponent implements OnInit {
 
   isLoading = false;
 
+  private extentDiskBeingEdited$ = new BehaviorSubject<Option>(undefined);
+
   readonly helptext = helptextSharingIscsi;
 
   readonly rpms$ = of(this.helptext.extent_form_enum_rpm);
   readonly types$ = of(this.helptext.extent_form_enum_type);
   readonly blocksizes$ = of(this.helptext.extent_form_enum_blocksize);
-  readonly disks$ = this.iscsiService.getExtentDevices().pipe(
-    choicesToOptions(),
-    map((options) => {
+  readonly disks$ = combineLatest([
+    this.iscsiService.getExtentDevices().pipe(choicesToOptions()),
+    this.extentDiskBeingEdited$,
+  ]).pipe(
+    map(([availableOptions, extentDiskBeingEdited]) => {
+      const options = [...availableOptions];
+      if (extentDiskBeingEdited) {
+        options.push(extentDiskBeingEdited);
+      }
+
       return _.sortBy(options, ['label']);
     }),
   );
@@ -80,6 +91,7 @@ export class ExtentFormComponent implements OnInit {
 
   constructor(
     protected iscsiService: IscsiService,
+    protected formatter: IxFormatterService,
     private translate: TranslateService,
     private formBuilder: FormBuilder,
     private errorHandler: FormErrorHandlerService,
@@ -110,14 +122,11 @@ export class ExtentFormComponent implements OnInit {
   }
 
   setExtentForEdit(): void {
-    if (this.editingExtent.type === IscsiExtentType.Disk) {
-      if (_.startsWith(this.editingExtent.path, 'zvol')) {
-        this.editingExtent.disk = this.editingExtent.path;
-      }
-      delete this.editingExtent.path;
-    }
-
     this.form.patchValue(this.editingExtent);
+
+    if (this.editingExtent.type === IscsiExtentType.Disk) {
+      this.setExtentDisk();
+    }
   }
 
   onSubmit(): void {
@@ -154,6 +163,21 @@ export class ExtentFormComponent implements OnInit {
         this.errorHandler.handleWsFormError(error, this.form);
         this.cdr.markForCheck();
       },
+    });
+  }
+
+  private setExtentDisk(): void {
+    if (!_.startsWith(this.editingExtent.path, 'zvol')) {
+      return;
+    }
+
+    const extentDiskBeingEdited = this.editingExtent.path.slice('zvol'.length + 1);
+    this.extentDiskBeingEdited$.next({
+      label: extentDiskBeingEdited,
+      value: this.editingExtent.path,
+    });
+    this.form.patchValue({
+      disk: this.editingExtent.path,
     });
   }
 }

@@ -127,7 +127,7 @@ describe('InterfacesCardComponent', () => {
   });
 
   it('shows form to edit an existing interface when Edit icon is pressed', async () => {
-    const editIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 3);
+    const editIcon = await table.getHarnessInRow(IxIconHarness.with({ name: 'edit' }), 'eno1');
     await editIcon.click();
 
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(InterfaceFormComponent, {
@@ -138,7 +138,7 @@ describe('InterfacesCardComponent', () => {
   });
 
   it('deletes a network interface with confirmation when Delete icon is pressed', async () => {
-    const deleteIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'delete' }), 3, 3);
+    const deleteIcon = await table.getHarnessInRow(IxIconHarness.with({ name: 'delete' }), 'vlan1');
     await deleteIcon.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
@@ -150,7 +150,7 @@ describe('InterfacesCardComponent', () => {
   });
 
   it('resets a network interface when Reset icon is pressed on a physical interface', async () => {
-    const refreshIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'refresh' }), 1, 3);
+    const refreshIcon = await table.getHarnessInRow(IxIconHarness.with({ name: 'refresh' }), 'eno1');
     await refreshIcon.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
@@ -169,7 +169,7 @@ describe('InterfacesCardComponent', () => {
     expect(await addButton.isDisabled()).toBe(true);
 
     // Delete button
-    const cellButtons = await table.getAllHarnessesInCell(MatButtonHarness, 3, 3);
+    const cellButtons = await table.getAllHarnessesInRow(MatButtonHarness, 'vlan1');
     const deleteButton = cellButtons[1];
     expect(await deleteButton.hasHarness(IxIconHarness.with({ name: 'delete' }))).toBe(true);
     expect(await deleteButton.isDisabled()).toBe(true);

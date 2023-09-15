@@ -6,9 +6,19 @@
         <ix-icon name="open_in_new" class="title-icon"></ix-icon>
       </h3>
     </a>
+    <div class="actions">
+      <button
+        mat-button
+        [ixTest]="['init-shutdown', 'add']"
+        (click)="onAdd()"
+      >{{ 'Add' | translate }}</button>
+    </div>
   </mat-toolbar-row>
 
-  <ix-table2 class="table">
+  <ix-table2
+    class="table"
+    [ix-table2-empty]="!dataProvider.rows.length"
+  >
     <thead
       ix-table-head
       [columns]="columns"

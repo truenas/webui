@@ -1,3 +1,68 @@
-<ix-conf-table
-  [conf]="tableConfig"
-></ix-conf-table>
+<mat-card>
+  <mat-toolbar-row>
+    <a [ixTest]="['init-shutdown', 'open-in-new']" [routerLink]="['/system', 'initshutdown']">
+      <h3 class="card-title">
+        {{ 'Init/Shutdown Scripts' | translate }}
+        <ix-icon name="open_in_new" class="title-icon"></ix-icon>
+      </h3>
+    </a>
+    <div class="actions">
+      <button
+        mat-button
+        [ixTest]="['init-shutdown', 'add']"
+        (click)="onAdd()"
+      >{{ 'Add' | translate }}</button>
+    </div>
+  </mat-toolbar-row>
+
+  <ix-table2
+    class="table"
+    [ix-table2-empty]="!dataProvider.rows.length"
+  >
+    <thead
+      ix-table-head
+      [columns]="columns"
+      [dataProvider]="dataProvider"
+    ></thead>
+    <tbody
+      ix-table-body
+      [columns]="columns"
+      [dataProvider]="dataProvider"
+      [isLoading]="isLoading"
+    >
+      <ng-template
+        ix-table-cell
+        [columnIndex]="0"
+        [dataProvider]="dataProvider"
+        let-script
+      >
+        {{ script.script || script.command }}
+      </ng-template>
+      <ng-template
+        ix-table-cell
+        [columnIndex]="5"
+        [dataProvider]="dataProvider"
+        let-script
+      >
+        <div class="buttons">
+          <button
+            mat-icon-button
+            [ixTest]="[script.id, 'edit']"
+            [matTooltip]="'Edit' | translate"
+            (click)="onEdit(script)"
+          >
+            <ix-icon name="edit"></ix-icon>
+          </button>
+          <button
+            mat-icon-button
+            [ixTest]="[script.id, 'delete']"
+            [matTooltip]="'Delete' | translate"
+            (click)="onDelete(script)"
+          >
+            <ix-icon name="delete"></ix-icon>
+          </button>
+        </div>
+      </ng-template>
+    </tbody>
+  </ix-table2>
+</mat-card>

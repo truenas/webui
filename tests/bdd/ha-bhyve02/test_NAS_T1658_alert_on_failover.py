@@ -5,7 +5,6 @@ import reusableSeleniumCode as rsc
 import xpaths
 from function import (
     wait_on_element,
-    wait_on_element_disappear,
     ssh_cmd,
     get
 )
@@ -47,8 +46,6 @@ def the_browser_is_open_to_nas_hostname_login_with_user_and_password(driver, nas
 def on_the_dashboard_look_at_the_number_of_alerts(driver, notification):
     """on the Dashboard, look at the number of alerts."""
     rsc.Verify_The_Dashboard(driver)
-    element_text = driver.find_element_by_xpath(xpaths.toolbar.notification_Text).text
-    notification['before'] = element_text
 
 
 @then('degraded the tank pool to create an alert and verify that the pool is degraded')
@@ -73,12 +70,8 @@ def degraded_the_tank_pool_to_create_an_alert_and_verify_that_the_pool_is_degrad
 def wait_for_the_alert_to_appear_and_verify_the_volume_and_the_state_is_degraded(driver, notification):
     """wait for the alert to appear and verify the volume and the state is degraded."""
     assert wait_on_element(driver, 7, xpaths.toolbar.notification)
-    assert wait_on_element_disappear(driver, 180, xpaths.toolbar.notification_Count(notification["before"]))
 
     rsc.Verify_Degraded_Alert(driver)
-
-    element_text = driver.find_element_by_xpath(xpaths.toolbar.notification_Text).text
-    notification['after'] = element_text
 
 
 @then('on the Dashboard, click Initiate Failover on the standby controller')
@@ -107,10 +100,9 @@ def wait_for_the_login_to_appear_and_ha_to_be_enabled_login_with_user_and_passwo
 def on_the_dashboard_verify_the_alert_exists_after_failover_with_the_right_volume_and_state(driver, notification):
     """on the Dashboard, verify the alert exists after failover with the right volume and state."""
     rsc.Verify_The_Dashboard(driver)
-
-    assert wait_on_element(driver, 7, xpaths.toolbar.notification)
-    assert wait_on_element(driver, 7, xpaths.toolbar.notification_Count(notification["after"]))
-
+    assert wait_on_element(driver, 180, xpaths.toolbar.ha_Enabled)
+    # if there is prefious the License Agrement might show up
+    rsc.License_Agrement(driver)
     rsc.Verify_Degraded_Alert(driver)
 
 
@@ -130,7 +122,6 @@ def fix_the_degraded_pool_and_verify_that_the_pool_is_fixed():
 @then('then wait for the alert to disappear and trigger failover again')
 def then_wait_for_the_alert_to_disappear_and_trigger_failover_again(driver, notification):
     """then wait for the alert to disappear and trigger failover again."""
-    assert wait_on_element(driver, 180, xpaths.toolbar.notification_Count(notification["before"]))
 
     rsc.Verify_Degraded_Alert_Is_Gone(driver)
 

@@ -181,6 +181,7 @@ export class ZvolFormComponent implements OnInit {
   );
 
   constructor(
+    public formatter: IxFormatterService,
     private translate: TranslateService,
     private formBuilder: FormBuilder,
     private ws: WebSocketService,
@@ -188,7 +189,6 @@ export class ZvolFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private formErrorHandler: FormErrorHandlerService,
     private errorHandler: ErrorHandlerService,
-    private formatter: IxFormatterService,
     protected storageService: StorageService,
     protected snackbar: SnackbarService,
     private slideInRef: IxSlideInRef<ZvolFormComponent>,
@@ -254,13 +254,9 @@ export class ZvolFormComponent implements OnInit {
             this.customFilter = [[['id', '=', this.parentId]]];
 
             this.copyParentProperties(parent);
-
             this.inheritSyncSource(parent, parentDataset);
-
             this.inheritCompression(parent, parentDataset);
-
             this.inheritDeduplication(parent, parentDataset);
-
             this.inheritSnapdev(parent, parentDataset);
 
             this.cdr.markForCheck();
@@ -292,7 +288,7 @@ export class ZvolFormComponent implements OnInit {
       this.form.controls.comments.setValue('');
     }
 
-    this.form.controls.volsize.setValue(humansize);
+    this.form.controls.volsize.setValue(parent.volsize.rawvalue);
   }
 
   disableEncryptionFields(): void {
@@ -542,11 +538,6 @@ export class ZvolFormComponent implements OnInit {
       data.name = this.parentId + '/' + data.name;
     }
 
-    if (this.origHuman !== data.volsize) {
-      data.volsize = this.formatter.convertHumanStringToNum(data.volsize as string, true);
-    } else {
-      delete data.volsize;
-    }
     return data;
   }
 

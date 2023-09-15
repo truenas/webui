@@ -1,7 +1,6 @@
 import {
   Component, Inject, OnInit,
 } from '@angular/core';
-import { MediaObserver } from '@angular/flex-layout';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -18,7 +17,6 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import network_interfaces_helptext from 'app/helptext/network/interfaces/interfaces-list';
 import helptext from 'app/helptext/topbar';
-import { HaStatus } from 'app/interfaces/events/ha-status-event.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AlertSlice, selectImportantUnreadAlertsCount } from 'app/modules/alerts/store/alert.selectors';
@@ -36,7 +34,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { selectHaStatus, selectIsHaLicensed, selectIsUpgradePending } from 'app/store/ha-info/ha-info.selectors';
+import { selectIsHaLicensed, selectIsUpgradePending } from 'app/store/ha-info/ha-info.selectors';
 import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
 import { alertIndicatorPressed, sidenavIndicatorPressed } from 'app/store/topbar/topbar.actions';
 
@@ -53,8 +51,6 @@ export class TopbarComponent implements OnInit {
   pendingNetworkChanges = false;
   waitingNetworkCheckin = false;
   updateDialog: MatDialogRef<UpdateDialogComponent>;
-  haStatusText: string;
-  haDisabledReasons: FailoverDisabledReason[] = [];
   isFailoverLicensed = false;
   upgradeWaitingToFinish = false;
   checkinRemaining: number;
@@ -64,7 +60,6 @@ export class TopbarComponent implements OnInit {
   updateNotificationSent = false;
   private userCheckInPrompted = false;
   tooltips = helptext.mat_tooltips;
-  screenSize = 'waiting';
   productType: ProductType;
 
   alertBadgeCount$ = this.store$.select(selectImportantUnreadAlertsCount);
@@ -80,7 +75,6 @@ export class TopbarComponent implements OnInit {
     private dialog: MatDialog,
     private translate: TranslateService,
     private loader: AppLoaderService,
-    private mediaObserver: MediaObserver,
     private store$: Store<AlertSlice>,
     private snackbar: SnackbarService,
     private errorHandler: ErrorHandlerService,
@@ -94,10 +88,6 @@ export class TopbarComponent implements OnInit {
     this.systemGeneralService.updateRunningNoticeSent.pipe(untilDestroyed(this)).subscribe(() => {
       this.updateNotificationSent = true;
     });
-
-    this.mediaObserver.asObservable().pipe(untilDestroyed(this)).subscribe((changes) => {
-      this.screenSize = changes[0].mqAlias;
-    });
   }
 
   ngOnInit(): void {
@@ -107,10 +97,6 @@ export class TopbarComponent implements OnInit {
 
       this.store$.select(selectIsHaLicensed).pipe(untilDestroyed(this)).subscribe((isHaLicensed) => {
         this.isFailoverLicensed = isHaLicensed;
-
-        if (isHaLicensed) {
-          this.getHaStatus();
-        }
       });
     }
 
@@ -180,20 +166,6 @@ export class TopbarComponent implements OnInit {
 
   onSidenavIndicatorPressed(): void {
     this.store$.dispatch(sidenavIndicatorPressed());
-  }
-
-  getLogoIcon(): string {
-    const isBlueTheme = this.themeService.activeTheme === 'ix-blue' || this.themeService.activeTheme === 'midnight';
-    if (isBlueTheme && this.screenSize === 'xs') {
-      return 'ix:logo_mark';
-    }
-    if (!isBlueTheme && this.screenSize === 'xs') {
-      return 'ix:logo_mark_rgb';
-    }
-    if (isBlueTheme && this.screenSize !== 'xs') {
-      return 'ix:logo_full';
-    }
-    return 'ix:logo_full_rgb';
   }
 
   checkEula(): void {
@@ -301,44 +273,6 @@ export class TopbarComponent implements OnInit {
     this.dialog.open(ResilverProgressDialogComponent);
   }
 
-  updateHaInfo(info: HaStatus): void {
-    this.haDisabledReasons = info.reasons;
-    this.haStatusText = info.hasHa ? helptext.ha_status_text_enabled : helptext.ha_status_text_disabled;
-  }
-
-  getHaStatus(): void {
-    this.store$.select(selectHaStatus).pipe(
-      filter((haStatus) => !!haStatus),
-      untilDestroyed(this),
-    ).subscribe((haStatus) => {
-      this.updateHaInfo(haStatus);
-    });
-  }
-
-  showHaStatus(): void {
-    let reasons = '<ul>\n';
-    let isWarning = false;
-    let haStatus: string;
-    if (this.haDisabledReasons.length > 0) {
-      haStatus = helptext.ha_status_text_disabled;
-      isWarning = true;
-      this.haDisabledReasons.forEach((reason) => {
-        const reasonText = helptext.ha_disabled_reasons[reason];
-        reasons = reasons + '<li>' + this.translate.instant(reasonText) + '</li>\n';
-      });
-    } else {
-      haStatus = helptext.ha_status_text_enabled;
-      reasons = reasons + '<li>' + this.translate.instant(helptext.ha_is_enabled) + '</li>\n';
-    }
-    reasons = reasons + '</ul>';
-
-    if (isWarning) {
-      this.dialogService.warn(haStatus, reasons, true);
-    } else {
-      this.dialogService.info(haStatus, reasons, true);
-    }
-  }
-
   upgradePendingDialog(): void {
     this.dialogService.confirm({
       title: this.translate.instant('Pending Upgrade'),
@@ -381,10 +315,6 @@ export class TopbarComponent implements OnInit {
       position: topbarDialogPosition,
     });
     this.updateDialog.componentInstance.setMessage({ title, message });
-  }
-
-  openIx(): void {
-    this.window.open('https://www.ixsystems.com/', '_blank');
   }
 
   onFeedbackIndicatorPressed(): void {

@@ -33,6 +33,9 @@ import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { PageTitleHeaderComponent } from 'app/modules/page-header/page-title-header/page-title-header.component';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { TruecommandModule } from 'app/modules/truecommand/truecommand.module';
+import { HaStatusIconComponent } from './components/topbar/ha-status-icon/ha-status-icon.component';
+import { HaStatusPopoverComponent } from './components/topbar/ha-status-icon/ha-status-popover/ha-status-popover.component';
+import { IxLogoComponent } from './components/topbar/ix-logo/ix-logo.component';
 import { JobsIndicatorComponent } from './components/topbar/jobs-indicator/jobs-indicator.component';
 import { PowerMenuComponent } from './components/topbar/power-menu/power-menu.component';
 import { UserMenuComponent } from './components/topbar/user-menu/user-menu.component';
@@ -77,6 +80,9 @@ import { PageHeaderDirective } from './directives/page-header.directive';
     DirectoryServicesIndicatorComponent,
     JobsIndicatorComponent,
     PageHeaderDirective,
+    IxLogoComponent,
+    HaStatusIconComponent,
+    HaStatusPopoverComponent,
   ],
   exports: [
     ChangePasswordDialogComponent,

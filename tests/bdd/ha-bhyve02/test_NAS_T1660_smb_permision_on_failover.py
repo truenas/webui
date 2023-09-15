@@ -259,8 +259,11 @@ def on_the_initiate_failover_box_check_the_confirm_checkbox_then_click_failover(
 def wait_for_the_login_to_appear_and_ha_to_be_enabled_login_with_user_and_password(driver, user, password):
     """wait for the login to appear and HA to be enabled, login with <user> and <password>."""
     rsc.HA_Login_Status_Enable(driver)
-
     rsc.Login(driver, user, password)
+    rsc.Verify_The_Dashboard(driver)
+    assert wait_on_element(driver, 180, xpaths.toolbar.ha_Enabled)
+    # if there is prefious the License Agrement might show up
+    rsc.License_Agrement(driver)
 
 
 @then(parsers.parse('verify the first file still exist in {share_name} dataset'))

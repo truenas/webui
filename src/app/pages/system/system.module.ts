@@ -32,6 +32,7 @@ import { TreeModule } from 'app/modules/ix-tree/tree.module';
 import { JobsModule } from 'app/modules/jobs/jobs.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import { OauthButtonModule } from 'app/modules/oauth-button/oauth-button.module';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
@@ -47,9 +48,7 @@ import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron
 import { CronListComponent } from 'app/pages/system/advanced/cron/cron-list/cron-list.component';
 import { GlobalTwoFactorAuthCardComponent } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-card/global-two-factor-card.component';
 import { GlobalTwoFactorAuthFormComponent } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-form/global-two-factor-form.component';
-import {
-  InitShutdownCardComponent,
-} from 'app/pages/system/advanced/init-shutdown/init-shutdown-card/init-shutdown-card.component';
+import { InitShutdownCardComponent } from 'app/pages/system/advanced/init-shutdown/init-shutdown-card/init-shutdown-card.component';
 import { InitShutdownFormComponent } from 'app/pages/system/advanced/init-shutdown/init-shutdown-form/init-shutdown-form.component';
 import { InitshutdownListComponent } from 'app/pages/system/advanced/init-shutdown/initshutdown-list/initshutdown-list.component';
 import {
@@ -71,7 +70,6 @@ import { SessionsCardComponent } from 'app/pages/system/advanced/sessions/sessio
 import { TokenSettingsComponent } from 'app/pages/system/advanced/sessions/token-settings/token-settings.component';
 import { StorageCardComponent } from 'app/pages/system/advanced/storage/storage-card/storage-card.component';
 import { StorageSettingsFormComponent } from 'app/pages/system/advanced/storage/storage-settings-form/storage-settings-form.component';
-import { SysctlCardComponent } from 'app/pages/system/advanced/sysctl/sysctl-card/sysctl-card.component';
 import { TunableFormComponent } from 'app/pages/system/advanced/sysctl/tunable-form/tunable-form.component';
 import { TunableListComponent } from 'app/pages/system/advanced/sysctl/tunable-list/tunable-list.component';
 import { SyslogCardComponent } from 'app/pages/system/advanced/syslog/syslog-card/syslog-card.component';
@@ -129,6 +127,7 @@ import { UpdateComponent } from 'app/pages/system/update/update.component';
 import { EnclosureModule } from 'app/pages/system/view-enclosure/enclosure.module';
 import { QrDialogComponent } from 'app/pages/two-factor-auth/components/two-factor/qr-dialog/qr-dialog.component';
 import { ConsoleCardComponent } from './advanced/console/console-card/console-card.component';
+import { SysctlCardComponent } from './advanced/sysctl/sysctl-card/sysctl-card.component';
 import { AlertSettingsComponent } from './alert-settings/alert-settings.component';
 import { BootenvNodeItemComponent } from './bootenv/bootenv-status/bootenv-node-item/bootenv-node-item.component';
 import { FileTicketModule } from './file-ticket/file-ticket.module';
@@ -178,6 +177,7 @@ import { routing } from './system.routing';
     AppLoaderModule,
     TestIdModule,
     IxTable2Module,
+    OauthButtonModule,
   ],
   declarations: [
     AdvancedSettingsComponent,
@@ -206,7 +206,6 @@ import { routing } from './system.routing';
     LocalizationCardComponent,
     InitShutdownFormComponent,
     InitshutdownListComponent,
-    InitShutdownCardComponent,
     IsolatedGpusFormComponent,
     KernelFormComponent,
     LicenseComponent,
@@ -225,7 +224,6 @@ import { routing } from './system.routing';
     StorageSettingsFormComponent,
     StorageCardComponent,
     SelfEncryptingDriveFormComponent,
-    SysctlCardComponent,
     TunableFormComponent,
     TunableListComponent,
     UpdateComponent,
@@ -268,6 +266,8 @@ import { routing } from './system.routing';
     KernelCardComponent,
     SupportCardComponent,
     AlertSettingsComponent,
+    InitShutdownCardComponent,
+    SysctlCardComponent,
   ],
   providers: [
     TranslateService,

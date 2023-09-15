@@ -120,7 +120,7 @@ export class InitShutdownFormComponent implements OnInit {
           this.snackbar.success(this.translate.instant('Init/Shutdown Script updated'));
         }
         this.isFormLoading = false;
-        this.slideInRef.close();
+        this.slideInRef.close(true);
       },
       error: (error) => {
         this.isFormLoading = false;

@@ -11,6 +11,7 @@ import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { CronCardComponent } from 'app/pages/system/advanced/cron/cron-card/cron-card.component';
 import { CronDeleteDialogComponent } from 'app/pages/system/advanced/cron/cron-delete-dialog/cron-delete-dialog.component';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
@@ -73,6 +74,9 @@ describe('CronCardComponent', () => {
       mockProvider(TaskService, {
         getTaskNextRun: jest.fn(() => 'in about 10 hours'),
       }),
+      mockProvider(AdvancedSettingsService, {
+        showFirstTimeWarningIfNeeded: jest.fn(() => Promise.resolve()),
+      }),
     ],
   });
 
@@ -94,7 +98,7 @@ describe('CronCardComponent', () => {
 
   it('shows confirmation dialog when Run Now button is pressed', async () => {
     jest.spyOn(spectator.inject(DialogService), 'confirm');
-    const runNowButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'play_arrow' }), 1, 5);
+    const runNowButton = await table.getHarnessInRow(IxIconHarness.with({ name: 'play_arrow' }), 'root');
     await runNowButton.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
@@ -104,8 +108,8 @@ describe('CronCardComponent', () => {
     });
   });
 
-  it('shows form to edit an existing interface when Edit button is pressed', async () => {
-    const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 5);
+  it('shows form to edit an existing cronjob when Edit button is pressed', async () => {
+    const editButton = await table.getHarnessInRow(IxIconHarness.with({ name: 'edit' }), 'root');
     await editButton.click();
 
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(CronFormComponent, {
@@ -114,7 +118,7 @@ describe('CronCardComponent', () => {
   });
 
   it('deletes a cronjob with confirmation when Delete button is pressed', async () => {
-    const deleteIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'delete' }), 1, 5);
+    const deleteIcon = await table.getHarnessInRow(IxIconHarness.with({ name: 'delete' }), 'root');
     await deleteIcon.click();
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(CronDeleteDialogComponent, {
