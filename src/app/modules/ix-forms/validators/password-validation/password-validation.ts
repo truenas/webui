@@ -33,22 +33,55 @@ export function matchOthersFgValidator(
   };
 }
 
-export function doesNotEqualValidator(otherControlName: string): ValidatorFn {
-  return (control: UntypedFormControl) => {
-    if (!control.parent) {
+export function doesNotEqualFgValidator(
+  controlName: string, comparateControlNames: string[], errMsg?: string,
+): ValidatorFn {
+  return (fg: FormGroup<unknown>) => {
+    if (!fg?.get(controlName)) {
       return null;
     }
 
-    const otherControl = control.parent.get(otherControlName);
-
-    if (!otherControl) {
-      throw new Error('doesNotEqual(): other control is not found in parent group');
+    const errFields: string[] = [];
+    const subjectControl = fg.get(controlName) as UntypedFormControl;
+    for (const name of comparateControlNames) {
+      const otherControl = fg.get(name) as UntypedFormControl;
+      if (!otherControl) {
+        throw new Error(
+          'doesNotEqual(): other control is not found in the group',
+        );
+      }
+      if (subjectControl.value && otherControl.value && otherControl.value === subjectControl.value) {
+        errFields.push(name);
+      }
     }
-
-    if (otherControl.value && control.value && otherControl.value === control.value) {
-      return { matchesOther: true };
+    if (errFields.length) {
+      fg.get(controlName).setErrors({
+        matchesOther: errMsg ? { message: errMsg } : true,
+      });
+      return {
+        [controlName]: { matchesOther: errMsg ? { message: errMsg } : true },
+      };
     }
-
     return null;
   };
 }
+
+// export function doesNotEqualValidator(otherControlName: string): ValidatorFn {
+//   return (control: UntypedFormControl) => {
+//     if (!control.parent) {
+//       return null;
+//     }
+
+//     const otherControl = control.parent.get(otherControlName);
+
+//     if (!otherControl) {
+//       throw new Error('doesNotEqual(): other control is not found in parent group');
+//     }
+
+//     if (otherControl.value && control.value && otherControl.value === control.value) {
+//       return { matchesOther: true };
+//     }
+
+//     return null;
+//   };
+// }
