@@ -55,6 +55,7 @@ export interface CloudSyncTaskUi extends CloudSyncTask {
   frequency: string;
   next_run: string;
   next_run_time: Date | string;
+  last_run: string;
   state: DataProtectionTaskState;
 }
 

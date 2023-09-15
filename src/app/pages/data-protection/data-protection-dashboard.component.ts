@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 import { EMPTY } from 'rxjs';
 import {
   filter, switchMap, tap, catchError,
@@ -205,6 +206,7 @@ export class DataProtectionDashboardComponent implements OnInit {
             { name: this.translate.instant('Keep for'), prop: 'keepfor', enableMatTooltip: true },
             { name: this.translate.instant('Frequency'), prop: 'frequency', enableMatTooltip: true },
             { name: this.translate.instant('Next Run'), prop: 'next_run', enableMatTooltip: true },
+            { name: this.translate.instant('Last Run'), prop: 'last_run', enableMatTooltip: true },
             {
               name: this.translate.instant('Enabled'),
               prop: 'enabled',
@@ -262,6 +264,7 @@ export class DataProtectionDashboardComponent implements OnInit {
           columns: [
             { name: this.translate.instant('Name'), prop: 'name', enableMatTooltip: true },
             { name: this.translate.instant('Last Snapshot'), prop: 'task_last_snapshot', enableMatTooltip: true },
+            { name: this.translate.instant('Last Run'), prop: 'last_run', enableMatTooltip: true },
             {
               name: this.translate.instant('Enabled'),
               prop: 'enabled',
@@ -303,6 +306,7 @@ export class DataProtectionDashboardComponent implements OnInit {
             { name: this.translate.instant('Description'), prop: 'description', enableMatTooltip: true },
             { name: this.translate.instant('Frequency'), prop: 'frequency', enableMatTooltip: true },
             { name: this.translate.instant('Next Run'), prop: 'next_run', enableMatTooltip: true },
+            { name: this.translate.instant('Last Run'), prop: 'last_run', enableMatTooltip: true },
             {
               name: this.translate.instant('Enabled'),
               prop: 'enabled',
@@ -342,6 +346,7 @@ export class DataProtectionDashboardComponent implements OnInit {
             { name: this.translate.instant('Remote Host'), prop: 'remotehost', enableMatTooltip: true },
             { name: this.translate.instant('Frequency'), prop: 'frequency', enableMatTooltip: true },
             { name: this.translate.instant('Next Run'), prop: 'next_run', enableMatTooltip: true },
+            { name: this.translate.instant('Last Run'), prop: 'last_run', enableMatTooltip: true },
             {
               name: this.translate.instant('Enabled'),
               prop: 'enabled',
@@ -431,6 +436,7 @@ export class DataProtectionDashboardComponent implements OnInit {
     const cloudsyncData = data.map((task) => {
       const formattedCronSchedule = scheduleToCrontab(task.schedule);
       task.credential = task.credentials.name;
+      task.last_run = formatDistanceToNow(task.state.datetime.$date, { addSuffix: true });
       task.cron_schedule = task.enabled ? formattedCronSchedule : this.translate.instant('Disabled');
       task.frequency = this.taskService.getTaskCronDescription(formattedCronSchedule);
       task.next_run_time = task.enabled ? this.taskService.getTaskNextTime(formattedCronSchedule) : this.translate.instant('Disabled');
@@ -468,6 +474,10 @@ export class DataProtectionDashboardComponent implements OnInit {
   replicationDataSourceHelper(data: ReplicationTaskUi[]): ReplicationTaskUi[] {
     const tasks: ReplicationTaskUi[] = [];
     data.forEach((task) => {
+      task.last_run = formatDistanceToNow(
+        task.state.datetime.$date,
+        { addSuffix: true },
+      );
       task.task_last_snapshot = task.state.last_snapshot
         ? task.state.last_snapshot
         : this.translate.instant(helptext.no_snapshot_sent_yet);
@@ -520,7 +530,10 @@ export class DataProtectionDashboardComponent implements OnInit {
       task.cron_schedule = scheduleToCrontab(task.schedule);
       task.frequency = this.taskService.getTaskCronDescription(task.cron_schedule);
       task.next_run = this.taskService.getTaskNextRun(task.cron_schedule);
-
+      task.last_run = formatDistanceToNow(
+        new Date(task.state.datetime.$date),
+        { addSuffix: true },
+      );
       return task;
     });
   }
@@ -530,6 +543,7 @@ export class DataProtectionDashboardComponent implements OnInit {
       task.cron_schedule = scheduleToCrontab(task.schedule);
       task.frequency = this.taskService.getTaskCronDescription(task.cron_schedule);
       task.next_run = this.taskService.getTaskNextRun(task.cron_schedule);
+      task.last_run = formatDistanceToNow(task.state.datetime.$date, { addSuffix: true });
 
       if (task.job === null) {
         task.state = { state: task.locked ? JobState.Locked : JobState.Pending };

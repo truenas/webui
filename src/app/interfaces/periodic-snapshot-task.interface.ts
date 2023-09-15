@@ -39,4 +39,5 @@ export interface PeriodicSnapshotTaskUi extends PeriodicSnapshotTask {
   when: string;
   frequency: string;
   next_run: string;
+  last_run: string;
 }

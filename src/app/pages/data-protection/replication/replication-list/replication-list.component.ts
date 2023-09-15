@@ -5,6 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { formatDistanceToNow } from 'date-fns';
 import {
   filter, switchMap, tap,
 } from 'rxjs/operators';
@@ -67,6 +68,7 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
     { name: this.translate.instant('Recursive'), prop: 'recursive', hidden: true },
     { name: this.translate.instant('Auto'), prop: 'auto', hidden: true },
     { name: this.translate.instant('Enabled'), prop: 'enabled', checkbox: true },
+    { name: this.translate.instant('Last Run'), prop: 'last_run', checkbox: true },
     {
       name: this.translate.instant('State'), prop: 'state', button: true, state: 'state',
     },
@@ -106,6 +108,7 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
     return tasks.map((task) => {
       return {
         ...task,
+        last_run: formatDistanceToNow(task.state.datetime.$date, { addSuffix: true }),
         ssh_connection: task.ssh_credentials ? task.ssh_credentials.name : '-',
         task_last_snapshot: task.state.last_snapshot ? task.state.last_snapshot : this.translate.instant('No snapshots sent yet'),
       };

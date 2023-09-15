@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import { formatDistanceToNow } from 'date-fns';
 import { EMPTY } from 'rxjs';
 import {
   catchError, filter, switchMap, take, tap,
@@ -71,6 +72,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
     },
     { name: this.translate.instant('Frequency'), prop: 'frequency', enableMatTooltip: true },
     { name: this.translate.instant('Next Run'), prop: 'next_run', hidden: true },
+    { name: this.translate.instant('Last Run'), prop: 'last_run', hidden: true },
     {
       name: this.translate.instant('Status'),
       prop: 'state',
@@ -132,6 +134,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
         });
       }
 
+      transformed.last_run = formatDistanceToNow(transformed.state.datetime.$date, { addSuffix: true });
       return transformed;
     });
   }

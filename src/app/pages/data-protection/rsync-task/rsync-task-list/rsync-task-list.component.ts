@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import { formatDistanceToNow } from 'date-fns';
 import {
   catchError, EMPTY, filter, switchMap, take, tap,
 } from 'rxjs';
@@ -60,6 +61,7 @@ export class RsyncTaskListComponent implements EntityTableConfig<RsyncTaskUi> {
     },
     { name: this.translate.instant('Frequency'), prop: 'frequency', enableMatTooltip: true },
     { name: this.translate.instant('Next Run'), prop: 'next_run', hidden: true },
+    { name: this.translate.instant('Last Run'), prop: 'last_run', hidden: true },
     { name: this.translate.instant('Short Description'), prop: 'desc', hidden: true },
     { name: this.translate.instant('User'), prop: 'user' },
     { name: this.translate.instant('Delay Updates'), prop: 'delayupdates', hidden: true },
@@ -170,6 +172,7 @@ export class RsyncTaskListComponent implements EntityTableConfig<RsyncTaskUi> {
           task.job = job;
         });
       }
+      task.last_run = formatDistanceToNow(task.state.datetime.$date, { addSuffix: true });
       return task;
     });
   }

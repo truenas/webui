@@ -42,5 +42,6 @@ export interface RsyncTaskUi extends RsyncTask {
   cron_schedule: string;
   next_run: string;
   frequency: string;
+  last_run: string;
   state: DataProtectionTaskState;
 }
