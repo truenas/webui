@@ -1,36 +1,34 @@
-import { UntypedFormControl, ValidatorFn } from '@angular/forms';
+import { FormGroup, UntypedFormControl, ValidatorFn } from '@angular/forms';
 
-export function matchOtherValidator(otherControlName: string): ValidatorFn {
-  let thisControl: UntypedFormControl;
-  let otherControl: UntypedFormControl;
-
-  return function matchOtherValidate(control: UntypedFormControl) {
-    if (!control.parent) {
+export function matchOthersFgValidator(
+  controlName: string, comparateControlNames: string[], errMsg?: string,
+): ValidatorFn {
+  return function matchOthersFgValidate(fg: FormGroup<unknown>) {
+    if (!fg?.get(controlName)) {
       return null;
     }
 
-    // Initializing the validator.
-    if (!thisControl) {
-      thisControl = control;
-      otherControl = control.parent.get(otherControlName) as UntypedFormControl;
+    const errFields: string[] = [];
+    const subjectControl = fg.get(controlName) as UntypedFormControl;
+    for (const name of comparateControlNames) {
+      const otherControl = fg.get(name) as UntypedFormControl;
       if (!otherControl) {
         throw new Error(
-          'matchOtherValidator(): other control is not found in parent group',
+          'matchOtherValidator(): other control is not found in the group',
         );
       }
-      otherControl.valueChanges.subscribe(
-        () => { thisControl.updateValueAndValidity(); },
-      );
+      if (otherControl.value !== subjectControl.value) {
+        errFields.push(name);
+      }
     }
-
-    if (!otherControl) {
-      return null;
+    if (errFields.length) {
+      fg.get(controlName).setErrors({
+        matchOther: errMsg ? { message: errMsg } : true,
+      });
+      return {
+        [controlName]: { matchOther: errMsg ? { message: errMsg } : true },
+      };
     }
-
-    if (otherControl.value !== thisControl.value) {
-      return { matchOther: true };
-    }
-
     return null;
   };
 }
