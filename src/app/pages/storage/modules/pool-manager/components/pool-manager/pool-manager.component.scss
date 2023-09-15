@@ -1,5 +1,6 @@
 .root-container {
   display: flex;
+  gap: 16px;
 
   .main-container {
     width: 100%;
@@ -13,4 +14,9 @@
     position: sticky;
     top: 0;
   }
+}
+
+ix-inventory {
+  display: block;
+  margin-top: 16px;
 }
