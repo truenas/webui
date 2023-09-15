@@ -2260,6 +2260,7 @@
   "Secret Access Key": "",
   "Secret Access Key for the linked AWS account.": "",
   "Secret Authentication Key": "",
+  "Secret Confirm must match Secret": "",
   "Secret Encryption Key": "",
   "Secret and Peer Secret can not be the same.": "",
   "Secret and confirmation should match.": "",

@@ -2546,6 +2546,7 @@
   "Secret (Read only)": "",
   "Secret Access Key": "",
   "Secret Authentication Key": "",
+  "Secret Confirm must match Secret": "",
   "Secret Encryption Key": "",
   "Secret Key": "",
   "Secret and Peer Secret can not be the same.": "",

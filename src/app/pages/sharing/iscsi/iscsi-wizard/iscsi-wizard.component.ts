@@ -4,6 +4,7 @@ import {
 import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { forkJoin, lastValueFrom } from 'rxjs';
 import { patterns } from 'app/constants/name-patterns.constant';
 import { DatasetType } from 'app/enums/dataset.enum';
@@ -34,6 +35,7 @@ import {
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { forbiddenValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
+import { matchOthersFgValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
@@ -82,12 +84,20 @@ export class IscsiWizardComponent implements OnInit {
       tag: [0, [Validators.min(0), Validators.required]],
       user: ['', [Validators.required]],
       secret: ['', [Validators.minLength(12), Validators.maxLength(16), Validators.required]],
-      secret_confirm: ['', [this.validationService.matchOtherValidator('secret'), Validators.required]],
+      secret_confirm: ['', [Validators.required]],
       listen: this.fb.array<string>([]),
     }),
     initiator: this.fb.group({
       initiators: [[] as string[]],
     }),
+  }, {
+    validators: [
+      matchOthersFgValidator(
+        'portal.secret_confirm',
+        ['portal.secret'],
+        this.translate.instant('Secret Confirm must match Secret'),
+      ),
+    ],
   });
 
   get isNewZvol(): boolean {
@@ -207,6 +217,7 @@ export class IscsiWizardComponent implements OnInit {
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
     private validationService: ValidationService,
+    private translate: TranslateService,
   ) {
     this.iscsiService.getExtents().pipe(untilDestroyed(this)).subscribe((extents) => {
       this.namesInUse.push(...extents.map((extent) => extent.name));

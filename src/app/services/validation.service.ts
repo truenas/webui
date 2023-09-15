@@ -80,39 +80,4 @@ export class ValidationService {
       return { range: true, rangeValue: { min, max } };
     };
   }
-
-  matchOtherValidator(otherControlName: string): ValidatorFn {
-    let thisControl: AbstractControl;
-    let otherControl: UntypedFormControl;
-
-    return function matchOtherValidate(control: AbstractControl) {
-      if (!control.parent) {
-        return null;
-      }
-
-      // Initializing the validator.
-      if (!thisControl) {
-        thisControl = control;
-        otherControl = control.parent.get(otherControlName) as UntypedFormControl;
-        if (!otherControl) {
-          throw new Error(
-            'matchOtherValidator(): other control is not found in parent group',
-          );
-        }
-        otherControl.valueChanges.subscribe(
-          () => { thisControl.updateValueAndValidity(); },
-        );
-      }
-
-      if (!otherControl) {
-        return null;
-      }
-
-      if (otherControl.value !== thisControl.value) {
-        return { matchOther: true };
-      }
-
-      return null;
-    };
-  }
 }
