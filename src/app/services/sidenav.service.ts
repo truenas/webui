@@ -2,7 +2,6 @@ import { Inject, Injectable } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
 import { MatDrawerMode, MatSidenav } from '@angular/material/sidenav';
 import { Router, NavigationEnd } from '@angular/router';
-import { untilDestroyed } from '@ngneat/until-destroy';
 import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { take, filter, distinctUntilChanged } from 'rxjs';
@@ -109,7 +108,7 @@ export class SidenavService {
       if (!this.isMobile) {
       // TODO: This is hack to resolve issue described here: https://ixsystems.atlassian.net/browse/NAS-110404
         setTimeout(() => {
-          this.sidenav.open();
+          this.sidenav?.open();
         });
         this.store$.pipe(
           waitForPreferences,
@@ -160,9 +159,8 @@ export class SidenavService {
   private listenForRouteChanges(): void {
     this.router.events.pipe(
       filter((routeChange) => routeChange instanceof NavigationEnd && this.isMobile),
-      untilDestroyed(this),
     ).subscribe(() => {
-      this.sidenav.close();
+      this.sidenav?.close();
     });
   }
 }
