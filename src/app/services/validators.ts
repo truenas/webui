@@ -49,43 +49,6 @@ export function greaterThanFg(
   };
 }
 
-// export function greaterThan(otherControlName: string, fieldPlaceholers: [string]): ValidatorFn {
-//   let thisControl: AbstractControl;
-//   let otherControl: UntypedFormControl;
-
-//   return function greaterThanValidate(control: AbstractControl) {
-//     if (!control.parent) {
-//       return null;
-//     }
-
-//     // Initializing the validator.
-//     if (!thisControl) {
-//       thisControl = control;
-//       otherControl = control.parent.get(otherControlName) as UntypedFormControl;
-//       if (!otherControl) {
-//         throw new Error(
-//           'greaterThanValidator(): other control is not found in parent group',
-//         );
-//       }
-//       otherControl.valueChanges.subscribe(
-//         () => { thisControl.updateValueAndValidity(); },
-//       );
-//     }
-
-//     if (!otherControl) {
-//       return null;
-//     }
-
-//     const otherVal = Number(otherControl.value);
-//     const thisVal = Number(thisControl.value);
-//     if (otherVal >= thisVal) {
-//       return { greaterThan: true, fields: fieldPlaceholers };
-//     }
-
-//     return null;
-//   };
-// }
-
 export function rangeValidator(min: number, max?: number): ValidatorFn {
   let thisControl: AbstractControl;
 
