@@ -77,7 +77,7 @@ export class IxErrorsComponent implements OnChanges {
           if (error === ixManualValidateError) {
             return;
           }
-          const message = (this.control.errors[error] as SomeError).message as string;
+          const message = (this.control.errors[error] as SomeError)?.message as string;
           if (message) {
             return message;
           }
