@@ -68,7 +68,8 @@ describe('CloudsyncFormComponent', () => {
     frequency: 'At 00:00, only on Sunday',
     next_run_time: 'Disabled',
     next_run: 'Disabled',
-    state: { state: 'PENDING' },
+    state: { state: 'PENDING', datetime: { $date: 123 } },
+    last_run: 'about 15 hours ago',
   } as CloudSyncTaskUi;
 
   let loader: HarnessLoader;
