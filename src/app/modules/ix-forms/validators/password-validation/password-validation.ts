@@ -65,23 +65,3 @@ export function doesNotEqualFgValidator(
     return null;
   };
 }
-
-// export function doesNotEqualValidator(otherControlName: string): ValidatorFn {
-//   return (control: UntypedFormControl) => {
-//     if (!control.parent) {
-//       return null;
-//     }
-
-//     const otherControl = control.parent.get(otherControlName);
-
-//     if (!otherControl) {
-//       throw new Error('doesNotEqual(): other control is not found in parent group');
-//     }
-
-//     if (otherControl.value && control.value && otherControl.value === control.value) {
-//       return { matchesOther: true };
-//     }
-
-//     return null;
-//   };
-// }
