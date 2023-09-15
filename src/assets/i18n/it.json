@@ -2912,7 +2912,7 @@
   "Set to either start this replication task  immediately after the linked periodic snapshot task completes or  continue to create a separate <b>Schedule</b> for this replication.": "",
   "Set to enable DHCP. Leave unset to create a static IPv4 or IPv6 configuration. Only one interface can be configured for DHCP.": "",
   "Set to enable Samba to do DNS updates when joining a domain.": "",
-  "Set to enable connecting to the VNC web interface.": "",
+  "Set to enable connecting to the SPICE web interface.": "",
   "Set to enable the File eXchange Protocol. This option makes the server vulnerable to FTP bounce attacks so it is not recommended.": "",
   "Set to enable the iSCSI extent.": "",
   "Set to enable the web user interface for the S3 service.  Access the minio web interface by entering the IP address and port number  separated by a colon in the browser address bar.": "",
