@@ -161,6 +161,8 @@
   "This session is current and cannot be terminated": "",
   "Unlock Pool": "",
   "VDEVs": "",
+  "Value must be greater than Range Low": "",
+  "Value must be greater than {label}": "",
   "Variable deleted.": "",
   "Warning: {n} of {total} docker images could not be deleted.": "",
   "Warning: {n} of {total} docker images could not be updated.": "",

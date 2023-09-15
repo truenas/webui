@@ -370,6 +370,8 @@
   "VDEVs": "",
   "VDEVs have been created through manual disk selection. To view or  edit your selections, press the \"Edit Manual Disk Selection\" button below. To start again with the  automated disk selection, hit the \"Reset\" button.": "",
   "VMware Snapshots": "",
+  "Value must be greater than Range Low": "",
+  "Value must be greater than {label}": "",
   "Variable deleted.": "",
   "Vdevs spans enclosure": "",
   "WARNING: Adding data VDEVs with different numbers of disks is not recommended.": "",

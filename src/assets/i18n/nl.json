@@ -272,6 +272,8 @@
   "Uses two disks for parity while all other disks store data. RAIDZ2 requires at least four disks. RAIDZ is a traditional ZFS data protection scheme. \nChoose RAIDZ over dRAID when managing a smaller set of drives, where simplicity of setup and predictable disk usage are primary considerations.": "",
   "VDEV is highly discouraged and will result in data loss if it fails": "",
   "VMware Snapshots": "",
+  "Value must be greater than Range Low": "",
+  "Value must be greater than {label}": "",
   "Variable deleted.": "",
   "WARNING: Adding data VDEVs with different numbers of disks is not recommended.": "",
   "Warning: {n} of {total} docker images could not be deleted.": "",

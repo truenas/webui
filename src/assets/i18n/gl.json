@@ -3972,6 +3972,8 @@
   "Value must be a number": "",
   "Value must be a valid email address": "",
   "Value must be a {type}": "",
+  "Value must be greater than Range Low": "",
+  "Value must be greater than {label}": "",
   "Var": "",
   "Variable": "",
   "Variable deleted.": "",

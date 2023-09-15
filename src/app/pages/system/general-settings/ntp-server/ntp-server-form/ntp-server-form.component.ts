@@ -10,7 +10,7 @@ import { CreateNtpServer, NtpServer } from 'app/interfaces/ntp-server.interface'
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { ValidationService } from 'app/services/validation.service';
+import { greaterThanFg } from 'app/services/validators';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -27,8 +27,16 @@ export class NtpServerFormComponent implements OnInit {
     iburst: [true],
     prefer: [false],
     minpoll: [6, [Validators.required, Validators.min(4)]],
-    maxpoll: [10, [Validators.required, Validators.max(17), this.validationService.greaterThan('minpoll', [helptext.minpoll.label])]],
+    maxpoll: [10, [Validators.required, Validators.max(17)]],
     force: [false],
+  }, {
+    validators: [
+      greaterThanFg(
+        'maxpoll',
+        ['minpoll'],
+        this.translate.instant('Value must be greater than {label}', { label: helptext.minpoll.label }),
+      ),
+    ],
   });
 
   readonly helptext = helptext;
@@ -41,7 +49,6 @@ export class NtpServerFormComponent implements OnInit {
   }
 
   constructor(
-    private validationService: ValidationService,
     private fb: FormBuilder,
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,

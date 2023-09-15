@@ -39,7 +39,6 @@ import { matchOthersFgValidator } from 'app/modules/ix-forms/validators/password
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
-import { ValidationService } from 'app/services/validation.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -216,7 +215,6 @@ export class IscsiWizardComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
-    private validationService: ValidationService,
     private translate: TranslateService,
   ) {
     this.iscsiService.getExtents().pipe(untilDestroyed(this)).subscribe((extents) => {
