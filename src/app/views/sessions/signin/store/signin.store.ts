@@ -7,9 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   combineLatest, forkJoin, Observable, of, Subscription,
 } from 'rxjs';
-import {
-  filter, finalize, map, switchMap, tap,
-} from 'rxjs/operators';
+import { map, switchMap, tap } from 'rxjs/operators';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -85,10 +83,7 @@ export class SigninStore extends ComponentStore<SigninState> {
         // TODO: This is a hack to keep existing code working. Ideally it shouldn't be here.
         this.systemGeneralService.loadProductType(),
       ]).pipe(
-        tap(() => {
-          this.updateService.hardRefreshIfNeeded();
-          this.updateFailoverStatusOnDisconnect();
-        }),
+        tap(() => this.updateService.hardRefreshIfNeeded()),
         switchMap(() => this.authService.loginWithToken()),
         tap((wasLoggedIn: boolean) => {
           if (!wasLoggedIn) {
@@ -103,6 +98,7 @@ export class SigninStore extends ComponentStore<SigninState> {
             this.dialogService.error(this.errorHandler.parseWsError(error));
           },
         ),
+        untilDestroyed(this),
       );
     }),
   ));
@@ -175,9 +171,8 @@ export class SigninStore extends ComponentStore<SigninState> {
 
   private checkIfAdminPasswordSet(): Observable<boolean> {
     return this.ws.call('user.has_local_administrator_set_up').pipe(
-      tap(
-        (wasAdminSet) => this.patchState({ wasAdminSet }),
-      ),
+      tap((wasAdminSet) => this.patchState({ wasAdminSet })),
+      untilDestroyed(this),
     );
   }
 
@@ -194,6 +189,7 @@ export class SigninStore extends ComponentStore<SigninState> {
         this.subscribeToFailoverUpdates();
         return this.loadAdditionalFailoverInfo();
       }),
+      untilDestroyed(this),
     );
   }
 
@@ -209,6 +205,7 @@ export class SigninStore extends ComponentStore<SigninState> {
             this.setFailoverIps(ips);
           },
         ),
+        untilDestroyed(this),
       );
   }
 
@@ -222,22 +219,5 @@ export class SigninStore extends ComponentStore<SigninState> {
       .subscribe((event) => {
         this.setFailoverDisabledReasons(event.disabled_reasons);
       });
-  }
-
-  /**
-   * If websocket connection is lost because of failover event, we need to resubscribe to updates.
-   */
-  private updateFailoverStatusOnDisconnect(): void {
-    this.wsManager.websocket$.pipe(
-      finalize(() => {
-        this.wsManager.isConnected$.pipe(
-          filter(Boolean),
-          switchMap(() => this.loadFailoverStatus()),
-          untilDestroyed(this),
-        ).subscribe();
-      }),
-      untilDestroyed(this),
-    )
-      .subscribe();
   }
 }
