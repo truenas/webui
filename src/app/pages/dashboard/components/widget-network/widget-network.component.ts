@@ -8,16 +8,18 @@ import { ChartData, ChartOptions } from 'chart.js';
 import { sub } from 'date-fns';
 import { utcToZonedTime } from 'date-fns-tz';
 import filesize from 'filesize';
-import { Subscription, timer } from 'rxjs';
+import { Subscription, combineLatest, timer } from 'rxjs';
 import {
   filter, map, take, throttleTime,
 } from 'rxjs/operators';
 import { KiB } from 'app/constants/bytes.constant';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { LinkState, NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
+import { ReportingGraphName } from 'app/enums/reporting.enum';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { BaseNetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
-import { NetworkInterfaceUpdate, ReportingDatabaseError, ReportingNameAndId } from 'app/interfaces/reporting.interface';
+import { ReportingGraph } from 'app/interfaces/reporting-graph.interface';
+import { NetworkInterfaceUpdate, ReportingData, ReportingDatabaseError, ReportingNameAndId } from 'app/interfaces/reporting.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { TableService } from 'app/modules/entity/table/table.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
@@ -25,6 +27,7 @@ import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.co
 import { ResourcesUsageStore } from 'app/pages/dashboard/store/resources-usage-store.service';
 import { deepCloneState } from 'app/pages/dashboard/utils/deep-clone-state.helper';
 import { ReportsService } from 'app/pages/reports-dashboard/reports.service';
+import { convertAggregations, optimizeLegend } from 'app/pages/reports-dashboard/utils/report.utils';
 import { DialogService } from 'app/services/dialog.service';
 import { LocaleService } from 'app/services/locale.service';
 import { ThemeService } from 'app/services/theme/theme.service';
@@ -169,11 +172,12 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
 
   ngOnInit(): void {
     this.resourcesUsageStore$.nics$.pipe(
-      deepCloneState(),
       untilDestroyed(this),
     ).subscribe({
       next: (interfaces) => {
-        this.availableNics = interfaces.filter((nic) => nic.state.link_state !== LinkState.Down);
+        this.availableNics = interfaces.filter(
+          (nic) => nic.state.link_state !== LinkState.Down,
+        ).map((nic) => ({ ...nic }));
         this.updateMapInfo();
       },
     });
@@ -355,18 +359,31 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
         identifier: networkInterfaceName,
         name: 'interface',
       };
-      this.ws.call('reporting.netdata_get_data', [[params], timeFrame]).pipe(
-        map((response) => {
-          const updatedResponse = response[0];
+      combineLatest([
+        this.ws.call('reporting.netdata_get_data', [[params], timeFrame]).pipe(
+          map((reportingData) => reportingData[0]),
+          map((reportingData) => optimizeLegend(reportingData)),
+        ),
+        this.ws.call('reporting.netdata_graphs').pipe(
+          map((reports) => reports.find((report) => report.name === ReportingGraphName.NetworkInterface)),
+        ),
+      ]).pipe(
+        map(([reportingData, reportGraph]: [ReportingData, ReportingGraph]) => {
+          return convertAggregations(
+            reportingData,
+            reportGraph.vertical_label,
+          );
+        }),
+        map((reportData) => {
           if (this.timezone) {
-            updatedResponse.start = utcToZonedTime(updatedResponse.start * 1000, this.timezone).valueOf() / 1000;
-            updatedResponse.end = utcToZonedTime(updatedResponse.end * 1000, this.timezone).valueOf() / 1000;
+            reportData.start = utcToZonedTime(reportData.start * 1000, this.timezone).valueOf() / 1000;
+            reportData.end = utcToZonedTime(reportData.end * 1000, this.timezone).valueOf() / 1000;
           }
-          (updatedResponse.data as number[][]).forEach((row, index) => {
+          (reportData.data as number[][]).forEach((row, index) => {
             // remove first column and convert kilobits/s to bytes
-            (updatedResponse.data as number[][])[index] = row.slice(1).map((value) => value * KiB);
+            (reportData.data as number[][])[index] = row.slice(1).map((value) => value * KiB);
           });
-          return updatedResponse;
+          return reportData;
         }),
         untilDestroyed(this),
       ).subscribe({
