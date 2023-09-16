@@ -57,8 +57,8 @@ export class ZfsInfoCardComponent {
 
   get canRemoveDisk(): boolean {
     return this.topologyParentItem.type !== TopologyItemType.Mirror
-      && !this.isRaidzParent
-      && (!this.hasTopLevelRaidz
+    && !this.isRaidzParent
+    && (!this.hasTopLevelRaidz
     || this.topologyCategory === VdevType.Cache
     || this.topologyCategory === VdevType.Log);
   }

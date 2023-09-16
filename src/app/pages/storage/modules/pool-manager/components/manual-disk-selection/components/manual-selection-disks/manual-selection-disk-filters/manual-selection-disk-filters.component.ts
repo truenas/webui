@@ -6,6 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import _ from 'lodash';
 import { FileSizePipe } from 'ngx-filesize';
 import { map } from 'rxjs/operators';
+import { redundantListToUniqueOptions } from 'app/helpers/operators/options.operators';
 import {
   ManualDiskSelectionStore,
 } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/store/manual-disk-selection.store';
@@ -29,12 +30,8 @@ export class ManualSelectionDiskFiltersComponent implements OnInit {
   });
 
   readonly typeOptions$ = this.store$.inventory$.pipe(
-    map((disks) => {
-      const diskTypes = disks.map((disk) => disk.type);
-      const uniqueTypes = _.uniq(diskTypes);
-      // TODO: Consider extracting somewhere similar to arrayToOptions
-      return uniqueTypes.map((type) => ({ label: type, value: type }));
-    }),
+    map((disks) => disks.map((disk) => disk.type)),
+    redundantListToUniqueOptions(),
   );
 
   readonly sizeOptions$ = this.store$.inventory$.pipe(

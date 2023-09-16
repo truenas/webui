@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, OnInit, Output,
+  ChangeDetectionStrategy, Component, Input, OnChanges, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -31,9 +31,6 @@ export class NormalSelectionComponent implements OnInit, OnChanges {
   @Input() isStepActive: boolean;
   @Input() inventory: UnusedDisk[];
 
-  // TODO: Consider moving to a service.
-  @Output() manualSelectionClicked = new EventEmitter<void>();
-
   form = this.formBuilder.group({
     width: [{ value: null as number, disabled: true }, Validators.required],
     vdevsNumber: [{ value: null as number, disabled: true }, Validators.required],
@@ -46,12 +43,8 @@ export class NormalSelectionComponent implements OnInit, OnChanges {
 
   constructor(
     private formBuilder: FormBuilder,
-    private store: PoolManagerStore,
+    protected store: PoolManagerStore,
   ) {}
-
-  openManualDiskSelection(): void {
-    this.manualSelectionClicked.emit();
-  }
 
   ngOnInit(): void {
     this.updateControlOptionsOnChanges();
