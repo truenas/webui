@@ -1,3 +1,8 @@
+<div *ngIf="!(isEnterprise$ | async)">
+  <a href="https://www.truenas.com/community/" ixTest="['forum-link']">
+    {{ 'TrueNAS Forums - To discuss with fellow TrueNAS community users' | translate }}
+  </a>
+</div>
 <button
   mat-button
   type="button"
