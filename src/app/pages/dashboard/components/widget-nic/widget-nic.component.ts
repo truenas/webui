@@ -9,6 +9,7 @@ import {
   styler,
 } from 'popmotion';
 import { filter, map, throttleTime } from 'rxjs/operators';
+import { KiB } from 'app/constants/bytes.constant';
 import { LinkState, NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
 import { deepCloneState } from 'app/helpers/state-select.helper';
 import { NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
@@ -126,8 +127,8 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
       untilDestroyed(this),
     ).subscribe((nicUpdate) => {
       this.traffic = {
-        sent: nicUpdate.sent_bytes_rate,
-        received: nicUpdate.received_bytes_rate,
+        sent: nicUpdate.sent_bytes_rate * KiB,
+        received: nicUpdate.received_bytes_rate * KiB,
         linkState: nicUpdate.link_state,
       };
       this.cdr.markForCheck();
