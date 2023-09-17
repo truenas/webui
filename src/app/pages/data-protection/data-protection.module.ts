@@ -7,6 +7,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatStepperModule } from '@angular/material/stepper';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
@@ -35,6 +37,7 @@ import {
 } from 'app/pages/data-protection/replication/replication-restore-dialog/replication-restore-dialog.component';
 import { ReplicationWhatAndWhereComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-what-and-where/replication-what-and-where.component';
 import { ReplicationWhenComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-when/replication-when.component';
+import { RsyncTaskCardComponent } from 'app/pages/data-protection/rsync-task/rsync-task-card/rsync-task-card.component';
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
 import { RsyncTaskListComponent } from 'app/pages/data-protection/rsync-task/rsync-task-list/rsync-task-list.component';
 import {
@@ -80,6 +83,8 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
     MatStepperModule,
     AppCommonModule,
     LayoutModule,
+    MatToolbarModule,
+    MatTooltipModule,
   ],
   declarations: [
     SnapshotTaskListComponent,
@@ -111,6 +116,7 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
     ScheduleSectionComponent,
     SourceSectionComponent,
     TargetSectionComponent,
+    RsyncTaskCardComponent,
   ],
 })
 export class DataProtectionModule {}
