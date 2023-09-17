@@ -70,7 +70,7 @@ export class FileTicketFormComponent implements OnInit {
   isFormDisabled$ = combineLatest([this.form.status$, this.isFormLoading$]).pipe(
     map(([status, loading]) => status === 'INVALID' || loading),
   );
-
+  readonly isEnterprise$ = this.sysGeneralService.isEnterprise$;
   constructor(
     private ws: WebSocketService,
     private fb: FormBuilder,

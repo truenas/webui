@@ -156,6 +156,7 @@
   "The number of children must at the minimum accomodate the total number of disks required for the previous configuration options including parity drives.": "",
   "This pool has an encrypted root dataset which is locked. Do you want to unlock it?": "",
   "This session is current and cannot be terminated": "",
+  "TrueNAS Forums - Discuss with fellow TrueNAS community users": "",
   "Unlock Pool": "",
   "VDEVs": "",
   "VDEVs not assigned": "",
