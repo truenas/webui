@@ -7,16 +7,8 @@
   }
 }
 
-:host ::ng-deep {
-  .justify-end {
-    display: flex;
-    height: inherit;
-    justify-content: flex-end;
-
-    mat-slide-toggle {
-      align-items: center;
-      display: flex;
-      height: 100%;
-    }
-  }
+.justify-end {
+  display: flex;
+  height: inherit;
+  justify-content: flex-end;
 }
