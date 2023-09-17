@@ -34,5 +34,8 @@ export class UserComboboxProvider implements IxComboboxProvider {
       );
   }
 
-  constructor(private userService: UserService, private optionsValueField: 'username' | 'uid' | 'id' = 'username') {}
+  constructor(
+    private userService: UserService,
+    private optionsValueField: 'username' | 'uid' | 'id' = 'username',
+  ) {}
 }

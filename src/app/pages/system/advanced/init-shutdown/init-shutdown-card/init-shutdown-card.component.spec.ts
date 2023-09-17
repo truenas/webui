@@ -110,7 +110,7 @@ describe('InitShutdownCardComponent', () => {
   });
 
   it('shows form to edit an init shutdown script when Edit button is pressed', async () => {
-    const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 5);
+    const editButton = await table.getHarnessInRow(IxIconHarness.with({ name: 'edit' }), 'Prepare system');
     await editButton.click();
 
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(InitShutdownFormComponent, {
@@ -119,7 +119,7 @@ describe('InitShutdownCardComponent', () => {
   });
 
   it('deletes a script with confirmation when Delete button is pressed', async () => {
-    const deleteIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'delete' }), 1, 5);
+    const deleteIcon = await table.getHarnessInRow(IxIconHarness.with({ name: 'delete' }), 'Prepare system');
     await deleteIcon.click();
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('initshutdownscript.delete', [1]);

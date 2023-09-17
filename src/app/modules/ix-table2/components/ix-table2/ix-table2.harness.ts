@@ -6,11 +6,13 @@ import {
 } from '@angular/cdk/testing';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { IxCellHarness } from 'app/modules/ix-table2/components/ix-table2/cell.harness';
+import { IxRowHarness } from 'app/modules/ix-table2/components/ix-table2/row.harness';
 
 export class IxTable2Harness extends ContentContainerComponentHarness {
   static hostSelector = 'ix-table2';
 
   readonly getCells = this.locatorForAll(IxCellHarness);
+  readonly getRows = this.locatorForAll(IxRowHarness);
 
   async getHeaderTexts(): Promise<string[]> {
     const headerCells = await this.locatorForAll('th')();
@@ -59,6 +61,44 @@ export class IxTable2Harness extends ContentContainerComponentHarness {
     }
 
     return cell.getAllHarnesses(query);
+  }
+
+  async getHarnessInRow<T extends ComponentHarness>(
+    query: HarnessQuery<T>,
+    text: string,
+  ): Promise<T> {
+    const rowNumber = await this.getNumberRowByText(text);
+    const row = (await this.getRows())[rowNumber];
+
+    if (!row) {
+      throw new Error(`No row found with number ${rowNumber}`);
+    }
+
+    return row.getHarness(query);
+  }
+
+  async getAllHarnessesInRow<T extends ComponentHarness>(
+    query: HarnessQuery<T>,
+    text: string,
+  ): Promise<T[]> {
+    const rowNumber = await this.getNumberRowByText(text);
+    const row = (await this.getRows())[rowNumber];
+
+    if (!row) {
+      throw new Error(`No row found with number ${rowNumber}`);
+    }
+
+    return row.getAllHarnesses(query);
+  }
+
+  async getNumberRowByText(text: string): Promise<number> {
+    const texts = (await this.getCellTexts()).slice(1);
+    for (let i = 0; i < texts.length; i += 1) {
+      if (texts[i].includes(text)) {
+        return i;
+      }
+    }
+    throw new Error(`No row found with the text '${text}'`);
   }
 
   async getRowElement(row: number): Promise<TestElement> {

@@ -1,6 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of, Subject } from 'rxjs';
 import { TiB } from 'app/constants/bytes.constant';
@@ -91,6 +92,7 @@ describe('NormalSelectionComponent', () => {
     ],
     providers: [
       mockProvider(PoolManagerStore, {
+        openManualSelectionDialog: jest.fn(),
         getLayoutsForVdevType: jest.fn((vdevType: VdevType) => {
           switch (vdevType) {
             case VdevType.Cache:
@@ -246,5 +248,13 @@ describe('NormalSelectionComponent', () => {
 
     expect(await widthSelect.getValue()).toBe('');
     expect(await vdevsSelect.getValue()).toBe('');
+  });
+
+  it('calls store.openManualSelectionDialog when button clicked', async () => {
+    const button = await loader.getHarness(MatButtonHarness.with({ text: 'Manual Disk Selection' }));
+    await button.click();
+
+    expect(spectator.inject(PoolManagerStore).openManualSelectionDialog).toHaveBeenCalled();
+
   });
 });

@@ -3,7 +3,6 @@ import {
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import _ from 'lodash';
 import { combineLatest, filter, tap } from 'rxjs';
 import { Pool } from 'app/interfaces/pool.interface';
 import { Disk } from 'app/interfaces/storage.interface';
@@ -43,8 +42,8 @@ export class AddVdevsComponent implements OnInit {
       this.addVdevsStore.poolDisks$.pipe(filter((disks) => !!disks.length)),
     ]).pipe(untilDestroyed(this)).subscribe({
       next: ([pool, poolDisks]) => {
-        this.existingPool = _.cloneDeep(pool);
-        this.poolDisks = _.clone(poolDisks);
+        this.existingPool = pool;
+        this.poolDisks = poolDisks;
         this.topology = poolTopologyToStoreTopology(pool.topology, poolDisks);
         this.cdr.markForCheck();
       },

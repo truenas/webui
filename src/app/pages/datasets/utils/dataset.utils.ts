@@ -61,3 +61,20 @@ export function isDatasetHasShares(dataset: DatasetDetails): boolean {
   }
   return false;
 }
+
+export function datasetNameSortComparer(a: DatasetDetails, b: DatasetDetails): number {
+  const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'variant' });
+
+  const partsA = a.name.split('/');
+  const partsB = b.name.split('/');
+  const minLength = Math.min(partsA.length, partsB.length);
+
+  for (let i = 0; i < minLength; i++) {
+    const compareResult = collator.compare(partsA[i], partsB[i]);
+    if (compareResult !== 0) {
+      return compareResult;
+    }
+  }
+
+  return partsA.length - partsB.length;
+}

@@ -1,5 +1,4 @@
-import { Component,
-} from '@angular/core';
+import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import _ from 'lodash';
 import { filter, map } from 'rxjs/operators';

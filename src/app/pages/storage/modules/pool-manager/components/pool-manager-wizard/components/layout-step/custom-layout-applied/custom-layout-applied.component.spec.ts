@@ -21,6 +21,7 @@ describe('CustomLayoutAppliedComponent', () => {
       mockProvider(PoolManagerStore, {
         resetStep$,
         resetTopologyCategory: jest.fn(),
+        openManualSelectionDialog: jest.fn(),
       }),
     ],
   });
@@ -36,7 +37,6 @@ describe('CustomLayoutAppliedComponent', () => {
       },
     });
 
-    jest.spyOn(spectator.component.manualSelectionClicked, 'emit');
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
@@ -44,20 +44,14 @@ describe('CustomLayoutAppliedComponent', () => {
     expect(spectator.query('.vdevs-length')).toHaveText('VDEVs: 2');
   });
 
-  it('emits manualSelectionClicked when Edit button is pressed', async () => {
+  it('calls store.openManualSelectionDialog when button clicked', async () => {
     const editButton = await loader.getHarness(
       MatButtonHarness.with({ text: 'Edit Manual Disk Selection' }),
     );
 
     await editButton.click();
 
-    expect(spectator.component.manualSelectionClicked.emit).toHaveBeenCalled();
-  });
+    expect(spectator.inject(PoolManagerStore).openManualSelectionDialog).toHaveBeenCalled();
 
-  it('calls resetTopologyCategory when Reset button is pressed', () => {
-    const store = spectator.inject(PoolManagerStore);
-    store.resetStep$.next(spectator.component.type);
-
-    expect(spectator.inject(PoolManagerStore).resetTopologyCategory).toHaveBeenCalledWith(VdevType.Data);
   });
 });

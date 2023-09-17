@@ -8,8 +8,11 @@
   }
 }
 
-.action-button {
-  display: block;
-  margin-bottom: 20px;
-  width: 100%;
+:host ::ng-deep {
+  .oauth-button {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+    width: 100%;
+  }
 }

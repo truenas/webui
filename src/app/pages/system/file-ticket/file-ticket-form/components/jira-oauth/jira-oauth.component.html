@@ -1,14 +1,10 @@
-<button
-  mat-button
-  type="button"
-  class="action-button"
-  ixTest="login-to-jira"
-  [disabled]="hasValue()"
-  [color]="value ? 'accent' : 'primary'"
-  (click)="initSession()"
->
-  {{ hasValue() ? ('Logged In To Jira' | translate) : ('Login to Jira' | translate) }}
-</button>
+<ix-oauth-button
+  testId="login-to-jira"
+  [oauthType]="oauthType.Jira"
+  [oauthUrl]="'https://support-proxy.ixsystems.com/oauth/initiate?origin='"
+  [isLoggedIn]="hasOauthAuthorization"
+  (loggedIn)="input($event)"
+></ix-oauth-button>
 
 <div class="full-width container has-tooltip hidden">
   <div *ngIf="label" class="label-container">

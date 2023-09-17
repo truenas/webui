@@ -1,0 +1,22 @@
+<div class="panel-header">
+  <h3>{{ 'HA Status' | translate }}</h3>
+</div>
+
+<div class="panel-content">
+  <div *ngIf="failoverDisabledReasons.length; else haEnabled" class="status-line">
+    <ix-icon name="warning"></ix-icon>
+    {{ 'HA is disabled' | translate }}
+  </div>
+  <ng-template #haEnabled>
+    <div class="status-line status-line--enabled">
+      <ix-icon name="check_circle"></ix-icon>
+      {{ 'HA is enabled' | translate }}
+    </div>
+  </ng-template>
+
+  <ul *ngIf="failoverDisabledReasons.length" class="disabled-reasons">
+    <li *ngFor="let reason of failoverDisabledReasons">
+      {{ disabledReasonExplanations[reason] | translate }}
+    </li>
+  </ul>
+</div>
