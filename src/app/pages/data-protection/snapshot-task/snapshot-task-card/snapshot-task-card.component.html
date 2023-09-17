@@ -15,7 +15,7 @@
     </div>
   </mat-toolbar-row>
 
-  <ix-table2 class="table">
+  <ix-table2 class="table" [ix-table2-empty]="!dataProvider.rows.length && !isLoading">
     <thead
       ix-table-head
       [columns]="columns"
