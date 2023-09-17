@@ -116,11 +116,11 @@
                           <ul *ngIf="getLinkState(nic) === LinkState.Up">
                             <li>
                               <span class="label">{{ 'In' | translate }}:</span>
-                              {{ nicInfoMap[nic.state.name]?.in }}
+                              {{ nicInfoMap[nic.state.name]?.in | filesize: { standard: 'iec' }  }}
                             </li>
                             <li>
                               <span class="label">{{ 'Out' | translate }}:</span
-                              >{{ nicInfoMap[nic.state.name]?.out }}
+                              >{{ nicInfoMap[nic.state.name]?.out | filesize: { standard: 'iec' }  }}
                             </li>
                           </ul>
                           <span *ngIf="getLinkState(nic) !== LinkState.Up">

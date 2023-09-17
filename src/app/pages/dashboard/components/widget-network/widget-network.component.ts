@@ -35,8 +35,8 @@ import { selectTimezone } from 'app/store/system-config/system-config.selectors'
 interface NicInfo {
   ip: string;
   state: LinkState;
-  in: string;
-  out: string;
+  in: number;
+  out: number;
   lastSent: number;
   lastReceived: number;
   chartData: ChartData<'line'>;
@@ -204,8 +204,8 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
           if (usageUpdate.link_state) {
             nicInfo.state = usageUpdate.link_state;
           }
-          nicInfo.in = this.getSpeedLabel(usageUpdate.received_bytes_rate * 8);
-          nicInfo.out = this.getSpeedLabel(usageUpdate.sent_bytes_rate * 8);
+          nicInfo.in = usageUpdate.received_bytes_rate * KiB;
+          nicInfo.out = usageUpdate.sent_bytes_rate * KiB;
 
           if (
             usageUpdate.sent_bytes !== undefined
@@ -250,8 +250,8 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
       this.nicInfoMap[nic.state.name] = {
         ip: this.getIpAddress(nic),
         state: this.getLinkState(nic),
-        in: '',
-        out: '',
+        in: 0,
+        out: 0,
         lastSent: 0,
         lastReceived: 0,
         chartData: null,
