@@ -294,6 +294,7 @@
   "Delete DNS Authenticator": "",
   "Delete Init/Shutdown Script {script}?": "",
   "Delete Interface": "",
+  "Delete S.M.A.R.T. Test <b>\"{name}\"</b>?": "",
   "Delete SSH Keypair": "",
   "Delete Script": "",
   "Delete Static Route": "",

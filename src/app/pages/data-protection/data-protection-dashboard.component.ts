@@ -78,6 +78,7 @@ SmartTestTaskUi
 @UntilDestroy()
 @Component({
   templateUrl: './data-protection-dashboard.component.html',
+  styleUrls: ['./data-protection-dashboard.component.scss'],
   providers: [TaskService],
 })
 export class DataProtectionDashboardComponent implements OnInit {
@@ -97,7 +98,6 @@ export class DataProtectionDashboardComponent implements OnInit {
     private translate: TranslateService,
     private store$: Store<AppState>,
     private snackbar: SnackbarService,
-    private storageService: StorageService,
   ) {
     this.storage
       .listDisks()
@@ -365,36 +365,6 @@ export class DataProtectionDashboardComponent implements OnInit {
           },
           onButtonClick: (row: RsyncTaskUi) => {
             this.stateButton(row as TaskTableRow);
-          },
-        },
-      },
-      {
-        name: TaskCardId.Smart,
-        tableConf: {
-          title: helptext.fieldset_smart_tests,
-          titleHref: '/tasks/smart',
-          queryCall: 'smart.test.query',
-          deleteCall: 'smart.test.delete',
-          deleteMsg: {
-            title: this.translate.instant('S.M.A.R.T. Test'),
-            key_props: ['type', 'desc'],
-          },
-          dataSourceHelper: (data: SmartTestTaskUi[]) => this.smartTestsDataSourceHelper(data),
-          parent: this,
-          columns: [
-            { name: helptext_smart.smartlist_column_disks, prop: 'disksLabel', enableMatTooltip: true },
-            { name: helptext_smart.smartlist_column_type, prop: 'type', enableMatTooltip: true },
-            { name: helptext_smart.smartlist_column_description, prop: 'desc', hiddenIfEmpty: true },
-            { name: helptext_smart.smartlist_column_frequency, prop: 'frequency', enableMatTooltip: true },
-            { name: helptext_smart.smartlist_column_next_run, prop: 'next_run', enableMatTooltip: true },
-          ],
-          add: () => {
-            const slideInRef = this.slideInService.open(SmartTaskFormComponent);
-            this.handleSlideInClosed(slideInRef, SmartTaskFormComponent);
-          },
-          edit: (row: SmartTestTaskUi) => {
-            const slideInRef = this.slideInService.open(SmartTaskFormComponent, { data: row });
-            this.handleSlideInClosed(slideInRef, SmartTaskFormComponent);
           },
         },
       },

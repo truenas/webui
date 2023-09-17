@@ -7,6 +7,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatStepperModule } from '@angular/material/stepper';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
@@ -40,6 +42,7 @@ import { RsyncTaskListComponent } from 'app/pages/data-protection/rsync-task/rsy
 import {
   ScrubTaskFormComponent,
 } from 'app/pages/data-protection/scrub-task/scrub-task-form/scrub-task-form.component';
+import { SmartTaskCardComponent } from 'app/pages/data-protection/smart-task/smart-task-card/smart-task-card.component';
 import { SmartTaskFormComponent } from 'app/pages/data-protection/smart-task/smart-task-form/smart-task-form.component';
 import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
 import { SnapshotTaskListComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-list/snapshot-task-list.component';
@@ -80,6 +83,8 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
     MatStepperModule,
     AppCommonModule,
     LayoutModule,
+    MatToolbarModule,
+    MatTooltipModule,
   ],
   declarations: [
     SnapshotTaskListComponent,
@@ -111,6 +116,7 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
     ScheduleSectionComponent,
     SourceSectionComponent,
     TargetSectionComponent,
+    SmartTaskCardComponent,
   ],
 })
 export class DataProtectionModule {}
