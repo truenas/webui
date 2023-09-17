@@ -8,7 +8,7 @@
   >
     <td
       *ngFor="let column of displayedColumns; index as idx"
-      [ngClass]="column.cssClass ? column.cssClass : ''"
+      [ngClass]="column.cssClass || ''"
     >
       <ng-container *ngIf="getTemplateByColumnIndex(idx) as template">
         <ng-container
