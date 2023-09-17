@@ -16,7 +16,6 @@ import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { ScrubTaskCardComponent } from 'app/pages/data-protection/scrub-task/scrub-task-card/scrub-task-card.component';
 import { ScrubTaskFormComponent } from 'app/pages/data-protection/scrub-task/scrub-task-form/scrub-task-form.component';
-import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
@@ -81,9 +80,6 @@ describe('ScrubTaskCardComponent', () => {
       mockProvider(TaskService, {
         getTaskNextRun: jest.fn(() => 'in 3 days'),
         getTaskCronDescription: jest.fn(() => 'At 00:00, only on Sunday'),
-      }),
-      mockProvider(AdvancedSettingsService, {
-        showFirstTimeWarningIfNeeded: jest.fn(() => Promise.resolve()),
       }),
     ],
   });

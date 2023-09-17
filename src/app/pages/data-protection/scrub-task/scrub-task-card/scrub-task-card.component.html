@@ -37,22 +37,22 @@
         ix-table-cell
         [columnIndex]="5"
         [dataProvider]="dataProvider"
-        let-cron
+        let-task
       >
         <div class="justify-end">
           <button
             mat-icon-button
-            [ixTest]="[cron.id, 'edit']"
+            [ixTest]="[task.id, 'edit']"
             [matTooltip]="'Edit' | translate"
-            (click)="openForm(cron)"
+            (click)="openForm(task)"
           >
             <ix-icon name="edit"></ix-icon>
           </button>
           <button
             mat-icon-button
-            [ixTest]="[cron.id, 'delete']"
+            [ixTest]="[task.id, 'delete']"
             [matTooltip]="'Delete' | translate"
-            (click)="doDelete(cron)"
+            (click)="doDelete(task)"
           >
             <ix-icon name="delete"></ix-icon>
           </button>
