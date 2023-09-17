@@ -12,7 +12,7 @@ import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
-import { matchOtherValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
+import { matchOthersFgValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -33,12 +33,15 @@ export class SelfEncryptingDriveFormComponent implements OnInit {
   form = this.fb.group({
     sed_user: ['' as SedUser, Validators.required],
     sed_passwd: [''],
-    sed_passwd2: ['', [
-      this.validatorsService.withMessage(
-        matchOtherValidator('sed_passwd'),
+    sed_passwd2: [''],
+  }, {
+    validators: [
+      matchOthersFgValidator(
+        'sed_passwd2',
+        ['sed_passwd'],
         this.translate.instant('SED password and confirmation should match.'),
       ),
-    ]],
+    ],
   });
 
   readonly sedUserOptions$ = of([
