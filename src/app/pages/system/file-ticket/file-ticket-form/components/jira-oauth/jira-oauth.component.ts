@@ -5,7 +5,6 @@ import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { WINDOW } from 'app/helpers/window.helper';
 import { OauthJiraMessage } from 'app/interfaces/support.interface';
-import { SystemGeneralService } from 'app/services/system-general.service';
 
 @Component({
   selector: 'ix-jira-oauth',
@@ -30,14 +29,11 @@ export class JiraOauthComponent implements ControlValueAccessor {
     this.cdr.markForCheck();
   }
 
-  readonly isEnterprise$ = this.sysGeneralService.isEnterprise$;
-
   constructor(
     public controlDirective: NgControl,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     @Inject(WINDOW) private window: Window,
-    private sysGeneralService: SystemGeneralService,
   ) {
     this.controlDirective.valueAccessor = this;
   }
