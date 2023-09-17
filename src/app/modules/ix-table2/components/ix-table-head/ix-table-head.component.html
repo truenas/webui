@@ -1,7 +1,7 @@
 <tr ixTest="header">
   <th
     *ngFor="let column of displayedColumns; index as idx"
-    [ngClass]="column.cssClass ? column.cssClass : ''"
+    [ngClass]="column.cssClass || ''"
     (click)="onSort(idx)"
   >
     <div class="title-container" [ngStyle]="{ cursor: column.sortable ? 'pointer' : 'auto' }">
