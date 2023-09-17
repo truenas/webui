@@ -1,6 +1,6 @@
 <mat-card>
   <mat-toolbar-row>
-    <a [ixTest]="['scrub-task', 'open-in-new']" [routerLink]="['/data-protection', 'snapshot']">
+    <a [ixTest]="['snapshot-task', 'open-in-new']" [routerLink]="['/data-protection', 'snapshot']">
       <h3 class="card-title">
         {{ 'Periodic Snapshot Tasks' | translate }}
         <ix-icon name="open_in_new" class="title-icon"></ix-icon>
@@ -9,7 +9,7 @@
     <div class="actions">
       <button
         mat-button
-        [ixTest]="['scrub-task', 'add']"
+        [ixTest]="['snapshot-task', 'add']"
         (click)="openForm()"
       >{{ 'Add' | translate }}</button>
     </div>

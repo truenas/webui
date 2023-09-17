@@ -87,15 +87,15 @@ export class SnapshotTaskCardComponent implements OnInit {
     });
   }
 
-  doDelete(scrubTask: PeriodicSnapshotTaskUi): void {
+  doDelete(snapshotTask: PeriodicSnapshotTaskUi): void {
     this.dialogService.confirm({
       title: this.translate.instant('Confirmation'),
       message: this.translate.instant('Delete Periodic Snapshot Task <b>"{value}"</b>?', {
-        value: `${scrubTask.dataset} - ${scrubTask.naming_schema} - ${scrubTask.keepfor}`,
+        value: `${snapshotTask.dataset} - ${snapshotTask.naming_schema} - ${snapshotTask.keepfor}`,
       }),
     }).pipe(
       filter(Boolean),
-      switchMap(() => this.ws.call('pool.snapshottask.delete', [scrubTask.id])),
+      switchMap(() => this.ws.call('pool.snapshottask.delete', [snapshotTask.id])),
       untilDestroyed(this),
     ).subscribe({
       next: () => {
@@ -115,9 +115,9 @@ export class SnapshotTaskCardComponent implements OnInit {
     });
   }
 
-  private onChangeEnabledState(scrubTask: PeriodicSnapshotTaskUi): void {
+  private onChangeEnabledState(snapshotTask: PeriodicSnapshotTaskUi): void {
     this.ws
-      .call('pool.snapshottask.update', [scrubTask.id, { enabled: !scrubTask.enabled } as PeriodicSnapshotTaskUi])
+      .call('pool.snapshottask.update', [snapshotTask.id, { enabled: !snapshotTask.enabled } as PeriodicSnapshotTaskUi])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
