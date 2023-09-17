@@ -1,12 +1,16 @@
 import { Injectable } from '@angular/core';
 import { ValidationErrors } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 import { Store } from '@ngrx/store';
 import _ from 'lodash';
 import {
+  combineLatest,
   forkJoin, Observable, of, Subject,
 } from 'rxjs';
 import {
+  filter,
   map, switchMap, take, tap,
 } from 'rxjs/operators';
 import { GiB } from 'app/constants/bytes.constant';
@@ -15,6 +19,7 @@ import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { ManualDiskSelectionComponent, ManualDiskSelectionParams } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/manual-disk-selection.component';
 import {
   DispersalStrategy,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/2-enclosure-wizard-step/enclosure-wizard-step.component';
@@ -117,6 +122,7 @@ export const initialState: PoolManagerState = {
   topology: initialTopology,
 };
 
+@UntilDestroy()
 @Injectable()
 export class PoolManagerStore extends ComponentStore<PoolManagerState> {
   readonly startOver$ = new Subject<void>();
@@ -218,6 +224,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     private dialogService: DialogService,
     private generateVdevs: GenerateVdevsService,
     private settingsStore$: Store<AppState>,
+    private dialog: MatDialog,
   ) {
     super(initialState);
   }
@@ -389,5 +396,39 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
           this.updateTopologyCategory(type as VdevType, { vdevs });
         });
       });
+  }
+
+  openManualSelectionDialog(type: VdevType): void {
+    this.state$.pipe(
+      take(1),
+      switchMap((state: PoolManagerState) => combineLatest([
+        of(state),
+        this.getInventoryForStep(type).pipe(take(1)),
+      ])),
+      switchMap(([state, inventoryForStep]: [PoolManagerState, UnusedDisk[]]) => {
+        const usedDisks = topologyCategoryToDisks(state.topology[type]);
+        const inventory = _.differenceBy(inventoryForStep, usedDisks, (disk: UnusedDisk) => disk.devname);
+        const isVdevsLimitedToOne = type === VdevType.Spare || type === VdevType.Cache || type === VdevType.Log;
+        return this.dialog.open(ManualDiskSelectionComponent, {
+          data: {
+            inventory,
+            layout: state.topology[type].layout,
+            enclosures: state.enclosures,
+            vdevs: state.topology[type].vdevs,
+            vdevsLimit: isVdevsLimitedToOne ? 1 : null,
+          } as ManualDiskSelectionParams,
+          panelClass: 'manual-selection-dialog',
+        }).afterClosed();
+      }),
+      filter(Boolean),
+      tap((customVdevs: UnusedDisk[][]) => {
+        if (!customVdevs.length) {
+          this.resetTopologyCategory(type);
+        } else {
+          this.setManualTopologyCategory(type, customVdevs);
+        }
+      }),
+      untilDestroyed(this),
+    ).subscribe();
   }
 }
