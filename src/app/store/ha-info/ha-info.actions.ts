@@ -6,11 +6,6 @@ export const haStatusLoaded = createAction(
   props<{ haStatus: HaStatus }>(),
 );
 
-export const upgradePendingStateLoaded = createAction(
-  '[HA Info API] Upgrade pending state loaded',
-  props<{ isUpgradePending: boolean }>(),
-);
-
 export const failoverLicensedStatusLoaded = createAction(
   '[HA Info API] Failover Licensed Status Loaded',
   props<{ isHaLicensed: boolean }>(),

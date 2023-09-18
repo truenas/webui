@@ -47,17 +47,7 @@
       <ix-truecommand-button></ix-truecommand-button>
 
       <!-- finish update -->
-      <button
-        *ngIf="upgradeWaitingToFinish"
-        mat-icon-button
-        id="finish-update"
-        class="topbar-button-right"
-        ixTest="finish-update"
-        [matTooltip]="tooltips.upgrade_waiting | translate"
-        (click)="upgradePendingDialog()"
-      >
-        <ix-icon class="movement" name="update"></ix-icon>
-      </button>
+      <ix-failover-upgrade-indicator></ix-failover-upgrade-indicator>
       <button
         *ngIf="updateIsRunning"
         mat-icon-button
@@ -80,17 +70,7 @@
       >
         <ix-icon class="movement" name="device_hub"></ix-icon>
       </button>
-      <button
-        *ngIf="showResilvering"
-        mat-icon-button
-        id="resilver"
-        class="topbar-button-right"
-        ixTest="resilvering"
-        [matTooltip]="tooltips.resilvering | translate"
-        (click)="showResilveringDetails()"
-      >
-        <ix-icon class="fa-spin" name="autorenew"></ix-icon>
-      </button>
+      <ix-resilvering-indicator></ix-resilvering-indicator>
       <ix-ha-status-icon></ix-ha-status-icon>
       <ix-directory-services-indicator></ix-directory-services-indicator>
       <ix-jobs-indicator></ix-jobs-indicator>
