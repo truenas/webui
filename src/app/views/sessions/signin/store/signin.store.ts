@@ -98,7 +98,6 @@ export class SigninStore extends ComponentStore<SigninState> {
             this.dialogService.error(this.errorHandler.parseWsError(error));
           },
         ),
-        untilDestroyed(this),
       );
     }),
   ));
@@ -110,16 +109,17 @@ export class SigninStore extends ComponentStore<SigninState> {
     }),
     tapResponse(
       () => {
-        if (this.statusSubscription && !this.statusSubscription.closed) {
-          this.statusSubscription.unsubscribe();
-          this.statusSubscription = null;
-        }
-        if (this.disabledReasonsSubscription && !this.disabledReasonsSubscription.closed) {
-          this.disabledReasonsSubscription.unsubscribe();
-          this.disabledReasonsSubscription = null;
-        }
         this.setLoadingState(false);
-        this.router.navigateByUrl(this.getRedirectUrl());
+        this.router.navigateByUrl(this.getRedirectUrl()).then(() => {
+          if (this.statusSubscription && !this.statusSubscription.closed) {
+            this.statusSubscription.unsubscribe();
+            this.statusSubscription = null;
+          }
+          if (this.disabledReasonsSubscription && !this.disabledReasonsSubscription.closed) {
+            this.disabledReasonsSubscription.unsubscribe();
+            this.disabledReasonsSubscription = null;
+          }
+        });
       },
       (error: WebsocketError) => {
         this.setLoadingState(false);
@@ -136,7 +136,7 @@ export class SigninStore extends ComponentStore<SigninState> {
     );
   }
 
-  setFailoverDisabledReasons = this.updater((state, disabledReasons: FailoverDisabledReason[]) => ({
+  private setFailoverDisabledReasons = this.updater((state, disabledReasons: FailoverDisabledReason[]) => ({
     ...state,
     failover: {
       ...state.failover,
@@ -172,7 +172,6 @@ export class SigninStore extends ComponentStore<SigninState> {
   private checkIfAdminPasswordSet(): Observable<boolean> {
     return this.ws.call('user.has_local_administrator_set_up').pipe(
       tap((wasAdminSet) => this.patchState({ wasAdminSet })),
-      untilDestroyed(this),
     );
   }
 
@@ -189,7 +188,6 @@ export class SigninStore extends ComponentStore<SigninState> {
         this.subscribeToFailoverUpdates();
         return this.loadAdditionalFailoverInfo();
       }),
-      untilDestroyed(this),
     );
   }
 
@@ -205,7 +203,6 @@ export class SigninStore extends ComponentStore<SigninState> {
             this.setFailoverIps(ips);
           },
         ),
-        untilDestroyed(this),
       );
   }
 
@@ -216,8 +213,6 @@ export class SigninStore extends ComponentStore<SigninState> {
 
     this.disabledReasonsSubscription = this.ws.subscribe('failover.disabled.reasons')
       .pipe(map((apiEvent) => apiEvent.fields), untilDestroyed(this))
-      .subscribe((event) => {
-        this.setFailoverDisabledReasons(event.disabled_reasons);
-      });
+      .subscribe((event) => this.setFailoverDisabledReasons(event.disabled_reasons));
   }
 }
