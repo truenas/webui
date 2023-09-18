@@ -7,7 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { SummaryProvider, SummarySection } from 'app/modules/common/summary/summary.interface';
-import { matchOtherValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
+import { matchOthersFgValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
 import { getCertificatePreview } from 'app/pages/credentials/certificates-dash/utils/get-certificate-preview.utils';
 
 @UntilDestroy()
@@ -20,8 +20,16 @@ export class CsrImportComponent implements SummaryProvider {
   form = this.formBuilder.group({
     CSR: ['', Validators.required],
     privatekey: ['', Validators.required],
-    passphrase: ['', [matchOtherValidator('passphrase2')]],
+    passphrase: [''],
     passphrase2: [''],
+  }, {
+    validators: [
+      matchOthersFgValidator(
+        'passphrase',
+        ['passphrase2'],
+        this.translate.instant('Passphrase value must match Confirm Passphrase'),
+      ),
+    ],
   });
 
   readonly helptext = helptextSystemCertificates;

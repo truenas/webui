@@ -27,7 +27,7 @@ import { requiredIdmapDomains } from 'app/pages/directory-service/utils/required
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IdmapService } from 'app/services/idmap.service';
-import { ValidationService } from 'app/services/validation.service';
+import { greaterThanFg, rangeValidator } from 'app/services/validators';
 import { WebSocketService } from 'app/services/ws.service';
 
 const minAllowedRange = 1000;
@@ -60,12 +60,11 @@ export class IdmapFormComponent implements OnInit {
     dns_domain_name: [''],
     range_low: [null as number, [
       Validators.required,
-      this.validators.rangeValidator(minAllowedRange, maxAllowedRange),
+      rangeValidator(minAllowedRange, maxAllowedRange),
     ]],
     range_high: [null as number, [
       Validators.required,
-      this.validators.rangeValidator(minAllowedRange, maxAllowedRange),
-      this.validators.greaterThan('range_low', [this.translate.instant('Range Low')]),
+      rangeValidator(minAllowedRange, maxAllowedRange),
     ]],
     certificate: [null as number],
     schema_mode: [null as IdmapSchemaMode],
@@ -88,6 +87,14 @@ export class IdmapFormComponent implements OnInit {
     cn_realm: [''],
     ldap_domain: [''],
     sssd_compat: [false],
+  }, {
+    validators: [
+      greaterThanFg(
+        'range_high',
+        ['range_low'],
+        this.translate.instant('Value must be greater than Range Low'),
+      ),
+    ],
   });
 
   backendChoices: IdmapBackendOptions;
@@ -146,7 +153,6 @@ export class IdmapFormComponent implements OnInit {
     private translate: TranslateService,
     private ws: WebSocketService,
     private validationHelpers: IxValidatorsService,
-    private validators: ValidationService,
     private idmapService: IdmapService,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,

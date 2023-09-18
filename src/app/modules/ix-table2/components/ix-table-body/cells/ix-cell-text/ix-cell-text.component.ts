@@ -4,11 +4,7 @@ import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-
 @Component({
   templateUrl: './ix-cell-text.component.html',
 })
-export class IxCellTextComponent<T> extends ColumnComponent<T> {
-  get value(): T[keyof T] {
-    return this.row[this.propertyName];
-  }
-}
+export class IxCellTextComponent<T> extends ColumnComponent<T> {}
 
 export function textColumn<T>(options: Partial<IxCellTextComponent<T>>): Column<T, IxCellTextComponent<T>> {
   return { type: IxCellTextComponent, ...options };

@@ -6,11 +6,11 @@ import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-
   templateUrl: './ix-cell-date.component.html',
 })
 export class IxCellDateComponent<T> extends ColumnComponent<T> {
-  get value(): number | Date {
-    if ((this.row[this.propertyName] as ApiTimestamp)?.$date) {
-      return (this.row[this.propertyName] as ApiTimestamp).$date;
+  get date(): number | Date {
+    if ((this.value as ApiTimestamp)?.$date) {
+      return (this.value as ApiTimestamp).$date;
     }
-    return this.row[this.propertyName] as number | Date;
+    return this.value as number | Date;
   }
 }
 
