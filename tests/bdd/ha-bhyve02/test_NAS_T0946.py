@@ -355,10 +355,10 @@ def enter_tank_for_pool_name_click_the_checkbox_beside_the_first_disk(driver):
     """enter tank for pool name, click the checkbox beside the first disk."""
     assert wait_on_element(driver, 7, '//h1[contains(.,"Create Pool")]')
     assert wait_on_element(driver, 7, '//div[contains(.,"Pool Manager")]')
-    assert wait_on_element(driver, 7, '//input[@id="pool-manager__name-input-field"]', 'inputable')
-    driver.find_element_by_xpath('//input[@id="pool-manager__name-input-field"]').clear()
-    driver.find_element_by_xpath('//input[@id="pool-manager__name-input-field"]').send_keys('tank')
-    driver.find_element_by_xpath('//datatable-body[contains(.,"sd")]//mat-checkbox[1]').click()
+    assert wait_on_element(driver, 7, xpaths.pool_manager.name_Input, 'inputable')
+    driver.find_element_by_xpath(xpaths.pool_manager.name_Input).clear()
+    driver.find_element_by_xpath(xpaths.pool_manager.name_Input).send_keys('tank')
+    driver.find_element_by_xpath(xpaths.pool_manager.first_Disk_Checkbox).click()
     if wait_on_element(driver, 3, '//mat-dialog-container[contains(.,"Warning: sd")]'):
         assert wait_on_element(driver, 5, '//button[*/text()=" Close "]', 'clickable')
         driver.find_element_by_xpath('//button[*/text()=" Close "]').click()
@@ -409,7 +409,7 @@ def navigate_to_dashboard_wait_for_ha_to_be_online(driver):
     driver.find_element_by_xpath(xpaths.side_Menu.dashboard).click()
     assert wait_on_element(driver, 10, xpaths.dashboard.system_Info_Card_Title)
     assert wait_on_element(driver, 15, '//span[contains(.,"Hostname:") and contains(.,"truenas")]')
-    assert wait_on_element(driver, 300, '//span[contains(.,"Hostname:") and contains(.,"truenas-b")]')
+    assert wait_on_element(driver, 180, '//span[contains(.,"Hostname:") and contains(.,"truenas-b")]')
     assert wait_on_element(driver, 30, xpaths.toolbar.ha_Enabled)
     time.sleep(5)
 
