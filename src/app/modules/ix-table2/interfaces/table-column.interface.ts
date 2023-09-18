@@ -4,6 +4,7 @@ export abstract class ColumnComponent<T> {
   identifier?: boolean;
   propertyName: keyof T;
   title?: string;
+  cssClass?: string;
   sortBy?: (row: T) => string | number;
   sortable?: boolean;
   getValue?: (row: T) => T[keyof T];
