@@ -2,9 +2,14 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { forkJoin, lastValueFrom } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
+import _ from 'lodash';
+import {
+  Observable, forkJoin, lastValueFrom, map, of, switchMap, tap,
+} from 'rxjs';
 import { patterns } from 'app/constants/name-patterns.constant';
 import { DatasetType } from 'app/enums/dataset.enum';
 import {
@@ -15,6 +20,8 @@ import {
   IscsiNewOption,
 } from 'app/enums/iscsi.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
+import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
+import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
 import {
   IscsiAuthAccess,
@@ -31,9 +38,13 @@ import {
   IscsiTargetExtentUpdate,
   IscsiTargetUpdate,
 } from 'app/interfaces/iscsi.interface';
+import { Service } from 'app/interfaces/service.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { forbiddenValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { StartServiceDialogComponent, StartServiceDialogResult } from 'app/pages/sharing/components/start-service-dialog/start-service-dialog.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
@@ -206,6 +217,10 @@ export class IscsiWizardComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
+    private mdDialog: MatDialog,
+    private snackbar: SnackbarService,
+    private translateService: TranslateService,
+    private loader: AppLoaderService,
     private validationService: ValidationService,
   ) {
     this.iscsiService.getExtents().pipe(untilDestroyed(this)).subscribe((extents) => {
@@ -412,8 +427,132 @@ export class IscsiWizardComponent implements OnInit {
       return;
     }
 
-    this.isLoading = false;
-    this.cdr.markForCheck();
-    this.slideInRef.close();
+    this.activateIscsiService().pipe(
+      untilDestroyed(this),
+    ).subscribe({
+      next: () => {
+        this.isLoading = false;
+        this.cdr.markForCheck();
+        this.slideInRef.close();
+      },
+    });
   }
+
+  activateIscsiService(): Observable<unknown> {
+    return this.getIscsiService().pipe(
+      switchMap((iscsiService) => {
+        if (iscsiService.state === ServiceStatus.Stopped) {
+          return this.startAndEnableService(iscsiService);
+        }
+        return this.restartService();
+      }),
+    );
+  }
+
+  getIscsiService = (): Observable<Service> => {
+    return this.ws
+      .call('service.query')
+      .pipe(map((services) => _.find(services, { service: ServiceName.Iscsi })));
+  };
+
+  startAndEnableService = (iscsiService: Service): Observable<unknown> => {
+    return this.mdDialog.open(StartServiceDialogComponent, {
+      data: serviceNames.get(ServiceName.Iscsi),
+      disableClose: true,
+    })
+      .afterClosed()
+      .pipe(
+        switchMap((result: StartServiceDialogResult) => {
+          const requests: Observable<unknown>[] = [];
+
+          if (result.start && result.startAutomatically) {
+            requests.push(
+              this.ws.call('service.update', [
+                iscsiService.id,
+                { enable: result.startAutomatically },
+              ]),
+            );
+          }
+
+          if (result.start) {
+            requests.push(
+              this.ws.call('service.start', [
+                iscsiService.service,
+                { silent: false },
+              ])
+                .pipe(
+                  tap(() => {
+                    this.snackbar.success(
+                      this.translateService.instant('The {service} service has started.', {
+                        service: serviceNames.get(ServiceName.Iscsi),
+                      }),
+                    );
+                  }),
+                ),
+            );
+          }
+
+          return requests.length ? forkJoin(requests) : of(requests);
+        }),
+      );
+  };
+
+  restartService(): Observable<unknown> {
+    return this.confirmRestart().pipe(
+      switchMap((confirmed) => {
+        if (confirmed) {
+          this.loader.open();
+          return this.ws.call('service.restart', [ServiceName.Iscsi]).pipe(
+            tap(() => {
+              this.loader.close();
+              this.snackbar.success(
+                this.translateService.instant(
+                  '{name} service has been restarted', { name: serviceNames.get(ServiceName.Iscsi) },
+                ),
+              );
+            }),
+          );
+        }
+        return of();
+      }),
+    );
+  }
+
+  confirmRestart(): Observable<boolean> {
+    return this.dialogService.confirm({
+      title: this.translateService.instant('Restart {name} Service?', { name: serviceNames.get(ServiceName.Iscsi) }),
+      message: this.translateService.instant('Some changes might not take affect until the {name} service has been restarted. Would you like to restart the {name} service now?', { name: serviceNames.get(ServiceName.Iscsi) }),
+      hideCheckbox: true,
+    }).pipe(
+      switchMap((confirmed) => {
+        if (confirmed) {
+          return this.warnAboutActiveIscsiSessions();
+        }
+        return of(false);
+      }),
+    );
+  }
+
+  warnAboutActiveIscsiSessions = (): Observable<boolean> => {
+    return this.iscsiService.getGlobalSessions().pipe(
+      switchMap((sessions) => {
+        if (!sessions.length) {
+          return of(true);
+        }
+        let message = this.translateService.instant(
+          'Stop {serviceName}?', { serviceName: serviceNames.get(ServiceName.Iscsi) },
+        );
+        if (sessions.length) {
+          message = `<font color="red">${this.translateService.instant('There are {sessions} active iSCSI connections.', { sessions: sessions.length })}</font><br>${this.translateService.instant('Restarting the service would mean to stop the {serviceName} service and close these connections?', { serviceName: serviceNames.get(ServiceName.Iscsi) })}`;
+        }
+
+        return this.dialogService.confirm({
+          title: this.translateService.instant('Alert'),
+          message,
+          hideCheckbox: true,
+          buttonText: this.translateService.instant('Stop'),
+        });
+      }),
+    );
+  };
 }
