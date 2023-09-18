@@ -60,10 +60,20 @@
   <mat-divider></mat-divider>
 
   <ix-table-expandable-row>
-    <button mat-button [ixTest]="['delete', snapshot.snapshot_name]" (click)="doDelete(snapshot)">
-      <ix-icon name="delete"></ix-icon>
-      <span>{{ 'Delete' | translate }}</span>
-    </button>
+    <div
+      [matTooltip]="'Snapshots must not have dependent clones' | translate"
+      [matTooltipDisabled]="!hasClones"
+    >
+      <button
+        mat-button
+        [ixTest]="['delete', snapshot.snapshot_name]"
+        [disabled]="hasClones"
+        (click)="doDelete(snapshot)"
+      >
+        <ix-icon name="delete"></ix-icon>
+        <span>{{ 'Delete' | translate }}</span>
+      </button>
+    </div>
 
     <button mat-button [ixTest]="['clone', snapshot.snapshot_name]" (click)="doClone(snapshot)">
       <span>{{ 'Clone To New Dataset' | translate }}</span>

@@ -146,6 +146,7 @@
   "Select Image Tag": "",
   "Select the minimum priority level to send to the remote syslog server.  The system only sends logs matching this level or higher.": "",
   "Skip": "",
+  "Snapshots must not have dependent clones": "",
   "Sort": "",
   "Special": "",
   "Standby: TrueNAS Controller {id}": "",
