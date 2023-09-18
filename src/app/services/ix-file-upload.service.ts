@@ -8,7 +8,7 @@ import {
   from, Observable, Observer, of, Subject,
 } from 'rxjs';
 import {
-  catchError, concatMap, map, switchMap, toArray,
+  catchError, concatMap, map, switchMap, take, toArray,
 } from 'rxjs/operators';
 import { MiB } from 'app/constants/bytes.constant';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
@@ -36,9 +36,10 @@ export class IxFileUploadService {
     params: unknown[] = [],
   ): void {
     this.authService.authToken$.pipe(
+      take(1),
       map((token) => {
         const endPoint = '/_upload?auth_token=' + token;
-        const formData: FormData = new FormData();
+        const formData = new FormData();
         formData.append('data', JSON.stringify({
           method,
           params,
