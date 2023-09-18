@@ -2,6 +2,7 @@ import {
   Component, Input, OnChanges, OnInit,
 } from '@angular/core';
 import { Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
@@ -32,7 +33,7 @@ export interface EmptyDiskObject {
   [p: string]: string | number | boolean | string[] | SmartTestResult[] | EnclosureAndSlot;
 }
 
-const notAssignedDev = 'VDEVs not assigned';
+const notAssignedDev = T('VDEVs not assigned');
 
 @UntilDestroy()
 @Component({
@@ -144,9 +145,8 @@ export class TopologyCardComponent implements OnInit, OnChanges {
       : this.disks?.find((disk) => disk.name === (vdevs[0] as TopologyDisk)?.disk)?.size;
 
     outputString = `${vdevs.length} x `;
-    // TODO: Needs to be translated.
     if (vdevWidth) {
-      outputString += `${type} | ${vdevWidth} wide | `;
+      outputString += this.translate.instant('{type} | {vdevWidth} wide | ', { type, vdevWidth });
     }
 
     if (size) {

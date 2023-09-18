@@ -44,15 +44,20 @@
     ></ix-checkbox>
 
     <div class="form-buttons">
-      <button
-        mat-button
-        type="submit"
-        color="primary"
-        ixTest="delete"
-        [disabled]="form.invalid"
+      <div
+        [matTooltip]="'Snapshots must not have dependent clones' | translate"
+        [matTooltipDisabled]="!hasClones"
       >
-        {{ 'Delete' | translate }}
-      </button>
+        <button
+          mat-button
+          type="submit"
+          color="primary"
+          ixTest="delete"
+          [disabled]="form.invalid || hasClones"
+        >
+          {{ 'Delete' | translate }}
+        </button>
+      </div>
       <button mat-button type="button" matDialogClose ixTest="cancel">
         {{ 'Cancel' | translate }}
       </button>

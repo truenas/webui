@@ -3,7 +3,7 @@ import {
   AbstractControl,
   FormBuilder, FormGroup,
 } from '@angular/forms';
-import { doesNotEqualValidator, matchOtherValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
+import { doesNotEqualFgValidator, matchOthersFgValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
 
 describe('PasswordValidation', () => {
   describe('matchOtherValidator', () => {
@@ -14,13 +14,20 @@ describe('PasswordValidation', () => {
     beforeEach(() => {
       TestBed.configureTestingModule({
         imports: [FormBuilder],
-        declarations: [matchOtherValidator],
+        declarations: [matchOthersFgValidator],
       });
 
       const formBuilder = new FormBuilder();
       form = formBuilder.group({
-        this: ['', [matchOtherValidator('other')]],
+        this: [''],
         other: ['', []],
+      }, {
+        validators: [
+          matchOthersFgValidator(
+            'this',
+            ['other'],
+          ),
+        ],
       });
 
       thisControl = form.controls.this;
@@ -28,11 +35,11 @@ describe('PasswordValidation', () => {
     });
 
     it('should throw error when no otherControl is given', () => {
-      form.removeControl('other');
 
       expect(() => {
+        form.removeControl('other');
         thisControl.setValue('test');
-      }).toThrow('matchOtherValidator(): other control is not found in parent group');
+      }).toThrow('matchOtherValidator(): other control is not found in the group');
     });
 
     it('should not have matchOther error', () => {
@@ -60,8 +67,15 @@ describe('PasswordValidation', () => {
 
       const formBuilder = new FormBuilder();
       form = formBuilder.group({
-        this: ['', [doesNotEqualValidator('other')]],
+        this: [''],
         other: ['', []],
+      }, {
+        validators: [
+          doesNotEqualFgValidator(
+            'this',
+            ['other'],
+          ),
+        ],
       });
 
       thisControl = form.controls.this;
@@ -69,11 +83,11 @@ describe('PasswordValidation', () => {
     });
 
     it('should throw error if otherControl is missing', () => {
-      form.removeControl('other');
 
       expect(() => {
+        form.removeControl('other');
         thisControl.setValue('test');
-      }).toThrow('doesNotEqual(): other control is not found in parent group');
+      }).toThrow('doesNotEqual(): other control is not found in the group');
     });
 
     it('should have matchesOther error', () => {

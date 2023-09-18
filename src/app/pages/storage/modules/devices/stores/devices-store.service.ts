@@ -33,7 +33,6 @@ const initialState: DevicesState = {
 @Injectable()
 export class DevicesStore extends ComponentStore<DevicesState> {
   readonly isLoading$ = this.select((state) => state.isLoading);
-  // TODO
   readonly error$ = this.select((state) => state.error);
   readonly nodes$ = this.select((state) => state.nodes);
   readonly diskDictionary$ = this.select((state) => state.diskDictionary);
@@ -80,7 +79,6 @@ export class DevicesStore extends ComponentStore<DevicesState> {
             if (!pools?.length) {
               return of([]);
             }
-            // TODO: Handle pool not found.
             return this.ws.call('disk.query', [[['pool', '=', pools[0].name]], { extra: { pools: true } }]).pipe(
               tap((disks) => {
                 this.patchState({

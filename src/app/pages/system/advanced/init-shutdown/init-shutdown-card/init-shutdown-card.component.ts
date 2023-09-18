@@ -92,7 +92,7 @@ export class InitShutdownCardComponent implements OnInit {
   onDelete(row: InitShutdownScript): void {
     this.dialog.confirm({
       title: this.translate.instant('Delete Script'),
-      message: this.translate.instant('Delete Init/Shutdown Script {script}', {
+      message: this.translate.instant('Delete Init/Shutdown Script {script}?', {
         script: row.command,
       }),
       buttonText: this.translate.instant('Delete'),
