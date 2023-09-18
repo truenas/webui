@@ -32,6 +32,10 @@ export class SnapshotBatchDeleteDialogComponent implements OnInit {
   jobSuccess: boolean[] = [];
   jobErrors: string[] = [];
 
+  get hasClones(): boolean {
+    return this.snapshots.some((snapshot) => !!snapshot?.properties?.clones?.value);
+  }
+
   constructor(
     private fb: FormBuilder,
     private websocket: WebSocketService,

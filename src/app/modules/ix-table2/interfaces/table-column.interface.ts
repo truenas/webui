@@ -4,10 +4,15 @@ export abstract class ColumnComponent<T> {
   identifier?: boolean;
   propertyName: keyof T;
   title?: string;
+  cssClass?: string;
   sortBy?: (row: T) => string | number;
   sortable?: boolean;
+  getValue?: (row: T) => T[keyof T];
   hidden = false;
-  cssClass?: string;
+
+  protected get value(): T[keyof T] {
+    return this.getValue ? this.getValue(this.row) : this.row[this.propertyName];
+  }
 
   protected row: T;
   getRow(): T {

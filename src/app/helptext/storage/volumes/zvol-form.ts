@@ -1,6 +1,5 @@
 import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { matchOtherValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
 
 export default {
   zvol_title_add: T('Add Zvol'),
@@ -100,7 +99,6 @@ export default {
      memorable passphrase or physically secure the passphrase.'),
     passphrase_validation: [Validators.minLength(8)],
     confirm_passphrase_placeholder: T('Confirm Passphrase'),
-    confirm_passphrase_validation: [matchOtherValidator('passphrase')],
     pbkdf2iters_placeholder: 'pbkdf2iters',
     pbkdf2iters_tooltip: T('Number of password-based key derivation function 2 (PBKDF2) iterations to use for reducing vulnerability \
      to brute-force attacks. Entering a number larger than <i>100000</i> is required. See \

@@ -22,7 +22,7 @@ import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-sl
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { forbiddenValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
-import { matchOtherValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
+import { matchOthersFgValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { getDatasetLabel } from 'app/pages/datasets/utils/dataset.utils';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
@@ -113,9 +113,17 @@ export class ZvolFormComponent implements OnInit {
     generate_key: [true],
     key: ['', [Validators.required, Validators.minLength(64), Validators.maxLength(64)]],
     passphrase: ['', [Validators.required, Validators.minLength(8)]],
-    confirm_passphrase: ['', [Validators.required, matchOtherValidator('passphrase')]],
+    confirm_passphrase: ['', [Validators.required]],
     pbkdf2iters: [350000, [Validators.required, Validators.min(100000)]],
     algorithm: ['AES-256-GCM', Validators.required],
+  }, {
+    validators: [
+      matchOthersFgValidator(
+        'confirm_passphrase',
+        ['passphrase'],
+        this.translate.instant('Confirm Passphrase value must match Passphrase'),
+      ),
+    ],
   });
 
   syncOptions: Option[] = [
