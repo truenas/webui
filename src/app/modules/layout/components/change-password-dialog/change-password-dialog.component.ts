@@ -7,7 +7,7 @@ import { filter, switchMap, tap } from 'rxjs/operators';
 import helptext from 'app/helptext/topbar';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
-import { matchOtherValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
+import { matchOthersFgValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AuthService } from 'app/services/auth/auth.service';
@@ -28,11 +28,15 @@ export class ChangePasswordDialogComponent {
     password: ['', [Validators.required]],
     passwordConfirmation: ['', [
       Validators.required,
-      this.validatorsService.withMessage(
-        matchOtherValidator('password'),
+    ]],
+  }, {
+    validators: [
+      matchOthersFgValidator(
+        'passwordConfirmation',
+        ['password'],
         this.translate.instant('New password and confirmation should match.'),
       ),
-    ]],
+    ],
   });
 
   private loggedInUser: LoggedInUser;
@@ -85,3 +89,4 @@ export class ChangePasswordDialogComponent {
     });
   }
 }
+

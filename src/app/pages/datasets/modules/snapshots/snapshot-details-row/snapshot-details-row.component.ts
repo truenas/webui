@@ -33,6 +33,10 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
   isHold: boolean;
   snapshotInfo: ZfsSnapshot;
 
+  get hasClones(): boolean {
+    return !!this.snapshotInfo?.properties?.clones?.value;
+  }
+
   constructor(
     private dialogService: DialogService,
     private ws: WebSocketService,

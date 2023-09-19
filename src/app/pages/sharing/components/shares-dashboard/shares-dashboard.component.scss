@@ -1,163 +1,20 @@
-$header-height: 125px;
+@import 'scss-imports/cssvars';
 
-.container {
-  height: calc(100% - #{$header-height});
-}
-
-.zero-table-container {
+.cards {
   display: grid;
-  grid-template-areas:
-    'first'
-    'second'
-    'third';
-  grid-template-columns: 100%;
-  grid-template-rows: 58px 58px 58px;
-
-  .first {
-    grid-area: first;
-    margin: 5px 0;
-  }
-
-  .second {
-    grid-area: second;
-    margin: 5px 0;
-  }
-
-  .third {
-    grid-area: third;
-    margin: 5px 0;
-  }
-}
-
-.one-table-container {
-  display: grid;
-  grid-template-areas:
-    'first'
-    'second'
-    'third';
-  grid-template-columns: 100%;
-  grid-template-rows: 70% 58px 58px;
-
-  .first {
-    grid-area: first;
-    margin: 5px 0;
-  }
-
-  .second {
-    grid-area: second;
-    margin: 5px 0;
-  }
-
-  .third {
-    grid-area: third;
-    margin: 5px 0;
-  }
-}
-
-.two-table-container {
-  display: grid;
-  grid-template-areas:
-    'first second'
-    'third third';
+  gap: 8px;
   grid-template-columns: 50% 50%;
-  grid-template-rows: 80% 58px;
 
-  .first {
-    grid-area: first;
-    margin: 5px 0;
-  }
-
-  .second {
-    grid-area: second;
-    margin: 5px 0;
-  }
-
-  .third {
-    column-span: 2;
-    grid-area: third;
-    margin: 5px 0;
-  }
-}
-
-.three-table-container {
-  display: grid;
-  grid-template-areas:
-    'first second'
-    'third .';
-  grid-template-columns: 50% 50%;
-  grid-template-rows: 45% 45%;
-
-  .first {
-    grid-area: first;
-    margin: 5px 0;
-  }
-
-  .second {
-    grid-area: second;
-    margin: 5px 0;
-  }
-
-  .third {
-    grid-area: third;
-    margin: 5px 0;
-  }
-}
-
-.entity-empty-div {
-  align-items: center;
-  display: flex;
-  justify-content: center;
-}
-
-@media screen and (max-width: 1199px) {
-  $standard-table-height: 336px;
-
-  .zero-table-container,
-  .one-table-container,
-  .two-table-container,
-  .three-table-container {
-    display: grid;
-    grid-template-areas:
-      'first'
-      'second'
-      'third';
+  @media #{$media-lt-lg} {
     grid-template-columns: 100%;
   }
 
-  .zero-table-container {
-    grid-template-rows: 58px 58px 58px;
-  }
+  > * {
+    display: flex;
+    flex-direction: column;
 
-  .one-table-container {
-    grid-template-rows: $standard-table-height 58px 58px;
-  }
-
-  .two-table-container {
-    grid-template-rows: $standard-table-height $standard-table-height 58px;
-  }
-
-  .three-table-container {
-    grid-template-rows: $standard-table-height $standard-table-height $standard-table-height;
-  }
-
-  .zero-table-container,
-  .one-table-container,
-  .two-table-container,
-  .three-table-container {
-    .first {
-      grid-area: first;
-      margin: 5px 0;
-    }
-
-    .second {
-      grid-area: second;
-      margin: 5px 0;
-
-    }
-
-    .third {
-      grid-area: third;
-      margin: 5px 0;
+    ::ng-deep > * {
+      flex: 1;
     }
   }
 }

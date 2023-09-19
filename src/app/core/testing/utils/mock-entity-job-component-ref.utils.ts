@@ -22,6 +22,7 @@ export const mockEntityJobComponentRef = {
     wsshow: jest.fn(),
     wspost: jest.fn(),
     updateSize: jest.fn(),
+    disableProgressValue: jest.fn(),
   },
   close: jest.fn(),
 } as unknown as MatDialogRef<EntityJobComponent>;

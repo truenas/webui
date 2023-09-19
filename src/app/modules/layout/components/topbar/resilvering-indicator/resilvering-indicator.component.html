@@ -1,0 +1,11 @@
+<button
+  *ngIf="isResilvering$ | async"
+  mat-icon-button
+  id="resilver"
+  class="topbar-button-right"
+  ixTest="resilvering"
+  [matTooltip]="tooltips.resilvering | translate"
+  (click)="showDetails()"
+>
+  <ix-icon class="spin" name="autorenew"></ix-icon>
+</button>
