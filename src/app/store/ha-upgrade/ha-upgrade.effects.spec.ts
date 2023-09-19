@@ -120,7 +120,7 @@ describe('HaUpgradeEffects', () => {
 
       expect(mockEntityJobComponentRef.componentInstance.setCall).toHaveBeenCalledWith('failover.upgrade_finish');
 
-      expect(await firstValueFrom(spectator.service.loadUpgradePendingState$))
+      expect(await firstValueFrom(spectator.service.showUpgradePendingDialog$))
         .toEqual(failoverUpgradeFinished());
     });
   });
