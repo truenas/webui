@@ -9,7 +9,12 @@
 
 :host ::ng-deep {
   .wide-actions {
-    width: 100px;
+    width: 80px;
+  }
+
+  .state-button {
+    text-overflow: inherit !important;
+    width: 80px;
   }
 
   .justify-end {

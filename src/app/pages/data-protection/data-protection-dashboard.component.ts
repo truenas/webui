@@ -327,48 +327,6 @@ export class DataProtectionDashboardComponent implements OnInit {
         },
       },
       {
-        name: TaskCardId.Rsync,
-        tableConf: {
-          title: helptext.fieldset_rsync_tasks,
-          titleHref: '/tasks/rsync',
-          queryCall: 'rsynctask.query',
-          deleteCall: 'rsynctask.delete',
-          deleteMsg: {
-            title: this.translate.instant('Rsync Task'),
-            key_props: ['remotehost', 'remotemodule'],
-          },
-          columns: [
-            { name: this.translate.instant('Path'), prop: 'path', enableMatTooltip: true },
-            { name: this.translate.instant('Remote Host'), prop: 'remotehost', enableMatTooltip: true },
-            { name: this.translate.instant('Frequency'), prop: 'frequency', enableMatTooltip: true },
-            { name: this.translate.instant('Next Run'), prop: 'next_run', enableMatTooltip: true },
-            {
-              name: this.translate.instant('Enabled'),
-              prop: 'enabled',
-              width: '80px',
-              checkbox: true,
-              onChange: (row: RsyncTaskUi) => this.onCheckboxToggle(TaskCardId.Rsync, row as TaskTableRow, 'enabled'),
-            },
-            { name: this.translate.instant('State'), prop: 'state', button: true },
-          ],
-          dataSourceHelper: (data: RsyncTaskUi[]) => this.rsyncDataSourceHelper(data),
-          getActions: this.getRsyncActions.bind(this),
-          isActionVisible: this.isActionVisible,
-          parent: this,
-          add: () => {
-            const slideInRef = this.slideInService.open(RsyncTaskFormComponent, { wide: true });
-            this.handleSlideInClosed(slideInRef, RsyncTaskFormComponent);
-          },
-          edit: (row: RsyncTaskUi) => {
-            const slideInRef = this.slideInService.open(RsyncTaskFormComponent, { wide: true, data: row });
-            this.handleSlideInClosed(slideInRef, RsyncTaskFormComponent);
-          },
-          onButtonClick: (row: RsyncTaskUi) => {
-            this.stateButton(row as TaskTableRow);
-          },
-        },
-      },
-      {
         name: TaskCardId.Smart,
         tableConf: {
           title: helptext.fieldset_smart_tests,
