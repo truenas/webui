@@ -29,8 +29,6 @@ export class SigninComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.signinStore.init();
-
     this.isConnected$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.signinStore.init();
     });
