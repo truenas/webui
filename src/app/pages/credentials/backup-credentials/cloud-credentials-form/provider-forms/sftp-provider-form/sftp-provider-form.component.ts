@@ -49,11 +49,6 @@ export class SftpProviderFormComponent extends BaseProviderFormComponent impleme
     return this.formPatcher$;
   };
 
-  ngAfterViewInit(): void {
-    this.formPatcher$.pipe(untilDestroyed(this)).subscribe((values) => {
-      this.form.patchValue(values);
-    });
-  }
   constructor(
     private ws: WebSocketService,
     private formBuilder: FormBuilder,
@@ -64,6 +59,12 @@ export class SftpProviderFormComponent extends BaseProviderFormComponent impleme
 
   ngOnInit(): void {
     this.loadPrivateKeys();
+  }
+
+  ngAfterViewInit(): void {
+    this.formPatcher$.pipe(untilDestroyed(this)).subscribe((values) => {
+      this.form.patchValue(values);
+    });
   }
 
   private loadPrivateKeys(): void {

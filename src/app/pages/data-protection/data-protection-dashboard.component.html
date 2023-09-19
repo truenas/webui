@@ -1,5 +1,6 @@
 <div class="cards">
   <ix-scrub-task-card></ix-scrub-task-card>
+  <ix-snapshot-task-card></ix-snapshot-task-card>
   <div *ngFor="let card of dataCards; index as i">
     <ix-conf-table fxFlex [conf]="card.tableConf"></ix-conf-table>
   </div>

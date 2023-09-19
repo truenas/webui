@@ -63,12 +63,12 @@ export class EditPosixAceComponent implements OnInit, OnChanges {
     return this.form.value.tag === PosixAclTag.Group;
   }
 
-  ngOnInit(): void {
-    this.setFormListeners();
+  ngOnChanges(): void {
     this.updateFormValues();
   }
 
-  ngOnChanges(): void {
+  ngOnInit(): void {
+    this.setFormListeners();
     this.updateFormValues();
   }
 

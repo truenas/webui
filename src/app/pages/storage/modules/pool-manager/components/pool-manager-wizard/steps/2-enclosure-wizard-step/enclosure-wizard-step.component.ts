@@ -71,6 +71,12 @@ export class EnclosureWizardStepComponent implements OnInit, OnChanges {
     return this.form.value.dispersalStrategy === DispersalStrategy.LimitToSingle;
   }
 
+  ngOnChanges(changes: IxSimpleChanges<this>): void {
+    if (changes.isStepActive.currentValue && !changes.isStepActive.previousValue && !this.form.touched) {
+      this.form.updateValueAndValidity();
+    }
+  }
+
   ngOnInit(): void {
     this.connectFormToStore();
 
@@ -89,12 +95,6 @@ export class EnclosureWizardStepComponent implements OnInit, OnChanges {
         dispersalStrategy: DispersalStrategy.None,
       });
     });
-  }
-
-  ngOnChanges(changes: IxSimpleChanges<this>): void {
-    if (changes.isStepActive.currentValue && !changes.isStepActive.previousValue && !this.form.touched) {
-      this.form.updateValueAndValidity();
-    }
   }
 
   private connectFormToStore(): void {

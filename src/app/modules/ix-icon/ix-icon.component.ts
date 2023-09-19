@@ -83,13 +83,13 @@ export class IxIconComponent extends MatIcon implements OnInit, OnChanges, After
     super(elementRef, iconRegistry, ariaHidden, location, errorHandler, defaults);
   }
 
+  ngOnChanges(): void {
+    this.updateIcon(this.name);
+  }
+
   ngOnInit(): void {
     this.updateIcon(this.iconName);
     super.ngOnInit();
-  }
-
-  ngOnChanges(): void {
-    this.updateIcon(this.name);
   }
 
   ngAfterContentInit(): void {

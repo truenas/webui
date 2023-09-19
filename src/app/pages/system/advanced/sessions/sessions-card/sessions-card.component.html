@@ -44,18 +44,18 @@
       [isLoading]="isLoading"
     >
       <ng-template
+        let-session
         ix-table-cell
         [columnIndex]="0"
         [dataProvider]="dataProvider"
-        let-session
       >
         {{ getUsername(session) }}
       </ng-template>
       <ng-template
+        let-session
         ix-table-cell
         [columnIndex]="2"
         [dataProvider]="dataProvider"
-        let-session
       >
         <div
           class="actions"

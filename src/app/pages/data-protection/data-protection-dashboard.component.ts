@@ -17,7 +17,6 @@ import helptext_smart from 'app/helptext/data-protection/smart/smart';
 import globalHelptext from 'app/helptext/global-helptext';
 import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.interface';
 import { ReplicationTaskUi } from 'app/interfaces/replication-task.interface';
 import { RsyncTaskUi } from 'app/interfaces/rsync-task.interface';
 import { SmartTestTaskUi } from 'app/interfaces/smart-test.interface';
@@ -41,7 +40,6 @@ import {
 import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
 import { SmartTaskFormComponent } from 'app/pages/data-protection/smart-task/smart-task-form/smart-task-form.component';
-import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -56,7 +54,6 @@ export interface TaskCard {
 }
 
 enum TaskCardId {
-  Snapshot = 'snapshot',
   Replication = 'replication',
   CloudSync = 'cloudsync',
   Rsync = 'rsync',
@@ -64,7 +61,6 @@ enum TaskCardId {
 }
 
 type TaskTableRow = Partial<
-Omit<PeriodicSnapshotTaskUi, 'naming_schema'> &
 Omit<ReplicationTaskUi, 'naming_schema'> &
 CloudSyncTaskUi &
 RsyncTaskUi &
@@ -94,7 +90,6 @@ export class DataProtectionDashboardComponent implements OnInit {
     private translate: TranslateService,
     private store$: Store<AppState>,
     private snackbar: SnackbarService,
-    private storageService: StorageService,
   ) {
     this.storage
       .listDisks()
@@ -121,9 +116,6 @@ export class DataProtectionDashboardComponent implements OnInit {
           case CloudsyncFormComponent:
             this.refreshTable(TaskCardId.CloudSync);
             break;
-          case SnapshotTaskFormComponent:
-            this.refreshTable(TaskCardId.Snapshot);
-            break;
           case RsyncTaskFormComponent:
             this.refreshTable(TaskCardId.Rsync);
             break;
@@ -136,61 +128,6 @@ export class DataProtectionDashboardComponent implements OnInit {
 
   getCardData(): void {
     this.dataCards = [
-      {
-        name: TaskCardId.Snapshot,
-        tableConf: {
-          title: helptext.fieldset_periodic_snapshot_tasks,
-          titleHref: '/tasks/snapshot',
-          queryCall: 'pool.snapshottask.query',
-          deleteCall: 'pool.snapshottask.delete',
-          deleteMsg: {
-            title: this.translate.instant('Periodic Snapshot Task'),
-            key_props: ['dataset', 'naming_schema', 'keepfor'],
-          },
-          columns: [
-            { name: this.translate.instant('Pool/Dataset'), prop: 'dataset', enableMatTooltip: true },
-            { name: this.translate.instant('Keep for'), prop: 'keepfor', enableMatTooltip: true },
-            { name: this.translate.instant('Frequency'), prop: 'frequency', enableMatTooltip: true },
-            { name: this.translate.instant('Next Run'), prop: 'next_run', enableMatTooltip: true },
-            {
-              name: this.translate.instant('Enabled'),
-              prop: 'enabled',
-              width: '80px',
-              checkbox: true,
-              onChange: (row: PeriodicSnapshotTaskUi) => this.onCheckboxToggle(TaskCardId.Snapshot, row, 'enabled'),
-            },
-            { name: this.translate.instant('State'), prop: 'state', button: true },
-          ],
-          dataSourceHelper: (data: PeriodicSnapshotTaskUi[]) => this.snapshotDataSourceHelper(data),
-          isActionVisible: this.isActionVisible,
-          parent: this,
-          add: () => {
-            const slideInRef = this.slideInService.open(SnapshotTaskFormComponent, { wide: true });
-            this.handleSlideInClosed(slideInRef, SnapshotTaskFormComponent);
-          },
-          edit: (row: PeriodicSnapshotTaskUi) => {
-            const slideInRef = this.slideInService.open(SnapshotTaskFormComponent, { wide: true, data: row });
-            this.handleSlideInClosed(slideInRef, SnapshotTaskFormComponent);
-          },
-          tableFooterActions: [
-            {
-              label: this.translate.instant('VMware Snapshot Integration'),
-              onClick: () => {
-                this.router.navigate(['/data-protection', 'vmware-snapshots']);
-              },
-            },
-            {
-              label: this.translate.instant('Snapshots'),
-              onClick: () => {
-                this.router.navigate(['/datasets', 'snapshots']);
-              },
-            },
-          ],
-          onButtonClick: (row) => {
-            this.stateButton(row);
-          },
-        },
-      },
       {
         name: TaskCardId.Replication,
         tableConf: {
@@ -448,17 +385,6 @@ export class DataProtectionDashboardComponent implements OnInit {
         ];
       }
       return test;
-    });
-  }
-
-  snapshotDataSourceHelper(data: PeriodicSnapshotTaskUi[]): PeriodicSnapshotTaskUi[] {
-    return data.map((task) => {
-      task.keepfor = `${task.lifetime_value} ${task.lifetime_unit}(S)`;
-      task.cron_schedule = scheduleToCrontab(task.schedule);
-      task.frequency = this.taskService.getTaskCronDescription(task.cron_schedule);
-      task.next_run = this.taskService.getTaskNextRun(task.cron_schedule);
-
-      return task;
     });
   }
 
@@ -781,14 +707,10 @@ export class DataProtectionDashboardComponent implements OnInit {
   }
 
   onCheckboxToggle(card: TaskCardId, row: TaskTableRow, param: 'enabled'): void {
-    let updateCall: 'pool.snapshottask.update'
-    | 'replication.update'
+    let updateCall: 'replication.update'
     | 'cloudsync.update'
     | 'rsynctask.update';
     switch (card) {
-      case TaskCardId.Snapshot:
-        updateCall = 'pool.snapshottask.update';
-        break;
       case TaskCardId.Replication:
         updateCall = 'replication.update';
         break;

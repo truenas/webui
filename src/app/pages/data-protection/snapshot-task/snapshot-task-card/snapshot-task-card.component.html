@@ -1,24 +1,21 @@
 <mat-card>
   <mat-toolbar-row>
-    <a [ixTest]="['init-shutdown', 'open-in-new']" [routerLink]="['/system', 'initshutdown']">
+    <a [ixTest]="['snapshot-task', 'open-in-new']" [routerLink]="['/data-protection', 'snapshot']">
       <h3 class="card-title">
-        {{ 'Init/Shutdown Scripts' | translate }}
+        {{ 'Periodic Snapshot Tasks' | translate }}
         <ix-icon name="open_in_new" class="title-icon"></ix-icon>
       </h3>
     </a>
     <div class="actions">
       <button
         mat-button
-        [ixTest]="['init-shutdown', 'add']"
-        (click)="onAdd()"
+        [ixTest]="['snapshot-task', 'add']"
+        (click)="openForm()"
       >{{ 'Add' | translate }}</button>
     </div>
   </mat-toolbar-row>
 
-  <ix-table2
-    class="table"
-    [ix-table2-empty]="!dataProvider.rows.length"
-  >
+  <ix-table2 class="table" [ix-table2-empty]="!dataProvider.rows.length && !isLoading">
     <thead
       ix-table-head
       [columns]="columns"
@@ -31,33 +28,25 @@
       [isLoading]="isLoading"
     >
       <ng-template
-        let-script
+        let-task
         ix-table-cell
-        [columnIndex]="0"
+        [columnIndex]="6"
         [dataProvider]="dataProvider"
       >
-        {{ script.script || script.command }}
-      </ng-template>
-      <ng-template
-        let-script
-        ix-table-cell
-        [columnIndex]="5"
-        [dataProvider]="dataProvider"
-      >
-        <div class="buttons">
+        <div class="justify-end">
           <button
             mat-icon-button
-            [ixTest]="[script.id, 'edit']"
+            [ixTest]="[task.id, 'edit']"
             [matTooltip]="'Edit' | translate"
-            (click)="onEdit(script)"
+            (click)="openForm(task)"
           >
             <ix-icon name="edit"></ix-icon>
           </button>
           <button
             mat-icon-button
-            [ixTest]="[script.id, 'delete']"
+            [ixTest]="[task.id, 'delete']"
             [matTooltip]="'Delete' | translate"
-            (click)="onDelete(script)"
+            (click)="doDelete(task)"
           >
             <ix-icon name="delete"></ix-icon>
           </button>
@@ -65,4 +54,20 @@
       </ng-template>
     </tbody>
   </ix-table2>
+
+  <div class="justify-end">
+    <div class="footer-actions">
+      <a
+        mat-button
+        [ixTest]="['snapshot-task', 'vmware-snapshots']"
+        [routerLink]="['/data-protection', 'vmware-snapshots']"
+      >{{ 'VMware Snapshot Integration' | translate }}</a>
+
+      <a
+        mat-button
+        [ixTest]="['snapshot-task', 'snapshots']"
+        [routerLink]="['/datasets', 'snapshots']"
+      >{{ 'Snapshots' | translate }}</a>
+    </div>
+  </div>
 </mat-card>

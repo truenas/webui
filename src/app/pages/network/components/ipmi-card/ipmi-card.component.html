@@ -17,18 +17,18 @@
       [dataProvider]="dataProvider"
     >
       <ng-template
+        let-ipmi
         ix-table-cell
         [columnIndex]="0"
         [dataProvider]="dataProvider"
-        let-ipmi
       >
         {{ 'Channel {n}' | translate: { n: ipmi.channel } }}
       </ng-template>
       <ng-template
+        let-ipmi
         ix-table-cell
         [columnIndex]="1"
         [dataProvider]="dataProvider"
-        let-ipmi
       >
         <div class="actions">
           <button
