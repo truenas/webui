@@ -28,11 +28,11 @@ export class TaskScheduleListComponent implements OnInit, OnChanges {
 
   constructor(private taskService: TaskService) {}
 
-  ngOnInit(): void {
+  ngOnChanges(): void {
     this.buildFutureRuns();
   }
 
-  ngOnChanges(): void {
+  ngOnInit(): void {
     this.buildFutureRuns();
   }
 

@@ -67,6 +67,14 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
     private dialogService: DialogService,
   ) {}
 
+  ngOnChanges(changes: IxSimpleChanges<this>): void {
+    this.getInheritedQuotas();
+    const selectedDatasetHasChanged = changes?.dataset?.previousValue?.id !== changes?.dataset?.currentValue?.id;
+    if (selectedDatasetHasChanged && this.checkQuotas) {
+      this.refreshQuotas$.next();
+    }
+  }
+
   ngOnInit(): void {
     if (this.checkQuotas) {
       this.initQuotas();
@@ -98,14 +106,6 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
         this.cdr.markForCheck();
       },
     });
-  }
-
-  ngOnChanges(changes: IxSimpleChanges<this>): void {
-    this.getInheritedQuotas();
-    const selectedDatasetHasChanged = changes?.dataset?.previousValue?.id !== changes?.dataset?.currentValue?.id;
-    if (selectedDatasetHasChanged && this.checkQuotas) {
-      this.refreshQuotas$.next();
-    }
   }
 
   getInheritedQuotas(): void {

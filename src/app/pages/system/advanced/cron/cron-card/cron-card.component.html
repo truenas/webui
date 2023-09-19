@@ -31,10 +31,10 @@
       [isLoading]="isLoading"
     >
       <ng-template
+        let-cron
         ix-table-cell
         [columnIndex]="5"
         [dataProvider]="dataProvider"
-        let-cron
       >
         <div class="buttons">
           <button
