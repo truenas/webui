@@ -1,15 +1,23 @@
 import {
   Injectable, EventEmitter, Inject,
 } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { environment } from 'environments/environment';
+import { tap } from 'rxjs';
+import { webSocket as rxjsWebsocket, WebSocketSubject } from 'rxjs/webSocket';
+import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
+import { WEBSOCKET } from 'app/helpers/websocket.helper';
 import { WINDOW } from 'app/helpers/window.helper';
 import { ShellConnectedEvent } from 'app/interfaces/shell.interface';
 
+@UntilDestroy()
 @Injectable()
 export class ShellService {
-  pendingMessages: string[] = [];
-  socket: WebSocket;
-  connected = false;
+  private pendingMessages: Uint8Array[] = [];
+  private ws$: WebSocketSubject<unknown>;
+  private connectionUrl = (this.window.location.protocol === 'https:' ? 'wss://' : 'ws://') + environment.remote + '/websocket/shell/';
+  private isConnected = false;
+
   token: string;
   vmId: number;
   podInfo: {
@@ -19,29 +27,52 @@ export class ShellService {
     command: string;
   };
 
-  private shellCmdOutput: ArrayBuffer;
   shellOutput = new EventEmitter<ArrayBuffer>();
   shellConnected = new EventEmitter<ShellConnectedEvent>();
 
   constructor(
     @Inject(WINDOW) private window: Window,
+    @Inject(WEBSOCKET) private webSocket: typeof rxjsWebsocket,
   ) {}
 
   connect(): void {
-    this.socket = new WebSocket(
-      (this.window.location.protocol === 'https:' ? 'wss://' : 'ws://')
-        + environment.remote + '/websocket/shell/',
-    );
-    this.socket.onmessage = this.onmessage.bind(this);
-    this.socket.onopen = this.onopen.bind(this);
-    this.socket.onclose = this.onclose.bind(this);
+    this.closeWebsocketConnection();
+
+    this.ws$ = this.webSocket({
+      url: this.connectionUrl,
+      openObserver: {
+        next: this.onOpen.bind(this),
+      },
+      closeObserver: {
+        next: this.onClose.bind(this),
+      },
+      serializer: (msg) => msg as string | ArrayBuffer,
+      deserializer: (msg) => msg,
+      binaryType: 'arraybuffer',
+    });
+
+    this.ws$.pipe(
+      tap((response: MessageEvent<ArrayBuffer | string>) => {
+        this.onMessage(response);
+      }),
+      untilDestroyed(this),
+    ).subscribe();
+
+    this.shellConnected.pipe(untilDestroyed(this)).subscribe({
+      next: (event) => {
+        this.isConnected = event.connected;
+        if (event.connected) {
+          this.onConnect();
+        }
+      },
+    });
   }
 
-  onopen(): void {
+  onOpen(): void {
     if (this.vmId) {
-      this.send(JSON.stringify({ token: this.token, options: { vm_id: this.vmId } }));
+      this.ws$.next(JSON.stringify({ token: this.token, options: { vm_id: this.vmId } }));
     } else if (this.podInfo) {
-      this.send(JSON.stringify({
+      this.ws$.next(JSON.stringify({
         token: this.token,
         options: {
           chart_release_name: this.podInfo.chart_release_name,
@@ -51,28 +82,24 @@ export class ShellService {
         },
       }));
     } else {
-      this.send(JSON.stringify({ token: this.token }));
+      this.ws$.next(JSON.stringify({ token: this.token }));
     }
   }
 
-  onconnect(): void {
+  onConnect(): void {
     while (this.pendingMessages.length > 0) {
       const payload = this.pendingMessages.pop();
       this.send(payload);
     }
   }
 
-  // empty eventListener for attach socket
-  addEventListener(): void {}
-
-  onclose(): void {
-    this.connected = false;
+  onClose(): void {
     this.shellConnected.emit({
-      connected: this.connected,
+      connected: false,
     });
   }
 
-  onmessage(msg: MessageEvent<ArrayBuffer | string>): void {
+  onMessage(msg: MessageEvent<ArrayBuffer | string>): void {
     let data: { id?: string; msg: string };
 
     try {
@@ -81,29 +108,32 @@ export class ShellService {
       data = { msg: 'please discard this' };
     }
 
-    if (data.msg === 'connected') {
-      this.connected = true;
-      this.onconnect();
+    if (data.msg === IncomingApiMessageType.Connected) {
       this.shellConnected.emit({
-        connected: this.connected,
+        connected: true,
         id: data.id,
       });
       return;
     }
 
-    if (!this.connected || data.msg === 'ping') {
+    if (!this.isConnected || data.msg === IncomingApiMessageType.Pong) {
       return;
     }
 
-    this.shellCmdOutput = msg.data as ArrayBuffer;
-    this.shellOutput.emit(this.shellCmdOutput);
+    this.shellOutput.emit(msg.data as ArrayBuffer);
   }
 
-  send(payload: string): void {
-    if (this.socket.readyState === WebSocket.OPEN) {
-      this.socket.send(payload);
+  send(payload: Uint8Array): void {
+    if (this.isConnected) {
+      this.ws$.next(payload);
     } else {
       this.pendingMessages.push(payload);
+    }
+  }
+
+  closeWebsocketConnection(): void {
+    if (this.ws$) {
+      this.ws$.complete();
     }
   }
 }

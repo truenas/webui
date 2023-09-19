@@ -114,9 +114,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.shellService.connected) {
-      this.shellService.socket.close();
-    }
+    this.shellService.closeWebsocketConnection();
   }
 
   onResize(): void {
@@ -159,7 +157,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
       this.attachAddon.dispose();
     }
 
-    this.attachAddon = new XtermAttachAddon(this.shellService.socket);
+    this.attachAddon = new XtermAttachAddon(this.shellService);
     this.xterm.loadAddon(this.attachAddon);
   }
 
