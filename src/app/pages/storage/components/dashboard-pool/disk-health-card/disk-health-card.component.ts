@@ -51,16 +51,16 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
     public translate: TranslateService,
   ) { }
 
+  ngOnChanges(): void {
+    this.ngOnInit();
+  }
+
   ngOnInit(): void {
     if (this.disks) {
       this.diskState.smartTests = this.disks.reduce((total, disk) => total + disk.smartTestsFailed, 0);
       this.diskState.alerts = this.disks.reduce((total, current) => total + current.alerts.length, 0);
       this.loadTemperatures();
     }
-  }
-
-  ngOnChanges(): void {
-    this.ngOnInit();
   }
 
   get isAverageTempReady(): boolean {

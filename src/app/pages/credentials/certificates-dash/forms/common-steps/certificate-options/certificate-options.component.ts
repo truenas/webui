@@ -60,12 +60,12 @@ export class CertificateOptionsComponent implements OnInit, OnChanges, SummaryPr
     private cdr: ChangeDetectorRef,
   ) { }
 
-  ngOnInit(): void {
-    this.loadSigningAuthorities();
+  ngOnChanges(): void {
     this.setSignedByValidator();
   }
 
-  ngOnChanges(): void {
+  ngOnInit(): void {
+    this.loadSigningAuthorities();
     this.setSignedByValidator();
   }
 

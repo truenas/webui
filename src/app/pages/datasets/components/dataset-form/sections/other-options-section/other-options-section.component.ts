@@ -136,15 +136,6 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     private datasetFormService: DatasetFormService,
   ) {}
 
-  ngOnInit(): void {
-    this.checkIfDedupIsSupported();
-    this.setUpShareTypeSelect();
-
-    this.form.controls.acltype.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
-      this.updateAclMode();
-    });
-  }
-
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     if (!changes.existing?.currentValue && !changes.parent?.currentValue) {
       return;
@@ -157,6 +148,15 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     this.setUpAclTypeWarning();
     this.updateAclMode();
     this.disableCaseSensitivityOnEdit();
+  }
+
+  ngOnInit(): void {
+    this.checkIfDedupIsSupported();
+    this.setUpShareTypeSelect();
+
+    this.form.controls.acltype.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+      this.updateAclMode();
+    });
   }
 
   getPayload(): Partial<DatasetCreate> | Partial<DatasetUpdate> {

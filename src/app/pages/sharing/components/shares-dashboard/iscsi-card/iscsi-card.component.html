@@ -45,10 +45,10 @@
       [isLoading]="isLoading"
     >
       <ng-template
+        let-iscsi
         ix-table-cell
         [columnIndex]="2"
         [dataProvider]="dataProvider"
-        let-iscsi
       >
         <div class="buttons">
           <button

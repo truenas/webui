@@ -46,16 +46,16 @@ export class NormalSelectionComponent implements OnInit, OnChanges {
     protected store: PoolManagerStore,
   ) {}
 
-  ngOnInit(): void {
-    this.updateControlOptionsOnChanges();
-    this.updateStoreOnChanges();
-    this.listenForResetEvents();
-  }
-
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     if (hasDeepChanges(changes, 'inventory') || hasDeepChanges(changes, 'layout')) {
       this.updateWidthOptions();
     }
+  }
+
+  ngOnInit(): void {
+    this.updateControlOptionsOnChanges();
+    this.updateStoreOnChanges();
+    this.listenForResetEvents();
   }
 
   get isNumberOfVdevsLimitedToOne(): boolean {

@@ -219,6 +219,7 @@ module.exports = {
 
         // Extra rules
         "@angular-eslint/use-lifecycle-interface": ["error"],
+        "@angular-eslint/sort-lifecycle-methods": ["error"],
         "@typescript-eslint/array-type": "error",
         "@typescript-eslint/explicit-member-accessibility": ["error", { accessibility: "no-public" }],
         "@typescript-eslint/no-inferrable-types": "error",

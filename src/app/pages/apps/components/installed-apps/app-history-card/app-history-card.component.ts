@@ -24,11 +24,11 @@ export class AppHistoryCardComponent implements OnInit, OnChanges {
     private cdr: ChangeDetectorRef,
   ) {}
 
-  ngOnInit(): void {
+  ngOnChanges(): void {
     this.loadEvents();
   }
 
-  ngOnChanges(): void {
+  ngOnInit(): void {
     this.loadEvents();
   }
 

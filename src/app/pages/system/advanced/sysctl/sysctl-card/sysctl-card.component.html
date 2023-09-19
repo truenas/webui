@@ -31,10 +31,10 @@
       [isLoading]="isLoading"
     >
       <ng-template
+        let-row
         ix-table-cell
         [columnIndex]="4"
         [dataProvider]="dataProvider"
-        let-row
       >
         <div class="buttons">
           <button

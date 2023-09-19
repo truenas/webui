@@ -71,17 +71,17 @@ export class DraidSelectionComponent implements OnInit, OnChanges {
     return parityDisksPerGroup[this.layout];
   }
 
-  ngOnInit(): void {
-    this.updateControlOptionsOnChanges();
-    this.updateStoreOnChanges();
-    this.listenForResetEvents();
-  }
-
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     if (hasDeepChanges(changes, 'layout') || hasDeepChanges(changes, 'inventory')) {
       this.updateDataDevicesOptions();
       this.updateDisabledStatuses();
     }
+  }
+
+  ngOnInit(): void {
+    this.updateControlOptionsOnChanges();
+    this.updateStoreOnChanges();
+    this.listenForResetEvents();
   }
 
   protected onDisksSelected(disks: UnusedDisk[]): void {
