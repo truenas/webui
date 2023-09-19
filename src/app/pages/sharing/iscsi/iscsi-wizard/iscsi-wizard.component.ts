@@ -5,7 +5,7 @@ import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { forkJoin, lastValueFrom } from 'rxjs';
+import { Observable, forkJoin, lastValueFrom, map, of, switchMap } from 'rxjs';
 import { patterns } from 'app/constants/name-patterns.constant';
 import { DatasetType } from 'app/enums/dataset.enum';
 import {
@@ -16,6 +16,9 @@ import {
   IscsiNewOption,
 } from 'app/enums/iscsi.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
+import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
+import { ServiceStatus } from 'app/enums/service-status.enum';
+import { shared } from 'app/helptext/sharing';
 import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
 import {
   IscsiAuthAccess,
@@ -36,6 +39,7 @@ import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { forbiddenValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { matchOthersFgValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
@@ -117,7 +121,7 @@ export class IscsiWizardComponent implements OnInit {
   }
 
   get isNewInitiator(): boolean {
-    return this.form.controls.initiator.enabled && !!this.form.value.initiator.initiators.length;
+    return this.form.controls.initiator.enabled;
   }
 
   get zvolPayload(): DatasetCreate {
@@ -179,8 +183,8 @@ export class IscsiWizardComponent implements OnInit {
   get initiatorPayload(): IscsiInitiatorGroupUpdate {
     const value = this.form.value;
     return {
-      initiators: value.initiator.initiators,
       comment: value.device.name,
+      ...(value.initiator.initiators.length ? { initiators: value.initiator.initiators } : {}),
     };
   }
 
@@ -216,6 +220,7 @@ export class IscsiWizardComponent implements OnInit {
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
+    private snackbar: SnackbarService,
   ) {
     this.iscsiService.getExtents().pipe(untilDestroyed(this)).subscribe((extents) => {
       this.namesInUse.push(...extents.map((extent) => extent.name));
@@ -421,8 +426,52 @@ export class IscsiWizardComponent implements OnInit {
       return;
     }
 
+    await this.checkIfIscsiServiceIsEnabled();
+
     this.isLoading = false;
     this.cdr.markForCheck();
     this.slideInRef.close();
+  }
+
+  private checkIfIscsiServiceIsEnabled(): Promise<void> {
+    return lastValueFrom(this.ws.call('service.query').pipe(
+      switchMap((services) => {
+        const iscsiService = services.find((service) => service.service === ServiceName.Iscsi);
+        if (!iscsiService.enable || iscsiService.state === ServiceStatus.Stopped) {
+          return this.startIscsiService();
+        }
+
+        return of(null);
+      }),
+    ));
+  }
+
+  private startIscsiService(): Observable<void> {
+    return this.dialogService.confirm({
+      title: shared.dialog_title,
+      message: shared.dialog_message,
+      hideCheckbox: true,
+      buttonText: shared.dialog_button,
+    }).pipe(
+      switchMap((confirmed) => {
+        if (!confirmed) {
+          return of(null);
+        }
+
+        return this.ws.call('service.update', [ServiceName.Iscsi, { enable: true }]).pipe(
+          switchMap(() => this.ws.call('service.start', [ServiceName.Iscsi, { silent: false }])),
+          map(() => {
+            this.snackbar.success(
+              this.translate.instant('The {service} service has been enabled.',
+                { service: serviceNames.get(ServiceName.Iscsi) },
+              ),
+            );
+
+            return undefined;
+          }),
+          this.errorHandler.catchError(),
+        );
+      }),
+    );
   }
 }

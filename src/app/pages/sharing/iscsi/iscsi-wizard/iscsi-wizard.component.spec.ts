@@ -7,10 +7,12 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatStepperModule } from '@angular/material/stepper';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { ServiceName } from 'app/enums/service-name.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import {
   IscsiAuthAccess, IscsiExtent, IscsiInitiatorGroup, IscsiPortal, IscsiTarget, IscsiTargetExtent,
 } from 'app/interfaces/iscsi.interface';
+import { Service } from 'app/interfaces/service.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -58,6 +60,12 @@ describe('IscsiWizardComponent', () => {
         mockCall('iscsi.initiator.create', { id: 14 } as IscsiInitiatorGroup),
         mockCall('iscsi.target.create', { id: 15 } as IscsiTarget),
         mockCall('iscsi.targetextent.create', { id: 16 } as IscsiTargetExtent),
+        mockCall('service.query', [{
+          service: ServiceName.Iscsi,
+          enable: true,
+        } as Service]),
+        mockCall('service.update'),
+        mockCall('service.start'),
       ]),
       mockProvider(IxSlideInRef),
       { provide: SLIDE_IN_DATA, useValue: undefined },
@@ -145,6 +153,8 @@ describe('IscsiWizardComponent', () => {
       extent: 11,
       target: 15,
     }]);
+
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('service.query');
 
     expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
   }));
