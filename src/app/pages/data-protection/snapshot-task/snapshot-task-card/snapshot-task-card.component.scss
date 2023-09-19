@@ -1,0 +1,33 @@
+.card-title {
+  align-items: center;
+  display: flex;
+
+  ix-icon {
+    margin-left: 5px;
+  }
+}
+
+.footer-actions {
+  display: flex;
+  gap: 8px;
+  padding: 10px;
+}
+
+:host ::ng-deep {
+  .state-button {
+    text-overflow: inherit !important;
+    width: 80px;
+  }
+
+  .justify-end {
+    display: flex;
+    height: inherit;
+    justify-content: flex-end;
+
+    mat-slide-toggle {
+      align-items: center;
+      display: flex;
+      height: 100%;
+    }
+  }
+}

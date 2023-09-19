@@ -86,6 +86,7 @@
   "Delete DNS Authenticator": "",
   "Delete Init/Shutdown Script {script}?": "",
   "Delete Interface": "",
+  "Delete Periodic Snapshot Task <b>\"{value}\"</b>?": "",
   "Delete SSH Keypair": "",
   "Delete Script": "",
   "Delete Static Route": "",
