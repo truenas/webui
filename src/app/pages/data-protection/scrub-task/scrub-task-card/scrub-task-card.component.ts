@@ -24,7 +24,6 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ScrubTaskCardComponent implements OnInit {
-  scrubTasks: ScrubTaskUi[] = [];
   dataProvider = new ArrayDataProvider<ScrubTaskUi>();
   isLoading = false;
 
@@ -40,10 +39,12 @@ export class ScrubTaskCardComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Frequency'),
       propertyName: 'frequency',
+      getValue: (task) => this.taskService.getTaskCronDescription(scheduleToCrontab(task.schedule)),
     }),
     textColumn({
       title: this.translate.instant('Next Run'),
       propertyName: 'next_run',
+      getValue: (task) => this.taskService.getTaskNextRun(scheduleToCrontab(task.schedule)),
     }),
     toggleColumn({
       title: this.translate.instant('Enabled'),
@@ -75,9 +76,7 @@ export class ScrubTaskCardComponent implements OnInit {
     this.ws.call('pool.scrub.query').pipe(
       untilDestroyed(this),
     ).subscribe((scrubTasks: ScrubTaskUi[]) => {
-      const transformedScrubTasks = this.transformScrubTasks(scrubTasks);
-      this.scrubTasks = transformedScrubTasks;
-      this.dataProvider.setRows(transformedScrubTasks);
+      this.dataProvider.setRows(scrubTasks);
       this.isLoading = false;
       this.cdr.markForCheck();
     });
@@ -122,15 +121,5 @@ export class ScrubTaskCardComponent implements OnInit {
           this.dialogService.error(this.errorHandler.parseWsError(err));
         },
       });
-  }
-
-  private transformScrubTasks(scrubTasks: ScrubTaskUi[]): ScrubTaskUi[] {
-    return scrubTasks.map((task) => {
-      task.cron_schedule = scheduleToCrontab(task.schedule);
-      task.frequency = this.taskService.getTaskCronDescription(task.cron_schedule);
-      task.next_run = this.taskService.getTaskNextRun(task.cron_schedule);
-
-      return task;
-    });
   }
 }
