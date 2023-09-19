@@ -42,7 +42,9 @@
           >
             <ix-icon name="edit"></ix-icon>
           </button>
+
           <button
+            *ngIf="!task.job || task.job?.state !== jobState.Running"
             mat-icon-button
             [ixTest]="[task.id, 'run_now']"
             [matTooltip]="'Run job' | translate"
@@ -50,6 +52,7 @@
           >
             <ix-icon name="play_arrow"></ix-icon>
           </button>
+
           <button
             mat-icon-button
             [ixTest]="[task.id, 'delete']"

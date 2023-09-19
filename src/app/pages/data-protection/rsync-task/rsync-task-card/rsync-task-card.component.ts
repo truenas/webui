@@ -35,6 +35,7 @@ export class RsyncTaskCardComponent implements OnInit {
   dataProvider = new ArrayDataProvider<RsyncTaskUi>();
   isLoading = false;
   jobStates = new Map<number, string>();
+  readonly jobState = JobState;
 
   columns = createTable<RsyncTaskUi>([
     textColumn({
