@@ -19,7 +19,6 @@ import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.interface';
 import { ReplicationTaskUi } from 'app/interfaces/replication-task.interface';
-import { RsyncTaskUi } from 'app/interfaces/rsync-task.interface';
 import { ScrubTaskUi } from 'app/interfaces/scrub-task.interface';
 import { SmartTestTaskUi } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
@@ -40,7 +39,6 @@ import {
   ReplicationRestoreDialogComponent,
 } from 'app/pages/data-protection/replication/replication-restore-dialog/replication-restore-dialog.component';
 import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
-import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
 import { ScrubTaskFormComponent } from 'app/pages/data-protection/scrub-task/scrub-task-form/scrub-task-form.component';
 import { SmartTaskFormComponent } from 'app/pages/data-protection/smart-task/smart-task-form/smart-task-form.component';
 import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
@@ -62,7 +60,6 @@ enum TaskCardId {
   Snapshot = 'snapshot',
   Replication = 'replication',
   CloudSync = 'cloudsync',
-  Rsync = 'rsync',
   Smart = 'smart',
 }
 
@@ -71,7 +68,6 @@ ScrubTaskUi &
 Omit<PeriodicSnapshotTaskUi, 'naming_schema'> &
 Omit<ReplicationTaskUi, 'naming_schema'> &
 CloudSyncTaskUi &
-RsyncTaskUi &
 SmartTestTaskUi
 >;
 
@@ -129,9 +125,6 @@ export class DataProtectionDashboardComponent implements OnInit {
             break;
           case SnapshotTaskFormComponent:
             this.refreshTable(TaskCardId.Snapshot);
-            break;
-          case RsyncTaskFormComponent:
-            this.refreshTable(TaskCardId.Rsync);
             break;
           case SmartTaskFormComponent:
             this.refreshTable(TaskCardId.Smart);
@@ -483,33 +476,6 @@ export class DataProtectionDashboardComponent implements OnInit {
     });
   }
 
-  rsyncDataSourceHelper(data: RsyncTaskUi[]): RsyncTaskUi[] {
-    return data.map((task) => {
-      task.cron_schedule = scheduleToCrontab(task.schedule);
-      task.frequency = this.taskService.getTaskCronDescription(task.cron_schedule);
-      task.next_run = this.taskService.getTaskNextRun(task.cron_schedule);
-
-      if (task.job === null) {
-        task.state = { state: task.locked ? JobState.Locked : JobState.Pending };
-      } else {
-        task.state = { state: task.job.state };
-        this.store$.select(selectJob(task.job.id)).pipe(
-          filter(Boolean),
-          untilDestroyed(this),
-        ).subscribe((job: Job) => {
-          task.state = { state: job.state };
-          task.job = job;
-          if (this.jobStates.get(job.id) !== job.state) {
-            this.refreshTable(TaskCardId.Rsync);
-          }
-          this.jobStates.set(job.id, job.state);
-        });
-      }
-
-      return task;
-    });
-  }
-
   getReplicationActions(): AppTableAction<ReplicationTaskUi>[] {
     return [
       {
@@ -695,44 +661,6 @@ export class DataProtectionDashboardComponent implements OnInit {
     ];
   }
 
-  getRsyncActions(): AppTableAction<RsyncTaskUi>[] {
-    return [
-      {
-        icon: 'play_arrow',
-        matTooltip: this.translate.instant('Run Now'),
-        name: 'run',
-        onClick: (row) => {
-          this.dialogService.confirm({
-            title: this.translate.instant('Run Now'),
-            message: this.translate.instant('Run this rsync now?'),
-            hideCheckbox: true,
-          }).pipe(
-            filter(Boolean),
-            tap(() => row.state = { state: JobState.Running }),
-            switchMap(() => this.ws.job('rsynctask.run', [row.id])),
-            tapOnce(() => this.snackbar.success(
-              this.translate.instant('Rsync task «{name}» has started.', {
-                name: `${row.remotehost} – ${row.remotemodule}`,
-              }),
-            )),
-            catchError((error: Job) => {
-              this.dialogService.error(this.errorHandler.parseJobError(error));
-              return EMPTY;
-            }),
-            untilDestroyed(this),
-          ).subscribe((job: Job) => {
-            row.state = { state: job.state };
-            row.job = job;
-            if (this.jobStates.get(job.id) !== job.state) {
-              this.refreshTable(TaskCardId.Rsync);
-            }
-            this.jobStates.set(job.id, job.state);
-          });
-        },
-      },
-    ];
-  }
-
   isActionVisible(name: string, row: TaskTableRow): boolean {
     if (name === 'run' && row.job && row.job.state === JobState.Running) {
       return false;
@@ -805,8 +733,7 @@ export class DataProtectionDashboardComponent implements OnInit {
     let updateCall: 'pool.scrub.update'
     | 'pool.snapshottask.update'
     | 'replication.update'
-    | 'cloudsync.update'
-    | 'rsynctask.update';
+    | 'cloudsync.update';
     switch (card) {
       case TaskCardId.Scrub:
         updateCall = 'pool.scrub.update';
@@ -819,9 +746,6 @@ export class DataProtectionDashboardComponent implements OnInit {
         break;
       case TaskCardId.CloudSync:
         updateCall = 'cloudsync.update';
-        break;
-      case TaskCardId.Rsync:
-        updateCall = 'rsynctask.update';
         break;
       default:
         return;
