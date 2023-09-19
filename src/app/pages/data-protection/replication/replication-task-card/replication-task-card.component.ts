@@ -35,7 +35,6 @@ import { AppState } from 'app/store';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ReplicationTaskCardComponent implements OnInit {
-  replicationTasks: ReplicationTaskUi[] = [];
   dataProvider = new ArrayDataProvider<ReplicationTaskUi>();
   isLoading = false;
   jobStates = new Map<number, string>();
@@ -91,7 +90,6 @@ export class ReplicationTaskCardComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe((replicationTasks: ReplicationTaskUi[]) => {
       const transformedReplicationTasks = this.transformReplicationTasks(replicationTasks);
-      this.replicationTasks = transformedReplicationTasks;
       this.dataProvider.setRows(transformedReplicationTasks);
       this.isLoading = false;
       this.cdr.markForCheck();
