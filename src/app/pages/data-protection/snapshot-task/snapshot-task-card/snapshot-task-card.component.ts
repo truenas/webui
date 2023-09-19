@@ -25,7 +25,6 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SnapshotTaskCardComponent implements OnInit {
-  snapshotTasks: PeriodicSnapshotTaskUi[] = [];
   dataProvider = new ArrayDataProvider<PeriodicSnapshotTaskUi>();
   isLoading = false;
 
@@ -36,15 +35,17 @@ export class SnapshotTaskCardComponent implements OnInit {
     }),
     textColumn({
       title: this.translate.instant('Keep for'),
-      propertyName: 'keepfor',
+      getValue: (task) => `${task.lifetime_value} ${task.lifetime_unit}(S)`,
     }),
     textColumn({
       title: this.translate.instant('Frequency'),
       propertyName: 'frequency',
+      getValue: (task) => this.taskService.getTaskCronDescription(scheduleToCrontab(task.schedule)),
     }),
     textColumn({
       title: this.translate.instant('Next Run'),
       propertyName: 'next_run',
+      getValue: (task) => this.taskService.getTaskNextRun(scheduleToCrontab(task.schedule)),
     }),
     toggleColumn({
       title: this.translate.instant('Enabled'),
@@ -81,9 +82,7 @@ export class SnapshotTaskCardComponent implements OnInit {
     this.ws.call('pool.snapshottask.query').pipe(
       untilDestroyed(this),
     ).subscribe((snapshotTasks: PeriodicSnapshotTaskUi[]) => {
-      const transformedSnapshotTasks = this.transformSnapshotTasks(snapshotTasks);
-      this.snapshotTasks = transformedSnapshotTasks;
-      this.dataProvider.setRows(transformedSnapshotTasks);
+      this.dataProvider.setRows(snapshotTasks);
       this.isLoading = false;
       this.cdr.markForCheck();
     });
@@ -130,16 +129,5 @@ export class SnapshotTaskCardComponent implements OnInit {
           this.dialogService.error(this.errorHandler.parseWsError(err));
         },
       });
-  }
-
-  private transformSnapshotTasks(snapshotTasks: PeriodicSnapshotTaskUi[]): PeriodicSnapshotTaskUi[] {
-    return snapshotTasks.map((task) => {
-      task.keepfor = `${task.lifetime_value} ${task.lifetime_unit}(S)`;
-      task.cron_schedule = scheduleToCrontab(task.schedule);
-      task.frequency = this.taskService.getTaskCronDescription(task.cron_schedule);
-      task.next_run = this.taskService.getTaskNextRun(task.cron_schedule);
-
-      return task;
-    });
   }
 }
