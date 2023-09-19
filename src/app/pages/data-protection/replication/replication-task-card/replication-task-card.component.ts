@@ -150,6 +150,7 @@ export class ReplicationTaskCardComponent implements OnInit {
         this.jobStates.set(job.id, job.state);
       }),
       catchError((error: Job) => {
+        this.getReplicationTasks();
         this.dialogService.error(this.errorHandler.parseJobError(error));
         return EMPTY;
       }),
