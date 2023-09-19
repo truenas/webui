@@ -29,10 +29,10 @@
       [isLoading]="isLoading"
     >
       <ng-template
+        let-address
         ix-table-cell
         [columnIndex]="1"
         [dataProvider]="dataProvider"
-        let-address
       >
         <div class="actions">
           <button

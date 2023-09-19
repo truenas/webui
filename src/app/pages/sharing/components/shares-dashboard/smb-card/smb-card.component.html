@@ -47,10 +47,10 @@
       [isLoading]="isLoading"
     >
       <ng-template
+        let-smb
         ix-table-cell
         [columnIndex]="isClustered ? 3 : 4"
         [dataProvider]="dataProvider"
-        let-smb
       >
         <div class="justify-end">
           <button

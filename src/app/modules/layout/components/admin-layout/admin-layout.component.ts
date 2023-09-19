@@ -100,13 +100,13 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     this.listenForSidenavChanges();
   }
 
-  ngOnDestroy(): void {
-    this.tokenLifetimeService.stop();
-  }
-
   ngAfterViewInit(): void {
     this.sidenavService.setSidenav(this.sideNavs?.first);
     this.renderPageHeader();
+  }
+
+  ngOnDestroy(): void {
+    this.tokenLifetimeService.stop();
   }
 
   listenForSidenavChanges(): void {

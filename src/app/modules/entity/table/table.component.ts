@@ -215,6 +215,14 @@ implements OnInit, AfterViewInit, AfterViewChecked {
     }
   }
 
+  ngOnInit(): void {
+    this.populateTable();
+
+    this.afterGetDataHook$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.updateColumns();
+    });
+  }
+
   ngAfterViewInit(): void {
     this.calculateLimitRows();
   }
@@ -223,14 +231,6 @@ implements OnInit, AfterViewInit, AfterViewChecked {
     if (this.tableHeight !== this.table.nativeElement.offsetHeight) {
       setTimeout(() => this.calculateLimitRows());
     }
-  }
-
-  ngOnInit(): void {
-    this.populateTable();
-
-    this.afterGetDataHook$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.updateColumns();
-    });
   }
 
   populateTable(): void {

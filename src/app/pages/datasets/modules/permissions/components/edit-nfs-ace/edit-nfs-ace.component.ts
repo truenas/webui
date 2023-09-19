@@ -106,12 +106,12 @@ export class EditNfsAceComponent implements OnChanges, OnInit {
     return this.form.value.flagsType === NfsFormFlagsType.Basic;
   }
 
-  ngOnInit(): void {
-    this.setFormListeners();
+  ngOnChanges(): void {
     this.updateFormValues();
   }
 
-  ngOnChanges(): void {
+  ngOnInit(): void {
+    this.setFormListeners();
     this.updateFormValues();
   }
 

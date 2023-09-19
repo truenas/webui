@@ -77,10 +77,6 @@ export class SmbCardComponent implements OnInit, OnChanges {
     private router: Router,
   ) {}
 
-  ngOnInit(): void {
-    this.getSmbShares();
-  }
-
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     if (!changes.isClustered?.currentValue && !!changes.isClustered?.previousValue) {
       this.updateEnabledFieldVisibility(false);
@@ -96,6 +92,10 @@ export class SmbCardComponent implements OnInit, OnChanges {
       this.isDeleteActionDisabled = true;
       this.tableHint = this.translate.instant('This share is configured through TrueCommand');
     }
+  }
+
+  ngOnInit(): void {
+    this.getSmbShares();
   }
 
   openForm(row?: SmbShare): void {

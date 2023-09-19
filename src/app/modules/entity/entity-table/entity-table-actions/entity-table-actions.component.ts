@@ -34,16 +34,16 @@ export class EntityTableActionsComponent implements OnInit, OnChanges {
     return this.entity.conf.inlineActions || false;
   }
 
+  ngOnChanges(): void {
+    this.getActions();
+  }
+
   ngOnInit(): void {
     if (this.entity.conf.config?.deleteMsg) {
       this.keyProp = this.entity.conf.config.deleteMsg.key_props[0];
     } else if (this.entity.filterColumns) {
       this.keyProp = this.entity.filterColumns[0].prop;
     }
-    this.getActions();
-  }
-
-  ngOnChanges(): void {
     this.getActions();
   }
 
