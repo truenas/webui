@@ -190,61 +190,6 @@ export class DataProtectionDashboardComponent implements OnInit {
         },
       },
       {
-        name: TaskCardId.Snapshot,
-        tableConf: {
-          title: helptext.fieldset_periodic_snapshot_tasks,
-          titleHref: '/tasks/snapshot',
-          queryCall: 'pool.snapshottask.query',
-          deleteCall: 'pool.snapshottask.delete',
-          deleteMsg: {
-            title: this.translate.instant('Periodic Snapshot Task'),
-            key_props: ['dataset', 'naming_schema', 'keepfor'],
-          },
-          columns: [
-            { name: this.translate.instant('Pool/Dataset'), prop: 'dataset', enableMatTooltip: true },
-            { name: this.translate.instant('Keep for'), prop: 'keepfor', enableMatTooltip: true },
-            { name: this.translate.instant('Frequency'), prop: 'frequency', enableMatTooltip: true },
-            { name: this.translate.instant('Next Run'), prop: 'next_run', enableMatTooltip: true },
-            {
-              name: this.translate.instant('Enabled'),
-              prop: 'enabled',
-              width: '80px',
-              checkbox: true,
-              onChange: (row: PeriodicSnapshotTaskUi) => this.onCheckboxToggle(TaskCardId.Snapshot, row, 'enabled'),
-            },
-            { name: this.translate.instant('State'), prop: 'state', button: true },
-          ],
-          dataSourceHelper: (data: PeriodicSnapshotTaskUi[]) => this.snapshotDataSourceHelper(data),
-          isActionVisible: this.isActionVisible,
-          parent: this,
-          add: () => {
-            const slideInRef = this.slideInService.open(SnapshotTaskFormComponent, { wide: true });
-            this.handleSlideInClosed(slideInRef, SnapshotTaskFormComponent);
-          },
-          edit: (row: PeriodicSnapshotTaskUi) => {
-            const slideInRef = this.slideInService.open(SnapshotTaskFormComponent, { wide: true, data: row });
-            this.handleSlideInClosed(slideInRef, SnapshotTaskFormComponent);
-          },
-          tableFooterActions: [
-            {
-              label: this.translate.instant('VMware Snapshot Integration'),
-              onClick: () => {
-                this.router.navigate(['/data-protection', 'vmware-snapshots']);
-              },
-            },
-            {
-              label: this.translate.instant('Snapshots'),
-              onClick: () => {
-                this.router.navigate(['/datasets', 'snapshots']);
-              },
-            },
-          ],
-          onButtonClick: (row) => {
-            this.stateButton(row);
-          },
-        },
-      },
-      {
         name: TaskCardId.Replication,
         tableConf: {
           title: helptext.fieldset_replication_tasks,
