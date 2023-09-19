@@ -1069,7 +1069,6 @@
   "Cloud credential updated.": "Хмарний обліковий запис оновлено.",
   "Cloud sync <i>{taskName}</i> stopped.": "Хмарну синхронізацію <i>{taskName}</i> зупинено.",
   "Cloud sync «{name}» has started.": "Хмарна синхронізація «{name}» почалася.",
-  "Cloud sync «{name}» stopped.": "Хмарну синхронізацію «{name}» зупинено.",
   "Cluster CIDR": "Кластер CIDR",
   "Cluster DNS IP": "Кластер DNS IP",
   "Collapse": "Згорнути",

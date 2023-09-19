@@ -1001,7 +1001,6 @@
   "Cloud credential updated.": "Cloudinloggegevens zijn bijgewerkt.",
   "Cloud sync <i>{taskName}</i> stopped.": "Cloudsynchronisatie <i>{taskName}</i> is gestopt.",
   "Cloud sync «{name}» has started.": "Cloudsynchronisatie «{name}» is gestart.",
-  "Cloud sync «{name}» stopped.": "Cloudsynchronisatie «{name}» is gestopt.",
   "Cluster CIDR": "Cluster CIDR",
   "Cluster DNS IP": "Cluster DNS IP",
   "Collapse": "Samenvouwen",

@@ -1082,7 +1082,6 @@
   "Cloud credential updated.": "云凭证已更新。",
   "Cloud sync <i>{taskName}</i> stopped.": "云端同步 <i>{taskName}</i> 已停止。",
   "Cloud sync «{name}» has started.": "云同步 «{name}» 已开始。",
-  "Cloud sync «{name}» stopped.": "云同步 «{name}» 已停止。",
   "Cluster CIDR": "集群CIDR",
   "Cluster DNS IP": "集群DNS IP",
   "Collapse": "折叠",

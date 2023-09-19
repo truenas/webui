@@ -913,7 +913,6 @@
   "Cloud credential updated.": "Identifiant cloud mis à jour.",
   "Cloud sync <i>{taskName}</i> stopped.": "La synchronisation cloud <i>{taskName}</i> s'est arrêtée.",
   "Cloud sync «{name}» has started.": "La synchronisation cloud «{name}» a démarré.",
-  "Cloud sync «{name}» stopped.": "La synchronisation cloud «{name}» est arrêtée.",
   "Cluster CIDR": "CIDR du Cluster",
   "Cluster DNS IP": "IP DNS du Cluster",
   "Collapse": "Réduire",

@@ -142,7 +142,7 @@ describe('CloudSyncTaskCardComponent', () => {
   it('should show table rows', async () => {
     const expectedRows = [
       ['Description', 'Frequency', 'Next Run', 'Enabled', 'State', ''],
-      ['scru', 'Every hour, every day', 'Disabled', '', '[object Object]', ''],
+      ['scru', 'Every hour, every day', 'Disabled', '', 'PENDING', ''],
     ];
 
     const cells = await table.getCellTexts();

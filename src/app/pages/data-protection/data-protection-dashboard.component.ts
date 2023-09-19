@@ -11,11 +11,9 @@ import {
 } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
-import helptext_cloudsync from 'app/helptext/data-protection/cloudsync/cloudsync-form';
 import helptext from 'app/helptext/data-protection/data-protection-dashboard/data-protection-dashboard';
 import helptext_smart from 'app/helptext/data-protection/smart/smart';
 import globalHelptext from 'app/helptext/global-helptext';
-import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.interface';
 import { ReplicationTaskUi } from 'app/interfaces/replication-task.interface';
@@ -31,10 +29,6 @@ import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-sli
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
-import {
-  CloudsyncRestoreDialogComponent,
-} from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import {
   ReplicationRestoreDialogComponent,
@@ -61,7 +55,6 @@ enum TaskCardId {
   Scrub = 'scrub',
   Snapshot = 'snapshot',
   Replication = 'replication',
-  CloudSync = 'cloudsync',
   Rsync = 'rsync',
   Smart = 'smart',
 }
@@ -70,7 +63,6 @@ type TaskTableRow = Partial<
 ScrubTaskUi &
 Omit<PeriodicSnapshotTaskUi, 'naming_schema'> &
 Omit<ReplicationTaskUi, 'naming_schema'> &
-CloudSyncTaskUi &
 RsyncTaskUi &
 SmartTestTaskUi
 >;
@@ -121,9 +113,6 @@ export class DataProtectionDashboardComponent implements OnInit {
           case ReplicationFormComponent:
           case ReplicationWizardComponent:
             this.refreshTable(TaskCardId.Replication);
-            break;
-          case CloudsyncFormComponent:
-            this.refreshTable(TaskCardId.CloudSync);
             break;
           case ScrubTaskFormComponent:
             this.refreshTable(TaskCardId.Scrub);
@@ -387,44 +376,6 @@ export class DataProtectionDashboardComponent implements OnInit {
     });
   }
 
-  cloudsyncDataSourceHelper(data: CloudSyncTaskUi[]): CloudSyncTaskUi[] {
-    const cloudsyncData = data.map((task) => {
-      const formattedCronSchedule = scheduleToCrontab(task.schedule);
-      task.credential = task.credentials.name;
-      task.cron_schedule = task.enabled ? formattedCronSchedule : this.translate.instant('Disabled');
-      task.frequency = this.taskService.getTaskCronDescription(formattedCronSchedule);
-      task.next_run_time = task.enabled ? this.taskService.getTaskNextTime(formattedCronSchedule) : this.translate.instant('Disabled');
-      task.next_run = task.enabled ? this.taskService.getTaskNextRun(formattedCronSchedule) : this.translate.instant('Disabled');
-
-      if (task.job === null) {
-        task.state = { state: task.locked ? JobState.Locked : JobState.Pending };
-      } else {
-        task.state = { state: task.job.state };
-        this.store$.select(selectJob(task.job.id)).pipe(
-          filter(Boolean),
-          untilDestroyed(this),
-        ).subscribe((job: Job) => {
-          task.state = { state: job.state };
-          task.job = job;
-          if (this.jobStates.get(job.id) !== job.state) {
-            this.refreshTable(TaskCardId.CloudSync);
-          }
-          this.jobStates.set(job.id, job.state);
-        });
-      }
-
-      return task;
-    });
-
-    cloudsyncData.sort((first, second) => {
-      if (typeof first.next_run_time === 'string') return 1;
-      if (typeof second.next_run_time === 'string') return -1;
-      return first.next_run_time.getTime() - second.next_run_time.getTime();
-    });
-
-    return cloudsyncData;
-  }
-
   replicationDataSourceHelper(data: ReplicationTaskUi[]): ReplicationTaskUi[] {
     const tasks: ReplicationTaskUi[] = [];
     data.forEach((task) => {
@@ -588,115 +539,6 @@ export class DataProtectionDashboardComponent implements OnInit {
     ];
   }
 
-  getCloudsyncActions(): AppTableAction<CloudSyncTaskUi>[] {
-    return [
-      {
-        icon: 'play_arrow',
-        matTooltip: this.translate.instant('Run Now'),
-        name: 'run',
-        onClick: (row) => {
-          this.dialogService.confirm({
-            title: this.translate.instant('Run Now'),
-            message: this.translate.instant('Run this cloud sync now?'),
-            hideCheckbox: true,
-          }).pipe(
-            filter(Boolean),
-            tap(() => row.state = { state: JobState.Running }),
-            switchMap(() => this.ws.job('cloudsync.sync', [row.id])),
-            tapOnce(() => this.snackbar.success(
-              this.translate.instant('Cloud sync «{name}» has started.', { name: row.description }),
-            )),
-            catchError((error: Job) => {
-              this.dialogService.error(this.errorHandler.parseJobError(error));
-              return EMPTY;
-            }),
-            untilDestroyed(this),
-          ).subscribe((job: Job) => {
-            row.state = { state: job.state };
-            row.job = job;
-            if (this.jobStates.get(job.id) !== job.state) {
-              this.refreshTable(TaskCardId.CloudSync);
-            }
-            this.jobStates.set(job.id, job.state);
-          });
-        },
-      },
-      {
-        icon: 'stop',
-        matTooltip: this.translate.instant('Stop'),
-        name: 'stop',
-        onClick: (row) => {
-          this.dialogService
-            .confirm({
-              title: this.translate.instant('Stop'),
-              message: this.translate.instant('Stop this cloud sync?'),
-              hideCheckbox: true,
-            })
-            .pipe(
-              filter(Boolean),
-              switchMap(() => {
-                return this.ws.call('cloudsync.abort', [row.id]).pipe(
-                  this.errorHandler.catchError(),
-                );
-              }),
-              untilDestroyed(this),
-            )
-            .subscribe(() => {
-              this.dialogService.info(
-                this.translate.instant('Task Stopped'),
-                this.translate.instant('Cloud sync «{name}» stopped.', { name: row.description }),
-                true,
-              );
-            });
-        },
-      },
-      {
-        icon: 'sync',
-        matTooltip: helptext_cloudsync.action_button_dry_run,
-        name: 'dry_run',
-        onClick: (row) => {
-          this.dialogService.confirm({
-            title: helptext_cloudsync.dry_run_title,
-            message: helptext_cloudsync.dry_run_dialog,
-            hideCheckbox: true,
-          }).pipe(
-            filter(Boolean),
-            switchMap(() => this.ws.job('cloudsync.sync', [row.id, { dry_run: true }])),
-            tapOnce(() => this.snackbar.success(
-              this.translate.instant('Cloud sync «{name}» has started.', { name: row.description }),
-            )),
-            catchError((error: Job) => {
-              this.dialogService.error(this.errorHandler.parseJobError(error));
-              return EMPTY;
-            }),
-            untilDestroyed(this),
-          ).subscribe((job: Job) => {
-            row.state = { state: job.state };
-            row.job = job;
-            if (this.jobStates.get(job.id) !== job.state) {
-              this.refreshTable(TaskCardId.CloudSync);
-            }
-            this.jobStates.set(job.id, job.state);
-          });
-        },
-      },
-      {
-        icon: 'restore',
-        matTooltip: this.translate.instant('Restore'),
-        name: 'restore',
-        onClick: (row) => {
-          const dialog = this.matDialog.open(CloudsyncRestoreDialogComponent, {
-            data: row.id,
-          });
-          dialog
-            .afterClosed()
-            .pipe(untilDestroyed(this))
-            .subscribe(() => this.refreshTable(TaskCardId.CloudSync));
-        },
-      },
-    ];
-  }
-
   getRsyncActions(): AppTableAction<RsyncTaskUi>[] {
     return [
       {
@@ -807,7 +649,6 @@ export class DataProtectionDashboardComponent implements OnInit {
     let updateCall: 'pool.scrub.update'
     | 'pool.snapshottask.update'
     | 'replication.update'
-    | 'cloudsync.update'
     | 'rsynctask.update';
     switch (card) {
       case TaskCardId.Scrub:
@@ -818,9 +659,6 @@ export class DataProtectionDashboardComponent implements OnInit {
         break;
       case TaskCardId.Replication:
         updateCall = 'replication.update';
-        break;
-      case TaskCardId.CloudSync:
-        updateCall = 'cloudsync.update';
         break;
       case TaskCardId.Rsync:
         updateCall = 'rsynctask.update';

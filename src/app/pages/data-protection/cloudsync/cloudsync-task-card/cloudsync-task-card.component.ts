@@ -230,17 +230,15 @@ export class CloudSyncTaskCardComponent implements OnInit {
         task.state = { state: task.locked ? JobState.Locked : JobState.Pending };
       } else {
         task.state = { state: task.job.state };
-        this.store$.select(selectJob(task.job.id)).pipe(
-          filter(Boolean),
-          untilDestroyed(this),
-        ).subscribe((job: Job) => {
-          task.state = { state: job.state };
-          task.job = job;
-          if (this.jobStates.get(job.id) !== job.state) {
-            this.getCloudSyncTasks();
-          }
-          this.jobStates.set(job.id, job.state);
-        });
+        this.store$.select(selectJob(task.job.id)).pipe(filter(Boolean), untilDestroyed(this))
+          .subscribe((job: Job) => {
+            task.state = { state: job.state };
+            task.job = job;
+            if (this.jobStates.get(job.id) !== job.state) {
+              this.getCloudSyncTasks();
+            }
+            this.jobStates.set(job.id, job.state);
+          });
       }
 
       return task;
