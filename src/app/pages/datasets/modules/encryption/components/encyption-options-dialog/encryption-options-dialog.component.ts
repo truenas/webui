@@ -17,7 +17,7 @@ import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
-import { matchOtherValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
+import { matchOthersFgValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
 import { findInTree } from 'app/modules/ix-tree/utils/find-in-tree.utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -47,13 +47,18 @@ export class EncryptionOptionsDialogComponent implements OnInit {
     generate_key: [false],
     key: ['', [Validators.required, Validators.minLength(64), Validators.maxLength(64)]],
     passphrase: ['', Validators.minLength(8)],
-    confirm_passphrase: ['', this.validatorsService.withMessage(
-      matchOtherValidator('passphrase'),
-      this.translate.instant('Passphrase and confirmation should match.'),
-    )],
+    confirm_passphrase: [''],
     pbkdf2iters: [350000, Validators.min(100000)],
     algorithm: [''],
     confirm: [false, [Validators.requiredTrue]],
+  }, {
+    validators: [
+      matchOthersFgValidator(
+        'confirm_passphrase',
+        ['passphrase'],
+        this.translate.instant('Passphrase and confirmation should match.'),
+      ),
+    ],
   });
 
   subscriptions: Subscription[] = [];

@@ -9,7 +9,7 @@ export class IxCellToggleComponent<T> extends ColumnComponent<T> {
   onRowToggle: (row: T, checked: boolean) => void;
 
   get checked(): boolean {
-    return this.row[this.propertyName] as boolean;
+    return this.value as boolean;
   }
 
   onSlideToggleChanged(event: MatSlideToggleChange): void {

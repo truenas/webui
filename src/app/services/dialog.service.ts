@@ -45,7 +45,7 @@ export class DialogService {
       }
       error = error[0];
     }
-    if (!error.message) {
+    if (!error?.message) {
       return of(false);
     }
     const dialogRef = this.dialog.open(ErrorDialogComponent, {

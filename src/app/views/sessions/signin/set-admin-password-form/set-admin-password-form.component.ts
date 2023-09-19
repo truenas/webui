@@ -10,7 +10,7 @@ import { SystemEnvironment } from 'app/enums/system-environment.enum';
 import { RadioOption } from 'app/interfaces/option.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
-import { matchOtherValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
+import { matchOthersFgValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
 import { AuthService } from 'app/services/auth/auth.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { SigninStore } from 'app/views/sessions/signin/store/signin.store';
@@ -32,12 +32,16 @@ export class SetAdminPasswordFormComponent implements OnInit {
     password: ['', Validators.required],
     password2: ['', [
       Validators.required,
-      this.validators.withMessage(
-        matchOtherValidator('password'),
-        this.translate.instant('Passwords do not match'),
-      ),
     ]],
     instanceId: ['', Validators.required],
+  }, {
+    validators: [
+      matchOthersFgValidator(
+        'password2',
+        ['password'],
+        this.translate.instant('Passwords do not match'),
+      ),
+    ],
   });
 
   hasInstanceId = false;
