@@ -4,8 +4,9 @@ import { HaStatus } from 'app/interfaces/events/ha-status-event.interface';
 import {
   failoverLicensedStatusLoaded,
   haStatusLoaded,
-  upgradePendingStateLoaded,
+
 } from 'app/store/ha-info/ha-info.actions';
+import { failoverUpgradeFinished, upgradePendingStateLoaded } from 'app/store/ha-upgrade/ha-upgrade.actions';
 
 export interface HaInfoState {
   haStatus: HaStatus;
@@ -31,4 +32,5 @@ export const haInfoReducer = createReducer(
   })),
   on(failoverLicensedStatusLoaded, (state, { isHaLicensed }) => ({ ...state, isHaLicensed })),
   on(upgradePendingStateLoaded, (state, { isUpgradePending }) => ({ ...state, isUpgradePending })),
+  on(failoverUpgradeFinished, (state) => ({ ...state, isUpgradePending: false })),
 );

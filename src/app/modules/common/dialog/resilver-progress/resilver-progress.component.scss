@@ -1,3 +1,8 @@
+:host {
+  display: block;
+  min-width: 300px;
+}
+
 mat-dialog-content.resilver-progres-dialog.mat-mdc-dialog-content {
   overflow: auto !important;
 }

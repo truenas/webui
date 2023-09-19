@@ -1,0 +1,11 @@
+<button
+  *ngIf="isPendingUpgrade$ | async"
+  mat-icon-button
+  id="finish-update"
+  class="topbar-button-right"
+  ixTest="finish-update"
+  [matTooltip]="'Upgrade Waiting to Finish' | translate"
+  (click)="showUpgradePendingDialog()"
+>
+  <ix-icon class="movement" name="update"></ix-icon>
+</button>
