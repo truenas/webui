@@ -28,10 +28,10 @@
       [isLoading]="isLoading"
     >
       <ng-template
+        let-task
         ix-table-cell
         [columnIndex]="6"
         [dataProvider]="dataProvider"
-        let-task
       >
         <div class="justify-end">
           <button
