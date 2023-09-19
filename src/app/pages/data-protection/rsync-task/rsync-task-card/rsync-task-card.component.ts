@@ -47,7 +47,7 @@ export class RsyncTaskCardComponent implements OnInit {
     }),
     textColumn({
       title: this.translate.instant('Frequency'),
-      propertyName: 'desc',
+      propertyName: 'frequency',
     }),
     textColumn({
       title: this.translate.instant('Next Run'),

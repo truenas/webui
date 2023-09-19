@@ -124,7 +124,7 @@ describe('RsyncTaskCardComponent', () => {
   it('should show table rows', async () => {
     const expectedRows = [
       ['Path', 'Remote Host', 'Frequency', 'Next Run', 'Enabled', 'State', ''],
-      ['/mnt/APPS', 'asd', 'asd', 'in 33 minutes', '', '[object Object]', ''],
+      ['/mnt/APPS', 'asd', 'Every hour, every day', 'in 33 minutes', '', '[object Object]', ''],
     ];
 
     const cells = await table.getCellTexts();
