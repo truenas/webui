@@ -1,0 +1,24 @@
+mat-card {
+  height: 100%;
+}
+
+.card-title {
+  align-items: center;
+  display: flex;
+
+  ix-icon {
+    margin-left: 5px;
+  }
+}
+
+.buttons {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.view-all {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  padding: 5px;
+}
