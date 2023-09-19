@@ -1,3 +1,4 @@
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
@@ -8,12 +9,16 @@ import {
   ConfigurationPreviewComponent,
 } from 'app/pages/storage/modules/pool-manager/components/configuration-preview/configuration-preview.component';
 import {
+  ConfigurationPreviewHarness,
+} from 'app/pages/storage/modules/pool-manager/components/configuration-preview/configuration-preview.harness';
+import {
   TopologyCategoryDescriptionPipe,
 } from 'app/pages/storage/modules/pool-manager/pipes/topology-category-description.pipe';
 import { PoolManagerStore, PoolManagerTopology } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 
 describe('ConfigurationPreviewComponent', () => {
   let spectator: Spectator<ConfigurationPreviewComponent>;
+  let configurationPreview: ConfigurationPreviewHarness;
   const createComponent = createComponentFactory({
     component: ConfigurationPreviewComponent,
     imports: [
@@ -82,28 +87,22 @@ describe('ConfigurationPreviewComponent', () => {
     ],
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     spectator = createComponent();
+    configurationPreview = await TestbedHarnessEnvironment.harnessForFixture(
+      spectator.fixture,
+      ConfigurationPreviewHarness,
+    );
   });
 
-  function getItems(): Record<string, string> {
-    const items: Record<string, string> = {};
-    spectator.queryAll<HTMLElement>('.details-item').forEach((item) => {
-      const label = item.querySelector('.label').textContent.trim();
-      const value = item.querySelector('.value').textContent.trim();
-      items[label] = value;
-    });
-    return items;
-  }
-
-  it('shows pool name', () => {
-    expect(getItems()).toMatchObject({
+  it('shows pool name', async () => {
+    expect(await configurationPreview.getItems()).toMatchObject({
       'Name:': 'tank',
     });
   });
 
-  it('shows description for every vdev type in topology', () => {
-    expect(getItems()).toMatchObject({
+  it('shows description for every vdev type in topology', async () => {
+    expect(await configurationPreview.getItems()).toMatchObject({
       'Data:': '2 × STRIPE | 3 × 2 GiB (HDD)',
       'Cache:': '2 × 5 GiB (HDD)',
       'Dedup:': 'None',
@@ -113,14 +112,14 @@ describe('ConfigurationPreviewComponent', () => {
     });
   });
 
-  it('shows encryption', () => {
-    expect(getItems()).toMatchObject({
+  it('shows encryption', async () => {
+    expect(await configurationPreview.getItems()).toMatchObject({
       'Encryption:': 'AES-256',
     });
   });
 
-  it('shows total raw capacity', () => {
-    expect(getItems()).toMatchObject({
+  it('shows total raw capacity', async () => {
+    expect(await configurationPreview.getItems()).toMatchObject({
       'Total Raw Capacity:': '10 GiB',
     });
   });
