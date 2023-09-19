@@ -13,7 +13,6 @@ import { JobState } from 'app/enums/job-state.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import helptext_cloudsync from 'app/helptext/data-protection/cloudsync/cloudsync-form';
 import helptext from 'app/helptext/data-protection/data-protection-dashboard/data-protection-dashboard';
-import helptext_smart from 'app/helptext/data-protection/smart/smart';
 import globalHelptext from 'app/helptext/global-helptext';
 import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -21,7 +20,6 @@ import { PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.in
 import { ReplicationTaskUi } from 'app/interfaces/replication-task.interface';
 import { RsyncTaskUi } from 'app/interfaces/rsync-task.interface';
 import { ScrubTaskUi } from 'app/interfaces/scrub-task.interface';
-import { SmartTestTaskUi } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ShowLogsDialogComponent } from 'app/modules/common/dialog/show-logs-dialog/show-logs-dialog.component';
@@ -42,7 +40,6 @@ import {
 import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
 import { ScrubTaskFormComponent } from 'app/pages/data-protection/scrub-task/scrub-task-form/scrub-task-form.component';
-import { SmartTaskFormComponent } from 'app/pages/data-protection/smart-task/smart-task-form/smart-task-form.component';
 import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -63,7 +60,6 @@ enum TaskCardId {
   Replication = 'replication',
   CloudSync = 'cloudsync',
   Rsync = 'rsync',
-  Smart = 'smart',
 }
 
 type TaskTableRow = Partial<
@@ -71,8 +67,7 @@ ScrubTaskUi &
 Omit<PeriodicSnapshotTaskUi, 'naming_schema'> &
 Omit<ReplicationTaskUi, 'naming_schema'> &
 CloudSyncTaskUi &
-RsyncTaskUi &
-SmartTestTaskUi
+RsyncTaskUi
 >;
 
 @UntilDestroy()
@@ -132,9 +127,6 @@ export class DataProtectionDashboardComponent implements OnInit {
             break;
           case RsyncTaskFormComponent:
             this.refreshTable(TaskCardId.Rsync);
-            break;
-          case SmartTaskFormComponent:
-            this.refreshTable(TaskCardId.Smart);
             break;
         }
       });
@@ -457,31 +449,6 @@ export class DataProtectionDashboardComponent implements OnInit {
       tasks.push(task);
     });
     return tasks;
-  }
-
-  smartTestsDataSourceHelper(data: SmartTestTaskUi[]): SmartTestTaskUi[] {
-    return data.map((test) => {
-      test.cron_schedule = scheduleToCrontab(test.schedule);
-      test.frequency = this.taskService.getTaskCronDescription(test.cron_schedule);
-      test.next_run = this.taskService.getTaskNextRun(test.cron_schedule);
-
-      if (test.all_disks) {
-        test.disksLabel = [this.translate.instant(helptext_smart.smarttest_all_disks_placeholder)];
-      } else if (test.disks.length) {
-        test.disksLabel = [
-          test.disks
-            .map((identifier) => {
-              const fullDisk = this.disks.find((item) => item.identifier === identifier);
-              if (fullDisk) {
-                return fullDisk.devname;
-              }
-              return identifier;
-            })
-            .join(','),
-        ];
-      }
-      return test;
-    });
   }
 
   snapshotDataSourceHelper(data: PeriodicSnapshotTaskUi[]): PeriodicSnapshotTaskUi[] {
