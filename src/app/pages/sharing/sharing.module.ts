@@ -12,6 +12,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
@@ -20,8 +21,12 @@ import { NgxDualListboxModule } from 'app/modules/common/dual-list/dual-list.mod
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
+import { IscsiCardComponent } from 'app/pages/sharing/components/shares-dashboard/iscsi-card/iscsi-card.component';
+import { NfsCardComponent } from 'app/pages/sharing/components/shares-dashboard/nfs-card/nfs-card.component';
+import { SmbCardComponent } from 'app/pages/sharing/components/shares-dashboard/smb-card/smb-card.component';
 import { AuthorizedAccessFormComponent } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-form/authorized-access-form.component';
 import { AuthorizedAccessListComponent } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-list/authorized-access-list.component';
 import { DeleteExtentDialogComponent } from 'app/pages/sharing/iscsi/extent/extent-list/delete-extent-dialog/delete-extent-dialog.component';
@@ -32,6 +37,8 @@ import { PortalWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/
 import { TargetGlobalConfigurationComponent } from 'app/pages/sharing/iscsi/target-global-configuration/target-global-configuration.component';
 import { RestartSmbDialogComponent } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
 import { UserService } from 'app/services/user.service';
+import { ServiceExtraActionsComponent } from './components/shares-dashboard/service-extra-actions/service-extra-actions.component';
+import { ServiceStateButtonComponent } from './components/shares-dashboard/service-state-button/service-state-button.component';
 import { SharesDashboardComponent } from './components/shares-dashboard/shares-dashboard.component';
 import { StartServiceDialogComponent } from './components/start-service-dialog/start-service-dialog.component';
 import { AssociatedTargetFormComponent } from './iscsi/associated-target/associated-target-form/associated-target-form.component';
@@ -78,6 +85,8 @@ import { SmbListComponent } from './smb/smb-list/smb-list.component';
     TestIdModule,
     MatStepperModule,
     NgxDualListboxModule,
+    IxTable2Module,
+    MatToolbarModule,
   ],
   declarations: [
     NfsListComponent,
@@ -107,6 +116,11 @@ import { SmbListComponent } from './smb/smb-list/smb-list.component';
     AssociatedTargetFormComponent,
     DeleteExtentDialogComponent,
     StartServiceDialogComponent,
+    SmbCardComponent,
+    NfsCardComponent,
+    IscsiCardComponent,
+    ServiceExtraActionsComponent,
+    ServiceStateButtonComponent,
   ],
   providers: [
     UserService,

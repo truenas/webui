@@ -1,111 +1,17 @@
-<div class="container" [ngClass]="getContainerClass()">
-  <ix-expandable-table
-    #nfsTable
-    [ngClass]="getNfsOrder()"
-    [expandableTableState]="nfsExpandableState"
-    [disabled]="true"
-    [conf]="nfsTableConf"
-  >
-    <ng-container
-      *ngTemplateOutlet="
-        nfsServiceStatus === ServiceStatus.Loading ? statusLoading : statusButton;
-        context: { status: nfsServiceStatus, count: nfsHasItems, service: 'nfs' }
-      "
-      headerCustomContent
-    ></ng-container>
+<div class="cards">
+  <ix-smb-card
+    [service]="smbService"
+    [isClustered]="isClustered"
+    (statusChanged)="updateTableService(smbService, $event)"
+  ></ix-smb-card>
 
-    <ng-container
-      *ngTemplateOutlet="
-        extraAction;
-        context: { tableExtraActions: nfsTableConf?.tableExtraActions, service: 'nfs' }
-      "
-      headerCustomActions
-    ></ng-container>
-  </ix-expandable-table>
+  <ix-nfs-card
+    [service]="nfsService"
+    (statusChanged)="updateTableService(nfsService, $event)"
+  ></ix-nfs-card>
 
-  <ix-expandable-table
-    #smbTable
-    [ngClass]="getSmbOrder()"
-    [expandableTableState]="smbExpandableState"
-    [disabled]="true"
-    [conf]="smbTableConf"
-  >
-    <ng-container
-      *ngTemplateOutlet="
-        smbServiceStatus === ServiceStatus.Loading ? statusLoading : statusButton;
-        context: { status: smbServiceStatus, count: smbHasItems, service: 'smb' }
-      "
-      headerCustomContent
-    ></ng-container>
-
-    <ng-container
-      *ngTemplateOutlet="
-        extraAction;
-        context: { tableExtraActions: smbTableConf?.tableExtraActions, service: 'smb' }
-      "
-      headerCustomActions
-    ></ng-container>
-  </ix-expandable-table>
-
-  <ix-expandable-table
-    #iscsiTable
-    [ngClass]="getIscsiOrder()"
-    [expandableTableState]="iscsiExpandableState"
-    [disabled]="true"
-    [conf]="iscsiTableConf"
-  >
-    <ng-container
-      *ngTemplateOutlet="
-        iscsiServiceStatus === ServiceStatus.Loading ? statusLoading : statusButton;
-        context: { status: iscsiServiceStatus, count: iscsiHasItems, service: 'iscsi' }
-      "
-      headerCustomContent
-    ></ng-container>
-
-    <ng-container
-      *ngTemplateOutlet="
-        extraAction;
-        context: { tableExtraActions: iscsiTableConf?.tableExtraActions, service: 'iscsi' }
-      "
-      headerCustomActions
-    ></ng-container>
-  </ix-expandable-table>
-
-  <ng-template #statusLoading>
-    <mat-spinner [diameter]="24"></mat-spinner>
-  </ng-template>
-
-  <ng-template #statusButton let-status="status" let-count="count" let-service="service">
-    <button
-      mat-stroked-button
-      [ixTest]="['service-status', service]"
-      [matTooltip]="'Service Status' | translate"
-      [ngClass]="getStatusClass(status, count)"
-    >
-      {{ status }}
-    </button>
-  </ng-template>
-
-  <ng-template #extraAction let-tableExtraActions="tableExtraActions" let-service="service">
-    <div *ngIf="tableExtraActions" id="customActions">
-      <button
-        mat-icon-button
-        aria-label="Table Actions of Expandable Table"
-        [ixTest]="[service, 'actions-menu']"
-        [matMenuTriggerFor]="rowActions"
-      >
-        <ix-icon name="more_vert"></ix-icon>
-      </button>
-      <mat-menu #rowActions="matMenu">
-        <button
-          *ngFor="let action of tableExtraActions"
-          mat-menu-item
-          [ixTest]="[service, 'actions-menu', action.label]"
-          (click)="action.onClick()"
-        >
-          {{ action.label | translate }}
-        </button>
-      </mat-menu>
-    </div>
-  </ng-template>
+  <ix-iscsi-card
+    [service]="iscsiService"
+    (statusChanged)="updateTableService(iscsiService, $event)"
+  ></ix-iscsi-card>
 </div>

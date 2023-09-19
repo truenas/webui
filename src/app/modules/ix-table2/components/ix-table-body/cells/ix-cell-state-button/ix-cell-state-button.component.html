@@ -1,0 +1,12 @@
+<button
+  mat-stroked-button
+  class="state-button"
+  ixTest="row-state"
+  [ngClass]="getButtonClass()"
+  (click)="$event.stopPropagation(); onButtonClick()"
+>
+  {{ state }}
+  <div *ngIf="warnings?.length > 0" class="label-warning-icon">
+    <ix-icon name="mdi-alert"></ix-icon>
+  </div>
+</button>
