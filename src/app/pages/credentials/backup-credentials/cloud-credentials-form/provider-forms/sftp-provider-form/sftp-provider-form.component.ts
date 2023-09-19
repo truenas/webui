@@ -36,7 +36,7 @@ export class SftpProviderFormComponent extends BaseProviderFormComponent impleme
 
   beforeSubmit(): Observable<unknown> {
     if (this.form.value.private_key !== newOption) {
-      return of(undefined);
+      return of();
     }
 
     return this.makeNewKeypair();

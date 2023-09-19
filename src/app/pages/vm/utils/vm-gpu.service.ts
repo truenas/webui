@@ -41,7 +41,7 @@ export class VmGpuService {
         const gpusToRemove = this.subtractGpus(previousGpus, newGpus);
 
         if (!gpusToAdd.length && !gpusToRemove.length) {
-          return of(undefined);
+          return of(null);
         }
 
         return forkJoin([

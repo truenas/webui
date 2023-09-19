@@ -4,7 +4,8 @@ import { ComponentStore } from '@ngrx/component-store';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import {
-  Observable, combineLatest, map, of,
+  EMPTY,
+  Observable, combineLatest, map,
 } from 'rxjs';
 import { AppExtraCategory, appExtraCategoryLabels } from 'app/enums/app-extra-category.enum';
 import { AppsFiltersSort, AppsFiltersValues } from 'app/interfaces/apps-filters-values.interface';
@@ -177,7 +178,7 @@ export class AppsFilterStore extends ComponentStore<AppsFilterState> {
       },
       error: () => {
         this.handleError();
-        return of(undefined);
+        return EMPTY;
       },
     });
   }

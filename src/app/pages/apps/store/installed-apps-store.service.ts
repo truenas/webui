@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import {
+  EMPTY,
   Observable, Subscription, catchError, combineLatest, filter, of, switchMap, tap,
 } from 'rxjs';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
@@ -57,7 +58,7 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> {
       }),
       catchError(() => {
         this.handleError();
-        return of(undefined);
+        return EMPTY;
       }),
     );
   });
