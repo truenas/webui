@@ -5,3 +5,4 @@ export const alertIndicatorPressed = createAction('[Topbar] Alert Indicator Pres
 export const jobIndicatorPressed = createAction('[Topbar] Job Indicator Pressed');
 
 export const sidenavUpdated = createAction('[Topbar] Sidenav Updated', props<SidenavStatusData>());
+export const sidenavIndicatorPressed = createAction('[Topbar] Sidenav Indicator Pressed');

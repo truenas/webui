@@ -1,8 +1,10 @@
 import { routerReducer, RouterReducerState } from '@ngrx/router-store';
 import { ActionReducerMap } from '@ngrx/store';
+import { EulaEffects } from 'app/store/eula/eula.effects';
 import { HaInfoEffects } from 'app/store/ha-info/ha-info.effects';
 import { haInfoReducer, HaInfoState } from 'app/store/ha-info/ha-info.reducer';
 import { haInfoStateKey } from 'app/store/ha-info/ha-info.selectors';
+import { HaUpgradeEffects } from 'app/store/ha-upgrade/ha-upgrade.effects';
 import { PreferencesEffects } from 'app/store/preferences/preferences.effects';
 import { preferencesReducer, PreferencesState } from 'app/store/preferences/preferences.reducer';
 import { preferencesStateKey } from 'app/store/preferences/preferences.selectors';
@@ -35,4 +37,6 @@ export const rootEffects = [
   PreferencesEffects,
   SystemInfoEffects,
   HaInfoEffects,
+  EulaEffects,
+  HaUpgradeEffects,
 ];
