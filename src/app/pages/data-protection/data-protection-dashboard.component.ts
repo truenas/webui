@@ -246,47 +246,6 @@ export class DataProtectionDashboardComponent implements OnInit {
         },
       },
       {
-        name: TaskCardId.Replication,
-        tableConf: {
-          title: helptext.fieldset_replication_tasks,
-          titleHref: '/tasks/replication',
-          queryCallOption: [[], { extra: { check_dataset_encryption_keys: true } }],
-          queryCall: 'replication.query',
-          deleteCall: 'replication.delete',
-          deleteMsg: {
-            title: this.translate.instant('Replication Task'),
-            key_props: ['name'],
-          },
-          dataSourceHelper: (data: ReplicationTaskUi[]) => this.replicationDataSourceHelper(data),
-          getActions: this.getReplicationActions.bind(this),
-          isActionVisible: this.isActionVisible,
-          columns: [
-            { name: this.translate.instant('Name'), prop: 'name', enableMatTooltip: true },
-            { name: this.translate.instant('Last Snapshot'), prop: 'task_last_snapshot', enableMatTooltip: true },
-            {
-              name: this.translate.instant('Enabled'),
-              prop: 'enabled',
-              width: '80px',
-              checkbox: true,
-              onChange: (row: ReplicationTaskUi) => this.onCheckboxToggle(TaskCardId.Replication, row as TaskTableRow, 'enabled'),
-            },
-            { name: this.translate.instant('State'), prop: 'state', button: true },
-          ],
-          parent: this,
-          add: () => {
-            const slideInRef = this.slideInService.open(ReplicationWizardComponent, { wide: true });
-            this.handleSlideInClosed(slideInRef, ReplicationWizardComponent);
-          },
-          edit: (row: ReplicationTaskUi) => {
-            const slideInRef = this.slideInService.open(ReplicationFormComponent, { wide: true, data: row });
-            this.handleSlideInClosed(slideInRef, ReplicationFormComponent);
-          },
-          onButtonClick: (row) => {
-            this.stateButton(row);
-          },
-        },
-      },
-      {
         name: TaskCardId.CloudSync,
         tableConf: {
           title: helptext.fieldset_cloud_sync_tasks,
