@@ -287,47 +287,6 @@ export class DataProtectionDashboardComponent implements OnInit {
         },
       },
       {
-        name: TaskCardId.CloudSync,
-        tableConf: {
-          title: helptext.fieldset_cloud_sync_tasks,
-          titleHref: '/tasks/cloudsync',
-          queryCall: 'cloudsync.query',
-          deleteCall: 'cloudsync.delete',
-          deleteMsg: {
-            title: this.translate.instant('Cloud Sync Task'),
-            key_props: ['description'],
-          },
-          dataSourceHelper: (data: CloudSyncTaskUi[]) => this.cloudsyncDataSourceHelper(data),
-          getActions: this.getCloudsyncActions.bind(this),
-          isActionVisible: this.isActionVisible,
-          columns: [
-            { name: this.translate.instant('Description'), prop: 'description', enableMatTooltip: true },
-            { name: this.translate.instant('Frequency'), prop: 'frequency', enableMatTooltip: true },
-            { name: this.translate.instant('Next Run'), prop: 'next_run', enableMatTooltip: true },
-            {
-              name: this.translate.instant('Enabled'),
-              prop: 'enabled',
-              checkbox: true,
-              width: '80px',
-              onChange: (row: CloudSyncTaskUi) => this.onCheckboxToggle(TaskCardId.CloudSync, row, 'enabled'),
-            },
-            { name: this.translate.instant('State'), prop: 'state', button: true },
-          ],
-          parent: this,
-          add: () => {
-            const slideInRef = this.slideInService.open(CloudsyncFormComponent, { wide: true });
-            this.handleSlideInClosed(slideInRef, CloudsyncFormComponent);
-          },
-          edit: (row: CloudSyncTaskUi) => {
-            const slideInRef = this.slideInService.open(CloudsyncFormComponent, { wide: true, data: row });
-            this.handleSlideInClosed(slideInRef, CloudsyncFormComponent);
-          },
-          onButtonClick: (row: CloudSyncTaskUi) => {
-            this.stateButton(row);
-          },
-        },
-      },
-      {
         name: TaskCardId.Rsync,
         tableConf: {
           title: helptext.fieldset_rsync_tasks,
