@@ -37,11 +37,6 @@ export class SearchInputComponent implements OnInit, OnChanges {
   searchValue = '';
   searchValueEmitHandler = new Subject<string>();
 
-  ngOnInit(): void {
-    this.searchValue = this.value;
-    this.handleSearchValueChanges();
-  }
-
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     if (changes.disabled?.previousValue !== changes.disabled?.currentValue && !!this.searchValue) {
       this.updateSearchValue(this.searchValue);
@@ -50,6 +45,11 @@ export class SearchInputComponent implements OnInit, OnChanges {
     if (changes.value?.previousValue !== changes.value?.currentValue) {
       this.searchValue = changes.value.currentValue;
     }
+  }
+
+  ngOnInit(): void {
+    this.searchValue = this.value;
+    this.handleSearchValueChanges();
   }
 
   onResetInput(): void {

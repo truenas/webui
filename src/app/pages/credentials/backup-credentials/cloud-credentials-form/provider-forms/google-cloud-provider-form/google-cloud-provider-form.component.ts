@@ -27,12 +27,6 @@ export class GoogleCloudProviderFormComponent extends BaseProviderFormComponent 
     return this.formPatcher$;
   };
 
-  ngAfterViewInit(): void {
-    this.formPatcher$.pipe(untilDestroyed(this)).subscribe((values) => {
-      this.form.patchValue(values);
-    });
-  }
-
   constructor(
     private formBuilder: FormBuilder,
   ) {
@@ -51,6 +45,12 @@ export class GoogleCloudProviderFormComponent extends BaseProviderFormComponent 
       untilDestroyed(this),
     ).subscribe((credentials) => {
       this.form.controls.service_account_credentials.setValue(credentials);
+    });
+  }
+
+  ngAfterViewInit(): void {
+    this.formPatcher$.pipe(untilDestroyed(this)).subscribe((values) => {
+      this.form.patchValue(values);
     });
   }
 

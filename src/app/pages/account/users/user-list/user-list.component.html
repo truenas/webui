@@ -30,7 +30,7 @@
       [columns]="columns"
       [dataProvider]="dataProvider"
     >
-      <ng-template ix-table-details-row [dataProvider]="dataProvider" let-user>
+      <ng-template let-user ix-table-details-row [dataProvider]="dataProvider">
         <ix-user-details-row
           [user]="user"
           (delete)="handleDeletedUser($event)"

@@ -75,10 +75,6 @@ export class TargetSectionComponent implements OnInit, OnChanges {
     return this.form.value.encryption_key_format === EncryptionKeyFormat.Hex;
   }
 
-  ngOnInit(): void {
-    this.setRetentionPolicyOptions();
-  }
-
   ngOnChanges(): void {
     if (this.replication) {
       this.setFormValues();
@@ -90,6 +86,10 @@ export class TargetSectionComponent implements OnInit, OnChanges {
       this.form.controls.target_dataset.disable();
     }
 
+    this.setRetentionPolicyOptions();
+  }
+
+  ngOnInit(): void {
     this.setRetentionPolicyOptions();
   }
 

@@ -360,10 +360,6 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
     return { value: output, prefix, shortName };
   }
 
-  ngAfterViewInit(): void {
-    this.render();
-  }
-
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     if (changes.data) {
       this.render();
@@ -374,6 +370,10 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
         this.render();// make an update method?
       }
     }
+  }
+
+  ngAfterViewInit(): void {
+    this.render();
   }
 
   ngOnDestroy(): void {

@@ -58,6 +58,10 @@ export class PermissionsCardComponent implements OnInit, OnChanges {
     return this.acl && !isRootDataset(this.dataset) && !this.dataset.locked;
   }
 
+  ngOnChanges(): void {
+    this.store.loadPermissions(this.dataset.mountpoint);
+  }
+
   ngOnInit(): void {
     this.store.state$
       .pipe(untilDestroyed(this))
@@ -87,9 +91,5 @@ export class PermissionsCardComponent implements OnInit, OnChanges {
           this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });
-  }
-
-  ngOnChanges(): void {
-    this.store.loadPermissions(this.dataset.mountpoint);
   }
 }

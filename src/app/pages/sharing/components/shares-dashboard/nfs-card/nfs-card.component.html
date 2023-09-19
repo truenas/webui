@@ -39,10 +39,10 @@
       [isLoading]="isLoading"
     >
       <ng-template
+        let-nfs
         ix-table-cell
         [columnIndex]="3"
         [dataProvider]="dataProvider"
-        let-nfs
       >
         <div class="justify-end">
           <button

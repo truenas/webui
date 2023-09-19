@@ -86,11 +86,11 @@ export class TopologyCardComponent implements OnInit, OnChanges {
     public storageService: StorageService,
   ) {}
 
-  ngOnInit(): void {
+  ngOnChanges(): void {
     this.parseTopology(this.poolState.topology);
   }
 
-  ngOnChanges(): void {
+  ngOnInit(): void {
     this.parseTopology(this.poolState.topology);
   }
 
