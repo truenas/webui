@@ -40,14 +40,14 @@ export class DualListboxComponent<T extends { id: string | number; name?: string
   selectedItems: ListSelection<T>;
   dragging = false;
 
-  ngOnInit(): void {
-    this.initItems();
-  }
-
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     if ('items' in changes && !_.isEqual(changes.items.currentValue, changes.items.previousValue)) {
       this.initItems();
     }
+  }
+
+  ngOnInit(): void {
+    this.initItems();
   }
 
   initItems(): void {

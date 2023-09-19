@@ -207,6 +207,16 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
     });
   }
 
+  ngOnChanges(changes: IxSimpleChanges<this>): void {
+    const wasReportChanged = changes?.report?.firstChange
+      || (changes.report.previousValue && !this.isReady)
+      || (changes.report.previousValue.title !== changes.report.currentValue.title);
+
+    if (wasReportChanged) {
+      this.updateReport$.next(changes);
+    }
+  }
+
   ngOnInit(): void {
     const { start, end } = this.convertTimeSpan(this.currentZoomLevel);
     this.currentStartDate = start;
@@ -217,16 +227,6 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
       setTimeout(() => {
         this.isReady = true;
       }, 1000);
-    }
-  }
-
-  ngOnChanges(changes: IxSimpleChanges<this>): void {
-    const wasReportChanged = changes?.report?.firstChange
-      || (changes.report.previousValue && !this.isReady)
-      || (changes.report.previousValue.title !== changes.report.currentValue.title);
-
-    if (wasReportChanged) {
-      this.updateReport$.next(changes);
     }
   }
 

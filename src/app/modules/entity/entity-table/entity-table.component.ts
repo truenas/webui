@@ -214,6 +214,30 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     });
   }
 
+  ngOnInit(): void {
+    this.cardHeaderReady = !this.conf.cardHeaderComponent;
+    this.hasActions = !this.conf.noActions;
+  }
+
+  ngAfterViewInit(): void {
+    this.dataSource = new MatTableDataSource();
+    this.altInit();
+
+    if (this.paginator) this.dataSource.paginator = this.paginator;
+    if (this.sort) this.dataSource.sort = this.sort;
+
+    this.dataSource$
+      .pipe(untilDestroyed(this))
+      .subscribe((data) => {
+        if (!this.dataSource) return;
+
+        if (data.length === 0) this.isTableEmpty = true;
+
+        this.dataSource.data = data;
+        this.changeDetectorRef.detectChanges();
+      });
+  }
+
   ngOnDestroy(): void {
     this.cleanup();
   }
@@ -253,11 +277,6 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
 
     const allShown = this.currentRowsThatAreOnScreenToo;
     this.isAllSelected = allShown.every((row) => this.selection.isSelected(row));
-  }
-
-  ngOnInit(): void {
-    this.cardHeaderReady = !this.conf.cardHeaderComponent;
-    this.hasActions = !this.conf.noActions;
   }
 
   altInit(): void {
@@ -331,25 +350,6 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     if (typeof (this.conf.hideTopActions) !== 'undefined') {
       this.hideTopActions = this.conf.hideTopActions;
     }
-  }
-
-  ngAfterViewInit(): void {
-    this.dataSource = new MatTableDataSource();
-    this.altInit();
-
-    if (this.paginator) this.dataSource.paginator = this.paginator;
-    if (this.sort) this.dataSource.sort = this.sort;
-
-    this.dataSource$
-      .pipe(untilDestroyed(this))
-      .subscribe((data) => {
-        if (!this.dataSource) return;
-
-        if (data.length === 0) this.isTableEmpty = true;
-
-        this.dataSource.data = data;
-        this.changeDetectorRef.detectChanges();
-      });
   }
 
   // Filter the table by the filter string.

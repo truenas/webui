@@ -81,10 +81,6 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
     this.controlDirective.valueAccessor = this;
   }
 
-  ngOnInit(): void {
-    this.setInitialNode();
-  }
-
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     if ('multiple' in changes) {
       this.treeOptions.useCheckbox = this.multiple;
@@ -93,6 +89,10 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
     if ('nodeProvider' in changes || 'root' in changes) {
       this.setInitialNode();
     }
+  }
+
+  ngOnInit(): void {
+    this.setInitialNode();
   }
 
   writeValue(value: string | string[]): void {

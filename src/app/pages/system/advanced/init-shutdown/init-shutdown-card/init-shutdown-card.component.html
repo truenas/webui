@@ -31,18 +31,18 @@
       [isLoading]="isLoading"
     >
       <ng-template
+        let-script
         ix-table-cell
         [columnIndex]="0"
         [dataProvider]="dataProvider"
-        let-script
       >
         {{ script.script || script.command }}
       </ng-template>
       <ng-template
+        let-script
         ix-table-cell
         [columnIndex]="5"
         [dataProvider]="dataProvider"
-        let-script
       >
         <div class="buttons">
           <button
