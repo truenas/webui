@@ -12,6 +12,7 @@ import { Job } from 'app/interfaces/job.interface';
 import { ReplicationTaskUi } from 'app/interfaces/replication-task.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { stateButtonColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { toggleColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
 import { createTable } from 'app/modules/ix-table2/utils';
@@ -55,9 +56,11 @@ export class ReplicationTaskCardComponent implements OnInit {
       cssClass: 'justify-end',
       onRowToggle: (row: ReplicationTaskUi) => this.onChangeEnabledState(row),
     }),
-    textColumn({
+    stateButtonColumn({
       title: this.translate.instant('State'),
-      propertyName: 'state',
+      getValue: (row) => row.state.state,
+      getJob: (row) => row.job,
+      cssClass: 'state-button',
     }),
     textColumn({
       propertyName: 'id',

@@ -48,7 +48,6 @@ export class TableService {
           table.tableConf.getInOutInfo(response);
         }
         table.dataSource = response as Record<string, unknown>[];
-        table.showCollapse = false;
         if (!(table.dataSource?.length > 0)) {
           table.emptyConf = {
             type: EmptyType.NoPageData,
@@ -60,12 +59,7 @@ export class TableService {
           }
         }
         if (table.limitRows) {
-          if (table.enableViewMore) {
-            table.displayedDataSource = table.dataSource.slice(0, table.dataSource.length);
-          } else {
-            table.displayedDataSource = table.dataSource.slice(0, table.limitRows - 1);
-            table.showViewMore = table.dataSource.length !== table.displayedDataSource.length;
-          }
+          table.calculateLimitRows();
         }
         if (table.loaderOpen) {
           this.loader.close();
