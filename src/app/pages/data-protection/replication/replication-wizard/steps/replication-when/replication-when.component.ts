@@ -66,6 +66,12 @@ export class ReplicationWhenComponent implements OnInit, OnChanges, SummaryProvi
     private translate: TranslateService,
   ) {}
 
+  ngOnChanges(changes: IxSimpleChanges<this>): void {
+    if (changes.isCustomRetentionVisible && !changes.isCustomRetentionVisible.currentValue) {
+      this.form.controls.retention_policy.setValue(RetentionPolicy.Source);
+    }
+  }
+
   ngOnInit(): void {
     this.form.controls.readonly.disable();
     this.form.controls.lifetime_value.disable();
@@ -88,12 +94,6 @@ export class ReplicationWhenComponent implements OnInit, OnChanges, SummaryProvi
         this.form.controls.lifetime_unit.disable();
       }
     });
-  }
-
-  ngOnChanges(changes: IxSimpleChanges<this>): void {
-    if (changes.isCustomRetentionVisible && !changes.isCustomRetentionVisible.currentValue) {
-      this.form.controls.retention_policy.setValue(RetentionPolicy.Source);
-    }
   }
 
   getSummary(): SummarySection {

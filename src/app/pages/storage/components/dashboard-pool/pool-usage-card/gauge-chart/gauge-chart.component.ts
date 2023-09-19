@@ -68,11 +68,11 @@ export class GaugeChartComponent implements OnChanges, AfterViewInit {
 
   constructor(public themeService: ThemeService) {}
 
-  ngAfterViewInit(): void {
+  ngOnChanges(): void {
     this.refresh();
   }
 
-  ngOnChanges(): void {
+  ngAfterViewInit(): void {
     this.refresh();
   }
 

@@ -22,7 +22,7 @@
     [dataProvider]="dataProvider"
     [isLoading]="isLoading"
   >
-    <ng-template ix-table-details-row [dataProvider]="dataProvider" let-cronjob>
+    <ng-template let-cronjob ix-table-details-row [dataProvider]="dataProvider">
       <dl *ngIf="hiddenColumns.length" class="table-hidden-columns">
         <div *ngFor="let column of hiddenColumns">
           <span>{{ column.title }}:</span>

@@ -24,10 +24,10 @@
     [dataProvider]="dataProvider"
   >
     <ng-template
+      let-tunable
       ix-table-cell
       [columnIndex]="5"
       [dataProvider]="dataProvider"
-      let-tunable
     >
       <div class="actions">
         <button

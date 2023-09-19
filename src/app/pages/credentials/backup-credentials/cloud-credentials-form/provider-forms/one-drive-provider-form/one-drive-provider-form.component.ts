@@ -58,12 +58,6 @@ export class OneDriveProviderFormComponent extends BaseProviderFormComponent imp
     return this.formPatcher$;
   };
 
-  ngAfterViewInit(): void {
-    this.formPatcher$.pipe(untilDestroyed(this)).subscribe((values) => {
-      this.form.patchValue(values);
-      this.oauthComponent.form.patchValue(values);
-    });
-  }
   constructor(
     private errorHandler: ErrorHandlerService,
     private formBuilder: FormBuilder,
@@ -74,6 +68,13 @@ export class OneDriveProviderFormComponent extends BaseProviderFormComponent imp
 
   ngOnInit(): void {
     this.setupDriveSelect();
+  }
+
+  ngAfterViewInit(): void {
+    this.formPatcher$.pipe(untilDestroyed(this)).subscribe((values) => {
+      this.form.patchValue(values);
+      this.oauthComponent.form.patchValue(values);
+    });
   }
 
   onOauthAuthenticated(attributes: Record<string, unknown>): void {
