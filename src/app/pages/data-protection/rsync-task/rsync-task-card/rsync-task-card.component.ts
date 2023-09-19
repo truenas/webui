@@ -145,6 +145,7 @@ export class RsyncTaskCardComponent implements OnInit {
         }),
       )),
       catchError((error: Job) => {
+        this.getRsyncTasks();
         this.dialogService.error(this.errorHandler.parseJobError(error));
         return EMPTY;
       }),
