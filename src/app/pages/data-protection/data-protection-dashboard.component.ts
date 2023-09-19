@@ -78,6 +78,7 @@ SmartTestTaskUi
 @UntilDestroy()
 @Component({
   templateUrl: './data-protection-dashboard.component.html',
+  styleUrls: ['./data-protection-dashboard.component.scss'],
   providers: [TaskService],
 })
 export class DataProtectionDashboardComponent implements OnInit {

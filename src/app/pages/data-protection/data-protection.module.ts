@@ -7,6 +7,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatStepperModule } from '@angular/material/stepper';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
@@ -21,6 +23,7 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import {
   CloudsyncRestoreDialogComponent,
 } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
+import { CloudSyncTaskCardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-task-card/cloudsync-task-card.component';
 import { CreateStorjBucketDialogComponent } from 'app/pages/data-protection/cloudsync/create-storj-bucket-dialog/create-storj-bucket-dialog.component';
 import { CustomTransfersDialogComponent } from 'app/pages/data-protection/cloudsync/custom-transfers-dialog/custom-transfers-dialog.component';
 import {
@@ -80,6 +83,8 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
     MatStepperModule,
     AppCommonModule,
     LayoutModule,
+    MatToolbarModule,
+    MatTooltipModule,
   ],
   declarations: [
     SnapshotTaskListComponent,
@@ -111,6 +116,7 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
     ScheduleSectionComponent,
     SourceSectionComponent,
     TargetSectionComponent,
+    CloudSyncTaskCardComponent,
   ],
 })
 export class DataProtectionModule {}
