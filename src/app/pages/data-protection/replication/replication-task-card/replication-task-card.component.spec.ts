@@ -170,7 +170,6 @@ describe('ReplicationTaskCardComponent', () => {
   });
 
   it('shows confirmation dialog when Run Now button is pressed', async () => {
-    jest.spyOn(spectator.inject(DialogService), 'confirm');
     const runNowButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'play_arrow' }), 1, 4);
     await runNowButton.click();
 
@@ -211,6 +210,8 @@ describe('ReplicationTaskCardComponent', () => {
       title: 'Confirmation',
       message: 'Delete Replication Task <b>\"APPS/test2 - APPS/test3\"</b>?',
     });
+
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('replication.delete', [1]);
   });
 
   it('updates Replication Task Enabled status once mat-toggle is updated', async () => {
