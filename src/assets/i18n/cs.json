@@ -911,6 +911,7 @@
   "Delete Interface": "",
   "Delete NTP Server": "",
   "Delete Periodic Snapshot Task <b>\"{value}\"</b>?": "",
+  "Delete Replication Task <b>\"{name}\"</b>?": "",
   "Delete SSH Keypair": "",
   "Delete Script": "",
   "Delete Scrub Task <b>\"{name}\"</b>?": "",
