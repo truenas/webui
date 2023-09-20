@@ -30,6 +30,7 @@ import { ES24F } from 'app/core/classes/hardware/es24f';
 import { E60 } from 'app/core/classes/hardware/e60';
 import { ES60 } from 'app/core/classes/hardware/es60';
 import { ES102 } from 'app/core/classes/hardware/es102';
+import { ES102S } from 'app/core/classes/hardware/es102s';
 import { MINIR } from 'app/core/classes/hardware/mini-r';
 import { DiskComponent } from './components/disk.component';
 import { TabContentComponent } from './components/tab-content/tab-content.component';
@@ -460,6 +461,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         this.chassis = new ES102();
         this.showCaption = false;
         break;
+      case 'ES102S':
+        this.chassis = new ES102S();
+        this.showCaption = false;
+        break;
       default:
         this.controllerEvents.next({
           name: 'Error',
@@ -576,6 +581,9 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         break;
       case 'ES102':
         chassis = new ES102();
+        break;
+      case 'ES102S':
+        chassis = new ES102S();
         break;
       default:
         this.controllerEvents.next({
