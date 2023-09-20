@@ -107,7 +107,7 @@ export class ScrubTaskFormComponent implements OnInit {
           this.snackbar.success(this.translate.instant('Task updated'));
         }
         this.isLoading = false;
-        this.slideInRef.close();
+        this.slideInRef.close(true);
       },
       error: (error) => {
         this.isLoading = false;

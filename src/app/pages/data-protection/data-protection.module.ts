@@ -35,6 +35,7 @@ import {
 import {
   ReplicationRestoreDialogComponent,
 } from 'app/pages/data-protection/replication/replication-restore-dialog/replication-restore-dialog.component';
+import { ReplicationTaskCardComponent } from 'app/pages/data-protection/replication/replication-task-card/replication-task-card.component';
 import { ReplicationWhatAndWhereComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-what-and-where/replication-what-and-where.component';
 import { ReplicationWhenComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-when/replication-when.component';
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
@@ -119,6 +120,7 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
     SourceSectionComponent,
     TargetSectionComponent,
     SmartTaskCardComponent,
+    ReplicationTaskCardComponent,
     ScrubTaskCardComponent,
     SnapshotTaskCardComponent,
   ],

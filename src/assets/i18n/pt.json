@@ -599,6 +599,7 @@
   "Delete Init/Shutdown Script {script}?": "",
   "Delete Interface": "",
   "Delete Periodic Snapshot Task <b>\"{value}\"</b>?": "",
+  "Delete Replication Task <b>\"{name}\"</b>?": "",
   "Delete S.M.A.R.T. Test <b>\"{name}\"</b>?": "",
   "Delete SSH Keypair": "",
   "Delete Script": "",
