@@ -138,6 +138,8 @@ describe('SnapshotTaskCardComponent', () => {
       title: 'Confirmation',
       message: 'Delete Periodic Snapshot Task <b>\"APPS/test2 - auto-%Y-%m-%d_%H-%M - 2 WEEK(S)\"</b>?',
     });
+
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.snapshottask.delete', [1]);
   });
 
   it('updates Snapshot Task Enabled status once mat-toggle is updated', async () => {

@@ -20,6 +20,7 @@ import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { TaskService } from 'app/services/task.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('SmartTaskCardComponent', () => {
   let spectator: Spectator<SmartTaskCardComponent>;
@@ -121,6 +122,7 @@ describe('SmartTaskCardComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     table = await loader.getHarness(IxTable2Harness);
+    ws = spectator.inject(WebSocketService);
   });
 
   it('should show table rows', async () => {
@@ -166,5 +168,7 @@ describe('SmartTaskCardComponent', () => {
       title: 'Confirmation',
       message: 'Delete S.M.A.R.T. Test <b>\"LONG - test\"</b>?',
     });
+
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('smart.test.delete', [1]);
   });
 });
