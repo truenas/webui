@@ -2,7 +2,7 @@ import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { MockEnclosure } from './mock-enclosure-template';
 
 export class MockEs102S extends MockEnclosure {
-  readonly totalSlotsFront: number = 60;
+  readonly totalSlotsFront: number = 102;
   readonly totalSlotsRear: number = 0;
   readonly totalSlotsInternal: number = 0;
 
