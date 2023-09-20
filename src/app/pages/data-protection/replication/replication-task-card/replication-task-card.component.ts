@@ -119,7 +119,7 @@ export class ReplicationTaskCardComponent implements OnInit {
   openForm(row?: ReplicationTaskUi): void {
     const slideInRef = this.slideInService.open(ReplicationFormComponent, { data: row, wide: true });
 
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.getReplicationTasks();
     });
   }
@@ -160,7 +160,7 @@ export class ReplicationTaskCardComponent implements OnInit {
     const dialog = this.matDialog.open(ReplicationRestoreDialogComponent, {
       data: row.id,
     });
-    dialog.afterClosed().pipe(untilDestroyed(this)).subscribe(() => this.getReplicationTasks());
+    dialog.afterClosed().pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getReplicationTasks());
   }
 
   downloadKeys(row: ReplicationTaskUi): void {

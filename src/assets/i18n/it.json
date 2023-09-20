@@ -818,6 +818,7 @@
   "Delete Replication Task <b>\"{name}\"</b>?": "",
   "Delete SSH Keypair": "",
   "Delete Script": "",
+  "Delete Scrub Task <b>\"{name}\"</b>?": "",
   "Delete Static Route": "",
   "Delete Sysctl": "",
   "Delete Sysctl Variable {variable}?": "",

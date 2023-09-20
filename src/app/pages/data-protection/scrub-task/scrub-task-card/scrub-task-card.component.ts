@@ -2,15 +2,14 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, switchMap } from 'rxjs';
-import { PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.interface';
+import { ScrubTaskUi } from 'app/interfaces/scrub-task.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
-import { stateButtonColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { toggleColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
-import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
+import { ScrubTaskFormComponent } from 'app/pages/data-protection/scrub-task/scrub-task-form/scrub-task-form.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -19,23 +18,23 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-snapshot-task-card',
-  templateUrl: './snapshot-task-card.component.html',
-  styleUrls: ['./snapshot-task-card.component.scss'],
+  selector: 'ix-scrub-task-card',
+  templateUrl: './scrub-task-card.component.html',
+  styleUrls: ['./scrub-task-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SnapshotTaskCardComponent implements OnInit {
-  dataProvider = new ArrayDataProvider<PeriodicSnapshotTaskUi>();
+export class ScrubTaskCardComponent implements OnInit {
+  dataProvider = new ArrayDataProvider<ScrubTaskUi>();
   isLoading = false;
 
-  columns = createTable<PeriodicSnapshotTaskUi>([
+  columns = createTable<ScrubTaskUi>([
     textColumn({
-      title: this.translate.instant('Pool/Dataset'),
-      propertyName: 'dataset',
+      title: this.translate.instant('Pool'),
+      propertyName: 'pool_name',
     }),
     textColumn({
-      title: this.translate.instant('Keep for'),
-      getValue: (task) => `${task.lifetime_value} ${task.lifetime_unit}(S)`,
+      title: this.translate.instant('Description'),
+      propertyName: 'description',
     }),
     textColumn({
       title: this.translate.instant('Frequency'),
@@ -51,12 +50,7 @@ export class SnapshotTaskCardComponent implements OnInit {
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
       cssClass: 'justify-end',
-      onRowToggle: (row: PeriodicSnapshotTaskUi) => this.onChangeEnabledState(row),
-    }),
-    stateButtonColumn({
-      title: this.translate.instant('State'),
-      getValue: (row) => row.state.state,
-      cssClass: 'state-button',
+      onRowToggle: (row: ScrubTaskUi) => this.onChangeEnabledState(row),
     }),
     textColumn({
       propertyName: 'id',
@@ -74,32 +68,31 @@ export class SnapshotTaskCardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.getSnapshotTasks();
+    this.getScrubTasks();
   }
 
-  getSnapshotTasks(): void {
+  getScrubTasks(): void {
     this.isLoading = true;
-    this.ws.call('pool.snapshottask.query').pipe(untilDestroyed(this))
-      .subscribe((snapshotTasks: PeriodicSnapshotTaskUi[]) => {
-        this.dataProvider.setRows(snapshotTasks);
-        this.isLoading = false;
-        this.cdr.markForCheck();
-      });
+    this.ws.call('pool.scrub.query').pipe(
+      untilDestroyed(this),
+    ).subscribe((scrubTasks: ScrubTaskUi[]) => {
+      this.dataProvider.setRows(scrubTasks);
+      this.isLoading = false;
+      this.cdr.markForCheck();
+    });
   }
 
-  doDelete(snapshotTask: PeriodicSnapshotTaskUi): void {
+  doDelete(scrubTask: ScrubTaskUi): void {
     this.dialogService.confirm({
       title: this.translate.instant('Confirmation'),
-      message: this.translate.instant('Delete Periodic Snapshot Task <b>"{value}"</b>?', {
-        value: `${snapshotTask.dataset} - ${snapshotTask.naming_schema} - ${snapshotTask.keepfor}`,
-      }),
+      message: this.translate.instant('Delete Scrub Task <b>"{name}"</b>?', { name: scrubTask.pool_name }),
     }).pipe(
       filter(Boolean),
-      switchMap(() => this.ws.call('pool.snapshottask.delete', [snapshotTask.id])),
+      switchMap(() => this.ws.call('pool.scrub.delete', [scrubTask.id])),
       untilDestroyed(this),
     ).subscribe({
       next: () => {
-        this.getSnapshotTasks();
+        this.getScrubTasks();
       },
       error: (err) => {
         this.dialogService.error(this.errorHandler.parseError(err));
@@ -107,24 +100,24 @@ export class SnapshotTaskCardComponent implements OnInit {
     });
   }
 
-  openForm(row?: PeriodicSnapshotTaskUi): void {
-    const slideInRef = this.slideInService.open(SnapshotTaskFormComponent, { data: row, wide: true });
+  openForm(row?: ScrubTaskUi): void {
+    const slideInRef = this.slideInService.open(ScrubTaskFormComponent, { data: row });
 
     slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-      this.getSnapshotTasks();
+      this.getScrubTasks();
     });
   }
 
-  private onChangeEnabledState(snapshotTask: PeriodicSnapshotTaskUi): void {
+  private onChangeEnabledState(scrubTask: ScrubTaskUi): void {
     this.ws
-      .call('pool.snapshottask.update', [snapshotTask.id, { enabled: !snapshotTask.enabled } as PeriodicSnapshotTaskUi])
+      .call('pool.scrub.update', [scrubTask.id, { enabled: !scrubTask.enabled } as ScrubTaskUi])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
-          this.getSnapshotTasks();
+          this.getScrubTasks();
         },
         error: (err: WebsocketError) => {
-          this.getSnapshotTasks();
+          this.getScrubTasks();
           this.dialogService.error(this.errorHandler.parseWsError(err));
         },
       });
