@@ -182,7 +182,6 @@ describe('CloudSyncTaskCardComponent', () => {
   });
 
   it('shows confirmation dialog when Dry Run button is pressed', async () => {
-    jest.spyOn(spectator.inject(DialogService), 'confirm');
     const runNowButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'sync' }), 1, 5);
     await runNowButton.click();
 
@@ -211,6 +210,8 @@ describe('CloudSyncTaskCardComponent', () => {
       title: 'Confirmation',
       message: 'Delete Cloud Sync Task <b>\"scru\"</b>?',
     });
+
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.delete', [3]);
   });
 
   it('updates CloudSync Task Enabled status once mat-toggle is updated', async () => {
