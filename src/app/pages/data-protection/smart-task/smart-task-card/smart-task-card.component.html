@@ -1,0 +1,57 @@
+<mat-card>
+  <mat-toolbar-row>
+    <a [ixTest]="['smart-task', 'open-in-new']" [routerLink]="['/data-protection', 'smart']">
+      <h3 class="card-title">
+        {{ 'S.M.A.R.T. Tests' | translate }}
+        <ix-icon name="open_in_new" class="title-icon"></ix-icon>
+      </h3>
+    </a>
+    <div class="actions">
+      <button
+        mat-button
+        [ixTest]="['smart-task', 'add']"
+        (click)="openForm()"
+      >{{ 'Add' | translate }}</button>
+    </div>
+  </mat-toolbar-row>
+
+  <ix-table2 class="table" [ix-table2-empty]="!dataProvider.rows.length && !isLoading">
+    <thead
+      ix-table-head
+      [columns]="columns"
+      [dataProvider]="dataProvider"
+    ></thead>
+    <tbody
+      ix-table-body
+      [columns]="columns"
+      [dataProvider]="dataProvider"
+      [isLoading]="isLoading"
+    >
+      <ng-template
+        let-task
+        ix-table-cell
+        [columnIndex]="5"
+        [dataProvider]="dataProvider"
+      >
+        <div class="justify-end">
+          <button
+            mat-icon-button
+            [ixTest]="[task.id, 'edit']"
+            [matTooltip]="'Edit' | translate"
+            (click)="openForm(task)"
+          >
+            <ix-icon name="edit"></ix-icon>
+          </button>
+          <button
+            mat-icon-button
+            [ixTest]="[task.id, 'delete']"
+            [matTooltip]="'Delete' | translate"
+            (click)="doDelete(task)"
+          >
+            <ix-icon name="delete"></ix-icon>
+          </button>
+        </div>
+      </ng-template>
+    </tbody>
+  </ix-table2>
+</mat-card>

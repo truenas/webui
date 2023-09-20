@@ -1,0 +1,31 @@
+.card-title {
+  align-items: center;
+  display: flex;
+
+  ix-icon {
+    margin-left: 5px;
+  }
+}
+
+:host ::ng-deep {
+  .wide-actions {
+    width: 135px;
+  }
+
+  .state-button {
+    text-overflow: inherit !important;
+    width: 80px;
+  }
+
+  .justify-end {
+    display: flex;
+    height: inherit;
+    justify-content: flex-end;
+
+    mat-slide-toggle {
+      align-items: center;
+      display: flex;
+      height: 100%;
+    }
+  }
+}

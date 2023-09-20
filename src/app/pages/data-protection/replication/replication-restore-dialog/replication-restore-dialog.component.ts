@@ -41,7 +41,7 @@ export class ReplicationRestoreDialogComponent {
       .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: () => {
-          this.dialogRef.close();
+          this.dialogRef.close(true);
         },
         error: (error) => {
           this.errorHandler.handleWsFormError(error, this.form);

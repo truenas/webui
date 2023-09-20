@@ -36,6 +36,7 @@ import {
 import {
   ReplicationRestoreDialogComponent,
 } from 'app/pages/data-protection/replication/replication-restore-dialog/replication-restore-dialog.component';
+import { ReplicationTaskCardComponent } from 'app/pages/data-protection/replication/replication-task-card/replication-task-card.component';
 import { ReplicationWhatAndWhereComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-what-and-where/replication-what-and-where.component';
 import { ReplicationWhenComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-when/replication-when.component';
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
@@ -44,6 +45,7 @@ import { ScrubTaskCardComponent } from 'app/pages/data-protection/scrub-task/scr
 import {
   ScrubTaskFormComponent,
 } from 'app/pages/data-protection/scrub-task/scrub-task-form/scrub-task-form.component';
+import { SmartTaskCardComponent } from 'app/pages/data-protection/smart-task/smart-task-card/smart-task-card.component';
 import { SmartTaskFormComponent } from 'app/pages/data-protection/smart-task/smart-task-form/smart-task-form.component';
 import { SnapshotTaskCardComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-card/snapshot-task-card.component';
 import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
@@ -119,6 +121,8 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
     SourceSectionComponent,
     TargetSectionComponent,
     CloudSyncTaskCardComponent,
+    SmartTaskCardComponent,
+    ReplicationTaskCardComponent,
     ScrubTaskCardComponent,
     SnapshotTaskCardComponent,
   ],
