@@ -50,6 +50,7 @@
         class="table-component"
         [ixTest]="['table', _tableConf.name]"
         [dataSource]="displayedDataSource"
+        [trackBy]="trackTask"
       >
         <ng-container
           *ngIf="_tableConf.complex; then complex; else simple"
@@ -254,14 +255,14 @@
       ></ix-entity-empty>
     </div>
     <div
-      *ngIf="showViewMore && !_tableConf.alwaysHideViewMore"
+      *ngIf="showViewMore && isOverflow && !_tableConf.alwaysHideViewMore"
       class="view-more-row"
       (click)="openViewMore()"
     >
       {{ 'View More' | translate }}
     </div>
     <div
-      *ngIf="showCollapse && !_tableConf.alwaysHideViewMore"
+      *ngIf="showCollapse && isOverflow && !_tableConf.alwaysHideViewMore"
       class="view-more-row"
       (click)="collapse()"
     >
