@@ -18,7 +18,6 @@ import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { ReplicationTaskUi } from 'app/interfaces/replication-task.interface';
 import { RsyncTaskUi } from 'app/interfaces/rsync-task.interface';
-import { ScrubTaskUi } from 'app/interfaces/scrub-task.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ShowLogsDialogComponent } from 'app/modules/common/dialog/show-logs-dialog/show-logs-dialog.component';
@@ -38,7 +37,6 @@ import {
 } from 'app/pages/data-protection/replication/replication-restore-dialog/replication-restore-dialog.component';
 import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
-import { ScrubTaskFormComponent } from 'app/pages/data-protection/scrub-task/scrub-task-form/scrub-task-form.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -53,14 +51,12 @@ export interface TaskCard {
 }
 
 enum TaskCardId {
-  Scrub = 'scrub',
   Replication = 'replication',
   CloudSync = 'cloudsync',
   Rsync = 'rsync',
 }
 
 type TaskTableRow = Partial<
-ScrubTaskUi &
 Omit<ReplicationTaskUi, 'naming_schema'> &
 CloudSyncTaskUi &
 RsyncTaskUi
@@ -115,9 +111,6 @@ export class DataProtectionDashboardComponent implements OnInit {
           case CloudsyncFormComponent:
             this.refreshTable(TaskCardId.CloudSync);
             break;
-          case ScrubTaskFormComponent:
-            this.refreshTable(TaskCardId.Scrub);
-            break;
           case RsyncTaskFormComponent:
             this.refreshTable(TaskCardId.Rsync);
             break;
@@ -127,53 +120,6 @@ export class DataProtectionDashboardComponent implements OnInit {
 
   getCardData(): void {
     this.dataCards = [
-      {
-        name: TaskCardId.Scrub,
-        tableConf: {
-          title: helptext.fieldset_scrub_tasks,
-          titleHref: '/tasks/scrub',
-          queryCall: 'pool.scrub.query',
-          deleteCall: 'pool.scrub.delete',
-          dataSourceHelper: (data: ScrubTaskUi[]) => this.scrubDataSourceHelper(data),
-          emptyEntityLarge: false,
-          columns: [
-            { name: this.translate.instant('Pool'), prop: 'pool_name', enableMatTooltip: true },
-            {
-              name: this.translate.instant('Description'), prop: 'description', hiddenIfEmpty: true, enableMatTooltip: true,
-            },
-            { name: this.translate.instant('Frequency'), prop: 'frequency', enableMatTooltip: true },
-            { name: this.translate.instant('Next Run'), prop: 'next_run', enableMatTooltip: true },
-            {
-              name: this.translate.instant('Enabled'),
-              prop: 'enabled',
-              width: '80px',
-              checkbox: true,
-              onChange: (row: ScrubTaskUi) => this.onCheckboxToggle(TaskCardId.Scrub, row, 'enabled'),
-            },
-          ],
-          deleteMsg: {
-            title: this.translate.instant('Scrub Task'),
-            key_props: ['pool_name'],
-          },
-          parent: this,
-          add: () => {
-            const slideInRef = this.slideInService.open(ScrubTaskFormComponent);
-            this.handleSlideInClosed(slideInRef, ScrubTaskFormComponent);
-          },
-          edit: (task: ScrubTaskUi) => {
-            const slideInRef = this.slideInService.open(ScrubTaskFormComponent, { data: task });
-            this.handleSlideInClosed(slideInRef, ScrubTaskFormComponent);
-          },
-          tableActions: [
-            {
-              label: this.translate.instant('Adjust Scrub/Resilver Priority'),
-              onClick: () => {
-                this.router.navigate(['/data-protection/scrub/priority']);
-              },
-            },
-          ],
-        },
-      },
       {
         name: TaskCardId.Replication,
         tableConf: {
@@ -314,16 +260,6 @@ export class DataProtectionDashboardComponent implements OnInit {
       if (card.tableConf.tableComponent) {
         card.tableConf.tableComponent.getData();
       }
-    });
-  }
-
-  scrubDataSourceHelper(data: ScrubTaskUi[]): ScrubTaskUi[] {
-    return data.map((task) => {
-      task.cron_schedule = scheduleToCrontab(task.schedule);
-      task.frequency = this.taskService.getTaskCronDescription(task.cron_schedule);
-      task.next_run = this.taskService.getTaskNextRun(task.cron_schedule);
-
-      return task;
     });
   }
 
@@ -708,14 +644,10 @@ export class DataProtectionDashboardComponent implements OnInit {
   }
 
   onCheckboxToggle(card: TaskCardId, row: TaskTableRow, param: 'enabled'): void {
-    let updateCall: 'pool.scrub.update'
-    | 'replication.update'
+    let updateCall: 'replication.update'
     | 'cloudsync.update'
     | 'rsynctask.update';
     switch (card) {
-      case TaskCardId.Scrub:
-        updateCall = 'pool.scrub.update';
-        break;
       case TaskCardId.Replication:
         updateCall = 'replication.update';
         break;

@@ -77,15 +77,14 @@ export class SmartTaskCardComponent implements OnInit {
 
   getSmartTasks(): void {
     this.isLoading = true;
-    this.ws.call('smart.test.query').pipe(
-      untilDestroyed(this),
-    ).subscribe((smartTasks: SmartTestTaskUi[]) => {
-      const transformedSmartTasks = this.transformSmartTasks(smartTasks);
-      this.smartTasks = transformedSmartTasks;
-      this.dataProvider.setRows(transformedSmartTasks);
-      this.isLoading = false;
-      this.cdr.markForCheck();
-    });
+    this.ws.call('smart.test.query').pipe(untilDestroyed(this))
+      .subscribe((smartTasks: SmartTestTaskUi[]) => {
+        const transformedSmartTasks = this.transformSmartTasks(smartTasks);
+        this.smartTasks = transformedSmartTasks;
+        this.dataProvider.setRows(transformedSmartTasks);
+        this.isLoading = false;
+        this.cdr.markForCheck();
+      });
   }
 
   doDelete(smartTask: SmartTestTaskUi): void {
@@ -111,7 +110,7 @@ export class SmartTaskCardComponent implements OnInit {
   openForm(row?: SmartTestTaskUi): void {
     const slideInRef = this.slideInService.open(SmartTaskFormComponent, { data: row });
 
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.getSmartTasks();
     });
   }
