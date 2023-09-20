@@ -126,6 +126,8 @@ describe('ScrubTaskCardComponent', () => {
       title: 'Confirmation',
       message: 'Delete Scrub Task <b>\"APPS\"</b>?',
     });
+
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.scrub.delete', [1]);
   });
 
   it('updates Scrub Task Enabled status once mat-toggle is updated', async () => {
