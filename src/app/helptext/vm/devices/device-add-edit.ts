@@ -54,5 +54,5 @@ export default {
   password_tooltip: T('Enter a VNC password to automatically pass to the\
  VNC session. Passwords cannot be longer than 8\
  characters.'),
-  web_tooltip: T('Set to enable connecting to the VNC web interface.'),
+  web_tooltip: T('Set to enable connecting to the SPICE web interface.'),
 };
