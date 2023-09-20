@@ -9,6 +9,7 @@ import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Direction } from 'app/enums/direction.enum';
 import { RsyncMode } from 'app/enums/rsync-mode.enum';
+import { KeychainCredential } from 'app/interfaces/keychain-credential.interface';
 import { RsyncTask } from 'app/interfaces/rsync-task.interface';
 import { User } from 'app/interfaces/user.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -16,11 +17,9 @@ import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-sl
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
-import { SshCredentialsNewOption } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard-data.interface';
 import { DialogService } from 'app/services/dialog.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 import { UserService } from 'app/services/user.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
@@ -68,6 +67,10 @@ describe('RsyncTaskFormComponent', () => {
       mockWebsocket([
         mockCall('rsynctask.create'),
         mockCall('rsynctask.update'),
+        mockCall('keychaincredential.query', [
+          { id: 1, name: 'ssh01' },
+          { id: 2, name: 'ssh02' },
+        ] as KeychainCredential[]),
       ]),
       mockProvider(IxSlideInService),
       mockProvider(FilesystemService),
@@ -76,17 +79,6 @@ describe('RsyncTaskFormComponent', () => {
           { username: 'root' },
           { username: 'steven' },
         ] as User[]),
-      }),
-      mockProvider(KeychainCredentialService, {
-        getSshConnections: () => of([
-          { id: 1, name: 'ssh01' },
-          { id: 2, name: 'ssh02' },
-        ]),
-        getSshCredentialsOptions: () => of([
-          { value: SshCredentialsNewOption.New, label: 'Create New' },
-          { value: 1, label: 'ssh01' },
-          { value: 2, label: 'ssh02' },
-        ]),
       }),
       mockProvider(DialogService),
       provideMockStore({

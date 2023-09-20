@@ -5,9 +5,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
+import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { NetcatMode } from 'app/enums/netcat-mode.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
-import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
+import { KeychainCredential } from 'app/interfaces/keychain-credential.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxFieldsetHarness } from 'app/modules/ix-forms/components/ix-fieldset/ix-fieldset.harness';
@@ -17,8 +18,6 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import {
   TransportSectionComponent,
 } from 'app/pages/data-protection/replication/replication-form/sections/transport-section/transport-section.component';
-import { SshCredentialsNewOption } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard-data.interface';
-import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 
 describe('TransportSectionComponent', () => {
   let spectator: Spectator<TransportSectionComponent>;
@@ -31,17 +30,12 @@ describe('TransportSectionComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockProvider(KeychainCredentialService, {
-        getSshConnections: jest.fn(() => of([
+      mockWebsocket([
+        mockCall('keychaincredential.query', [
           { id: 1, name: 'connection 1' },
           { id: 2, name: 'connection 2' },
-        ] as KeychainSshCredentials[])),
-        getSshCredentialsOptions: () => of([
-          { value: SshCredentialsNewOption.New, label: 'Create New' },
-          { value: 1, label: 'connection 1' },
-          { value: 2, label: 'connection 2' },
-        ]),
-      }),
+        ] as KeychainCredential[]),
+      ]),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
           afterClosed: () => of(true),
