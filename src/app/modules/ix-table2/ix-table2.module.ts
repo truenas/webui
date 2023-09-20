@@ -54,6 +54,7 @@ import { IxTableColumnsSelectorComponent } from './components/ix-table-columns-s
     CoreComponents,
     MatMenuModule,
     MatDividerModule,
+    MatTooltipModule,
   ],
   declarations: [
     IxTable2Component,
