@@ -21,6 +21,7 @@ import { InventoryComponent } from 'app/pages/storage/modules/pool-manager/compo
 import {
   ManualDiskSelectionComponent,
 } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/manual-disk-selection.component';
+import { NewDevicesPreviewComponent } from 'app/pages/storage/modules/pool-manager/components/new-devices/new-devices-preview.component';
 import {
   AutomatedDiskSelectionComponent,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/layout-step/automated-disk-selection/automated-disk-selection.component';
@@ -105,6 +106,7 @@ export const commonDeclarations = [
   NormalSelectionComponent,
   DraidSelectionComponent,
   DiskSizeSelectsComponent,
+  NewDevicesPreviewComponent,
 ];
 
 export const commonProviders = [
