@@ -27,6 +27,7 @@ import {
 } from 'app/interfaces/storage.interface';
 import { MockEnclosure } from './enclosure-templates/mock-enclosure-template';
 import { MockEs102 } from './enclosure-templates/mock-es102';
+import { MockEs102S } from './enclosure-templates/mock-es102s';
 import { MockEs24 } from './enclosure-templates/mock-es24';
 import { MockF60 } from './enclosure-templates/mock-f60';
 import { MockM40 } from './enclosure-templates/mock-m40';
@@ -680,6 +681,9 @@ export class MockStorageGenerator {
         break;
       case 'ES102':
         chassis = new MockEs102(enclosureNumber);
+        break;
+      case 'ES102S':
+        chassis = new MockEs102S(enclosureNumber);
         break;
       case 'M40':
         chassis = new MockM40(enclosureNumber);
