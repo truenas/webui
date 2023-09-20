@@ -122,7 +122,6 @@ describe('SmartTaskCardComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     table = await loader.getHarness(IxTable2Harness);
-    ws = spectator.inject(WebSocketService);
   });
 
   it('should show table rows', async () => {
