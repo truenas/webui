@@ -125,7 +125,7 @@ export class RsyncTaskCardComponent implements OnInit {
   openForm(row?: RsyncTaskUi): void {
     const slideInRef = this.slideInService.open(RsyncTaskFormComponent, { data: row, wide: true });
 
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.getRsyncTasks();
     });
   }

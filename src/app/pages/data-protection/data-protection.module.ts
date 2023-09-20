@@ -40,6 +40,7 @@ import { ReplicationWhenComponent } from 'app/pages/data-protection/replication/
 import { RsyncTaskCardComponent } from 'app/pages/data-protection/rsync-task/rsync-task-card/rsync-task-card.component';
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
 import { RsyncTaskListComponent } from 'app/pages/data-protection/rsync-task/rsync-task-list/rsync-task-list.component';
+import { ScrubTaskCardComponent } from 'app/pages/data-protection/scrub-task/scrub-task-card/scrub-task-card.component';
 import {
   ScrubTaskFormComponent,
 } from 'app/pages/data-protection/scrub-task/scrub-task-form/scrub-task-form.component';
@@ -118,6 +119,7 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
     SourceSectionComponent,
     TargetSectionComponent,
     RsyncTaskCardComponent,
+    ScrubTaskCardComponent,
     SnapshotTaskCardComponent,
   ],
 })

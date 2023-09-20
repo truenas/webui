@@ -117,7 +117,7 @@ export class IscsiWizardComponent implements OnInit {
   }
 
   get isNewInitiator(): boolean {
-    return this.form.controls.initiator.enabled && !!this.form.value.initiator.initiators.length;
+    return this.form.controls.initiator.enabled;
   }
 
   get zvolPayload(): DatasetCreate {
@@ -179,8 +179,8 @@ export class IscsiWizardComponent implements OnInit {
   get initiatorPayload(): IscsiInitiatorGroupUpdate {
     const value = this.form.value;
     return {
-      initiators: value.initiator.initiators,
       comment: value.device.name,
+      ...(value.initiator.initiators.length ? { initiators: value.initiator.initiators } : {}),
     };
   }
 
