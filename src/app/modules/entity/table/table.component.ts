@@ -1,5 +1,5 @@
 import {
-  Component, OnInit, Input, ViewChild, AfterViewInit, AfterViewChecked, ElementRef,
+  Component, OnInit, Input, ViewChild, AfterViewInit, AfterViewChecked, ElementRef, TrackByFunction,
 } from '@angular/core';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -161,6 +161,12 @@ implements OnInit, AfterViewInit, AfterViewChecked {
 
   private tableHeight: number;
 
+  trackTask: TrackByFunction<Row> = (index: number, row: Row): unknown => row[this.idProp];
+
+  get isOverflow(): boolean {
+    return this.TABLE_MIN_ROWS < this.dataSource?.length;
+  }
+
   get tableConf(): AppTableConfig {
     return this._tableConf;
   }
@@ -188,6 +194,7 @@ implements OnInit, AfterViewInit, AfterViewChecked {
 
     this.tableHeight = this.table.nativeElement.offsetHeight;
     if (this.enableViewMore) {
+      this.displayedDataSource = this.dataSource;
       return;
     }
     this.limitRows = Math.floor(
