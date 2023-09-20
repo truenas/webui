@@ -125,7 +125,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
   openForm(row?: CloudSyncTaskUi): void {
     const slideInRef = this.slideInService.open(CloudsyncFormComponent, { data: row, wide: true });
 
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.getCloudSyncTasks();
     });
   }
@@ -169,7 +169,6 @@ export class CloudSyncTaskCardComponent implements OnInit {
         filter(Boolean),
         switchMap(() => {
           return this.ws.call('cloudsync.abort', [row.id]).pipe(
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             this.errorHandler.catchError(),
           );
         }),
