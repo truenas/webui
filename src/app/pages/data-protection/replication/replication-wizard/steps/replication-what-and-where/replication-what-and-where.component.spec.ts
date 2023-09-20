@@ -134,9 +134,11 @@ describe('ReplicationWhatAndWhereComponent', () => {
   });
 
   it('opens an extended dialog when choosing to create a new ssh connection', async () => {
+    const matDialog = spectator.inject(MatDialog);
+    jest.spyOn(matDialog, 'open');
     await form.fillForm({ 'Source Location': 'On a Different System' });
     await form.fillForm({ 'SSH Connection': 'Create New' });
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalled();
+    expect(matDialog.open).toHaveBeenCalled();
   });
 
   it('when an existing name is entered, the "Next" button is disabled', async () => {

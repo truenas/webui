@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
@@ -15,6 +16,7 @@ import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-sl
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
+import { SshCredentialsNewOption } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard-data.interface';
 import { DialogService } from 'app/services/dialog.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -79,6 +81,11 @@ describe('RsyncTaskFormComponent', () => {
         getSshConnections: () => of([
           { id: 1, name: 'ssh01' },
           { id: 2, name: 'ssh02' },
+        ]),
+        getSshCredentialsOptions: () => of([
+          { value: SshCredentialsNewOption.New, label: 'Create New' },
+          { value: 1, label: 'ssh01' },
+          { value: 2, label: 'ssh02' },
         ]),
       }),
       mockProvider(DialogService),
@@ -288,6 +295,15 @@ describe('RsyncTaskFormComponent', () => {
           validate_rpath: true,
         },
       ]);
+    });
+
+    it('opens an extended dialog when choosing to create a new ssh connection', async () => {
+      const matDialog = spectator.inject(MatDialog);
+      jest.spyOn(matDialog, 'open');
+      await form.fillForm({ 'Rsync Mode': 'SSH' });
+      await form.fillForm({ 'Connect using:': 'SSH connection from the keychain' });
+      await form.fillForm({ 'SSH Connection': 'Create New' });
+      expect(matDialog.open).toHaveBeenCalled();
     });
   });
 });

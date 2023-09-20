@@ -377,7 +377,6 @@
   "{catalog} Catalog": "",
   "{count} snapshots found.": "",
   "{cpuPercentage}% Avg. Usage": "",
-  "{credentialName} (Newly Created)": "",
   "{email} via {server}": "",
   "{license} contract, expires {date}": "",
   "{n, plural, one {# docker image} other {# docker images}} has been deleted.": "",

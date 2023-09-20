@@ -1,6 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
@@ -10,10 +11,13 @@ import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.inter
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxFieldsetHarness } from 'app/modules/ix-forms/components/ix-fieldset/ix-fieldset.harness';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import {
   TransportSectionComponent,
 } from 'app/pages/data-protection/replication/replication-form/sections/transport-section/transport-section.component';
+import { SshCredentialsNewOption } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard-data.interface';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 
 describe('TransportSectionComponent', () => {
@@ -32,7 +36,19 @@ describe('TransportSectionComponent', () => {
           { id: 1, name: 'connection 1' },
           { id: 2, name: 'connection 2' },
         ] as KeychainSshCredentials[])),
+        getSshCredentialsOptions: () => of([
+          { value: SshCredentialsNewOption.New, label: 'Create New' },
+          { value: 1, label: 'connection 1' },
+          { value: 2, label: 'connection 2' },
+        ]),
       }),
+      mockProvider(MatDialog, {
+        open: jest.fn(() => ({
+          afterClosed: () => of(true),
+        })),
+      }),
+      mockProvider(IxSlideInRef),
+      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
 
@@ -94,6 +110,13 @@ describe('TransportSectionComponent', () => {
         netcat_active_side_port_min: null,
         netcat_passive_side_connect_address: null,
       });
+    });
+
+    it('opens an extended dialog when choosing to create a new ssh connection', async () => {
+      const matDialog = spectator.inject(MatDialog);
+      jest.spyOn(matDialog, 'open');
+      await form.fillForm({ 'SSH Connection': 'Create New' });
+      expect(matDialog.open).toHaveBeenCalled();
     });
   });
 
