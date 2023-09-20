@@ -48,3 +48,7 @@ $opened-scroll-container-height: calc(80vh - 48px - 240px); // Viewport - topbar
 .err-title {
   align-items: center;
 }
+
+.err-message-wrapper {
+  word-wrap: break-word;
+}

@@ -79,13 +79,12 @@ export class SnapshotTaskCardComponent implements OnInit {
 
   getSnapshotTasks(): void {
     this.isLoading = true;
-    this.ws.call('pool.snapshottask.query').pipe(
-      untilDestroyed(this),
-    ).subscribe((snapshotTasks: PeriodicSnapshotTaskUi[]) => {
-      this.dataProvider.setRows(snapshotTasks);
-      this.isLoading = false;
-      this.cdr.markForCheck();
-    });
+    this.ws.call('pool.snapshottask.query').pipe(untilDestroyed(this))
+      .subscribe((snapshotTasks: PeriodicSnapshotTaskUi[]) => {
+        this.dataProvider.setRows(snapshotTasks);
+        this.isLoading = false;
+        this.cdr.markForCheck();
+      });
   }
 
   doDelete(snapshotTask: PeriodicSnapshotTaskUi): void {
@@ -111,7 +110,7 @@ export class SnapshotTaskCardComponent implements OnInit {
   openForm(row?: PeriodicSnapshotTaskUi): void {
     const slideInRef = this.slideInService.open(SnapshotTaskFormComponent, { data: row, wide: true });
 
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.getSnapshotTasks();
     });
   }

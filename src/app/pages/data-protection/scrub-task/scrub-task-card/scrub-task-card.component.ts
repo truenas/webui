@@ -103,7 +103,7 @@ export class ScrubTaskCardComponent implements OnInit {
   openForm(row?: ScrubTaskUi): void {
     const slideInRef = this.slideInService.open(ScrubTaskFormComponent, { data: row });
 
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.getScrubTasks();
     });
   }

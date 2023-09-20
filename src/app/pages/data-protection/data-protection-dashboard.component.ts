@@ -1,4 +1,3 @@
-import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -13,12 +12,11 @@ import { JobState } from 'app/enums/job-state.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import helptext_cloudsync from 'app/helptext/data-protection/cloudsync/cloudsync-form';
 import helptext from 'app/helptext/data-protection/data-protection-dashboard/data-protection-dashboard';
-import helptext_smart from 'app/helptext/data-protection/smart/smart';
 import globalHelptext from 'app/helptext/global-helptext';
 import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { ReplicationTaskUi } from 'app/interfaces/replication-task.interface';
-import { SmartTestTaskUi } from 'app/interfaces/smart-test.interface';
+import { RsyncTaskUi } from 'app/interfaces/rsync-task.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ShowLogsDialogComponent } from 'app/modules/common/dialog/show-logs-dialog/show-logs-dialog.component';
@@ -32,12 +30,7 @@ import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/clou
 import {
   CloudsyncRestoreDialogComponent,
 } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
-import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
-import {
-  ReplicationRestoreDialogComponent,
-} from 'app/pages/data-protection/replication/replication-restore-dialog/replication-restore-dialog.component';
-import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
-import { SmartTaskFormComponent } from 'app/pages/data-protection/smart-task/smart-task-form/smart-task-form.component';
+import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -54,13 +47,13 @@ export interface TaskCard {
 enum TaskCardId {
   Replication = 'replication',
   CloudSync = 'cloudsync',
-  Smart = 'smart',
+  Rsync = 'rsync',
 }
 
 type TaskTableRow = Partial<
 Omit<ReplicationTaskUi, 'naming_schema'> &
 CloudSyncTaskUi &
-SmartTestTaskUi
+RsyncTaskUi
 >;
 
 @UntilDestroy()
@@ -105,15 +98,11 @@ export class DataProtectionDashboardComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe(() => {
         switch (modalType) {
-          case ReplicationFormComponent:
-          case ReplicationWizardComponent:
-            this.refreshTable(TaskCardId.Replication);
-            break;
           case CloudsyncFormComponent:
             this.refreshTable(TaskCardId.CloudSync);
             break;
-          case SmartTaskFormComponent:
-            this.refreshTable(TaskCardId.Smart);
+          case RsyncTaskFormComponent:
+            this.refreshTable(TaskCardId.Rsync);
             break;
         }
       });
@@ -121,47 +110,6 @@ export class DataProtectionDashboardComponent implements OnInit {
 
   getCardData(): void {
     this.dataCards = [
-      {
-        name: TaskCardId.Replication,
-        tableConf: {
-          title: helptext.fieldset_replication_tasks,
-          titleHref: '/tasks/replication',
-          queryCallOption: [[], { extra: { check_dataset_encryption_keys: true } }],
-          queryCall: 'replication.query',
-          deleteCall: 'replication.delete',
-          deleteMsg: {
-            title: this.translate.instant('Replication Task'),
-            key_props: ['name'],
-          },
-          dataSourceHelper: (data: ReplicationTaskUi[]) => this.replicationDataSourceHelper(data),
-          getActions: this.getReplicationActions.bind(this),
-          isActionVisible: this.isActionVisible,
-          columns: [
-            { name: this.translate.instant('Name'), prop: 'name', enableMatTooltip: true },
-            { name: this.translate.instant('Last Snapshot'), prop: 'task_last_snapshot', enableMatTooltip: true },
-            {
-              name: this.translate.instant('Enabled'),
-              prop: 'enabled',
-              width: '80px',
-              checkbox: true,
-              onChange: (row: ReplicationTaskUi) => this.onCheckboxToggle(TaskCardId.Replication, row as TaskTableRow, 'enabled'),
-            },
-            { name: this.translate.instant('State'), prop: 'state', button: true },
-          ],
-          parent: this,
-          add: () => {
-            const slideInRef = this.slideInService.open(ReplicationWizardComponent, { wide: true });
-            this.handleSlideInClosed(slideInRef, ReplicationWizardComponent);
-          },
-          edit: (row: ReplicationTaskUi) => {
-            const slideInRef = this.slideInService.open(ReplicationFormComponent, { wide: true, data: row });
-            this.handleSlideInClosed(slideInRef, ReplicationFormComponent);
-          },
-          onButtonClick: (row) => {
-            this.stateButton(row);
-          },
-        },
-      },
       {
         name: TaskCardId.CloudSync,
         tableConf: {
@@ -204,32 +152,43 @@ export class DataProtectionDashboardComponent implements OnInit {
         },
       },
       {
-        name: TaskCardId.Smart,
+        name: TaskCardId.Rsync,
         tableConf: {
-          title: helptext.fieldset_smart_tests,
-          titleHref: '/tasks/smart',
-          queryCall: 'smart.test.query',
-          deleteCall: 'smart.test.delete',
+          title: helptext.fieldset_rsync_tasks,
+          titleHref: '/tasks/rsync',
+          queryCall: 'rsynctask.query',
+          deleteCall: 'rsynctask.delete',
           deleteMsg: {
-            title: this.translate.instant('S.M.A.R.T. Test'),
-            key_props: ['type', 'desc'],
+            title: this.translate.instant('Rsync Task'),
+            key_props: ['remotehost', 'remotemodule'],
           },
-          dataSourceHelper: (data: SmartTestTaskUi[]) => this.smartTestsDataSourceHelper(data),
-          parent: this,
           columns: [
-            { name: helptext_smart.smartlist_column_disks, prop: 'disksLabel', enableMatTooltip: true },
-            { name: helptext_smart.smartlist_column_type, prop: 'type', enableMatTooltip: true },
-            { name: helptext_smart.smartlist_column_description, prop: 'desc', hiddenIfEmpty: true },
-            { name: helptext_smart.smartlist_column_frequency, prop: 'frequency', enableMatTooltip: true },
-            { name: helptext_smart.smartlist_column_next_run, prop: 'next_run', enableMatTooltip: true },
+            { name: this.translate.instant('Path'), prop: 'path', enableMatTooltip: true },
+            { name: this.translate.instant('Remote Host'), prop: 'remotehost', enableMatTooltip: true },
+            { name: this.translate.instant('Frequency'), prop: 'frequency', enableMatTooltip: true },
+            { name: this.translate.instant('Next Run'), prop: 'next_run', enableMatTooltip: true },
+            {
+              name: this.translate.instant('Enabled'),
+              prop: 'enabled',
+              width: '80px',
+              checkbox: true,
+              onChange: (row: RsyncTaskUi) => this.onCheckboxToggle(TaskCardId.Rsync, row as TaskTableRow, 'enabled'),
+            },
+            { name: this.translate.instant('State'), prop: 'state', button: true },
           ],
+          dataSourceHelper: (data: RsyncTaskUi[]) => this.rsyncDataSourceHelper(data),
+          isActionVisible: this.isActionVisible,
+          parent: this,
           add: () => {
-            const slideInRef = this.slideInService.open(SmartTaskFormComponent);
-            this.handleSlideInClosed(slideInRef, SmartTaskFormComponent);
+            const slideInRef = this.slideInService.open(RsyncTaskFormComponent, { wide: true });
+            this.handleSlideInClosed(slideInRef, RsyncTaskFormComponent);
           },
-          edit: (row: SmartTestTaskUi) => {
-            const slideInRef = this.slideInService.open(SmartTaskFormComponent, { data: row });
-            this.handleSlideInClosed(slideInRef, SmartTaskFormComponent);
+          edit: (row: RsyncTaskUi) => {
+            const slideInRef = this.slideInService.open(RsyncTaskFormComponent, { wide: true, data: row });
+            this.handleSlideInClosed(slideInRef, RsyncTaskFormComponent);
+          },
+          onButtonClick: (row: RsyncTaskUi) => {
+            this.stateButton(row as TaskTableRow);
           },
         },
       },
@@ -290,129 +249,31 @@ export class DataProtectionDashboardComponent implements OnInit {
     return cloudsyncData;
   }
 
-  replicationDataSourceHelper(data: ReplicationTaskUi[]): ReplicationTaskUi[] {
-    const tasks: ReplicationTaskUi[] = [];
-    data.forEach((task) => {
-      task.task_last_snapshot = task.state.last_snapshot
-        ? task.state.last_snapshot
-        : this.translate.instant(helptext.no_snapshot_sent_yet);
+  rsyncDataSourceHelper(data: RsyncTaskUi[]): RsyncTaskUi[] {
+    return data.map((task) => {
+      task.cron_schedule = scheduleToCrontab(task.schedule);
+      task.frequency = this.taskService.getTaskCronDescription(task.cron_schedule);
+      task.next_run = this.taskService.getTaskNextRun(task.cron_schedule);
 
-      if (task.job !== null) {
+      if (task.job === null) {
+        task.state = { state: task.locked ? JobState.Locked : JobState.Pending };
+      } else {
+        task.state = { state: task.job.state };
         this.store$.select(selectJob(task.job.id)).pipe(
           filter(Boolean),
           untilDestroyed(this),
         ).subscribe((job: Job) => {
+          task.state = { state: job.state };
           task.job = job;
           if (this.jobStates.get(job.id) !== job.state) {
-            this.refreshTable(TaskCardId.Replication);
+            this.refreshTable(TaskCardId.Rsync);
           }
           this.jobStates.set(job.id, job.state);
         });
       }
-      tasks.push(task);
+
+      return task;
     });
-    return tasks;
-  }
-
-  smartTestsDataSourceHelper(data: SmartTestTaskUi[]): SmartTestTaskUi[] {
-    return data.map((test) => {
-      test.cron_schedule = scheduleToCrontab(test.schedule);
-      test.frequency = this.taskService.getTaskCronDescription(test.cron_schedule);
-      test.next_run = this.taskService.getTaskNextRun(test.cron_schedule);
-
-      if (test.all_disks) {
-        test.disksLabel = [this.translate.instant(helptext_smart.smarttest_all_disks_placeholder)];
-      } else if (test.disks.length) {
-        test.disksLabel = [
-          test.disks
-            .map((identifier) => {
-              const fullDisk = this.disks.find((item) => item.identifier === identifier);
-              if (fullDisk) {
-                return fullDisk.devname;
-              }
-              return identifier;
-            })
-            .join(','),
-        ];
-      }
-      return test;
-    });
-  }
-
-  getReplicationActions(): AppTableAction<ReplicationTaskUi>[] {
-    return [
-      {
-        icon: 'play_arrow',
-        name: 'run',
-        matTooltip: this.translate.instant('Run Now'),
-        onClick: (row) => {
-          this.dialogService.confirm({
-            title: this.translate.instant('Run Now'),
-            message: this.translate.instant('Replicate «{name}» now?', { name: row.name }),
-            hideCheckbox: true,
-          }).pipe(
-            filter(Boolean),
-            tap(() => row.state.state = JobState.Running),
-            switchMap(() => this.ws.job('replication.run', [row.id])),
-            tapOnce(() => {
-              this.snackbar.success(
-                this.translate.instant('Replication «{name}» has started.', { name: row.name }),
-              );
-            }),
-            tap((job) => {
-              if (!([JobState.Running, JobState.Pending].includes(job.state))) {
-                this.refreshTable(TaskCardId.Replication); return;
-              }
-              row.state.state = job.state;
-              row.job = { ...job };
-              this.jobStates.set(job.id, job.state);
-            }),
-            catchError((error: Job) => {
-              this.dialogService.error(this.errorHandler.parseJobError(error));
-              return EMPTY;
-            }),
-            untilDestroyed(this),
-          ).subscribe();
-        },
-      },
-      {
-        name: 'restore',
-        matTooltip: this.translate.instant('Restore'),
-        icon: 'restore',
-        onClick: (row) => {
-          const dialog = this.matDialog.open(ReplicationRestoreDialogComponent, {
-            data: row.id,
-          });
-          dialog
-            .afterClosed()
-            .pipe(untilDestroyed(this))
-            .subscribe(() => this.refreshTable(TaskCardId.Replication));
-        },
-      },
-      {
-        name: 'download_keys',
-        matTooltip: this.translate.instant('Download encryption keys'),
-        icon: 'download',
-        onClick: (row) => {
-          this.ws.call('core.download', ['pool.dataset.export_keys_for_replication', [row.id], `${row.name}_encryption_keys.json`]).pipe(untilDestroyed(this)).subscribe({
-            next: ([, url]) => {
-              const mimetype = 'application/json';
-              this.storage.streamDownloadFile(url, `${row.name}_encryption_keys.json`, mimetype).pipe(untilDestroyed(this)).subscribe({
-                next: (file) => {
-                  this.storage.downloadBlob(file, `${row.name}_encryption_keys.json`);
-                },
-                error: (err: HttpErrorResponse) => {
-                  this.dialogService.error(this.errorHandler.parseHttpError(err));
-                },
-              });
-            },
-            error: (err) => {
-              this.dialogService.error(this.errorHandler.parseWsError(err));
-            },
-          });
-        },
-      },
-    ];
   }
 
   getCloudsyncActions(): AppTableAction<CloudSyncTaskUi>[] {
