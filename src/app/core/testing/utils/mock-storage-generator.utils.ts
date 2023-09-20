@@ -28,6 +28,7 @@ import {
 import { MockEnclosure } from './enclosure-templates/mock-enclosure-template';
 import { MockEs102 } from './enclosure-templates/mock-es102';
 import { MockEs24 } from './enclosure-templates/mock-es24';
+import { MockEs60G2 } from './enclosure-templates/mock-es60g2';
 import { MockF60 } from './enclosure-templates/mock-f60';
 import { MockM40 } from './enclosure-templates/mock-m40';
 import { MockM50 } from './enclosure-templates/mock-m50';
@@ -677,6 +678,9 @@ export class MockStorageGenerator {
         break;
       case 'ES24':
         chassis = new MockEs24(enclosureNumber);
+        break;
+      case 'ES60G2':
+        chassis = new MockEs60G2(enclosureNumber);
         break;
       case 'ES102':
         chassis = new MockEs102(enclosureNumber);

@@ -38,6 +38,7 @@ import { Es12 } from 'app/pages/system/view-enclosure/classes/hardware/es12';
 import { Es24 } from 'app/pages/system/view-enclosure/classes/hardware/es24';
 import { Es24F } from 'app/pages/system/view-enclosure/classes/hardware/es24f';
 import { Es60 } from 'app/pages/system/view-enclosure/classes/hardware/es60';
+import { Es60G2 } from 'app/pages/system/view-enclosure/classes/hardware/es60g2';
 import { F60 } from 'app/pages/system/view-enclosure/classes/hardware/f60';
 import { M50 } from 'app/pages/system/view-enclosure/classes/hardware/m50';
 import { MINIR } from 'app/pages/system/view-enclosure/classes/hardware/mini-r';
@@ -569,6 +570,9 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
       case 'ES60':
         this.chassis = new Es60();
         break;
+      case 'ES60G2':
+        this.chassis = new Es60G2();
+        break;
       case 'E60':
         this.chassis = new E60();
         break;
@@ -716,6 +720,9 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
         break;
       case 'ES60':
         extractedChassis = new Es60();
+        break;
+      case 'ES60G2':
+        extractedChassis = new Es60G2();
         break;
       case 'E60':
         extractedChassis = new E60();
