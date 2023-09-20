@@ -109,7 +109,8 @@
                     [id]="productModel"
                     [class.clickable]="enclosureSupport"
                     [matTooltipDisabled]="!enclosureSupport"
-                    [src]="'assets/images/' + productImage"
+                    [src]="'assets/images' + productImage"
+                    [src-fallback]="'assets/images/truenas_scale_ondark_favicon.png'"
                     (click)="goToEnclosure()"
                   />
 
