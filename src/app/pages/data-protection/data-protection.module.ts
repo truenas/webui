@@ -44,6 +44,7 @@ import { ScrubTaskCardComponent } from 'app/pages/data-protection/scrub-task/scr
 import {
   ScrubTaskFormComponent,
 } from 'app/pages/data-protection/scrub-task/scrub-task-form/scrub-task-form.component';
+import { SmartTaskCardComponent } from 'app/pages/data-protection/smart-task/smart-task-card/smart-task-card.component';
 import { SmartTaskFormComponent } from 'app/pages/data-protection/smart-task/smart-task-form/smart-task-form.component';
 import { SnapshotTaskCardComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-card/snapshot-task-card.component';
 import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
@@ -118,6 +119,7 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
     ScheduleSectionComponent,
     SourceSectionComponent,
     TargetSectionComponent,
+    SmartTaskCardComponent,
     ReplicationTaskCardComponent,
     ScrubTaskCardComponent,
     SnapshotTaskCardComponent,

@@ -12,13 +12,11 @@ import { JobState } from 'app/enums/job-state.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import helptext_cloudsync from 'app/helptext/data-protection/cloudsync/cloudsync-form';
 import helptext from 'app/helptext/data-protection/data-protection-dashboard/data-protection-dashboard';
-import helptext_smart from 'app/helptext/data-protection/smart/smart';
 import globalHelptext from 'app/helptext/global-helptext';
 import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { ReplicationTaskUi } from 'app/interfaces/replication-task.interface';
 import { RsyncTaskUi } from 'app/interfaces/rsync-task.interface';
-import { SmartTestTaskUi } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ShowLogsDialogComponent } from 'app/modules/common/dialog/show-logs-dialog/show-logs-dialog.component';
@@ -33,7 +31,6 @@ import {
   CloudsyncRestoreDialogComponent,
 } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
-import { SmartTaskFormComponent } from 'app/pages/data-protection/smart-task/smart-task-form/smart-task-form.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -51,14 +48,12 @@ enum TaskCardId {
   Replication = 'replication',
   CloudSync = 'cloudsync',
   Rsync = 'rsync',
-  Smart = 'smart',
 }
 
 type TaskTableRow = Partial<
 Omit<ReplicationTaskUi, 'naming_schema'> &
 CloudSyncTaskUi &
-RsyncTaskUi &
-SmartTestTaskUi
+RsyncTaskUi
 >;
 
 @UntilDestroy()
@@ -108,9 +103,6 @@ export class DataProtectionDashboardComponent implements OnInit {
             break;
           case RsyncTaskFormComponent:
             this.refreshTable(TaskCardId.Rsync);
-            break;
-          case SmartTaskFormComponent:
-            this.refreshTable(TaskCardId.Smart);
             break;
         }
       });
@@ -201,36 +193,6 @@ export class DataProtectionDashboardComponent implements OnInit {
           },
         },
       },
-      {
-        name: TaskCardId.Smart,
-        tableConf: {
-          title: helptext.fieldset_smart_tests,
-          titleHref: '/tasks/smart',
-          queryCall: 'smart.test.query',
-          deleteCall: 'smart.test.delete',
-          deleteMsg: {
-            title: this.translate.instant('S.M.A.R.T. Test'),
-            key_props: ['type', 'desc'],
-          },
-          dataSourceHelper: (data: SmartTestTaskUi[]) => this.smartTestsDataSourceHelper(data),
-          parent: this,
-          columns: [
-            { name: helptext_smart.smartlist_column_disks, prop: 'disksLabel', enableMatTooltip: true },
-            { name: helptext_smart.smartlist_column_type, prop: 'type', enableMatTooltip: true },
-            { name: helptext_smart.smartlist_column_description, prop: 'desc', hiddenIfEmpty: true },
-            { name: helptext_smart.smartlist_column_frequency, prop: 'frequency', enableMatTooltip: true },
-            { name: helptext_smart.smartlist_column_next_run, prop: 'next_run', enableMatTooltip: true },
-          ],
-          add: () => {
-            const slideInRef = this.slideInService.open(SmartTaskFormComponent);
-            this.handleSlideInClosed(slideInRef, SmartTaskFormComponent);
-          },
-          edit: (row: SmartTestTaskUi) => {
-            const slideInRef = this.slideInService.open(SmartTaskFormComponent, { data: row });
-            this.handleSlideInClosed(slideInRef, SmartTaskFormComponent);
-          },
-        },
-      },
     ];
   }
 
@@ -286,31 +248,6 @@ export class DataProtectionDashboardComponent implements OnInit {
     });
 
     return cloudsyncData;
-  }
-
-  smartTestsDataSourceHelper(data: SmartTestTaskUi[]): SmartTestTaskUi[] {
-    return data.map((test) => {
-      test.cron_schedule = scheduleToCrontab(test.schedule);
-      test.frequency = this.taskService.getTaskCronDescription(test.cron_schedule);
-      test.next_run = this.taskService.getTaskNextRun(test.cron_schedule);
-
-      if (test.all_disks) {
-        test.disksLabel = [this.translate.instant(helptext_smart.smarttest_all_disks_placeholder)];
-      } else if (test.disks.length) {
-        test.disksLabel = [
-          test.disks
-            .map((identifier) => {
-              const fullDisk = this.disks.find((item) => item.identifier === identifier);
-              if (fullDisk) {
-                return fullDisk.devname;
-              }
-              return identifier;
-            })
-            .join(','),
-        ];
-      }
-      return test;
-    });
   }
 
   rsyncDataSourceHelper(data: RsyncTaskUi[]): RsyncTaskUi[] {
