@@ -12,7 +12,7 @@ interface LayoutColumn {
 export class Es102S extends Chassis {
   constructor() {
     super();
-    this.model = 'es60g2';
+    this.model = 'es102s';
 
     this.front = new ChassisView();
     this.front.container = new PIXI.Container();
