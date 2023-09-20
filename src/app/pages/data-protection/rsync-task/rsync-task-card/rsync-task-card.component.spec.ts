@@ -171,6 +171,8 @@ describe('RsyncTaskCardComponent', () => {
       title: 'Confirmation',
       message: 'Delete Rsync Task <b>\"asd - asdad\"</b>?',
     });
+
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('rsynctask.delete', [1]);
   });
 
   it('updates Rsync Task Enabled status once mat-toggle is updated', async () => {
