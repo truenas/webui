@@ -3,7 +3,9 @@
   {{ title | translate }}
 </h1>
 <div #errorMdContent mat-dialog-content id="err-md-content">
-  <div #errorMessageWrapper id="err-message-wrapper"><span [innerHTML]="message"></span></div>
+  <div #errorMessageWrapper id="err-message-wrapper" class="err-message-wrapper">
+    <span [innerHTML]="message"></span>
+  </div>
   <div
     *ngIf="backtrace"
     class="more-info"
