@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -25,12 +25,15 @@ interface RowState {
   styleUrls: ['./ix-cell-state-button.component.scss'],
 })
 export class IxCellStateButtonComponent<T> extends ColumnComponent<T> {
-  constructor(
-    private matDialog: MatDialog,
-    private translate: TranslateService,
-    private dialogService: DialogService,
-  ) {
+  matDialog: MatDialog;
+  translate: TranslateService;
+  dialogService: DialogService;
+
+  constructor() {
     super();
+    this.matDialog = inject(MatDialog);
+    this.translate = inject(TranslateService);
+    this.dialogService = inject(DialogService);
   }
 
   getWarnings?: (row: T) => unknown[];
@@ -48,7 +51,7 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> {
     return this.value as JobState;
   }
 
-  onButtonClick(): void {
+  protected onButtonClick(): void {
     if (this.job) {
       const state = (this.row as RowState).state;
 
