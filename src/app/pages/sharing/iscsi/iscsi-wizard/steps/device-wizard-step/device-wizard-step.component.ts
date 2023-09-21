@@ -39,14 +39,12 @@ export class DeviceWizardStepComponent implements OnInit {
     .pipe(
       choicesToOptions(),
       switchMap((options) => of([...options, { label: 'Create New', value: IscsiNewOption.New }])),
-      untilDestroyed(this),
     );
 
   readonly targetOptions$ = this.iscsiService.getTargets()
     .pipe(
       idNameArrayToOptions(),
       switchMap((options) => of([...options, { label: 'Create New', value: IscsiNewOption.New }])),
-      untilDestroyed(this),
     );
 
   get isDevice(): boolean {

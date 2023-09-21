@@ -148,33 +148,46 @@ export class SharesDashboardComponent implements AfterViewInit {
         case SmbFormComponent:
         case SmbAclComponent:
           if (!this.smbTable.tableComponent) {
-            this.refreshDashboard();
+            this.refreshDashboard(ShareType.Smb);
           }
           this.smbTable.tableComponent.getData();
           break;
         case NfsFormComponent:
           if (!this.nfsTable.tableComponent) {
-            this.refreshDashboard();
+            this.refreshDashboard(ShareType.Nfs);
           }
           this.nfsTable.tableComponent.getData();
           break;
         case TargetFormComponent:
+        case IscsiWizardComponent:
           if (!this.iscsiTable.tableComponent) {
-            this.refreshDashboard();
+            this.refreshDashboard(ShareType.Iscsi);
           }
           this.iscsiTable.tableComponent.getData();
           break;
         default:
-          this.refreshDashboard();
+          this.refreshDashboard(null);
           break;
       }
     });
   }
 
-  refreshDashboard(): void {
-    this.nfsTableConf = this.getTableConfigForShareType(ShareType.Nfs);
-    this.smbTableConf = this.getTableConfigForShareType(ShareType.Smb);
-    this.iscsiTableConf = this.getTableConfigForShareType(ShareType.Iscsi);
+  refreshDashboard(type: ShareType): void {
+    switch (type) {
+      case ShareType.Nfs:
+        this.nfsTableConf = this.getTableConfigForShareType(ShareType.Nfs);
+        break;
+      case ShareType.Smb:
+        this.smbTableConf = this.getTableConfigForShareType(ShareType.Smb);
+        break;
+      case ShareType.Iscsi:
+        this.iscsiTableConf = this.getTableConfigForShareType(ShareType.Iscsi);
+        break;
+      default:
+        this.nfsTableConf = this.getTableConfigForShareType(ShareType.Nfs);
+        this.smbTableConf = this.getTableConfigForShareType(ShareType.Smb);
+        this.iscsiTableConf = this.getTableConfigForShareType(ShareType.Iscsi);
+    }
   }
 
   getTableConfigForShareType(shareType: ShareType): InputExpandableTableConf {
