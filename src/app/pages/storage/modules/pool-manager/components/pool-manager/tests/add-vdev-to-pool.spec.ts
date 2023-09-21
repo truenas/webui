@@ -9,6 +9,7 @@ import { CoreComponents } from 'app/core/core-components.module';
 import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DiskType } from 'app/enums/disk-type.enum';
+import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
@@ -178,7 +179,7 @@ describe('AddVdevsComponent – Add Vdev to existing pool', () => {
     const dataStepValues = await wizard.getStepValues();
     expect(dataStepValues).toEqual({
       'Disk Size': '',
-      'Layout': 'MIRROR',
+      'Layout': TopologyItemType.Mirror,
       'Number of VDEVs': '',
       'Treat Disk Size as Minimum': false,
       'Width': '',
@@ -267,31 +268,12 @@ describe('AddVdevsComponent – Add Vdev to existing pool', () => {
         topology: {
           cache: [],
           data: [
-            {
-              type: 'MIRROR',
-              disks: [
-                'sda3',
-                'sda0',
-              ],
-            },
+            { type: TopologyItemType.Mirror, disks: ['sda3', 'sda0'] },
           ],
           dedup: [
-            {
-              type: 'MIRROR',
-              disks: [
-                'sda1',
-                'sda2',
-                'sda5',
-              ],
-            },
-          ],
+            { type: TopologyItemType.Mirror, disks: ['sda1', 'sda2', 'sda5' ] } ],
           log: [
-            {
-              type: 'STRIPE',
-              disks: [
-                'sda6',
-              ],
-            },
+            { type: TopologyItemType.Stripe, disks: ['sda6'] },
           ],
           spares: [],
           special: [],
