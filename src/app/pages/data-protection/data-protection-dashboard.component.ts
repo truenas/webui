@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import { formatDistanceToNow } from 'date-fns';
 import { EMPTY } from 'rxjs';
 import {
   filter, switchMap, tap, catchError,
@@ -111,6 +112,7 @@ export class DataProtectionDashboardComponent implements OnInit {
             { name: this.translate.instant('Remote Host'), prop: 'remotehost', enableMatTooltip: true },
             { name: this.translate.instant('Frequency'), prop: 'frequency', enableMatTooltip: true },
             { name: this.translate.instant('Next Run'), prop: 'next_run', enableMatTooltip: true },
+            { name: this.translate.instant('Last Run'), prop: 'last_run', enableMatTooltip: true },
             {
               name: this.translate.instant('Enabled'),
               prop: 'enabled',
@@ -161,6 +163,11 @@ export class DataProtectionDashboardComponent implements OnInit {
       task.cron_schedule = scheduleToCrontab(task.schedule);
       task.frequency = this.taskService.getTaskCronDescription(task.cron_schedule);
       task.next_run = this.taskService.getTaskNextRun(task.cron_schedule);
+      if (task.job?.time_finished?.$date) {
+        task.last_run = formatDistanceToNow(task.job?.time_finished?.$date, { addSuffix: true });
+      } else {
+        task.last_run = this.translate.instant('N/A');
+      }
 
       if (task.job === null) {
         task.state = { state: task.locked ? JobState.Locked : JobState.Pending };

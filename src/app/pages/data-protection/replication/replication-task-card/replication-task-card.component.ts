@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import { formatDistanceToNow } from 'date-fns';
 import { catchError, EMPTY, filter, switchMap, tap } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
@@ -61,6 +62,10 @@ export class ReplicationTaskCardComponent implements OnInit {
       getValue: (row) => row.state.state,
       getJob: (row) => row.job,
       cssClass: 'state-button',
+    }),
+    textColumn({
+      title: this.translate.instant('Last Run'),
+      propertyName: 'last_run',
     }),
     textColumn({
       propertyName: 'id',
@@ -201,6 +206,11 @@ export class ReplicationTaskCardComponent implements OnInit {
     const tasks: ReplicationTaskUi[] = [];
 
     replicationTasks.forEach((task) => {
+      if (task.state?.datetime?.$date) {
+        task.last_run = formatDistanceToNow(task.state.datetime.$date, { addSuffix: true });
+      } else {
+        task.last_run = this.translate.instant('N/A');
+      }
       task.task_last_snapshot = task.state.last_snapshot
         ? task.state.last_snapshot
         : this.translate.instant(helptext.no_snapshot_sent_yet);

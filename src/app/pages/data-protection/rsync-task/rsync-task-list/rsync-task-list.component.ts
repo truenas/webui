@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import { formatDistanceToNow } from 'date-fns';
 import {
   catchError, EMPTY, filter, switchMap, take, tap,
 } from 'rxjs';
@@ -60,6 +61,7 @@ export class RsyncTaskListComponent implements EntityTableConfig<RsyncTaskUi> {
     },
     { name: this.translate.instant('Frequency'), prop: 'frequency', enableMatTooltip: true },
     { name: this.translate.instant('Next Run'), prop: 'next_run', hidden: true },
+    { name: this.translate.instant('Last Run'), prop: 'last_run', hidden: true },
     { name: this.translate.instant('Short Description'), prop: 'desc', hidden: true },
     { name: this.translate.instant('User'), prop: 'user' },
     { name: this.translate.instant('Delay Updates'), prop: 'delayupdates', hidden: true },
@@ -156,7 +158,11 @@ export class RsyncTaskListComponent implements EntityTableConfig<RsyncTaskUi> {
       task.cron_schedule = scheduleToCrontab(task.schedule);
       task.frequency = this.taskService.getTaskCronDescription(task.cron_schedule);
       task.next_run = this.taskService.getTaskNextRun(task.cron_schedule);
-
+      if (task.job?.time_finished?.$date) {
+        task.last_run = formatDistanceToNow(task.job?.time_finished?.$date, { addSuffix: true });
+      } else {
+        task.last_run = this.translate.instant('N/A');
+      }
       if (task.job === null) {
         task.state = { state: task.locked ? JobState.Locked : JobState.Pending };
       } else {
