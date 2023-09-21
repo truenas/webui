@@ -133,7 +133,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
   runNow(row: CloudSyncTaskUi): void {
     this.dialogService.confirm({
       title: this.translate.instant('Run Now'),
-      message: this.translate.instant('Run this Cloud Sync now?'),
+      message: this.translate.instant('Run this Cloud sync now?'),
       hideCheckbox: true,
     }).pipe(
       filter(Boolean),
