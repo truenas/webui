@@ -20,6 +20,7 @@ import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { ReplicationRestoreDialogComponent } from 'app/pages/data-protection/replication/replication-restore-dialog/replication-restore-dialog.component';
+import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -116,12 +117,18 @@ export class ReplicationTaskCardComponent implements OnInit {
     });
   }
 
-  openForm(row?: ReplicationTaskUi): void {
-    const slideInRef = this.slideInService.open(ReplicationFormComponent, { data: row, wide: true });
+  addReplicationTask(): void {
+    const slideInRef = this.slideInService.open(ReplicationWizardComponent, { wide: true });
+    slideInRef.slideInClosed$
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe(() => this.getReplicationTasks());
+  }
 
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-      this.getReplicationTasks();
-    });
+  editReplicationTask(row: ReplicationTaskUi): void {
+    const slideInRef = this.slideInService.open(ReplicationFormComponent, { data: row, wide: true });
+    slideInRef.slideInClosed$
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe(() => this.getReplicationTasks());
   }
 
   runNow(row: ReplicationTaskUi): void {
@@ -204,9 +211,6 @@ export class ReplicationTaskCardComponent implements OnInit {
           untilDestroyed(this),
         ).subscribe((job: Job) => {
           task.job = job;
-          if (this.jobStates.get(job.id) !== job.state) {
-            this.getReplicationTasks();
-          }
           this.jobStates.set(job.id, job.state);
         });
       }
