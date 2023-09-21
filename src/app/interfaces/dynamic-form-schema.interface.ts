@@ -69,7 +69,6 @@ export interface DynamicFormSchemaEnum extends DynamicFormSchemaBase {
   type: DynamicFormSchemaType.Enum;
   tooltip?: string;
   options?: Observable<Option[]>;
-  hideEmpty?: boolean;
 }
 
 export interface DynamicFormSchemaExplorer extends DynamicFormSchemaBase {

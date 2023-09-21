@@ -77,9 +77,7 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
   }
 
   ngOnInit(): void {
-    if (this.autocompleteOptions) {
-      this.filteredOptions = this.autocompleteOptions?.slice(0, 50);
-    }
+    this.filterOptions();
   }
 
   get value(): string | number {
@@ -218,9 +216,9 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
 
   filterOptions(): void {
     if (this.autocompleteOptions) {
-      this.filteredOptions = this.autocompleteOptions?.filter((option) => {
-        return option.label?.toString().toLowerCase().includes(this.value?.toString().toLowerCase());
-      })?.slice(0, 50);
+      this.filteredOptions = this.autocompleteOptions.filter((option) => {
+        return option.label.toString().toLowerCase().includes((this.value || '').toString().toLowerCase());
+      }).slice(0, 50);
     }
   }
 }
