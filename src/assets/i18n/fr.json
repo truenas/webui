@@ -199,7 +199,7 @@
   "The number of children must at the minimum accomodate the total number of disks required for the previous configuration options including parity drives.": "",
   "These images will not be removed as there are other apps which are consuming them": "",
   "This type of VDEV requires at least {n, plural, one {# disk} other {# disks}}.": "",
-  "TrueNAS Forums - To discuss with fellow TrueNAS community users": "",
+  "TrueNAS Forums - Discuss with fellow TrueNAS community users": "",
   "VDEVs": "",
   "Version Info": "",
   "Versions": "",
