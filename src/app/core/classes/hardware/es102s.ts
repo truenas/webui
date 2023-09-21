@@ -1,6 +1,6 @@
-import { Container, Transform } from 'pixi.js';
-import { ChassisView } from 'app/pages/system/view-enclosure/classes/chassis-view';
-import { Chassis } from 'app/pages/system/view-enclosure/classes/hardware/chassis';
+import { Container } from 'pixi.js';
+import { Chassis } from './chassis';
+import { ChassisView } from './chassis-view';
 
 interface LayoutColumn {
   start: number;
@@ -9,18 +9,18 @@ interface LayoutColumn {
   iomIndex: number;
 }
 
-export class Es60G2 extends Chassis {
+export class ES102S extends Chassis {
   constructor() {
     super();
-    this.model = 'es60g2';
+    this.model = 'es102';
 
     this.front = new ChassisView();
     this.front.container = new PIXI.Container();
-    this.front.chassisPath = 'assets/images/hardware/es102/es102_960w.png';
-    this.front.driveTrayBackgroundPath = 'assets/images/hardware/es102/es102_960w_drivetray_handle.png';
-    this.front.driveTrayHandlePath = 'assets/images/hardware/es102/es102_960w_drivetray_bg_grey.png';
+    this.front.chassisPath = 'assets/images/hardware/es102s/es102s_960w.png';
+    this.front.driveTrayBackgroundPath = 'assets/images/hardware/es102s/es102s_960w_drivetray_bg.png';
+    this.front.driveTrayHandlePath = 'assets/images/hardware/es102s/es102s_960w_drivetray_handle.png';
 
-    this.front.totalDriveTrays = 60;
+    this.front.totalDriveTrays = 102;
     this.front.rows = 12;
     this.front.columns = 8;
     this.front.orientation = 'columns';
@@ -41,33 +41,33 @@ export class Es60G2 extends Chassis {
         offsetX: number,
         offsetY: number,
       ) => {
-        const gapX = 4;// was 16
-        const gapY = 2;
+        const gapX = 4;
+        const gapY = 4;
 
         const cols: LayoutColumn[] = [
           {
-            start: 0, count: 14, iomGap: 38, iomIndex: 7,
+            start: 0, count: 15, iomGap: 0, iomIndex: 7,
           },
           {
-            start: 14, count: 14, iomGap: 38, iomIndex: 7,
+            start: 15, count: 15, iomGap: 0, iomIndex: 7,
           },
           {
-            start: 28, count: 14, iomGap: 38, iomIndex: 7,
+            start: 30, count: 13, iomGap: 64, iomIndex: 6,
           },
           {
-            start: 42, count: 12, iomGap: 100, iomIndex: 6,
+            start: 43, count: 13, iomGap: 64, iomIndex: 6,
           },
           {
-            start: 54, count: 12, iomGap: 70, iomIndex: 6,
+            start: 56, count: 13, iomGap: 70, iomIndex: 6,
           },
           {
-            start: 66, count: 12, iomGap: 70, iomIndex: 6,
+            start: 69, count: 11, iomGap: 70, iomIndex: 6,
           },
           {
-            start: 78, count: 12, iomGap: 70, iomIndex: 6,
+            start: 80, count: 11, iomGap: 70, iomIndex: 6,
           },
           {
-            start: 90, count: 12, iomGap: 70, iomIndex: 6,
+            start: 91, count: 11, iomGap: 70, iomIndex: 6,
           },
         ];
 
@@ -85,7 +85,7 @@ export class Es60G2 extends Chassis {
         const currentColumn: number = getCurrentColumn();
         const col = cols[currentColumn];
 
-        const mod = (index - col.start) % col.count; // this.front[orientation];
+        const mod = (index - col.start) % col.count;
         const iomGapX = currentColumn > 3 ? 30 : 0;
         const iomGapY = (index - col.start) >= col.iomIndex ? col.iomGap : 0;
 
@@ -93,7 +93,7 @@ export class Es60G2 extends Chassis {
         let nextPositionY = mod * (displayObject.height + gapY);
 
         if (currentColumn > 3) {
-          nextPositionY += 15;
+          nextPositionY += -5;
         }
 
         return { x: nextPositionX + offsetX + iomGapX, y: nextPositionY + offsetY + iomGapY };
@@ -101,8 +101,8 @@ export class Es60G2 extends Chassis {
     };
   }
 
-  generatePerspectiveOffset(): void {
-    (this.front.driveTrays.transform as Transform).position.x = 32;
-    (this.front.driveTrays.transform as Transform).position.y = 32;
+  generatePerspectiveOffset() {
+    this.front.driveTrays.transform.position.x = 32;
+    this.front.driveTrays.transform.position.y = 32;
   }
 }
