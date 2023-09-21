@@ -6,6 +6,7 @@ import {
   EventEmitter,
   Input,
   OnChanges,
+  OnInit,
   Output,
   ViewChild,
 } from '@angular/core';
@@ -25,7 +26,7 @@ import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
   styleUrls: ['./ix-input.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class IxInputComponent implements ControlValueAccessor, OnChanges {
+export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges {
   @Input() label: string;
   @Input() placeholder: string;
   @Input() prefixIcon: string;
@@ -72,6 +73,12 @@ export class IxInputComponent implements ControlValueAccessor, OnChanges {
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     if ('autocompleteOptions' in changes) {
       this.filterOptions();
+    }
+  }
+
+  ngOnInit(): void {
+    if (this.autocompleteOptions) {
+      this.filteredOptions = this.autocompleteOptions?.slice(0, 50);
     }
   }
 
@@ -181,6 +188,11 @@ export class IxInputComponent implements ControlValueAccessor, OnChanges {
     this.onChange(this.value);
     this.cdr.markForCheck();
     this.inputBlur.emit();
+
+    if (this.autocompleteOptions && !this.autocompleteOptions.some((option) => option.label === this._value)) {
+      this.writeValue('');
+      this.onChange('');
+    }
   }
 
   onPasswordToggled(): void {
@@ -206,9 +218,9 @@ export class IxInputComponent implements ControlValueAccessor, OnChanges {
 
   filterOptions(): void {
     if (this.autocompleteOptions) {
-      this.filteredOptions = this.autocompleteOptions.filter((option) => {
-        return option.label.toString().toLowerCase().includes(this.value.toString().toLowerCase());
-      });
+      this.filteredOptions = this.autocompleteOptions?.filter((option) => {
+        return option.label?.toString().toLowerCase().includes(this.value?.toString().toLowerCase());
+      })?.slice(0, 50);
     }
   }
 }

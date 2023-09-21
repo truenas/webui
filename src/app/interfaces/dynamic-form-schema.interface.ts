@@ -20,6 +20,7 @@ export type DynamicFormSchemaNode =
 | DynamicFormSchemaCron
 | DynamicFormSchemaInput
 | DynamicFormSchemaSelect
+| DynamicFormSchemaEnum
 | DynamicFormSchemaExplorer
 | DynamicFormSchemaCheckbox
 | DynamicFormSchemaIpaddr
@@ -59,6 +60,13 @@ export interface DynamicFormSchemaCron extends DynamicFormSchemaBase {
 
 export interface DynamicFormSchemaSelect extends DynamicFormSchemaBase {
   type: DynamicFormSchemaType.Select;
+  tooltip?: string;
+  options?: Observable<Option[]>;
+  hideEmpty?: boolean;
+}
+
+export interface DynamicFormSchemaEnum extends DynamicFormSchemaBase {
+  type: DynamicFormSchemaType.Enum;
   tooltip?: string;
   options?: Observable<Option[]>;
   hideEmpty?: boolean;
