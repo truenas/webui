@@ -497,7 +497,7 @@ describe('DeviceFormComponent', () => {
         bind: '0.0.0.0',
         password: '12345678',
         web: true,
-        type: VmDisplayType.Vnc,
+        type: VmDisplayType.Spice,
         resolution: '1024x768',
         port: 5900,
       },
@@ -522,7 +522,7 @@ describe('DeviceFormComponent', () => {
           password: '',
           port: 5950,
           resolution: '800x600',
-          type: VmDisplayType.Vnc,
+          type: VmDisplayType.Spice,
           web: true,
         },
         dtype: VmDeviceType.Display,
@@ -537,7 +537,6 @@ describe('DeviceFormComponent', () => {
       expect(values).toEqual({
         Bind: '0.0.0.0',
         'Device Order': '1002',
-        'Display Type': VmDisplayType.Vnc,
         Password: '12345678',
         Port: '5900',
         Resolution: '1024x768',
@@ -547,9 +546,6 @@ describe('DeviceFormComponent', () => {
 
     it('updates an existing Display device', async () => {
       spectator.component.setDeviceForEdit(existingDisplay);
-      await form.fillForm({
-        'Display Type': 'SPICE',
-      });
 
       await saveButton.click();
       expect(websocket.call).toHaveBeenLastCalledWith('vm.device.update', [1, {
