@@ -8,7 +8,7 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  debounceTime, map, merge, Observable, of,
+  debounceTime, map, merge, Observable, of, take,
 } from 'rxjs';
 import { DatasetSource } from 'app/enums/dataset.enum';
 import { Direction } from 'app/enums/direction.enum';
@@ -280,8 +280,9 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
       .subscribe((credentialId: number) => {
         const selectedCredential = this.sshCredentials.find((credential) => credential.id === credentialId);
         const isRootUser = selectedCredential?.attributes?.username === 'root';
+        const isSudoEnabled = this.form.controls.sudo.value;
 
-        if (!selectedCredential || isRootUser || !(this.isRemoteSource || this.isRemoteTarget)) {
+        if (!selectedCredential || isRootUser || !(this.isRemoteSource || this.isRemoteTarget) || isSudoEnabled) {
           return;
         }
 
@@ -291,7 +292,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
           message: helptext.sudo_warning,
           hideCheckbox: true,
           buttonText: this.translate.instant('Use Sudo for Zfs Commands'),
-        }).pipe(untilDestroyed(this)).subscribe((useSudo) => {
+        }).pipe(take(1), untilDestroyed(this)).subscribe((useSudo) => {
           this.form.controls.sudo.setValue(useSudo);
         });
       });
