@@ -239,7 +239,7 @@ export class FileTicketFormComponent implements OnInit {
   getJobStatus(id: number): Observable<Job> {
     return this.ws.call('core.get_jobs', [[['id', '=', id]]]).pipe(
       map((jobs) => jobs[0]),
-      catchError((error) => throwError(error)),
+      catchError((error) => throwError(() => error)),
     );
   }
 }

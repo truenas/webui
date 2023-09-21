@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import {
+  EMPTY,
   Observable, ObservableInput, Subscription, catchError, combineLatest, map, of, switchMap, tap,
 } from 'rxjs';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
@@ -71,7 +72,7 @@ export class KubernetesStore extends ComponentStore<KubernetesState> {
       switchMap(() => this.loadKubernetesStatus()),
       catchError(() => {
         this.handleError();
-        return of(undefined);
+        return EMPTY;
       }),
     );
   });
