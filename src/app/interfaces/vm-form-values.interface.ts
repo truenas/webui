@@ -43,4 +43,5 @@ export interface VmFormValues {
   pin_vcpus: boolean;
   hyperv_enlightenments: boolean;
   trust_guest_rx_filters: boolean;
+  password: string;
 }
