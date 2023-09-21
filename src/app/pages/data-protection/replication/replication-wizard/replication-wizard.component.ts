@@ -127,7 +127,7 @@ export class ReplicationWizardComponent {
     ).subscribe(() => {
       this.isLoading = false;
       this.cdr.markForCheck();
-      this.slideInRef.close();
+      this.slideInRef.close(true);
     });
   }
 
