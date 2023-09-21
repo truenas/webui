@@ -4,8 +4,7 @@ import { ComponentStore } from '@ngrx/component-store';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import {
-  EMPTY,
-  Observable, combineLatest, map,
+  EMPTY, Observable, combineLatest, map,
 } from 'rxjs';
 import { AppExtraCategory, appExtraCategoryLabels } from 'app/enums/app-extra-category.enum';
 import { AppsFiltersSort, AppsFiltersValues } from 'app/interfaces/apps-filters-values.interface';
