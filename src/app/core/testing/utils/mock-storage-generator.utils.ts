@@ -25,10 +25,14 @@ import {
   TopologyItemStats,
   VDev,
 } from 'app/interfaces/storage.interface';
+import { MockE16 } from './enclosure-templates/mock-e16';
+import { MockE24 } from './enclosure-templates/mock-e24';
 import { MockEnclosure } from './enclosure-templates/mock-enclosure-template';
 import { MockEs102 } from './enclosure-templates/mock-es102';
 import { MockEs102S } from './enclosure-templates/mock-es102s';
+import { MockEs12 } from './enclosure-templates/mock-es12';
 import { MockEs24 } from './enclosure-templates/mock-es24';
+import { MockEs60 } from './enclosure-templates/mock-es60';
 import { MockF60 } from './enclosure-templates/mock-f60';
 import { MockM40 } from './enclosure-templates/mock-m40';
 import { MockM50 } from './enclosure-templates/mock-m50';
@@ -676,8 +680,20 @@ export class MockStorageGenerator {
       case 'M50-REAR':
         chassis = new MockM50Rear(enclosureNumber);
         break;
+      case 'ES12':
+        chassis = new MockEs12(enclosureNumber);
+        break;
+      case 'E16':
+        chassis = new MockE16(enclosureNumber);
+        break;
+      case 'E24':
+        chassis = new MockE24(enclosureNumber);
+        break;
       case 'ES24':
         chassis = new MockEs24(enclosureNumber);
+        break;
+      case 'ES60':
+        chassis = new MockEs60(enclosureNumber);
         break;
       case 'ES102':
         chassis = new MockEs102(enclosureNumber);
