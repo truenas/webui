@@ -1,5 +1,7 @@
 import { MatDialog } from '@angular/material/dialog';
+import { TranslateService } from '@ngx-translate/core';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { DialogService } from 'app/services/dialog.service';
 
 export abstract class ColumnComponent<T> {
   identifier?: boolean;
@@ -26,6 +28,6 @@ export abstract class ColumnComponent<T> {
 }
 
 export type Column<T, C extends ColumnComponent<T>> = {
-  type?: new (matDialog?: MatDialog) => C;
+  type?: new (matDialog?: MatDialog, translate?: TranslateService, dialogService?: DialogService) => C;
   headerType?: new () => C;
 } & Partial<C>;

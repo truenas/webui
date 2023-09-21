@@ -140,7 +140,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
       tap(() => row.state = { state: JobState.Running }),
       switchMap(() => this.ws.job('cloudsync.sync', [row.id])),
       tapOnce(() => this.snackbar.success(
-        this.translate.instant('Cloud Sync «{name}» has started.', { name: row.description }),
+        this.translate.instant('Cloud sync «{name}» has started.', { name: row.description }),
       )),
       catchError((error: Job) => {
         this.getCloudSyncTasks();
@@ -177,7 +177,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
       .subscribe(() => {
         this.dialogService.info(
           this.translate.instant('Task Stopped'),
-          this.translate.instant('Cloud Sync «{name}» stopped.', { name: row.description }),
+          this.translate.instant('Cloud sync «{name}» stopped.', { name: row.description }),
           true,
         );
       });
@@ -192,7 +192,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
       filter(Boolean),
       switchMap(() => this.ws.job('cloudsync.sync', [row.id, { dry_run: true }])),
       tapOnce(() => this.snackbar.success(
-        this.translate.instant('Cloud Sync «{name}» has started.', { name: row.description }),
+        this.translate.instant('Cloud sync «{name}» has started.', { name: row.description }),
       )),
       catchError((error: Job) => {
         this.dialogService.error(this.errorHandler.parseJobError(error));
