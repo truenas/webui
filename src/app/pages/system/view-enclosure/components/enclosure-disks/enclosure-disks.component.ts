@@ -572,6 +572,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
         break;
       case 'ES60G2':
         this.chassis = new Es60G2();
+        this.showCaption = false;
         break;
       case 'E60':
         this.chassis = new E60();
@@ -723,6 +724,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
         break;
       case 'ES60G2':
         extractedChassis = new Es60G2();
+        this.showCaption = false;
         break;
       case 'E60':
         extractedChassis = new E60();
