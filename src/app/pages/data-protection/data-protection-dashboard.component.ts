@@ -436,7 +436,11 @@ export class DataProtectionDashboardComponent implements OnInit {
     const cloudsyncData = data.map((task) => {
       const formattedCronSchedule = scheduleToCrontab(task.schedule);
       task.credential = task.credentials.name;
-      task.last_run = formatDistanceToNow(task.state.datetime.$date, { addSuffix: true });
+      if (task.state?.datetime) {
+        task.last_run = formatDistanceToNow(task.state.datetime.$date, { addSuffix: true });
+      } else {
+        task.last_run = this.translate.instant('N/A');
+      }
       task.cron_schedule = task.enabled ? formattedCronSchedule : this.translate.instant('Disabled');
       task.frequency = this.taskService.getTaskCronDescription(formattedCronSchedule);
       task.next_run_time = task.enabled ? this.taskService.getTaskNextTime(formattedCronSchedule) : this.translate.instant('Disabled');
@@ -474,10 +478,15 @@ export class DataProtectionDashboardComponent implements OnInit {
   replicationDataSourceHelper(data: ReplicationTaskUi[]): ReplicationTaskUi[] {
     const tasks: ReplicationTaskUi[] = [];
     data.forEach((task) => {
-      task.last_run = formatDistanceToNow(
-        task.state.datetime.$date,
-        { addSuffix: true },
-      );
+      if (task.state?.datetime) {
+        task.last_run = formatDistanceToNow(
+          task.state.datetime.$date,
+          { addSuffix: true },
+        );
+      } else {
+        task.last_run = this.translate.instant('N/A');
+      }
+
       task.task_last_snapshot = task.state.last_snapshot
         ? task.state.last_snapshot
         : this.translate.instant(helptext.no_snapshot_sent_yet);
@@ -543,7 +552,11 @@ export class DataProtectionDashboardComponent implements OnInit {
       task.cron_schedule = scheduleToCrontab(task.schedule);
       task.frequency = this.taskService.getTaskCronDescription(task.cron_schedule);
       task.next_run = this.taskService.getTaskNextRun(task.cron_schedule);
-      task.last_run = formatDistanceToNow(task.state.datetime.$date, { addSuffix: true });
+      if (task.state?.datetime) {
+        task.last_run = formatDistanceToNow(task.state.datetime.$date, { addSuffix: true });
+      } else {
+        task.last_run = this.translate.instant('N/A');
+      }
 
       if (task.job === null) {
         task.state = { state: task.locked ? JobState.Locked : JobState.Pending };
