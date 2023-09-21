@@ -233,9 +233,6 @@ export class CloudSyncTaskCardComponent implements OnInit {
           .subscribe((job: Job) => {
             task.state = { state: job.state };
             task.job = job;
-            if (this.jobStates.get(job.id) !== job.state) {
-              this.getCloudSyncTasks();
-            }
             this.jobStates.set(job.id, job.state);
           });
       }
