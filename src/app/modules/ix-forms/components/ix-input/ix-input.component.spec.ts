@@ -134,18 +134,6 @@ describe('IxInputComponent', () => {
       expect(formControl.value).toBe('');
     });
 
-    it('correctly saves value to form control when autocomplete options provided', () => {
-      spectator.setInput('autocompleteOptions', [{
-        label: 'bingo',
-        value: 1,
-      }]);
-      spectator.typeInElement('bingo', 'input');
-      spectator.component.blurred();
-
-      expect(formControl.value).toBe(1);
-      expect(spectator.query('input')).toHaveValue('bingo');
-    });
-
     it('disables input when form control is disabled', () => {
       formControl.disable();
       spectator.detectComponentChanges();

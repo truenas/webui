@@ -33,7 +33,6 @@
     (input)="input(ixInput)"
     (focus)="focus(ixInput)"
     (blur)="blurred()"
-    (keyup.enter)="onEnter(); trigger.closePanel()"
   />
   <span *ngIf="shouldShowResetInput()" class="reset-input">
     <ix-icon name="mdi-close-circle" (click)="resetInput(ixInput)"></ix-icon>

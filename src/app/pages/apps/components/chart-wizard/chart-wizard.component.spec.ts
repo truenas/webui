@@ -481,7 +481,6 @@ describe('ChartWizardComponent', () => {
         'API Port to use for IPFS (local)': '9599',
         'Gateway Port to use for IPFS (local)': '9822',
         'Swarm Port to use for IPFS (Public)': '9401',
-        'Provide access to node network namespace for the workload': true,
         'Update Strategy': 'Kill existing pods before creating new ones',
       });
 

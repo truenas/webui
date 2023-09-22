@@ -16,6 +16,7 @@ import {
 } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 
@@ -77,18 +78,8 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
   }
 
   ngOnInit(): void {
-    this.filterOptions();
-
-    this.controlDirective.control.valueChanges.pipe(untilDestroyed(this)).subscribe((value: string) => {
-      const existingOption = this.autocompleteOptions?.find((option) => option.label === value);
-      if (this.autocompleteOptions && existingOption?.value) {
-        this.value = existingOption.value;
-        this.onChange(this.value);
-      }
-    });
-
-    if (this.value && this.autocompleteOptions) {
-      this.formatted = this.autocompleteOptions.find((item) => item.value === this.value).label;
+    if (this.autocompleteOptions) {
+      this.handleAutocompleteOptionsOnInit();
     }
   }
 
@@ -181,7 +172,7 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
     if (this.readonly) {
       ixInput.select();
     }
-    this.filterOptions();
+    this.filterOptions('');
   }
 
   blurred(): void {
@@ -198,7 +189,7 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
 
     this.onChange(this.value);
 
-    if (this.autocompleteOptions && !this.autocompleteOptions.some((option) => option.label === this.formatted)) {
+    if (this.autocompleteOptions && !this.findExistingOption(this.value)) {
       this.writeValue('');
       this.onChange('');
       this.formatted = '';
@@ -212,28 +203,50 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
     this.showPassword = !this.showPassword;
   }
 
-  onEnter(): void {
-    if (this.filteredOptions?.length) {
-      this.optionSelected(this.filteredOptions[0]);
-    }
-  }
-
   optionSelected(option: Option): void {
     if (this.inputElementRef?.nativeElement) {
       this.inputElementRef.nativeElement.value = option.label;
-      this.inputElementRef.nativeElement.blur();
     }
 
-    this.onChange(option.value);
     this.value = option.value;
-    this.filterOptions();
+    this.onChange(option.value);
+    this.cdr.markForCheck();
   }
 
-  filterOptions(): void {
+  filterOptions(customFilterValue?: string): void {
+    const filterValue = (customFilterValue ?? this.value) || '';
     if (this.autocompleteOptions) {
       this.filteredOptions = this.autocompleteOptions.filter((option) => {
-        return option.label.toString().toLowerCase().includes((this.value || '').toString().toLowerCase());
+        return option.label.toString().toLowerCase().includes((filterValue).toString().toLowerCase());
       }).slice(0, 50);
     }
+  }
+
+  private findExistingOption(value: string | number): Option {
+    return this.autocompleteOptions?.find((option) => (option.label === value) || (option.value === value));
+  }
+
+  private handleAutocompleteOptionsOnInit(): void {
+    // handle input value changes for this.autocomplete options
+    this.controlDirective.control.valueChanges.pipe(
+      debounceTime(100),
+      distinctUntilChanged(),
+      untilDestroyed(this),
+    ).subscribe((value: string) => {
+      const existingOption = this.findExistingOption(value);
+
+      if (this.autocompleteOptions && existingOption?.value) {
+        this.value = existingOption.value;
+        this.onChange(existingOption.value);
+        this.cdr.markForCheck();
+      }
+    });
+
+    // handling initial value formatting from value to label
+    if (this.value) {
+      this.formatted = this.autocompleteOptions.find((item) => item.value === this.value).label;
+    }
+
+    this.filterOptions('');
   }
 }
