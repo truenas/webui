@@ -1,4 +1,3 @@
-import { MatDialog } from '@angular/material/dialog';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
 
 export abstract class ColumnComponent<T> {
@@ -26,6 +25,6 @@ export abstract class ColumnComponent<T> {
 }
 
 export type Column<T, C extends ColumnComponent<T>> = {
-  type?: new (matDialog?: MatDialog) => C;
+  type?: new () => C;
   headerType?: new () => C;
 } & Partial<C>;
