@@ -154,7 +154,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
             tap(() => row.state = { state: JobState.Running }),
             switchMap(() => this.ws.job('cloudsync.sync', [row.id])),
             tapOnce(() => this.snackbar.success(
-              this.translate.instant('Cloud sync «{name}» has started.', { name: row.description }),
+              this.translate.instant('Cloud Sync «{name}» has started.', { name: row.description }),
             )),
             catchError((error: Job) => {
               this.dialog.error(this.errorHandler.parseJobError(error));
@@ -177,7 +177,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
           this.dialog
             .confirm({
               title: this.translate.instant('Stop'),
-              message: this.translate.instant('Stop this cloud sync?'),
+              message: this.translate.instant('Stop this Cloud Sync?'),
               hideCheckbox: true,
             })
             .pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
@@ -211,7 +211,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
             filter(Boolean),
             switchMap(() => this.ws.job('cloudsync.sync', [row.id, { dry_run: true }])),
             tap(() => this.snackbar.success(
-              this.translate.instant('Cloud sync «{name}» has started.', { name: row.description }),
+              this.translate.instant('Cloud Sync «{name}» has started.', { name: row.description }),
             )),
             catchError((error: Job) => {
               this.dialog.error(this.errorHandler.parseJobError(error));

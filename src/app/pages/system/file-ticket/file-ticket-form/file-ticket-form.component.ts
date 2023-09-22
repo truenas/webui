@@ -70,7 +70,7 @@ export class FileTicketFormComponent implements OnInit {
   isFormDisabled$ = combineLatest([this.form.status$, this.isFormLoading$]).pipe(
     map(([status, loading]) => status === 'INVALID' || loading),
   );
-
+  readonly isEnterprise$ = this.sysGeneralService.isEnterprise$;
   constructor(
     private ws: WebSocketService,
     private fb: FormBuilder,
@@ -239,7 +239,7 @@ export class FileTicketFormComponent implements OnInit {
   getJobStatus(id: number): Observable<Job> {
     return this.ws.call('core.get_jobs', [[['id', '=', id]]]).pipe(
       map((jobs) => jobs[0]),
-      catchError((error) => throwError(error)),
+      catchError((error) => throwError(() => error)),
     );
   }
 }

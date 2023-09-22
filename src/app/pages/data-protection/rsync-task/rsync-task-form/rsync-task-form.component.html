@@ -99,7 +99,7 @@
                 formControlName="ssh_credentials"
                 [label]="'SSH Connection' | translate"
                 [tooltip]="helptext.rsync_ssh_credentials_tooltip | translate"
-                [options]="sshConnections$"
+                [options]="sshCredentialsOptions$"
                 [required]="true"
               ></ix-select>
             </ng-template>

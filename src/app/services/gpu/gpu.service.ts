@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import {
-  combineLatest, Observable, of,
+  combineLatest, EMPTY, Observable,
 } from 'rxjs';
 import {
   map, shareReplay, switchMap, take,
@@ -80,7 +80,7 @@ export class GpuService {
           ...idsToIsolate,
         ]);
         if (newIsolatedGpuIds.size === oldIsolatedGpuIds.length) {
-          return of(undefined);
+          return EMPTY;
         }
 
         return this.ws.call('system.advanced.update_gpu_pci_ids', [Array.from(newIsolatedGpuIds)]);

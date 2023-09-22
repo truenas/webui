@@ -26,7 +26,7 @@ export class DatasetFormService {
 
   ensurePathLimits(parentPath: string): Observable<unknown> {
     if (!parentPath) {
-      return of(undefined);
+      return of();
     }
 
     if (parentPath.length >= maxDatasetPath) {
@@ -47,7 +47,7 @@ export class DatasetFormService {
       );
     }
 
-    return of(undefined);
+    return of();
   }
 
   loadDataset(datasetId: string): Observable<Dataset> {
