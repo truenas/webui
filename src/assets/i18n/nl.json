@@ -4248,7 +4248,6 @@
   "{app} Catalog Summary": "{app} catalogusoverzicht",
   "{count} snapshots found.": "{count} momentopnamen gevonden",
   "{cpuPercentage}% Avg. Usage": "{cpu}% gemiddeld gebruik ",
-  "{credentialName} (Newly Created)": "{credentialName} (nieuw aangemaakt)",
   "{duration} remaining": "{duration} resterend",
   "{eligible} of {total} existing snapshots of dataset {targetDataset} would be replicated with this task.": "{eligible} van {total} bestaande momentopnamen van dataset {targetDataset} zouden met deze taak worden gerepliceerd.",
   "{field} is required": "{field} is vereist",
