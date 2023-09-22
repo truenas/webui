@@ -158,7 +158,7 @@ describe('RsyncTaskCardComponent', () => {
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Run Now',
-      message: 'Run this rsync now?',
+      message: 'Run «asd - asdad» Rsync now?',
       hideCheckbox: true,
     });
   });

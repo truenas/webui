@@ -135,7 +135,7 @@ export class RsyncTaskCardComponent implements OnInit {
   runNow(row: RsyncTaskUi): void {
     this.dialogService.confirm({
       title: this.translate.instant('Run Now'),
-      message: this.translate.instant('Run «{name}» rsync now?', {
+      message: this.translate.instant('Run «{name}» Rsync now?', {
         name: `${row.remotehost || row.path} ${row.remotemodule ? '- ' + row.remotemodule : ''}`,
       }),
       hideCheckbox: true,
