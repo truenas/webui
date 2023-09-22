@@ -14,7 +14,7 @@ import {
   ControlValueAccessor,
   NgControl,
 } from '@angular/forms';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Option } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
@@ -78,6 +78,18 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
 
   ngOnInit(): void {
     this.filterOptions();
+
+    this.controlDirective.control.valueChanges.pipe(untilDestroyed(this)).subscribe((value: string) => {
+      const existingOption = this.autocompleteOptions?.find((option) => option.label === value);
+      if (this.autocompleteOptions && existingOption?.value) {
+        this.value = existingOption.value;
+        this.onChange(this.value);
+      }
+    });
+
+    if (this.value && this.autocompleteOptions) {
+      this.formatted = this.autocompleteOptions.find((item) => item.value === this.value).label;
+    }
   }
 
   get value(): string | number {
@@ -169,6 +181,7 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
     if (this.readonly) {
       ixInput.select();
     }
+    this.filterOptions();
   }
 
   blurred(): void {
@@ -184,13 +197,15 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
     }
 
     this.onChange(this.value);
-    this.cdr.markForCheck();
-    this.inputBlur.emit();
 
-    if (this.autocompleteOptions && !this.autocompleteOptions.some((option) => option.label === this._value)) {
+    if (this.autocompleteOptions && !this.autocompleteOptions.some((option) => option.label === this.formatted)) {
       this.writeValue('');
       this.onChange('');
+      this.formatted = '';
     }
+
+    this.cdr.markForCheck();
+    this.inputBlur.emit();
   }
 
   onPasswordToggled(): void {
@@ -206,11 +221,11 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
   optionSelected(option: Option): void {
     if (this.inputElementRef?.nativeElement) {
       this.inputElementRef.nativeElement.value = option.label;
-      setTimeout(() => this.inputElementRef.nativeElement.blur(), 10);
+      this.inputElementRef.nativeElement.blur();
     }
 
-    this.writeValue(option.label);
-    this.onChange(option.label);
+    this.onChange(option.value);
+    this.value = option.value;
     this.filterOptions();
   }
 
