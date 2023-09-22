@@ -30,6 +30,7 @@ import { E16 } from 'app/pages/system/view-enclosure/classes/hardware/e16';
 import { E24 } from 'app/pages/system/view-enclosure/classes/hardware/e24';
 import { E60 } from 'app/pages/system/view-enclosure/classes/hardware/e60';
 import { Es102 } from 'app/pages/system/view-enclosure/classes/hardware/es102';
+import { Es102S } from 'app/pages/system/view-enclosure/classes/hardware/es102s';
 import { Es12 } from 'app/pages/system/view-enclosure/classes/hardware/es12';
 import { Es24 } from 'app/pages/system/view-enclosure/classes/hardware/es24';
 import { Es24F } from 'app/pages/system/view-enclosure/classes/hardware/es24f';
@@ -61,6 +62,7 @@ import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectTheme } from 'app/store/preferences/preferences.selectors';
 import CanvasExtract = PIXI.extract.CanvasExtract;
+
 
 export enum EnclosureLocation {
   Front = 'front',
@@ -569,6 +571,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
         this.chassis = new Es102();
         this.showCaption = false;
         break;
+      case 'ES102S':
+        this.chassis = new Es102S();
+        this.showCaption = false;
+        break;
       case 'TRUENAS-F100-HA':
       case 'F100':
       case 'TRUENAS-F130-HA':
@@ -715,6 +721,9 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
         break;
       case 'ES102':
         extractedChassis = new Es102();
+        break;
+      case 'ES102S':
+        extractedChassis = new Es102S();
         break;
       case 'TRUENAS-F100-HA':
       case 'F100':
