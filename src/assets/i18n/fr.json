@@ -222,7 +222,6 @@
   "{app} Application Summary": "",
   "{catalog} Catalog": "",
   "{cpuPercentage}% Avg. Usage": "",
-  "{credentialName} (Newly Created)": "",
   "{email} via {server}": "",
   "{n, plural, one {# CPU} other {# CPUs}}": "",
   "{n, plural, one {# core} other {# cores}}": "",
