@@ -12,6 +12,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxFilesizeModule } from 'ngx-filesize';
+import { ImgFallbackModule } from 'ngx-img-fallback';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
@@ -72,6 +73,7 @@ import { routing } from './dashboard.routing';
     TestIdModule,
     NgxFilesizeModule,
     NgxSkeletonLoaderModule,
+    ImgFallbackModule,
   ],
   declarations: [
     DashboardComponent,
