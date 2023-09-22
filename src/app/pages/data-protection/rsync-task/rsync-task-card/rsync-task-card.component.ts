@@ -50,10 +50,12 @@ export class RsyncTaskCardComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Frequency'),
       propertyName: 'frequency',
+      getValue: (row) => this.taskService.getTaskCronDescription(scheduleToCrontab(row.schedule)),
     }),
     textColumn({
       title: this.translate.instant('Next Run'),
       propertyName: 'next_run',
+      getValue: (row) => this.taskService.getTaskNextRun(scheduleToCrontab(row.schedule)),
     }),
     toggleColumn({
       title: this.translate.instant('Enabled'),
@@ -102,15 +104,15 @@ export class RsyncTaskCardComponent implements OnInit {
     });
   }
 
-  doDelete(rsyncTask: RsyncTaskUi): void {
+  doDelete(row: RsyncTaskUi): void {
     this.dialogService.confirm({
       title: this.translate.instant('Confirmation'),
       message: this.translate.instant('Delete Rsync Task <b>"{name}"</b>?', {
-        name: `${rsyncTask.remotehost} - ${rsyncTask.remotemodule}`,
+        name: `${row.remotehost || row.path} ${row.remotemodule ? '- ' + row.remotemodule : ''}`,
       }),
     }).pipe(
       filter(Boolean),
-      switchMap(() => this.ws.call('rsynctask.delete', [rsyncTask.id])),
+      switchMap(() => this.ws.call('rsynctask.delete', [row.id])),
       untilDestroyed(this),
     ).subscribe({
       next: () => {
@@ -133,7 +135,9 @@ export class RsyncTaskCardComponent implements OnInit {
   runNow(row: RsyncTaskUi): void {
     this.dialogService.confirm({
       title: this.translate.instant('Run Now'),
-      message: this.translate.instant('Run this rsync now?'),
+      message: this.translate.instant('Run «{name}» rsync now?', {
+        name: `${row.remotehost || row.path} ${row.remotemodule ? '- ' + row.remotemodule : ''}`,
+      }),
       hideCheckbox: true,
     }).pipe(
       filter(Boolean),
@@ -141,7 +145,7 @@ export class RsyncTaskCardComponent implements OnInit {
       switchMap(() => this.ws.job('rsynctask.run', [row.id])),
       tapOnce(() => this.snackbar.success(
         this.translate.instant('Rsync task «{name}» has started.', {
-          name: `${row.remotehost} – ${row.remotemodule}`,
+          name: `${row.remotehost || row.path} ${row.remotemodule ? '- ' + row.remotemodule : ''}`,
         }),
       )),
       catchError((error: Job) => {
@@ -162,25 +166,16 @@ export class RsyncTaskCardComponent implements OnInit {
 
   private transformRsyncTasks(rsyncTasks: RsyncTaskUi[]): RsyncTaskUi[] {
     return rsyncTasks.map((task: RsyncTaskUi) => {
-      task.cron_schedule = scheduleToCrontab(task.schedule);
-      task.frequency = this.taskService.getTaskCronDescription(task.cron_schedule);
-      task.next_run = this.taskService.getTaskNextRun(task.cron_schedule);
-
       if (task.job === null) {
         task.state = { state: task.locked ? JobState.Locked : JobState.Pending };
       } else {
         task.state = { state: task.job.state };
-        this.store$.select(selectJob(task.job.id)).pipe(
-          filter(Boolean),
-          untilDestroyed(this),
-        ).subscribe((job: Job) => {
-          task.state = { state: job.state };
-          task.job = job;
-          if (this.jobStates.get(job.id) !== job.state) {
-            this.getRsyncTasks();
-          }
-          this.jobStates.set(job.id, job.state);
-        });
+        this.store$.select(selectJob(task.job.id)).pipe(filter(Boolean), untilDestroyed(this))
+          .subscribe((job: Job) => {
+            task.state = { state: job.state };
+            task.job = job;
+            this.jobStates.set(job.id, job.state);
+          });
       }
 
       return task;

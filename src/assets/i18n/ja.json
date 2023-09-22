@@ -2448,6 +2448,7 @@
   "Run this cloud sync now?": "",
   "Run this job now?": "",
   "Run this rsync now?": "",
+  "Run «{name}» rsync now?": "",
   "S.M.A.R.T.": "",
   "S.M.A.R.T. Enabled": "",
   "S.M.A.R.T. Extra Options": "",
