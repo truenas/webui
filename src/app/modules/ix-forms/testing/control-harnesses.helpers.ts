@@ -82,3 +82,17 @@ export async function fillControlValues(
     await control.setValue(values[label]);
   }
 }
+
+export async function getDisabledStates(
+  controlsDict: { [label: string]: SupportedFormControlHarness },
+): Promise<{ [label: string]: boolean }> {
+  const result: { [label: string]: boolean } = {};
+  // eslint-disable-next-line guard-for-in,no-restricted-syntax
+  for (const label in controlsDict) {
+    const control = controlsDict[label] as IxFormControlHarness;
+
+    result[label] = await control.isDisabled();
+  }
+
+  return result;
+}
