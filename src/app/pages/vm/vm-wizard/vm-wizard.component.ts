@@ -1062,7 +1062,7 @@ export class VmWizardComponent implements WizardConfiguration {
           attributes: {
             port: this.displayPort,
             bind: value.bind,
-            password: '',
+            password: value.password,
             web: true,
             type: value.display_type,
           },
@@ -1075,7 +1075,7 @@ export class VmWizardComponent implements WizardConfiguration {
             port: this.displayPort,
             resolution: '1024x768',
             bind: value.bind,
-            password: '',
+            password: value.password,
             web: true,
             type: value.display_type,
           },
