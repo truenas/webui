@@ -3935,7 +3935,6 @@
   "{catalog} Catalog": "",
   "{count} snapshots found.": "",
   "{cpuPercentage}% Avg. Usage": "",
-  "{credentialName} (Newly Created)": "",
   "{duration} remaining": "",
   "{eligible} of {total} existing snapshots of dataset {targetDataset} would be replicated with this task.": "",
   "{email} via {server}": "",
