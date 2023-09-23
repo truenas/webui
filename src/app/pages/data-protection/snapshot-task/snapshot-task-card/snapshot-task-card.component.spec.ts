@@ -50,6 +50,9 @@ describe('SnapshotTaskCardComponent', () => {
       vmware_sync: false,
       state: {
         state: 'PENDING',
+        datetime: {
+          $date: new Date().getTime() - 50000,
+        },
       },
       keepfor: '2 WEEK(S)',
       cron_schedule: '0 0 * * *',
@@ -102,8 +105,8 @@ describe('SnapshotTaskCardComponent', () => {
 
   it('should show table rows', async () => {
     const expectedRows = [
-      ['Pool/Dataset', 'Keep for', 'Frequency', 'Next Run', 'Enabled', 'State', ''],
-      ['APPS/test2', '2 WEEK(S)', 'At 00:00, every day', 'in about 6 hours', '', 'PENDING', ''],
+      ['Pool/Dataset', 'Keep for', 'Frequency', 'Next Run', 'Last Run', 'Enabled', 'State', ''],
+      ['APPS/test2', '2 WEEK(S)', 'At 00:00, every day', 'in about 6 hours', '1 minute ago', '', 'PENDING', ''],
     ];
 
     const cells = await table.getCellTexts();
@@ -111,7 +114,7 @@ describe('SnapshotTaskCardComponent', () => {
   });
 
   it('shows form to edit an existing Snapshot Task when Edit button is pressed', async () => {
-    const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 6);
+    const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 7);
     await editButton.click();
 
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(SnapshotTaskFormComponent, {
@@ -131,7 +134,7 @@ describe('SnapshotTaskCardComponent', () => {
   });
 
   it('deletes a Snapshot Task with confirmation when Delete button is pressed', async () => {
-    const deleteIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'delete' }), 1, 6);
+    const deleteIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'delete' }), 1, 7);
     await deleteIcon.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
@@ -143,7 +146,7 @@ describe('SnapshotTaskCardComponent', () => {
   });
 
   it('updates Snapshot Task Enabled status once mat-toggle is updated', async () => {
-    const toggle = await table.getHarnessInCell(MatSlideToggleHarness, 1, 4);
+    const toggle = await table.getHarnessInCell(MatSlideToggleHarness, 1, 5);
 
     expect(await toggle.isChecked()).toBe(false);
 
