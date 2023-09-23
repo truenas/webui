@@ -2,12 +2,14 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Direction } from 'app/enums/direction.enum';
 import { RsyncMode } from 'app/enums/rsync-mode.enum';
+import { KeychainCredential } from 'app/interfaces/keychain-credential.interface';
 import { RsyncTask } from 'app/interfaces/rsync-task.interface';
 import { User } from 'app/interfaces/user.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -18,7 +20,6 @@ import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { DialogService } from 'app/services/dialog.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 import { UserService } from 'app/services/user.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
@@ -66,6 +67,10 @@ describe('RsyncTaskFormComponent', () => {
       mockWebsocket([
         mockCall('rsynctask.create'),
         mockCall('rsynctask.update'),
+        mockCall('keychaincredential.query', [
+          { id: 1, name: 'ssh01' },
+          { id: 2, name: 'ssh02' },
+        ] as KeychainCredential[]),
       ]),
       mockProvider(IxSlideInService),
       mockProvider(FilesystemService),
@@ -74,12 +79,6 @@ describe('RsyncTaskFormComponent', () => {
           { username: 'root' },
           { username: 'steven' },
         ] as User[]),
-      }),
-      mockProvider(KeychainCredentialService, {
-        getSshConnections: () => of([
-          { id: 1, name: 'ssh01' },
-          { id: 2, name: 'ssh02' },
-        ]),
       }),
       mockProvider(DialogService),
       provideMockStore({
@@ -288,6 +287,15 @@ describe('RsyncTaskFormComponent', () => {
           validate_rpath: true,
         },
       ]);
+    });
+
+    it('opens an extended dialog when choosing to create a new ssh connection', async () => {
+      const matDialog = spectator.inject(MatDialog);
+      jest.spyOn(matDialog, 'open');
+      await form.fillForm({ 'Rsync Mode': 'SSH' });
+      await form.fillForm({ 'Connect using:': 'SSH connection from the keychain' });
+      await form.fillForm({ 'SSH Connection': 'Create New' });
+      expect(matDialog.open).toHaveBeenCalled();
     });
   });
 });

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import {
+  EMPTY,
   Observable, catchError, combineLatest, of, switchMap, tap,
 } from 'rxjs';
 import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
@@ -94,7 +95,7 @@ export class AppsStore extends ComponentStore<AppsState> {
       }),
       catchError(() => {
         this.handleError();
-        return of(undefined);
+        return EMPTY;
       }),
     );
   });
