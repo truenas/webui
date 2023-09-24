@@ -222,4 +222,8 @@ export class FileTicketLicensedFormComponent implements OnInit {
     this.slideInRef.close();
     this.router.navigate(['system', 'support', 'eula']);
   }
+
+  attachDebugChanged(value: boolean): void {
+    this.form.controls.attach_debug.patchValue(value);
+  }
 }

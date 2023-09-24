@@ -242,4 +242,8 @@ export class FileTicketFormComponent implements OnInit {
       catchError((error) => throwError(() => error)),
     );
   }
+
+  attachDebugChanged(value: boolean): void {
+    this.form.controls.attach_debug.patchValue(value);
+  }
 }

@@ -16,6 +16,7 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { JiraOauthComponent } from 'app/pages/system/file-ticket/file-ticket-form/components/jira-oauth/jira-oauth.component';
 import { FileTicketFormComponent } from 'app/pages/system/file-ticket/file-ticket-form/file-ticket-form.component';
 import { FileTicketLicensedFormComponent } from 'app/pages/system/file-ticket/file-ticket-licensed-form/file-ticket-licensed-form.component';
+import { AttachDebugCheckboxComponent } from './file-ticket-form/components/attach-debug-checkbox/attach-debug-checkbox.component';
 
 @NgModule({
   imports: [
@@ -38,6 +39,7 @@ import { FileTicketLicensedFormComponent } from 'app/pages/system/file-ticket/fi
     FileTicketFormComponent,
     FileTicketLicensedFormComponent,
     JiraOauthComponent,
+    AttachDebugCheckboxComponent,
   ],
   exports: [
     FileTicketFormComponent,
