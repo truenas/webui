@@ -40,12 +40,11 @@
           [required]="true"
         ></ix-select>
 
-        <ix-attach-debug-checkbox
+        <ix-checkbox
           formControlName="attach_debug"
-          [isChecked]="form.controls.attach_debug.value"
+          [label]="'Attach Debug' | translate"
           [tooltip]="tooltips.attach_debug | translate"
-          (attachDebugAgreed)="attachDebugChanged($event)"
-        ></ix-attach-debug-checkbox>
+        ></ix-checkbox>
 
         <ix-input
           formControlName="title"
