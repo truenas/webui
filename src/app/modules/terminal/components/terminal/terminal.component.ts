@@ -106,7 +106,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
       take(1),
       tap((token) => {
         this.initializeWebShell(token);
-        this.shellService.shellOutput.pipe(untilDestroyed(this)).subscribe(() => {});
+        this.shellService.shellOutput$.pipe(untilDestroyed(this)).subscribe(() => {});
         this.initializeTerminal();
       }),
       untilDestroyed(this),
@@ -114,7 +114,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.shellService.closeWebsocketConnection();
+    this.shellService.disconnect();
   }
 
   onResize(): void {
@@ -175,14 +175,9 @@ export class TerminalComponent implements OnInit, OnDestroy {
   }
 
   initializeWebShell(token: string): void {
-    this.shellService.token = token;
+    this.shellService.connect(this.conf.connectionData, token);
 
-    if (this.conf.setShellConnectionData) {
-      this.conf.setShellConnectionData(this.shellService);
-    }
-    this.shellService.connect();
-
-    this.shellService.shellConnected.pipe(untilDestroyed(this)).subscribe((event: ShellConnectedEvent) => {
+    this.shellService.shellConnected$.pipe(untilDestroyed(this)).subscribe((event: ShellConnectedEvent) => {
       this.shellConnected = event.connected;
       this.connectionId = event.id;
       this.updateTerminal();
@@ -196,10 +191,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
   }
 
   reconnect(): void {
-    if (this.conf.setShellConnectionData) {
-      this.conf.setShellConnectionData(this.shellService);
-    }
-    this.shellService.connect();
+    this.shellService.connect(this.conf.connectionData);
   }
 
   onFontSizeChanged(newSize: number): void {

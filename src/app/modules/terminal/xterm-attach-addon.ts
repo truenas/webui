@@ -1,4 +1,4 @@
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Subscription } from 'rxjs';
 import { Terminal, IDisposable, ITerminalAddon } from 'xterm';
 import { ShellService } from 'app/services/shell.service';
 
@@ -7,38 +7,43 @@ import { ShellService } from 'app/services/shell.service';
  * https://github.com/xtermjs/xterm.js/tree/master/addons/xterm-addon-attach
  * but it always sends messages as binary.
  */
-@UntilDestroy()
 export class XtermAttachAddon implements ITerminalAddon {
   private disposables: IDisposable[] = [];
-  private encoder = new TextEncoder();
+  private subscriptions: Subscription[] = [];
 
   constructor(
     private shellService: ShellService,
   ) {}
 
   activate(terminal: Terminal): void {
-    this.shellService.shellOutput.pipe(untilDestroyed(this)).subscribe((data) => {
-      terminal.write(typeof data === 'string' ? data : new Uint8Array(data));
-    });
+    this.dispose();
+
+    this.subscriptions.push(
+      this.shellService.shellOutput$.subscribe((data) => {
+        terminal.write(typeof data === 'string' ? data : new Uint8Array(data));
+      }),
+      this.shellService.shellConnected$.subscribe((event) => {
+        if (!event.connected) {
+          this.dispose();
+        }
+      }),
+    );
 
     this.disposables.push(terminal.onData((data) => this.sendBinary(data)));
     this.disposables.push(terminal.onBinary((data) => this.sendBinary(data)));
-
-    this.shellService.shellConnected.pipe(untilDestroyed(this)).subscribe((event) => {
-      if (!event.connected) {
-        this.dispose();
-      }
-    });
   }
 
   dispose(): void {
+    for (const subscription of this.subscriptions) {
+      subscription.unsubscribe();
+    }
+
     for (const disposable of this.disposables) {
       disposable.dispose();
     }
   }
 
   private sendBinary(data: string): void {
-    const buffer = this.encoder.encode(data);
-    this.shellService.send(buffer);
+    this.shellService.send(data);
   }
 }

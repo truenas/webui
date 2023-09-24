@@ -3,40 +3,49 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { environment } from 'environments/environment';
-import { tap } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { webSocket as rxjsWebsocket, WebSocketSubject } from 'rxjs/webSocket';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { WEBSOCKET } from 'app/helpers/websocket.helper';
 import { WINDOW } from 'app/helpers/window.helper';
 import { ShellConnectedEvent } from 'app/interfaces/shell.interface';
+import { TerminalConnectionData } from 'app/interfaces/terminal.interface';
 
 @UntilDestroy()
 @Injectable()
 export class ShellService {
-  private pendingMessages: Uint8Array[] = [];
+  private encoder = new TextEncoder();
   private ws$: WebSocketSubject<unknown>;
   private connectionUrl = (this.window.location.protocol === 'https:' ? 'wss://' : 'ws://') + environment.remote + '/websocket/shell/';
   private isConnected = false;
 
-  token: string;
-  vmId: number;
-  podInfo: {
-    chart_release_name: string;
-    pod_name: string;
-    container_name: string;
-    command: string;
-  };
+  private token: string;
+  private connectionData: TerminalConnectionData;
 
-  shellOutput = new EventEmitter<ArrayBuffer>();
-  shellConnected = new EventEmitter<ShellConnectedEvent>();
+  private shellOutput = new EventEmitter<ArrayBuffer>();
+  private shellConnected = new EventEmitter<ShellConnectedEvent>();
+
+  get shellOutput$(): Observable<ArrayBuffer> {
+    return this.shellOutput.asObservable();
+  }
+
+  get shellConnected$(): Observable<ShellConnectedEvent> {
+    return this.shellConnected.asObservable();
+  }
 
   constructor(
     @Inject(WINDOW) private window: Window,
     @Inject(WEBSOCKET) private webSocket: typeof rxjsWebsocket,
   ) {}
 
-  connect(): void {
-    this.closeWebsocketConnection();
+  connect(connectionData: TerminalConnectionData, token?: string): void {
+    this.connectionData = connectionData;
+
+    if (token !== undefined) {
+      this.token = token;
+    }
+
+    this.disconnect();
 
     this.ws$ = this.webSocket({
       url: this.connectionUrl,
@@ -61,24 +70,21 @@ export class ShellService {
     this.shellConnected.pipe(untilDestroyed(this)).subscribe({
       next: (event) => {
         this.isConnected = event.connected;
-        if (event.connected) {
-          this.onConnect();
-        }
       },
     });
   }
 
-  onOpen(): void {
-    if (this.vmId) {
-      this.ws$.next(JSON.stringify({ token: this.token, options: { vm_id: this.vmId } }));
-    } else if (this.podInfo) {
+  private onOpen(): void {
+    if (this.connectionData.vmId) {
+      this.ws$.next(JSON.stringify({ token: this.token, options: { vm_id: this.connectionData.vmId } }));
+    } else if (this.connectionData.podInfo) {
       this.ws$.next(JSON.stringify({
         token: this.token,
         options: {
-          chart_release_name: this.podInfo.chart_release_name,
-          pod_name: this.podInfo.pod_name,
-          container_name: this.podInfo.container_name,
-          command: this.podInfo.command,
+          chart_release_name: this.connectionData.podInfo.chartReleaseName,
+          pod_name: this.connectionData.podInfo.podName,
+          container_name: this.connectionData.podInfo.containerName,
+          command: this.connectionData.podInfo.command,
         },
       }));
     } else {
@@ -86,20 +92,13 @@ export class ShellService {
     }
   }
 
-  onConnect(): void {
-    while (this.pendingMessages.length > 0) {
-      const payload = this.pendingMessages.pop();
-      this.send(payload);
-    }
-  }
-
-  onClose(): void {
+  private onClose(): void {
     this.shellConnected.emit({
       connected: false,
     });
   }
 
-  onMessage(msg: MessageEvent<ArrayBuffer | string>): void {
+  private onMessage(msg: MessageEvent<ArrayBuffer | string>): void {
     let data: { id?: string; msg: string };
 
     try {
@@ -123,15 +122,14 @@ export class ShellService {
     this.shellOutput.emit(msg.data as ArrayBuffer);
   }
 
-  send(payload: Uint8Array): void {
+  send(data: string): void {
     if (this.isConnected) {
-      this.ws$.next(payload);
-    } else {
-      this.pendingMessages.push(payload);
+      const buffer = this.encoder.encode(data);
+      this.ws$.next(buffer);
     }
   }
 
-  closeWebsocketConnection(): void {
+  disconnect(): void {
     if (this.ws$) {
       this.ws$.complete();
     }
