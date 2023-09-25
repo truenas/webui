@@ -15,7 +15,7 @@ import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-sli
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
-import { selectJob } from 'app/modules/jobs/store/job.selectors';
+import { selectJobs } from 'app/modules/jobs/store/job.selectors';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { RsyncTaskCardComponent } from 'app/pages/data-protection/rsync-task/rsync-task-card/rsync-task-card.component';
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
@@ -53,7 +53,13 @@ describe('RsyncTaskCardComponent', () => {
       remotepath: '',
       direction: 'PUSH',
       delayupdates: true,
-      job: null,
+      job: {
+        id: 1,
+        state: 'FINISHED',
+        time_finished: {
+          $date: new Date().getTime() - 50000,
+        },
+      },
       ssh_credentials: null,
       schedule: {
         minute: '0',
@@ -83,8 +89,14 @@ describe('RsyncTaskCardComponent', () => {
       provideMockStore({
         selectors: [
           {
-            selector: selectJob(1),
-            value: {} as Job,
+            selector: selectJobs,
+            value: [{
+              id: 1,
+              state: 'FINISHED',
+              time_finished: {
+                $date: new Date().getTime() - 50000,
+              },
+            } as Job],
           },
         ],
       }),
@@ -123,8 +135,8 @@ describe('RsyncTaskCardComponent', () => {
 
   it('should show table rows', async () => {
     const expectedRows = [
-      ['Path', 'Remote Host', 'Frequency', 'Next Run', 'Enabled', 'State', ''],
-      ['/mnt/APPS', 'asd', 'Every hour, every day', 'in 33 minutes', '', 'PENDING', ''],
+      ['Path', 'Remote Host', 'Frequency', 'Next Run', 'Last Run', 'Enabled', 'State', ''],
+      ['/mnt/APPS', 'asd', 'Every hour, every day', 'in 33 minutes', '1 minute ago', '', 'FINISHED', ''],
     ];
 
     const cells = await table.getCellTexts();
@@ -132,7 +144,7 @@ describe('RsyncTaskCardComponent', () => {
   });
 
   it('shows form to edit an existing Rsync Task when Edit button is pressed', async () => {
-    const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 6);
+    const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 7);
     await editButton.click();
 
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(RsyncTaskFormComponent, {
@@ -153,7 +165,7 @@ describe('RsyncTaskCardComponent', () => {
 
   it('shows confirmation dialog when Run Now button is pressed', async () => {
     jest.spyOn(spectator.inject(DialogService), 'confirm');
-    const runNowButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'play_arrow' }), 1, 6);
+    const runNowButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'play_arrow' }), 1, 7);
     await runNowButton.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
@@ -164,7 +176,7 @@ describe('RsyncTaskCardComponent', () => {
   });
 
   it('deletes a Rsync Task with confirmation when Delete button is pressed', async () => {
-    const deleteIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'delete' }), 1, 6);
+    const deleteIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'delete' }), 1, 7);
     await deleteIcon.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
@@ -176,7 +188,7 @@ describe('RsyncTaskCardComponent', () => {
   });
 
   it('updates Rsync Task Enabled status once mat-toggle is updated', async () => {
-    const toggle = await table.getHarnessInCell(MatSlideToggleHarness, 1, 4);
+    const toggle = await table.getHarnessInCell(MatSlideToggleHarness, 1, 5);
 
     expect(await toggle.isChecked()).toBe(false);
 
