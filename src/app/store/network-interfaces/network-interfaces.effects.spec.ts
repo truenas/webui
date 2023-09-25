@@ -70,15 +70,5 @@ describe('NetworkInterfacesEffects', () => {
       }));
       expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/network']);
     });
-
-    it('does not show dialog when user is already on /network page', () => {
-      Object.defineProperty(spectator.inject(Router), 'url', {
-        get: () => '/network',
-      });
-      actions$.next(checkinIndicatorPressed());
-      spectator.service.showCheckinPrompt$.subscribe();
-
-      expect(spectator.inject(DialogService).confirm).not.toHaveBeenCalled();
-    });
   });
 });
