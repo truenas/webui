@@ -3952,7 +3952,7 @@
   "Use Preset": "Utiliser un préréglage",
   "Use Signature Version 2": "Utiliser Signature Version 2",
   "Use Sudo For Zfs Commands": "Utiliser Sudo pour les commandes ZFS",
-  "Use Sudo for Zfs Commands": "Utiliser Sudo pour les commandes Zfs",
+  "Use Sudo for ZFS Commands": "Utiliser Sudo pour les commandes Zfs",
   "Use Syslog Only": "Utiliser uniquement Syslog",
   "Use System Dataset": "Utiliser le dataset système",
   "Use all disk space": "Utiliser tout l'espace disque",

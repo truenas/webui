@@ -8,7 +8,7 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  debounceTime, map, merge, Observable, of, take,
+  debounceTime, map, merge, Observable, of,
 } from 'rxjs';
 import { DatasetSource } from 'app/enums/dataset.enum';
 import { Direction } from 'app/enums/direction.enum';
@@ -59,6 +59,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   sshCredentials: KeychainSshCredentials[] = [];
   snapshotsText = '';
   isSnapshotsWarning = false;
+  isSudoDialogShown = false;
 
   form = this.formBuilder.group({
     exist_replication: [null as number],
@@ -280,9 +281,9 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
       .subscribe((credentialId: number) => {
         const selectedCredential = this.sshCredentials.find((credential) => credential.id === credentialId);
         const isRootUser = selectedCredential?.attributes?.username === 'root';
-        const isSudoEnabled = this.form.controls.sudo.value;
+        const isRemote = this.isRemoteSource || this.isRemoteTarget;
 
-        if (!selectedCredential || isRootUser || !(this.isRemoteSource || this.isRemoteTarget) || isSudoEnabled) {
+        if (!selectedCredential || isRootUser || !isRemote || this.isSudoDialogShown) {
           return;
         }
 
@@ -291,9 +292,10 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
           title: this.translate.instant('Sudo Enabled'),
           message: helptext.sudo_warning,
           hideCheckbox: true,
-          buttonText: this.translate.instant('Use Sudo for Zfs Commands'),
-        }).pipe(take(1), untilDestroyed(this)).subscribe((useSudo) => {
+          buttonText: this.translate.instant('Use Sudo for ZFS Commands'),
+        }).pipe(untilDestroyed(this)).subscribe((useSudo) => {
           this.form.controls.sudo.setValue(useSudo);
+          this.isSudoDialogShown = true;
         });
       });
 

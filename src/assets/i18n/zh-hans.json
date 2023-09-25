@@ -3970,7 +3970,7 @@
   "Use Preset": "使用预设",
   "Use Signature Version 2": "使用签名版本2",
   "Use Sudo For Zfs Commands": "zfs 命令使用 sudo 执行",
-  "Use Sudo for Zfs Commands": "使用sudo来运行zfs命令",
+  "Use Sudo for ZFS Commands": "使用sudo来运行zfs命令",
   "Use Syslog Only": "仅使用系统日志",
   "Use System Dataset": "使用系统数据集",
   "Use all disk space": "使用所有的磁盘空间",
