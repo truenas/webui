@@ -56,6 +56,7 @@ export interface CloudSyncTaskUi extends CloudSyncTask {
   next_run: string;
   next_run_time: Date | string;
   state: DataProtectionTaskState;
+  last_run: string;
 }
 
 export interface CloudSyncListDirectoryParams {

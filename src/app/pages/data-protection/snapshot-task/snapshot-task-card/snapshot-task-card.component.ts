@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { formatDistanceToNow } from 'date-fns';
 import { filter, switchMap } from 'rxjs';
 import { PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -46,6 +47,18 @@ export class SnapshotTaskCardComponent implements OnInit {
       title: this.translate.instant('Next Run'),
       propertyName: 'next_run',
       getValue: (task) => this.taskService.getTaskNextRun(scheduleToCrontab(task.schedule)),
+    }),
+    textColumn({
+      title: this.translate.instant('Last Run'),
+      getValue: (task): string => {
+        let lastRun: string;
+        if (task.state?.datetime?.$date) {
+          lastRun = formatDistanceToNow(task.state.datetime.$date, { addSuffix: true });
+        } else {
+          lastRun = this.translate.instant('N/A');
+        }
+        return lastRun;
+      },
     }),
     toggleColumn({
       title: this.translate.instant('Enabled'),

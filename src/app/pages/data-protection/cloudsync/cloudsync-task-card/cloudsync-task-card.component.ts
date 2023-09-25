@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import { formatDistanceToNow } from 'date-fns';
 import { EMPTY, catchError, filter, switchMap, tap } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
@@ -53,6 +54,18 @@ export class CloudSyncTaskCardComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Next Run'),
       propertyName: 'next_run',
+    }),
+    textColumn({
+      title: this.translate.instant('Last Run'),
+      getValue: (task): string => {
+        let lastRun: string;
+        if (task.job?.time_finished?.$date) {
+          lastRun = formatDistanceToNow(task.job?.time_finished?.$date, { addSuffix: true });
+        } else {
+          lastRun = this.translate.instant('N/A');
+        }
+        return lastRun;
+      },
     }),
     toggleColumn({
       title: this.translate.instant('Enabled'),
