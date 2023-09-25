@@ -2,4 +2,9 @@
 
 .card {
   @include details-card();
+
+  .details-item .value {
+    white-space: wrap;
+    word-wrap: break-word;
+  }
 }

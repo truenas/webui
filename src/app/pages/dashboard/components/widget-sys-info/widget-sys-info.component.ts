@@ -10,7 +10,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { addSeconds } from 'date-fns';
 import { filter, take } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
-import { ProductType } from 'app/enums/product-type.enum';
 import { ScreenType } from 'app/enums/screen-type.enum';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -59,7 +58,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
   certified = false;
   updateAvailable = false;
   isIxHardware = false;
-  productType = this.sysGenService.getProductType();
   isUpdateRunning = false;
   hasHa: boolean;
   updateMethod = 'update.update';
@@ -67,7 +65,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
   uptimeString: string;
   dateTime: string;
 
-  readonly ProductType = ProductType;
   readonly ScreenType = ScreenType;
 
   constructor(
@@ -118,7 +115,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
       this.isIxHardware = isIxHardware;
       this.setProductImage();
     });
-    if (this.sysGenService.getProductType() === ProductType.ScaleEnterprise) {
+    if (this.sysGenService.isEnterprise) {
       this.store$.select(selectIsHaLicensed).pipe(untilDestroyed(this)).subscribe((isHaLicensed) => {
         this.isHaLicensed = isHaLicensed;
         if (isHaLicensed) {

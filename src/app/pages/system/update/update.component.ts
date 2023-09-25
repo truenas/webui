@@ -588,7 +588,7 @@ export class UpdateComponent implements OnInit {
 
   private saveConfigurationIfNecessary(): Observable<void> {
     if (this.wasConfigurationSaved) {
-      return of(undefined);
+      return of();
     }
 
     return this.matDialog.open(SaveConfigDialogComponent, {

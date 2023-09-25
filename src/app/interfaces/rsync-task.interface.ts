@@ -43,4 +43,5 @@ export interface RsyncTaskUi extends RsyncTask {
   next_run: string;
   frequency: string;
   state: DataProtectionTaskState;
+  last_run: string;
 }

@@ -20,6 +20,7 @@ import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { ReplicationRestoreDialogComponent } from 'app/pages/data-protection/replication/replication-restore-dialog/replication-restore-dialog.component';
 import { ReplicationTaskCardComponent } from 'app/pages/data-protection/replication/replication-task-card/replication-task-card.component';
+import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
 import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -74,6 +75,9 @@ describe('ReplicationTaskCardComponent', () => {
         state: 'FINISHED',
         warnings: [],
         last_snapshot: 'APPS/test2@auto-2023-09-19_00-00',
+        datetime: {
+          $date: new Date().getTime() - 50000,
+        },
       },
       properties: true,
       properties_exclude: [],
@@ -103,6 +107,7 @@ describe('ReplicationTaskCardComponent', () => {
     ],
     providers: [
       provideMockStore({
+        initialState: {},
         selectors: [
           {
             selector: selectJob(1),
@@ -112,6 +117,7 @@ describe('ReplicationTaskCardComponent', () => {
       }),
       mockWebsocket([
         mockCall('replication.query', replicationTasks),
+        mockCall('core.get_jobs', []),
         mockCall('replication.delete'),
         mockCall('replication.update'),
       ]),
@@ -141,8 +147,8 @@ describe('ReplicationTaskCardComponent', () => {
 
   it('should show table rows', async () => {
     const expectedRows = [
-      ['Name', 'Last Snapshot', 'Enabled', 'State', ''],
-      ['APPS/test2 - APPS/test3', 'APPS/test2@auto-2023-09-19_00-00', '', 'FINISHED', ''],
+      ['Name', 'Last Snapshot', 'Enabled', 'State', 'Last Run', ''],
+      ['APPS/test2 - APPS/test3', 'APPS/test2@auto-2023-09-19_00-00', '', 'FINISHED', '1 minute ago', ''],
     ];
 
     const cells = await table.getCellTexts();
@@ -150,7 +156,7 @@ describe('ReplicationTaskCardComponent', () => {
   });
 
   it('shows form to edit an existing Replication Task when Edit button is pressed', async () => {
-    const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 4);
+    const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 5);
     await editButton.click();
 
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ReplicationFormComponent, {
@@ -163,14 +169,13 @@ describe('ReplicationTaskCardComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ReplicationFormComponent, {
-      data: undefined,
+    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ReplicationWizardComponent, {
       wide: true,
     });
   });
 
   it('shows confirmation dialog when Run Now button is pressed', async () => {
-    const runNowButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'play_arrow' }), 1, 4);
+    const runNowButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'play_arrow' }), 1, 5);
     await runNowButton.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
@@ -182,7 +187,7 @@ describe('ReplicationTaskCardComponent', () => {
 
   it('shows confirmation dialog when Restore button is pressed', async () => {
     jest.spyOn(spectator.inject(MatDialog), 'open');
-    const restoreButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'restore' }), 1, 4);
+    const restoreButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'restore' }), 1, 5);
     await restoreButton.click();
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ReplicationRestoreDialogComponent, {
@@ -192,7 +197,7 @@ describe('ReplicationTaskCardComponent', () => {
 
   it('downloads Encryption Keys', async () => {
     jest.spyOn(spectator.inject(MatDialog), 'open');
-    const downloadButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'download' }), 1, 4);
+    const downloadButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'download' }), 1, 5);
     await downloadButton.click();
 
     expect(ws.call).toHaveBeenCalledWith('core.download', [
@@ -203,7 +208,7 @@ describe('ReplicationTaskCardComponent', () => {
   });
 
   it('deletes a Replication Task with confirmation when Delete button is pressed', async () => {
-    const deleteIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'delete' }), 1, 4);
+    const deleteIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'delete' }), 1, 5);
     await deleteIcon.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({

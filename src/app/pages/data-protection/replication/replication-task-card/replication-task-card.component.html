@@ -10,7 +10,7 @@
       <button
         mat-button
         [ixTest]="['replication-task', 'add']"
-        (click)="openForm()"
+        (click)="addReplicationTask()"
       >{{ 'Add' | translate }}</button>
     </div>
   </mat-toolbar-row>
@@ -30,7 +30,7 @@
       <ng-template
         let-task
         ix-table-cell
-        [columnIndex]="4"
+        [columnIndex]="5"
         [dataProvider]="dataProvider"
       >
         <div class="justify-end">
@@ -38,7 +38,7 @@
             mat-icon-button
             [ixTest]="[task.id, 'edit']"
             [matTooltip]="'Edit' | translate"
-            (click)="openForm(task)"
+            (click)="editReplicationTask(task)"
           >
             <ix-icon name="edit"></ix-icon>
           </button>

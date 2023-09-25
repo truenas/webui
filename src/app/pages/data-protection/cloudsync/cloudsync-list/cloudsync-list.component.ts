@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import { formatDistanceToNow } from 'date-fns';
 import { EMPTY } from 'rxjs';
 import {
   catchError, filter, switchMap, take, tap,
@@ -71,6 +72,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
     },
     { name: this.translate.instant('Frequency'), prop: 'frequency', enableMatTooltip: true },
     { name: this.translate.instant('Next Run'), prop: 'next_run', hidden: true },
+    { name: this.translate.instant('Last Run'), prop: 'last_run', hidden: true },
     {
       name: this.translate.instant('Status'),
       prop: 'state',
@@ -116,7 +118,16 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
       transformed.credential = task.credentials.name;
       transformed.cron_schedule = task.enabled ? formattedCronSchedule : this.translate.instant('Disabled');
       transformed.frequency = this.taskService.getTaskCronDescription(formattedCronSchedule);
-      transformed.next_run = task.enabled ? this.taskService.getTaskNextRun(formattedCronSchedule) : this.translate.instant('Disabled');
+      transformed.next_run =
+        task.enabled ?
+          this.taskService.getTaskNextRun(formattedCronSchedule)
+          : this.translate.instant('Disabled');
+
+      if (transformed.job?.time_finished?.$date) {
+        transformed.last_run = formatDistanceToNow(transformed.job?.time_finished?.$date, { addSuffix: true });
+      } else {
+        transformed.last_run = this.translate.instant('N/A');
+      }
 
       if (task.job === null) {
         transformed.state = { state: transformed.locked ? JobState.Locked : JobState.Pending };
@@ -154,7 +165,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
             tap(() => row.state = { state: JobState.Running }),
             switchMap(() => this.ws.job('cloudsync.sync', [row.id])),
             tapOnce(() => this.snackbar.success(
-              this.translate.instant('Cloud sync «{name}» has started.', { name: row.description }),
+              this.translate.instant('Cloud Sync «{name}» has started.', { name: row.description }),
             )),
             catchError((error: Job) => {
               this.dialog.error(this.errorHandler.parseJobError(error));
@@ -177,7 +188,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
           this.dialog
             .confirm({
               title: this.translate.instant('Stop'),
-              message: this.translate.instant('Stop this cloud sync?'),
+              message: this.translate.instant('Stop this Cloud Sync?'),
               hideCheckbox: true,
             })
             .pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
@@ -211,7 +222,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
             filter(Boolean),
             switchMap(() => this.ws.job('cloudsync.sync', [row.id, { dry_run: true }])),
             tap(() => this.snackbar.success(
-              this.translate.instant('Cloud sync «{name}» has started.', { name: row.description }),
+              this.translate.instant('Cloud Sync «{name}» has started.', { name: row.description }),
             )),
             catchError((error: Job) => {
               this.dialog.error(this.errorHandler.parseJobError(error));

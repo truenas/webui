@@ -69,6 +69,7 @@ describe('CloudsyncFormComponent', () => {
     next_run_time: 'Disabled',
     next_run: 'Disabled',
     state: { state: 'PENDING' },
+    last_run: '1 minute ago',
   } as CloudSyncTaskUi;
 
   let loader: HarnessLoader;

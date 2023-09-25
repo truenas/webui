@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import { formatDistanceToNow } from 'date-fns';
 import { catchError, EMPTY, filter, switchMap, tap } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
@@ -20,6 +21,7 @@ import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { ReplicationRestoreDialogComponent } from 'app/pages/data-protection/replication/replication-restore-dialog/replication-restore-dialog.component';
+import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -60,6 +62,10 @@ export class ReplicationTaskCardComponent implements OnInit {
       getValue: (row) => row.state.state,
       getJob: (row) => row.job,
       cssClass: 'state-button',
+    }),
+    textColumn({
+      title: this.translate.instant('Last Run'),
+      propertyName: 'last_run',
     }),
     textColumn({
       propertyName: 'id',
@@ -116,12 +122,18 @@ export class ReplicationTaskCardComponent implements OnInit {
     });
   }
 
-  openForm(row?: ReplicationTaskUi): void {
-    const slideInRef = this.slideInService.open(ReplicationFormComponent, { data: row, wide: true });
+  addReplicationTask(): void {
+    const slideInRef = this.slideInService.open(ReplicationWizardComponent, { wide: true });
+    slideInRef.slideInClosed$
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe(() => this.getReplicationTasks());
+  }
 
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-      this.getReplicationTasks();
-    });
+  editReplicationTask(row: ReplicationTaskUi): void {
+    const slideInRef = this.slideInService.open(ReplicationFormComponent, { data: row, wide: true });
+    slideInRef.slideInClosed$
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe(() => this.getReplicationTasks());
   }
 
   runNow(row: ReplicationTaskUi): void {
@@ -194,6 +206,11 @@ export class ReplicationTaskCardComponent implements OnInit {
     const tasks: ReplicationTaskUi[] = [];
 
     replicationTasks.forEach((task) => {
+      if (task.state?.datetime?.$date) {
+        task.last_run = formatDistanceToNow(task.state.datetime.$date, { addSuffix: true });
+      } else {
+        task.last_run = this.translate.instant('N/A');
+      }
       task.task_last_snapshot = task.state.last_snapshot
         ? task.state.last_snapshot
         : this.translate.instant(helptext.no_snapshot_sent_yet);
@@ -204,9 +221,6 @@ export class ReplicationTaskCardComponent implements OnInit {
           untilDestroyed(this),
         ).subscribe((job: Job) => {
           task.job = job;
-          if (this.jobStates.get(job.id) !== job.state) {
-            this.getReplicationTasks();
-          }
           this.jobStates.set(job.id, job.state);
         });
       }

@@ -83,9 +83,6 @@
   .toggle_pw {
     @include variable(display, --toggle_pw_display_prop, $toggle-pw-display-prop);
     opacity: var(--disabled-opacity);
-    position: absolute;
-    right: 0;
-    top: -5px;
   }
 
   .toggle_pw ix-icon {
