@@ -70,7 +70,7 @@ export class NetworkComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.checkInterfacePendingChanges();
+    this.loadCheckinStatus();
 
     this.actions$.pipe(ofType(networkInterfacesChanged), untilDestroyed(this))
       .subscribe(({ checkIn }) => {
@@ -96,14 +96,21 @@ export class NetworkComponent implements OnInit, OnDestroy {
   handleSlideInClosed(slideInRef: IxSlideInRef<unknown>): void {
     slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
       this.interfacesStore.loadInterfaces();
-      this.checkInterfacePendingChanges();
+      this.loadCheckinStatusAfterChange();
     });
   }
 
-  async checkInterfacePendingChanges(): Promise<void> {
+  async loadCheckinStatus(): Promise<void> {
+    this.hasPendingChanges = await this.getPendingChanges();
+    this.handleWaitingCheckin(await this.getCheckinWaitingSeconds());
+  }
+
+  async loadCheckinStatusAfterChange(): Promise<void> {
     let hasPendingChanges = await this.getPendingChanges();
     let checkinWaitingSeconds = await this.getCheckinWaitingSeconds();
 
+    // This handles scenario where user made one change, clicked Test and then made another change.
+    // TODO: Backend should be deciding to reset timer.
     if (hasPendingChanges && checkinWaitingSeconds > 0) {
       await this.cancelCommit();
       hasPendingChanges = await this.getPendingChanges();
