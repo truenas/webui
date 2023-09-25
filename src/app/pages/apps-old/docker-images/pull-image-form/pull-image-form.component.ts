@@ -55,7 +55,7 @@ export class PullImageFormComponent {
       params.tag = values.tag;
     }
     if (values.username || values.password) {
-      params.docker_authentication = {
+      params.authentication = {
         username: values.username,
         password: values.password,
       };
