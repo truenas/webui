@@ -8,7 +8,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import {
-  combineLatest, from, Observable, of, Subscription,
+  from, Observable, of, Subscription,
 } from 'rxjs';
 import {
   debounceTime, filter, map, switchMap, take,
@@ -384,14 +384,9 @@ export class UserFormComponent {
     ]]).pipe(
       filter((shares) => !!shares.length),
       map((shares) => shares[0].path),
-      switchMap((homeSharePath) => {
-        this.form.patchValue({ home: homeSharePath });
-
-        return combineLatest([of(homeSharePath), this.form.get('username').valueChanges]);
-      }),
       untilDestroyed(this),
-    ).subscribe(([homeSharePath, username]) => {
-      this.form.patchValue({ home: `${homeSharePath}/${username}` });
+    ).subscribe((homeSharePath) => {
+      this.form.patchValue({ home: homeSharePath });
     });
   }
 
