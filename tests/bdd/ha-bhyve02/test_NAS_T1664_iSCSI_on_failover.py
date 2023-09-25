@@ -169,15 +169,11 @@ def when_it_is_saved_verify_the_portal_target_and_extent(driver):
     assert wait_on_element(driver, 5, xpaths.iscsi.iscsitest1_Text)
 
 
+# TODO: update this step in Jira when Bluefin is EOL
 @then('go back to the Sharing page and turn on the iSCSI service')
 def go_back_to_the_sharing_page_and_turn_on_the_iscsi_service(driver):
     """go back to the Sharing page and turn on the iSCSI service."""
     driver.find_element_by_xpath(xpaths.side_Menu.shares).click()
-    assert wait_on_element(driver, 7, xpaths.sharing.title)
-    assert wait_on_element(driver, 7, xpaths.sharing.iscsi_Burger_Button, 'clickable')
-    driver.find_element_by_xpath(xpaths.sharing.iscsi_Burger_Button).click()
-    assert wait_on_element(driver, 7, xpaths.sharing.turn_On_Service_Button, 'clickable')
-    driver.find_element_by_xpath(xpaths.sharing.turn_On_Service_Button).click()
     assert wait_on_element(driver, 10, xpaths.sharing.iscsi_Service_Status)
 
 
