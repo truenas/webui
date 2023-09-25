@@ -150,7 +150,8 @@ def on_the_initiator_leave_the_input_blank_and_click_next(driver):
 def on_the_confirm_options_verify_and_click_save(driver):
     """on the Confirm Options, verify and click Save."""
     # This step was removed in Cobia
-    pass
+    assert wait_on_element(driver, 5, xpaths.progress.progressbar)
+    rsc.Start_iSCSI_Service(driver)
 
 
 @then('when it is saved, verify the Portal, Target, and Extent')
