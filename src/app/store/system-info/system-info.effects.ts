@@ -5,7 +5,7 @@ import {
   catchError, map, mergeMap, switchMap,
 } from 'rxjs/operators';
 import { SystemFeatures } from 'app/interfaces/events/sys-info-event.interface';
-import { WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import {
   ixHardwareLoaded,
@@ -47,7 +47,7 @@ export class SystemInfoEffects {
       }
 
       // HIGH AVAILABILITY SUPPORT
-      if ((profile.license && profile.license.system_serial_ha) || profile.system_product === 'BHYVE') {
+      if (profile.license?.system_serial_ha || profile.system_product === 'BHYVE') {
         features.HA = true;
         return of(systemFeaturesLoaded({ systemFeatures: features }));
       }

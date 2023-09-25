@@ -3,8 +3,6 @@ import {
   OnInit,
   ChangeDetectorRef,
   ViewChild, ChangeDetectionStrategy,
-  AfterViewInit,
-  TemplateRef,
   OnDestroy, Inject,
 } from '@angular/core';
 import { MatSort, Sort } from '@angular/material/sort';
@@ -27,14 +25,14 @@ import { QueryFilter, QueryParams } from 'app/interfaces/query-api.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DatasetQuotaAddFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-add-form/dataset-quota-add-form.component';
 import { DatasetQuotaEditFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-edit-form/dataset-quota-edit-form.component';
-import {
-  AppLoaderService, DialogService, StorageService, WebSocketService,
-} from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { LayoutService } from 'app/services/layout.service';
+import { StorageService } from 'app/services/storage.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -42,9 +40,8 @@ import { LayoutService } from 'app/services/layout.service';
   styleUrls: ['./dataset-quotas-userlist.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, OnDestroy {
+export class DatasetQuotasUserlistComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
-  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   datasetId: string;
   dataSource = new MatTableDataSource<DatasetQuota>([]);
@@ -74,7 +71,6 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
     private translate: TranslateService,
     private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
-    private layoutService: LayoutService,
     @Inject(WINDOW) private window: Window,
     private emptyService: EmptyService,
   ) { }
@@ -84,10 +80,6 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
     this.datasetId = paramMap.datasetId as string;
     this.useFullFilter = this.window.localStorage.getItem('useFullFilter') !== 'false';
     this.getUserQuotas();
-  }
-
-  ngAfterViewInit(): void {
-    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
   ngOnDestroy(): void {
@@ -223,14 +215,14 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
   removeInvalidQuotas(): void {
     this.getRemovalConfirmation().pipe(
       filter(Boolean),
-      tap(() => this.loader.open()),
-      switchMap(() => this.setQuota(this.getRemoveQuotaPayload(this.invalidQuotas))),
+      switchMap(() => {
+        const payload = this.getRemoveQuotaPayload(this.invalidQuotas);
+        return this.setQuota(payload).pipe(this.loader.withLoader());
+      }),
       tap(() => {
-        this.loader.close();
         this.getUserQuotas();
       }),
       catchError((error: WebsocketError | Job) => {
-        this.loader.close();
         this.handleError(error);
         return EMPTY;
       }),
@@ -269,14 +261,14 @@ export class DatasetQuotasUserlistComponent implements OnInit, AfterViewInit, On
   doDelete(row: DatasetQuota): void {
     this.confirmDelete(row.name).pipe(
       filter(Boolean),
-      tap(() => this.loader.open()),
-      switchMap(() => this.setQuota(this.getRemoveQuotaPayload([row]))),
+      switchMap(() => {
+        const payload = this.getRemoveQuotaPayload([row]);
+        return this.setQuota(payload).pipe(this.loader.withLoader());
+      }),
       tap(() => {
-        this.loader.close();
         this.getUserQuotas();
       }),
       catchError((error: WebsocketError | Job) => {
-        this.loader.close();
         this.handleError(error);
         return EMPTY;
       }),

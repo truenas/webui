@@ -2,12 +2,13 @@ import {
   Component, Input, OnChanges, OnInit,
 } from '@angular/core';
 import { Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
 import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
-import { VdevType, TopologyWarning } from 'app/enums/v-dev-type.enum';
+import { VdevType } from 'app/enums/v-dev-type.enum';
 import { Pool, PoolTopology } from 'app/interfaces/pool.interface';
 import { SmartTestResult } from 'app/interfaces/smart-test.interface';
 import {
@@ -17,7 +18,7 @@ import {
   TopologyDisk,
   TopologyItem,
 } from 'app/interfaces/storage.interface';
-import { StorageService } from 'app/services';
+import { StorageService } from 'app/services/storage.service';
 
 interface TopologyState {
   data: string;
@@ -28,12 +29,11 @@ interface TopologyState {
   dedup: string;
 }
 
-interface EmptyDiskObject {
+export interface EmptyDiskObject {
   [p: string]: string | number | boolean | string[] | SmartTestResult[] | EnclosureAndSlot;
 }
 
-const notAssignedDev = 'VDEVs not assigned';
-const multiWarning = 'warnings';
+const notAssignedDev = T('VDEVs not assigned');
 
 @UntilDestroy()
 @Component({
@@ -53,6 +53,8 @@ export class TopologyCardComponent implements OnInit, OnChanges {
     spare: notAssignedDev,
     dedup: notAssignedDev,
   };
+
+  topologyWarningsState: TopologyState = { ...this.topologyState };
 
   get iconType(): PoolCardIconType {
     if (this.isStatusError(this.poolState)) {
@@ -74,17 +76,21 @@ export class TopologyCardComponent implements OnInit, OnChanges {
     return this.translate.instant('Everything is fine');
   }
 
+  get isDraidLayoutDataVdevs(): boolean {
+    return /\bDRAID\b/.test(this.topologyState.data);
+  }
+
   constructor(
     public router: Router,
     public translate: TranslateService,
     public storageService: StorageService,
   ) {}
 
-  ngOnInit(): void {
+  ngOnChanges(): void {
     this.parseTopology(this.poolState.topology);
   }
 
-  ngOnChanges(): void {
+  ngOnInit(): void {
     this.parseTopology(this.poolState.topology);
   }
 
@@ -97,29 +103,18 @@ export class TopologyCardComponent implements OnInit, OnChanges {
     this.topologyState.log = this.parseDevs(topology.log, VdevType.Log);
     this.topologyState.cache = this.parseDevs(topology.cache, VdevType.Cache);
     this.topologyState.spare = this.parseDevs(topology.spare, VdevType.Spare);
+    this.topologyState.metadata = this.parseDevs(topology.special, VdevType.Special);
+    this.topologyState.dedup = this.parseDevs(topology.dedup, VdevType.Dedup);
 
-    this.topologyState.metadata = this.parseDevs(
-      topology.special,
-      VdevType.Special,
-      topology.data,
-    );
-    this.topologyState.dedup = this.parseDevs(
-      topology.dedup,
-      VdevType.Dedup,
-      topology.data,
-    );
+    this.topologyWarningsState.data = this.parseDevsWarnings(topology.data, VdevType.Data);
+    this.topologyWarningsState.log = this.parseDevsWarnings(topology.log, VdevType.Log);
+    this.topologyWarningsState.cache = this.parseDevsWarnings(topology.cache, VdevType.Cache);
+    this.topologyWarningsState.spare = this.parseDevsWarnings(topology.spare, VdevType.Spare);
+    this.topologyWarningsState.metadata = this.parseDevsWarnings(topology.special, VdevType.Special, topology.data);
+    this.topologyWarningsState.dedup = this.parseDevsWarnings(topology.dedup, VdevType.Dedup, topology.data);
   }
 
-  private parseDevs(
-    vdevs: TopologyItem[],
-    category: VdevType,
-    dataVdevs?: TopologyItem[],
-  ): string {
-    const disks: Disk[] = this.disks.map((disk: StorageDashboardDisk) => {
-      return this.dashboardDiskToDisk(disk);
-    });
-    const warnings = this.storageService.validateVdevs(category, vdevs, disks, dataVdevs);
-
+  private parseDevs(vdevs: TopologyItem[], category: VdevType): string {
     let outputString = vdevs.length ? '' : notAssignedDev;
 
     // Check VDEV Widths
@@ -140,15 +135,7 @@ export class TopologyCardComponent implements OnInit, OnChanges {
       vdevWidth = Array.from(allVdevWidths.values())[0];
     }
 
-    if (warnings.length === 1) {
-      return warnings[0];
-    }
-
-    if (warnings.length > 1) {
-      return warnings.length.toString() + ' ' + multiWarning;
-    }
-
-    if (!warnings.length && outputString && outputString === notAssignedDev) {
+    if (outputString && outputString === notAssignedDev) {
       return outputString;
     }
 
@@ -158,7 +145,9 @@ export class TopologyCardComponent implements OnInit, OnChanges {
       : this.disks?.find((disk) => disk.name === (vdevs[0] as TopologyDisk)?.disk)?.size;
 
     outputString = `${vdevs.length} x `;
-    outputString += vdevWidth ? `${type} | ${vdevWidth} wide | ` : '';
+    if (vdevWidth) {
+      outputString += this.translate.instant('{type} | {vdevWidth} wide | ', { type, vdevWidth });
+    }
 
     if (size) {
       outputString += filesize(size, { standard: 'iec' });
@@ -166,6 +155,21 @@ export class TopologyCardComponent implements OnInit, OnChanges {
       outputString += '?';
     }
 
+    return outputString;
+  }
+
+  private parseDevsWarnings(vdevs: TopologyItem[], category: VdevType, dataVdevs?: TopologyItem[]): string {
+    let outputString = '';
+    const disks: Disk[] = this.disks.map((disk: StorageDashboardDisk) => {
+      return this.dashboardDiskToDisk(disk);
+    });
+    const warnings = this.storageService.validateVdevs(category, vdevs, disks, dataVdevs);
+    if (warnings.length === 1) {
+      outputString = warnings[0];
+    }
+    if (warnings.length > 1) {
+      outputString = warnings.join(', ');
+    }
     return outputString;
   }
 
@@ -184,24 +188,6 @@ export class TopologyCardComponent implements OnInit, OnChanges {
       PoolStatus.Offline,
       PoolStatus.Degraded,
     ].includes(poolState.status);
-  }
-
-  isTopologyWarning(topologyState: string): boolean {
-    if (topologyState.includes(multiWarning)) {
-      return true;
-    }
-
-    switch (topologyState) {
-      case TopologyWarning.NoRedundancy:
-      case TopologyWarning.RedundancyMismatch:
-      case TopologyWarning.MixedVdevLayout:
-      case TopologyWarning.MixedVdevCapacity:
-      case TopologyWarning.MixedDiskCapacity:
-      case TopologyWarning.MixedVdevWidth:
-        return true;
-      default:
-        return false;
-    }
   }
 
   dashboardDiskToDisk(dashDisk: StorageDashboardDisk): Disk {

@@ -31,7 +31,6 @@
               ]
             },
             "styles": [
-              "node_modules/@siemens/ngx-datatable/assets/icons.css",
               "node_modules/@bugsplat/angular-tree-component/css/angular-tree-component.css",
               "src/assets/styles/index.scss"
             ],
@@ -40,7 +39,6 @@
               "node_modules/pixi.js/dist/pixi.min.js",
               "node_modules/pixi-filters/dist/pixi-filters.js"
             ],
-            "webWorkerTsConfig": "tsconfig.worker.json",
             "vendorChunk": true,
             "extractLicenses": false,
             "buildOptimizer": false,

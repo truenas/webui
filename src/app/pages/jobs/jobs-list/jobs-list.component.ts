@@ -5,7 +5,6 @@ import {
   ChangeDetectorRef,
   Component,
   OnInit, QueryList,
-  TemplateRef,
   ViewChild,
   ViewChildren,
 } from '@angular/core';
@@ -31,9 +30,10 @@ import { abortJobPressed } from 'app/modules/jobs/store/job.actions';
 import {
   JobSlice, selectJobState, selectJobs, selectFailedJobs, selectRunningJobs,
 } from 'app/modules/jobs/store/job.selectors';
-import { DialogService, StorageService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { LayoutService } from 'app/services/layout.service';
+import { StorageService } from 'app/services/storage.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { JobTab } from './job-tab.enum';
 
 @UntilDestroy()
@@ -47,7 +47,6 @@ export class JobsListComponent implements OnInit, AfterViewInit {
   error$ = this.store$.select(selectJobState).pipe(map((state) => state.error));
 
   @ViewChild(MatSort, { static: false }) sort: MatSort;
-  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
   @ViewChildren(IxDetailRowDirective) private detailRows: QueryList<IxDetailRowDirective>;
 
   dataSource = new MatTableDataSource<Job>([]);
@@ -55,7 +54,7 @@ export class JobsListComponent implements OnInit, AfterViewInit {
   expandedRow: Job;
   selectedIndex: JobTab = 0;
 
-  selector$ = new BehaviorSubject<typeof selectRunningJobs | typeof selectJobs | typeof selectFailedJobs>(selectJobs);
+  selector$ = new BehaviorSubject<typeof selectRunningJobs | typeof selectJobs>(selectJobs);
 
   emptyType$: Observable<EmptyType> = combineLatest([
     this.isLoading$,
@@ -94,7 +93,6 @@ export class JobsListComponent implements OnInit, AfterViewInit {
     private store$: Store<JobSlice>,
     private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
-    private layoutService: LayoutService,
     private emptyService: EmptyService,
   ) {}
 
@@ -127,7 +125,6 @@ export class JobsListComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.dataSource.sort = this.sort;
-    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
   onToggle(job: Job): void {

@@ -2,19 +2,22 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { format, formatDuration, intervalToDuration } from 'date-fns';
+import { formatDuration, intervalToDuration } from 'date-fns';
 import { filter, map } from 'rxjs/operators';
-import { toLoadingState } from 'app/helpers/to-loading-state.helper';
+import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { AuthSession, AuthSessionCredentialsData } from 'app/interfaces/auth-session.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { dateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-date/ix-cell-date.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { createTable } from 'app/modules/ix-table2/utils';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { TokenSettingsComponent } from 'app/pages/system/advanced/sessions/token-settings/token-settings.component';
-import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { defaultPreferences } from 'app/store/preferences/default-preferences.constant';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -43,7 +46,7 @@ export class SessionsCardComponent {
       title: this.translate.instant('Username'),
       propertyName: 'credentials_data',
     }),
-    textColumn({
+    dateColumn({
       title: this.translate.instant('Start session time'),
       propertyName: 'created_at',
     }),
@@ -116,16 +119,12 @@ export class SessionsCardComponent {
   }
 
   private terminateOtherSessions(): void {
-    this.loader.open();
-    this.ws.call('auth.terminate_other_sessions').pipe(untilDestroyed(this)).subscribe({
-      next: () => {
-        this.loader.close();
-        this.updateSessions();
-      },
-      error: (error: WebsocketError) => {
-        this.loader.close();
-        this.dialogService.error(this.errorHandler.parseWsError(error));
-      },
+    this.ws.call('auth.terminate_other_sessions').pipe(
+      this.loader.withLoader(),
+      this.errorHandler.catchError(),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.updateSessions();
     });
   }
 
@@ -136,28 +135,20 @@ export class SessionsCardComponent {
     });
   }
 
-  getDate(date: number): string {
-    return format(date, 'Pp');
-  }
-
   getUsername(credentialsData: AuthSessionCredentialsData): string {
-    if (credentialsData && credentialsData.credentials_data) {
+    if (credentialsData?.credentials_data) {
       return credentialsData.credentials_data.username || this.getUsername(credentialsData.credentials_data.parent);
     }
     return '';
   }
 
   private terminateSession(sessionId: string): void {
-    this.loader.open();
-    this.ws.call('auth.terminate_session', [sessionId]).pipe(untilDestroyed(this)).subscribe({
-      next: () => {
-        this.loader.close();
-        this.updateSessions();
-      },
-      error: (error: WebsocketError) => {
-        this.loader.close();
-        this.dialogService.error(this.errorHandler.parseWsError(error));
-      },
+    this.ws.call('auth.terminate_session', [sessionId]).pipe(
+      this.loader.withLoader(),
+      this.errorHandler.catchError(),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.updateSessions();
     });
   }
 }

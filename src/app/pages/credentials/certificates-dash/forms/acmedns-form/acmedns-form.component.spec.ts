@@ -16,7 +16,7 @@ import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-sl
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/forms/acmedns-form/acmedns-form.component';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('AcmednsFormComponent', () => {
@@ -111,9 +111,6 @@ describe('AcmednsFormComponent', () => {
         Authenticator: 'route53',
         'Access Key Id': 'access_key_id',
         'Secret Access Key': 'secret_access_key',
-        'Cloudflare Email': '',
-        'API Key': '',
-        'API Token': '',
       });
 
       expect(disabledState).toEqual({
@@ -121,9 +118,6 @@ describe('AcmednsFormComponent', () => {
         Authenticator: false,
         'Access Key Id': false,
         'Secret Access Key': false,
-        'Cloudflare Email': true,
-        'API Key': true,
-        'API Token': true,
       });
     });
 
@@ -166,11 +160,8 @@ describe('AcmednsFormComponent', () => {
       await form.fillForm({
         Name: 'name_new',
         Authenticator: 'cloudflare',
-        'Access Key Id': '',
-        'Secret Access Key': '',
         'Cloudflare Email': 'aaa@aaa.com',
         'API Key': 'new_api_key',
-        'API Token': '',
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));

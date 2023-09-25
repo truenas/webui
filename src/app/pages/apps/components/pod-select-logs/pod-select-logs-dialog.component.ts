@@ -8,7 +8,7 @@ import { Observable, of } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
-import { WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 
 export type LogsDialogFormValue = PodSelectLogsDialogComponent['form']['value'];
 
@@ -92,10 +92,8 @@ export class PodSelectLogsDialogComponent implements OnInit {
   }
 
   loadPodLogs(appName: string): void {
-    this.loader.open();
-
     this.ws.call('chart.release.pod_logs_choices', [appName])
-      .pipe(untilDestroyed(this)).subscribe({
+      .pipe(this.loader.withLoader(), untilDestroyed(this)).subscribe({
         next: (podLogs) => {
           this.podLogsDetails = { ...podLogs };
           const logsList = Object.keys(this.podLogsDetails);
@@ -107,12 +105,10 @@ export class PodSelectLogsDialogComponent implements OnInit {
           } else {
             this.hasPool = false;
           }
-          this.loader.close();
           this.cdr.markForCheck();
         },
         error: () => {
           this.hasPool = false;
-          this.loader.close();
           this.cdr.markForCheck();
         },
       });

@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import {
-  AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnInit, TemplateRef, ViewChild,
+  ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
@@ -10,9 +10,9 @@ import { combineLatest, map, Subscription } from 'rxjs';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { LogsDialogFormValue, PodSelectLogsDialogComponent } from 'app/pages/apps/components/pod-select-logs/pod-select-logs-dialog.component';
-import { DialogService, ShellService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { LayoutService } from 'app/services/layout.service';
+import { ShellService } from 'app/services/shell.service';
 import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -29,9 +29,8 @@ interface PodLogEvent {
   styleUrls: ['./pod-logs.component.scss'],
   providers: [ShellService],
 })
-export class PodLogsComponent implements OnInit, AfterViewInit {
+export class PodLogsComponent implements OnInit {
   @ViewChild('logContainer', { static: true }) logContainer: ElementRef<HTMLElement>;
-  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   fontSize = 14;
   chartReleaseName: string;
@@ -51,7 +50,6 @@ export class PodLogsComponent implements OnInit, AfterViewInit {
     protected aroute: ActivatedRoute,
     protected loader: AppLoaderService,
     protected storageService: StorageService,
-    private layoutService: LayoutService,
     private errorHandler: ErrorHandlerService,
     private mdDialog: MatDialog,
     private cdr: ChangeDetectorRef,
@@ -68,10 +66,6 @@ export class PodLogsComponent implements OnInit, AfterViewInit {
 
       this.reconnect();
     });
-  }
-
-  ngAfterViewInit(): void {
-    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
   // subscribe pod log for selected app, pod and container.
@@ -137,9 +131,10 @@ export class PodLogsComponent implements OnInit, AfterViewInit {
         title: 'Choose log',
         customSubmit: (logsFormValueDialog: LogsDialogFormValue) => {
           if (isDownload) {
-            return this.download(logsFormValueDialog);
+            this.download(logsFormValueDialog);
+            return;
           }
-          return this.onChooseLogs(logsFormValueDialog);
+          this.onChooseLogs(logsFormValueDialog);
         },
       },
     });
@@ -153,7 +148,6 @@ export class PodLogsComponent implements OnInit, AfterViewInit {
 
     this.dialogService.closeAllDialogs();
 
-    this.loader.open();
     const fileName = `${chartReleaseName}_${podName}_${containerName}.log`;
     const mimetype = 'application/octet-stream';
     this.ws.call(
@@ -163,27 +157,24 @@ export class PodLogsComponent implements OnInit, AfterViewInit {
         [chartReleaseName, { pod_name: podName, container_name: containerName, tail_lines: tailLines }],
         fileName,
       ],
-    ).pipe(untilDestroyed(this)).subscribe({
-      next: (download) => {
-        this.loader.close();
-        const [, url] = download;
-        this.storageService.streamDownloadFile(url, fileName, mimetype)
-          .pipe(untilDestroyed(this))
-          .subscribe({
-            next: (file: Blob) => {
-              if (download !== null) {
-                this.storageService.downloadBlob(file, fileName);
-              }
-            },
-            error: (error: HttpErrorResponse) => {
-              this.dialogService.error(this.errorHandler.parseHttpError(error));
-            },
-          });
-      },
-      error: (error) => {
-        this.loader.close();
-        this.dialogService.error(this.errorHandler.parseWsError(error));
-      },
+    ).pipe(
+      this.loader.withLoader(),
+      this.errorHandler.catchError(),
+      untilDestroyed(this),
+    ).subscribe((download) => {
+      const [, url] = download;
+      this.storageService.streamDownloadFile(url, fileName, mimetype)
+        .pipe(untilDestroyed(this))
+        .subscribe({
+          next: (file: Blob) => {
+            if (download !== null) {
+              this.storageService.downloadBlob(file, fileName);
+            }
+          },
+          error: (error: HttpErrorResponse) => {
+            this.dialogService.error(this.errorHandler.parseHttpError(error));
+          },
+        });
     });
   }
 

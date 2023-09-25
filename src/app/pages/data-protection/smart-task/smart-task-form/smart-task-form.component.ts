@@ -7,7 +7,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { SmartTestType, smartTestTypeLabels } from 'app/enums/smart-test-type.enum';
-import { choicesToOptions, mapToOptions } from 'app/helpers/options.helper';
+import { choicesToOptions } from 'app/helpers/operators/options.operators';
+import { mapToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/data-protection/smart/smart';
 import { SmartTestTask } from 'app/interfaces/smart-test.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -108,7 +109,7 @@ export class SmartTaskFormComponent implements OnInit {
           this.snackbar.success(this.translate.instant('Task updated'));
         }
         this.isLoading = false;
-        this.slideInRef.close();
+        this.slideInRef.close(true);
       },
       error: (error) => {
         this.isLoading = false;

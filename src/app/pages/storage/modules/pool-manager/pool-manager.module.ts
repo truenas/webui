@@ -24,10 +24,10 @@ import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { TreeModule } from 'app/modules/ix-tree/tree.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
-import {
-  DownloadKeyDialogOldComponent,
-} from 'app/pages/storage/components/manager/download-key-old/download-key-dialog-old.component';
+import { AddVdevsComponent } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/add-vdevs.component';
+import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
 import { ConfigurationPreviewComponent } from 'app/pages/storage/modules/pool-manager/components/configuration-preview/configuration-preview.component';
+import { ExistingConfigurationPreviewComponent } from 'app/pages/storage/modules/pool-manager/components/existing-configuration-preview/existing-configuration-preview.component';
 import { InventoryComponent } from 'app/pages/storage/modules/pool-manager/components/inventory/inventory.component';
 import { DiskIconComponent } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/components/disk-icon/disk-icon.component';
 import { DiskInfoComponent } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/components/disk-info/disk-info.component';
@@ -36,7 +36,9 @@ import { ManualSelectionVdevComponent } from 'app/pages/storage/modules/pool-man
 import { ManualDiskSelectionComponent } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/manual-disk-selection.component';
 import { ManualDiskDragToggleStore } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/store/manual-disk-drag-toggle.store';
 import { ManualDiskSelectionStore } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/store/manual-disk-selection.store';
+import { NewDevicesPreviewComponent } from 'app/pages/storage/modules/pool-manager/components/new-devices/new-devices-preview.component';
 import { PoolManagerComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager/pool-manager.component';
+import { DiskSizeSelectsComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/layout-step/automated-disk-selection/disk-size-selects/disk-size-selects.component';
 import { PoolManagerWizardComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/pool-manager-wizard.component';
 import { GeneralWizardStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/1-general-wizard-step/general-wizard-step.component';
 import { LogWizardStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/4-log-wizard-step/log-wizard-step.component';
@@ -57,6 +59,8 @@ import { InspectVdevsDialogComponent } from './components/inspect-vdevs-dialog/i
 import { ManualSelectionDiskFiltersComponent } from './components/manual-disk-selection/components/manual-selection-disks/manual-selection-disk-filters/manual-selection-disk-filters.component';
 import { ManualSelectionDisksComponent } from './components/manual-disk-selection/components/manual-selection-disks/manual-selection-disks.component';
 import { AutomatedDiskSelectionComponent } from './components/pool-manager-wizard/components/layout-step/automated-disk-selection/automated-disk-selection.component';
+import { DraidSelectionComponent } from './components/pool-manager-wizard/components/layout-step/automated-disk-selection/draid-selection/draid-selection.component';
+import { NormalSelectionComponent } from './components/pool-manager-wizard/components/layout-step/automated-disk-selection/normal-selection/normal-selection.component';
 import { CustomLayoutAppliedComponent } from './components/pool-manager-wizard/components/layout-step/custom-layout-applied/custom-layout-applied.component';
 import { LayoutStepComponent } from './components/pool-manager-wizard/components/layout-step/layout-step.component';
 import { PoolWarningsComponent } from './components/pool-manager-wizard/components/pool-warnings/pool-warnings.component';
@@ -102,12 +106,15 @@ import { DataWizardStepComponent } from './components/pool-manager-wizard/steps/
     DiskInfoComponent,
     ManualSelectionVdevComponent,
     SpareWizardStepComponent,
+    NewDevicesPreviewComponent,
     ReviewWizardStepComponent,
     GeneralWizardStepComponent,
     CacheWizardStepComponent,
     ManualDiskSelectionComponent,
     DedupWizardStepComponent,
+    ExistingConfigurationPreviewComponent,
     MetadataWizardStepComponent,
+    AddVdevsComponent,
     ManualSelectionDisksComponent,
     ManualSelectionDiskFiltersComponent,
     LayoutStepComponent,
@@ -118,12 +125,15 @@ import { DataWizardStepComponent } from './components/pool-manager-wizard/steps/
     DataWizardStepComponent,
     PoolWarningsComponent,
     DownloadKeyDialogComponent,
-    DownloadKeyDialogOldComponent,
     InspectVdevsDialogComponent,
     TopologyCategoryDescriptionPipe,
+    DiskSizeSelectsComponent,
+    DraidSelectionComponent,
+    NormalSelectionComponent,
   ],
   providers: [
     PoolManagerStore,
+    AddVdevsStore,
     ManualDiskSelectionStore,
     ManualDiskDragToggleStore,
     GenerateVdevsService,

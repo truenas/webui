@@ -5,14 +5,16 @@ import { Validators, FormBuilder } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { of } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { RollbackRecursiveType } from 'app/enums/rollback-recursive-type.enum';
 import helptext from 'app/helptext/storage/snapshots/snapshots';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ZfsRollbackParams, ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { AppLoaderService, WebSocketService, DialogService } from 'app/services';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -105,16 +107,14 @@ export class SnapshotRollbackDialogComponent implements OnInit {
     }
 
     this.websocket.call('zfs.snapshot.rollback', [this.snapshotName, body]).pipe(
-      tap(() => this.loader.open()),
+      this.loader.withLoader(),
       untilDestroyed(this),
     ).subscribe({
       next: () => {
-        this.loader.close();
         this.wasDatasetRolledBack = true;
         this.cdr.markForCheck();
       },
       error: (error) => {
-        this.loader.close();
         this.formErrorHandler.handleWsFormError(error, this.form);
       },
     });

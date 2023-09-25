@@ -4,18 +4,24 @@ import {
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import {
+  concatMap, forkJoin, from, Observable, of,
+} from 'rxjs';
 import { NfsAclTag, smbAclTagLabels } from 'app/enums/nfs-acl.enum';
 import { SmbSharesecPermission, SmbSharesecType } from 'app/enums/smb-sharesec.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextSharingSmb } from 'app/helptext/sharing';
+import { Group } from 'app/interfaces/group.interface';
+import { Option } from 'app/interfaces/option.interface';
+import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { SmbSharesecAce } from 'app/interfaces/smb-share.interface';
+import { User } from 'app/interfaces/user.interface';
 import { GroupComboboxProvider } from 'app/modules/ix-forms/classes/group-combobox-provider';
 import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { UserService } from 'app/services';
+import { UserService } from 'app/services/user.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 interface FormAclEntry {
@@ -72,8 +78,8 @@ export class SmbAclComponent implements OnInit {
 
   readonly helptext = helptextSharingSmb;
   readonly nfsAclTag = NfsAclTag;
-  readonly userProvider = new UserComboboxProvider(this.userService, 'id');
-  readonly groupProvider = new GroupComboboxProvider(this.userService, 'id');
+  readonly userProvider = new UserComboboxProvider(this.userService, 'uid');
+  protected groupProvider: GroupComboboxProvider;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -150,8 +156,7 @@ export class SmbAclComponent implements OnInit {
               user: ace.ae_who_id?.id_type !== NfsAclTag.Everyone ? ace.ae_who_id?.id : null,
             });
           });
-          this.isLoading = false;
-          this.cdr.markForCheck();
+          this.extractOptionFromAcl(shareAcl.share_acl);
         },
         error: () => {
           this.isLoading = false;
@@ -176,5 +181,56 @@ export class SmbAclComponent implements OnInit {
 
       return result;
     });
+  }
+
+  private initialValueDataFromAce(
+    ace: SmbSharesecAce,
+  ): Observable<Group[]> | Observable<User[]> | Observable<string[]> {
+    if (ace.ae_who_id?.id_type === NfsAclTag.UserGroup) {
+      const queryArgs: QueryFilter<Group>[] = [['gid', '=', ace.ae_who_id?.id]];
+      return this.ws.call('group.query', [queryArgs]);
+    }
+
+    if (ace.ae_who_id?.id_type === NfsAclTag.User) {
+      const queryArgs: QueryFilter<Group>[] = [['uid', '=', ace.ae_who_id?.id]];
+      return this.ws.call('user.query', [queryArgs]);
+    }
+
+    return of([]);
+  }
+
+  private extractOptionFromAcl(shareAcl: SmbSharesecAce[]): void {
+    from(shareAcl)
+      .pipe(
+        concatMap((ace: SmbSharesecAce) => {
+          return forkJoin(
+            this.initialValueDataFromAce(ace),
+          );
+        }),
+      )
+      .pipe(untilDestroyed(this))
+      .subscribe((data: unknown[][]) => {
+        const response = data[0];
+        const initialOptions: Option[] = [];
+
+        if (response.length) {
+          let option: Option;
+          if ((response as Group[])[0].gid) {
+            option = { label: (response as Group[])[0].group, value: (response as Group[])[0].gid };
+          } else if (
+            (response as User[])[0].uid
+            || (response as User[])[0].uid?.toString() === '0'
+          ) {
+            option = { label: (response as User[])[0].username, value: (response as User[])[0].uid };
+          } else {
+            return;
+          }
+          initialOptions.push(option);
+        }
+
+        this.groupProvider = new GroupComboboxProvider(this.userService, 'gid', initialOptions);
+        this.isLoading = false;
+        this.cdr.markForCheck();
+      });
   }
 }

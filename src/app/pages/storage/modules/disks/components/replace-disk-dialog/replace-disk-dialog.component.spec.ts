@@ -14,7 +14,7 @@ import {
   ReplaceDiskDialogData,
   ReplaceDiskDialogComponent,
 } from 'app/pages/storage/modules/disks/components/replace-disk-dialog/replace-disk-dialog.component';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 
 describe('ReplaceDiskDialogComponent', () => {
   let spectator: Spectator<ReplaceDiskDialogComponent>;

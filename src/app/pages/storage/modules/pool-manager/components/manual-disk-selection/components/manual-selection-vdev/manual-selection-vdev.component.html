@@ -10,7 +10,7 @@
         <div class="type-container">
           <h3>{{ layout }}</h3>
           <p *ngIf="minDisks[layout] <= vdev.disks?.length; else addDisks">
-            {{ vdev.rawSize | filesize: { standard: 'iec' } }}{{ ' Est. Usable Raw Capacity' | translate }}
+            {{ sizeEstimation | filesize: { standard: 'iec' } }}{{ ' Est. Usable Raw Capacity' | translate }}
           </p>
           <ng-template #addDisks>
             <p>{{ 'Add the required no. of disks to get a vdev size estimate' | translate }}</p>
@@ -65,12 +65,12 @@
         class="drag-hint"
         [label]="'Drag & drop disks to add or remove them' | translate"
       ></ix-label>
-      <ix-label *ngIf="vdevErrMsg" class="error" [label]="vdevErrMsg"></ix-label>
-      <ix-label
-        *ngIf="showDiskSizeError"
-        class="error"
-        [label]="'Mixing disks of different sizes in a vdev is not recommended.' | translate"
-      ></ix-label>
+      <div *ngIf="vdevErrorMessage" class="error">
+        {{ vdevErrorMessage | translate }}
+      </div>
+      <div *ngIf="mixesDisksOfDifferentSizes" class="error">
+        {{ 'Mixing disks of different sizes in a vdev is not recommended.' | translate }}
+      </div>
     </div>
   </mat-card-content>
 </mat-card>

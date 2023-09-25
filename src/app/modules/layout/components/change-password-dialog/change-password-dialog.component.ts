@@ -6,14 +6,14 @@ import { TranslateService } from '@ngx-translate/core';
 import { filter, switchMap, tap } from 'rxjs/operators';
 import helptext from 'app/helptext/topbar';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
-import { matchOtherValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
+import { matchOthersFgValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService, WebSocketService } from 'app/services';
 import { AuthService } from 'app/services/auth/auth.service';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -28,11 +28,15 @@ export class ChangePasswordDialogComponent {
     password: ['', [Validators.required]],
     passwordConfirmation: ['', [
       Validators.required,
-      this.validatorsService.withMessage(
-        matchOtherValidator('password'),
+    ]],
+  }, {
+    validators: [
+      matchOthersFgValidator(
+        'passwordConfirmation',
+        ['password'],
         this.translate.instant('New password and confirmation should match.'),
       ),
-    ]],
+    ],
   });
 
   private loggedInUser: LoggedInUser;
@@ -59,9 +63,10 @@ export class ChangePasswordDialogComponent {
   }
 
   onSubmit(): void {
-    this.loader.open();
     const { currentPassword, password } = this.form.value;
     this.ws.call('auth.check_user', [this.loggedInUser.pw_name, currentPassword]).pipe(
+      this.loader.withLoader(),
+      this.errorHandler.catchError(),
       tap((passwordVerified) => {
         if (passwordVerified) {
           return;
@@ -76,18 +81,12 @@ export class ChangePasswordDialogComponent {
       filter(Boolean),
       switchMap(() => this.ws.call('user.update', [this.loggedInUser.id, { password }])),
       untilDestroyed(this),
-    ).subscribe({
-      next: () => {
-        this.snackbar.success(
-          this.translate.instant(helptext.changePasswordDialog.pw_updated),
-        );
-        this.loader.close();
-        this.dialogRef.close();
-      },
-      error: (error: WebsocketError) => {
-        this.loader.close();
-        this.dialogService.error(this.errorHandler.parseWsError(error));
-      },
+    ).subscribe(() => {
+      this.snackbar.success(
+        this.translate.instant(helptext.changePasswordDialog.pw_updated),
+      );
+      this.dialogRef.close();
     });
   }
 }
+

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  Observable, OperatorFunction, map, pipe,
+  Observable, OperatorFunction, filter, map, pipe,
 } from 'rxjs';
 import { ixChartApp } from 'app/constants/catalog.constants';
 import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
@@ -11,16 +11,17 @@ import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { AppsFiltersValues } from 'app/interfaces/apps-filters-values.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
-import { ChartReleaseEvent, ChartScaleResult } from 'app/interfaces/chart-release-event.interface';
+import { ChartReleaseEvent, ChartScaleQueryParams, ChartScaleResult } from 'app/interfaces/chart-release-event.interface';
 import { ChartRelease, ChartReleaseUpgradeParams } from 'app/interfaces/chart-release.interface';
 import { Choices } from 'app/interfaces/choices.interface';
 import { ContainerConfig } from 'app/interfaces/container-config.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
+import { KubernetesStatusData } from 'app/interfaces/kubernetes-status-data.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { QueryFilter, QueryParams } from 'app/interfaces/query-api.interface';
-import { WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 
 const ignoredAppsList = [ixChartApp];
 
@@ -33,6 +34,14 @@ export function filterIgnoredApps(): OperatorFunction<AvailableApp[], AvailableA
 @Injectable({ providedIn: 'root' })
 export class ApplicationsService {
   constructor(private ws: WebSocketService, private translate: TranslateService) {}
+
+  getKubernetesStatus(): Observable<KubernetesStatusData> {
+    return this.ws.call('kubernetes.status');
+  }
+
+  getKubernetesStatusUpdates(): Observable<ApiEvent<KubernetesStatusData>> {
+    return this.ws.subscribe('kubernetes.state');
+  }
 
   getKubernetesConfig(): Observable<KubernetesConfig> {
     return this.ws.call('kubernetes.config');
@@ -126,7 +135,7 @@ export class ApplicationsService {
   }
 
   getAllChartReleases(): Observable<ChartRelease[]> {
-    const secondOption = { extra: { history: true } };
+    const secondOption = { extra: { history: true, stats: true } };
     return this.ws.call('chart.release.query', [[], secondOption]);
   }
 
@@ -138,6 +147,18 @@ export class ApplicationsService {
 
   getInstalledAppsUpdates(): Observable<ApiEvent> {
     return this.ws.subscribe('chart.release.query');
+  }
+
+  getInstalledAppsStatisticsUpdates(): Observable<ApiEvent> {
+    return this.ws.subscribe('chart.release.statistics');
+  }
+
+  getInstalledAppsStatusUpdates(): Observable<ApiEvent<Job<ChartScaleResult, ChartScaleQueryParams>>> {
+    return this.ws.subscribe('core.get_jobs').pipe(
+      filter((event: ApiEvent<Job<ChartScaleResult, ChartScaleQueryParams>>) => {
+        return event.fields.method === 'chart.release.scale';
+      }),
+    );
   }
 
   getChartReleaseWithResources(name: string): Observable<ChartRelease[]> {

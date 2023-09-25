@@ -1,12 +1,9 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { TemplateRef } from '@angular/core';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { ActivatedRoute } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import {
-  BehaviorSubject, of, Subject,
-} from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { DatasetQuota } from 'app/interfaces/dataset-quota.interface';
@@ -18,11 +15,9 @@ import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.s
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
 import { DatasetQuotaEditFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-edit-form/dataset-quota-edit-form.component';
-import {
-  AppLoaderService, DialogService, WebSocketService,
-} from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { LayoutService } from 'app/services/layout.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { DatasetQuotasGrouplistComponent } from './dataset-quotas-grouplist.component';
 
 const fakeGroupQuotas: DatasetQuota[] = [{
@@ -57,7 +52,6 @@ describe('DatasetQuotasGrouplistComponent', () => {
       IxTableModule,
     ],
     providers: [
-      mockProvider(AppLoaderService),
       mockProvider(FormErrorHandlerService),
       mockProvider(WebSocketService),
       mockProvider(IxFormatterService, {
@@ -65,9 +59,6 @@ describe('DatasetQuotasGrouplistComponent', () => {
       }),
       mockProvider(ActivatedRoute, {
         snapshot: { params: { datasetId: 'Test' } },
-      }),
-      mockProvider(LayoutService, {
-        pageHeaderUpdater$: new BehaviorSubject<TemplateRef<unknown>>(null),
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),

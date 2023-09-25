@@ -81,4 +81,12 @@ export default {
  be sized to X GiB for each X TiB of general storage.'),
   exported_pool_warning: T('This disk is part of the exported pool {pool}. Adding this disk to a new or other existing pools will make {pool} unable to import. You will lose any and all data in {pool}. Please make sure you have backed up any sensitive data in {pool} before reusing/repurposing this disk.'),
 
+  dRaidTooltip: T('dRAID is a ZFS feature that boosts resilver speed and load distribution. Due to fixed strip width disk space efficiency may be substantially worse with small files. \nOpt for dRAID over RAID-Z when handling large-capacity drives and extensive disk environments for enhanced performance.'),
+  stripeTooltip: T('Each disk stores data. A stripe requires at least one disk and has no data redundancy.'),
+  mirrorTooltip: T('Data is identical in each disk. A mirror requires at least two disks, provides the most redundancy, and has the least capacity.'),
+  raidz1Tooltip: T('Uses one disk for parity while all other disks store data. RAIDZ1 requires at least three disks. RAIDZ is a traditional ZFS data protection scheme. \nChoose RAIDZ over dRAID when managing a smaller set of drives, where simplicity of setup and predictable disk usage are primary considerations.'),
+  raidz2Tooltip: T('Uses two disks for parity while all other disks store data. RAIDZ2 requires at least four disks. RAIDZ is a traditional ZFS data protection scheme. \nChoose RAIDZ over dRAID when managing a smaller set of drives, where simplicity of setup and predictable disk usage are primary considerations.'),
+  raidz3Tooltip: T('Uses three disks for parity while all other disks store data. RAIDZ3 requires at least five disks. RAIDZ is a traditional ZFS data protection scheme. \nChoose RAIDZ over dRAID when managing a smaller set of drives, where simplicity of setup and predictable disk usage are primary considerations.'),
+
+  dRaidChildrenExplanation: T('The number of children must at the minimum accomodate the total number of disks required for the previous configuration options including parity drives.'),
 };

@@ -5,6 +5,7 @@ import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { range } from 'lodash';
 import { forkJoin, of } from 'rxjs';
@@ -17,7 +18,7 @@ import {
   XmitHashPolicy,
 } from 'app/enums/network-interface.enum';
 import { ProductType } from 'app/enums/product-type.enum';
-import { choicesToOptions, singleArrayToOptions } from 'app/helpers/options.helper';
+import { choicesToOptions, singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import helptext from 'app/helptext/network/interfaces/interfaces-form';
 import {
   NetworkInterface,
@@ -42,9 +43,11 @@ import {
   interfaceAliasesToFormAliases,
   NetworkInterfaceFormAlias,
 } from 'app/pages/network/components/interface-form/network-interface-alias-control.interface';
-import { NetworkService, SystemGeneralService } from 'app/services';
-import { CoreService } from 'app/services/core-service/core.service';
+import { NetworkService } from 'app/services/network.service';
+import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { AppState } from 'app/store';
+import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
 
 @UntilDestroy()
 @Component({
@@ -133,12 +136,12 @@ export class InterfaceFormComponent implements OnInit {
     private networkService: NetworkService,
     private errorHandler: FormErrorHandlerService,
     private snackbar: SnackbarService,
-    private core: CoreService,
     private validatorsService: IxValidatorsService,
     private interfaceFormValidator: InterfaceNameValidatorService,
     private matDialog: MatDialog,
     private systemGeneralService: SystemGeneralService,
     private slideInRef: IxSlideInRef<InterfaceFormComponent>,
+    private store$: Store<AppState>,
     @Inject(SLIDE_IN_DATA) private existingInterface: NetworkInterface,
   ) {}
 
@@ -231,7 +234,7 @@ export class InterfaceFormComponent implements OnInit {
       next: () => {
         this.isLoading = false;
         this.snackbar.success(this.translate.instant('Network interface updated'));
-        this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: false, checkin: false }, sender: this });
+        this.store$.dispatch(networkInterfacesChanged({ commit: false, checkIn: false }));
         this.slideInRef.close(true);
 
         this.ws.call('interface.default_route_will_be_removed').pipe(

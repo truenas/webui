@@ -1,4 +1,4 @@
-<ng-template #pageHeader>
+<ng-template ixPageHeader>
   <ix-page-title-header>
     <ix-search-input
       [disabled]="loading"
@@ -31,11 +31,9 @@
           [diameter]="30"
           [matTooltip]="
             (service.state === ServiceStatus.Running
-              ? 'Stopping'
-              : 'Starting'
+              ? ('Stopping' | uppercase | translate)
+              : ('Starting' | uppercase | translate)
             )
-              | uppercase
-              | translate
           "
         ></mat-spinner>
 
@@ -75,6 +73,7 @@
           matTooltipPosition="left"
           [ixTest]="[service.service, 'edit']"
           [attr.aria-label]="'Edit' | translate"
+          [attr.name]="service.name"
           [matTooltip]="'Configure' | translate"
           (click)="configureService(service)"
         >
@@ -93,6 +92,5 @@
       mat-row
       [ixTest]="service.service"
     ></tr>
-
   </table>
 </mat-card>

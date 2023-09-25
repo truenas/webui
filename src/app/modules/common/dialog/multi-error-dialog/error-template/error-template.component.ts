@@ -4,8 +4,7 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Job } from 'app/interfaces/job.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -59,8 +58,9 @@ export class ErrorTemplateComponent {
   }
 
   downloadLogs(): void {
-    this.ws.call('core.download', ['filesystem.get', [this.logs.logs_path], `${this.logs.id}.log`]).pipe(untilDestroyed(this)).subscribe({
-      next: ([, url]) => {
+    this.ws.call('core.download', ['filesystem.get', [this.logs.logs_path], `${this.logs.id}.log`])
+      .pipe(this.errorHandler.catchError(), untilDestroyed(this))
+      .subscribe(([, url]) => {
         const mimetype = 'text/plain';
         this.storage.streamDownloadFile(url, `${this.logs.id}.log`, mimetype).pipe(untilDestroyed(this)).subscribe({
           next: (file) => {
@@ -70,10 +70,6 @@ export class ErrorTemplateComponent {
             this.dialogService.error(this.errorHandler.parseHttpError(error));
           },
         });
-      },
-      error: (error: WebsocketError) => {
-        this.dialogService.error(this.errorHandler.parseWsError(error));
-      },
-    });
+      });
   }
 }

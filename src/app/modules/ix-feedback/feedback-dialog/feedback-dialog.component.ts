@@ -16,7 +16,7 @@ import { IxFeedbackService } from 'app/modules/ix-feedback/ix-feedback.service';
 import { rangeValidator } from 'app/modules/ix-forms/validators/range-validation/range-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { FileTicketFormComponent } from 'app/pages/system/file-ticket/file-ticket-form/file-ticket-form.component';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { AppState } from 'app/store';
@@ -45,7 +45,7 @@ export class FeedbackDialogComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
     private dialogRef: MatDialogRef<FeedbackDialogComponent>,
     private feedbackService: IxFeedbackService,
     private store$: Store<AppState>,
@@ -75,7 +75,7 @@ export class FeedbackDialogComponent implements OnInit {
 
   openFileTicketForm(): void {
     this.dialogRef.close();
-    this.slideIn.open(FileTicketFormComponent);
+    this.slideInService.open(FileTicketFormComponent);
   }
 
   onSubmit(): void {
@@ -126,7 +126,8 @@ export class FeedbackDialogComponent implements OnInit {
       .subscribe({
         next: () => this.onSuccess(),
         error: (error: HttpErrorResponse) => {
-          console.error(error);
+          this.isLoading = false;
+          this.cdr.markForCheck();
           this.dialogService.error({
             title: this.translate.instant('Uploading failed.'),
             message: error.message,

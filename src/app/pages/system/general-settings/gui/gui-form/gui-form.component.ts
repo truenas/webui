@@ -6,7 +6,6 @@ import {
   FormBuilder,
   Validators,
 } from '@angular/forms';
-import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -14,7 +13,7 @@ import { combineLatest, of } from 'rxjs';
 import {
   filter, switchMap, takeUntil, tap,
 } from 'rxjs/operators';
-import { choicesToOptions } from 'app/helpers/options.helper';
+import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { SystemGeneralConfig, SystemGeneralConfigUpdate } from 'app/interfaces/system-config.interface';
@@ -23,9 +22,8 @@ import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-sli
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { ipValidator } from 'app/modules/ix-forms/validators/ip-validation';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import {
-  DialogService, SystemGeneralService,
-} from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
+import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -77,7 +75,6 @@ export class GuiFormComponent {
     private wsManager: WebsocketConnectionService,
     private dialog: DialogService,
     private loader: AppLoaderService,
-    private router: Router,
     private translate: TranslateService,
     private errorHandler: FormErrorHandlerService,
     private store$: Store<AppState>,
@@ -117,6 +114,7 @@ export class GuiFormComponent {
       filter(Boolean),
       tap(() => {
         this.store$.dispatch(guiFormSubmitted({ theme: values.theme }));
+
         // prevent to revert momentarily to previous value due to `guiFormSubmitted`
         this.formGroup.controls.ui_httpsredirect.setValue(values.ui_httpsredirect);
       }),
@@ -137,6 +135,8 @@ export class GuiFormComponent {
         this.cdr.markForCheck();
       },
     });
+
+    this.themeService.updateThemeInLocalStorage(this.themeService.findTheme(values.theme));
   }
 
   getIsServiceRestartRequired(current: SystemGeneralConfig, next: SystemGeneralConfigUpdate): boolean {

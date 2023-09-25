@@ -4,11 +4,13 @@ import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import { formatDistanceToNow } from 'date-fns';
 import { EMPTY } from 'rxjs';
 import {
   catchError, filter, switchMap, take, tap,
 } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
+import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import helptext from 'app/helptext/data-protection/cloudsync/cloudsync-form';
 import globalHelptext from 'app/helptext/global-helptext';
 import { CloudSyncTask, CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
@@ -21,22 +23,22 @@ import {
 } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import {
   CloudsyncRestoreDialogComponent,
 } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
 import {
-  AppLoaderService,
   CloudCredentialService,
-  DialogService,
-  TaskService,
-} from 'app/services';
+} from 'app/services/cloud-credential.service';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
-import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
 @UntilDestroy()
 @Component({
@@ -70,6 +72,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
     },
     { name: this.translate.instant('Frequency'), prop: 'frequency', enableMatTooltip: true },
     { name: this.translate.instant('Next Run'), prop: 'next_run', hidden: true },
+    { name: this.translate.instant('Last Run'), prop: 'last_run', hidden: true },
     {
       name: this.translate.instant('Status'),
       prop: 'state',
@@ -111,14 +114,20 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
   resourceTransformIncomingRestData(tasks: CloudSyncTask[]): CloudSyncTaskUi[] {
     return tasks.map((task) => {
       const transformed = { ...task } as CloudSyncTaskUi;
-      const formattedCronSchedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
+      const formattedCronSchedule = scheduleToCrontab(task.schedule);
       transformed.credential = task.credentials.name;
       transformed.cron_schedule = task.enabled ? formattedCronSchedule : this.translate.instant('Disabled');
       transformed.frequency = this.taskService.getTaskCronDescription(formattedCronSchedule);
+      transformed.next_run =
+        task.enabled ?
+          this.taskService.getTaskNextRun(formattedCronSchedule)
+          : this.translate.instant('Disabled');
 
-      this.store$.select(selectTimezone).pipe(take(1), untilDestroyed(this)).subscribe((timezone) => {
-        transformed.next_run = task.enabled ? this.taskService.getTaskNextRun(formattedCronSchedule, timezone) : this.translate.instant('Disabled');
-      });
+      if (transformed.job?.time_finished?.$date) {
+        transformed.last_run = formatDistanceToNow(transformed.job?.time_finished?.$date, { addSuffix: true });
+      } else {
+        transformed.last_run = this.translate.instant('N/A');
+      }
 
       if (task.job === null) {
         transformed.state = { state: transformed.locked ? JobState.Locked : JobState.Pending };
@@ -154,13 +163,12 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
           }).pipe(
             filter(Boolean),
             tap(() => row.state = { state: JobState.Running }),
-            switchMap(() => this.ws.call('cloudsync.sync', [row.id])),
-            tap(() => this.snackbar.success(
-              this.translate.instant('Cloud sync «{name}» has started.', { name: row.description }),
+            switchMap(() => this.ws.job('cloudsync.sync', [row.id])),
+            tapOnce(() => this.snackbar.success(
+              this.translate.instant('Cloud Sync «{name}» has started.', { name: row.description }),
             )),
-            switchMap((id) => this.store$.select(selectJob(id)).pipe(filter(Boolean))),
-            catchError((error: WebsocketError) => {
-              this.dialog.error(this.errorHandler.parseWsError(error));
+            catchError((error: Job) => {
+              this.dialog.error(this.errorHandler.parseJobError(error));
               return EMPTY;
             }),
             untilDestroyed(this),
@@ -180,7 +188,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
           this.dialog
             .confirm({
               title: this.translate.instant('Stop'),
-              message: this.translate.instant('Stop this cloud sync?'),
+              message: this.translate.instant('Stop this Cloud Sync?'),
               hideCheckbox: true,
             })
             .pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
@@ -212,13 +220,12 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
             hideCheckbox: true,
           }).pipe(
             filter(Boolean),
-            switchMap(() => this.ws.call('cloudsync.sync', [row.id, { dry_run: true }])),
+            switchMap(() => this.ws.job('cloudsync.sync', [row.id, { dry_run: true }])),
             tap(() => this.snackbar.success(
-              this.translate.instant('Cloud sync «{name}» has started.', { name: row.description }),
+              this.translate.instant('Cloud Sync «{name}» has started.', { name: row.description }),
             )),
-            switchMap((id) => this.store$.select(selectJob(id)).pipe(filter(Boolean))),
-            catchError((error: WebsocketError) => {
-              this.dialog.error(this.errorHandler.parseWsError(error));
+            catchError((error: Job) => {
+              this.dialog.error(this.errorHandler.parseJobError(error));
               return EMPTY;
             }),
             untilDestroyed(this),

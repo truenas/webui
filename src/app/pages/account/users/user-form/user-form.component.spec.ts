@@ -20,10 +20,11 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { selectUsers } from 'app/pages/account/users/store/user.selectors';
-import {
-  DialogService, StorageService, UserService, WebSocketService,
-} from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { FilesystemService } from 'app/services/filesystem.service';
+import { StorageService } from 'app/services/storage.service';
+import { UserService } from 'app/services/user.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { UserFormComponent } from './user-form.component';
 
 describe('UserFormComponent', () => {
@@ -124,7 +125,7 @@ describe('UserFormComponent', () => {
 
       const usernameInput = await loader.getHarness(IxInputHarness.with({ label: 'Username' }));
       await usernameInput.setValue('test');
-      expect(await homeInput.getValue()).toBe('/mnt/users/test');
+      expect(await homeInput.getValue()).toBe('/mnt/users');
     });
 
     it('checks download ssh key button is hidden', async () => {

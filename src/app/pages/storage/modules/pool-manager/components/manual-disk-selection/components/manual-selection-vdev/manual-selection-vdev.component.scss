@@ -42,10 +42,6 @@ p {
   justify-content: center;
 }
 
-.drag-handle {
-  cursor: grab;
-}
-
 .grabbed {
   cursor: grabbing;
 }
@@ -73,6 +69,7 @@ p {
 
 .error {
   color: red;
+  font-size: 12px;
 }
 
 .type-container {

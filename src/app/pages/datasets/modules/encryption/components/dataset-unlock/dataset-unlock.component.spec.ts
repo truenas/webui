@@ -8,7 +8,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of, Subject } from 'rxjs';
 import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DatasetEncryptionType } from 'app/enums/dataset.enum';
 import { DatasetEncryptionSummary } from 'app/interfaces/dataset-encryption-summary.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
@@ -16,8 +16,8 @@ import { IxFileInputHarness } from 'app/modules/ix-forms/components/ix-file-inpu
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { DatasetUnlockComponent } from 'app/pages/datasets/modules/encryption/components/dataset-unlock/dataset-unlock.component';
-import { DialogService } from 'app/services';
 import { AuthService } from 'app/services/auth/auth.service';
+import { DialogService } from 'app/services/dialog.service';
 import { IxFileUploadService } from 'app/services/ix-file-upload.service';
 
 describe('DatasetUnlockComponent', () => {
@@ -53,7 +53,7 @@ describe('DatasetUnlockComponent', () => {
         snapshot: { params: { datasetId: 'pool_name_1' } },
       }),
       mockWebsocket([
-        mockCall('pool.dataset.encryption_summary'),
+        mockJob('pool.dataset.encryption_summary'),
       ]),
       mockProvider(DialogService),
       mockProvider(MatDialog, {

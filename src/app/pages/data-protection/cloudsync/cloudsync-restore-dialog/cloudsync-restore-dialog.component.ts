@@ -11,7 +11,7 @@ import { TransferMode } from 'app/enums/transfer-mode.enum';
 import helptext_cloudsync from 'app/helptext/data-protection/cloudsync/cloudsync-form';
 import { CloudsyncRestoreParams } from 'app/interfaces/cloudsync-provider.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { AppLoaderService } from 'app/services';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -53,17 +53,13 @@ export class CloudsyncRestoreDialogComponent {
   ) { }
 
   onSubmit(): void {
-    this.loader.open();
-
     this.ws.call('cloudsync.restore', [this.parentTaskId, this.form.value] as CloudsyncRestoreParams)
-      .pipe(untilDestroyed(this))
+      .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: () => {
-          this.loader.close();
           this.dialogRef.close();
         },
         error: (error) => {
-          this.loader.close();
           this.errorHandler.handleWsFormError(error, this.form);
         },
       });

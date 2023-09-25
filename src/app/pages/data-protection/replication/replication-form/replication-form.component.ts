@@ -34,14 +34,12 @@ import {
 import {
   ReplicationWizardComponent,
 } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
-import {
-  DialogService,
-  ReplicationService,
-  WebSocketService,
-} from 'app/services';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { ReplicationService } from 'app/services/replication.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -122,6 +120,10 @@ export class ReplicationFormComponent implements OnInit {
     return this.sourceSection.form.controls.schema_or_regex.value === SnapshotNamingOption.NameRegex;
   }
 
+  get isFormValid(): boolean {
+    return this.sections.every((section) => section.form.valid);
+  }
+
   setForEdit(): void {
     this.cdr.markForCheck();
   }
@@ -146,7 +148,7 @@ export class ReplicationFormComponent implements OnInit {
             );
             this.isLoading = false;
             this.cdr.markForCheck();
-            this.slideInRef.close();
+            this.slideInRef.close(true);
           },
           error: (error) => {
             this.isLoading = false;

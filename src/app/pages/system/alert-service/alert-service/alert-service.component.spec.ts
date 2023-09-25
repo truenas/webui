@@ -26,7 +26,8 @@ import {
 import {
   OpsGenieServiceComponent,
 } from 'app/pages/system/alert-service/alert-service/alert-services/ops-genie-service/ops-genie-service.component';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 jest.mock('./alert-services/aws-sns-service/aws-sns-service.component', () => {
   return {

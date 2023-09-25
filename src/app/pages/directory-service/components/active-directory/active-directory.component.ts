@@ -9,7 +9,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { forkJoin, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
-import { singleArrayToOptions } from 'app/helpers/options.helper';
+import { singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import helptext from 'app/helptext/directory-service/active-directory';
 import { NssInfoType } from 'app/interfaces/active-directory.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -20,10 +20,10 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import {
   LeaveDomainDialogComponent,
 } from 'app/pages/directory-service/components/leave-domain-dialog/leave-domain-dialog.component';
-import {
-  DialogService, SystemGeneralService, WebSocketService,
-} from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { SystemGeneralService } from 'app/services/system-general.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({

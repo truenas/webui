@@ -20,12 +20,14 @@
           </div>
         </ng-template>
         <ix-general-wizard-step
+          [isAddingVdevs]="!!existingPool"
+          [pool]="existingPool"
           [isStepActive]="activeStep === PoolCreationWizardStep.General"
         ></ix-general-wizard-step>
       </mat-step>
 
       <mat-step
-        *ngIf="hasEnclosureStep"
+        *ngIf="hasEnclosureStep && !existingPool"
         ixStepActivation
         [errorMessage]="getTopLevelErrorForStep(PoolCreationWizardStep.EnclosureOptions)"
         [hasError]="!!getTopLevelErrorForStep(PoolCreationWizardStep.EnclosureOptions) && getWasStepActivated(PoolCreationWizardStep.EnclosureOptions)"
@@ -79,7 +81,8 @@
       >
         <ng-template matStepLabel>
           <div class="step-header">
-            {{ 'Log (Optional)' | translate }}
+            {{ 'Log' | translate }}
+            <span class="optional-text">{{ '(Optional)' | translate }}</span>
             <ix-icon
               *ngIf="getTopLevelWarningForStep(PoolCreationWizardStep.Log) as warning"
               class="error-warning-icon"
@@ -89,12 +92,14 @@
           </div>
         </ng-template>
         <ix-log-wizard-step
+          [isStepActive]="activeStep === PoolCreationWizardStep.Log"
           [stepWarning]="getTopLevelWarningForStep(PoolCreationWizardStep.Log)"
           (goToLastStep)="goToLastStep()"
           ></ix-log-wizard-step>
       </mat-step>
 
       <mat-step
+        *ngIf="!(usesDraidLayout$ | async) && !alreadyHasSpare"
         ixStepActivation
         [errorMessage]="getTopLevelErrorForStep(PoolCreationWizardStep.Spare)"
         [hasError]="!!getTopLevelErrorForStep(PoolCreationWizardStep.Spare) && getWasStepActivated(PoolCreationWizardStep.Spare)"
@@ -102,7 +107,8 @@
       >
         <ng-template matStepLabel>
           <div class="step-header">
-            {{ 'Spare (Optional)' | translate }}
+            {{ 'Spare' | translate }}
+            <span class="optional-text">{{ '(Optional)' | translate }}</span>
             <ix-icon
               *ngIf="getTopLevelWarningForStep(PoolCreationWizardStep.Spare) as warning"
               class="error-warning-icon"
@@ -112,6 +118,7 @@
           </div>
         </ng-template>
         <ix-spare-wizard-step
+          [isStepActive]="activeStep === PoolCreationWizardStep.Spare"
           [stepWarning]="getTopLevelWarningForStep(PoolCreationWizardStep.Spare)"
           (goToLastStep)="goToLastStep()"
         ></ix-spare-wizard-step>
@@ -125,7 +132,8 @@
       >
         <ng-template matStepLabel>
           <div class="step-header">
-            {{ 'Cache (Optional)' | translate }}
+            {{ 'Cache' | translate }}
+            <span class="optional-text">{{ '(Optional)' | translate }}</span>
             <ix-icon
               *ngIf="getTopLevelWarningForStep(PoolCreationWizardStep.Cache) as warning"
               class="error-warning-icon"
@@ -135,6 +143,7 @@
           </div>
         </ng-template>
         <ix-cache-wizard-step
+          [isStepActive]="activeStep === PoolCreationWizardStep.Cache"
           [stepWarning]="getTopLevelWarningForStep(PoolCreationWizardStep.Cache)"
           (goToLastStep)="goToLastStep()"
         ></ix-cache-wizard-step>
@@ -148,7 +157,8 @@
       >
         <ng-template matStepLabel>
           <div class="step-header">
-            {{ 'Metadata (Optional)' | translate }}
+            {{ 'Metadata' | translate }}
+            <span class="optional-text">{{ '(Optional)' | translate }}</span>
             <ix-icon
               *ngIf="getTopLevelWarningForStep(PoolCreationWizardStep.Metadata) as warning"
               class="error-warning-icon"
@@ -158,6 +168,7 @@
           </div>
         </ng-template>
         <ix-metadata-wizard-step
+          [isStepActive]="activeStep === PoolCreationWizardStep.Metadata"
           [stepWarning]="getTopLevelWarningForStep(PoolCreationWizardStep.Metadata)"
           (goToLastStep)="goToLastStep()"
         ></ix-metadata-wizard-step>
@@ -171,7 +182,8 @@
       >
         <ng-template matStepLabel>
           <div class="step-header">
-            {{ 'Dedup (Optional)' | translate }}
+            {{ 'Dedup' | translate }}
+            <span class="optional-text">{{ '(Optional)' | translate }}</span>
             <ix-icon
               *ngIf="getTopLevelWarningForStep(PoolCreationWizardStep.Dedup) as warning"
               class="error-warning-icon"
@@ -181,6 +193,7 @@
           </div>
         </ng-template>
         <ix-dedup-wizard-step
+          [isStepActive]="activeStep === PoolCreationWizardStep.Dedup"
           [stepWarning]="getTopLevelWarningForStep(PoolCreationWizardStep.Dedup)"
           (goToLastStep)="goToLastStep()"
         ></ix-dedup-wizard-step>
@@ -192,8 +205,9 @@
       >
         <ng-template matStepLabel>{{ 'Review' | translate }}</ng-template>
         <ix-review-wizard-step
+          [isAddingVdevs]="!!existingPool"
           [isStepActive]="activeStep === PoolCreationWizardStep.Review"
-          (createPool)="createPool()"
+          (createPool)="submit()"
         ></ix-review-wizard-step>
       </mat-step>
     </mat-vertical-stepper>

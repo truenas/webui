@@ -4,7 +4,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { ResponseErrorType } from 'app/enums/response-error-type.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { DialogService } from 'app/services';
+import { ixManualValidateError } from 'app/modules/ix-forms/components/ix-errors/ix-errors.component';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 @Injectable({ providedIn: 'root' })
@@ -69,7 +70,7 @@ export class FormErrorHandlerService {
       control.setErrors({
         manualValidateError: true,
         manualValidateErrorMsg: errorMessage,
-        ixManualValidateError: { message: errorMessage },
+        [ixManualValidateError]: { message: errorMessage },
       });
 
       control.markAsTouched();

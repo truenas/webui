@@ -7,8 +7,10 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
-import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 export interface SetEnclosureLabelDialogData {
   enclosureId: string;
@@ -56,19 +58,16 @@ export class SetEnclosureLabelDialogComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.loader.open();
     const formValues = this.form.value;
     const newLabel = formValues.resetToDefault ? this.data.defaultLabel : formValues.label;
 
     this.ws.call('enclosure.update', [this.data.enclosureId, { label: newLabel }])
-      .pipe(untilDestroyed(this))
+      .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: () => {
-          this.loader.close();
           this.dialogRef.close(newLabel);
         },
         error: (error: WebsocketError) => {
-          this.loader.close();
           this.dialogService.error(this.errorHandler.parseWsError(error));
           this.dialogRef.close();
         },

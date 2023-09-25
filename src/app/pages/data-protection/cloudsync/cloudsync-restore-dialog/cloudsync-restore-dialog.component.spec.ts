@@ -12,7 +12,7 @@ import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import {
   TransferModeExplanationComponent,
 } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { CloudsyncRestoreDialogComponent } from './cloudsync-restore-dialog.component';

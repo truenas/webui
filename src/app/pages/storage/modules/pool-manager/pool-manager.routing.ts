@@ -4,7 +4,7 @@ import { PoolManagerComponent } from 'app/pages/storage/modules/pool-manager/com
 
 export const routes: Routes = [
   {
-    path: '',
+    path: 'create',
     data: { title: 'Pool Creation Wizard' },
     children: [
       {

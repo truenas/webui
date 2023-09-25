@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, Input, OnChanges, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -64,10 +64,17 @@ export class EnclosureWizardStepComponent implements OnInit, OnChanges {
     private store: PoolManagerStore,
     private translate: TranslateService,
     private formBuilder: FormBuilder,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   get isLimitingToSingle(): boolean {
     return this.form.value.dispersalStrategy === DispersalStrategy.LimitToSingle;
+  }
+
+  ngOnChanges(changes: IxSimpleChanges<this>): void {
+    if (changes.isStepActive.currentValue && !changes.isStepActive.previousValue && !this.form.touched) {
+      this.form.updateValueAndValidity();
+    }
   }
 
   ngOnInit(): void {
@@ -79,6 +86,7 @@ export class EnclosureWizardStepComponent implements OnInit, OnChanges {
       tap(() => {
         this.form.controls.limitToEnclosure.removeValidators(Validators.required);
         this.form.controls.limitToEnclosure.setValue(null);
+        this.cdr.markForCheck();
       }),
     ).pipe(untilDestroyed(this)).subscribe();
 
@@ -87,12 +95,6 @@ export class EnclosureWizardStepComponent implements OnInit, OnChanges {
         dispersalStrategy: DispersalStrategy.None,
       });
     });
-  }
-
-  ngOnChanges(changes: IxSimpleChanges<this>): void {
-    if (changes.isStepActive.currentValue && !changes.isStepActive.previousValue && !this.form.touched) {
-      this.form.updateValueAndValidity();
-    }
   }
 
   private connectFormToStore(): void {

@@ -1,10 +1,10 @@
 import { CdkVirtualScrollViewport } from '@angular/cdk/scrolling';
 import {
-  Component, ElementRef, OnInit, OnDestroy, AfterViewInit, ViewChild, TemplateRef, Inject,
+  Component, ElementRef, OnInit, OnDestroy, ViewChild, Inject,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { ReportingGraphName } from 'app/enums/reporting-graph-name.enum';
+import { ReportingGraphName } from 'app/enums/reporting.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Option } from 'app/interfaces/option.interface';
 import { ReportTab, ReportType } from 'app/pages/reports-dashboard/interfaces/report-tab.interface';
@@ -18,10 +18,9 @@ import { ReportsService } from './reports.service';
   styleUrls: ['./reports-dashboard.component.scss'],
   templateUrl: './reports-dashboard.component.html',
 })
-export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewInit {
+export class ReportsDashboardComponent implements OnInit, OnDestroy {
   @ViewChild(CdkVirtualScrollViewport, { static: false }) viewport: CdkVirtualScrollViewport;
   @ViewChild('container', { static: true }) container: ElementRef;
-  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   scrollContainer: HTMLElement;
 
@@ -65,10 +64,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
 
         this.activateTabFromUrl();
       });
-  }
-
-  ngAfterViewInit(): void {
-    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
   ngOnDestroy(): void {
@@ -141,6 +136,8 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
               ReportingGraphName.ZfsArcSize,
               ReportingGraphName.ZfsArcRatio,
               ReportingGraphName.ZfsArcResult,
+              ReportingGraphName.ZfsArcActualRate,
+              ReportingGraphName.ZfsArcRate,
             ].includes(graphName);
             break;
           default:
@@ -158,6 +155,10 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
     }
   }
 
+  convertToTitleCase(input: string): string {
+    return input.split('_').map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
+  }
+
   /**
    * Based on identifiers, create a single dimensional array of reports to render
    * @param list Report[]
@@ -170,7 +171,12 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
       if (report.identifiers) {
         report.identifiers.forEach((identifier, index) => {
           const flattenedReport = { ...report };
-          flattenedReport.title = flattenedReport.title.replace(/{identifier}/, identifier);
+
+          if (flattenedReport.title.includes('{identifier}')) {
+            flattenedReport.title = flattenedReport.title.replace(/{identifier}/, identifier);
+          } else {
+            flattenedReport.title = `${flattenedReport.title} - ${this.convertToTitleCase(identifier)}`;
+          }
 
           flattenedReport.identifiers = [identifier];
           if (report.isRendered[index]) {
@@ -216,9 +222,5 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, AfterViewIn
     });
 
     this.visibleReports = visible;
-  }
-
-  isReportReversed(report: Report): boolean {
-    return report.name === 'cpu';
   }
 }

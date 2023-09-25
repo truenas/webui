@@ -11,7 +11,7 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
 @UntilDestroy()
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class LocaleService {
   t24 = T('(24 Hours)');
   timezone: string;
@@ -124,24 +124,5 @@ export class LocaleService {
       dateFnsFormat = dateFnsFormat.replace(' a', ' aaaaa\'m\'');
     }
     return dateFnsFormat;
-  }
-
-  getPreferredDateFormatForChart(): string {
-    return this.formatDateTimeToChart(this.dateFormat);
-  }
-
-  getPreferredTimeFormatForChart(): string {
-    return this.formatDateTimeToChart(this.timeFormat);
-  }
-
-  /** Revert DateFns for Chart DateTime format */
-  formatDateTimeToChart(dateTimeFormat: string): string {
-    return dateTimeFormat
-      .replace('yyyy', 'YYYY')
-      .replace('y', 'YY')
-      .replace('dd', 'DD')
-      .replace('d', 'D')
-      .replace(' aaaaa\'m\'', ' a')
-      .replace(' aa', ' A');
   }
 }

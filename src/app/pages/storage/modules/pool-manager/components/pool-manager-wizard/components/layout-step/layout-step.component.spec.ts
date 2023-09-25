@@ -1,13 +1,9 @@
-import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
-import { BehaviorSubject, of } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
-import {
-  ManualDiskSelectionComponent, ManualDiskSelectionParams,
-} from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/manual-disk-selection.component';
 import {
   AutomatedDiskSelectionComponent,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/layout-step/automated-disk-selection/automated-disk-selection.component';
@@ -48,7 +44,6 @@ describe('LayoutStepComponent', () => {
     enclosures,
   } as PoolManagerState;
   const state$ = new BehaviorSubject(state);
-  let dialogReturnValue = [{}] as UnusedDisk[][];
 
   const createComponent = createComponentFactory({
     component: LayoutStepComponent,
@@ -62,11 +57,6 @@ describe('LayoutStepComponent', () => {
       mockProvider(PoolManagerStore, {
         state$: state$.asObservable(),
         resetTopologyCategory: jest.fn(),
-      }),
-      mockProvider(MatDialog, {
-        open: jest.fn(() => ({
-          afterClosed: jest.fn(() => of(dialogReturnValue)),
-        })),
       }),
     ],
   });
@@ -112,30 +102,4 @@ describe('LayoutStepComponent', () => {
     expect(customLayout.vdevs).toBe(topologyCategory.vdevs);
   });
 
-  it('opens manual selection dialog when one of the child components emits (manualSelectionClicked)', () => {
-    const automatedSelection = spectator.query(AutomatedDiskSelectionComponent);
-    automatedSelection.manualSelectionClicked.emit();
-
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ManualDiskSelectionComponent, {
-      data: {
-        enclosures,
-        inventory: [expect.objectContaining({ devname: 'sdb' })],
-        vdevs: topologyCategory.vdevs,
-        layout: topologyCategory.layout,
-      } as ManualDiskSelectionParams,
-      panelClass: 'manual-selection-dialog',
-    });
-
-    expect(spectator.inject(PoolManagerStore).setManualTopologyCategory)
-      .toHaveBeenCalledWith(VdevType.Data, dialogReturnValue);
-  });
-
-  it('resets layout when manual selection dialog results in no vdevs', () => {
-    dialogReturnValue = [];
-
-    const automatedSelection = spectator.query(AutomatedDiskSelectionComponent);
-    automatedSelection.manualSelectionClicked.emit();
-
-    expect(spectator.inject(PoolManagerStore).resetTopologyCategory).toHaveBeenCalledWith(VdevType.Data);
-  });
 });

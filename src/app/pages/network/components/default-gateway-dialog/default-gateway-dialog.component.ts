@@ -5,12 +5,13 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { EMPTY } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import helptext from 'app/helptext/network/configuration/configuration';
 import helptextIpmi from 'app/helptext/network/ipmi/ipmi';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { ipv4Validator } from 'app/modules/ix-forms/validators/ip-validation';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -33,6 +34,10 @@ export class DefaultGatewayDialogComponent {
       ],
     ],
   });
+
+  currentGateway$ = this.ws.call('network.general.summary').pipe(
+    toLoadingState(),
+  );
 
   readonly helptext = helptext;
 

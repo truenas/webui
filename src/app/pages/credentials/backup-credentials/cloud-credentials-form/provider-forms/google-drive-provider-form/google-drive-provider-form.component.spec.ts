@@ -10,7 +10,7 @@ import {
 import {
   GoogleDriveProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/google-drive-provider-form/google-drive-provider-form.component';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 
 describe('GoogleDriveProviderFormComponent', () => {
   let spectator: Spectator<GoogleDriveProviderFormComponent>;

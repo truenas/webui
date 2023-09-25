@@ -5,10 +5,10 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
   Observable, filter, map, switchMap, throttleTime,
 } from 'rxjs';
-import { toLoadingState } from 'app/helpers/to-loading-state.helper';
+import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { MemoryStatsEventData } from 'app/interfaces/events/memory-stats-event.interface';
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
-import { WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -57,6 +57,7 @@ export class AppResourcesCardComponent implements OnInit {
       if (update?.virtual_memory) {
         const memStats: MemoryStatsEventData = { ...update.virtual_memory };
 
+        // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
         if (update.zfs && update.zfs.arc_size !== null) {
           memStats.arc_size = update.zfs.arc_size;
         }

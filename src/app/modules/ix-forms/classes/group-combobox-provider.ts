@@ -3,7 +3,7 @@ import { map } from 'rxjs/operators';
 import { Group } from 'app/interfaces/group.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { IxComboboxProvider } from 'app/modules/ix-forms/components/ix-combobox/ix-combobox-provider';
-import { UserService } from 'app/services';
+import { UserService } from 'app/services/user.service';
 
 export class GroupComboboxProvider implements IxComboboxProvider {
   private page = 1;
@@ -14,7 +14,17 @@ export class GroupComboboxProvider implements IxComboboxProvider {
     const offset = this.page * this.pageSize;
 
     return this.userService.groupQueryDsCache(filterValue, false, offset)
-      .pipe(map((groups) => this.groupQueryResToOptions(groups)));
+      .pipe(
+        map((groups) => this.groupQueryResToOptions(groups)),
+      );
+  }
+
+  mapOptions(options: Option[]): Option[] {
+    const missingInitialOptions = this.initialOptions.filter((initialOption) => {
+      const isInitialOptionInResults = options.find((option) => option.value === initialOption.value);
+      return !isInitialOptionInResults;
+    });
+    return [...options, ...missingInitialOptions];
   }
 
   groupQueryResToOptions(groups: Group[]): Option[] {
@@ -32,5 +42,9 @@ export class GroupComboboxProvider implements IxComboboxProvider {
       );
   }
 
-  constructor(private userService: UserService, private optionsValueField: 'group' | 'id' = 'group') {}
+  constructor(
+    private userService: UserService,
+    private optionsValueField: 'group' | 'gid' | 'id' = 'group',
+    private initialOptions: Option[] = [],
+  ) {}
 }

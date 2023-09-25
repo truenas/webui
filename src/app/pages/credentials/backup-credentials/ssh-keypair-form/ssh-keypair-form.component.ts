@@ -13,16 +13,15 @@ import {
   KeychainCredentialUpdate,
   KeychainSshKeyPair,
 } from 'app/interfaces/keychain-credential.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { atLeastOne } from 'app/modules/ix-forms/validators/at-least-one-validation';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import {
-  AppLoaderService, DialogService, StorageService,
-} from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -85,20 +84,18 @@ export class SshKeypairFormComponent implements OnInit {
   }
 
   onGenerateButtonPressed(): void {
-    this.loader.open();
-    this.ws.call('keychaincredential.generate_ssh_key_pair').pipe(untilDestroyed(this)).subscribe({
-      next: (keyPair) => {
-        this.loader.close();
+    this.ws.call('keychaincredential.generate_ssh_key_pair')
+      .pipe(
+        this.loader.withLoader(),
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe((keyPair) => {
         this.form.patchValue({
           public_key: keyPair.public_key,
           private_key: keyPair.private_key,
         });
-      },
-      error: (err: WebsocketError) => {
-        this.loader.close();
-        this.dialogService.error(this.errorHandler.parseWsError(err));
-      },
-    });
+      });
   }
 
   onDownloadKey(keyType: 'private_key' | 'public_key'): void {

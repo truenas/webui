@@ -12,7 +12,7 @@ import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import {
   CertificateOptionsComponent,
 } from 'app/pages/credentials/certificates-dash/forms/common-steps/certificate-options/certificate-options.component';
-import { SystemGeneralService } from 'app/services';
+import { SystemGeneralService } from 'app/services/system-general.service';
 
 describe('CertificateOptionsComponent', () => {
   let spectator: Spectator<CertificateOptionsComponent>;

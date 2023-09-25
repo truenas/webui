@@ -5,7 +5,7 @@ export enum ReportZoomLevel {
   Day = '24h',
   Week = '7d',
   Month = '1M',
-  HalfYear = '5M',
+  HalfYear = '6M',
 }
 
 export const zoomLevelLabels = new Map<ReportZoomLevel, string>([

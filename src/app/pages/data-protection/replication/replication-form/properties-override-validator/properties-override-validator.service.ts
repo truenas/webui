@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AbstractControl } from '@angular/forms';
+import { AbstractControl, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 
@@ -17,7 +17,7 @@ export class PropertiesOverrideValidatorService {
 
   private validatePropertyOverride(control: AbstractControl): boolean {
     const overrides = control.value as string[];
-    if (!overrides?.length) {
+    if (!overrides?.length && control.hasValidator(Validators.required)) {
       return false;
     }
 

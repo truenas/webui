@@ -1,25 +1,14 @@
-import {
-  AfterViewInit, ChangeDetectionStrategy, Component, OnDestroy, TemplateRef, ViewChild,
-} from '@angular/core';
-import { LayoutService } from 'app/services/layout.service';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { Observable } from 'rxjs';
+import { WebSocketService } from 'app/services/ws.service';
 
 @Component({
   templateUrl: './advanced-settings.component.html',
   styleUrls: ['./advanced-settings.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AdvancedSettingsComponent implements AfterViewInit, OnDestroy {
-  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
+export class AdvancedSettingsComponent {
+  constructor(private ws: WebSocketService) {}
 
-  constructor(
-    private layoutService: LayoutService,
-  ) {}
-
-  ngAfterViewInit(): void {
-    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
-  }
-
-  ngOnDestroy(): void {
-    this.layoutService.pageHeaderUpdater$.next(null);
-  }
+  isSystemLicensed$: Observable<null | object> = this.ws.call('system.license');
 }

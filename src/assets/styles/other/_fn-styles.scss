@@ -6,32 +6,6 @@
  *
 */
 
-/*
-# Table of contents
-## Globals
-## Common
-## Loader
-## Third pirty adjust
-    Scroll Bar
-    Data table
-## Main Sidenav
-## Collapsed Sidenav
-## Pages
-    Sign in
-    sign up
-    forgot
-    lockscreen
-## Forms
-## Inbox
-## Calendar
-## Chats
-## Gallery
-## Plans & Pricings
-## Users
-## Media queries
-*/
-
-
 /*---- Globals -----*/
 html {
   font-size: 87.5% /* 14px */;
@@ -92,6 +66,10 @@ button:focus-visible {
   border-color: transparent !important;
   box-shadow: 0 0 0 1px var(--focus-brd) inset !important;
   outline-width: 0;
+}
+
+.mdc-button--outlined:focus-visible {
+  outline: 1px solid var(--primary) !important;
 }
 
 a:focus-visible {
@@ -203,20 +181,6 @@ samp {
   box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
 }
 
-.mat-blue {
-  background: #247ba0;
-  color: #fefefe;
-}
-
-.mat-indigo {
-  background-color: #3f51b5 !important;
-}
-
-.mat-brown {
-  background-color: #785548 !important;
-  color: #fefefe;
-}
-
 .text-center {
   text-align: center;
 }
@@ -227,10 +191,6 @@ samp {
 
 .text-muted {
   color: rgba(0, 0, 0, 0.54) !important;
-}
-
-.text-sm {
-  font-size: 0.813rem;
 }
 
 .material-icons.icon-sm {
@@ -355,12 +315,6 @@ samp {
   width: 100%;
 }
 
-.form-error-msg {
-  color: #f44336;
-  display: block;
-  padding: 5px 0;
-}
-
 .ct-legend {
   list-style-type: none;
   position: relative;
@@ -407,97 +361,6 @@ body .mat-mdc-select-trigger {
 
 .empty-row {
   padding: 1rem;
-}
-
-.ngx-datatable.material .datatable-header .datatable-header-cell {
-  font-weight: 330;
-  padding: 0.5rem;
-}
-
-.ngx-datatable.fullscreen {
-  height: calc(100vh - 90px);
-}
-
-.ngx-datatable.fullscreen .datatable-header {
-  background: blue;
-  overflow: hidden;
-  position: fixed;
-  z-index: 999;
-}
-
-.ngx-datatable.material {
-  background: rgba(255, 255, 255, 0.42);
-}
-
-.ngx-datatable.material .datatable-header {
-  background: rgba(255, 255, 255, 0.66);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
-}
-
-.ngx-datatable.material .datatable-header .datatable-header-cell {
-  font-weight: 500;
-  padding: 0.5rem;
-}
-
-.ngx-datatable.material .datatable-header .datatable-header-cell:hover {
-  border-right: 1px solid rgba(0, 0, 0, 0.12);
-}
-
-.ngx-datatable.material:not(.cell-selection) .datatable-body-row:hover,
-.ngx-datatable.material:not(.cell-selection) .datatable-body-row:hover .datatable-row-group {
-  background: rgba(0, 0, 0, 0.04);
-}
-
-.ngx-datatable.material:not(.cell-selection) .datatable-body-row:hover,
-.ngx-datatable.material:not(.cell-selection) .datatable-body-row:hover .datatable-row-group {
-  transition-duration: 0.3s;
-  transition-property: background;
-  transition-timing-function: linear;
-}
-
-.ngx-datatable.material .datatable-body .datatable-body-row .datatable-body-cell {
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-  line-height: 2.2rem;
-  overflow: hidden;
-  /*padding: .9rem .6rem;
-    line-height: 0rem;*/
-  padding: 0 16px;
-}
-
-.ngx-datatable.material .datatable-body .datatable-body-row:last-child {
-  border-bottom: 0 solid black;
-}
-
-.ngx-datatable.material .datatable-footer {
-  border-top: 1px solid rgba(255, 255, 255, 0);
-}
-
-.ngx-datatable.material .datatable-footer .page-count {
-  height: 50px;
-  line-height: 50px;
-  padding: 0 1.2rem;
-}
-
-.ngx-datatable .datatable-footer .datatable-pager .pager {
-  padding: 0 1.2rem !important;
-}
-
-.ngx-datatable .datatable-footer .datatable-pager .pager .pages {
-  margin: 0 0.5rem;
-}
-
-.ngx-datatable .datatable-footer .datatable-pager .pager .pages a {
-  border-radius: 3px;
-  height: 22px;
-  line-height: 22px;
-  min-width: 24px;
-  padding: 0 6px;
-  text-align: center;
-  text-decoration: none;
-}
-
-.ngx-datatable .datatable-footer .datatable-pager .pager .pages.active a {
-  box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
 }
 
 /*-------- Scrollbar ---------*/
@@ -778,10 +641,6 @@ input:-webkit-autofill {
 .cal-event-action .material-icons {
   margin: 6px;
   vertical-align: sub;
-}
-
-.cal-open-day-events {
-  box-shadow: none !important;
 }
 
 /*---- Chats -----*/

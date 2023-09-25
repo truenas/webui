@@ -1,20 +1,24 @@
-import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
-import { firstValueFrom } from 'rxjs';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
+import { BehaviorSubject, firstValueFrom, of } from 'rxjs';
 import { TiB } from 'app/constants/bytes.constant';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
+import { ManualDiskSelectionComponent, ManualDiskSelectionParams } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/manual-disk-selection.component';
 import { DispersalStrategy } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/2-enclosure-wizard-step/enclosure-wizard-step.component';
-import { initialState, PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
+import { initialState, PoolManagerState, PoolManagerStore, PoolManagerTopologyCategory } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import {
   GenerateVdevsService,
 } from 'app/pages/storage/modules/pool-manager/utils/generate-vdevs/generate-vdevs.service';
-import { WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('PoolManagerStore', () => {
   let spectator: SpectatorService<PoolManagerStore>;
+  let dialogReturnValue = [{}] as UnusedDisk[][];
+
   const disks = [
     {
       devname: 'sda',
@@ -32,7 +36,7 @@ describe('PoolManagerStore', () => {
       type: DiskType.Ssd,
       enclosure: {
         number: 1,
-        slot: 1,
+        slot: 2,
       },
     },
     {
@@ -52,6 +56,11 @@ describe('PoolManagerStore', () => {
         mockCall('disk.get_unused', disks),
         mockCall('enclosure.query', enclosures),
       ]),
+      mockProvider(MatDialog, {
+        open: jest.fn(() => ({
+          afterClosed: jest.fn(() => of(dialogReturnValue)),
+        })),
+      }),
       GenerateVdevsService,
     ],
   });
@@ -98,9 +107,9 @@ describe('PoolManagerStore', () => {
       spectator.service.setManualTopologyCategory(VdevType.Data, [[disks[0]]]);
 
       const inventory = await firstValueFrom(spectator.service.getInventoryForStep(VdevType.Data));
-      expect(inventory).toHaveLength(3);
+      expect(inventory).toHaveLength(2);
       const diskNames = inventory.map((disk) => disk.devname).sort();
-      expect(diskNames).toEqual(['sda', 'sdb', 'sdc']);
+      expect(diskNames).toEqual(['sdb', 'sdc']);
     });
   });
 
@@ -123,7 +132,7 @@ describe('PoolManagerStore', () => {
 
   describe('start over functionality', () => {
     it('reverts state to initial state', async () => {
-      spectator.service.reset();
+      spectator.service.startOver();
 
       expect(await firstValueFrom(spectator.service.state$)).toMatchObject({
         ...initialState,
@@ -134,17 +143,20 @@ describe('PoolManagerStore', () => {
   });
 
   describe('methods - options', () => {
+
     it('setGeneralOptions - sets options such as name and encryption', async () => {
       const generalOptions = {
         name: 'tank',
         encryption: 'AES-128',
-      };
+        nameErrors: null,
+      } as PoolManagerState;
       spectator.service.setGeneralOptions(generalOptions);
 
       expect(await firstValueFrom(spectator.service.state$)).toMatchObject({
         ...initialState,
         name: generalOptions.name,
         encryption: generalOptions.encryption,
+        nameErrors: null,
       });
     });
 
@@ -217,6 +229,8 @@ describe('PoolManagerStore', () => {
         vdevsNumber: 1,
         width: 1,
         vdevs: [[disks[2]]],
+        draidDataDisks: 0,
+        draidSpareDisks: 0,
       });
     });
 
@@ -233,6 +247,61 @@ describe('PoolManagerStore', () => {
       spectator.service.resetTopology();
 
       expect(await firstValueFrom(spectator.service.state$)).toMatchObject(initialState);
+    });
+  });
+
+  describe('methods - openManualSelectionDialog', () => {
+    const topologyCategory = {
+      layout: CreateVdevLayout.Stripe,
+      vdevs: [
+        [{ devname: 'sda' }],
+      ],
+      hasCustomDiskSelection: false,
+    } as PoolManagerTopologyCategory;
+
+    const state = {
+      topology: {
+        [VdevType.Data]: topologyCategory,
+      },
+      enclosures,
+    } as PoolManagerState;
+    const state$ = new BehaviorSubject(state);
+    const inventory = [
+      { devname: 'sda' },
+      { devname: 'sdb' },
+    ] as UnusedDisk[];
+    it('opens manual selection dialog when one of the child components emits (manualSelectionClicked)', () => {
+      Object.defineProperty(spectator.service, 'state$', { value: state$ } );
+      jest.spyOn(spectator.service, 'getInventoryForStep').mockReturnValue(of(inventory));
+      jest.spyOn(spectator.service, 'setManualTopologyCategory');
+      spectator.service.openManualSelectionDialog(VdevType.Data);
+
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ManualDiskSelectionComponent, {
+        data: {
+          enclosures,
+          inventory: [expect.objectContaining({ devname: 'sdb' })],
+          vdevs: topologyCategory.vdevs,
+          layout: topologyCategory.layout,
+          vdevsLimit: null,
+        } as ManualDiskSelectionParams,
+        panelClass: 'manual-selection-dialog',
+      });
+
+      expect(spectator.service.setManualTopologyCategory)
+        .toHaveBeenCalledWith(VdevType.Data, dialogReturnValue);
+    });
+
+    it('resets layout when manual selection dialog results in no vdevs', () => {
+      dialogReturnValue = [];
+      jest.spyOn(spectator.service, 'resetTopologyCategory');
+      const openFnSpy = jest.spyOn(spectator.inject(MatDialog), 'open');
+      openFnSpy.mockImplementation(() => {
+        return {
+          afterClosed: () => of([]),
+        } as unknown as MatDialogRef<unknown>;
+      });
+      spectator.service.openManualSelectionDialog(VdevType.Data);
+      expect(spectator.service.resetTopologyCategory).toHaveBeenCalledWith(VdevType.Data);
     });
   });
 });

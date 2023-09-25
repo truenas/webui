@@ -25,10 +25,10 @@
       [isLoading]="isLoading"
     >
       <ng-template
+        let-interface
         ix-table-cell
         [columnIndex]="0"
         [dataProvider]="dataProvider"
-        let-interface
       >
         <ix-interface-status-icon
           class="interface-icon"
@@ -36,10 +36,10 @@
         ></ix-interface-status-icon>
       </ng-template>
       <ng-template
+        let-interface
         ix-table-cell
         [columnIndex]="3"
         [dataProvider]="dataProvider"
-        let-interface
       >
         <div class="buttons">
           <button
@@ -52,7 +52,7 @@
           </button>
 
           <div
-            [matTooltip]="isHaEnabled ? (helptext.ha_enabled_delete_msg | translate) : ('Reset configuration' | translate)"
+            [matTooltip]="isHaEnabled ? (helptext.ha_enabled_reset_msg | translate) : ('Reset configuration' | translate)"
           >
             <button
               *ngIf="isPhysical(interface)"

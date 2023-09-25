@@ -1,7 +1,6 @@
 import {
   Component, EventEmitter, Input, OnInit, Output,
 } from '@angular/core';
-import { getUniqueId } from 'app/helpers/get-unique-id.helper';
 import { ToolbarMenuOption } from 'app/modules/entity/entity-toolbar/components/toolbar-multimenu/toolbar-menu-option.interface';
 
 @Component({
@@ -18,7 +17,6 @@ export class ToolbarMultimenuComponent implements OnInit {
   allSelected = false;
   values: ToolbarMenuOption[] = [];
   selectStates: boolean [] = [];
-  id = getUniqueId();
 
   ngOnInit(): void {
     this.selectStates.length = this.options.length;

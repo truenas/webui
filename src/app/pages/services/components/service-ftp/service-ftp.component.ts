@@ -2,23 +2,24 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { filter, switchMap } from 'rxjs/operators';
 import { invertUmask } from 'app/helpers/mode.helper';
-import { idNameArrayToOptions } from 'app/helpers/options.helper';
+import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
 import helptext from 'app/helptext/services/components/service-ftp';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { portRangeValidator, rangeValidator } from 'app/modules/ix-forms/validators/range-validation/range-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService, SystemGeneralService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
+import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -89,13 +90,13 @@ export class ServiceFtpComponent implements OnInit {
     private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
-    private router: Router,
     private dialogService: DialogService,
     private systemGeneralService: SystemGeneralService,
     private filesystemService: FilesystemService,
     private translate: TranslateService,
     private snackbar: SnackbarService,
     public iecFormatter: IxFormatterService,
+    private slideInRef: IxSlideInRef<ServiceFtpComponent>,
   ) {}
 
   ngOnInit(): void {
@@ -125,8 +126,8 @@ export class ServiceFtpComponent implements OnInit {
         next: () => {
           this.isFormLoading = false;
           this.snackbar.success(this.translate.instant('Service configuration saved'));
+          this.slideInRef.close();
           this.cdr.markForCheck();
-          this.router.navigate(['/services']);
         },
         error: (error) => {
           this.isFormLoading = false;

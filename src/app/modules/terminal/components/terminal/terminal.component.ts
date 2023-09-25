@@ -1,7 +1,6 @@
 import {
-  AfterViewInit,
   ChangeDetectionStrategy, ChangeDetectorRef,
-  Component, ElementRef, HostListener, Input, OnDestroy, OnInit, TemplateRef, ViewChild,
+  Component, ElementRef, HostListener, Input, OnDestroy, OnInit, ViewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -15,9 +14,9 @@ import { ShellConnectedEvent } from 'app/interfaces/shell.interface';
 import { TerminalConfiguration } from 'app/interfaces/terminal.interface';
 import { CopyPasteMessageComponent } from 'app/modules/terminal/components/copy-paste-message/copy-paste-message.component';
 import { XtermAttachAddon } from 'app/modules/terminal/xterm-attach-addon';
-import { ShellService, WebSocketService } from 'app/services';
 import { AuthService } from 'app/services/auth/auth.service';
-import { LayoutService } from 'app/services/layout.service';
+import { ShellService } from 'app/services/shell.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 
@@ -29,10 +28,9 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
   providers: [ShellService],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TerminalComponent implements OnInit, AfterViewInit, OnDestroy {
+export class TerminalComponent implements OnInit, OnDestroy {
   @Input() conf: TerminalConfiguration;
   @ViewChild('terminal', { static: true }) container: ElementRef;
-  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   waitParentChanges = 300;
   fontSize = 14;
@@ -65,7 +63,6 @@ export class TerminalComponent implements OnInit, AfterViewInit, OnDestroy {
     private shellService: ShellService,
     private dialog: MatDialog,
     private translate: TranslateService,
-    private layoutService: LayoutService,
     private store$: Store<AppState>,
     private authService: AuthService,
     private cdr: ChangeDetectorRef,
@@ -114,10 +111,6 @@ export class TerminalComponent implements OnInit, AfterViewInit, OnDestroy {
       }),
       untilDestroyed(this),
     ).subscribe();
-  }
-
-  ngAfterViewInit(): void {
-    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
   ngOnDestroy(): void {

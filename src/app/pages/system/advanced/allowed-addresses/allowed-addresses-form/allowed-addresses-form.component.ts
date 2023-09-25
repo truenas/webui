@@ -5,15 +5,20 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, tap } from 'rxjs';
+import {
+  EMPTY, filter, switchMap, tap,
+} from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { helptextSystemGeneral } from 'app/helptext/system/general';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { ipv4Validator } from 'app/modules/ix-forms/validators/ip-validation';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
 
@@ -81,23 +86,20 @@ export class AllowedAddressesFormComponent implements OnInit {
     }).pipe(
       tap(() => this.slideInRef.close()),
       filter(Boolean),
+      switchMap(() => {
+        return this.ws.call('system.general.ui_restart').pipe(
+          catchError((error: WebsocketError) => {
+            this.dialogService.error({
+              title: helptextSystemGeneral.dialog_error_title,
+              message: error.reason,
+              backtrace: error.trace.formatted,
+            });
+            return EMPTY;
+          }),
+        );
+      }),
       untilDestroyed(this),
-    ).subscribe(() => {
-      this.loader.open();
-      this.ws.call('system.general.ui_restart').pipe(untilDestroyed(this)).subscribe({
-        next: () => {
-          this.loader.close();
-        },
-        error: (error: WebsocketError) => {
-          this.loader.close();
-          this.dialogService.error({
-            title: helptextSystemGeneral.dialog_error_title,
-            message: error.reason,
-            backtrace: error.trace.formatted,
-          });
-        },
-      });
-    });
+    ).subscribe();
   }
 
   onSubmit(): void {

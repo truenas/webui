@@ -3,8 +3,6 @@ import {
   OnInit,
   ChangeDetectorRef,
   ViewChild, ChangeDetectionStrategy,
-  AfterViewInit,
-  TemplateRef,
   OnDestroy, Inject,
 } from '@angular/core';
 import { MatSort, Sort } from '@angular/material/sort';
@@ -13,7 +11,7 @@ import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
-import { filter, switchMap, tap } from 'rxjs/operators';
+import { filter, switchMap } from 'rxjs/operators';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -24,14 +22,14 @@ import { QueryFilter, QueryParams } from 'app/interfaces/query-api.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DatasetQuotaAddFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-add-form/dataset-quota-add-form.component';
 import { DatasetQuotaEditFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-edit-form/dataset-quota-edit-form.component';
-import {
-  AppLoaderService, DialogService, StorageService, WebSocketService,
-} from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { LayoutService } from 'app/services/layout.service';
+import { StorageService } from 'app/services/storage.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -39,9 +37,8 @@ import { LayoutService } from 'app/services/layout.service';
   styleUrls: ['./dataset-quotas-grouplist.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, OnDestroy {
+export class DatasetQuotasGrouplistComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
-  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   datasetId: string;
   dataSource = new MatTableDataSource<DatasetQuota>([]);
@@ -72,7 +69,6 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
     private translate: TranslateService,
     private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
-    private layoutService: LayoutService,
     @Inject(WINDOW) private window: Window,
     private emptyService: EmptyService,
   ) { }
@@ -82,10 +78,6 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
     this.datasetId = paramMap.datasetId as string;
     this.useFullFilter = this.window.localStorage.getItem('useFullFilter') !== 'false';
     this.getGroupQuotas();
-  }
-
-  ngAfterViewInit(): void {
-    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
   ngOnDestroy(): void {
@@ -230,17 +222,16 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
     }).pipe(
       filter(Boolean),
       switchMap(() => {
-        this.loader.open();
-        return this.ws.call('pool.dataset.set_quota', [this.datasetId, this.getRemoveQuotaPayload(this.invalidQuotas)]);
+        return this.ws.call('pool.dataset.set_quota', [this.datasetId, this.getRemoveQuotaPayload(this.invalidQuotas)]).pipe(
+          this.loader.withLoader(),
+        );
       }),
       untilDestroyed(this),
     ).subscribe({
       next: () => {
-        this.loader.close();
         this.getGroupQuotas();
       },
       error: (error) => {
-        this.loader.close();
         this.handleError(error);
       },
     });
@@ -263,18 +254,15 @@ export class DatasetQuotasGrouplistComponent implements OnInit, AfterViewInit, O
   doDelete(row: DatasetQuota): void {
     this.confirmDelete(row).pipe(
       filter(Boolean),
-      tap(() => this.loader.open()),
-      switchMap(() => this.setQuota(row)),
+      switchMap(() => {
+        return this.setQuota(row).pipe(
+          this.loader.withLoader(),
+          this.errorHandler.catchError(),
+        );
+      }),
       untilDestroyed(this),
-    ).subscribe({
-      next: () => {
-        this.loader.close();
-        this.getGroupQuotas();
-      },
-      error: (error: WebsocketError) => {
-        this.loader.close();
-        this.dialogService.error(this.errorHandler.parseWsError(error));
-      },
+    ).subscribe(() => {
+      this.getGroupQuotas();
     });
   }
 

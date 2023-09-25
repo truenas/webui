@@ -1,5 +1,4 @@
 import { Inject, Injectable } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -8,20 +7,18 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   combineLatest, forkJoin, Observable, of, Subscription,
 } from 'rxjs';
-import {
-  filter, finalize, map, switchMap, tap,
-} from 'rxjs/operators';
+import { map, switchMap, tap } from 'rxjs/operators';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { DialogService, SystemGeneralService } from 'app/services';
 import { AuthService } from 'app/services/auth/auth.service';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { SystemGeneralService } from 'app/services/system-general.service';
 import { UpdateService } from 'app/services/update.service';
 import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { InsecureConnectionComponent } from 'app/views/sessions/signin/snackbar/insecure-connection.component';
 
 interface SigninState {
   isLoading: boolean;
@@ -70,7 +67,6 @@ export class SigninStore extends ComponentStore<SigninState> {
     private errorHandler: ErrorHandlerService,
     private authService: AuthService,
     private updateService: UpdateService,
-    private mdDialog: MatDialog,
     @Inject(WINDOW) private window: Window,
   ) {
     super(initialState);
@@ -87,23 +83,18 @@ export class SigninStore extends ComponentStore<SigninState> {
         // TODO: This is a hack to keep existing code working. Ideally it shouldn't be here.
         this.systemGeneralService.loadProductType(),
       ]).pipe(
-        tap(() => {
-          this.updateService.hardRefreshIfNeeded();
-          this.updateFailoverStatusOnDisconnect();
-        }),
+        tap(() => this.updateService.hardRefreshIfNeeded()),
         switchMap(() => this.authService.loginWithToken()),
-        tap((wasLoggedIn) => {
+        tap((wasLoggedIn: boolean) => {
           if (!wasLoggedIn) {
             this.authService.clearAuthToken();
-            this.setLoadingState(false);
             return;
           }
           this.handleSuccessfulLogin();
         }),
         tapResponse(
-          () => this.setLoadingState(false),
+          () => {},
           (error: WebsocketError) => {
-            this.setLoadingState(false);
             this.dialogService.error(this.errorHandler.parseWsError(error));
           },
         ),
@@ -118,16 +109,17 @@ export class SigninStore extends ComponentStore<SigninState> {
     }),
     tapResponse(
       () => {
-        if (this.statusSubscription && !this.statusSubscription.closed) {
-          this.statusSubscription.unsubscribe();
-          this.statusSubscription = null;
-        }
-        if (this.disabledReasonsSubscription && !this.disabledReasonsSubscription.closed) {
-          this.disabledReasonsSubscription.unsubscribe();
-          this.disabledReasonsSubscription = null;
-        }
         this.setLoadingState(false);
-        this.router.navigateByUrl(this.getRedirectUrl());
+        this.router.navigateByUrl(this.getRedirectUrl()).then(() => {
+          if (this.statusSubscription && !this.statusSubscription.closed) {
+            this.statusSubscription.unsubscribe();
+            this.statusSubscription = null;
+          }
+          if (this.disabledReasonsSubscription && !this.disabledReasonsSubscription.closed) {
+            this.disabledReasonsSubscription.unsubscribe();
+            this.disabledReasonsSubscription = null;
+          }
+        });
       },
       (error: WebsocketError) => {
         this.setLoadingState(false);
@@ -144,14 +136,7 @@ export class SigninStore extends ComponentStore<SigninState> {
     );
   }
 
-  showSecurityWarning(): void {
-    this.snackbar.openFromComponent(
-      InsecureConnectionComponent,
-      { duration: undefined, verticalPosition: 'top' },
-    );
-  }
-
-  setFailoverDisabledReasons = this.updater((state, disabledReasons: FailoverDisabledReason[]) => ({
+  private setFailoverDisabledReasons = this.updater((state, disabledReasons: FailoverDisabledReason[]) => ({
     ...state,
     failover: {
       ...state.failover,
@@ -186,9 +171,7 @@ export class SigninStore extends ComponentStore<SigninState> {
 
   private checkIfAdminPasswordSet(): Observable<boolean> {
     return this.ws.call('user.has_local_administrator_set_up').pipe(
-      tap(
-        (wasAdminSet) => this.patchState({ wasAdminSet }),
-      ),
+      tap((wasAdminSet) => this.patchState({ wasAdminSet })),
     );
   }
 
@@ -196,6 +179,7 @@ export class SigninStore extends ComponentStore<SigninState> {
     return this.ws.call('failover.status').pipe(
       switchMap((status) => {
         this.setFailoverStatus(status);
+        this.setLoadingState(false);
 
         if (status === FailoverStatus.Single) {
           return of(null);
@@ -229,25 +213,6 @@ export class SigninStore extends ComponentStore<SigninState> {
 
     this.disabledReasonsSubscription = this.ws.subscribe('failover.disabled.reasons')
       .pipe(map((apiEvent) => apiEvent.fields), untilDestroyed(this))
-      .subscribe((event) => {
-        this.setFailoverDisabledReasons(event.disabled_reasons);
-      });
-  }
-
-  /**
-   * If websocket connection is lost because of failover event, we need to resubscribe to updates.
-   */
-  private updateFailoverStatusOnDisconnect(): void {
-    this.wsManager.websocket$.pipe(
-      finalize(() => {
-        this.wsManager.isConnected$.pipe(
-          filter(Boolean),
-          switchMap(() => this.loadFailoverStatus()),
-          untilDestroyed(this),
-        ).subscribe();
-      }),
-      untilDestroyed(this),
-    )
-      .subscribe();
+      .subscribe((event) => this.setFailoverDisabledReasons(event.disabled_reasons));
   }
 }

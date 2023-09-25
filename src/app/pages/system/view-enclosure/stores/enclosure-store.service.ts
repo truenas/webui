@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
+import _ from 'lodash';
 import {
   combineLatest, forkJoin, Observable, of, Subject, tap,
 } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { EnclosureSlotDiskStatus } from 'app/enums/enclosure-slot-status.enum';
 import { VdevType, TopologyItemType } from 'app/enums/v-dev-type.enum';
-import { ApiEvent } from 'app/interfaces/api-message.interface';
 import {
   Enclosure,
   EnclosureElement,
@@ -20,9 +20,11 @@ import {
   Disk, TopologyDisk, TopologyItem, VDev,
 } from 'app/interfaces/storage.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { DialogService, StorageService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { DisksUpdateService } from 'app/services/disks-update.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { StorageService } from 'app/services/storage.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 export interface EnclosureState {
   areEnclosuresLoading: boolean;
@@ -57,7 +59,6 @@ interface ProcessParameters {
 export class EnclosureStore extends ComponentStore<EnclosureState> {
   readonly data$ = this.select((state) => state);
   readonly enclosureViews$ = this.select((state) => state.enclosureViews);
-  readonly selectedEnclosure$ = this.select((state) => state.selectedEnclosure);
 
   private disksUpdateSubscriptionId: string;
 
@@ -108,19 +109,6 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
     });
   }
 
-  patchStateWithSelectedEnclosure(): (source: Observable<number>) => Observable<number> {
-    return tapResponse<number>(
-      (selected: number) => {
-        this.patchState({
-          selectedEnclosure: selected,
-        });
-      },
-      (error: Error) => {
-        console.error(error);
-      },
-    );
-  }
-
   patchStateWithEnclosureViewsData(): (source: Observable<EnclosureView[]>) => Observable<EnclosureView[]> {
     return tapResponse<EnclosureView[]>(
       (views: EnclosureView[]) => {
@@ -132,12 +120,7 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
         if (Object.keys(error).length) {
           this.dialogService.error(this.errorHandler.parseWsError(error));
         } else {
-          this.dialogService.warn(
-            'Error with error',
-            `Yo dawg we heard you like errors so we made your error have an error. (Empty websocket error)
-            * Source: enclosure-store.service.ts
-            `,
-          );
+          console.error('Empty websocket error');
         }
       },
     );
@@ -357,6 +340,24 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
     };
   }
 
+  updateLabel(enclosureId: string, label: string): void {
+    this.patchState((state) => {
+      return {
+        ...state,
+        enclosures: state.enclosures.map((enclosure: Enclosure) => {
+          if (enclosure.id !== enclosureId) {
+            return enclosure;
+          }
+
+          return {
+            ...enclosure,
+            label,
+          };
+        }),
+      };
+    });
+  }
+
   private findTopologyDiskInVdev(vdev: TopologyItem, name: string): TopologyDisk | VDev | null {
     if (!vdev?.type) return null;
 
@@ -381,10 +382,6 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
     return this.ws.call('pool.query', [[], { extra: { is_upgraded: true } }]);
   }
 
-  listenForPoolUpdates(): Observable<ApiEvent<Pool>> {
-    return this.ws.subscribe('pool.query');
-  }
-
   listenForDiskUpdates(): void { // Observable<Disk[]> {
     if (!this.disksUpdateSubscriptionId) {
       const diskUpdatesTrigger$ = new Subject<Disk[]>();
@@ -400,7 +397,7 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
       (pools: Pool[]) => {
         this.patchState({
           arePoolsLoading: false,
-          pools: this.sorter.tableSorter(pools, 'name', 'asc'),
+          pools: _.sortBy(pools, (pool) => pool.name),
         });
       },
       (error: WebsocketError) => {

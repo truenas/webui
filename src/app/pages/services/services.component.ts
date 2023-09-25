@@ -1,5 +1,5 @@
 import {
-  Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ViewChild, TemplateRef, AfterViewInit,
+  Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef,
 } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
@@ -14,9 +14,17 @@ import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service, ServiceRow } from 'app/interfaces/service.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
-import { IscsiService } from 'app/services/';
+import { ServiceFtpComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
+import { ServiceLldpComponent } from 'app/pages/services/components/service-lldp/service-lldp.component';
+import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
+import { ServiceSmartComponent } from 'app/pages/services/components/service-smart/service-smart.component';
+import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
+import { ServiceSnmpComponent } from 'app/pages/services/components/service-snmp/service-snmp.component';
+import { ServiceSshComponent } from 'app/pages/services/components/service-ssh/service-ssh.component';
+import { ServiceUpsComponent } from 'app/pages/services/components/service-ups/service-ups.component';
 import { DialogService } from 'app/services/dialog.service';
-import { LayoutService } from 'app/services/layout.service';
+import { IscsiService } from 'app/services/iscsi.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -27,9 +35,7 @@ import { WebSocketService } from 'app/services/ws.service';
   providers: [IscsiService],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ServicesComponent implements OnInit, AfterViewInit {
-  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
-
+export class ServicesComponent implements OnInit {
   dataSource = new MatTableDataSource<ServiceRow>([]);
   displayedColumns = ['name', 'state', 'enable', 'actions'];
   error = false;
@@ -51,8 +57,8 @@ export class ServicesComponent implements OnInit, AfterViewInit {
     private dialog: DialogService,
     private iscsiService: IscsiService,
     private cdr: ChangeDetectorRef,
-    private layoutService: LayoutService,
     private emptyService: EmptyService,
+    private slideInService: IxSlideInService,
   ) {}
 
   ngOnInit(): void {
@@ -62,10 +68,6 @@ export class ServicesComponent implements OnInit, AfterViewInit {
 
   get shouldShowEmpty(): boolean {
     return !this.dataSource.filteredData.length;
-  }
-
-  ngAfterViewInit(): void {
-    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
   getData(): void {
@@ -234,11 +236,31 @@ export class ServicesComponent implements OnInit, AfterViewInit {
       case ServiceName.Iscsi:
         this.router.navigate(['/sharing', 'iscsi']);
         break;
+      case ServiceName.Ftp:
+        this.slideInService.open(ServiceFtpComponent, { wide: true });
+        break;
+      case ServiceName.Nfs:
+        this.slideInService.open(ServiceNfsComponent, { wide: true });
+        break;
+      case ServiceName.Snmp:
+        this.slideInService.open(ServiceSnmpComponent, { wide: true });
+        break;
+      case ServiceName.Ups:
+        this.slideInService.open(ServiceUpsComponent, { wide: true });
+        break;
+      case ServiceName.Ssh:
+        this.slideInService.open(ServiceSshComponent);
+        break;
       case ServiceName.Cifs:
-        this.router.navigate(['/services', 'smb']);
+        this.slideInService.open(ServiceSmbComponent);
+        break;
+      case ServiceName.Smart:
+        this.slideInService.open(ServiceSmartComponent);
+        break;
+      case ServiceName.Lldp:
+        this.slideInService.open(ServiceLldpComponent);
         break;
       default:
-        this.router.navigate(['/services', row.service]);
         break;
     }
   }

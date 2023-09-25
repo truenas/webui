@@ -4,8 +4,6 @@ import {
   ChangeDetectorRef,
   ViewChild,
   OnInit,
-  TemplateRef,
-  AfterViewInit,
   QueryList,
   ViewChildren,
 } from '@angular/core';
@@ -33,9 +31,8 @@ import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/s
 import { SnapshotBatchDeleteDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-batch-delete-dialog/snapshot-batch-delete-dialog.component';
 import { snapshotPageEntered } from 'app/pages/datasets/modules/snapshots/store/snapshot.actions';
 import { selectSnapshotsTotal, selectSnapshots, selectSnapshotState } from 'app/pages/datasets/modules/snapshots/store/snapshot.selectors';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { LayoutService } from 'app/services/layout.service';
 import { AppState } from 'app/store';
 import { snapshotExtraColumnsToggled } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -47,7 +44,7 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [FormatDateTimePipe],
 })
-export class SnapshotListComponent implements OnInit, AfterViewInit {
+export class SnapshotListComponent implements OnInit {
   readonly EmptyType = EmptyType;
   isLoading$ = this.store$.select(selectSnapshotState).pipe(map((state) => state.isLoading));
   emptyType$: Observable<EmptyType> = combineLatest([
@@ -73,7 +70,6 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
   @ViewChildren(IxDetailRowDirective) private detailRows: QueryList<IxDetailRowDirective>;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   @ViewChild(IxCheckboxColumnComponent, { static: false }) checkboxColumn: IxCheckboxColumnComponent<ZfsSnapshot>;
-  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   loadingExtraColumns = false;
   dataSource = new MatTableDataSource<ZfsSnapshot>([]);
@@ -109,7 +105,6 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
     private matDialog: MatDialog,
     private store$: Store<AppState>,
     private slideInService: IxSlideInService,
-    private layoutService: LayoutService,
     private route: ActivatedRoute,
     private emptyService: EmptyService,
   ) {
@@ -120,10 +115,6 @@ export class SnapshotListComponent implements OnInit, AfterViewInit {
     this.store$.dispatch(snapshotPageEntered());
     this.getPreferences();
     this.getSnapshots();
-  }
-
-  ngAfterViewInit(): void {
-    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
   getPreferences(): void {

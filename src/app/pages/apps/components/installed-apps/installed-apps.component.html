@@ -1,7 +1,7 @@
-<ng-template #pageHeader>
+<ng-template ixPageHeader>
   <ix-page-title-header [pageTitle]="'Installed' | translate">
+    <ix-kubernetes-status></ix-kubernetes-status>
     <div *ngIf="hasUpdates" class="global-update">
-      <span>{{ '{n, plural, one {# available update} other {# available updates} }!' | translate: { n: appsUpdateAvailable } }}</span>
       <button
         mat-button
         ixTest="update-all"
@@ -9,7 +9,10 @@
         (click)="onBulkUpgrade(true)"
       >
         <ix-icon name="mdi-alert-circle"></ix-icon>
-        <span>{{ 'Update All' | translate }}</span>
+        <span>
+          {{ 'Update All' | translate }}
+          <ng-container *ngIf="appsUpdateAvailable">({{appsUpdateAvailable}})</ng-container>
+        </span>
       </button>
     </div>
     <ix-app-settings-button></ix-app-settings-button>
@@ -84,13 +87,9 @@
       </div>
     </div>
 
-    <ix-fake-progress-bar
-      *ngIf="!showMobileDetails"
-      class="loader-bar"
-      [loading]="isLoading"
-    ></ix-fake-progress-bar>
-
     <div class="app-search">
+      <ix-fake-progress-bar *ngIf="!showMobileDetails" [loading]="isLoading"></ix-fake-progress-bar>
+
       <ix-search-input
         [disabled]="!dataSource.length"
         [value]="filterString"
@@ -114,10 +113,9 @@
             </span>
           </div>
           <div>{{ 'Status' | translate }}</div>
-          <!-- TODO: Waiting for the https://ixsystems.atlassian.net/browse/NAS-121614 -->
           <div>{{ 'CPU' | translate }}</div>
           <div>{{ 'RAM' | translate }}</div>
-          <div>{{ 'Disk' | translate }}</div>
+          <div>{{ 'Network' | translate }}</div>
           <div class="app-update-header">
             <span>{{ 'Updates' | translate }}</span>
             <ix-icon
@@ -135,6 +133,7 @@
             <ix-app-row
               routerLinkActive="selected"
               [app]="app"
+              [status]="getAppStatus(app.name)"
               [selected]="app.selected"
               [job]="appJobs.get(app.name)"
               [routerLink]="['/apps/installed', app.catalog, app.catalog_train, app.id]"

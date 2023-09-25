@@ -13,6 +13,8 @@ interface SomeError {
   [key: string]: unknown;
 }
 
+export const ixManualValidateError = 'ixManualValidateError';
+
 @UntilDestroy()
 @Component({
   selector: 'ix-errors',
@@ -23,6 +25,7 @@ interface SomeError {
 export class IxErrorsComponent implements OnChanges {
   @Input() control: AbstractControl;
   @Input() label: string;
+  readonly ixManualValidateError = ixManualValidateError;
 
   private statusChangeSubscription: Subscription;
   messages: string[] = [];
@@ -71,7 +74,10 @@ export class IxErrorsComponent implements OnChanges {
         untilDestroyed(this),
       ).subscribe(() => {
         const newErrors: string[] = Object.keys(this.control.errors || []).map((error) => {
-          const message = (this.control.errors[error] as SomeError).message as string;
+          if (error === ixManualValidateError) {
+            return;
+          }
+          const message = (this.control.errors[error] as SomeError)?.message as string;
           if (message) {
             return message;
           }
@@ -124,5 +130,15 @@ export class IxErrorsComponent implements OnChanges {
       default:
         return undefined;
     }
+  }
+
+  removeManualError(): void {
+    if (this.control.errors) {
+      delete this.control.errors[ixManualValidateError];
+      delete this.control.errors.manualValidateError;
+      delete this.control.errors.manualValidateErrorMsg;
+    }
+    this.control.updateValueAndValidity();
+    this.cdr.markForCheck();
   }
 }

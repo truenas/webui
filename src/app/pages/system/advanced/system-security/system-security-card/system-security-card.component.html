@@ -1,0 +1,27 @@
+<mat-card id="email-card">
+  <mat-toolbar-row>
+    <h3>{{ 'System Security' | translate }}</h3>
+    <div class="actions action-icon">
+      <button
+        *ixWithLoadingState="systemSecurityConfig$ as systemSecurityConfig"
+        mat-button
+        color="default"
+        [ixTest]="['system-security', 'settings']"
+        (click)="openSystemSecuritySettings(systemSecurityConfig)"
+      >
+        {{ 'Settings' | translate }}
+      </button>
+    </div>
+  </mat-toolbar-row>
+
+  <mat-card-content>
+    <mat-list>
+      <mat-list-item>
+        <span class="label">{{ 'Enable FIPS' | translate }}:</span>
+        <span *ixWithLoadingState="systemSecurityConfig$ as systemSecurityConfig" class="value">
+          {{ systemSecurityConfig?.enable_fips ? ('Yes' | translate) : ('No' | translate) }}
+        </span>
+      </mat-list-item>
+    </mat-list>
+  </mat-card-content>
+</mat-card>

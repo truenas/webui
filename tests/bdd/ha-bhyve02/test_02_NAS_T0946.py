@@ -8,7 +8,8 @@ import xpaths
 from function import (
     wait_on_element,
     wait_on_element_disappear,
-    is_element_present
+    is_element_present,
+    create_Pool
 )
 from pytest_bdd import (
     given,
@@ -35,6 +36,8 @@ def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
 @when(parsers.parse('login appear enter "root" and "{password}"'))
 def login_appear_enter_root_and_password(driver, password):
     """login appear enter "root" and "password"."""
+    global ADMIN_PASSWORD
+    ADMIN_PASSWORD = password
     rsc.Login_If_Not_On_Dashboard(driver, 'root', password)
 
 
@@ -210,11 +213,11 @@ def navigate_to_network_then_under_interfacesclick_enp0s6f0(driver):
     """navigate to Network then under Interfaces click enp0s6f0."""
     assert wait_on_element(driver, 7, xpaths.side_Menu.network, 'clickable')
     driver.find_element_by_xpath(xpaths.side_Menu.network).click()
-    assert wait_on_element(driver, 7, '//h1[contains(.,"Network")]')
-    assert wait_on_element(driver, 7, '//h3[contains(.,"Interfaces")]')
-    assert wait_on_element(driver, 7, '//td[contains(.,"enp0s6f0")]')
-    assert wait_on_element(driver, 7, '//ix-icon[@id="enp0s6f0"]')
-    driver.find_element_by_xpath('//ix-icon[@id="enp0s6f0"]').click()
+    assert wait_on_element(driver, 7, xpaths.network.title)
+    assert wait_on_element(driver, 7, xpaths.network.interface_Card_Title)
+    assert wait_on_element(driver, 7, xpaths.network.interface_Row('enp0s6f0'))
+    assert wait_on_element(driver, 7, xpaths.network.interface_Edit_Button('enp-0-s-6-f-0'))
+    driver.find_element_by_xpath(xpaths.network.interface_Edit_Button('enp-0-s-6-f-0')).click()
 
 
 @then('the Edit Interface should appear')
@@ -260,9 +263,9 @@ def click_apply_and_please_wait_should_appear_while_settings_are_being_applied(d
 @then('click Test Changes, check Confirm, click Test Changes again')
 def click_test_changes_check_confirm_click_test_changes_again(driver):
     """click Test Changes, check Confirm, click Test Changes again."""
-    assert wait_on_element(driver, 7, '//button[contains(.,"Test Changes")]', 'clickable')
-    driver.find_element_by_xpath('//button[contains(.,"Test Changes")]').click()
-    assert wait_on_element(driver, 7, '//h1[contains(.,"Test Changes")]', 'clickable')
+    assert wait_on_element(driver, 7, xpaths.network.test_Changes_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.network.test_Changes_Button).click()
+    assert wait_on_element(driver, 10, xpaths.network.test_Changes_Dialog_Title)
     driver.find_element_by_xpath(xpaths.checkbox.new_Confirm).click()
     driver.find_element_by_xpath(xpaths.button.Continue).click()
     assert wait_on_element(driver, 5, xpaths.popup.please_Wait)
@@ -273,6 +276,8 @@ def click_test_changes_check_confirm_click_test_changes_again(driver):
 @then(parsers.parse('switch to the virtual hostname "{virtual_hostname}" and login'))
 def switch_to_the_virtual_hostname_virtual_hostname_and_login(driver, virtual_hostname):
     """switch to the virtual hostname "{virtual_hostname}" and login."""
+    global NAS_HOSTNAME
+    NAS_HOSTNAME = virtual_hostname
     driver.get(f"http://{virtual_hostname}")
     assert wait_on_element(driver, 7, xpaths.login.user_Input)
     driver.find_element_by_xpath(xpaths.login.user_Input).clear()
@@ -322,48 +327,52 @@ def wipe_all_disk_without_a_pool(driver):
     rsc.Wiped_Unused_Disk(driver)
 
 
+# TODO: when Bluefin is replaced by Cobia the steps below need to be refactor.
 @then('navigate to Storage click Create')
 def navigate_to_storage_click_create(driver):
     """navigate to Storage click Create"""
     driver.find_element_by_xpath(xpaths.side_Menu.storage).click()
-    assert wait_on_element(driver, 7, '//h1[text()="Storage Dashboard"]')
-    assert wait_on_element(driver, 7, '//button[contains(.,"Create pool")]', 'clickable')
-    driver.find_element_by_xpath('//button[contains(.,"Create pool")]').click()
+    assert wait_on_element(driver, 7, xpaths.storage.title)
+    # assert wait_on_element(driver, 7, xpaths.storage.create_Pool_Button, 'clickable')
+    # driver.find_element_by_xpath(xpaths.storage.create_Pool_Button).click()
 
 
 @then('enter tank for pool name, click the checkbox beside the first disk')
 def enter_tank_for_pool_name_click_the_checkbox_beside_the_first_disk(driver):
     """enter tank for pool name, click the checkbox beside the first disk."""
-    assert wait_on_element(driver, 7, '//h1[contains(.,"Create Pool")]')
-    assert wait_on_element(driver, 7, '//div[contains(.,"Pool Manager")]')
-    assert wait_on_element(driver, 7, '//input[@id="pool-manager__name-input-field"]', 'inputable')
-    driver.find_element_by_xpath('//input[@id="pool-manager__name-input-field"]').clear()
-    driver.find_element_by_xpath('//input[@id="pool-manager__name-input-field"]').send_keys('tank')
-    driver.find_element_by_xpath('//datatable-body[contains(.,"sd")]//mat-checkbox[1]').click()
-    if wait_on_element(driver, 3, '//mat-dialog-container[contains(.,"Warning: sd")]'):
-        assert wait_on_element(driver, 5, '//button[*/text()=" Close "]', 'clickable')
-        driver.find_element_by_xpath('//button[*/text()=" Close "]').click()
+    # assert wait_on_element(driver, 7, '//h1[contains(.,"Create Pool")]')
+    # assert wait_on_element(driver, 7, '//div[contains(.,"Pool Manager")]')
+    # assert wait_on_element(driver, 7, '//input[@id="pool-manager__name-input-field"]', 'inputable')
+    # driver.find_element_by_xpath('//input[@id="pool-manager__name-input-field"]').clear()
+    # driver.find_element_by_xpath('//input[@id="pool-manager__name-input-field"]').send_keys('tank')
+    # driver.find_element_by_xpath('//datatable-body[contains(.,"sd")]//mat-checkbox[1]').click()
+    # if wait_on_element(driver, 3, '//mat-dialog-container[contains(.,"Warning: sd")]'):
+    #     assert wait_on_element(driver, 5, '//button[*/text()=" Close "]', 'clickable')
+    #     driver.find_element_by_xpath('//button[*/text()=" Close "]').click()
+    pass
 
 
 @then('click the arrow pointing to Data Vdevs, click Create, check confirm, click CREATE POOL')
 def click_the_arrow_pointing_to_data_vdevs_click_create_check_confirm_click_create_pool(driver):
     """click the arrow pointing to Data Vdevs, click Create, check confirm, click CREATE POOL."""
-    assert wait_on_element(driver, 7, '//button[@id="vdev__add-button"]', 'clickable')
-    driver.find_element_by_xpath('//button[@id="vdev__add-button"]').click()
-    assert wait_on_element(driver, 7, '//mat-checkbox[@id="pool-manager__force-submit-checkbox"]', 'clickable')
-    driver.find_element_by_xpath('//mat-checkbox[@id="pool-manager__force-submit-checkbox"]').click()
-    # rsc.Confirm_Single_Disk(driver)
-    assert wait_on_element(driver, 7, '//button[@name="create-button"]', 'clickable')
-    driver.find_element_by_xpath('//button[@name="create-button"]').click()
-    rsc.Confirm_Creating_Pool(driver)
+    # assert wait_on_element(driver, 7, '//button[@id="vdev__add-button"]', 'clickable')
+    # driver.find_element_by_xpath('//button[@id="vdev__add-button"]').click()
+    # assert wait_on_element(driver, 7, '//mat-checkbox[@id="pool-manager__force-submit-checkbox"]', 'clickable')
+    # driver.find_element_by_xpath('//mat-checkbox[@id="pool-manager__force-submit-checkbox"]').click()
+    # # rsc.Confirm_Single_Disk(driver)
+    # assert wait_on_element(driver, 7, '//button[@name="create-button"]', 'clickable')
+    # driver.find_element_by_xpath('//button[@name="create-button"]').click()
+    # rsc.Confirm_Creating_Pool(driver)
+    create_Pool(NAS_HOSTNAME, ('root', ADMIN_PASSWORD), 'tank')
 
 
 @then('Create Pool should appear while pool is being created. You should be returned to the Storage page')
 def create_pool_should_appear_while_pool_is_being_created_you_should_be_returned_to_the_storage_page(driver):
     """Create Pool should appear while pool is being created. You should be returned to the Storage page."""
-    assert wait_on_element(driver, 7, '//h1[contains(.,"Create Pool")]')
-    assert wait_on_element_disappear(driver, 120, '//h1[contains(.,"Create Pool")]')
-    assert wait_on_element(driver, 7, '//h1[text()="Storage Dashboard"]')
+    # assert wait_on_element(driver, 7, '//h1[contains(.,"Create Pool")]')
+    # assert wait_on_element_disappear(driver, 120, '//h1[contains(.,"Create Pool")]')
+    driver.refresh()
+    assert wait_on_element(driver, 7, xpaths.storage.title)
     assert wait_on_element(driver, 7, '//h2[text()="tank"]')
 
 
@@ -389,9 +398,9 @@ def navigate_to_dashboard_wait_for_ha_to_be_online(driver):
     assert wait_on_element(driver, 7, xpaths.side_Menu.dashboard, 'clickable')
     driver.find_element_by_xpath(xpaths.side_Menu.dashboard).click()
     rsc.Verify_The_Dashboard(driver)
+    assert wait_on_element(driver, 240, xpaths.toolbar.ha_Enabled)
     assert wait_on_element(driver, 15, '//span[contains(.,"Hostname:") and contains(.,"truenas")]')
-    assert wait_on_element(driver, 300, '//span[contains(.,"Hostname:") and contains(.,"truenas-b")]')
-    assert wait_on_element(driver, 30, xpaths.toolbar.ha_Enabled)
+    assert wait_on_element(driver, 15, '//span[contains(.,"Hostname:") and contains(.,"truenas-b")]')
     time.sleep(5)
 
 

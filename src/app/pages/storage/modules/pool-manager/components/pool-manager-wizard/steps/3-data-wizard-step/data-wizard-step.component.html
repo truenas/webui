@@ -2,8 +2,9 @@
   [description]="helptext.data_vdev_description | translate"
   [type]="VdevType.Data"
   [inventory]="inventory$ | async"
-  [canChangeLayout]="true"
+  [canChangeLayout]="canChangeLayout"
   [limitLayouts]="allowedLayouts"
+  [isStepActive]="isStepActive"
 ></ix-layout-step>
 
 <p *ngIf="stepWarning" class="warning">
@@ -26,16 +27,25 @@
     color="primary"
     type="button"
     ixTest="next"
-    [disabled]="!hasDataVdevs"
   >
     {{ 'Next' | translate }}
   </button>
+
+  <button
+    mat-button
+    color="error"
+    type="button"
+    ixTest="reset-fields-in-step"
+    (click)="resetStep()"
+  >
+    {{ 'Reset Step' | translate }}
+  </button>
+
   <button
     mat-button
     color="accent"
     type="button"
     ixTest="save-ang-go-to-review"
-    [disabled]="!hasDataVdevs"
     (click)="goToReviewStep()"
   >
     {{ 'Save And Go To Review' | translate }}

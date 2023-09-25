@@ -15,7 +15,7 @@ import {
 } from 'app/modules/truecommand/components/truecommand-signup-modal/truecommand-signup-modal.component';
 import { TruecommandStatusModalComponent } from 'app/modules/truecommand/components/truecommand-status-modal/truecommand-status-modal.component';
 import { TruecommandButtonComponent } from 'app/modules/truecommand/truecommand-button.component';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 
 function getFakeConfig(overrides: Partial<TrueCommandConfig>): TrueCommandConfig {
   return {

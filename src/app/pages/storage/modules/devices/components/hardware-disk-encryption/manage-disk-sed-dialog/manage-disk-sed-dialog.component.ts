@@ -7,9 +7,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import helptext from 'app/helptext/storage/disks/disks';
 import { Disk } from 'app/interfaces/storage.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { AppLoaderService, DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -51,37 +51,28 @@ export class ManageDiskSedDialogComponent implements OnInit {
   }
 
   private loadDiskSedInfo(): void {
-    this.loader.open();
-
     this.ws.call('disk.query', [[['devname', '=', this.diskName]], { extra: { passwords: true } }])
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: (disks) => {
-          this.loader.close();
-          this.disk = disks[0];
-          this.passwordControl.setValue(this.disk.passwd);
-        },
-        error: (error: WebsocketError) => {
-          this.loader.close();
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-        },
+      .pipe(
+        this.loader.withLoader(),
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe((disks) => {
+        this.disk = disks[0];
+        this.passwordControl.setValue(this.disk.passwd);
       });
   }
 
   setNewPassword(password: string): void {
-    this.loader.open();
     this.ws.call('disk.update', [this.disk.identifier, { passwd: password }])
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: () => {
-          this.loader.close();
-          this.dialogRef.close(true);
-          this.snackbar.success(this.translate.instant('SED password updated.'));
-        },
-        error: (error: WebsocketError) => {
-          this.loader.close();
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-        },
+      .pipe(
+        this.loader.withLoader(),
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        this.dialogRef.close(true);
+        this.snackbar.success(this.translate.instant('SED password updated.'));
       });
   }
 }

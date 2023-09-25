@@ -54,8 +54,8 @@ simultaneously.'),
 
   sysloglevel: {
     tooltip: T(
-      'When <i>Syslog Server</i> is defined, only logs matching this\
- level are sent.',
+      'Select the minimum priority level to send to the remote syslog server.\
+  The system only sends logs matching this level or higher.',
     ),
     options: [
       { label: T('Emergency'), value: SyslogLevel.Emergency },

@@ -7,7 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { map, switchMap, tap } from 'rxjs/operators';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
-import { idNameArrayToOptions } from 'app/helpers/options.helper';
+import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
 import { CloudCredential } from 'app/interfaces/cloud-sync-task.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -36,7 +36,7 @@ export class SftpProviderFormComponent extends BaseProviderFormComponent impleme
 
   beforeSubmit(): Observable<unknown> {
     if (this.form.value.private_key !== newOption) {
-      return of(undefined);
+      return of();
     }
 
     return this.makeNewKeypair();
@@ -49,11 +49,6 @@ export class SftpProviderFormComponent extends BaseProviderFormComponent impleme
     return this.formPatcher$;
   };
 
-  ngAfterViewInit(): void {
-    this.formPatcher$.pipe(untilDestroyed(this)).subscribe((values) => {
-      this.form.patchValue(values);
-    });
-  }
   constructor(
     private ws: WebSocketService,
     private formBuilder: FormBuilder,
@@ -64,6 +59,12 @@ export class SftpProviderFormComponent extends BaseProviderFormComponent impleme
 
   ngOnInit(): void {
     this.loadPrivateKeys();
+  }
+
+  ngAfterViewInit(): void {
+    this.formPatcher$.pipe(untilDestroyed(this)).subscribe((values) => {
+      this.form.patchValue(values);
+    });
   }
 
   private loadPrivateKeys(): void {

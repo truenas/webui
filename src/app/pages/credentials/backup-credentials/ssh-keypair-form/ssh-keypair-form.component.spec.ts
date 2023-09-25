@@ -16,8 +16,9 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SshKeypairFormComponent } from 'app/pages/credentials/backup-credentials/ssh-keypair-form/ssh-keypair-form.component';
 import {
-  AppLoaderService, DialogService, StorageService,
-} from 'app/services';
+  DialogService,
+} from 'app/services/dialog.service';
+import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('SshKeypairFormComponent', () => {
@@ -52,7 +53,6 @@ describe('SshKeypairFormComponent', () => {
       mockProvider(StorageService),
       mockProvider(FormErrorHandlerService),
       mockProvider(DialogService),
-      mockProvider(AppLoaderService),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });

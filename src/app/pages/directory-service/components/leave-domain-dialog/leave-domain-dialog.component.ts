@@ -9,7 +9,7 @@ import { LeaveActiveDirectory } from 'app/interfaces/active-directory-config.int
 import { Job } from 'app/interfaces/job.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -38,10 +38,9 @@ export class LeaveDomainDialogComponent {
 
   onSubmit(): void {
     const params = this.form.value;
-    this.loader.open();
 
     this.ws.job('activedirectory.leave', [params as LeaveActiveDirectory])
-      .pipe(untilDestroyed(this))
+      .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: (job) => {
           if (job.state !== JobState.Success) {
@@ -52,11 +51,9 @@ export class LeaveDomainDialogComponent {
             this.translate.instant(helptext.ad_leave_domain_dialog.success_msg),
           );
 
-          this.loader.close();
           this.dialogRef.close(true);
         },
         error: (error: Job) => {
-          this.loader.close();
           this.dialogService.error(this.errorHandler.parseJobError(error));
         },
       });

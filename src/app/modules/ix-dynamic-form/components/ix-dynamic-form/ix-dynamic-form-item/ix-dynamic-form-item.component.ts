@@ -7,7 +7,9 @@ import { Subject } from 'rxjs';
 import { distinctUntilChanged, filter, map } from 'rxjs/operators';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
 import { ChartSchemaNode } from 'app/interfaces/chart-release.interface';
-import { AddListItemEvent, DeleteListItemEvent, DynamicFormSchemaNode } from 'app/interfaces/dynamic-form-schema.interface';
+import {
+  AddListItemEvent, DeleteListItemEvent, DynamicFormSchemaList, DynamicFormSchemaNode,
+} from 'app/interfaces/dynamic-form-schema.interface';
 import { CustomUntypedFormField } from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
 
 @UntilDestroy()
@@ -26,6 +28,12 @@ export class IxDynamicFormItemComponent implements OnInit {
   @Output() deleteListItem = new EventEmitter<DeleteListItemEvent>();
 
   readonly DynamicFormSchemaType = DynamicFormSchemaType;
+
+  get isAllListControlsDisabled(): boolean {
+    return (this.dynamicSchema as DynamicFormSchemaList).items.every((item) => {
+      return item.editable !== undefined && item.editable !== null && !item.editable;
+    });
+  }
 
   constructor(
     private changeDetectorRef: ChangeDetectorRef,
@@ -47,9 +55,8 @@ export class IxDynamicFormItemComponent implements OnInit {
       });
     });
     if (
-      this.dynamicSchema
-      && this.dynamicSchema.editable !== undefined
-      && !this.dynamicSchema.editable
+      this.dynamicSchema?.editable !== undefined
+      && !this.dynamicSchema?.editable
     ) {
       this.dynamicForm?.get(this.dynamicSchema.controlName)?.disable();
     }

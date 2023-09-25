@@ -103,14 +103,14 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   }
 
   get totalDisks(): string {
-    if (this.poolState && this.poolState.topology) {
+    if (this.poolState?.topology) {
       return countDisksTotal(this.poolState.topology);
     }
     return this.translate.instant('Unknown');
   }
 
   get unhealthyDisks(): { totalErrors: number | string; disks: string[] } {
-    if (this.poolState && this.poolState.topology) {
+    if (this.poolState?.topology) {
       const unhealthy: string[] = []; // Disks with errors
       this.poolState.topology.data.forEach((item) => {
         if (item.type === TopologyItemType.Disk) {
@@ -142,8 +142,8 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     return this.currentDiskDetails ? Object.keys(this.currentDiskDetails) as (keyof Disk)[] : [];
   }
 
-  get isScanScrub(): boolean {
-    return this.poolState.scan?.function === PoolScanFunction.Scrub;
+  get isScanResilver(): boolean {
+    return this.poolState.scan?.function === PoolScanFunction.Resilver;
   }
 
   get isScanInProgress(): boolean {
@@ -163,14 +163,14 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     super(translate);
   }
 
-  ngOnInit(): void {
-    this.title = this.path.length > 0 && this.poolState && this.currentSlide !== '0' ? this.poolState.name : 'Pool';
-  }
-
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     if (changes.volumeData) {
       this.getAvailableSpace();
     }
+  }
+
+  ngOnInit(): void {
+    this.title = this.path.length > 0 && this.poolState && this.currentSlide !== '0' ? this.poolState.name : 'Pool';
   }
 
   ngAfterViewInit(): void {
@@ -219,7 +219,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     }
 
     this.displayValue = filesize(this.volumeData.avail, { standard: 'iec' });
-    if (this.displayValue.slice(-2) === ' B') {
+    if (this.displayValue.endsWith(' B')) {
       this.diskSizeLabel = this.displayValue.slice(-1);
       this.diskSize = new Intl.NumberFormat().format(parseFloat(this.displayValue.slice(0, -2)));
     } else {

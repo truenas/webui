@@ -8,14 +8,17 @@ import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { NfsAclTag } from 'app/enums/nfs-acl.enum';
 import { SmbSharesecPermission, SmbSharesecType } from 'app/enums/smb-sharesec.enum';
+import { Group } from 'app/interfaces/group.interface';
 import { SmbSharesec } from 'app/interfaces/smb-share.interface';
+import { User as TnUser } from 'app/interfaces/user.interface';
 import { IxComboboxHarness } from 'app/modules/ix-forms/components/ix-combobox/ix-combobox.harness';
 import { IxListHarness } from 'app/modules/ix-forms/components/ix-list/ix-list.harness';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { DialogService, UserService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { UserService } from 'app/services/user.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { SmbAclComponent } from './smb-acl.component';
 
@@ -23,6 +26,38 @@ describe('SmbAclComponent', () => {
   let spectator: Spectator<SmbAclComponent>;
   let loader: HarnessLoader;
   let entriesList: IxListHarness;
+  const mockAcl = {
+    id: 13,
+    share_name: 'myshare',
+    share_acl: [
+      {
+        ae_who_sid: 'S-1-1-0',
+        ae_type: SmbSharesecType.Allowed,
+        ae_who_id: {
+          id_type: NfsAclTag.Everyone,
+          id: null,
+        },
+        ae_perm: SmbSharesecPermission.Read,
+      },
+      {
+        ae_who_sid: 'S-1-1-1',
+        ae_type: SmbSharesecType.Denied,
+        ae_perm: SmbSharesecPermission.Full,
+        ae_who_id: {
+          id_type: NfsAclTag.User,
+          id: 3001,
+        },
+        ae_who_str: 'myuser',
+      },
+    ],
+  } as SmbSharesec;
+
+  const rootUser: Partial<TnUser> = {
+    id: 0,
+    uid: 0,
+    username: 'root',
+  };
+
   const createComponent = createComponentFactory({
     component: SmbAclComponent,
     imports: [
@@ -31,43 +66,21 @@ describe('SmbAclComponent', () => {
     ],
     providers: [
       mockWebsocket([
-        mockCall('sharing.smb.getacl', {
-          id: 13,
-          share_name: 'myshare',
-          share_acl: [
-            {
-              ae_who_sid: 'S-1-1-0',
-              ae_type: SmbSharesecType.Allowed,
-              ae_who_id: {
-                id_type: NfsAclTag.Everyone,
-                id: null,
-              },
-              ae_perm: SmbSharesecPermission.Read,
-            },
-            {
-              ae_who_sid: 'S-1-1-1',
-              ae_type: SmbSharesecType.Denied,
-              ae_perm: SmbSharesecPermission.Full,
-              ae_who_id: {
-                id_type: NfsAclTag.User,
-                id: 0,
-              },
-              ae_who_str: 'root',
-            },
-          ],
-        } as SmbSharesec),
+        mockCall('sharing.smb.getacl', mockAcl),
         mockCall('sharing.smb.setacl'),
+        mockCall('user.query', [rootUser] as TnUser[]),
+        mockCall('group.query', [{ group: 'wheel', id: 1, gid: 1 }] as Group[]),
       ]),
       mockProvider(IxSlideInService),
       mockProvider(DialogService),
       mockProvider(IxSlideInRef),
       mockProvider(UserService, {
         userQueryDsCache: () => of([
-          { username: 'root', id: 0 },
+          { username: 'root', id: 0, uid: 0 },
           { username: 'trunk' },
         ] as User[]),
         groupQueryDsCache: () => of([
-          { group: 'wheel', id: 1 },
+          { group: 'wheel', id: 1, gid: 1 },
           { group: 'vip' },
         ]),
       }),
@@ -127,7 +140,7 @@ describe('SmbAclComponent', () => {
       },
       {
         Who: 'User',
-        User: 'root',
+        User: '3001',
         Permission: 'FULL',
         Type: 'DENIED',
       },
@@ -158,7 +171,7 @@ describe('SmbAclComponent', () => {
           ae_perm: SmbSharesecPermission.Full,
           ae_type: SmbSharesecType.Denied,
           ae_who_id: {
-            id: 0,
+            id: 3001,
             id_type: 'USER',
           },
         },

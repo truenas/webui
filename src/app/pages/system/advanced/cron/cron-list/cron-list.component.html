@@ -1,0 +1,53 @@
+<ng-template #pageHeader>
+  <ix-page-title-header>
+    <ix-search-input (search)="onListFiltered($event)"></ix-search-input>
+
+    <ix-table-columns-selector [columns]="columns" (columnsChange)="columnsChange($event)"></ix-table-columns-selector>
+
+    <button mat-button color="primary" ixTest="add-cronjob" (click)="doAdd()">
+      {{ 'Add' | translate }}
+    </button>
+  </ix-page-title-header>
+</ng-template>
+
+<ix-table2 class="table">
+  <thead
+    ix-table-head
+    [columns]="columns"
+    [dataProvider]="dataProvider"
+  ></thead>
+  <tbody
+    ix-table-body
+    [columns]="columns"
+    [dataProvider]="dataProvider"
+    [isLoading]="isLoading"
+  >
+    <ng-template let-cronjob ix-table-details-row [dataProvider]="dataProvider">
+      <dl *ngIf="hiddenColumns.length" class="table-hidden-columns">
+        <div *ngFor="let column of hiddenColumns">
+          <span>{{ column.title }}:</span>
+          <span>{{ cronjob[column.propertyName] }}</span>
+        </div>
+        <mat-divider></mat-divider>
+      </dl>
+
+      <div class="table-details-row-actions">
+        <button
+          mat-button
+          [ixTest]="[cronjob.id, 'run_now']"
+          (click)="runNow(cronjob)"
+        >{{ 'Run Now' | translate }}</button>
+        <button
+          mat-button
+          [ixTest]="[cronjob.id, 'edit']"
+          (click)="doEdit(cronjob)"
+        >{{ 'Edit' | translate }}</button>
+        <button
+          mat-button
+          [ixTest]="[cronjob.id, 'delete']"
+          (click)="doDelete(cronjob)"
+        >{{ 'Delete' | translate }}</button>
+      </div>
+    </ng-template>
+  </tbody>
+</ix-table2>

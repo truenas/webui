@@ -26,22 +26,36 @@
   <mat-card-content>
     <div fxLayout="row" fxLayoutGap="8px">
       <div class="app-logo">
-        <img [src]="app?.chart_metadata?.icon" />
+        <img [src]="app?.chart_metadata?.icon" [src-fallback]="imagePlaceholder" />
       </div>
       <div class="details-list">
         <div class="details-item">
           <div class="label">{{ 'Name' | translate }}:</div>
           <div class="value">
-            <ng-container *ngIf="app?.chart_metadata?.name; else notAvailable">
-              {{ app.chart_metadata.name }}
+            <ng-container *ngIf="app?.name; else notAvailable">
+              {{ app.name }}
             </ng-container>
           </div>
         </div>
         <div class="details-item">
-          <div class="label">{{ 'Version' | translate }}:</div>
+          <div class="label">{{ 'App Version' | translate }}:</div>
           <div class="value">
-            <ng-container *ngIf="app?.human_version; else notAvailable">
-              {{ app.human_version }}
+            <ng-container *ngIf="!ixChartApp">
+              <ng-container *ngIf="app?.chart_metadata?.appVersion; else notAvailable">
+                {{ app.chart_metadata.appVersion }}
+              </ng-container>
+            </ng-container>
+            <ng-container *ngIf="ixChartApp">
+              <!-- Show docker image tag as version for custom apps -->
+              {{ app.human_version.split(':')[1].split('_')[0] }}
+            </ng-container>
+          </div>
+        </div>
+        <div class="details-item">
+          <div class="label">{{ 'Chart Version' | translate }}:</div>
+          <div class="value">
+            <ng-container *ngIf="app?.chart_metadata?.version; else notAvailable">
+              {{ app.chart_metadata.version }}
             </ng-container>
           </div>
         </div>
@@ -85,7 +99,7 @@
           <div class="label">{{ 'Catalog' | translate }}:</div>
           <div class="value">
             <ng-container *ngIf="app?.catalog; else notAvailable">
-              {{ app.catalog }}
+              {{ app.catalog | appCatalog }}
             </ng-container>
           </div>
         </div>

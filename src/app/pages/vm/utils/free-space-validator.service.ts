@@ -5,7 +5,7 @@ import filesize from 'filesize';
 import { Observable, of } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
-import { WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 
 /**
  * Creates an async validator that checks if there is enough free space for the selected datastore.

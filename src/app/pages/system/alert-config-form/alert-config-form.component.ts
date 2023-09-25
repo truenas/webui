@@ -13,8 +13,9 @@ import helptext from 'app/helptext/system/alert-settings';
 import { AlertCategory, AlertClassesUpdate, AlertClassSettings } from 'app/interfaces/alert.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService, WebSocketService } from 'app/services/';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -128,15 +129,12 @@ export class AlertConfigFormComponent implements OnInit {
         }
       });
 
-    this.ws.call('alertclasses.update', [payload]).pipe(untilDestroyed(this)).subscribe({
-      next: () => {
-        this.snackbarService.success(this.translate.instant('Settings saved.'));
-        this.cdr.markForCheck();
-      },
-      error: (error: WebsocketError) => {
-        this.dialogService.error(this.errorHandler.parseWsError(error));
-        this.cdr.markForCheck();
-      },
+    this.ws.call('alertclasses.update', [payload]).pipe(
+      this.errorHandler.catchError(),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.snackbarService.success(this.translate.instant('Settings saved.'));
+      this.cdr.markForCheck();
     }).add(() => {
       this.isFormLoading = false;
       this.cdr.markForCheck();

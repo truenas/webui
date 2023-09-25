@@ -8,10 +8,10 @@ import {
   from, Observable, Observer, of, Subject,
 } from 'rxjs';
 import {
-  catchError, concatMap, tap, toArray,
+  catchError, concatMap, map, switchMap, take, toArray,
 } from 'rxjs/operators';
 import { MiB } from 'app/constants/bytes.constant';
-import { ApiMethod } from 'app/interfaces/api-directory.interface';
+import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { ValidatedFile } from 'app/interfaces/validated-file.interface';
 import { AuthService } from 'app/services/auth/auth.service';
 
@@ -24,38 +24,34 @@ export class IxFileUploadService {
   private fileUploadProgress$ = new Subject<HttpProgressEvent>();
   private fileUploadSuccess$ = new Subject<HttpResponse<unknown>>();
 
-  private defaultUploadEndpoint: string;
-
   constructor(
     protected http: HttpClient,
     private translate: TranslateService,
     private authService: AuthService,
-  ) {
-    this.authService.authToken$.pipe(
-      tap((token) => {
-        this.defaultUploadEndpoint = '/_upload?auth_token=' + token;
-      }),
-      untilDestroyed(this),
-    ).subscribe();
-  }
+  ) { }
 
   upload(
     file: File,
-    method: ApiMethod,
+    method: ApiJobMethod,
     params: unknown[] = [],
-    apiEndPoint = this.defaultUploadEndpoint,
   ): void {
-    const formData: FormData = new FormData();
-    formData.append('data', JSON.stringify({
-      method,
-      params,
-    }));
-    formData.append('file', file, file.name);
-    const req = new HttpRequest('POST', apiEndPoint, formData, {
-      reportProgress: true,
-    });
-
-    this.http.request(req).pipe(untilDestroyed(this)).subscribe({
+    this.authService.authToken$.pipe(
+      take(1),
+      map((token) => {
+        const endPoint = '/_upload?auth_token=' + token;
+        const formData = new FormData();
+        formData.append('data', JSON.stringify({
+          method,
+          params,
+        }));
+        formData.append('file', file, file.name);
+        return new HttpRequest('POST', endPoint, formData, {
+          reportProgress: true,
+        });
+      }),
+      switchMap((req) => this.http.request(req)),
+      untilDestroyed(this),
+    ).subscribe({
       next: (event: HttpEvent<unknown>) => {
         if (event.type === HttpEventType.UploadProgress) {
           this.fileUploadProgress$.next(event);

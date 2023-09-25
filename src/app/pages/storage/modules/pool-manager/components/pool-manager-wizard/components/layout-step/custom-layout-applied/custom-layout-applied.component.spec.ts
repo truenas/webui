@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { Subject } from 'rxjs';
 import { VdevType } from 'app/enums/v-dev-type.enum';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import {
@@ -12,11 +13,15 @@ import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/p
 describe('CustomLayoutAppliedComponent', () => {
   let spectator: Spectator<CustomLayoutAppliedComponent>;
   let loader: HarnessLoader;
+  const resetStep$ = new Subject<VdevType>();
+
   const createComponent = createComponentFactory({
     component: CustomLayoutAppliedComponent,
     providers: [
       mockProvider(PoolManagerStore, {
+        resetStep$,
         resetTopologyCategory: jest.fn(),
+        openManualSelectionDialog: jest.fn(),
       }),
     ],
   });
@@ -32,7 +37,6 @@ describe('CustomLayoutAppliedComponent', () => {
       },
     });
 
-    jest.spyOn(spectator.component.manualSelectionClicked, 'emit');
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
@@ -40,20 +44,14 @@ describe('CustomLayoutAppliedComponent', () => {
     expect(spectator.query('.vdevs-length')).toHaveText('VDEVs: 2');
   });
 
-  it('emits manualSelectionClicked when Edit button is pressed', async () => {
+  it('calls store.openManualSelectionDialog when button clicked', async () => {
     const editButton = await loader.getHarness(
       MatButtonHarness.with({ text: 'Edit Manual Disk Selection' }),
     );
 
     await editButton.click();
 
-    expect(spectator.component.manualSelectionClicked.emit).toHaveBeenCalled();
-  });
+    expect(spectator.inject(PoolManagerStore).openManualSelectionDialog).toHaveBeenCalled();
 
-  it('calls resetTopologyCategory when Reset button is pressed', async () => {
-    const resetButton = await loader.getHarness(MatButtonHarness.with({ text: 'Reset' }));
-    await resetButton.click();
-
-    expect(spectator.inject(PoolManagerStore).resetTopologyCategory).toHaveBeenCalledWith(VdevType.Data);
   });
 });

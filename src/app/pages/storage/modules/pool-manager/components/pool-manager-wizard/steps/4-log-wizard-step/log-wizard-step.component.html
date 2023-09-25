@@ -2,8 +2,9 @@
   [description]="helptext.log_vdev_description | translate"
   [type]="VdevType.Log"
   [inventory]="inventory$ | async"
-  [canChangeLayout]="true"
+  [canChangeLayout]="canChangeLayout"
   [limitLayouts]="allowedLayouts"
+  [isStepActive]="isStepActive"
 ></ix-layout-step>
 
 <p *ngIf="stepWarning" class="warning">
@@ -28,6 +29,16 @@
     ixTest="next"
   >
     {{ 'Next' | translate }}
+  </button>
+
+  <button
+    mat-button
+    color="error"
+    type="button"
+    ixTest="reset-fields-in-step"
+    (click)="resetStep()"
+  >
+    {{ 'Reset Step' | translate }}
   </button>
 
   <button

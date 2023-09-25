@@ -1,12 +1,9 @@
 import {
-  ChangeDetectionStrategy, Component, EventEmitter, Inject, Input, Output,
+  ChangeDetectionStrategy, Component, EventEmitter, Input, Output,
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { TranslateService } from '@ngx-translate/core';
-import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
-import { OauthMessage } from 'app/interfaces/oauth-message.interface';
-import { DialogService } from 'app/services';
+import { OauthButtonType } from 'app/modules/oauth-button/interfaces/oauth-button.interface';
 
 export interface OauthProviderData {
   client_id: string;
@@ -31,36 +28,16 @@ export class OauthProviderComponent {
   });
 
   readonly helptext = helptext;
+  readonly oauthType = OauthButtonType;
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private dialogService: DialogService,
-    private translate: TranslateService,
-    @Inject(WINDOW) private window: Window,
-  ) { }
-
-  onLoginPressed(): void {
-    this.window.open(this.oauthUrl + '?origin=' + encodeURIComponent(this.window.location.toString()), '_blank', 'width=640,height=480');
-
-    this.window.addEventListener('message', this.onOauthMessage, false);
+  get hasOauthAuthorization(): boolean {
+    return Boolean(this.form.value.client_id && this.form.value.client_secret);
   }
 
-  onOauthMessage = (message: OauthMessage<OauthProviderData>): void => {
-    this.window.removeEventListener('message', this.onOauthMessage);
+  constructor(private formBuilder: FormBuilder) { }
 
-    if (!('oauth_portal' in message.data)) {
-      return;
-    }
-
-    if (message.data.error) {
-      this.dialogService.error({
-        title: this.translate.instant('Error'),
-        message: message.data.error,
-      });
-      return;
-    }
-
-    this.form.patchValue(message.data.result);
-    this.authenticated.emit(message.data.result);
-  };
+  onLoggedIn(result: OauthProviderData): void {
+    this.form.patchValue(result);
+    this.authenticated.emit(result);
+  }
 }

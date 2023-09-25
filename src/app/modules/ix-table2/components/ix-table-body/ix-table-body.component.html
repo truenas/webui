@@ -1,12 +1,15 @@
 <ng-container *ngFor="let row of dataProvider.currentPage$ | async">
   <tr
-    ixTest="row"
     class="row"
+    [ixTest]="getTestAttr(row)"
     [ngStyle]="{ cursor: detailsTemplate ? 'pointer' : 'auto' }"
     [hidden]="isLoading"
     (click)="onToggle(row)"
   >
-    <td *ngFor="let column of columns; index as idx">
+    <td
+      *ngFor="let column of displayedColumns; index as idx"
+      [ngClass]="column.cssClass || ''"
+    >
       <ng-container *ngIf="getTemplateByColumnIndex(idx) as template">
         <ng-container
           *ngTemplateOutlet="template; context: { $implicit: row }"
@@ -33,13 +36,13 @@
     </td>
   </tr>
   <tr *ngIf="detailsTemplate && isExpanded(row)" ixTest="details" class="details" [hidden]="isLoading">
-    <td [attr.colspan]="columns.length + 1">
+    <td [attr.colspan]="displayedColumns.length + 1">
       <ng-container *ngTemplateOutlet="detailsTemplate; context: { $implicit: row }"></ng-container>
     </td>
   </tr>
 </ng-container>
 
-<td *ngIf="isLoading" [attr.colspan]="columns.length">
+<td *ngIf="isLoading" [attr.colspan]="displayedColumns.length">
   <div class="spinner-container">
     <mat-spinner [diameter]="40"></mat-spinner>
   </div>

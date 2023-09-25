@@ -14,7 +14,7 @@ import { PosixAclItem } from 'app/interfaces/acl.interface';
 import { GroupComboboxProvider } from 'app/modules/ix-forms/classes/group-combobox-provider';
 import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
-import { UserService } from 'app/services';
+import { UserService } from 'app/services/user.service';
 
 @UntilDestroy()
 @Component({
@@ -63,12 +63,12 @@ export class EditPosixAceComponent implements OnInit, OnChanges {
     return this.form.value.tag === PosixAclTag.Group;
   }
 
-  ngOnInit(): void {
-    this.setFormListeners();
+  ngOnChanges(): void {
     this.updateFormValues();
   }
 
-  ngOnChanges(): void {
+  ngOnInit(): void {
+    this.setFormListeners();
     this.updateFormValues();
   }
 

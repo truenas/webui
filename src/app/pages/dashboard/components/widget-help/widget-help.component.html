@@ -7,31 +7,32 @@
       fxLayoutAlign="space-between stretch"
     >
       <mat-card-content>
-        <mat-toolbar-row [class.drag-handle]="showReorderHandle">
+        <ix-drag-handle [showReorderHandle]="showReorderHandle">
           <ng-content [select]="[cdkDragHandle]"></ng-content>
 
-          <!-- Mobile Only: Exit widget -->
-          <button
-            *ngIf="screenType === ScreenType.Mobile"
-            class="mat-card-title-text"
-            mat-icon-button
-            color="default"
-            ixTest="help-back"
-            (click)="goBack()"
-          >
-            <ix-icon name="chevron_left" class="back-arrow"></ix-icon>
-          </button>
-
-          <h3 class="mat-card-title-text">
-            <div
-              class="card-title-text"
-              [class.drag-handle]="showReorderHandle"
+          <mat-toolbar-row>
+            <!-- Mobile Only: Exit widget -->
+            <button
+              *ngIf="screenType === ScreenType.Mobile"
+              class="mat-card-title-text"
+              mat-icon-button
+              color="default"
+              ixTest="help-back"
+              (click)="goBack()"
             >
-              <span *ngIf="showReorderHandle" class="grip"></span>
-              <span>{{ 'TrueNAS Help' | translate }}</span>
-            </div>
-          </h3>
-        </mat-toolbar-row>
+              <ix-icon name="chevron_left" class="back-arrow"></ix-icon>
+            </button>
+
+            <h3 class="mat-card-title-text">
+              <ix-drag-handle [showReorderHandle]="showReorderHandle">
+                <div class="card-title-text">
+                  <span *ngIf="showReorderHandle" class="grip"></span>
+                  <span>{{ 'TrueNAS Help' | translate }}</span>
+                </div>
+              </ix-drag-handle>
+            </h3>
+          </mat-toolbar-row>
+        </ix-drag-handle>
 
         <div class="content-wrapper container">
           <div class="line-item">

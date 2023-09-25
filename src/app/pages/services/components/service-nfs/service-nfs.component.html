@@ -1,10 +1,7 @@
+<ix-modal-header [title]="'NFS' | translate" [loading]="isFormLoading"></ix-modal-header>
+
 <mat-card class="card">
   <mat-card-content>
-    <mat-progress-bar
-      *ngIf="isFormLoading"
-      mode="indeterminate"
-    ></mat-progress-bar>
-
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset [title]="'General Options' | translate">
         <ix-select
@@ -101,18 +98,20 @@
           >
             {{ 'Save' | translate }}
           </button>
-
-          <button mat-button type="button" ixTest="cancel" [routerLink]="['/services']">
-            {{ 'Cancel' | translate }}
-          </button>
         </div>
-        <div>
+        <div class="add-spn-container">
+          <ix-tooltip
+            *ngIf="isAddSpnVisible && isAddSpnDisabled"
+            [header]="'Add SPN' | translate"
+            [message]="'Save the \'Require Kerberos for NFSv4\' value before adding SMP' | translate"
+          ></ix-tooltip>
           <button
             *ngIf="isAddSpnVisible"
             mat-button
             type="button"
             color="primary"
             ixTest="add-spn"
+            [disabled]="isAddSpnDisabled"
             (click)="addSpn()"
           >
             {{ 'Add SPN' | translate }}

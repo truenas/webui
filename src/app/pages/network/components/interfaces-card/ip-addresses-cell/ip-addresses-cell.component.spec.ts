@@ -64,4 +64,20 @@ describe('IpAddressesCellComponent', () => {
     expect(addresses[0]).toHaveText('33.12.44.2/24');
     expect(addresses[1]).toHaveText('33.12.45.2/24');
   });
+
+  it('shows virtual addresses if any', () => {
+    spectator.component.setRow({
+      aliases: [],
+      failover_virtual_aliases: [
+        { address: '33.10.44.2', netmask: 24, type: NetworkInterfaceAliasType.Inet },
+        { address: '33.10.45.2', netmask: 24, type: NetworkInterfaceAliasType.Inet },
+      ],
+    } as NetworkInterface);
+    spectator.detectComponentChanges();
+
+    const addresses = spectator.queryAll('ul li');
+    expect(addresses).toHaveLength(2);
+    expect(addresses[0]).toHaveText('33.10.44.2/24 (VIP)');
+    expect(addresses[1]).toHaveText('33.10.45.2/24 (VIP)');
+  });
 });

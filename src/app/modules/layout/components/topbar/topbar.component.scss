@@ -1,9 +1,5 @@
 @import '../../../../../assets/styles/scss-imports/splitview';
 
-.fa-spin {
-  animation: fa-spin 2s infinite linear;
-}
-
 :host {
   position: fixed;
   top: 0;
@@ -44,47 +40,15 @@
   }
 }
 
-@keyframes fa-spin {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  100% {
-    transform: rotate(359deg);
-  }
-}
-
 .topbar {
   background-color: var(--topbar) !important;
   color: var(--topbar-txt) !important;
 }
 
-.ix-logo:focus-visible,
 .topbar button:focus-visible {
   background: var(--focus-bg);
   box-shadow: 0 0 0 1px var(--focus-brd) inset !important;
   outline-width: 0;
-}
-
-.ix-logo {
-  cursor: pointer;
-  fill: none !important;
-  height: 48px;
-  position: relative;
-  right: -10px;
-  top: 4px;
-  width: 175px;
-}
-
-.ix-logo.ix_full_logo,
-.ix-logo.ix_logomark {
-  fill: var(--topbar-txt) !important;
-}
-
-.ix-logo.xs {
-  height: 50px;
-  right: 0;
-  width: 50px;
 }
 
 ::ng-deep .topbar-button-right {
@@ -115,6 +79,7 @@
   .logomark {
     bottom: 10px;
     left: 10px;
+    max-width: 40px;
     position: absolute;
     top: 10px;
   }
@@ -122,6 +87,7 @@
   .logotype {
     bottom: 9px;
     left: 58px;
+    max-width: 96px;
     position: absolute;
     top: 10px;
   }

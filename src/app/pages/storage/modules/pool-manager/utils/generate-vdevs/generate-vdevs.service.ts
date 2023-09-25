@@ -109,7 +109,7 @@ export class GenerateVdevsService {
     const suitableDisks = this.groupedDisks.findSuitableDisks(category);
 
     if (suitableDisks.length < disksNeeded) {
-      throw new Error('Not enough disks to generate vdevs');
+      return [];
     }
 
     let pickedDisks: UnusedDisk[] = [];

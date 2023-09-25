@@ -19,7 +19,6 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { NgxDatatableModule } from '@siemens/ngx-datatable';
 import { NgChartsModule } from 'ng2-charts';
 import { NgxFilesizeModule } from 'ngx-filesize';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
@@ -41,18 +40,13 @@ import { GaugeChartComponent } from 'app/pages/storage/components/dashboard-pool
 import { PoolUsageCardComponent } from 'app/pages/storage/components/dashboard-pool/pool-usage-card/pool-usage-card.component';
 import { TopologyCardComponent } from 'app/pages/storage/components/dashboard-pool/topology-card/topology-card.component';
 import { ImportPoolComponent } from 'app/pages/storage/components/import-pool/import-pool.component';
-import { ExportedPoolsDialogComponent } from 'app/pages/storage/components/manager/exported-pools-dialog/exported-pools-dialog.component';
-import { ManagerComponent } from 'app/pages/storage/components/manager/manager.component';
-import {
-  RepeatVdevDialogComponent,
-} from 'app/pages/storage/components/manager/repeat-vdev-dialog/repeat-vdev-dialog.component';
-import { VdevComponent } from 'app/pages/storage/components/manager/vdev/vdev.component';
 import { PoolsDashboardComponent } from 'app/pages/storage/components/pools-dashboard/pools-dashboard.component';
 import {
   ManageUnusedDiskDialogComponent,
 } from 'app/pages/storage/components/unused-resources/unused-disk-card/manage-unused-disk-dialog/manage-unused-disk-dialog.component';
 import { UnusedDiskCardComponent } from 'app/pages/storage/components/unused-resources/unused-disk-card/unused-disk-card.component';
 import { UnusedResourcesComponent } from 'app/pages/storage/components/unused-resources/unused-resources.component';
+import { PoolManagerModule } from 'app/pages/storage/modules/pool-manager/pool-manager.module';
 import { routing } from 'app/pages/storage/storage.routing';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
 import { DashboardPoolComponent } from './components/dashboard-pool/dashboard-pool.component';
@@ -63,6 +57,7 @@ import { ZfsHealthCardComponent } from './components/dashboard-pool/zfs-health-c
 
 @NgModule({
   imports: [
+    PoolManagerModule,
     routing,
     IxTableModule,
     IxFormsModule,
@@ -81,7 +76,6 @@ import { ZfsHealthCardComponent } from './components/dashboard-pool/zfs-health-c
     FlexLayoutModule,
     ReactiveFormsModule,
     LayoutModule,
-    NgxDatatableModule,
     MatFormFieldModule,
     MatOptionModule,
     TooltipModule,
@@ -109,9 +103,6 @@ import { ZfsHealthCardComponent } from './components/dashboard-pool/zfs-health-c
     GaugeChartComponent,
     TopologyCardComponent,
     ImportPoolComponent,
-    VdevComponent,
-    ManagerComponent,
-    ExportedPoolsDialogComponent,
     ManageUnusedDiskDialogComponent,
     ZfsHealthCardComponent,
     UnusedDiskCardComponent,
@@ -120,7 +111,6 @@ import { ZfsHealthCardComponent } from './components/dashboard-pool/zfs-health-c
     ExportDisconnectModalComponent,
     DiskHealthCardComponent,
     AutotrimDialogComponent,
-    RepeatVdevDialogComponent,
     PoolCardIconComponent,
   ],
   providers: [

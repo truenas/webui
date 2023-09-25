@@ -1,0 +1,85 @@
+<mat-card>
+  <mat-toolbar-row>
+    <a [ixTest]="['iscsi-share', 'open-in-new']" [routerLink]="['/sharing', 'iscsi', 'target']">
+      <h3 class="card-title">
+        {{ 'Block (iSCSI) Shares Targets' | translate }}
+        <ix-icon name="open_in_new" class="title-icon"></ix-icon>
+      </h3>
+    </a>
+
+    <ix-service-state-button
+      [service]="service"
+      [count]="dataProvider.rows.length"
+    ></ix-service-state-button>
+
+    <div class="actions">
+      <button
+        mat-button
+        [ixTest]="['iscsi-share', 'configure']"
+        (click)="openForm(null, false)"
+      >{{ 'Configure' | translate }}</button>
+
+      <button
+        mat-button
+        [ixTest]="['iscsi-share', 'wizard']"
+        (click)="openForm(null, true)"
+      >{{ 'Wizard' | translate }}</button>
+
+      <ix-service-extra-actions
+        [service]="service"
+        (statusChanged)="statusChanged.emit($event)"
+      ></ix-service-extra-actions>
+    </div>
+  </mat-toolbar-row>
+
+  <ix-table2 class="table" [ix-table2-empty]="!dataProvider.rows.length && !isLoading">
+    <thead
+      ix-table-head
+      [columns]="columns"
+      [dataProvider]="dataProvider"
+    ></thead>
+    <tbody
+      ix-table-body
+      [columns]="columns"
+      [dataProvider]="dataProvider"
+      [isLoading]="isLoading"
+    >
+      <ng-template
+        let-iscsi
+        ix-table-cell
+        [columnIndex]="2"
+        [dataProvider]="dataProvider"
+      >
+        <div class="buttons">
+          <button
+            mat-icon-button
+            [ixTest]="[iscsi.id, 'edit']"
+            [matTooltip]="'Edit' | translate"
+            (click)="openForm(iscsi)"
+          >
+            <ix-icon name="edit"></ix-icon>
+          </button>
+          <button
+            mat-icon-button
+            [ixTest]="[iscsi.id, 'delete']"
+            [matTooltip]="'Delete' | translate"
+            (click)="doDelete(iscsi)"
+          >
+            <ix-icon name="delete"></ix-icon>
+          </button>
+        </div>
+      </ng-template>
+    </tbody>
+  </ix-table2>
+
+  <a
+    *ngIf="iscsiShares.length > 4"
+    class="view-all"
+    [ixTest]="['iscsi-share', 'view-all']"
+    [routerLink]="['/sharing', 'iscsi', 'target']"
+  >
+    <span>
+      {{ 'View All' | translate }}
+    </span>
+  </a>
+</mat-card>

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
-import { EMPTY, Observable } from 'rxjs';
+import { EMPTY, Observable, of } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
 import { VdevType } from 'app/enums/v-dev-type.enum';
 import { DeviceNestedDataNode, VDevGroup } from 'app/interfaces/device-nested-data-node.interface';
@@ -10,7 +10,7 @@ import { PoolTopology } from 'app/interfaces/pool.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { getTreeBranchToNode } from 'app/pages/datasets/utils/get-tree-branch-to-node.utils';
-import { WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 
 export interface DevicesState {
   isLoading: boolean;
@@ -33,7 +33,6 @@ const initialState: DevicesState = {
 @Injectable()
 export class DevicesStore extends ComponentStore<DevicesState> {
   readonly isLoading$ = this.select((state) => state.isLoading);
-  // TODO
   readonly error$ = this.select((state) => state.error);
   readonly nodes$ = this.select((state) => state.nodes);
   readonly diskDictionary$ = this.select((state) => state.diskDictionary);
@@ -77,7 +76,9 @@ export class DevicesStore extends ComponentStore<DevicesState> {
       switchMap((poolId) => {
         return this.ws.call('pool.query', [[['id', '=', poolId]]]).pipe(
           switchMap((pools) => {
-            // TODO: Handle pool not found.
+            if (!pools?.length) {
+              return of([]);
+            }
             return this.ws.call('disk.query', [[['pool', '=', pools[0].name]], { extra: { pools: true } }]).pipe(
               tap((disks) => {
                 this.patchState({

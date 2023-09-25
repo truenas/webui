@@ -63,7 +63,6 @@ describe('ManualDiskSelectionStore', () => {
       expectObservable(spectator.service.vdevs$).toBe('a', {
         a: [{
           disks: [],
-          rawSize: 0,
           uuid: 'first_vdev',
         }],
       });
@@ -76,7 +75,6 @@ describe('ManualDiskSelectionStore', () => {
         disk: unusedDisks[0],
         vdev: {
           disks: [],
-          rawSize: 0,
           uuid: 'first_vdev',
         },
       });
@@ -84,7 +82,6 @@ describe('ManualDiskSelectionStore', () => {
         disk: unusedDisks[1],
         vdev: {
           disks: [],
-          rawSize: 0,
           uuid: 'first_vdev',
         },
       });
@@ -97,7 +94,6 @@ describe('ManualDiskSelectionStore', () => {
             ...unusedDisks[1],
             vdevUuid: 'first_vdev',
           }],
-          rawSize: 0,
           uuid: 'first_vdev',
         }],
       });
@@ -109,7 +105,6 @@ describe('ManualDiskSelectionStore', () => {
       disk: unusedDisks[0],
       vdev: {
         disks: [],
-        rawSize: 0,
         uuid: 'first_vdev',
       },
     });
@@ -117,7 +112,6 @@ describe('ManualDiskSelectionStore', () => {
       disk: unusedDisks[1],
       vdev: {
         disks: [],
-        rawSize: 0,
         uuid: 'first_vdev',
       },
     });
@@ -134,7 +128,6 @@ describe('ManualDiskSelectionStore', () => {
             ...unusedDisks[1],
             vdevUuid: 'first_vdev',
           }],
-          rawSize: 0,
           uuid: 'first_vdev',
         }],
       });
@@ -144,7 +137,6 @@ describe('ManualDiskSelectionStore', () => {
   it('removes vdev', () => {
     spectator.service.removeVdev({
       disks: [],
-      rawSize: 0,
       uuid: 'first_vdev',
     });
     testScheduler.run(({ expectObservable }) => {

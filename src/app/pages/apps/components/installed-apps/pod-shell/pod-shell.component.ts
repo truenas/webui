@@ -14,7 +14,9 @@ import helptext from 'app/helptext/shell/shell';
 import { PodDialogFormValue } from 'app/interfaces/pod-select-dialog.interface';
 import { TerminalConfiguration } from 'app/interfaces/terminal.interface';
 import { PodSelectDialogComponent } from 'app/pages/apps/components/pod-select-dialog/pod-select-dialog.component';
-import { DialogService, ShellService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
+import { ShellService } from 'app/services/shell.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -98,7 +100,7 @@ export class PodShellComponent implements TerminalConfiguration {
     });
   }
 
-  onChooseShell(value: PodDialogFormValue): void {
+  onChooseShell(value: { [key: string]: string }): void {
     this.podName = value.pods;
     this.containerName = value.containers;
     this.command = value.command;

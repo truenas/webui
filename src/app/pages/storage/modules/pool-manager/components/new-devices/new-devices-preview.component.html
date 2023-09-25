@@ -1,0 +1,19 @@
+<mat-card class="card">
+  <mat-card-header>
+    <h3 mat-card-title>{{ 'New Devices' | translate }}</h3>
+  </mat-card-header>
+  <mat-card-content>
+    <div>
+
+      <div *ngFor="let category of topology$ | async | keyvalue" class="details-item">
+        <span class="label">
+          {{ category.key | mapValue: vdevTypeLabels | translate }}:
+        </span>
+        <span class="value">
+          {{ category.value | ixTopologyCategoryDescription: !isLimitedToOneLayout(category.key) }}
+        </span>
+      </div>
+
+    </div>
+  </mat-card-content>
+</mat-card>

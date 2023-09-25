@@ -88,7 +88,10 @@ export class StorageService {
     );
   }
 
-  // Handles sorting for entity tables and some other ngx datatables
+  /**
+   * @deprecated Handles sorting for entity tables and some other ngx datatables
+   */
+  // eslint-disable-next-line sonarjs/cognitive-complexity
   tableSorter<T>(arr: T[], key: keyof T, asc: SortDirection): T[] {
     const tempArr: unknown[] = [];
     let sorter: unknown[];
@@ -113,7 +116,7 @@ export class StorageService {
     // Regex checks for ' XiB' with a leading space and X === K, M, G or T
     // also include bytes unit, which will get from convertBytesToHumanReadable (IxFormatterService) function
     if (isStringArray(tempArr)
-      && (tempArr[n].slice(-2) === ' B' || /\s[KMGT]iB$/.test(tempArr[n].slice(-4)) || tempArr[n].slice(-6) === ' bytes')) {
+      && (tempArr[n].endsWith(' B') || /\s[KMGT]iB$/.test(tempArr[n].slice(-4)) || tempArr[n].endsWith(' bytes'))) {
       let bytes = [];
       let kbytes = [];
       let mbytes = [];
@@ -121,7 +124,7 @@ export class StorageService {
       let tbytes = [];
       for (const i of tempArr) {
         if (i) {
-          if (i.slice(-2) === ' B') {
+          if (i.endsWith(' B')) {
             bytes.push(i);
           } else {
             switch (i.slice(-3)) {
@@ -245,7 +248,7 @@ export class StorageService {
      * Strip leading forward slash if present
      * /zpool/d0 -> zpool/d0
      */
-    path = path.indexOf('/') === 0 ? path.substring(1) : path;
+    path = path.startsWith('/') ? path.substring(1) : path;
 
     return !path.includes('/');
   }

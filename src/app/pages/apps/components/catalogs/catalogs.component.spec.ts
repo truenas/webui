@@ -9,7 +9,7 @@ import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { CatalogsComponent } from 'app/pages/apps/components/catalogs/catalogs.component';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 
 const fakeCatalogDataSource: Catalog[] = [
   {

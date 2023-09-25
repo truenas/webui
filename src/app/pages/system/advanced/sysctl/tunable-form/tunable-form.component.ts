@@ -12,7 +12,7 @@ import { Tunable } from 'app/interfaces/tunable.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -71,7 +71,7 @@ export class TunableFormComponent implements OnInit {
       complete: () => {
         this.isFormLoading = false;
         this.cdr.markForCheck();
-        this.slideInRef.close();
+        this.slideInRef.close(true);
       },
       error: (error) => {
         this.isFormLoading = false;

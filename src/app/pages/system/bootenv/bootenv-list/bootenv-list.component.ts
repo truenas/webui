@@ -1,6 +1,6 @@
 import {
   AfterViewInit,
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, TemplateRef, ViewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MAT_SLIDE_TOGGLE_DEFAULT_OPTIONS } from '@angular/material/slide-toggle';
@@ -9,28 +9,28 @@ import { MatTableDataSource } from '@angular/material/table';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  Observable, BehaviorSubject, combineLatest, of, Subject,
+  Observable, BehaviorSubject, combineLatest, of,
 } from 'rxjs';
 import {
-  filter, map, tap, switchMap,
+  filter, switchMap,
 } from 'rxjs/operators';
 import { BootEnvironmentAction } from 'app/enums/boot-environment-action.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { helptextSystemBootenv } from 'app/helptext/system/boot-env';
 import { Bootenv } from 'app/interfaces/bootenv.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { IxCheckboxColumnComponent } from 'app/modules/ix-tables/components/ix-checkbox-column/ix-checkbox-column.component';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { BootPoolDeleteDialogComponent } from 'app/pages/system/bootenv/boot-pool-delete-dialog/boot-pool-delete-dialog.component';
 import { BootEnvironmentFormComponent } from 'app/pages/system/bootenv/bootenv-form/bootenv-form.component';
 import { BootenvStatsDialogComponent } from 'app/pages/system/bootenv/bootenv-stats-dialog/bootenv-stats-dialog.component';
-import { DialogService, WebSocketService, AppLoaderService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { LayoutService } from 'app/services/layout.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -42,7 +42,6 @@ import { LayoutService } from 'app/services/layout.service';
   ],
 })
 export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
-  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
   dataSource = new MatTableDataSource<Bootenv>([]);
   displayedColumns = ['select', 'name', 'active', 'created', 'rawspace', 'keep', 'actions'];
   @ViewChild(MatSort, { static: false }) sort: MatSort;
@@ -51,11 +50,11 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
 
   isLoading$ = new BehaviorSubject(false);
   isError$ = new BehaviorSubject(false);
-  fetchedData$ = new Subject<Bootenv[]>();
+  isNoData$ = new BehaviorSubject(false);
   emptyType$: Observable<EmptyType> = combineLatest([
     this.isLoading$,
     this.isError$,
-    this.fetchedData$.pipe(map((bootenvs) => bootenvs.length === 0)),
+    this.isNoData$,
   ]).pipe(
     switchMap(([isLoading, isError, isNoData]) => {
       if (isLoading) {
@@ -89,7 +88,6 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
     private cdr: ChangeDetectorRef,
     private matDialog: MatDialog,
     private slideInService: IxSlideInService,
-    private layoutService: LayoutService,
     private snackbar: SnackbarService,
     private emptyService: EmptyService,
   ) { }
@@ -100,10 +98,9 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.dataSource.sort = this.sort;
-    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
-  handleSlideInClosed(slideInRef: IxSlideInRef<unknown, unknown>): void {
+  handleSlideInClosed(slideInRef: IxSlideInRef<unknown>): void {
     slideInRef.slideInClosed$.pipe(
       filter((value) => value === true),
       untilDestroyed(this),
@@ -148,18 +145,15 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
       buttonText: this.translate.instant('Start Scrub'),
     }).pipe(
       filter(Boolean),
-      tap(() => this.loader.open()),
-      switchMap(() => this.ws.call('boot.scrub')),
+      switchMap(() => {
+        return this.ws.startJob('boot.scrub').pipe(
+          this.loader.withLoader(),
+          this.errorHandler.catchError(),
+        );
+      }),
       untilDestroyed(this),
-    ).subscribe({
-      next: () => {
-        this.loader.close();
-        this.snackbar.success(this.translate.instant('Scrub Started'));
-      },
-      error: (error: WebsocketError) => {
-        this.dialogService.error(this.errorHandler.parseWsError(error));
-        this.loader.close();
-      },
+    ).subscribe(() => {
+      this.snackbar.success(this.translate.instant('Scrub Started'));
     });
   }
 
@@ -195,8 +189,6 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
           return item.id;
       }
     };
-    this.isLoading$.next(false);
-    this.cdr.markForCheck();
   }
 
   private getBootEnvironments(): void {
@@ -205,11 +197,13 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
     this.cdr.markForCheck();
 
     this.ws.call('bootenv.query').pipe(
-      tap((bootenvs) => this.fetchedData$.next(bootenvs)),
       untilDestroyed(this),
     ).subscribe({
       next: (bootenvs) => {
+        this.isNoData$.next(!bootenvs.length);
         this.createDataSource(bootenvs);
+        this.isLoading$.next(false);
+        this.cdr.markForCheck();
       },
       error: () => {
         this.createDataSource();
@@ -227,19 +221,16 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
       buttonText: helptextSystemBootenv.list_dialog_activate_action,
     }).pipe(
       filter(Boolean),
-      tap(() => this.loader.open()),
-      switchMap(() => this.ws.call('bootenv.activate', [bootenv.id])),
+      switchMap(() => {
+        return this.ws.call('bootenv.activate', [bootenv.id]).pipe(
+          this.loader.withLoader(),
+          this.errorHandler.catchError(),
+        );
+      }),
       untilDestroyed(this),
-    ).subscribe({
-      next: () => {
-        this.getBootEnvironments();
-        this.loader.close();
-        this.checkboxColumn.clearSelection();
-      },
-      error: (error: WebsocketError) => {
-        this.dialogService.error(this.errorHandler.parseWsError(error));
-        this.loader.close();
-      },
+    ).subscribe(() => {
+      this.getBootEnvironments();
+      this.checkboxColumn.clearSelection();
     });
   }
 
@@ -250,22 +241,14 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
         message: this.translate.instant('Keep this Boot Environment?'),
         buttonText: this.translate.instant('Set Keep Flag'),
       }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-        this.loader.open();
         this.ws.call('bootenv.set_attribute', [bootenv.id, { keep: true }]).pipe(
+          this.loader.withLoader(),
+          this.errorHandler.catchError(),
           untilDestroyed(this),
-        ).subscribe(
-          {
-            next: () => {
-              this.getBootEnvironments();
-              this.loader.close();
-              this.checkboxColumn.clearSelection();
-            },
-            error: (error: WebsocketError) => {
-              this.dialogService.error(this.errorHandler.parseWsError(error));
-              this.loader.close();
-            },
-          },
-        );
+        ).subscribe(() => {
+          this.getBootEnvironments();
+          this.checkboxColumn.clearSelection();
+        });
       });
     } else {
       this.dialogService.confirm({
@@ -274,19 +257,16 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
         buttonText: this.translate.instant('Remove Keep Flag'),
       }).pipe(
         filter(Boolean),
-        tap(() => this.loader.open()),
-        switchMap(() => this.ws.call('bootenv.set_attribute', [bootenv.id, { keep: false }])),
+        switchMap(() => {
+          return this.ws.call('bootenv.set_attribute', [bootenv.id, { keep: false }]).pipe(
+            this.loader.withLoader(),
+            this.errorHandler.catchError(),
+          );
+        }),
         untilDestroyed(this),
-      ).subscribe({
-        next: () => {
-          this.getBootEnvironments();
-          this.loader.close();
-          this.checkboxColumn.selection.clear();
-        },
-        error: (error: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-          this.loader.close();
-        },
+      ).subscribe(() => {
+        this.getBootEnvironments();
+        this.checkboxColumn.selection.clear();
       });
     }
   }

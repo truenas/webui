@@ -1,12 +1,9 @@
 import {
-  AfterViewInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   OnDestroy,
   OnInit,
-  TemplateRef,
-  ViewChild,
 } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -18,7 +15,7 @@ import {
   BehaviorSubject, of, Subject, Subscription, timer,
 } from 'rxjs';
 import {
-  filter, map, take,
+  filter, map, take, tap,
 } from 'rxjs/operators';
 import { ixChartApp } from 'app/constants/catalog.constants';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
@@ -44,12 +41,12 @@ import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.com
 import { CustomUntypedFormField } from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
-import { forbiddenAsyncValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
+import { forbiddenAsyncValues, forbiddenValuesError } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
-import { AppLoaderService, DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { LayoutService } from 'app/services/layout.service';
 import { AppSchemaService } from 'app/services/schema/app-schema.service';
 
 @UntilDestroy()
@@ -58,9 +55,7 @@ import { AppSchemaService } from 'app/services/schema/app-schema.service';
   styleUrls: ['./chart-wizard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
-  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
-
+export class ChartWizardComponent implements OnInit, OnDestroy {
   appId: string;
   catalog: string;
   train: string;
@@ -115,7 +110,6 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
     private cdr: ChangeDetectorRef,
     private activatedRoute: ActivatedRoute,
     private appService: ApplicationsService,
-    private layoutService: LayoutService,
     private loader: AppLoaderService,
     private router: Router,
     private errorHandler: ErrorHandlerService,
@@ -146,10 +140,6 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  ngAfterViewInit(): void {
-    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
-  }
-
   ngOnDestroy(): void {
     if (this.subscription) {
       this.subscription.unsubscribe();
@@ -167,10 +157,9 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
   loadApplicationForCreation(): void {
     this.isNew = true;
     this.isLoading = true;
-    this.loader.open();
     this.appService
       .getCatalogItem(this.appId, this.catalog, this.train)
-      .pipe(untilDestroyed(this))
+      .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: (app) => {
           app.schema = app.versions[app.latest_version].schema;
@@ -227,9 +216,7 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
         const keys = fieldToBeDeleted.split('.');
         _.unset(data, keys);
       },
-      complete: () => {
-        this.saveData(data);
-      },
+      complete: () => this.saveData(data),
     });
 
     this.getFieldsHiddenOnForm(data, deleteField$);
@@ -241,8 +228,8 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
       data: {
         title: this.isNew ? helptext.installing : helptext.updating,
       },
+      disableClose: true,
     });
-    this.dialogRef.componentInstance.showCloseButton = false;
 
     if (this.isNew) {
       const version = data.version;
@@ -269,7 +256,6 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
     this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => this.onSuccess());
 
     this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((failedJob) => {
-      this.dialogRef.close();
       this.formErrorHandler.handleWsFormError(failedJob, this.form);
       this.cdr.markForCheck();
     });
@@ -306,10 +292,9 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
   private loadApplicationForEdit(): void {
     this.isNew = false;
     this.isLoading = true;
-    this.loader.open();
     this.appService
       .getChartRelease(this.appId)
-      .pipe(untilDestroyed(this))
+      .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: (releases) => {
           this.setChartForEdit(releases[0]);
@@ -390,6 +375,18 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     if (this.catalogApp.name !== ixChartApp) {
       this.form.patchValue({ release_name: this.catalogApp.name });
+      this.forbiddenAppNames$.pipe(
+        map((forbiddenNames) => {
+          return forbiddenValuesError(forbiddenNames, false, this.form.controls.release_name);
+        }),
+        tap((errors) => {
+          this.form.controls.release_name.setErrors(errors);
+          this.form.controls.release_name.markAsDirty();
+          this.form.controls.release_name.markAsTouched();
+          this.cdr.markForCheck();
+        }),
+        untilDestroyed(this),
+      ).subscribe();
     }
   }
 
@@ -423,13 +420,11 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
   private afterAppLoaded(): void {
     this.appsLoaded = true;
     this.isLoading = false;
-    this.loader.close();
     this.checkIfPoolIsSet();
     this.cdr.markForCheck();
   }
 
   private afterAppLoadError(error: WebsocketError): void {
-    this.loader.close();
     this.router.navigate(['/apps', 'available']).then(() => {
       this.dialogService.error(this.errorHandler.parseWsError(error));
     });
@@ -464,7 +459,7 @@ export class ChartWizardComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private addFormControls(chartSchemaNode: ChartSchemaNode): void {
     this.subscription.add(
-      this.appSchemaService.addFormControls({
+      this.appSchemaService.getNewFormControlChangesSubscription({
         chartSchemaNode,
         formGroup: this.form,
         config: this.config,

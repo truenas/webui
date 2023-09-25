@@ -3,7 +3,7 @@ import { map } from 'rxjs/operators';
 import { Option } from 'app/interfaces/option.interface';
 import { User } from 'app/interfaces/user.interface';
 import { IxComboboxProvider } from 'app/modules/ix-forms/components/ix-combobox/ix-combobox-provider';
-import { UserService } from 'app/services';
+import { UserService } from 'app/services/user.service';
 
 export class UserComboboxProvider implements IxComboboxProvider {
   private page = 1;
@@ -34,5 +34,8 @@ export class UserComboboxProvider implements IxComboboxProvider {
       );
   }
 
-  constructor(private userService: UserService, private optionsValueField: 'username' | 'id' = 'username') {}
+  constructor(
+    private userService: UserService,
+    private optionsValueField: 'username' | 'uid' | 'id' = 'username',
+  ) {}
 }

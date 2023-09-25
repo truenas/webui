@@ -7,19 +7,19 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { MailSecurity } from 'app/enums/mail-security.enum';
-import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemEmail } from 'app/helptext/system/email';
 import { GmailOauthConfig, MailConfig, MailConfigUpdate } from 'app/interfaces/mail-config.interface';
-import { OauthMessage } from 'app/interfaces/oauth-message.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { portRangeValidator } from 'app/modules/ix-forms/validators/range-validation/range-validation';
+import { OauthButtonType } from 'app/modules/oauth-button/interfaces/oauth-button.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { DialogService } from 'app/services/dialog.service';
+import { SystemGeneralService } from 'app/services/system-general.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 enum SendMethod {
   Smtp = 'smtp',
@@ -55,6 +55,7 @@ export class EmailFormComponent implements OnInit {
 
   isLoading = false;
 
+  readonly oauthType = OauthButtonType;
   readonly sendMethodOptions$ = of([
     {
       label: helptextSystemEmail.send_mail_method.smtp.placeholder,
@@ -79,7 +80,6 @@ export class EmailFormComponent implements OnInit {
   constructor(
     private ws: WebSocketService,
     private dialogService: DialogService,
-    private errorHandler: ErrorHandlerService,
     private formErrorHandler: FormErrorHandlerService,
     private formBuilder: FormBuilder,
     private cdr: ChangeDetectorRef,
@@ -89,7 +89,6 @@ export class EmailFormComponent implements OnInit {
     private snackbar: SnackbarService,
     private systemGeneralService: SystemGeneralService,
     private slideInRef: IxSlideInRef<EmailFormComponent>,
-    @Inject(WINDOW) private window: Window,
     @Inject(SLIDE_IN_DATA) private emailConfig: MailConfig,
   ) {}
 
@@ -132,28 +131,8 @@ export class EmailFormComponent implements OnInit {
     });
   }
 
-  onLoginToGmailPressed(): void {
-    this.window.open(
-      'https://truenas.com/oauth/gmail?origin=' + encodeURIComponent(this.window.location.toString()),
-      '_blank',
-      'width=640,height=480',
-    );
-
-    const authenticationListener = (message: OauthMessage<GmailOauthConfig>): void => {
-      if (message.data.oauth_portal) {
-        if (message.data.error) {
-          this.dialogService.error({
-            title: this.translate.instant('Error'),
-            message: message.data.error,
-          });
-        } else {
-          this.oauthCredentials = message.data.result;
-          this.cdr.markForCheck();
-        }
-      }
-      this.window.removeEventListener('message', authenticationListener);
-    };
-    this.window.addEventListener('message', authenticationListener, false);
+  onLoggedIn(credentials: GmailOauthConfig): void {
+    this.oauthCredentials = credentials;
   }
 
   onSubmit(): void {

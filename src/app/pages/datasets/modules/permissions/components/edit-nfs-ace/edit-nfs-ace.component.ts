@@ -27,7 +27,7 @@ import { GroupComboboxProvider } from 'app/modules/ix-forms/classes/group-combob
 import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
 import { newNfsAce } from 'app/pages/datasets/modules/permissions/utils/new-ace.utils';
-import { UserService } from 'app/services';
+import { UserService } from 'app/services/user.service';
 import {
   NfsFormFlagsType,
   nfsFormFlagsTypeLabels,
@@ -106,12 +106,12 @@ export class EditNfsAceComponent implements OnChanges, OnInit {
     return this.form.value.flagsType === NfsFormFlagsType.Basic;
   }
 
-  ngOnInit(): void {
-    this.setFormListeners();
+  ngOnChanges(): void {
     this.updateFormValues();
   }
 
-  ngOnChanges(): void {
+  ngOnInit(): void {
+    this.setFormListeners();
     this.updateFormValues();
   }
 

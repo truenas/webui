@@ -17,7 +17,7 @@ import { NestedTreeDataSource } from 'app/modules/ix-tree/nested-tree-datasource
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { BootPoolAttachDialogComponent } from 'app/pages/system/bootenv/boot-pool-attach/boot-pool-attach-dialog.component';
 import { BootPoolReplaceDialogComponent } from 'app/pages/system/bootenv/boot-pool-replace/boot-pool-replace-dialog.component';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -106,21 +106,19 @@ export class BootStatusListComponent implements OnInit {
 
   detach(diskPath: string): void {
     const disk = diskPath.substring(5, diskPath.length);
-    this.loader.open();
-    this.ws.call('boot.detach', [disk]).pipe(untilDestroyed(this)).subscribe({
-      next: () => {
-        this.loader.close();
+    this.ws.call('boot.detach', [disk])
+      .pipe(
+        this.loader.withLoader(),
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
         this.router.navigate(['/', 'system', 'boot']);
         this.dialogService.info(
           this.translate.instant('Device detached'),
           this.translate.instant('<i>{disk}</i> has been detached.', { disk }),
         );
-      },
-      error: (error: WebsocketError) => {
-        this.loader.close();
-        this.dialogService.error(this.errorHandler.parseWsError(error));
-      },
-    });
+      });
   }
 
   doAction(event: BootPoolActionEvent): void {

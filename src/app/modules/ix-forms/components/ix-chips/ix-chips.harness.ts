@@ -1,6 +1,7 @@
 import {
   BaseHarnessFilters, ComponentHarness, HarnessPredicate, parallel, TestKey,
 } from '@angular/cdk/testing';
+import { MatAutocompleteHarness } from '@angular/material/autocomplete/testing';
 import {
   MatChipGridHarness,
   MatChipHarness,
@@ -23,6 +24,7 @@ export class IxChipsHarness extends ComponentHarness implements IxFormControlHar
   }
 
   getMatChipListHarness = this.locatorFor(MatChipGridHarness);
+  getAutoCompleteHarness = this.locatorFor(MatAutocompleteHarness);
   getMatChips = this.locatorForAll(MatChipHarness);
   getErrorText = getErrorText;
 
@@ -32,6 +34,14 @@ export class IxChipsHarness extends ComponentHarness implements IxFormControlHar
       return '';
     }
     return label.getLabel();
+  }
+
+  async selectSuggestionValue(value: string): Promise<void> {
+    await this.setValue([value]);
+    const harness = (await this.getAutoCompleteHarness());
+
+    await harness.focus();
+    await harness.selectOption({ text: value });
   }
 
   async getValue(): Promise<string[]> {

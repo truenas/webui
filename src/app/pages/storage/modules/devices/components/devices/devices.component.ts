@@ -10,8 +10,6 @@ import {
   Component,
   OnInit,
   AfterViewInit,
-  TemplateRef,
-  ViewChild,
   Inject,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -27,7 +25,6 @@ import {
 import { NestedTreeDataSource } from 'app/modules/ix-tree/nested-tree-datasource';
 import { flattenTreeWithFilter } from 'app/modules/ix-tree/utils/flattern-tree-with-filter';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
-import { LayoutService } from 'app/services/layout.service';
 
 const raidzItems = [TopologyItemType.Raidz, TopologyItemType.Raidz1, TopologyItemType.Raidz2, TopologyItemType.Raidz3];
 
@@ -38,8 +35,6 @@ const raidzItems = [TopologyItemType.Raidz, TopologyItemType.Raidz1, TopologyIte
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DevicesComponent implements OnInit, AfterViewInit {
-  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
-
   isLoading$ = this.devicesStore.isLoading$;
   selectedNode$ = this.devicesStore.selectedNode$;
   selectedParentNode$ = this.devicesStore.selectedParentNode$;
@@ -68,7 +63,6 @@ export class DevicesComponent implements OnInit, AfterViewInit {
 
   constructor(
     private router: Router,
-    private layoutService: LayoutService,
     private cdr: ChangeDetectorRef,
     private route: ActivatedRoute,
     private devicesStore: DevicesStore,
@@ -103,8 +97,6 @@ export class DevicesComponent implements OnInit, AfterViewInit {
         }
         this.cdr.detectChanges();
       });
-
-    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
   onRowGroupSelected(dataNodeSelected: DeviceNestedDataNode, _: MouseEvent): void {
@@ -199,8 +191,8 @@ export class DevicesComponent implements OnInit, AfterViewInit {
       filter(Boolean),
       untilDestroyed(this),
     ).subscribe((guid) => {
-      this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
       this.devicesStore.selectNodeByGuid(guid);
+      this.cdr.markForCheck();
     });
   }
 

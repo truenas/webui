@@ -39,8 +39,10 @@ import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { TreeDataSource } from 'app/modules/ix-tree/tree-datasource';
 import { TreeFlattener } from 'app/modules/ix-tree/tree-flattener';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import { WebSocketService, DialogService } from 'app/services';
+import { datasetNameSortComparer } from 'app/pages/datasets/utils/dataset.utils';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectIsSystemHaCapable } from 'app/store/system-info/system-info.selectors';
 
@@ -259,12 +261,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
 
       return uniqBy(result, 'id');
     };
-    this.dataSource.sortComparer = (a, b) => {
-      return new Intl.Collator(undefined, {
-        numeric: true,
-        sensitivity: 'accent',
-      }).compare(a.name, b.name);
-    };
+    this.dataSource.sortComparer = datasetNameSortComparer;
     this.dataSource.data = datasets;
   }
 

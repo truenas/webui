@@ -15,7 +15,7 @@ import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
-import { AppLoaderService, DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 
 describe('SelectPoolDialogComponent', () => {
   let spectator: Spectator<SelectPoolDialogComponent>;
@@ -30,6 +30,7 @@ describe('SelectPoolDialogComponent', () => {
     providers: [
       mockProvider(KubernetesStore, {
         updatePoolAndKubernetesConfig: jest.fn(() => of()),
+        updateSelectedPool: jest.fn(() => of()),
       }),
       mockProvider(ApplicationsService, {
         getKubernetesConfig: jest.fn(() => of({})),
@@ -45,7 +46,6 @@ describe('SelectPoolDialogComponent', () => {
         open: jest.fn(() => mockEntityJobComponentRef),
       }),
       mockProvider(MatDialogRef),
-      mockProvider(AppLoaderService),
       mockProvider(Router),
     ],
   });
@@ -54,6 +54,9 @@ describe('SelectPoolDialogComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
+
+    const kubernetesStore = spectator.inject(KubernetesStore);
+    jest.spyOn(kubernetesStore, 'updatePoolAndKubernetesConfig').mockReturnValue(of({}));
   });
 
   it('loads pools available in system and shows them in the dropdown', async () => {

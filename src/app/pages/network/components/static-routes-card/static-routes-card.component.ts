@@ -1,6 +1,5 @@
 import {
-  AfterViewInit,
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, TemplateRef, ViewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -17,9 +16,8 @@ import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { StaticRouteDeleteDialogComponent } from 'app/pages/network/components/static-route-delete-dialog/static-route-delete-dialog.component';
 import { StaticRouteFormComponent } from 'app/pages/network/components/static-route-form/static-route-form.component';
-import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { LayoutService } from 'app/services/layout.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -28,9 +26,7 @@ import { LayoutService } from 'app/services/layout.service';
   styleUrls: ['./static-routes-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class StaticRoutesCardComponent implements OnInit, AfterViewInit {
-  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
-
+export class StaticRoutesCardComponent implements OnInit {
   filterString = '';
   dataProvider = new ArrayDataProvider<StaticRoute>();
   staticRoutes: StaticRoute[] = [];
@@ -76,7 +72,6 @@ export class StaticRoutesCardComponent implements OnInit, AfterViewInit {
     private matDialog: MatDialog,
     private ws: WebSocketService,
     private slideInService: IxSlideInService,
-    private layoutService: LayoutService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
     protected emptyService: EmptyService,
@@ -121,10 +116,6 @@ export class StaticRoutesCardComponent implements OnInit, AfterViewInit {
       direction: SortDirection.Asc,
       propertyName: 'destination',
     });
-  }
-
-  ngAfterViewInit(): void {
-    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
   doAdd(): void {

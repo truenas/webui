@@ -1,10 +1,9 @@
 import {
-  Component, ChangeDetectionStrategy, ChangeDetectorRef, Input, Inject,
+  Component, ChangeDetectionStrategy, ChangeDetectorRef, Input,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
-import { WINDOW } from 'app/helpers/window.helper';
-import { OauthJiraMessage } from 'app/interfaces/support.interface';
+import { OauthButtonType } from 'app/modules/oauth-button/interfaces/oauth-button.interface';
 
 @Component({
   selector: 'ix-jira-oauth',
@@ -24,16 +23,21 @@ export class JiraOauthComponent implements ControlValueAccessor {
   onChange: (value: string) => void = (): void => {};
   onTouch: () => void = (): void => {};
 
+  readonly oauthType = OauthButtonType;
+
   writeValue(value: string): void {
     this.value = value;
     this.cdr.markForCheck();
+  }
+
+  get hasOauthAuthorization(): boolean {
+    return Boolean(this.value?.length);
   }
 
   constructor(
     public controlDirective: NgControl,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
-    @Inject(WINDOW) private window: Window,
   ) {
     this.controlDirective.valueAccessor = this;
   }
@@ -46,26 +50,8 @@ export class JiraOauthComponent implements ControlValueAccessor {
     this.onTouch = onTouched;
   }
 
-  initSession(): void {
-    const authFn = (message: OauthJiraMessage): void => this.doAuth(message);
-
-    this.window.removeEventListener('message', authFn, false);
-    this.window.open('https://support-proxy.ixsystems.com/oauth/initiate?origin=' + encodeURIComponent(this.window.location.toString()), '_blank', 'width=640,height=480');
-    this.window.addEventListener('message', authFn, false);
-  }
-
-  doAuth(message: OauthJiraMessage): void {
-    const token = message.data as string;
-    this.input(token);
-    this.cdr.markForCheck();
-  }
-
   shouldShowResetInput(): boolean {
-    return this.hasValue();
-  }
-
-  hasValue(): boolean {
-    return Boolean(this.value?.length);
+    return this.hasOauthAuthorization;
   }
 
   setDisabledState?(isDisabled: boolean): void {

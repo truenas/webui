@@ -8,9 +8,17 @@
       "model": "M40",
       "systemProduct": "TRUENAS-M40"
     },
+    "R10": {
+      "model": "R10",
+      "systemProduct": "TRUENAS-R10"
+    },
     "R20": {
       "model": "R20",
       "systemProduct": "TRUENAS-R20"
+    },
+    "R30": {
+      "model": "R30",
+      "systemProduct": "TRUENAS-R30"
     },
     "R40": {
       "model": "R40",
@@ -24,14 +32,42 @@
       "model": "MINI-R",
       "systemProduct": "TRUENAS-MINI-R"
     },
+    "MINI-X": {
+      "model": "MINI-3.0-X",
+      "systemProduct": "TRUENAS-MINI-3.0-X"
+    },
+    "MINI-X+": {
+      "model": "MINI-3.0-X+",
+      "systemProduct": "TRUENAS-MINI-3.0-X+"
+    },
+    "MINI-E+": {
+      "model": "MINI-3.0-E+",
+      "systemProduct": "TRUENAS-MINI-3.0-E+"
+    },
     "MINI-XL+": {
       "model": "MINI-3.0-XL+",
       "systemProduct": "TRUENAS-MINI-3.0-XL+"
+    },
+    "F60": {
+      "model": "F60",
+      "systemProduct": "TRUENAS-F60-HA"
     }
   },
   "shelves": {
+    "ES12": {
+      "model": "ES12"
+    },
+    "E16": {
+      "model": "E16"
+    },
+    "E24": {
+      "model": "E24"
+    },
     "ES24": {
       "model": "ES24"
+    },
+    "ES60": {
+      "model": "ES60"
     },
     "ES102": {
       "model": "ES102"

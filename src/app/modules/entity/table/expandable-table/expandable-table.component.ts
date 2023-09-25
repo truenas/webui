@@ -70,6 +70,10 @@ export class ExpandableTableComponent implements OnInit, AfterViewChecked {
     };
   }
 
+  ngOnInit(): void {
+    this.populateTable();
+  }
+
   ngAfterViewChecked(): void {
     if (!this.isExpanded) {
       return;
@@ -94,9 +98,5 @@ export class ExpandableTableComponent implements OnInit, AfterViewChecked {
         this.tableConf = { ...this.tableConf };
       }
     }
-  }
-
-  ngOnInit(): void {
-    this.populateTable();
   }
 }

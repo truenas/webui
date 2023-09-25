@@ -1,6 +1,4 @@
-import {
-  AfterViewInit, Component, TemplateRef, ViewChild,
-} from '@angular/core';
+import { Component } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -13,7 +11,7 @@ import { VmBootloader, VmDeviceType } from 'app/enums/vm.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/vm/vm-list';
 import wizardHelptext from 'app/helptext/vm/vm-wizard/vm-wizard';
-import { ApiParams } from 'app/interfaces/api-directory.interface';
+import { ApiCallParams } from 'app/interfaces/api/api-call-directory.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import {
   VirtualizationDetails,
@@ -24,19 +22,20 @@ import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.com
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { VmEditFormComponent } from 'app/pages/vm/vm-edit-form/vm-edit-form.component';
 import { CloneVmDialogComponent } from 'app/pages/vm/vm-list/clone-vm-dialog/clone-vm-dialog.component';
 import { DeleteVmDialogComponent } from 'app/pages/vm/vm-list/delete-vm-dialog/delete-vm-dialog.component';
-import { DisplayVmDialogComponent } from 'app/pages/vm/vm-list/display-vm-dialog/display-vm-dialog.component';
 import { StopVmDialogComponent } from 'app/pages/vm/vm-list/stop-vm-dialog/stop-vm-dialog.component';
 import { VirtualMachineRow } from 'app/pages/vm/vm-list/virtual-machine-row.interface';
 import { VmWizardComponent } from 'app/pages/vm/vm-wizard/vm-wizard.component';
-import {
-  WebSocketService, StorageService, AppLoaderService, DialogService, VmService, SystemGeneralService,
-} from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { LayoutService } from 'app/services/layout.service';
+import { StorageService } from 'app/services/storage.service';
+import { SystemGeneralService } from 'app/services/system-general.service';
+import { VmService } from 'app/services/vm.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 const noMemoryError = 'ENOMEM';
 
@@ -46,9 +45,7 @@ const noMemoryError = 'ENOMEM';
   styleUrls: ['./vm-list.component.scss'],
   providers: [VmService],
 })
-export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, AfterViewInit {
-  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
-
+export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
   title = this.translate.instant('Virtual Machines');
   queryCall = 'vm.query' as const;
   wsDelete = 'vm.delete' as const;
@@ -111,7 +108,6 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, Af
     private errorHandler: ErrorHandlerService,
     private vmService: VmService,
     private translate: TranslateService,
-    private layoutService: LayoutService,
     private systemGeneralService: SystemGeneralService,
     private slideInService: IxSlideInService,
   ) {}
@@ -153,10 +149,6 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, Af
         },
       );
     });
-  }
-
-  ngAfterViewInit(): void {
-    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
   getCustomEmptyConfig(emptyType: EmptyType): EmptyConfig {
@@ -262,10 +254,10 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, Af
       });
   }
 
-  doRowAction<T extends 'vm.start' | 'vm.update' | 'vm.restart' | 'vm.poweroff'>(
+  doRowAction<T extends 'vm.start' | 'vm.update' | 'vm.poweroff'>(
     row: VirtualMachineRow,
     method: T,
-    params: ApiParams<T> = [row.id],
+    params: ApiCallParams<T> = [row.id],
     updateTable = false,
   ): void {
     this.loader.open();
@@ -328,7 +320,19 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, Af
       icon: 'replay',
       label: this.translate.instant('Restart'),
       onClick: (vm: VirtualMachineRow) => {
-        this.doRowAction(vm, this.wsMethods.restart);
+        this.loader.open();
+        this.ws.startJob(this.wsMethods.restart, [vm.id]).pipe(untilDestroyed(this)).subscribe({
+          complete: () => {
+            this.updateRows([row]).then(() => {
+              this.loader.close();
+            });
+            this.checkMemory();
+          },
+          error: (error: WebsocketError) => {
+            this.loader.close();
+            this.dialogService.error(this.errorHandler.parseWsError(error));
+          },
+        });
       },
     },
     {
@@ -409,9 +413,8 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, Af
       onClick: (vm: VirtualMachineRow) => {
         this.loader.open();
         this.ws.call('vm.get_display_devices', [vm.id]).pipe(untilDestroyed(this)).subscribe({
-          next: (displayDevices) => {
-            this.loader.close();
-            this.dialog.open(DisplayVmDialogComponent, { data: { vm, displayDevices } });
+          next: () => {
+            this.vmService.openDisplayWebUri(vm.id);
           },
           error: (error: WebsocketError) => {
             this.loader.close();

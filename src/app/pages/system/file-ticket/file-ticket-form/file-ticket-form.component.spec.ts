@@ -18,9 +18,10 @@ import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { JobItemComponent } from 'app/modules/jobs/components/job-item/job-item.component';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { FileTicketFormComponent } from 'app/pages/system/file-ticket/file-ticket-form/file-ticket-form.component';
-import { DialogService, SystemGeneralService } from 'app/services';
 import { AuthService } from 'app/services/auth/auth.service';
+import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { JiraOauthComponent } from './components/jira-oauth/jira-oauth.component';
 
@@ -28,6 +29,11 @@ describe('FileTicketFormComponent', () => {
   let spectator: Spectator<FileTicketFormComponent>;
   let loader: HarnessLoader;
   let ws: WebSocketService;
+
+  const mockToken = JSON.stringify({
+    oauth_token: 'mock.oauth.token',
+    oauth_token_secret: 'mock.oauth.token.secret',
+  });
 
   const mockNewTicketResponse = {
     ticket: 123456789,
@@ -70,7 +76,7 @@ describe('FileTicketFormComponent', () => {
       mockProvider(IxSlideInService),
       mockProvider(FormErrorHandlerService),
       mockProvider(SystemGeneralService, {
-        getTokenForJira: jest.fn(() => 'token.is.mocked'),
+        getTokenForJira: jest.fn(() => mockToken),
         setTokenForJira: jest.fn(),
       }),
       mockProvider(IxSlideInRef),
@@ -90,7 +96,7 @@ describe('FileTicketFormComponent', () => {
 
     expect(values).toEqual(
       {
-        Token: 'token.is.mocked',
+        Token: mockToken,
         'Attach screenshots': [],
         Category: '',
         Subject: '',
@@ -99,13 +105,13 @@ describe('FileTicketFormComponent', () => {
         'Attach Debug': false,
       },
     );
-    expect(ws.call).toHaveBeenCalledWith('support.fetch_categories', ['token.is.mocked']);
+    expect(ws.call).toHaveBeenCalledWith('support.fetch_categories', [mockToken]);
   });
 
   it('sends a create payload to websocket', async () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
-      Token: 'token.is.mocked',
+      Token: mockToken,
       Category: 'WebUI',
       Subject: 'Test subject',
       Body: 'Testing ticket body',
@@ -119,7 +125,7 @@ describe('FileTicketFormComponent', () => {
       body: 'Testing ticket body',
       category: '10004',
       title: 'Test subject',
-      token: 'token.is.mocked',
+      token: mockToken,
       type: 'BUG',
     }]);
 

@@ -10,7 +10,7 @@
   </mat-toolbar-row>
   <mat-card-content>
     <ix-table2
-      [ix-table-empty]="!dataProvider.rows.length"
+      [ix-table2-empty]="!dataProvider.rows.length"
       [emptyConfig]="emptyService.defaultEmptyConfig(emptyType$ | async)"
     >
       <thead
@@ -24,10 +24,10 @@
         [dataProvider]="dataProvider"
       >
         <ng-template
+          let-route
           ix-table-cell
           [columnIndex]="2"
           [dataProvider]="dataProvider"
-          let-route
         >
           <div class="actions">
             <button

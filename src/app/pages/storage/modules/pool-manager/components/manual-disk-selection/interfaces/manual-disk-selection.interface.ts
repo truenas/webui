@@ -8,5 +8,4 @@ export interface ManualSelectionDisk extends UnusedDisk {
 export interface ManualSelectionVdev {
   disks: ManualSelectionDisk[];
   uuid?: string;
-  rawSize: number;
 }

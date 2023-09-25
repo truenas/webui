@@ -15,7 +15,7 @@ import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-sli
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { rangeValidator } from 'app/modules/ix-forms/validators/range-validation/range-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -26,18 +26,15 @@ import { WebSocketService } from 'app/services/ws.service';
 export class ReportsConfigFormComponent implements OnInit {
   isFormLoading = true;
   tooltips = {
-    graphite: helptext.graphite_tooltip,
     graph_age: helptext.graph_age_tooltip,
     graph_points: helptext.graph_points_tooltip,
   };
   userValues: ReportingConfigUpdate;
   readonly defaultValues: ReportingConfigUpdate = {
-    graphite: '',
     graph_age: 12,
     graph_points: 1200,
   };
   form = this.fb.group({
-    graphite: [this.defaultValues.graphite, []],
     graph_age: [this.defaultValues.graph_age, [Validators.required, rangeValidator(1, 60)]],
     graph_points: [this.defaultValues.graph_points, [Validators.required, rangeValidator(1, 4096)]],
   });

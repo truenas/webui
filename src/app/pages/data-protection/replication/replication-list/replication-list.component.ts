@@ -1,23 +1,25 @@
 import { DatePipe } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, ChangeDetectorRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import { formatDistanceToNow } from 'date-fns';
 import {
   filter, switchMap, tap,
 } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
+import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import globalHelptext from 'app/helptext/global-helptext';
 import { Job } from 'app/interfaces/job.interface';
+import { QueryParams } from 'app/interfaces/query-api.interface';
 import { ReplicationTask, ReplicationTaskUi } from 'app/interfaces/replication-task.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ShowLogsDialogComponent } from 'app/modules/common/dialog/show-logs-dialog/show-logs-dialog.component';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
-import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
@@ -25,17 +27,14 @@ import {
   ReplicationRestoreDialogComponent,
 } from 'app/pages/data-protection/replication/replication-restore-dialog/replication-restore-dialog.component';
 import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
-import {
-  DialogService,
-  StorageService,
-  TaskService,
-  KeychainCredentialService,
-  ReplicationService,
-} from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { KeychainCredentialService } from 'app/services/keychain-credential.service';
+import { ReplicationService } from 'app/services/replication.service';
+import { StorageService } from 'app/services/storage.service';
+import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
 
 @UntilDestroy()
 @Component({
@@ -55,6 +54,7 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
   routeAdd: string[] = ['tasks', 'replication', 'wizard'];
   routeEdit: string[] = ['tasks', 'replication', 'edit'];
   routeSuccess: string[] = ['tasks', 'replication'];
+  queryCallOption: QueryParams<void> = [[], { extra: { check_dataset_encryption_keys: true } }];
   entityList: EntityTableComponent<ReplicationTaskUi>;
   filterValue = '';
 
@@ -68,6 +68,7 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
     { name: this.translate.instant('Recursive'), prop: 'recursive', hidden: true },
     { name: this.translate.instant('Auto'), prop: 'auto', hidden: true },
     { name: this.translate.instant('Enabled'), prop: 'enabled', checkbox: true },
+    { name: this.translate.instant('Last Run'), prop: 'last_run', hidden: true },
     {
       name: this.translate.instant('State'), prop: 'state', button: true, state: 'state',
     },
@@ -85,16 +86,16 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
 
   constructor(
     private ws: WebSocketService,
-    private dialog: DialogService,
+    private dialogService: DialogService,
     protected loader: AppLoaderService,
     private slideInService: IxSlideInService,
     private translate: TranslateService,
     private matDialog: MatDialog,
     private errorHandler: ErrorHandlerService,
     private route: ActivatedRoute,
-    private store$: Store<AppState>,
     private snackbar: SnackbarService,
     private cdr: ChangeDetectorRef,
+    private storage: StorageService,
   ) {
     this.filterValue = this.route.snapshot.paramMap.get('dataset') || '';
   }
@@ -107,32 +108,36 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
     return tasks.map((task) => {
       return {
         ...task,
+        last_run:
+          task.job?.time_finished?.$date
+            ? formatDistanceToNow(task.job?.time_finished?.$date, { addSuffix: true })
+            : this.translate.instant('N/A'),
         ssh_connection: task.ssh_credentials ? task.ssh_credentials.name : '-',
-        task_last_snapshot: task.state.last_snapshot ? task.state.last_snapshot : this.translate.instant('No snapshots sent yet'),
+        task_last_snapshot:
+          task.state.last_snapshot ? task.state.last_snapshot : this.translate.instant('No snapshots sent yet'),
       };
     });
   }
 
   getActions(parentrow: ReplicationTaskUi): EntityTableAction[] {
-    return [
+    const actions: EntityTableAction[] =  [
       {
         id: parentrow.name,
         icon: 'play_arrow',
         name: 'run',
         label: this.translate.instant('Run Now'),
         onClick: (row: ReplicationTaskUi) => {
-          this.dialog.confirm({
+          this.dialogService.confirm({
             title: this.translate.instant('Run Now'),
             message: this.translate.instant('Replicate «{name}» now?', { name: row.name }),
             hideCheckbox: true,
           }).pipe(
             filter(Boolean),
             tap(() => row.state = { state: JobState.Running }),
-            switchMap(() => this.ws.call('replication.run', [row.id])),
-            tap(() => this.snackbar.success(
+            switchMap(() => this.ws.job('replication.run', [row.id])),
+            tapOnce(() => this.snackbar.success(
               this.translate.instant('Replication «{name}» has started.', { name: row.name }),
             )),
-            switchMap((id: number) => this.store$.select(selectJob(id)).pipe(filter(Boolean))),
             untilDestroyed(this),
           ).subscribe({
             next: (job: Job) => {
@@ -140,8 +145,8 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
               row.job = { ...job };
               this.cdr.markForCheck();
             },
-            error: (err: WebsocketError) => {
-              this.dialog.error(this.errorHandler.parseWsError(err));
+            error: (error: Job) => {
+              this.dialogService.error(this.errorHandler.parseJobError(error));
             },
           });
         },
@@ -174,16 +179,46 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
           this.doEdit(row.id);
         },
       },
-      {
-        id: parentrow.name,
-        icon: 'delete',
-        name: 'delete',
-        label: this.translate.instant('Delete'),
-        onClick: (row: ReplicationTaskUi) => {
-          this.entityList.doDelete(row);
-        },
-      },
     ];
+    if (parentrow.has_encrypted_dataset_keys) {
+      actions.push({
+        id: parentrow.name,
+        icon: 'download',
+        name: 'download_keys',
+        label: this.translate.instant('Download keys'),
+        onClick: (row) => {
+          this.loader.open();
+          this.ws.call('core.download', ['pool.dataset.export_keys_for_replication', [row.id], `${row.name}_encryption_keys.json`]).pipe(untilDestroyed(this)).subscribe({
+            next: ([, url]) => {
+              this.loader.close();
+              const mimetype = 'application/json';
+              this.storage.streamDownloadFile(url, `${row.name}_encryption_keys.json`, mimetype).pipe(untilDestroyed(this)).subscribe({
+                next: (file) => {
+                  this.storage.downloadBlob(file, `${row.name}_encryption_keys.json`);
+                },
+                error: (err: HttpErrorResponse) => {
+                  this.dialogService.error(this.errorHandler.parseHttpError(err));
+                },
+              });
+            },
+            error: (err) => {
+              this.loader.close();
+              this.dialogService.error(this.errorHandler.parseWsError(err));
+            },
+          });
+        },
+      });
+    }
+    actions.push({
+      id: parentrow.name,
+      icon: 'delete',
+      name: 'delete',
+      label: this.translate.instant('Delete'),
+      onClick: (row: ReplicationTaskUi) => {
+        this.entityList.doDelete(row);
+      },
+    });
+    return actions;
   }
 
   onButtonClick(row: ReplicationTaskUi): void {
@@ -208,23 +243,23 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
         });
         dialogRef.componentInstance.aborted.pipe(untilDestroyed(this)).subscribe(() => {
           dialogRef.close();
-          this.dialog.info(this.translate.instant('Task Aborted'), '');
+          this.dialogService.info(this.translate.instant('Task Aborted'), '');
         });
       } else if (row.state.state === JobState.Hold) {
-        this.dialog.info(this.translate.instant('Task is on hold'), row.state.reason);
+        this.dialogService.info(this.translate.instant('Task is on hold'), row.state.reason);
       } else if (row.state.warnings && row.state.warnings.length > 0) {
         let list = '';
         row.state.warnings.forEach((warning: string) => {
           list += warning + '\n';
         });
-        this.dialog.error({ title: row.state.state, message: `<pre>${list}</pre>` });
+        this.dialogService.error({ title: row.state.state, message: `<pre>${list}</pre>` });
       } else if (row.state.error) {
-        this.dialog.error({ title: row.state.state, message: `<pre>${row.state.error}</pre>` });
-      } else if (row.job) {
+        this.dialogService.error({ title: row.state.state, message: `<pre>${row.state.error}</pre>` });
+      } else {
         this.matDialog.open(ShowLogsDialogComponent, { data: row.job });
       }
     } else {
-      this.dialog.warn(globalHelptext.noLogDialog.title, globalHelptext.noLogDialog.message);
+      this.dialogService.warn(globalHelptext.noLogDialog.title, globalHelptext.noLogDialog.message);
     }
   }
 
@@ -238,7 +273,7 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
       },
       error: (err: WebsocketError) => {
         row.enabled = !row.enabled;
-        this.dialog.error(this.errorHandler.parseWsError(err));
+        this.dialogService.error(this.errorHandler.parseWsError(err));
       },
     });
   }

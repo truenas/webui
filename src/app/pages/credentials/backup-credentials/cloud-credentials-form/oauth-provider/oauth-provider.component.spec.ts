@@ -2,16 +2,16 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { WINDOW } from 'app/helpers/window.helper';
 import { OauthMessage } from 'app/interfaces/oauth-message.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
+import { OauthButtonModule } from 'app/modules/oauth-button/oauth-button.module';
 import {
   OauthProviderComponent, OauthProviderData,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/oauth-provider/oauth-provider.component';
-import { DialogService } from 'app/services';
 
 describe('OauthProviderComponent', () => {
   let spectator: Spectator<OauthProviderComponent>;
@@ -21,6 +21,7 @@ describe('OauthProviderComponent', () => {
     imports: [
       ReactiveFormsModule,
       IxFormsModule,
+      OauthButtonModule,
     ],
     providers: [
       mockWindow({
@@ -42,7 +43,6 @@ describe('OauthProviderComponent', () => {
         }) as Window['addEventListener'],
         removeEventListener: jest.fn() as Window['removeEventListener'],
       }),
-      mockProvider(DialogService),
     ],
   });
 
@@ -67,7 +67,7 @@ describe('OauthProviderComponent', () => {
     );
     expect(spectator.inject<Window>(WINDOW).addEventListener).toHaveBeenCalledWith(
       'message',
-      spectator.component.onOauthMessage,
+      expect.any(Function),
       false,
     );
   });
@@ -104,6 +104,6 @@ describe('OauthProviderComponent', () => {
     await loginButton.click();
 
     expect(spectator.inject<Window>(WINDOW).removeEventListener)
-      .toHaveBeenCalledWith('message', spectator.component.onOauthMessage);
+      .toHaveBeenCalledWith('message', expect.any(Function), false);
   });
 });

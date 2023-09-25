@@ -1,0 +1,51 @@
+<ng-template ixPageHeader>
+  <ix-page-title-header>
+    <ix-search-input (search)="onListFiltered($event)"></ix-search-input>
+
+    <button mat-button ixTest="add-tunable" [color]="'primary'" (click)="doAdd()">
+      {{ 'Add' | translate }}
+    </button>
+  </ix-page-title-header>
+</ng-template>
+
+<ix-table2
+  class="table"
+  [ix-table2-empty]="!dataProvider.rows.length"
+  [emptyConfig]="emptyConfig.defaultEmptyConfig(emptyType$ | async)"
+>
+  <thead
+    ix-table-head
+    [columns]="columns"
+    [dataProvider]="dataProvider"
+  ></thead>
+  <tbody
+    ix-table-body
+    [columns]="columns"
+    [dataProvider]="dataProvider"
+  >
+    <ng-template
+      let-tunable
+      ix-table-cell
+      [columnIndex]="5"
+      [dataProvider]="dataProvider"
+    >
+      <div class="actions">
+        <button
+          mat-icon-button
+          [ixTest]="['edit', tunable.id]"
+          (click)="doEdit(tunable)"
+        >
+          <ix-icon name="mdi-pencil"></ix-icon>
+        </button>
+        <button
+          mat-icon-button
+          [ixTest]="['delete', tunable.id]"
+          (click)="doDelete(tunable)"
+        >
+          <ix-icon name="mdi-delete"></ix-icon>
+        </button>
+      </div>
+    </ng-template>
+  </tbody>
+</ix-table2>
+<ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>

@@ -78,6 +78,13 @@
                 [tooltip]="helptext.rsync_remotehost_tooltip | translate"
               ></ix-input>
 
+              <ix-slide-toggle
+                *ngIf="isRemoteHostSpecified"
+                formControlName="ssh_keyscan"
+                [label]="'SSH Keyscan' | translate"
+                [tooltip]="helptext.ssh_keyscan_tooltip | translate"
+              ></ix-slide-toggle>
+
               <ix-input
                 formControlName="remoteport"
                 type="number"
@@ -92,7 +99,7 @@
                 formControlName="ssh_credentials"
                 [label]="'SSH Connection' | translate"
                 [tooltip]="helptext.rsync_ssh_credentials_tooltip | translate"
-                [options]="sshConnections$"
+                [options]="sshCredentialsOptions$"
                 [required]="true"
               ></ix-select>
             </ng-template>

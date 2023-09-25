@@ -25,7 +25,7 @@ import {
 } from 'app/pages/storage/components/dashboard-pool/topology-card/topology-card.component';
 import { ZfsHealthCardComponent } from 'app/pages/storage/components/dashboard-pool/zfs-health-card/zfs-health-card.component';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
-import { AppLoaderService, DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('DashboardPoolComponent', () => {
@@ -50,7 +50,6 @@ describe('DashboardPoolComponent', () => {
         open: jest.fn(() => ({ afterClosed: jest.fn(() => of()) })),
       }),
       mockProvider(SnackbarService),
-      mockProvider(AppLoaderService),
       mockProvider(PoolsDashboardStore, {
         loadDashboard: jest.fn(),
       }),

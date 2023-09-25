@@ -1,5 +1,5 @@
 import {
-  Component, OnInit, Input, ViewChild, AfterViewInit, AfterViewChecked, ElementRef,
+  Component, OnInit, Input, ViewChild, AfterViewInit, AfterViewChecked, ElementRef, TrackByFunction,
 } from '@angular/core';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -7,7 +7,8 @@ import { Observable, Subject } from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { LinkState } from 'app/enums/network-interface.enum';
-import { ApiDirectory } from 'app/interfaces/api-directory.interface';
+import { ApiCallMethod } from 'app/interfaces/api/api-call-directory.interface';
+import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { TableService } from 'app/modules/entity/table/table.service';
 
@@ -67,9 +68,9 @@ export interface AppTableConfig<P = unknown> {
   title?: string;
   titleHref?: string;
   columns: AppTableColumn[];
-  queryCall: keyof ApiDirectory;
+  queryCall: ApiCallMethod;
   queryCallOption?: unknown;
-  deleteCall?: keyof ApiDirectory;
+  deleteCall?: ApiCallMethod | ApiJobMethod;
   deleteCallIsJob?: boolean;
   complex?: boolean;
   hideHeader?: boolean; // hide table header row
@@ -161,6 +162,12 @@ implements OnInit, AfterViewInit, AfterViewChecked {
 
   private tableHeight: number;
 
+  trackTask: TrackByFunction<Row> = (index: number, row: Row): unknown => row[this.idProp];
+
+  get isOverflow(): boolean {
+    return this.TABLE_MIN_ROWS < this.dataSource?.length;
+  }
+
   get tableConf(): AppTableConfig {
     return this._tableConf;
   }
@@ -188,6 +195,7 @@ implements OnInit, AfterViewInit, AfterViewChecked {
 
     this.tableHeight = this.table.nativeElement.offsetHeight;
     if (this.enableViewMore) {
+      this.displayedDataSource = this.dataSource;
       return;
     }
     this.limitRows = Math.floor(
@@ -207,6 +215,14 @@ implements OnInit, AfterViewInit, AfterViewChecked {
     }
   }
 
+  ngOnInit(): void {
+    this.populateTable();
+
+    this.afterGetDataHook$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.updateColumns();
+    });
+  }
+
   ngAfterViewInit(): void {
     this.calculateLimitRows();
   }
@@ -215,14 +231,6 @@ implements OnInit, AfterViewInit, AfterViewChecked {
     if (this.tableHeight !== this.table.nativeElement.offsetHeight) {
       setTimeout(() => this.calculateLimitRows());
     }
-  }
-
-  ngOnInit(): void {
-    this.populateTable();
-
-    this.afterGetDataHook$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.updateColumns();
-    });
   }
 
   populateTable(): void {
@@ -364,10 +372,10 @@ implements OnInit, AfterViewInit, AfterViewChecked {
       return 'slide-toggle';
     }
 
-    if (column.state && column.state.prop && this._tableConf.getInOutInfo) {
+    if (column.state?.prop && this._tableConf.getInOutInfo) {
       return 'state-info';
     }
-    if (column.state && column.state.icon) {
+    if (column.state?.icon) {
       return 'state-icon';
     }
 

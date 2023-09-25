@@ -1,89 +1,66 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import * as cronParser from 'cron-parser';
-import { formatDistanceToNowStrict } from 'date-fns';
-import { filter, switchMap } from 'rxjs/operators';
+import { filter, from, map, switchMap } from 'rxjs';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { Cronjob } from 'app/interfaces/cronjob.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { AppTableAction, AppTableConfig } from 'app/modules/entity/table/table.component';
+import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { scheduleColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-schedule/ix-cell-schedule.component';
+import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { yesNoColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
+import { createTable } from 'app/modules/ix-table2/utils';
+import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
+import { CronDeleteDialogComponent } from 'app/pages/system/advanced/cron/cron-delete-dialog/cron-delete-dialog.component';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { CronjobRow } from 'app/pages/system/advanced/cron/cron-list/cronjob-row.interface';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { TaskService } from 'app/services/task.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
   selector: 'ix-cron-card',
   templateUrl: './cron-card.component.html',
+  styleUrls: ['./cron-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CronCardComponent {
-  readonly tableConfig: AppTableConfig = {
-    title: helptextSystemAdvanced.fieldset_cron,
-    titleHref: '/system/cron',
-    queryCall: 'cronjob.query',
-    deleteCall: 'cronjob.delete',
-    deleteMsg: {
-      title: this.translate.instant('Cron Job'),
-      key_props: ['user', 'command', 'description'],
-    },
-    getActions: (): AppTableAction<CronjobRow>[] => {
-      return [
-        {
-          name: 'play',
-          icon: 'play_arrow',
-          matTooltip: this.translate.instant('Run job'),
-          onClick: (row: CronjobRow): void => {
-            this.dialog
-              .confirm({ title: this.translate.instant('Run Now'), message: this.translate.instant('Run this job now?'), hideCheckbox: true })
-              .pipe(
-                filter((run) => !!run),
-                switchMap(() => this.ws.call('cronjob.run', [row.id])),
-              )
-              .pipe(untilDestroyed(this)).subscribe({
-                next: () => {
-                  const message = row.enabled
-                    ? this.translate.instant('This job is scheduled to run again {nextRun}.', { nextRun: row.next_run })
-                    : this.translate.instant('This job will not run again until it is enabled.');
-                  this.dialog.info(
-                    this.translate.instant('Job {job} Completed Successfully', { job: row.description }),
-                    message,
-                    true,
-                  );
-                },
-                error: (error: WebsocketError) => this.dialog.error(this.errorHandler.parseWsError(error)),
-              });
-          },
-        },
-      ];
-    },
-    emptyEntityLarge: false,
-    dataSourceHelper: this.cronDataSourceHelper,
-    columns: [
-      { name: this.translate.instant('Users'), prop: 'user' },
-      { name: this.translate.instant('Command'), prop: 'command' },
-      { name: this.translate.instant('Description'), prop: 'description' },
-      { name: this.translate.instant('Schedule'), prop: 'cron_schedule' },
-      { name: this.translate.instant('Enabled'), prop: 'enabled' },
-      { name: this.translate.instant('Next Run'), prop: 'next_run' },
-    ],
-    add: async () => {
-      await this.advancedSettings.showFirstTimeWarningIfNeeded();
+export class CronCardComponent implements OnInit {
+  title = helptextSystemAdvanced.fieldset_cron;
+  cronjobs: CronjobRow[] = [];
+  dataProvider = new ArrayDataProvider<CronjobRow>();
 
-      const slideInRef = this.slideInService.open(CronFormComponent);
-      slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.tableConfig.tableComponent?.getData());
-    },
-    edit: async (cron: CronjobRow) => {
-      await this.advancedSettings.showFirstTimeWarningIfNeeded();
+  columns = createTable<CronjobRow>([
+    textColumn({
+      title: this.translate.instant('Users'),
+      propertyName: 'user',
+    }),
+    textColumn({
+      title: this.translate.instant('Command'),
+      propertyName: 'command',
+    }),
+    textColumn({
+      title: this.translate.instant('Description'),
+      propertyName: 'description',
+    }),
+    scheduleColumn({
+      title: this.translate.instant('Schedule'),
+      propertyName: 'schedule',
+    }),
+    yesNoColumn({
+      title: this.translate.instant('Enabled'),
+      propertyName: 'enabled',
+    }),
+    textColumn({
+      propertyName: 'id',
+    }),
+  ]);
 
-      const slideInRef = this.slideInService.open(CronFormComponent, { data: cron });
-      slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.tableConfig.tableComponent?.getData());
-    },
-  };
+  isLoading = false;
 
   constructor(
     private slideInService: IxSlideInService,
@@ -91,21 +68,85 @@ export class CronCardComponent {
     private errorHandler: ErrorHandlerService,
     private ws: WebSocketService,
     private dialog: DialogService,
+    private taskService: TaskService,
+    private cdr: ChangeDetectorRef,
+    private matDialog: MatDialog,
     private advancedSettings: AdvancedSettingsService,
   ) {}
 
-  private cronDataSourceHelper(data: Cronjob[]): CronjobRow[] {
-    return data.map((job) => {
-      const schedule = `${job.schedule.minute} ${job.schedule.hour} ${job.schedule.dom} ${job.schedule.month} ${job.schedule.dow}`;
-      return {
-        ...job,
-        cron_schedule: schedule,
+  ngOnInit(): void {
+    this.getCronJobs();
+  }
 
-        next_run: formatDistanceToNowStrict(
-          cronParser.parseExpression(schedule, { iterator: true }).next().value.toDate(),
-          { addSuffix: true },
-        ),
-      };
+  onAdd(): void {
+    this.openForm();
+  }
+
+  getCronJobs(): void {
+    this.isLoading = true;
+    this.ws.call('cronjob.query').pipe(
+      map((cronjobs) => {
+        return cronjobs.map((job: Cronjob): CronjobRow => ({
+          ...job,
+          cron_schedule: scheduleToCrontab(job.schedule),
+          next_run: this.taskService.getTaskNextRun(scheduleToCrontab(job.schedule)),
+        }));
+      }),
+      this.errorHandler.catchError(),
+      untilDestroyed(this),
+    ).subscribe((cronjobs) => {
+      this.cronjobs = cronjobs;
+      this.dataProvider.setRows(cronjobs);
+      this.isLoading = false;
+      this.cdr.markForCheck();
     });
+  }
+
+  runNow(row: CronjobRow): void {
+    this.dialog.confirm({
+      title: this.translate.instant('Run Now'),
+      message: this.translate.instant('Run this job now?'),
+      hideCheckbox: true,
+    }).pipe(
+      filter(Boolean),
+      switchMap(() => this.ws.call('cronjob.run', [row.id])),
+      untilDestroyed(this),
+    ).subscribe({
+      next: () => {
+        const message = row.enabled
+          ? this.translate.instant('This job is scheduled to run again {nextRun}.', { nextRun: row.next_run })
+          : this.translate.instant('This job will not run again until it is enabled.');
+        this.dialog.info(
+          this.translate.instant('Job {job} Completed Successfully', { job: row.description }),
+          message,
+        );
+      },
+      error: (error: WebsocketError) => this.dialog.error(this.errorHandler.parseWsError(error)),
+    });
+  }
+
+  doDelete(row: CronjobRow): void {
+    this.matDialog.open(CronDeleteDialogComponent, {
+      data: row,
+    }).afterClosed()
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe(() => {
+        this.getCronJobs();
+      });
+  }
+
+  doEdit(row: CronjobRow): void {
+    this.openForm(row);
+  }
+
+  private openForm(row?: CronjobRow): void {
+    from(this.advancedSettings.showFirstTimeWarningIfNeeded()).pipe(
+      switchMap(() => this.slideInService.open(CronFormComponent, { data: row }).slideInClosed$),
+      filter(Boolean),
+      untilDestroyed(this),
+    )
+      .subscribe(() => {
+        this.getCronJobs();
+      });
   }
 }

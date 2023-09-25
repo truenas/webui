@@ -10,10 +10,11 @@ import { TranslateService } from '@ngx-translate/core';
 import { switchMap } from 'rxjs/operators';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import {
-  AppLoaderService, DialogService, StorageService, WebSocketService,
-} from 'app/services';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { StorageService } from 'app/services/storage.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
@@ -63,8 +64,6 @@ export class SaveConfigDialogComponent {
   }
 
   onSubmit(): void {
-    this.loader.open();
-
     this.store$.pipe(
       waitForSystemInfo,
       switchMap((systemInfo) => {
@@ -82,18 +81,17 @@ export class SaveConfigDialogComponent {
         }
 
         return this.ws.call('core.download', ['config.save', [{ secretseed: this.exportSeedCheckbox.value }], fileName]).pipe(
+          this.loader.withLoader(),
           switchMap(([, url]) => this.storage.downloadUrl(url, fileName, mimeType)),
         );
       }),
       untilDestroyed(this),
     ).subscribe({
       next: () => {
-        this.loader.close();
         this.dialogRef.close(true);
       },
       error: (error: WebsocketError) => {
         this.dialogService.error(this.errorHandler.parseWsError(error));
-        this.loader.close();
         this.dialogRef.close(false);
       },
     });

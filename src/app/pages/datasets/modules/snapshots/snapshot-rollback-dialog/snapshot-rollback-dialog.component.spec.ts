@@ -11,7 +11,8 @@ import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { fakeZfsSnapshot } from 'app/pages/datasets/modules/snapshots//testing/snapshot-fake-datasource';
 import { SnapshotRollbackDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
-import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('SnapshotRollbackDialogComponent', () => {
   let spectator: Spectator<SnapshotRollbackDialogComponent>;
@@ -32,7 +33,6 @@ describe('SnapshotRollbackDialogComponent', () => {
         provide: MAT_DIALOG_DATA,
         useValue: fakeZfsSnapshot.name,
       },
-      mockProvider(AppLoaderService),
       mockProvider(MatDialogRef),
       mockProvider(DialogService),
       mockWebsocket([

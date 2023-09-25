@@ -5,9 +5,11 @@ import { AvailableAppsComponent } from 'app/pages/apps/components/available-apps
 import { CategoryViewComponent } from 'app/pages/apps/components/available-apps/category-view/category-view.component';
 import { CatalogsComponent } from 'app/pages/apps/components/catalogs/catalogs.component';
 import { ChartWizardComponent } from 'app/pages/apps/components/chart-wizard/chart-wizard.component';
+import { DockerImagesListComponent } from 'app/pages/apps/components/docker-images/docker-images-list/docker-images-list.component';
 import { InstalledAppsComponent } from 'app/pages/apps/components/installed-apps/installed-apps.component';
 import { PodLogsComponent } from 'app/pages/apps/components/installed-apps/pod-logs/pod-logs.component';
 import { PodShellComponent } from 'app/pages/apps/components/installed-apps/pod-shell/pod-shell.component';
+import { AppsNavigateAwayGuard } from 'app/pages/apps/guards/apps-navigate-away.guard';
 import { appNameResolver } from 'app/pages/apps/resolvers/app-name.resolver';
 import { AppDetailViewComponent } from './components/app-detail-view/app-detail-view.component';
 import { AppRouterOutletComponent } from './components/app-router-outlet/app-router-outlet.component';
@@ -15,6 +17,7 @@ import { AppRouterOutletComponent } from './components/app-router-outlet/app-rou
 const routes: Routes = [
   {
     path: '',
+    canDeactivate: [AppsNavigateAwayGuard],
     data: { breadcrumb: T('Applications') },
     children: [
       {
@@ -57,6 +60,11 @@ const routes: Routes = [
                 data: { title: T('Pod Logs') },
               },
             ],
+          },
+          {
+            path: 'manage-container-images',
+            component: DockerImagesListComponent,
+            data: { title: T('Manage Container Images') },
           },
         ],
       },

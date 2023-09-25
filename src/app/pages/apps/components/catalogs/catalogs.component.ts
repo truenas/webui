@@ -1,5 +1,5 @@
 import {
-  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, TemplateRef, ViewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -25,9 +25,8 @@ import { CatalogDeleteDialogComponent } from 'app/pages/apps/components/catalogs
 import {
   ManageCatalogSummaryDialogComponent,
 } from 'app/pages/apps/components/catalogs/manage-catalog-summary/manage-catalog-summary-dialog.component';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { LayoutService } from 'app/services/layout.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { CatalogEditFormComponent } from './catalog-edit-form/catalog-edit-form.component';
 
@@ -37,9 +36,7 @@ import { CatalogEditFormComponent } from './catalog-edit-form/catalog-edit-form.
   styleUrls: ['./catalogs.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CatalogsComponent implements OnInit, AfterViewInit {
-  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
-
+export class CatalogsComponent implements OnInit {
   filterString = '';
   catalogSyncJobIds = new Set<number>();
   dataProvider = new ArrayDataProvider<Catalog>();
@@ -90,7 +87,6 @@ export class CatalogsComponent implements OnInit, AfterViewInit {
     private dialogService: DialogService,
     private ws: WebSocketService,
     private slideInService: IxSlideInService,
-    private layoutService: LayoutService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
     protected emptyService: EmptyService,
@@ -154,10 +150,6 @@ export class CatalogsComponent implements OnInit, AfterViewInit {
       direction: SortDirection.Asc,
       propertyName: 'label',
     });
-  }
-
-  ngAfterViewInit(): void {
-    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
   refresh(): void {

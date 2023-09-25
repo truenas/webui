@@ -10,7 +10,7 @@ import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import {
   CaIdentifierAndTypeComponent,
 } from 'app/pages/credentials/certificates-dash/certificate-authority-add/steps/ca-identifier-and-type/ca-identifier-and-type.component';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 
 describe('CaIdentifierAndTypeComponent', () => {
   let spectator: Spectator<CaIdentifierAndTypeComponent>;

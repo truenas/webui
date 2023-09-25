@@ -27,7 +27,7 @@ import {
   PoolManagerState,
   PoolManagerStore,
 } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 
 describe('ReviewWizardStepComponent', () => {
   let spectator: Spectator<ReviewWizardStepComponent>;
@@ -182,7 +182,7 @@ describe('ReviewWizardStepComponent', () => {
       }));
 
       const store = spectator.inject(PoolManagerStore);
-      expect(store.reset).toHaveBeenCalled();
+      expect(store.startOver).toHaveBeenCalled();
     });
   });
 

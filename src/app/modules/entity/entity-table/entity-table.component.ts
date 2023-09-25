@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/prefer-optional-chain */
 import {
   animate, state, style, transition, trigger,
 } from '@angular/animations';
@@ -33,6 +33,8 @@ import {
 } from 'rxjs/operators';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
+import { ApiCallMethod, ApiCallParams } from 'app/interfaces/api/api-call-directory.interface';
+import { ApiJobMethod, ApiJobParams } from 'app/interfaces/api/api-job-directory.interface';
 import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -49,9 +51,8 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { LayoutService } from 'app/services/layout.service';
 import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
@@ -83,7 +84,6 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
   @ViewChild('newEntityTable', { static: false }) entitytable: TemplateRef<void>;
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
-  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
 
   dataSourceStreamer$ = new Subject<Row[]>();
   dataSource$: Observable<Row[]> = this.dataSourceStreamer$.asObservable();
@@ -203,7 +203,6 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     protected store$: Store<AppState>,
     protected matDialog: MatDialog,
     public changeDetectorRef: ChangeDetectorRef,
-    protected layoutService: LayoutService,
     private snackbar: SnackbarService,
     private errorHandler: ErrorHandlerService,
   ) {
@@ -213,6 +212,30 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
         this.cleanup();
       }
     });
+  }
+
+  ngOnInit(): void {
+    this.cardHeaderReady = !this.conf.cardHeaderComponent;
+    this.hasActions = !this.conf.noActions;
+  }
+
+  ngAfterViewInit(): void {
+    this.dataSource = new MatTableDataSource();
+    this.altInit();
+
+    if (this.paginator) this.dataSource.paginator = this.paginator;
+    if (this.sort) this.dataSource.sort = this.sort;
+
+    this.dataSource$
+      .pipe(untilDestroyed(this))
+      .subscribe((data) => {
+        if (!this.dataSource) return;
+
+        if (data.length === 0) this.isTableEmpty = true;
+
+        this.dataSource.data = data;
+        this.changeDetectorRef.detectChanges();
+      });
   }
 
   ngOnDestroy(): void {
@@ -254,11 +277,6 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
 
     const allShown = this.currentRowsThatAreOnScreenToo;
     this.isAllSelected = allShown.every((row) => this.selection.isSelected(row));
-  }
-
-  ngOnInit(): void {
-    this.cardHeaderReady = !this.conf.cardHeaderComponent;
-    this.hasActions = !this.conf.noActions;
   }
 
   altInit(): void {
@@ -331,30 +349,6 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
 
     if (typeof (this.conf.hideTopActions) !== 'undefined') {
       this.hideTopActions = this.conf.hideTopActions;
-    }
-  }
-
-  ngAfterViewInit(): void {
-    this.dataSource = new MatTableDataSource();
-    this.altInit();
-
-    if (this.paginator) this.dataSource.paginator = this.paginator;
-    if (this.sort) this.dataSource.sort = this.sort;
-
-    this.dataSource$
-      .pipe(untilDestroyed(this))
-      .subscribe((data) => {
-        if (!this.dataSource) return;
-
-        if (data.length === 0) this.isTableEmpty = true;
-
-        this.dataSource.data = data;
-        this.changeDetectorRef.detectChanges();
-      });
-
-    // If actionsConfig was disabled, don't show the default toolbar. like the Table is in a Tab.
-    if (!this.conf.disableActionsConfig) {
-      this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
     }
   }
 
@@ -528,14 +522,17 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     if (this.conf.queryCall) {
       if (this.conf.queryCallJob) {
         if (this.conf.queryCallOption) {
-          this.getFunction = this.ws.job(this.conf.queryCall, this.conf.queryCallOption);
+          this.getFunction = this.ws.job(this.conf.queryCall as ApiJobMethod, this.conf.queryCallOption);
         } else {
-          this.getFunction = this.ws.job(this.conf.queryCall, []);
+          this.getFunction = this.ws.job(this.conf.queryCall as ApiJobMethod, []);
         }
       } else if (this.conf.queryCallOption) {
-        this.getFunction = this.ws.call(this.conf.queryCall, this.conf.queryCallOption);
+        this.getFunction = this.ws.call(
+          this.conf.queryCall as ApiCallMethod,
+          this.conf.queryCallOption as ApiCallParams<ApiCallMethod>,
+        );
       } else {
-        this.getFunction = this.ws.call(this.conf.queryCall, []);
+        this.getFunction = this.ws.call(this.conf.queryCall as ApiCallMethod, []);
       }
     } else {
       this.getFunction = EMPTY;
@@ -868,8 +865,12 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     this.loader.open();
     this.loaderOpen = true;
     this.busy = this.ws.call(
-      this.conf.wsDelete,
-      this.conf.wsDeleteParams ? this.conf.wsDeleteParams(this.toDeleteRow, id) : [id],
+      this.conf.wsDelete as ApiCallMethod,
+      (
+        this.conf.wsDeleteParams
+          ? this.conf.wsDeleteParams(this.toDeleteRow, id)
+          : [id]
+      ) as ApiCallParams<ApiCallMethod>,
     ).pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.getData();
@@ -913,7 +914,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
         }),
         switchMap(() => {
           const params = this.conf.wsDeleteParams ? this.conf.wsDeleteParams(this.toDeleteRow, id) : [id];
-          return this.ws.call(this.conf.wsDelete, params).pipe(
+          return this.ws.call(this.conf.wsDelete as ApiCallMethod, params as ApiCallParams<ApiCallMethod>).pipe(
             take(1),
             catchError((error) => {
               this.dialogService.error(this.errorHandler.parseWsError(error));
@@ -998,7 +999,10 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
       if (this.conf.wsMultiDelete) {
         // ws to do multi-delete
         if (this.conf.wsMultiDeleteParams) {
-          this.busy = this.ws.job(this.conf.wsMultiDelete, this.conf.wsMultiDeleteParams(selected))
+          this.busy = this.ws.job(
+            this.conf.wsMultiDelete,
+            this.conf.wsMultiDeleteParams(selected) as ApiJobParams<ApiJobMethod>,
+          )
             .pipe(untilDestroyed(this))
             .subscribe({
               next: (res1: Job<CoreBulkResponse[]>) => {

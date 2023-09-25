@@ -11,7 +11,7 @@ import {
   Observable, combineLatest, of, merge,
 } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { singleArrayToOptions } from 'app/helpers/options.helper';
+import { singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import helptext from 'app/helptext/storage/snapshots/snapshots';
 import { Option } from 'app/interfaces/option.interface';
 import { CreateZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
@@ -23,7 +23,7 @@ import { atLeastOne } from 'app/modules/ix-forms/validators/at-least-one-validat
 import { requiredEmpty } from 'app/modules/ix-forms/validators/required-empty-validation';
 import { snapshotExcludeBootQueryFilter } from 'app/pages/datasets/modules/snapshots/constants/snapshot-exclude-boot.constant';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import { WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({

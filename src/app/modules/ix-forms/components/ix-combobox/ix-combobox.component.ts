@@ -21,7 +21,7 @@ import {
   debounceTime, distinctUntilChanged, map, takeUntil,
 } from 'rxjs/operators';
 import { Option } from 'app/interfaces/option.interface';
-import { IxComboboxProvider } from 'app/modules/ix-forms/components/ix-combobox/ix-combobox-provider';
+import { IxComboboxProvider, IxComboboxProviderManager } from 'app/modules/ix-forms/components/ix-combobox/ix-combobox-provider';
 
 @UntilDestroy()
 @Component({
@@ -36,7 +36,11 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
   @Input() required: boolean;
   @Input() tooltip: string;
   @Input() allowCustomValue = false;
-  @Input() provider: IxComboboxProvider;
+  @Input() set provider(comboboxProvider: IxComboboxProvider) {
+    this.comboboxProviderHandler = new IxComboboxProviderManager(comboboxProvider);
+    this.cdr.markForCheck();
+  }
+  private comboboxProviderHandler: IxComboboxProviderManager;
 
   @ViewChild('ixInput') inputElementRef: ElementRef<HTMLInputElement>;
   @ViewChild('auto') autoCompleteRef: MatAutocomplete;
@@ -67,7 +71,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
 
   writeValue(value: string | number): void {
     this.value = value;
-    if (this.value && this.options && this.options.length) {
+    if (this.value && this.options?.length) {
       this.selectedOption = { ...(this.options.find((option: Option) => option.value === this.value)) };
     }
     if (this.selectedOption) {
@@ -78,6 +82,10 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
   }
 
   ngOnInit(): void {
+    if (this.controlDirective.value) {
+      this.textContent = this.controlDirective.value as string;
+    }
+
     this.filterChanged$.pipe(
       debounceTime(300),
       distinctUntilChanged(),
@@ -96,7 +104,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
   filterOptions(filterValue: string): void {
     this.loading = true;
     this.cdr.markForCheck();
-    this.provider?.fetch(filterValue).pipe(
+    this.comboboxProviderHandler?.fetch(filterValue).pipe(
       catchError(() => {
         this.hasErrorInOptions = true;
         return EMPTY;
@@ -116,20 +124,11 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
       if (!this.selectedOption && this.value !== null && this.value !== '') {
         const setOption = this.options.find((option: Option) => option.value === this.value);
         if (setOption) {
-          this.selectedOption = setOption ? { ...setOption } : null;
+          this.selectedOption = { ...setOption };
           if (this.selectedOption) {
             this.filterChanged$.next('');
           }
         } else {
-          /**
-           * We are adding a custom fake option here so we can show the current value of the control even
-           * if we haven't found the correct option in the list of options fetched so far. The assumption
-           * is that the correct option exists in one of the following pages of list of options
-           */
-          if (!this.allowCustomValue) {
-            this.options.push({ label: this.value as string, value: this.value });
-          }
-
           this.selectedOption = { label: this.value as string, value: this.value };
           if (this.selectedOption.value) {
             this.filterChanged$.next('');
@@ -171,7 +170,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
 
           this.loading = true;
           this.cdr.markForCheck();
-          this.provider?.nextPage(this.filterValue !== null || this.filterValue !== undefined ? this.filterValue : '')
+          this.comboboxProviderHandler?.nextPage(this.filterValue !== null || this.filterValue !== undefined ? this.filterValue : '')
             .pipe(untilDestroyed(this)).subscribe((options: Option[]) => {
               this.loading = false;
               this.cdr.markForCheck();
@@ -212,7 +211,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
 
   resetInput(): void {
     this.filterChanged$.next('');
-    if (this.inputElementRef && this.inputElementRef.nativeElement) {
+    if (this.inputElementRef?.nativeElement) {
       this.inputElementRef.nativeElement.value = '';
     }
     this.selectedOption = null;

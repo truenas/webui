@@ -34,8 +34,10 @@ import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedu
 import { ReplicationWizardData } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard-data.interface';
 import { ReplicationWhatAndWhereComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-what-and-where/replication-what-and-where.component';
 import { ReplicationWhenComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-when/replication-when.component';
-import { DialogService, ReplicationService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ReplicationService } from 'app/services/replication.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -125,7 +127,7 @@ export class ReplicationWizardComponent {
     ).subscribe(() => {
       this.isLoading = false;
       this.cdr.markForCheck();
-      this.slideInRef.close();
+      this.slideInRef.close(true);
     });
   }
 
@@ -256,8 +258,11 @@ export class ReplicationWizardComponent {
         payload = this.setSchemaOrRegexForObject(payload, data.schema_or_regex, data.naming_schema, data.name_regex);
       } else if (data.schema_or_regex === SnapshotNamingOption.NamingSchema) {
         payload.also_include_naming_schema = data.naming_schema ? [data.naming_schema] : [this.defaultNamingSchema];
-      } else {
+      } else if (data.name_regex) {
         payload.name_regex = data.name_regex;
+      } else {
+        // fallback when no other data to rely on
+        payload.also_include_naming_schema = [this.defaultNamingSchema];
       }
     }
 
@@ -298,15 +303,16 @@ export class ReplicationWizardComponent {
     schema: string = null,
     regex: string = null,
   ): ReplicationCreate {
+    const values = { ...data };
     if (schemaOrRegex === SnapshotNamingOption.NamingSchema) {
-      data.naming_schema = schema ? [schema] : [this.defaultNamingSchema];
-      delete data.name_regex;
+      values.naming_schema = schema ? [schema] : [this.defaultNamingSchema];
+      delete values.name_regex;
     } else {
-      data.name_regex = regex;
-      delete data.naming_schema;
-      delete data.also_include_naming_schema;
+      values.name_regex = regex;
+      delete values.naming_schema;
+      delete values.also_include_naming_schema;
     }
-    return data;
+    return values;
   }
 
   handleError(err: WebsocketError): void {
@@ -392,7 +398,7 @@ export class ReplicationWizardComponent {
       }),
       map((createdReplication) => {
         if (values.schedule_method === ScheduleMethod.Once && createdReplication) {
-          this.ws.call('replication.run', [createdReplication.id]).pipe(untilDestroyed(this)).subscribe(() => {
+          this.ws.startJob('replication.run', [createdReplication.id]).pipe(untilDestroyed(this)).subscribe(() => {
             this.dialogService.info(
               this.translate.instant('Task started'),
               this.translate.instant('Replication <i>{name}</i> has started.', { name: values.name }),

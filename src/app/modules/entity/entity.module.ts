@@ -39,7 +39,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { TreeModule } from '@bugsplat/angular-tree-component';
 import { TranslateModule } from '@ngx-translate/core';
-import { NgxDatatableModule } from '@siemens/ngx-datatable';
 import { NgxFilesizeModule } from 'ngx-filesize';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
@@ -57,11 +56,12 @@ import { TableComponent } from 'app/modules/entity/table/table.component';
 import { TableService } from 'app/modules/entity/table/table.service';
 import { TaskScheduleListComponent } from 'app/modules/entity/task-schedule-list/task-schedule-list.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { LayoutModule } from 'app/modules/layout/layout.module';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
-import { AppLoaderService } from 'app/services';
 
 @NgModule({
   imports: [
@@ -70,7 +70,6 @@ import { AppLoaderService } from 'app/services';
     ReactiveFormsModule,
     DragDropModule,
     RouterModule,
-    NgxDatatableModule,
     CdkTableModule,
     TreeModule,
     MatListModule,
@@ -115,6 +114,7 @@ import { AppLoaderService } from 'app/services';
     MatNativeDateModule,
     SchedulerModule,
     TestIdModule,
+    LayoutModule,
   ],
   declarations: [
     TaskScheduleListComponent,

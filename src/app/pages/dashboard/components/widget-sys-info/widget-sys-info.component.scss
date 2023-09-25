@@ -26,7 +26,7 @@
   height: 48px;
   left: 0;
   padding: 0 16px;
-  position: absolute;
+  position: relative;
   text-align: left;
   width: 100%;
   z-index: 2;
@@ -278,6 +278,7 @@ img.clickable,
   &.freenas,
   &.truenas {
     .generic {
+      margin: 0 auto;
       padding-bottom: 10%;
     }
   }

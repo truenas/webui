@@ -14,7 +14,7 @@ import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
 import { ApiKeyFormDialogComponent } from 'app/pages/api-keys/components/api-key-form-dialog/api-key-form-dialog.component';
 import { ApiKeyListComponent } from 'app/pages/api-keys/components/api-key-list/api-key-list.component';
 import { ApiKeyComponentStore, ApiKeysState } from 'app/pages/api-keys/store/api-key.store';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('ApiKeyListComponent', () => {

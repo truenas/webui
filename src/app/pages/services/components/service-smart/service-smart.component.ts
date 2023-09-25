@@ -2,7 +2,6 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
@@ -10,9 +9,10 @@ import { SmartPowerMode } from 'app/enums/smart-power.mode';
 import helptext from 'app/helptext/services/components/service-smart';
 import { SmartConfigUpdate } from 'app/interfaces/smart-test.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -56,8 +56,8 @@ export class ServiceSmartComponent implements OnInit {
     private fb: FormBuilder,
     private translate: TranslateService,
     private dialogService: DialogService,
-    private router: Router,
     private snackbar: SnackbarService,
+    private slideInRef: IxSlideInRef<ServiceSmartComponent>,
   ) {}
 
   ngOnInit(): void {
@@ -88,8 +88,8 @@ export class ServiceSmartComponent implements OnInit {
         next: () => {
           this.isFormLoading = false;
           this.snackbar.success(this.translate.instant('Service configuration saved'));
+          this.slideInRef.close();
           this.cdr.markForCheck();
-          this.router.navigate(['/services']);
         },
         error: (error) => {
           this.isFormLoading = false;

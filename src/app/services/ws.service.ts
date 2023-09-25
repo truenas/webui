@@ -13,9 +13,10 @@ import { MockEnclosureUtils } from 'app/core/testing/utils/mock-enclosure.utils'
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import {
-  ApiDirectory, ApiMethod,
-} from 'app/interfaces/api-directory.interface';
-import { ApiEventDirectory } from 'app/interfaces/api-event-directory.interface';
+  ApiCallDirectory, ApiCallMethod,
+} from 'app/interfaces/api/api-call-directory.interface';
+import { ApiEventDirectory } from 'app/interfaces/api/api-event-directory.interface';
+import { ApiJobDirectory, ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { ApiEvent, IncomingWebsocketMessage, ResultMessage } from 'app/interfaces/api-message.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
@@ -43,52 +44,26 @@ export class WebSocketService {
     return this.wsManager.websocket$;
   }
 
-  call<K extends ApiMethod>(method: K, params?: ApiDirectory[K]['params']): Observable<ApiDirectory[K]['response']> {
-    const uuid = UUID.UUID();
-    return of(uuid).pipe(
-      tap(() => {
-        this.wsManager.send({
-          id: uuid, msg: IncomingApiMessageType.Method, method, params,
-        });
-      }),
-      switchMap(() => this.ws$),
-      filter((data: IncomingWebsocketMessage) => data.msg === IncomingApiMessageType.Result && data.id === uuid),
-      switchMap((data: IncomingWebsocketMessage) => {
-        if ('error' in data && data.error) {
-          console.error('Error: ', data.error);
-          return throwError(() => data.error);
-        }
-
-        if (
-          this.mockUtils
-          && environment.mockConfig?.enabled
-          && this.mockUtils?.canMock
-          && data.msg === IncomingApiMessageType.Result
-        ) {
-          const mockResultMessage: ResultMessage = this.mockUtils.overrideMessage(data, method);
-          return of(mockResultMessage);
-        }
-
-        return of(data);
-      }),
-
-      map((data: ResultMessage<ApiDirectory[K]['response']>) => data.result),
-      take(1),
-    );
+  call<M extends ApiCallMethod>(method: M, params?: ApiCallDirectory[M]['params']): Observable<ApiCallDirectory[M]['response']> {
+    return this.callMethod(method, params);
   }
 
-  job<K extends ApiMethod>(
-    method: K,
-    params?: ApiDirectory[K]['params'],
-  ): Observable<Job<ApiDirectory[K]['response']>> {
-    return this.call(method, params).pipe(
-      switchMap((jobId: number) => {
-        if (typeof jobId !== 'number') {
-          return throwError(() => {
-            return new Error(`${method} did not return a job id. You may be calling ws.job when ws.call was expected.`);
-          });
-        }
+  /**
+   * Use `job` when you care about job progress or result.
+   */
+  startJob<M extends ApiJobMethod>(method: M, params?: ApiJobDirectory[M]['params']): Observable<number> {
+    return this.callMethod(method, params);
+  }
 
+  /**
+   * In your subscription, next will be next job update, complete will be when the job is complete.
+   */
+  job<M extends ApiJobMethod>(
+    method: M,
+    params?: ApiJobDirectory[M]['params'],
+  ): Observable<Job<ApiJobDirectory[M]['response']>> {
+    return this.callMethod(method, params).pipe(
+      switchMap((jobId: number) => {
         return merge(
           this.subscribeToJobUpdates(jobId),
           // Get job status here for jobs that complete too fast.
@@ -98,13 +73,13 @@ export class WebSocketService {
             takeWhile((job) => job.state !== JobState.Success, true),
             switchMap((job) => {
               if (job.state === JobState.Failed) {
-                return throwError(() => job);
+                return throwError(() => job.error);
               }
               return of(job);
             }),
           );
       }),
-    );
+    ) as Observable<Job<ApiJobDirectory[M]['response']>>;
   }
 
   subscribe<K extends keyof ApiEventDirectory>(name: K): Observable<ApiEvent<ApiEventDirectory[K]['response']>> {
@@ -142,6 +117,42 @@ export class WebSocketService {
       },
     );
     this.eventSubscriptions.clear();
+  }
+
+  private callMethod<M extends ApiCallMethod>(method: M, params?: ApiCallDirectory[M]['params']): Observable<ApiCallDirectory[M]['response']>;
+  private callMethod<M extends ApiJobMethod>(method: M, params?: ApiJobDirectory[M]['params']): Observable<number>;
+  private callMethod<M extends ApiCallMethod | ApiJobMethod>(method: M, params?: unknown): Observable<unknown> {
+    const uuid = UUID.UUID();
+    return of(uuid).pipe(
+      tap(() => {
+        this.wsManager.send({
+          id: uuid, msg: IncomingApiMessageType.Method, method, params,
+        });
+      }),
+      switchMap(() => this.ws$),
+      filter((data: IncomingWebsocketMessage) => data.msg === IncomingApiMessageType.Result && data.id === uuid),
+      switchMap((data: IncomingWebsocketMessage) => {
+        if ('error' in data && data.error) {
+          console.error('Error: ', data.error);
+          return throwError(() => data.error);
+        }
+
+        if (
+          this.mockUtils
+          && environment.mockConfig?.enabled
+          && this.mockUtils?.canMock
+          && data.msg === IncomingApiMessageType.Result
+        ) {
+          const mockResultMessage: ResultMessage = this.mockUtils.overrideMessage(data, method);
+          return of(mockResultMessage);
+        }
+
+        return of(data);
+      }),
+
+      map((data: ResultMessage) => data.result),
+      take(1),
+    );
   }
 
   private subscribeToJobUpdates(jobId: number): Observable<Job> {

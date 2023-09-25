@@ -4,7 +4,7 @@ import {
 import * as _ from 'lodash';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableColumn } from 'app/modules/entity/entity-table/entity-table.interface';
-import { TaskService } from 'app/services';
+import { TaskService } from 'app/services/task.service';
 
 @Component({
   selector: 'ix-entity-table-row-details',
@@ -22,12 +22,12 @@ export class EntityTableRowDetailsComponent implements OnInit, OnChanges {
     private taskService: TaskService,
   ) {}
 
-  ngOnInit(): void {
+  ngOnChanges(): void {
     this.buildColumns();
     this.actions = this.getActions();
   }
 
-  ngOnChanges(): void {
+  ngOnInit(): void {
     this.buildColumns();
     this.actions = this.getActions();
   }

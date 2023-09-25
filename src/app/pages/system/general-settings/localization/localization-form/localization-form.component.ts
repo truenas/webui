@@ -18,8 +18,10 @@ import { IxComboboxProvider } from 'app/modules/ix-forms/components/ix-combobox/
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { LanguageService, SystemGeneralService, WebSocketService } from 'app/services';
+import { LanguageService } from 'app/services/language.service';
 import { LocaleService } from 'app/services/locale.service';
+import { SystemGeneralService } from 'app/services/system-general.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { localizationFormSubmitted } from 'app/store/preferences/preferences.actions';
 import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
@@ -52,11 +54,11 @@ export class LocalizationFormComponent implements OnInit {
     tooltip: string;
     provider: SimpleAsyncComboboxProvider;
   } = {
-      fcName: 'language',
-      label: helptext.stg_language.placeholder,
-      tooltip: helptext.stg_language.tooltip,
-      provider: new SimpleAsyncComboboxProvider(this.sysGeneralService.languageOptions(this.sortLanguagesByName)),
-    };
+    fcName: 'language',
+    label: helptext.stg_language.placeholder,
+    tooltip: helptext.stg_language.tooltip,
+    provider: new SimpleAsyncComboboxProvider(this.sysGeneralService.languageOptions(this.sortLanguagesByName)),
+  };
 
   kbdMap: {
     readonly fcName: 'kbdmap';
@@ -64,11 +66,11 @@ export class LocalizationFormComponent implements OnInit {
     tooltip: string;
     options: Observable<Option[]>;
   } = {
-      fcName: 'kbdmap',
-      label: helptext.stg_kbdmap.placeholder,
-      tooltip: helptext.stg_kbdmap.tooltip,
-      options: this.sysGeneralService.kbdMapChoices(),
-    };
+    fcName: 'kbdmap',
+    label: helptext.stg_kbdmap.placeholder,
+    tooltip: helptext.stg_kbdmap.tooltip,
+    options: this.sysGeneralService.kbdMapChoices(),
+  };
 
   timezone: {
     readonly fcName: 'timezone';
@@ -76,13 +78,13 @@ export class LocalizationFormComponent implements OnInit {
     tooltip: string;
     provider: IxComboboxProvider;
   } = {
-      fcName: 'timezone',
-      label: helptext.stg_timezone.placeholder,
-      tooltip: helptext.stg_timezone.tooltip,
-      provider: new SimpleAsyncComboboxProvider(this.sysGeneralService.timezoneChoices().pipe(map(
-        (tzChoices) => _.sortBy(tzChoices, [(option) => option.label.toLowerCase()]),
-      ))),
-    };
+    fcName: 'timezone',
+    label: helptext.stg_timezone.placeholder,
+    tooltip: helptext.stg_timezone.tooltip,
+    provider: new SimpleAsyncComboboxProvider(this.sysGeneralService.timezoneChoices().pipe(map(
+      (tzChoices) => _.sortBy(tzChoices, [(option) => option.label.toLowerCase()]),
+    ))),
+  };
 
   dateFormat: {
     readonly fcName: 'date_format';
@@ -90,10 +92,10 @@ export class LocalizationFormComponent implements OnInit {
     tooltip: string;
     options?: Observable<Option[]>;
   } = {
-      fcName: 'date_format',
-      label: helptext.date_format.placeholder,
-      tooltip: helptext.date_format.tooltip,
-    };
+    fcName: 'date_format',
+    label: helptext.date_format.placeholder,
+    tooltip: helptext.date_format.tooltip,
+  };
 
   timeFormat: {
     readonly fcName: 'time_format';
@@ -101,10 +103,10 @@ export class LocalizationFormComponent implements OnInit {
     tooltip: string;
     options?: Observable<Option[]>;
   } = {
-      fcName: 'time_format',
-      label: helptext.time_format.placeholder,
-      tooltip: helptext.time_format.tooltip,
-    };
+    fcName: 'time_format',
+    label: helptext.time_format.placeholder,
+    tooltip: helptext.time_format.tooltip,
+  };
 
   constructor(
     private sysGeneralService: SystemGeneralService,

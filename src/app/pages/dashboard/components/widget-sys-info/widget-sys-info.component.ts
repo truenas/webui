@@ -7,24 +7,28 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import { addSeconds } from 'date-fns';
 import { filter, take } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
-import { ProductType } from 'app/enums/product-type.enum';
 import { ScreenType } from 'app/enums/screen-type.enum';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
+import { Timeout } from 'app/interfaces/timeout.interface';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import {
-  AppLoaderService, DialogService, SystemGeneralService,
-} from 'app/services';
+  DialogService,
+} from 'app/services/dialog.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { LocaleService } from 'app/services/locale.service';
 import { ProductImageService } from 'app/services/product-image.service';
+import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectHasOnlyMismatchVersionsReason, selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
-import { selectIsIxHardware, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
+import { selectIsIxHardware, waitForSystemFeatures, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -37,14 +41,15 @@ import { selectIsIxHardware, waitForSystemInfo } from 'app/store/system-info/sys
   providers: [TitleCasePipe],
 })
 export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
-  @Input() isHaLicensed = false;
+  protected isHaLicensed = false;
   @Input() isPassive = false;
-  @Input() enclosureSupport = false;
+  protected enclosureSupport = false;
   @Input() showReorderHandle = false;
-  @Input() systemInfo: SystemInfo;
+  protected systemInfo: SystemInfo;
 
   hasOnlyMismatchVersionsReason$ = this.store$.select(selectHasOnlyMismatchVersionsReason);
 
+  timeInterval: Timeout;
   data: SystemInfo;
   ready = false;
   productImage = '';
@@ -53,7 +58,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
   certified = false;
   updateAvailable = false;
   isIxHardware = false;
-  productType = this.sysGenService.getProductType();
   isUpdateRunning = false;
   hasHa: boolean;
   updateMethod = 'update.update';
@@ -61,7 +65,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
   uptimeString: string;
   dateTime: string;
 
-  readonly ProductType = ProductType;
   readonly ScreenType = ScreenType;
 
   constructor(
@@ -77,6 +80,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
     public loader: AppLoaderService,
     public dialogService: DialogService,
     private titleCase: TitleCasePipe,
+    private errorHandler: ErrorHandlerService,
     @Inject(WINDOW) private window: Window,
   ) {
     super(translate);
@@ -89,7 +93,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
       this.screenType = currentScreenType;
     });
 
-    this.hasHa = this.window.sessionStorage.getItem('ha_status') === 'true';
+    this.hasHa = this.window.localStorage.getItem('ha_status') === 'true';
   }
 
   get licenseString(): string {
@@ -100,48 +104,48 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.isHaLicensed && this.isPassive) {
-      this.store$.select(selectHaStatus).pipe(
-        filter((haStatus) => !!haStatus),
-        untilDestroyed(this),
-      ).subscribe((haStatus) => {
-        if (haStatus.hasHa) {
-          this.data = null;
-
-          this.ws.call('failover.call_remote', ['system.info'])
-            .pipe(untilDestroyed(this))
-            .subscribe((systemInfo: SystemInfo) => {
-              this.processSysInfo(systemInfo);
-            });
-        } else if (!haStatus.hasHa) {
-          this.productImage = '';
-        }
-        this.hasHa = haStatus.hasHa;
-      });
-    } else {
-      this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe({
-        next: (systemInfo) => {
-          this.processSysInfo(systemInfo);
-        },
-        error: (error) => {
-          console.error('System Info not available', error);
-        },
-        complete: () => {
-          this.checkForUpdate();
-        },
-      });
-    }
-    if (this.sysGenService.getProductType() === ProductType.ScaleEnterprise) {
+    this.checkForUpdate();
+    this.store$.pipe(waitForSystemFeatures, untilDestroyed(this)).subscribe((features) => {
+      this.enclosureSupport = features.enclosure;
+    });
+    this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((systemInfo) => {
+      this.processSysInfo(systemInfo);
+    });
+    this.store$.select(selectIsIxHardware).pipe(untilDestroyed(this)).subscribe((isIxHardware) => {
+      this.isIxHardware = isIxHardware;
+      this.setProductImage();
+    });
+    if (this.sysGenService.isEnterprise) {
       this.store$.select(selectIsHaLicensed).pipe(untilDestroyed(this)).subscribe((isHaLicensed) => {
+        this.isHaLicensed = isHaLicensed;
         if (isHaLicensed) {
           this.updateMethod = 'failover.upgrade';
+        }
+        if (isHaLicensed && this.isPassive) {
+          this.loadSystemInfoForPassive();
         }
         this.checkForRunningUpdate();
       });
     }
-    this.store$.select(selectIsIxHardware).pipe(untilDestroyed(this)).subscribe((isIxHardware) => {
-      this.isIxHardware = isIxHardware;
-      this.setProductImage();
+  }
+
+  loadSystemInfoForPassive(): void {
+    this.store$.select(selectHaStatus).pipe(
+      filter((haStatus) => !!haStatus),
+      untilDestroyed(this),
+    ).subscribe((haStatus) => {
+      if (haStatus.hasHa) {
+        this.data = null;
+
+        this.ws.call('failover.call_remote', ['system.info'])
+          .pipe(untilDestroyed(this))
+          .subscribe((systemInfo: SystemInfo) => {
+            this.processSysInfo(systemInfo);
+          });
+      } else if (!haStatus.hasHa) {
+        this.productImage = '';
+      }
+      this.hasHa = haStatus.hasHa;
     });
   }
 
@@ -175,8 +179,17 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
 
   processSysInfo(systemInfo: SystemInfo): void {
     this.data = systemInfo;
-    const datetime = this.addTimeDiff(this.data.datetime.$date);
+    let datetime = this.addTimeDiff(this.data.datetime.$date);
     this.dateTime = this.locale.getTimeOnly(datetime, false, this.data.timezone);
+
+    if (this.timeInterval) {
+      clearInterval(this.timeInterval);
+    }
+
+    this.timeInterval = setInterval(() => {
+      datetime = addSeconds(datetime, 1).getTime();
+      this.dateTime = this.locale.getTimeOnly(datetime, false, this.data.timezone);
+    }, 1000);
 
     this.setProductImage();
 
@@ -240,7 +253,10 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
   }
 
   goToEnclosure(): void {
-    if (this.enclosureSupport) this.router.navigate(['/system/viewenclosure']);
+    if (!this.enclosureSupport) {
+      return;
+    }
+    this.router.navigate(['/system/viewenclosure']);
   }
 
   /**

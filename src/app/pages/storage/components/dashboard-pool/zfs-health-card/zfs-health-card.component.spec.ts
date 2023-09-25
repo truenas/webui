@@ -26,7 +26,7 @@ import {
 } from 'app/pages/storage/components/dashboard-pool/zfs-health-card/autotrim-dialog/autotrim-dialog.component';
 import { ZfsHealthCardComponent } from 'app/pages/storage/components/dashboard-pool/zfs-health-card/zfs-health-card.component';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('ZfsHealthCardComponent', () => {
@@ -89,6 +89,7 @@ describe('ZfsHealthCardComponent', () => {
 
           return of(undefined);
         }),
+        startJob: jest.fn(() => of(undefined)),
       }),
     ],
     declarations: [
@@ -150,7 +151,7 @@ describe('ZfsHealthCardComponent', () => {
       await scrubButton.click();
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
-      expect(websocket.call).toHaveBeenCalledWith('pool.scrub', [45, PoolScrubAction.Start]);
+      expect(websocket.startJob).toHaveBeenCalledWith('pool.scrub', [45, PoolScrubAction.Start]);
     });
 
     it('shows information about an active scan task', async () => {
@@ -185,7 +186,7 @@ describe('ZfsHealthCardComponent', () => {
       await stopScrubButton.click();
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
-      expect(websocket.call).toHaveBeenCalledWith('pool.scrub', [45, PoolScrubAction.Stop]);
+      expect(websocket.startJob).toHaveBeenCalledWith('pool.scrub', [45, PoolScrubAction.Stop]);
     });
 
     it('shows information about an active resilver', () => {
@@ -214,6 +215,49 @@ describe('ZfsHealthCardComponent', () => {
       expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(AutotrimDialogComponent, {
         data: pool,
       });
+    });
+  });
+
+  describe('pausing scrub', () => {
+    it('pauses scrub when it was started and then Pause was pressed', async () => {
+      websocketSubscription$.next({
+        id: 2,
+        collection: 'zfs.pool.scan',
+        msg: IncomingApiMessageType.Changed,
+        fields: {
+          name: 'tank',
+          scan: activeScrub,
+        } as PoolScan,
+      });
+      spectator.detectChanges();
+
+      const pauseButton = await loader.getHarness(MatButtonHarness.with({ text: 'Pause Scrub' }));
+      await pauseButton.click();
+
+      expect(spectator.inject(WebSocketService).startJob).toHaveBeenCalledWith('pool.scrub', [45, PoolScrubAction.Pause]);
+    });
+
+    it('resumes scrub after it was previously paused and Resume was pressed', async () => {
+      websocketSubscription$.next({
+        id: 2,
+        collection: 'zfs.pool.scan',
+        msg: IncomingApiMessageType.Changed,
+        fields: {
+          name: 'tank',
+          scan: {
+            ...activeScrub,
+            pause: {
+              $date: 1655917081000,
+            },
+          },
+        } as PoolScan,
+      });
+      spectator.detectChanges();
+
+      const resumeButton = await loader.getHarness(MatButtonHarness.with({ text: 'Resume Scrub' }));
+      await resumeButton.click();
+
+      expect(spectator.inject(WebSocketService).startJob).toHaveBeenCalledWith('pool.scrub', [45, PoolScrubAction.Start]);
     });
   });
 });

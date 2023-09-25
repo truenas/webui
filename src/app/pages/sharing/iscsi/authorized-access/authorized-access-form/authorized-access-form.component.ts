@@ -12,8 +12,8 @@ import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-sl
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import {
-  doesNotEqualValidator,
-  matchOtherValidator,
+  doesNotEqualFgValidator,
+  matchOthersFgValidator,
 } from 'app/modules/ix-forms/validators/password-validation/password-validation';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -40,10 +40,6 @@ export class AuthorizedAccessFormComponent implements OnInit {
       Validators.minLength(12),
       Validators.maxLength(16),
       Validators.required,
-      this.validatorService.withMessage(
-        matchOtherValidator('secret_confirm'),
-        this.translate.instant('Secret and confirmation should match.'),
-      ),
     ]],
     secret_confirm: ['', Validators.required],
     peeruser: [''],
@@ -54,16 +50,26 @@ export class AuthorizedAccessFormComponent implements OnInit {
       ),
       Validators.minLength(12),
       Validators.maxLength(16),
-      this.validatorService.withMessage(
-        doesNotEqualValidator('secret'),
-        this.translate.instant('Secret and Peer Secret can not be the same.'),
-      ),
-      this.validatorService.withMessage(
-        matchOtherValidator('peersecret_confirm'),
-        this.translate.instant('Secret and confirmation should match.'),
-      ),
     ]],
     peersecret_confirm: [''],
+  }, {
+    validators: [
+      matchOthersFgValidator(
+        'secret',
+        ['secret_confirm'],
+        this.translate.instant('Secret and confirmation should match.'),
+      ),
+      matchOthersFgValidator(
+        'peersecret',
+        ['peersecret_confirm'],
+        this.translate.instant('Secret and confirmation should match.'),
+      ),
+      doesNotEqualFgValidator(
+        'peersecret',
+        ['secret'],
+        this.translate.instant('Secret and Peer Secret can not be the same.'),
+      ),
+    ],
   });
 
   isLoading = false;

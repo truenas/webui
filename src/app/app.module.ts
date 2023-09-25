@@ -82,7 +82,7 @@ import { RoutePartsService } from './services/route-parts/route-parts.service';
       useHash: false,
       preloadingStrategy: PreloadAllModules,
     }),
-    NgxPopperjsModule.forRoot({ appendTo: 'body' }),
+    NgxPopperjsModule.forRoot({ appendTo: 'body', hideOnScroll: true }),
     CoreComponents,
     MatSnackBarModule,
     TerminalModule,

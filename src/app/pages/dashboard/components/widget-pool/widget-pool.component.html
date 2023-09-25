@@ -7,76 +7,74 @@
       fxLayoutAlign="space-between stretch"
     >
       <mat-card-content #carouselparent>
-        <mat-toolbar-row
-          [class]="'view-' + (path.length > 0 ? currentSlideName : 'Pool')"
-          [class.drag-handle]="showReorderHandle"
-        >
+        <ix-drag-handle [showReorderHandle]="showReorderHandle">
           <ng-content [select]="[cdkDragHandle]"></ng-content>
 
-          <!-- Mobile Only: Exit widget -->
-          <button
-            *ngIf="currentSlide === '0'"
-            fxHide.gt-xs
-            class="mat-card-title-text primary-nav"
-            mat-icon-button
-            color="default"
-            [ixTest]="[poolState.name, 'widget', 'back']"
-            (click)="goBack()"
-          >
-            <ix-icon name="chevron_left" class="back-arrow"></ix-icon>
-          </button>
-
-          <!-- Back to previous slide -->
-          <button
-            *ngIf="currentSlide !== '0'"
-            class="mat-card-title-text primary-nav"
-            mat-icon-button
-            color="default"
-            [ixTest]="[poolState.name, 'widget', 'back']"
-            (click)="updateSlide(path[previousSlide].name, true, previousSlide)"
-          >
-            <ix-icon name="chevron_left" class="back-arrow"></ix-icon>
-          </button>
-
-          <h3 class="mat-card-title-text">
-            <div
-              class="card-title-text"
-              [class.drag-handle]="showReorderHandle"
+          <mat-toolbar-row [class]="'view-' + (path.length > 0 ? currentSlideName : 'Pool')">
+            <!-- Mobile Only: Exit widget -->
+            <button
+              *ngIf="currentSlide === '0'"
+              fxHide.gt-xs
+              class="mat-card-title-text primary-nav"
+              mat-icon-button
+              color="default"
+              [ixTest]="[poolState.name, 'widget', 'back']"
+              (click)="goBack()"
             >
-              <span *ngIf="showReorderHandle" class="grip"></span>
-              <span>{{ title | translate }}</span>
+              <ix-icon name="chevron_left" class="back-arrow"></ix-icon>
+            </button>
+
+            <!-- Back to previous slide -->
+            <button
+              *ngIf="currentSlide !== '0'"
+              class="mat-card-title-text primary-nav"
+              mat-icon-button
+              color="default"
+              [ixTest]="[poolState.name, 'widget', 'back']"
+              (click)="updateSlide(path[previousSlide].name, true, previousSlide)"
+            >
+              <ix-icon name="chevron_left" class="back-arrow"></ix-icon>
+            </button>
+
+            <h3 class="mat-card-title-text">
+              <ix-drag-handle [showReorderHandle]="showReorderHandle">
+                <div class="card-title-text">
+                  <span *ngIf="showReorderHandle" class="grip"></span>
+                  <span>{{ title | translate }}</span>
+                </div>
+              </ix-drag-handle>
+            </h3>
+
+            <div class="controls">
+              <a
+                mat-icon-button
+                [ixTest]="poolState.name"
+                [routerLink]="['/storage']"
+              >
+                <ix-icon
+                  name="mdi-database"
+                  matTooltipPosition="above"
+                  aria-label="Configure Pools"
+                  [matTooltip]="'Pool Status' | translate"
+                ></ix-icon>
+              </a>
+
+              <a
+                mat-icon-button
+                [ixTest]="[poolState.name, 'disk-reports']"
+                [routerLink]="['/reportsdashboard', 'disk']"
+                [queryParams]="{ disks: poolDisks }"
+              >
+                <ix-icon
+                  name="insert_chart"
+                  matTooltipPosition="above"
+                  aria-label="Disk Reports"
+                  [matTooltip]="'Disk Reports' | translate"
+                ></ix-icon>
+              </a>
             </div>
-          </h3>
-
-          <div class="controls">
-            <a
-              mat-icon-button
-              [ixTest]="poolState.name"
-              [routerLink]="['/storage']"
-            >
-              <ix-icon
-                name="mdi-database"
-                matTooltipPosition="above"
-                aria-label="Configure Pools"
-                [matTooltip]="'Pool Status' | translate"
-              ></ix-icon>
-            </a>
-
-            <a
-              mat-icon-button
-              [ixTest]="[poolState.name, 'disk-reports']"
-              [routerLink]="['/reportsdashboard', 'disk']"
-              [queryParams]="{ disks: poolDisks }"
-            >
-              <ix-icon
-                name="insert_chart"
-                matTooltipPosition="above"
-                aria-label="Disk Reports"
-                [matTooltip]="'Disk Reports' | translate"
-              ></ix-icon>
-            </a>
-          </div>
-        </mat-toolbar-row>
+          </mat-toolbar-row>
+        </ix-drag-handle>
 
         <!-- Carousel -->
         <div *ngIf="poolState && path" #carousel class="carousel">
@@ -217,22 +215,27 @@
                       </div>
                     </div>
 
-                    <div *ngIf="poolState.scan.end_time || isScanInProgress" class="tr last-scan">
+                    <div class="tr last-scan">
                       <div class="td label">
-                        <strong>{{ isScanScrub ? ('Last Scrub' | translate) : ('Last Resilver' | translate) }}:</strong>
+                        <strong>{{ isScanResilver ? ('Last Resilver' | translate) : ('Last Scrub' | translate) }}:</strong>
                       </div>
                       <div class="td">
-                        <ng-container *ngIf="!isScanInProgress">
-                          {{ poolState.scan.end_time.$date | formatDateTime }}
-                          <span>
-                            <ix-icon *ngIf="isScanFinished" class="healthy" name="check_circle"></ix-icon>
-                            <ix-icon *ngIf="!isScanFinished" class="warning" name="error"></ix-icon>
-                          </span>
+                        <ng-container *ngIf="!poolState.scan?.end_time?.$date && !isScanInProgress; else lastScrub">
+                          {{ 'Never' | translate }}
                         </ng-container>
-                        <ng-container *ngIf="isScanInProgress">
-                          {{ 'In Progress' | translate}}
-                          {{ poolState.scan.percentage / 100 | percent: '1.2-2' }}
-                        </ng-container>
+                        <ng-template #lastScrub>
+                          <ng-container *ngIf="!isScanInProgress">
+                            {{ poolState.scan.end_time.$date | formatDateTime }}
+                            <span>
+                              <ix-icon *ngIf="isScanFinished" class="healthy" name="check_circle"></ix-icon>
+                              <ix-icon *ngIf="!isScanFinished" class="warning" name="error"></ix-icon>
+                            </span>
+                          </ng-container>
+                          <ng-container *ngIf="isScanInProgress">
+                            {{ 'In Progress' | translate}}
+                            {{ poolState.scan.percentage / 100 | percent: '1.2-2' }}
+                          </ng-container>
+                        </ng-template>
                       </div>
                     </div>
                   </div>

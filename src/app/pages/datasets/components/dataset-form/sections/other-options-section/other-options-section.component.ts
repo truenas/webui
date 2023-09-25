@@ -35,7 +35,8 @@ import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { OnOff, onOffLabels } from 'app/enums/on-off.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { inherit, WithInherit } from 'app/enums/with-inherit.enum';
-import { choicesToOptions, mapToOptions, singleArrayToOptions } from 'app/helpers/options.helper';
+import { choicesToOptions, singleArrayToOptions } from 'app/helpers/operators/options.operators';
+import { mapToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -46,7 +47,9 @@ import {
   specialSmallBlockSizeOptions,
 } from 'app/pages/datasets/components/dataset-form/utils/special-small-block-size-options.constant';
 import { getFieldValue } from 'app/pages/datasets/components/dataset-form/utils/zfs-property.utils';
-import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
+import { SystemGeneralService } from 'app/services/system-general.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
@@ -133,15 +136,6 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     private datasetFormService: DatasetFormService,
   ) {}
 
-  ngOnInit(): void {
-    this.checkIfDedupIsSupported();
-    this.setUpShareTypeSelect();
-
-    this.form.controls.acltype.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
-      this.updateAclMode();
-    });
-  }
-
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     if (!changes.existing?.currentValue && !changes.parent?.currentValue) {
       return;
@@ -154,6 +148,15 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     this.setUpAclTypeWarning();
     this.updateAclMode();
     this.disableCaseSensitivityOnEdit();
+  }
+
+  ngOnInit(): void {
+    this.checkIfDedupIsSupported();
+    this.setUpShareTypeSelect();
+
+    this.form.controls.acltype.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+      this.updateAclMode();
+    });
   }
 
   getPayload(): Partial<DatasetCreate> | Partial<DatasetUpdate> {

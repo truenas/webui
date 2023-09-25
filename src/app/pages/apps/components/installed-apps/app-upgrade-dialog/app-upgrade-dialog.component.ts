@@ -10,10 +10,9 @@ import helptext from 'app/helptext/apps/apps';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { ChartContainerImage } from 'app/interfaces/chart-release.interface';
 import { ChartUpgradeDialogConfig } from 'app/interfaces/chart-upgrade-dialog-config.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 type Version = Omit<UpgradeSummary, 'upgrade_version' | 'image_update_available' | 'upgrade_human_version'> & { fetched?: boolean };
@@ -34,7 +33,7 @@ export class AppUpgradeDialogComponent {
 
   constructor(
     public dialogRef: MatDialogRef<AppUpgradeDialogComponent>,
-    private appLoaderService: AppLoaderService,
+    private loader: AppLoaderService,
     private errorHandler: ErrorHandlerService,
     private appService: ApplicationsService,
     public dialogService: DialogService,
@@ -74,20 +73,19 @@ export class AppUpgradeDialogComponent {
   onVersionOptionChanged(): void {
     this.selectedVersion = this.versionOptions.get(this.selectedVersionKey);
     if (!this.selectedVersion.fetched) {
-      this.appLoaderService.open();
-      this.appService.getChartUpgradeSummary(this.dialogConfig.appInfo.name, this.selectedVersionKey)
-        .pipe(untilDestroyed(this)).subscribe({
-          next: (summary: UpgradeSummary) => {
-            this.appLoaderService.close();
-            this.selectedVersion.changelog = summary.changelog;
-            this.selectedVersion.container_images_to_update = summary.container_images_to_update;
-            this.selectedVersion.item_update_available = summary.item_update_available;
-            this.selectedVersion.fetched = true;
-          },
-          error: (error: WebsocketError) => {
-            this.appLoaderService.close();
-            this.dialogService.error(this.errorHandler.parseWsError(error));
-          },
+      this.appService.getChartUpgradeSummary(
+        this.dialogConfig.appInfo.name,
+        this.selectedVersionKey,
+      )
+        .pipe(
+          this.loader.withLoader(),
+          this.errorHandler.catchError(),
+          untilDestroyed(this),
+        ).subscribe((summary: UpgradeSummary) => {
+          this.selectedVersion.changelog = summary.changelog;
+          this.selectedVersion.container_images_to_update = summary.container_images_to_update;
+          this.selectedVersion.item_update_available = summary.item_update_available;
+          this.selectedVersion.fetched = true;
         });
     }
   }

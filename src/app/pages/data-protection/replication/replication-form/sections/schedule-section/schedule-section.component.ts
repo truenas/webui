@@ -8,7 +8,7 @@ import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-t
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
-import { TaskService } from 'app/services';
+import { TaskService } from 'app/services/task.service';
 
 @Component({
   selector: 'ix-replication-schedule-section',

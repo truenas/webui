@@ -15,7 +15,7 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import {
   TargetSectionComponent,
 } from 'app/pages/data-protection/replication/replication-form/sections/target-section/target-section.component';
-import { ReplicationService } from 'app/services';
+import { ReplicationService } from 'app/services/replication.service';
 
 describe('TargetSectionComponent', () => {
   let spectator: Spectator<TargetSectionComponent>;

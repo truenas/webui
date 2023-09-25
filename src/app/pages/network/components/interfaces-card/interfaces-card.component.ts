@@ -8,6 +8,7 @@ import {
   Output,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 import { NetworkInterfaceType } from 'app/enums/network-interface.enum';
@@ -17,17 +18,19 @@ import { AllNetworkInterfacesUpdate } from 'app/interfaces/reporting.interface';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { createTable } from 'app/modules/ix-table2/utils';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
 import {
   IpAddressesCellComponent,
 } from 'app/pages/network/components/interfaces-card/ip-addresses-cell/ip-addresses-cell.component';
 import { InterfacesStore } from 'app/pages/network/stores/interfaces.store';
-import {
-  AppLoaderService, DialogService, NetworkService, WebSocketService,
-} from 'app/services';
-import { CoreService } from 'app/services/core-service/core.service';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { NetworkService } from 'app/services/network.service';
+import { WebSocketService } from 'app/services/ws.service';
+import { AppState } from 'app/store';
+import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
 
 @UntilDestroy()
 @Component({
@@ -65,14 +68,14 @@ export class InterfacesCardComponent implements OnInit {
   readonly helptext = helptext;
 
   constructor(
-    private store: InterfacesStore,
+    private interfacesStore$: InterfacesStore,
+    private store$: Store<AppState>,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
-    private slideIn: IxSlideInService,
+    private slideInService: IxSlideInService,
     private dialogService: DialogService,
     private ws: WebSocketService,
     private loader: AppLoaderService,
-    private core: CoreService,
     private errorHandler: ErrorHandlerService,
     private networkService: NetworkService,
   ) {}
@@ -82,9 +85,9 @@ export class InterfacesCardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.store.loadInterfaces();
+    this.interfacesStore$.loadInterfaces();
     this.subscribeToUpdates();
-    this.store.state$.pipe(untilDestroyed(this)).subscribe((state) => {
+    this.interfacesStore$.state$.pipe(untilDestroyed(this)).subscribe((state) => {
       this.isLoading = state.isLoading;
       this.dataProvider.setRows(state.interfaces);
       this.cdr.markForCheck();
@@ -92,24 +95,24 @@ export class InterfacesCardComponent implements OnInit {
   }
 
   onAddNew(): void {
-    this.slideIn.open(InterfaceFormComponent)
+    this.slideInService.open(InterfaceFormComponent)
       .slideInClosed$
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => {
         this.interfacesUpdated.emit();
-        this.store.loadInterfaces();
+        this.interfacesStore$.loadInterfaces();
       });
   }
 
   onEdit(row: NetworkInterface): void {
-    this.slideIn.open(InterfaceFormComponent, {
+    this.slideInService.open(InterfaceFormComponent, {
       data: row,
     })
       .slideInClosed$
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => {
         this.interfacesUpdated.emit();
-        this.store.loadInterfaces();
+        this.interfacesStore$.loadInterfaces();
       });
   }
 
@@ -134,19 +137,17 @@ export class InterfacesCardComponent implements OnInit {
   }
 
   private makeDeleteCall(row: NetworkInterface): void {
-    this.loader.open();
-    this.ws.call('interface.delete', [row.id]).pipe(untilDestroyed(this)).subscribe({
-      next: () => {
-        this.loader.close();
+    this.ws.call('interface.delete', [row.id])
+      .pipe(
+        this.loader.withLoader(),
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
         this.interfacesUpdated.emit();
-        this.store.loadInterfaces();
-        this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: false, checkin: false }, sender: this });
-      },
-      error: (error) => {
-        this.dialogService.error(this.errorHandler.parseWsError(error));
-        this.loader.close();
-      },
-    });
+        this.interfacesStore$.loadInterfaces();
+        this.store$.dispatch(networkInterfacesChanged({ commit: false, checkIn: false }));
+      });
   }
 
   private subscribeToUpdates(): void {

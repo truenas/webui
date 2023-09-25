@@ -6,7 +6,8 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/storage/snapshots/snapshots';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { AppLoaderService, WebSocketService } from 'app/services';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -43,21 +44,17 @@ export class SnapshotCloneDialogComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.loader.open();
-
     this.ws.call('zfs.snapshot.clone', [{
       snapshot: this.snapshotName,
       dataset_dst: this.datasetName,
     }])
-      .pipe(untilDestroyed(this))
+      .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: () => {
-          this.loader.close();
           this.wasDatasetCloned = true;
           this.cdr.markForCheck();
         },
         error: (error) => {
-          this.loader.close();
           this.errorHandler.handleWsFormError(error, this.form);
         },
       });

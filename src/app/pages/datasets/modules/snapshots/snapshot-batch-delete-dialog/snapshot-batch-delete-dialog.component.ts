@@ -11,7 +11,7 @@ import { Job } from 'app/interfaces/job.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { SnapshotDialogData } from 'app/pages/datasets/modules/snapshots/interfaces/snapshot-dialog-data.interface';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
@@ -31,6 +31,10 @@ export class SnapshotBatchDeleteDialogComponent implements OnInit {
   dialogData: SnapshotDialogData;
   jobSuccess: boolean[] = [];
   jobErrors: string[] = [];
+
+  get hasClones(): boolean {
+    return this.snapshots.some((snapshot) => !!snapshot?.properties?.clones?.value);
+  }
 
   constructor(
     private fb: FormBuilder,

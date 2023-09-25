@@ -1,58 +1,126 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
+import { switchMap, from, filter } from 'rxjs';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
-import { AppTableConfig } from 'app/modules/entity/table/table.component';
+import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import {
+  yesNoColumn,
+} from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
+import { createTable } from 'app/modules/ix-table2/utils';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import {
   InitShutdownFormComponent,
 } from 'app/pages/system/advanced/init-shutdown/init-shutdown-form/init-shutdown-form.component';
+import { DialogService } from 'app/services/dialog.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
+
+
 
 @UntilDestroy()
 @Component({
   selector: 'ix-init-shutdown-card',
   templateUrl: './init-shutdown-card.component.html',
+  styleUrls: ['./init-shutdown-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class InitShutdownCardComponent {
-  readonly tableConfig: AppTableConfig = {
-    title: helptextSystemAdvanced.fieldset_initshutdown,
-    titleHref: '/system/initshutdown',
-    queryCall: 'initshutdownscript.query',
-    deleteCall: 'initshutdownscript.delete',
-    deleteMsg: {
-      title: this.translate.instant('Init/Shutdown Script'),
-      key_props: ['type', 'command', 'script'],
-    },
-    emptyEntityLarge: false,
-    columns: [
-      { name: this.translate.instant('Type'), prop: 'type' },
-      { name: this.translate.instant('Command'), prop: 'command' },
-      { name: this.translate.instant('Script'), prop: 'script' },
-      { name: this.translate.instant('Description'), prop: 'comment' },
-      { name: this.translate.instant('When'), prop: 'when' },
-      { name: this.translate.instant('Enabled'), prop: 'enabled' },
-      { name: this.translate.instant('Timeout'), prop: 'timeout' },
-    ],
-    add: async () => {
-      await this.advancedSettings.showFirstTimeWarningIfNeeded();
+export class InitShutdownCardComponent implements OnInit {
+  dataProvider = new ArrayDataProvider<InitShutdownScript>();
 
-      const slideInRef = this.slideInService.open(InitShutdownFormComponent);
-      slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.tableConfig.tableComponent?.getData());
-    },
-    edit: async (script: InitShutdownScript) => {
-      await this.advancedSettings.showFirstTimeWarningIfNeeded();
+  columns = createTable<InitShutdownScript>([
+    textColumn({
+      title: this.translate.instant('Command / Script'),
+      propertyName: 'command',
+    }),
+    textColumn({
+      title: this.translate.instant('Description'),
+      propertyName: 'comment',
+    }),
+    textColumn({
+      title: this.translate.instant('When'),
+      propertyName: 'when',
+    }),
+    yesNoColumn({
+      title: this.translate.instant('Enabled'),
+      propertyName: 'enabled',
+    }),
+    textColumn({
+      title: this.translate.instant('Timeout'),
+      propertyName: 'timeout',
+    }),
+    textColumn({
+      propertyName: 'id',
+    }),
+  ]);
 
-      const slideInRef = this.slideInService.open(InitShutdownFormComponent, { data: script });
-      slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.tableConfig.tableComponent?.getData());
-    },
-  };
+  isLoading = false;
 
   constructor(
     private slideInService: IxSlideInService,
     private translate: TranslateService,
+    private errorHandler: ErrorHandlerService,
+    private ws: WebSocketService,
+    private dialog: DialogService,
+    private cdr: ChangeDetectorRef,
+    private snackbar: SnackbarService,
     private advancedSettings: AdvancedSettingsService,
   ) {}
+
+  ngOnInit(): void {
+    this.loadScripts();
+  }
+
+  onAdd(): void {
+    this.openForm();
+  }
+
+  loadScripts(): void {
+    this.isLoading = true;
+    this.ws.call('initshutdownscript.query')
+      .pipe(this.errorHandler.catchError(), untilDestroyed(this))
+      .subscribe((scripts) => {
+        this.dataProvider.setRows(scripts);
+        this.isLoading = false;
+        this.cdr.markForCheck();
+      });
+  }
+
+  onDelete(row: InitShutdownScript): void {
+    this.dialog.confirm({
+      title: this.translate.instant('Delete Script'),
+      message: this.translate.instant('Delete Init/Shutdown Script {script}?', {
+        script: row.command,
+      }),
+      buttonText: this.translate.instant('Delete'),
+    })
+      .pipe(
+        switchMap(() => this.ws.call('initshutdownscript.delete', [row.id])),
+        filter(Boolean),
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        this.snackbar.success(this.translate.instant('Script deleted.'));
+        this.loadScripts();
+      });
+  }
+
+  onEdit(row: InitShutdownScript): void {
+    this.openForm(row);
+  }
+
+  private openForm(row?: InitShutdownScript): void {
+    from(this.advancedSettings.showFirstTimeWarningIfNeeded()).pipe(
+      switchMap(() => this.slideInService.open(InitShutdownFormComponent, { data: row }).slideInClosed$),
+      filter(Boolean),
+      untilDestroyed(this),
+    )
+      .subscribe(() => {
+        this.loadScripts();
+      });
+  }
 }

@@ -4,8 +4,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 import helptext from 'app/helptext/topbar';
-import { DialogService } from 'app/services';
 import { AuthService } from 'app/services/auth/auth.service';
+import { DialogService } from 'app/services/dialog.service';
 import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
 
 @UntilDestroy()
@@ -28,7 +28,7 @@ export class PowerMenuComponent {
   onSignOut(): void {
     this.authService.logout().pipe(untilDestroyed(this)).subscribe();
     this.authService.clearAuthToken();
-    this.wsManager.resetUi();
+    this.wsManager.isClosed$ = true;
   }
 
   onReboot(): void {

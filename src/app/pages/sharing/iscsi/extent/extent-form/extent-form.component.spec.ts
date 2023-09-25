@@ -4,6 +4,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { KiB } from 'app/constants/bytes.constant';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IscsiExtentRpm, IscsiExtentType } from 'app/enums/iscsi.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
@@ -14,8 +15,9 @@ import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-sl
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { ExtentFormComponent } from 'app/pages/sharing/iscsi/extent/extent-form/extent-form.component';
-import { DialogService, StorageService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('ExtentFormComponent', () => {
@@ -31,7 +33,7 @@ describe('ExtentFormComponent', () => {
     type: IscsiExtentType.File,
     disk: 'key_device_2',
     path: '/mnt/opt',
-    filesize: 512,
+    filesize: 512 * KiB,
     serial: 'serial_number',
     blocksize: 1024,
     pblocksize: true,
@@ -158,7 +160,7 @@ describe('ExtentFormComponent', () => {
         'Enable TPC': false,
         Enabled: false,
         'Extent Type': 'File',
-        Filesize: '512',
+        Filesize: '512 KiB',
         'LUN RPM': '5400',
         'Logical Block Size': '1024',
         Name: 'test_name',
@@ -173,7 +175,7 @@ describe('ExtentFormComponent', () => {
       await form.fillForm({
         Name: 'test_name',
         Description: 'test_comment',
-        Filesize: 2049,
+        Filesize: '2049 KiB',
         'Logical Block Size': '512',
       });
 
@@ -187,7 +189,7 @@ describe('ExtentFormComponent', () => {
           blocksize: 512,
           comment: 'test_comment',
           enabled: false,
-          filesize: 2560,
+          filesize: 2049 * KiB + (512 - 2049 * KiB % 512),
           insecure_tpc: false,
           name: 'test_name',
           path: '/mnt/opt',
@@ -195,7 +197,7 @@ describe('ExtentFormComponent', () => {
           ro: true,
           rpm: '5400',
           serial: 'serial_number',
-          type: 'FILE',
+          type: IscsiExtentType.File,
           xen: true,
         },
       ]);

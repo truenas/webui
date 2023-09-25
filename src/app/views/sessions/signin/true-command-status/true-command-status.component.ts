@@ -6,7 +6,8 @@ import { filter } from 'rxjs/operators';
 import { WINDOW } from 'app/helpers/window.helper';
 import helptext from 'app/helptext/topbar';
 import { TrueCommandConnectionState } from 'app/interfaces/true-command-config.interface';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({

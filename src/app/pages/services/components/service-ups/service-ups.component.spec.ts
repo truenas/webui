@@ -6,11 +6,13 @@ import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { UpsConfig, UpsConfigUpdate } from 'app/interfaces/ups-config.interface';
 import { IxComboboxHarness } from 'app/modules/ix-forms/components/ix-combobox/ix-combobox.harness';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { ServiceUpsComponent } from 'app/pages/services/components/service-ups/service-ups.component';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('ServiceUpsComponent', () => {
@@ -62,6 +64,8 @@ describe('ServiceUpsComponent', () => {
       ]),
       mockProvider(FormErrorHandlerService),
       mockProvider(DialogService),
+      mockProvider(IxSlideInRef),
+      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
 

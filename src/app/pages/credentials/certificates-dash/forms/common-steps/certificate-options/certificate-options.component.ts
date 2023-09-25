@@ -11,11 +11,13 @@ import {
   certificateKeyLengths,
 } from 'app/enums/certificate-digest-algorithm.enum';
 import { CertificateKeyType, certificateKeyTypeLabels } from 'app/enums/certificate-key-type.enum';
-import { choicesToOptions, idNameArrayToOptions, mapToOptions } from 'app/helpers/options.helper';
+import { choicesToOptions, idNameArrayToOptions } from 'app/helpers/operators/options.operators';
+import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { Option } from 'app/interfaces/option.interface';
 import { SummaryProvider, SummarySection } from 'app/modules/common/summary/summary.interface';
-import { SystemGeneralService, WebSocketService } from 'app/services';
+import { SystemGeneralService } from 'app/services/system-general.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -58,12 +60,12 @@ export class CertificateOptionsComponent implements OnInit, OnChanges, SummaryPr
     private cdr: ChangeDetectorRef,
   ) { }
 
-  ngOnInit(): void {
-    this.loadSigningAuthorities();
+  ngOnChanges(): void {
     this.setSignedByValidator();
   }
 
-  ngOnChanges(): void {
+  ngOnInit(): void {
+    this.loadSigningAuthorities();
     this.setSignedByValidator();
   }
 

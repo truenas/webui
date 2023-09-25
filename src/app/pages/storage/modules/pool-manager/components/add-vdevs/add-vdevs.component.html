@@ -1,0 +1,25 @@
+<div class="root-container">
+  <div class="main-container">
+    <ix-pool-manager-wizard
+      (stepChanged)="onStepChanged($event)"
+    ></ix-pool-manager-wizard>
+  </div>
+  <div class="sidebar">
+    <div class="details-container">
+      <ix-existing-configuration-preview
+        *ngIf="hasConfigurationPreview && !!existingPool"
+        [name]="existingPool?.name"
+        [topology]="existingPool?.topology"
+        [disks]="poolDisks"
+        [size]="existingPool?.size"
+      ></ix-existing-configuration-preview>
+
+      <ix-new-devices-preview
+        *ngIf="hasConfigurationPreview"
+      ></ix-new-devices-preview>
+
+      <ix-inventory></ix-inventory>
+    </div>
+  </div>
+</div>
+

@@ -1,4 +1,4 @@
-<ng-template #pageHeader>
+<ng-template ixPageHeader>
   <ix-page-title-header>
     <ix-reports-global-controls
       (diskOptionsChanged)="buildDiskReport($event)"
@@ -16,12 +16,10 @@
         *ngIf="activeReports[key] && activeReports[key].identifiers.length > 0"
         [report]="activeReports[key]"
         [identifier]="activeReports[key].identifiers[0]"
-        [isReversed]="isReportReversed(activeReports[key])"
       ></ix-report>
       <ix-report
         *ngIf="activeReports[key].identifiers.length === 0"
         [report]="activeReports[key]"
-        [isReversed]="isReportReversed(activeReports[key])"
       ></ix-report>
     </div>
     <div class="bottom-spacer"></div>

@@ -25,10 +25,10 @@ import {
 import {
   LeaveDomainDialogComponent,
 } from 'app/pages/directory-service/components/leave-domain-dialog/leave-domain-dialog.component';
-import {
-  DialogService, SystemGeneralService, WebSocketService,
-} from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SystemGeneralService } from 'app/services/system-general.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('ActiveDirectoryComponent', () => {
   let spectator: Spectator<ActiveDirectoryComponent>;
@@ -110,6 +110,7 @@ describe('ActiveDirectoryComponent', () => {
       'Domain Account Password': '',
       'Domain Name': 'AD.IXSYSTEMS.NET',
       'Enable (requires password or Kerberos principal)': false,
+      'NetBIOS Name': 'truenas',
     });
   });
 
@@ -151,7 +152,7 @@ describe('ActiveDirectoryComponent', () => {
       'AD Timeout': '60',
       'DNS Timeout': '10',
       'Winbind NSS Info': 'SFU20',
-      'Netbios Name': 'truenas',
+      'NetBIOS Name': 'truenas',
       'NetBIOS Alias': ['alias1', 'alias2'],
     });
   });

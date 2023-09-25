@@ -10,16 +10,17 @@ import {
   catchError, filter, map, switchMap, tap,
 } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
-import { choicesToOptions } from 'app/helpers/options.helper';
+import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import helptext from 'app/helptext/apps/apps';
 import { KubernetesConfig, KubernetesConfigUpdate } from 'app/interfaces/kubernetes-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import {
-  AppLoaderService, DialogService,
-} from 'app/services';
+  DialogService,
+} from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -39,7 +40,6 @@ export class KubernetesSettingsComponent implements OnInit {
     enable_container_image_update: [true],
     configure_gpus: [true],
     servicelb: [true],
-    validate_host_path: [true],
     cluster_cidr: ['', Validators.required],
     service_cidr: ['', Validators.required],
     cluster_dns_ip: ['', Validators.required],
@@ -83,20 +83,18 @@ export class KubernetesSettingsComponent implements OnInit {
     this.showReInitConfirm(values).pipe(
       filter(Boolean),
       switchMap(() => {
-        this.loader.open();
         return forkJoin([
           this.ws.job('kubernetes.update', [values]),
           this.appService.updateContainerConfig(enableContainerImageUpdate),
         ]).pipe(
+          this.loader.withLoader(),
           tap(([job]) => {
             if (job.state !== JobState.Success) {
               return;
             }
-            this.loader.close();
             this.slideInRef.close();
           }),
           catchError((error) => {
-            this.loader.close();
             this.formErrorHandler.handleWsFormError(error, this.form);
             return EMPTY;
           }),
@@ -119,7 +117,6 @@ export class KubernetesSettingsComponent implements OnInit {
         });
 
         this.oldConfig = kubernetesConfig;
-        this.setHostPathCheckWarning();
         this.isFormLoading = false;
         this.cdr.markForCheck();
       },
@@ -128,25 +125,6 @@ export class KubernetesSettingsComponent implements OnInit {
         this.cdr.markForCheck();
         this.dialogService.error(this.errorHandler.parseWsError(error));
       },
-    });
-  }
-
-  private setHostPathCheckWarning(): void {
-    this.form.controls.validate_host_path.valueChanges.pipe(
-      filter((value) => !value),
-      switchMap(() => {
-        return this.dialogService.confirm({
-          title: helptext.kubForm.validateHostPath.title,
-          message: helptext.kubForm.validateHostPath.warning,
-        });
-      }),
-      untilDestroyed(this),
-    ).subscribe((confirmed) => {
-      if (confirmed) {
-        return;
-      }
-
-      this.form.patchValue({ validate_host_path: true });
     });
   }
 

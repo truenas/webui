@@ -8,13 +8,13 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import {
-  combineLatest, from, Observable, of, Subscription,
+  from, Observable, of, Subscription,
 } from 'rxjs';
 import {
   debounceTime, filter, map, switchMap, take,
 } from 'rxjs/operators';
 import { allCommands } from 'app/constants/all-commands.constant';
-import { choicesToOptions } from 'app/helpers/options.helper';
+import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import helptext from 'app/helptext/account/user-form';
 import { Option } from 'app/interfaces/option.interface';
 import { User, UserUpdate } from 'app/interfaces/user.interface';
@@ -24,13 +24,14 @@ import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-sl
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { forbiddenValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
-import { matchOtherValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
+import { matchOthersFgValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { userAdded, userChanged } from 'app/pages/account/users/store/user.actions';
 import { selectUsers } from 'app/pages/account/users/store/user.selectors';
-import { UserService, DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { StorageService } from 'app/services/storage.service';
+import { UserService } from 'app/services/user.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 
@@ -204,7 +205,7 @@ export class UserFormComponent implements OnInit {
     });
 
     this.form.controls.home.valueChanges.pipe(untilDestroyed(this)).subscribe((home) => {
-      if (home === defaultHomePath) {
+      if (home === defaultHomePath || this.editingUser?.immutable) {
         this.form.controls.home_mode.disable();
       } else {
         this.form.controls.home_mode.enable();
@@ -217,9 +218,10 @@ export class UserFormComponent implements OnInit {
       }
     });
 
-    this.form.controls.password_conf.addValidators(
-      this.validatorsService.withMessage(
-        matchOtherValidator('password'),
+    this.form.addValidators(
+      matchOthersFgValidator(
+        'password_conf',
+        ['password'],
         this.translate.instant(this.isNewUser ? 'Password and confirmation should match.' : 'New password and confirmation should match.'),
       ),
     );
@@ -256,7 +258,7 @@ export class UserFormComponent implements OnInit {
       full_name: values.full_name,
       group: values.group,
       groups: values.groups,
-      home_mode: values.home_mode,
+      home_mode: this.homeModeOldValue !== values.home_mode ? values.home_mode : undefined,
       home_create: values.home_create,
       home: values.home,
       locked: values.password_disabled ? false : values.locked,
@@ -415,14 +417,9 @@ export class UserFormComponent implements OnInit {
     ]]).pipe(
       filter((shares) => !!shares.length),
       map((shares) => shares[0].path),
-      switchMap((homeSharePath) => {
-        this.form.patchValue({ home: homeSharePath });
-
-        return combineLatest([of(homeSharePath), this.form.controls.username.valueChanges]);
-      }),
       untilDestroyed(this),
-    ).subscribe(([homeSharePath, username]) => {
-      this.form.patchValue({ home: `${homeSharePath}/${username}` });
+    ).subscribe((homeSharePath) => {
+      this.form.patchValue({ home: homeSharePath });
     });
   }
 

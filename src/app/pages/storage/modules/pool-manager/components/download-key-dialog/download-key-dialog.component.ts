@@ -7,15 +7,16 @@ import { EMPTY, switchMap } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import helptext from 'app/helptext/storage/volumes/download-key';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import {
-  AppLoaderService, DialogService, StorageService, WebSocketService,
-} from 'app/services';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { StorageService } from 'app/services/storage.service';
+import { WebSocketService } from 'app/services/ws.service';
 
-export type DownloadKeyDialogParams = {
+export interface DownloadKeyDialogParams {
   id: number;
   name: string;
-};
+}
 
 @UntilDestroy()
 @Component({
@@ -42,18 +43,16 @@ export class DownloadKeyDialogComponent {
   }
 
   downloadKey(): void {
-    this.loader.open();
     this.ws.call('core.download', ['pool.dataset.export_keys', [this.data.name], this.filename]).pipe(
+      this.loader.withLoader(),
       switchMap(([, url]) => {
         return this.storage.streamDownloadFile(url, this.filename, 'application/json').pipe(
           tap((file) => {
             this.storage.downloadBlob(file, this.filename);
             this.wasDownloaded = true;
             this.cdr.markForCheck();
-            this.loader.close();
           }),
           catchError((error) => {
-            this.loader.close();
             this.dialog.error(this.errorHandler.parseHttpError(error));
             return EMPTY;
           }),

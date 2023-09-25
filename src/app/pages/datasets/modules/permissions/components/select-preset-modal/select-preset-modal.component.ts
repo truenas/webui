@@ -8,14 +8,15 @@ import { of } from 'rxjs';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { AclTemplateByPath } from 'app/interfaces/acl.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import {
   SelectPresetModalConfig,
 } from 'app/pages/datasets/modules/permissions/interfaces/select-preset-modal-config.interface';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
-import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -26,7 +27,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 export class SelectPresetModalComponent implements OnInit {
   form = new FormGroup({
     presetName: new FormControl('', this.validatorsService.validateOnCondition(
-      (control) => control.parent && control.parent.get('usePreset').value,
+      (control) => control.parent?.get('usePreset')?.value,
       Validators.required,
     )),
     usePreset: new FormControl(true),
@@ -72,7 +73,6 @@ export class SelectPresetModalComponent implements OnInit {
   }
 
   private loadOptions(): void {
-    this.loader.open();
     this.ws.call('filesystem.acltemplate.by_path', [{
       path: this.data.datasetPath,
       'format-options': {
@@ -80,20 +80,17 @@ export class SelectPresetModalComponent implements OnInit {
         resolve_names: true,
       },
     }])
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: (presets) => {
-          this.presets = presets;
-          this.presetOptions$ = of(presets.map((preset) => ({
-            label: preset.name,
-            value: preset.name,
-          })));
-          this.loader.close();
-        },
-        error: (error: WebsocketError) => {
-          this.loader.close();
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-        },
+      .pipe(
+        this.loader.withLoader(),
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe((presets) => {
+        this.presets = presets;
+        this.presetOptions$ = of(presets.map((preset) => ({
+          label: preset.name,
+          value: preset.name,
+        })));
       });
   }
 

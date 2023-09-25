@@ -1,0 +1,43 @@
+<div class="content-container">
+  <div class="automated-disk-selection-container" [formGroup]="form">
+    <h3>{{ 'Automated Disk Selection' | translate }}</h3>
+    <ix-disk-size-dropdowns
+      [type]="type"
+      [layout]="layout"
+      [inventory]="inventory"
+      [isStepActive]="isStepActive"
+      (disksSelected)="onDisksSelected($event)"
+    ></ix-disk-size-dropdowns>
+
+    <ix-select
+      formControlName="width"
+      [label]="'Width' | translate"
+      [options]="widthOptions$"
+      [required]="true"
+    ></ix-select>
+
+    <ix-select
+      *ngIf="!isNumberOfVdevsLimitedToOne"
+      formControlName="vdevsNumber"
+      [label]="'Number of VDEVs' | translate"
+      [options]="numberOptions$"
+      [required]="true"
+    ></ix-select>
+  </div>
+  <div class="advanced-options-container">
+    <h3>{{ 'Advanced Options' | translate }}</h3>
+
+    <p>{{ 'Manual disk selection allows you to create VDEVs and add disks to those VDEVs individually.' | translate }}</p>
+
+    <button
+      mat-button
+      type="button"
+      class="manual-disk-selection"
+      ixTest="manual"
+      [disabled]="!layout"
+      (click)="store.openManualSelectionDialog(type)"
+    >
+      {{ 'Manual Disk Selection' | translate }}
+    </button>
+  </div>
+</div>

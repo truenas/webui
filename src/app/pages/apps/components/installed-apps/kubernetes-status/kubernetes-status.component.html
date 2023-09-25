@@ -1,0 +1,35 @@
+<ng-container *ngIf="(status$ | async) as status">
+  <div *ngIf="status === kubernetesStatus.Running" class="status-wrapper" [matTooltip]="statusDescription$ | async">
+    <ix-icon name="mdi-check-circle" class="running"></ix-icon>
+    <span>{{ status | mapValue: kubernetesStatusLabels | translate }}</span>
+  </div>
+
+  <div
+    *ngIf="status === kubernetesStatus.Initializing || status === kubernetesStatus.Stopping"
+    class="status-wrapper"
+    [matTooltip]="statusDescription$ | async"
+  >
+    <mat-spinner [diameter]="20"></mat-spinner>
+    <span>{{ status | mapValue: kubernetesStatusLabels | translate }}</span>
+  </div>
+
+  <div *ngIf="status === kubernetesStatus.Stopped" class="status-wrapper" [matTooltip]="statusDescription$ | async">
+    <ix-icon name="stop_circle"></ix-icon>
+    <span>{{ status | mapValue: kubernetesStatusLabels | translate }}</span>
+  </div>
+
+  <div *ngIf="status === kubernetesStatus.Failed" class="status-wrapper" [matTooltip]="statusDescription$ | async">
+    <ix-icon name="mdi-close-circle" class="error"></ix-icon>
+    <span>{{ status | mapValue: kubernetesStatusLabels | translate }}</span>
+  </div>
+
+  <div *ngIf="status === kubernetesStatus.Unconfigured" class="status-wrapper" [matTooltip]="statusDescription$ | async">
+    <ix-icon name="settings"></ix-icon>
+    <span>{{ status | mapValue: kubernetesStatusLabels | translate }}</span>
+  </div>
+
+  <div *ngIf="status === kubernetesStatus.Pending" class="status-wrapper" [matTooltip]="statusDescription$ | async">
+    <ix-icon name="pending"></ix-icon>
+    <span>{{ status | mapValue: kubernetesStatusLabels | translate }}</span>
+  </div>
+</ng-container>

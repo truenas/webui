@@ -28,7 +28,8 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import {
   OtherOptionsSectionComponent,
 } from 'app/pages/datasets/components/dataset-form/sections/other-options-section/other-options-section.component';
-import { DialogService, SystemGeneralService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
+import { SystemGeneralService } from 'app/services/system-general.service';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 describe('OtherOptionsSectionComponent', () => {

@@ -38,15 +38,13 @@ import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-sl
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { forbiddenValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   StartServiceDialogComponent, StartServiceDialogResult,
 } from 'app/pages/sharing/components/start-service-dialog/start-service-dialog.component';
 import { RestartSmbDialogComponent } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
-import {
-  AppLoaderService,
-  DialogService,
-} from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -137,7 +135,7 @@ export class SmbFormComponent implements OnInit {
     If there is both a *Hosts Allow* and *Hosts Deny* list, then allow all hosts \
     that are on the *Hosts Allow* list. <br><br> \
     If there is a host not on the *Hosts Allow* and not on the *Hosts Deny* list, \
-    then allow it.', { url: 'https://www.samba.org/samba/docs/current/man-html/smb.conf.5.html#HOSTSALLOW' });
+    then allow it.', { url: 'https://wiki.samba.org/index.php/1.4_Samba_Security' });
 
   form = this.formBuilder.group({
     path: ['', Validators.required],
@@ -300,14 +298,22 @@ export class SmbFormComponent implements OnInit {
   }
 
   /**
-   *
    * @returns Observable<void> to allow setting warnings for values changes once default or previous preset is applied
    */
   setupAndApplyPurposePresets(): Observable<void> {
     return this.ws.call('sharing.smb.presets').pipe(
       switchMap((presets) => {
-        this.presets = presets;
-        const options = Object.entries(presets).map(([presetName, preset]) => ({
+        const nonClusterPresets = Object.entries(presets).reduce(
+          (acc, [presetName, preset]) => {
+            if (!preset.cluster) {
+              acc[presetName] = preset;
+            }
+            return acc;
+          },
+          {} as SmbPresets,
+        );
+        this.presets = nonClusterPresets;
+        const options = Object.entries(nonClusterPresets).map(([presetName, preset]) => ({
           label: preset.verbose_name,
           value: presetName,
         }));

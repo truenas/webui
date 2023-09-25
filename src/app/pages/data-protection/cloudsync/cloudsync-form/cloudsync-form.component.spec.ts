@@ -17,7 +17,7 @@ import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/clou
 import {
   TransferModeExplanationComponent,
 } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -69,6 +69,7 @@ describe('CloudsyncFormComponent', () => {
     next_run_time: 'Disabled',
     next_run: 'Disabled',
     state: { state: 'PENDING' },
+    last_run: '1 minute ago',
   } as CloudSyncTaskUi;
 
   let loader: HarnessLoader;

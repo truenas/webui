@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import {
-  combineLatest, Observable, of,
+  combineLatest, EMPTY, Observable,
 } from 'rxjs';
 import {
   map, shareReplay, switchMap, take,
@@ -9,7 +9,7 @@ import {
 import { DeviceType } from 'app/enums/device-type.enum';
 import { Device } from 'app/interfaces/device.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { WebSocketService } from 'app/services/index';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
@@ -80,7 +80,7 @@ export class GpuService {
           ...idsToIsolate,
         ]);
         if (newIsolatedGpuIds.size === oldIsolatedGpuIds.length) {
-          return of(undefined);
+          return EMPTY;
         }
 
         return this.ws.call('system.advanced.update_gpu_pci_ids', [Array.from(newIsolatedGpuIds)]);

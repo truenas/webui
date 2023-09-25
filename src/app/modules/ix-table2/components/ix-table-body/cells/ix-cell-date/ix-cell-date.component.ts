@@ -1,15 +1,16 @@
 import { Component } from '@angular/core';
+import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.interface';
 
 @Component({
   templateUrl: './ix-cell-date.component.html',
 })
 export class IxCellDateComponent<T> extends ColumnComponent<T> {
-  formatDate: string = undefined;
-  formatTime: string = undefined;
-
-  get value(): number | Date {
-    return this.row[this.propertyName] as number | Date;
+  get date(): number | Date {
+    if ((this.value as ApiTimestamp)?.$date) {
+      return (this.value as ApiTimestamp).$date;
+    }
+    return this.value as number | Date;
   }
 }
 

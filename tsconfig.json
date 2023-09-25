@@ -12,7 +12,6 @@
     "strictBindCallApply": true,
     "module": "es2020",
     "target": "ES2022",
-    "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
     "lib": [
       "es2020",

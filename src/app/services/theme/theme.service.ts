@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -18,9 +18,16 @@ import { selectTheme } from 'app/store/preferences/preferences.selectors';
 export class ThemeService {
   defaultTheme = defaultTheme.name;
   activeTheme = this.defaultTheme;
+  activeTheme$ = new BehaviorSubject<string>(this.defaultTheme);
+
   allThemes: Theme[] = allThemes;
-  private utils: ThemeUtils;
   loadTheme$ = new Subject<string>();
+
+  private utils: ThemeUtils;
+
+  get isDefaultTheme(): boolean {
+    return this.activeTheme === this.defaultTheme;
+  }
 
   constructor(
     private store$: Store<AppState>,
@@ -48,15 +55,21 @@ export class ThemeService {
 
   onThemeChanged(theme: string): void {
     this.activeTheme = theme;
-    this.setCssVars(this.findTheme(this.activeTheme, true));
+    this.activeTheme$.next(theme);
+    const selectedTheme = this.findTheme(this.activeTheme, true);
+
+    this.setCssVars(selectedTheme);
+    this.updateThemeInLocalStorage(selectedTheme);
+  }
+
+  updateThemeInLocalStorage(theme: Theme): void {
+    this.window.localStorage.setItem('theme', theme.name);
+    this.window.localStorage.setItem('bg1', theme?.bg1);
+    this.window.localStorage.setItem('fg1', theme?.fg1);
   }
 
   resetToDefaultTheme(): void {
     this.store$.dispatch(themeNotFound());
-  }
-
-  get isDefaultTheme(): boolean {
-    return this.activeTheme === this.defaultTheme;
   }
 
   currentTheme(): Theme {
@@ -196,5 +209,16 @@ export class ThemeService {
       return this.utils.hexToRgb(bgColor).rgb;
     }
     return this.utils.rgbToArray(bgColor);
+  }
+
+  getActiveTheme(): Theme {
+    let theme: Theme = defaultTheme;
+    const storedTheme = this.window.localStorage.getItem('theme');
+
+    if (storedTheme) {
+      theme = this.findTheme(storedTheme);
+    }
+
+    return theme;
   }
 }

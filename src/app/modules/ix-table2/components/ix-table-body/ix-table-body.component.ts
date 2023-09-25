@@ -33,6 +33,10 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
   @ContentChild(IxTableDetailsRowDirective)
   detailsRow: IxTableDetailsRowDirective<T>;
 
+  get displayedColumns(): Column<T, ColumnComponent<T>>[] {
+    return this.columns?.filter((column) => !column?.hidden);
+  }
+
   constructor(
     private cdr: ChangeDetectorRef,
   ) {}
@@ -56,6 +60,11 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
 
   get detailsTemplate(): TemplateRef<{ $implicit: T }> | undefined {
     return this.detailsRow?.templateRef;
+  }
+
+  getTestAttr(row: T): string {
+    const idColumn = this.columns.find((column) => column.identifier);
+    return idColumn ? row[idColumn.propertyName].toString() : '';
   }
 
   getTemplateByColumnIndex(idx: number): TemplateRef<{ $implicit: T }> | undefined {

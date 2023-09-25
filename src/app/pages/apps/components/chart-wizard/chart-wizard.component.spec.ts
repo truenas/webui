@@ -8,7 +8,7 @@ import { Spectator } from '@ngneat/spectator';
 import { mockProvider, createComponentFactory } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
 import { ChartFormValue, ChartRelease, ChartSchemaNodeConf } from 'app/interfaces/chart-release.interface';
 import { IxDynamicFormModule } from 'app/modules/ix-dynamic-form/ix-dynamic-form.module';
@@ -20,7 +20,7 @@ import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { ChartWizardComponent } from 'app/pages/apps/components/chart-wizard/chart-wizard.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
-import { AppLoaderService, DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 describe('ChartWizardComponent', () => {
@@ -338,10 +338,9 @@ describe('ChartWizardComponent', () => {
         getChartRelease: jest.fn(() => of([existingChartEdit])),
         getAllChartReleases: jest.fn(() => of([existingChartEdit])),
       }),
-      mockProvider(AppLoaderService),
       mockWebsocket([
-        mockCall('chart.release.create'),
-        mockCall('chart.release.update'),
+        mockJob('chart.release.create'),
+        mockJob('chart.release.update'),
         mockCall('catalog.get_item_details', existingCatalogApp),
         mockCall('chart.release.query', [existingChartEdit]),
       ]),

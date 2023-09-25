@@ -2,12 +2,14 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ErrorHandler, Injectable, Injector } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import * as Sentry from '@sentry/angular';
-import { Observable } from 'rxjs';
+import {
+  Observable, catchError, MonoTypeOperatorFunction, EMPTY,
+} from 'rxjs';
 import { sentryCustomExceptionExtraction } from 'app/helpers/error-parser.helper';
 import { ErrorReport } from 'app/interfaces/error-report.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 
 @Injectable({
   providedIn: 'root',
@@ -36,7 +38,6 @@ export class ErrorHandlerService implements ErrorHandler {
     const parsedError = this.parseError(error);
     if (parsedError) {
       error = parsedError;
-      this.dialog?.error(parsedError);
     }
     this.logToSentry(error);
   }
@@ -71,8 +72,15 @@ export class ErrorHandlerService implements ErrorHandler {
       && 'exc_info' in obj);
   }
 
-  reportError(error: WebsocketError | Job): Observable<boolean> {
-    return this.dialog.error(this.parseErrorOrJob(error));
+  catchError<T>(): MonoTypeOperatorFunction<T> {
+    return (source$: Observable<T>) => {
+      return source$.pipe(
+        catchError((error: WebsocketError | Job) => {
+          this.dialog.error(this.parseErrorOrJob(error));
+          return EMPTY;
+        }),
+      );
+    };
   }
 
   parseWsError(error: WebsocketError): ErrorReport {

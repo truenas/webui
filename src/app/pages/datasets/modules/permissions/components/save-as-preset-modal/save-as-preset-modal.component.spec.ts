@@ -13,7 +13,8 @@ import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { SaveAsPresetModalComponent } from 'app/pages/datasets/modules/permissions/components/save-as-preset-modal/save-as-preset-modal.component';
 import { SaveAsPresetModalConfig } from 'app/pages/datasets/modules/permissions/interfaces/save-as-preset-modal-config.interface';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
-import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('SaveAsPresetModalComponent', () => {
   let spectator: Spectator<SaveAsPresetModalComponent>;
@@ -27,7 +28,6 @@ describe('SaveAsPresetModalComponent', () => {
     ],
     providers: [
       DatasetAclEditorStore,
-      mockProvider(AppLoaderService),
       mockProvider(MatDialogRef),
       mockProvider(DialogService),
       mockWebsocket([

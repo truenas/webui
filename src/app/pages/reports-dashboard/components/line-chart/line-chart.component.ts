@@ -1,17 +1,20 @@
 import {
-  Component, Input, AfterViewInit, OnDestroy, OnChanges, ViewChild, ElementRef,
+  Component, Input, AfterViewInit, OnDestroy, OnChanges, ViewChild, ElementRef, EventEmitter, Output,
 } from '@angular/core';
 import { UUID } from 'angular2-uuid';
 import { utcToZonedTime } from 'date-fns-tz';
 import Dygraph, { dygraphs } from 'dygraphs';
 // eslint-disable-next-line
 import smoothPlotter from 'dygraphs/src/extras/smooth-plotter.js';
+import {
+  GiB, KiB, MiB, TiB,
+} from 'app/constants/bytes.constant';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { ReportingData } from 'app/interfaces/reporting.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { Theme } from 'app/interfaces/theme.interface';
 import { Report, LegendDataWithStackedTotalHtml } from 'app/pages/reports-dashboard/interfaces/report.interface';
-import { CoreService } from 'app/services/core-service/core.service';
+import { ReportsService } from 'app/pages/reports-dashboard/reports.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 
 interface Conversion {
@@ -21,6 +24,7 @@ interface Conversion {
   shortName?: string;
 }
 
+// TODO: Untie from reporting and move to a separate module.
 @Component({
   selector: 'ix-linechart',
   templateUrl: './line-chart.component.html',
@@ -30,13 +34,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
   @ViewChild('wrapper', { static: true }) el: ElementRef;
   @Input() chartId: string;
   @Input() chartColors: string[];
-  @Input() set data(value: ReportingData) {
-    this._data = value;
-  }
-  get data(): ReportingData {
-    return this._data;
-  }
-  @Input() isReversed = false;
+  @Input() data: ReportingData;
   @Input() report: Report;
   @Input() title: string;
   @Input() timezone: string;
@@ -44,14 +42,10 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   @Input() legends?: string[];
   @Input() type = 'line';
-  @Input() convertToCelsius?: true;
-  @Input() dataStructure: 'columns'; // rows vs columns
-  @Input() minY?: number = 0;
-  @Input() maxY?: number = 100;
   @Input() labelY?: string = 'Label Y';
-  @Input() interactive = false;
 
-  library: 'dygraph' | 'chart.js' = 'dygraph';
+  lastMinDate: number;
+  lastMaxDate: number;
 
   chart: Dygraph;
 
@@ -63,42 +57,30 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
   culling = 6;
   controlUid = `chart_${UUID.UUID()}`;
 
+  @Output() zoomChange = new EventEmitter<number[]>();
+
   private utils: ThemeUtils = new ThemeUtils();
-  private _data: ReportingData;
 
   constructor(
-    private core: CoreService,
     public themeService: ThemeService,
+    private reportsService: ReportsService,
   ) {}
 
   render(update?: boolean): void {
     this.renderGraph(update);
   }
 
-  // dygraph renderer
   renderGraph(update?: boolean): void {
-    if (!this.data?.legend) {
+    if (!this.data?.legend?.length) {
       return;
-    }
-
-    if (this.isReversed) {
-      this.data.legend = this.data.legend.reverse();
-      (this.data.data as number[][]).forEach((row, i) => {
-        (this.data.data as number[][])[i] = row.slice().reverse();
-      });
-      this.data.aggregations.min = this.data.aggregations.min.slice().reverse();
-      this.data.aggregations.max = this.data.aggregations.max.slice().reverse();
-      this.data.aggregations.mean = this.data.aggregations.mean.slice().reverse();
     }
 
     const data = this.makeTimeAxis(this.data);
     const labels = data.shift();
-
     const fg2 = this.themeService.currentTheme().fg2;
     const fg2Type = this.utils.getValueType(fg2);
     const fg2Rgb = fg2Type === 'hex' ? this.utils.hexToRgb(this.themeService.currentTheme().fg2).rgb : this.utils.rgbToArray(fg2);
     const gridLineColor = `rgba(${fg2Rgb[0]}, ${fg2Rgb[1]}, ${fg2Rgb[2]}, 0.25)`;
-    const yLabelSuffix = this.labelY === 'Bits/s' ? this.labelY.toLowerCase() : this.labelY;
 
     const options: dygraphs.Options = {
       animatedZooms: true,
@@ -109,7 +91,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
       strokeWidth: 1,
       colors: this.chartColors,
       labels, // time axis
-      ylabel: this.yLabelPrefix + yLabelSuffix,
+      ylabel: this.formatAxisName(),
       gridLineColor,
       showLabelsOnHighlight: false,
       labelsSeparateLines: true,
@@ -117,7 +99,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
         y: {
           yRangePad: 24,
           axisLabelFormatter: (numero: number) => {
-            const converted = this.formatLabelValue(numero, this.inferUnits(this.labelY), 1, true);
+            const converted = this.formatLabelValue(numero, this.inferUnits(this.labelY), 1, true, true);
             const suffix = converted.suffix ? converted.suffix : '';
             return `${this.limitDecimals(converted.value)} ${suffix}`;
           },
@@ -148,7 +130,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
           const suffix = getSuffix(converted);
           clone.stackedTotalHTML = `${this.limitDecimals(converted.value)} ${suffix}`;
         }
-        this.core.emit({ name: `LegendEvent-${this.chartId}`, data: clone, sender: this });
+        this.reportsService.emitLegendEvent(clone);
         return '';
       },
       series: () => {
@@ -160,7 +142,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
         return series;
       },
       drawCallback: (dygraph: Dygraph & { axes_: { maxyval: number }[] }) => {
-        if (dygraph.axes_) {
+        if (dygraph.axes_.length) {
           const numero = dygraph.axes_[0].maxyval;
           const converted = this.formatLabelValue(numero, this.inferUnits(this.labelY));
           if (converted.prefix) {
@@ -172,6 +154,22 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
           console.warn('axes not found');
         }
       },
+      zoomCallback: (startDate: number, endDate: number) => {
+        const maxZoomLevel = 5 * 60 * 1000;
+        const zoomRange = endDate - startDate;
+
+        if (zoomRange < maxZoomLevel) {
+          this.chart.updateOptions({
+            dateWindow: [this.lastMinDate, this.lastMaxDate],
+            animatedZooms: false,
+          });
+          return;
+        }
+
+        this.lastMinDate = startDate;
+        this.lastMaxDate = endDate;
+        this.zoomChange.emit([startDate, endDate]);
+      },
       stackedGraph: this.stacked,
     } as unknown as dygraphs.Options;
 
@@ -182,59 +180,53 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
     }
   }
 
+  // TODO: Line chart should be dumber and should not care about timezones.
   protected makeTimeAxis(rd: ReportingData): dygraphs.DataArray {
-    const structure = this.library === 'chart.js' ? 'columns' : 'rows';
-    if (structure === 'rows') {
-      // Push dates to row based data...
-      const rows = [];
-      // Add legend with axis to beginning of array
-      const legend = Object.assign([], rd.legend);
-      legend.unshift('x');
-      rows.push(legend);
+    const rowData = rd.data as number[][];
 
-      const rowData = rd.data as number[][];
-      for (let i = 0; i < rowData.length; i++) {
-        const item = Object.assign([], rowData[i]);
-        let dateStr = utcToZonedTime(new Date(rd.start * 1000 + i * rd.step * 1000), this.timezone).toString();
-        // UTC: 2020-12-17T16:33:10Z
-        // Los Angeles: 2020-12-17T08:36:30-08:00
-        // Change dateStr from '2020-12-17T08:36:30-08:00' to '2020-12-17T08:36'
-        const list = dateStr.split(':');
-        dateStr = list.join(':');
-        const date = new Date(dateStr);
+    const newRows = rowData.map((row, index) => {
+      // replace unix timestamp in first column with date
+      const convertedDate = utcToZonedTime(row[0] * 1000, this.timezone);
 
-        item.unshift(date);
-        rows.push(item);
-      }
+      if (index === 0) { this.lastMinDate = convertedDate.getTime(); }
+      if (index === rowData.length - 1) { this.lastMaxDate = convertedDate.getTime(); }
 
-      return rows;
-    }
-    if (structure === 'columns') {
-      const columns = [];
+      return [convertedDate, ...row.slice(1)];
+    });
 
-      for (let i = 0; i < (rd.data as number[][]).length; i++) {
-        const date = new Date(rd.start * 1000 + i * rd.step * 1000);
-        columns.push(date);
-      }
-
-      return columns as unknown as dygraphs.DataArray;
-    }
-
-    return undefined;
+    return [
+      ['x', ...rd.legend],
+      ...newRows,
+    ] as unknown as dygraphs.DataArray;
   }
 
   inferUnits(label: string): string {
-    // if(this.report.units){ return this.report.units; }
     // Figures out from the label what the unit is
     let units = label;
-    if (label.includes('%')) {
-      units = '%';
-    } else if (label.includes('°')) {
-      units = '°';
-    } else if (label.toLowerCase().includes('bytes')) {
-      units = 'bytes';
-    } else if (label.toLowerCase().includes('bits')) {
-      units = 'bits';
+    switch (true) {
+      case label.toLowerCase().includes('percentage'):
+      case label.includes('%'):
+        units = '%';
+        break;
+      case label.toLowerCase().includes('celsius'):
+      case label.includes('°'):
+        units = '°';
+        break;
+      case label.toLowerCase().includes('mebibytes'):
+        units = 'mebibytes';
+        break;
+      case label.toLowerCase().includes('kilobits'):
+        units = 'kilobits';
+        break;
+      case label.toLowerCase().includes('kibibytes'):
+        units = 'kibibytes';
+        break;
+      case label.toLowerCase().includes('bytes'):
+        units = 'bytes';
+        break;
+      case label.toLowerCase().includes('bits'):
+        units = 'bits';
+        break;
     }
 
     if (typeof units === 'undefined') {
@@ -244,20 +236,63 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
     return units;
   }
 
-  formatLabelValue(value: number, units: string, fixed?: number, prefixRules?: boolean): Conversion {
+  formatAxisName(): string {
+    switch (true) {
+      case this.labelY.toLowerCase() === 'seconds':
+        return 'Days';
+      case this.labelY.toLowerCase().includes('bits/s'):
+        return `${this.yLabelPrefix}bits/s`;
+      case this.labelY.toLowerCase().includes('bytes/s'):
+        return `${this.yLabelPrefix}bytes/s`;
+      case this.labelY.toLowerCase().includes('bytes'):
+        return `${this.yLabelPrefix}bytes`;
+      case this.labelY.toLowerCase().includes('bits'):
+        return `${this.yLabelPrefix}bits`;
+      default:
+        return this.labelY;
+    }
+  }
+
+  formatLabelValue(value: number, units: string, fixed?: number, prefixRules?: boolean, axis = false): Conversion {
+    const day = 60 * 60 * 24;
     let output: Conversion = { value };
     if (!fixed) { fixed = -1; }
     if (typeof value !== 'number') { return value; }
 
     switch (units.toLowerCase()) {
+      case 'seconds':
+        output = { value: value / day, shortName: ' days' };
+        break;
+      case 'kilobits':
+        output = this.convertKmgt(value * 1000, 'bits', fixed, prefixRules);
+        if (axis) {
+          output.value = this.getValueForAxis(value * 1000, output.prefix);
+        }
+        break;
+      case 'mebibytes':
+        output = this.convertKmgt(value * MiB, 'bytes', fixed, prefixRules);
+        if (axis) {
+          output.value = this.getValueForAxis(value * 1000 * 1000, output.prefix);
+        }
+        break;
+      case 'kibibytes':
+        output = this.convertKmgt(value * KiB, 'bytes', fixed, prefixRules);
+        if (axis) {
+          output.value = this.getValueForAxis(value * 1000, output.prefix);
+        }
+        break;
       case 'bits':
       case 'bytes':
         output = this.convertKmgt(value, units.toLowerCase(), fixed, prefixRules);
+        if (axis) {
+          output.value = this.getValueForAxis(value, output.prefix);
+        }
         break;
       case '%':
       case '°':
       default:
         output = this.convertByKilo(value);
+        break;
     }
 
     return output;
@@ -280,37 +315,41 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
   }
 
   limitDecimals(numero: number): string | number {
-    const subZero = numero.toString().split('.');
-    const decimalPlaces = subZero && subZero[1] ? subZero[1].length : 0;
-    return decimalPlaces > 2 ? numero.toFixed(2) : numero;
+    if (numero < 1024) {
+      return Number(numero.toString().slice(0, 4));
+    }
+    return Math.round(numero);
+  }
+
+  getValueForAxis(value: number, prefix: string): number {
+    if (prefix === 'Tebi') return value / 1000 ** 4;
+    if (prefix === 'Gibi') return value / 1000 ** 3;
+    if (prefix === 'Mebi') return value / 1000 ** 2;
+    if (prefix === 'Kibi') return value / 1000;
+    return value;
   }
 
   convertKmgt(value: number, units: string, fixed?: number, prefixRules?: boolean): Conversion {
-    const kilo = 1024;
-    const mega = kilo * 1024;
-    const giga = mega * 1024;
-    const tera = giga * 1024;
-
     let prefix = '';
     let output: number = value;
     let shortName = '';
 
-    if (value > tera || (prefixRules && this.yLabelPrefix === 'Tera')) {
-      prefix = 'Tera';
+    if (value > TiB || (prefixRules && this.yLabelPrefix === 'Tebi')) {
+      prefix = 'Tebi';
       shortName = 'TiB';
-      output = value / tera;
-    } else if ((value < tera && value > giga) || (prefixRules && this.yLabelPrefix === 'Giga')) {
-      prefix = 'Giga';
+      output = value / TiB;
+    } else if ((value < TiB && value > GiB) || (prefixRules && this.yLabelPrefix === 'Gibi')) {
+      prefix = 'Gibi';
       shortName = 'GiB';
-      output = value / giga;
-    } else if ((value < giga && value > mega) || (prefixRules && this.yLabelPrefix === 'Mega')) {
-      prefix = 'Mega';
+      output = value / GiB;
+    } else if ((value < GiB && value > MiB) || (prefixRules && this.yLabelPrefix === 'Mebi')) {
+      prefix = 'Mebi';
       shortName = 'MiB';
-      output = value / mega;
-    } else if ((value < mega && value > kilo) || (prefixRules && this.yLabelPrefix === 'Kilo')) {
-      prefix = 'Kilo';
-      shortName = 'KB';
-      output = value / kilo;
+      output = value / MiB;
+    } else if ((value < MiB && value > KiB) || (prefixRules && this.yLabelPrefix === 'Kibi')) {
+      prefix = 'Kibi';
+      shortName = 'KiB';
+      output = value / KiB;
     }
 
     if (units === 'bits') {
@@ -319,10 +358,6 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
     }
 
     return { value: output, prefix, shortName };
-  }
-
-  ngAfterViewInit(): void {
-    this.render();
   }
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
@@ -337,8 +372,11 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
     }
   }
 
+  ngAfterViewInit(): void {
+    this.render();
+  }
+
   ngOnDestroy(): void {
-    this.core.unregister({ observerClass: this });
     this.chart?.destroy();
   }
 }

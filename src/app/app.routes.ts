@@ -1,8 +1,8 @@
 import { Routes } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslationsLoadedGuard } from 'app/core/guards/translations-loaded.guard';
+import { WebsocketConnectionGuard } from 'app/core/guards/websocket-connection.guard';
 import { AdminLayoutComponent } from 'app/modules/layout/components/admin-layout/admin-layout.component';
-import { ApplicationsComponent } from 'app/pages/apps-old/applications.component';
 import { TwoFactorGuardService } from 'app/services/auth/two-factor-guard.service';
 import { AuthLayoutComponent } from './modules/layout/components/auth-layout/auth-layout.component';
 import { AuthGuardService } from './services/auth/auth-guard.service';
@@ -15,7 +15,7 @@ export const rootRouterConfig: Routes = [{
 {
   path: '',
   component: AuthLayoutComponent,
-  canActivate: [TranslationsLoadedGuard],
+  canActivate: [TranslationsLoadedGuard, WebsocketConnectionGuard],
   children: [{
     path: 'sessions',
     loadChildren: () => import('./views/sessions/sessions.module').then((module) => module.SessionsModule),
@@ -30,7 +30,7 @@ export const rootRouterConfig: Routes = [{
 {
   path: '',
   component: AdminLayoutComponent,
-  canActivate: [AuthGuardService, TranslationsLoadedGuard],
+  canActivate: [AuthGuardService, TranslationsLoadedGuard, WebsocketConnectionGuard],
   canActivateChild: [TwoFactorGuardService],
   children: [{
     path: 'dashboard',
@@ -75,16 +75,6 @@ export const rootRouterConfig: Routes = [{
   {
     path: 'apps',
     loadChildren: () => import('app/pages/apps/apps.module').then((module) => module.AppsModule),
-    data: { title: T('Applications'), breadcrumb: T('Applications') },
-  },
-  {
-    path: 'apps-old',
-    component: ApplicationsComponent,
-    data: { title: T('Applications'), breadcrumb: T('Applications') },
-  },
-  {
-    path: 'apps-old/:tabIndex',
-    loadChildren: () => import('app/pages/apps-old/old-apps.module').then((module) => module.OldAppsModule),
     data: { title: T('Applications'), breadcrumb: T('Applications') },
   },
   {

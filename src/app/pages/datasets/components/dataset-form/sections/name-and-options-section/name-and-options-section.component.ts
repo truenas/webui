@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnInit,
+  ChangeDetectionStrategy, Component, Input, OnChanges, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
@@ -9,7 +9,8 @@ import { DatasetCaseSensitivity, DatasetSync, datasetSyncLabels } from 'app/enum
 import { OnOff, onOffLabels } from 'app/enums/on-off.enum';
 import { inherit, WithInherit } from 'app/enums/with-inherit.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
-import { choicesToOptions, mapToOptions } from 'app/helpers/options.helper';
+import { choicesToOptions } from 'app/helpers/operators/options.operators';
+import { mapToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -19,7 +20,8 @@ import {
 import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/utils/dataset-form.service';
 import { datasetNameTooLong } from 'app/pages/datasets/components/dataset-form/utils/name-length-validation';
 import { getFieldValue } from 'app/pages/datasets/components/dataset-form/utils/zfs-property.utils';
-import { NameValidationService, WebSocketService } from 'app/services';
+import { NameValidationService } from 'app/services/name-validation.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @Component({
   selector: 'ix-name-and-options',
@@ -54,16 +56,11 @@ export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
 
   constructor(
     private ws: WebSocketService,
-    private cdr: ChangeDetectorRef,
     private formBuilder: FormBuilder,
     private translate: TranslateService,
     private nameValidationService: NameValidationService,
     private datasetFormService: DatasetFormService,
   ) {}
-
-  ngOnInit(): void {
-    this.form.controls.parent.disable();
-  }
 
   ngOnChanges(): void {
     if (this.parent) {
@@ -74,6 +71,10 @@ export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
     this.setSelectOptions();
     this.setFormValues();
     this.setNameDisabledStatus();
+  }
+
+  ngOnInit(): void {
+    this.form.controls.parent.disable();
   }
 
   getPayload(): Partial<DatasetCreate> | Partial<DatasetUpdate> {

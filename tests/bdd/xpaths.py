@@ -103,6 +103,7 @@ class advanced:
 
 class alert():
     title = '//h3[text()="Alerts"]'
+    panel_Open = '//mat-sidenav[contains(.,"Alerts") and contains(@class,"mat-drawer-opened")]'
     degraded_Critical_Level = '//ix-alert[contains(.,"DEGRADED")]//h3[contains(.,"Critical")]'
     degraded_Pool_Text = '//h4[contains(.,"Pool tank state is DEGRADED")]'
     close_Button = '//button[contains(.,"clear")]'
@@ -168,6 +169,7 @@ class button:
     initiate_Failover = '//button[contains(*/text(),"Initiate Failover") and contains(@class,"mat-default")]'
     leave_Domain = '//button[contains(.,"Leave Domain")]'
     reload_Now = '//button[@data-test="button-dialog-confirm"]'
+    dialog_Cancel = '//button[@data-test="button-dialog-cancel"]'
 
 
 class certificates:
@@ -487,7 +489,15 @@ class login:
 class network:
     title = '//h1[contains(.,"Network")]'
     global_Configuration_Title = '//h3[text()="Global Configuration"]'
-    interface = '//ix-icon[@id="enp0s8"]'
+    interface_Card_Title = '//h3[contains(.,"Interfaces")]'
+    test_Changes_Button = '//*[@data-test="button-test-changes"]'
+    test_Changes_Dialog_Title = '//h1[contains(text(),"Test Changes")]'
+
+    def interface_Row(interface):
+        return f'//td[contains(.,"{interface}")]'
+
+    def interface_Edit_Button(interface):
+        return f'//*[@data-test="button-edit-interface-{interface}"]'
 
 
 class pool_manager:
@@ -615,7 +625,7 @@ class smb_Service:
 
 class storage:
     title = '//h1[contains(text(),"Storage Dashboard")]'
-    create_Pool_Button = '//a[contains(.,"Create Pool")]'
+    create_Pool_Button = '//*[@data-test="link-create-pool-legacy"]'
     disks_Button = '//a[*/text()=" Disks "]'
     encrypted_Pool = '//h2[text()="encrypted_pool"]'
     export_Disconnect_Button = '//ix-dashboard-pool[contains(.,"encrypted_pool")]//button[contains(.,"Export/Disconnect")]'

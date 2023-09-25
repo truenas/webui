@@ -2,17 +2,18 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Actions, ofType } from '@ngrx/effects';
 import { TranslateService } from '@ngx-translate/core';
 import ipRegex from 'ip-regex';
-import { combineLatest, filter } from 'rxjs';
+import { combineLatest } from 'rxjs';
 import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
 import { NetworkConfiguration } from 'app/interfaces/network-configuration.interface';
 import { NetworkSummary } from 'app/interfaces/network-summary.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { NetworkConfigurationComponent } from 'app/pages/network/components/configuration/configuration.component';
-import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
 
 @UntilDestroy()
 @Component({
@@ -31,14 +32,14 @@ export class NetworkConfigurationCardComponent implements OnInit {
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
     private slideInService: IxSlideInService,
-    private core: CoreService,
+    private actions$: Actions,
   ) {}
 
   ngOnInit(): void {
     this.loadNetworkConfigAndSummary();
 
-    this.core.register({ observerClass: this, eventName: 'NetworkInterfacesChanged' })
-      .pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.loadNetworkConfigAndSummary());
+    this.actions$.pipe(ofType(networkInterfacesChanged), untilDestroyed(this))
+      .subscribe(() => this.loadNetworkConfigAndSummary());
   }
 
   get serviceAnnouncement(): string {

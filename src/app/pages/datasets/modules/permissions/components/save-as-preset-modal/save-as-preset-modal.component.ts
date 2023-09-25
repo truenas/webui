@@ -9,11 +9,12 @@ import { AclType } from 'app/enums/acl-type.enum';
 import {
   Acl, AclTemplateByPath, AclTemplateCreateParams, NfsAclItem, PosixAclItem,
 } from 'app/interfaces/acl.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SaveAsPresetModalConfig } from 'app/pages/datasets/modules/permissions/interfaces/save-as-preset-modal-config.interface';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
-import { WebSocketService, AppLoaderService, DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -58,7 +59,6 @@ export class SaveAsPresetModalComponent implements OnInit {
   }
 
   private loadOptions(): void {
-    this.loader.open();
     this.ws.call('filesystem.acltemplate.by_path', [{
       path: this.data.datasetPath,
       'format-options': {
@@ -66,17 +66,14 @@ export class SaveAsPresetModalComponent implements OnInit {
         resolve_names: true,
       },
     }])
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: (presets) => {
-          this.presets = this.sortPresets(presets);
-          this.cdr.markForCheck();
-          this.loader.close();
-        },
-        error: (error: WebsocketError) => {
-          this.loader.close();
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-        },
+      .pipe(
+        this.loader.withLoader(),
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe((presets) => {
+        this.presets = this.sortPresets(presets);
+        this.cdr.markForCheck();
       });
   }
 
@@ -98,30 +95,26 @@ export class SaveAsPresetModalComponent implements OnInit {
       }) as NfsAclItem[] | PosixAclItem[],
     };
 
-    this.loader.open();
-    this.ws.call('filesystem.acltemplate.create', [payload]).pipe(untilDestroyed(this)).subscribe({
-      next: () => {
-        this.loader.close();
+    this.ws.call('filesystem.acltemplate.create', [payload])
+      .pipe(
+        this.loader.withLoader(),
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
         this.dialogRef.close();
-      },
-      error: (error: WebsocketError) => {
-        this.loader.close();
-        this.dialogService.error(this.errorHandler.parseWsError(error));
-      },
-    });
+      });
   }
 
   onRemovePreset(preset: AclTemplateByPath): void {
-    this.loader.open();
-    this.ws.call('filesystem.acltemplate.delete', [preset.id]).pipe(untilDestroyed(this)).subscribe({
-      next: () => {
+    this.ws.call('filesystem.acltemplate.delete', [preset.id])
+      .pipe(
+        this.errorHandler.catchError(),
+        this.loader.withLoader(),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
         this.loadOptions();
-        this.loader.close();
-      },
-      error: (error: WebsocketError) => {
-        this.loader.close();
-        this.dialogService.error(this.errorHandler.parseWsError(error));
-      },
-    });
+      });
   }
 }

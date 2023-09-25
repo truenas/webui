@@ -14,8 +14,9 @@ import { IncomingWebsocketMessage } from 'app/interfaces/api-message.interface';
 import { ManualSmartTest } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 export interface ManualTestDialogParams {
   selectedDisks: Disk[];
@@ -96,7 +97,7 @@ export class ManualTestDialogComponent {
             untilDestroyed(this),
           ).subscribe({
             next: (result) => {
-              if (result && result.progress) {
+              if (result?.progress) {
                 this.progressTotalPercent = result.progress.percent / 100;
               }
               this.cdr.markForCheck();

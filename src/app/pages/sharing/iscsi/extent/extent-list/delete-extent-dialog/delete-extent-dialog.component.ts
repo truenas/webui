@@ -6,8 +6,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { IscsiExtentType } from 'app/enums/iscsi.enum';
 import { IscsiExtent } from 'app/interfaces/iscsi.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { AppLoaderService, DialogService } from 'app/services';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -30,7 +29,6 @@ export class DeleteExtentDialogComponent {
     private formBuilder: FormBuilder,
     @Inject(MAT_DIALOG_DATA) public extent: IscsiExtent,
     private dialogRef: MatDialogRef<DeleteExtentDialogComponent>,
-    private dialogService: DialogService,
   ) { }
 
   get isFile(): boolean {
@@ -38,20 +36,16 @@ export class DeleteExtentDialogComponent {
   }
 
   onDelete(): void {
-    this.loader.open();
     const { remove, force } = this.form.value;
 
     this.ws.call('iscsi.extent.delete', [this.extent.id, remove, force])
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: () => {
-          this.loader.close();
-          this.dialogRef.close(true);
-        },
-        error: (error: WebsocketError) => {
-          this.loader.close();
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-        },
+      .pipe(
+        this.loader.withLoader(),
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe(() => {
+        this.dialogRef.close(true);
       });
   }
 }

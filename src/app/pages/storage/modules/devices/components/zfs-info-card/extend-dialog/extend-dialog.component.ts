@@ -11,9 +11,9 @@ import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/storage/volumes/volume-status';
 import { PoolAttachParams } from 'app/interfaces/pool.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { AppLoaderService, DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -83,7 +83,6 @@ export class ExtendDialogComponent implements OnInit {
 
   onSubmit(event: SubmitEvent): void {
     event.preventDefault();
-    this.loader.open();
 
     const payload = {
       new_disk: this.newDiskControl.value,
@@ -96,35 +95,27 @@ export class ExtendDialogComponent implements OnInit {
     }
 
     this.ws.job('pool.attach', [this.data.poolId, payload])
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: (job) => {
-          if (job.state !== JobState.Success) {
-            return;
-          }
+      .pipe(
+        this.loader.withLoader(),
+        this.errorHandler.catchError(),
+        untilDestroyed(this),
+      )
+      .subscribe((job) => {
+        if (job.state !== JobState.Success) {
+          return;
+        }
 
-          this.loader.close();
-          this.snackbar.success(this.translate.instant('Vdev successfully extended.'));
-          this.dialogRef.close(true);
-        },
-        error: (error: WebsocketError) => {
-          this.loader.close();
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-        },
+        this.snackbar.success(this.translate.instant('Vdev successfully extended.'));
+        this.dialogRef.close(true);
       });
   }
 
   private loadUnusedDisks(): void {
     this.ws.call('disk.get_unused')
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: (disks) => {
-          this.unusedDisks = disks;
-          this.disksWithDuplicateSerials = disks.filter((disk) => disk.duplicate_serial.length);
-        },
-        error: (error: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-        },
+      .pipe(this.errorHandler.catchError(), untilDestroyed(this))
+      .subscribe((disks) => {
+        this.unusedDisks = disks;
+        this.disksWithDuplicateSerials = disks.filter((disk) => disk.duplicate_serial.length);
       });
   }
 }

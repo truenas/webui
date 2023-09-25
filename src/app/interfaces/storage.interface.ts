@@ -21,6 +21,7 @@ export interface VDev {
   stats: TopologyItemStats;
   status: TopologyItemStatus;
   unavail_disk: unknown;
+  disk?: string;
 }
 
 export interface TopologyDisk {

@@ -1,7 +1,13 @@
 @import 'mixins/cards';
 
+.optional-text {
+  color: var((--grey));
+  margin-left: 5px;
+}
+
 .root-container {
   display: flex;
+  gap: 16px;
 
   .main-container {
     width: 100%;

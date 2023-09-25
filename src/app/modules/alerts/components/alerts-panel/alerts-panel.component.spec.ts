@@ -13,11 +13,12 @@ import { AlertsPanelPageObject } from 'app/modules/alerts/components/alerts-pane
 import { AlertEffects } from 'app/modules/alerts/store/alert.effects';
 import { adapter, alertReducer, alertsInitialState } from 'app/modules/alerts/store/alert.reducer';
 import { alertStateKey } from 'app/modules/alerts/store/alert.selectors';
-import { SystemGeneralService } from 'app/services';
+import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { haInfoReducer } from 'app/store/ha-info/ha-info.reducer';
 import { haInfoStateKey } from 'app/store/ha-info/ha-info.selectors';
+import { alertIndicatorPressed } from 'app/store/topbar/topbar.actions';
 
 const unreadAlerts = [
   {
@@ -187,5 +188,10 @@ describe('AlertsPanelComponent', () => {
 
     expect(alertPanel.unreadAlertComponents).toHaveLength(1);
     expect(alertPanel.dismissedAlertComponents).toHaveLength(3);
+  });
+
+  it('calls alert.list when alerts panel is open', () => {
+    spectator.inject(Store).dispatch(alertIndicatorPressed());
+    expect(websocket.call).toHaveBeenCalledWith('alert.list');
   });
 });

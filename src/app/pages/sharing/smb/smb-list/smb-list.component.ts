@@ -10,9 +10,10 @@ import { SmbShare } from 'app/interfaces/smb-share.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -75,6 +76,7 @@ export class SmbListComponent implements EntityTableConfig<SmbShare> {
     private slideInService: IxSlideInService,
     private dialogService: DialogService,
     private translate: TranslateService,
+    private appLoader: AppLoaderService,
   ) {}
 
   preInit(entityList: EntityTableComponent<SmbShare>): void {
@@ -124,9 +126,11 @@ export class SmbListComponent implements EntityTableConfig<SmbShare> {
         disabled: this.isClustered,
         label: helptextSharingSmb.action_share_acl,
         onClick: (row: SmbShare) => {
+          this.appLoader.open();
           this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).pipe(untilDestroyed(this)).subscribe(
             (isLocked) => {
               if (isLocked) {
+                this.appLoader.close();
                 this.lockedPathDialog(row.path);
               } else {
                 // A home share has a name (homes) set; row.name works for other shares
@@ -134,6 +138,7 @@ export class SmbListComponent implements EntityTableConfig<SmbShare> {
                 this.ws.call('sharing.smb.getacl', [{ share_name: searchName }])
                   .pipe(untilDestroyed(this))
                   .subscribe((shareAcl) => {
+                    this.appLoader.close();
                     const slideInRef = this.slideInService.open(SmbAclComponent, { data: shareAcl.share_name });
                     slideInRef.slideInClosed$.pipe(take(1), untilDestroyed(this)).subscribe(() => {
                       this.entityList.getData();

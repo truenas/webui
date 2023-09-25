@@ -1,5 +1,4 @@
 .form-actions {
-  border-top: 1px solid var(--lines);
   display: flex;
   justify-content: space-between;
   padding: 16px 11px;
@@ -24,4 +23,13 @@
   margin-left: auto;
   margin-right: auto;
   max-width: 960px;
+}
+
+.add-spn-container {
+  display: flex;
+  gap: 10px;
+
+  ::ng-deep ix-icon {
+    font-size: 25px !important;
+  }
 }

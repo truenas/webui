@@ -1,6 +1,6 @@
 import {
   AfterViewInit, ChangeDetectorRef,
-  Component, ElementRef, OnDestroy, TemplateRef, ViewChild,
+  Component, ElementRef, OnDestroy, ViewChild,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -9,14 +9,12 @@ import { Observable, ReplaySubject, Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { Enclosure, EnclosureElement, EnclosureView } from 'app/interfaces/enclosure.interface';
 import { CoreEvent } from 'app/interfaces/events';
-import { EnclosureCanvasEvent, EnclosureLabelChangedEvent } from 'app/interfaces/events/enclosure-events.interface';
+import { EnclosureCanvasEvent } from 'app/interfaces/events/enclosure-events.interface';
 import { ErrorMessage } from 'app/pages/system/view-enclosure/interfaces/error-message.interface';
 import { ViewConfig } from 'app/pages/system/view-enclosure/interfaces/view.config';
 import { EnclosureState, EnclosureStore } from 'app/pages/system/view-enclosure/stores/enclosure-store.service';
-import { WebSocketService } from 'app/services';
-import { CoreService } from 'app/services/core-service/core.service';
 import { DisksUpdateService } from 'app/services/disks-update.service';
-import { LayoutService } from 'app/services/layout.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectTheme } from 'app/store/preferences/preferences.selectors';
 import { selectIsIxHardware, waitForSystemFeatures, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -40,7 +38,6 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
   errors: ErrorMessage[] = [];
   events: Subject<CoreEvent>;
   @ViewChild('navigation', { static: false }) nav: ElementRef<HTMLElement>;
-  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
   private disksUpdateSubscriptionId: string;
   private destroyed$ = new ReplaySubject<boolean>(1);
 
@@ -148,11 +145,9 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
   }
 
   constructor(
-    private core: CoreService,
     public router: Router,
     private ws: WebSocketService,
     private store$: Store<AppState>,
-    private layoutService: LayoutService,
     private disksUpdateService: DisksUpdateService,
     private enclosureStore: EnclosureStore,
     private changeDetectorRef: ChangeDetectorRef,
@@ -195,11 +190,6 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
       }
     });
 
-    core.register({ observerClass: this, eventName: 'EnclosureLabelChanged' }).pipe(untilDestroyed(this)).subscribe((evt: EnclosureLabelChangedEvent) => {
-      this.systemState.enclosures[evt.data.index].label = evt.data.label;
-      this.events.next(evt);
-    });
-
     this.store$.pipe(waitForSystemInfo, untilDestroyed(this))
       .subscribe((sysInfo) => {
         if (!this.systemProduct) {
@@ -219,8 +209,6 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
-
     this.enclosureStore.loadData();
     this.systemProfile = {
       enclosureStore$: this.enclosureStore.data$,
@@ -255,7 +243,6 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.disksUpdateService.removeSubscriber(this.disksUpdateSubscriptionId);
-    this.core.unregister({ observerClass: this });
     this.destroyed$.next(true);
     this.destroyed$.complete();
   }

@@ -1,10 +1,10 @@
 .container {
   align-items: flex-start;
-  display: grid;
+  /*display: grid;
   grid-gap: 4px 10px;
   grid-template-areas:
     'a b'
-    'c d';
+    'c d';*/
   height: 100%;
 
   &.no-slot .model {

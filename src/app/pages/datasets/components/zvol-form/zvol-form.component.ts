@@ -22,13 +22,14 @@ import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-sl
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { forbiddenValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
-import { matchOtherValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
+import { matchOthersFgValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { getDatasetLabel } from 'app/pages/datasets/utils/dataset.utils';
-import {
-  CloudCredentialService, DialogService, StorageService, WebSocketService,
-} from 'app/services';
+import { CloudCredentialService } from 'app/services/cloud-credential.service';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { StorageService } from 'app/services/storage.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 interface ZvolFormData {
   name?: string;
@@ -112,9 +113,17 @@ export class ZvolFormComponent implements OnInit {
     generate_key: [true],
     key: ['', [Validators.required, Validators.minLength(64), Validators.maxLength(64)]],
     passphrase: ['', [Validators.required, Validators.minLength(8)]],
-    confirm_passphrase: ['', [Validators.required, matchOtherValidator('passphrase')]],
+    confirm_passphrase: ['', [Validators.required]],
     pbkdf2iters: [350000, [Validators.required, Validators.min(100000)]],
     algorithm: ['AES-256-GCM', Validators.required],
+  }, {
+    validators: [
+      matchOthersFgValidator(
+        'confirm_passphrase',
+        ['passphrase'],
+        this.translate.instant('Confirm Passphrase value must match Passphrase'),
+      ),
+    ],
   });
 
   syncOptions: Option[] = [
@@ -180,6 +189,7 @@ export class ZvolFormComponent implements OnInit {
   );
 
   constructor(
+    public formatter: IxFormatterService,
     private translate: TranslateService,
     private formBuilder: FormBuilder,
     private ws: WebSocketService,
@@ -187,7 +197,6 @@ export class ZvolFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private formErrorHandler: FormErrorHandlerService,
     private errorHandler: ErrorHandlerService,
-    private formatter: IxFormatterService,
     protected storageService: StorageService,
     protected snackbar: SnackbarService,
     private slideInRef: IxSlideInRef<ZvolFormComponent>,
@@ -243,28 +252,22 @@ export class ZvolFormComponent implements OnInit {
           parentDatasetId.pop();
           parentDatasetId = parentDatasetId.join('/');
 
-          this.ws.call('pool.dataset.query', [[['id', '=', parentDatasetId]]]).pipe(untilDestroyed(this)).subscribe({
-            next: (parentDataset) => {
-              this.form.controls.sparse.disable();
-              this.form.controls.volblocksize.disable();
+          this.ws.call('pool.dataset.query', [[['id', '=', parentDatasetId]]]).pipe(
+            this.errorHandler.catchError(),
+            untilDestroyed(this),
+          ).subscribe((parentDataset) => {
+            this.form.controls.sparse.disable();
+            this.form.controls.volblocksize.disable();
 
-              this.customFilter = [[['id', '=', this.parentId]]];
+            this.customFilter = [[['id', '=', this.parentId]]];
 
-              this.copyParentProperties(parent);
+            this.copyParentProperties(parent);
+            this.inheritSyncSource(parent, parentDataset);
+            this.inheritCompression(parent, parentDataset);
+            this.inheritDeduplication(parent, parentDataset);
+            this.inheritSnapdev(parent, parentDataset);
 
-              this.inheritSyncSource(parent, parentDataset);
-
-              this.inheritCompression(parent, parentDataset);
-
-              this.inheritDeduplication(parent, parentDataset);
-
-              this.inheritSnapdev(parent, parentDataset);
-
-              this.cdr.markForCheck();
-            },
-            error: (error: WebsocketError): void => {
-              this.dialogService.error(this.errorHandler.parseWsError(error));
-            },
+            this.cdr.markForCheck();
           });
         }
         this.isLoading = false;
@@ -293,7 +296,7 @@ export class ZvolFormComponent implements OnInit {
       this.form.controls.comments.setValue('');
     }
 
-    this.form.controls.volsize.setValue(humansize);
+    this.form.controls.volsize.setValue(parent.volsize.rawvalue);
   }
 
   disableEncryptionFields(): void {
@@ -543,11 +546,6 @@ export class ZvolFormComponent implements OnInit {
       data.name = this.parentId + '/' + data.name;
     }
 
-    if (this.origHuman !== data.volsize) {
-      data.volsize = this.formatter.convertHumanStringToNum(data.volsize as string, true);
-    } else {
-      delete data.volsize;
-    }
     return data;
   }
 
@@ -701,14 +699,12 @@ export class ZvolFormComponent implements OnInit {
 
   private loadRecommendedBlocksize(): void {
     const root = this.parentId.split('/')[0];
-    this.ws.call('pool.dataset.recommended_zvol_blocksize', [root]).pipe(untilDestroyed(this)).subscribe({
-      next: (recommendedSize) => {
-        this.form.controls.volblocksize.setValue(recommendedSize);
-        this.minimumRecommendedBlockSize = recommendedSize;
-      },
-      error: (error: WebsocketError): void => {
-        this.dialogService.error(this.errorHandler.parseWsError(error));
-      },
+    this.ws.call('pool.dataset.recommended_zvol_blocksize', [root]).pipe(
+      this.errorHandler.catchError(),
+      untilDestroyed(this),
+    ).subscribe((recommendedSize) => {
+      this.form.controls.volblocksize.setValue(recommendedSize);
+      this.minimumRecommendedBlockSize = recommendedSize;
     });
   }
 

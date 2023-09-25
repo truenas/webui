@@ -15,7 +15,7 @@ import helptext from 'app/helptext/data-protection/replication/replication';
 import { Option } from 'app/interfaces/option.interface';
 import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
-import { ReplicationService } from 'app/services';
+import { ReplicationService } from 'app/services/replication.service';
 
 @Component({
   selector: 'ix-replication-target-section',
@@ -75,10 +75,6 @@ export class TargetSectionComponent implements OnInit, OnChanges {
     return this.form.value.encryption_key_format === EncryptionKeyFormat.Hex;
   }
 
-  ngOnInit(): void {
-    this.setRetentionPolicyOptions();
-  }
-
   ngOnChanges(): void {
     if (this.replication) {
       this.setFormValues();
@@ -90,6 +86,10 @@ export class TargetSectionComponent implements OnInit, OnChanges {
       this.form.controls.target_dataset.disable();
     }
 
+    this.setRetentionPolicyOptions();
+  }
+
+  ngOnInit(): void {
     this.setRetentionPolicyOptions();
   }
 

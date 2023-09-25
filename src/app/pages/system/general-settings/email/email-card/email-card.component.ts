@@ -3,19 +3,18 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable, of } from 'rxjs';
-import { LoadingState, toLoadingState } from 'app/helpers/to-loading-state.helper';
+import { LoadingState, toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { helptextSystemEmail } from 'app/helptext/system/email';
 import { MailConfig } from 'app/interfaces/mail-config.interface';
 import { EmailFormComponent } from 'app/pages/system/general-settings/email/email-form/email-form.component';
-import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
   selector: 'ix-email-card',
   templateUrl: './email-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  styleUrls: ['./email-card.component.scss'],
 })
 export class EmailCardComponent {
   readonly helptext = helptextSystemEmail;

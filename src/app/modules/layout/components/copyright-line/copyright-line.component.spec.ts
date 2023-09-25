@@ -3,7 +3,7 @@ import { of } from 'rxjs';
 import { CoreComponents } from 'app/core/core-components.module';
 import { ProductType } from 'app/enums/product-type.enum';
 import { CopyrightLineComponent } from 'app/modules/layout/components/copyright-line/copyright-line.component';
-import { SystemGeneralService } from 'app/services';
+import { SystemGeneralService } from 'app/services/system-general.service';
 
 describe('CopyrightLineComponent', () => {
   let spectator: Spectator<CopyrightLineComponent>;

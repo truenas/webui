@@ -19,8 +19,8 @@ import { RadioOption } from 'app/interfaces/option.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { UnlockSummaryDialogComponent } from 'app/pages/datasets/modules/encryption/components/unlock-summary-dialog/unlock-summary-dialog.component';
-import { DialogService } from 'app/services';
 import { AuthService } from 'app/services/auth/auth.service';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 interface DatasetFormGroup {
@@ -280,7 +280,7 @@ export class DatasetUnlockComponent implements OnInit {
     const errors: { name: string; unlock_error: string }[] = [];
     let skipped: { name: string }[] = [];
     const unlock: { name: string }[] = [];
-    if (job && job.result) {
+    if (job?.result) {
       if (job.result.failed) {
         const failed = job.result.failed;
         Object.entries(failed).forEach(([errorDataset, fail]) => {
@@ -309,7 +309,7 @@ export class DatasetUnlockComponent implements OnInit {
   openSummaryDialog(payload: DatasetUnlockParams, job: Job<DatasetEncryptionSummary[]>): void {
     const errors: DatasetEncryptionSummary[] = [];
     const unlock: DatasetEncryptionSummary[] = [];
-    if (job && job.result) {
+    if (job?.result) {
       job.result.forEach((result) => {
         if (result.unlock_successful) {
           unlock.push(result);

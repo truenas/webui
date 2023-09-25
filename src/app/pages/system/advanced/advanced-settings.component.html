@@ -1,4 +1,4 @@
-<ng-template #pageHeader>
+<ng-template ixPageHeader>
   <ix-page-title-header>
     <ix-save-debug-button></ix-save-debug-button>
   </ix-page-title-header>
@@ -18,4 +18,5 @@
   <ix-self-encrypting-drive-card></ix-self-encrypting-drive-card>
   <ix-isolated-gpus-card></ix-isolated-gpus-card>
   <ix-global-two-factor-card></ix-global-two-factor-card>
+  <ix-system-security-card *ngIf="!!(isSystemLicensed$ | async)"></ix-system-security-card>
 </div>

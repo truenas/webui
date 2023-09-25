@@ -1,4 +1,4 @@
-<ng-template #pageHeader>
+<ng-template ixPageHeader>
   <ix-page-title-header>
     <ix-search-input (search)="onListFiltered($event)"></ix-search-input>
     <mat-slide-toggle
@@ -17,7 +17,7 @@
 
 <div class="table-container">
   <ix-table2
-    [ix-table-empty]="!dataProvider.rows.length"
+    [ix-table2-empty]="!dataProvider.rows.length"
     [emptyConfig]="emptyConfigService.defaultEmptyConfig((emptyType$ | async))"
   >
     <thead
@@ -30,7 +30,7 @@
       [columns]="columns"
       [dataProvider]="dataProvider"
     >
-      <ng-template ix-table-details-row [dataProvider]="dataProvider" let-user>
+      <ng-template let-user ix-table-details-row [dataProvider]="dataProvider">
         <ix-user-details-row
           [user]="user"
           (delete)="handleDeletedUser($event)"

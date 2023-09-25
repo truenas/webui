@@ -37,12 +37,8 @@
           formControlName="servicelb"
           [label]="'Enable Integrated Loadbalancer' | translate"
         ></ix-checkbox>
-
-        <ix-checkbox
-          formControlName="validate_host_path"
-          [label]="'Enable Host Path Safety Checks' | translate"
-        ></ix-checkbox>
       </ix-fieldset>
+
       <ix-fieldset [title]="'Settings Requiring Re-Initialization' | translate">
         <p class="help-text">
           {{ reInitHelpText | translate }}

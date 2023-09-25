@@ -14,8 +14,9 @@ import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { BootEnvironmentListComponent } from 'app/pages/system/bootenv/bootenv-list/bootenv-list.component';
 import { fakeBootEnvironmentsDataSource } from 'app/pages/system/bootenv/test/fake-boot-environments';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('BootEnvironmentListComponent', () => {
   let spectator: Spectator<BootEnvironmentListComponent>;

@@ -7,6 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs';
 import { VdevType, vdevTypeLabels } from 'app/enums/v-dev-type.enum';
+import { isTopologyLimitedToOneLayout } from 'app/helpers/storage.helper';
 import {
   InspectVdevsDialogComponent,
 } from 'app/pages/storage/modules/pool-manager/components/inspect-vdevs-dialog/inspect-vdevs-dialog.component';
@@ -18,7 +19,7 @@ import {
   PoolManagerStore,
   PoolManagerTopology, PoolManagerTopologyCategory,
 } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 
 @UntilDestroy()
 @Component({
@@ -29,17 +30,17 @@ import { DialogService } from 'app/services';
 })
 export class ReviewWizardStepComponent implements OnInit {
   @Input() isStepActive: boolean;
+  @Input() isAddingVdevs: boolean;
   @Output() createPool = new EventEmitter<void>();
 
   state: PoolManagerState;
   nonEmptyTopologyCategories: [VdevType, PoolManagerTopologyCategory][] = [];
+  poolCreationErrors: PoolCreationError[];
+  isCreateDisabled = false;
 
   protected totalCapacity$ = this.store.totalUsableCapacity$;
   protected readonly vdevTypeLabels = vdevTypeLabels;
-
-  poolCreationErrors: PoolCreationError[];
-
-  isCreateDisabled = false;
+  protected isLimitedToOneLayout = isTopologyLimitedToOneLayout;
 
   constructor(
     private matDialog: MatDialog,
@@ -113,7 +114,7 @@ export class ReviewWizardStepComponent implements OnInit {
         filter(Boolean),
         untilDestroyed(this),
       ).subscribe(() => {
-        this.store.reset();
+        this.store.startOver();
       });
   }
 }

@@ -1,4 +1,4 @@
-<ng-template #pageHeader>
+<ng-template ixPageHeader>
   <ix-page-title-header>
     <ix-search-input (search)="onSearch($event)"></ix-search-input>
 
@@ -19,11 +19,6 @@
     </button>
   </ix-page-title-header>
 </ng-template>
-
-<ix-fake-progress-bar
-  class="loader-bar"
-  [loading]="isLoading$ | async"
-></ix-fake-progress-bar>
 
 <div
   *ngIf="checkboxColumn?.selection.selected.length"
@@ -52,7 +47,7 @@
   matSortDisableClear="true"
   ixTest="bootenv-table"
   [ix-table-empty]="!dataSource.filteredData.length"
-  [emptyConfig]="emptyConfigService.defaultEmptyConfig((emptyType$ | async))"
+  [emptyConfig]="emptyConfigService.defaultEmptyConfig(emptyType$ | async)"
   [dataSource]="dataSource"
   [matSortActive]="defaultSort.active"
   [matSortDirection]="defaultSort.direction"

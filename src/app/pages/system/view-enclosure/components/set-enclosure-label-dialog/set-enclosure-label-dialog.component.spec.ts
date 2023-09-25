@@ -11,7 +11,8 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import {
   SetEnclosureLabelDialogComponent, SetEnclosureLabelDialogData,
 } from 'app/pages/system/view-enclosure/components/set-enclosure-label-dialog/set-enclosure-label-dialog.component';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('SetEnclosureLabelDialogComponent', () => {
   let spectator: Spectator<SetEnclosureLabelDialogComponent>;

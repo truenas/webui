@@ -1,0 +1,50 @@
+<div class="content-container" [formGroup]="form">
+  <h3>{{ 'Automated Disk Selection' | translate }}</h3>
+  <div class="columns">
+    <div class="column">
+      <ix-disk-size-dropdowns
+        [inventory]="inventory"
+        [layout]="layout"
+        [type]="type"
+        [isStepActive]="isStepActive"
+        (disksSelected)="onDisksSelected($event)"
+      ></ix-disk-size-dropdowns>
+
+      <ix-select
+        class="select"
+        formControlName="dataDevicesPerGroup"
+        [label]="'Data Devices' | translate"
+        [options]="dataDevicesPerGroupOptions$"
+        [required]="true"
+      ></ix-select>
+
+      <ix-select
+        class="select"
+        formControlName="spares"
+        [label]="'Distributed Hot Spares' | translate"
+        [options]="sparesOptions$"
+        [required]="true"
+      ></ix-select>
+    </div>
+
+    <div class="column">
+      <ix-select
+        formControlName="children"
+        [label]="'Children' | translate"
+        [required]="true"
+        [options]="widthOptions$"
+      ></ix-select>
+
+      <div class="explanation">
+        {{ helptext.dRaidChildrenExplanation | translate }}
+      </div>
+
+      <ix-select
+        formControlName="vdevsNumber"
+        [label]="'Number of VDEVs' | translate"
+        [options]="vdevsNumberOptions$"
+        [required]="true"
+      ></ix-select>
+    </div>
+  </div>
+</div>

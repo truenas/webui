@@ -2,19 +2,19 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { UpsMode } from 'app/enums/ups-mode.enum';
-import { choicesToOptions, singleArrayToOptions } from 'app/helpers/options.helper';
+import { choicesToOptions, singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import helptext from 'app/helptext/services/components/service-ups';
 import { UpsConfigUpdate } from 'app/interfaces/ups-config.interface';
 import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
 import { IxComboboxProvider } from 'app/modules/ix-forms/components/ix-combobox/ix-combobox-provider';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -116,9 +116,9 @@ export class ServiceUpsComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private fb: FormBuilder,
     private dialogService: DialogService,
-    private router: Router,
     private translate: TranslateService,
     private snackbar: SnackbarService,
+    private slideInRef: IxSlideInRef<ServiceUpsComponent>,
   ) {}
 
   ngOnInit(): void {
@@ -178,8 +178,8 @@ export class ServiceUpsComponent implements OnInit {
         next: () => {
           this.isFormLoading = false;
           this.snackbar.success(this.translate.instant('Service configuration saved'));
+          this.slideInRef.close();
           this.cdr.markForCheck();
-          this.router.navigate(['/services']);
         },
         error: (error) => {
           this.isFormLoading = false;

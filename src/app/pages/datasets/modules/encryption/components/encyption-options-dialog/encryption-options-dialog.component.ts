@@ -9,7 +9,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { of, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { DatasetEncryptionType } from 'app/enums/dataset.enum';
-import { combineLatestIsAny } from 'app/helpers/combine-latest-is-any.helper';
+import { combineLatestIsAny } from 'app/helpers/operators/combine-latest-is-any.helper';
 import dataset_helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { DatasetChangeKeyParams } from 'app/interfaces/dataset-change-key.interface';
 import { Dataset } from 'app/interfaces/dataset.interface';
@@ -17,12 +17,14 @@ import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
-import { matchOtherValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
+import { matchOthersFgValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
 import { findInTree } from 'app/modules/ix-tree/utils/find-in-tree.utils';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { isPasswordEncrypted, isEncryptionRoot } from 'app/pages/datasets/utils/dataset.utils';
-import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { EncryptionOptionsDialogData } from './encryption-options-dialog-data.interface';
 
 enum EncryptionType {
@@ -45,13 +47,18 @@ export class EncryptionOptionsDialogComponent implements OnInit {
     generate_key: [false],
     key: ['', [Validators.required, Validators.minLength(64), Validators.maxLength(64)]],
     passphrase: ['', Validators.minLength(8)],
-    confirm_passphrase: ['', this.validatorsService.withMessage(
-      matchOtherValidator('passphrase'),
-      this.translate.instant('Passphrase and confirmation should match.'),
-    )],
+    confirm_passphrase: [''],
     pbkdf2iters: [350000, Validators.min(100000)],
     algorithm: [''],
     confirm: [false, [Validators.requiredTrue]],
+  }, {
+    validators: [
+      matchOthersFgValidator(
+        'confirm_passphrase',
+        ['passphrase'],
+        this.translate.instant('Passphrase and confirmation should match.'),
+      ),
+    ],
   });
 
   subscriptions: Subscription[] = [];
@@ -123,17 +130,14 @@ export class EncryptionOptionsDialogComponent implements OnInit {
   }
 
   private setToInherit(): void {
-    this.loader.open();
     this.ws.call('pool.dataset.inherit_parent_encryption_properties', [this.data.dataset.id])
-      .pipe(untilDestroyed(this))
+      .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: () => {
-          this.loader.close();
           this.showSuccessDialog();
           this.dialogRef.close(true);
         },
         error: (error: WebsocketError) => {
-          this.loader.close();
           this.formErrorHandler.handleWsFormError(error, this.form);
         },
       });
@@ -182,13 +186,10 @@ export class EncryptionOptionsDialogComponent implements OnInit {
   }
 
   private loadPbkdf2iters(): void {
-    this.loader.open();
-
     this.ws.call('pool.dataset.query', [[['id', '=', this.data.dataset.id]]])
-      .pipe(untilDestroyed(this))
+      .pipe(this.loader.withLoader(), untilDestroyed(this))
       .subscribe({
         next: (datasets: Dataset[]) => {
-          this.loader.close();
           const pbkdf2iters = datasets[0].pbkdf2iters;
 
           if (!pbkdf2iters || pbkdf2iters.rawvalue === '0') {
@@ -200,7 +201,6 @@ export class EncryptionOptionsDialogComponent implements OnInit {
           });
         },
         error: (error: WebsocketError) => {
-          this.loader.close();
           this.dialog.error(this.errorHandler.parseWsError(error));
         },
       });

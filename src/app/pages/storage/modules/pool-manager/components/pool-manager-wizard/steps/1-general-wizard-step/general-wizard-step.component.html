@@ -3,13 +3,15 @@
     formControlName="name"
     [label]="'Name' | translate"
     [required]="true"
+    [readonly]="isAddingVdevs"
   ></ix-input>
   <ix-checkbox
+    *ngIf="!isAddingVdevs"
     formControlName="encryption"
     [label]="'Encryption' | translate"
   ></ix-checkbox>
   <ix-select
-    *ngIf="form.controls.encryption.value"
+    *ngIf="form.controls.encryption.value && !isAddingVdevs"
     formControlName="encryptionStandard"
     [label]="'Encryption Standard' | translate"
     [options]="encryptionAlgorithmOptions$"
@@ -26,7 +28,6 @@
         color="primary"
         type="button"
         ixTest="next"
-        [disabled]="form.invalid"
       >
         {{ 'Next' | translate }}
       </button>

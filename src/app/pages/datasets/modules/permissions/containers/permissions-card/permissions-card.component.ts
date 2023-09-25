@@ -14,7 +14,7 @@ import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { PermissionsCardStore } from 'app/pages/datasets/modules/permissions/stores/permissions-card.store';
 import { isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 @UntilDestroy()
@@ -58,6 +58,10 @@ export class PermissionsCardComponent implements OnInit, OnChanges {
     return this.acl && !isRootDataset(this.dataset) && !this.dataset.locked;
   }
 
+  ngOnChanges(): void {
+    this.store.loadPermissions(this.dataset.mountpoint);
+  }
+
   ngOnInit(): void {
     this.store.state$
       .pipe(untilDestroyed(this))
@@ -68,7 +72,7 @@ export class PermissionsCardComponent implements OnInit, OnChanges {
           this.stat = state.stat;
 
           // TODO: Move elsewhere
-          if (this.acl && this.acl.acl && this.acl.acltype === AclType.Nfs4) {
+          if (this.acl?.acl && this.acl.acltype === AclType.Nfs4) {
             for (const acl of this.acl.acl) {
               if (acl.tag === NfsAclTag.Owner && acl.who === null) {
                 acl.who = this.acl.uid.toString();
@@ -83,12 +87,9 @@ export class PermissionsCardComponent implements OnInit, OnChanges {
         },
         error: (error: WebsocketError) => {
           this.isLoading = false;
+          this.cdr.markForCheck();
           this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });
-  }
-
-  ngOnChanges(): void {
-    this.store.loadPermissions(this.dataset.mountpoint);
   }
 }

@@ -8,7 +8,7 @@ import {
 } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -20,14 +20,13 @@ import {
 import {
   CertificateDetailsComponent,
 } from 'app/pages/credentials/certificates-dash/certificate-details/certificate-details.component';
-import { CertificatesDashComponent } from 'app/pages/credentials/certificates-dash/certificates-dash.component';
 import {
   ViewCertificateDialogData,
 } from 'app/pages/credentials/certificates-dash/view-certificate-dialog/view-certificate-dialog-data.interface';
 import {
   ViewCertificateDialogComponent,
 } from 'app/pages/credentials/certificates-dash/view-certificate-dialog/view-certificate-dialog.component';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { CertificateEditComponent } from './certificate-edit.component';
@@ -35,7 +34,6 @@ import { CertificateEditComponent } from './certificate-edit.component';
 describe('CertificateEditComponent', () => {
   let spectator: Spectator<CertificateEditComponent>;
   let loader: HarnessLoader;
-  const mockCertificatesDashComponent = {} as CertificatesDashComponent;
   const certificate = {
     id: 1,
     name: 'ray',
@@ -56,7 +54,7 @@ describe('CertificateEditComponent', () => {
     ],
     providers: [
       mockWebsocket([
-        mockCall('certificate.update'),
+        mockJob('certificate.update'),
       ]),
       mockProvider(MatDialog),
       mockProvider(IxSlideInService),
@@ -75,7 +73,7 @@ describe('CertificateEditComponent', () => {
     beforeEach(() => {
       spectator = createComponent({
         providers: [
-          { provide: SLIDE_IN_DATA, useValue: { certificatesDash: mockCertificatesDashComponent, certificate } },
+          { provide: SLIDE_IN_DATA, useValue: certificate },
         ],
       });
       spectator.detectChanges();
@@ -106,7 +104,7 @@ describe('CertificateEditComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('certificate.update', [1, { name: 'New Name' }]);
+      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('certificate.update', [1, { name: 'New Name' }]);
       expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
     });
 
@@ -144,11 +142,8 @@ describe('CertificateEditComponent', () => {
           {
             provide: SLIDE_IN_DATA,
             useValue: {
-              certificatesDash: mockCertificatesDashComponent,
-              certificate: {
-                ...certificate,
-                acme: true,
-              },
+              ...certificate,
+              acme: true,
             },
           },
         ],
@@ -169,10 +164,7 @@ describe('CertificateEditComponent', () => {
         providers: [
           {
             provide: SLIDE_IN_DATA,
-            useValue: {
-              certificatesDash: mockCertificatesDashComponent,
-              certificate: certificateCsr,
-            },
+            useValue: certificateCsr,
           },
         ],
       });

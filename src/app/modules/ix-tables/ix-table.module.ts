@@ -27,6 +27,9 @@ import { IxTableEmptyDirective } from 'app/modules/ix-tables/directives/ix-table
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 
+/**
+ * @deprecated
+ */
 @NgModule({
   declarations: [
     IxCellDefDirective,

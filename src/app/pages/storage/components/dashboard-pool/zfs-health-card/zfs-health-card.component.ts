@@ -6,25 +6,22 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { formatDuration } from 'date-fns';
-import { EMPTY, Observable, Subscription } from 'rxjs';
-import {
-  catchError, filter, map, switchMap,
-} from 'rxjs/operators';
+import { Observable, Subscription } from 'rxjs';
+import { filter, map, switchMap } from 'rxjs/operators';
 import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolScrubAction } from 'app/enums/pool-scrub-action.enum';
 import { PoolStatus, poolStatusLabels } from 'app/enums/pool-status.enum';
+import { LoadingState, toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { secondsToDuration } from 'app/helpers/time.helpers';
-import { LoadingState, toLoadingState } from 'app/helpers/to-loading-state.helper';
 import { Pool, PoolScanUpdate } from 'app/interfaces/pool.interface';
 import { TopologyItem } from 'app/interfaces/storage.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import {
   AutotrimDialogComponent,
 } from 'app/pages/storage/components/dashboard-pool/zfs-health-card/autotrim-dialog/autotrim-dialog.component';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
-import { DialogService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -56,12 +53,28 @@ export class ZfsHealthCardComponent implements OnChanges {
     private store: PoolsDashboardStore,
   ) { }
 
-  get isScanRunning(): boolean {
+  get scanLabel(): string {
+    if (!this.isScrub) {
+      return this.translate.instant('Resilvering:');
+    }
+
+    if (this.isScrubPaused) {
+      return this.translate.instant('Scrub Paused');
+    }
+
+    return this.translate.instant('Scrub In Progress:');
+  }
+
+  get wasScanInitiated(): boolean {
     return this.scan?.state === PoolScanState.Scanning;
   }
 
-  get isScanScrub(): boolean {
+  get isScrub(): boolean {
     return this.scan?.function === PoolScanFunction.Scrub;
+  }
+
+  get isScrubPaused(): boolean {
+    return Boolean(this.scan?.pause);
   }
 
   get scanDuration(): string {
@@ -83,11 +96,11 @@ export class ZfsHealthCardComponent implements OnChanges {
     // TODO: Consider implementing a reactive service for localized time formatting.
     switch (this.scan.state) {
       case PoolScanState.Finished:
-        return this.isScanScrub
+        return this.isScrub
           ? T('Finished Scrub on {date}')
           : T('Finished Resilver on {date}');
       case PoolScanState.Canceled:
-        return this.isScanScrub
+        return this.isScrub
           ? T('Canceled Scrub on {date}')
           : T('Canceled Resilver on {date}');
       default:
@@ -138,11 +151,8 @@ export class ZfsHealthCardComponent implements OnChanges {
     })
       .pipe(
         filter(Boolean),
-        switchMap(() => this.ws.call('pool.scrub', [this.pool.id, PoolScrubAction.Start])),
-        catchError((error: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-          return EMPTY;
-        }),
+        switchMap(() => this.ws.startJob('pool.scrub', [this.pool.id, PoolScrubAction.Start])),
+        this.errorHandler.catchError(),
         untilDestroyed(this),
       )
       .subscribe();
@@ -156,13 +166,22 @@ export class ZfsHealthCardComponent implements OnChanges {
       buttonText: this.translate.instant('Stop Scrub'),
     }).pipe(
       filter(Boolean),
-      switchMap(() => this.ws.call('pool.scrub', [this.pool.id, PoolScrubAction.Stop])),
-      catchError((error: WebsocketError) => {
-        this.dialogService.error(this.errorHandler.parseWsError(error));
-        return EMPTY;
-      }),
+      switchMap(() => this.ws.startJob('pool.scrub', [this.pool.id, PoolScrubAction.Stop])),
+      this.errorHandler.catchError(),
       untilDestroyed(this),
     ).subscribe();
+  }
+
+  onPauseScrub(): void {
+    this.ws.startJob('pool.scrub', [this.pool.id, PoolScrubAction.Pause])
+      .pipe(untilDestroyed(this))
+      .subscribe();
+  }
+
+  onResumeScrub(): void {
+    this.ws.startJob('pool.scrub', [this.pool.id, PoolScrubAction.Start])
+      .pipe(untilDestroyed(this))
+      .subscribe();
   }
 
   onEditAutotrim(): void {
@@ -181,16 +200,12 @@ export class ZfsHealthCardComponent implements OnChanges {
       .pipe(
         map((apiEvent) => apiEvent.fields),
         filter((scan) => scan.name === this.pool.name),
+        this.errorHandler.catchError(),
         untilDestroyed(this),
       )
-      .subscribe({
-        next: (scan) => {
-          this.scan = scan.scan;
-          this.cdr.markForCheck();
-        },
-        error: (error: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-        },
+      .subscribe((scan) => {
+        this.scan = scan.scan;
+        this.cdr.markForCheck();
       });
   }
 

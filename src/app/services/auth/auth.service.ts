@@ -237,7 +237,7 @@ export class AuthService {
     );
   }
 
-  private getLoggedInUserInformation(): void {
+  getLoggedInUserInformation(): void {
     let authenticatedUser: LoggedInUser;
     const uuid = UUID.UUID();
     const payload = {

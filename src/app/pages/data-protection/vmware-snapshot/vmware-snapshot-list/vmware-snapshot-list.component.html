@@ -1,0 +1,42 @@
+<ng-template ixPageHeader>
+  <ix-page-title-header>
+    <ix-search-input (search)="onListFiltered($event)"></ix-search-input>
+    <button mat-button ixTest="add-vmware-snapshot" [color]="'primary'" (click)="doAdd()">
+      {{ 'Add' | translate }}
+    </button>
+  </ix-page-title-header>
+</ng-template>
+
+<div class="table-container">
+  <ix-table2
+    [ix-table2-empty]="!dataProvider.rows.length"
+    [emptyConfig]="emptyConfigService.defaultEmptyConfig(emptyType)"
+  >
+    <thead
+      ix-table-head
+      [columns]="columns"
+      [dataProvider]="dataProvider"
+    ></thead>
+    <tbody
+      ix-table-body
+      [columns]="columns"
+      [dataProvider]="dataProvider"
+    >
+      <ng-template let-snapshot ix-table-details-row [dataProvider]="dataProvider">
+        <div class="table-details-row-actions">
+          <button
+            mat-button
+            [ixTest]="[snapshot.hostname, snapshot.filesystem, 'edit']"
+            (click)="doEdit(snapshot)"
+          >{{ 'Edit' | translate }}</button>
+          <button
+            mat-button
+            [ixTest]="[snapshot.hostname, snapshot.filesystem, 'delete']"
+            (click)="doDelete(snapshot)"
+          >{{ 'Delete' | translate }}</button>
+        </div>
+      </ng-template>
+    </tbody>
+  </ix-table2>
+  <ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>
+</div>

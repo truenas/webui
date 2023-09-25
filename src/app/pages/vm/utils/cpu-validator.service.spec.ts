@@ -3,7 +3,7 @@ import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { lastValueFrom } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CpuValidatorService } from 'app/pages/vm/utils/cpu-validator.service';
-import { WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('CpuValidatorService', () => {
   let spectator: SpectatorService<CpuValidatorService>;

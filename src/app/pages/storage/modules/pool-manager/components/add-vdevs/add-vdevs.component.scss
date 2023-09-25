@@ -1,0 +1,23 @@
+.root-container {
+  display: flex;
+  gap: 16px;
+
+  .main-container {
+    width: 100%;
+  }
+
+  .sidebar {
+    width: 60%;
+  }
+
+  .details-container {
+    position: sticky;
+    top: 0;
+  }
+}
+
+ix-inventory,
+ix-new-devices-preview {
+  display: block;
+  margin-top: 16px;
+}

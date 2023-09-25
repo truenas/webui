@@ -11,6 +11,12 @@
   padding: 4px 8px 12px 24px;
 }
 
+.header-actions {
+  align-items: center;
+  display: flex;
+  justify-content: flex-end;
+}
+
 .mat-mdc-table {
   background: var(--bg2);
   margin-left: -24px;

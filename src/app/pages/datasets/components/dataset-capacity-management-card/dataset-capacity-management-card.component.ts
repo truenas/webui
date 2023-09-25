@@ -13,9 +13,10 @@ import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DatasetCapacitySettingsComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-settings/dataset-capacity-settings.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -66,6 +67,14 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
     private dialogService: DialogService,
   ) {}
 
+  ngOnChanges(changes: IxSimpleChanges<this>): void {
+    this.getInheritedQuotas();
+    const selectedDatasetHasChanged = changes?.dataset?.previousValue?.id !== changes?.dataset?.currentValue?.id;
+    if (selectedDatasetHasChanged && this.checkQuotas) {
+      this.refreshQuotas$.next();
+    }
+  }
+
   ngOnInit(): void {
     if (this.checkQuotas) {
       this.initQuotas();
@@ -99,14 +108,6 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
     });
   }
 
-  ngOnChanges(changes: IxSimpleChanges<this>): void {
-    this.getInheritedQuotas();
-    const selectedDatasetHasChanged = changes?.dataset?.previousValue?.id !== changes?.dataset?.currentValue?.id;
-    if (selectedDatasetHasChanged && this.checkQuotas) {
-      this.refreshQuotas$.next();
-    }
-  }
-
   getInheritedQuotas(): void {
     this.datasetStore.selectedBranch$.pipe(
       map((datasets) => {
@@ -122,7 +123,6 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
       },
       error: (error: WebsocketError) => {
         this.dialogService.error(this.errorHandler.parseWsError(error));
-        this.cdr.markForCheck();
       },
     });
   }

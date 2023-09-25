@@ -9,12 +9,12 @@ import { of } from 'rxjs';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { SummaryProvider, SummarySection } from 'app/modules/common/summary/summary.interface';
-import { matchOtherValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
+import { matchOthersFgValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
 import { getCertificatePreview } from 'app/pages/credentials/certificates-dash/utils/get-certificate-preview.utils';
-import { DialogService, WebSocketService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -28,8 +28,16 @@ export class CertificateImportComponent implements OnInit, SummaryProvider {
     csr: [null as number],
     certificate: [''],
     privatekey: [''],
-    passphrase: ['', [matchOtherValidator('passphrase2')]],
+    passphrase: [''],
     passphrase2: [''],
+  }, {
+    validators: [
+      matchOthersFgValidator(
+        'passphrase',
+        ['passphrase2'],
+        this.translate.instant('Passphrase value must match Confirm Passphrase'),
+      ),
+    ],
   });
 
   csrs: Certificate[] = [];
@@ -100,21 +108,16 @@ export class CertificateImportComponent implements OnInit, SummaryProvider {
 
   private loadCsrs(): void {
     this.ws.call('certificate.query', [[['CSR', '!=', null]]])
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: (csrs) => {
-          this.csrs = csrs;
-          this.csrOptions$ = of(
-            csrs.map((csr) => ({
-              label: csr.name,
-              value: csr.id,
-            })),
-          );
-          this.cdr.markForCheck();
-        },
-        error: (error: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-        },
+      .pipe(this.errorHandler.catchError(), untilDestroyed(this))
+      .subscribe((csrs) => {
+        this.csrs = csrs;
+        this.csrOptions$ = of(
+          csrs.map((csr) => ({
+            label: csr.name,
+            value: csr.id,
+          })),
+        );
+        this.cdr.markForCheck();
       });
   }
 

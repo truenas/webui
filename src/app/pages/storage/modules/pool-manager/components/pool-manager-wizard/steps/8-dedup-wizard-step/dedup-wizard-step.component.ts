@@ -14,6 +14,7 @@ import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/p
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DedupWizardStepComponent {
+  @Input() isStepActive: boolean;
   @Input() stepWarning: string | null;
   @Output() goToLastStep = new EventEmitter<void>();
 
@@ -31,5 +32,9 @@ export class DedupWizardStepComponent {
 
   goToReviewStep(): void {
     this.goToLastStep.emit();
+  }
+
+  resetStep(): void {
+    this.store.resetStep(VdevType.Dedup);
   }
 }

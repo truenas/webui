@@ -1,17 +1,12 @@
 @import 'scss-imports/splitview';
-@import 'app/modules/page-header/breadcrumb/breadcrumb.component';
 
 $singlecolumn-max-width: ($card-width-slim + $gap * 2);
 $dualcolumn-slim-max-width: ($card-width-slim * 2 + $gap * 2);
 $scrollbar-offset: 20px;
-$header-height: 200px;
+$header-height: 193px;
 
 :host {
   display: block;
-}
-
-.loader-bar {
-  height: 2px;
 }
 
 .container {
@@ -97,6 +92,15 @@ $header-height: 200px;
 .app-search {
   background-color: var(--bg2);
   padding: 16px;
+  position: relative;
+
+  ix-fake-progress-bar {
+    height: 2px;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
 }
 
 .app-wrapper {
@@ -129,7 +133,7 @@ $header-height: 200px;
 
 ix-app-row,
 .app-header-row {
-  grid-template-columns: minmax(200px, auto) minmax(100px, 130px) 40px 40px 40px minmax(100px, 115px) 60px;
+  grid-template-columns: minmax(180px, auto) minmax(100px, 120px) 55px 55px 85px minmax(100px, 115px) 60px;
 
   @media (max-width: $breakpoint-tablet) {
     grid-template-columns: auto 0 0 0 0 0 0;
