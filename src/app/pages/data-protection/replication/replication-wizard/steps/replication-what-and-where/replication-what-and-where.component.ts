@@ -284,9 +284,9 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
       .subscribe((credentialId: number) => {
         const selectedCredential = this.sshCredentials.find((credential) => credential.id === credentialId);
         const isRootUser = selectedCredential?.attributes?.username === 'root';
-        const isRemote = this.isRemoteSource || this.isRemoteTarget;
+        const isNonRemote = !(this.isRemoteSource || this.isRemoteTarget);
 
-        if (!selectedCredential || isRootUser || !isRemote || this.isSudoDialogShown) {
+        if (!selectedCredential || isRootUser || isNonRemote || this.isSudoDialogShown) {
           return;
         }
 
@@ -295,7 +295,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
           title: this.translate.instant('Sudo Enabled'),
           message: helptext.sudo_warning,
           hideCheckbox: true,
-          buttonText: this.translate.instant('Use Sudo for ZFS Commands'),
+          buttonText: this.translate.instant('Use Sudo For ZFS Commands'),
         }).pipe(untilDestroyed(this)).subscribe((useSudo) => {
           this.form.controls.sudo.setValue(useSudo);
           this.isSudoDialogShown = true;
