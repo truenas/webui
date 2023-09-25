@@ -129,7 +129,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
     dialogRef.componentInstance.success.pipe(
       switchMap((job: Job<Pool>) => {
         if (!this.hasEncryption) {
-          return of(undefined);
+          return of(null);
         }
 
         return this.matDialog.open<DownloadKeyDialogComponent, DownloadKeyDialogParams>(DownloadKeyDialogComponent, {
