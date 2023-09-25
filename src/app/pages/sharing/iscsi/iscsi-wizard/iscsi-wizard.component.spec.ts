@@ -6,11 +6,16 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatStepperModule } from '@angular/material/stepper';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { ServiceName } from 'app/enums/service-name.enum';
+import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
+import { IscsiGlobalSession } from 'app/interfaces/iscsi-global-config.interface';
 import {
   IscsiAuthAccess, IscsiExtent, IscsiInitiatorGroup, IscsiPortal, IscsiTarget, IscsiTargetExtent,
 } from 'app/interfaces/iscsi.interface';
+import { Service } from 'app/interfaces/service.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -43,8 +48,20 @@ describe('IscsiWizardComponent', () => {
     ],
     providers: [
       mockProvider(IxSlideInService),
-      mockProvider(DialogService),
+      mockProvider(DialogService, {
+        confirm: jest.fn(() => of(true)),
+      }),
       mockWebsocket([
+        mockCall('service.query', [{
+          service: ServiceName.Iscsi,
+          id: 4,
+          enable: false,
+          state: ServiceStatus.Running,
+        } as Service]),
+        mockCall('service.update'),
+        mockCall('service.start'),
+        mockCall('iscsi.global.sessions', [] as IscsiGlobalSession[]),
+        mockCall('service.restart'),
         mockCall('iscsi.extent.query', []),
         mockCall('iscsi.target.query', []),
         mockCall('iscsi.portal.query', []),

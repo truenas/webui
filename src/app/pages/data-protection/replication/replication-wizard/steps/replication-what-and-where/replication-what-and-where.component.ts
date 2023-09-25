@@ -8,7 +8,8 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  debounceTime, map, merge, Observable, of,
+  BehaviorSubject,
+  debounceTime, filter, map, merge, Observable, of, switchMap,
 } from 'rxjs';
 import { DatasetSource } from 'app/enums/dataset.enum';
 import { Direction } from 'app/enums/direction.enum';
@@ -95,7 +96,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   });
 
   existReplicationOptions$: Observable<Option[]>;
-  sshCredentialsOptions$: Observable<Option[]>;
+  readonly sshCredentialsOptions$ = new BehaviorSubject<Option[]>([]);
 
   transportOptions$ = of([
     { label: this.translate.instant('Encryption (more secure, but slower)'), value: TransportMode.Ssh },
@@ -134,7 +135,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     private slideInRef: IxSlideInRef<ReplicationWhatAndWhereComponent>,
     private formBuilder: FormBuilder,
     private replicationService: ReplicationService,
-    private keychainCredentialService: KeychainCredentialService,
+    private keychainCredentials: KeychainCredentialService,
     private datePipe: DatePipe,
     private translate: TranslateService,
     private datasetService: DatasetService,
@@ -150,7 +151,9 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     this.disableSource();
     this.disableTarget();
     this.loadExistReplication();
-    this.loadSshCredentials();
+    this.loadSshConnections();
+    this.loadSshConnectionOptions();
+    this.listenForNewSshConnection();
 
     this.form.controls.source_datasets_from.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
       this.disableTransportAndSudo(value, this.form.value.target_dataset_from);
@@ -294,26 +297,6 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
           this.form.controls.sudo.setValue(useSudo);
         });
       });
-
-    this.form.controls.ssh_credentials_source.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
-      if (value === SshCredentialsNewOption.New) {
-        this.createSshConnection(true);
-      } else if (value) {
-        this.remoteSourceNodeProvider = this.replicationService.getTreeNodeProvider(
-          { sshCredential: value, transport: this.form.value.transport || TransportMode.Ssh },
-        );
-      }
-    });
-
-    this.form.controls.ssh_credentials_target.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
-      if (value === SshCredentialsNewOption.New) {
-        this.createSshConnection(false);
-      } else if (value) {
-        this.remoteTargetNodeProvider = this.replicationService.getTreeNodeProvider(
-          { sshCredential: value, transport: this.form.value.transport || TransportMode.Ssh },
-        );
-      }
-    });
   }
 
   getSummary(): SummarySection {
@@ -359,54 +342,69 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     );
   }
 
-  private loadSshCredentials(): void {
-    this.keychainCredentialService.getSshConnections().pipe(untilDestroyed(this)).subscribe((credentials) => {
-      this.sshCredentials = credentials;
-      const sshCredentialNewOption = { label: this.translate.instant('Create New'), value: SshCredentialsNewOption.New };
-      const sshCredentialOptions = credentials.map((credential) => ({ label: credential.name, value: credential.id }));
-      this.sshCredentialsOptions$ = of([sshCredentialNewOption, ...sshCredentialOptions]);
+  private listenForNewSshConnection(): void {
+    this.form.controls.ssh_credentials_source.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
+      if (value === SshCredentialsNewOption.New) {
+        this.createSshConnection(true);
+      } else if (value) {
+        this.remoteSourceNodeProvider = this.replicationService.getTreeNodeProvider(
+          { sshCredential: value, transport: this.form.value.transport || TransportMode.Ssh },
+        );
+      }
+    });
+
+    this.form.controls.ssh_credentials_target.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
+      if (value === SshCredentialsNewOption.New) {
+        this.createSshConnection(false);
+      } else if (value) {
+        this.remoteTargetNodeProvider = this.replicationService.getTreeNodeProvider(
+          { sshCredential: value, transport: this.form.value.transport || TransportMode.Ssh },
+        );
+      }
     });
   }
 
+  private loadSshConnections(): void {
+    this.keychainCredentials.getSshConnections()
+      .pipe(untilDestroyed(this))
+      .subscribe((connections) => {
+        this.sshCredentials = connections;
+      });
+  }
+
+  private loadSshConnectionOptions(): void {
+    this.keychainCredentials.getSshCredentialsOptions()
+      .pipe(untilDestroyed(this))
+      .subscribe((options) => this.sshCredentialsOptions$.next(options));
+  }
+
   private createSshConnection(isSource: boolean): void {
-    const dialogRef = this.matDialog.open(SshConnectionFormComponent, {
+    this.openSshConnectionDialog().pipe(
+      filter(Boolean),
+      switchMap((newCredential): Observable<[KeychainSshCredentials, Option[]]> => {
+        return this.keychainCredentials.getSshCredentialsOptions().pipe(
+          map((options) => [newCredential, options]),
+        );
+      }),
+      untilDestroyed(this),
+    ).subscribe(([newCredential, sshConnectionsOptions]) => {
+      this.sshCredentialsOptions$.next(sshConnectionsOptions);
+
+      if (isSource) {
+        this.form.controls.ssh_credentials_source.setValue(newCredential.id);
+      } else {
+        this.form.controls.ssh_credentials_target.setValue(newCredential.id);
+      }
+    });
+  }
+
+  private openSshConnectionDialog(): Observable<KeychainSshCredentials> {
+    return this.matDialog.open(SshConnectionFormComponent, {
       data: { dialog: true },
       width: '600px',
       panelClass: 'ix-overflow-dialog',
       viewContainerRef: this.viewContainerRef,
-    });
-
-    dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe(() => {
-      this.keychainCredentialService.getSshConnections().pipe(untilDestroyed(this)).subscribe((credentials) => {
-        const newCredential = credentials.find((credential) => {
-          return !this.sshCredentials.find((existingCredential) => existingCredential.id === credential.id);
-        });
-
-        if (!newCredential) {
-          if (isSource) {
-            this.form.controls.ssh_credentials_source.setValue(null);
-          } else {
-            this.form.controls.ssh_credentials_target.setValue(null);
-          }
-          return;
-        }
-
-        const sshCredentialNewOption = { label: this.translate.instant('Create New'), value: SshCredentialsNewOption.New };
-        const sshCredentialCreatedOption = {
-          label: this.translate.instant('{credentialName} (Newly Created)', { credentialName: newCredential.name }),
-          value: newCredential.id,
-        };
-        const sshCredentialOptions = this.sshCredentials.map((crd) => ({ label: crd.name, value: crd.id }));
-        this.sshCredentialsOptions$ = of([sshCredentialCreatedOption, sshCredentialNewOption, ...sshCredentialOptions]);
-        this.sshCredentials = credentials;
-
-        if (isSource) {
-          this.form.controls.ssh_credentials_source.setValue(newCredential.id);
-        } else {
-          this.form.controls.ssh_credentials_target.setValue(newCredential.id);
-        }
-      });
-    });
+    }).afterClosed();
   }
 
   private genTaskName(source: string[], target: string): void {

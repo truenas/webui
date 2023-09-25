@@ -50,6 +50,8 @@ export class FileTicketFormComponent implements OnInit {
     screenshot: [null as File[]],
   });
 
+  readonly isEnterprise$ = this.sysGeneralService.isEnterprise$;
+
   readonly acceptedFiles = ticketAcceptedFiles;
   readonly typeOptions$ = of(mapToOptions(ticketTypeLabels, this.translate));
   categoryOptions$: Observable<Option[]> = this.getCategories().pipe(
