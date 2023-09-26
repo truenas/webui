@@ -24,7 +24,6 @@ import { LineChartComponent } from 'app/pages/reports-dashboard/components/line-
 import { ReportsDashboardComponent } from 'app/pages/reports-dashboard/reports-dashboard.component';
 import { routing } from 'app/pages/reports-dashboard/reports-dashboard.routing';
 import { ReportComponent } from './components/report/report.component';
-import { ReportsConfigFormComponent } from './components/reports-config-form/reports-config-form.component';
 import { ReportsGlobalControlsComponent } from './components/reports-global-controls/reports-global-controls.component';
 
 @NgModule({
@@ -54,7 +53,6 @@ import { ReportsGlobalControlsComponent } from './components/reports-global-cont
   declarations: [
     LineChartComponent,
     ReportComponent,
-    ReportsConfigFormComponent,
     ReportsDashboardComponent,
     ReportsGlobalControlsComponent,
   ],
