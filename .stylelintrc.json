@@ -18,6 +18,7 @@
     "selector-disallowed-list": ["mat-icon"]
   },
   "ignoreFiles": [
-    "src/assets/iconfont/mdi/scss/_functions.scss"
+    "src/assets/iconfont/mdi/scss/_functions.scss",
+    "src/assets/styles/other/_root-variables.scss"
   ]
 }

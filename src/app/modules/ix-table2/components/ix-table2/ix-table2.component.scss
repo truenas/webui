@@ -15,7 +15,7 @@ table {
 :host ::ng-deep {
   tr > td > ng-component > span {
     -webkit-box-orient: vertical;
-    display: inline-box;
+    display: var(--webkit-inline-box);
     -webkit-line-clamp: 2;
     margin: 0 0 -5px;
     overflow: hidden;
