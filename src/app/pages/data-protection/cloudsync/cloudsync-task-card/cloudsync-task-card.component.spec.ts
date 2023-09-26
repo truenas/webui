@@ -34,7 +34,7 @@ describe('CloudSyncTaskCardComponent', () => {
   const cloudsyncTasks = [
     {
       id: 3,
-      description: 'scru',
+      description: 'custom-cloudsync',
       path: '/mnt/APPS',
       attributes: {
         folder: '',
@@ -152,7 +152,7 @@ describe('CloudSyncTaskCardComponent', () => {
   it('should show table rows', async () => {
     const expectedRows = [
       ['Description', 'Frequency', 'Next Run', 'Last Run', 'Enabled', 'State', ''],
-      ['scru', 'Every hour, every day', 'Disabled', '1 minute ago', '', 'FINISHED', ''],
+      ['custom-cloudsync', 'Every hour, every day', 'Disabled', '1 minute ago', '', 'FINISHED', ''],
     ];
 
     const cells = await table.getCellTexts();
@@ -186,7 +186,7 @@ describe('CloudSyncTaskCardComponent', () => {
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Run Now',
-      message: 'Run this Cloud Sync now?',
+      message: 'Run «custom-cloudsync» Cloud Sync now?',
       hideCheckbox: true,
     });
   });
@@ -218,7 +218,7 @@ describe('CloudSyncTaskCardComponent', () => {
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Confirmation',
-      message: 'Delete Cloud Sync Task <b>\"scru\"</b>?',
+      message: 'Delete Cloud Sync Task <b>\"custom-cloudsync\"</b>?',
     });
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.delete', [3]);
