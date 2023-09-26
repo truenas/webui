@@ -45,6 +45,7 @@
       [itemsSchema]="dynamicSchema.itemsSchema"
       [isEditMode]="isEditMode"
       [canAdd]="!isAllListControlsDisabled"
+      [formArray]="getFormArray"
       (add)="addControl($event)"
     >
       <ix-list-item

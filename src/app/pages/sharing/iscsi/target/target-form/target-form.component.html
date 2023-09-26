@@ -33,6 +33,7 @@
               formArrayName="auth_networks"
               [empty]="form.controls.auth_networks.length === 0"
               [label]="helptext.auth_network.placeholder | translate"
+              [formArray]="form.get('auth_networks')"
               (add)="addNetwork()"
             >
               <ix-list-item
@@ -53,6 +54,7 @@
           <ix-fieldset [title]="helptext.fieldset_target_group | translate">
             <ix-list
               formArrayName="groups"
+              [formArray]="form.get('groups')"
               [empty]="form.controls.groups.length === 0"
               [label]="'Add groups' | translate"
               (add)="addGroup()"
