@@ -149,6 +149,7 @@
           formArrayName="aliases"
           [empty]="form.controls.aliases.controls.length === 0"
           [label]="'Aliases' | translate"
+          [formArray]="form.get('aliases')"
           (add)="addAlias()"
         >
           <ix-list-item

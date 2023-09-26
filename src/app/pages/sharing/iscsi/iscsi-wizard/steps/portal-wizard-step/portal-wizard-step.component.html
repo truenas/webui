@@ -53,6 +53,7 @@
       [empty]="form.controls.listen.controls.length === 0"
       [label]="helptextSharingIscsi.portal_form_placeholder_ip | translate"
       [tooltip]="helptextSharingIscsi.portal_form_tooltip_ip | translate"
+      [formArray]="form.get('listen')"
       (add)="addAddress()"
     >
       <ix-list-item
