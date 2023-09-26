@@ -177,7 +177,7 @@ describe('CloudSyncTaskCardComponent', () => {
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Run Now',
-      message: 'Run this Cloud Sync now?',
+      message: 'Run «custom-cloudsync» Cloud Sync now?',
       hideCheckbox: true,
     });
   });
