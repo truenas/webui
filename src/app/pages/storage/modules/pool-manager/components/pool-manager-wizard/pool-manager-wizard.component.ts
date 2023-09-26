@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatStepper } from '@angular/material/stepper';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -46,6 +46,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
     map(([storeLoading, secondaryLoading]) => storeLoading || secondaryLoading),
   );
   usesDraidLayout$ = this.store.usesDraidLayout$;
+  hasSpareStep$ = this.store.hasSpareStep$;
 
   activeStep: PoolCreationWizardStep = PoolCreationWizardStep.General;
   hasEnclosureStep = false;
@@ -73,7 +74,6 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
     private router: Router,
     private snackbar: SnackbarService,
     private poolManagerValidation: PoolManagerValidationService,
-    private route: ActivatedRoute,
     private addVdevsStore: AddVdevsStore,
     private dialogService: DialogService,
   ) {}

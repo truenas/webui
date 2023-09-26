@@ -19,10 +19,12 @@ import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
 import { ManualDiskSelectionComponent, ManualDiskSelectionParams } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/manual-disk-selection.component';
 import {
   DispersalStrategy,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/2-enclosure-wizard-step/enclosure-wizard-step.component';
+import { PoolCreationWizardStep } from 'app/pages/storage/modules/pool-manager/enums/pool-creation-wizard-step.enum';
 import { categoryCapacity } from 'app/pages/storage/modules/pool-manager/utils/capacity.utils';
 import { filterAllowedDisks } from 'app/pages/storage/modules/pool-manager/utils/disk.utils';
 import {
@@ -134,6 +136,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
   readonly enclosures$ = this.select((state) => state.enclosures);
   readonly allDisks$ = this.select((state) => state.allDisks);
   readonly topology$ = this.select((state) => state.topology);
+
   readonly diskSettings$ = this.select((state) => state.diskSettings);
   readonly enclosureSettings$ = this.select((state) => state.enclosureSettings);
   readonly totalUsableCapacity$ = this.select(
@@ -168,6 +171,14 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
   readonly usesDraidLayout$ = this.select(
     this.topology$,
     (topology) => this.isUsingDraidLayout(topology),
+  );
+
+  readonly hasSpareStep$ = this.select(
+    this.addVdevsStore.pool$,
+    this.usesDraidLayout$,
+    this.topology$,
+    (pool, usesDraidLayout, topology) =>
+      topology[PoolCreationWizardStep.Spare] && !pool?.topology?.spare?.length && !usesDraidLayout,
   );
 
   isUsingDraidLayout(topology: PoolManagerTopology): boolean {
@@ -225,6 +236,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     private generateVdevs: GenerateVdevsService,
     private settingsStore$: Store<AppState>,
     private dialog: MatDialog,
+    private addVdevsStore: AddVdevsStore,
   ) {
     super(initialState);
   }
