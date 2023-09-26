@@ -34,6 +34,7 @@ export default {
   checkin_complete_title: T('Changes Saved'),
   checkin_complete_message: T('Network interface changes have been made permanent.'),
   checkin_button: T('Save'),
+  go_to_network: T('Go To Network Settings'),
 
   pending_changes_title: T('Pending Network Changes'),
   pending_changes_message: T('There are pending network interface changes. Review them now?'),
