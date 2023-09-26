@@ -33,6 +33,7 @@
       <ix-fieldset [title]="'IP Address' | translate">
         <ix-list
           formArrayName="ip"
+          [formArray]="form.get('ip')"
           [empty]="listen.length === 0"
           [label]="'Add listen' | translate"
           (add)="onAdd()"
