@@ -16,8 +16,6 @@ export class XtermAttachAddon implements ITerminalAddon {
   ) {}
 
   activate(terminal: Terminal): void {
-    this.dispose();
-
     this.subscriptions.push(
       this.shellService.shellOutput$.subscribe((data) => {
         terminal.write(typeof data === 'string' ? data : new Uint8Array(data));

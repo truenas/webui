@@ -52,6 +52,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
 
   private fitAddon: FitAddon;
   private attachAddon: XtermAttachAddon;
+  private token: string;
 
   readonly toolbarTooltip = this.translate.instant(`<b>Copy & Paste</b> <br/>
                   Context menu copy and paste operations are disabled in the Shell. Copy and paste shortcuts for Mac are <i>Command+C</i> and <i>Command+V</i>. For most operating systems, use <i>Ctrl+Insert</i> to copy and <i>Shift+Insert</i> to paste.<br/><br/>
@@ -105,8 +106,8 @@ export class TerminalComponent implements OnInit, OnDestroy {
     this.authService.authToken$.pipe(
       take(1),
       tap((token) => {
-        this.initializeWebShell(token);
-        this.shellService.shellOutput$.pipe(untilDestroyed(this)).subscribe(() => {});
+        this.token = token;
+        this.initializeWebShell();
         this.initializeTerminal();
       }),
       untilDestroyed(this),
@@ -174,8 +175,8 @@ export class TerminalComponent implements OnInit, OnDestroy {
     return true;
   }
 
-  initializeWebShell(token: string): void {
-    this.shellService.connect(this.conf.connectionData, token);
+  initializeWebShell(): void {
+    this.shellService.connect(this.conf.connectionData, this.token);
 
     this.shellService.shellConnected$.pipe(untilDestroyed(this)).subscribe((event: ShellConnectedEvent) => {
       this.shellConnected = event.connected;
@@ -191,7 +192,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
   }
 
   reconnect(): void {
-    this.shellService.connect(this.conf.connectionData);
+    this.shellService.connect(this.conf.connectionData, this.token);
   }
 
   onFontSizeChanged(newSize: number): void {
