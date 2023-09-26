@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatStepper } from '@angular/material/stepper';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -45,7 +45,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
   isLoading$ = combineLatest([this.store.isLoading$, this.addVdevsStore.isLoading$]).pipe(
     map(([storeLoading, secondaryLoading]) => storeLoading || secondaryLoading),
   );
-  hasSpareStep$ = this.store.hasSpareStep$;
+  usesDraidLayout$ = this.store.usesDraidLayout$;
 
   activeStep: PoolCreationWizardStep = PoolCreationWizardStep.General;
   hasEnclosureStep = false;
@@ -60,6 +60,10 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
     return Boolean(this.state.encryption);
   }
 
+  get alreadyHasSpare(): boolean {
+    return Boolean(this.existingPool?.topology?.spare?.length);
+  }
+
   constructor(
     private store: PoolManagerStore,
     private systemStore$: Store<AppState>,
@@ -69,6 +73,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
     private router: Router,
     private snackbar: SnackbarService,
     private poolManagerValidation: PoolManagerValidationService,
+    private route: ActivatedRoute,
     private addVdevsStore: AddVdevsStore,
     private dialogService: DialogService,
   ) {}
