@@ -94,10 +94,8 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
     this.addVdevsStore.pool$.pipe(
       filter(Boolean),
       tap((pool) => {
-        if (pool) {
-          this.existingPool = pool;
-          this.cdr.markForCheck();
-        }
+        this.existingPool = pool;
+        this.cdr.markForCheck();
       }),
       untilDestroyed(this),
     ).subscribe();

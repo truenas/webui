@@ -174,16 +174,16 @@ describe('AddVdevsComponent – Add Vdev to existing pool', () => {
     const dataStepValues = await wizard.getStepValues();
     expect(dataStepValues).toEqual({
       'Disk Size': '',
-      'Layout': TopologyItemType.Mirror,
+      Layout: TopologyItemType.Mirror,
       'Number of VDEVs': '',
       'Treat Disk Size as Minimum': false,
-      'Width': '',
+      Width: '',
     });
 
     await wizard.fillStep({
       'Disk Size': '20 GiB (HDD)',
       'Treat Disk Size as Minimum': true,
-      'Width': '2',
+      Width: '2',
       'Number of VDEVs': '1',
     });
 
@@ -200,10 +200,10 @@ describe('AddVdevsComponent – Add Vdev to existing pool', () => {
     expect(await (await wizard.getActiveStep()).getLabel()).toBe('Log (Optional)');
 
     await wizard.fillStep({
-      'Layout': 'Stripe',
+      Layout: 'Stripe',
       'Disk Size': '20 GiB (HDD)',
       'Treat Disk Size as Minimum': true,
-      'Width': '1',
+      Width: '1',
     });
 
     expect(await wizard.getNewDevicesConfigurationPreviewSummary()).toMatchObject({
@@ -230,7 +230,7 @@ describe('AddVdevsComponent – Add Vdev to existing pool', () => {
     await wizard.fillStep({
       'Disk Size': '20 GiB (HDD)',
       'Treat Disk Size as Minimum': true,
-      'Width': '3',
+      Width: '3',
       'Number of VDEVs': '1',
     });
 
@@ -266,7 +266,8 @@ describe('AddVdevsComponent – Add Vdev to existing pool', () => {
             { type: TopologyItemType.Mirror, disks: ['sda3', 'sda0'] },
           ],
           dedup: [
-            { type: TopologyItemType.Mirror, disks: ['sda1', 'sda2', 'sda5' ] } ],
+            { type: TopologyItemType.Mirror, disks: ['sda1', 'sda2', 'sda5'] },
+          ],
           log: [
             { type: TopologyItemType.Stripe, disks: ['sda6'] },
           ],
