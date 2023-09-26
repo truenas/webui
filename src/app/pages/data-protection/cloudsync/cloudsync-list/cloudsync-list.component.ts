@@ -233,7 +233,7 @@ export class CloudsyncListComponent implements OnInit, AfterViewInit {
     const dialog = this.matDialog.open(CloudsyncRestoreDialogComponent, {
       data: row.id,
     });
-    dialog.afterClosed().pipe(untilDestroyed(this)).subscribe(() => this.getCloudSyncTasks());
+    dialog.afterClosed().pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCloudSyncTasks());
   }
 
   openForm(row?: CloudSyncTaskUi): void {
