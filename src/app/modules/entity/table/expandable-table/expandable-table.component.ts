@@ -1,6 +1,6 @@
 import {
   AfterViewChecked,
-  Component, ElementRef, Input, OnInit, ViewChild,
+  Component, ElementRef, Input, OnChanges, ViewChild,
 } from '@angular/core';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { AppTableAction, AppTableConfig, TableComponent } from 'app/modules/entity/table/table.component';
@@ -28,7 +28,7 @@ export enum ExpandableTableState {
   templateUrl: './expandable-table.component.html',
   styleUrls: ['./expandable-table.component.scss'],
 })
-export class ExpandableTableComponent implements OnInit, AfterViewChecked {
+export class ExpandableTableComponent implements OnChanges, AfterViewChecked {
   title = '';
   titleHref: string;
   actions: AppTableAction[];
@@ -70,7 +70,7 @@ export class ExpandableTableComponent implements OnInit, AfterViewChecked {
     };
   }
 
-  ngOnInit(): void {
+  ngOnChanges(): void {
     this.populateTable();
   }
 
