@@ -423,7 +423,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
       filter(Boolean),
       tap((customVdevs: UnusedDisk[][]) => {
         if (!customVdevs.length) {
-          this.resetTopologyCategory(type);
+          this.resetStep(type);
         } else {
           this.setManualTopologyCategory(type, customVdevs);
         }
