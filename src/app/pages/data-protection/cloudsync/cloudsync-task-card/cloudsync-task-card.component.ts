@@ -193,6 +193,9 @@ export class CloudSyncTaskCardComponent implements OnInit {
           this.translate.instant('Cloud Sync «{name}» stopped.', { name: row.description }),
           true,
         );
+        row.state = { state: JobState.Aborted };
+        row.job = null;
+        this.cdr.markForCheck();
       });
   }
 
