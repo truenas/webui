@@ -94,7 +94,7 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
       },
       error: (error: WebsocketError) => {
         this.isLoadingQuotas = false;
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+        this.errorHandler.handleError(error);
         this.cdr.markForCheck();
       },
     });

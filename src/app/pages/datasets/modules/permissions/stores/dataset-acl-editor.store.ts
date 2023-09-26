@@ -78,7 +78,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
             });
           }),
           catchError((error: WebsocketError) => {
-            this.dialogService.error(this.errorHandler.parseWsError(error));
+            this.errorHandler.handleError(error);
 
             this.patchState({
               isLoading: false,
