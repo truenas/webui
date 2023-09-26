@@ -38,7 +38,8 @@
           [ixTest]="[task.id, 'run_now']"
           (click)="runNow(task)"
         >
-          {{ 'Run Now' | translate}}
+          <ix-icon name="play_arrow"></ix-icon>
+          <span>{{ 'Run Now' | translate }}</span>
         </button>
 
         <button
@@ -47,7 +48,8 @@
           [ixTest]="[task.id, 'stop']"
           (click)="stopCloudSyncTask(task)"
         >
-          {{ 'Stop' | translate }}
+          <ix-icon name="stop"></ix-icon>
+          <span>{{ 'Stop' | translate }}</span>
         </button>
 
         <button
@@ -55,7 +57,8 @@
           [ixTest]="[task.id, 'dry_run']"
           (click)="dryRun(task)"
         >
-          {{ 'Dry Run' | translate}}
+          <ix-icon name="sync"></ix-icon>
+          <span>{{ 'Dry Run' | translate }}</span>
         </button>
 
         <button
@@ -63,7 +66,8 @@
           [ixTest]="[task.id, 'restore']"
           (click)="restore(task)"
         >
-          {{ 'Restore' | translate }}
+          <ix-icon name="restore"></ix-icon>
+          <span>{{ 'Restore' | translate }}</span>
         </button>
 
         <button
@@ -71,7 +75,8 @@
           [ixTest]="[task.id, 'edit']"
           (click)="openForm(task)"
         >
-          {{ 'Edit' | translate }}
+          <ix-icon name="edit"></ix-icon>
+          <span>{{ 'Edit' | translate }}</span>
         </button>
 
         <button
@@ -79,7 +84,9 @@
           [ixTest]="[task.id, 'delete']"
           (click)="doDelete(task)"
         >
-          {{ 'Delete' | translate }}</button>
+          <ix-icon name="delete"></ix-icon>
+          <span>{{ 'Delete' | translate }}</span>
+        </button>
       </div>
     </ng-template>
   </tbody>
