@@ -49,7 +49,7 @@ export class PermissionsCardStore extends ComponentStore<PermissionsCardState> {
             });
           }),
           catchError((error: WebsocketError) => {
-            this.dialogService.error(this.errorHandler.parseWsError(error));
+            this.errorHandler.handleError(error);
 
             this.patchState({
               isLoading: false,
