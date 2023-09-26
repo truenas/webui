@@ -2,6 +2,7 @@
 """SCALE UI: feature tests."""
 
 import pytest
+import reusableSeleniumCode as rsc
 import time
 import xpaths
 from function import (
@@ -118,12 +119,7 @@ def input_my_ldap_smb_test_share_as_the_description_and_click_save(driver, descr
 @then('if Restart SMB Service box appears, click Restart Service')
 def if_restart_smb_service_box_appears_click_restart_service(driver):
     """if Restart SMB Service box appears, click Restart Service."""
-    if wait_on_element(driver, 3, xpaths.popup.smb_Restart_Title):
-        assert wait_on_element(driver, 3, xpaths.popup.smb_Restart_Button, 'clickable')
-        driver.find_element_by_xpath(xpaths.popup.smb_Restart_Button).click()
-    elif wait_on_element(driver, 3, xpaths.popup.smb_Start_Title):
-        assert wait_on_element(driver, 3, xpaths.popup.enable_Service_Button, 'clickable')
-        driver.find_element_by_xpath(xpaths.popup.enable_Service_Button).click()
+    rsc.Start_Or_Restart_SMB_Service(driver)
     assert wait_on_element_disappear(driver, 30, xpaths.progress.progressbar)
 
 
