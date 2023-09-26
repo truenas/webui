@@ -5,6 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
@@ -21,6 +22,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
 describe('SnapshotTaskCardComponent', () => {
   let spectator: Spectator<SnapshotTaskCardComponent>;
@@ -69,6 +71,14 @@ describe('SnapshotTaskCardComponent', () => {
       IxTable2Module,
     ],
     providers: [
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectSystemConfigState,
+            value: {},
+          },
+        ],
+      }),
       mockWebsocket([
         mockCall('pool.snapshottask.query', snapshotTasks),
         mockCall('pool.snapshottask.delete'),
@@ -91,7 +101,7 @@ describe('SnapshotTaskCardComponent', () => {
       }),
       mockProvider(LocaleService),
       mockProvider(TaskService, {
-        getTaskNextRun: jest.fn(() => 'in about 6 hours'),
+        getTaskNextTime: jest.fn(() => new Date(new Date().getTime() + (24 * 60 * 60 * 1000))),
         getTaskCronDescription: jest.fn(() => 'At 00:00, every day'),
       }),
     ],
@@ -106,7 +116,7 @@ describe('SnapshotTaskCardComponent', () => {
   it('should show table rows', async () => {
     const expectedRows = [
       ['Pool/Dataset', 'Keep for', 'Frequency', 'Next Run', 'Last Run', 'Enabled', 'State', ''],
-      ['APPS/test2', '2 WEEK(S)', 'At 00:00, every day', 'in about 6 hours', '1 minute ago', '', 'PENDING', ''],
+      ['APPS/test2', '2 week(s)', 'At 00:00, every day', 'in 1 day', '1 minute ago', '', 'PENDING', ''],
     ];
 
     const cells = await table.getCellTexts();

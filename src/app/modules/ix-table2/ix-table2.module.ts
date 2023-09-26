@@ -11,11 +11,13 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxFilesizeModule } from 'ngx-filesize';
 import { CoreComponents } from 'app/core/core-components.module';
+import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTable2EmptyRowComponent } from 'app/modules/ix-table2/components/ix-empty-row/ix-empty-row.component';
 import { IxCellActionsComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { IxCellCheckboxComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-checkbox/ix-cell-checkbox.component';
 import { IxCellDateComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-date/ix-cell-date.component';
+import { IxCellRelativeDateComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
 import { IxCellScheduleComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-schedule/ix-cell-schedule.component';
 import { IxCellSizeComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-size/ix-cell-size.component';
 import { IxCellStateButtonComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
@@ -67,6 +69,7 @@ import { IxTableColumnsSelectorComponent } from './components/ix-table-columns-s
     IxTableHeaderCellDirective,
     IxCellTextComponent,
     IxCellDateComponent,
+    IxCellRelativeDateComponent,
     IxCellSizeComponent,
     IxCellCheckboxComponent,
     IxCellYesNoComponent,
@@ -93,6 +96,7 @@ import { IxTableColumnsSelectorComponent } from './components/ix-table-columns-s
     IxTableHeaderCellDirective,
     IxCellTextComponent,
     IxCellDateComponent,
+    IxCellRelativeDateComponent,
     IxCellSizeComponent,
     IxCellCheckboxComponent,
     IxCellYesNoComponent,
@@ -107,6 +111,9 @@ import { IxTableColumnsSelectorComponent } from './components/ix-table-columns-s
     IxTableColumnsSelectorComponent,
     IxTablePagerShowMoreComponent,
     IxTableExpandableRowComponent,
+  ],
+  providers: [
+    FormatDateTimePipe,
   ],
 })
 export class IxTable2Module {}

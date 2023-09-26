@@ -7,6 +7,7 @@ import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { Cronjob } from 'app/interfaces/cronjob.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { relativeDateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
 import { scheduleColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-schedule/ix-cell-schedule.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { yesNoColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
@@ -55,8 +56,13 @@ export class CronCardComponent implements OnInit {
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
     }),
+    relativeDateColumn({
+      title: this.translate.instant('Next Run'),
+      getValue: (row) => this.taskService.getTaskNextTime(row.cron_schedule) as unknown,
+    }),
     textColumn({
       propertyName: 'id',
+      cssClass: 'wide-actions',
     }),
   ]);
 

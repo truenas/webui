@@ -5,6 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { ScrubTaskUi } from 'app/interfaces/scrub-task.interface';
@@ -21,6 +22,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
 describe('ScrubTaskCardComponent', () => {
   let spectator: Spectator<ScrubTaskCardComponent>;
@@ -44,7 +46,6 @@ describe('ScrubTaskCardComponent', () => {
       },
       cron_schedule: '00 00 * * 7',
       frequency: 'At 00:00, only on Sunday',
-      next_run: 'in 3 days',
     },
   ] as ScrubTaskUi[];
 
@@ -56,6 +57,14 @@ describe('ScrubTaskCardComponent', () => {
       IxTable2Module,
     ],
     providers: [
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectSystemConfigState,
+            value: {},
+          },
+        ],
+      }),
       mockWebsocket([
         mockCall('pool.scrub.query', scrubTasks),
         mockCall('pool.scrub.delete'),
@@ -78,7 +87,7 @@ describe('ScrubTaskCardComponent', () => {
       }),
       mockProvider(LocaleService),
       mockProvider(TaskService, {
-        getTaskNextRun: jest.fn(() => 'in 3 days'),
+        getTaskNextTime: jest.fn(() => new Date(new Date().getTime() + (24 * 60 * 60 * 1000))),
         getTaskCronDescription: jest.fn(() => 'At 00:00, only on Sunday'),
       }),
     ],
@@ -93,7 +102,7 @@ describe('ScrubTaskCardComponent', () => {
   it('should show table rows', async () => {
     const expectedRows = [
       ['Pool', 'Description', 'Frequency', 'Next Run', 'Enabled', ''],
-      ['APPS', 'cccc', 'At 00:00, only on Sunday', 'in 3 days', '', ''],
+      ['APPS', 'cccc', 'At 00:00, only on Sunday', 'in 1 day', '', ''],
     ];
 
     const cells = await table.getCellTexts();

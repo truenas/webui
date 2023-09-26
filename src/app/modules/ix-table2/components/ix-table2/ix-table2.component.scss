@@ -11,3 +11,15 @@ table {
   table-layout: fixed;
   width: 100%;
 }
+
+:host ::ng-deep {
+  tr > td > ng-component > span {
+    -webkit-box-orient: vertical;
+    display: inline-box;
+    -webkit-line-clamp: 2;
+    margin: 0 0 -5px;
+    overflow: hidden;
+    white-space: normal;
+    word-break: break-word;
+  }
+}
