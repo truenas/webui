@@ -72,15 +72,6 @@
     @media (max-width: $breakpoint-tablet) {
       display: none;
     }
-
-    &:first-child {
-      left: 0;
-      position: sticky;
-
-      @media (max-width: $breakpoint-tablet) {
-        display: inline-flex;
-      }
-    }
   }
 
   .cell-name {
@@ -109,5 +100,26 @@
 
   .cell-action {
     justify-content: center;
+  }
+}
+
+.cell {
+  &.cell-name,
+  &.cell-status {
+    @media (max-width: $breakpoint-tablet) {
+      display: inline-flex;
+    }
+  }
+
+  &.cell-name {
+    left: 0;
+    position: sticky;
+  }
+  
+  &.cell-status {
+    justify-content: center;
+    min-width: 130px;
+    position: absolute;
+    right: 5px;
   }
 }

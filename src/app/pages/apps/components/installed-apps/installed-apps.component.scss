@@ -136,7 +136,7 @@ ix-app-row,
   grid-template-columns: minmax(200px, auto) minmax(100px, 130px) minmax(100px, 115px) 60px;
 
   @media (max-width: $breakpoint-tablet) {
-    grid-template-columns: auto 0 0 0 0 0 0;
+    grid-template-columns: auto auto 0 0 0 0 0;
   }
 }
 
