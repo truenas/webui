@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { formatDistanceToNow } from 'date-fns';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
+import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
 import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.interface';
 
 @Component({
@@ -19,7 +19,7 @@ export class IxCellRelativeDateComponent<T> extends ColumnComponent<T> {
 
   get date(): string {
     if (this.value) {
-      return formatDistanceToNow(this.value as number, { addSuffix: true });
+      return formatDistanceToNowShortened(this.value as number);
     } else {
       return this.translate.instant('N/A');
     }
