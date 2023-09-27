@@ -14,7 +14,6 @@ export interface ReportingRealtimeUpdate {
 export interface AllCpusUpdate {
   [cpuNumber: number]: CpuUpdate;
   average: CpuUpdate;
-  temperature: number[];
   temperature_celsius: number[];
 }
 
