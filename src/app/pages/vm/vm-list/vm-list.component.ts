@@ -13,6 +13,7 @@ import helptext from 'app/helptext/vm/vm-list';
 import wizardHelptext from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { ApiParams } from 'app/interfaces/api-directory.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
+import { QueryParams } from 'app/interfaces/query-api.interface';
 import {
   VirtualizationDetails,
   VirtualMachine, VirtualMachineUpdate,
@@ -49,6 +50,11 @@ const noMemoryError = 'ENOMEM';
 export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
   title = this.translate.instant('Virtual Machines');
   queryCall = 'vm.query' as const;
+  queryCallOption: QueryParams<VirtualMachine, { extra: { retrieve_display_available_info: boolean } }> = [[], {
+    extra: {
+      retrieve_display_available_info: true,
+    },
+  }];
   wsDelete = 'vm.delete' as const;
   protected dialogRef: MatDialogRef<EntityJobComponent>;
   private productType = this.systemGeneralService.getProductType();
@@ -442,7 +448,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
   }
 
   isActionVisible(actionId: string, row: VirtualMachineRow): boolean {
-    if (actionId === 'DISPLAY' && (row.status.state !== ServiceStatus.Running || !this.checkDisplay(row))) {
+    if (actionId === 'DISPLAY' && (row.status.state !== ServiceStatus.Running || !row.display_available)) {
       return false;
     }
     if ((actionId === 'POWER_OFF' || actionId === 'STOP' || actionId === 'RESTART'
