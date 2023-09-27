@@ -57,7 +57,7 @@ describe('PullImageFormComponent', () => {
     await saveButton.click();
 
     expect(ws.job).toHaveBeenCalledWith('container.image.pull', [{
-      docker_authentication: {
+      authentication: {
         username: 'john',
         password: '12345678',
       },

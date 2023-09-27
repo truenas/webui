@@ -432,7 +432,7 @@ class iscsi:
 
 class iscsi_Wizard:
     """iscsi_Wizard contains xpaths for the iSCSI Wizard"""
-    title = '//h3[text()="Wizard iSCSI"]'
+    title = '//h3[text()="iSCSI Wizard"]'
     block_Device_Title = '//mat-step-header[contains(.,"Create or Choose Block Device") and @tabindex="0"]'
     device_Name_Input = '//input[@data-test="input-name"]'
     extent_Type_Select = '//mat-select[@data-test="select-type"]'
@@ -514,8 +514,9 @@ class pool_manager:
 
 class popup:
     smb_Restart_Title = '//h3[text()="Restart SMB Service"]'
-    smb_Restart_Button = '//button[contains(*/text(),"Restart Service")]'
+    restart_Service_Button = '//button[contains(*/text(),"Restart Service")]'
     smb_Start_Title = '//h1[text()="Start SMB Service"]'
+    iscsi_Start_Title = '//h1[text()="Start iSCSI Service"]'
     # data-test is not proper but work since it is the only one like that in the UI.
     enable_Service_To_Start_Automatically_Checkbox = '//mat-checkbox[@data-test="checkbox"]'
     enable_Service_Title = '//h1[text()="Enable service"]'

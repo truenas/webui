@@ -7,6 +7,7 @@ import {
   DynamicFormSchemaCheckbox,
   DynamicFormSchemaCron,
   DynamicFormSchemaDict,
+  DynamicFormSchemaEnum,
   DynamicFormSchemaExplorer,
   DynamicFormSchemaInput,
   DynamicFormSchemaIpaddr,
@@ -45,23 +46,22 @@ export function buildCommonSchemaBase(payload: Partial<CommonSchemaTransform>): 
   };
 }
 
-export function transformEnumSchemaType(payload: CommonSchemaTransform): DynamicFormSchemaSelect {
+export function transformEnumSchemaType(payload: CommonSchemaTransform): DynamicFormSchemaEnum {
   const { schema } = payload;
 
   return {
     ...buildCommonSchemaBase(payload),
-    type: DynamicFormSchemaType.Select,
+    type: DynamicFormSchemaType.Enum,
     options: of(schema.enum.map((option) => ({
       value: option.value,
       label: option.description,
     }))),
-    hideEmpty: true,
   };
 }
 
 export function transformIntSchemaType(
   payload: CommonSchemaTransform,
-): DynamicFormSchemaInput | DynamicFormSchemaSelect {
+): DynamicFormSchemaInput | DynamicFormSchemaEnum | DynamicFormSchemaSelect {
   const { schema } = payload;
 
   if (schema.enum) { return transformEnumSchemaType(payload); }
@@ -95,7 +95,7 @@ export function transformCronSchemaType(
 
 export function transformStringSchemaType(
   payload: CommonSchemaTransform,
-): DynamicFormSchemaInput | DynamicFormSchemaSelect {
+): DynamicFormSchemaInput | DynamicFormSchemaEnum | DynamicFormSchemaSelect {
   const { schema } = payload;
 
   if (schema.enum) { return transformEnumSchemaType(payload); }
