@@ -4,5 +4,7 @@ export function formatDistanceToNowShortened(date: Date | number): string {
   return formatDistanceToNow(date, { addSuffix: true })
     .replace('about ', '')
     .replace(' minutes', ' min.')
-    .replace(' seconds', ' sec.');
+    .replace(' minute', ' min.')
+    .replace(' seconds', ' sec.')
+    .replace(' second', ' sec.');
 }
