@@ -26,12 +26,12 @@ describe('IxCellRelativeDateComponent', () => {
     spectator = createComponent({
       props: {
         propertyName: 'dateField',
-        row: { dateField: new Date('2023-07-12 09:10:00') },
+        row: { dateField: new Date(new Date().getTime() - (24 * 60 * 60 * 10000)) },
       } as Partial<IxCellRelativeDateComponent<TestTableData>>,
     });
   });
 
   it('shows custom relative format datetime in template', () => {
-    expect(spectator.element.textContent.trim()).toBe('3 months ago');
+    expect(spectator.element.textContent.trim()).toBe('10 days ago');
   });
 });
