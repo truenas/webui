@@ -117,12 +117,24 @@
               ></mat-checkbox>
             </span>
           </div>
-          <div [mat-sort-header]="sortableField.Application">{{ 'Application' | translate }}</div>
-          <div [mat-sort-header]="sortableField.Status">{{ 'Status' | translate }}</div>
+          <div
+            [matColumnDef]="sortableField.Application"
+            [mat-sort-header]="sortableField.Application"
+          >
+            {{ 'Application' | translate }}
+          </div>
+          <div
+            [matColumnDef]="sortableField.Status"
+            [mat-sort-header]="sortableField.Status"
+          >
+            {{ 'Status' | translate }}
+          </div>
           <div>{{ 'CPU' | translate }}</div>
           <div>{{ 'RAM' | translate }}</div>
           <div>{{ 'Network' | translate }}</div>
-          <div class="app-update-header"
+          <div
+            class="app-update-header"
+            [matColumnDef]="sortableField.Updates"
             [mat-sort-header]="hasUpdates ? sortableField.Updates : null"
             [disabled]="!hasUpdates"
           >
