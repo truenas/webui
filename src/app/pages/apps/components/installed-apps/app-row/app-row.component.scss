@@ -117,9 +117,20 @@
   }
   
   &.cell-status {
-    justify-content: center;
-    min-width: 130px;
-    position: absolute;
-    right: 5px;
+    @media (max-width: $breakpoint-tablet) {
+      justify-content: center;
+      min-width: 130px;
+      position: absolute;
+      right: 24px;
+    }
   }
+}
+
+.cell-clickable {
+  @media(max-width: $breakpoint-tablet) {
+    display: inline;
+    position: absolute;
+    right: 0;
+  }
+  display: none;
 }

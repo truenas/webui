@@ -171,6 +171,16 @@ ix-app-row,
         display: block !important;
       }
     }
+
+    &:nth-child(2) {
+      @media (max-width: $breakpoint-tablet) {
+        display: inline-flex !important;
+        justify-content: center;
+        position: absolute;
+        right: 24px;
+        width: 130px;
+      }
+    }
   }
 
   .app-name-header {
