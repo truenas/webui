@@ -384,7 +384,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
       icon: 'device_hub',
       label: this.translate.instant('Devices'),
       onClick: (vm: VirtualMachineRow) => {
-        this.router.navigate(new Array('').concat(['vm', String(vm.id), 'devices', vm.name]));
+        this.router.navigate(['/', 'vm', String(vm.id), 'devices']);
       },
     },
     {

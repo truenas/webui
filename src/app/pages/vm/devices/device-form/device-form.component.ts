@@ -8,10 +8,11 @@ import { BehaviorSubject, forkJoin, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import {
-  VmDeviceType, VmDiskMode, VmNicType,
+  VmDeviceType, vmDeviceTypeLabels, VmDiskMode, VmNicType,
 } from 'app/enums/vm.enum';
 import { assertUnreachable } from 'app/helpers/assert-unreachable.utils';
 import { arrayToOptions, choicesToOptions } from 'app/helpers/operators/options.operators';
+import { mapToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/vm/devices/device-add-edit';
 import {
   VmDevice, VmDeviceUpdate,
@@ -147,30 +148,7 @@ export class DeviceFormComponent implements OnInit {
 
   readonly fileNodeProvider = this.filesystemService.getFilesystemNodeProvider();
 
-  readonly deviceTypeOptions = [
-    {
-      label: this.translate.instant('CD-ROM'),
-      value: VmDeviceType.Cdrom,
-    }, {
-      label: this.translate.instant('NIC'),
-      value: VmDeviceType.Nic,
-    }, {
-      label: this.translate.instant('Disk'),
-      value: VmDeviceType.Disk,
-    }, {
-      label: this.translate.instant('Raw File'),
-      value: VmDeviceType.Raw,
-    }, {
-      label: this.translate.instant('PCI Passthrough Device'),
-      value: VmDeviceType.Pci,
-    }, {
-      label: this.translate.instant('USB Passthrough Device'),
-      value: VmDeviceType.Usb,
-    }, {
-      label: this.translate.instant('Display'),
-      value: VmDeviceType.Display,
-    },
-  ];
+  readonly deviceTypeOptions = mapToOptions(vmDeviceTypeLabels, this.translate);
   readonly deviceTypes$ = new BehaviorSubject(this.deviceTypeOptions);
 
   readonly diskModes$ = of([

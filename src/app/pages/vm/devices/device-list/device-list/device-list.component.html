@@ -1,0 +1,67 @@
+<ng-template ixPageHeader>
+  <ix-page-title-header>
+    <ix-search-input (search)="onListFiltered($event)"></ix-search-input>
+
+    <button mat-button ixTest="add-device" color="primary" (click)="onAdd()">
+      {{ 'Add' | translate }}
+    </button>
+  </ix-page-title-header>
+</ng-template>
+
+<ix-table2
+  class="table"
+  [ix-table2-empty]="!dataProvider.rows.length"
+  [emptyConfig]="emptyConfig.defaultEmptyConfig(emptyType$ | async)"
+>
+  <thead
+    ix-table-head
+    [columns]="columns"
+    [dataProvider]="dataProvider"
+  ></thead>
+  <tbody
+    ix-table-body
+    [columns]="columns"
+    [dataProvider]="dataProvider"
+  >
+    <ng-template
+      let-device
+      ix-table-cell
+      [columnIndex]="3"
+      [dataProvider]="dataProvider"
+    >
+      <button
+        mat-icon-button
+        ixTest="device-actions"
+        class="actions"
+        [title]="'Actions' | translate"
+        [matMenuTriggerFor]="actionsMenu"
+      >
+        <ix-icon name="more_vert"></ix-icon>
+      </button>
+      <mat-menu #actionsMenu="matMenu">
+        <a
+          mat-menu-item
+          [ixTest]="[device.id, 'edit']"
+          (click)="onEdit(device)"
+        >
+          {{ 'Edit' | translate }}
+        </a>
+        <a
+          mat-menu-item
+          [ixTest]="[device.id, 'delete']"
+          (click)="onDelete(device)"
+        >
+          {{ 'Delete' | translate }}
+        </a>
+        <a
+          mat-menu-item
+          [ixTest]="[device.id, 'details']"
+          (click)="onDetails(device)"
+        >
+          {{ 'Details' | translate }}
+        </a>
+      </mat-menu>
+    </ng-template>
+  </tbody>
+</ix-table2>
+<ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>
