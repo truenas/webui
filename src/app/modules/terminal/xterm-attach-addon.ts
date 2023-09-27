@@ -36,7 +36,7 @@ export class XtermAttachAddon implements ITerminalAddon {
   }
 
   private sendBinary(data: string): void {
-    if (this.socket.readyState !== 1) {
+    if (this.socket.readyState !== WebSocket.OPEN) {
       return;
     }
     const buffer = this.encoder.encode(data);

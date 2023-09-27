@@ -12,6 +12,8 @@ export class ShellService {
   connected = false;
   token: string;
   vmId: number;
+  private encoder = new TextEncoder();
+
   podInfo: {
     chart_release_name: string;
     pod_name: string;
@@ -101,7 +103,7 @@ export class ShellService {
 
   send(payload: string): void {
     if (this.socket.readyState === WebSocket.OPEN) {
-      this.socket.send(payload);
+      this.socket.send(this.encoder.encode(payload));
     } else {
       this.pendingMessages.push(payload);
     }
