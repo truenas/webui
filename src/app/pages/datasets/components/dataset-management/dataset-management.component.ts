@@ -15,6 +15,7 @@ import {
   ElementRef,
   Inject,
   TrackByFunction,
+  HostBinding,
 } from '@angular/core';
 import {
   ActivatedRoute, NavigationStart, Router,
@@ -60,7 +61,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
 
   isLoading$ = this.datasetStore.isLoading$;
   selectedDataset$ = this.datasetStore.selectedDataset$;
-  showMobileDetails = false;
+  @HostBinding('class.details-overlay') showMobileDetails = false;
   isMobileView = false;
   systemDataset: string;
   isLoading = true;
