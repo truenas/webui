@@ -133,7 +133,7 @@ $header-height: 193px;
 
 ix-app-row,
 .app-header-row {
-  grid-template-columns: 40px minmax(130px, auto) minmax(100px, 120px) 55px 55px 85px minmax(100px, 115px) 60px;
+  grid-template-columns: 40px minmax(175px, auto) minmax(100px, 120px) 55px 55px 85px 75px 40px;
 
   @media (max-width: $breakpoint-tablet) {
     grid-template-columns: 45px auto 0 0 0 0 0 0;
