@@ -116,7 +116,7 @@ describe('SnapshotTaskCardComponent', () => {
   it('should show table rows', async () => {
     const expectedRows = [
       ['Pool/Dataset', 'Keep for', 'Frequency', 'Next Run', 'Last Run', 'Enabled', 'State', ''],
-      ['APPS/test2', '2 week(s)', 'At 00:00, every day', 'in 1 day', '1 minute ago', '', 'PENDING', ''],
+      ['APPS/test2', '2 week(s)', 'At 00:00, every day', 'in 1 day', '1 min. ago', '', 'PENDING', ''],
     ];
 
     const cells = await table.getCellTexts();
