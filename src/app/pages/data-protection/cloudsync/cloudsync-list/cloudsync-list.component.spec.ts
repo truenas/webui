@@ -135,6 +135,8 @@ describe('CloudsyncListComponent', () => {
       message: 'Run this Cloud Sync now?',
       hideCheckbox: true,
     });
+
+    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('cloudsync.sync', [1]);
   });
 
   it('shows form to edit an existing interface when Edit button is pressed', async () => {
@@ -165,7 +167,7 @@ describe('CloudsyncListComponent', () => {
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.delete', [1]);
   });
 
-  it('shows confirmation dialog when Restore button is pressed', async () => {
+  it('shows dialog when Restore button is pressed', async () => {
     await table.clickToggle(0);
 
     jest.spyOn(spectator.inject(MatDialog), 'open');
@@ -189,5 +191,7 @@ describe('CloudsyncListComponent', () => {
       message: 'Start a dry run test of this cloud sync task? The  system will connect to the cloud service provider and simulate  transferring a file. No data will be sent or received.',
       hideCheckbox: true,
     });
+
+    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('cloudsync.sync', [1, { dry_run: true }]);
   });
 });
