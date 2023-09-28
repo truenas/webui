@@ -25,6 +25,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
 describe('CloudSyncTaskCardComponent', () => {
   let spectator: Spectator<CloudSyncTaskCardComponent>;
@@ -36,14 +37,6 @@ describe('CloudSyncTaskCardComponent', () => {
       id: 3,
       description: 'custom-cloudsync',
       path: '/mnt/APPS',
-      attributes: {
-        folder: '',
-        fast_list: false,
-        acknowledge_abuse: false,
-      },
-      pre_script: '',
-      post_script: '',
-      snapshot: false,
       include: [
         '//**',
         '/Folder1/**',
@@ -53,12 +46,6 @@ describe('CloudSyncTaskCardComponent', () => {
       enabled: false,
       direction: 'PULL',
       transfer_mode: 'COPY',
-      encryption: false,
-      filename_encryption: false,
-      encryption_password: '',
-      encryption_salt: '',
-      create_empty_src_dirs: false,
-      follow_symlinks: false,
       credentials: {
         id: 1,
         name: 'Google Drive',
@@ -114,6 +101,10 @@ describe('CloudSyncTaskCardComponent', () => {
               time_finished: cloudsyncTasks[0].job.time_finished,
             } as Job],
           },
+          {
+            selector: selectSystemConfigState,
+            value: {},
+          },
         ],
       }),
       mockWebsocket([
@@ -137,7 +128,7 @@ describe('CloudSyncTaskCardComponent', () => {
       }),
       mockProvider(LocaleService),
       mockProvider(TaskService, {
-        getTaskNextRun: jest.fn(() => 'in 33 minutes'),
+        getTaskNextTime: jest.fn(() => new Date(new Date().getTime() + (24 * 60 * 60 * 1000))),
         getTaskCronDescription: jest.fn(() => 'Every hour, every day'),
       }),
     ],
@@ -152,7 +143,7 @@ describe('CloudSyncTaskCardComponent', () => {
   it('should show table rows', async () => {
     const expectedRows = [
       ['Description', 'Frequency', 'Next Run', 'Last Run', 'Enabled', 'State', ''],
-      ['custom-cloudsync', 'Every hour, every day', 'Disabled', '1 minute ago', '', 'FINISHED', ''],
+      ['custom-cloudsync', 'Every hour, every day', 'in 1 day', '1 min. ago', '', 'FINISHED', ''],
     ];
 
     const cells = await table.getCellTexts();

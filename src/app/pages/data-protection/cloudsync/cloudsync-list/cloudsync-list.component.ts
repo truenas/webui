@@ -5,9 +5,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { formatDistanceToNow } from 'date-fns';
-import { EMPTY, catchError, filter, map, switchMap, tap } from 'rxjs';
+import {
+  EMPTY, catchError, filter, map, switchMap, tap,
+} from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
+import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import helptext_cloudsync from 'app/helptext/data-protection/cloudsync/cloudsync-form';
 import { CloudSyncTask, CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
@@ -74,7 +76,7 @@ export class CloudsyncListComponent implements OnInit, AfterViewInit {
       title: this.translate.instant('Schedule'),
       propertyName: 'schedule',
       hidden: true,
-      getValue: (task) => task.enabled ? scheduleToCrontab(task.schedule) : this.translate.instant('Disabled'),
+      getValue: (task) => (task.enabled ? scheduleToCrontab(task.schedule) : this.translate.instant('Disabled')),
     }),
     textColumn({
       title: this.translate.instant('Frequency'),
@@ -85,9 +87,9 @@ export class CloudsyncListComponent implements OnInit, AfterViewInit {
       title: this.translate.instant('Next Run'),
       propertyName: 'next_run',
       hidden: true,
-      getValue: (task) => task.enabled ?
-        this.taskService.getTaskNextRun(scheduleToCrontab(task.schedule))
-        : this.translate.instant('Disabled'),
+      getValue: (task) => (task.enabled
+        ? this.taskService.getTaskNextRun(scheduleToCrontab(task.schedule))
+        : this.translate.instant('Disabled')),
     }),
     textColumn({
       title: this.translate.instant('Last Run'),
@@ -95,10 +97,9 @@ export class CloudsyncListComponent implements OnInit, AfterViewInit {
       hidden: true,
       getValue: (task) => {
         if (task.job?.time_finished?.$date) {
-          return formatDistanceToNow(task.job?.time_finished?.$date, { addSuffix: true });
-        } else {
-          return this.translate.instant('N/A');
+          return formatDistanceToNowShortened(task.job?.time_finished?.$date);
         }
+        return this.translate.instant('N/A');
       },
     }),
     stateButtonColumn({
@@ -110,7 +111,7 @@ export class CloudsyncListComponent implements OnInit, AfterViewInit {
     textColumn({
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
-      getValue: (task) => task.enabled ? this.translate.instant('Yes') : this.translate.instant('No'),
+      getValue: (task) => (task.enabled ? this.translate.instant('Yes') : this.translate.instant('No')),
     }),
   ]);
 
