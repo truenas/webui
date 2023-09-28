@@ -147,7 +147,7 @@ export class ResourcesUsageStore extends ComponentStore<ResourcesUsageState> {
     );
   }
 
-  subscribeToResourceUsageUpdates(): Observable<ReportingRealtimeUpdate> {
+  getResourceUsageUpdates(): Observable<ReportingRealtimeUpdate> {
     return this.ws.subscribe('reporting.realtime').pipe(
       map((apiEvent) => apiEvent.fields),
       tap((update) => {
