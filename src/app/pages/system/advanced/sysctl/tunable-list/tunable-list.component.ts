@@ -11,8 +11,8 @@ import { EmptyType } from 'app/enums/empty-type.enum';
 import { Tunable } from 'app/interfaces/tunable.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { fromTemplateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-from-template/ix-cell-from-template.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { withTemplateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-with-template/ix-cell-with-template.component';
 import { yesNoColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table2/utils';
@@ -58,7 +58,7 @@ export class TunableListComponent implements OnInit {
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
     }),
-    withTemplateColumn(),
+    fromTemplateColumn(),
   ]);
 
   isLoading$ = new BehaviorSubject<boolean>(true);

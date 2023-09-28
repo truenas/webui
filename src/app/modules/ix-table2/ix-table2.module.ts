@@ -16,12 +16,12 @@ import { IxTable2EmptyRowComponent } from 'app/modules/ix-table2/components/ix-e
 import { IxCellInlineIconActionsComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { IxCellCheckboxComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-checkbox/ix-cell-checkbox.component';
 import { IxCellDateComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-date/ix-cell-date.component';
+import { IxCellFromTemplateComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-from-template/ix-cell-from-template.component';
 import { IxCellScheduleComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-schedule/ix-cell-schedule.component';
 import { IxCellSizeComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-size/ix-cell-size.component';
 import { IxCellStateButtonComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
 import { IxCellTextComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { IxCellToggleComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
-import { IxCellWithTemplateComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-with-template/ix-cell-with-template.component';
 import { IxCellYesNoComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table2/components/ix-table-body/ix-table-body.component';
 import { IxTableExpandableRowComponent } from 'app/modules/ix-table2/components/ix-table-expandable-row/ix-table-expandable-row.component';
@@ -62,7 +62,7 @@ import { IxTableColumnsSelectorComponent } from './components/ix-table-columns-s
     IxTableHeadComponent,
     IxTableBodyComponent,
     IxTablePagerComponent,
-    IxCellWithTemplateComponent,
+    IxCellFromTemplateComponent,
     IxTableCellDirective,
     IxTableDetailsRowDirective,
     IxTableBodyCellDirective,

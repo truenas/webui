@@ -4,8 +4,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { switchMap, from, filter } from 'rxjs';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { fromTemplateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-from-template/ix-cell-from-template.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { withTemplateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-with-template/ix-cell-with-template.component';
 import {
   yesNoColumn,
 } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
@@ -53,7 +53,7 @@ export class InitShutdownCardComponent implements OnInit {
       title: this.translate.instant('Timeout'),
       propertyName: 'timeout',
     }),
-    withTemplateColumn(),
+    fromTemplateColumn(),
   ]);
 
   isLoading = false;

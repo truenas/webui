@@ -9,8 +9,8 @@ import {
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { fromTemplateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-from-template/ix-cell-from-template.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { withTemplateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-with-template/ix-cell-with-template.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
@@ -41,7 +41,7 @@ export class AcmeDnsAuthenticatorListComponent implements OnInit {
       propertyName: 'authenticator',
       sortable: true,
     }),
-    withTemplateColumn(),
+    fromTemplateColumn(),
   ]);
 
   isLoading$ = new BehaviorSubject<boolean>(true);

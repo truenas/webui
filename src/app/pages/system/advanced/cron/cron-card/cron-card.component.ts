@@ -7,9 +7,9 @@ import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { Cronjob } from 'app/interfaces/cronjob.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { fromTemplateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-from-template/ix-cell-from-template.component';
 import { scheduleColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-schedule/ix-cell-schedule.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { withTemplateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-with-template/ix-cell-with-template.component';
 import { yesNoColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
@@ -56,7 +56,7 @@ export class CronCardComponent implements OnInit {
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
     }),
-    withTemplateColumn(),
+    fromTemplateColumn(),
   ]);
 
   isLoading = false;

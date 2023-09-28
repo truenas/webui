@@ -10,9 +10,9 @@ import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { SmbShare, SmbSharesec } from 'app/interfaces/smb-share.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { fromTemplateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-from-template/ix-cell-from-template.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { toggleColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
-import { withTemplateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-with-template/ix-cell-with-template.component';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
@@ -62,7 +62,7 @@ export class SmbCardComponent implements OnInit, OnChanges {
       cssClass: 'justify-end',
       onRowToggle: (row: SmbShare) => this.onChangeEnabledState(row),
     }),
-    withTemplateColumn({
+    fromTemplateColumn({
       cssClass: 'wide-actions',
     }),
   ]);

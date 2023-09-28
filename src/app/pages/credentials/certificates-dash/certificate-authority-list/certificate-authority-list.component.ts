@@ -16,8 +16,8 @@ import { CertificateAuthority } from 'app/interfaces/certificate-authority.inter
 import { Job } from 'app/interfaces/job.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { fromTemplateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-from-template/ix-cell-from-template.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { withTemplateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-with-template/ix-cell-with-template.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
@@ -57,7 +57,7 @@ export class CertificateAuthorityListComponent implements OnInit {
       propertyName: 'common',
       sortable: true,
     }),
-    withTemplateColumn(),
+    fromTemplateColumn(),
   ]);
 
   isLoading$ = new BehaviorSubject<boolean>(true);
