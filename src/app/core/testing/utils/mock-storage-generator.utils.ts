@@ -33,6 +33,7 @@ import { MockEs102S } from './enclosure-templates/mock-es102s';
 import { MockEs12 } from './enclosure-templates/mock-es12';
 import { MockEs24 } from './enclosure-templates/mock-es24';
 import { MockEs60 } from './enclosure-templates/mock-es60';
+import { MockEs60G2 } from './enclosure-templates/mock-es60g2';
 import { MockF60 } from './enclosure-templates/mock-f60';
 import { MockM40 } from './enclosure-templates/mock-m40';
 import { MockM50 } from './enclosure-templates/mock-m50';
@@ -47,8 +48,6 @@ import { MockR20 } from './enclosure-templates/mock-r20';
 import { MockR30 } from './enclosure-templates/mock-r30';
 import { MockR40 } from './enclosure-templates/mock-r40';
 import { MockR50 } from './enclosure-templates/mock-r50';
-
-
 
 export class MockStorageGenerator {
   poolState: PoolInstance;
@@ -696,6 +695,9 @@ export class MockStorageGenerator {
         break;
       case 'ES60':
         chassis = new MockEs60(enclosureNumber);
+        break;
+      case 'ES60G2':
+        chassis = new MockEs60G2(enclosureNumber);
         break;
       case 'ES102':
         chassis = new MockEs102(enclosureNumber);
