@@ -99,7 +99,7 @@
       </mat-step>
 
       <mat-step
-        *ngIf="!(usesDraidLayout$ | async) && !alreadyHasSpare"
+        *ngIf="!(usesDraidLayout$ | async) && !alreadyHasSpare && state.topology[PoolCreationWizardStep.Spare]"
         ixStepActivation
         [errorMessage]="getTopLevelErrorForStep(PoolCreationWizardStep.Spare)"
         [hasError]="!!getTopLevelErrorForStep(PoolCreationWizardStep.Spare) && getWasStepActivated(PoolCreationWizardStep.Spare)"

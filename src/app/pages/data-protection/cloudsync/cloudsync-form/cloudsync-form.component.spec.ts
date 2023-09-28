@@ -69,7 +69,7 @@ describe('CloudsyncFormComponent', () => {
     next_run_time: 'Disabled',
     next_run: 'Disabled',
     state: { state: 'PENDING' },
-  } as CloudSyncTaskUi;
+  } as unknown as CloudSyncTaskUi;
 
   let loader: HarnessLoader;
   let spectator: Spectator<CloudsyncFormComponent>;

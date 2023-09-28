@@ -24,6 +24,7 @@ import { ReplicationWizardComponent } from 'app/pages/data-protection/replicatio
 import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
 
 describe('ReplicationTaskCardComponent', () => {
@@ -36,59 +37,22 @@ describe('ReplicationTaskCardComponent', () => {
     {
       id: 1,
       target_dataset: 'APPS/test3',
-      recursive: false,
-      compression: null,
-      speed_limit: null,
       enabled: false,
       direction: 'PUSH',
       transport: 'LOCAL',
-      sudo: false,
-      netcat_active_side: null,
-      netcat_active_side_port_min: null,
-      netcat_active_side_port_max: null,
       source_datasets: [
         'APPS/test2',
       ],
-      exclude: [],
-      naming_schema: [],
-      check_dataset_encryption_keys: true,
-      name_regex: null,
-      auto: true,
-      only_matching_schedule: false,
-      readonly: 'SET',
-      allow_from_scratch: true,
-      hold_pending_snapshots: false,
-      retention_policy: 'SOURCE',
-      lifetime_unit: null,
-      lifetime_value: null,
-      lifetimes: [],
-      large_block: true,
-      embed: false,
-      compressed: true,
       has_encrypted_dataset_keys: true,
-      retries: 5,
-      netcat_active_side_listen_address: null,
-      netcat_passive_side_connect_address: null,
-      logging_level: null,
       name: 'APPS/test2 - APPS/test3',
       state: {
         state: 'FINISHED',
         warnings: [],
         last_snapshot: 'APPS/test2@auto-2023-09-19_00-00',
+        datetime: {
+          $date: new Date().getTime() - 50000,
+        },
       },
-      properties: true,
-      properties_exclude: [],
-      properties_override: {},
-      replicate: false,
-      encryption: false,
-      encryption_inherit: null,
-      encryption_key: null,
-      encryption_key_format: null,
-      encryption_key_location: null,
-      ssh_credentials: null,
-      periodic_snapshot_tasks: [],
-      also_include_naming_schema: [],
-      schedule: null,
       restrict_schedule: null,
       job: null,
       task_last_snapshot: 'APPS/test2@auto-2023-09-19_00-00',
@@ -104,15 +68,21 @@ describe('ReplicationTaskCardComponent', () => {
     ],
     providers: [
       provideMockStore({
+        initialState: {},
         selectors: [
           {
             selector: selectJob(1),
             value: {} as Job,
           },
+          {
+            selector: selectSystemConfigState,
+            value: {},
+          },
         ],
       }),
       mockWebsocket([
         mockCall('replication.query', replicationTasks),
+        mockCall('core.get_jobs', []),
         mockCall('replication.delete'),
         mockCall('replication.update'),
       ]),
@@ -142,8 +112,8 @@ describe('ReplicationTaskCardComponent', () => {
 
   it('should show table rows', async () => {
     const expectedRows = [
-      ['Name', 'Last Snapshot', 'Enabled', 'State', ''],
-      ['APPS/test2 - APPS/test3', 'APPS/test2@auto-2023-09-19_00-00', '', 'FINISHED', ''],
+      ['Name', 'Last Snapshot', 'Enabled', 'State', 'Last Run', ''],
+      ['APPS/test2 - APPS/test3', 'APPS/test2@auto-2023-09-19_00-00', '', 'FINISHED', '1 min. ago', ''],
     ];
 
     const cells = await table.getCellTexts();
@@ -151,7 +121,7 @@ describe('ReplicationTaskCardComponent', () => {
   });
 
   it('shows form to edit an existing Replication Task when Edit button is pressed', async () => {
-    const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 4);
+    const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 5);
     await editButton.click();
 
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ReplicationFormComponent, {
@@ -170,7 +140,7 @@ describe('ReplicationTaskCardComponent', () => {
   });
 
   it('shows confirmation dialog when Run Now button is pressed', async () => {
-    const runNowButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'play_arrow' }), 1, 4);
+    const runNowButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'play_arrow' }), 1, 5);
     await runNowButton.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
@@ -182,7 +152,7 @@ describe('ReplicationTaskCardComponent', () => {
 
   it('shows confirmation dialog when Restore button is pressed', async () => {
     jest.spyOn(spectator.inject(MatDialog), 'open');
-    const restoreButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'restore' }), 1, 4);
+    const restoreButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'restore' }), 1, 5);
     await restoreButton.click();
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ReplicationRestoreDialogComponent, {
@@ -192,7 +162,7 @@ describe('ReplicationTaskCardComponent', () => {
 
   it('downloads Encryption Keys', async () => {
     jest.spyOn(spectator.inject(MatDialog), 'open');
-    const downloadButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'download' }), 1, 4);
+    const downloadButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'download' }), 1, 5);
     await downloadButton.click();
 
     expect(ws.call).toHaveBeenCalledWith('core.download', [
@@ -203,7 +173,7 @@ describe('ReplicationTaskCardComponent', () => {
   });
 
   it('deletes a Replication Task with confirmation when Delete button is pressed', async () => {
-    const deleteIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'delete' }), 1, 4);
+    const deleteIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'delete' }), 1, 5);
     await deleteIcon.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({

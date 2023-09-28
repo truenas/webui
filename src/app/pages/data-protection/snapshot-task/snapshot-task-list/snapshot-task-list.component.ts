@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { JobState } from 'app/enums/job-state.enum';
+import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
 import {
   PeriodicSnapshotTask,
   PeriodicSnapshotTaskUi,
@@ -43,6 +44,7 @@ export class SnapshotTaskListComponent implements EntityTableConfig<PeriodicSnap
     { name: this.translate.instant('When'), prop: 'when' },
     { name: this.translate.instant('Frequency'), prop: 'frequency', enableMatTooltip: true },
     { name: this.translate.instant('Next Run'), prop: 'next_run', hidden: true },
+    { name: this.translate.instant('Last Run'), prop: 'last_run', hidden: true },
     { name: this.translate.instant('Keep snapshot for'), prop: 'keepfor', hidden: true },
     { name: this.translate.instant('Legacy'), prop: 'legacy', hidden: true },
     { name: this.translate.instant('VMware Sync'), prop: 'vmware_sync', hidden: true },
@@ -97,6 +99,10 @@ export class SnapshotTaskListComponent implements EntityTableConfig<PeriodicSnap
 
       return {
         ...transformedTask,
+        last_run:
+          transformedTask.state?.datetime?.$date
+            ? formatDistanceToNowShortened(transformedTask.state?.datetime?.$date)
+            : this.translate.instant('N/A'),
         frequency: this.taskService.getTaskCronDescription(transformedTask.cron_schedule),
         next_run: this.taskService.getTaskNextRun(transformedTask.cron_schedule),
       };

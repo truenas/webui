@@ -138,8 +138,8 @@ def Login_If_Not_On_Dashboard(driver, user, password):
 
 def Restart_SMB_Service(driver):
     assert wait_on_element(driver, 7, xpaths.popup.smb_Restart_Title)
-    assert wait_on_element(driver, 5, xpaths.popup.smb_Restart_Button, 'clickable')
-    driver.find_element_by_xpath(xpaths.popup.smb_Restart_Button).click()
+    assert wait_on_element(driver, 5, xpaths.popup.restart_Service_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.popup.restart_Service_Button).click()
 
 
 def Return_To_Pool_list(driver):
@@ -168,6 +168,13 @@ def Start_Or_Restart_SMB_Service(driver):
 
 def Start_SMB_Service(driver):
     assert wait_on_element(driver, 7, xpaths.popup.smb_Start_Title)
+    assert wait_on_element(driver, 5, xpaths.popup.enable_Service_To_Start_Automatically_Checkbox, 'clickable')
+    driver.find_element_by_xpath(xpaths.popup.enable_Service_To_Start_Automatically_Checkbox).click()
+    driver.find_element_by_xpath(xpaths.popup.enable_Service_Button).click()
+
+
+def Start_iSCSI_Service(driver):
+    assert wait_on_element(driver, 7, xpaths.popup.iscsi_Start_Title)
     assert wait_on_element(driver, 5, xpaths.popup.enable_Service_To_Start_Automatically_Checkbox, 'clickable')
     driver.find_element_by_xpath(xpaths.popup.enable_Service_To_Start_Automatically_Checkbox).click()
     driver.find_element_by_xpath(xpaths.popup.enable_Service_Button).click()

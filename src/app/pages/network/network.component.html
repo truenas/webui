@@ -78,7 +78,7 @@
         </mat-card>
         <ix-interfaces-card
           [isHaEnabled]="isHaEnabled"
-          (interfacesUpdated)="checkInterfacePendingChanges()"
+          (interfacesUpdated)="loadCheckinStatusAfterChange()"
         ></ix-interfaces-card>
         <ix-network-configuration-card
           class="dashboard-card"

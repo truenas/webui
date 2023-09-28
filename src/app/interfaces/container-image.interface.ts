@@ -1,7 +1,7 @@
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 
 export interface PullContainerImageParams {
-  docker_authentication?: {
+  authentication?: {
     username: string;
     password: string;
   };

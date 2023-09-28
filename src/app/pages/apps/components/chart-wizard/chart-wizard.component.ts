@@ -15,6 +15,8 @@ import {
   BehaviorSubject, of, Subject, Subscription, timer,
 } from 'rxjs';
 import {
+  debounceTime,
+  distinctUntilChanged,
   filter, map, take, tap,
 } from 'rxjs/operators';
 import { ixChartApp } from 'app/constants/catalog.constants';
@@ -118,26 +120,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.listenForRouteChanges();
-
-    this.searchControl.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
-      const option = this.searchOptions.find((opt) => opt.value === value)
-        || this.searchOptions.find((opt) => opt.label.toLocaleLowerCase() === value.toLocaleLowerCase());
-
-      if (option) {
-        const path = option.value.toString().split('.');
-        let nextElement: HTMLElement;
-        path.forEach((id, idx) => {
-          nextElement = document.getElementById(id);
-          if (idx === path.length - 1) {
-            nextElement?.scrollIntoView({ block: 'center' });
-            nextElement.classList.add('highlighted');
-            timer(999)
-              .pipe(untilDestroyed(this))
-              .subscribe(() => nextElement.classList.remove('highlighted'));
-          }
-        });
-      }
-    });
+    this.handleSearchControl();
   }
 
   ngOnDestroy(): void {
@@ -481,6 +464,32 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
     this.kubernetesStore.selectedPool$.pipe(untilDestroyed(this)).subscribe((pool) => {
       if (!pool) {
         this.router.navigate(['/apps/available', this.catalog, this.train, this.appId]);
+      }
+    });
+  }
+
+  private handleSearchControl(): void {
+    this.searchControl.valueChanges.pipe(
+      debounceTime(100),
+      distinctUntilChanged(),
+      untilDestroyed(this),
+    ).subscribe((value) => {
+      const option = this.searchOptions.find((opt) => opt.value === value)
+        || this.searchOptions.find((opt) => opt.label.toLocaleLowerCase() === value.toLocaleLowerCase());
+
+      if (option) {
+        const path = option.value.toString().split('.');
+        let nextElement: HTMLElement;
+        path.forEach((id, idx) => {
+          nextElement = document.getElementById(id);
+          if (idx === path.length - 1) {
+            nextElement?.scrollIntoView({ block: 'center' });
+            nextElement.classList.add('highlighted');
+            timer(999)
+              .pipe(untilDestroyed(this))
+              .subscribe(() => nextElement.classList.remove('highlighted'));
+          }
+        });
       }
     });
   }

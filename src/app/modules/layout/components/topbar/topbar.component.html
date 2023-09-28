@@ -52,17 +52,7 @@
       >
         <ix-icon class="movement" name="system_update_alt"></ix-icon>
       </button>
-      <button
-        *ngIf="pendingNetworkChanges"
-        mat-icon-button
-        id="network"
-        class="topbar-button-right"
-        ixTest="has-pending-network-changes"
-        [matTooltip]="tooltips.pending_network_changes | translate"
-        (click)="showNetworkChangesPending()"
-      >
-        <ix-icon class="movement" name="device_hub"></ix-icon>
-      </button>
+      <ix-checkin-indicator></ix-checkin-indicator>
       <ix-resilvering-indicator></ix-resilvering-indicator>
       <ix-ha-status-icon></ix-ha-status-icon>
       <ix-directory-services-indicator></ix-directory-services-indicator>

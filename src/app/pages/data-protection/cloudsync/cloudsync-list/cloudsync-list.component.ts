@@ -9,6 +9,7 @@ import {
   catchError, filter, switchMap, take, tap,
 } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
+import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import helptext from 'app/helptext/data-protection/cloudsync/cloudsync-form';
 import globalHelptext from 'app/helptext/global-helptext';
@@ -71,6 +72,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
     },
     { name: this.translate.instant('Frequency'), prop: 'frequency', enableMatTooltip: true },
     { name: this.translate.instant('Next Run'), prop: 'next_run', hidden: true },
+    { name: this.translate.instant('Last Run'), prop: 'last_run', hidden: true },
     {
       name: this.translate.instant('Status'),
       prop: 'state',
@@ -116,7 +118,16 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
       transformed.credential = task.credentials.name;
       transformed.cron_schedule = task.enabled ? formattedCronSchedule : this.translate.instant('Disabled');
       transformed.frequency = this.taskService.getTaskCronDescription(formattedCronSchedule);
-      transformed.next_run = task.enabled ? this.taskService.getTaskNextRun(formattedCronSchedule) : this.translate.instant('Disabled');
+      transformed.next_run =
+        task.enabled ?
+          this.taskService.getTaskNextRun(formattedCronSchedule)
+          : this.translate.instant('Disabled');
+
+      if (transformed.job?.time_finished?.$date) {
+        transformed.last_run = formatDistanceToNowShortened(transformed.job?.time_finished?.$date);
+      } else {
+        transformed.last_run = this.translate.instant('N/A');
+      }
 
       if (task.job === null) {
         transformed.state = { state: transformed.locked ? JobState.Locked : JobState.Pending };

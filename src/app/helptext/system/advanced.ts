@@ -10,7 +10,7 @@ export const helptextSystemAdvanced = {
   fieldset_addresses: T('Allowed IP Addresses'),
 
   dialog_generate_debug_title: T('Generate Debug File'),
-  dialog_generate_debug_message: T('This operation might take a long time. It cannot be aborted once started. Proceed?'),
+  dialog_generate_debug_message: T('Warning: Debugs may contain log files with personal information such as usernames or other identifying information about your system. Please review debugs and redact any sensitive information before sharing with external entities.'),
   dialog_button_ok: T('Proceed'),
 
   system_dataset_tooltip: T('Store system logs on the system dataset. Unset to store system logs in <i>/var/</i> on the operating system device.'),

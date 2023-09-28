@@ -9,6 +9,7 @@ import { Job } from 'app/interfaces/job.interface';
 import { RsyncTaskUi, RsyncTaskUpdate } from 'app/interfaces/rsync-task.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { relativeDateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
 import { stateButtonColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { toggleColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
@@ -49,13 +50,15 @@ export class RsyncTaskCardComponent implements OnInit {
     }),
     textColumn({
       title: this.translate.instant('Frequency'),
-      propertyName: 'frequency',
       getValue: (row) => this.taskService.getTaskCronDescription(scheduleToCrontab(row.schedule)),
     }),
-    textColumn({
+    relativeDateColumn({
       title: this.translate.instant('Next Run'),
-      propertyName: 'next_run',
-      getValue: (row) => this.taskService.getTaskNextRun(scheduleToCrontab(row.schedule)),
+      getValue: (row) => this.taskService.getTaskNextTime(scheduleToCrontab(row.schedule)) as unknown,
+    }),
+    relativeDateColumn({
+      title: this.translate.instant('Last Run'),
+      getValue: (row) => row.job?.time_finished?.$date,
     }),
     toggleColumn({
       title: this.translate.instant('Enabled'),

@@ -5,6 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
@@ -21,6 +22,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
 describe('SnapshotTaskCardComponent', () => {
   let spectator: Spectator<SnapshotTaskCardComponent>;
@@ -50,6 +52,9 @@ describe('SnapshotTaskCardComponent', () => {
       vmware_sync: false,
       state: {
         state: 'PENDING',
+        datetime: {
+          $date: new Date().getTime() - 50000,
+        },
       },
       keepfor: '2 WEEK(S)',
       cron_schedule: '0 0 * * *',
@@ -66,6 +71,14 @@ describe('SnapshotTaskCardComponent', () => {
       IxTable2Module,
     ],
     providers: [
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectSystemConfigState,
+            value: {},
+          },
+        ],
+      }),
       mockWebsocket([
         mockCall('pool.snapshottask.query', snapshotTasks),
         mockCall('pool.snapshottask.delete'),
@@ -88,7 +101,7 @@ describe('SnapshotTaskCardComponent', () => {
       }),
       mockProvider(LocaleService),
       mockProvider(TaskService, {
-        getTaskNextRun: jest.fn(() => 'in about 6 hours'),
+        getTaskNextTime: jest.fn(() => new Date(new Date().getTime() + (24 * 60 * 60 * 1000))),
         getTaskCronDescription: jest.fn(() => 'At 00:00, every day'),
       }),
     ],
@@ -102,8 +115,8 @@ describe('SnapshotTaskCardComponent', () => {
 
   it('should show table rows', async () => {
     const expectedRows = [
-      ['Pool/Dataset', 'Keep for', 'Frequency', 'Next Run', 'Enabled', 'State', ''],
-      ['APPS/test2', '2 WEEK(S)', 'At 00:00, every day', 'in about 6 hours', '', 'PENDING', ''],
+      ['Pool/Dataset', 'Keep for', 'Frequency', 'Next Run', 'Last Run', 'Enabled', 'State', ''],
+      ['APPS/test2', '2 week(s)', 'At 00:00, every day', 'in 1 day', '1 min. ago', '', 'PENDING', ''],
     ];
 
     const cells = await table.getCellTexts();
@@ -111,7 +124,7 @@ describe('SnapshotTaskCardComponent', () => {
   });
 
   it('shows form to edit an existing Snapshot Task when Edit button is pressed', async () => {
-    const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 6);
+    const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 7);
     await editButton.click();
 
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(SnapshotTaskFormComponent, {
@@ -131,7 +144,7 @@ describe('SnapshotTaskCardComponent', () => {
   });
 
   it('deletes a Snapshot Task with confirmation when Delete button is pressed', async () => {
-    const deleteIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'delete' }), 1, 6);
+    const deleteIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'delete' }), 1, 7);
     await deleteIcon.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
@@ -143,7 +156,7 @@ describe('SnapshotTaskCardComponent', () => {
   });
 
   it('updates Snapshot Task Enabled status once mat-toggle is updated', async () => {
-    const toggle = await table.getHarnessInCell(MatSlideToggleHarness, 1, 4);
+    const toggle = await table.getHarnessInCell(MatSlideToggleHarness, 1, 5);
 
     expect(await toggle.isChecked()).toBe(false);
 

@@ -15,7 +15,7 @@ import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-sli
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
-import { selectJob } from 'app/modules/jobs/store/job.selectors';
+import { selectJobs } from 'app/modules/jobs/store/job.selectors';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { CloudsyncRestoreDialogComponent } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
@@ -25,6 +25,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
 describe('CloudSyncTaskCardComponent', () => {
   let spectator: Spectator<CloudSyncTaskCardComponent>;
@@ -34,16 +35,8 @@ describe('CloudSyncTaskCardComponent', () => {
   const cloudsyncTasks = [
     {
       id: 3,
-      description: 'scru',
+      description: 'custom-cloudsync',
       path: '/mnt/APPS',
-      attributes: {
-        folder: '',
-        fast_list: false,
-        acknowledge_abuse: false,
-      },
-      pre_script: '',
-      post_script: '',
-      snapshot: false,
       include: [
         '//**',
         '/Folder1/**',
@@ -53,12 +46,6 @@ describe('CloudSyncTaskCardComponent', () => {
       enabled: false,
       direction: 'PULL',
       transfer_mode: 'COPY',
-      encryption: false,
-      filename_encryption: false,
-      encryption_password: '',
-      encryption_salt: '',
-      create_empty_src_dirs: false,
-      follow_symlinks: false,
       credentials: {
         id: 1,
         name: 'Google Drive',
@@ -86,7 +73,13 @@ describe('CloudSyncTaskCardComponent', () => {
       state: {
         state: 'RUNNING',
       },
-      job: null,
+      job: {
+        id: 1,
+        state: 'FINISHED',
+        time_finished: {
+          $date: new Date().getTime() - 50000,
+        },
+      },
     } as unknown as CloudSyncTaskUi,
   ];
 
@@ -101,8 +94,16 @@ describe('CloudSyncTaskCardComponent', () => {
       provideMockStore({
         selectors: [
           {
-            selector: selectJob(1),
-            value: {} as Job,
+            selector: selectJobs,
+            value: [{
+              state: 'FINISHED',
+              id: 1,
+              time_finished: cloudsyncTasks[0].job.time_finished,
+            } as Job],
+          },
+          {
+            selector: selectSystemConfigState,
+            value: {},
           },
         ],
       }),
@@ -127,7 +128,7 @@ describe('CloudSyncTaskCardComponent', () => {
       }),
       mockProvider(LocaleService),
       mockProvider(TaskService, {
-        getTaskNextRun: jest.fn(() => 'in 33 minutes'),
+        getTaskNextTime: jest.fn(() => new Date(new Date().getTime() + (24 * 60 * 60 * 1000))),
         getTaskCronDescription: jest.fn(() => 'Every hour, every day'),
       }),
     ],
@@ -141,8 +142,8 @@ describe('CloudSyncTaskCardComponent', () => {
 
   it('should show table rows', async () => {
     const expectedRows = [
-      ['Description', 'Frequency', 'Next Run', 'Enabled', 'State', ''],
-      ['scru', 'Every hour, every day', 'Disabled', '', 'PENDING', ''],
+      ['Description', 'Frequency', 'Next Run', 'Last Run', 'Enabled', 'State', ''],
+      ['custom-cloudsync', 'Every hour, every day', 'in 1 day', '1 min. ago', '', 'FINISHED', ''],
     ];
 
     const cells = await table.getCellTexts();
@@ -150,7 +151,7 @@ describe('CloudSyncTaskCardComponent', () => {
   });
 
   it('shows form to edit an existing CloudSync Task when Edit button is pressed', async () => {
-    const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 5);
+    const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 6);
     await editButton.click();
 
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(CloudsyncFormComponent, {
@@ -171,18 +172,18 @@ describe('CloudSyncTaskCardComponent', () => {
 
   it('shows confirmation dialog when Run Now button is pressed', async () => {
     jest.spyOn(spectator.inject(DialogService), 'confirm');
-    const runNowButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'play_arrow' }), 1, 5);
+    const runNowButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'play_arrow' }), 1, 6);
     await runNowButton.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Run Now',
-      message: 'Run this Cloud Sync now?',
+      message: 'Run «custom-cloudsync» Cloud Sync now?',
       hideCheckbox: true,
     });
   });
 
   it('shows confirmation dialog when Dry Run button is pressed', async () => {
-    const runNowButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'sync' }), 1, 5);
+    const runNowButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'sync' }), 1, 6);
     await runNowButton.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
@@ -194,7 +195,7 @@ describe('CloudSyncTaskCardComponent', () => {
 
   it('shows confirmation dialog when Restore button is pressed', async () => {
     jest.spyOn(spectator.inject(MatDialog), 'open');
-    const runNowButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'restore' }), 1, 5);
+    const runNowButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'restore' }), 1, 6);
     await runNowButton.click();
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(CloudsyncRestoreDialogComponent, {
@@ -203,19 +204,19 @@ describe('CloudSyncTaskCardComponent', () => {
   });
 
   it('deletes a CloudSync Task with confirmation when Delete button is pressed', async () => {
-    const deleteIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'delete' }), 1, 5);
+    const deleteIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'delete' }), 1, 6);
     await deleteIcon.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Confirmation',
-      message: 'Delete Cloud Sync Task <b>\"scru\"</b>?',
+      message: 'Delete Cloud Sync Task <b>\"custom-cloudsync\"</b>?',
     });
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.delete', [3]);
   });
 
   it('updates CloudSync Task Enabled status once mat-toggle is updated', async () => {
-    const toggle = await table.getHarnessInCell(MatSlideToggleHarness, 1, 3);
+    const toggle = await table.getHarnessInCell(MatSlideToggleHarness, 1, 4);
 
     expect(await toggle.isChecked()).toBe(false);
 
