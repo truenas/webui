@@ -115,7 +115,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.shellService.disconnect();
+    this.shellService.disconnectIfSessionActive();
   }
 
   onResize(): void {

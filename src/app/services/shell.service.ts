@@ -31,7 +31,7 @@ export class ShellService {
   ) {}
 
   connect(connectionData: TerminalConnectionData, token: string): void {
-    this.disconnect();
+    this.disconnectIfSessionActive();
 
     this.ws$ = this.webSocket({
       url: this.connectionUrl,
@@ -115,7 +115,7 @@ export class ShellService {
     }
   }
 
-  disconnect(): void {
+  disconnectIfSessionActive(): void {
     if (this.ws$ && !this.ws$.closed) {
       this.ws$.complete();
     }
