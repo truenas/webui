@@ -6,6 +6,7 @@ import { ScrubTaskUi } from 'app/interfaces/scrub-task.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
 import { fromTemplateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-from-template/ix-cell-from-template.component';
+import { relativeDateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { toggleColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
 import { createTable } from 'app/modules/ix-table2/utils';
@@ -39,13 +40,11 @@ export class ScrubTaskCardComponent implements OnInit {
     }),
     textColumn({
       title: this.translate.instant('Frequency'),
-      propertyName: 'frequency',
       getValue: (task) => this.taskService.getTaskCronDescription(scheduleToCrontab(task.schedule)),
     }),
-    textColumn({
+    relativeDateColumn({
       title: this.translate.instant('Next Run'),
-      propertyName: 'next_run',
-      getValue: (task) => this.taskService.getTaskNextRun(scheduleToCrontab(task.schedule)),
+      getValue: (task) => this.taskService.getTaskNextTime(scheduleToCrontab(task.schedule)) as unknown,
     }),
     toggleColumn({
       title: this.translate.instant('Enabled'),

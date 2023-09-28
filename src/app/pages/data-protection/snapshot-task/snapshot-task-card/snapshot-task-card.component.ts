@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { formatDistanceToNow } from 'date-fns';
 import { filter, switchMap } from 'rxjs';
 import { PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
 import { fromTemplateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-from-template/ix-cell-from-template.component';
+import { relativeDateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
 import { stateButtonColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { toggleColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
@@ -37,29 +37,20 @@ export class SnapshotTaskCardComponent implements OnInit {
     }),
     textColumn({
       title: this.translate.instant('Keep for'),
-      getValue: (task) => `${task.lifetime_value} ${task.lifetime_unit}(S)`,
+      getValue: (row) => `${row.lifetime_value} ${row.lifetime_unit}(S)`.toLowerCase(),
     }),
     textColumn({
       title: this.translate.instant('Frequency'),
       propertyName: 'frequency',
-      getValue: (task) => this.taskService.getTaskCronDescription(scheduleToCrontab(task.schedule)),
+      getValue: (row) => this.taskService.getTaskCronDescription(scheduleToCrontab(row.schedule)),
     }),
-    textColumn({
+    relativeDateColumn({
       title: this.translate.instant('Next Run'),
-      propertyName: 'next_run',
-      getValue: (task) => this.taskService.getTaskNextRun(scheduleToCrontab(task.schedule)),
+      getValue: (row) => this.taskService.getTaskNextTime(scheduleToCrontab(row.schedule)) as unknown,
     }),
-    textColumn({
+    relativeDateColumn({
       title: this.translate.instant('Last Run'),
-      getValue: (task): string => {
-        let lastRun: string;
-        if (task.state?.datetime?.$date) {
-          lastRun = formatDistanceToNow(task.state.datetime.$date, { addSuffix: true });
-        } else {
-          lastRun = this.translate.instant('N/A');
-        }
-        return lastRun;
-      },
+      getValue: (row) => row.state?.datetime?.$date,
     }),
     toggleColumn({
       title: this.translate.instant('Enabled'),

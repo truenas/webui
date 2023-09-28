@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { formatDistanceToNow } from 'date-fns';
 import { catchError, EMPTY, filter, switchMap, tap } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
@@ -11,6 +10,7 @@ import { RsyncTaskUi, RsyncTaskUpdate } from 'app/interfaces/rsync-task.interfac
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
 import { fromTemplateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-from-template/ix-cell-from-template.component';
+import { relativeDateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
 import { stateButtonColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { toggleColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
@@ -51,17 +51,15 @@ export class RsyncTaskCardComponent implements OnInit {
     }),
     textColumn({
       title: this.translate.instant('Frequency'),
-      propertyName: 'frequency',
       getValue: (row) => this.taskService.getTaskCronDescription(scheduleToCrontab(row.schedule)),
     }),
-    textColumn({
+    relativeDateColumn({
       title: this.translate.instant('Next Run'),
-      propertyName: 'next_run',
-      getValue: (row) => this.taskService.getTaskNextRun(scheduleToCrontab(row.schedule)),
+      getValue: (row) => this.taskService.getTaskNextTime(scheduleToCrontab(row.schedule)) as unknown,
     }),
-    textColumn({
+    relativeDateColumn({
       title: this.translate.instant('Last Run'),
-      propertyName: 'last_run',
+      getValue: (row) => row.job?.time_finished?.$date,
     }),
     toggleColumn({
       title: this.translate.instant('Enabled'),
@@ -172,14 +170,12 @@ export class RsyncTaskCardComponent implements OnInit {
   private transformRsyncTasks(rsyncTasks: RsyncTaskUi[]): RsyncTaskUi[] {
     return rsyncTasks.map((task: RsyncTaskUi) => {
       if (task.job === null) {
-        task.last_run = this.translate.instant('N/A');
         task.state = { state: task.locked ? JobState.Locked : JobState.Pending };
       } else {
         task.state = { state: task.job.state };
         this.store$.select(selectJob(task.job.id)).pipe(filter(Boolean), untilDestroyed(this))
           .subscribe((job: Job) => {
             task.state = { state: job.state };
-            task.last_run = formatDistanceToNow(task.job?.time_finished?.$date, { addSuffix: true });
             task.job = job;
             this.jobStates.set(job.id, job.state);
           });
