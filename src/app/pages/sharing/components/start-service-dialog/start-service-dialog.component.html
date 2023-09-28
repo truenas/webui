@@ -13,8 +13,8 @@
 <ix-form-actions mat-dialog-actions>
   <button
     mat-button
-    mat-dialog-close
     ixTest="do-not-start"
+    [mat-dialog-close]="false"
   >{{ 'No' | translate }}</button>
 
   <button

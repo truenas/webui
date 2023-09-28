@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -11,12 +11,7 @@ import { Service } from 'app/interfaces/service.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { ServicesState } from 'app/store/services/services.reducer';
-import { waitForServices } from 'app/store/services/services.selectors';
-
-export interface StartServiceDialogResult {
-  start: boolean;
-  startAutomatically: boolean;
-}
+import { selectService } from 'app/store/services/services.selectors';
 
 @UntilDestroy()
 @Component({
@@ -25,11 +20,7 @@ export interface StartServiceDialogResult {
 })
 export class StartServiceDialogComponent implements OnInit {
   startAutomaticallyControl = new FormControl(false);
-  private services: Service[] = [];
-
-  get service(): Service {
-    return this.services.find((service) => service.service === this.serviceName);
-  }
+  private service: Service;
 
   get serviceHumanName(): string {
     return serviceNames.get(this.serviceName);
@@ -41,6 +32,7 @@ export class StartServiceDialogComponent implements OnInit {
 
   constructor(
     private ws: WebSocketService,
+    private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private snackbar: SnackbarService,
     private dialogRef: MatDialogRef<StartServiceDialogComponent, boolean>,
@@ -49,34 +41,21 @@ export class StartServiceDialogComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.getServices();
-  }
-
-  getServices(): void {
-    this.store$
-      .pipe(waitForServices, untilDestroyed(this))
-      .subscribe((services) => {
-        this.services = services;
-        if (this.service.state !== ServiceStatus.Running) {
-          this.dialogRef.close(true);
-        }
-      });
+    this.store$.select(selectService(this.serviceName)).pipe(untilDestroyed(this)).subscribe((service) => {
+      this.service = service;
+      this.cdr.markForCheck();
+    });
   }
 
   onSubmit(): void {
     const requests: Observable<unknown>[] = [];
-    const result: StartServiceDialogResult = {
-      start: true,
-      startAutomatically: this.startAutomaticallyControl.value,
-    };
+    const startAutomatically = this.startAutomaticallyControl.value;
 
-    if (result.start && result.startAutomatically) {
-      requests.push(this.ws.call('service.update', [this.service.id, { enable: result.startAutomatically } ]));
+    if (startAutomatically) {
+      requests.push(this.ws.call('service.update', [this.service.id, { enable: this.startAutomaticallyControl.value } ]));
     }
 
-    if (result.start) {
-      requests.push(this.ws.call('service.start', [this.serviceName, { silent: false }]));
-    }
+    requests.push(this.ws.call('service.start', [this.serviceName, { silent: false }]));
 
     const request$ = requests.length ? forkJoin(requests) : of(requests);
 

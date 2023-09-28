@@ -4,11 +4,15 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { ServiceName } from 'app/enums/service-name.enum';
+import { ServiceStatus } from 'app/enums/service-status.enum';
 import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import {
-  StartServiceDialogComponent, StartServiceDialogResult,
-} from 'app/pages/sharing/components/start-service-dialog/start-service-dialog.component';
+import { StartServiceDialogComponent } from 'app/pages/sharing/components/start-service-dialog/start-service-dialog.component';
+import { WebSocketService } from 'app/services/ws.service';
+import { selectServices } from 'app/store/services/services.selectors';
 
 describe('StartServiceDialogComponent', () => {
   let spectator: Spectator<StartServiceDialogComponent>;
@@ -20,11 +24,28 @@ describe('StartServiceDialogComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
+      mockWebsocket([
+        mockCall('service.update'),
+        mockCall('service.start'),
+      ]),
       {
         provide: MAT_DIALOG_DATA,
-        useValue: 'SMB',
+        useValue: ServiceName.Cifs,
       },
       mockProvider(MatDialogRef),
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectServices,
+            value: [{
+              id: 4,
+              service: ServiceName.Cifs,
+              state: ServiceStatus.Running,
+              enabled: false,
+            }],
+          },
+        ],
+      }),
     ],
   });
 
@@ -43,22 +64,18 @@ describe('StartServiceDialogComponent', () => {
     );
     await enableAutomaticallyCheckbox.setValue(true);
 
-    const enableButton = await loader.getHarness(MatButtonHarness.with({ text: 'Enable Service' }));
+    const enableButton = await loader.getHarness(MatButtonHarness.with({ text: 'Start' }));
     await enableButton.click();
 
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({
-      start: true,
-      startAutomatically: true,
-    } as StartServiceDialogResult);
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('service.update', [4, { enable: true }]);
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('service.start', ['cifs', { silent: false }]);
+    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
   });
 
   it('returns false result when No is pressed', async () => {
     const noButton = await loader.getHarness(MatButtonHarness.with({ text: 'No' }));
     await noButton.click();
 
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({
-      start: false,
-      startAutomatically: false,
-    });
+    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(false);
   });
 });
