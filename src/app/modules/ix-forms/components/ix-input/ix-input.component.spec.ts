@@ -1,5 +1,8 @@
+import { HarnessLoader, parallel } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatAutocompleteHarness } from '@angular/material/autocomplete/testing';
 import { FormControl } from '@ngneat/reactive-forms';
 import { createHostFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
@@ -12,6 +15,8 @@ import { IxInputComponent } from './ix-input.component';
 describe('IxInputComponent', () => {
   let spectator: Spectator<IxInputComponent>;
   const formControl = new FormControl<unknown>();
+  let loader: HarnessLoader;
+
   const createHost = createHostFactory({
     component: IxInputComponent,
     imports: [
@@ -29,6 +34,7 @@ describe('IxInputComponent', () => {
     spectator = createHost('<ix-input [formControl]="formControl"></ix-input>', {
       hostProps: { formControl },
     });
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
   describe('rendering', () => {
@@ -100,6 +106,32 @@ describe('IxInputComponent', () => {
       spectator.typeInElement('new value', 'input');
 
       expect(formControl.value).toBe('new value');
+    });
+
+    it('shows autocomplete values when value typed', async () => {
+      spectator.setInput('autocompleteOptions', [{
+        label: 'autocomplete test',
+        value: 1,
+      }]);
+
+      spectator.typeInElement('test', 'input');
+      spectator.focus();
+
+      const select = await loader.getHarness(MatAutocompleteHarness);
+      const options = await select.getOptions();
+      const optionLabels = await parallel(() => options.map((option) => option.getText()));
+      expect(optionLabels).toEqual(['autocomplete test']);
+    });
+
+    it('resets form control value when autocomplete values provided and custom value typed', () => {
+      spectator.setInput('autocompleteOptions', [{
+        label: 'bingo',
+        value: 1,
+      }]);
+      spectator.typeInElement('new value', 'input');
+      spectator.component.blurred();
+
+      expect(formControl.value).toBe('');
     });
 
     it('disables input when form control is disabled', () => {

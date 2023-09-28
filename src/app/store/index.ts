@@ -5,6 +5,12 @@ import { HaInfoEffects } from 'app/store/ha-info/ha-info.effects';
 import { haInfoReducer, HaInfoState } from 'app/store/ha-info/ha-info.reducer';
 import { haInfoStateKey } from 'app/store/ha-info/ha-info.selectors';
 import { HaUpgradeEffects } from 'app/store/ha-upgrade/ha-upgrade.effects';
+import { NetworkInterfacesEffects } from 'app/store/network-interfaces/network-interfaces.effects';
+import {
+  networkInterfacesReducer,
+  NetworkInterfacesState,
+} from 'app/store/network-interfaces/network-interfaces.reducer';
+import { networkInterfacesKey } from 'app/store/network-interfaces/network-interfaces.selectors';
 import { PreferencesEffects } from 'app/store/preferences/preferences.effects';
 import { preferencesReducer, PreferencesState } from 'app/store/preferences/preferences.reducer';
 import { preferencesStateKey } from 'app/store/preferences/preferences.selectors';
@@ -25,6 +31,7 @@ export interface AppState {
   [systemInfoStateKey]: SystemInfoState;
   [haInfoStateKey]: HaInfoState;
   [servicesStateKey]: ServicesState;
+  [networkInterfacesKey]: NetworkInterfacesState;
   router: RouterReducerState<CustomRouterState>;
 }
 
@@ -34,9 +41,9 @@ export const rootReducers: ActionReducerMap<AppState> = {
   [systemInfoStateKey]: systemInfoReducer,
   [haInfoStateKey]: haInfoReducer,
   [servicesStateKey]: servicesReducer,
+  [networkInterfacesKey]: networkInterfacesReducer,
   router: routerReducer,
 };
-
 export const rootEffects = [
   SystemConfigEffects,
   PreferencesEffects,
@@ -45,4 +52,5 @@ export const rootEffects = [
   EulaEffects,
   HaUpgradeEffects,
   ServicesEffects,
+  NetworkInterfacesEffects,
 ];

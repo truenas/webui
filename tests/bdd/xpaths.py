@@ -432,7 +432,7 @@ class iscsi:
 
 class iscsi_Wizard:
     """iscsi_Wizard contains xpaths for the iSCSI Wizard"""
-    title = '//h3[text()="Wizard iSCSI"]'
+    title = '//h3[text()="iSCSI Wizard"]'
     block_Device_Title = '//mat-step-header[contains(.,"Create or Choose Block Device") and @tabindex="0"]'
     device_Name_Input = '//input[@data-test="input-name"]'
     extent_Type_Select = '//mat-select[@data-test="select-type"]'
