@@ -1,12 +1,14 @@
 import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import _ from 'lodash';
-import { filter, map } from 'rxjs/operators';
+import { Store } from '@ngrx/store';
+import { map } from 'rxjs/operators';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
 import { IscsiService } from 'app/services/iscsi.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { ServicesState } from 'app/store/services/services.reducer';
+import { waitForServices } from 'app/store/services/services.selectors';
 
 @UntilDestroy()
 @Component({
@@ -24,7 +26,7 @@ export class SharesDashboardComponent {
 
   isClustered = false;
 
-  constructor(private ws: WebSocketService) {
+  constructor(private ws: WebSocketService, private store$: Store<ServicesState>) {
     this.getInitialServiceStatus();
     this.loadClusteredState();
   }
@@ -36,27 +38,16 @@ export class SharesDashboardComponent {
   }
 
   getInitialServiceStatus(): void {
-    this.ws
-      .call('service.query', [])
-      .pipe(untilDestroyed(this))
-      .subscribe((services) => {
-        this.servicesToCheck.forEach((service) => {
-          this.updateTableService(_.find(services, { service }));
-        });
-        this.subscribeToServiceUpdates();
-      });
-  }
-
-  subscribeToServiceUpdates(): void {
-    this.ws
-      .subscribe('service.query')
+    this.store$
       .pipe(
-        map((event) => event.fields),
-        filter((service: Service) => this.servicesToCheck.includes(service.service)),
+        waitForServices,
+        map((services) => services.filter((service) => this.servicesToCheck.includes(service.service))),
         untilDestroyed(this),
       )
-      .subscribe((service: Service) => {
-        this.updateTableService(service);
+      .subscribe((services) => {
+        services.forEach((service) => {
+          this.updateTableService(service);
+        });
       });
   }
 

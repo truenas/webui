@@ -1864,7 +1864,6 @@
   "The value is out of range. Enter a value between {min} and {max}.": "",
   "The {service} service failed to start.": "",
   "The {service} service failed to stop.": "",
-  "The {service} service has been enabled.": "",
   "The {service} service has started.": "",
   "Theme": "",
   "There are no alerts.": "",

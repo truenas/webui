@@ -3391,7 +3391,6 @@
   "The zvol default block size is automatically chosen based on the number of the disks in the pool for a general use case.": "",
   "The {service} service failed to start.": "",
   "The {service} service failed to stop.": "",
-  "The {service} service has been enabled.": "",
   "The {service} service has started.": "",
   "Theme": "",
   "There are no alerts.": "",

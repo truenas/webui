@@ -9,6 +9,7 @@ import { SpectatorRouting } from '@ngneat/spectator';
 import {
   createRoutingFactory, mockProvider,
 } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { CoreComponents } from 'app/core/core-components.module';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
@@ -30,6 +31,8 @@ import { DialogService } from 'app/services/dialog.service';
 import { IscsiService } from 'app/services/iscsi.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { initialState } from 'app/store/services/services.reducer';
+import { selectServices, selectServicesState } from 'app/store/services/services.selectors';
 
 const hiddenServices = [ServiceName.Gluster, ServiceName.Afp];
 const fakeDataSource: ServiceRow[] = [...serviceNames.entries()]
@@ -59,7 +62,6 @@ describe('ServicesComponent', () => {
     ],
     providers: [
       mockWebsocket([
-        mockCall('service.query', fakeDataSource),
         mockCall('service.update'),
         mockCall('service.start'),
         mockCall('service.stop'),
@@ -67,6 +69,18 @@ describe('ServicesComponent', () => {
       mockProvider(DialogService),
       mockProvider(IxSlideInService),
       mockProvider(IscsiService),
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectServicesState,
+            value: initialState,
+          },
+          {
+            selector: selectServices,
+            value: fakeDataSource,
+          },
+        ],
+      }),
     ],
   });
 

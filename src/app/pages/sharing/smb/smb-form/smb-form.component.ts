@@ -9,10 +9,10 @@ import { Validators, FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
-import {
-  forkJoin, noop, Observable, of,
+import { noop, Observable, of,
 } from 'rxjs';
 import {
   debounceTime,
@@ -22,11 +22,10 @@ import {
   take,
   tap,
 } from 'rxjs/operators';
-import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
+import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { helptextSharingSmb } from 'app/helptext/sharing';
 import { Option } from 'app/interfaces/option.interface';
-import { Service } from 'app/interfaces/service.interface';
 import {
   SmbPresets,
   SmbPresetType,
@@ -40,14 +39,14 @@ import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.s
 import { forbiddenValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import {
-  StartServiceDialogComponent, StartServiceDialogResult,
-} from 'app/pages/sharing/components/start-service-dialog/start-service-dialog.component';
+import { StartServiceDialogComponent } from 'app/pages/sharing/components/start-service-dialog/start-service-dialog.component';
 import { RestartSmbDialogComponent } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { ServicesState } from 'app/store/services/services.reducer';
+import { selectService } from 'app/store/services/services.selectors';
 
 @UntilDestroy()
 @Component({
@@ -178,6 +177,7 @@ export class SmbFormComponent implements OnInit {
     private filesystemService: FilesystemService,
     private snackbar: SnackbarService,
     private slideInRef: IxSlideInRef<SmbFormComponent>,
+    private store$: Store<ServicesState>,
     @Inject(SLIDE_IN_DATA) private existingSmbShare: SmbShare,
   ) { }
 
@@ -411,55 +411,46 @@ export class SmbFormComponent implements OnInit {
     }
 
     request$.pipe(
+      switchMap((smbShareResponse: SmbShare) => this.checkIfSmbServiceIsEnabled().pipe(
+        map((isEnabled) => ({ share: smbShareResponse, serviceEnabled: isEnabled })),
+      )),
+      switchMap((result) => this.shouldRedirectToAclEdit().pipe(
+        map((shouldRedirect) => ({ ...result, shouldRedirect })),
+      )),
       untilDestroyed(this),
     ).subscribe({
-      next: (smbShareResponse: SmbShare) => {
-        this.getCifsService().pipe(
-          switchMap((cifsService) => {
-            if (cifsService.state === ServiceStatus.Stopped) {
-              return this.startAndEnableService(cifsService);
+      next: (result) => {
+        this.isLoading = false;
+        this.cdr.markForCheck();
+        if (result.shouldRedirect) {
+          this.dialogService.confirm({
+            title: this.translate.instant('Configure ACL'),
+            message: this.translate.instant('Do you want to configure the ACL?'),
+            buttonText: this.translate.instant('Configure'),
+            hideCheckbox: true,
+          }).pipe(untilDestroyed(this)).subscribe((isConfigure) => {
+            if (isConfigure) {
+              const homeShare = this.form.controls.home.value;
+              this.router.navigate(
+                ['/', 'datasets', 'acl', 'edit'],
+                { queryParams: { homeShare, path: result.share.path_local } },
+              );
             }
-            return this.restartCifsServiceIfNecessary();
-          }),
-          switchMap(() => this.shouldRedirectToAclEdit()),
-          untilDestroyed(this),
-        ).subscribe({
-          next: (redirect) => {
-            this.isLoading = false;
-            this.cdr.markForCheck();
-            if (redirect) {
-              this.dialogService.confirm({
-                title: this.translate.instant('Configure ACL'),
-                message: this.translate.instant('Do you want to configure the ACL?'),
-                buttonText: this.translate.instant('Configure'),
-                hideCheckbox: true,
-              }).pipe(untilDestroyed(this)).subscribe((isConfigure) => {
-                if (isConfigure) {
-                  const homeShare = this.form.controls.home.value;
-                  this.router.navigate(
-                    ['/', 'datasets', 'acl', 'edit'],
-                    { queryParams: { homeShare, path: smbShareResponse.path_local } },
-                  );
-                }
-                this.slideInRef.close();
-              });
-            } else {
-              this.slideInRef.close();
-            }
-          },
-          error: (err: WebsocketError) => {
-            if (err.reason.includes('[ENOENT]') || err.reason.includes('[EXDEV]')) {
-              this.dialogService.closeAllDialogs();
-            } else {
-              this.dialogService.error(this.errorHandler.parseWsError(err));
-            }
-            this.isLoading = false;
-            this.cdr.markForCheck();
             this.slideInRef.close();
-          },
-        });
+          });
+        } else {
+          this.slideInRef.close();
+        }
       },
-      error: (error) => {
+      error: (error: WebsocketError) => {
+        if (error.reason.includes('[ENOENT]') || error.reason.includes('[EXDEV]')) {
+          this.dialogService.closeAllDialogs();
+        } else {
+          this.dialogService.error(this.errorHandler.parseWsError(error));
+        }
+        this.isLoading = false;
+        this.cdr.markForCheck();
+        this.slideInRef.close();
         this.isLoading = false;
         this.cdr.markForCheck();
         this.formErrorHandler.handleWsFormError(error, this.form);
@@ -520,51 +511,18 @@ export class SmbFormComponent implements OnInit {
     );
   }
 
-  startAndEnableService = (cifsService: Service): Observable<unknown> => {
-    return this.mdDialog.open(StartServiceDialogComponent, {
-      data: serviceNames.get(ServiceName.Cifs),
-      disableClose: true,
-    })
-      .afterClosed()
-      .pipe(
-        switchMap((result: StartServiceDialogResult) => {
-          const requests: Observable<unknown>[] = [];
+  private checkIfSmbServiceIsEnabled(): Observable<boolean> {
+    return this.store$.select(selectService(ServiceName.Cifs)).pipe(
+      switchMap((service) => {
+        if (!service.enable || service.state === ServiceStatus.Stopped) {
+          return this.mdDialog.open(StartServiceDialogComponent, {
+            data: ServiceName.Cifs,
+            disableClose: true,
+          }).afterClosed();
+        }
 
-          if (result.start && result.startAutomatically) {
-            requests.push(
-              this.ws.call('service.update', [
-                cifsService.id,
-                { enable: result.startAutomatically },
-              ]),
-            );
-          }
-
-          if (result.start) {
-            requests.push(
-              this.ws.call('service.start', [
-                cifsService.service,
-                { silent: false },
-              ])
-                .pipe(
-                  tap(() => {
-                    this.snackbar.success(
-                      this.translate.instant('The {service} service has started.', {
-                        service: 'SMB',
-                      }),
-                    );
-                  }),
-                ),
-            );
-          }
-
-          return requests.length ? forkJoin(requests) : of(requests);
-        }),
-      );
-  };
-
-  getCifsService = (): Observable<Service> => {
-    return this.ws
-      .call('service.query')
-      .pipe(map((services) => _.find(services, { service: ServiceName.Cifs })));
-  };
+        return this.restartCifsServiceIfNecessary();
+      }),
+    );
+  }
 }

@@ -3708,7 +3708,6 @@
   "The zvol default block size is automatically chosen based on the number of the disks in the pool for a general use case.": "Розмір блоку ZVOL за замовчуванням автоматично вибирається залежно від кількості дисків у пулі для загального використання.",
   "The {service} service failed to start.": "Не вдалося запустити службу {service}.",
   "The {service} service failed to stop.": "Не вдалося зупинити службу {service}.",
-  "The {service} service has been enabled.": "Сервіс {service} увімкнено.",
   "The {service} service has started.": "Сервіс {service} запущено.",
   "Theme": "Тема",
   "There are no alerts.": "Оповіщень немає.",

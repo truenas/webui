@@ -2,10 +2,10 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { provideMockStore } from '@ngrx/store/testing';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { IscsiGlobalConfig } from 'app/interfaces/iscsi-global-config.interface';
@@ -13,15 +13,19 @@ import { Service } from 'app/interfaces/service.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { StartServiceDialogComponent } from 'app/pages/sharing/components/start-service-dialog/start-service-dialog.component';
 import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
+import { selectServices } from 'app/store/services/services.selectors';
 import { TargetGlobalConfigurationComponent } from './target-global-configuration.component';
 
 describe('TargetGlobalConfigurationComponent', () => {
   let spectator: Spectator<TargetGlobalConfigurationComponent>;
   let loader: HarnessLoader;
   let ws: WebSocketService;
+  let store$: MockStore<AppState>;
 
   const createComponent = createComponentFactory({
     component: TargetGlobalConfigurationComponent,
@@ -38,13 +42,10 @@ describe('TargetGlobalConfigurationComponent', () => {
           listen_port: 3260,
         } as IscsiGlobalConfig),
         mockCall('iscsi.global.update'),
-        mockCall('service.query', [{
-          service: ServiceName.Iscsi,
-          enable: true,
-        } as Service]),
         mockCall('service.update'),
         mockCall('service.start'),
       ]),
+      mockProvider(MatDialog),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
@@ -55,6 +56,10 @@ describe('TargetGlobalConfigurationComponent', () => {
             selector: selectIsHaLicensed,
             value: true,
           },
+          {
+            selector: selectServices,
+            value: [],
+          },
         ],
       }),
     ],
@@ -64,6 +69,7 @@ describe('TargetGlobalConfigurationComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     ws = spectator.inject(WebSocketService);
+    store$ = spectator.inject(MockStore);
   });
 
   it('loads iSCSI global config when component is initialized', () => {
@@ -106,16 +112,21 @@ describe('TargetGlobalConfigurationComponent', () => {
   });
 
   it('checks if iSCSI service is enabled and does nothing if it is', async () => {
+    store$.overrideSelector(selectServices, [{
+      service: ServiceName.Iscsi,
+      enable: true,
+    } as Service]);
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.call).toHaveBeenCalledWith('service.query');
-    expect(spectator.inject(DialogService).confirm).not.toHaveBeenCalled();
+    expect(spectator.inject(MatDialog).open).not.toHaveBeenCalledWith(StartServiceDialogComponent, {
+      data: ServiceName.Iscsi,
+      disableClose: true,
+    });
   });
 
   it('if iSCSI service is not running, asks user if service needs to be enabled', async () => {
-    const websocketMock = spectator.inject(MockWebsocketService);
-    websocketMock.mockCall('service.query', [{
+    store$.overrideSelector(selectServices, [{
       id: 13,
       service: ServiceName.Iscsi,
       enable: false,
@@ -124,9 +135,9 @@ describe('TargetGlobalConfigurationComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
-    expect(ws.call).toHaveBeenCalledWith('service.update', [13, { enable: true }]);
-    expect(ws.call).toHaveBeenCalledWith('service.start', [ServiceName.Iscsi, { silent: false }]);
-    expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(StartServiceDialogComponent, {
+      data: ServiceName.Iscsi,
+      disableClose: true,
+    });
   });
 });

@@ -3715,7 +3715,6 @@
   "The zvol default block size is automatically chosen based on the number of the disks in the pool for a general use case.": "在一般情况下，将基于池中的磁盘数量自动选择zvol默认块大小。",
   "The {service} service failed to start.": "{service} 服务未能启动。",
   "The {service} service failed to stop.": "{service} 服务未能停止。",
-  "The {service} service has been enabled.": "{service} 服务已启用。",
   "The {service} service has started.": "{service} 服务已启动。",
   "Theme": "主题",
   "There are no alerts.": "没有警报。",

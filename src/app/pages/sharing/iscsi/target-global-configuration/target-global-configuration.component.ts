@@ -2,25 +2,26 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Store } from '@ngrx/store';
+import { Store, select } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash';
-import {
-  EMPTY, forkJoin, Observable,
+import { Observable, of,
 } from 'rxjs';
-import { filter, switchMap, tap } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 import { ServiceName } from 'app/enums/service-name.enum';
-import { helptextSharingIscsi, shared } from 'app/helptext/sharing';
+import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { IscsiGlobalConfigUpdate } from 'app/interfaces/iscsi-global-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { StartServiceDialogComponent } from 'app/pages/sharing/components/start-service-dialog/start-service-dialog.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
+import { selectService } from 'app/store/services/services.selectors';
 
 @UntilDestroy()
 @Component({
@@ -59,6 +60,7 @@ export class TargetGlobalConfigurationComponent implements OnInit {
     private dialogService: DialogService,
     private translate: TranslateService,
     private snackbar: SnackbarService,
+    private matDialog: MatDialog,
   ) {}
 
   ngOnInit(): void {
@@ -105,33 +107,20 @@ export class TargetGlobalConfigurationComponent implements OnInit {
     });
   }
 
-  private checkIfServiceShouldBeEnabled(): Observable<unknown> {
-    return this.ws.call('service.query').pipe(
-      switchMap((services) => {
-        const service = _.find(services, { service: ServiceName.Iscsi });
-        if (service.enable) {
-          return EMPTY;
+  private checkIfServiceShouldBeEnabled(): Observable<boolean> {
+    return this.store$.pipe(
+      select(selectService(ServiceName.Iscsi)),
+      switchMap((service) => {
+        if (!service.enable) {
+          return this.matDialog.open(StartServiceDialogComponent, {
+            data: ServiceName.Iscsi,
+            disableClose: true,
+          }).afterClosed();
         }
 
-        return this.dialogService.confirm({
-          title: shared.dialog_title,
-          message: shared.dialog_message,
-          hideCheckbox: true,
-          buttonText: shared.dialog_button,
-        }).pipe(
-          filter(Boolean),
-          switchMap(() => forkJoin([
-            this.ws.call('service.update', [service.id, { enable: true }]),
-            this.ws.call('service.start', [service.service, { silent: false }]),
-          ])),
-          tap(() => {
-            this.snackbar.success(
-              this.translate.instant('The {service} service has been enabled.', { service: 'iSCSI' }),
-            );
-          }),
-          this.errorHandler.catchError(),
-        );
+        return of(true);
       }),
+      untilDestroyed(this),
     );
   }
 

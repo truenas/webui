@@ -3677,7 +3677,6 @@
   "The zvol default block size is automatically chosen based on the number of the disks in the pool for a general use case.": "La taille de bloc par défaut de zvol est automatiquement choisie en fonction du nombre de disques dans le pool pour un cas d'utilisation générale.",
   "The {service} service failed to start.": "Le service {service} n'a pas réussi à démarrer.",
   "The {service} service failed to stop.": "Le service {service} n'a pas réussi à s'arrêter.",
-  "The {service} service has been enabled.": "Le service {service} a été activé.",
   "The {service} service has started.": "Le service {service} a démarré.",
   "Theme": "Theme",
   "There are no alerts.": "Il n'y a pas d'alertes.",

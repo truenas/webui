@@ -3697,7 +3697,6 @@
   "The zvol default block size is automatically chosen based on the number of the disks in the pool for a general use case.": "De standaard blokgrootte van ZVol wordt automatisch gekozen op basis van het aantal schijven in de pool voor een algemeen gebruik.",
   "The {service} service failed to start.": "De {service}-service kon niet worden gestart.",
   "The {service} service failed to stop.": "De {service}-service kon niet worden gestopt.",
-  "The {service} service has been enabled.": "De {service}-service is ingeschakeld.",
   "The {service} service has started.": "De service {service} is gestart.",
   "Theme": "Thema",
   "There are no alerts.": "Er zijn geen waarschuwingen.",
