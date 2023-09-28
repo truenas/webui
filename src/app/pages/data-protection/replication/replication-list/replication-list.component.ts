@@ -5,11 +5,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { formatDistanceToNow } from 'date-fns';
 import {
   filter, switchMap, tap,
 } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
+import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import globalHelptext from 'app/helptext/global-helptext';
 import { Job } from 'app/interfaces/job.interface';
@@ -110,7 +110,7 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
         ...task,
         last_run:
           task.job?.time_finished?.$date
-            ? formatDistanceToNow(task.job?.time_finished?.$date, { addSuffix: true })
+            ? formatDistanceToNowShortened(task.job?.time_finished?.$date)
             : this.translate.instant('N/A'),
         ssh_connection: task.ssh_credentials ? task.ssh_credentials.name : '-',
         task_last_snapshot:

@@ -11,3 +11,9 @@
   display: flex;
   justify-content: flex-end;
 }
+
+:host ::ng-deep {
+  .wide-actions {
+    width: 80px;
+  }
+}

@@ -4,11 +4,11 @@ import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { formatDistanceToNow } from 'date-fns';
 import {
   catchError, EMPTY, filter, switchMap, take, tap,
 } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
+import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import globalHelptext from 'app/helptext/global-helptext';
 import { Job } from 'app/interfaces/job.interface';
@@ -161,7 +161,7 @@ export class RsyncTaskListComponent implements EntityTableConfig<RsyncTaskUi> {
       task.frequency = this.taskService.getTaskCronDescription(task.cron_schedule);
       task.next_run = this.taskService.getTaskNextRun(task.cron_schedule);
       if (task.job?.time_finished?.$date) {
-        task.last_run = formatDistanceToNow(task.job?.time_finished?.$date, { addSuffix: true });
+        task.last_run = formatDistanceToNowShortened(task.job?.time_finished?.$date);
       } else {
         task.last_run = this.translate.instant('N/A');
       }
