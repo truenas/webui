@@ -7,6 +7,7 @@ import { SmartTestTaskUi } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { withTemplateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-with-template/ix-cell-with-template.component';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { SmartTaskFormComponent } from 'app/pages/data-protection/smart-task/smart-task-form/smart-task-form.component';
@@ -51,9 +52,7 @@ export class SmartTaskCardComponent implements OnInit {
       title: helptext_smart.smartlist_column_next_run,
       propertyName: 'next_run',
     }),
-    textColumn({
-      propertyName: 'id',
-    }),
+    withTemplateColumn(),
   ]);
 
   constructor(

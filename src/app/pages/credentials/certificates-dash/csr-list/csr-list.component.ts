@@ -16,6 +16,7 @@ import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { withTemplateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-with-template/ix-cell-with-template.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
@@ -51,9 +52,7 @@ export class CertificateSigningRequestsListComponent implements OnInit {
       propertyName: 'common',
       sortable: true,
     }),
-    textColumn({
-      propertyName: 'id',
-    }),
+    withTemplateColumn(),
   ]);
 
   isLoading$ = new BehaviorSubject<boolean>(true);

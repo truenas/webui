@@ -7,6 +7,7 @@ import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { toggleColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
+import { withTemplateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-with-template/ix-cell-with-template.component';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { ScrubTaskFormComponent } from 'app/pages/data-protection/scrub-task/scrub-task-form/scrub-task-form.component';
@@ -52,9 +53,7 @@ export class ScrubTaskCardComponent implements OnInit {
       cssClass: 'justify-end',
       onRowToggle: (row: ScrubTaskUi) => this.onChangeEnabledState(row),
     }),
-    textColumn({
-      propertyName: 'id',
-    }),
+    withTemplateColumn(),
   ]);
 
   constructor(

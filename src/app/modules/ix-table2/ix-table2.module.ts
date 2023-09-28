@@ -21,6 +21,7 @@ import { IxCellSizeComponent } from 'app/modules/ix-table2/components/ix-table-b
 import { IxCellStateButtonComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
 import { IxCellTextComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { IxCellToggleComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
+import { IxCellWithTemplateComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-with-template/ix-cell-with-template.component';
 import { IxCellYesNoComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
 import { IxTableBodyComponent } from 'app/modules/ix-table2/components/ix-table-body/ix-table-body.component';
 import { IxTableExpandableRowComponent } from 'app/modules/ix-table2/components/ix-table-expandable-row/ix-table-expandable-row.component';
@@ -61,6 +62,7 @@ import { IxTableColumnsSelectorComponent } from './components/ix-table-columns-s
     IxTableHeadComponent,
     IxTableBodyComponent,
     IxTablePagerComponent,
+    IxCellWithTemplateComponent,
     IxTableCellDirective,
     IxTableDetailsRowDirective,
     IxTableBodyCellDirective,

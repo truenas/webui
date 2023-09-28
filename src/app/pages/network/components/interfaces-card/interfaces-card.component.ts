@@ -17,6 +17,7 @@ import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { AllNetworkInterfacesUpdate } from 'app/interfaces/reporting.interface';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { withTemplateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-with-template/ix-cell-with-template.component';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
@@ -60,9 +61,7 @@ export class InterfacesCardComponent implements OnInit {
       type: IpAddressesCellComponent,
       title: this.translate.instant('IP Addresses'),
     },
-    textColumn({
-      propertyName: 'id',
-    }),
+    withTemplateColumn(),
   ]);
 
   readonly helptext = helptext;

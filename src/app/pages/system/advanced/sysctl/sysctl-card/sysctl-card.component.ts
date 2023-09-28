@@ -5,6 +5,7 @@ import { filter, from, switchMap } from 'rxjs';
 import { Tunable } from 'app/interfaces/tunable.interface';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { withTemplateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-with-template/ix-cell-with-template.component';
 import {
   yesNoColumn,
 } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
@@ -44,9 +45,7 @@ export class SysctlCardComponent implements OnInit {
       title: this.translate.instant('Description'),
       propertyName: 'comment',
     }),
-    textColumn({
-      propertyName: 'id',
-    }),
+    withTemplateColumn(),
   ]);
 
   isLoading = false;
