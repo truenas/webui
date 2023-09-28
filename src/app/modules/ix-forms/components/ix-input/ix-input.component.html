@@ -33,7 +33,6 @@
     (input)="input(ixInput)"
     (focus)="focus(ixInput)"
     (blur)="blurred()"
-    (keyup.enter)="onEnter(); trigger.closePanel()"
   />
   <span *ngIf="shouldShowResetInput()" class="reset-input">
     <ix-icon name="mdi-close-circle" (click)="resetInput(ixInput)"></ix-icon>
@@ -59,7 +58,7 @@
   </button>
 
   <mat-autocomplete #auto="matAutocomplete" (optionSelected)="optionSelected($event.option.value)">
-    <ng-container *ngIf="filteredOptions && filteredOptions.length">
+    <ng-container *ngIf="filteredOptions?.length">
       <mat-option
         *ngFor="let option of filteredOptions"
         class="option"

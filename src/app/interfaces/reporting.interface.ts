@@ -97,20 +97,11 @@ export interface ZfsUpdate {
   cache_hit_ratio: number;
 }
 
-export interface ReportingConfig {
-  confirm_rrd_destroy?: boolean;
-  graph_age: number;
-  graph_points: number;
-  id: number;
-}
-
 export interface ReportingQueryOptions {
   unit?: ReportingQueryUnit;
   start?: number;
   end?: number;
 }
-
-export type ReportingConfigUpdate = Omit<ReportingConfig, 'id'>;
 
 export type ReportingQueryParams = [
   [ReportingNameAndId],

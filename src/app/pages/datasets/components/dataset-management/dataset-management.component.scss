@@ -6,6 +6,14 @@ $scrollbar-offset: 20px;
 
 :host {
   display: block;
+
+  &.details-overlay {
+    .table-container {
+      @media (max-width: $breakpoint-hidden) {
+        display: none !important;
+      }
+    }
+  }
 }
 
 .loader-bar {
