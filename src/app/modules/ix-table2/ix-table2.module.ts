@@ -21,6 +21,7 @@ import { IxCellRelativeDateComponent } from 'app/modules/ix-table2/components/ix
 import { IxCellScheduleComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-schedule/ix-cell-schedule.component';
 import { IxCellSizeComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-size/ix-cell-size.component';
 import { IxCellStateButtonComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
+import { IxCellTemplateComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component';
 import { IxCellTextComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { IxCellToggleComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
 import { IxCellYesNoComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
@@ -63,6 +64,7 @@ import { IxTableColumnsSelectorComponent } from './components/ix-table-columns-s
     IxTableHeadComponent,
     IxTableBodyComponent,
     IxTablePagerComponent,
+    IxCellTemplateComponent,
     IxTableCellDirective,
     IxTableDetailsRowDirective,
     IxTableBodyCellDirective,
