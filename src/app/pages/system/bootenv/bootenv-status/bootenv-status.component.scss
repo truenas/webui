@@ -70,7 +70,7 @@ $padding-left: 8px;
   width: 100%;
 
   @media (max-width: $breakpoint-tablet) {
-    grid-template-columns: auto 0 0 0 0 0 0;
+    grid-template-columns: 45px auto 0 0 0 0 0 0;
     width: auto;
   }
 
