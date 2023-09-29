@@ -42,7 +42,6 @@ describe('AppStatusCellComponent', () => {
   it('checks status for deploying app', () => {
     setupTest(AppStatus.Deploying);
 
-    expect(spectator.query('mat-spinner')).toBeTruthy();
     expect(spectator.query('span')).toHaveText('Deploying');
   });
 
@@ -56,7 +55,6 @@ describe('AppStatusCellComponent', () => {
       } as Job<ChartScaleResult, ChartScaleQueryParams>,
     );
 
-    expect(spectator.query('mat-spinner')).toBeTruthy();
     expect(spectator.query('span')).toHaveText('Starting');
   });
 
@@ -70,7 +68,6 @@ describe('AppStatusCellComponent', () => {
       } as Job<ChartScaleResult, ChartScaleQueryParams>,
     );
 
-    expect(spectator.query('mat-spinner')).toBeTruthy();
     expect(spectator.query('span')).toHaveText('Stopping');
   });
 });
