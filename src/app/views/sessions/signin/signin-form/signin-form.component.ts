@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
@@ -23,16 +23,16 @@ import { SigninStore } from 'app/views/sessions/signin/store/signin.store';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SigninFormComponent implements OnInit {
-  hasTwoFactor = false;
+  hasTwoFactor = true;
   showSecurityWarning = false;
 
   protected isLastLoginAttemptFailed = false;
   protected isLastOtpAttemptFailed = false;
 
   form = this.formBuilder.group({
-    username: ['', Validators.required],
-    password: ['', Validators.required],
-    otp: ['', Validators.required],
+    username: [''],
+    password: [''],
+    otp: [''],
   });
 
   protected isLoading$ = this.signinStore.isLoading$;
