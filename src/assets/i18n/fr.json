@@ -165,7 +165,6 @@
   "Snapshots must not have dependent clones": "",
   "Some changes might not take affect until the {name} service has been restarted. Would you like to restart the {name} service now?": "",
   "Sort": "",
-  "Special": "",
   "Standby: TrueNAS Controller {id}": "",
   "Stateful Sets": "",
   "Sysctl \"{name}\" deleted": "",

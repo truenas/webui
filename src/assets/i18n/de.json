@@ -2268,7 +2268,6 @@
   "Spare VDEVs": "",
   "Spares": "",
   "Sparse": "",
-  "Special": "",
   "Special Allocation class, used to create Fusion pools. Optional VDEV type which is used to speed up metadata and small block IO.": "",
   "Specifies the auxiliary directory service ID provider.": "",
   "Specify a size and value such as <i>10 GiB</i>.": "",
