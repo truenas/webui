@@ -13,7 +13,9 @@ export const helptext_system_advanced = {
   fieldset_replication: T('Replication'),
 
   dialog_generate_debug_title: T('Generate Debug File'),
-  dialog_generate_debug_message: T('This operation might take a long time. Proceed?'),
+  dialog_generate_debug_message: T('Warning: Debugs may contain log files with personal information such\
+ as usernames or other identifying information about your system. Please review debugs and redact any\
+ sensitive information before sharing with external entities.'),
   dialog_button_ok: T('Proceed'),
 
   debug_dialog: {

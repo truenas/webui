@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { Router } from '@angular/router';
@@ -11,13 +11,16 @@ import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-jo
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { helptext_system_support as helptext } from 'app/helptext/system/support';
+import { AttachDebugWarningService } from 'app/pages/system/support/services/attach-debug-warning.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-tn-support',
   template: '<entity-form [conf]="this"></entity-form>',
 
 })
-export class TnSupportComponent implements OnInit {
+export class TnSupportComponent implements OnInit, OnDestroy {
+  private subscriptions = new Subscription();
   entityEdit: any;
   screenshot: any;
   subs: any;
@@ -162,9 +165,15 @@ export class TnSupportComponent implements OnInit {
     },
   ];
 
-  constructor(public dialog: MatDialog, public loader: AppLoaderService,
-    public ws: WebSocketService, public dialogService: DialogService, public router: Router,
-    private translate: TranslateService) { }
+  constructor(
+    public dialog: MatDialog,
+    public loader: AppLoaderService,
+    public ws: WebSocketService,
+    public dialogService: DialogService,
+    public router: Router,
+    private translate: TranslateService,
+    private attachDebugWarningService: AttachDebugWarningService
+  ) { }
 
   ngOnInit() {
     setTimeout(() => {
@@ -172,6 +181,11 @@ export class TnSupportComponent implements OnInit {
         _.find(this.fieldConfig, { name: 'FN_col2' }).paraText = '<i class="material-icons">mail</i>' + res;
       });
     }, 2000);
+
+ }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 
   afterInit(entityEdit: any) {
@@ -193,6 +207,8 @@ export class TnSupportComponent implements OnInit {
         },
       },
     ];
+
+    this.listenForAttachDebugChanges();
   }
 
   emailListValidator(name: string) {
@@ -250,35 +266,45 @@ export class TnSupportComponent implements OnInit {
     let url;
     dialogRef.componentInstance.setCall('support.new_ticket', [payload]);
     dialogRef.componentInstance.submit();
-    dialogRef.componentInstance.success.subscribe((res) => {
-      if (res.result) {
-        url = `<a href="${res.result.url}" target="_blank" style="text-decoration:underline;">${res.result.url}</a>`;
-      }
-      if (res.method === 'support.new_ticket' && this.subs && this.subs.length > 0) {
-        this.subs.forEach((item) => {
-          const formData: FormData = new FormData();
-          formData.append('data', JSON.stringify({
-            method: 'support.attach_ticket',
-            params: [{ ticket: (res.result.ticket), filename: item.file.name }],
-          }));
-          formData.append('file', item.file, item.apiEndPoint);
-          dialogRef.componentInstance.wspost(item.apiEndPoint, formData);
-          dialogRef.componentInstance.success.subscribe((res) => {
-            this.resetForm();
-          }),
-          dialogRef.componentInstance.failure.subscribe((res) => {
-            dialogRef.componentInstance.setDescription(res.error);
+    this.subscriptions.add(
+      dialogRef.componentInstance.success.subscribe((res) => {
+        if (res.result) {
+          url = `<a href="${res.result.url}" target="_blank" style="text-decoration:underline;">${res.result.url}</a>`;
+        }
+        if (res.method === 'support.new_ticket' && this.subs && this.subs.length > 0) {
+          this.subs.forEach((item) => {
+            const formData: FormData = new FormData();
+            formData.append('data', JSON.stringify({
+              method: 'support.attach_ticket',
+              params: [{ ticket: (res.result.ticket), filename: item.file.name }],
+            }));
+            formData.append('file', item.file, item.apiEndPoint);
+            dialogRef.componentInstance.wspost(item.apiEndPoint, formData);
+            this.subscriptions.add(
+              dialogRef.componentInstance.success.subscribe((res) => {
+                this.resetForm();
+              })
+            );
+
+            this.subscriptions.add(
+              dialogRef.componentInstance.failure.subscribe((res) => {
+                dialogRef.componentInstance.setDescription(res.error);
+              })
+            );
           });
-        });
-        dialogRef.componentInstance.setDescription(url);
-      } else {
-        dialogRef.componentInstance.setDescription(url);
-        this.resetForm();
-      }
-    });
-    dialogRef.componentInstance.failure.subscribe((res) => {
-      dialogRef.componentInstance.setDescription(res.error);
-    });
+          dialogRef.componentInstance.setDescription(url);
+        } else {
+          dialogRef.componentInstance.setDescription(url);
+          this.resetForm();
+        }
+      })
+    );
+
+    this.subscriptions.add(
+      dialogRef.componentInstance.failure.subscribe((res) => {
+        dialogRef.componentInstance.setDescription(res.error);
+      })
+    );
   }
 
   updater(file: any, parent: any) {
@@ -304,5 +330,14 @@ export class TnSupportComponent implements OnInit {
     this.entityEdit.formGroup.controls['environment'].setValue('production');
     this.entityEdit.formGroup.controls['criticality'].setValue('inquiry');
     this.subs = [];
+  }
+
+  private listenForAttachDebugChanges(): void {
+    const control = this.entityEdit.formGroup.controls['attach_debug'] as FormControl;
+
+    this.subscriptions.add(
+      this.attachDebugWarningService.handleAttachDebugChanges(control)
+        .subscribe((checked) => control.patchValue(checked))
+    );
   }
 }

@@ -11,12 +11,15 @@ import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.in
 import { WebSocketService } from 'app/services/';
 import { helptext_system_support as helptext } from 'app/helptext/system/support';
 import { Subscription } from 'rxjs';
+import { AttachDebugWarningService } from 'app/pages/system/support/services/attach-debug-warning.service';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-fn-support',
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class FnSupportComponent implements OnDestroy {
+  private subscriptions = new Subscription();
   entityEdit: EntityFormComponent;
   category: any;
   screenshot: any;
@@ -118,27 +121,31 @@ export class FnSupportComponent implements OnDestroy {
     },
   ];
 
-  private categoriesSubscription: Subscription;
-
-  constructor(protected ws: WebSocketService, protected dialog: MatDialog,
-    protected translate: TranslateService) { }
+  constructor(
+    protected ws: WebSocketService,
+    protected dialog: MatDialog,
+    protected translate: TranslateService,
+    private attachDebugWarningService: AttachDebugWarningService
+  ) { }
 
   afterInit(entityEdit: any) {
     this.entityEdit = entityEdit;
     setTimeout(() => {
-      this.translate.get(helptext.contactUs).subscribe((res) => {
-        _.find(this.fieldConfig, { name: 'FN_col2' }).paraText = '<i class="material-icons">mail</i>' + res;
-      });
+      this.subscriptions.add(
+        this.translate.get(helptext.contactUs).subscribe((res) => {
+          _.find(this.fieldConfig, { name: 'FN_col2' }).paraText = '<i class="material-icons">mail</i>' + res;
+        })
+      );
     }, 2000);
 
     this.category = _.find(this.fieldConfig, { name: 'category' });
     this.loadCategoriesOnAuth();
+
+    this.listenForAttachDebugChanges();
   }
 
   ngOnDestroy(): void {
-    if (this.categoriesSubscription) {
-      this.categoriesSubscription.unsubscribe();
-    }
+    this.subscriptions.unsubscribe();
   }
 
   customSubmit(values): void {
@@ -160,39 +167,49 @@ export class FnSupportComponent implements OnDestroy {
     let url;
     dialogRef.componentInstance.setCall('support.new_ticket', [payload]);
     dialogRef.componentInstance.submit();
-    dialogRef.componentInstance.success.subscribe((res) => {
-      if (res.result) {
-        url = `<a href="${res.result.url}" target="_blank" style="text-decoration:underline;">${res.result.url}</a>`;
-      }
-      if (res.method === 'support.new_ticket' && this.subs && this.subs.length > 0) {
-        this.subs.forEach((item) => {
-          const formData: FormData = new FormData();
-          formData.append('data', JSON.stringify({
-            method: 'support.attach_ticket',
-            params: [{
-              ticket: (res.result.ticket),
-              filename: item.file.name,
-              token: payload.token,
-            }],
-          }));
-          formData.append('file', item.file, item.apiEndPoint);
-          dialogRef.componentInstance.wspost(item.apiEndPoint, formData);
-          dialogRef.componentInstance.success.subscribe(() => {
-            this.resetForm();
+    this.subscriptions.add(
+      dialogRef.componentInstance.success.subscribe((res) => {
+        if (res.result) {
+          url = `<a href="${res.result.url}" target="_blank" style="text-decoration:underline;">${res.result.url}</a>`;
+        }
+        if (res.method === 'support.new_ticket' && this.subs && this.subs.length > 0) {
+          this.subs.forEach((item) => {
+            const formData: FormData = new FormData();
+            formData.append('data', JSON.stringify({
+              method: 'support.attach_ticket',
+              params: [{
+                ticket: (res.result.ticket),
+                filename: item.file.name,
+                token: payload.token,
+              }],
+            }));
+            formData.append('file', item.file, item.apiEndPoint);
+            dialogRef.componentInstance.wspost(item.apiEndPoint, formData);
+            this.subscriptions.add(
+              dialogRef.componentInstance.success.subscribe(() => {
+                this.resetForm();
+              })
+            );
+
+            this.subscriptions.add(
+              dialogRef.componentInstance.failure.subscribe((res) => {
+                dialogRef.componentInstance.setDescription(res.error);
+              })
+            );
           });
-          dialogRef.componentInstance.failure.subscribe((res) => {
-            dialogRef.componentInstance.setDescription(res.error);
-          });
-        });
-        dialogRef.componentInstance.setDescription(url);
-      } else {
-        dialogRef.componentInstance.setDescription(url);
-        this.resetForm();
-      }
-    });
-    dialogRef.componentInstance.failure.subscribe((res) => {
-      dialogRef.componentInstance.setDescription(res.error);
-    });
+          dialogRef.componentInstance.setDescription(url);
+        } else {
+          dialogRef.componentInstance.setDescription(url);
+          this.resetForm();
+        }
+      })
+    );
+
+    this.subscriptions.add(
+      dialogRef.componentInstance.failure.subscribe((res) => {
+        dialogRef.componentInstance.setDescription(res.error);
+      })
+    );
   }
 
   resetForm() {
@@ -219,27 +236,38 @@ export class FnSupportComponent implements OnDestroy {
   }
 
   private loadCategoriesOnAuth(): void {
-    this.entityEdit.formGroup.controls['token'].valueChanges.subscribe((token) => {
-      if (!token) {
-        return;
-      }
-
-      this.category.isLoading = true;
-      this.ws.call('support.fetch_categories', [token]).subscribe((res) => {
-        this.category.isLoading = false;
-        this.entityEdit.setDisabled('category', false);
-        const options = [];
-        for (const property in res) {
-          if (res.hasOwnProperty(property)) {
-            options.push({ label: property, value: res[property] });
-          }
-          this.category.options = _.sortBy(options, ['label']);
+    this.subscriptions.add(
+      this.entityEdit.formGroup.controls['token'].valueChanges.subscribe((token) => {
+        if (!token) {
+          return;
         }
-      }, (error) => {
-        this.entityEdit.setDisabled('category', true);
-        this.category.isLoading = false;
-        new EntityUtils().handleWSError(this, error, this.dialog);
-      });
-    });
+
+        this.category.isLoading = true;
+        this.ws.call('support.fetch_categories', [token]).subscribe((res) => {
+          this.category.isLoading = false;
+          this.entityEdit.setDisabled('category', false);
+          const options = [];
+          for (const property in res) {
+            if (res.hasOwnProperty(property)) {
+              options.push({ label: property, value: res[property] });
+            }
+            this.category.options = _.sortBy(options, ['label']);
+          }
+        }, (error) => {
+          this.entityEdit.setDisabled('category', true);
+          this.category.isLoading = false;
+          new EntityUtils().handleWSError(this, error, this.dialog);
+        });
+      })
+    );
+  }
+
+  private listenForAttachDebugChanges(): void {
+    const control = this.entityEdit.formGroup.controls['attach_debug'] as FormControl;
+
+    this.subscriptions.add(
+      this.attachDebugWarningService.handleAttachDebugChanges(control)
+        .subscribe((checked) => control.patchValue(checked))
+    );
   }
 }
