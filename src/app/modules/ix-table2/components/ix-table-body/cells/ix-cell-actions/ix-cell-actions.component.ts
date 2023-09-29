@@ -6,7 +6,7 @@ import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-
   templateUrl: './ix-cell-actions.component.html',
   styleUrls: ['./ix-cell-actions.component.scss'],
 })
-export class IxCellInlineIconActionsComponent<T> extends ColumnComponent<T> {
+export class IxCellActionsComponent<T> extends ColumnComponent<T> {
   actions: {
     iconName: string;
     onClick: (row: T) => void;
@@ -15,8 +15,8 @@ export class IxCellInlineIconActionsComponent<T> extends ColumnComponent<T> {
   }[];
 }
 
-export function inlineIconActionsColumn<T>(
-  options: Partial<IxCellInlineIconActionsComponent<T>>,
-): Column<T, IxCellInlineIconActionsComponent<T>> {
-  return { type: IxCellInlineIconActionsComponent, ...options };
+export function actionsColumn<T>(
+  options: Partial<IxCellActionsComponent<T>>,
+): Column<T, IxCellActionsComponent<T>> {
+  return { type: IxCellActionsComponent, ...options };
 }

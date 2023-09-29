@@ -9,7 +9,7 @@ import { AuthSession, AuthSessionCredentialsData } from 'app/interfaces/auth-ses
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
 import { dateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-date/ix-cell-date.component';
-import { fromTemplateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-from-template/ix-cell-from-template.component';
+import { templateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -51,7 +51,7 @@ export class SessionsCardComponent {
       title: this.translate.instant('Start session time'),
       propertyName: 'created_at',
     }),
-    fromTemplateColumn(),
+    templateColumn(),
   ]);
 
   constructor(

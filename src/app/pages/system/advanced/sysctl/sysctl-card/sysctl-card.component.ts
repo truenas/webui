@@ -4,7 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { filter, from, switchMap } from 'rxjs';
 import { Tunable } from 'app/interfaces/tunable.interface';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
-import { fromTemplateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-from-template/ix-cell-from-template.component';
+import { templateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import {
   yesNoColumn,
@@ -45,7 +45,7 @@ export class SysctlCardComponent implements OnInit {
       title: this.translate.instant('Description'),
       propertyName: 'comment',
     }),
-    fromTemplateColumn(),
+    templateColumn(),
   ]);
 
   isLoading = false;

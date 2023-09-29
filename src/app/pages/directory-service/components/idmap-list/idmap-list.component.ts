@@ -9,7 +9,7 @@ import { IdmapName } from 'app/enums/idmap.enum';
 import helptext from 'app/helptext/directory-service/idmap';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
-import { inlineIconActionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
+import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table2/utils';
@@ -70,7 +70,7 @@ export default class IdmapListComponent implements OnInit {
       propertyName: 'cert_name',
       sortable: true,
     }),
-    inlineIconActionsColumn({
+    actionsColumn({
       actions: [
         {
           iconName: 'edit',

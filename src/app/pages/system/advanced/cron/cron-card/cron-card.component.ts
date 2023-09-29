@@ -7,9 +7,9 @@ import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { Cronjob } from 'app/interfaces/cronjob.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
-import { fromTemplateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-from-template/ix-cell-from-template.component';
 import { relativeDateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
 import { scheduleColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-schedule/ix-cell-schedule.component';
+import { templateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { yesNoColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
 import { createTable } from 'app/modules/ix-table2/utils';
@@ -61,7 +61,7 @@ export class CronCardComponent implements OnInit {
       title: this.translate.instant('Next Run'),
       getValue: (row) => this.taskService.getTaskNextTime(row.cron_schedule) as unknown,
     }),
-    fromTemplateColumn({
+    templateColumn({
       cssClass: 'wide-actions',
     }),
   ]);
