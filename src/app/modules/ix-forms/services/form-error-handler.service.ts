@@ -66,13 +66,16 @@ export class FormErrorHandlerService {
           .find((controlOfArray) => isExactMatch(errorMessage, controlOfArray.value));
       }
 
-      control.setErrors({
-        manualValidateError: true,
-        manualValidateErrorMsg: errorMessage,
-        ixManualValidateError: { message: errorMessage },
-      });
-
-      control.markAsTouched();
+      if (!control) {
+        this.dialog.error(this.errorHandler.parseError(error));
+      } else {
+        control.setErrors({
+          manualValidateError: true,
+          manualValidateErrorMsg: errorMessage,
+          ixManualValidateError: { message: errorMessage },
+        });
+        control.markAsTouched();
+      }
     }
   }
 

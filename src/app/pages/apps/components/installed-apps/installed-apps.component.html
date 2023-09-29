@@ -89,7 +89,7 @@
 
     <div class="app-search">
       <ix-fake-progress-bar *ngIf="!showMobileDetails" [loading]="isLoading"></ix-fake-progress-bar>
-    
+
       <ix-search-input
         [disabled]="!dataSource.length"
         [value]="filterString"
@@ -97,7 +97,13 @@
       ></ix-search-input>
     </div>
 
-    <div class="app-wrapper">
+    <div class="app-wrapper"
+      matSort
+      matSortActive="application"
+      matSortDirection="asc"
+      matSortDisableClear
+      (matSortChange)="sortChanged($event)"
+    >
       <div class="app-inner">
         <div class="app-header-row">
           <div>
@@ -109,12 +115,26 @@
                 [checked]="allAppsChecked"
                 (change)="toggleAppsChecked($event.checked)"
               ></mat-checkbox>
-              {{ 'Application' | translate }}
             </span>
           </div>
-          <div>{{ 'Status' | translate }}</div>
-          <!-- TODO: Waiting for the https://ixsystems.atlassian.net/browse/NAS-121614 CPU / RAM / DISK -->
-          <div class="app-update-header">
+          <div
+            [matColumnDef]="sortableField.Application"
+            [mat-sort-header]="sortableField.Application"
+          >
+            {{ 'Application' | translate }}
+          </div>
+          <div
+            [matColumnDef]="sortableField.Status"
+            [mat-sort-header]="sortableField.Status"
+          >
+            {{ 'Status' | translate }}
+          </div>
+          <div
+            class="app-update-header"
+            [matColumnDef]="sortableField.Updates"
+            [mat-sort-header]="hasUpdates ? sortableField.Updates : null"
+            [disabled]="!hasUpdates"
+          >
             <span>{{ 'Updates' | translate }}</span>
             <ix-icon
               *ngIf="hasUpdates"

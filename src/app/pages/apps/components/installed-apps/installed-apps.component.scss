@@ -92,7 +92,7 @@ $header-height: 193px;
   background-color: var(--bg2);
   padding: 16px;
   position: relative;
-  
+
   ix-fake-progress-bar {
     height: 2px;
     left: 0;
@@ -132,10 +132,10 @@ $header-height: 193px;
 
 ix-app-row,
 .app-header-row {
-  grid-template-columns: minmax(200px, auto) minmax(100px, 130px) minmax(100px, 115px) 60px;
+  grid-template-columns: 40px minmax(160px, auto) minmax(100px, 130px) minmax(100px, 115px) 60px;
 
   @media (max-width: $breakpoint-tablet) {
-    grid-template-columns: auto auto 0 0 0 0 0;
+    grid-template-columns: 45px auto 0 0 0 0 0 0;
   }
 }
 
@@ -155,7 +155,11 @@ ix-app-row,
   z-index: 1;
 
   > div {
+    align-items: center;
+    display: flex;
     font-weight: bold;
+    height: 100%;
+    justify-content: flex-start;
     padding: 4px 0;
 
     @media (max-width: $breakpoint-tablet) {
@@ -183,9 +187,11 @@ ix-app-row,
   }
 
   .app-name-header {
-    background: linear-gradient(90deg, var(--bg1) 0%, var(--bg1) calc(100% - 13px), transparent 100%);
+    align-items: center;
+    background: linear-gradient(90deg, var(--bg1) 0%, var(--bg1) 0, transparent 80%);
+    display: flex;
     padding-left: 15px;
-    padding-right: 15px;
+    padding-right: 0;
   }
 
   .app-update-header {
@@ -197,6 +203,7 @@ ix-app-row,
       color: var(--yellow);
       font-size: 18px;
       line-height: 1;
+      margin-left: 4px;
     }
   }
 }

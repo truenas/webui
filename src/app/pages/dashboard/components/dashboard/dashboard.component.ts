@@ -24,6 +24,7 @@ import { VolumesData, VolumeData } from 'app/interfaces/volume-data.interface';
 import { DashboardFormComponent } from 'app/pages/dashboard/components/dashboard-form/dashboard-form.component';
 import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
 import { DashboardStore } from 'app/pages/dashboard/store/dashboard-store.service';
+import { ResourcesUsageStore } from 'app/pages/dashboard/store/resources-usage-store.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -126,6 +127,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
     private store$: Store<AppState>,
     @Inject(WINDOW) private window: Window,
     private dashboardStore$: DashboardStore,
+    private resourcesUsageStore$: ResourcesUsageStore,
   ) {}
 
   ngAfterViewInit(): void {
@@ -138,6 +140,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
         this.isLoaded = !isLoading;
       },
     });
+    this.subscribeToResourceUsageUpdates();
     this.generateDefaultConfig();
   }
 
@@ -267,6 +270,10 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
     conf.push({ name: WidgetName.Network, rendered: true, id: conf.length.toString() });
 
     this.availableWidgets = conf;
+  }
+
+  private subscribeToResourceUsageUpdates(): void {
+    this.resourcesUsageStore$.getResourceUsageUpdates().pipe(untilDestroyed(this)).subscribe();
   }
 
   volumeDataFromConfig(item: DashConfigItem): VolumesData | VolumeData {
