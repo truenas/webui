@@ -157,7 +157,7 @@ export class CloudsyncListComponent implements OnInit, AfterViewInit {
   runNow(row: CloudSyncTaskUi): void {
     this.dialogService.confirm({
       title: this.translate.instant('Run Now'),
-      message: this.translate.instant('Run this Cloud Sync now?'),
+      message: this.translate.instant('Run «{name}» Cloud Sync now?', { name: row.description }),
       hideCheckbox: true,
     }).pipe(
       filter(Boolean),

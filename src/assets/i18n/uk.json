@@ -263,7 +263,6 @@
   "Restarting the service would mean to stop the {serviceName} service and close these connections?": "",
   "Resume Scrub": "",
   "Run As Context": "",
-  "Run this Cloud Sync now?": "",
   "Run «{name}» Cloud Sync now?": "",
   "Run «{name}» Rsync now?": "",
   "S.M.A.R.T.": "",

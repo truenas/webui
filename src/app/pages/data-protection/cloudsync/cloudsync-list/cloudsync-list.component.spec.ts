@@ -132,7 +132,7 @@ describe('CloudsyncListComponent', () => {
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Run Now',
-      message: 'Run this Cloud Sync now?',
+      message: 'Run «custom-cloudlist» Cloud Sync now?',
       hideCheckbox: true,
     });
 
