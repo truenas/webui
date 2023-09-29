@@ -1,19 +1,84 @@
 import { Injectable } from '@angular/core';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { Observable, of } from 'rxjs';
+import { Observable, Subject, of } from 'rxjs';
+import { ApiJobDirectory, ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import {
   ConfirmOptions,
   ConfirmOptionsWithSecondaryCheckbox,
   DialogWithSecondaryCheckboxResult,
 } from 'app/interfaces/dialog.interface';
 import { ErrorReport } from 'app/interfaces/error-report.interface';
+import { Job, JobProgress } from 'app/interfaces/job.interface';
 import { ConfirmDialogComponent } from 'app/modules/common/dialog/confirm-dialog/confirm-dialog.component';
 import { ErrorDialogComponent } from 'app/modules/common/dialog/error-dialog/error-dialog.component';
 import { FullScreenDialogComponent } from 'app/modules/common/dialog/full-screen-dialog/full-screen-dialog.component';
 import { GeneralDialogComponent, GeneralDialogConfig } from 'app/modules/common/dialog/general-dialog/general-dialog.component';
 import { InfoDialogComponent } from 'app/modules/common/dialog/info-dialog/info-dialog.component';
+import { JobProgressDialogComponent, JobProgressDialogConfig } from 'app/modules/common/dialog/job-progress/job-progress-dialog.component';
 import { MultiErrorDialogComponent } from 'app/modules/common/dialog/multi-error-dialog/multi-error-dialog.component';
+
+export class JobProgressDialog {
+  private readonly onSuccess$ = new Subject<Job>();
+  private readonly onAbort$ = new Subject<Job>();
+  private readonly onFailure$ = new Subject<Job>();
+  private readonly _onProgress$ = new Subject<JobProgress>();
+
+  readonly afterSuccess$ = this.onSuccess$.asObservable();
+  readonly afterAbort$ = this.onAbort$.asObservable();
+  readonly afterFailure$ = this.onFailure$.asObservable();
+  readonly onProgress$ = this._onProgress$.asObservable();
+
+  private _matDialogRef: MatDialogRef<JobProgressDialogComponent>;
+
+  set matDialogRef(ref: MatDialogRef<JobProgressDialogComponent>) {
+    this._matDialogRef = ref;
+  }
+
+  get matDialogRef(): MatDialogRef<JobProgressDialogComponent> {
+    return this._matDialogRef;
+  }
+
+  afterSuccess(job: Job): void {
+    this.onSuccess$.next(job);
+  }
+
+  afterAbort(job: Job): void {
+    this.onAbort$.next(job);
+  }
+
+  afterFailure(job: Job): void {
+    this.onFailure$.next(job);
+  }
+
+  onProgress(progress: JobProgress): void {
+    this._onProgress$.next(progress);
+  }
+}
+
+export class JobProgressDialogRef {
+  constructor(private readonly jobProgressDialog: JobProgressDialog) { }
+
+  getDialogRef(): MatDialogRef<JobProgressDialogComponent> {
+    return this.jobProgressDialog.matDialogRef;
+  }
+
+  onSuccess(): Observable<Job> {
+    return this.jobProgressDialog.afterSuccess$;
+  }
+
+  onAbort(): Observable<Job> {
+    return this.jobProgressDialog.afterAbort$;
+  }
+
+  onFailure(): Observable<Job> {
+    return this.jobProgressDialog.afterFailure$;
+  }
+
+  onProgressUpdate(): Observable<JobProgress> {
+    return this.jobProgressDialog.onProgress$;
+  }
+}
 
 @UntilDestroy()
 @Injectable({
@@ -119,5 +184,39 @@ export class DialogService {
     for (const openDialog of (this.dialog.openDialogs || [])) {
       openDialog.close();
     }
+  }
+
+  jobProgress<M extends ApiJobMethod>(
+    job$: Observable<Job<ApiJobDirectory[M]['response']>>,
+    config: {
+      title: string;
+      description: string;
+    },
+    flags: {
+      showRealtimeLogs: boolean;
+      autoCloseOnSuccess: boolean;
+    } = {
+      showRealtimeLogs: false,
+      autoCloseOnSuccess: true,
+    },
+  ): JobProgressDialogRef {
+    const jobProgressDialog: JobProgressDialog = new JobProgressDialog();
+
+    const dialogRef = this.dialog.open(JobProgressDialogComponent, {
+      data: {
+        job$,
+        callbacks: {
+          onSuccess: (job: Job) => jobProgressDialog.afterSuccess(job),
+          onProgress: (progress: JobProgress) => jobProgressDialog.onProgress(progress),
+          onAbort: (job: Job) => jobProgressDialog.afterAbort(job),
+          onFailure: (job: Job) => jobProgressDialog.afterFailure(job),
+        },
+        config,
+        flags,
+      } as JobProgressDialogConfig,
+    });
+    jobProgressDialog.matDialogRef = dialogRef;
+
+    return new JobProgressDialogRef(jobProgressDialog);
   }
 }
