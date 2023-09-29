@@ -43,12 +43,9 @@ export default {
   ldap_idmap_backend_tooltip: T('Backend used to map Windows security \
  identifiers (SIDs) to UNIX UIDs and GIDs. To configure the selected \
  backend, click <i>EDIT IDMAP</i>.'),
-  ldap_has_samba_schema_tooltip: T('Only set LDAP authentication for\
- SMB shares is required and the LDAP server is already configured with Samba attributes. DEPRECATED: \
- Support for Samba Schema is <a\
- href="https://www.samba.org/samba/history/samba-4.13.0.html" target="_blank">officially deprecated in Samba 4.13</a>. \
- The feature will be removed after Samba 4.14. Users should begin \
- upgrading legacy Samba domains to Samba AD domains.'),
+  ldap_has_samba_schema_tooltip: T('Use Samba LDAP schema extensions to provide support for LDAP\
+ authentication with SMB shares. DEPRECATED: Support for legacy samba schema for LDAP has been\
+ deprecated and will be removed in a future TrueNAS version.'),
   ldap_auxiliary_parameters_tooltip: T('Additional options for <a\
  href="https://arthurdejong.org/nss-pam-ldapd/nslcd.conf.5"\
  target="_blank">nslcd.conf</a>.'),
