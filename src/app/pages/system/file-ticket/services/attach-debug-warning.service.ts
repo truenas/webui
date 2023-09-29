@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, filter, pairwise, startWith, switchMap } from 'rxjs';
+import {
+  Observable, filter, pairwise, startWith, switchMap,
+} from 'rxjs';
 import { DialogService } from 'app/services/dialog.service';
 
 @Injectable()
 export class AttachDebugWarningService {
-
   constructor(private dialogService: DialogService, private translate: TranslateService) { }
 
   handleAttachDebugChanges(control: FormControl<boolean>): Observable<boolean> {
