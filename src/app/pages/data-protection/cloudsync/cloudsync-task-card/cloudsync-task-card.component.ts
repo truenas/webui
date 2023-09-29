@@ -75,7 +75,6 @@ export class CloudSyncTaskCardComponent implements OnInit {
     templateColumn({
       cssClass: 'wide-actions',
       sortable: true,
-      title: 'Actions',
     }),
   ]);
 
