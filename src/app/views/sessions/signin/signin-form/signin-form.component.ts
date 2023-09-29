@@ -23,7 +23,7 @@ import { SigninStore } from 'app/views/sessions/signin/store/signin.store';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SigninFormComponent implements OnInit {
-  hasTwoFactor = true;
+  hasTwoFactor = false;
   showSecurityWarning = false;
 
   protected isLastLoginAttemptFailed = false;
