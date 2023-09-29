@@ -429,6 +429,8 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
             (b.update_available || b.container_images_update_available) ? 1 : 0,
             isAsc,
           );
+        default:
+          return doSortCompare(a.name, b.name, isAsc);
       }
     });
   }
