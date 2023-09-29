@@ -5,7 +5,7 @@ import { NgxUploaderModule } from 'ngx-uploader';
 
 import { QRCodeModule } from 'angular2-qrcode';
 import { EntityModule } from '../common/entity/entity.module';
-
+import { AttachDebugWarningService } from './support/services/attach-debug-warning.service'
 import { MaterialModule } from '../../appMaterial.module';
 import { MarkdownModule } from 'ngx-markdown';
 import { routing } from './system.routing';
@@ -125,6 +125,8 @@ import { QRDialog } from './two-factor/two-factor.component';
     QRDialog,
   ],
   entryComponents: [QRDialog],
-  providers: [],
+  providers: [
+    AttachDebugWarningService
+  ],
 })
 export class SystemModule {}
