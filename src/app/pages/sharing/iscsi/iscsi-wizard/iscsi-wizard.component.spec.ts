@@ -6,6 +6,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatStepperModule } from '@angular/material/stepper';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { Store } from '@ngrx/store';
+import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
@@ -27,11 +29,15 @@ import { PortalWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/
 import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { AppState } from 'app/store';
+import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
+import { selectServices } from 'app/store/services/services.selectors';
 
 describe('IscsiWizardComponent', () => {
   let spectator: Spectator<IscsiWizardComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
+  let store$: Store<AppState>;
 
   const createComponent = createComponentFactory({
     component: IscsiWizardComponent,
@@ -52,13 +58,6 @@ describe('IscsiWizardComponent', () => {
         confirm: jest.fn(() => of(true)),
       }),
       mockWebsocket([
-        mockCall('service.query', [{
-          service: ServiceName.Iscsi,
-          id: 4,
-          enable: false,
-          state: ServiceStatus.Running,
-        } as Service]),
-        mockCall('service.update'),
         mockCall('service.start'),
         mockCall('iscsi.global.sessions', [] as IscsiGlobalSession[]),
         mockCall('service.restart'),
@@ -76,6 +75,17 @@ describe('IscsiWizardComponent', () => {
         mockCall('iscsi.target.create', { id: 15 } as IscsiTarget),
         mockCall('iscsi.targetextent.create', { id: 16 } as IscsiTargetExtent),
       ]),
+      provideMockStore({
+        selectors: [{
+          selector: selectServices,
+          value: [{
+            service: ServiceName.Iscsi,
+            id: 4,
+            enable: false,
+            state: ServiceStatus.Stopped,
+          } as Service],
+        }],
+      }),
       mockProvider(IxSlideInRef),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
@@ -86,6 +96,8 @@ describe('IscsiWizardComponent', () => {
 
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
+    store$ = spectator.inject(Store);
+    jest.spyOn(store$, 'dispatch');
   });
 
   it('creates objects when wizard is submitted', fakeAsync(async () => {
@@ -162,6 +174,8 @@ describe('IscsiWizardComponent', () => {
       extent: 11,
       target: 15,
     }]);
+
+    expect(store$.dispatch).toHaveBeenCalledWith(checkIfServiceIsEnabled({ serviceName: ServiceName.Iscsi }));
 
     expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
   }));

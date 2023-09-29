@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
@@ -13,11 +14,11 @@ import { Service } from 'app/interfaces/service.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { StartServiceDialogComponent } from 'app/pages/sharing/components/start-service-dialog/start-service-dialog.component';
 import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
+import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { selectServices } from 'app/store/services/services.selectors';
 import { TargetGlobalConfigurationComponent } from './target-global-configuration.component';
 
@@ -25,7 +26,8 @@ describe('TargetGlobalConfigurationComponent', () => {
   let spectator: Spectator<TargetGlobalConfigurationComponent>;
   let loader: HarnessLoader;
   let ws: WebSocketService;
-  let store$: MockStore<AppState>;
+  let mockStore$: MockStore<AppState>;
+  let store$: Store<AppState>;
 
   const createComponent = createComponentFactory({
     component: TargetGlobalConfigurationComponent,
@@ -69,7 +71,13 @@ describe('TargetGlobalConfigurationComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     ws = spectator.inject(WebSocketService);
-    store$ = spectator.inject(MockStore);
+    mockStore$ = spectator.inject(MockStore);
+    store$ = spectator.inject(Store);
+    jest.spyOn(store$, 'dispatch');
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   it('loads iSCSI global config when component is initialized', () => {
@@ -112,32 +120,30 @@ describe('TargetGlobalConfigurationComponent', () => {
   });
 
   it('checks if iSCSI service is enabled and does nothing if it is', async () => {
-    store$.overrideSelector(selectServices, [{
+    mockStore$.overrideSelector(selectServices, [{
+      id: 13,
       service: ServiceName.Iscsi,
       enable: true,
     } as Service]);
+    mockStore$.refreshState();
+
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(MatDialog).open).not.toHaveBeenCalledWith(StartServiceDialogComponent, {
-      data: ServiceName.Iscsi,
-      disableClose: true,
-    });
+    expect(store$.dispatch).toHaveBeenCalledWith(checkIfServiceIsEnabled({ serviceName: ServiceName.Iscsi }));
   });
 
   it('if iSCSI service is not running, asks user if service needs to be enabled', async () => {
-    store$.overrideSelector(selectServices, [{
+    mockStore$.overrideSelector(selectServices, [{
       id: 13,
       service: ServiceName.Iscsi,
       enable: false,
     } as Service]);
+    mockStore$.refreshState();
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(StartServiceDialogComponent, {
-      data: ServiceName.Iscsi,
-      disableClose: true,
-    });
+    expect(store$.dispatch).toHaveBeenCalledWith(checkIfServiceIsEnabled({ serviceName: ServiceName.Iscsi }));
   });
 });

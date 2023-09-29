@@ -2,26 +2,19 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Store, select } from '@ngrx/store';
-import { TranslateService } from '@ngx-translate/core';
-import { Observable, of,
-} from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { Store } from '@ngrx/store';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { IscsiGlobalConfigUpdate } from 'app/interfaces/iscsi-global-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { StartServiceDialogComponent } from 'app/pages/sharing/components/start-service-dialog/start-service-dialog.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
-import { selectService } from 'app/store/services/services.selectors';
+import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 
 @UntilDestroy()
 @Component({
@@ -58,9 +51,6 @@ export class TargetGlobalConfigurationComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private formErrorHandler: FormErrorHandlerService,
     private dialogService: DialogService,
-    private translate: TranslateService,
-    private snackbar: SnackbarService,
-    private matDialog: MatDialog,
   ) {}
 
   ngOnInit(): void {
@@ -73,11 +63,10 @@ export class TargetGlobalConfigurationComponent implements OnInit {
     this.setLoading(true);
     const values = this.form.value as IscsiGlobalConfigUpdate;
 
+    this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Iscsi }));
+
     this.ws.call('iscsi.global.update', [values])
-      .pipe(
-        switchMap(() => this.checkIfServiceShouldBeEnabled()),
-        untilDestroyed(this),
-      )
+      .pipe(untilDestroyed(this))
       .subscribe({
         complete: () => {
           this.setLoading(false);
@@ -105,23 +94,6 @@ export class TargetGlobalConfigurationComponent implements OnInit {
         this.setLoading(false);
       },
     });
-  }
-
-  private checkIfServiceShouldBeEnabled(): Observable<boolean> {
-    return this.store$.pipe(
-      select(selectService(ServiceName.Iscsi)),
-      switchMap((service) => {
-        if (!service.enable) {
-          return this.matDialog.open(StartServiceDialogComponent, {
-            data: ServiceName.Iscsi,
-            disableClose: true,
-          }).afterClosed();
-        }
-
-        return of(true);
-      }),
-      untilDestroyed(this),
-    );
   }
 
   private setLoading(value: boolean): void {

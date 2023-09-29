@@ -1,10 +1,17 @@
 import { Injectable } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { mergeMap, map, switchMap, filter, EMPTY, catchError, of } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { mergeMap, map, switchMap, filter, EMPTY, catchError, of, distinctUntilChanged } from 'rxjs';
 import { ServiceName } from 'app/enums/service-name.enum';
+import { ServiceStatus } from 'app/enums/service-status.enum';
+import { StartServiceDialogComponent } from 'app/pages/sharing/components/start-service-dialog/start-service-dialog.component';
 import { WebSocketService } from 'app/services/ws.service';
+import { AppState } from 'app/store';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
-import { serviceChanged, servicesLoaded } from 'app/store/services/services.actions';
+import { checkIfServiceIsEnabled, serviceChanged, serviceStartFailed, servicesLoaded } from 'app/store/services/services.actions';
+import { selectService } from 'app/store/services/services.selectors';
+import { serviceEnabled } from './services.actions';
 
 const hiddenServices: ServiceName[] = [ServiceName.Gluster, ServiceName.Afp];
 
@@ -36,8 +43,31 @@ export class ServicesEffects {
     }),
   ));
 
+  checkIfServiceIsEnabled$ = createEffect(() => this.actions$.pipe(
+    ofType(checkIfServiceIsEnabled),
+    filter(({ serviceName }) => Boolean(serviceName)),
+    switchMap(({ serviceName }) => this.store$.select(selectService(serviceName))),
+    distinctUntilChanged((prev, curr) => prev.id === curr.id),
+    switchMap((service) => {
+      if (!service.enable || service.state === ServiceStatus.Stopped) {
+        return this.matDialog.open(StartServiceDialogComponent, {
+          data: service.service,
+          disableClose: true,
+        }).afterClosed().pipe(
+          filter(Boolean),
+          map(() => serviceEnabled()),
+          catchError(() => of(serviceStartFailed())),
+        );
+      }
+
+      return of(serviceEnabled());
+    }),
+  ));
+
   constructor(
+    private store$: Store<AppState>,
     private actions$: Actions,
     private ws: WebSocketService,
+    private matDialog: MatDialog,
   ) {}
 }

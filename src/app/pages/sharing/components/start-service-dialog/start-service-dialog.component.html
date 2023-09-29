@@ -4,10 +4,10 @@
     {{ '{service} Service is not currently running. Start the service now?' | translate: { service: serviceHumanName } }}
   </p>
 
-  <ix-checkbox
+  <ix-slide-toggle
     [formControl]="startAutomaticallyControl"
     [label]="'Enable this service to start automatically.' | translate"
-  ></ix-checkbox>
+  ></ix-slide-toggle>
 </div>
 
 <ix-form-actions mat-dialog-actions>

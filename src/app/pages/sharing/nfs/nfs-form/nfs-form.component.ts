@@ -2,13 +2,11 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
 import { NfsProtocol } from 'app/enums/nfs-protocol.enum';
 import { NfsSecurityProvider } from 'app/enums/nfs-security-provider.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
@@ -21,14 +19,11 @@ import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-sl
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { ipv4or6cidrValidator } from 'app/modules/ix-forms/validators/ip-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { StartServiceDialogComponent } from 'app/pages/sharing/components/start-service-dialog/start-service-dialog.component';
-import { DialogService } from 'app/services/dialog.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { UserService } from 'app/services/user.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { ServicesState } from 'app/store/services/services.reducer';
-import { selectService } from 'app/store/services/services.selectors';
 
 @UntilDestroy()
 @Component({
@@ -94,9 +89,6 @@ export class NfsFormComponent implements OnInit {
     private formBuilder: FormBuilder,
     private userService: UserService,
     private translate: TranslateService,
-    private dialogService: DialogService,
-    private matDialog: MatDialog,
-    private errorHandler: ErrorHandlerService,
     private filesystemService: FilesystemService,
     private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
@@ -152,10 +144,7 @@ export class NfsFormComponent implements OnInit {
     }
 
     request$
-      .pipe(
-        switchMap(() => this.checkIfNfsServiceIsEnabled()),
-        untilDestroyed(this),
-      )
+      .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
           if (this.isNew) {
@@ -163,6 +152,7 @@ export class NfsFormComponent implements OnInit {
           } else {
             this.snackbar.success(this.translate.instant('NFS share updated'));
           }
+          this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Nfs }));
           this.isLoading = false;
           this.cdr.markForCheck();
           this.slideInRef.close();
@@ -181,20 +171,5 @@ export class NfsFormComponent implements OnInit {
       .subscribe((nfsConfig) => {
         this.hasNfsSecurityField = nfsConfig.protocols?.includes(NfsProtocol.V4);
       });
-  }
-
-  private checkIfNfsServiceIsEnabled(): Observable<boolean> {
-    return this.store$.select(selectService(ServiceName.Nfs)).pipe(
-      switchMap((service) => {
-        if (!service.enable) {
-          return this.matDialog.open(StartServiceDialogComponent, {
-            data: ServiceName.Nfs,
-            disableClose: true,
-          }).afterClosed();
-        }
-
-        return of(false);
-      }),
-    );
   }
 }

@@ -5,6 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
@@ -24,13 +25,13 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { StartServiceDialogComponent } from 'app/pages/sharing/components/start-service-dialog/start-service-dialog.component';
 import { RestartSmbDialogComponent } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
 import { DialogService } from 'app/services/dialog.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
+import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { selectServices } from 'app/store/services/services.selectors';
 import { SmbFormComponent } from './smb-form.component';
 
@@ -121,7 +122,8 @@ describe('SmbFormComponent', () => {
   let loader: HarnessLoader;
   let form: IxFormHarness;
   let websocket: WebSocketService;
-  let store$: MockStore<AppState>;
+  let mockStore$: MockStore<AppState>;
+  let store$: Store<AppState>;
 
   const createComponent = createComponentFactory({
     component: SmbFormComponent,
@@ -146,12 +148,6 @@ describe('SmbFormComponent', () => {
         mockCall('filesystem.acl_is_trivial', false),
         mockCall('pool.dataset.path_in_locked_datasets', false),
       ]),
-      provideMockStore({
-        selectors: [{
-          selector: selectServices,
-          value: [],
-        }],
-      }),
       mockProvider(IxSlideInService),
       mockProvider(Router),
       mockProvider(AppLoaderService),
@@ -238,7 +234,9 @@ describe('SmbFormComponent', () => {
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
       websocket = spectator.inject(WebSocketService);
-      store$ = spectator.inject(MockStore);
+      mockStore$ = spectator.inject(MockStore);
+      store$ = spectator.inject(Store);
+      jest.spyOn(store$, 'dispatch');
     });
 
     it('shows all the fields when Advanced Options button is pressed', async () => {
@@ -369,7 +367,7 @@ describe('SmbFormComponent', () => {
     });
 
     it('should submit the form with the correct value', async () => {
-      store$.overrideSelector(selectServices, [{
+      mockStore$.overrideSelector(selectServices, [{
         id: 4,
         service: ServiceName.Cifs,
         enable: true,
@@ -429,16 +427,15 @@ describe('SmbFormComponent', () => {
         timemachine_quota: 0,
       }]);
 
-      expect(spectator.inject(MatDialog).open)
-        .toHaveBeenCalledWith(RestartSmbDialogComponent, {
-          data: {
-            timemachine: true,
-            homeshare: true,
-            path: false,
-            hosts: true,
-            isNew: true,
-          },
-        });
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(RestartSmbDialogComponent, {
+        data: {
+          timemachine: true,
+          homeshare: true,
+          path: false,
+          hosts: true,
+          isNew: true,
+        },
+      });
 
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
         helptextSharingSmb.restarted_smb_dialog.message,
@@ -461,13 +458,14 @@ describe('SmbFormComponent', () => {
         );
     });
 
-    it('should submit the form with the correct value and start service', async () => {
-      store$.overrideSelector(selectServices, [{
+    it('should submit the form with the correct value and check service action is dispatched', async () => {
+      mockStore$.overrideSelector(selectServices, [{
         id: 4,
         service: ServiceName.Cifs,
         enable: false,
         state: ServiceStatus.Stopped,
       } as Service]);
+      mockStore$.refreshState();
 
       const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
       await advancedButton.click();
@@ -522,10 +520,7 @@ describe('SmbFormComponent', () => {
         timemachine_quota: 0,
       }]);
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(StartServiceDialogComponent, {
-        data: ServiceName.Cifs,
-        disableClose: true,
-      });
+      expect(store$.dispatch).toHaveBeenCalledWith(checkIfServiceIsEnabled({ serviceName: ServiceName.Cifs }));
 
       const sharePath = await (await loader.getHarness(
         IxExplorerHarness.with({ label: formLabels.path }),
