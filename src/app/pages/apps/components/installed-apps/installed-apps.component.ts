@@ -38,6 +38,7 @@ import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.se
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
 import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 enum SortableField {
   Application = 'application',
@@ -136,6 +137,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     private slideInService: IxSlideInService,
     private breakpointObserver: BreakpointObserver,
     @Inject(WINDOW) private window: Window,
+    private ws: WebSocketService,
   ) {
     this.router.events
       .pipe(
@@ -285,7 +287,25 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   }
 
   start(name: string): void {
-    this.appService.startApplication(name)
+    const jobStarter$ = this.ws.job('chart.release.scale', [name, { replica_count: 1 }]);
+    const dialogRef = this.dialogService.jobProgress(
+      jobStarter$,
+      {
+        title: 'Test starting job',
+        description: 'Test description',
+      },
+    );
+    dialogRef.onSuccess().pipe(untilDestroyed(this)).subscribe({
+      next: (job) => {
+        this.snackbar.success('Job ' + job.state );
+      },
+    });
+    dialogRef.onFailure().pipe(untilDestroyed(this)).subscribe({
+      next: (job) => {
+        this.snackbar.success('Job ' + job.state );
+      },
+    });
+    jobStarter$
       .pipe(untilDestroyed(this))
       .subscribe((job: Job<ChartScaleResult, ChartScaleQueryParams>) => {
         this.appJobs.set(name, job);
