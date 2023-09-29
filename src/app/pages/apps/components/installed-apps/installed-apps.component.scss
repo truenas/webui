@@ -135,7 +135,7 @@ ix-app-row,
   grid-template-columns: 40px minmax(160px, auto) minmax(100px, 130px) minmax(100px, 115px) 60px;
 
   @media (max-width: $breakpoint-tablet) {
-    grid-template-columns: 45px auto 0 0 0 0 0 0;
+    grid-template-columns: 45px auto auto 0 0 0 0 0;
   }
 }
 
@@ -166,16 +166,16 @@ ix-app-row,
       display: none !important;
     }
 
-    &:first-child {
-      left: 0;
+    &:nth-child(2) {
+      left: 45px;
       position: sticky;
 
       @media (max-width: $breakpoint-tablet) {
-        display: block !important;
+        display: inline-flex !important;
       }
     }
 
-    &:nth-child(2) {
+    &:nth-child(3) {
       @media (max-width: $breakpoint-tablet) {
         display: inline-flex !important;
         justify-content: center;
