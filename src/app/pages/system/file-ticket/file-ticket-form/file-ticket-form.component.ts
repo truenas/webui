@@ -27,6 +27,7 @@ import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { GeneralDialogConfig } from 'app/modules/common/dialog/general-dialog/general-dialog.component';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { AttachDebugWarningService } from 'app/pages/system/file-ticket/services/attach-debug-warning.service';
 import { DialogService } from 'app/services/dialog.service';
 import { IxFileUploadService } from 'app/services/ix-file-upload.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -82,6 +83,7 @@ export class FileTicketFormComponent implements OnInit {
     private errorHandler: FormErrorHandlerService,
     private fileUpload: IxFileUploadService,
     private dialog: DialogService,
+    private attachDebugWarningService: AttachDebugWarningService,
     @Inject(WINDOW) private window: Window,
   ) {
     this.form.controls.category.setDisable(true);
@@ -90,6 +92,7 @@ export class FileTicketFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.isFormLoading$.next(false);
+    this.listenForAttachDebugChanges();
 
     this.form.controls.token.value$.pipe(
       filter((token) => !!token),
@@ -242,5 +245,12 @@ export class FileTicketFormComponent implements OnInit {
       map((jobs) => jobs[0]),
       catchError((error) => throwError(() => error)),
     );
+  }
+
+  private listenForAttachDebugChanges(): void {
+    const control = this.form.controls.attach_debug;
+    this.attachDebugWarningService.handleAttachDebugChanges(control)
+      .pipe(untilDestroyed(this))
+      .subscribe((checked) => control.patchValue(checked));
   }
 }

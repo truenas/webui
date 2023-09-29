@@ -31,6 +31,7 @@ import { GeneralDialogConfig } from 'app/modules/common/dialog/general-dialog/ge
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
+import { AttachDebugWarningService } from 'app/pages/system/file-ticket/services/attach-debug-warning.service';
 import { DialogService } from 'app/services/dialog.service';
 import { IxFileUploadService } from 'app/services/ix-file-upload.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -98,11 +99,13 @@ export class FileTicketLicensedFormComponent implements OnInit {
     private dialog: DialogService,
     private router: Router,
     private validatorsService: IxValidatorsService,
+    private attachDebugWarningService: AttachDebugWarningService,
     @Inject(WINDOW) private window: Window,
   ) { }
 
   ngOnInit(): void {
     this.isFormLoading = false;
+    this.listenForAttachDebugChanges();
 
     this.form.controls.screenshot.valueChanges.pipe(
       switchMap((screenshots) => this.fileUpload.validateScreenshots(screenshots)),
@@ -220,5 +223,12 @@ export class FileTicketLicensedFormComponent implements OnInit {
   onEulaPressed(): void {
     this.slideInRef.close();
     this.router.navigate(['system', 'support', 'eula']);
+  }
+
+  private listenForAttachDebugChanges(): void {
+    const control = this.form.controls.attach_debug;
+    this.attachDebugWarningService.handleAttachDebugChanges(control)
+      .pipe(untilDestroyed(this))
+      .subscribe((checked) => control.patchValue(checked));
   }
 }

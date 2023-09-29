@@ -21,6 +21,7 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { JobItemComponent } from 'app/modules/jobs/components/job-item/job-item.component';
 import { FileTicketLicensedFormComponent } from 'app/pages/system/file-ticket/file-ticket-licensed-form/file-ticket-licensed-form.component';
+import { AttachDebugWarningService } from 'app/pages/system/file-ticket/services/attach-debug-warning.service';
 import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
@@ -48,6 +49,9 @@ describe('FileTicketLicensedFormComponent', () => {
     providers: [
       mockProvider(DialogService, {
         generalDialog: jest.fn(() => of()),
+      }),
+      mockProvider(AttachDebugWarningService, {
+        handleAttachDebugChanges: jest.fn((() => of(false))),
       }),
       mockWebsocket([
         mockCall('core.get_jobs', [{
