@@ -111,26 +111,22 @@ export class DatasetFormComponent implements OnInit {
     this.isLoading = true;
     this.cdr.markForCheck();
 
-    this.datasetFormService.isPathTooDeep(this.slideInData.datasetId).pipe(
-      filter((tooDeep) => !tooDeep),
-      switchMap(() => this.datasetFormService.isPathTooLong(this.slideInData.datasetId)),
-      filter((tooLong) => !tooLong),
-    ).pipe(
+    this.datasetFormService.isPathLengthAndDepthSafe(this.slideInData.datasetId).pipe(
+      filter(Boolean),
       switchMap(() => this.datasetFormService.loadDataset(this.slideInData.datasetId)),
       untilDestroyed(this),
-    )
-      .subscribe({
-        next: (dataset) => {
-          this.parentDataset = dataset;
-          this.isLoading = false;
-          this.cdr.markForCheck();
-        },
-        error: (error) => {
-          this.isLoading = false;
-          this.cdr.markForCheck();
-          this.dialog.error(this.errorHandler.parseWsError(error));
-        },
-      });
+    ).subscribe({
+      next: (dataset) => {
+        this.parentDataset = dataset;
+        this.isLoading = false;
+        this.cdr.markForCheck();
+      },
+      error: (error) => {
+        this.isLoading = false;
+        this.cdr.markForCheck();
+        this.dialog.error(this.errorHandler.parseWsError(error));
+      },
+    });
   }
 
   setForEdit(): void {
