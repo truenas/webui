@@ -7,7 +7,7 @@
       matTooltipPosition="right"
       ixTest="toggle-sidenav"
       [matTooltip]="tooltips.toggle_collapse | translate"
-      (click)="toggleCollapse()"
+      (click)="onSidenavIndicatorPressed()"
     >
       <ix-icon name="menu"></ix-icon>
     </button>
@@ -16,27 +16,13 @@
 
     <a class="mobile-logo" routerLink="/" ixTest="mobile-logo">
       <div class="mobile-logo-container">
-        <ix-icon
-          name="ix:logo_truenas_scale_mark_color"
-          class="logomark"
-        ></ix-icon>
-
-        <ix-icon
-          name="ix:logo_truenas_scale_type_color"
-          class="logotype"
-        ></ix-icon>
+        <ix-icon name="ix:logo_truenas_scale_mark_color" class="logomark"></ix-icon>
+        <ix-icon name="ix:logo_truenas_scale_type_color" class="logotype"></ix-icon>
       </div>
     </a>
 
     <div class="topbar-mobile-footer">
-      <div class="ix-systems-logo-icon">
-        <ix-icon
-          tabindex="0"
-          [class]="['ix-logo', screenSize, getLogoIcon()]"
-          [name]="getLogoIcon()"
-          (click)="openIx()"
-        ></ix-icon>
-      </div>
+      <ix-logo></ix-logo>
 
       <button
         *ixIfNightly
@@ -54,17 +40,7 @@
       <ix-truecommand-button></ix-truecommand-button>
 
       <!-- finish update -->
-      <button
-        *ngIf="upgradeWaitingToFinish"
-        mat-icon-button
-        id="finish-update"
-        class="topbar-button-right"
-        ixTest="finish-update"
-        [matTooltip]="tooltips.upgrade_waiting | translate"
-        (click)="upgradePendingDialog()"
-      >
-        <ix-icon class="movement" name="update"></ix-icon>
-      </button>
+      <ix-failover-upgrade-indicator></ix-failover-upgrade-indicator>
       <button
         *ngIf="updateIsRunning"
         mat-icon-button
@@ -76,60 +52,9 @@
       >
         <ix-icon class="movement" name="system_update_alt"></ix-icon>
       </button>
-      <button
-        *ngIf="pendingNetworkChanges"
-        mat-icon-button
-        id="network"
-        class="topbar-button-right"
-        ixTest="has-pending-network-changes"
-        [matTooltip]="tooltips.pending_network_changes | translate"
-        (click)="showNetworkChangesPending()"
-      >
-        <ix-icon class="movement" name="device_hub"></ix-icon>
-      </button>
-      <button
-        *ngIf="showResilvering"
-        mat-icon-button
-        id="resilver"
-        class="topbar-button-right"
-        ixTest="resilvering"
-        [matTooltip]="tooltips.resilvering | translate"
-        (click)="showResilveringDetails()"
-      >
-        <ix-icon class="fa-spin" name="autorenew"></ix-icon>
-      </button>
-      <!-- HA Status -->
-      <span *ngIf="isFailoverLicensed && haStatusText">
-        <button
-          *ngIf="haDisabledReasons.length === 0"
-          mat-icon-button
-          id="ha"
-          class="topbar-button-right"
-          ixTest="ha-indicator-enabled"
-          [matTooltip]="haStatusText | translate"
-          (click)="showHaStatus()"
-        >
-          <ix-icon name="ix:ha_enabled"></ix-icon>
-        </button>
-        <button
-          *ngIf="haDisabledReasons.length > 0"
-          mat-icon-button
-          id="ha"
-          class="topbar-button-right"
-          ixTest="ha-indicator-disabled"
-          [matTooltip]="haStatusText | translate"
-          (click)="showHaStatus()"
-        >
-          <ng-container *ngIf="haDisabledReasons[0] === FailoverDisabledReason.NoSystemReady; else haDisabledIcon">
-            <ix-icon name="ix:ha_reconnecting"></ix-icon>
-          </ng-container>
-
-          <ng-template #haDisabledIcon>
-            <ix-icon name="ix:ha_disabled"></ix-icon>
-          </ng-template>
-        </button>
-      </span>
-
+      <ix-checkin-indicator></ix-checkin-indicator>
+      <ix-resilvering-indicator></ix-resilvering-indicator>
+      <ix-ha-status-icon></ix-ha-status-icon>
       <ix-directory-services-indicator></ix-directory-services-indicator>
       <ix-jobs-indicator></ix-jobs-indicator>
 

@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatDialog } from '@angular/material/dialog';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { EntityModule } from 'app/modules/entity/entity.module';
@@ -19,6 +20,7 @@ import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { TaskService } from 'app/services/task.service';
+import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
 describe('CronCardComponent', () => {
   let spectator: Spectator<CronCardComponent>;
@@ -52,6 +54,14 @@ describe('CronCardComponent', () => {
       IxTable2Module,
     ],
     providers: [
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectSystemConfigState,
+            value: {},
+          },
+        ],
+      }),
       mockWebsocket([
         mockCall('cronjob.query', cronJobs),
         mockCall('cronjob.run'),
@@ -72,6 +82,7 @@ describe('CronCardComponent', () => {
       }),
       mockProvider(LocaleService),
       mockProvider(TaskService, {
+        getTaskNextTime: jest.fn(() => new Date(new Date().getTime() + (24 * 60 * 60 * 1000))),
         getTaskNextRun: jest.fn(() => 'in about 10 hours'),
       }),
       mockProvider(AdvancedSettingsService, {
@@ -88,8 +99,8 @@ describe('CronCardComponent', () => {
 
   it('should show table rows', async () => {
     const expectedRows = [
-      ['Users', 'Command', 'Description', 'Schedule', 'Enabled', ''],
-      ['root', "echo 'Hello World'", 'test', '0 0 * * *', 'Yes', ''],
+      ['Users', 'Command', 'Description', 'Schedule', 'Enabled', 'Next Run', ''],
+      ['root', "echo 'Hello World'", 'test', '0 0 * * *', 'Yes', 'in 1 day', ''],
     ];
 
     const cells = await table.getCellTexts();
@@ -98,7 +109,7 @@ describe('CronCardComponent', () => {
 
   it('shows confirmation dialog when Run Now button is pressed', async () => {
     jest.spyOn(spectator.inject(DialogService), 'confirm');
-    const runNowButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'play_arrow' }), 1, 5);
+    const runNowButton = await table.getHarnessInRow(IxIconHarness.with({ name: 'play_arrow' }), 'root');
     await runNowButton.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
@@ -109,7 +120,7 @@ describe('CronCardComponent', () => {
   });
 
   it('shows form to edit an existing cronjob when Edit button is pressed', async () => {
-    const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 5);
+    const editButton = await table.getHarnessInRow(IxIconHarness.with({ name: 'edit' }), 'root');
     await editButton.click();
 
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(CronFormComponent, {
@@ -118,7 +129,7 @@ describe('CronCardComponent', () => {
   });
 
   it('deletes a cronjob with confirmation when Delete button is pressed', async () => {
-    const deleteIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'delete' }), 1, 5);
+    const deleteIcon = await table.getHarnessInRow(IxIconHarness.with({ name: 'delete' }), 'root');
     await deleteIcon.click();
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(CronDeleteDialogComponent, {

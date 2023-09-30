@@ -15,7 +15,10 @@
     </div>
   </mat-toolbar-row>
 
-  <ix-table2 class="table">
+  <ix-table2
+    class="table"
+    [ix-table2-empty]="!dataProvider.rows.length"
+  >
     <thead
       ix-table-head
       [columns]="columns"
@@ -28,18 +31,18 @@
       [isLoading]="isLoading"
     >
       <ng-template
+        let-script
         ix-table-cell
         [columnIndex]="0"
         [dataProvider]="dataProvider"
-        let-script
       >
         {{ script.script || script.command }}
       </ng-template>
       <ng-template
+        let-script
         ix-table-cell
         [columnIndex]="5"
         [dataProvider]="dataProvider"
-        let-script
       >
         <div class="buttons">
           <button

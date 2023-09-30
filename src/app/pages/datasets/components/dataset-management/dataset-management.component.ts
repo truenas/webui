@@ -15,6 +15,7 @@ import {
   ElementRef,
   Inject,
   TrackByFunction,
+  HostBinding,
 } from '@angular/core';
 import {
   ActivatedRoute, NavigationStart, Router,
@@ -39,6 +40,7 @@ import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { TreeDataSource } from 'app/modules/ix-tree/tree-datasource';
 import { TreeFlattener } from 'app/modules/ix-tree/tree-flattener';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
+import { datasetNameSortComparer } from 'app/pages/datasets/utils/dataset.utils';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -59,7 +61,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
 
   isLoading$ = this.datasetStore.isLoading$;
   selectedDataset$ = this.datasetStore.selectedDataset$;
-  showMobileDetails = false;
+  @HostBinding('class.details-overlay') showMobileDetails = false;
   isMobileView = false;
   systemDataset: string;
   isLoading = true;
@@ -260,13 +262,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
 
       return uniqBy(result, 'id');
     };
-    this.dataSource.sortComparer = (a, b) => {
-      return new Intl.Collator(undefined, {
-        numeric: true,
-        sensitivity: 'accent',
-        ignorePunctuation: true,
-      }).compare(a.name, b.name);
-    };
+    this.dataSource.sortComparer = datasetNameSortComparer;
     this.dataSource.data = datasets;
   }
 

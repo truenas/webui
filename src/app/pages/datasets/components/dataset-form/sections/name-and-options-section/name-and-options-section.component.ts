@@ -62,10 +62,6 @@ export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
     private datasetFormService: DatasetFormService,
   ) {}
 
-  ngOnInit(): void {
-    this.form.controls.parent.disable();
-  }
-
   ngOnChanges(): void {
     if (this.parent) {
       this.form.controls.parent.setValue(this.parent.name);
@@ -75,6 +71,10 @@ export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
     this.setSelectOptions();
     this.setFormValues();
     this.setNameDisabledStatus();
+  }
+
+  ngOnInit(): void {
+    this.form.controls.parent.disable();
   }
 
   getPayload(): Partial<DatasetCreate> | Partial<DatasetUpdate> {

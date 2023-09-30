@@ -148,7 +148,7 @@ export class ReplicationFormComponent implements OnInit {
             );
             this.isLoading = false;
             this.cdr.markForCheck();
-            this.slideInRef.close();
+            this.slideInRef.close(true);
           },
           error: (error) => {
             this.isLoading = false;

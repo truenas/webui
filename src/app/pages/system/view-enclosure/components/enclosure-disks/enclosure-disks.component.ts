@@ -30,10 +30,12 @@ import { E16 } from 'app/pages/system/view-enclosure/classes/hardware/e16';
 import { E24 } from 'app/pages/system/view-enclosure/classes/hardware/e24';
 import { E60 } from 'app/pages/system/view-enclosure/classes/hardware/e60';
 import { Es102 } from 'app/pages/system/view-enclosure/classes/hardware/es102';
+import { Es102S } from 'app/pages/system/view-enclosure/classes/hardware/es102s';
 import { Es12 } from 'app/pages/system/view-enclosure/classes/hardware/es12';
 import { Es24 } from 'app/pages/system/view-enclosure/classes/hardware/es24';
 import { Es24F } from 'app/pages/system/view-enclosure/classes/hardware/es24f';
 import { Es60 } from 'app/pages/system/view-enclosure/classes/hardware/es60';
+import { Es60G2 } from 'app/pages/system/view-enclosure/classes/hardware/es60g2';
 import { F60 } from 'app/pages/system/view-enclosure/classes/hardware/f60';
 import { M50 } from 'app/pages/system/view-enclosure/classes/hardware/m50';
 import { MINIR } from 'app/pages/system/view-enclosure/classes/hardware/mini-r';
@@ -61,6 +63,7 @@ import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectTheme } from 'app/store/preferences/preferences.selectors';
 import CanvasExtract = PIXI.extract.CanvasExtract;
+
 
 export enum EnclosureLocation {
   Front = 'front',
@@ -562,11 +565,18 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
       case 'ES60':
         this.chassis = new Es60();
         break;
+      case 'ES60G2':
+        this.chassis = new Es60G2();
+        break;
       case 'E60':
         this.chassis = new E60();
         break;
       case 'ES102':
         this.chassis = new Es102();
+        this.showCaption = false;
+        break;
+      case 'ES102S':
+        this.chassis = new Es102S();
         this.showCaption = false;
         break;
       case 'TRUENAS-F100-HA':
@@ -710,11 +720,17 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
       case 'ES60':
         extractedChassis = new Es60();
         break;
+      case 'ES60G2':
+        extractedChassis = new Es60G2();
+        break;
       case 'E60':
         extractedChassis = new E60();
         break;
       case 'ES102':
         extractedChassis = new Es102();
+        break;
+      case 'ES102S':
+        extractedChassis = new Es102S();
         break;
       case 'TRUENAS-F100-HA':
       case 'F100':

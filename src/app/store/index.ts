@@ -1,8 +1,16 @@
 import { routerReducer, RouterReducerState } from '@ngrx/router-store';
 import { ActionReducerMap } from '@ngrx/store';
+import { EulaEffects } from 'app/store/eula/eula.effects';
 import { HaInfoEffects } from 'app/store/ha-info/ha-info.effects';
 import { haInfoReducer, HaInfoState } from 'app/store/ha-info/ha-info.reducer';
 import { haInfoStateKey } from 'app/store/ha-info/ha-info.selectors';
+import { HaUpgradeEffects } from 'app/store/ha-upgrade/ha-upgrade.effects';
+import { NetworkInterfacesEffects } from 'app/store/network-interfaces/network-interfaces.effects';
+import {
+  networkInterfacesReducer,
+  NetworkInterfacesState,
+} from 'app/store/network-interfaces/network-interfaces.reducer';
+import { networkInterfacesKey } from 'app/store/network-interfaces/network-interfaces.selectors';
 import { PreferencesEffects } from 'app/store/preferences/preferences.effects';
 import { preferencesReducer, PreferencesState } from 'app/store/preferences/preferences.reducer';
 import { preferencesStateKey } from 'app/store/preferences/preferences.selectors';
@@ -19,6 +27,7 @@ export interface AppState {
   [preferencesStateKey]: PreferencesState;
   [systemInfoStateKey]: SystemInfoState;
   [haInfoStateKey]: HaInfoState;
+  [networkInterfacesKey]: NetworkInterfacesState;
   router: RouterReducerState<CustomRouterState>;
 }
 
@@ -27,6 +36,7 @@ export const rootReducers: ActionReducerMap<AppState> = {
   [preferencesStateKey]: preferencesReducer,
   [systemInfoStateKey]: systemInfoReducer,
   [haInfoStateKey]: haInfoReducer,
+  [networkInterfacesKey]: networkInterfacesReducer,
   router: routerReducer,
 };
 
@@ -35,4 +45,7 @@ export const rootEffects = [
   PreferencesEffects,
   SystemInfoEffects,
   HaInfoEffects,
+  EulaEffects,
+  HaUpgradeEffects,
+  NetworkInterfacesEffects,
 ];

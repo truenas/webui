@@ -9,13 +9,16 @@
     <div class="actions">
       <button
         mat-button
-        [ixTest]="['init-shutdown', 'add']"
+        [ixTest]="['cron', 'add']"
         (click)="onAdd()"
       >{{ 'Add' | translate }}</button>
     </div>
   </mat-toolbar-row>
 
-  <ix-table2 class="table">
+  <ix-table2
+    class="table"
+    [ix-table2-empty]="!dataProvider.rows.length"
+  >
     <thead
       ix-table-head
       [columns]="columns"
@@ -28,10 +31,10 @@
       [isLoading]="isLoading"
     >
       <ng-template
-        ix-table-cell
-        [columnIndex]="5"
-        [dataProvider]="dataProvider"
         let-cron
+        ix-table-cell
+        [columnIndex]="6"
+        [dataProvider]="dataProvider"
       >
         <div class="buttons">
           <button

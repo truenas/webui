@@ -1,0 +1,79 @@
+<mat-card>
+  <mat-toolbar-row>
+    <a [ixTest]="['nfs-share', 'open-in-new']" [routerLink]="['/sharing', 'nfs']">
+      <h3 class="card-title">
+        {{ 'UNIX (NFS) Shares' | translate }}
+        <ix-icon name="open_in_new" class="title-icon"></ix-icon>
+      </h3>
+    </a>
+
+    <ix-service-state-button
+      [service]="service"
+      [count]="dataProvider.rows.length"
+    ></ix-service-state-button>
+
+    <div class="actions">
+      <button
+        mat-button
+        [ixTest]="['nfs-share', 'add']"
+        (click)="openForm()"
+      >{{ 'Add' | translate }}</button>
+
+      <ix-service-extra-actions
+        [service]="service"
+        (statusChanged)="statusChanged.emit($event)"
+      ></ix-service-extra-actions>
+    </div>
+  </mat-toolbar-row>
+
+  <ix-table2 class="table" [ix-table2-empty]="!dataProvider.rows.length && !isLoading">
+    <thead
+      ix-table-head
+      [columns]="columns"
+      [dataProvider]="dataProvider"
+    ></thead>
+    <tbody
+      ix-table-body
+      [columns]="columns"
+      [dataProvider]="dataProvider"
+      [isLoading]="isLoading"
+    >
+      <ng-template
+        let-nfs
+        ix-table-cell
+        [columnIndex]="3"
+        [dataProvider]="dataProvider"
+      >
+        <div class="justify-end">
+          <button
+            mat-icon-button
+            [ixTest]="[nfs.id, 'edit']"
+            [matTooltip]="'Edit' | translate"
+            (click)="openForm(nfs)"
+          >
+            <ix-icon name="edit"></ix-icon>
+          </button>
+          <button
+            mat-icon-button
+            [ixTest]="[nfs.id, 'delete']"
+            [matTooltip]="'Delete' | translate"
+            (click)="doDelete(nfs)"
+          >
+            <ix-icon name="delete"></ix-icon>
+          </button>
+        </div>
+      </ng-template>
+    </tbody>
+  </ix-table2>
+
+  <a
+    *ngIf="nfsShares.length > 4"
+    class="view-all"
+    [ixTest]="['nfs-share', 'view-all']"
+    [routerLink]="['/sharing', 'nfs']"
+  >
+    <span>
+      {{ 'View All' | translate }}
+    </span>
+  </a>
+</mat-card>

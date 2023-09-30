@@ -1,0 +1,40 @@
+:host {
+  display: block;
+  min-height: 100px;
+  min-width: 260px;
+  padding: 0 20px 12px;
+}
+
+.panel-header {
+  align-items: baseline;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--lines);
+  display: flex;
+  height: 50px;
+  margin: 0 -20px;
+  margin-top: 1px;
+  padding: 12px 24px;
+  place-content: stretch space-between;
+}
+
+.panel-content {
+  margin: 0 2px;
+}
+
+.status-line {
+  align-items: center;
+  column-gap: 7px;
+  display: flex;
+  font-size: 14px;
+  margin-top: 16px;
+
+  &--enabled {
+    margin-top: 18px;
+  }
+}
+
+.disabled-reasons {
+  margin-bottom: 5px;
+  margin-top: 14px;
+  padding-left: 16px;
+}

@@ -9,6 +9,7 @@ import {
   filter, switchMap, tap,
 } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
+import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import globalHelptext from 'app/helptext/global-helptext';
 import { Job } from 'app/interfaces/job.interface';
@@ -67,6 +68,7 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
     { name: this.translate.instant('Recursive'), prop: 'recursive', hidden: true },
     { name: this.translate.instant('Auto'), prop: 'auto', hidden: true },
     { name: this.translate.instant('Enabled'), prop: 'enabled', checkbox: true },
+    { name: this.translate.instant('Last Run'), prop: 'last_run', hidden: true },
     {
       name: this.translate.instant('State'), prop: 'state', button: true, state: 'state',
     },
@@ -106,8 +108,13 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
     return tasks.map((task) => {
       return {
         ...task,
+        last_run:
+          task.job?.time_finished?.$date
+            ? formatDistanceToNowShortened(task.job?.time_finished?.$date)
+            : this.translate.instant('N/A'),
         ssh_connection: task.ssh_credentials ? task.ssh_credentials.name : '-',
-        task_last_snapshot: task.state.last_snapshot ? task.state.last_snapshot : this.translate.instant('No snapshots sent yet'),
+        task_last_snapshot:
+          task.state.last_snapshot ? task.state.last_snapshot : this.translate.instant('No snapshots sent yet'),
       };
     });
   }
@@ -172,8 +179,6 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
           this.doEdit(row.id);
         },
       },
-
-
     ];
     if (parentrow.has_encrypted_dataset_keys) {
       actions.push({

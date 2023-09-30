@@ -163,14 +163,14 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     super(translate);
   }
 
-  ngOnInit(): void {
-    this.title = this.path.length > 0 && this.poolState && this.currentSlide !== '0' ? this.poolState.name : 'Pool';
-  }
-
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     if (changes.volumeData) {
       this.getAvailableSpace();
     }
+  }
+
+  ngOnInit(): void {
+    this.title = this.path.length > 0 && this.poolState && this.currentSlide !== '0' ? this.poolState.name : 'Pool';
   }
 
   ngAfterViewInit(): void {

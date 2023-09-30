@@ -11,7 +11,7 @@ import { DatasetEncryptionType } from 'app/enums/dataset.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
-import { matchOtherValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
+import { matchOthersFgValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
 import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -34,9 +34,17 @@ export class EncryptionSectionComponent implements OnChanges {
     generate_key: [true],
     key: ['', [Validators.minLength(64), Validators.maxLength(64)]],
     passphrase: ['', Validators.minLength(8)],
-    confirm_passphrase: ['', matchOtherValidator('passphrase')],
+    confirm_passphrase: [''],
     pbkdf2iters: [350000, Validators.min(100000)],
     algorithm: ['AES-256-GCM'],
+  }, {
+    validators: [
+      matchOthersFgValidator(
+        'confirm_passphrase',
+        ['passphrase'],
+        this.translate.instant('Confirm Passphrase value must match Passphrase'),
+      ),
+    ],
   });
 
   readonly helptext = helptext;

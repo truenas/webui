@@ -75,6 +75,7 @@
           formArrayName="networks"
           [empty]="form.controls.networks.controls.length === 0"
           [label]="'Networks' | translate"
+          [formArray]="form.get('networks')"
           (add)="addNetworkControl()"
         >
           <ix-list-item
@@ -95,6 +96,7 @@
           formArrayName="hosts"
           [empty]="form.controls.hosts.controls.length === 0"
           [label]="'Hosts' | translate"
+          [formArray]="form.get('hosts')"
           (add)="addHostControl()"
         >
           <ix-list-item

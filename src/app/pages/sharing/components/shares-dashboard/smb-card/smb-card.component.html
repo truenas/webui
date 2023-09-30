@@ -1,0 +1,105 @@
+<mat-card>
+  <mat-toolbar-row>
+    <a [ixTest]="['smb-share', 'open-in-new']" [routerLink]="['/sharing', 'smb']">
+      <h3 class="card-title">
+        {{ title | translate }}
+        <ix-icon name="open_in_new" class="title-icon"></ix-icon>
+      </h3>
+    </a>
+
+    <ix-service-state-button
+      [service]="service"
+      [count]="dataProvider.rows.length"
+    ></ix-service-state-button>
+
+    <div class="actions">
+      <ix-tooltip
+        *ngIf="tableHint"
+        [header]="title | translate"
+        [message]="tableHint | translate"
+      ></ix-tooltip>
+
+      <button
+        mat-button
+        [ixTest]="['smb-share', 'add']"
+        [disabled]="isAddActionDisabled"
+        (click)="openForm()"
+      >{{ 'Add' | translate }}</button>
+
+      <ix-service-extra-actions
+        *ngIf="!isClustered"
+        [service]="service"
+        (statusChanged)="statusChanged.emit($event)"
+      ></ix-service-extra-actions>
+    </div>
+  </mat-toolbar-row>
+
+  <ix-table2 class="table" [ix-table2-empty]="!dataProvider.rows.length && !isLoading">
+    <thead
+      ix-table-head
+      [columns]="columns"
+      [dataProvider]="dataProvider"
+    ></thead>
+    <tbody
+      ix-table-body
+      [columns]="columns"
+      [dataProvider]="dataProvider"
+      [isLoading]="isLoading"
+    >
+      <ng-template
+        let-smb
+        ix-table-cell
+        [columnIndex]="isClustered ? 3 : 4"
+        [dataProvider]="dataProvider"
+      >
+        <div class="justify-end">
+          <button
+            mat-icon-button
+            [ixTest]="[smb.id, 'share']"
+            [matTooltip]="'Edit Share ACL' | translate"
+            (click)="doShareAclEdit(smb)"
+          >
+            <ix-icon name="share"></ix-icon>
+          </button>
+          <button
+            mat-icon-button
+            [ixTest]="[smb.id, 'security']"
+            [matTooltip]="'Edit Filesystem ACL' | translate"
+            (click)="doFilesystemAclEdit(smb)"
+          >
+            <ix-icon name="security"></ix-icon>
+          </button>
+
+          <button
+            mat-icon-button
+            [ixTest]="[smb.id, 'edit']"
+            [matTooltip]="'Edit' | translate"
+            (click)="openForm(smb)"
+          >
+            <ix-icon name="edit"></ix-icon>
+          </button>
+          <button
+            mat-icon-button
+            [ixTest]="[smb.id, 'delete']"
+            [disabled]="isDeleteActionDisabled"
+            [matTooltip]="'Delete' | translate"
+            (click)="doDelete(smb)"
+          >
+            <ix-icon name="delete"></ix-icon>
+          </button>
+        </div>
+      </ng-template>
+    </tbody>
+  </ix-table2>
+
+  <a
+    *ngIf="smbShares.length > 4"
+    class="view-all"
+    [ixTest]="['smb-share', 'view-all']"
+    [routerLink]="['/sharing', 'smb']"
+  >
+    <span>
+      {{ 'View All' | translate }}
+    </span>
+  </a>
+</mat-card>

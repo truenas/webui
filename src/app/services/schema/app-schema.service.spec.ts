@@ -6,12 +6,12 @@ import {
   DynamicFormSchemaCheckbox,
   DynamicFormSchemaDict,
   DynamicFormSchemaInput,
-  DynamicFormSchemaSelect,
   DynamicFormSchemaList,
   DynamicFormSchemaIpaddr,
   DynamicFormSchemaCron,
   DynamicFormSchemaUri,
   DynamicWizardSchema,
+  DynamicFormSchemaEnum,
 } from 'app/interfaces/dynamic-form-schema.interface';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { AppSchemaService } from 'app/services/schema/app-schema.service';
@@ -160,7 +160,6 @@ const afterEnum = [[{
   attrs: [{
     controlName: 'variable_select_int',
     editable: undefined,
-    hideEmpty: true,
     required: true,
     title: 'Label Select Int',
     tooltip: undefined,
@@ -168,19 +167,18 @@ const afterEnum = [[{
     options: expect.objectContaining({
       _subscribe: expect.any(Function),
     }),
-    type: 'select',
+    type: 'enum',
   }, {
     controlName: 'variable_select_string',
     editable: undefined,
-    hideEmpty: true,
     required: false,
     title: 'Label Select String',
     tooltip: undefined,
     options: expect.objectContaining({
       _subscribe: expect.any(Function),
     }),
-    type: 'select',
-  }] as DynamicFormSchemaSelect[],
+    type: 'enum',
+  }] as DynamicFormSchemaEnum[],
   controlName: 'variable_dict',
   editable: undefined,
   tooltip: 'Description Dict',

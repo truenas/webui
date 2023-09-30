@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, OnChanges, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnChanges } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { merge, of } from 'rxjs';
@@ -24,8 +24,6 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
   @Input() inventory: UnusedDisk[] = [];
   @Input() canChangeLayout = false;
   @Input() limitLayouts: CreateVdevLayout[] = [];
-
-  @Output() manualSelectionClicked = new EventEmitter<void>();
 
   readonly layoutControl = new FormControl(null as CreateVdevLayout, Validators.required);
 

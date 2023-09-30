@@ -1,8 +1,7 @@
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
 
 export interface IxComboboxProvider {
-
   /**
    * Filter the options based on query string. Should handle <empty string> and return normal
    * list of options in that case.
@@ -18,4 +17,35 @@ export interface IxComboboxProvider {
     * @returns Should return a list of option to be concatenated to the current list
     */
   nextPage(filterValue: string): Observable<Option[]>;
+
+  /**
+   * Used to map the fetch result to a new array of options for any needed changes before
+   * the options array is consumed by IxComboboxComponent
+   */
+  mapOptions?(options: Option[]): Option[];
+}
+
+export class IxComboboxProviderManager {
+  constructor(private provider: IxComboboxProvider) { }
+  fetch(filterValue: string): Observable<Option[]> {
+    return this.provider.fetch(filterValue).pipe(
+      map((result) => {
+        if (this.provider.mapOptions) {
+          return this.provider.mapOptions(result);
+        }
+        return result;
+      }),
+    );
+  }
+
+  nextPage(filterValue: string): Observable<Option[]> {
+    return this.provider.nextPage(filterValue).pipe(
+      map((result) => {
+        if (this.provider.mapOptions) {
+          return this.provider.mapOptions(result);
+        }
+        return result;
+      }),
+    );
+  }
 }

@@ -8,7 +8,6 @@ import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { take } from 'rxjs';
-import { ReportsConfigFormComponent } from 'app/pages/reports-dashboard/components/reports-config-form/reports-config-form.component';
 import { ReportTab, ReportType } from 'app/pages/reports-dashboard/interfaces/report-tab.interface';
 import { ReportsService } from 'app/pages/reports-dashboard/reports.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -30,7 +29,6 @@ export class ReportsGlobalControlsComponent implements OnInit {
     metrics: [[] as string[]],
   });
   activeTab: ReportTab;
-  selectedDisks: string[];
   allTabs: ReportTab[];
   diskDevices$ = this.reportsService.getDiskDevices();
   diskMetrics$ = this.reportsService.getDiskMetrics();
@@ -51,10 +49,6 @@ export class ReportsGlobalControlsComponent implements OnInit {
     this.setupTabs();
     this.setAutoRefreshControl();
     this.setupDisksTab();
-  }
-
-  showConfigForm(): void {
-    this.slideInService.open(ReportsConfigFormComponent);
   }
 
   isActiveTab(tab: ReportTab): boolean {

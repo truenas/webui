@@ -54,11 +54,29 @@
     }
   },
   "shelves": {
+    "ES12": {
+      "model": "ES12"
+    },
+    "E16": {
+      "model": "E16"
+    },
+    "E24": {
+      "model": "E24"
+    },
     "ES24": {
       "model": "ES24"
     },
+    "ES60": {
+      "model": "ES60"
+    },
+    "ES60G2": {
+      "model": "ES60G2"
+    },
     "ES102": {
       "model": "ES102"
+    },
+    "ES102S": {
+      "model": "ES102S"
     }
   }
 }

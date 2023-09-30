@@ -6,6 +6,7 @@ import {
   EventEmitter,
   Input,
   OnChanges,
+  OnInit,
   Output,
   ViewChild,
 } from '@angular/core';
@@ -13,8 +14,9 @@ import {
   ControlValueAccessor,
   NgControl,
 } from '@angular/forms';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 
@@ -25,7 +27,7 @@ import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
   styleUrls: ['./ix-input.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class IxInputComponent implements ControlValueAccessor, OnChanges {
+export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges {
   @Input() label: string;
   @Input() placeholder: string;
   @Input() prefixIcon: string;
@@ -72,6 +74,12 @@ export class IxInputComponent implements ControlValueAccessor, OnChanges {
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     if ('autocompleteOptions' in changes) {
       this.filterOptions();
+    }
+  }
+
+  ngOnInit(): void {
+    if (this.autocompleteOptions) {
+      this.handleAutocompleteOptionsOnInit();
     }
   }
 
@@ -164,6 +172,7 @@ export class IxInputComponent implements ControlValueAccessor, OnChanges {
     if (this.readonly) {
       ixInput.select();
     }
+    this.filterOptions('');
   }
 
   blurred(): void {
@@ -179,6 +188,13 @@ export class IxInputComponent implements ControlValueAccessor, OnChanges {
     }
 
     this.onChange(this.value);
+
+    if (this.autocompleteOptions && !this.findExistingOption(this.value)) {
+      this.writeValue('');
+      this.onChange('');
+      this.formatted = '';
+    }
+
     this.cdr.markForCheck();
     this.inputBlur.emit();
   }
@@ -187,28 +203,50 @@ export class IxInputComponent implements ControlValueAccessor, OnChanges {
     this.showPassword = !this.showPassword;
   }
 
-  onEnter(): void {
-    if (this.filteredOptions?.length) {
-      this.optionSelected(this.filteredOptions[0]);
-    }
-  }
-
   optionSelected(option: Option): void {
     if (this.inputElementRef?.nativeElement) {
       this.inputElementRef.nativeElement.value = option.label;
-      setTimeout(() => this.inputElementRef.nativeElement.blur(), 10);
     }
 
-    this.writeValue(option.label);
-    this.onChange(option.label);
-    this.filterOptions();
+    this.value = option.value;
+    this.onChange(option.value);
+    this.cdr.markForCheck();
   }
 
-  filterOptions(): void {
+  filterOptions(customFilterValue?: string): void {
+    const filterValue = (customFilterValue ?? this.value) || '';
     if (this.autocompleteOptions) {
       this.filteredOptions = this.autocompleteOptions.filter((option) => {
-        return option.label.toString().toLowerCase().includes(this.value.toString().toLowerCase());
-      });
+        return option.label.toString().toLowerCase().includes((filterValue).toString().toLowerCase());
+      }).slice(0, 50);
     }
+  }
+
+  private findExistingOption(value: string | number): Option {
+    return this.autocompleteOptions?.find((option) => (option.label === value) || (option.value === value));
+  }
+
+  private handleAutocompleteOptionsOnInit(): void {
+    // handle input value changes for this.autocomplete options
+    this.controlDirective.control.valueChanges.pipe(
+      debounceTime(100),
+      distinctUntilChanged(),
+      untilDestroyed(this),
+    ).subscribe((value: string) => {
+      const existingOption = this.findExistingOption(value);
+
+      if (this.autocompleteOptions && existingOption?.value) {
+        this.value = existingOption.value;
+        this.onChange(existingOption.value);
+        this.cdr.markForCheck();
+      }
+    });
+
+    // handling initial value formatting from value to label
+    if (this.value !== undefined && this.value !== null) {
+      this.formatted = this.findExistingOption(this.value)?.label;
+    }
+
+    this.filterOptions('');
   }
 }

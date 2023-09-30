@@ -50,15 +50,15 @@ export class SchedulerPreviewColumnComponent implements OnChanges, OnInit {
     return isBefore(this.calendar.activeDate, startOfMonth(new Date()));
   }
 
+  ngOnChanges(): void {
+    this.updatePreviewDates();
+    this.refreshCalendar();
+  }
+
   ngOnInit(): void {
     this.calendar.stateChanges
       .pipe(untilDestroyed(this))
       .subscribe(() => this.onCalendarUpdated());
-  }
-
-  ngOnChanges(): void {
-    this.updatePreviewDates();
-    this.refreshCalendar();
   }
 
   getSelectedDateClass: MatCalendarCellClassFunction<Date> = (dateInCalendar): string => {

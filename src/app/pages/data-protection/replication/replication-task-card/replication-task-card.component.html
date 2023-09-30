@@ -1,0 +1,87 @@
+<mat-card>
+  <mat-toolbar-row>
+    <a [ixTest]="['replication-task', 'open-in-new']" [routerLink]="['/data-protection', 'replication']">
+      <h3 class="card-title">
+        {{ 'Replication Tasks' | translate }}
+        <ix-icon name="open_in_new" class="title-icon"></ix-icon>
+      </h3>
+    </a>
+    <div class="actions">
+      <button
+        mat-button
+        [ixTest]="['replication-task', 'add']"
+        (click)="addReplicationTask()"
+      >{{ 'Add' | translate }}</button>
+    </div>
+  </mat-toolbar-row>
+
+  <ix-table2 class="table" [ix-table2-empty]="!dataProvider.rows.length && !isLoading">
+    <thead
+      ix-table-head
+      [columns]="columns"
+      [dataProvider]="dataProvider"
+    ></thead>
+    <tbody
+      ix-table-body
+      [columns]="columns"
+      [dataProvider]="dataProvider"
+      [isLoading]="isLoading"
+    >
+      <ng-template
+        let-task
+        ix-table-cell
+        [columnIndex]="5"
+        [dataProvider]="dataProvider"
+      >
+        <div class="justify-end">
+          <button
+            mat-icon-button
+            [ixTest]="[task.id, 'edit']"
+            [matTooltip]="'Edit' | translate"
+            (click)="editReplicationTask(task)"
+          >
+            <ix-icon name="edit"></ix-icon>
+          </button>
+
+          <button
+            *ngIf="!task.job || task.job?.state !== jobState.Running"
+            mat-icon-button
+            [ixTest]="[task.id, 'run_now']"
+            [matTooltip]="'Run job' | translate"
+            (click)="runNow(task)"
+          >
+            <ix-icon name="play_arrow"></ix-icon>
+          </button>
+
+          <button
+            mat-icon-button
+            [ixTest]="[task.id, 'restore']"
+            [matTooltip]="'Restore' | translate"
+            (click)="restore(task)"
+          >
+            <ix-icon name="restore"></ix-icon>
+          </button>
+
+          <button
+            *ngIf="task.has_encrypted_dataset_keys"
+            mat-icon-button
+            [ixTest]="[task.id, 'download_keys']"
+            [matTooltip]="'Download encryption keys' | translate"
+            (click)="downloadKeys(task)"
+          >
+            <ix-icon name="download"></ix-icon>
+          </button>
+
+          <button
+            mat-icon-button
+            [ixTest]="[task.id, 'delete']"
+            [matTooltip]="'Delete' | translate"
+            (click)="doDelete(task)"
+          >
+            <ix-icon name="delete"></ix-icon>
+          </button>
+        </div>
+      </ng-template>
+    </tbody>
+  </ix-table2>
+</mat-card>

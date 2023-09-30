@@ -109,7 +109,7 @@ export function poolTopologyToStoreTopology(topology: PoolTopology, disks: Disk[
             );
           }
           return [
-            disks.find((disk) => disk.devname === topologyItem.disk) as UnusedDisk,
+            { ...disks.find((disk) => disk.devname === topologyItem.disk) as UnusedDisk },
           ];
         },
       ),

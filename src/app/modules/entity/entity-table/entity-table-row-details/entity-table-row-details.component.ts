@@ -22,12 +22,12 @@ export class EntityTableRowDetailsComponent implements OnInit, OnChanges {
     private taskService: TaskService,
   ) {}
 
-  ngOnInit(): void {
+  ngOnChanges(): void {
     this.buildColumns();
     this.actions = this.getActions();
   }
 
-  ngOnChanges(): void {
+  ngOnInit(): void {
     this.buildColumns();
     this.actions = this.getActions();
   }

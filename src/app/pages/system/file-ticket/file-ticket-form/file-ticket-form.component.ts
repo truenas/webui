@@ -28,6 +28,7 @@ import { GeneralDialogConfig } from 'app/modules/common/dialog/general-dialog/ge
 import { ixManualValidateError } from 'app/modules/ix-forms/components/ix-errors/ix-errors.component';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { AttachDebugWarningService } from 'app/pages/system/file-ticket/services/attach-debug-warning.service';
 import { DialogService } from 'app/services/dialog.service';
 import { IxFileUploadService } from 'app/services/ix-file-upload.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -70,7 +71,7 @@ export class FileTicketFormComponent implements OnInit {
   isFormDisabled$ = combineLatest([this.form.status$, this.isFormLoading$]).pipe(
     map(([status, loading]) => status === 'INVALID' || loading),
   );
-
+  readonly isEnterprise$ = this.sysGeneralService.isEnterprise$;
   constructor(
     private ws: WebSocketService,
     private fb: FormBuilder,
@@ -81,6 +82,7 @@ export class FileTicketFormComponent implements OnInit {
     private errorHandler: FormErrorHandlerService,
     private fileUpload: IxFileUploadService,
     private dialog: DialogService,
+    private attachDebugWarningService: AttachDebugWarningService,
     @Inject(WINDOW) private window: Window,
   ) {
     this.form.controls.category.setDisable(true);
@@ -89,6 +91,7 @@ export class FileTicketFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.isFormLoading$.next(false);
+    this.listenForAttachDebugChanges();
 
     this.form.controls.token.value$.pipe(
       filter((token) => !!token),
@@ -239,7 +242,14 @@ export class FileTicketFormComponent implements OnInit {
   getJobStatus(id: number): Observable<Job> {
     return this.ws.call('core.get_jobs', [[['id', '=', id]]]).pipe(
       map((jobs) => jobs[0]),
-      catchError((error) => throwError(error)),
+      catchError((error) => throwError(() => error)),
     );
+  }
+
+  private listenForAttachDebugChanges(): void {
+    const control = this.form.controls.attach_debug;
+    this.attachDebugWarningService.handleAttachDebugChanges(control)
+      .pipe(untilDestroyed(this))
+      .subscribe((checked) => control.patchValue(checked));
   }
 }

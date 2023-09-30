@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
@@ -74,6 +75,7 @@ export class DatasetAclEditorComponent implements OnInit {
     private matDialog: MatDialog,
     private userService: UserService,
     private formBuilder: FormBuilder,
+    private location: Location,
   ) { }
 
   ngOnInit(): void {
@@ -83,6 +85,10 @@ export class DatasetAclEditorComponent implements OnInit {
     this.store.state$
       .pipe(untilDestroyed(this))
       .subscribe((state) => {
+        if (this.acl === null && state.acl === null) {
+          return this.router.navigate(['/sharing']);
+        }
+
         const isFirstLoad = !this.acl && state.acl;
         this.isLoading = state.isLoading;
         this.acl = state.acl;

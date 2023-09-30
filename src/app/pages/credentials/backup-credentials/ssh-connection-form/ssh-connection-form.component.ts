@@ -14,6 +14,7 @@ import { SshConnectionsSetupMethod } from 'app/enums/ssh-connections-setup-metho
 import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
 import helptext from 'app/helptext/system/ssh-connections';
 import {
+  KeychainCredential,
   KeychainCredentialUpdate,
   KeychainSshCredentials,
 } from 'app/interfaces/keychain-credential.interface';
@@ -187,23 +188,23 @@ export class SshConnectionFormComponent implements OnInit {
   onSubmit(): void {
     this.isLoading = true;
 
-    const request$: Observable<unknown> = this.isNew
+    const request$: Observable<KeychainCredential> = this.isNew
       ? this.prepareSetupRequest()
       : this.prepareUpdateRequest();
 
     request$.pipe(
       untilDestroyed(this),
     ).subscribe({
-      next: () => {
+      next: (newCredential) => {
         this.isLoading = false;
         this.snackbar.success(this.translate.instant('SSH Connection saved'));
         // TODO: Ideally this form shouldn't care about how it was called
         if (this.data?.dialog) {
           if (this.dialogRef) {
-            this.dialogRef.close();
+            this.dialogRef.close(newCredential);
           }
         } else {
-          this.slideInRef.close(true);
+          this.slideInRef.close(newCredential);
         }
       },
       error: (error) => {
@@ -214,7 +215,7 @@ export class SshConnectionFormComponent implements OnInit {
     });
   }
 
-  private prepareSetupRequest(): Observable<unknown> {
+  private prepareSetupRequest(): Observable<KeychainCredential> {
     const values = this.form.value;
 
     const params: SshConnectionSetup = {
@@ -269,7 +270,7 @@ export class SshConnectionFormComponent implements OnInit {
     );
   }
 
-  private prepareUpdateRequest(): Observable<unknown> {
+  private prepareUpdateRequest(): Observable<KeychainCredential> {
     const values = this.form.value;
     const params: KeychainCredentialUpdate = {
       name: values.connection_name,

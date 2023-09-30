@@ -191,8 +191,6 @@ import {
 } from 'app/interfaces/replication-task.interface';
 import { ReportingGraph } from 'app/interfaces/reporting-graph.interface';
 import {
-  ReportingConfig,
-  ReportingConfigUpdate,
   ReportingData,
   ReportingQueryParams,
 } from 'app/interfaces/reporting.interface';
@@ -698,8 +696,6 @@ export interface ApiCallDirectory {
   'rsyncmod.delete': { params: [id: number]; response: boolean };
 
   // Reporting
-  'reporting.update': { params: [ReportingConfigUpdate]; response: ReportingConfig };
-  'reporting.config': { params: void; response: ReportingConfig };
   'reporting.clear': { params: void; response: void };
   'reporting.netdata_get_data': { params: ReportingQueryParams; response: ReportingData[] };
   'reporting.netdata_graphs': { params: QueryParams<ReportingGraph>; response: ReportingGraph[] };

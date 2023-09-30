@@ -7,7 +7,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import _ from 'lodash';
 import { combineLatest, of } from 'rxjs';
 import {
   filter, map, switchMap, tap,
@@ -83,9 +82,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
     this.connectToStore();
     this.checkEnclosureStepAvailability();
     this.listenForStartOver();
-    if (this.route.snapshot.url.toString().includes('add-vdevs')) {
-      this.loadExistingPoolDetails();
-    }
+    this.loadExistingPoolDetails();
   }
 
   ngOnDestroy(): void {
@@ -96,8 +93,10 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
   loadExistingPoolDetails(): void {
     this.addVdevsStore.pool$.pipe(
       tap((pool) => {
-        this.existingPool = _.cloneDeep(pool);
-        this.cdr.markForCheck();
+        if (pool) {
+          this.existingPool = pool;
+          this.cdr.markForCheck();
+        }
       }),
       untilDestroyed(this),
     ).subscribe();
@@ -128,7 +127,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
     dialogRef.componentInstance.success.pipe(
       switchMap((job: Job<Pool>) => {
         if (!this.hasEncryption) {
-          return of(undefined);
+          return of(null);
         }
 
         return this.matDialog.open<DownloadKeyDialogComponent, DownloadKeyDialogParams>(DownloadKeyDialogComponent, {

@@ -52,6 +52,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
 
   private fitAddon: FitAddon;
   private attachAddon: XtermAttachAddon;
+  private token: string;
 
   readonly toolbarTooltip = this.translate.instant(`<b>Copy & Paste</b> <br/>
                   Context menu copy and paste operations are disabled in the Shell. Copy and paste shortcuts for Mac are <i>Command+C</i> and <i>Command+V</i>. For most operating systems, use <i>Ctrl+Insert</i> to copy and <i>Shift+Insert</i> to paste.<br/><br/>
@@ -105,8 +106,8 @@ export class TerminalComponent implements OnInit, OnDestroy {
     this.authService.authToken$.pipe(
       take(1),
       tap((token) => {
-        this.initializeWebShell(token);
-        this.shellService.shellOutput.pipe(untilDestroyed(this)).subscribe(() => {});
+        this.token = token;
+        this.initializeWebShell();
         this.initializeTerminal();
       }),
       untilDestroyed(this),
@@ -114,9 +115,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.shellService.connected) {
-      this.shellService.socket.close();
-    }
+    this.shellService.disconnectIfSessionActive();
   }
 
   onResize(): void {
@@ -159,7 +158,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
       this.attachAddon.dispose();
     }
 
-    this.attachAddon = new XtermAttachAddon(this.shellService.socket);
+    this.attachAddon = new XtermAttachAddon(this.shellService);
     this.xterm.loadAddon(this.attachAddon);
   }
 
@@ -176,15 +175,10 @@ export class TerminalComponent implements OnInit, OnDestroy {
     return true;
   }
 
-  initializeWebShell(token: string): void {
-    this.shellService.token = token;
+  initializeWebShell(): void {
+    this.shellService.connect(this.conf.connectionData, this.token);
 
-    if (this.conf.setShellConnectionData) {
-      this.conf.setShellConnectionData(this.shellService);
-    }
-    this.shellService.connect();
-
-    this.shellService.shellConnected.pipe(untilDestroyed(this)).subscribe((event: ShellConnectedEvent) => {
+    this.shellService.shellConnected$.pipe(untilDestroyed(this)).subscribe((event: ShellConnectedEvent) => {
       this.shellConnected = event.connected;
       this.connectionId = event.id;
       this.updateTerminal();
@@ -198,10 +192,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
   }
 
   reconnect(): void {
-    if (this.conf.setShellConnectionData) {
-      this.conf.setShellConnectionData(this.shellService);
-    }
-    this.shellService.connect();
+    this.shellService.connect(this.conf.connectionData, this.token);
   }
 
   onFontSizeChanged(newSize: number): void {

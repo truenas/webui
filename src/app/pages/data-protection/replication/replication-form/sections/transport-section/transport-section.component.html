@@ -4,7 +4,7 @@
     formControlName="ssh_credentials"
     [label]="'SSH Connection' | translate"
     [required]="true"
-    [options]="sshCredentials$"
+    [options]="sshCredentialsOptions$"
     [tooltip]="helptext.ssh_credentials_tooltip | translate"
   ></ix-select>
   <ng-container *ngIf="isNetcat">
