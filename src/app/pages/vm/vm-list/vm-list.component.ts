@@ -13,7 +13,6 @@ import helptext from 'app/helptext/vm/vm-list';
 import wizardHelptext from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { ApiParams } from 'app/interfaces/api-directory.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
-import { QueryParams } from 'app/interfaces/query-api.interface';
 import {
   VirtualizationDetails,
   VirtualMachine, VirtualMachineUpdate,
@@ -50,11 +49,6 @@ const noMemoryError = 'ENOMEM';
 export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
   title = this.translate.instant('Virtual Machines');
   queryCall = 'vm.query' as const;
-  queryCallOption: QueryParams<VirtualMachine, { extra: { retrieve_display_available_info: boolean } }> = [[], {
-    extra: {
-      retrieve_display_available_info: true,
-    },
-  }];
   wsDelete = 'vm.delete' as const;
   protected dialogRef: MatDialogRef<EntityJobComponent>;
   private productType = this.systemGeneralService.getProductType();
