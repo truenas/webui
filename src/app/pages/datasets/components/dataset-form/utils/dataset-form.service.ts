@@ -24,9 +24,24 @@ export class DatasetFormService {
     private slideInService: IxSlideInService,
   ) {}
 
-  ensurePathLimits(parentPath: string): Observable<unknown> {
+  isPathTooDeep(parentPath: string): Observable<boolean> {
     if (!parentPath) {
-      return of();
+      return of(false);
+    }
+    if (parentPath.split('/').length >= maxDatasetNesting) {
+      return this.dialog.warn(
+        this.translate.instant(helptext.pathWarningTitle),
+        this.translate.instant(helptext.pathIsTooDeepWarning),
+      ).pipe(
+        tap(() => this.slideInService.closeLast()),
+      );
+    }
+    return of(false);
+  }
+
+  isPathTooLong(parentPath: string): Observable<boolean> {
+    if (!parentPath) {
+      return of(false);
     }
 
     if (parentPath.length >= maxDatasetPath) {
@@ -38,16 +53,7 @@ export class DatasetFormService {
       );
     }
 
-    if (parentPath.split('/').length >= maxDatasetNesting) {
-      return this.dialog.warn(
-        this.translate.instant(helptext.pathWarningTitle),
-        this.translate.instant(helptext.pathIsTooDeepWarning),
-      ).pipe(
-        tap(() => this.slideInService.closeLast()),
-      );
-    }
-
-    return of();
+    return of(false);
   }
 
   loadDataset(datasetId: string): Observable<Dataset> {
