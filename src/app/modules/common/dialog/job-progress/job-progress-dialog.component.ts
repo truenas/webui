@@ -2,27 +2,16 @@ import { AfterViewChecked, Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import _ from 'lodash';
-import { Observable, Subscription, delay, map } from 'rxjs';
+import { Observable, Subscription, map } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
-import { Job, JobProgress } from 'app/interfaces/job.interface';
+import { Job } from 'app/interfaces/job.interface';
 import { WebSocketService } from 'app/services/ws.service';
 
 export interface JobProgressDialogConfig {
-  job$: Observable<Job>;
-  callbacks: {
-    onSuccess?: (job: Job) => void;
-    onFailure?: (job: Job) => void;
-    onAbort?: (job: Job) => void;
-    onProgress: (progress: JobProgress) => void;
-  };
-  config: {
-    title: string;
-    description: string;
-  };
-  flags: {
-    showRealtimeLogs: boolean;
-    autoCloseOnSuccess: boolean;
-  };
+  title: string;
+  description: string;
+  showRealtimeLogs: boolean;
+  autoCloseOnSuccess: boolean;
 }
 
 @UntilDestroy()
@@ -62,7 +51,7 @@ export class JobProgressDialogComponent implements OnInit, AfterViewChecked {
 
   constructor(
     private dialogRef: MatDialogRef<JobProgressDialogComponent, MatDialogConfig>,
-    @Inject(MAT_DIALOG_DATA) public data: JobProgressDialogConfig,
+    @Inject(MAT_DIALOG_DATA) public data: { job$: Observable<Job>; config: JobProgressDialogConfig },
     private ws: WebSocketService,
   ) { }
 
@@ -70,27 +59,25 @@ export class JobProgressDialogComponent implements OnInit, AfterViewChecked {
     this.title = this.data.config.title;
     this.description = this.data.config.description;
     let logsSubscription: Subscription = null;
-    this.showRealtimeLogs = this.data.flags.showRealtimeLogs;
-    this.autoCloseOnSuccess = this.data.flags.autoCloseOnSuccess;
+    this.showRealtimeLogs = this.data.config.showRealtimeLogs;
+    this.autoCloseOnSuccess = this.data.config.autoCloseOnSuccess;
     if (this.dialogRef.disableClose) {
       this.showCloseButton = false;
     }
 
     this.data.job$.pipe(
-      delay(5000),
       untilDestroyed(this),
     ).subscribe({
       next: (job) => {
         this.job = job;
         this.showAbortButton = job.abortable;
         if (
-          this.data.flags.showRealtimeLogs
+          this.data.config.showRealtimeLogs
           && this.job.logs_path
           && !this.realtimeLogsSubscribed) {
           logsSubscription = this.getRealtimeLogs();
         }
-        if (job.progress && !this.data.flags.showRealtimeLogs) {
-          this.data.callbacks.onProgress(job.progress);
+        if (job.progress && !this.data.config.showRealtimeLogs) {
           if (job.progress.description) {
             this.description = job.progress.description;
           }
@@ -99,23 +86,17 @@ export class JobProgressDialogComponent implements OnInit, AfterViewChecked {
           }
           this.hideProgressValue = job.progress.percent === null;
         }
-        if (this.job.state === JobState.Aborted) {
-          this.data.callbacks.onAbort(this.job);
-        }
 
       },
       error: (job: Job) => {
         this.job = job;
-        this.data.callbacks.onFailure(this.job);
       },
       complete: () => {
         if (this.job.state === JobState.Success) {
-          this.data.callbacks.onSuccess(this.job);
           if (this.autoCloseOnSuccess) {
             this.dialogRef.close();
           }
         } else if (this.job.state === JobState.Failed) {
-          this.data.callbacks.onFailure(this.job);
           let error = _.replace(this.job.error, '<', '< ');
           error = _.replace(error, '>', ' >');
           this.description = '<b>Error:</b> ' + error;
