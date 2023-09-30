@@ -82,6 +82,16 @@
       }
     }
 
+    &.cell-status {
+      @media (max-width: $breakpoint-tablet) {
+        display: inline-flex;
+        justify-content: center;
+        min-width: 130px;
+        position: absolute;
+        right: 24px;
+      }
+    }
+
     &:nth-child(2) {
       @media (max-width: $breakpoint-tablet) {
         display: inline-flex;
@@ -125,4 +135,13 @@
   .cell-action {
     justify-content: center;
   }
+}
+
+.cell-clickable {
+  @media(max-width: $breakpoint-tablet) {
+    display: inline;
+    position: absolute;
+    right: 0;
+  }
+  display: none;
 }

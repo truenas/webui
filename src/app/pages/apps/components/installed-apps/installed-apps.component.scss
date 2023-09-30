@@ -136,7 +136,7 @@ ix-app-row,
   grid-template-columns: 40px minmax(160px, auto) minmax(100px, 130px) minmax(100px, 115px) 60px;
 
   @media (max-width: $breakpoint-tablet) {
-    grid-template-columns: 45px auto 0 0 0 0 0 0;
+    grid-template-columns: 45px auto auto 0 0 0 0 0;
   }
 }
 
@@ -179,6 +179,16 @@ ix-app-row,
     &:nth-child(2) {
       @media (max-width: $breakpoint-tablet) {
         display: flex !important;
+      }
+    }
+
+    &:nth-child(3) {
+      @media (max-width: $breakpoint-tablet) {
+        display: inline-flex !important;
+        justify-content: center;
+        position: absolute;
+        right: 24px;
+        width: 130px;
       }
     }
   }
