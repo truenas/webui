@@ -5,11 +5,11 @@ import { Store } from '@ngrx/store';
 import { mergeMap, map, switchMap, filter, EMPTY, catchError, of, distinctUntilChanged } from 'rxjs';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
-import { StartServiceDialogComponent } from 'app/pages/sharing/components/start-service-dialog/start-service-dialog.component';
+import { StartServiceDialogComponent, StartServiceDialogResult } from 'app/pages/sharing/components/start-service-dialog/start-service-dialog.component';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
-import { checkIfServiceIsEnabled, serviceChanged, serviceStartFailed, servicesLoaded } from 'app/store/services/services.actions';
+import { checkIfServiceIsEnabled, serviceChanged, serviceDisabled, serviceStartFailed, serviceStarted, servicesLoaded } from 'app/store/services/services.actions';
 import { selectService } from 'app/store/services/services.selectors';
 import { serviceEnabled } from './services.actions';
 
@@ -50,14 +50,24 @@ export class ServicesEffects {
     distinctUntilChanged((prev, curr) => prev.id === curr.id),
     switchMap((service) => {
       if (!service.enable || service.state === ServiceStatus.Stopped) {
-        return this.matDialog.open(StartServiceDialogComponent, {
-          data: service.service,
-          disableClose: true,
-        }).afterClosed().pipe(
-          filter(Boolean),
-          map(() => serviceEnabled()),
-          catchError(() => of(serviceStartFailed())),
-        );
+        return this.matDialog.open<StartServiceDialogComponent, unknown, StartServiceDialogResult>(
+          StartServiceDialogComponent, {
+            data: service.service,
+            disableClose: true,
+          })
+          .afterClosed()
+          .pipe(
+            map((data) => {
+              if (data.start && data.startAutomatically) {
+                return serviceEnabled();
+              }
+              if (data.start && !data.startAutomatically) {
+                return serviceStarted();
+              }
+              return data.startAutomatically ? serviceEnabled() : serviceDisabled();
+            }),
+            catchError(() => of(serviceStartFailed())),
+          );
       }
 
       return of(serviceEnabled());

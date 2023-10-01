@@ -18,5 +18,7 @@ export const checkIfServiceIsEnabled = createAction(
 );
 
 export const serviceEnabled = createAction('[Services API] Service Enabled');
+export const serviceDisabled = createAction('[Services API] Service Disabled');
+export const serviceStarted = createAction('[Services API] Service Started');
 export const serviceStartFailed = createAction('[Services API] Service Start Failed');
 export const serviceRestart = createAction('[Services API] Service Restart', props<{ service: Service }>());

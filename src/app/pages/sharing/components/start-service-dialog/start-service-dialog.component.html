@@ -14,7 +14,7 @@
   <button
     mat-button
     ixTest="do-not-start"
-    [mat-dialog-close]="false"
+    (click)="onCancel()"
   >{{ 'No' | translate }}</button>
 
   <button

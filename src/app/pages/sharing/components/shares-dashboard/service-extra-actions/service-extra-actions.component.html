@@ -1,7 +1,7 @@
 <div *ngIf="service">
   <button
     mat-icon-button
-    aria-label="Table Actions of Expandable Table"
+    [attr.aria-label]="'Table Actions of Expandable Table' | translate"
     [ixTest]="[service?.id, 'actions-menu']"
     [matMenuTriggerFor]="rowActions"
   >
