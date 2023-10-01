@@ -57,8 +57,8 @@ export class AppsFilterStore extends ComponentStore<AppsFilterState> {
       state,
     ]) => {
       const allApps: AvailableApp[] = state.filteredApps?.length ? [...state.filteredApps] : [...availableApps];
-      const filteredApps: AvailableApp[] = allApps
-        .filter((app) => this.doesAppContainString(state.searchQuery, app));
+      const filteredApps: AvailableApp[] = allApps.filter((app) => this.doesAppContainString(state.searchQuery, app));
+
       if (state.filter.sort === AppsFiltersSort.Name) {
         return this.sortAppsByName(filteredApps);
       }
@@ -70,8 +70,8 @@ export class AppsFilterStore extends ComponentStore<AppsFilterState> {
       }
       return this.sortAppsByCategory(
         filteredApps,
-        recommendedApps,
-        latestApps,
+        state.searchQuery.length ? [] : recommendedApps,
+        state.searchQuery.length ? [] : latestApps,
         appsCategories,
         state,
       );
