@@ -16,6 +16,13 @@ import { WebSocketService } from 'app/services/ws.service';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectServices } from 'app/store/services/services.selectors';
 
+const cifsService = {
+  id: 4,
+  service: ServiceName.Cifs,
+  state: ServiceStatus.Stopped,
+  enable: false,
+};
+
 describe('StartServiceDialogComponent', () => {
   let spectator: Spectator<StartServiceDialogComponent>;
   let loader: HarnessLoader;
@@ -40,7 +47,7 @@ describe('StartServiceDialogComponent', () => {
       provideMockStore({
         selectors: [{
           selector: selectServices,
-          value: [],
+          value: [cifsService],
         }],
       }),
     ],
@@ -53,12 +60,29 @@ describe('StartServiceDialogComponent', () => {
   });
 
   it('cifs: shows a dialog with Enable automatically checkbox.', async () => {
-    store$.overrideSelector(selectServices, [{
-      id: 4,
-      service: ServiceName.Cifs,
-      state: ServiceStatus.Stopped,
-      enable: false,
-    }] as Service[]);
+    expect(spectator.query('.description')).toHaveText(
+      'SMB Service is not currently running. Start the service now?',
+    );
+
+    const enableAutomaticallyCheckbox = await loader.getHarness(
+      IxSlideToggleHarness.with({ label: 'Enable this service to start automatically.' }),
+    );
+
+    expect(await enableAutomaticallyCheckbox.getValue()).toBe(false);
+
+    await enableAutomaticallyCheckbox.setValue(true);
+
+    const startButton = await loader.getHarness(MatButtonHarness.with({ text: 'Start' }));
+    await startButton.click();
+
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('service.update', [4, { enable: true }]);
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('service.start', ['cifs', { silent: false }]);
+    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
+  });
+
+  it('ensures initial state for slide toggle matches current service value', async () => {
+    store$.overrideSelector(selectServices, [{ ...cifsService, enable: true } as Service]);
+    store$.refreshState();
 
     expect(spectator.query('.description')).toHaveText(
       'SMB Service is not currently running. Start the service now?',
@@ -67,7 +91,7 @@ describe('StartServiceDialogComponent', () => {
     const enableAutomaticallyCheckbox = await loader.getHarness(
       IxSlideToggleHarness.with({ label: 'Enable this service to start automatically.' }),
     );
-    await enableAutomaticallyCheckbox.setValue(true);
+    expect(await enableAutomaticallyCheckbox.getValue()).toBe(true);
 
     const startButton = await loader.getHarness(MatButtonHarness.with({ text: 'Start' }));
     await startButton.click();
@@ -81,6 +105,7 @@ describe('StartServiceDialogComponent', () => {
     const noButton = await loader.getHarness(MatButtonHarness.with({ text: 'No' }));
     await noButton.click();
 
+    expect(spectator.inject(WebSocketService).call).not.toHaveBeenCalled();
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(false);
   });
 });
