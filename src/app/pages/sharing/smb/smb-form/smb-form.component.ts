@@ -412,8 +412,6 @@ export class SmbFormComponent implements OnInit {
       request$ = this.ws.call('sharing.smb.update', [this.existingSmbShare.id, smbShare]);
     }
 
-    this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Cifs }));
-
     request$.pipe(
       switchMap((smbShareResponse) => this.restartCifsServiceIfNecessary().pipe(
         map(() => smbShareResponse),
@@ -441,13 +439,15 @@ export class SmbFormComponent implements OnInit {
               );
             }
             this.slideInRef.close();
+            this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Cifs }));
           });
         } else {
+          this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Cifs }));
           this.slideInRef.close();
         }
       },
       error: (error: WebsocketError) => {
-        if (error.reason.includes('[ENOENT]') || error.reason.includes('[EXDEV]')) {
+        if (error?.reason?.includes('[ENOENT]') || error?.reason?.includes('[EXDEV]')) {
           this.dialogService.closeAllDialogs();
         } else {
           this.dialogService.error(this.errorHandler.parseWsError(error));
@@ -474,8 +474,8 @@ export class SmbFormComponent implements OnInit {
   promptIfRestartRequired(): Observable<boolean> {
     return this.store$.select(selectService(ServiceName.Cifs)).pipe(
       map((service) => service.state === ServiceStatus.Running),
-      switchMap(() => {
-        if (this.isRestartRequired) {
+      switchMap((isRunning) => {
+        if (isRunning && this.isRestartRequired) {
           return this.mdDialog.open(RestartSmbDialogComponent, {
             data: {
               timemachine: this.isNewTimemachineShare,

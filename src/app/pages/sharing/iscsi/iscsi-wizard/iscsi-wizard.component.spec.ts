@@ -58,7 +58,6 @@ describe('IscsiWizardComponent', () => {
         confirm: jest.fn(() => of(true)),
       }),
       mockWebsocket([
-        mockCall('service.start'),
         mockCall('iscsi.global.sessions', [] as IscsiGlobalSession[]),
         mockCall('service.restart'),
         mockCall('iscsi.extent.query', []),

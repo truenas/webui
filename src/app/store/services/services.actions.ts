@@ -8,7 +8,7 @@ export const servicesLoaded = createAction(
 );
 
 export const serviceChanged = createAction(
-  '[Services API] Service State Updated',
+  '[Services API] Service Changed',
   props<{ service: Service }>(),
 );
 

@@ -44,8 +44,6 @@ describe('TargetGlobalConfigurationComponent', () => {
           listen_port: 3260,
         } as IscsiGlobalConfig),
         mockCall('iscsi.global.update'),
-        mockCall('service.update'),
-        mockCall('service.start'),
       ]),
       mockProvider(MatDialog),
       mockProvider(DialogService, {

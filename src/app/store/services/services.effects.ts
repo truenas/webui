@@ -38,7 +38,7 @@ export class ServicesEffects {
       return this.ws.subscribe('service.query').pipe(
         map((event) => event.fields),
         filter((service) => !hiddenServices.includes(service.service)),
-        switchMap((service) => of(serviceChanged({ service }))),
+        map((service) => serviceChanged({ service })),
       );
     }),
   ));

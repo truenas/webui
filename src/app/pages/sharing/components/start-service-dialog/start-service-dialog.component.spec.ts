@@ -68,7 +68,7 @@ describe('StartServiceDialogComponent', () => {
     store$ = spectator.inject(MockStore);
   });
 
-  it('cifs: shows a dialog with Enable automatically toggle.', async () => {
+  it('cifs: shows a dialog submit with Enable automatically checkbox.', async () => {
     expect(spectator.query('.description')).toHaveText(
       'SMB Service is not currently running. Start the service now?',
     );
@@ -77,9 +77,7 @@ describe('StartServiceDialogComponent', () => {
       IxSlideToggleHarness.with({ label: 'Enable this service to start automatically.' }),
     );
 
-    expect(await enableAutomaticallyCheckbox.getValue()).toBe(false);
-
-    await enableAutomaticallyCheckbox.setValue(true);
+    expect(await enableAutomaticallyCheckbox.getValue()).toBe(true);
 
     const startButton = await loader.getHarness(MatButtonHarness.with({ text: 'Start' }));
     await startButton.click();
@@ -89,6 +87,28 @@ describe('StartServiceDialogComponent', () => {
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({
       start: true,
       startAutomatically: true,
+    });
+  });
+
+  it('cifs: shows a dialog and submit without Enable automatically checkbox.', async () => {
+    expect(spectator.query('.description')).toHaveText(
+      'SMB Service is not currently running. Start the service now?',
+    );
+
+    const enableAutomaticallyCheckbox = await loader.getHarness(
+      IxSlideToggleHarness.with({ label: 'Enable this service to start automatically.' }),
+    );
+    await enableAutomaticallyCheckbox.setValue(false);
+    expect(await enableAutomaticallyCheckbox.getValue()).toBe(false);
+
+    const startButton = await loader.getHarness(MatButtonHarness.with({ text: 'Start' }));
+    await startButton.click();
+
+    expect(spectator.inject(WebSocketService).call).not.toHaveBeenCalledWith('service.update', [4, { enable: true }]);
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('service.start', ['cifs', { silent: false }]);
+    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({
+      start: true,
+      startAutomatically: false,
     });
   });
 

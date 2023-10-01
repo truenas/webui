@@ -63,14 +63,13 @@ export class TargetGlobalConfigurationComponent implements OnInit {
     this.setLoading(true);
     const values = this.form.value as IscsiGlobalConfigUpdate;
 
-    this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Iscsi }));
-
     this.ws.call('iscsi.global.update', [values])
       .pipe(untilDestroyed(this))
       .subscribe({
         complete: () => {
           this.setLoading(false);
           this.areSettingsSaved = true;
+          this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Iscsi }));
           this.cdr.markForCheck();
         },
         error: (error) => {

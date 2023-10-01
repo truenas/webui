@@ -27,11 +27,19 @@ export interface StartServiceDialogResult {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StartServiceDialogComponent implements OnInit {
-  startAutomaticallyControl = new FormControl(false);
+  startAutomaticallyControl = new FormControl(true);
   private service: Service;
 
   get serviceHumanName(): string {
     return serviceNames.get(this.serviceName);
+  }
+
+  get isStopped(): boolean {
+    return this.service.state === ServiceStatus.Stopped;
+  }
+
+  get isDisabled(): boolean {
+    return !this.service.enable;
   }
 
   constructor(
@@ -51,7 +59,6 @@ export class StartServiceDialogComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe((service) => {
         this.service = service;
-        this.startAutomaticallyControl.setValue(service.enable);
         this.cdr.markForCheck();
       });
   }
@@ -59,22 +66,22 @@ export class StartServiceDialogComponent implements OnInit {
   onCancel(): void {
     this.dialogRef.close({
       start: false,
-      startAutomatically: this.startAutomaticallyControl.value,
+      startAutomatically: false,
     });
   }
 
   onSubmit(): void {
     const requests: Observable<boolean | number>[] = [];
-    const data: StartServiceDialogResult = {
-      start: this.service.state === ServiceStatus.Stopped,
+    const result: StartServiceDialogResult = {
+      start: true,
       startAutomatically: this.startAutomaticallyControl.value,
     };
 
-    if (data.startAutomatically && !this.service.enable) {
-      requests.push(this.ws.call('service.update', [this.service.id, { enable: data.startAutomatically } ]));
+    if (result.start && result.startAutomatically && this.isDisabled) {
+      requests.push(this.ws.call('service.update', [this.service.id, { enable: result.startAutomatically } ]));
     }
 
-    if (data.start) {
+    if (result.start) {
       requests.push(this.ws.call('service.start', [this.serviceName, { silent: false }]));
     }
 
@@ -82,19 +89,19 @@ export class StartServiceDialogComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
-          if (data.startAutomatically) {
+          if (result.startAutomatically) {
             this.snackbar.success(
               this.translate.instant(
-                'The {service} service is now active and will auto-start after a system reboot.',
+                'The {service} service is running and will auto-start after a system reboot.',
                 { service: this.serviceHumanName },
               ),
             );
           } else {
             this.snackbar.success(
-              this.translate.instant('The {service} service is now active.', { service: this.serviceHumanName }),
+              this.translate.instant('The {service} service is running.', { service: this.serviceHumanName }),
             );
           }
-          this.dialogRef.close(data);
+          this.dialogRef.close(result);
         },
         error: (error: WebsocketError) => {
           this.dialogRef.close({

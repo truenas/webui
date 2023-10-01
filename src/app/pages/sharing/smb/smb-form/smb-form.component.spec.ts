@@ -141,8 +141,6 @@ describe('SmbFormComponent', () => {
         mockCall('filesystem.stat', {
           acl: false,
         } as FileSystemStat),
-        mockCall('service.update'),
-        mockCall('service.start'),
         mockCall('service.restart'),
         mockCall('sharing.smb.presets', { ...presets }),
         mockCall('filesystem.acl_is_trivial', false),
@@ -373,6 +371,7 @@ describe('SmbFormComponent', () => {
         enable: true,
         state: ServiceStatus.Running,
       } as Service]);
+      mockStore$.refreshState();
 
       const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
       await advancedButton.click();
