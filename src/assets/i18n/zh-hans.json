@@ -3438,7 +3438,6 @@
   "Spare VDEVs": "备用 VDEV",
   "Spares": "备用",
   "Sparse": "备用",
-  "Special": "特殊的",
   "Specifies the auxiliary directory service ID provider.": "指定辅助目录服务ID提供程序。",
   "Specify a size and value such as <i>10 GiB</i>.": "指定大小和值，例如<i>10 GiB</i> 。",
   "Specify the PCI device to pass thru (bus#/slot#/fcn#).": "Specify the PCI device to pass thru (bus\\#/slot\\#/fcn\\#).",
