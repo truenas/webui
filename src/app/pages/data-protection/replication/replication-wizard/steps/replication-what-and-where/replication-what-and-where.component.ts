@@ -290,7 +290,6 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
           return;
         }
 
-        this.dialogService.closeAllDialogs();
         this.dialogService.confirm({
           title: this.translate.instant('Sudo Enabled'),
           message: helptext.sudo_warning,

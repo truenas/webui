@@ -31,6 +31,7 @@ import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { CreateZfsSnapshot, ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ReplicationWizardData } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard-data.interface';
 import { ReplicationWhatAndWhereComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-what-and-where/replication-what-and-where.component';
 import { ReplicationWhenComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-when/replication-when.component';
@@ -69,6 +70,7 @@ export class ReplicationWizardComponent {
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
+    private snackbar: SnackbarService,
   ) {}
 
   setRowId(id: number): void {
@@ -125,6 +127,7 @@ export class ReplicationWizardComponent {
       catchError((err) => { this.handleError(err); return EMPTY; }),
       untilDestroyed(this),
     ).subscribe(() => {
+      this.snackbar.success(this.translate.instant('Replication task created.'));
       this.isLoading = false;
       this.cdr.markForCheck();
       this.slideInRef.close(true);
