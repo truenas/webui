@@ -40,7 +40,7 @@ export class TopbarComponent implements OnInit {
     public themeService: ThemeService,
     private router: Router,
     private systemGeneralService: SystemGeneralService,
-    private dialog: MatDialog,
+    private matDialog: MatDialog,
     private store$: Store<AlertSlice>,
   ) {
     this.systemGeneralService.updateRunningNoticeSent.pipe(untilDestroyed(this)).subscribe(() => {
@@ -114,7 +114,7 @@ export class TopbarComponent implements OnInit {
       : helptext.updateRunning_dialog.message + helptext.updateRunning_dialog.message_pt2;
     const title = helptext.updateRunning_dialog.title;
 
-    this.updateDialog = this.dialog.open(UpdateDialogComponent, {
+    this.updateDialog = this.matDialog.open(UpdateDialogComponent, {
       width: '400px',
       hasBackdrop: true,
       panelClass: 'topbar-panel',
@@ -124,6 +124,6 @@ export class TopbarComponent implements OnInit {
   }
 
   onFeedbackIndicatorPressed(): void {
-    this.dialog.open(FeedbackDialogComponent);
+    this.matDialog.open(FeedbackDialogComponent);
   }
 }

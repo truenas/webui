@@ -223,7 +223,7 @@ export class IscsiWizardComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
-    private mdDialog: MatDialog,
+    private matDialog: MatDialog,
     private snackbar: SnackbarService,
     private translateService: TranslateService,
     private loader: AppLoaderService,
@@ -461,7 +461,7 @@ export class IscsiWizardComponent implements OnInit {
   };
 
   startAndEnableService = (iscsiService: Service): Observable<unknown> => {
-    return this.mdDialog.open(StartServiceDialogComponent, {
+    return this.matDialog.open(StartServiceDialogComponent, {
       data: serviceNames.get(ServiceName.Iscsi),
       disableClose: true,
     })

@@ -104,7 +104,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
     private loader: AppLoaderService,
     private dialogService: DialogService,
     private router: Router,
-    protected dialog: MatDialog,
+    protected matDialog: MatDialog,
     private errorHandler: ErrorHandlerService,
     private vmService: VmService,
     private translate: TranslateService,
@@ -365,7 +365,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
       icon: 'delete',
       label: this.translate.instant('Delete'),
       onClick: (vm: VirtualMachineRow) => {
-        this.dialog.open(DeleteVmDialogComponent, {
+        this.matDialog.open(DeleteVmDialogComponent, {
           data: vm,
         })
           .afterClosed()
@@ -392,7 +392,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
       icon: 'filter_none',
       label: this.translate.instant('Clone'),
       onClick: (vm: VirtualMachineRow) => {
-        this.dialog.open(CloneVmDialogComponent, {
+        this.matDialog.open(CloneVmDialogComponent, {
           data: vm,
         })
           .afterClosed()
@@ -477,7 +477,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
   }
 
   private openStopDialog(vm: VirtualMachineRow): void {
-    this.dialog.open(StopVmDialogComponent, {
+    this.matDialog.open(StopVmDialogComponent, {
       data: vm,
     })
       .afterClosed()
@@ -494,7 +494,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
   }
 
   stopVm(vm: VirtualMachine, forceAfterTimeout: boolean): void {
-    const jobDialogRef = this.dialog.open(
+    const jobDialogRef = this.matDialog.open(
       EntityJobComponent,
       {
         data: {

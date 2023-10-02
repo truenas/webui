@@ -56,7 +56,7 @@ export class ManualUpdateFormComponent implements OnInit {
 
   constructor(
     private dialogService: DialogService,
-    private mdDialog: MatDialog,
+    private matDialog: MatDialog,
     protected router: Router,
     public systemService: SystemGeneralService,
     private formBuilder: FormBuilder,
@@ -146,7 +146,7 @@ export class ManualUpdateFormComponent implements OnInit {
   }
 
   showRunningUpdate(jobId: number): void {
-    const dialogRef = this.mdDialog.open(EntityJobComponent, { data: { title: this.translate.instant('Update') } });
+    const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: this.translate.instant('Update') } });
     if (this.isHaLicensed) {
       dialogRef.componentInstance.disableProgressValue(true);
     }
@@ -177,7 +177,7 @@ export class ManualUpdateFormComponent implements OnInit {
     if (!files.length) {
       return;
     }
-    const dialogRef = this.mdDialog.open(EntityJobComponent, {
+    const dialogRef = this.matDialog.open(EntityJobComponent, {
       data: { title: helptext.manual_update_action },
       disableClose: true,
     });
@@ -295,7 +295,7 @@ export class ManualUpdateFormComponent implements OnInit {
   };
 
   private resumeUpdateAfterFailure(): void {
-    const dialogRef = this.mdDialog.open(EntityJobComponent, {
+    const dialogRef = this.matDialog.open(EntityJobComponent, {
       data: { title: helptext.manual_update_action },
       disableClose: true,
     });
