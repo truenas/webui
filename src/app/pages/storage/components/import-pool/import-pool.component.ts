@@ -50,7 +50,7 @@ export class ImportPoolComponent implements OnInit {
     private fb: FormBuilder,
     private slideInRef: IxSlideInRef<ImportPoolComponent>,
     private ws: WebSocketService,
-    private dialog: MatDialog,
+    private matDialog: MatDialog,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private translate: TranslateService,
@@ -87,7 +87,7 @@ export class ImportPoolComponent implements OnInit {
 
   onSubmit(): void {
     this.isLoading = true;
-    const dialogRef = this.dialog.open(
+    const dialogRef = this.matDialog.open(
       EntityJobComponent,
       {
         data: { title: this.translate.instant('Importing Pool') },

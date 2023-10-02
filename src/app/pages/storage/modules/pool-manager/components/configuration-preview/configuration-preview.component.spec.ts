@@ -108,7 +108,7 @@ describe('ConfigurationPreviewComponent', () => {
       'Dedup:': 'None',
       'Log:': '2 × RAIDZ1 | 3 × 3 GiB (HDD)',
       'Spare:': 'Manual layout | 2 VDEVs',
-      'Special:': 'None',
+      'Metadata:': 'None',
     });
   });
 

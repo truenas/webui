@@ -13,7 +13,7 @@ export class WebsocketConnectionGuard {
   constructor(
     private wsManager: WebsocketConnectionService,
     protected router: Router,
-    private dialog: MatDialog,
+    private matDialog: MatDialog,
     private dialogService: DialogService,
     private translate: TranslateService,
   ) {
@@ -40,7 +40,7 @@ export class WebsocketConnectionGuard {
   }
 
   private closeAllDialogs(): void {
-    for (const openDialog of this.dialog.openDialogs) {
+    for (const openDialog of this.matDialog.openDialogs) {
       openDialog.close();
     }
   }

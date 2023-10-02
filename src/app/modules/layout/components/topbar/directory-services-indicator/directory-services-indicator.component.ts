@@ -29,7 +29,7 @@ export class DirectoryServicesIndicatorComponent implements OnInit, OnDestroy {
 
   constructor(
     private ws: WebSocketService,
-    private dialog: MatDialog,
+    private matDialog: MatDialog,
     private cdr: ChangeDetectorRef,
   ) { }
 
@@ -49,7 +49,7 @@ export class DirectoryServicesIndicatorComponent implements OnInit, OnDestroy {
     if (this.isServicesMonitorOpen) {
       this.servicesMonitorRef.close(true);
     } else {
-      this.servicesMonitorRef = this.dialog.open(DirectoryServicesMonitorComponent, {
+      this.servicesMonitorRef = this.matDialog.open(DirectoryServicesMonitorComponent, {
         hasBackdrop: true,
         panelClass: 'topbar-panel',
         position: topbarDialogPosition,

@@ -30,6 +30,7 @@ import {
   distinctUntilChanged,
   filter,
   map,
+  switchMap,
 } from 'rxjs/operators';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -281,7 +282,17 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   private listenForRouteChanges(): void {
     this.activatedRoute.params
       .pipe(
-        map((params) => params.datasetId as string),
+        switchMap((params) => {
+          return this.datasetStore.datasets$.pipe(
+            map((datasets) => {
+              const selectedDataset = datasets.find((dataset) => dataset.id === params.datasetId);
+              if (!selectedDataset && datasets.length) {
+                this.router.navigate(['/datasets', datasets[0]?.id]);
+              }
+              return selectedDataset ? params.datasetId as string : datasets[0]?.id;
+            }),
+          );
+        }),
         filter(Boolean),
         untilDestroyed(this),
       )

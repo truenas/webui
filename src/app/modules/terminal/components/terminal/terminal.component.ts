@@ -62,7 +62,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
   constructor(
     private ws: WebSocketService,
     private shellService: ShellService,
-    private dialog: MatDialog,
+    private matDialog: MatDialog,
     private translate: TranslateService,
     private store$: Store<AppState>,
     private authService: AuthService,
@@ -123,7 +123,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
   }
 
   onRightClick(): false {
-    this.dialog.open(CopyPasteMessageComponent);
+    this.matDialog.open(CopyPasteMessageComponent);
     return false;
   }
 

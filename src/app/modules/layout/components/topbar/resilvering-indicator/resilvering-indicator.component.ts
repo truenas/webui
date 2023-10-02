@@ -26,11 +26,11 @@ export class ResilveringIndicatorComponent {
   protected readonly tooltips = helptext.mat_tooltips;
 
   constructor(
-    private dialog: MatDialog,
+    private matDialog: MatDialog,
     private ws: WebSocketService,
   ) {}
 
   showDetails(): void {
-    this.dialog.open(ResilverProgressDialogComponent);
+    this.matDialog.open(ResilverProgressDialogComponent);
   }
 }
