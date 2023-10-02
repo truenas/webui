@@ -75,6 +75,7 @@ export class LayoutStepComponent implements OnInit {
       .subscribe((customVdevs: UnusedDisk[][]) => {
         if (!customVdevs.length) {
           this.store.resetTopologyCategory(this.type);
+          this.store.resetStep(this.type);
         } else {
           this.store.setManualTopologyCategory(this.type, customVdevs);
         }
