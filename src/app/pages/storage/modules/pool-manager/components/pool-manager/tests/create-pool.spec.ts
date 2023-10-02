@@ -201,7 +201,7 @@ describe('PoolManagerComponent – create pool', () => {
       Dedup: '1 × STRIPE | 1 × 20 GiB (HDD)',
       Log: '1 × STRIPE | 1 × 20 GiB (HDD)',
       Spare: '1 × 20 GiB (HDD)',
-      Special: '1 × STRIPE | 1 × 20 GiB (HDD)',
+      Metadata: '1 × STRIPE | 1 × 20 GiB (HDD)',
     });
     expect(await reviewView.getWarnings()).toEqual([
       'A stripe log VDEV may result in data loss if it fails combined with a power outage.',
