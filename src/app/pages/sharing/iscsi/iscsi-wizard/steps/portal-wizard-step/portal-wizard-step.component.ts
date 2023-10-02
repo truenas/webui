@@ -79,10 +79,12 @@ export class PortalWizardStepComponent implements OnInit {
         this.form.controls.discovery_authmethod.enable();
         this.form.controls.discovery_authgroup.enable();
         this.form.controls.listen.enable();
+        this.form.controls.listen.addValidators(Validators.required);
       } else {
         this.form.controls.discovery_authmethod.disable();
         this.form.controls.discovery_authgroup.disable();
         this.form.controls.listen.disable();
+        this.form.controls.listen.removeValidators(Validators.required);
         this.form.controls.tag.disable();
         this.form.controls.user.disable();
         this.form.controls.secret.disable();
