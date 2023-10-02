@@ -165,8 +165,13 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   setMobileStats(usage: number[], temps: number[]): void {
     // Usage
     usage.splice(0, 1);
+
     this.usageMin = Number(Math.min(...usage).toFixed(0));
+    this.usageMin = Number.isFinite(this.usageMin) ? this.usageMin : 0;
+
     this.usageMax = Number(Math.max(...usage).toFixed(0));
+    this.usageMax = Number.isFinite(this.usageMax) ? this.usageMax : 0;
+
     this.usageMinThreads = [];
     this.usageMaxThreads = [];
     for (let i = 0; i < usage.length; i++) {
@@ -182,7 +187,11 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     // Temperature
     temps.splice(0, 1);
     this.tempMin = Number(Math.min(...temps).toFixed(0));
+    this.tempMin = Number.isFinite(this.tempMin) ? this.tempMin : 0;
+
     this.tempMax = Number(Math.max(...temps).toFixed(0));
+    this.tempMax = Number.isFinite(this.tempMax) ? this.tempMax : 0;
+
     this.tempMinThreads = [];
     this.tempMaxThreads = [];
     for (let i = 0; i < temps.length; i++) {
