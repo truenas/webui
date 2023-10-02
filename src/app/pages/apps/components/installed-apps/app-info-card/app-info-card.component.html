@@ -125,6 +125,30 @@
     </div>
   </mat-card-content>
   <mat-card-actions *ngIf="app">
+    <div class="cell cell-action cell-status-actions">
+      <button
+        *ngIf="isAppStopped"
+        mat-button
+        matTooltipPosition="above"
+        [ixTest]="[app.name, 'start']"
+        [matTooltip]="'Start' | translate"
+        [disabled]="inProgress"
+        (click)="startApp.emit(); $event.stopPropagation()"
+      >
+        <ix-icon name="mdi-play"></ix-icon> {{ 'Start' | translate }}
+      </button>
+      <button
+        *ngIf="!isAppStopped"
+        mat-button
+        matTooltipPosition="above"
+        [ixTest]="[app.name, 'stop']"
+        [matTooltip]="'Stop' | translate"
+        [disabled]="isStartingOrStopping"
+        (click)="stopApp.emit(); $event.stopPropagation()"
+      >
+        <ix-icon name="mdi-stop"></ix-icon> {{ 'Stop' | translate }}
+      </button>
+    </div>
     <button
       *ngIf="app.history && !isEmpty(app.history)"
       mat-button
