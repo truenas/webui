@@ -2,7 +2,6 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatStepperHarness, MatStepperNextHarness } from '@angular/material/stepper/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
@@ -58,7 +57,7 @@ describe('ReplicationWizardComponent', () => {
         mockCall('replication.create'),
       ]),
       mockProvider(IxSlideInService),
-      mockProvider(MatSnackBar),
+      mockProvider(SnackbarService),
       mockProvider(IxSlideInRef),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
@@ -159,7 +158,7 @@ describe('ReplicationWizardComponent', () => {
       transport: TransportMode.Local,
     }]);
 
-    expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Replication task created.');
+    expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
   });
 });
