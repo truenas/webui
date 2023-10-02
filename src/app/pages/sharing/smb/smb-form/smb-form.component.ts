@@ -438,8 +438,8 @@ export class SmbFormComponent implements OnInit {
                 { queryParams: { homeShare, path: smbShareResponse.path_local } },
               );
             }
-            this.slideInRef.close();
             this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Cifs }));
+            this.slideInRef.close();
           });
         } else {
           this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Cifs }));
@@ -488,6 +488,7 @@ export class SmbFormComponent implements OnInit {
         }
         return of(false);
       }),
+      take(1),
     );
   }
 

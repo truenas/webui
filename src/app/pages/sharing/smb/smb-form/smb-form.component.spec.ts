@@ -519,8 +519,6 @@ describe('SmbFormComponent', () => {
         timemachine_quota: 0,
       }]);
 
-      expect(store$.dispatch).toHaveBeenCalledWith(checkIfServiceIsEnabled({ serviceName: ServiceName.Cifs }));
-
       const sharePath = await (await loader.getHarness(
         IxExplorerHarness.with({ label: formLabels.path }),
       )).getValue();
@@ -536,6 +534,8 @@ describe('SmbFormComponent', () => {
           ['/', 'datasets', 'acl', 'edit'],
           { queryParams: { homeShare, path: sharePath } },
         );
+
+      expect(store$.dispatch).toHaveBeenCalledWith(checkIfServiceIsEnabled({ serviceName: ServiceName.Cifs }));
     });
   });
 });

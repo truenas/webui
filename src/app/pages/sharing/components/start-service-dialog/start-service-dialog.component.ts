@@ -55,12 +55,7 @@ export class StartServiceDialogComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.store$.select(selectService(this.serviceName))
-      .pipe(untilDestroyed(this))
-      .subscribe((service) => {
-        this.service = service;
-        this.cdr.markForCheck();
-      });
+    this.getService();
   }
 
   onCancel(): void {
@@ -110,6 +105,15 @@ export class StartServiceDialogComponent implements OnInit {
           });
           this.dialogService.error(this.errorHandler.parseWsError(error));
         },
+      });
+  }
+
+  private getService(): void {
+    this.store$.select(selectService(this.serviceName))
+      .pipe(untilDestroyed(this))
+      .subscribe((service) => {
+        this.service = service;
+        this.cdr.markForCheck();
       });
   }
 }
