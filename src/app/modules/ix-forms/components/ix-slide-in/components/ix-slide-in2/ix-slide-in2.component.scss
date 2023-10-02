@@ -48,7 +48,6 @@
 .ix-slide-in2-background {
 
   /* semi-transparent black  */
-  background-color: #000;
   bottom: 0;
   left: 0;
   opacity: 0.75;
@@ -60,6 +59,10 @@
 
   /* z-index must be below .ix-slide-in and above everything else  */
   z-index: -10;
+}
+
+.ix-slide-in2-0-background {
+  background-color: #000;
 }
 
 .ix-slide-in2-background.open {

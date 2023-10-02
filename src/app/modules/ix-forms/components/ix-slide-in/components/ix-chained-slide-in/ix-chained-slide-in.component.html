@@ -1,3 +1,3 @@
-<div *ngFor="let component of components; trackBy trackByComponentId">
-  <ix-slide-in2 [componentType]="component.component" [id]="component.id"></ix-slide-in2>
+<div *ngFor="let component of components; trackBy trackByComponentId; index as i">
+  <ix-slide-in2 [componentType]="component.component" [id]="component.id" [index]="i"></ix-slide-in2>
 </div>

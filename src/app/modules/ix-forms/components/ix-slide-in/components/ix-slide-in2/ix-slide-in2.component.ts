@@ -28,6 +28,7 @@ import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.servic
 })
 export class IxSlideIn2Component implements OnInit, OnDestroy {
   @Input() id: string;
+  @Input() index: number;
   @Input() componentType: Type<unknown>;
   @ViewChild('body', { static: true, read: ViewContainerRef }) slideInBody: ViewContainerRef;
 
