@@ -51,7 +51,7 @@ export class PodLogsComponent implements OnInit {
     protected loader: AppLoaderService,
     protected storageService: StorageService,
     private errorHandler: ErrorHandlerService,
-    private mdDialog: MatDialog,
+    private matDialog: MatDialog,
     private cdr: ChangeDetectorRef,
   ) {}
 
@@ -123,7 +123,7 @@ export class PodLogsComponent implements OnInit {
   }
 
   showChooseLogsDialog(isDownload: boolean): void {
-    this.mdDialog.open(PodSelectLogsDialogComponent, {
+    this.matDialog.open(PodSelectLogsDialogComponent, {
       minWidth: '650px',
       maxWidth: '850px',
       data: {

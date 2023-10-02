@@ -65,11 +65,11 @@ export class HaUpgradeEffects {
     private store$: Store<AppState>,
     private dialogService: DialogService,
     private translate: TranslateService,
-    private dialog: MatDialog,
+    private matDialog: MatDialog,
   ) { }
 
   private finishUpgrade(): Observable<unknown> {
-    const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: this.translate.instant('Update') } });
+    const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: this.translate.instant('Update') } });
     dialogRef.componentInstance.setCall('failover.upgrade_finish');
     dialogRef.componentInstance.disableProgressValue(true);
     dialogRef.componentInstance.submit();

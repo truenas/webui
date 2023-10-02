@@ -35,7 +35,7 @@ export class DatasetDetailsCardComponent {
 
   constructor(
     private translate: TranslateService,
-    private mdDialog: MatDialog,
+    private matDialog: MatDialog,
     private datasetStore: DatasetTreeStore,
     private slideInService: IxSlideInService,
     private errorHandler: ErrorHandlerService,
@@ -74,7 +74,7 @@ export class DatasetDetailsCardComponent {
   }
 
   deleteDataset(): void {
-    this.mdDialog.open(DeleteDatasetDialogComponent, { data: this.dataset })
+    this.matDialog.open(DeleteDatasetDialogComponent, { data: this.dataset })
       .afterClosed()
       .pipe(
         filter(Boolean),
