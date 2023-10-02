@@ -113,8 +113,8 @@ export class SshConnectionCardComponent implements OnInit {
   doDelete(credential: KeychainSshCredentials): void {
     this.dialog
       .confirm({
-        title: this.translate.instant('Delete Cloud Credential'),
-        message: this.translate.instant('Are you sure you want to delete the <b>{name}</b> Cloud Credential?', {
+        title: this.translate.instant('Delete SSH Connection'),
+        message: this.translate.instant('Are you sure you want to delete the <b>{name}</b> SSH Connection?', {
           name: credential.name,
         }),
         buttonText: this.translate.instant('Delete'),
