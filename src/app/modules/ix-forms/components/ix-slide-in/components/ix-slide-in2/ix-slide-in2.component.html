@@ -1,0 +1,15 @@
+<div
+  [class]="['ix-' + id, 'ix-slide-in2-form']"
+  [class.open]="isSlideInOpen"
+  [class.wide]="wide"
+>
+  <div class="ix-slide-in2-body">
+    <ng-template #body></ng-template>
+  </div>
+</div>
+
+<div
+  [class]="['ix-slide-in2-background', 'ix-' + id + '-background']"
+  [class.open]="isSlideInOpen"
+  (click)="onBackdropClicked()"
+></div>

@@ -36,7 +36,9 @@ import { IxListComponent } from 'app/modules/ix-forms/components/ix-list/ix-list
 import { IxPermissionsComponent } from 'app/modules/ix-forms/components/ix-permissions/ix-permissions.component';
 import { IxRadioGroupComponent } from 'app/modules/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { IxSelectComponent } from 'app/modules/ix-forms/components/ix-select/ix-select.component';
+import { IxChainedSlideInComponent } from 'app/modules/ix-forms/components/ix-slide-in/components/ix-chained-slide-in/ix-chained-slide-in.component';
 import { IxModalHeaderComponent } from 'app/modules/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
+import { IxSlideIn2Component } from 'app/modules/ix-forms/components/ix-slide-in/components/ix-slide-in2/ix-slide-in2.component';
 import { IxSlideToggleComponent } from 'app/modules/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
 import { IxStarRatingComponent } from 'app/modules/ix-forms/components/ix-star-rating/ix-star-rating.component';
 import { IxTextareaComponent } from 'app/modules/ix-forms/components/ix-textarea/ix-textarea.component';
@@ -87,6 +89,8 @@ import { WithManageCertificatesLinkComponent } from './components/with-manage-ce
     IxSelectComponent,
     IxFieldsetComponent,
     IxSlideInComponent,
+    IxSlideIn2Component,
+    IxChainedSlideInComponent,
     IxModalHeaderComponent,
     IxCheckboxComponent,
     IxTextareaComponent,
@@ -112,6 +116,8 @@ import { WithManageCertificatesLinkComponent } from './components/with-manage-ce
     IxInputComponent,
     IxSelectComponent,
     IxSlideInComponent,
+    IxSlideIn2Component,
+    IxChainedSlideInComponent,
     IxModalHeaderComponent,
     IxFieldsetComponent,
     IxCheckboxComponent,

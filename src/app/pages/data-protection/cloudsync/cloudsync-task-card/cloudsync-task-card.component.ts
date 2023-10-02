@@ -24,6 +24,7 @@ import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/clou
 import { CloudsyncRestoreDialogComponent } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -89,6 +90,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
     private store$: Store<AppState>,
     private snackbar: SnackbarService,
     private matDialog: MatDialog,
+    private ixChainedSlideInService: IxChainedSlideInService,
   ) {}
 
   ngOnInit(): void {
@@ -128,12 +130,12 @@ export class CloudSyncTaskCardComponent implements OnInit {
     });
   }
 
-  openForm(row?: CloudSyncTaskUi): void {
-    const slideInRef = this.slideInService.open(CloudsyncFormComponent, { data: row, wide: true });
+  openForm(/*row?: CloudSyncTaskUi*/): void {
+    this.ixChainedSlideInService.pushComponent(CloudsyncFormComponent);
 
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-      this.getCloudSyncTasks();
-    });
+    // slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+    //   this.getCloudSyncTasks();
+    // });
   }
 
   runNow(row: CloudSyncTaskUi): void {
