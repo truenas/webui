@@ -284,8 +284,11 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
         switchMap((params) => {
           return this.datasetStore.datasets$.pipe(
             map((datasets) => {
-              return datasets.find((dataset) => dataset.id === params.datasetId)
-                ? params.datasetId as string : datasets[0]?.id;
+              const selectedDataset = datasets.find((dataset) => dataset.id === params.datasetId);
+              if (!selectedDataset && datasets.length) {
+                this.router.navigate(['/datasets', datasets[0]?.id]);
+              }
+              return selectedDataset ? params.datasetId as string : datasets[0]?.id;
             }),
           );
         }),
