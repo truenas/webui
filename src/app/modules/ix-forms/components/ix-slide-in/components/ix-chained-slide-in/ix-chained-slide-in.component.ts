@@ -1,22 +1,7 @@
-import { Component, ComponentRef, ElementRef, Input, OnInit, TrackByFunction, Type } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, TrackByFunction, Type } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subject } from 'rxjs';
 import { ChainedComponentSeralized as ChainedComponentInfoSeralized, IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
-
-export class IxSlideInRef<T, D = unknown> {
-  readonly slideInClosed$ = new Subject<D>();
-  componentRef: ComponentRef<T>;
-  id: string;
-
-  get componentInstance(): T {
-    return this.componentRef.instance;
-  }
-
-  close(response?: D): void {
-    this.slideInClosed$.next(response);
-    this.slideInClosed$.complete();
-  }
-}
 
 @UntilDestroy()
 @Component({

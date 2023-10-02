@@ -14,9 +14,7 @@ import {
 } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { UUID } from 'angular2-uuid';
 import { Observable, Subscription, filter, merge, timer } from 'rxjs';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_CLOSER, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { ChainedComponentSeralized, IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 
@@ -102,7 +100,7 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
   openSlideIn<T, D>(
     componentType: Type<T>,
     params?: { wide?: boolean; data?: D },
-  ): IxSlideInRef<T, D> {
+  ): void {
     if (this.isSlideInOpen) {
       console.error('SlideIn is already open');
     }
@@ -120,24 +118,20 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
     this.wasBodyCleared = false;
     // clear body and close all slides
 
-    return this.createSlideInRef<T, D>(componentType, params?.data);
+    this.createSlideInRef<T, D>(componentType, params?.data);
   }
 
   private createSlideInRef<T, D>(
     componentType: Type<T>,
     data?: D,
-  ): IxSlideInRef<T, D> {
-    const slideInRef = new IxSlideInRef<T, D>();
+  ): void {
     const injector = Injector.create({
       providers: [
         { provide: SLIDE_IN_DATA, useValue: data },
         { provide: SLIDE_IN_CLOSER, useValue: this.componentInfo.close$ },
       ],
     });
-    slideInRef.componentRef = this.slideInBody.createComponent<T>(componentType, { injector });
-    slideInRef.id = UUID.UUID();
-
-    return slideInRef;
+    this.slideInBody.createComponent<T>(componentType, { injector });
   }
 
   ngOnDestroy(): void {
