@@ -1,7 +1,7 @@
 import { Component, ComponentRef, ElementRef, Input, OnInit, TrackByFunction, Type } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subject } from 'rxjs';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
+import { ChainedComponentSeralized as ChainedComponentInfoSeralized, IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 
 export class IxSlideInRef<T, D = unknown> {
   readonly slideInClosed$ = new Subject<D>();
@@ -26,16 +26,16 @@ export class IxSlideInRef<T, D = unknown> {
 })
 export class IxChainedSlideInComponent implements OnInit {
   @Input() id: string;
-  protected components: { component: Type<unknown>; id: string }[] = [];
+  protected components: ChainedComponentInfoSeralized[];
   private element: HTMLElement;
 
   readonly trackByComponentId: TrackByFunction<{
-    component: Type<unknown>; id: string;
+    component: Type<unknown>; id: string; close$: Subject<unknown>;
   }> = (_, componentRef) => componentRef.id;
 
   constructor(
     private el: ElementRef,
-    private ixChainedSlideInService: IxChainedSlideInService,
+    protected ixChainedSlideInService: IxChainedSlideInService,
   ) {
     this.element = this.el.nativeElement as HTMLElement;
   }

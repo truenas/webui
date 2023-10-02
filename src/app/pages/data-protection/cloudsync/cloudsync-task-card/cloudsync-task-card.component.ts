@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { EMPTY, catchError, filter, switchMap, tap } from 'rxjs';
+import { EMPTY, Subject, catchError, filter, switchMap, tap } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import helptext_cloudsync from 'app/helptext/data-protection/cloudsync/cloudsync-form';
@@ -130,12 +130,15 @@ export class CloudSyncTaskCardComponent implements OnInit {
     });
   }
 
-  openForm(/*row?: CloudSyncTaskUi*/): void {
-    this.ixChainedSlideInService.pushComponent(CloudsyncFormComponent);
+  openForm(row?: CloudSyncTaskUi): void {
+    const onClose$ = new Subject<unknown>();
+    this.ixChainedSlideInService.pushComponent(
+      { component: CloudsyncFormComponent, close$: onClose$, wide: true, data: row },
+    );
 
-    // slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-    //   this.getCloudSyncTasks();
-    // });
+    onClose$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+      this.getCloudSyncTasks();
+    });
   }
 
   runNow(row: CloudSyncTaskUi): void {

@@ -1,11 +1,25 @@
 import { Injectable, Type } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import { UUID } from 'angular2-uuid';
-import _ from 'lodash';
-import { tap } from 'rxjs';
+import { Observable, Subject, tap } from 'rxjs';
 
 export interface ChainedSlideInState {
-  components: { component: Type<unknown>; id: string }[];
+  components: Map<string, ChainedComponentInfo>;
+}
+
+export interface ChainedComponentInfo {
+  component: Type<unknown>;
+  close$: Subject<unknown>;
+  wide?: boolean;
+  data?: unknown;
+}
+
+export interface ChainedComponentSeralized {
+  id: string;
+  component: Type<unknown>;
+  close$: Subject<unknown>;
+  data?: unknown;
+  wide?: boolean;
 }
 
 @Injectable({
@@ -13,10 +27,16 @@ export interface ChainedSlideInState {
 })
 export class IxChainedSlideInService extends ComponentStore<ChainedSlideInState> {
 
-  readonly components$ = this.select((state) => state.components);
+  readonly components$: Observable<ChainedComponentSeralized[]> = this.select(
+    (state) => this.mapToSerializedArray(state.components),
+  );
+
+  readonly isTopComponentWide$ = this.select((state) => {
+    return !!(this.mapToSerializedArray(state.components).pop()?.wide);
+  });
 
   constructor() {
-    super({ components: [] });
+    super({ components: new Map() });
     this.initialize();
   }
 
@@ -25,26 +45,42 @@ export class IxChainedSlideInService extends ComponentStore<ChainedSlideInState>
       tap(() => {
         this.setState(() => {
           return {
-            components: [],
+            components: new Map(),
           };
         });
       }),
     );
   });
 
-  pushComponent = this.updater((state, component: Type<unknown>) => {
-    const newArray = _.cloneDeep(state.components);
-    newArray.push({ component, id: UUID.UUID() });
+  pushComponent = this.updater((state, chainedComponentInfo: ChainedComponentInfo) => {
+    const newMap = new Map(state.components);
+    newMap.set(UUID.UUID(), {
+      ...chainedComponentInfo,
+    });
     return {
-      components: newArray,
+      components: newMap,
     };
   });
 
   popComponent = this.updater((state) => {
-    const newArray = _.cloneDeep(state.components);
-    newArray.pop();
+    const newMap = new Map(state.components);
+    const all = this.mapToSerializedArray(state.components);
+    const popped = all.pop();
+    newMap.delete(popped.id);
     return {
-      components: newArray,
+      components: newMap,
     };
   });
+
+  mapToSerializedArray(map: Map<string, ChainedComponentInfo>): ChainedComponentSeralized[] {
+    return Array.from(map, ([id, componentInfo]) => {
+      return {
+        id,
+        component: componentInfo.component,
+        close$: componentInfo.close$,
+        wide: componentInfo.wide,
+        data: componentInfo.data,
+      };
+    });
+  }
 }

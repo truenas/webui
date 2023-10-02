@@ -9,8 +9,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
 import _ from 'lodash';
-import { Observable, of } from 'rxjs';
-import { filter, map, switchMap } from 'rxjs/operators';
+import { Observable, Subject, of } from 'rxjs';
+import { distinctUntilChanged, filter, map, switchMap } from 'rxjs/operators';
 import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
@@ -24,8 +24,7 @@ import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { SLIDE_IN_CLOSER, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
@@ -173,7 +172,7 @@ export class CloudsyncFormComponent implements OnInit {
   readonly bucketNodeProvider = this.getBucketsNodeProvider();
 
   constructor(
-    public slideInRef: IxSlideInRef<CloudsyncFormComponent>,
+    // public slideInRef: IxSlideInRef<CloudsyncFormComponent>,
     private translate: TranslateService,
     private formBuilder: FormBuilder,
     private ws: WebSocketService,
@@ -187,6 +186,7 @@ export class CloudsyncFormComponent implements OnInit {
     private filesystemService: FilesystemService,
     protected cloudCredentialService: CloudCredentialService,
     @Inject(SLIDE_IN_DATA) private editingTask: CloudSyncTaskUi,
+    @Inject(SLIDE_IN_CLOSER) protected slideInCloser$: Subject<unknown>,
     private chainedSlideInService: IxChainedSlideInService,
   ) { }
 
@@ -278,9 +278,16 @@ export class CloudsyncFormComponent implements OnInit {
       }
     });
 
-    this.form.controls.credentials.valueChanges.pipe(untilDestroyed(this)).subscribe((credentials) => {
+    this.form.controls.credentials.valueChanges.pipe(
+      distinctUntilChanged(),
+      untilDestroyed(this),
+    ).subscribe((credentials) => {
       if (credentials === -1) {
-        this.chainedSlideInService.pushComponent(CloudCredentialsFormComponent);
+        const onClose$ = new Subject<unknown>();
+        this.chainedSlideInService.pushComponent({ component: CloudCredentialsFormComponent, close$: onClose$ });
+        onClose$.pipe(untilDestroyed(this)).subscribe((/*response*/) => {
+          // console.log('Closed CloudCredentialsFormComponent');
+        });
         return;
       }
       if (credentials) {
@@ -773,7 +780,7 @@ export class CloudsyncFormComponent implements OnInit {
           this.snackbar.success(this.translate.instant('Task updated'));
         }
         this.isLoading = false;
-        this.slideInRef.close(true);
+        this.slideInCloser$.next(true);
       },
       error: (error) => {
         this.isLoading = false;

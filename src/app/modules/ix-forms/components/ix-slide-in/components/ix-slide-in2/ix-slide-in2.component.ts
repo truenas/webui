@@ -17,8 +17,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { UUID } from 'angular2-uuid';
 import { Observable, Subscription, filter, merge, timer } from 'rxjs';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
+import { SLIDE_IN_CLOSER, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { ChainedComponentSeralized, IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -27,16 +27,13 @@ import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.servic
   styleUrls: ['./ix-slide-in2.component.scss'],
 })
 export class IxSlideIn2Component implements OnInit, OnDestroy {
-  @Input() id: string;
+  @Input() componentInfo: ChainedComponentSeralized;
   @Input() index: number;
-  @Input() componentType: Type<unknown>;
-  @ViewChild('body', { static: true, read: ViewContainerRef }) slideInBody: ViewContainerRef;
+  @ViewChild('chainedBody', { static: true, read: ViewContainerRef }) slideInBody: ViewContainerRef;
 
   @HostListener('document:keydown.escape') onKeydownHandler(): void {
     this.onBackdropClicked();
   }
-
-  slideInRef: IxSlideInRef<unknown>;
 
   isSlideInOpen = false;
   wide = false;
@@ -58,35 +55,48 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     // ensure id attribute exists
-    if (!this.id) {
+    if (!this.componentInfo.id) {
       return;
     }
 
     // move element to bottom of page (just before </body>) so it can be displayed above everything else
     document.body.appendChild(this.element);
-    if (this.componentType) {
-      this.open(this.componentType);
+    if (this.componentInfo.component) {
+      this.openSlideIn(this.componentInfo.component, {
+        wide: this.componentInfo.wide, data: this.componentInfo.data,
+      });
     }
+    this.chainedSlideInService.isTopComponentWide$.pipe(
+      untilDestroyed(this),
+    ).subscribe((wide) => {
+      this.wide = wide;
+    });
+    this.componentInfo.close$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.closeSlideIn();
+    });
   }
 
   onBackdropClicked(): void {
     if (!this.element || !this.isSlideInOpen) { return; }
-    this.chainedSlideInService.popComponent();
+    // this.close$.next(null);/
+    this.closeSlideIn();
   }
 
   closeSlideIn(): void {
-    this.renderer.removeStyle(document.body, 'overflow');
-    this.wasBodyCleared = true;
-    this.timeOutOfClear = timer(200).pipe(untilDestroyed(this)).subscribe(() => {
-      // Destroying child component later improves performance a little bit.
-      // 200ms matches transition duration
-      this.slideInBody.clear();
-      this.wasBodyCleared = false;
+    this.isSlideInOpen = false;
+    // Delays are to give time for css transitions
+    timer(100).pipe(untilDestroyed(this)).subscribe(() => {
+      this.renderer.removeStyle(document.body, 'overflow');
+      this.wasBodyCleared = true;
+      this.timeOutOfClear = timer(100).pipe(untilDestroyed(this)).subscribe(() => {
+        // Destroying child component later improves performance a little bit.
+        // 200ms matches transition duration
+        this.slideInBody.clear();
+        this.wasBodyCleared = false;
+      });
+      this.componentInfo.close$.next(null);
+      this.chainedSlideInService.popComponent();
     });
-  }
-
-  open<T, D>(component: Type<T>, params?: { wide?: boolean; data?: D }): void {
-    this.slideInRef = this.openSlideIn(component, params);
   }
 
   openSlideIn<T, D>(
@@ -97,7 +107,9 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
       console.error('SlideIn is already open');
     }
 
-    this.isSlideInOpen = true;
+    timer(10).pipe(untilDestroyed(this)).subscribe(() => {
+      this.isSlideInOpen = true;
+    });
     this.renderer.setStyle(document.body, 'overflow', 'hidden');
     this.wide = !!params?.wide;
 
@@ -119,7 +131,7 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
     const injector = Injector.create({
       providers: [
         { provide: SLIDE_IN_DATA, useValue: data },
-        { provide: IxSlideInRef, useValue: slideInRef },
+        { provide: SLIDE_IN_CLOSER, useValue: this.componentInfo.close$ },
       ],
     });
     slideInRef.componentRef = this.slideInBody.createComponent<T>(componentType, { injector });
@@ -130,8 +142,9 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.element.remove();
-    this.slideInRef.close();
+    this.componentInfo.close$.next(null);
   }
+
   private closeOnNavigation(): void {
     merge(
       new Observable((observer) => {
@@ -143,7 +156,7 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
     )
       .pipe(untilDestroyed(this))
       .subscribe(() => {
-        this.slideInRef.close();
+        this.componentInfo.close$.next(null);
       });
   }
 }
