@@ -46,7 +46,7 @@ describe('GeneralSectionComponent', () => {
       Transport: 'SSH',
       'Number of retries for failed replications': '3',
       'Logging Level': 'DEBUG',
-      'Use Sudo For Zfs Commands': false,
+      'Use Sudo For ZFS Commands': false,
       Enabled: false,
     });
   });
@@ -58,7 +58,7 @@ describe('GeneralSectionComponent', () => {
       Transport: TransportMode.Ssh,
       'Number of retries for failed replications': '5',
       'Logging Level': LoggingLevel.Default,
-      'Use Sudo For Zfs Commands': false,
+      'Use Sudo For ZFS Commands': false,
       Enabled: true,
     });
   });
@@ -76,7 +76,7 @@ describe('GeneralSectionComponent', () => {
       Name: 'replication',
       Direction: 'PUSH',
       'Logging Level': 'INFO',
-      'Use Sudo For Zfs Commands': true,
+      'Use Sudo For ZFS Commands': true,
     });
 
     expect(spectator.component.getPayload()).toEqual({
