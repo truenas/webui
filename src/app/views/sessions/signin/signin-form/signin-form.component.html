@@ -25,7 +25,7 @@
       type="button"
       color="primary"
       ixTest="log-in"
-      [disabled]="(isLoading$ | async) || !form.controls.password.value || !form.controls.username.value"
+      [disabled]="(isLoading$ | async)"
       (click)="login()"
     >
       {{ 'Log In' | translate }}
@@ -52,7 +52,7 @@
         type="button"
         color="primary"
         ixTest="log-in"
-        [disabled]="(isLoading$ | async) || !form.controls.otp.value"
+        [disabled]="(isLoading$ | async)"
         (click)="loginWithOtp()"
       >
         {{ 'Proceed' | translate }}

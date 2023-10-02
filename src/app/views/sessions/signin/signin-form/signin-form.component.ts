@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
@@ -32,7 +32,7 @@ export class SigninFormComponent implements OnInit {
   form = this.formBuilder.group({
     username: [''],
     password: [''],
-    otp: [''],
+    otp: ['', Validators.required],
   });
 
   protected isLoading$ = this.signinStore.isLoading$;
