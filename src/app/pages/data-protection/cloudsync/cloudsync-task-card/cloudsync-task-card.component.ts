@@ -186,6 +186,9 @@ export class CloudSyncTaskCardComponent implements OnInit {
           this.translate.instant('Cloud Sync «{name}» stopped.', { name: row.description }),
           true,
         );
+        row.state = { state: JobState.Aborted };
+        row.job = null;
+        this.cdr.markForCheck();
       });
   }
 
@@ -219,7 +222,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
     const dialog = this.matDialog.open(CloudsyncRestoreDialogComponent, {
       data: row.id,
     });
-    dialog.afterClosed().pipe(untilDestroyed(this)).subscribe(() => this.getCloudSyncTasks());
+    dialog.afterClosed().pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCloudSyncTasks());
   }
 
   private transformCloudSyncTasks(cloudsyncTasks: CloudSyncTaskUi[]): CloudSyncTaskUi[] {
