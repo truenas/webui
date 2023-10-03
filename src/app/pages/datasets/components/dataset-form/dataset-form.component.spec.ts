@@ -84,7 +84,7 @@ describe('DatasetFormComponent', () => {
         confirm: jest.fn(() => of(true)),
       }),
       mockProvider(DatasetFormService, {
-        isPathLengthAndDepthSafe: jest.fn(() => of(true)),
+        checkAndWarnForLengthAndDepth: jest.fn(() => of(true)),
         loadDataset: jest.fn((path) => {
           if (path === 'parent/child') {
             return of(existingDataset);
