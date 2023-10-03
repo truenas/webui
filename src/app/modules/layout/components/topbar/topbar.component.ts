@@ -421,10 +421,6 @@ export class TopbarComponent implements OnInit, OnDestroy {
     this.window.open('https://www.ixsystems.com/', '_blank');
   }
 
-  onFeedbackIndicatorPressed(): void {
-    this.dialog.open(FeedbackDialogComponent);
-  }
-
   private listenForUpgradePendingState(): void {
     this.store$.select(selectIsUpgradePending).pipe(filter(Boolean), take(1), untilDestroyed(this)).subscribe(() => {
       this.upgradeWaitingToFinish = true;
