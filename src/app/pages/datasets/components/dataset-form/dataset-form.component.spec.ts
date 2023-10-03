@@ -140,7 +140,7 @@ describe('DatasetFormComponent', () => {
     });
 
     it('ensures path limits when form is opened for adding a new form', () => {
-      expect(spectator.inject(DatasetFormService).isPathLengthAndDepthSafe).toHaveBeenCalledWith('parent/child');
+      expect(spectator.inject(DatasetFormService).checkAndWarnForLengthAndDepth).toHaveBeenCalledWith('parent/child');
     });
   });
 
