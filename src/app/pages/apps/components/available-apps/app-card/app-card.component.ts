@@ -21,7 +21,8 @@ export class AppCardComponent {
   readonly officialCatalog = officialCatalog;
 
   get description(): string {
-    return this.app.description.length > 150 ? `${this.app.description.substring(0, 150)}...` : this.app.description;
+    const description = this.app.description || '';
+    return description.length > 150 ? `${description.substring(0, 150)}...` : description;
   }
 
   constructor(
