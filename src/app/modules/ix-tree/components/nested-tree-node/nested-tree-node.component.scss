@@ -4,3 +4,12 @@
   margin-top: 0;
   min-width: fit-content;
 }
+
+:host ::ng-deep {
+  ix-nested-tree-node {
+    &[aria-level='2'] .ix-tree-node-toggle {
+      margin-left: 10px;
+    }
+  }
+}
+
