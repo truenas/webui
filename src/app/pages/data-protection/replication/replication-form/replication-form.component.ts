@@ -4,11 +4,13 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { merge } from 'rxjs';
-import { debounceTime } from 'rxjs/operators';
+import { debounceTime, switchMap } from 'rxjs/operators';
 import { Direction } from 'app/enums/direction.enum';
 import { SnapshotNamingOption } from 'app/enums/snapshot-naming-option.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
+import helptext from 'app/helptext/data-protection/replication/replication-wizard';
 import { CountManualSnapshotsParams } from 'app/interfaces/count-manual-snapshots.interface';
+import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
 import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
@@ -38,6 +40,7 @@ import { DatasetService } from 'app/services/dataset-service/dataset.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 import { ReplicationService } from 'app/services/replication.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -62,6 +65,8 @@ export class ReplicationFormComponent implements OnInit {
 
   eligibleSnapshotsMessage = '';
   isEligibleSnapshotsMessageRed = false;
+  isSudoDialogShown = false;
+  sshCredentials: KeychainSshCredentials[] = [];
 
   constructor(
     private ws: WebSocketService,
@@ -75,6 +80,7 @@ export class ReplicationFormComponent implements OnInit {
     private replicationService: ReplicationService,
     private slideInService: IxSlideInService,
     private slideInRef: IxSlideInRef<ReplicationFormComponent>,
+    private keychainCredentials: KeychainCredentialService,
     @Inject(SLIDE_IN_DATA) public existingReplication: ReplicationTask,
   ) {}
 
@@ -82,6 +88,7 @@ export class ReplicationFormComponent implements OnInit {
     this.countSnapshotsOnChanges();
     this.updateExplorersOnChanges();
     this.updateExplorers();
+    this.listenForSudoEnabled();
 
     if (this.existingReplication) {
       this.setForEdit();
@@ -277,5 +284,34 @@ export class ReplicationFormComponent implements OnInit {
     this.sourceNodeProvider = this.isPush || this.isLocal ? localProvider : remoteProvider;
     this.targetNodeProvider = this.isPush && !this.isLocal ? remoteProvider : localProvider;
     this.cdr.markForCheck();
+  }
+
+  private listenForSudoEnabled(): void {
+    this.keychainCredentials.getSshConnections()
+      .pipe(
+        switchMap((sshCredentials) => {
+          this.sshCredentials = sshCredentials;
+          return this.transportSection.form.controls.ssh_credentials.valueChanges;
+        }),
+        untilDestroyed(this),
+      )
+      .subscribe((credentialId: number) => {
+        const selectedCredential = this.sshCredentials.find((credential) => credential.id === credentialId);
+        const isRootUser = selectedCredential?.attributes?.username === 'root';
+
+        if (!selectedCredential || isRootUser || this.isSudoDialogShown) {
+          return;
+        }
+
+        this.dialog.confirm({
+          title: this.translate.instant('Sudo Enabled'),
+          message: helptext.sudo_warning,
+          hideCheckbox: true,
+          buttonText: this.translate.instant('Use Sudo For ZFS Commands'),
+        }).pipe(untilDestroyed(this)).subscribe((useSudo) => {
+          this.generalSection.form.controls.sudo.setValue(useSudo);
+          this.isSudoDialogShown = true;
+        });
+      });
   }
 }

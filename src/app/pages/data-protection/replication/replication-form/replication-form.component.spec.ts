@@ -5,10 +5,13 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents, MockInstance } from 'ng-mocks';
+import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Direction } from 'app/enums/direction.enum';
 import { SnapshotNamingOption } from 'app/enums/snapshot-naming-option.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
+import helptext from 'app/helptext/data-protection/replication/replication-wizard';
+import { KeychainCredential } from 'app/interfaces/keychain-credential.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
@@ -36,6 +39,7 @@ import {
   ReplicationWizardComponent,
 } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
+import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ReplicationService } from 'app/services/replication.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -50,6 +54,7 @@ describe('ReplicationFormComponent', () => {
     name: new FormControl('dataset'),
     direction: new FormControl(Direction.Pull),
     transport: new FormControl(TransportMode.Ssh),
+    sudo: new FormControl(false),
   });
   const transportForm = new FormGroup({
     ssh_credentials: new FormControl(5),
@@ -119,7 +124,19 @@ describe('ReplicationFormComponent', () => {
         }),
         mockCall('replication.create'),
         mockCall('replication.update'),
+        mockCall('keychaincredential.query', [
+          {
+            id: 123,
+            name: 'non-root-ssh-connection',
+            attributes: {
+              username: 'user1',
+            },
+          },
+        ] as KeychainCredential[]),
       ]),
+      mockProvider(DialogService, {
+        confirm: jest.fn(() => of()),
+      }),
       mockProvider(IxSlideInService),
       mockProvider(SnackbarService),
       mockProvider(IxSlideInRef),
@@ -174,6 +191,7 @@ describe('ReplicationFormComponent', () => {
         target_dataset: '/tank/target',
         transport: TransportMode.Ssh,
         auto: true,
+        sudo: false,
       }]);
       expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
     });
@@ -205,6 +223,7 @@ describe('ReplicationFormComponent', () => {
           target_dataset: '/tank/target',
           transport: TransportMode.Ssh,
           auto: true,
+          sudo: false,
         },
       ]);
       expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
@@ -251,6 +270,27 @@ describe('ReplicationFormComponent', () => {
       spectator.detectChanges();
       expect(spectator.query(SourceSectionComponent).nodeProvider).toBe(localNodeProvider);
       expect(spectator.query(TargetSectionComponent).nodeProvider).toBe(localNodeProvider);
+    }));
+  });
+
+  describe('sudo enabled dialog', () => {
+    beforeEach(fakeAsync(() => {
+      spectator = createComponent();
+      tick();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    }));
+
+    it('opens sudo enabled dialog when choosing to existing ssh credential', fakeAsync(() => {
+      transportForm.controls.ssh_credentials.setValue(123);
+      tick();
+      spectator.detectChanges();
+
+      expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
+        buttonText: 'Use Sudo For ZFS Commands',
+        hideCheckbox: true,
+        message: helptext.sudo_warning,
+        title: 'Sudo Enabled',
+      });
     }));
   });
 });
