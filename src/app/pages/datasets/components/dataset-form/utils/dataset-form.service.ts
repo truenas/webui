@@ -24,13 +24,13 @@ export class DatasetFormService {
     private slideInService: IxSlideInService,
   ) {}
 
-  isPathLengthAndDepthSafe(parentPath: string): Observable<boolean> {
-    return of(!!parentPath).pipe(
+  checkAndWarnForLengthAndDepth(path: string): Observable<boolean> {
+    return of(!!path).pipe(
       switchMap((pathExists) => {
         if (!pathExists) {
           return of(true);
         }
-        if (parentPath.split('/').length >= maxDatasetNesting) {
+        if (path.split('/').length >= maxDatasetNesting) {
           return this.dialog.warn(
             this.translate.instant(helptext.pathWarningTitle),
             this.translate.instant(helptext.pathIsTooDeepWarning),
@@ -39,7 +39,7 @@ export class DatasetFormService {
             map(() => false),
           );
         }
-        if (parentPath.length >= maxDatasetPath) {
+        if (path.length >= maxDatasetPath) {
           return this.dialog.warn(
             this.translate.instant(helptext.pathWarningTitle),
             this.translate.instant(helptext.pathIsTooLongWarning),

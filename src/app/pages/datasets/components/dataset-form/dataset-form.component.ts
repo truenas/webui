@@ -111,7 +111,7 @@ export class DatasetFormComponent implements OnInit {
     this.isLoading = true;
     this.cdr.markForCheck();
 
-    this.datasetFormService.isPathLengthAndDepthSafe(this.slideInData.datasetId).pipe(
+    this.datasetFormService.checkAndWarnForLengthAndDepth(this.slideInData.datasetId).pipe(
       filter(Boolean),
       switchMap(() => this.datasetFormService.loadDataset(this.slideInData.datasetId)),
       untilDestroyed(this),
