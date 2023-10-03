@@ -128,7 +128,7 @@ export class DeviceListComponent implements OnInit {
         virtualMachineId: this.vmId,
       },
     })
-      .slideInClosed$.pipe(untilDestroyed(this))
+      .slideInClosed$.pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => {
         this.loadDevices();
       });
@@ -142,7 +142,7 @@ export class DeviceListComponent implements OnInit {
       },
     })
       .slideInClosed$
-      .pipe(untilDestroyed(this))
+      .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => {
         this.loadDevices();
       });
