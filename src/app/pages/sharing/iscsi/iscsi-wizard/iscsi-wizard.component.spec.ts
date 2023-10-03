@@ -18,6 +18,7 @@ import {
   IscsiAuthAccess, IscsiExtent, IscsiInitiatorGroup, IscsiPortal, IscsiTarget, IscsiTargetExtent,
 } from 'app/interfaces/iscsi.interface';
 import { Service } from 'app/interfaces/service.interface';
+import { IxListHarness } from 'app/modules/ix-forms/components/ix-list/ix-list.harness';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -65,7 +66,10 @@ describe('IscsiWizardComponent', () => {
         mockCall('iscsi.portal.query', []),
         mockCall('iscsi.auth.query', []),
         mockCall('iscsi.extent.disk_choices', {}),
-        mockCall('iscsi.portal.listen_ip_choices', {}),
+        mockCall('iscsi.portal.listen_ip_choices', {
+          '0.0.0.0': '0.0.0.0',
+          '192.168.1.3': '192.168.1.3',
+        }),
         mockCall('pool.dataset.create', { id: 'my pool/test_zvol' } as Dataset),
         mockCall('iscsi.extent.create', { id: 11 } as IscsiExtent),
         mockCall('iscsi.auth.create', { id: 12, tag: 12 } as IscsiAuthAccess),
@@ -107,6 +111,13 @@ describe('IscsiWizardComponent', () => {
       Size: 1024,
       Portal: 'Create New',
       Initiators: ['initiator1', 'initiator2'],
+    });
+
+    const addIpAddressButton = await loader.getHarness(IxListHarness.with({ label: 'IP Address' }));
+    await addIpAddressButton.pressAddButton();
+
+    await form.fillForm({
+      'IP Address': '192.168.1.3',
     });
 
     await form.fillForm({
@@ -151,7 +162,7 @@ describe('IscsiWizardComponent', () => {
       comment: 'test-name',
       discovery_authgroup: 12,
       discovery_authmethod: 'CHAP',
-      listen: [],
+      listen: [{ ip: '192.168.1.3' }],
     }]);
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenNthCalledWith(12, 'iscsi.initiator.create', [{

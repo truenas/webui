@@ -67,7 +67,7 @@ export class TwoFactorComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
     private translateService: TranslateService,
-    protected mdDialog: MatDialog,
+    protected matDialog: MatDialog,
     private authService: AuthService,
   ) {}
 
@@ -99,7 +99,7 @@ export class TwoFactorComponent implements OnInit {
   }
 
   openQrDialog(provisioningUri: string): void {
-    const dialogRef = this.mdDialog.open(QrDialogComponent, {
+    const dialogRef = this.matDialog.open(QrDialogComponent, {
       width: '300px',
       data: { qrInfo: provisioningUri },
     });

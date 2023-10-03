@@ -29,6 +29,7 @@
           [empty]="form.controls.datasets.controls.length === 0"
           [label]="'Datasets' | translate"
           [canAdd]="false"
+          [formArray]="form.get('datasets')"
         >
           <ix-list-item
             *ngFor="let dataset of form.controls.datasets.controls; let i = index"

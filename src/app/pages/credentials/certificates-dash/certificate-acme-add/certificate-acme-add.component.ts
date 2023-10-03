@@ -60,7 +60,7 @@ export class CertificateAcmeAddComponent {
     private dialogService: DialogService,
     private slideInRef: IxSlideInRef<CertificateAcmeAddComponent>,
     private formErrorHandler: FormErrorHandlerService,
-    private mdDialog: MatDialog,
+    private matDialog: MatDialog,
     @Inject(SLIDE_IN_DATA) private csr: Certificate,
   ) {
     this.loadDomains();
@@ -89,18 +89,18 @@ export class CertificateAcmeAddComponent {
     this.isLoading = true;
     this.cdr.markForCheck();
 
-    const dialogRef = this.mdDialog.open(EntityJobComponent, { data: { title: 'Creating ACME Certificate' }, disableClose: true });
+    const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: 'Creating ACME Certificate' }, disableClose: true });
     dialogRef.componentInstance.setCall('certificate.create', [payload]);
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.isLoading = false;
-      this.mdDialog.closeAll();
+      this.matDialog.closeAll();
       this.cdr.markForCheck();
       this.slideInRef.close(true);
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
       this.isLoading = false;
-      this.mdDialog.closeAll();
+      this.matDialog.closeAll();
       this.cdr.markForCheck();
       this.formErrorHandler.handleWsFormError(error, this.form);
     });

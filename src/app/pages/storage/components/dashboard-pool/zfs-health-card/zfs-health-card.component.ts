@@ -49,7 +49,7 @@ export class ZfsHealthCardComponent implements OnChanges {
     private translate: TranslateService,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
-    private dialog: MatDialog,
+    private matDialog: MatDialog,
     private store: PoolsDashboardStore,
   ) { }
 
@@ -185,7 +185,7 @@ export class ZfsHealthCardComponent implements OnChanges {
   }
 
   onEditAutotrim(): void {
-    this.dialog
+    this.matDialog
       .open(AutotrimDialogComponent, { data: this.pool })
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))

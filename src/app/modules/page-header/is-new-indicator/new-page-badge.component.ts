@@ -9,9 +9,9 @@ import { FeedbackDialogComponent } from 'app/modules/ix-feedback/feedback-dialog
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NewPageBadgeComponent {
-  constructor(private dialog: MatDialog) {}
+  constructor(private matDialog: MatDialog) {}
 
   leaveFeedbackPressed(): void {
-    this.dialog.open(FeedbackDialogComponent);
+    this.matDialog.open(FeedbackDialogComponent);
   }
 }

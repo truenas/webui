@@ -224,7 +224,7 @@ export class IscsiWizardComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
-    private mdDialog: MatDialog,
+    private matDialog: MatDialog,
     private snackbar: SnackbarService,
     private translateService: TranslateService,
     private loader: AppLoaderService,

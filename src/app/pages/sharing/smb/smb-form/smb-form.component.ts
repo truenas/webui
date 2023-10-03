@@ -168,7 +168,7 @@ export class SmbFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private formBuilder: FormBuilder,
     private ws: WebSocketService,
-    private mdDialog: MatDialog,
+    private matDialog: MatDialog,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
@@ -476,7 +476,7 @@ export class SmbFormComponent implements OnInit {
       map((service) => service.state === ServiceStatus.Running),
       switchMap((isRunning) => {
         if (isRunning && this.isRestartRequired) {
-          return this.mdDialog.open(RestartSmbDialogComponent, {
+          return this.matDialog.open(RestartSmbDialogComponent, {
             data: {
               timemachine: this.isNewTimemachineShare,
               homeshare: this.isNewHomeShare,

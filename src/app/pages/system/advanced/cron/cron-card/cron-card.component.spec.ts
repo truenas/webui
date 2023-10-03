@@ -20,6 +20,7 @@ import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { TaskService } from 'app/services/task.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
 describe('CronCardComponent', () => {
@@ -108,7 +109,6 @@ describe('CronCardComponent', () => {
   });
 
   it('shows confirmation dialog when Run Now button is pressed', async () => {
-    jest.spyOn(spectator.inject(DialogService), 'confirm');
     const runNowButton = await table.getHarnessInRow(IxIconHarness.with({ name: 'play_arrow' }), 'root');
     await runNowButton.click();
 
@@ -117,6 +117,8 @@ describe('CronCardComponent', () => {
       message: 'Run this job now?',
       hideCheckbox: true,
     });
+
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cronjob.run', [1]);
   });
 
   it('shows form to edit an existing cronjob when Edit button is pressed', async () => {

@@ -20,14 +20,14 @@ import { MultiErrorDialogComponent } from 'app/modules/common/dialog/multi-error
   providedIn: 'root',
 })
 export class DialogService {
-  constructor(private dialog: MatDialog) { }
+  constructor(private matDialog: MatDialog) { }
 
   confirm(confirmOptions: ConfirmOptions): Observable<boolean>;
   confirm(confirmOptions: ConfirmOptionsWithSecondaryCheckbox): Observable<DialogWithSecondaryCheckboxResult>;
   confirm(
     options: ConfirmOptions | ConfirmOptionsWithSecondaryCheckbox,
   ): Observable<boolean> | Observable<DialogWithSecondaryCheckboxResult> {
-    return this.dialog.open(ConfirmDialogComponent, {
+    return this.matDialog.open(ConfirmDialogComponent, {
       disableClose: options.disableClose || false,
       data: options,
     })
@@ -38,7 +38,7 @@ export class DialogService {
     if (Array.isArray(error)) {
       error = this.cleanErrors(error);
       if (error.length > 1) {
-        const dialogRef = this.dialog.open(MultiErrorDialogComponent, {
+        const dialogRef = this.matDialog.open(MultiErrorDialogComponent, {
           data: error,
         });
         return dialogRef.afterClosed();
@@ -48,7 +48,7 @@ export class DialogService {
     if (!error?.message) {
       return of(false);
     }
-    const dialogRef = this.dialog.open(ErrorDialogComponent, {
+    const dialogRef = this.matDialog.open(ErrorDialogComponent, {
       data: error,
     });
     dialogRef.componentInstance.title = error.title;
@@ -71,7 +71,7 @@ export class DialogService {
   }
 
   info(title: string, info: string, isHtml = false): Observable<boolean> {
-    const dialogRef = this.dialog.open(InfoDialogComponent);
+    const dialogRef = this.matDialog.open(InfoDialogComponent);
 
     dialogRef.componentInstance.title = title;
     dialogRef.componentInstance.info = info;
@@ -82,7 +82,7 @@ export class DialogService {
   }
 
   warn(title: string, info: string, isHtml = false): Observable<boolean> {
-    const dialogRef = this.dialog.open(InfoDialogComponent);
+    const dialogRef = this.matDialog.open(InfoDialogComponent);
 
     dialogRef.componentInstance.title = title;
     dialogRef.componentInstance.info = info;
@@ -93,14 +93,14 @@ export class DialogService {
   }
 
   generalDialog(conf: GeneralDialogConfig, matConfig?: MatDialogConfig): Observable<boolean> {
-    const dialogRef = this.dialog.open(GeneralDialogComponent, matConfig);
+    const dialogRef = this.matDialog.open(GeneralDialogComponent, matConfig);
     dialogRef.componentInstance.conf = conf;
 
     return dialogRef.afterClosed();
   }
 
   fullScreenDialog(title: string, message: string, showClose = false): Observable<boolean> {
-    const dialogRef = this.dialog.open(FullScreenDialogComponent, {
+    const dialogRef = this.matDialog.open(FullScreenDialogComponent, {
       maxWidth: '100vw',
       maxHeight: '100vh',
       height: '100%',
@@ -116,7 +116,7 @@ export class DialogService {
   }
 
   closeAllDialogs(): void {
-    for (const openDialog of (this.dialog.openDialogs || [])) {
+    for (const openDialog of (this.matDialog.openDialogs || [])) {
       openDialog.close();
     }
   }

@@ -8,6 +8,7 @@ import {
   Inject,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { Sort } from '@angular/material/sort';
 import {
   ActivatedRoute, NavigationEnd, NavigationStart, Router,
 } from '@angular/router';
@@ -27,6 +28,7 @@ import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AppBulkUpgradeComponent } from 'app/pages/apps/components/installed-apps/app-bulk-upgrade/app-bulk-upgrade.component';
 import { KubernetesSettingsComponent } from 'app/pages/apps/components/installed-apps/kubernetes-settings/kubernetes-settings.component';
@@ -36,6 +38,16 @@ import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.se
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
 import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+
+enum SortableField {
+  Application = 'application',
+  Status = 'status',
+  Updates = 'updates',
+}
+
+function doSortCompare(a: number | string, b: number | string, isAsc: boolean): number {
+  return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
+}
 
 @UntilDestroy()
 @Component({
@@ -51,6 +63,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   showMobileDetails = false;
   isMobileView = false;
   appJobs = new Map<string, Job<ChartScaleResult, ChartScaleQueryParams>>();
+  readonly sortableField = SortableField;
 
   entityEmptyConf: EmptyConfig = {
     type: EmptyType.Loading,
@@ -264,7 +277,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
       untilDestroyed(this),
     ).subscribe({
       next: ([,,charts]) => {
-        this.dataSource = charts;
+        this.dataSource = charts.sort((a, b) => doSortCompare(a.name, b.name, true));
         this.selectAppForDetails(this.activatedRoute.snapshot.paramMap.get('appId'));
         this.cdr.markForCheck();
       },
@@ -399,6 +412,27 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
       }
     }
     return status;
+  }
+
+  sortChanged(sort: Sort): void {
+    this.dataSource = this.dataSource.sort((a, b) => {
+      const isAsc = sort.direction === SortDirection.Asc;
+
+      switch (sort.active) {
+        case SortableField.Application:
+          return doSortCompare(a.name, b.name, isAsc);
+        case SortableField.Status:
+          return doSortCompare(a.status, b.status, isAsc);
+        case SortableField.Updates:
+          return doSortCompare(
+            (a.update_available || a.container_images_update_available) ? 1 : 0,
+            (b.update_available || b.container_images_update_available) ? 1 : 0,
+            isAsc,
+          );
+        default:
+          return doSortCompare(a.name, b.name, isAsc);
+      }
+    });
   }
 
   private selectAppForDetails(appId: string): void {

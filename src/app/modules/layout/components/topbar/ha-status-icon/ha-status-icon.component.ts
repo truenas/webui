@@ -32,7 +32,7 @@ export class HaStatusIconComponent implements OnInit {
   constructor(
     private store$: Store<AppState>,
     private cdr: ChangeDetectorRef,
-    private dialog: MatDialog,
+    private matDialog: MatDialog,
     private translate: TranslateService,
   ) { }
 
@@ -63,7 +63,7 @@ export class HaStatusIconComponent implements OnInit {
     if (this.isStatusPanelOpen) {
       this.statusPanelRef.close(true);
     } else {
-      this.statusPanelRef = this.dialog.open(HaStatusPopoverComponent, {
+      this.statusPanelRef = this.matDialog.open(HaStatusPopoverComponent, {
         hasBackdrop: true,
         panelClass: 'topbar-panel',
         position: topbarDialogPosition,

@@ -3,10 +3,9 @@ import {
   ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
+import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import * as _ from 'lodash';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { IscsiAuthMethod } from 'app/enums/iscsi.enum';
@@ -29,7 +28,6 @@ import { WebSocketService } from 'app/services/ws.service';
 export class PortalFormComponent implements OnInit {
   isLoading = false;
   listen: IscsiInterface[] = [];
-  listPrefix = '__';
 
   get isNew(): boolean {
     return !this.editingIscsiPortal;
@@ -45,6 +43,7 @@ export class PortalFormComponent implements OnInit {
     comment: [''],
     discovery_authmethod: [IscsiAuthMethod.None],
     discovery_authgroup: [null as number],
+    ip: this.fb.array<string>([]),
   });
 
   readonly labels = {
@@ -87,14 +86,6 @@ export class PortalFormComponent implements OnInit {
   );
   readonly listenOptions$ = this.iscsiService.getIpChoices().pipe(choicesToOptions());
 
-  private ipAddressFromControls = [
-    {
-      name: 'ip',
-      default: '' as string,
-      validator: [Validators.required, ipValidator('all')],
-    },
-  ];
-
   constructor(
     private fb: FormBuilder,
     private translate: TranslateService,
@@ -113,15 +104,10 @@ export class PortalFormComponent implements OnInit {
   }
 
   setupForm(): void {
-    this.editingIscsiPortal.listen.forEach((listen, index) => {
+    this.editingIscsiPortal.listen.forEach((listen) => {
       const newListItem = {} as IscsiInterface;
-      this.ipAddressFromControls.forEach((fc) => {
-        if (fc.name === 'ip') {
-          const defaultValue = listen.ip;
-          newListItem[fc.name] = defaultValue;
-          this.form.addControl(`${fc.name}${this.listPrefix}${index}`, new FormControl(defaultValue, fc.validator));
-        }
-      });
+      newListItem.ip = listen.ip;
+      this.form.controls.ip.push(this.fb.control(listen.ip, [Validators.required, ipValidator('all')]));
       this.listen.push(newListItem);
     });
 
@@ -132,43 +118,12 @@ export class PortalFormComponent implements OnInit {
   }
 
   onAdd(): void {
-    const newIndex = this.listen.length;
-    const newListItem = {} as IscsiInterface;
-    this.ipAddressFromControls.forEach((fc) => {
-      newListItem[fc.name as 'ip'] = fc.default;
-      this.form.addControl(`${fc.name}${this.listPrefix}${newIndex}`, new FormControl(fc.default, fc.validator));
-    });
-
-    this.listen.push(newListItem);
+    this.form.controls.ip.push(this.fb.control('', [Validators.required, ipValidator('all')]));
+    this.listen.push({ ip: '' } as IscsiInterface);
   }
 
   onDelete(index: number): void {
-    this.ipAddressFromControls.forEach((fc) => {
-      this.form.removeControl(`${fc.name}${this.listPrefix}${index}`);
-    });
-
     this.listen.splice(index, 1);
-  }
-
-  prepareSubmit(values: PortalFormComponent['form']['value']): IscsiInterface[] {
-    const listen = [] as IscsiInterface[];
-
-    const tempListen: { name: string; index: string; value: string | number | string[] }[] = [];
-    Object.keys(values).forEach((key) => {
-      const keys = key.split(this.listPrefix);
-      if (keys.length > 1) {
-        tempListen.push({ name: keys[0], index: keys[1], value: values[key as keyof PortalFormComponent['form']['value']] });
-      }
-    });
-
-    Object.values(_.groupBy(tempListen, 'index')).forEach((item) => {
-      const ip = item.find((ele) => ele.name === 'ip')?.value as string;
-      if (ip) {
-        listen.push({ ip } as IscsiInterface);
-      }
-    });
-
-    return listen;
   }
 
   onSubmit(): void {
@@ -177,7 +132,7 @@ export class PortalFormComponent implements OnInit {
       comment: values.comment,
       discovery_authmethod: values.discovery_authmethod,
       discovery_authgroup: values.discovery_authgroup,
-      listen: this.prepareSubmit(values),
+      listen: values.ip.map((ip) => ({ ip })) as IscsiInterface[],
     };
 
     this.isLoading = true;

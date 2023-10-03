@@ -24,7 +24,7 @@ export class JobsIndicatorComponent implements OnInit {
   isJobPanelOpen$ = this.store$.select(selectIsJobPanelOpen);
 
   constructor(
-    private dialog: MatDialog,
+    private matDialog: MatDialog,
     private store$: Store<AppState>,
   ) { }
 
@@ -45,7 +45,7 @@ export class JobsIndicatorComponent implements OnInit {
       filter(Boolean),
       untilDestroyed(this),
     ).subscribe(() => {
-      const jobsPanelRef = this.dialog.open(JobsPanelComponent, {
+      const jobsPanelRef = this.matDialog.open(JobsPanelComponent, {
         width: '400px',
         hasBackdrop: true,
         panelClass: 'topbar-panel',
