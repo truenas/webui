@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { UUID } from 'angular2-uuid';
 import { LocalStorage } from 'ngx-webstorage';
 import {
@@ -21,6 +22,8 @@ import { IncomingWebsocketMessage, ResultMessage } from 'app/interfaces/api-mess
 import { DsUncachedUser, LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { User } from 'app/interfaces/user.interface';
 import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
+import { AppState } from 'app/store';
+import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 
 @UntilDestroy()
 @Injectable({
@@ -61,6 +64,7 @@ export class AuthService {
 
   constructor(
     private wsManager: WebsocketConnectionService,
+    private store$: Store<AppState>,
   ) {
     this.setupAuthenticationUpdate();
 
@@ -73,6 +77,7 @@ export class AuthService {
     this.isAuthenticated$.pipe(untilDestroyed(this)).subscribe({
       next: (isAuthenticated) => {
         if (isAuthenticated) {
+          this.store$.dispatch(adminUiInitialized());
           this.getLoggedInUserInformation();
           this.setupPeriodicTokenGeneration();
         } else if (this.generateTokenSubscription) {
