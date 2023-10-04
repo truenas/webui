@@ -15,6 +15,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
+import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
 import { NgxDualListboxModule } from 'app/modules/common/dual-list/dual-list.module';
@@ -87,6 +88,7 @@ import { SmbListComponent } from './smb/smb-list/smb-list.component';
     NgxDualListboxModule,
     IxTable2Module,
     MatToolbarModule,
+    CoreComponents,
   ],
   declarations: [
     NfsListComponent,

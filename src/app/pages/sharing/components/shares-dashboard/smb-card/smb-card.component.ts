@@ -1,11 +1,12 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, switchMap } from 'rxjs';
-import { ServiceStatus } from 'app/enums/service-status.enum';
+import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingSmb } from 'app/helptext/sharing/smb/smb';
-import { Service } from 'app/interfaces/service.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { SmbShare, SmbSharesec } from 'app/interfaces/smb-share.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -20,6 +21,8 @@ import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { ServicesState } from 'app/store/services/services.reducer';
+import { selectService } from 'app/store/services/services.selectors';
 
 @UntilDestroy()
 @Component({
@@ -29,15 +32,13 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SmbCardComponent implements OnInit, OnChanges {
-  @Input() service: Service;
   @Input() isClustered: boolean;
-
-  @Output() statusChanged = new EventEmitter<ServiceStatus>();
+  service$ = this.store$.select(selectService(ServiceName.Cifs));
 
   isLoading = false;
   smbShares: SmbShare[] = [];
   dataProvider = new ArrayDataProvider<SmbShare>();
-  title = 'Windows (SMB) Shares';
+  title = T('Windows (SMB) Shares');
 
   isAddActionDisabled = false;
   isDeleteActionDisabled = false;
@@ -75,6 +76,7 @@ export class SmbCardComponent implements OnInit, OnChanges {
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
     private router: Router,
+    private store$: Store<ServicesState>,
   ) {}
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {

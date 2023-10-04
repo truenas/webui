@@ -1,0 +1,23 @@
+name: Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  pull_request_review_comment:
+    types: [created]
+
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: coderabbitai/ai-pr-reviewer@latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_TOKEN }}
+        with:
+          debug: false
+          review_simple_changes: true
+          review_comment_lgtm: true
+          openai_light_model: "gpt-3.5-turbo"
+          openai_heavy_model: "gpt-3.5-turbo"

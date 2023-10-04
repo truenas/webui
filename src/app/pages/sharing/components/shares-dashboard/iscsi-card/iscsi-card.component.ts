@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, switchMap } from 'rxjs';
-import { ServiceStatus } from 'app/enums/service-status.enum';
+import { ServiceName } from 'app/enums/service-name.enum';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
-import { Service } from 'app/interfaces/service.interface';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
 import { templateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
@@ -15,6 +15,8 @@ import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { ServicesState } from 'app/store/services/services.reducer';
+import { selectService } from 'app/store/services/services.selectors';
 
 @UntilDestroy()
 @Component({
@@ -24,9 +26,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IscsiCardComponent implements OnInit {
-  @Input() service: Service;
-
-  @Output() statusChanged = new EventEmitter<ServiceStatus>();
+  service$ = this.store$.select(selectService(ServiceName.Iscsi));
 
   isLoading = false;
   iscsiShares: IscsiTarget[] = [];
@@ -51,6 +51,7 @@ export class IscsiCardComponent implements OnInit {
     private ws: WebSocketService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
+    private store$: Store<ServicesState>,
   ) {}
 
   ngOnInit(): void {
