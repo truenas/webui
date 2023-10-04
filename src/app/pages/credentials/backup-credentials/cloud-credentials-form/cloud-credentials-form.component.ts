@@ -123,7 +123,7 @@ export class CloudCredentialsFormComponent implements OnInit {
   }
 
   get isGooglePhotosProvider(): boolean {
-    return this.providerForm?.provider.name === CloudsyncProviderName.GooglePhotos;
+    return this.providerForm?.provider?.name === CloudsyncProviderName.GooglePhotos;
   }
 
   get isFormValid(): boolean {
