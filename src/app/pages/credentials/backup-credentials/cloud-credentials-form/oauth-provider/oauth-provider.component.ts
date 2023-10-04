@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
+import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
 import { OauthMessage } from 'app/interfaces/oauth-message.interface';
@@ -23,6 +24,8 @@ export interface OauthProviderData {
 })
 export class OauthProviderComponent {
   @Input() oauthUrl: string;
+  @Input() providerName: CloudsyncProviderName;
+
   @Output() authenticated = new EventEmitter<Record<string, unknown>>();
 
   form = this.formBuilder.group({
@@ -31,6 +34,21 @@ export class OauthProviderComponent {
   });
 
   readonly helptext = helptext;
+
+  get isGooglePhotosProvider(): boolean {
+    return this.providerName === CloudsyncProviderName.GooglePhotos;
+  }
+
+  get hideLoginToProviderButton(): boolean {
+    return this.isGooglePhotosProvider;
+  }
+
+  get oauthTooltip(): string | null {
+    if (this.isGooglePhotosProvider) {
+      return helptext.token_google_photos.oauth_tooltip;
+    }
+    return null;
+  }
 
   constructor(
     private formBuilder: FormBuilder,

@@ -154,6 +154,7 @@
   "Once an enclosure is selected, all other VDEV creation steps will limit disk selection options to disks in the selected enclosure. If the enclosure selection is changed, all disk selections will be reset.": "",
   "One or more data VDEVs has disks of different sizes.": "",
   "Optional. Only needed for private images.": "",
+  "Photo Library API client secret generated from the  <a href=\"https://developers.google.com/identity/protocols/oauth2\" target=\"_blank\">Google API Console</a>": "",
   "Pool Manager": "",
   "Provide helpful notations related to the share, e.g. ‘Shared to everybody’.     Maximum length is 120 characters.": "",
   "Pull Image": "",
