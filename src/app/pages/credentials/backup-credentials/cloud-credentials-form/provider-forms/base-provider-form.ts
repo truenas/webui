@@ -18,7 +18,7 @@ export abstract class BaseProviderFormComponent<T = CloudCredential['attributes'
    * TODO: Consider making this functionality part of the private key select.
    */
   beforeSubmit(): Observable<unknown> {
-    return of();
+    return of(undefined);
   }
 
   getSubmitAttributes(): T {
