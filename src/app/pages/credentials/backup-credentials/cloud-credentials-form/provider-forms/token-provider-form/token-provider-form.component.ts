@@ -43,8 +43,6 @@ export class TokenProviderFormComponent extends BaseProviderFormComponent implem
         return helptext.token_box.tooltip;
       case CloudsyncProviderName.Dropbox:
         return helptext.token_dropbox.tooltip;
-      case CloudsyncProviderName.GooglePhotos:
-        return helptext.token_google_photos.tooltip;
       case CloudsyncProviderName.Hubic:
         return helptext.token_hubic.tooltip;
       case CloudsyncProviderName.Yandex:

@@ -35,21 +35,6 @@ export class OauthProviderComponent {
 
   readonly helptext = helptext;
 
-  get isGooglePhotosProvider(): boolean {
-    return this.providerName === CloudsyncProviderName.GooglePhotos;
-  }
-
-  get hideLoginToProviderButton(): boolean {
-    return this.isGooglePhotosProvider;
-  }
-
-  get oauthTooltip(): string | null {
-    if (this.isGooglePhotosProvider) {
-      return helptext.token_google_photos.oauth_tooltip;
-    }
-    return null;
-  }
-
   constructor(
     private formBuilder: FormBuilder,
     private dialogService: DialogService,
