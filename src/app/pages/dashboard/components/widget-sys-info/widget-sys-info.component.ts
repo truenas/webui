@@ -7,8 +7,9 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { addSeconds } from 'date-fns';
-import { filter, take } from 'rxjs/operators';
+import { Observable, combineLatest } from 'rxjs';
+import { distinctUntilChanged, filter, map, switchMap, take } from 'rxjs/operators';
+import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { JobState } from 'app/enums/job-state.enum';
 import { ScreenType } from 'app/enums/screen-type.enum';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
@@ -20,8 +21,6 @@ import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.co
 import {
   DialogService,
 } from 'app/services/dialog.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { LocaleService } from 'app/services/locale.service';
 import { ProductImageService } from 'app/services/product-image.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
@@ -62,8 +61,16 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
   hasHa: boolean;
   updateMethod = 'update.update';
   screenType = ScreenType.Desktop;
-  uptimeString: string;
   dateTime: string;
+  uptimeString$ = combineLatest([
+    this.sysGenService.uptime$,
+    this.sysGenService.dateTime$.pipe(
+      map((datetime) => this.formatDateTimePipe.transform(datetime, null, ' ', 'HH:mm')),
+    ),
+  ]).pipe(
+    distinctUntilChanged(),
+    switchMap(([uptime, datetime]) => this.calculateUptime(uptime, datetime)),
+  );
 
   readonly ScreenType = ScreenType;
 
@@ -73,14 +80,13 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
     private ws: WebSocketService,
     public sysGenService: SystemGeneralService,
     public mediaObserver: MediaObserver,
-    private locale: LocaleService,
     public themeService: ThemeService,
     private store$: Store<AppState>,
     private productImgServ: ProductImageService,
     public loader: AppLoaderService,
     public dialogService: DialogService,
     private titleCase: TitleCasePipe,
-    private errorHandler: ErrorHandlerService,
+    private formatDateTimePipe: FormatDateTimePipe,
     @Inject(WINDOW) private window: Window,
   ) {
     super(translate);
@@ -169,61 +175,37 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
     return this.translate.instant('Check for Updates');
   }
 
-  addTimeDiff(timestamp: number): number {
-    if (sessionStorage.systemInfoLoaded) {
-      const now = Date.now();
-      return timestamp + now - Number(sessionStorage.systemInfoLoaded);
-    }
-    return timestamp;
-  }
-
   processSysInfo(systemInfo: SystemInfo): void {
     this.data = systemInfo;
-    let datetime = this.addTimeDiff(this.data.datetime.$date);
-    this.dateTime = this.locale.getTimeOnly(datetime, false, this.data.timezone);
-
-    if (this.timeInterval) {
-      clearInterval(this.timeInterval);
-    }
-
-    this.timeInterval = setInterval(() => {
-      datetime = addSeconds(datetime, 1).getTime();
-      this.dateTime = this.locale.getTimeOnly(datetime, false, this.data.timezone);
-    }, 1000);
-
     this.setProductImage();
-
-    this.parseUptime();
     this.ready = true;
   }
 
-  parseUptime(): void {
-    this.uptimeString = '';
-    const seconds = Math.round(this.addTimeDiff(this.data.uptime_seconds * 1000) / 1000);
-    const uptime = {
-      days: Math.floor(seconds / (3600 * 24)),
-      hrs: Math.floor(seconds % (3600 * 24) / 3600),
-      min: Math.floor(seconds % 3600 / 60),
-    };
-    const { days, hrs, min } = uptime;
+  calculateUptime(uptime: number, dateTime: string): Observable<string> {
+    const days = Math.floor(uptime / (3600 * 24));
+    const hours = Math.floor(uptime % (3600 * 24) / 3600);
+    const minutes = Math.floor(uptime % 3600 / 60);
+    const seconds = Math.floor(uptime % 60);
 
-    let pmin = min.toString();
-    if (pmin.length === 1) {
-      pmin = '0' + pmin;
-    }
-
-    // TODO: Replace with ICU strings
+    let uptimeString = '';
     if (days > 0) {
-      if (days === 1) {
-        this.uptimeString += `${days}${this.translate.instant(' day, ')}`;
-      } else {
-        this.uptimeString += `${days}${this.translate.instant(' days, ')}${hrs}:${pmin}`;
-      }
-    } else if (hrs > 0) {
-      this.uptimeString += `${hrs}:${pmin}`;
-    } else {
-      this.uptimeString += this.translate.instant('{minute, plural, one {# minute} other {# minutes}}', { minute: min });
+      uptimeString += this.translate.instant('{days, plural, =1 {# day} other {# days}},', { days }) + ' ';
     }
+    if (hours > 0) {
+      uptimeString += this.translate.instant('{hours, plural, =1 {# hour} other {# hours}}', { hours }) + ' ';
+    }
+    if (minutes > 0) {
+      uptimeString += this.translate.instant('{minutes, plural, =1 {# minute} other {# minutes}}', { minutes }) + ' ';
+    }
+    if (seconds > 0 && !(days > 0)) {
+      uptimeString += this.translate.instant('{seconds, plural, =1 {# second} other {# seconds}}', { seconds }) + ' ';
+    }
+
+    if (!days && !hours && !minutes && !seconds) {
+      return this.translate.get('N/A');
+    }
+
+    return this.translate.get(`${uptimeString} as of {dateTime}`, { dateTime });
   }
 
   setProductImage(): void {

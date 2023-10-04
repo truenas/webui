@@ -15,6 +15,7 @@ import { NgxFilesizeModule } from 'ngx-filesize';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { CoreComponents } from 'app/core/core-components.module';
+import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
 import { ChartsModule } from 'app/modules/charts/charts.module';
@@ -94,6 +95,7 @@ import { routing } from './dashboard.routing';
     ResourcesUsageStore,
     DashboardStorageStore,
     DashboardStore,
+    FormatDateTimePipe,
   ],
 })
 export class DashboardModule {

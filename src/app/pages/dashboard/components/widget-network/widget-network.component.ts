@@ -24,9 +24,9 @@ import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.s
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { ResourcesUsageStore } from 'app/pages/dashboard/store/resources-usage-store.service';
 import { deepCloneState } from 'app/pages/dashboard/utils/deep-clone-state.helper';
-import { ReportsService } from 'app/pages/reports-dashboard/reports.service';
 import { DialogService } from 'app/services/dialog.service';
 import { LocaleService } from 'app/services/locale.service';
+import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
@@ -148,9 +148,10 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
     title: this.translate.instant('Loading'),
   };
 
+  private serverTime: Date;
+
   constructor(
     private ws: WebSocketService,
-    private reportsService: ReportsService,
     private tableService: TableService,
     public translate: TranslateService,
     private dialog: DialogService,
@@ -159,11 +160,16 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
     public themeService: ThemeService,
     private store$: Store<AppState>,
     private resourcesUsageStore$: ResourcesUsageStore,
+    private systemGeneralService: SystemGeneralService,
   ) {
     super(translate);
 
     this.store$.select(selectTimezone).pipe(untilDestroyed(this)).subscribe((timezone) => {
       this.timezone = timezone;
+    });
+
+    this.systemGeneralService.dateTime$.pipe(untilDestroyed(this)).subscribe((serverTime) => {
+      this.serverTime = new Date(serverTime);
     });
   }
 
@@ -183,7 +189,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
 
   ngAfterViewInit(): void {
     if (!this.fetchDataIntervalSubscription || this.fetchDataIntervalSubscription.closed) {
-      this.fetchDataIntervalSubscription = timer(0, 10000).pipe(
+      this.fetchDataIntervalSubscription = timer(0, 60000).pipe(
         untilDestroyed(this),
       ).subscribe(() => {
         this.fetchReportData();
@@ -339,7 +345,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
   }
 
   fetchReportData(): void {
-    const endDate = this.reportsService.serverTime;
+    const endDate = this.serverTime;
     const subOptions: Duration = {};
     subOptions.hours = 1;
     const startDate = sub(endDate, subOptions);
