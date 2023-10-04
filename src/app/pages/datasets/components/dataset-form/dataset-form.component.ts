@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  forkJoin, Observable, of, switchMap, map, combineLatest,
+  forkJoin, Observable, of, switchMap, map, combineLatest, filter,
 } from 'rxjs';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.interface';
@@ -111,22 +111,22 @@ export class DatasetFormComponent implements OnInit {
     this.isLoading = true;
     this.cdr.markForCheck();
 
-    this.datasetFormService.ensurePathLimits(this.slideInData.datasetId).pipe(
+    this.datasetFormService.checkAndWarnForLengthAndDepth(this.slideInData.datasetId).pipe(
+      filter(Boolean),
       switchMap(() => this.datasetFormService.loadDataset(this.slideInData.datasetId)),
-    )
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: (dataset) => {
-          this.parentDataset = dataset;
-          this.isLoading = false;
-          this.cdr.markForCheck();
-        },
-        error: (error) => {
-          this.isLoading = false;
-          this.cdr.markForCheck();
-          this.dialog.error(this.errorHandler.parseWsError(error));
-        },
-      });
+      untilDestroyed(this),
+    ).subscribe({
+      next: (dataset) => {
+        this.parentDataset = dataset;
+        this.isLoading = false;
+        this.cdr.markForCheck();
+      },
+      error: (error) => {
+        this.isLoading = false;
+        this.cdr.markForCheck();
+        this.dialog.error(this.errorHandler.parseWsError(error));
+      },
+    });
   }
 
   setForEdit(): void {

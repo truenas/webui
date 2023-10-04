@@ -55,6 +55,15 @@ import {
 } from 'app/services/schema/app-schema.transformer';
 import { UrlValidationService } from 'app/services/url-validation.service';
 
+interface ToggleFieldHiddenOrDisabledValue {
+  formField: CustomUntypedFormField;
+  value: unknown;
+  schema: ChartSchemaNodeConf;
+  subquestion: ChartSchemaNode;
+  isParentImmutable: boolean;
+  isNew: boolean;
+}
+
 @UntilDestroy()
 @Injectable({
   providedIn: 'root',
@@ -673,10 +682,17 @@ export class AppSchemaService {
       );
 
       const formField = formGroup.controls[subquestion.variable] as CustomUntypedFormField;
-      this.toggleFieldHiddenOrDisabled(formField, newFormControl.value, schema, subquestion, isParentImmutable);
+      this.toggleFieldHiddenOrDisabled({
+        value: newFormControl.value,
+        formField,
+        schema,
+        subquestion,
+        isParentImmutable,
+        isNew,
+      });
     }
 
-    subscription.add(newFormControl.valueChanges.subscribe((value) => {
+    subscription.add(newFormControl.valueChanges.subscribe((value: unknown) => {
       for (const subquestion of schema.subquestions) {
         const parentControl = formGroup.controls[subquestion.variable].parent as CustomUntypedFormField;
         if (!parentControl.hidden$) {
@@ -686,20 +702,25 @@ export class AppSchemaService {
         parentControl.hidden$.pipe(take(1)).subscribe((isParentHidden) => {
           if (!isParentHidden) {
             const formField = (formGroup.controls[subquestion.variable] as CustomUntypedFormField);
-            this.toggleFieldHiddenOrDisabled(formField, value, schema, subquestion, isParentImmutable);
+            this.toggleFieldHiddenOrDisabled({
+              formField,
+              value,
+              schema,
+              subquestion,
+              isParentImmutable,
+              isNew,
+            });
           }
         });
       }
     }));
   }
 
-  private toggleFieldHiddenOrDisabled(
-    formField: CustomUntypedFormField,
-    value: unknown,
-    schema: ChartSchemaNodeConf,
-    subquestion: ChartSchemaNode,
-    isParentImmutable: boolean,
-  ): void {
+  private toggleFieldHiddenOrDisabled(fieldValue: ToggleFieldHiddenOrDisabledValue): void {
+    const {
+      formField, value, schema, subquestion, isNew, isParentImmutable,
+    } = fieldValue;
+
     if (!formField.hidden$) {
       formField.hidden$ = new BehaviorSubject<boolean>(false);
     }
@@ -712,7 +733,7 @@ export class AppSchemaService {
       formField.disable();
     }
 
-    if (subquestion && (isParentImmutable || schema.immutable || subquestion.schema.immutable)) {
+    if (subquestion && !isNew && (isParentImmutable || schema.immutable || subquestion.schema.immutable)) {
       formField.disable();
     }
   }
