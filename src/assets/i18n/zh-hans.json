@@ -257,6 +257,7 @@
   "Optional. Only needed for private images.": "",
   "Password Login Groups": "",
   "Pause Scrub": "",
+  "Photo Library API client secret generated from the  <a href=\"https://developers.google.com/identity/protocols/oauth2\" target=\"_blank\">Google API Console</a>": "",
   "Pool Creation Wizard": "",
   "Pool Manager": "",
   "Pool Name": "",

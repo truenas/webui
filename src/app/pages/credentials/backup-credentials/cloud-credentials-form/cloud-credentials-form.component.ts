@@ -122,10 +122,28 @@ export class CloudCredentialsFormComponent implements OnInit {
     });
   }
 
+  get isGooglePhotosProvider(): boolean {
+    return this.providerForm?.provider.name === CloudsyncProviderName.GooglePhotos;
+  }
+
+  get isFormValid(): boolean {
+    const isBaseFormValid = this.providerForm?.form?.valid;
+
+    if (this.isGooglePhotosProvider) {
+      return this.submissionAttributes.client_secret && this.submissionAttributes.client_id && isBaseFormValid;
+    }
+
+    return isBaseFormValid;
+  }
+
   get areActionsDisabled(): boolean {
     return this.isLoading
       || this.commonForm.invalid
       || this.providerForm?.form?.invalid;
+  }
+
+  get submissionAttributes(): { [key: string]: string | number | boolean } {
+    return this.providerForm?.getSubmitAttributes() || {};
   }
 
   ngOnInit(): void {

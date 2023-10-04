@@ -81,7 +81,7 @@ export class BackupCredentialsComponent implements OnInit {
           },
           dataSourceHelper: this.cloudCredentialsDataSourceHelper.bind(this),
           afterGetData: (credentials: CloudsyncCredential[]) => {
-            const state = this.navigation.extras.state as { editCredential: string; id: string };
+            const state = this.navigation?.extras?.state as { editCredential: string; id: string };
             if (!state || state.editCredential !== 'cloudcredentials' || !this.isFirstCredentialsLoad) {
               return;
             }

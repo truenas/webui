@@ -77,7 +77,7 @@ export class TokenProviderFormComponent extends BaseProviderFormComponent implem
     }
 
     return {
-      ...this.oauthComponent.form.value,
+      ...this.oauthComponent?.form?.value,
       ...this.form.value,
     };
   }
