@@ -123,18 +123,10 @@ export class CloudCredentialsFormComponent implements OnInit {
     });
   }
 
-  get isGooglePhotosProvider(): boolean {
-    return this.providerForm?.provider?.name === CloudsyncProviderName.GooglePhotos;
-  }
-
   get areActionsDisabled(): boolean {
     return this.isLoading
       || this.commonForm.invalid
       || this.providerForm?.form?.invalid;
-  }
-
-  get submissionAttributes(): { [key: string]: string | number | boolean } {
-    return this.providerForm?.getSubmitAttributes() || {};
   }
 
   ngOnInit(): void {

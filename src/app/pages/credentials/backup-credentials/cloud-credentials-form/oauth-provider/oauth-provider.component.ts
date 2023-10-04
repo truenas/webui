@@ -3,7 +3,6 @@ import {
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
-import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
 import { OauthMessage } from 'app/interfaces/oauth-message.interface';
@@ -24,7 +23,6 @@ export interface OauthProviderData {
 })
 export class OauthProviderComponent {
   @Input() oauthUrl: string;
-  @Input() providerName: CloudsyncProviderName;
 
   @Output() authenticated = new EventEmitter<Record<string, unknown>>();
 
