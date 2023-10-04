@@ -37,6 +37,7 @@ export interface VirtualMachine {
   suspend_on_snapshot: boolean;
   min_memory: number;
   uuid: string;
+  display_available: boolean;
 }
 
 export type VirtualMachineUpdate = Omit<VirtualMachine, 'status' | 'id' | 'devices'>;
