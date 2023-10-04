@@ -182,7 +182,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
         memoryString: this.formatter.convertBytesToHumanReadable(vm.memory * 1048576, 2),
       } as VirtualMachineRow;
 
-      if (this.checkDisplay(vm)) {
+      if (vm.display_available) {
         transformed.port = this.getDisplayPort(vm);
       } else {
         transformed.port = 'N/A';
@@ -193,23 +193,6 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
 
       return transformed;
     });
-  }
-
-  checkDisplay(vm: VirtualMachine | VirtualMachineRow): boolean {
-    const devices = vm.devices;
-    if (!devices || devices.length === 0) {
-      return false;
-    }
-    if (this.productType !== ProductType.Scale && ([VmBootloader.Grub, VmBootloader.UefiCsm].includes(vm.bootloader))) {
-      return false;
-    }
-    for (const device of devices) {
-      if (devices && device.dtype === VmDeviceType.Display) {
-        return true;
-      }
-    }
-
-    return false;
   }
 
   getDisplayPort(vm: VirtualMachine): boolean | number {
