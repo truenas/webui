@@ -127,13 +127,11 @@ export class CloudCredentialsFormComponent implements OnInit {
   }
 
   get isFormValid(): boolean {
-    const isBaseFormValid = this.providerForm?.form?.valid;
-
     if (this.isGooglePhotosProvider) {
-      return this.submissionAttributes.client_secret && this.submissionAttributes.client_id && isBaseFormValid;
+      return Boolean(this.submissionAttributes.client_secret && this.submissionAttributes.client_id);
     }
 
-    return isBaseFormValid;
+    return true;
   }
 
   get areActionsDisabled(): boolean {
