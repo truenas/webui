@@ -2932,6 +2932,7 @@
   "Start {service} Service": "",
   "Started": "",
   "Starting": "",
+  "Starting task": "",
   "Stateful Sets": "",
   "Static IP addresses which SMB listens on for connections.  Leaving all unselected defaults to listening on all active interfaces.": "",
   "Static IPv4 address of the IPMI web interface.": "",

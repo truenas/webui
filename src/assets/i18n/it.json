@@ -3125,6 +3125,7 @@
   "Start {service} Service": "",
   "Started": "",
   "Starting": "",
+  "Starting task": "",
   "State": "",
   "Stateful Sets": "",
   "Static IP addresses which SMB listens on for connections.  Leaving all unselected defaults to listening on all active interfaces.": "",

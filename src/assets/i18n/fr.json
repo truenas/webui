@@ -167,6 +167,7 @@
   "Some changes might not take affect until the {name} service has been restarted. Would you like to restart the {name} service now?": "",
   "Sort": "",
   "Standby: TrueNAS Controller {id}": "",
+  "Starting task": "",
   "Stateful Sets": "",
   "Sysctl \"{name}\" deleted": "",
   "System Security": "",
