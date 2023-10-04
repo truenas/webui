@@ -2,7 +2,7 @@ name: Pull Request Stats
 
 on:
   pull_request:
-    types: [opened, edited]
+    types: [synchronize]
 
 jobs:
   stats:
@@ -11,7 +11,7 @@ jobs:
       - name: Run pull request stats
         uses: flowwer-dev/pull-request-stats@master
         with:
-          period: 365
+          period: 180
           charts: true
           disableLinks: true
           limit: 6
