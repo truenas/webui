@@ -1,0 +1,14 @@
+name: Pull Request Recap
+
+on:
+  pull_request:
+    types: [opened]
+
+jobs:
+  recap:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Recap changes
+        uses: flowwer-dev/recap@main
+        with:
+          openai-apikey: ${{ secrets.OPENAI_TOKEN }}
