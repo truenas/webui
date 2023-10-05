@@ -87,7 +87,7 @@ export class OneDriveProviderFormComponent extends BaseProviderFormComponent imp
   getSubmitAttributes(): OauthProviderComponent['form']['value'] & this['form']['value'] {
     const { drives, ...oneDriveValues } = this.form.value;
     return {
-      ...this.oauthComponent.form.value,
+      ...this.oauthComponent?.form?.value,
       ...oneDriveValues,
     };
   }
