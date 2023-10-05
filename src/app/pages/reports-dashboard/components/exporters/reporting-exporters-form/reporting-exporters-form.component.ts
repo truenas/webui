@@ -99,10 +99,13 @@ export class ReportingExportersFormComponent implements OnInit {
       schemas.map((schema) => ({ label: schema.key, value: schema.key })),
     );
   }
+
   createExporterControls(schemas: ReportingExporterSchema[]): void {
     for (const schema of schemas) {
       for (const input of schema.schema) {
-        this.form.controls.attributes.addControl(input._name_, new FormControl('', input._required_ ? [Validators.required] : []));
+        this.form.controls.attributes.addControl(
+          input._name_, new FormControl('', input._required_ ? [Validators.required] : []),
+        );
       }
     }
 
@@ -115,7 +118,7 @@ export class ReportingExportersFormComponent implements OnInit {
     }];
 
     this.reportingExporterList = schemas.map((schema) => this.parseSchemaForExporterList(schema));
-    this.onExporterTypeChanged(ReportingExporterType.Graphite);
+    this.onExporterTypeChanged(null);
   }
 
   parseSchemaForDynamicSchema(schema: ReportingExporterSchema): DynamicFormSchemaNode[] {

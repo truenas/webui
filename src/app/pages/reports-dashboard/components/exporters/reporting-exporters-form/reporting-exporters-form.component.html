@@ -18,6 +18,7 @@
           formControlName="type"
           [label]="'Reporting Exporter Type' | translate"
           [options]="exporterTypeOptions$"
+          (ngModelChange)="onExporterTypeChanged($event)"
         ></ix-select>
         <ix-checkbox
           formControlName="enabled"
