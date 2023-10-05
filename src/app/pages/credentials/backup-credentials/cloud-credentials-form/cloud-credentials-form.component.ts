@@ -40,6 +40,7 @@ import {
 import {
   GoogleDriveProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/google-drive-provider-form/google-drive-provider-form.component';
+import { GooglePhotosProviderFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/google-photos-provider-form/google-photos-provider-form.component';
 import {
   HttpProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/http-provider-form/http-provider-form.component';
@@ -289,10 +290,10 @@ export class CloudCredentialsFormComponent implements OnInit {
     const tokenOnlyProviders = [
       CloudsyncProviderName.Box,
       CloudsyncProviderName.Dropbox,
-      CloudsyncProviderName.GooglePhotos,
       CloudsyncProviderName.Hubic,
       CloudsyncProviderName.Yandex,
     ];
+
     if (tokenOnlyProviders.includes(this.selectedProvider.name)) {
       return TokenProviderFormComponent;
     }
@@ -303,6 +304,7 @@ export class CloudCredentialsFormComponent implements OnInit {
       [CloudsyncProviderName.Ftp, FtpProviderFormComponent],
       [CloudsyncProviderName.GoogleCloudStorage, GoogleCloudProviderFormComponent],
       [CloudsyncProviderName.GoogleDrive, GoogleDriveProviderFormComponent],
+      [CloudsyncProviderName.GooglePhotos, GooglePhotosProviderFormComponent],
       [CloudsyncProviderName.Http, HttpProviderFormComponent],
       [CloudsyncProviderName.Mega, MegaProviderFormComponent],
       [CloudsyncProviderName.MicrosoftOnedrive, OneDriveProviderFormComponent],
