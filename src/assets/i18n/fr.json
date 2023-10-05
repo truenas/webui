@@ -139,6 +139,7 @@
   "Once an enclosure is selected, all other VDEV creation steps will limit disk selection options to disks in the selected enclosure. If the enclosure selection is changed, all disk selections will be reset.": "",
   "Passphrase value must match Confirm Passphrase": "",
   "Percentage of total core utilization": "",
+  "Photo Library API client secret generated from the  <a href=\"https://developers.google.com/identity/protocols/oauth2\" target=\"_blank\">Google API Console</a>": "",
   "Provide helpful notations related to the share, e.g. ‘Shared to everybody’.     Maximum length is 120 characters.": "",
   "Pull Image": "",
   "RAIDZ1": "",
