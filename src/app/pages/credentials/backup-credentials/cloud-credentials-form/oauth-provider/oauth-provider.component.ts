@@ -23,6 +23,7 @@ export interface OauthProviderData {
 })
 export class OauthProviderComponent {
   @Input() oauthUrl: string;
+
   @Output() authenticated = new EventEmitter<Record<string, unknown>>();
 
   form = this.formBuilder.group({
