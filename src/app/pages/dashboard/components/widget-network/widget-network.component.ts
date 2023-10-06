@@ -15,6 +15,7 @@ import {
 import { KiB } from 'app/constants/bytes.constant';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { LinkState, NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
+import { elapsedTime } from 'app/helpers/operators/elapsed-time.operator';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { BaseNetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
 import { NetworkInterfaceUpdate, ReportingDatabaseError, ReportingNameAndId } from 'app/interfaces/reporting.interface';
@@ -26,11 +27,11 @@ import { ResourcesUsageStore } from 'app/pages/dashboard/store/resources-usage-s
 import { deepCloneState } from 'app/pages/dashboard/utils/deep-clone-state.helper';
 import { DialogService } from 'app/services/dialog.service';
 import { LocaleService } from 'app/services/locale.service';
-import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
+import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 interface NicInfo {
   ip: string;
@@ -160,17 +161,25 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
     public themeService: ThemeService,
     private store$: Store<AppState>,
     private resourcesUsageStore$: ResourcesUsageStore,
-    private systemGeneralService: SystemGeneralService,
   ) {
     super(translate);
 
-    this.store$.select(selectTimezone).pipe(untilDestroyed(this)).subscribe((timezone) => {
-      this.timezone = timezone;
-    });
+    this.store$.select(selectTimezone)
+      .pipe(untilDestroyed(this))
+      .subscribe((timezone) => {
+        this.timezone = timezone;
+      });
 
-    this.systemGeneralService.dateTime$.pipe(untilDestroyed(this)).subscribe((serverTime) => {
-      this.serverTime = new Date(serverTime);
-    });
+    this.store$
+      .pipe(
+        waitForSystemInfo,
+        map((systemInfo) => systemInfo.datetime.$date),
+        elapsedTime(10000),
+        untilDestroyed(this),
+      )
+      .subscribe((serverTime) => {
+        this.serverTime = new Date(serverTime);
+      });
   }
 
   ngOnInit(): void {
@@ -189,7 +198,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
 
   ngAfterViewInit(): void {
     if (!this.fetchDataIntervalSubscription || this.fetchDataIntervalSubscription.closed) {
-      this.fetchDataIntervalSubscription = timer(0, 60000).pipe(
+      this.fetchDataIntervalSubscription = timer(0, 10000).pipe(
         untilDestroyed(this),
       ).subscribe(() => {
         this.fetchReportData();
