@@ -41,7 +41,7 @@ describe('elapsedTime', () => {
     ]);
   });
 
-  it('should calculate the elapsed time correctly with the custom interval', () => {
+  it('should correctly calculate elapsed time in milliseconds with the custom interval', () => {
     const initialMilliseconds = 1696578754786;
     const ticks = 10;
     const interval = 10000;

@@ -86,14 +86,14 @@ export class SystemGeneralService {
   readonly uptime$: Observable<number> = this.store$.pipe(
     waitForSystemInfo,
     map((systemInfo) => Math.floor(systemInfo.uptime_seconds * 1000)),
-    elapsedTime(),
+    elapsedTime(30000),
     map((elapsedMilliseconds) => Math.floor(elapsedMilliseconds / 1000)),
     shareReplay({ refCount: true, bufferSize: 1 }),
   );
   readonly dateTime$ = this.store$.pipe(
     waitForSystemInfo,
     map((systemInfo) => systemInfo.datetime.$date),
-    elapsedTime(),
+    elapsedTime(30000),
     shareReplay({ refCount: true, bufferSize: 1 }),
   );
 
