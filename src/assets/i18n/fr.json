@@ -3955,7 +3955,6 @@
   "Use Signature Version 2": "Utiliser Signature Version 2",
   "Use Sudo For ZFS Commands": "Utiliser Sudo pour les commandes ZFS",
   "Use Syslog Only": "Utiliser uniquement Syslog",
-  "Use System Dataset": "Utiliser le dataset système",
   "Use all disk space": "Utiliser tout l'espace disque",
   "Use an exported encryption key file to unlock datasets.": "Utilisez un fichier de clé de chiffrement exporté pour déverrouiller les datasets.",
   "Use as Home Share": "Utiliser comme partage d'accueil (home)",

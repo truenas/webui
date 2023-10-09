@@ -3973,7 +3973,6 @@
   "Use Signature Version 2": "使用签名版本2",
   "Use Sudo For ZFS Commands": "使用sudo来运行zfs命令",
   "Use Syslog Only": "仅使用系统日志",
-  "Use System Dataset": "使用系统数据集",
   "Use all disk space": "使用所有的磁盘空间",
   "Use an exported encryption key file to unlock datasets.": "使用导出的加密密钥文件来解锁数据集。",
   "Use as Home Share": "用作家庭共享",
