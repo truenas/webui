@@ -23,6 +23,7 @@ import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-sli
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
+import { emailValidator } from 'app/modules/ix-forms/validators/email-validation/email-validation';
 import { forbiddenValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { matchOthersFgValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -64,7 +65,7 @@ export class UserFormComponent implements OnInit {
       Validators.pattern(UserService.namePattern),
       Validators.maxLength(32),
     ]],
-    email: ['', [Validators.email]],
+    email: ['', [emailValidator()]],
     password: ['', [
       this.validatorsService.validateOnCondition(
         () => this.isNewUser,
