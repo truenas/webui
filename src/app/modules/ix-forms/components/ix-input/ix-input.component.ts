@@ -244,7 +244,7 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
 
     // handling initial value formatting from value to label
     if (this.value !== undefined && this.value !== null) {
-      this.formatted = this.findExistingOption(this.value)?.label;
+      this.formatted = this.findExistingOption(this.value)?.label || '';
     }
 
     this.filterOptions('');
