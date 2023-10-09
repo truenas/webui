@@ -3961,7 +3961,6 @@
   "Use Signature Version 2": "Handtekening versie 2 gebruiken",
   "Use Sudo For ZFS Commands": "Sudo gebruiken voor ZFS opdrachten",
   "Use Syslog Only": "Alleen Syslog gebruiken",
-  "Use System Dataset": "Systeem dataset gebruiken",
   "Use all disk space": "Alle schijfruimte gebruiken",
   "Use an exported encryption key file to unlock datasets.": "Een geëxporteerd versleutelingssleutelbestand gebruiken om datasets te ontgrendelen.",
   "Use as Home Share": "Als Home-share gebruiken",
