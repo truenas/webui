@@ -133,17 +133,7 @@ export class ReplicationWizardComponent {
       }),
       switchMap((createdReplication) => {
         if (values.schedule_method === ScheduleMethod.Once && createdReplication) {
-          this.appLoader.open(this.translate.instant('Starting task'));
-          return this.ws.startJob('replication.run', [createdReplication.id]).pipe(
-            switchMap(() => {
-              this.appLoader.close();
-              return this.dialogService.info(
-                this.translate.instant('Task started'),
-                this.translate.instant('Replication <i>{name}</i> has started.', { name: values.name }),
-                true,
-              );
-            }),
-          );
+          return this.runReplicationOnce(createdReplication);
         }
         return of(createdReplication);
       }),
@@ -153,6 +143,20 @@ export class ReplicationWizardComponent {
       this.cdr.markForCheck();
       this.slideInRef.close(true);
     });
+  }
+
+  private runReplicationOnce(createdReplication: ReplicationTask): Observable<boolean> {
+    this.appLoader.open(this.translate.instant('Starting task'));
+    return this.ws.startJob('replication.run', [createdReplication.id]).pipe(
+      switchMap(() => {
+        this.appLoader.close();
+        return this.dialogService.info(
+          this.translate.instant('Task started'),
+          this.translate.instant('Replication <i>{name}</i> has started.', { name: createdReplication.name }),
+          true,
+        );
+      }),
+    );
   }
 
   private preparePayload(): ReplicationWizardData {
