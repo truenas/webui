@@ -337,6 +337,7 @@
   "Special Allocation class, used to create Fusion pools. Optional VDEV type which is used to speed up metadata and small block IO.": "",
   "Standby: TrueNAS Controller {id}": "",
   "Start Over": "",
+  "Starting task": "",
   "Stateful Sets": "",
   "Static route deleted": "",
   "Stopping Apps Service": "",
