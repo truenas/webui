@@ -8,6 +8,7 @@
   "A stripe {vdevType} VDEV is highly discouraged and will result in data loss if it fails": "",
   "ACL Types & ACL Modes": "",
   "Add Allowed Initiators (IQN)": "",
+  "Add New": "",
   "Add Vdevs to Pool": "",
   "Add the required no. of disks to get a vdev size estimate": "",
   "Adding data VDEVs of different types is not supported.": "",
