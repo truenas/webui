@@ -8,7 +8,6 @@ aws_access_key_id=KEY_ID
 aws_secret_access_key=ACCESS_KEY
 """
 
-
 import boto3
 import time
 import reusableSeleniumCode as rsc
@@ -49,10 +48,7 @@ def the_browser_is_open_on_the_truenas_url_and_logged_in(driver, nas_ip, root_pa
         assert wait_on_element(driver, 5, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
     if not is_element_present(driver, '//li[contains(.,"Dashboard")]'):
-        assert wait_on_element(driver, 10, '//span[contains(.,"root")]')
-        element = driver.find_element_by_xpath('//span[contains(.,"root")]')
-        driver.execute_script("arguments[0].scrollIntoView();", element)
-        time.sleep(0.5)
+        rsc.scroll_To(driver, xpaths.sideMenu.root)
         assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
@@ -248,8 +244,9 @@ def on_the_bucket_tab_create_a_folder_and_upload_a_file_in_it(driver):
     assert wait_on_element(driver, 10, '//div[contains(.,"Create folder")]')
     assert wait_on_element(driver, 10, '//input[@placeholder="Enter folder name"]', 'inputable')
     driver.find_element_by_xpath('//input[@placeholder="Enter folder name"]').send_keys('my_folder')
-    assert wait_on_element(driver, 5, '//awsui-button[@class="createFolder-object-actions__actions-submit"]', 'clickable')
-    driver.find_element_by_xpath('//awsui-button[@class="createFolder-object-actions__actions-submit"]').click()
+    assert wait_on_element(driver, 5, xpaths.aws.create_The_Folder_Button, 'clickable')
+    rsc.scroll_To(driver, xpaths.aws.create_The_Folder_Button)
+    driver.find_element_by_xpath(xpaths.aws.create_The_Folder_Button).click()
     assert wait_on_element(driver, 10, f'//h1[text()="{my_bucket}"]')
     assert wait_on_element(driver, 5, '//span[text()="my_folder/"]', 'clickable')
     s3_client = boto3.client('s3')
@@ -465,8 +462,9 @@ def create_a_folder_and_upload_a_file_in_it(driver):
     assert wait_on_element(driver, 10, '//div[contains(.,"Create folder")]')
     assert wait_on_element(driver, 10, '//input[@placeholder="Enter folder name"]', 'inputable')
     driver.find_element_by_xpath('//input[@placeholder="Enter folder name"]').send_keys('my_folder')
-    assert wait_on_element(driver, 5, '//awsui-button[@class="createFolder-object-actions__actions-submit"]', 'clickable')
-    driver.find_element_by_xpath('//awsui-button[@class="createFolder-object-actions__actions-submit"]').click()
+    assert wait_on_element(driver, 5, xpaths.aws.create_The_Folder_Button, 'clickable')
+    rsc.scroll_To(driver, xpaths.aws.create_The_Folder_Button)
+    driver.find_element_by_xpath(xpaths.aws.create_The_Folder_Button).click()
     assert wait_on_element(driver, 5, f'//h1[text()="{my_bucket}"]')
     assert wait_on_element(driver, 5, '//span[text()="my_folder/"]', 'clickable')
     s3_client = boto3.client('s3')
