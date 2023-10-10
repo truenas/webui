@@ -222,6 +222,13 @@ export class NavigationService {
     state: 'systemprocesses',
   },
   {
+    name: T('Shell'),
+    type: 'link',
+    tooltip: T('Shell'),
+    icon: 'console-line',
+    state: 'shell',
+  },
+  {
     name: T('Guide'),
     type: 'extLink',
     tooltip: T('Guide'),

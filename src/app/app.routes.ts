@@ -101,6 +101,11 @@ export const rootRouterConfig: Routes = [{
     data: { title: 'System Processes', breadcrumb: 'System Processes' },
   },
   {
+    path: 'shell',
+    loadChildren: './pages/shell/shell.module#ShellModule',
+    data: { title: 'Shell', breadcrumb: 'Shell' },
+  },
+  {
     path: 'guide',
     loadChildren: './pages/guide/guide.module#GuideModule',
     data: { title: 'Guide', breadcrumb: 'Guide' },
