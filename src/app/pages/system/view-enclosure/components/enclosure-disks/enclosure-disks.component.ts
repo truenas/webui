@@ -30,7 +30,7 @@ import { E16 } from 'app/pages/system/view-enclosure/classes/hardware/e16';
 import { E24 } from 'app/pages/system/view-enclosure/classes/hardware/e24';
 import { E60 } from 'app/pages/system/view-enclosure/classes/hardware/e60';
 import { Es102 } from 'app/pages/system/view-enclosure/classes/hardware/es102';
-import { Es102S } from 'app/pages/system/view-enclosure/classes/hardware/es102s';
+import { Es102G2 } from 'app/pages/system/view-enclosure/classes/hardware/es102g2';
 import { Es12 } from 'app/pages/system/view-enclosure/classes/hardware/es12';
 import { Es24 } from 'app/pages/system/view-enclosure/classes/hardware/es24';
 import { Es24F } from 'app/pages/system/view-enclosure/classes/hardware/es24f';
@@ -576,7 +576,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
         this.showCaption = false;
         break;
       case 'ES102G2':
-        this.chassis = new Es102S();
+        this.chassis = new Es102G2();
         this.showCaption = false;
         break;
       case 'TRUENAS-F100-HA':
@@ -730,7 +730,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
         extractedChassis = new Es102();
         break;
       case 'ES102G2':
-        extractedChassis = new Es102S();
+        extractedChassis = new Es102G2();
         break;
       case 'TRUENAS-F100-HA':
       case 'F100':
