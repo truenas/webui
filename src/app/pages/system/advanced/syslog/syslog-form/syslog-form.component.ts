@@ -6,12 +6,11 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  EMPTY, forkJoin, of, Subscription,
+  EMPTY, of, Subscription,
 } from 'rxjs';
 import {
-  catchError, switchMap, tap,
+  catchError, tap,
 } from 'rxjs/operators';
-import { JobState } from 'app/enums/job-state.enum';
 import { SyslogLevel, SyslogTransport } from 'app/enums/syslog.enum';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import { helptextSystemAdvanced, helptextSystemAdvanced as helptext } from 'app/helptext/system/advanced';
@@ -42,7 +41,6 @@ export class SyslogFormComponent implements OnInit {
     syslog_transport: [null as SyslogTransport],
     syslog_tls_certificate: [null as string],
     syslog_tls_certificate_authority: [null as string],
-    syslog: [false],
   });
 
   readonly isTlsTransport$ = this.form.select((values) => values.syslog_transport === SyslogTransport.Tls);
@@ -86,7 +84,7 @@ export class SyslogFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const { syslog, ...values } = this.form.value;
+    const { ...values } = this.form.value;
     let configUpdate: Partial<AdvancedConfigUpdate> = {
       syslog_transport: values.syslog_transport,
       fqdn_syslog: values.fqdn_syslog,
@@ -104,25 +102,19 @@ export class SyslogFormComponent implements OnInit {
 
     this.isFormLoading = true;
     this.ws.call('system.advanced.update', [configUpdate]).pipe(
-      switchMap(() => this.ws.job('systemdataset.update', [{ syslog }]).pipe(
-        tap((job) => {
-          if (job.state !== JobState.Success) {
-            return;
-          }
-
-          this.snackbar.success(this.translate.instant('Settings saved'));
-          this.store$.dispatch(advancedConfigUpdated());
-          this.isFormLoading = false;
-          this.cdr.markForCheck();
-          this.slideInRef.close();
-        }),
-        catchError((error) => {
-          this.isFormLoading = false;
-          this.formErrorHandler.handleWsFormError(error, this.form);
-          this.cdr.markForCheck();
-          return EMPTY;
-        }),
-      )),
+      tap(() => {
+        this.snackbar.success(this.translate.instant('Settings saved'));
+        this.store$.dispatch(advancedConfigUpdated());
+        this.isFormLoading = false;
+        this.cdr.markForCheck();
+        this.slideInRef.close();
+      }),
+      catchError((error) => {
+        this.isFormLoading = false;
+        this.formErrorHandler.handleWsFormError(error, this.form);
+        this.cdr.markForCheck();
+        return EMPTY;
+      }),
       untilDestroyed(this),
     ).subscribe();
   }
@@ -130,19 +122,15 @@ export class SyslogFormComponent implements OnInit {
   private loadForm(): void {
     this.isFormLoading = true;
 
-    forkJoin([
-      this.ws.call('system.advanced.config'),
-      this.ws.call('systemdataset.config'),
-    ]).pipe(untilDestroyed(this))
+    this.ws.call('system.advanced.config').pipe(untilDestroyed(this))
       .subscribe({
-        next: ([advancedConfig, { syslog }]) => {
+        next: (advancedConfig) => {
           this.isFormLoading = false;
           this.cdr.markForCheck();
           this.form.patchValue({
             ...advancedConfig,
             syslog_tls_certificate: String(advancedConfig.syslog_tls_certificate),
             syslog_tls_certificate_authority: String(advancedConfig.syslog_tls_certificate_authority),
-            syslog,
           });
         },
         error: (error: WebsocketError) => {

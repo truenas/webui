@@ -3978,7 +3978,6 @@
   "Use Signature Version 2": "Використати підпис версії 2",
   "Use Sudo For ZFS Commands": "Використовуйте Sudo для команд ZFS",
   "Use Syslog Only": "Використовувати лише Syslog",
-  "Use System Dataset": "Використовувати системний набір даних",
   "Use all disk space": "Використати весь простір дисків",
   "Use an exported encryption key file to unlock datasets.": "Використовати експортований файл ключа шифрування, щоб розблокувати набори даних.",
   "Use as Home Share": "Використовувати як домашній ресурс",
