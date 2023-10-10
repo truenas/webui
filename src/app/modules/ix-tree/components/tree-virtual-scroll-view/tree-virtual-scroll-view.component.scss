@@ -11,6 +11,12 @@
 
     cdk-virtual-scroll-viewport {
       height: 100%;
+
+      ix-tree-node {
+        &[aria-level='1'] .ix-tree-node-toggle {
+          margin-left: 10px;
+        }
+      }
     }
 
     .scrollTop {

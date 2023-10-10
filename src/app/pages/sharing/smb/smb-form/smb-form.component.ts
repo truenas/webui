@@ -168,7 +168,7 @@ export class SmbFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private formBuilder: FormBuilder,
     private ws: WebSocketService,
-    private mdDialog: MatDialog,
+    private matDialog: MatDialog,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
@@ -480,7 +480,7 @@ export class SmbFormComponent implements OnInit {
 
   promptIfRestartRequired(): Observable<boolean> {
     if (this.isRestartRequired) {
-      const dialog = this.mdDialog.open(RestartSmbDialogComponent, {
+      const dialog = this.matDialog.open(RestartSmbDialogComponent, {
         data: {
           timemachine: this.isNewTimemachineShare,
           homeshare: this.isNewHomeShare,
@@ -521,7 +521,7 @@ export class SmbFormComponent implements OnInit {
   }
 
   startAndEnableService = (cifsService: Service): Observable<unknown> => {
-    return this.mdDialog.open(StartServiceDialogComponent, {
+    return this.matDialog.open(StartServiceDialogComponent, {
       data: serviceNames.get(ServiceName.Cifs),
       disableClose: true,
     })

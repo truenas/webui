@@ -111,3 +111,13 @@ $padding-left: 8px;
     background-color: var(--hover-bg);
   }
 }
+
+:host ::ng-deep {
+  button.ix-tree-node-toggle {
+    margin-left: 5px;
+  }
+
+  ix-bootenv-node-item {
+    padding-left: 5px;
+  }
+}

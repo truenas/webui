@@ -23,7 +23,7 @@ export class RebootComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     protected loader: AppLoaderService,
     protected dialogService: DialogService,
-    protected dialog: MatDialog,
+    protected matDialog: MatDialog,
     private location: Location,
   ) {
   }
@@ -32,7 +32,7 @@ export class RebootComponent implements OnInit {
     // Replace URL so that we don't reboot again if page is refreshed.
     this.location.replaceState('/sessions/signin');
 
-    this.dialog.closeAll();
+    this.matDialog.closeAll();
     this.ws.job('system.reboot').pipe(untilDestroyed(this)).subscribe({
       error: (error: WebsocketError) => { // error on reboot
         this.dialogService.error(this.errorHandler.parseWsError(error))

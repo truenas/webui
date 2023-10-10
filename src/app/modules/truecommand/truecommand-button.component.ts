@@ -56,7 +56,7 @@ export class TruecommandButtonComponent implements OnInit {
   constructor(
     private ws: WebSocketService,
     private dialogService: DialogService,
-    private dialog: MatDialog,
+    private matDialog: MatDialog,
     private loader: AppLoaderService,
     private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
@@ -80,7 +80,7 @@ export class TruecommandButtonComponent implements OnInit {
   }
 
   handleUpdate(): void {
-    this.dialog
+    this.matDialog
       .open(TruecommandConnectModalComponent, {
         maxWidth: '420px',
         minWidth: '350px',
@@ -129,7 +129,7 @@ export class TruecommandButtonComponent implements OnInit {
   }
 
   private openSignupDialog(): void {
-    this.dialog.open(TruecommandSignupModalComponent)
+    this.matDialog.open(TruecommandSignupModalComponent)
       .afterClosed()
       .pipe(untilDestroyed(this))
       .subscribe((shouldConnect) => {
@@ -150,7 +150,7 @@ export class TruecommandButtonComponent implements OnInit {
       this.tcStatusDialogRef.close(true);
     } else {
       this.isTcStatusOpened = true;
-      this.tcStatusDialogRef = this.dialog.open(TruecommandStatusModalComponent, {
+      this.tcStatusDialogRef = this.matDialog.open(TruecommandStatusModalComponent, {
         width: '400px',
         hasBackdrop: true,
         position: {

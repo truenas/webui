@@ -46,7 +46,7 @@ export class PodShellComponent implements TerminalConfiguration {
     private dialogService: DialogService,
     private aroute: ActivatedRoute,
     private translate: TranslateService,
-    private mdDialog: MatDialog,
+    private matDialog: MatDialog,
     private cdr: ChangeDetectorRef,
   ) {}
 
@@ -89,7 +89,7 @@ export class PodShellComponent implements TerminalConfiguration {
   }
 
   customReconnectAction(): void {
-    this.mdDialog.open(PodSelectDialogComponent, {
+    this.matDialog.open(PodSelectDialogComponent, {
       minWidth: '650px',
       maxWidth: '850px',
       data: {

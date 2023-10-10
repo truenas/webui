@@ -7,7 +7,6 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SyslogLevel, SyslogTransport } from 'app/enums/syslog.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
-import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -36,9 +35,6 @@ describe('SyslogFormComponent', () => {
           syslog_transport: SyslogTransport.Udp,
           syslog_tls_certificate: 2,
         } as AdvancedConfig),
-        mockCall('systemdataset.config', {
-          syslog: true,
-        } as SystemDatasetConfig),
         mockCall('system.advanced.syslog_certificate_choices', {
           1: 'Certificate 1',
           2: 'Certificate 2',
@@ -69,13 +65,11 @@ describe('SyslogFormComponent', () => {
     const values = await form.getValues();
 
     expect(ws.call).toHaveBeenCalledWith('system.advanced.config');
-    expect(ws.call).toHaveBeenCalledWith('systemdataset.config');
     expect(values).toEqual({
       'Use FQDN for Logging': true,
       'Syslog Level': 'Error',
       'Syslog Server': 'existing.server.com',
       'Syslog Transport': 'UDP',
-      'Use System Dataset': true,
     });
   });
 
@@ -86,7 +80,6 @@ describe('SyslogFormComponent', () => {
       'Syslog Level': 'Info',
       'Syslog Server': 'new.server.com',
       'Syslog Transport': SyslogTransport.Tcp,
-      'Use System Dataset': false,
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -100,7 +93,6 @@ describe('SyslogFormComponent', () => {
         syslog_transport: SyslogTransport.Tcp,
       },
     ]);
-    expect(ws.job).toHaveBeenCalledWith('systemdataset.update', [{ syslog: false }]);
   });
 
   it('shows certificate fields when transport is TLS and saves it', async () => {

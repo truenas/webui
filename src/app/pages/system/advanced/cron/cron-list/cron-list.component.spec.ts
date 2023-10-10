@@ -19,6 +19,7 @@ import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { TaskService } from 'app/services/task.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
 describe('CronListComponent', () => {
@@ -123,6 +124,8 @@ describe('CronListComponent', () => {
       message: 'Run this job now?',
       hideCheckbox: true,
     });
+
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cronjob.run', [1]);
   });
 
   it('shows form to edit an existing interface when Edit button is pressed', async () => {

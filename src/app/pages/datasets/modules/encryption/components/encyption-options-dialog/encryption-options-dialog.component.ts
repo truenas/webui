@@ -88,7 +88,7 @@ export class EncryptionOptionsDialogComponent implements OnInit {
     private formErrorHandler: FormErrorHandlerService,
     private errorHandler: ErrorHandlerService,
     private snackbar: SnackbarService,
-    private mdDialog: MatDialog,
+    private matDialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public data: EncryptionOptionsDialogData,
   ) {}
 
@@ -157,7 +157,7 @@ export class EncryptionOptionsDialogComponent implements OnInit {
       body.pbkdf2iters = Number(values.pbkdf2iters);
     }
 
-    const jobDialogRef = this.mdDialog.open(EntityJobComponent, {
+    const jobDialogRef = this.matDialog.open(EntityJobComponent, {
       data: {
         title: this.translate.instant('Updating key type'),
       },

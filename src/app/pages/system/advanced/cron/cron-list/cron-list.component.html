@@ -4,7 +4,7 @@
 
     <ix-table-columns-selector [columns]="columns" (columnsChange)="columnsChange($event)"></ix-table-columns-selector>
 
-    <button mat-button color="primary" ixTest="add-cronjob" (click)="doAdd()">
+    <button mat-button color="primary" id="lol" ixTest="add-cronjob" (click)="doAdd()">
       {{ 'Add' | translate }}
     </button>
   </ix-page-title-header>
@@ -25,7 +25,7 @@
     <ng-template let-cronjob ix-table-details-row [dataProvider]="dataProvider">
       <dl *ngIf="hiddenColumns.length" class="table-hidden-columns">
         <div *ngFor="let column of hiddenColumns">
-          <span>{{ column.title }}:</span>
+          <b>{{ column.title }}:</b>
           <span>{{ cronjob[column.propertyName] }}</span>
         </div>
         <mat-divider></mat-divider>

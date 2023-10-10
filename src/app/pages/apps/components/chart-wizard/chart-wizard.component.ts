@@ -106,7 +106,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
     private formErrorHandler: FormErrorHandlerService,
     private dialogService: DialogService,
     private appSchemaService: AppSchemaService,
-    private mdDialog: MatDialog,
+    private matDialog: MatDialog,
     private validatorsService: IxValidatorsService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
@@ -207,7 +207,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
   }
 
   saveData(data: ChartFormValues): void {
-    this.dialogRef = this.mdDialog.open(EntityJobComponent, {
+    this.dialogRef = this.matDialog.open(EntityJobComponent, {
       data: {
         title: this.isNew ? helptext.installing : helptext.updating,
       },
