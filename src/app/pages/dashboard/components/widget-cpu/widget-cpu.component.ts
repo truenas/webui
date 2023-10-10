@@ -163,8 +163,10 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   setMobileStats(usage: number[], temps: number[]): void {
     // Usage
     usage.splice(0, 1);
-    this.usageMin = Number(Math.min(...usage).toFixed(0));
-    this.usageMax = Number(Math.max(...usage).toFixed(0));
+
+    this.usageMin = usage?.length ? Number(Math.min(...usage).toFixed(0)) : 0;
+    this.usageMax = usage?.length ? Number(Math.max(...usage).toFixed(0)) : 0;
+
     this.usageMinThreads = [];
     this.usageMaxThreads = [];
     for (let i = 0; i < usage.length; i++) {
@@ -183,8 +185,9 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
       this.tempMin = 0;
       this.tempMax = 0;
     } else {
-      this.tempMin = Number(Math.min(...temps).toFixed(0));
-      this.tempMax = Number(Math.max(...temps).toFixed(0));
+      this.tempMin = temps?.length ? Number(Math.min(...temps).toFixed(0)) : 0;
+      this.tempMax = temps?.length ? Number(Math.max(...temps).toFixed(0)) : 0;
+
       this.tempMinThreads = [];
       this.tempMaxThreads = [];
       for (let i = 0; i < temps.length; i++) {
