@@ -24,4 +24,4 @@ def scroll_To(driver, xpath):
     assert wait_on_element(driver, 5, xpath)
     element = driver.find_element_by_xpath(xpath)
     driver.execute_script("arguments[0].scrollIntoView();", element)
-    time.sleep(0.5)
+    time.sleep(0.2)
