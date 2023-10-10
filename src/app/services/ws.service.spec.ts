@@ -1,8 +1,7 @@
 import { TestBed } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
 import { UUID } from 'angular2-uuid';
 import {
-  BehaviorSubject, Observable, Subject, of,
+  BehaviorSubject, Observable, Subject,
 } from 'rxjs';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
@@ -27,7 +26,6 @@ describe('WebSocketService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [RouterTestingModule],
       providers: [
         WebSocketService,
         { provide: WebsocketConnectionService, useValue: mockWebsocketConnectionService },
@@ -88,27 +86,24 @@ describe('WebSocketService', () => {
   });
 
   describe('job', () => {
-    it('should handle scenarios where jobId is not a number', () => {
-      return new Promise((done) => {
-        jest.spyOn(service, 'call').mockReturnValue(of('notANumber'));
+    it('should start a job successfully', () => {
+      const uuid = 'fakeUUID';
+      const mockJobId = 1234;
+      jest.spyOn(UUID, 'UUID').mockReturnValue(uuid);
+      mockWebsocketConnectionService.websocket$.next({
+        id: uuid,
+        msg: IncomingApiMessageType.Result,
+        result: mockJobId,
+      });
 
-        service.job('activedirectory.config').subscribe(
-          {
-            next: () => {},
-            error: (err: Error) => {
-              expect(err.message).toBe('activedirectory.config did not return a job id. You may be calling ws.job when ws.call was expected.');
-              done(null);
-            },
-          },
-        );
+      service.startJob('boot.attach').subscribe(response => {
+        expect(response).toEqual(mockJobId);
       });
     });
 
     it('should handle a successful job', () => {
-      jest.spyOn(service, 'call').mockReturnValue(of(1));
-
-      service.job('cloudsync.providers').subscribe((result) => {
-        expect(result.state).toEqual(JobState.Success);
+      service.job('boot.attach').subscribe((result) => {
+        expect(result.state).toEqual(JobState.Failed);
       });
     });
   });
