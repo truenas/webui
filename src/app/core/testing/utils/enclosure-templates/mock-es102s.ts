@@ -9,7 +9,7 @@ export class MockEs102S extends MockEnclosure {
   data = {
     id: '5000ccab05114080',
     name: 'HGST H4060-J 3010',
-    model: 'ES102S',
+    model: 'ES102G2',
     controller: false,
     elements: [
       {
