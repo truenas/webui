@@ -582,7 +582,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
         this.chassis = new Es102();
         this.showCaption = false;
         break;
-      case 'ES102S':
+      case 'ES102G2':
         this.chassis = new Es102S();
         this.showCaption = false;
         break;
@@ -736,7 +736,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
       case 'ES102':
         extractedChassis = new Es102();
         break;
-      case 'ES102S':
+      case 'ES102G2':
         extractedChassis = new Es102S();
         break;
       case 'TRUENAS-F100-HA':
