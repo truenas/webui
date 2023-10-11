@@ -9,7 +9,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/apps/apps';
 import { Catalog } from 'app/interfaces/catalog.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { AsyncArrayDataProvider } from 'app/modules/ix-table2/async-array-data-provider';
+import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table2/utils';
@@ -34,9 +34,7 @@ import { CatalogEditFormComponent } from './catalog-edit-form/catalog-edit-form.
 })
 export class CatalogsComponent implements OnInit {
   catalogSyncJobIds = new Set<number>();
-
-  catalogs$ = this.ws.call('catalog.query', [[], { extra: { item_details: true } }]).pipe(untilDestroyed(this));
-  dataProvider = new AsyncArrayDataProvider<Catalog>(this.catalogs$);
+  dataProvider: AsyncDataProvider<Catalog>;
 
   columns = createTable<Catalog>([
     textColumn({
@@ -71,9 +69,10 @@ export class CatalogsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    const catalogs$ = this.ws.call('catalog.query', [[], { extra: { item_details: true } }]).pipe(untilDestroyed(this));
+    this.dataProvider = new AsyncDataProvider<Catalog>(catalogs$);
     this.listenForCatalogSyncJobs();
     this.setDefaultSort();
-    this.setFiltering();
   }
 
   listenForCatalogSyncJobs(): void {
@@ -94,17 +93,12 @@ export class CatalogsComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.dataProvider.filterRows(query);
-  }
-
-  setFiltering(): void {
-    this.dataProvider.setFiltering(
-      (rows, query) => (rows.filter((catalog) => (
-        catalog.label.toLowerCase().includes(query)
-          || catalog.id.toLowerCase().includes(query)
-          || catalog.repository.toString().includes(query)
-      ))),
-    );
+    const filterString = query.toLowerCase();
+    this.dataProvider.setRows(this.dataProvider.rowsWithoutFilter.filter((catalog) => {
+      return catalog.label.toLowerCase().includes(filterString)
+        || catalog.id.toLowerCase().includes(filterString)
+        || catalog.repository.toString().includes(filterString);
+    }));
   }
 
   setDefaultSort(): void {
@@ -116,7 +110,7 @@ export class CatalogsComponent implements OnInit {
   }
 
   refresh(): void {
-    this.dataProvider.refreshData();
+    this.dataProvider.refresh();
   }
 
   doAdd(): void {

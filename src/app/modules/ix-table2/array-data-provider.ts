@@ -21,22 +21,8 @@ export class ArrayDataProvider<T> implements TableProvider<T> {
     pageSize: null,
   };
 
-  private rowsWithoutFilter: T[] = [];
-  private filterBy: (row: T[], query: string) => T[];
-  private filterString = '';
-
-  setFiltering(filterBy: (row: T[], query: string) => T[]): void {
-    this.filterBy = filterBy;
-  }
-
-  filterRows(query: string): void {
-    this.filterString = query;
-    this.setRows(this.rowsWithoutFilter);
-  }
-
   setRows(rows: T[]): void {
-    this.rowsWithoutFilter = rows;
-    this.rows = this.filterBy ? this.filterBy(rows, this.filterString) : rows;
+    this.rows = rows;
     this.updateCurrentPage();
   }
 
