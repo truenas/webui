@@ -97,7 +97,13 @@
       ></ix-search-input>
     </div>
 
-    <div class="app-wrapper">
+    <div class="app-wrapper"
+      matSort
+      matSortActive="application"
+      matSortDirection="asc"
+      matSortDisableClear
+      (matSortChange)="sortChanged($event)"
+    >
       <div class="app-inner">
         <div class="app-header-row">
           <div>
@@ -109,14 +115,29 @@
                 [checked]="allAppsChecked"
                 (change)="toggleAppsChecked($event.checked)"
               ></mat-checkbox>
-              {{ 'Application' | translate }}
             </span>
           </div>
-          <div>{{ 'Status' | translate }}</div>
+          <div
+            [matColumnDef]="sortableField.Application"
+            [mat-sort-header]="sortableField.Application"
+          >
+            {{ 'Application' | translate }}
+          </div>
+          <div
+            [matColumnDef]="sortableField.Status"
+            [mat-sort-header]="sortableField.Status"
+          >
+            {{ 'Status' | translate }}
+          </div>
           <div>{{ 'CPU' | translate }}</div>
           <div>{{ 'RAM' | translate }}</div>
           <div>{{ 'Network' | translate }}</div>
-          <div class="app-update-header">
+          <div
+            class="app-update-header"
+            [matColumnDef]="sortableField.Updates"
+            [mat-sort-header]="hasUpdates ? sortableField.Updates : null"
+            [disabled]="!hasUpdates"
+          >
             <span>{{ 'Updates' | translate }}</span>
             <ix-icon
               *ngIf="hasUpdates"

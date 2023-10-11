@@ -166,6 +166,9 @@ describe('RsyncTaskCardComponent', () => {
       message: 'Run «asd - asdad» Rsync now?',
       hideCheckbox: true,
     });
+
+    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('rsynctask.run', [1]);
+
   });
 
   it('deletes a Rsync Task with confirmation when Delete button is pressed', async () => {

@@ -60,6 +60,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   sshCredentials: KeychainSshCredentials[] = [];
   snapshotsText = '';
   isSnapshotsWarning = false;
+  isSudoDialogShown = false;
 
   form = this.formBuilder.group({
     exist_replication: [null as number],
@@ -283,19 +284,20 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
       .subscribe((credentialId: number) => {
         const selectedCredential = this.sshCredentials.find((credential) => credential.id === credentialId);
         const isRootUser = selectedCredential?.attributes?.username === 'root';
+        const isNonRemote = !(this.isRemoteSource || this.isRemoteTarget);
 
-        if (!selectedCredential || isRootUser || !(this.isRemoteSource || this.isRemoteTarget)) {
+        if (!selectedCredential || isRootUser || isNonRemote || this.isSudoDialogShown) {
           return;
         }
 
-        this.dialogService.closeAllDialogs();
         this.dialogService.confirm({
           title: this.translate.instant('Sudo Enabled'),
           message: helptext.sudo_warning,
           hideCheckbox: true,
-          buttonText: this.translate.instant('Use Sudo for Zfs Commands'),
+          buttonText: this.translate.instant('Use Sudo For ZFS Commands'),
         }).pipe(untilDestroyed(this)).subscribe((useSudo) => {
           this.form.controls.sudo.setValue(useSudo);
+          this.isSudoDialogShown = true;
         });
       });
   }

@@ -150,9 +150,11 @@ describe('ReplicationTaskCardComponent', () => {
       message: 'Replicate «APPS/test2 - APPS/test3» now?',
       hideCheckbox: true,
     });
+
+    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('replication.run', [1]);
   });
 
-  it('shows confirmation dialog when Restore button is pressed', async () => {
+  it('shows dialog when Restore button is pressed', async () => {
     jest.spyOn(spectator.inject(MatDialog), 'open');
     const restoreButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'restore' }), 1, 5);
     await restoreButton.click();

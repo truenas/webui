@@ -13,6 +13,7 @@ import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
 import { relativeDateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
 import { stateButtonColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
+import { templateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { toggleColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
 import { createTable } from 'app/modules/ix-table2/utils';
@@ -71,9 +72,9 @@ export class CloudSyncTaskCardComponent implements OnInit {
       getJob: (row) => row.job,
       cssClass: 'state-button',
     }),
-    textColumn({
-      propertyName: 'id',
+    templateColumn({
       cssClass: 'wide-actions',
+      sortable: true,
     }),
   ]);
 
@@ -185,6 +186,9 @@ export class CloudSyncTaskCardComponent implements OnInit {
           this.translate.instant('Cloud Sync «{name}» stopped.', { name: row.description }),
           true,
         );
+        row.state = { state: JobState.Aborted };
+        row.job = null;
+        this.cdr.markForCheck();
       });
   }
 
@@ -218,7 +222,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
     const dialog = this.matDialog.open(CloudsyncRestoreDialogComponent, {
       data: row.id,
     });
-    dialog.afterClosed().pipe(untilDestroyed(this)).subscribe(() => this.getCloudSyncTasks());
+    dialog.afterClosed().pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCloudSyncTasks());
   }
 
   private transformCloudSyncTasks(cloudsyncTasks: CloudSyncTaskUi[]): CloudSyncTaskUi[] {

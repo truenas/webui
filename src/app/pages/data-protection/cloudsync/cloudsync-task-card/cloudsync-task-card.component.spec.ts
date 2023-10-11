@@ -186,6 +186,8 @@ describe('CloudSyncTaskCardComponent', () => {
       message: 'Run «custom-cloudsync» Cloud Sync now?',
       hideCheckbox: true,
     });
+
+    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('cloudsync.sync', [3]);
   });
 
   it('shows confirmation dialog when Dry Run button is pressed', async () => {
@@ -197,9 +199,11 @@ describe('CloudSyncTaskCardComponent', () => {
       message: 'Start a dry run test of this cloud sync task? The  system will connect to the cloud service provider and simulate  transferring a file. No data will be sent or received.',
       hideCheckbox: true,
     });
+
+    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('cloudsync.sync', [3, { dry_run: true }]);
   });
 
-  it('shows confirmation dialog when Restore button is pressed', async () => {
+  it('shows dialog when Restore button is pressed', async () => {
     jest.spyOn(spectator.inject(MatDialog), 'open');
     const runNowButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'restore' }), 1, 6);
     await runNowButton.click();

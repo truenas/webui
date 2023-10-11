@@ -3,7 +3,7 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   Observable, of, OperatorFunction, pipe,
 } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { map, switchMap, tap } from 'rxjs/operators';
 import { maxDatasetNesting, maxDatasetPath } from 'app/constants/dataset.constants';
 import { inherit } from 'app/enums/with-inherit.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
@@ -24,30 +24,33 @@ export class DatasetFormService {
     private slideInService: IxSlideInService,
   ) {}
 
-  ensurePathLimits(parentPath: string): Observable<unknown> {
-    if (!parentPath) {
-      return of();
-    }
-
-    if (parentPath.length >= maxDatasetPath) {
-      return this.dialog.warn(
-        this.translate.instant(helptext.pathWarningTitle),
-        this.translate.instant(helptext.pathIsTooLongWarning),
-      ).pipe(
-        tap(() => this.slideInService.closeLast()),
-      );
-    }
-
-    if (parentPath.split('/').length >= maxDatasetNesting) {
-      return this.dialog.warn(
-        this.translate.instant(helptext.pathWarningTitle),
-        this.translate.instant(helptext.pathIsTooDeepWarning),
-      ).pipe(
-        tap(() => this.slideInService.closeLast()),
-      );
-    }
-
-    return of();
+  checkAndWarnForLengthAndDepth(path: string): Observable<boolean> {
+    return of(!!path).pipe(
+      switchMap((pathExists) => {
+        if (!pathExists) {
+          return of(true);
+        }
+        if (path.split('/').length >= maxDatasetNesting) {
+          return this.dialog.warn(
+            this.translate.instant(helptext.pathWarningTitle),
+            this.translate.instant(helptext.pathIsTooDeepWarning),
+          ).pipe(
+            tap(() => this.slideInService.closeLast()),
+            map(() => false),
+          );
+        }
+        if (path.length >= maxDatasetPath) {
+          return this.dialog.warn(
+            this.translate.instant(helptext.pathWarningTitle),
+            this.translate.instant(helptext.pathIsTooLongWarning),
+          ).pipe(
+            tap(() => this.slideInService.closeLast()),
+            map(() => false),
+          );
+        }
+        return of(true);
+      }),
+    );
   }
 
   loadDataset(datasetId: string): Observable<Dataset> {

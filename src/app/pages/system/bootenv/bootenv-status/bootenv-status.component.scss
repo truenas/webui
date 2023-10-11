@@ -70,7 +70,7 @@ $padding-left: 8px;
   width: 100%;
 
   @media (max-width: $breakpoint-tablet) {
-    grid-template-columns: auto 0 0 0 0 0 0;
+    grid-template-columns: 45px auto 0 0 0 0 0 0;
     width: auto;
   }
 
@@ -109,5 +109,15 @@ $padding-left: 8px;
 
   &:hover {
     background-color: var(--hover-bg);
+  }
+}
+
+:host ::ng-deep {
+  button.ix-tree-node-toggle {
+    margin-left: 5px;
+  }
+
+  ix-bootenv-node-item {
+    padding-left: 5px;
   }
 }

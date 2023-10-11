@@ -16,6 +16,8 @@ export class IxCellActionsComponent<T> extends ColumnComponent<T> {
   }[];
 }
 
-export function actionsColumn<T>(options: Partial<IxCellActionsComponent<T>>): Column<T, IxCellActionsComponent<T>> {
+export function actionsColumn<T>(
+  options: Partial<IxCellActionsComponent<T>>,
+): Column<T, IxCellActionsComponent<T>> {
   return { type: IxCellActionsComponent, ...options };
 }

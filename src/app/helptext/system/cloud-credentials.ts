@@ -146,6 +146,8 @@ a new application key, log in to the Backblaze account, go to the \
  <a href="https://developers.google.com/drive/api/v3/about-auth"\
  target="_blank">Google Drive</a>.',
     ),
+    oauth_tooltip: T('Photo Library API client secret generated from the \
+ <a href="https://developers.google.com/identity/protocols/oauth2" target="_blank">Google API Console</a>'),
   },
   team_drive_google_drive: {
     tooltip: T(

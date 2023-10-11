@@ -7,7 +7,6 @@
       autocomplete="username"
       class="username-input"
       [label]="'Username' | translate"
-      [required]="true"
     ></ix-input>
 
     <ix-input
@@ -16,7 +15,6 @@
       prefixIcon="lock"
       autocomplete="current-password"
       [label]="'Password' | translate"
-      [required]="true"
     ></ix-input>
 
     <ix-insecure-connection *ngIf="showSecurityWarning"></ix-insecure-connection>
