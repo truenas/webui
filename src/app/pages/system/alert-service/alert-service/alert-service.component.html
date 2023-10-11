@@ -5,7 +5,7 @@
 
 <mat-card>
   <mat-card-content>
-    <form class="ix-form-container" (submit)="onSubmit()">
+    <form class="ix-form-container" (submit)="onSubmit($event)">
       <ix-fieldset
         [title]="'Name and Type' | translate"
         [formGroup]="commonForm"

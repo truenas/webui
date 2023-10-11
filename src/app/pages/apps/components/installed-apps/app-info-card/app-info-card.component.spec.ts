@@ -6,7 +6,8 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
-import { MockComponents } from 'ng-mocks';
+import { MockComponents, MockDirective } from 'ng-mocks';
+import { ImgFallbackDirective } from 'ngx-img-fallback';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
@@ -70,6 +71,7 @@ describe('AppInfoCardComponent', () => {
         AppCardLogoComponent,
         NgxSkeletonLoaderComponent,
       ),
+      MockDirective(ImgFallbackDirective),
     ],
     providers: [
       mockProvider(ApplicationsService, {

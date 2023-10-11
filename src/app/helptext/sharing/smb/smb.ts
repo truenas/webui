@@ -136,7 +136,7 @@ export const helptextSharingSmb = {
   placeholder_streams: T('Enable Alternate Data Streams'),
   tooltip_streams: T(
     'Allows multiple \
- <a href="http://www.ntfs.com/ntfs-multiple.htm" target"_blank">NTFS data streams</a>. \
+ <a href="http://www.ntfs.com/ntfs-multiple.htm">NTFS data streams</a>. \
  Disabling this option causes MacOS to write streams to files on the filesystem.',
   ),
 
