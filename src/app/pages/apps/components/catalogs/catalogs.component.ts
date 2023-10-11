@@ -4,7 +4,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter } from 'rxjs/operators';
+import { filter, tap } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/apps/apps';
 import { Catalog } from 'app/interfaces/catalog.interface';
@@ -35,6 +35,7 @@ import { CatalogEditFormComponent } from './catalog-edit-form/catalog-edit-form.
 export class CatalogsComponent implements OnInit {
   catalogSyncJobIds = new Set<number>();
   dataProvider: AsyncDataProvider<Catalog>;
+  catalogs: Catalog[] = [];
 
   columns = createTable<Catalog>([
     textColumn({
@@ -69,7 +70,10 @@ export class CatalogsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const catalogs$ = this.ws.call('catalog.query', [[], { extra: { item_details: true } }]).pipe(untilDestroyed(this));
+    const catalogs$ = this.ws.call('catalog.query', [[], { extra: { item_details: true } }]).pipe(
+      tap((catalogs) => this.catalogs = catalogs),
+      untilDestroyed(this),
+    );
     this.dataProvider = new AsyncDataProvider<Catalog>(catalogs$);
     this.listenForCatalogSyncJobs();
     this.setDefaultSort();
@@ -94,7 +98,7 @@ export class CatalogsComponent implements OnInit {
 
   onListFiltered(query: string): void {
     const filterString = query.toLowerCase();
-    this.dataProvider.setRows(this.dataProvider.rowsWithoutFilter.filter((catalog) => {
+    this.dataProvider.setRows(this.catalogs.filter((catalog) => {
       return catalog.label.toLowerCase().includes(filterString)
         || catalog.id.toLowerCase().includes(filterString)
         || catalog.repository.toString().includes(filterString);
