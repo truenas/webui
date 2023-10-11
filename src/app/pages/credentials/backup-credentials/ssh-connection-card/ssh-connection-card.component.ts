@@ -3,12 +3,11 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import {
-  BehaviorSubject, Observable, combineLatest, switchMap, of, filter,
+import { switchMap, filter, tap,
 } from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
-import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
 import { templateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
@@ -28,7 +27,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SshConnectionCardComponent implements OnInit {
-  dataProvider = new ArrayDataProvider<KeychainSshCredentials>();
+  dataProvider: AsyncDataProvider<KeychainSshCredentials>;
   credentials: KeychainSshCredentials[] = [];
   columns = createTable<KeychainSshCredentials>([
     textColumn({
@@ -39,23 +38,7 @@ export class SshConnectionCardComponent implements OnInit {
     templateColumn(),
   ]);
 
-  isLoading$ = new BehaviorSubject<boolean>(true);
-  isNoData$ = new BehaviorSubject<boolean>(false);
-  hasError$ = new BehaviorSubject<boolean>(false);
-  emptyType$: Observable<EmptyType> = combineLatest([this.isLoading$, this.isNoData$, this.hasError$]).pipe(
-    switchMap(([isLoading, isNoData, isError]) => {
-      if (isLoading) {
-        return of(EmptyType.Loading);
-      }
-      if (isError) {
-        return of(EmptyType.Errors);
-      }
-      if (isNoData) {
-        return of(EmptyType.NoPageData);
-      }
-      return of(EmptyType.NoSearchResults);
-    }),
-  );
+  readonly EmptyType = EmptyType;
 
   constructor(
     private ws: WebSocketService,
@@ -68,28 +51,17 @@ export class SshConnectionCardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.getCredentials();
+    const credentials$ = this.keychainCredentialService.getSshConnections().pipe(
+      tap((credentials) => this.credentials = credentials),
+      untilDestroyed(this),
+    );
+    this.dataProvider = new AsyncDataProvider<KeychainSshCredentials>(credentials$);
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => this.cdr.markForCheck());
+    this.setDefaultSort();
   }
 
   getCredentials(): void {
-    this.keychainCredentialService.getSshConnections()
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: (credentials) => {
-          this.credentials = credentials;
-          this.dataProvider.setRows(this.credentials);
-          this.isLoading$.next(false);
-          this.isNoData$.next(!this.credentials.length);
-          this.setDefaultSort();
-          this.cdr.markForCheck();
-        },
-        error: () => {
-          this.dataProvider.setRows([]);
-          this.isLoading$.next(false);
-          this.hasError$.next(true);
-          this.cdr.markForCheck();
-        },
-      });
+    this.dataProvider.refresh();
   }
 
   setDefaultSort(): void {
