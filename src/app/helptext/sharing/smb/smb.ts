@@ -32,9 +32,9 @@ export const helptextSharingSmb = {
     'List of groups for which to generate audit messages. Keep this list empty to Watch All',
   ),
   tooltip_ignore_list: T(
-    'List of groups to ignore when auditing. If conflict arises between watch_list and ignore_list \
- (based on user group membership), then watch_list will take precedence and ops will be audited. \
- NOTE: auditing may not be enabled if SMB1 support is enabled for the server.',
+    'List of groups to ignore when auditing. If conflict arises between Watch List and Ignore List \
+ (based on user group membership), then Watch List will take precedence and ops will be audited. \
+ <br><br> NOTE: auditing may not be enabled if SMB1 support is enabled for the server.',
   ),
 
   placeholder_home: T('Use as Home Share'),
