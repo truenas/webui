@@ -20,9 +20,21 @@ export const helptextSharingSmb = {
   tooltip_comment: T('Description of the share or notes on how it is used.'),
 
   placeholder_enabled: T('Enabled'),
+  placeholder_watch_all: T('Watch All'),
   tooltip_enabled: T(
     'Enable this SMB share. Unset to disable this SMB share \
  without deleting it.',
+  ),
+  tooltip_enabled_audit_log: T(
+    'Controls whether audit messages will be generated for the share.',
+  ),
+  tooltip_watch_list: T(
+    'List of groups for which to generate audit messages. Keep this list empty to Watch All',
+  ),
+  tooltip_ignore_list: T(
+    'List of groups to ignore when auditing. If conflict arises between watch_list and ignore_list \
+ (based on user group membership), then watch_list will take precedence and ops will be audited. \
+ NOTE: auditing may not be enabled if SMB1 support is enabled for the server.',
   ),
 
   placeholder_home: T('Use as Home Share'),

@@ -86,6 +86,34 @@
         ></ix-chips>
       </ix-fieldset>
 
+      <ix-fieldset *ngIf="isAdvancedMode" formGroupName="audit" [title]="'Audit Logging' | translate">
+        <ix-checkbox
+          formControlName="enable"
+          [label]="helptextSharingSmb.placeholder_enabled | translate"
+          [tooltip]="helptextSharingSmb.tooltip_enabled_audit_log | translate"
+        ></ix-checkbox>
+
+        <ix-chips
+          formControlName="watch_list"
+          [label]="'Watch List' | translate"
+          [tooltip]="helptextSharingSmb.tooltip_watch_list | translate"
+          [autocompleteProvider]="groupProvider"
+          [allowNewEntries]="false"
+        ></ix-chips>
+
+        <span class="watch-all-info">
+          {{ 'Keep this list empty to Watch All' | translate }}
+        </span>
+
+        <ix-chips
+          formControlName="ignore_list"
+          [label]="'Ignore List' | translate"
+          [tooltip]="helptextSharingSmb.tooltip_ignore_list | translate"
+          [autocompleteProvider]="groupProvider"
+          [allowNewEntries]="false"
+        ></ix-chips>
+      </ix-fieldset>
+
       <ix-fieldset *ngIf="isAdvancedMode" [title]="'Other Options' | translate">
         <ix-checkbox
           formControlName="home"
