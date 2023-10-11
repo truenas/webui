@@ -5,6 +5,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -90,6 +91,7 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
     LayoutModule,
     MatToolbarModule,
     MatTooltipModule,
+    MatDividerModule,
   ],
   declarations: [
     SnapshotTaskListComponent,

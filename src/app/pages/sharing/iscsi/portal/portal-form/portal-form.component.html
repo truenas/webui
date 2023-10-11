@@ -32,6 +32,8 @@
 
       <ix-fieldset [title]="'IP Address' | translate">
         <ix-list
+          formArrayName="ip"
+          [formArray]="form.get('ip')"
           [empty]="listen.length === 0"
           [label]="'Add listen' | translate"
           (add)="onAdd()"
@@ -39,7 +41,7 @@
           <ng-container *ngFor="let item of listen; let i = index">
             <ix-list-item (delete)="onDelete(i)">
               <ix-select
-                [formControlName]="'ip' + listPrefix + i"
+                [formControlName]="i"
                 [label]="labels.ip | translate"
                 [tooltip]="tooltips.ip | translate"
                 [options]="listenOptions$"

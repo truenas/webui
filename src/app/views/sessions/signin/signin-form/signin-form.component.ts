@@ -30,8 +30,8 @@ export class SigninFormComponent implements OnInit {
   protected isLastOtpAttemptFailed = false;
 
   form = this.formBuilder.group({
-    username: ['', Validators.required],
-    password: ['', Validators.required],
+    username: [''],
+    password: [''],
     otp: ['', Validators.required],
   });
 

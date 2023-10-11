@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import * as cronParser from 'cron-parser';
 import { Options as CronOptions } from 'cronstrue/dist/options';
 import cronstrue from 'cronstrue/i18n';
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
 import { Option } from 'app/interfaces/option.interface';
 import { LocaleService } from 'app/services/locale.service';
 import { LanguageService } from './language.service';
@@ -142,10 +142,7 @@ export class TaskService {
       tz: this.localeService.timezone,
     });
 
-    return formatDistanceToNow(
-      schedule.next().value.toDate(),
-      { addSuffix: true },
-    );
+    return formatDistanceToNowShortened(schedule.next().value.toDate());
   }
 
   getTaskNextTime(scheduleExpression: string): Date {

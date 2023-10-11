@@ -3,7 +3,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { formatDistanceToNow } from 'date-fns';
 import { EMPTY, catchError, filter, switchMap, tap } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
@@ -12,7 +11,9 @@ import { CloudSyncTaskUi, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-
 import { Job } from 'app/interfaces/job.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { relativeDateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
 import { stateButtonColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
+import { templateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { toggleColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
 import { createTable } from 'app/modules/ix-table2/utils';
@@ -51,21 +52,13 @@ export class CloudSyncTaskCardComponent implements OnInit {
       title: this.translate.instant('Frequency'),
       propertyName: 'frequency',
     }),
-    textColumn({
+    relativeDateColumn({
       title: this.translate.instant('Next Run'),
-      propertyName: 'next_run',
+      getValue: (row) => this.taskService.getTaskNextTime(scheduleToCrontab(row.schedule)),
     }),
-    textColumn({
+    relativeDateColumn({
       title: this.translate.instant('Last Run'),
-      getValue: (task): string => {
-        let lastRun: string;
-        if (task.job?.time_finished?.$date) {
-          lastRun = formatDistanceToNow(task.job?.time_finished?.$date, { addSuffix: true });
-        } else {
-          lastRun = this.translate.instant('N/A');
-        }
-        return lastRun;
-      },
+      getValue: (row) => row.job?.time_finished?.$date,
     }),
     toggleColumn({
       title: this.translate.instant('Enabled'),
@@ -79,9 +72,9 @@ export class CloudSyncTaskCardComponent implements OnInit {
       getJob: (row) => row.job,
       cssClass: 'state-button',
     }),
-    textColumn({
-      propertyName: 'id',
+    templateColumn({
       cssClass: 'wide-actions',
+      sortable: true,
     }),
   ]);
 
@@ -193,6 +186,9 @@ export class CloudSyncTaskCardComponent implements OnInit {
           this.translate.instant('Cloud Sync «{name}» stopped.', { name: row.description }),
           true,
         );
+        row.state = { state: JobState.Aborted };
+        row.job = null;
+        this.cdr.markForCheck();
       });
   }
 
@@ -226,7 +222,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
     const dialog = this.matDialog.open(CloudsyncRestoreDialogComponent, {
       data: row.id,
     });
-    dialog.afterClosed().pipe(untilDestroyed(this)).subscribe(() => this.getCloudSyncTasks());
+    dialog.afterClosed().pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCloudSyncTasks());
   }
 
   private transformCloudSyncTasks(cloudsyncTasks: CloudSyncTaskUi[]): CloudSyncTaskUi[] {
@@ -236,7 +232,6 @@ export class CloudSyncTaskCardComponent implements OnInit {
       task.cron_schedule = task.enabled ? formattedCronSchedule : this.translate.instant('Disabled');
       task.frequency = this.taskService.getTaskCronDescription(formattedCronSchedule);
       task.next_run_time = task.enabled ? this.taskService.getTaskNextTime(formattedCronSchedule) : this.translate.instant('Disabled');
-      task.next_run = task.enabled ? this.taskService.getTaskNextRun(formattedCronSchedule) : this.translate.instant('Disabled');
 
       if (task.job === null) {
         task.state = { state: task.locked ? JobState.Locked : JobState.Pending };

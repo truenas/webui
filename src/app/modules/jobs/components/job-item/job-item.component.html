@@ -2,6 +2,8 @@
   class="job-item"
   [class.abortable]="job?.state === JobState.Running && job?.abortable"
   [class.interactive]="clickable"
+  [matTooltip]="job?.state === JobState.Failed ? job.error : null"
+  [matTooltipPosition]="'left'"
 >
   <div class="job-item-body" (click)="clickable && open()">
     <div fxLayout="row" fxLayoutAlign="space-between baseline" fxLayoutGap="8px">

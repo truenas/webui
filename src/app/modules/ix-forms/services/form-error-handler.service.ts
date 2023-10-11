@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AbstractControl, UntypedFormGroup, UntypedFormArray } from '@angular/forms';
+import { AbstractControl, UntypedFormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { ResponseErrorType } from 'app/enums/response-error-type.enum';
 import { Job } from 'app/interfaces/job.interface';
@@ -51,20 +51,13 @@ export class FormErrorHandlerService {
       const field = extraItem[0].split('.')[1];
       const errorMessage = extraItem[1];
 
-      let control = this.getFormField(formGroup, field, fieldsMap);
+      const control = this.getFormField(formGroup, field, fieldsMap);
 
       if (!control) {
         console.error(`Could not find control ${field}.`);
         // Fallback to default modal error message.
         this.dialog.error(this.errorHandler.parseError(error));
         return;
-      }
-
-      if ((control as UntypedFormArray).controls?.length) {
-        const isExactMatch = (text: string, match: string): boolean => new RegExp(`\\b${match}\\b`).test(text);
-
-        control = (control as UntypedFormArray).controls
-          .find((controlOfArray) => isExactMatch(errorMessage, controlOfArray.value));
       }
 
       control.setErrors({

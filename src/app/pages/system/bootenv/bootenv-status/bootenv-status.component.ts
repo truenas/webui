@@ -60,7 +60,7 @@ export class BootStatusListComponent implements OnInit {
     private ws: WebSocketService,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
-    private mdDialog: MatDialog,
+    private matDialog: MatDialog,
     private loader: AppLoaderService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
@@ -91,14 +91,14 @@ export class BootStatusListComponent implements OnInit {
   }
 
   attach(): void {
-    this.mdDialog.open(BootPoolAttachDialogComponent)
+    this.matDialog.open(BootPoolAttachDialogComponent)
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => this.loadPoolInstance());
   }
 
   replace(diskPath: string): void {
-    this.mdDialog.open(BootPoolReplaceDialogComponent, { data: diskPath })
+    this.matDialog.open(BootPoolReplaceDialogComponent, { data: diskPath })
       .afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => this.loadPoolInstance());

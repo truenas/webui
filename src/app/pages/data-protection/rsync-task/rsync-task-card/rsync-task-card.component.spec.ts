@@ -24,6 +24,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
 describe('RsyncTaskCardComponent', () => {
   let spectator: Spectator<RsyncTaskCardComponent>;
@@ -39,14 +40,6 @@ describe('RsyncTaskCardComponent', () => {
       remotemodule: 'asdad',
       desc: 'asd',
       user: 'test',
-      recursive: true,
-      times: true,
-      compress: true,
-      archive: false,
-      delete: false,
-      quiet: false,
-      preserveperm: false,
-      preserveattr: false,
       extra: [],
       enabled: false,
       mode: 'MODULE',
@@ -70,8 +63,6 @@ describe('RsyncTaskCardComponent', () => {
       },
       locked: false,
       cron_schedule: '0 * * * *',
-      frequency: 'Every hour, every day',
-      next_run: 'in 33 minutes',
       state: {
         state: 'FAILED',
       },
@@ -98,6 +89,10 @@ describe('RsyncTaskCardComponent', () => {
               },
             } as Job],
           },
+          {
+            selector: selectSystemConfigState,
+            value: {},
+          },
         ],
       }),
       mockWebsocket([
@@ -121,7 +116,7 @@ describe('RsyncTaskCardComponent', () => {
       }),
       mockProvider(LocaleService),
       mockProvider(TaskService, {
-        getTaskNextRun: jest.fn(() => 'in 33 minutes'),
+        getTaskNextTime: jest.fn(() => new Date(new Date().getTime() + (24 * 60 * 60 * 1000))),
         getTaskCronDescription: jest.fn(() => 'Every hour, every day'),
       }),
     ],
@@ -136,7 +131,7 @@ describe('RsyncTaskCardComponent', () => {
   it('should show table rows', async () => {
     const expectedRows = [
       ['Path', 'Remote Host', 'Frequency', 'Next Run', 'Last Run', 'Enabled', 'State', ''],
-      ['/mnt/APPS', 'asd', 'Every hour, every day', 'in 33 minutes', '1 minute ago', '', 'FINISHED', ''],
+      ['/mnt/APPS', 'asd', 'Every hour, every day', 'in 1 day', '1 min. ago', '', 'FINISHED', ''],
     ];
 
     const cells = await table.getCellTexts();
@@ -173,6 +168,9 @@ describe('RsyncTaskCardComponent', () => {
       message: 'Run «asd - asdad» Rsync now?',
       hideCheckbox: true,
     });
+
+    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('rsynctask.run', [1]);
+
   });
 
   it('deletes a Rsync Task with confirmation when Delete button is pressed', async () => {

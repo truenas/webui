@@ -51,8 +51,6 @@ import { EntityTableRowDetailsComponent } from 'app/modules/entity/entity-table/
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { ToolbarMultimenuComponent } from 'app/modules/entity/entity-toolbar/components/toolbar-multimenu/toolbar-multimenu.component';
 import { ToolbarSliderComponent } from 'app/modules/entity/entity-toolbar/components/toolbar-slider/toolbar-slider.component';
-import { ExpandableTableComponent } from 'app/modules/entity/table/expandable-table/expandable-table.component';
-import { TableComponent } from 'app/modules/entity/table/table.component';
 import { TableService } from 'app/modules/entity/table/table.service';
 import { TaskScheduleListComponent } from 'app/modules/entity/task-schedule-list/task-schedule-list.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
@@ -126,8 +124,6 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
     EntityJobComponent,
     ToolbarMultimenuComponent,
     ToolbarSliderComponent,
-    TableComponent,
-    ExpandableTableComponent,
     EntityEmptyComponent,
   ],
   exports: [
@@ -137,8 +133,6 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
     EntityTableActionsComponent,
     ToolbarSliderComponent,
     ToolbarMultimenuComponent,
-    TableComponent,
-    ExpandableTableComponent,
     CdkTreeModule,
     EntityEmptyComponent,
   ],

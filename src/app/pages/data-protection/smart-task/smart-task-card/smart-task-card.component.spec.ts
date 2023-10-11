@@ -4,6 +4,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { SmartTestTaskUi } from 'app/interfaces/smart-test.interface';
@@ -21,6 +22,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
 describe('SmartTaskCardComponent', () => {
   let spectator: Spectator<SmartTaskCardComponent>;
@@ -45,7 +47,6 @@ describe('SmartTaskCardComponent', () => {
       },
       cron_schedule: '0 0 * * 0',
       frequency: 'At 00:00, only on Sunday',
-      next_run: 'in 6 days',
       disksLabel: [
         'sdm,sdb',
       ],
@@ -66,13 +67,6 @@ describe('SmartTaskCardComponent', () => {
       hddstandby: 'ALWAYS ON',
       advpowermgmt: 'DISABLED',
       togglesmart: true,
-      smartoptions: '',
-      expiretime: null,
-      critical: null,
-      difference: null,
-      informational: null,
-      model: null,
-      rotationrate: null,
       type: 'SSD',
       zfs_guid: '6853459480607509721',
       bus: 'UNKNOWN',
@@ -91,6 +85,14 @@ describe('SmartTaskCardComponent', () => {
       IxTable2Module,
     ],
     providers: [
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectSystemConfigState,
+            value: {},
+          },
+        ],
+      }),
       mockWebsocket([
         mockCall('smart.test.query', smartTasks),
         mockCall('disk.query', disks),
@@ -112,7 +114,7 @@ describe('SmartTaskCardComponent', () => {
       }),
       mockProvider(LocaleService),
       mockProvider(TaskService, {
-        getTaskNextRun: jest.fn(() => 'in 6 days'),
+        getTaskNextTime: jest.fn(() => new Date(new Date().getTime() + (24 * 60 * 60 * 1000))),
         getTaskCronDescription: jest.fn(() => 'At 00:00, only on Sunday'),
       }),
     ],
@@ -129,10 +131,10 @@ describe('SmartTaskCardComponent', () => {
       ['Disks', 'Type', 'Description', 'Frequency', 'Next Run', ''],
       [
         '{serial_lunid}8HG7MZJH_5000cca2700de678,{serial_lunid}8HG7MLTH_5000cca2700de0c8',
-        'LONG',
+        'Long',
         'test',
         'At 00:00, only on Sunday',
-        'in 6 days',
+        'in 1 day',
         '',
       ],
     ];

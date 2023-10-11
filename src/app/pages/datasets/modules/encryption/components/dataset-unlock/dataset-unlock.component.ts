@@ -74,7 +74,7 @@ export class DatasetUnlockComponent implements OnInit {
     private authService: AuthService,
     protected dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
-    private dialog: MatDialog,
+    private matDialog: MatDialog,
     private router: Router,
     private translate: TranslateService,
   ) {
@@ -109,7 +109,7 @@ export class DatasetUnlockComponent implements OnInit {
   }
 
   getEncryptionSummary(): void {
-    const dialogRef = this.dialog.open(EntityJobComponent, {
+    const dialogRef = this.matDialog.open(EntityJobComponent, {
       data: { title: helptext.fetching_encryption_summary_title },
       disableClose: true,
     });
@@ -182,7 +182,7 @@ export class DatasetUnlockComponent implements OnInit {
   unlockSubmit(payload: DatasetUnlockParams): void {
     const values = this.form.value;
     payload.recursive = !values.use_file || values.unlock_children;
-    const dialogRef = this.dialog.open(EntityJobComponent, {
+    const dialogRef = this.matDialog.open(EntityJobComponent, {
       data: { title: helptext.unlocking_datasets_title },
       disableClose: true,
     });
@@ -239,7 +239,7 @@ export class DatasetUnlockComponent implements OnInit {
       datasets: !values.use_file ? datasets : undefined,
     };
 
-    const dialogRef = this.dialog.open(EntityJobComponent, {
+    const dialogRef = this.matDialog.open(EntityJobComponent, {
       data: { title: helptext.fetching_encryption_summary_title },
       disableClose: true,
     });
@@ -295,7 +295,7 @@ export class DatasetUnlockComponent implements OnInit {
       });
       if (!this.dialogOpen) {
         this.dialogOpen = true;
-        const unlockDialogRef = this.dialog.open(UnlockSummaryDialogComponent, { disableClose: true });
+        const unlockDialogRef = this.matDialog.open(UnlockSummaryDialogComponent, { disableClose: true });
         unlockDialogRef.componentInstance.parent = this;
         unlockDialogRef.componentInstance.showFinalResults();
         unlockDialogRef.componentInstance.unlockDatasets = unlock;
@@ -320,7 +320,7 @@ export class DatasetUnlockComponent implements OnInit {
     }
     if (!this.dialogOpen) { // prevent dialog from opening more than once
       this.dialogOpen = true;
-      const unlockDialogRef = this.dialog.open(UnlockSummaryDialogComponent, { disableClose: true });
+      const unlockDialogRef = this.matDialog.open(UnlockSummaryDialogComponent, { disableClose: true });
       unlockDialogRef.componentInstance.parent = this;
       unlockDialogRef.componentInstance.unlockDatasets = unlock;
       unlockDialogRef.componentInstance.errorDatasets = errors;

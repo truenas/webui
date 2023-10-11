@@ -185,8 +185,8 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
       this.tempMin = 0;
       this.tempMax = 0;
     } else {
-      this.tempMin = temps?.length ? Number(Math.min(...temps).toFixed(0)) : 0;
-      this.tempMax = temps?.length ? Number(Math.max(...temps).toFixed(0)) : 0;
+      this.tempMin = Number(Math.min(...temps).toFixed(0));
+      this.tempMax = Number(Math.max(...temps).toFixed(0));
 
       this.tempMinThreads = [];
       this.tempMaxThreads = [];

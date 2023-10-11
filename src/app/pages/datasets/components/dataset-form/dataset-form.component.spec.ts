@@ -84,7 +84,7 @@ describe('DatasetFormComponent', () => {
         confirm: jest.fn(() => of(true)),
       }),
       mockProvider(DatasetFormService, {
-        ensurePathLimits: jest.fn(() => of(undefined)),
+        checkAndWarnForLengthAndDepth: jest.fn(() => of(true)),
         loadDataset: jest.fn((path) => {
           if (path === 'parent/child') {
             return of(existingDataset);
@@ -140,7 +140,7 @@ describe('DatasetFormComponent', () => {
     });
 
     it('ensures path limits when form is opened for adding a new form', () => {
-      expect(spectator.inject(DatasetFormService).ensurePathLimits).toHaveBeenCalledWith('parent/child');
+      expect(spectator.inject(DatasetFormService).checkAndWarnForLengthAndDepth).toHaveBeenCalledWith('parent/child');
     });
   });
 

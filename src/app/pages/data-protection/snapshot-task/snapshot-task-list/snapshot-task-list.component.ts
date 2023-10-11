@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { formatDistanceToNow } from 'date-fns';
 import { JobState } from 'app/enums/job-state.enum';
+import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
 import {
   PeriodicSnapshotTask,
   PeriodicSnapshotTaskUi,
@@ -101,7 +101,7 @@ export class SnapshotTaskListComponent implements EntityTableConfig<PeriodicSnap
         ...transformedTask,
         last_run:
           transformedTask.state?.datetime?.$date
-            ? formatDistanceToNow(transformedTask.state?.datetime?.$date, { addSuffix: true })
+            ? formatDistanceToNowShortened(transformedTask.state?.datetime?.$date)
             : this.translate.instant('N/A'),
         frequency: this.taskService.getTaskCronDescription(transformedTask.cron_schedule),
         next_run: this.taskService.getTaskNextRun(transformedTask.cron_schedule),

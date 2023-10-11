@@ -2,9 +2,8 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { MockPipe } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
-import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
+import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { EntityModule } from 'app/modules/entity/entity.module';
@@ -27,10 +26,7 @@ describe('BootEnvironmentListComponent', () => {
     component: BootEnvironmentListComponent,
     imports: [EntityModule, IxTableModule, AppLoaderModule],
     declarations: [
-      MockPipe(
-        FormatDateTimePipe,
-        jest.fn(() => '2022-08-09 20:52:00'),
-      ),
+      FakeFormatDateTimePipe,
     ],
     providers: [
       mockWebsocket([
@@ -73,12 +69,12 @@ describe('BootEnvironmentListComponent', () => {
 
     const expectedRows = [
       ['', 'Name', 'Active', 'Date Created', 'Space', 'Keep', ''],
-      ['', 'CLONE', '', '2022-08-09 20:52:00', '384 KiB', 'No', ''],
+      ['', 'CLONE', '', '2022-08-22 19:27:00', '384 KiB', 'No', ''],
       [
         '',
         '22.12-MASTER-20220808-020013',
         'Now/Reboot',
-        '2022-08-09 20:52:00',
+        '2022-08-09 16:52:00',
         '3 GiB',
         'No',
         '',

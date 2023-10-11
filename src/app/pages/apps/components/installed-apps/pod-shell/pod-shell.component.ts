@@ -12,10 +12,9 @@ import {
 import { PodSelectDialogType } from 'app/enums/pod-select-dialog.enum';
 import helptext from 'app/helptext/shell/shell';
 import { PodDialogFormValue } from 'app/interfaces/pod-select-dialog.interface';
-import { TerminalConfiguration } from 'app/interfaces/terminal.interface';
+import { TerminalConfiguration, TerminalConnectionData } from 'app/interfaces/terminal.interface';
 import { PodSelectDialogComponent } from 'app/pages/apps/components/pod-select-dialog/pod-select-dialog.component';
 import { DialogService } from 'app/services/dialog.service';
-import { ShellService } from 'app/services/shell.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -31,12 +30,23 @@ export class PodShellComponent implements TerminalConfiguration {
   protected containerName: string;
   protected podDetails: Record<string, string[]>;
 
+  get connectionData(): TerminalConnectionData {
+    return {
+      podInfo: {
+        chartReleaseName: this.chartReleaseName,
+        podName: this.podName,
+        containerName: this.containerName,
+        command: this.command,
+      },
+    };
+  }
+
   constructor(
     private ws: WebSocketService,
     private dialogService: DialogService,
     private aroute: ActivatedRoute,
     private translate: TranslateService,
-    private mdDialog: MatDialog,
+    private matDialog: MatDialog,
     private cdr: ChangeDetectorRef,
   ) {}
 
@@ -78,17 +88,8 @@ export class PodShellComponent implements TerminalConfiguration {
     });
   }
 
-  setShellConnectionData(shellService: ShellService): void {
-    shellService.podInfo = {
-      chart_release_name: this.chartReleaseName,
-      pod_name: this.podName,
-      container_name: this.containerName,
-      command: this.command,
-    };
-  }
-
   customReconnectAction(): void {
-    this.mdDialog.open(PodSelectDialogComponent, {
+    this.matDialog.open(PodSelectDialogComponent, {
       minWidth: '650px',
       maxWidth: '850px',
       data: {

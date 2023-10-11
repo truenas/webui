@@ -6,6 +6,8 @@ import helptext_smart from 'app/helptext/data-protection/smart/smart';
 import { SmartTestTaskUi } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { relativeDateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
+import { templateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
@@ -37,7 +39,7 @@ export class SmartTaskCardComponent implements OnInit {
     }),
     textColumn({
       title: helptext_smart.smartlist_column_type,
-      propertyName: 'type',
+      getValue: (row) => row.type.replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()),
     }),
     textColumn({
       title: helptext_smart.smartlist_column_description,
@@ -45,15 +47,13 @@ export class SmartTaskCardComponent implements OnInit {
     }),
     textColumn({
       title: helptext_smart.smartlist_column_frequency,
-      propertyName: 'frequency',
+      getValue: (row) => this.taskService.getTaskCronDescription(row.cron_schedule),
     }),
-    textColumn({
+    relativeDateColumn({
       title: helptext_smart.smartlist_column_next_run,
-      propertyName: 'next_run',
+      getValue: (row) => this.taskService.getTaskNextTime(row.cron_schedule) as unknown,
     }),
-    textColumn({
-      propertyName: 'id',
-    }),
+    templateColumn(),
   ]);
 
   constructor(
@@ -118,8 +118,6 @@ export class SmartTaskCardComponent implements OnInit {
   private transformSmartTasks(smartTasks: SmartTestTaskUi[]): SmartTestTaskUi[] {
     return smartTasks.map((test) => {
       test.cron_schedule = scheduleToCrontab(test.schedule);
-      test.frequency = this.taskService.getTaskCronDescription(test.cron_schedule);
-      test.next_run = this.taskService.getTaskNextRun(test.cron_schedule);
 
       if (test.all_disks) {
         test.disksLabel = [this.translate.instant(helptext_smart.smarttest_all_disks_placeholder)];
