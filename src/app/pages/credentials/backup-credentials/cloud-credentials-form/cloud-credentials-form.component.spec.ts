@@ -35,6 +35,7 @@ import { CloudCredentialsFormComponent } from './cloud-credentials-form.componen
 jest.mock('./provider-forms/s3-provider-form/s3-provider-form.component', () => {
   return {
     S3ProviderFormComponent: Component({
+      selector: 'ix-s3-provider-form',
       template: '',
     })(class {
       provider: CloudsyncProvider;
@@ -58,6 +59,7 @@ jest.mock('./provider-forms/s3-provider-form/s3-provider-form.component', () => 
 jest.mock('./provider-forms/token-provider-form/token-provider-form.component', () => {
   return {
     TokenProviderFormComponent: Component({
+      selector: 'ix-token-provider-form',
       template: '',
     })(class {
       provider: CloudsyncProvider;

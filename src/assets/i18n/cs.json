@@ -288,7 +288,7 @@
   "Allowed network in network/mask CIDR notation (example <i>1.2.3.4/24<i>).     One entry per field. Leave empty to allow everybody.": "",
   "Allowed sudo commands": "",
   "Allowed sudo commands with no password": "",
-  "Allows multiple  <a href=\"http://www.ntfs.com/ntfs-multiple.htm\" target\"_blank\">NTFS data streams</a>.  Disabling this option causes MacOS to write streams to files on the filesystem.": "",
+  "Allows multiple  <a href=\"http://www.ntfs.com/ntfs-multiple.htm\">NTFS data streams</a>.  Disabling this option causes MacOS to write streams to files on the filesystem.": "",
   "Allows sudo commands": "",
   "Allows the share to host user home  directories. Each user is given a personal home directory when  connecting to the share which is not accessible by other users. This  allows for a personal, dynamic share. Only one share can be used  as the home share.": "",
   "Alphanumeric <a href=\"https://www.backblaze.com/docs/cloud-storage-application-keys?highlight=application%20key\" target=\"_blank\">Backblaze B2</a> Application Key ID. To generate a new application key, log in to the Backblaze account, go to the <i>App Keys</i> page, and add a new application key. Copy the application <i>keyID</i> string to this field.": "",

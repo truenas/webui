@@ -5,11 +5,12 @@ import { MatDialog } from '@angular/material/dialog';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { MockModule } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { User } from 'app/interfaces/user.interface';
-import { EntityModule } from 'app/modules/entity/entity.module';
+import { AlertsModule } from 'app/modules/alerts/alerts.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import {
@@ -51,7 +52,7 @@ describe('UserDetailsRowComponent', () => {
   const createComponent = createComponentFactory({
     component: UserDetailsRowComponent,
     imports: [
-      EntityModule,
+      MockModule(AlertsModule),
       IxTableModule,
     ],
     declarations: [

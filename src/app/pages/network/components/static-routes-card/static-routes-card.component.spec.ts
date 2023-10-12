@@ -38,7 +38,9 @@ describe('StaticRoutesCardComponent', () => {
         confirm: () => of(true),
       }),
       mockProvider(IxSlideInService, {
-        onClose$: of(),
+        open: jest.fn(() => ({
+          slideInClosed$: of(true),
+        })),
       }),
       mockProvider(IxSlideInRef),
       mockProvider(MatDialog, {

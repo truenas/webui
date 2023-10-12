@@ -5,7 +5,6 @@ import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { CoreComponents } from 'app/core/core-components.module';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { User } from 'app/interfaces/user.interface';
-import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { usersInitialState, UsersState } from 'app/pages/account/users/store/user.reducer';
@@ -69,7 +68,6 @@ describe('UserListComponent', () => {
   const createComponent = createComponentFactory({
     component: UserListComponent,
     imports: [
-      EntityModule,
       CoreComponents,
       IxTable2Module,
     ],

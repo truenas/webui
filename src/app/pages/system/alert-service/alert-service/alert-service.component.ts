@@ -146,7 +146,8 @@ export class AlertServiceComponent implements OnInit {
       });
   }
 
-  onSubmit(): void {
+  onSubmit(event: Event): void {
+    event.preventDefault();
     this.isLoading = true;
     this.cdr.detectChanges();
 
