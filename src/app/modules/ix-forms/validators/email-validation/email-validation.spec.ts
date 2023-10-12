@@ -9,7 +9,7 @@ describe('emailValidator', () => {
     expect(validate(new FormControl('a@a.a'))).toBeNull();
   });
 
-  it('should return an error when value is valid email', () => {
+  it('should return an error when value is invalid email', () => {
     expect(validate(new FormControl('test'))).toEqual({ email: true });
     expect(validate(new FormControl('test@test.'))).toEqual({ email: true });
     expect(validate(new FormControl('test@test'))).toEqual({ email: true });
