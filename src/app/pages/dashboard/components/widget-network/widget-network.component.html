@@ -100,7 +100,10 @@
                         </li>
                         <li fxLayout="row" fxLayoutAlign="start center" class="line-state">
                           <span class="icon state">
-                            <ix-icon
+                            <ix-interface-status-icon
+                              [update]="networkInterfaceUpdate.get(nic.state.name)"
+                            ></ix-interface-status-icon>
+                            <!-- <ix-icon
                               *ngIf="getLinkState(nic) === LinkState.Up"
                               name="ix:network_upload_download"
                               class="state-info-icon"
@@ -111,7 +114,7 @@
                               *ngIf="getLinkState(nic) !== LinkState.Up"
                               name="ix:network_upload_download_disabled"
                               class="state-info-icon"
-                            ></ix-icon>
+                            ></ix-icon> -->
                           </span>
                           <ul *ngIf="getLinkState(nic) === LinkState.Up">
                             <li>
