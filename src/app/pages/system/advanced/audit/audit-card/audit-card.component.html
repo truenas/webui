@@ -1,0 +1,49 @@
+<mat-card>
+  <mat-toolbar-row>
+    <h3>{{ 'Audit' | translate }}</h3>
+    <div class="actions action-icon">
+      <button
+        mat-button
+        [ixTest]="['audit', 'configure']"
+        (click)="onConfigurePressed()"
+      >
+        {{ 'Configure' | translate }}
+      </button>
+    </div>
+  </mat-toolbar-row>
+
+  <mat-card-content>
+    <mat-list>
+      <mat-list-item>
+        <span class="label">{{ 'Retention' | translate }}:</span>
+        <span *ixWithLoadingState="auditConfig$ as auditConfig" class="value">
+          {{ auditConfig.retention }}
+        </span>
+      </mat-list-item>
+      <mat-list-item>
+        <span class="label">{{ 'Reservation' | translate }}:</span>
+        <span *ixWithLoadingState="auditConfig$ as auditConfig" class="value">
+          {{ auditConfig.reservation }}
+        </span>
+      </mat-list-item>
+      <mat-list-item>
+        <span class="label">{{ 'Quota' | translate }}:</span>
+        <span *ixWithLoadingState="auditConfig$ as auditConfig" class="value">
+          {{ auditConfig.quota }}
+        </span>
+      </mat-list-item>
+      <mat-list-item>
+        <span class="label">{{ 'Quota Fill Warning' | translate }}:</span>
+        <span *ixWithLoadingState="auditConfig$ as auditConfig" class="value">
+          {{ auditConfig.quota_fill_warning }}
+        </span>
+      </mat-list-item>
+      <mat-list-item>
+        <span class="label">{{ 'Quota Fill Critical' | translate }}:</span>
+        <span *ixWithLoadingState="auditConfig$ as auditConfig" class="value">
+          {{ auditConfig.quota_fill_critical }}
+        </span>
+      </mat-list-item>
+    </mat-list>
+  </mat-card-content>
+</mat-card>

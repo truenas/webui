@@ -32,6 +32,7 @@ describe('SyslogCardComponent', () => {
               syslogserver: '127.1.2.3',
               sysloglevel: SyslogLevel.Alert,
               syslog_transport: SyslogTransport.Tcp,
+              syslog_audit: false,
             } as AdvancedConfig,
           },
         ],
@@ -57,6 +58,7 @@ describe('SyslogCardComponent', () => {
       'Syslog Level: Alert',
       'Syslog Server: 127.1.2.3',
       'Syslog Transport: TCP',
+      'Include Audit Logs: false',
     ]);
   });
 

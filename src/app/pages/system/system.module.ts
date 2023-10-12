@@ -41,6 +41,8 @@ import {
   AllowedAddressesCardComponent,
 } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses-card/allowed-addresses-card.component';
 import { AllowedAddressesFormComponent } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses-form/allowed-addresses-form.component';
+import { AuditCardComponent } from 'app/pages/system/advanced/audit/audit-card/audit-card.component';
+import { AuditFormComponent } from 'app/pages/system/advanced/audit/audit-form/audit-form.component';
 import { ConsoleFormComponent } from 'app/pages/system/advanced/console/console-form/console-form.component';
 import { CronCardComponent } from 'app/pages/system/advanced/cron/cron-card/cron-card.component';
 import { CronDeleteDialogComponent } from 'app/pages/system/advanced/cron/cron-delete-dialog/cron-delete-dialog.component';
@@ -220,7 +222,9 @@ import { routing } from './system.routing';
     AllowedAddressesFormComponent,
     SysInfoComponent,
     SyslogCardComponent,
+    AuditCardComponent,
     SyslogFormComponent,
+    AuditFormComponent,
     StorageSettingsFormComponent,
     StorageCardComponent,
     SelfEncryptingDriveFormComponent,

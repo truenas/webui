@@ -1,0 +1,64 @@
+<ix-modal-header
+  [title]="'Audit' | translate"
+  [loading]="isFormLoading"
+></ix-modal-header>
+
+<mat-card>
+  <mat-card-content>
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+      <ix-fieldset>
+        <ix-input
+          formControlName="retention"
+          type="number"
+          [label]="'Retention' | translate"
+          [tooltip]="tooltips.retention | translate"
+          [required]="true"
+        ></ix-input>
+
+        <ix-input
+          formControlName="reservation"
+          type="number"
+          [label]="'Reservation' | translate"
+          [tooltip]="tooltips.reservation | translate"
+          [required]="true"
+        ></ix-input>
+
+        <ix-input
+          formControlName="quota"
+          type="number"
+          [label]="'Quota' | translate"
+          [tooltip]="tooltips.quota | translate"
+          [required]="true"
+        ></ix-input>
+
+        <ix-input
+          formControlName="quota_fill_warning"
+          type="number"
+          [label]="'Quota Fill Warning' | translate"
+          [tooltip]="tooltips.quota_fill_warning | translate"
+          [required]="true"
+        ></ix-input>
+
+        <ix-input
+          formControlName="quota_fill_critical"
+          type="number"
+          [label]="'Quota Fill Critical' | translate"
+          [tooltip]="tooltips.quota_fill_critical | translate"
+          [required]="true"
+        ></ix-input>
+      </ix-fieldset>
+
+      <ix-form-actions>
+        <button
+          mat-button
+          type="submit"
+          color="primary"
+          ixTest="save"
+          [disabled]="form.invalid || isFormLoading"
+        >
+          {{ 'Save' | translate }}
+        </button>
+      </ix-form-actions>
+    </form>
+  </mat-card-content>
+</mat-card>
