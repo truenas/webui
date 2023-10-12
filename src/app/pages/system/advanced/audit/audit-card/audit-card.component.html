@@ -17,31 +17,31 @@
       <mat-list-item>
         <span class="label">{{ 'Retention' | translate }}:</span>
         <span *ixWithLoadingState="auditConfig$ as auditConfig" class="value">
-          {{ (auditConfig.retention + ' days') | translate }}
+          {{ '{value} days' | translate: { value: auditConfig.retention }  }}
         </span>
       </mat-list-item>
       <mat-list-item>
         <span class="label">{{ 'Reservation' | translate }}:</span>
         <span *ixWithLoadingState="auditConfig$ as auditConfig" class="value">
-          {{ auditConfig.reservation }}
+          {{ '{value} GiB' | translate: { value: auditConfig.reservation }  }}
         </span>
       </mat-list-item>
       <mat-list-item>
         <span class="label">{{ 'Quota' | translate }}:</span>
         <span *ixWithLoadingState="auditConfig$ as auditConfig" class="value">
-          {{ auditConfig.quota }}
+          {{ '{value} GiB' | translate: { value: auditConfig.quota }  }}
         </span>
       </mat-list-item>
       <mat-list-item>
         <span class="label">{{ 'Quota Fill Warning' | translate }}:</span>
         <span *ixWithLoadingState="auditConfig$ as auditConfig" class="value">
-          {{ auditConfig.quota_fill_warning }}
+          {{ '{value}%' | translate: { value: auditConfig.quota_fill_warning }  }}
         </span>
       </mat-list-item>
       <mat-list-item>
         <span class="label">{{ 'Quota Fill Critical' | translate }}:</span>
         <span *ixWithLoadingState="auditConfig$ as auditConfig" class="value">
-          {{ auditConfig.quota_fill_critical }}
+          {{ '{value}%' | translate: { value: auditConfig.quota_fill_critical }  }}
         </span>
       </mat-list-item>
     </mat-list>
