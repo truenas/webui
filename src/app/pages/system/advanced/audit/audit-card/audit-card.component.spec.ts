@@ -44,11 +44,11 @@ describe('AuditCardComponent', () => {
     const itemTexts = await parallel(() => items.map((item) => item.getFullText()));
 
     expect(itemTexts).toEqual([
-      'Retention: 30',
-      'Reservation: 100',
-      'Quota: 100',
-      'Quota Fill Warning: 80',
-      'Quota Fill Critical: 95',
+      'Retention: 30 days',
+      'Reservation: 100 GiB',
+      'Quota: 100 GiB',
+      'Quota Fill Warning: 80%',
+      'Quota Fill Critical: 95%',
     ]);
   });
 
