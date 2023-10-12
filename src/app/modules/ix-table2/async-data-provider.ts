@@ -1,13 +1,17 @@
-import { BehaviorSubject, Observable, Subscription } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription, map } from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
 
 export class AsyncDataProvider<T> extends ArrayDataProvider<T> {
-  private _subscription = new Subscription();
-  private _emptyType$ = new BehaviorSubject<EmptyType>(EmptyType.Loading);
+  private subscription = new Subscription();
+  readonly emptyType$ = new BehaviorSubject<EmptyType>(EmptyType.Loading);
 
-  get emptyType$(): Observable<EmptyType> {
-    return this._emptyType$.asObservable();
+  get isLoading$(): Observable<boolean> {
+    return this.emptyType$.pipe(map((emptyType) => emptyType === EmptyType.Loading));
+  }
+
+  get isError$(): Observable<boolean> {
+    return this.emptyType$.pipe(map((emptyType) => emptyType === EmptyType.Errors));
   }
 
   constructor(
@@ -18,24 +22,24 @@ export class AsyncDataProvider<T> extends ArrayDataProvider<T> {
   }
 
   refresh(): void {
-    this._emptyType$.next(EmptyType.Loading);
-    this._subscription.add(
+    this.emptyType$.next(EmptyType.Loading);
+    this.subscription.add(
       this.request$.subscribe({
         next: (rows) => {
           this.setRows(rows);
-          this._emptyType$.next(rows.length ? EmptyType.NoSearchResults : EmptyType.NoPageData);
+          this.emptyType$.next(rows.length ? EmptyType.NoSearchResults : EmptyType.NoPageData);
         },
         error: () => {
           this.setRows([]);
-          this._emptyType$.next(EmptyType.Errors);
+          this.emptyType$.next(EmptyType.Errors);
         },
       }),
     );
   }
 
   unsubscribe(): void {
-    if (this._subscription) {
-      this._subscription.unsubscribe();
+    if (this.subscription) {
+      this.subscription.unsubscribe();
     }
   }
 }

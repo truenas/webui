@@ -26,7 +26,7 @@
       ix-table-body
       [columns]="columns"
       [dataProvider]="dataProvider"
-      [isLoading]="(dataProvider.emptyType$ | async) === EmptyType.Loading"
+      [isLoading]="dataProvider.isLoading$ | async"
     >
       <ng-template let-catalog ix-table-details-row [dataProvider]="dataProvider">
         <div class="table-details-row-actions">
