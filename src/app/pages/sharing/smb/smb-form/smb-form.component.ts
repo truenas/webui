@@ -54,7 +54,6 @@ import { WebSocketService } from 'app/services/ws.service';
 @UntilDestroy()
 @Component({
   templateUrl: './smb-form.component.html',
-  styleUrls: ['./smb-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SmbFormComponent implements OnInit {

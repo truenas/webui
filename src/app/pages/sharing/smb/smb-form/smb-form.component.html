@@ -95,15 +95,12 @@
 
         <ix-chips
           formControlName="watch_list"
+          hint="Keep this list empty to Watch All"
           [label]="'Watch List' | translate"
           [tooltip]="helptextSharingSmb.tooltip_watch_list | translate"
           [autocompleteProvider]="groupProvider"
           [allowNewEntries]="false"
         ></ix-chips>
-
-        <span class="watch-all-info">
-          {{ 'Keep this list empty to Watch All' | translate }}
-        </span>
 
         <ix-chips
           formControlName="ignore_list"
