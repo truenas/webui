@@ -122,7 +122,7 @@ export class UserFormComponent implements OnInit {
     map((groups) => groups.map((group) => ({ label: group.group, value: group.id }))),
   );
   shellOptions$: Observable<Option[]>;
-  readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider();
+  readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
   readonly groupProvider = new SimpleAsyncComboboxProvider(this.groupOptions$);
 
   get homeCreateWarning(): string {
