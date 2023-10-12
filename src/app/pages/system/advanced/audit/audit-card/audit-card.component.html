@@ -17,7 +17,7 @@
       <mat-list-item>
         <span class="label">{{ 'Retention' | translate }}:</span>
         <span *ixWithLoadingState="auditConfig$ as auditConfig" class="value">
-          {{ auditConfig.retention }}
+          {{ (auditConfig.retention + ' days') | translate }}
         </span>
       </mat-list-item>
       <mat-list-item>
