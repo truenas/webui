@@ -1,6 +1,6 @@
 {
   "": "",
-  "\n            It looks like your session has been inactive for more than {lifetime} seconds.<br>\n            For security reasons we will log you out at {time}.\n          ": "",
+  "\n              It looks like your session has been inactive for more than {lifetime} seconds.<br>\n              For security reasons we will log you out at {time}.\n            ": "",
   " Est. Usable Raw Capacity": "",
   " Please click the button below to add {item}.": "",
   " bytes.": "",
@@ -137,6 +137,7 @@
   "Admin Username": "",
   "Adv. Power Mgmt.": "",
   "Advanced Replication Creation": "",
+  "Advanced Settings → Sessions": "",
   "Agree": "",
   "Alert service saved": "",
   "Alerts could not be loaded": "",
@@ -305,6 +306,7 @@
   "Certificate has been created.": "",
   "Certificate request signed": "",
   "Certificate signing request created": "",
+  "Change Token Lifetime in": "",
   "Changes to ACL type affect how on-disk ZFS ACL is  written and read.\nWhen the ACL type is changed from POSIX to NFSv4,  no migration is performed for default and access ACLs encoded in the  posix1e acl extended attributes to native ZFS ACLs.\nWhen ACL type is  changed from NFSv4 to POSIX, native ZFS ACLs are not converted to  posix1e extended attributes, but the native ACL will be used internally  by ZFS for access checks.\n\nThis means that the user must manually set  new ACLs recursively on the dataset after ACL type changes in order to  avoid unexpected permissions behavior.\n\nThis action will be destructive,  and so it is advised to take a ZFS snapshot of the dataset prior to ACL  type changes and permissions modifications.": "",
   "Changing Advanced settings can be dangerous when done incorrectly. Please use caution before saving.": "",
   "Changing global 2FA settings might cause user secrets to reset. Which means users will have to reconfigure their 2FA. Are you sure you want to continue?": "",

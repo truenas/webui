@@ -1,0 +1,25 @@
+<h1 mat-dialog-title>{{ options.title | translate }}</h1>
+<div mat-dialog-content id="confirm-msg">
+  <div class="message-content">
+    <span [innerHTML]="options.message | translate"></span>
+
+    <p>
+      {{ 'Change Token Lifetime in' | translate }}
+      <b (click)="viewSessionsCard()">
+        {{ 'Advanced Settings → Sessions' | translate }}
+      </b>
+    </p>
+  </div>
+</div>
+
+<div mat-dialog-actions>
+  <button
+    mat-button
+    name="ok_button"
+    class="mat-mdc-button mat-button mat-primary submit-button"
+    ixTest="session-expiring-extend-confirm"
+    (click)="extendSession()"
+  >
+    {{ options.buttonText | translate }}
+  </button>
+</div>

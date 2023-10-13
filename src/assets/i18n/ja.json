@@ -1,6 +1,6 @@
 {
   "": "",
-  "\n            It looks like your session has been inactive for more than {lifetime} seconds.<br>\n            For security reasons we will log you out at {time}.\n          ": "",
+  "\n              It looks like your session has been inactive for more than {lifetime} seconds.<br>\n              For security reasons we will log you out at {time}.\n            ": "",
   " Est. Usable Raw Capacity": "",
   " Please click the button below to add {item}.": "",
   " bytes.": "",
@@ -209,6 +209,7 @@
   "Advanced Power Management": "",
   "Advanced Remote Options": "",
   "Advanced Replication Creation": "",
+  "Advanced Settings → Sessions": "",
   "Agree": "",
   "Alert service saved": "",
   "Alerts could not be loaded": "",
@@ -484,6 +485,7 @@
   "Certificate to use for key server authentication. A valid certificate is required to verify the key server connection. WARNING: for security reasons, please protect the Certificate used for key server authentication.": "",
   "Certificate to use when performing LDAP  certificate-based authentication. To configure LDAP certificate-based  authentication, create a Certificate Signing Request for the LDAP  provider to sign. A certificate is not required when using  username/password or Kerberos authentication.": "",
   "Change Enclosure Label": "",
+  "Change Token Lifetime in": "",
   "Change from <i>public</i> to increase system security. Can only contain alphanumeric characters, underscores, dashes, periods, and spaces. This can be left empty for <i>SNMPv3</i> networks.": "",
   "Changelog": "",
   "Changes Saved": "",
