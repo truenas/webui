@@ -20,7 +20,6 @@ import {
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
-import { onJobAbort, onJobFailureOrError, onJobSuccess } from 'app/helpers/operators/job-event-parsers.helper';
 import { WINDOW } from 'app/helpers/window.helper';
 import helptext from 'app/helptext/apps/apps';
 import { ChartScaleResult, ChartScaleQueryParams } from 'app/interfaces/chart-release-event.interface';
@@ -288,32 +287,12 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   }
 
   start(name: string): void {
-
-    const job$ = this.ws.job('chart.release.scale', [name, { replica_count: 1 }]);
-
-    this.dialogService.jobProgress(job$, {
-      title: 'Test starting job',
-      description: 'Test description',
-      showRealtimeLogs: false,
-      autoCloseOnSuccess: false,
-    },
-    );
-
-    job$.pipe(
-      onJobSuccess((job: Job) => {
-        this.snackbar.success('Job Successfull: ' + job.state);
-      }),
-      onJobAbort((job: Job) => {
-        this.snackbar.success('Job Aborted: ' + job.state);
-      }),
-      onJobFailureOrError((job: Job) => {
-        this.snackbar.success('Job Failured: ' + job.state);
-      }),
-      untilDestroyed(this),
-    ).subscribe((job: Job<ChartScaleResult, ChartScaleQueryParams>) => {
-      this.appJobs.set(name, job);
-      this.cdr.markForCheck();
-    });
+    this.appService.startApplication(name)
+      .pipe(untilDestroyed(this))
+      .subscribe((job: Job<ChartScaleResult, ChartScaleQueryParams>) => {
+        this.appJobs.set(name, job);
+        this.cdr.markForCheck();
+      });
   }
 
   stop(name: string): void {
