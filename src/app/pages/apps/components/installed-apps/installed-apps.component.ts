@@ -38,7 +38,6 @@ import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.se
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
 import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 enum SortableField {
   Application = 'application',
@@ -137,7 +136,6 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     private slideInService: IxSlideInService,
     private breakpointObserver: BreakpointObserver,
     @Inject(WINDOW) private window: Window,
-    private ws: WebSocketService,
   ) {
     this.router.events
       .pipe(
