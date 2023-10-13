@@ -192,13 +192,7 @@ export class DialogService {
       title: string;
       description: string;
     },
-    flags: {
-      showRealtimeLogs: boolean;
-      autoCloseOnSuccess: boolean;
-    } = {
-      showRealtimeLogs: false,
-      autoCloseOnSuccess: true,
-    },
+    showRealtimeLogs = false,
   ): JobProgressDialogRef {
     const jobProgressDialog: JobProgressDialog = new JobProgressDialog();
 
@@ -212,7 +206,7 @@ export class DialogService {
           onFailure: (job: Job) => jobProgressDialog.afterFailure(job),
         },
         config,
-        flags,
+        showRealtimeLogs: showRealtimeLogs,
       } as JobProgressDialogConfig,
     });
     jobProgressDialog.matDialogRef = dialogRef;
