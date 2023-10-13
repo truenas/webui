@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
-import { MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { Observable, Subject, of } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { JobProgressDialogRef } from 'app/classes/job-progress-dialog-ref.class';
+import { JobProgressDialog } from 'app/classes/job-progress-dialog.class';
 import { ApiJobDirectory, ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import {
   ConfirmOptions,
@@ -17,68 +19,6 @@ import { GeneralDialogComponent, GeneralDialogConfig } from 'app/modules/common/
 import { InfoDialogComponent } from 'app/modules/common/dialog/info-dialog/info-dialog.component';
 import { JobProgressDialogComponent, JobProgressDialogConfig } from 'app/modules/common/dialog/job-progress/job-progress-dialog.component';
 import { MultiErrorDialogComponent } from 'app/modules/common/dialog/multi-error-dialog/multi-error-dialog.component';
-
-export class JobProgressDialog {
-  private readonly onSuccess$ = new Subject<Job>();
-  private readonly onAbort$ = new Subject<Job>();
-  private readonly onFailure$ = new Subject<Job>();
-  private readonly _onProgress$ = new Subject<JobProgress>();
-
-  readonly afterSuccess$ = this.onSuccess$.asObservable();
-  readonly afterAbort$ = this.onAbort$.asObservable();
-  readonly afterFailure$ = this.onFailure$.asObservable();
-  readonly onProgress$ = this._onProgress$.asObservable();
-
-  private _matDialogRef: MatDialogRef<JobProgressDialogComponent>;
-
-  set matDialogRef(ref: MatDialogRef<JobProgressDialogComponent>) {
-    this._matDialogRef = ref;
-  }
-
-  get matDialogRef(): MatDialogRef<JobProgressDialogComponent> {
-    return this._matDialogRef;
-  }
-
-  afterSuccess(job: Job): void {
-    this.onSuccess$.next(job);
-  }
-
-  afterAbort(job: Job): void {
-    this.onAbort$.next(job);
-  }
-
-  afterFailure(job: Job): void {
-    this.onFailure$.next(job);
-  }
-
-  onProgress(progress: JobProgress): void {
-    this._onProgress$.next(progress);
-  }
-}
-
-export class JobProgressDialogRef {
-  constructor(private readonly jobProgressDialog: JobProgressDialog) { }
-
-  getDialogRef(): MatDialogRef<JobProgressDialogComponent> {
-    return this.jobProgressDialog.matDialogRef;
-  }
-
-  onSuccess(): Observable<Job> {
-    return this.jobProgressDialog.afterSuccess$;
-  }
-
-  onAbort(): Observable<Job> {
-    return this.jobProgressDialog.afterAbort$;
-  }
-
-  onFailure(): Observable<Job> {
-    return this.jobProgressDialog.afterFailure$;
-  }
-
-  onProgressUpdate(): Observable<JobProgress> {
-    return this.jobProgressDialog.onProgress$;
-  }
-}
 
 @UntilDestroy()
 @Injectable({
