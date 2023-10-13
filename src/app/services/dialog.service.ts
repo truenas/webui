@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { Observable, of } from 'rxjs';
 import {
@@ -8,13 +8,11 @@ import {
   DialogWithSecondaryCheckboxResult,
 } from 'app/interfaces/dialog.interface';
 import { ErrorReport } from 'app/interfaces/error-report.interface';
-import { Job } from 'app/interfaces/job.interface';
 import { ConfirmDialogComponent } from 'app/modules/common/dialog/confirm-dialog/confirm-dialog.component';
 import { ErrorDialogComponent } from 'app/modules/common/dialog/error-dialog/error-dialog.component';
 import { FullScreenDialogComponent } from 'app/modules/common/dialog/full-screen-dialog/full-screen-dialog.component';
 import { GeneralDialogComponent, GeneralDialogConfig } from 'app/modules/common/dialog/general-dialog/general-dialog.component';
 import { InfoDialogComponent } from 'app/modules/common/dialog/info-dialog/info-dialog.component';
-import { JobProgressDialogComponent, JobProgressDialogConfig } from 'app/modules/common/dialog/job-progress/job-progress-dialog.component';
 import { MultiErrorDialogComponent } from 'app/modules/common/dialog/multi-error-dialog/multi-error-dialog.component';
 
 @UntilDestroy()
@@ -121,11 +119,5 @@ export class DialogService {
     for (const openDialog of (this.dialog.openDialogs || [])) {
       openDialog.close();
     }
-  }
-
-  jobProgress(job$: Observable<Job>, config: JobProgressDialogConfig): MatDialogRef<JobProgressDialogComponent> {
-    return this.dialog.open(JobProgressDialogComponent, {
-      data: { job$, config },
-    });
   }
 }
