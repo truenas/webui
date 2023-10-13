@@ -277,6 +277,7 @@ export class SmbFormComponent implements OnInit {
     if (pathControl.value && (!nameControl.value || !nameControl.dirty)) {
       const name = pathControl.value.split('/').pop();
       nameControl.setValue(name);
+      nameControl.markAsTouched();
     }
     this.cdr.markForCheck();
   }
