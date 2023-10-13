@@ -14,15 +14,7 @@ export class JobProgressDialog {
   readonly afterFailure$ = this.onFailure$.asObservable();
   readonly onProgress$ = this._onProgress$.asObservable();
 
-  private _matDialogRef: MatDialogRef<JobProgressDialogComponent>;
-
-  set matDialogRef(ref: MatDialogRef<JobProgressDialogComponent>) {
-    this._matDialogRef = ref;
-  }
-
-  get matDialogRef(): MatDialogRef<JobProgressDialogComponent> {
-    return this._matDialogRef;
-  }
+  matDialogRef: MatDialogRef<JobProgressDialogComponent>;
 
   afterSuccess(job: Job): void {
     this.onSuccess$.next(job);
