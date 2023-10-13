@@ -19,10 +19,7 @@ export interface JobProgressDialogConfig {
     title: string;
     description: string;
   };
-  flags: {
-    showRealtimeLogs: boolean;
-    autoCloseOnSuccess: boolean;
-  };
+  showRealtimeLogs: boolean;
 }
 
 @UntilDestroy()
@@ -44,7 +41,6 @@ export class JobProgressDialogComponent implements OnInit, AfterViewChecked {
   protected progressTotalPercent = 0;
   protected hideProgressValue = false;
   protected showRealtimeLogs = false;
-  protected autoCloseOnSuccess = true;
 
   get isJobRunning(): boolean {
     return this.job?.state === JobState.Running;
@@ -70,8 +66,7 @@ export class JobProgressDialogComponent implements OnInit, AfterViewChecked {
     this.title = this.data.config.title;
     this.description = this.data.config.description;
     let logsSubscription: Subscription = null;
-    this.showRealtimeLogs = this.data.flags.showRealtimeLogs;
-    this.autoCloseOnSuccess = this.data.flags.autoCloseOnSuccess;
+    this.showRealtimeLogs = this.data.showRealtimeLogs;
     if (this.dialogRef.disableClose) {
       this.showCloseButton = false;
     }
@@ -84,12 +79,12 @@ export class JobProgressDialogComponent implements OnInit, AfterViewChecked {
         this.job = job;
         this.showAbortButton = job.abortable;
         if (
-          this.data.flags.showRealtimeLogs
+          this.data.showRealtimeLogs
           && this.job.logs_path
           && !this.realtimeLogsSubscribed) {
           logsSubscription = this.getRealtimeLogs();
         }
-        if (job.progress && !this.data.flags.showRealtimeLogs) {
+        if (job.progress && !this.data.showRealtimeLogs) {
           this.data.callbacks.onProgress(job.progress);
           if (job.progress.description) {
             this.description = job.progress.description;
@@ -111,9 +106,6 @@ export class JobProgressDialogComponent implements OnInit, AfterViewChecked {
       complete: () => {
         if (this.job.state === JobState.Success) {
           this.data.callbacks.onSuccess(this.job);
-          if (this.autoCloseOnSuccess) {
-            this.dialogRef.close();
-          }
         } else if (this.job.state === JobState.Failed) {
           this.data.callbacks.onFailure(this.job);
           let error = _.replace(this.job.error, '<', '< ');
