@@ -20,7 +20,6 @@ import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { BaseNetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
 import { NetworkInterfaceUpdate, ReportingDatabaseError, ReportingNameAndId } from 'app/interfaces/reporting.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { TableService } from 'app/modules/entity/table/table.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { ResourcesUsageStore } from 'app/pages/dashboard/store/resources-usage-store.service';
@@ -76,6 +75,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
   minSizeToActiveTrafficArrowIcon = 1024;
 
   fetchDataIntervalSubscription: Subscription;
+  networkInterfaceUpdate = new Map<string, NetworkInterfaceUpdate>();
 
   availableNics: BaseNetworkInterface[] = [];
   chartOptions: ChartOptions<'line'> = {
@@ -153,7 +153,6 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
 
   constructor(
     private ws: WebSocketService,
-    private tableService: TableService,
     public translate: TranslateService,
     private dialog: DialogService,
     private formatter: IxFormatterService,
@@ -214,6 +213,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
         untilDestroyed(this),
       ).subscribe((usageUpdate: NetworkInterfaceUpdate) => {
         const nicName = nic.name;
+        this.networkInterfaceUpdate.set(nic.name, usageUpdate);
         if (nicName in this.nicInfoMap) {
           const nicInfo = this.nicInfoMap[nicName];
           if (usageUpdate.link_state) {
@@ -227,7 +227,6 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
             && usageUpdate.sent_bytes - nicInfo.lastSent > this.minSizeToActiveTrafficArrowIcon
           ) {
             nicInfo.lastSent = usageUpdate.sent_bytes;
-            this.tableService.updateStateInfoIcon(nicName, 'sent');
           }
 
           if (
@@ -235,7 +234,6 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
             && usageUpdate.received_bytes - nicInfo.lastReceived > this.minSizeToActiveTrafficArrowIcon
           ) {
             nicInfo.lastReceived = usageUpdate.received_bytes;
-            this.tableService.updateStateInfoIcon(nicName, 'received');
           }
         }
       });
