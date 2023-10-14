@@ -4,31 +4,31 @@ import { Job, JobProgress } from 'app/interfaces/job.interface';
 import { JobProgressDialogComponent } from 'app/modules/common/dialog/job-progress/job-progress-dialog.component';
 
 export class JobProgressDialog {
-  private readonly onSuccess$ = new Subject<Job>();
-  private readonly onAbort$ = new Subject<Job>();
-  private readonly onFailure$ = new Subject<Job>();
-  private readonly _onProgress$ = new Subject<JobProgress>();
+  private readonly success$ = new Subject<Job>();
+  private readonly abort$ = new Subject<Job>();
+  private readonly failure$ = new Subject<Job>();
+  private readonly progress$ = new Subject<JobProgress>();
 
-  readonly afterSuccess$ = this.onSuccess$.asObservable();
-  readonly afterAbort$ = this.onAbort$.asObservable();
-  readonly afterFailure$ = this.onFailure$.asObservable();
-  readonly onProgress$ = this._onProgress$.asObservable();
+  readonly afterSuccess$ = this.success$.asObservable();
+  readonly afterAbort$ = this.abort$.asObservable();
+  readonly afterFailure$ = this.failure$.asObservable();
+  readonly onProgress$ = this.progress$.asObservable();
 
   matDialogRef: MatDialogRef<JobProgressDialogComponent>;
 
-  afterSuccess(job: Job): void {
-    this.onSuccess$.next(job);
+  success(job: Job): void {
+    this.success$.next(job);
   }
 
-  afterAbort(job: Job): void {
-    this.onAbort$.next(job);
+  abort(job: Job): void {
+    this.abort$.next(job);
   }
 
-  afterFailure(job: Job): void {
-    this.onFailure$.next(job);
+  failure(job: Job): void {
+    this.failure$.next(job);
   }
 
-  onProgress(progress: JobProgress): void {
-    this._onProgress$.next(progress);
+  progress(progress: JobProgress): void {
+    this.progress$.next(progress);
   }
 }

@@ -140,10 +140,10 @@ export class DialogService {
       data: {
         job$,
         callbacks: {
-          onSuccess: (job: Job) => jobProgressDialog.afterSuccess(job),
-          onProgress: (progress: JobProgress) => jobProgressDialog.onProgress(progress),
-          onAbort: (job: Job) => jobProgressDialog.afterAbort(job),
-          onFailure: (job: Job) => jobProgressDialog.afterFailure(job),
+          onSuccess: (job: Job) => jobProgressDialog.success(job),
+          onProgress: (progress: JobProgress) => jobProgressDialog.progress(progress),
+          onAbort: (job: Job) => jobProgressDialog.abort(job),
+          onFailure: (job: Job) => jobProgressDialog.failure(job),
         },
         config,
         showRealtimeLogs: showRealtimeLogs,
