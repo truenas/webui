@@ -127,12 +127,12 @@ export class DialogService {
   }
 
   jobProgress<M extends ApiJobMethod>(
-    { job$, title, description, showRealtimeLogs }: {
-      job$: Observable<Job<ApiJobDirectory[M]['response']>>;
+    job$: Observable<Job<ApiJobDirectory[M]['response']>>,
+    { title, description, showRealtimeLogs }: {
       title?: string;
       description?: string;
       showRealtimeLogs?: boolean;
-    },
+    } = null,
   ): JobProgressDialogRef {
     const jobProgressDialog: JobProgressDialog = new JobProgressDialog();
 

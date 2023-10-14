@@ -275,14 +275,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
   start(name: string): void {
     const jobStarter$ = this.ws.job('chart.release.scale', [name, { replica_count: 1 }]);
-    const dialogRef = this.dialogService.jobProgress(
-      {
-        job$: jobStarter$,
-        title: 'Test starting job',
-        description: 'Test description',
-        showRealtimeLogs: false,
-      },
-    );
+    const dialogRef = this.dialogService.jobProgress(jobStarter$);
     dialogRef.onSuccess().pipe(untilDestroyed(this)).subscribe({
       next: (job) => {
         this.snackbar.success('Job ' + job.state );
