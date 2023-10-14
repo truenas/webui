@@ -1,8 +1,8 @@
-import { AfterViewChecked, Component, Inject, OnInit } from '@angular/core';
+import { AfterViewChecked, ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import _ from 'lodash';
-import { Observable, Subscription, delay, map } from 'rxjs';
+import { Observable, Subscription, map } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job, JobProgress } from 'app/interfaces/job.interface';
 import { WebSocketService } from 'app/services/ws.service';
@@ -26,6 +26,7 @@ export interface JobProgressDialogConfig {
 @Component({
   templateUrl: './job-progress-dialog.component.html',
   styleUrls: ['./job-progress-dialog.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class JobProgressDialogComponent implements OnInit, AfterViewChecked {
   protected job: Job = {} as Job;
@@ -60,6 +61,7 @@ export class JobProgressDialogComponent implements OnInit, AfterViewChecked {
     private dialogRef: MatDialogRef<JobProgressDialogComponent, MatDialogConfig>,
     @Inject(MAT_DIALOG_DATA) public data: JobProgressDialogConfig,
     private ws: WebSocketService,
+    private cdr: ChangeDetectorRef,
   ) { }
 
   ngOnInit(): void {
@@ -70,9 +72,9 @@ export class JobProgressDialogComponent implements OnInit, AfterViewChecked {
     if (this.dialogRef.disableClose) {
       this.showCloseButton = false;
     }
+    this.cdr.markForCheck();
 
     this.data.job$.pipe(
-      delay(5000),
       untilDestroyed(this),
     ).subscribe({
       next: (job) => {
@@ -97,11 +99,12 @@ export class JobProgressDialogComponent implements OnInit, AfterViewChecked {
         if (this.job.state === JobState.Aborted) {
           this.data.callbacks.onAbort(this.job);
         }
-
+        this.cdr.markForCheck();
       },
       error: (job: Job) => {
         this.job = job;
         this.data.callbacks.onFailure(this.job);
+        this.cdr.markForCheck();
       },
       complete: () => {
         if (this.job.state === JobState.Success) {
@@ -115,6 +118,8 @@ export class JobProgressDialogComponent implements OnInit, AfterViewChecked {
         if (this.realtimeLogsSubscribed) {
           logsSubscription.unsubscribe();
         }
+        this.cdr.markForCheck();
+
       },
     });
 
@@ -131,6 +136,7 @@ export class JobProgressDialogComponent implements OnInit, AfterViewChecked {
       return;
     }
     logsContainer.scrollTop = logsContainer.scrollHeight;
+    this.cdr.markForCheck();
   }
 
   abortJob(): void {
@@ -147,12 +153,14 @@ export class JobProgressDialogComponent implements OnInit, AfterViewChecked {
   getRealtimeLogs(): Subscription {
     this.realtimeLogsSubscribed = true;
     const subName = 'filesystem.file_tail_follow:' + this.job.logs_path;
+    this.cdr.markForCheck();
     return this.ws.subscribeToLogs(subName)
       .pipe(map((apiEvent) => apiEvent.fields), untilDestroyed(this))
       .subscribe((logs) => {
         if (logs?.data && typeof logs.data === 'string') {
           this.realtimeLogs += logs.data;
         }
+        this.cdr.markForCheck();
       });
   }
 
