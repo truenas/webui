@@ -11,6 +11,7 @@ import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { helptextSharingSmb } from 'app/helptext/sharing';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
+import { Group } from 'app/interfaces/group.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { SmbPresets, SmbPresetType, SmbShare } from 'app/interfaces/smb-share.interface';
 import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
@@ -58,6 +59,11 @@ describe('SmbFormComponent', () => {
     cluster_volname: '',
     locked: false,
     path_local: '/mnt/pool123/ds222',
+    audit: {
+      enable: true,
+      watch_list: [],
+      ignore_list: [],
+    },
   };
 
   const formLabels: { [key: string]: string } = {
@@ -83,6 +89,8 @@ describe('SmbFormComponent', () => {
     durablehandle: 'Enable SMB2/3 Durable Handles',
     fsrvp: 'Enable FSRVP',
     path_suffix: 'Path Suffix',
+    watch_list: 'Watch List',
+    ignore_list: 'Ignore List',
   };
 
   const presets: SmbPresets = {
@@ -126,6 +134,7 @@ describe('SmbFormComponent', () => {
     ],
     providers: [
       mockWebsocket([
+        mockCall('group.query', [{ group: 'test' }] as Group[]),
         mockCall('sharing.smb.create', { ...existingShare }),
         mockCall('sharing.smb.update', { ...existingShare }),
         mockCall('sharing.smb.query', [
@@ -409,6 +418,11 @@ describe('SmbFormComponent', () => {
         durablehandle: true,
         fsrvp: false,
         timemachine_quota: 0,
+        audit: {
+          enable: true,
+          watch_list: [],
+          ignore_list: [],
+        },
       }]);
 
       expect(websocket.call).toHaveBeenCalledWith('service.query');

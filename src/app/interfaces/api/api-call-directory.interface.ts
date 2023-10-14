@@ -29,6 +29,7 @@ import {
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { ApiKey, CreateApiKeyRequest, UpdateApiKeyRequest } from 'app/interfaces/api-key.interface';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
+import { AuditEntry } from 'app/interfaces/audit.interface';
 import { AuthSession } from 'app/interfaces/auth-session.interface';
 import { CheckUserQuery } from 'app/interfaces/auth.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
@@ -305,6 +306,15 @@ export interface ApiCallDirectory {
   'api_key.delete': { params: [id: string]; response: boolean };
   'api_key.query': { params: QueryParams<ApiKey>; response: ApiKey[] };
 
+  // App
+  'app.categories': { params: void; response: string[] };
+  'app.available': { params: QueryParams<AvailableApp>; response: AvailableApp[] };
+  'app.similar': { params: [app_name: string, catalog: string, train: string]; response: AvailableApp[] };
+  'app.latest': { params: QueryParams<AvailableApp>; response: AvailableApp[] };
+
+  // Audit
+  'audit.query': { params: QueryParams<AuditEntry>; response: AuditEntry[] };
+
   // Auth
   'auth.check_user': { params: CheckUserQuery; response: boolean };
   'auth.me': { params: void; response: DsUncachedUser };
@@ -330,12 +340,6 @@ export interface ApiCallDirectory {
   'bootenv.set_attribute': { params: SetBootenvAttributeParams; response: boolean };
   'bootenv.activate': { params: [string]; response: boolean };
   'bootenv.query': { params: QueryParams<Bootenv>; response: Bootenv[] };
-
-  // App
-  'app.categories': { params: void; response: string[] };
-  'app.available': { params: QueryParams<AvailableApp>; response: AvailableApp[] };
-  'app.similar': { params: [app_name: string, catalog: string, train: string]; response: AvailableApp[] };
-  'app.latest': { params: QueryParams<AvailableApp>; response: AvailableApp[] };
 
   // Catalog
   'catalog.query': { params: CatalogQueryParams; response: Catalog[] };

@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.interface';
 
 @Component({
+  selector: 'ix-cell-actions',
   templateUrl: './ix-cell-actions.component.html',
   styleUrls: ['./ix-cell-actions.component.scss'],
 })

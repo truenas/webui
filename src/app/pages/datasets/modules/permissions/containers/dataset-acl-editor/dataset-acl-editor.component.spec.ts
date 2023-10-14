@@ -128,14 +128,6 @@ describe('DatasetAclEditorComponent', () => {
   });
 
   describe('preset modal', () => {
-    beforeEach(() => {
-      jest.spyOn(matDialog, 'open').mockImplementation();
-    });
-
-    afterEach(() => {
-      jest.restoreAllMocks();
-    });
-
     it('shows select preset modal if user presses "Use Preset"', async () => {
       const usePresetButton = await loader.getHarness(MatButtonHarness.with({ text: 'Use Preset' }));
       await usePresetButton.click();
@@ -185,7 +177,6 @@ describe('DatasetAclEditorComponent', () => {
 
   describe('editing', () => {
     it('opens Strip ACL dialog when Strip Acl is pressed', async () => {
-      jest.spyOn(matDialog, 'open').mockImplementation();
       const stripButton = await loader.getHarness(MatButtonHarness.with({ text: 'Strip ACL' }));
       await stripButton.click();
 

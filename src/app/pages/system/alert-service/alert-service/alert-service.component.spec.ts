@@ -32,6 +32,7 @@ import { WebSocketService } from 'app/services/ws.service';
 jest.mock('./alert-services/aws-sns-service/aws-sns-service.component', () => {
   return {
     AwsSnsServiceComponent: Component({
+      selector: 'ix-aws-service',
       template: '',
     })(class {
       setValues = jest.fn() as BaseAlertServiceForm['setValues'];
@@ -53,6 +54,7 @@ jest.mock('./alert-services/aws-sns-service/aws-sns-service.component', () => {
 jest.mock('./alert-services/ops-genie-service/ops-genie-service.component', () => {
   return {
     OpsGenieServiceComponent: Component({
+      selector: 'ix-ops-genie-service',
       template: '',
     })(class {
       setValues = jest.fn() as BaseAlertServiceForm['setValues'];

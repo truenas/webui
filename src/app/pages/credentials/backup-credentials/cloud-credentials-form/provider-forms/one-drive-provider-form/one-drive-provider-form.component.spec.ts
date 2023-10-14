@@ -1,12 +1,14 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { MockComponent } from 'ng-mocks';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { OneDriveType } from 'app/enums/cloudsync-provider.enum';
 import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
+import { OauthButtonComponent } from 'app/modules/oauth-button/components/oauth-button/oauth-button.component';
 import {
   OauthProviderComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/oauth-provider/oauth-provider.component';
@@ -27,6 +29,7 @@ describe('OneDriveProviderFormComponent', () => {
     ],
     declarations: [
       OauthProviderComponent,
+      MockComponent(OauthButtonComponent),
     ],
     providers: [
       mockProvider(DialogService),

@@ -5,6 +5,7 @@ import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now
 import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.interface';
 
 @Component({
+  selector: 'ix-cell-relative-date',
   templateUrl: './ix-cell-relative-date.component.html',
 })
 export class IxCellRelativeDateComponent<T> extends ColumnComponent<T> {

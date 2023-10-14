@@ -8,7 +8,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import {
-  catchError, EMPTY, forkJoin, map, Observable, of, switchMap,
+  catchError, EMPTY, forkJoin, map, Observable, of, switchMap, tap,
 } from 'rxjs';
 import { truenasDbKeyLocation } from 'app/constants/truenas-db-key-location.constant';
 import { DatasetSource } from 'app/enums/dataset.enum';
@@ -30,6 +30,7 @@ import { Schedule } from 'app/interfaces/schedule.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { CreateZfsSnapshot, ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ReplicationWizardData } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard-data.interface';
@@ -70,6 +71,7 @@ export class ReplicationWizardComponent {
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
+    private appLoader: AppLoaderService,
     private snackbar: SnackbarService,
   ) {}
 
@@ -124,14 +126,37 @@ export class ReplicationWizardComponent {
     this.callCreateSnapshots(values).pipe(
       switchMap(() => this.callCreateTasks(values)),
       switchMap(() => this.callCreateReplication(values)),
+      tap((createdReplication) => {
+        this.snackbar.success(this.translate.instant('Replication task created.'));
+        this.isLoading = false;
+        this.createdReplication = createdReplication;
+      }),
+      switchMap((createdReplication) => {
+        if (values.schedule_method === ScheduleMethod.Once && createdReplication) {
+          return this.runReplicationOnce(createdReplication);
+        }
+        return of(createdReplication);
+      }),
       catchError((err) => { this.handleError(err); return EMPTY; }),
       untilDestroyed(this),
     ).subscribe(() => {
-      this.snackbar.success(this.translate.instant('Replication task created.'));
-      this.isLoading = false;
       this.cdr.markForCheck();
       this.slideInRef.close(true);
     });
+  }
+
+  private runReplicationOnce(createdReplication: ReplicationTask): Observable<boolean> {
+    this.appLoader.open(this.translate.instant('Starting task'));
+    return this.ws.startJob('replication.run', [createdReplication.id]).pipe(
+      switchMap(() => {
+        this.appLoader.close();
+        return this.dialogService.info(
+          this.translate.instant('Task started'),
+          this.translate.instant('Replication <i>{name}</i> has started.', { name: createdReplication.name }),
+          true,
+        );
+      }),
+    );
   }
 
   private preparePayload(): ReplicationWizardData {
@@ -399,19 +424,7 @@ export class ReplicationWizardComponent {
         }
         return this.createReplication(replicationPayload);
       }),
-      map((createdReplication) => {
-        if (values.schedule_method === ScheduleMethod.Once && createdReplication) {
-          this.ws.startJob('replication.run', [createdReplication.id]).pipe(untilDestroyed(this)).subscribe(() => {
-            this.dialogService.info(
-              this.translate.instant('Task started'),
-              this.translate.instant('Replication <i>{name}</i> has started.', { name: values.name }),
-              true,
-            );
-          });
-        }
 
-        return this.createdReplication = createdReplication;
-      }),
     );
   }
 }
