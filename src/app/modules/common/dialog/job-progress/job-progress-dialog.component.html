@@ -1,4 +1,4 @@
-<h1 *ngIf="title" mat-dialog-title>{{ title | translate }}</h1>
+<h1 mat-dialog-title>{{ (title | translate) || ('Loading' | translate) }}</h1>
 <mat-dialog-content class="job-dialog">
   <div *ngIf="showRealtimeLogs && realtimeLogs" class="logs-container">
     <h5>{{ 'Logs' | translate }}</h5>
@@ -83,7 +83,7 @@
       mat-dialog-close="close"
       ixTest="close"
     >
-      <ix-icon name="remove"></ix-icon>
+      <ix-icon name="close"></ix-icon>
     </button>
   </ng-template>
 </div>

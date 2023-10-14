@@ -132,7 +132,7 @@ export class DialogService {
       title?: string;
       description?: string;
       showRealtimeLogs?: boolean;
-    } = null,
+    } = {},
   ): JobProgressDialogRef {
     const jobProgressDialog: JobProgressDialog = new JobProgressDialog();
 
