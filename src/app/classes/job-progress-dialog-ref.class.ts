@@ -26,4 +26,8 @@ export class JobProgressDialogRef {
   onProgressUpdate(): Observable<JobProgress> {
     return this.jobProgressDialog.onProgress$;
   }
+
+  onClose(): Observable<unknown> {
+    return this.jobProgressDialog.matDialogRef.afterClosed();
+  }
 }
