@@ -276,10 +276,11 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   start(name: string): void {
     const jobStarter$ = this.ws.job('chart.release.scale', [name, { replica_count: 1 }]);
     const dialogRef = this.dialogService.jobProgress(
-      jobStarter$,
       {
+        job$: jobStarter$,
         title: 'Test starting job',
         description: 'Test description',
+        showRealtimeLogs: false,
       },
     );
     dialogRef.onSuccess().pipe(untilDestroyed(this)).subscribe({

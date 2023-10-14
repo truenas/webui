@@ -79,11 +79,18 @@ export class JobProgressDialogComponent implements OnInit, AfterViewChecked {
     ).subscribe({
       next: (job) => {
         this.job = job;
+        if (!this.title) {
+          this.title = this.job.method;
+        }
+        if (!this.description) {
+          this.description = this.job.description;
+        }
         this.showAbortButton = job.abortable;
         if (
           this.data.showRealtimeLogs
           && this.job.logs_path
-          && !this.realtimeLogsSubscribed) {
+          && !this.realtimeLogsSubscribed
+        ) {
           logsSubscription = this.getRealtimeLogs();
         }
         if (job.progress && !this.data.showRealtimeLogs) {
