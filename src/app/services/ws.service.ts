@@ -73,7 +73,7 @@ export class WebSocketService {
             takeWhile((job) => job.state !== JobState.Success, true),
             switchMap((job) => {
               if (job.state === JobState.Failed) {
-                return throwError(() => job.error);
+                return throwError(() => job);
               }
               return of(job);
             }),

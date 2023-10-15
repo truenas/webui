@@ -1,6 +1,7 @@
 import { AfterViewChecked, ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import { Observable, Subscription, map } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
@@ -61,6 +62,7 @@ export class JobProgressDialogComponent implements OnInit, AfterViewChecked {
     private dialogRef: MatDialogRef<JobProgressDialogComponent, MatDialogConfig>,
     @Inject(MAT_DIALOG_DATA) public data: JobProgressDialogConfig,
     private ws: WebSocketService,
+    private translate: TranslateService,
     private cdr: ChangeDetectorRef,
   ) { }
 
@@ -110,6 +112,8 @@ export class JobProgressDialogComponent implements OnInit, AfterViewChecked {
       },
       error: (job: Job) => {
         this.job = job;
+        this.title = this.translate.instant('Job {method} Failed', { method: '\'' + this.job.method + '\'' });
+        this.description = this.job.error;
         this.data.callbacks.onFailure(this.job);
         this.cdr.markForCheck();
       },

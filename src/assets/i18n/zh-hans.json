@@ -210,6 +210,7 @@
   "It is not recommended to create a pool with VDEVs containing different numbers of disks. Continue?": "",
   "It is not recommended to extend a pool with one or more VDEVs containing different numbers of disks. Continue?": "",
   "Items per page": "",
+  "Job {method} Failed": "",
   "KMIP": "",
   "LLDP": "",
   "Last Resilver": "",
