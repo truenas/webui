@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
+import { uniqBy } from 'lodash';
 import { EMPTY, Observable } from 'rxjs';
 import {
   catchError, switchMap, tap,
@@ -30,7 +31,7 @@ export class DatasetTreeStore extends ComponentStore<DatasetTreeState> {
   readonly isLoading$ = this.select((state) => state.isLoading);
   // TODO
   readonly error$ = this.select((state) => state.error);
-  readonly datasets$ = this.select((state) => state.datasets);
+  readonly datasets$ = this.select((state) => uniqBy(state.datasets, 'mountpoint'));
   readonly selectedBranch$ = this.select((state) => {
     if (!state.selectedDatasetId) {
       return null;
