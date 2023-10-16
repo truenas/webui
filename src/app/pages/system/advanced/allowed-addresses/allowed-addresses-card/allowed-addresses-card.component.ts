@@ -62,7 +62,6 @@ export class AllowedAddressesCardComponent implements OnInit {
       untilDestroyed(this),
     );
     this.dataProvider = new AsyncDataProvider<AllowedAddressRow>(config$);
-    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => this.cdr.markForCheck());
   }
 
   async onConfigure(): Promise<void> {

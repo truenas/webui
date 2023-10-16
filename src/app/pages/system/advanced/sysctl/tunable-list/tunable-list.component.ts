@@ -76,7 +76,6 @@ export class TunableListComponent implements OnInit {
       untilDestroyed(this),
     );
     this.dataProvider = new AsyncDataProvider<Tunable>(tunables$);
-    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => this.cdr.markForCheck());
     this.setDefaultSort();
   }
 

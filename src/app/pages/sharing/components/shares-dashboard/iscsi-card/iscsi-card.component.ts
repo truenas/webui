@@ -61,7 +61,6 @@ export class IscsiCardComponent implements OnInit {
       untilDestroyed(this),
     );
     this.dataProvider = new AsyncDataProvider<IscsiTarget>(iscsiShares$);
-    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => this.cdr.markForCheck());
   }
 
   openForm(row?: IscsiTarget, openWizard?: boolean): void {

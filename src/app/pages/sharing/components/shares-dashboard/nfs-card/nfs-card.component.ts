@@ -71,7 +71,6 @@ export class NfsCardComponent implements OnInit {
       untilDestroyed(this),
     );
     this.dataProvider = new AsyncDataProvider<NfsShare>(nfsShares$);
-    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => this.cdr.markForCheck());
   }
 
   openForm(row?: NfsShare): void {

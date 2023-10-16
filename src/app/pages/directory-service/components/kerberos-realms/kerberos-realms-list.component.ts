@@ -115,7 +115,6 @@ export default class KerberosRealmsListComponent implements OnInit {
       untilDestroyed(this),
     );
     this.dataProvider = new AsyncDataProvider<KerberosRealmRow>(kerberosRealsm$);
-    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => this.cdr.markForCheck());
     this.setDefaultSort();
   }
 

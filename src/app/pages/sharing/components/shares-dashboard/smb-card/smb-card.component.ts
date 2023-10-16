@@ -102,7 +102,6 @@ export class SmbCardComponent implements OnInit, OnChanges {
       untilDestroyed(this),
     );
     this.dataProvider = new AsyncDataProvider<SmbShare>(smbShares$);
-    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => this.cdr.markForCheck());
   }
 
   openForm(row?: SmbShare): void {

@@ -79,7 +79,6 @@ export class SmartTaskCardComponent implements OnInit {
       untilDestroyed(this),
     );
     this.dataProvider = new AsyncDataProvider<SmartTestTaskUi>(smartTasks$);
-    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => this.cdr.markForCheck());
   }
 
   getSmartTasks(): void {

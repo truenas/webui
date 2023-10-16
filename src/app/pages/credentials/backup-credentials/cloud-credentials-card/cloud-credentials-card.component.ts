@@ -1,11 +1,10 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { switchMap, filter, tap,
 } from 'rxjs';
-import { EmptyType } from 'app/enums/empty-type.enum';
 import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
 import { templateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component';
@@ -45,13 +44,10 @@ export class CloudCredentialsCardComponent implements OnInit {
     templateColumn(),
   ]);
 
-  readonly EmptyType = EmptyType;
-
   constructor(
     private ws: WebSocketService,
     private slideInService: IxSlideInService,
     private translate: TranslateService,
-    private cdr: ChangeDetectorRef,
     protected emptyService: EmptyService,
     private dialog: DialogService,
     private cloudCredentialService: CloudCredentialService,
@@ -63,7 +59,6 @@ export class CloudCredentialsCardComponent implements OnInit {
       untilDestroyed(this),
     );
     this.dataProvider = new AsyncDataProvider<CloudsyncCredential>(credentials$);
-    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => this.cdr.markForCheck());
     this.setDefaultSort();
 
     this.getProviders();

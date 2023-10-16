@@ -87,7 +87,6 @@ export class CertificateAuthorityListComponent implements OnInit {
       untilDestroyed(this),
     );
     this.dataProvider = new AsyncDataProvider<CertificateAuthority>(authorities$);
-    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => this.cdr.markForCheck());
     this.setDefaultSort();
   }
 

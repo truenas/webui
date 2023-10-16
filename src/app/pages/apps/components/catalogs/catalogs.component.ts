@@ -1,11 +1,10 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, tap } from 'rxjs/operators';
-import { EmptyType } from 'app/enums/empty-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/apps/apps';
 import { Catalog } from 'app/interfaces/catalog.interface';
@@ -61,13 +60,10 @@ export class CatalogsComponent implements OnInit {
     }),
   ]);
 
-  readonly EmptyType = EmptyType;
-
   constructor(
     private matDialog: MatDialog,
     private dialogService: DialogService,
     private ws: WebSocketService,
-    private cdr: ChangeDetectorRef,
     private slideInService: IxSlideInService,
     private translate: TranslateService,
     protected emptyService: EmptyService,
@@ -79,7 +75,6 @@ export class CatalogsComponent implements OnInit {
       untilDestroyed(this),
     );
     this.dataProvider = new AsyncDataProvider<Catalog>(catalogs$);
-    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => this.cdr.markForCheck());
     this.setDefaultSort();
 
     this.listenForCatalogSyncJobs();

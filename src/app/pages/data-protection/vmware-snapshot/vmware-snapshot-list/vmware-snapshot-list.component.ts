@@ -65,7 +65,6 @@ export class VmwareSnapshotListComponent implements OnInit {
       untilDestroyed(this),
     );
     this.dataProvider = new AsyncDataProvider<VmwareSnapshot>(snapshots$);
-    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => this.cdr.markForCheck());
   }
 
   onListFiltered(query: string): void {

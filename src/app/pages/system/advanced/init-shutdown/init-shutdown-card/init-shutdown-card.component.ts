@@ -74,7 +74,6 @@ export class InitShutdownCardComponent implements OnInit {
       untilDestroyed(this),
     );
     this.dataProvider = new AsyncDataProvider<InitShutdownScript>(scripts$);
-    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => this.cdr.markForCheck());
   }
 
   onAdd(): void {

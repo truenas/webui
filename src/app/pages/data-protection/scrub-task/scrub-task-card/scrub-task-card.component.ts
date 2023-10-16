@@ -72,7 +72,6 @@ export class ScrubTaskCardComponent implements OnInit {
       untilDestroyed(this),
     );
     this.dataProvider = new AsyncDataProvider<ScrubTaskUi>(scrubTasks$);
-    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => this.cdr.markForCheck());
   }
 
   getScrubTasks(): void {

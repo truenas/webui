@@ -99,7 +99,6 @@ export class CloudSyncTaskCardComponent implements OnInit {
       untilDestroyed(this),
     );
     this.dataProvider = new AsyncDataProvider<CloudSyncTaskUi>(cloudsyncTasks$);
-    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => this.cdr.markForCheck());
   }
 
   getCloudSyncTasks(): void {

@@ -93,7 +93,6 @@ export class ReplicationTaskCardComponent implements OnInit {
       untilDestroyed(this),
     );
     this.dataProvider = new AsyncDataProvider<ReplicationTaskUi>(replicationTasks$);
-    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => this.cdr.markForCheck());
   }
 
   getReplicationTasks(): void {

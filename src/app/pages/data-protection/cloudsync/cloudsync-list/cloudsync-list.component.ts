@@ -141,7 +141,6 @@ export class CloudsyncListComponent implements OnInit, AfterViewInit {
       untilDestroyed(this),
     );
     this.dataProvider = new AsyncDataProvider<CloudSyncTaskUi>(cloudSyncTasks$);
-    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => this.cdr.markForCheck());
   }
 
   ngAfterViewInit(): void {

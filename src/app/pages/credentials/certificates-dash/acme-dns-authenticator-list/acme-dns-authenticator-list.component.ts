@@ -56,7 +56,6 @@ export class AcmeDnsAuthenticatorListComponent implements OnInit {
       untilDestroyed(this),
     );
     this.dataProvider = new AsyncDataProvider<DnsAuthenticator>(authenticators$);
-    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => this.cdr.markForCheck());
     this.setDefaultSort();
   }
 
