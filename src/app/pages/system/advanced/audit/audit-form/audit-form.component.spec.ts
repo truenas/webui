@@ -56,22 +56,22 @@ describe('AuditFormComponent', () => {
 
     expect(ws.call).toHaveBeenCalledWith('audit.config');
     expect(values).toEqual({
-      Retention: '30',
-      Reservation: '100',
-      Quota: '100',
-      'Quota Fill Warning': '80',
-      'Quota Fill Critical': '95',
+      'Retention (in days)': '30',
+      'Reservation (in GiB)': '100',
+      'Quota (in GiB)': '100',
+      'Quota Fill Warning (in %)': '80',
+      'Quota Fill Critical (in %)': '95',
     });
   });
 
   it('saves both advanced config and dataset config when form is submitted', async () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
-      Retention: 29,
-      Reservation: 99,
-      Quota: 99,
-      'Quota Fill Warning': 79,
-      'Quota Fill Critical': 94,
+      'Retention (in days)': 29,
+      'Reservation (in GiB)': 99,
+      'Quota (in GiB)': 99,
+      'Quota Fill Warning (in %)': 79,
+      'Quota Fill Critical (in %)': 94,
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
