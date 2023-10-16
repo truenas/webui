@@ -117,18 +117,22 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
     return lastValueFrom(
       this.vmService.getVirtualizationDetails().pipe(
         map((virtualization) => {
+          virtualization.error ||= '';
           this.virtualizationDetails = virtualization;
           this.hasVirtualizationSupport = virtualization.supported;
           this.canAdd = virtualization.supported;
           return true;
         }),
         catchError(() => {
-          this.canAdd = true;
-          this.hasVirtualizationSupport = true;
-          return of(true);
+          return of(false);
         }),
       ),
     );
+  }
+
+  prerequisiteFailedHandler(entity: EntityTableComponent<VirtualMachineRow>): void {
+    entity.configureEmptyTable(EmptyType.Errors, '');
+    entity.changeDetectorRef.detectChanges();
   }
 
   afterInit(entityList: EntityTableComponent<VirtualMachineRow>): void {
