@@ -17,7 +17,6 @@ import { AuditConfig } from 'app/interfaces/audit.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -25,7 +24,7 @@ import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
 
-@UntilDestroy({ arrayName: 'subscriptions' })
+@UntilDestroy()
 @Component({
   templateUrl: 'audit-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -51,7 +50,6 @@ export class AuditFormComponent implements OnInit {
   };
 
   constructor(
-    public iecFormatter: IxFormatterService,
     private fb: FormBuilder,
     private ws: WebSocketService,
     private slideInRef: IxSlideInRef<AuditFormComponent>,

@@ -10,7 +10,7 @@
         <ix-input
           formControlName="retention"
           type="number"
-          [label]="'Retention' | translate"
+          [label]="'Retention (in days)' | translate"
           [tooltip]="tooltips.retention | translate"
           [required]="true"
         ></ix-input>
@@ -18,7 +18,7 @@
         <ix-input
           formControlName="reservation"
           type="number"
-          [label]="'Reservation' | translate"
+          [label]="'Reservation (in GiB)' | translate"
           [tooltip]="tooltips.reservation | translate"
           [required]="true"
         ></ix-input>
@@ -26,7 +26,7 @@
         <ix-input
           formControlName="quota"
           type="number"
-          [label]="'Quota' | translate"
+          [label]="'Quota (in GiB)' | translate"
           [tooltip]="tooltips.quota | translate"
           [required]="true"
         ></ix-input>
@@ -34,7 +34,7 @@
         <ix-input
           formControlName="quota_fill_warning"
           type="number"
-          [label]="'Quota Fill Warning' | translate"
+          [label]="'Quota Fill Warning (in %)' | translate"
           [tooltip]="tooltips.quota_fill_warning | translate"
           [required]="true"
         ></ix-input>
@@ -42,7 +42,7 @@
         <ix-input
           formControlName="quota_fill_critical"
           type="number"
-          [label]="'Quota Fill Critical' | translate"
+          [label]="'Quota Fill Critical (in %)' | translate"
           [tooltip]="tooltips.quota_fill_critical | translate"
           [required]="true"
         ></ix-input>
