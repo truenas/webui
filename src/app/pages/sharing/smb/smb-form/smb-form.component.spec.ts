@@ -531,6 +531,11 @@ describe('SmbFormComponent', () => {
         durablehandle: true,
         fsrvp: false,
         timemachine_quota: 0,
+        audit: {
+          enable: true,
+          watch_list: [],
+          ignore_list: [],
+        },
       }]);
 
       const sharePath = await (await loader.getHarness(
