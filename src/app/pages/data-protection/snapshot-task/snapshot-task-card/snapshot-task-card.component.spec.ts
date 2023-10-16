@@ -9,7 +9,6 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
-import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
@@ -67,7 +66,6 @@ describe('SnapshotTaskCardComponent', () => {
     component: SnapshotTaskCardComponent,
     imports: [
       AppLoaderModule,
-      EntityModule,
       IxTable2Module,
     ],
     providers: [

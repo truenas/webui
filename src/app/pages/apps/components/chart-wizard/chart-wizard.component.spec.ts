@@ -351,6 +351,7 @@ describe('ChartWizardComponent', () => {
         open: jest.fn(() => mockEntityJobComponentRef),
       }),
       mockProvider(IxSlideInRef),
+      mockProvider(Router),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });

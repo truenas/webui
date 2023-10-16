@@ -7,7 +7,6 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
@@ -45,7 +44,7 @@ describe('SessionsCardComponent', () => {
     }));
   const createComponent = createComponentFactory({
     component: SessionsCardComponent,
-    imports: [AppLoaderModule, EntityModule, IxTable2Module, FakeFormatDateTimePipe],
+    imports: [AppLoaderModule, IxTable2Module, FakeFormatDateTimePipe],
     providers: [
       mockWebsocket([
         mockCall('auth.sessions', sessions),

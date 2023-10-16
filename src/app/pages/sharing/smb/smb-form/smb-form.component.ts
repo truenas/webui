@@ -33,6 +33,7 @@ import {
   SmbShare,
 } from 'app/interfaces/smb-share.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { ChipsProvider } from 'app/modules/ix-forms/components/ix-chips/chips-provider';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -47,6 +48,7 @@ import { RestartSmbDialogComponent } from 'app/pages/sharing/smb/smb-form/restar
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
+import { UserService } from 'app/services/user.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -60,6 +62,12 @@ export class SmbFormComponent implements OnInit {
   namesInUse: string[] = [];
   readonly helptextSharingSmb = helptextSharingSmb;
   private wasStripAclWarningShown = false;
+
+  groupProvider: ChipsProvider = (query) => {
+    return this.userService.groupQueryDsCache(query).pipe(
+      map((groups) => groups.map((group) => group.group)),
+    );
+  };
 
   title: string = helptextSharingSmb.formTitleAdd;
 
@@ -161,6 +169,11 @@ export class SmbFormComponent implements OnInit {
     durablehandle: [false],
     fsrvp: [false],
     path_suffix: [''],
+    audit: this.formBuilder.group({
+      enable: [false],
+      watch_list: [[] as string[]],
+      ignore_list: [[] as string[]],
+    }),
   });
 
   constructor(
@@ -173,6 +186,7 @@ export class SmbFormComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     private router: Router,
+    private userService: UserService,
     protected loader: AppLoaderService,
     private formErrorHandler: FormErrorHandlerService,
     private filesystemService: FilesystemService,
@@ -263,6 +277,7 @@ export class SmbFormComponent implements OnInit {
     if (pathControl.value && (!nameControl.value || !nameControl.dirty)) {
       const name = pathControl.value.split('/').pop();
       nameControl.setValue(name);
+      nameControl.markAsTouched();
     }
     this.cdr.markForCheck();
   }
