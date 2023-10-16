@@ -3,13 +3,14 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { switchMap, from, filter } from 'rxjs';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
-import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
 import { templateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import {
   yesNoColumn,
 } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
 import { createTable } from 'app/modules/ix-table2/utils';
+import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import {
@@ -30,7 +31,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InitShutdownCardComponent implements OnInit {
-  dataProvider = new ArrayDataProvider<InitShutdownScript>();
+  dataProvider: AsyncDataProvider<InitShutdownScript>;
 
   columns = createTable<InitShutdownScript>([
     textColumn({
@@ -56,8 +57,6 @@ export class InitShutdownCardComponent implements OnInit {
     templateColumn(),
   ]);
 
-  isLoading = false;
-
   constructor(
     private slideInService: IxSlideInService,
     private translate: TranslateService,
@@ -67,10 +66,15 @@ export class InitShutdownCardComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
     private advancedSettings: AdvancedSettingsService,
+    protected emptyService: EmptyService,
   ) {}
 
   ngOnInit(): void {
-    this.loadScripts();
+    const scripts$ = this.ws.call('initshutdownscript.query').pipe(
+      untilDestroyed(this),
+    );
+    this.dataProvider = new AsyncDataProvider<InitShutdownScript>(scripts$);
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => this.cdr.markForCheck());
   }
 
   onAdd(): void {
@@ -78,14 +82,7 @@ export class InitShutdownCardComponent implements OnInit {
   }
 
   loadScripts(): void {
-    this.isLoading = true;
-    this.ws.call('initshutdownscript.query')
-      .pipe(this.errorHandler.catchError(), untilDestroyed(this))
-      .subscribe((scripts) => {
-        this.dataProvider.setRows(scripts);
-        this.isLoading = false;
-        this.cdr.markForCheck();
-      });
+    this.dataProvider.refresh();
   }
 
   onDelete(row: InitShutdownScript): void {

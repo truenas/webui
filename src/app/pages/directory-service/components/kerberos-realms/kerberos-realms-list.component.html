@@ -21,7 +21,7 @@
   </mat-toolbar>
   <ix-table2
     [ix-table2-empty]="!dataProvider.rows.length"
-    [emptyConfig]="emptyService.defaultEmptyConfig(emptyType$ | async)"
+    [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
   >
     <thead
       ix-table-head
@@ -32,6 +32,7 @@
       ix-table-body
       [columns]="columns"
       [dataProvider]="dataProvider"
+      [isLoading]="dataProvider.isLoading$ | async"
     >
     </tbody>
   </ix-table2>

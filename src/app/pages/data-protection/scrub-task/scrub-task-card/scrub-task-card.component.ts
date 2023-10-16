@@ -1,15 +1,16 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, switchMap } from 'rxjs';
+import { filter, map, switchMap } from 'rxjs';
 import { ScrubTaskUi } from 'app/interfaces/scrub-task.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
 import { relativeDateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
 import { templateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { toggleColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
 import { createTable } from 'app/modules/ix-table2/utils';
+import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { ScrubTaskFormComponent } from 'app/pages/data-protection/scrub-task/scrub-task-form/scrub-task-form.component';
 import { DialogService } from 'app/services/dialog.service';
@@ -26,8 +27,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ScrubTaskCardComponent implements OnInit {
-  dataProvider = new ArrayDataProvider<ScrubTaskUi>();
-  isLoading = false;
+  dataProvider: AsyncDataProvider<ScrubTaskUi>;
 
   columns = createTable<ScrubTaskUi>([
     textColumn({
@@ -63,21 +63,20 @@ export class ScrubTaskCardComponent implements OnInit {
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
     private taskService: TaskService,
+    protected emptyService: EmptyService,
   ) {}
 
   ngOnInit(): void {
-    this.getScrubTasks();
+    const scrubTasks$ = this.ws.call('pool.scrub.query').pipe(
+      map((cloudSyncTasks) => cloudSyncTasks as ScrubTaskUi[]),
+      untilDestroyed(this),
+    );
+    this.dataProvider = new AsyncDataProvider<ScrubTaskUi>(scrubTasks$);
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => this.cdr.markForCheck());
   }
 
   getScrubTasks(): void {
-    this.isLoading = true;
-    this.ws.call('pool.scrub.query').pipe(
-      untilDestroyed(this),
-    ).subscribe((scrubTasks: ScrubTaskUi[]) => {
-      this.dataProvider.setRows(scrubTasks);
-      this.isLoading = false;
-      this.cdr.markForCheck();
-    });
+    this.dataProvider.refresh();
   }
 
   doDelete(scrubTask: ScrubTaskUi): void {

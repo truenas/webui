@@ -1,15 +1,16 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, switchMap } from 'rxjs';
+import { filter, map, switchMap, tap } from 'rxjs';
 import helptext_smart from 'app/helptext/data-protection/smart/smart';
 import { SmartTestTaskUi } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
-import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
 import { relativeDateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
 import { templateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { createTable } from 'app/modules/ix-table2/utils';
+import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { SmartTaskFormComponent } from 'app/pages/data-protection/smart-task/smart-task-form/smart-task-form.component';
 import { DialogService } from 'app/services/dialog.service';
@@ -28,8 +29,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class SmartTaskCardComponent implements OnInit {
   smartTasks: SmartTestTaskUi[] = [];
-  dataProvider = new ArrayDataProvider<SmartTestTaskUi>();
-  isLoading = false;
+  dataProvider: AsyncDataProvider<SmartTestTaskUi>;
   disks: Disk[] = [];
 
   columns = createTable<SmartTestTaskUi>([
@@ -65,6 +65,7 @@ export class SmartTaskCardComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private taskService: TaskService,
     private storageService: StorageService,
+    protected emptyService: EmptyService,
   ) {
     this.storageService.listDisks().pipe(filter(Boolean), untilDestroyed(this)).subscribe((disks: Disk[]) => {
       this.disks = disks;
@@ -72,19 +73,17 @@ export class SmartTaskCardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getSmartTasks();
+    const smartTasks$ = this.ws.call('smart.test.query').pipe(
+      map((smartTasks: SmartTestTaskUi[]) => this.transformSmartTasks(smartTasks)),
+      tap((smartTasks) => this.smartTasks = smartTasks),
+      untilDestroyed(this),
+    );
+    this.dataProvider = new AsyncDataProvider<SmartTestTaskUi>(smartTasks$);
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => this.cdr.markForCheck());
   }
 
   getSmartTasks(): void {
-    this.isLoading = true;
-    this.ws.call('smart.test.query').pipe(untilDestroyed(this))
-      .subscribe((smartTasks: SmartTestTaskUi[]) => {
-        const transformedSmartTasks = this.transformSmartTasks(smartTasks);
-        this.smartTasks = transformedSmartTasks;
-        this.dataProvider.setRows(transformedSmartTasks);
-        this.isLoading = false;
-        this.cdr.markForCheck();
-      });
+    this.dataProvider.refresh();
   }
 
   doDelete(smartTask: SmartTestTaskUi): void {

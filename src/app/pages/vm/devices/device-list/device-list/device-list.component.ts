@@ -3,11 +3,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { BehaviorSubject, combineLatest, filter, Observable, of, switchMap } from 'rxjs';
-import { EmptyType } from 'app/enums/empty-type.enum';
+import { filter, tap } from 'rxjs';
 import { vmDeviceTypeLabels } from 'app/enums/vm.enum';
 import { VmDevice } from 'app/interfaces/vm-device.interface';
-import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
 import {
   actionsColumn,
 } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
@@ -31,7 +30,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DeviceListComponent implements OnInit {
-  dataProvider = new ArrayDataProvider<VmDevice>();
+  dataProvider: AsyncDataProvider<VmDevice>;
   filterString = '';
   devices: VmDevice[] = [];
 
@@ -58,28 +57,6 @@ export class DeviceListComponent implements OnInit {
     actionsColumn({}),
   ]);
 
-  isLoading$ = new BehaviorSubject<boolean>(true);
-  hasNoData$ = new BehaviorSubject<boolean>(false);
-  hasError$ = new BehaviorSubject<boolean>(false);
-  emptyType$: Observable<EmptyType> = combineLatest([this.isLoading$, this.hasNoData$, this.hasError$]).pipe(
-    switchMap(([isLoading, isNoData, isError]) => {
-      if (isLoading) {
-        return of(EmptyType.Loading);
-      }
-      if (isError) {
-        return of(EmptyType.Errors);
-      }
-      if (isNoData) {
-        return of(EmptyType.NoPageData);
-      }
-      return of(EmptyType.NoSearchResults);
-    }),
-  );
-
-  get emptyConfig(): EmptyService {
-    return this.emptyConfigService;
-  }
-
   get vmId(): number {
     return Number(this.route.snapshot.params['pk']);
   }
@@ -89,37 +66,23 @@ export class DeviceListComponent implements OnInit {
     private translate: TranslateService,
     private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
-    private emptyConfigService: EmptyService,
+    protected emptyService: EmptyService,
     private matDialog: MatDialog,
     private route: ActivatedRoute,
   ) {}
 
   ngOnInit(): void {
-    this.loadDevices();
+    const devices$ = this.ws.call('vm.device.query', [[['vm', '=', this.vmId]]]).pipe(
+      tap((devices) => this.devices = devices),
+      untilDestroyed(this),
+    );
+    this.dataProvider = new AsyncDataProvider<VmDevice>(devices$);
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => this.cdr.markForCheck());
+    this.setDefaultSort();
   }
 
   loadDevices(): void {
-    this.isLoading$.next(true);
-    this.hasError$.next(false);
-
-    this.ws
-      .call('vm.device.query', [[['vm', '=', this.vmId]]])
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: (devices) => {
-          this.devices = devices;
-          this.hasNoData$.next(!devices.length);
-          this.dataProvider.setRows(devices);
-          this.isLoading$.next(false);
-          this.setDefaultSort();
-          this.cdr.markForCheck();
-        },
-        error: () => {
-          this.isLoading$.next(false);
-          this.hasError$.next(true);
-          this.cdr.markForCheck();
-        },
-      });
+    this.dataProvider.refresh();
   }
 
   onAdd(): void {

@@ -4,20 +4,21 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { catchError, EMPTY, filter, switchMap, tap } from 'rxjs';
+import { catchError, EMPTY, filter, map, switchMap, tap } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import helptext from 'app/helptext/data-protection/data-protection-dashboard/data-protection-dashboard';
 import { Job } from 'app/interfaces/job.interface';
 import { ReplicationTaskUi } from 'app/interfaces/replication-task.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
 import { relativeDateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
 import { stateButtonColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
 import { templateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { toggleColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
 import { createTable } from 'app/modules/ix-table2/utils';
+import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
@@ -38,8 +39,7 @@ import { AppState } from 'app/store';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ReplicationTaskCardComponent implements OnInit {
-  dataProvider = new ArrayDataProvider<ReplicationTaskUi>();
-  isLoading = false;
+  dataProvider: AsyncDataProvider<ReplicationTaskUi>;
   jobStates = new Map<number, string>();
   readonly jobState = JobState;
 
@@ -84,22 +84,20 @@ export class ReplicationTaskCardComponent implements OnInit {
     private snackbar: SnackbarService,
     private matDialog: MatDialog,
     private storage: StorageService,
+    protected emptyService: EmptyService,
   ) {}
 
   ngOnInit(): void {
-    this.getReplicationTasks();
+    const replicationTasks$ = this.ws.call('replication.query', [[], { extra: { check_dataset_encryption_keys: true } }]).pipe(
+      map((replicationTasks: ReplicationTaskUi[]) => this.transformReplicationTasks(replicationTasks)),
+      untilDestroyed(this),
+    );
+    this.dataProvider = new AsyncDataProvider<ReplicationTaskUi>(replicationTasks$);
+    this.dataProvider.emptyType$.pipe(untilDestroyed(this)).subscribe(() => this.cdr.markForCheck());
   }
 
   getReplicationTasks(): void {
-    this.isLoading = true;
-    this.ws.call('replication.query', [[], { extra: { check_dataset_encryption_keys: true } }]).pipe(
-      untilDestroyed(this),
-    ).subscribe((replicationTasks: ReplicationTaskUi[]) => {
-      const transformedReplicationTasks = this.transformReplicationTasks(replicationTasks);
-      this.dataProvider.setRows(transformedReplicationTasks);
-      this.isLoading = false;
-      this.cdr.markForCheck();
-    });
+    this.dataProvider.refresh();
   }
 
   doDelete(replicationTask: ReplicationTaskUi): void {
