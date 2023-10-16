@@ -2,6 +2,7 @@
   "": "",
   "\n              It looks like your session has been inactive for more than {lifetime} seconds.<br>\n              For security reasons we will log you out at {time}.\n            ": "",
   "(Optional)": "",
+  "(Session will be extended automatically)": "",
   ", ": "",
   "...": "",
   "A stripe log VDEV may result in data loss if it fails combined with a power outage.": "",

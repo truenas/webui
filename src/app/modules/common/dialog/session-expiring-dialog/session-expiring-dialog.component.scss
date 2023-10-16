@@ -19,5 +19,7 @@ div.message-content {
 }
 
 b {
+  color: var(--primary);
   cursor: pointer;
+  text-decoration: underline;
 }
