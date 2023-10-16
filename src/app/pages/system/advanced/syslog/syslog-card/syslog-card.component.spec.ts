@@ -58,7 +58,7 @@ describe('SyslogCardComponent', () => {
       'Syslog Level: Alert',
       'Syslog Server: 127.1.2.3',
       'Syslog Transport: TCP',
-      'Include Audit Logs: false',
+      'Include Audit Logs: No',
     ]);
   });
 
