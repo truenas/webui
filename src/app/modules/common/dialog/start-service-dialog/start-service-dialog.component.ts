@@ -28,6 +28,7 @@ export interface StartServiceDialogResult {
 })
 export class StartServiceDialogComponent implements OnInit {
   startAutomaticallyControl = new FormControl(true);
+  protected isLoading = false;
   private service: Service;
 
   get serviceHumanName(): string {
@@ -66,6 +67,7 @@ export class StartServiceDialogComponent implements OnInit {
   }
 
   onSubmit(): void {
+    this.isLoading = true;
     const requests: Observable<boolean | number>[] = [];
     const result: StartServiceDialogResult = {
       start: true,
@@ -96,14 +98,16 @@ export class StartServiceDialogComponent implements OnInit {
               this.translate.instant('The {service} service is running.', { service: this.serviceHumanName }),
             );
           }
+          this.isLoading = false;
           this.dialogRef.close(result);
         },
         error: (error: WebsocketError) => {
+          this.isLoading = false;
+          this.dialogService.error(this.errorHandler.parseWsError(error));
           this.dialogRef.close({
             start: false,
             startAutomatically: false,
           });
-          this.dialogService.error(this.errorHandler.parseWsError(error));
         },
       });
   }

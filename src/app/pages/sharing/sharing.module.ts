@@ -41,7 +41,6 @@ import { UserService } from 'app/services/user.service';
 import { ServiceExtraActionsComponent } from './components/shares-dashboard/service-extra-actions/service-extra-actions.component';
 import { ServiceStateButtonComponent } from './components/shares-dashboard/service-state-button/service-state-button.component';
 import { SharesDashboardComponent } from './components/shares-dashboard/shares-dashboard.component';
-import { StartServiceDialogComponent } from './components/start-service-dialog/start-service-dialog.component';
 import { AssociatedTargetFormComponent } from './iscsi/associated-target/associated-target-form/associated-target-form.component';
 import { AssociatedTargetListComponent } from './iscsi/associated-target/associated-target-list/associated-target-list.component';
 import { ExtentFormComponent } from './iscsi/extent/extent-form/extent-form.component';
@@ -117,7 +116,6 @@ import { SmbListComponent } from './smb/smb-list/smb-list.component';
     AssociatedTargetListComponent,
     AssociatedTargetFormComponent,
     DeleteExtentDialogComponent,
-    StartServiceDialogComponent,
     SmbCardComponent,
     NfsCardComponent,
     IscsiCardComponent,

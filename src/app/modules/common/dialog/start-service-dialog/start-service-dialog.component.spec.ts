@@ -10,9 +10,9 @@ import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.u
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
+import { StartServiceDialogComponent, StartServiceDialogResult } from 'app/modules/common/dialog/start-service-dialog/start-service-dialog.component';
 import { IxSlideToggleHarness } from 'app/modules/ix-forms/components/ix-slide-toggle/ix-slide-toggle.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
-import { StartServiceDialogComponent, StartServiceDialogResult } from 'app/pages/sharing/components/start-service-dialog/start-service-dialog.component';
 import { WebSocketService } from 'app/services/ws.service';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectServices } from 'app/store/services/services.selectors';

@@ -5,7 +5,7 @@ import { Store } from '@ngrx/store';
 import { mergeMap, map, switchMap, filter, EMPTY, catchError, of, distinctUntilChanged } from 'rxjs';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
-import { StartServiceDialogComponent, StartServiceDialogResult } from 'app/pages/sharing/components/start-service-dialog/start-service-dialog.component';
+import { StartServiceDialogComponent, StartServiceDialogResult } from 'app/modules/common/dialog/start-service-dialog/start-service-dialog.component';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
