@@ -10,11 +10,15 @@
     >{{ 'Show Events' | translate }}</button>
   </mat-toolbar-row>
 
-  <ix-table2>
+  <ix-table2
+    [ix-table2-empty]="!dataProvider.rows.length"
+    [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
+  >
     <tbody
       ix-table-body
       [columns]="columns"
       [dataProvider]="dataProvider"
+      [isLoading]="dataProvider.isLoading$ | async"
     >
       <ng-template
         let-ipmi
