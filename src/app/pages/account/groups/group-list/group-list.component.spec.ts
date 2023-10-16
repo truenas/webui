@@ -3,13 +3,14 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { MockModule } from 'ng-mocks';
 import { CoreComponents } from 'app/core/core-components.module';
 import { Group } from 'app/interfaces/group.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
-import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxEmptyRowHarness } from 'app/modules/ix-tables/components/ix-empty-row/ix-empty-row.component.harness';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
+import { LayoutModule } from 'app/modules/layout/layout.module';
 import { GroupDetailsRowComponent } from 'app/pages/account/groups/group-details-row/group-details-row.component';
 import { GroupListComponent } from 'app/pages/account/groups/group-list/group-list.component';
 import { GroupsState } from 'app/pages/account/groups/store/group.reducer';
@@ -45,9 +46,9 @@ describe('GroupListComponent', () => {
   const createComponent = createComponentFactory({
     component: GroupListComponent,
     imports: [
-      EntityModule,
-      IxTableModule,
       CoreComponents,
+      IxTableModule,
+      MockModule(LayoutModule),
     ],
     declarations: [
       GroupDetailsRowComponent,

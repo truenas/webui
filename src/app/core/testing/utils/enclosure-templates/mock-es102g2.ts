@@ -1,7 +1,7 @@
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { MockEnclosure } from './mock-enclosure-template';
 
-export class MockEs102S extends MockEnclosure {
+export class MockEs102G2 extends MockEnclosure {
   readonly totalSlotsFront: number = 102;
   readonly totalSlotsRear: number = 0;
   readonly totalSlotsInternal: number = 0;
@@ -9,7 +9,7 @@ export class MockEs102S extends MockEnclosure {
   data = {
     id: '5000ccab05114080',
     name: 'HGST H4060-J 3010',
-    model: 'ES102S',
+    model: 'ES102G2',
     controller: false,
     elements: [
       {

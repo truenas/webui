@@ -28,6 +28,7 @@ import {
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/cloud-credentials-form.component';
 import { OauthProviderComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/oauth-provider/oauth-provider.component';
 import { BackblazeB2ProviderFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/backblaze-b2-provider-form/backblaze-b2-provider-form.component';
+import { GooglePhotosProviderFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/google-photos-provider-form/google-photos-provider-form.component';
 import {
   StorjProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/storj-provider-form/storj-provider-form.component';
@@ -115,6 +116,7 @@ import { CertificateSubjectComponent } from './certificates-dash/forms/common-st
     FtpProviderFormComponent,
     GoogleCloudProviderFormComponent,
     GoogleDriveProviderFormComponent,
+    GooglePhotosProviderFormComponent,
     HttpProviderFormComponent,
     TokenProviderFormComponent,
     MegaProviderFormComponent,

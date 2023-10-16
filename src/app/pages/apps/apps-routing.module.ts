@@ -28,7 +28,7 @@ const routes: Routes = [
       {
         path: 'installed',
         component: AppRouterOutletComponent,
-        data: { isNew: true, breadcrumb: undefined },
+        data: { breadcrumb: undefined },
         children: [
           {
             path: '',
@@ -71,7 +71,7 @@ const routes: Routes = [
       {
         path: 'available',
         component: AppRouterOutletComponent,
-        data: { isNew: true, breadcrumb: T('Discover') },
+        data: { breadcrumb: T('Discover') },
         children: [
           {
             path: 'catalogs',

@@ -15,22 +15,22 @@ import {
 import { KiB } from 'app/constants/bytes.constant';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { LinkState, NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
+import { elapsedTime } from 'app/helpers/operators/elapsed-time.operator';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { BaseNetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
 import { NetworkInterfaceUpdate, ReportingDatabaseError, ReportingNameAndId } from 'app/interfaces/reporting.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { TableService } from 'app/modules/entity/table/table.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { ResourcesUsageStore } from 'app/pages/dashboard/store/resources-usage-store.service';
 import { deepCloneState } from 'app/pages/dashboard/utils/deep-clone-state.helper';
-import { ReportsService } from 'app/pages/reports-dashboard/reports.service';
 import { DialogService } from 'app/services/dialog.service';
 import { LocaleService } from 'app/services/locale.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
+import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 interface NicInfo {
   ip: string;
@@ -75,6 +75,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
   minSizeToActiveTrafficArrowIcon = 1024;
 
   fetchDataIntervalSubscription: Subscription;
+  networkInterfaceUpdate = new Map<string, NetworkInterfaceUpdate>();
 
   availableNics: BaseNetworkInterface[] = [];
   chartOptions: ChartOptions<'line'> = {
@@ -148,10 +149,10 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
     title: this.translate.instant('Loading'),
   };
 
+  private serverTime: Date;
+
   constructor(
     private ws: WebSocketService,
-    private reportsService: ReportsService,
-    private tableService: TableService,
     public translate: TranslateService,
     private dialog: DialogService,
     private formatter: IxFormatterService,
@@ -162,9 +163,22 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
   ) {
     super(translate);
 
-    this.store$.select(selectTimezone).pipe(untilDestroyed(this)).subscribe((timezone) => {
-      this.timezone = timezone;
-    });
+    this.store$.select(selectTimezone)
+      .pipe(untilDestroyed(this))
+      .subscribe((timezone) => {
+        this.timezone = timezone;
+      });
+
+    this.store$
+      .pipe(
+        waitForSystemInfo,
+        map((systemInfo) => systemInfo.datetime.$date),
+        elapsedTime(10000),
+        untilDestroyed(this),
+      )
+      .subscribe((serverTime) => {
+        this.serverTime = new Date(serverTime);
+      });
   }
 
   ngOnInit(): void {
@@ -199,6 +213,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
         untilDestroyed(this),
       ).subscribe((usageUpdate: NetworkInterfaceUpdate) => {
         const nicName = nic.name;
+        this.networkInterfaceUpdate.set(nic.name, usageUpdate);
         if (nicName in this.nicInfoMap) {
           const nicInfo = this.nicInfoMap[nicName];
           if (usageUpdate.link_state) {
@@ -212,7 +227,6 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
             && usageUpdate.sent_bytes - nicInfo.lastSent > this.minSizeToActiveTrafficArrowIcon
           ) {
             nicInfo.lastSent = usageUpdate.sent_bytes;
-            this.tableService.updateStateInfoIcon(nicName, 'sent');
           }
 
           if (
@@ -220,7 +234,6 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
             && usageUpdate.received_bytes - nicInfo.lastReceived > this.minSizeToActiveTrafficArrowIcon
           ) {
             nicInfo.lastReceived = usageUpdate.received_bytes;
-            this.tableService.updateStateInfoIcon(nicName, 'received');
           }
         }
       });
@@ -339,7 +352,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
   }
 
   fetchReportData(): void {
-    const endDate = this.reportsService.serverTime;
+    const endDate = this.serverTime;
     const subOptions: Duration = {};
     subOptions.hours = 1;
     const startDate = sub(endDate, subOptions);

@@ -13,7 +13,6 @@ export const routes: Routes = [
         data: {
           title: 'Pool Creation Wizard',
           breadcrumb: 'Pool Creation Wizard',
-          isNew: true,
         },
       },
     ],

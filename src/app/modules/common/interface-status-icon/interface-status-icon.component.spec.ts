@@ -1,14 +1,13 @@
 import { MatTooltip } from '@angular/material/tooltip';
-import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent, MockDirective } from 'ng-mocks';
 import { KiB, MiB } from 'app/constants/bytes.constant';
 import { LinkState } from 'app/enums/network-interface.enum';
 import { NetworkInterfaceUpdate } from 'app/interfaces/reporting.interface';
-import { TableService } from 'app/modules/entity/table/table.service';
-import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import {
   InterfaceStatusIconComponent,
-} from 'app/pages/network/components/interfaces-card/interface-status-icon/interface-status-icon.component';
+} from 'app/modules/common/interface-status-icon/interface-status-icon.component';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 
 describe('InterfaceStatusIconComponent', () => {
   let spectator: Spectator<InterfaceStatusIconComponent>;
@@ -17,9 +16,6 @@ describe('InterfaceStatusIconComponent', () => {
     declarations: [
       MockComponent(IxIconComponent),
       MockDirective(MatTooltip),
-    ],
-    providers: [
-      mockProvider(TableService),
     ],
   });
 
@@ -45,6 +41,7 @@ describe('InterfaceStatusIconComponent', () => {
 
   describe('enabled', () => {
     beforeEach(() => {
+      jest.spyOn(spectator.component, 'updateStateInfoIcon');
       spectator.setInput('update', {
         link_state: LinkState.Up,
         sent_bytes: 100 * KiB,
@@ -66,9 +63,8 @@ describe('InterfaceStatusIconComponent', () => {
     });
 
     it('updates state icon to mark arrow or arrows as active on network traffic', () => {
-      const tableService = spectator.inject(TableService);
-      expect(tableService.updateStateInfoIcon).toHaveBeenCalledWith(expect.any(String), 'sent');
-      expect(tableService.updateStateInfoIcon).toHaveBeenCalledWith(expect.any(String), 'received');
+      expect(spectator.component.updateStateInfoIcon).toHaveBeenCalledWith('sent');
+      expect(spectator.component.updateStateInfoIcon).toHaveBeenCalledWith('received');
     });
   });
 });

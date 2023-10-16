@@ -3,6 +3,7 @@ import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.interface';
 
 @Component({
+  selector: 'ix-cell-date',
   templateUrl: './ix-cell-date.component.html',
 })
 export class IxCellDateComponent<T> extends ColumnComponent<T> {

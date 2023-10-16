@@ -8,10 +8,10 @@ import {
 } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { VmDeviceType } from 'app/enums/vm.enum';
+import { VmDevice, VmDiskDevice, VmRawFileDevice } from 'app/interfaces/vm-device.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { DeviceDeleteModalComponent, DeviceDeleteModalState } from 'app/pages/vm/devices/device-list/device-delete-modal/device-delete-modal.component';
+import { DeviceDeleteModalComponent } from 'app/pages/vm/devices/device-list/device-delete-modal/device-delete-modal.component';
 import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -20,7 +20,7 @@ describe('DeviceDeleteModalComponent', () => {
   let loader: HarnessLoader;
   let ws: WebSocketService;
 
-  function createComponentWithData(data: DeviceDeleteModalState): SpectatorFactory<DeviceDeleteModalComponent> {
+  function createComponentWithData(device: VmDevice): SpectatorFactory<DeviceDeleteModalComponent> {
     return createComponentFactory({
       component: DeviceDeleteModalComponent,
       imports: [
@@ -31,24 +31,21 @@ describe('DeviceDeleteModalComponent', () => {
         mockWebsocket([
           mockCall('vm.device.delete'),
         ]),
-        mockProvider(AppLoaderService),
         mockProvider(DialogService),
         mockProvider(MatDialogRef),
       ],
       componentProviders: [
-        { provide: MAT_DIALOG_DATA, useFactory: () => data },
+        { provide: MAT_DIALOG_DATA, useFactory: () => device },
       ],
     });
   }
 
   describe('for disk', () => {
     const fakeDisk = {
-      row: {
-        id: 'id',
-        dtype: VmDeviceType.Disk,
-        attributes: { path: '/path/to/zvol123' },
-      } as unknown,
-    } as DeviceDeleteModalState;
+      id: 4,
+      dtype: VmDeviceType.Disk,
+      attributes: { path: '/path/to/zvol123' },
+    } as VmDiskDevice;
 
     const createComponent = createComponentWithData(fakeDisk);
 
@@ -94,7 +91,7 @@ describe('DeviceDeleteModalComponent', () => {
             await submitButton.click();
 
             expect(ws.call).toHaveBeenCalledWith('vm.device.delete', [
-              fakeDisk.row.id,
+              fakeDisk.id,
               expectedValues,
             ]);
           });
@@ -105,11 +102,9 @@ describe('DeviceDeleteModalComponent', () => {
 
   describe('for raw file', () => {
     const fakeRawFile = {
-      row: {
-        id: 'id',
-        dtype: VmDeviceType.Raw,
-      } as unknown,
-    } as DeviceDeleteModalState;
+      id: 5,
+      dtype: VmDeviceType.Raw,
+    } as VmRawFileDevice;
 
     const createComponent = createComponentWithData(fakeRawFile);
 
@@ -169,7 +164,7 @@ describe('DeviceDeleteModalComponent', () => {
             await submitButton.click();
 
             expect(ws.call).toHaveBeenCalledWith('vm.device.delete', [
-              fakeRawFile.row.id,
+              fakeRawFile.id,
               expectedValues,
             ]);
           });
@@ -180,11 +175,9 @@ describe('DeviceDeleteModalComponent', () => {
 
   describe('for other device', () => {
     const fakeRawFile = {
-      row: {
-        id: 'id',
-        dtype: undefined,
-      } as unknown,
-    } as DeviceDeleteModalState;
+      id: 6,
+      dtype: undefined,
+    } as VmRawFileDevice;
 
     const createComponent = createComponentWithData(fakeRawFile);
 
@@ -224,7 +217,7 @@ describe('DeviceDeleteModalComponent', () => {
           await submitButton.click();
 
           expect(ws.call).toHaveBeenCalledWith('vm.device.delete', [
-            fakeRawFile.row.id,
+            fakeRawFile.id,
             expectedValues,
           ]);
         });

@@ -70,7 +70,12 @@ describe('SmbCardComponent', () => {
       EntityModule,
       IxTable2Module,
     ],
-    declarations: [MockComponents(ServiceStateButtonComponent, ServiceExtraActionsComponent)],
+    declarations: [
+      MockComponents(
+        ServiceStateButtonComponent,
+        ServiceExtraActionsComponent,
+      ),
+    ],
     providers: [
       mockWebsocket([
         mockCall('sharing.smb.query', smbShares),

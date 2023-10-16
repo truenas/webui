@@ -262,6 +262,7 @@ export class CertificateListComponent implements OnInit {
         dialogRef.componentInstance.setCall('certificate.update', [certificate.id, { revoked: true }]);
         dialogRef.componentInstance.submit();
         dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+          this.getCertificates();
           this.matDialog.closeAll();
         });
         dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((failedJob) => {
