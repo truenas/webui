@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Store } from '@ngrx/store';
 import {
-  map, startWith, switchMap,
+  map, shareReplay, startWith, switchMap,
 } from 'rxjs/operators';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
@@ -29,6 +29,10 @@ export class SelfEncryptingDriveCardComponent {
     switchMap(() => this.ws.call('system.advanced.sed_global_password')),
     map((sedPassword) => '*'.repeat(sedPassword.length) || '–'),
     toLoadingState(),
+    shareReplay({
+      refCount: false,
+      bufferSize: 1,
+    }),
   );
 
   constructor(

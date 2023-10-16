@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { map, startWith, switchMap } from 'rxjs/operators';
+import { map, shareReplay, startWith, switchMap } from 'rxjs/operators';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import {
@@ -20,6 +20,10 @@ export class ReplicationSettingsCardComponent {
     switchMap(() => this.ws.call('replication.config.config')),
     map((config) => config.max_parallel_replication_tasks),
     toLoadingState(),
+    shareReplay({
+      refCount: false,
+      bufferSize: 1,
+    }),
   );
 
   constructor(
