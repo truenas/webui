@@ -2,6 +2,7 @@ import {
   AfterViewInit, ComponentRef, Directive, Input, OnChanges, ViewContainerRef,
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { IxEmptyRowComponent } from 'app/modules/ix-tables/components/ix-empty-row/ix-empty-row.component';
 
@@ -26,7 +27,7 @@ export class IxTable2EmptyDirective implements AfterViewInit, OnChanges {
   }
 
   toggleEmptyComponent(): void {
-    if (this.showEmptyRow) {
+    if (this.showEmptyRow && this.emptyConfig?.type !== EmptyType.Loading) {
       this.updateComponentConfig();
     } else {
       this.destroyRowComponent();

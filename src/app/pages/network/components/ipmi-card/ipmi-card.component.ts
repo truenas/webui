@@ -5,9 +5,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Ipmi } from 'app/interfaces/ipmi.interface';
-import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
 import { templateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component';
 import { createTable } from 'app/modules/ix-table2/utils';
+import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import {
   IpmiEventsDialogComponent,
 } from 'app/pages/network/components/ipmi-card/ipmi-events-dialog/ipmi-events-dialog.component';
@@ -23,7 +24,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IpmiCardComponent implements OnInit {
-  protected dataProvider = new ArrayDataProvider<Ipmi>();
+  protected dataProvider: AsyncDataProvider<Ipmi>;
   columns = createTable<Ipmi>([
     templateColumn(),
     templateColumn(),
@@ -35,11 +36,13 @@ export class IpmiCardComponent implements OnInit {
     private ws: WebSocketService,
     private slideInService: IxSlideInService,
     private matDialog: MatDialog,
+    protected emptyService: EmptyService,
     @Inject(WINDOW) private window: Window,
   ) { }
 
   ngOnInit(): void {
-    this.loadIpmiEntries();
+    const ipmi$ = this.ws.call('ipmi.lan.query').pipe(untilDestroyed(this));
+    this.dataProvider = new AsyncDataProvider<Ipmi>(ipmi$);
   }
 
   canOpen(ipmi: Ipmi): boolean {
@@ -62,8 +65,6 @@ export class IpmiCardComponent implements OnInit {
   }
 
   private loadIpmiEntries(): void {
-    this.ws.call('ipmi.lan.query').pipe(untilDestroyed(this)).subscribe((ipmi) => {
-      this.dataProvider.setRows(ipmi);
-    });
+    this.dataProvider.refresh();
   }
 }

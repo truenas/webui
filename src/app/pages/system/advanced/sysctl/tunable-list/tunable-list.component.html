@@ -11,7 +11,7 @@
 <ix-table2
   class="table"
   [ix-table2-empty]="!dataProvider.rows.length"
-  [emptyConfig]="emptyConfig.defaultEmptyConfig(emptyType$ | async)"
+  [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
 >
   <thead
     ix-table-head
@@ -22,6 +22,7 @@
     ix-table-body
     [columns]="columns"
     [dataProvider]="dataProvider"
+    [isLoading]="dataProvider.isLoading$ | async"
   >
     <ng-template
       let-tunable
