@@ -30,32 +30,6 @@
       [columns]="columns"
       [dataProvider]="dataProvider"
       [isLoading]="dataProvider.isLoading$ | async"
-    >
-      <ng-template
-        let-task
-        ix-table-cell
-        [columnIndex]="5"
-        [dataProvider]="dataProvider"
-      >
-        <div class="justify-end">
-          <button
-            mat-icon-button
-            [ixTest]="[task.id, 'edit']"
-            [matTooltip]="'Edit' | translate"
-            (click)="openForm(task)"
-          >
-            <ix-icon name="edit"></ix-icon>
-          </button>
-          <button
-            mat-icon-button
-            [ixTest]="[task.id, 'delete']"
-            [matTooltip]="'Delete' | translate"
-            (click)="doDelete(task)"
-          >
-            <ix-icon name="delete"></ix-icon>
-          </button>
-        </div>
-      </ng-template>
-    </tbody>
+    ></tbody>
   </ix-table2>
 </mat-card>

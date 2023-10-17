@@ -49,51 +49,7 @@
       [columns]="columns"
       [dataProvider]="dataProvider"
       [isLoading]="dataProvider.isLoading$ | async"
-    >
-      <ng-template
-        let-smb
-        ix-table-cell
-        [columnIndex]="isClustered ? 3 : 4"
-        [dataProvider]="dataProvider"
-      >
-        <div class="justify-end">
-          <button
-            mat-icon-button
-            [ixTest]="[smb.id, 'share']"
-            [matTooltip]="'Edit Share ACL' | translate"
-            (click)="doShareAclEdit(smb)"
-          >
-            <ix-icon name="share"></ix-icon>
-          </button>
-          <button
-            mat-icon-button
-            [ixTest]="[smb.id, 'security']"
-            [matTooltip]="'Edit Filesystem ACL' | translate"
-            (click)="doFilesystemAclEdit(smb)"
-          >
-            <ix-icon name="security"></ix-icon>
-          </button>
-
-          <button
-            mat-icon-button
-            [ixTest]="[smb.id, 'edit']"
-            [matTooltip]="'Edit' | translate"
-            (click)="openForm(smb)"
-          >
-            <ix-icon name="edit"></ix-icon>
-          </button>
-          <button
-            mat-icon-button
-            [ixTest]="[smb.id, 'delete']"
-            [disabled]="isDeleteActionDisabled"
-            [matTooltip]="'Delete' | translate"
-            (click)="doDelete(smb)"
-          >
-            <ix-icon name="delete"></ix-icon>
-          </button>
-        </div>
-      </ng-template>
-    </tbody>
+    ></tbody>
   </ix-table2>
 
   <a

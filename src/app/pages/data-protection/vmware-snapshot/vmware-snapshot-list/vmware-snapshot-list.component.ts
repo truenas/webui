@@ -83,12 +83,13 @@ export class VmwareSnapshotListComponent implements OnInit {
 
   doAdd(): void {
     const slideInRef = this.slideInService.open(VmwareSnapshotFormComponent);
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.getSnapshotsData());
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getSnapshotsData());
   }
 
   doEdit(snapshot: VmwareSnapshot): void {
     const slideInRef = this.slideInService.open(VmwareSnapshotFormComponent, { data: snapshot });
     slideInRef.slideInClosed$.pipe(
+      filter(Boolean),
       untilDestroyed(this),
     ).subscribe(() => this.getSnapshotsData());
   }

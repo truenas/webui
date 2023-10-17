@@ -23,30 +23,6 @@
     [columns]="columns"
     [dataProvider]="dataProvider"
     [isLoading]="dataProvider.isLoading$ | async"
-  >
-    <ng-template
-      let-tunable
-      ix-table-cell
-      [columnIndex]="5"
-      [dataProvider]="dataProvider"
-    >
-      <div class="actions">
-        <button
-          mat-icon-button
-          [ixTest]="['edit', tunable.id]"
-          (click)="doEdit(tunable)"
-        >
-          <ix-icon name="mdi-pencil"></ix-icon>
-        </button>
-        <button
-          mat-icon-button
-          [ixTest]="['delete', tunable.id]"
-          (click)="doDelete(tunable)"
-        >
-          <ix-icon name="mdi-delete"></ix-icon>
-        </button>
-      </div>
-    </ng-template>
-  </tbody>
+  ></tbody>
 </ix-table2>
 <ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>
