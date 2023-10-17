@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, repeat, take } from 'rxjs/operators';
+import { filter, repeat, skipWhile, take } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import { ScreenType } from 'app/enums/screen-type.enum';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
@@ -95,28 +95,58 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
 
   ngOnInit(): void {
     this.checkForUpdate();
-    this.store$.pipe(waitForSystemFeatures, untilDestroyed(this)).subscribe((features) => {
-      this.enclosureSupport = features.enclosure;
-    });
-    this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((systemInfo) => {
-      this.processSysInfo(systemInfo);
-    });
-    this.store$.select(selectIsIxHardware).pipe(untilDestroyed(this)).subscribe((isIxHardware) => {
-      this.isIxHardware = isIxHardware;
-      this.setProductImage();
-    });
+    this.loadSystemInfo();
+    this.loadEnclosureSupport();
+    this.loadIsIxHardware();
+  }
+
+  loadSystemInfo(): void {
+    this.loadSystemInfoForActive();
     if (this.sysGenService.isEnterprise) {
-      this.store$.select(selectIsHaLicensed).pipe(untilDestroyed(this)).subscribe((isHaLicensed) => {
-        this.isHaLicensed = isHaLicensed;
-        if (isHaLicensed) {
-          this.updateMethod = 'failover.upgrade';
-        }
-        if (isHaLicensed && this.isPassive) {
-          this.loadSystemInfoForPassive();
-        }
-        this.checkForRunningUpdate();
-      });
+      this.store$
+        .select(selectIsHaLicensed)
+        .pipe(untilDestroyed(this))
+        .subscribe((isHaLicensed) => {
+          this.isHaLicensed = isHaLicensed;
+          if (isHaLicensed) {
+            this.updateMethod = 'failover.upgrade';
+          }
+          if (isHaLicensed && this.isPassive) {
+            this.loadSystemInfoForPassive();
+          }
+          this.checkForRunningUpdate();
+        });
     }
+  }
+
+  loadIsIxHardware(): void {
+    this.store$
+      .select(selectIsIxHardware)
+      .pipe(untilDestroyed(this))
+      .subscribe((isIxHardware) => {
+        this.isIxHardware = isIxHardware;
+        this.setProductImage();
+      });
+  }
+
+  loadEnclosureSupport(): void {
+    this.store$
+      .pipe(waitForSystemFeatures, untilDestroyed(this))
+      .subscribe((features) => {
+        this.enclosureSupport = features.enclosure;
+      });
+  }
+
+  loadSystemInfoForActive(): void {
+    this.store$
+      .pipe(
+        waitForSystemInfo,
+        skipWhile(() => this.isPassive),
+        untilDestroyed(this),
+      )
+      .subscribe((systemInfo) => {
+        this.processSysInfo(systemInfo);
+      });
   }
 
   loadSystemInfoForPassive(): void {
