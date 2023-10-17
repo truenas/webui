@@ -95,12 +95,14 @@ export enum DatasetShareType {
   Generic = 'GENERIC',
   Smb = 'SMB',
   Apps = 'APPS',
+  Multiprotocol = 'MULTIPROTOCOL',
 }
 
 export const datasetShareTypeLabels = new Map<DatasetShareType, string>([
   [DatasetShareType.Generic, T('Generic')],
   [DatasetShareType.Smb, T('SMB')],
   [DatasetShareType.Apps, T('Apps')],
+  [DatasetShareType.Multiprotocol, T('Multiprotocol')],
 ]);
 
 export enum DatasetXattr {
