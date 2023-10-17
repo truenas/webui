@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -6,6 +6,7 @@ import { filter, map } from 'rxjs';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
+import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
@@ -27,7 +28,7 @@ interface AllowedAddressRow {
 @UntilDestroy()
 @Component({
   selector: 'ix-allowed-addresses-card',
-  styleUrls: ['../../common-card.scss', './allowed-addresses-card.component.scss'],
+  styleUrls: ['../../common-card.scss'],
   templateUrl: './allowed-addresses-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -39,8 +40,14 @@ export class AllowedAddressesCardComponent implements OnInit {
       title: this.translate.instant('Address'),
       propertyName: 'address',
     }),
-    textColumn({
-      propertyName: 'address',
+    actionsColumn({
+      actions: [
+        {
+          iconName: 'delete',
+          tooltip: this.translate.instant('Delete'),
+          onClick: (row) => this.promptDeleteAllowedAddress(row),
+        },
+      ],
     }),
   ]);
 
@@ -53,7 +60,6 @@ export class AllowedAddressesCardComponent implements OnInit {
     private translate: TranslateService,
     private advancedSettings: AdvancedSettingsService,
     protected emptyService: EmptyService,
-    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {

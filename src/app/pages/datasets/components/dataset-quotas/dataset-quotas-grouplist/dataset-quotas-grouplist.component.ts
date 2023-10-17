@@ -241,14 +241,14 @@ export class DatasetQuotasGrouplistComponent implements OnInit, OnDestroy {
     const slideInRef = this.slideInService.open(DatasetQuotaAddFormComponent, {
       data: { quotaType: DatasetQuotaType.Group, datasetId: this.datasetId },
     });
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.getGroupQuotas());
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getGroupQuotas());
   }
 
   doEdit(row: DatasetQuota): void {
     const slideInRef = this.slideInService.open(DatasetQuotaEditFormComponent, {
       data: { quotaType: DatasetQuotaType.Group, datasetId: this.datasetId, id: row.id },
     });
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.getGroupQuotas());
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getGroupQuotas());
   }
 
   doDelete(row: DatasetQuota): void {

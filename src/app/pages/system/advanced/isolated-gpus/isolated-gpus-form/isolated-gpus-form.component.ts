@@ -62,7 +62,7 @@ export class IsolatedGpusFormComponent implements OnInit {
         this.cdr.markForCheck();
         this.snackbar.success(this.translate.instant('Settings saved'));
         this.store$.dispatch(advancedConfigUpdated());
-        this.slideInRef.close();
+        this.slideInRef.close(true);
       },
       error: (error) => {
         this.isFormLoading = false;

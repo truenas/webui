@@ -13,7 +13,7 @@ import { Job } from 'app/interfaces/job.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
-import { templateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component';
+import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table2/utils';
@@ -50,7 +50,30 @@ export class CertificateSigningRequestsListComponent implements OnInit {
       propertyName: 'common',
       sortable: true,
     }),
-    templateColumn(),
+    actionsColumn({
+      actions: [
+        {
+          iconName: 'build',
+          tooltip: this.translate.instant('Create ACME Certificate'),
+          onClick: (row) => this.doCreateAcmeCert(row),
+        },
+        {
+          iconName: 'mdi-download',
+          tooltip: this.translate.instant('Download'),
+          onClick: (row) => this.doDownload(row),
+        },
+        {
+          iconName: 'edit',
+          tooltip: this.translate.instant('Edit'),
+          onClick: (row) => this.doEdit(row),
+        },
+        {
+          iconName: 'delete',
+          tooltip: this.translate.instant('Delete'),
+          onClick: (row) => this.doDelete(row),
+        },
+      ],
+    }),
   ]);
 
   constructor(

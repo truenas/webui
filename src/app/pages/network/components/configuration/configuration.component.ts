@@ -318,7 +318,7 @@ export class NetworkConfigurationComponent implements OnInit {
         next: () => {
           this.isFormLoading = false;
           this.cdr.markForCheck();
-          this.slideInRef.close();
+          this.slideInRef.close(true);
         },
         error: (error) => {
           this.isFormLoading = false;

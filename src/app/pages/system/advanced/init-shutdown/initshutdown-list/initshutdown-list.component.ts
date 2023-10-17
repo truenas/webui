@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { filter } from 'rxjs';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
@@ -54,7 +55,7 @@ export class InitshutdownListComponent implements EntityTableConfig {
         actionName: 'edit',
         onClick: (rowToEdit: InitShutdownScript) => {
           const slideInRef = this.slideInService.open(InitShutdownFormComponent, { data: rowToEdit });
-          slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+          slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
             this.entityList.loaderOpen = true;
             this.entityList.needRefreshTable = true;
             this.entityList.getData();
@@ -75,7 +76,7 @@ export class InitshutdownListComponent implements EntityTableConfig {
 
   doAdd(): void {
     const slideInRef = this.slideInService.open(InitShutdownFormComponent);
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.entityList.loaderOpen = true;
       this.entityList.needRefreshTable = true;
       this.entityList.getData();

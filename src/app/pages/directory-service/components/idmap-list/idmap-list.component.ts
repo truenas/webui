@@ -83,9 +83,7 @@ export default class IdmapListComponent implements OnInit {
         },
         {
           iconName: 'delete',
-          hidden: (row) => {
-            return of(requiredIdmapDomains.includes(row.name as IdmapName));
-          },
+          hidden: (row) => of(requiredIdmapDomains.includes(row.name as IdmapName)),
           tooltip: this.translateService.instant('Delete'),
           onClick: (row) => {
             this.dialogService.confirm({

@@ -4,7 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { switchMap, from, filter } from 'rxjs';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
-import { templateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component';
+import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import {
   yesNoColumn,
@@ -37,6 +37,7 @@ export class InitShutdownCardComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Command / Script'),
       propertyName: 'command',
+      getValue: (row) => row.script || row.command,
     }),
     textColumn({
       title: this.translate.instant('Description'),
@@ -54,7 +55,20 @@ export class InitShutdownCardComponent implements OnInit {
       title: this.translate.instant('Timeout'),
       propertyName: 'timeout',
     }),
-    templateColumn(),
+    actionsColumn({
+      actions: [
+        {
+          iconName: 'edit',
+          tooltip: this.translate.instant('Edit'),
+          onClick: (row) => this.onEdit(row),
+        },
+        {
+          iconName: 'delete',
+          tooltip: this.translate.instant('Delete'),
+          onClick: (row) => this.onDelete(row),
+        },
+      ],
+    }),
   ]);
 
   constructor(

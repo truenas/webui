@@ -8,7 +8,7 @@ import { filter, tap } from 'rxjs';
 import { Tunable } from 'app/interfaces/tunable.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
-import { templateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component';
+import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { yesNoColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
@@ -55,7 +55,20 @@ export class TunableListComponent implements OnInit {
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
     }),
-    templateColumn(),
+    actionsColumn({
+      actions: [
+        {
+          iconName: 'edit',
+          tooltip: this.translate.instant('Edit'),
+          onClick: (row) => this.doEdit(row),
+        },
+        {
+          iconName: 'delete',
+          tooltip: this.translate.instant('Delete'),
+          onClick: (row) => this.doDelete(row),
+        },
+      ],
+    }),
   ]);
 
   constructor(

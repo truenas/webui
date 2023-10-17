@@ -10,9 +10,11 @@ import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-
 export class IxCellActionsComponent<T> extends ColumnComponent<T> {
   actions: {
     iconName: string;
-    onClick: (row: T) => void;
     tooltip?: string;
+    onClick: (row: T) => void;
+    dynamicTooltip?: (row: T) => Observable<string>;
     hidden?: (row: T) => Observable<boolean>;
+    disabled?: (row: T) => Observable<boolean>;
   }[];
 }
 

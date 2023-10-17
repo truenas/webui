@@ -10,7 +10,7 @@ import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { SmbShare, SmbSharesec } from 'app/interfaces/smb-share.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
-import { templateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component';
+import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { toggleColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
 import { createTable } from 'app/modules/ix-table2/utils';
@@ -59,11 +59,32 @@ export class SmbCardComponent implements OnInit, OnChanges {
     toggleColumn({
       title: helptextSharingSmb.column_enabled,
       propertyName: 'enabled',
-      cssClass: 'justify-end',
       onRowToggle: (row: SmbShare) => this.onChangeEnabledState(row),
     }),
-    templateColumn({
+    actionsColumn({
       cssClass: 'wide-actions',
+      actions: [
+        {
+          iconName: 'share',
+          tooltip: this.translate.instant('Edit Share ACL'),
+          onClick: (row) => this.doShareAclEdit(row),
+        },
+        {
+          iconName: 'security',
+          tooltip: this.translate.instant('Edit Filesystem ACL'),
+          onClick: (row) => this.doFilesystemAclEdit(row),
+        },
+        {
+          iconName: 'edit',
+          tooltip: this.translate.instant('Edit'),
+          onClick: (row) => this.openForm(row),
+        },
+        {
+          iconName: 'delete',
+          tooltip: this.translate.instant('Delete'),
+          onClick: (row) => this.doDelete(row),
+        },
+      ],
     }),
   ]);
 
@@ -112,7 +133,7 @@ export class SmbCardComponent implements OnInit, OnChanges {
       );
     } else {
       const slideInRef = this.slideInService.open(SmbFormComponent, { data: row });
-      slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+      slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
         this.getSmbShares();
       });
     }
@@ -150,7 +171,7 @@ export class SmbCardComponent implements OnInit, OnChanges {
               next: (shareAcl: SmbSharesec) => {
                 const slideInRef = this.slideInService.open(SmbAclComponent, { data: shareAcl.share_name });
 
-                slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+                slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
                   this.getSmbShares();
                 });
               },

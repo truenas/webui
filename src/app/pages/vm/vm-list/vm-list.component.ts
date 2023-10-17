@@ -340,7 +340,10 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
       label: this.translate.instant('Edit'),
       onClick: (vm: VirtualMachineRow) => {
         const slideInRef = this.slideInService.open(VmEditFormComponent, { data: vm });
-        slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
+        slideInRef.slideInClosed$.pipe(
+          filter(Boolean),
+          untilDestroyed(this),
+        ).subscribe(() => this.entityList.getData());
       },
     },
     {
@@ -456,7 +459,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
 
   doAdd(): void {
     const slideInRef = this.slideInService.open(VmWizardComponent);
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.entityList.getData());
   }
 
   private openStopDialog(vm: VirtualMachineRow): void {

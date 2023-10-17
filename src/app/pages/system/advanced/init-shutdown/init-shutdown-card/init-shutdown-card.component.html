@@ -30,40 +30,6 @@
       [columns]="columns"
       [dataProvider]="dataProvider"
       [isLoading]="dataProvider.isLoading$ | async"
-    >
-      <ng-template
-        let-script
-        ix-table-cell
-        [columnIndex]="0"
-        [dataProvider]="dataProvider"
-      >
-        {{ script.script || script.command }}
-      </ng-template>
-      <ng-template
-        let-script
-        ix-table-cell
-        [columnIndex]="5"
-        [dataProvider]="dataProvider"
-      >
-        <div class="buttons">
-          <button
-            mat-icon-button
-            [ixTest]="[script.id, 'edit']"
-            [matTooltip]="'Edit' | translate"
-            (click)="onEdit(script)"
-          >
-            <ix-icon name="edit"></ix-icon>
-          </button>
-          <button
-            mat-icon-button
-            [ixTest]="[script.id, 'delete']"
-            [matTooltip]="'Delete' | translate"
-            (click)="onDelete(script)"
-          >
-            <ix-icon name="delete"></ix-icon>
-          </button>
-        </div>
-      </ng-template>
-    </tbody>
+    ></tbody>
   </ix-table2>
 </mat-card>
