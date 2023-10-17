@@ -149,8 +149,12 @@ export class TopologyCardComponent implements OnInit, OnChanges {
       outputString += this.translate.instant('{type} | {vdevWidth} wide | ', { type, vdevWidth });
     }
 
-    if (size) {
+    const isMixedVdevCapacity = this.storageService.isMixedVdevCapacity(this.storageService.getVdevCapacities(vdevs));
+
+    if (!isMixedVdevCapacity && size) {
       outputString += filesize(size, { standard: 'iec' });
+    } else if (isMixedVdevCapacity) {
+      outputString += this.translate.instant('Mixed capacity');
     } else {
       outputString += '?';
     }
