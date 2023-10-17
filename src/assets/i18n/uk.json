@@ -230,6 +230,7 @@
   "Minutes of inactivity before the drive enters standby mode. Temperature monitoring is disabled for standby disks.": "",
   "Mixing disks of different sizes in a VDEV is not recommended.": "",
   "Module": "",
+  "Multiprotocol": "",
   "NEW": "",
   "NFS share created": "",
   "NFS share updated": "",
