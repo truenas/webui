@@ -9,6 +9,7 @@
       <ix-fieldset [title]="'ACL Entries' | translate">
         <ix-list
           formArrayName="entries"
+          [formArray]="form.get('entries')"
           [empty]="form.controls.entries.length === 0 && !isLoading"
           [label]="'Add entry' | translate"
           (add)="addAce()"

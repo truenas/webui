@@ -12,6 +12,7 @@ import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { SnapshotNamingOption } from 'app/enums/snapshot-naming-option.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
+import helptext from 'app/helptext/data-protection/replication/replication-wizard';
 import { KeychainCredential } from 'app/interfaces/keychain-credential.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -21,6 +22,7 @@ import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { ReplicationWhatAndWhereComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-what-and-where/replication-what-and-where.component';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
+import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 describe('ReplicationWhatAndWhereComponent', () => {
@@ -48,7 +50,13 @@ describe('ReplicationWhatAndWhereComponent', () => {
           },
         ] as ReplicationTask[]),
         mockCall('keychaincredential.query', [
-          { id: 123, name: 'test_ssh' },
+          {
+            id: 123,
+            name: 'non-root-ssh-connection',
+            attributes: {
+              username: 'user1',
+            },
+          },
         ] as KeychainCredential[]),
         mockCall('replication.count_eligible_manual_snapshots', { total: 0, eligible: 0 }),
       ]),
@@ -60,6 +68,9 @@ describe('ReplicationWhatAndWhereComponent', () => {
         })),
       }),
       mockProvider(IxSlideInRef),
+      mockProvider(DialogService, {
+        confirm: jest.fn(() => of()),
+      }),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
@@ -139,6 +150,17 @@ describe('ReplicationWhatAndWhereComponent', () => {
     await form.fillForm({ 'Source Location': 'On a Different System' });
     await form.fillForm({ 'SSH Connection': 'Create New' });
     expect(matDialog.open).toHaveBeenCalled();
+  });
+
+  it('opens sudo enabled dialog when choosing to existing ssh credential', async () => {
+    await form.fillForm({ 'Source Location': 'On a Different System' });
+    await form.fillForm({ 'SSH Connection': 'non-root-ssh-connection' });
+    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
+      'buttonText': 'Use Sudo For ZFS Commands',
+      'hideCheckbox': true,
+      'message': helptext.sudo_warning,
+      'title': 'Sudo Enabled',
+    });
   });
 
   it('when an existing name is entered, the "Next" button is disabled', async () => {

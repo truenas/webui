@@ -6,7 +6,6 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
-import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
@@ -20,6 +19,7 @@ import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { TaskService } from 'app/services/task.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
 describe('CronCardComponent', () => {
@@ -50,7 +50,6 @@ describe('CronCardComponent', () => {
     component: CronCardComponent,
     imports: [
       AppLoaderModule,
-      EntityModule,
       IxTable2Module,
     ],
     providers: [
@@ -108,7 +107,6 @@ describe('CronCardComponent', () => {
   });
 
   it('shows confirmation dialog when Run Now button is pressed', async () => {
-    jest.spyOn(spectator.inject(DialogService), 'confirm');
     const runNowButton = await table.getHarnessInRow(IxIconHarness.with({ name: 'play_arrow' }), 'root');
     await runNowButton.click();
 
@@ -117,6 +115,8 @@ describe('CronCardComponent', () => {
       message: 'Run this job now?',
       hideCheckbox: true,
     });
+
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cronjob.run', [1]);
   });
 
   it('shows form to edit an existing cronjob when Edit button is pressed', async () => {

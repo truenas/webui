@@ -31,7 +31,7 @@ describe('DatasetFormService', () => {
   describe('ensurePathLimits', () => {
     it('checks parent path, shows error if it is too long and closes slide in', async () => {
       const wrongPath = 'a'.repeat(maxDatasetPath);
-      await firstValueFrom(spectator.service.ensurePathLimits(wrongPath));
+      await firstValueFrom(spectator.service.checkAndWarnForLengthAndDepth(wrongPath));
 
       expect(spectator.inject(DialogService).warn).toHaveBeenCalledWith(
         helptext.pathWarningTitle,
@@ -42,7 +42,7 @@ describe('DatasetFormService', () => {
 
     it('checks parent path, shows error if it nesting level is too deep and closes slide in', async () => {
       const wrongPath = '/'.repeat(maxDatasetNesting);
-      await firstValueFrom(spectator.service.ensurePathLimits(wrongPath));
+      await firstValueFrom(spectator.service.checkAndWarnForLengthAndDepth(wrongPath));
 
       expect(spectator.inject(DialogService).warn).toHaveBeenCalledWith(
         helptext.pathWarningTitle,

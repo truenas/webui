@@ -1,0 +1,36 @@
+<ng-template ixPageHeader>
+  <ix-page-title-header>
+    <button mat-button color="primary" ixTest="manage-views" (click)="onManageViewsPressed()">
+      {{ 'Manage Views' | translate }}
+    </button>
+  </ix-page-title-header>
+</ng-template>
+
+<div class="header">
+  <ix-input
+    class="search-control"
+    [formControl]="searchControl"
+    [placeholder]="'Search' | translate"
+  ></ix-input>
+
+  <button mat-button ixTest="setup-columns" (click)="onSetupColumns()">
+    {{ 'Setup Columns' | translate }}
+  </button>
+
+  <button mat-button ixTest="export" (click)="onExport()">
+    {{ 'Export' | translate }}
+  </button>
+</div>
+
+<ix-table2>
+  <thead
+    ix-table-head
+    [columns]="columns"
+    [dataProvider]="dataProvider"
+  ></thead>
+  <tbody
+    ix-table-body
+    [columns]="columns"
+    [dataProvider]="dataProvider"
+  ></tbody>
+</ix-table2>

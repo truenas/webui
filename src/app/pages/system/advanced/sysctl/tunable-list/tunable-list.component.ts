@@ -4,13 +4,11 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import {
-  BehaviorSubject, Observable, combineLatest, filter, of, switchMap,
-} from 'rxjs';
-import { EmptyType } from 'app/enums/empty-type.enum';
+import { filter, tap } from 'rxjs';
 import { Tunable } from 'app/interfaces/tunable.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
+import { templateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { yesNoColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
@@ -30,7 +28,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TunableListComponent implements OnInit {
-  dataProvider = new ArrayDataProvider<Tunable>();
+  dataProvider: AsyncDataProvider<Tunable>;
   filterString = '';
   tunables: Tunable[] = [];
   columns = createTable<Tunable>([
@@ -57,32 +55,8 @@ export class TunableListComponent implements OnInit {
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
     }),
-    textColumn({
-      propertyName: 'id',
-    }),
+    templateColumn(),
   ]);
-
-  isLoading$ = new BehaviorSubject<boolean>(true);
-  isNoData$ = new BehaviorSubject<boolean>(false);
-  hasError$ = new BehaviorSubject<boolean>(false);
-  emptyType$: Observable<EmptyType> = combineLatest([this.isLoading$, this.isNoData$, this.hasError$]).pipe(
-    switchMap(([isLoading, isNoData, isError]) => {
-      if (isLoading) {
-        return of(EmptyType.Loading);
-      }
-      if (isError) {
-        return of(EmptyType.Errors);
-      }
-      if (isNoData) {
-        return of(EmptyType.NoPageData);
-      }
-      return of(EmptyType.NoSearchResults);
-    }),
-  );
-
-  get emptyConfig(): EmptyService {
-    return this.emptyConfigService;
-  }
 
   constructor(
     private errorHandler: ErrorHandlerService,
@@ -91,37 +65,22 @@ export class TunableListComponent implements OnInit {
     private slideInService: IxSlideInService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
-    private emptyConfigService: EmptyService,
+    protected emptyService: EmptyService,
     private matDialog: MatDialog,
     private snackbar: SnackbarService,
   ) {}
 
   ngOnInit(): void {
-    this.getTunables();
+    const tunables$ = this.ws.call('tunable.query').pipe(
+      tap((tunables) => this.tunables = tunables),
+      untilDestroyed(this),
+    );
+    this.dataProvider = new AsyncDataProvider<Tunable>(tunables$);
+    this.setDefaultSort();
   }
 
   getTunables(): void {
-    this.isLoading$.next(true);
-    this.hasError$.next(false);
-
-    this.ws
-      .call('tunable.query')
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: (tunables) => {
-          this.tunables = tunables;
-          this.isNoData$.next(!tunables.length);
-          this.dataProvider.setRows(tunables);
-          this.isLoading$.next(false);
-          this.setDefaultSort();
-          this.cdr.markForCheck();
-        },
-        error: () => {
-          this.isLoading$.next(false);
-          this.hasError$.next(true);
-          this.cdr.markForCheck();
-        },
-      });
+    this.dataProvider.refresh();
   }
 
   doAdd(): void {

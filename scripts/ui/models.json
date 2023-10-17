@@ -69,11 +69,14 @@
     "ES60": {
       "model": "ES60"
     },
+    "ES60G2": {
+      "model": "ES60G2"
+    },
     "ES102": {
       "model": "ES102"
     },
-    "ES102S": {
-      "model": "ES102S"
+    "ES102G2": {
+      "model": "ES102G2"
     }
   }
 }

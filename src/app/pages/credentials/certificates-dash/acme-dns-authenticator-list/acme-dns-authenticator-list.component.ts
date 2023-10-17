@@ -3,12 +3,10 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import {
-  BehaviorSubject, Observable, combineLatest, switchMap, of, filter,
-} from 'rxjs';
-import { EmptyType } from 'app/enums/empty-type.enum';
+import { switchMap, filter, tap } from 'rxjs';
 import { DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
-import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
+import { templateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table2/utils';
@@ -27,7 +25,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class AcmeDnsAuthenticatorListComponent implements OnInit {
   filterString = '';
-  dataProvider = new ArrayDataProvider<DnsAuthenticator>();
+  dataProvider: AsyncDataProvider<DnsAuthenticator>;
   authenticators: DnsAuthenticator[] = [];
   columns = createTable<DnsAuthenticator>([
     textColumn({
@@ -40,28 +38,8 @@ export class AcmeDnsAuthenticatorListComponent implements OnInit {
       propertyName: 'authenticator',
       sortable: true,
     }),
-    textColumn({
-      propertyName: 'id',
-    }),
+    templateColumn(),
   ]);
-
-  isLoading$ = new BehaviorSubject<boolean>(true);
-  isNoData$ = new BehaviorSubject<boolean>(false);
-  hasError$ = new BehaviorSubject<boolean>(false);
-  emptyType$: Observable<EmptyType> = combineLatest([this.isLoading$, this.isNoData$, this.hasError$]).pipe(
-    switchMap(([isLoading, isNoData, isError]) => {
-      if (isLoading) {
-        return of(EmptyType.Loading);
-      }
-      if (isError) {
-        return of(EmptyType.Errors);
-      }
-      if (isNoData) {
-        return of(EmptyType.NoPageData);
-      }
-      return of(EmptyType.NoSearchResults);
-    }),
-  );
 
   constructor(
     private ws: WebSocketService,
@@ -73,29 +51,16 @@ export class AcmeDnsAuthenticatorListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.getAuthenticators();
+    const authenticators$ = this.ws.call('acme.dns.authenticator.query').pipe(
+      tap((authenticators) => this.authenticators = authenticators),
+      untilDestroyed(this),
+    );
+    this.dataProvider = new AsyncDataProvider<DnsAuthenticator>(authenticators$);
+    this.setDefaultSort();
   }
 
   getAuthenticators(): void {
-    this.ws
-      .call('acme.dns.authenticator.query')
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: (authenticators) => {
-          this.authenticators = authenticators;
-          this.dataProvider.setRows(this.authenticators);
-          this.isLoading$.next(false);
-          this.isNoData$.next(!this.authenticators.length);
-          this.setDefaultSort();
-          this.cdr.markForCheck();
-        },
-        error: () => {
-          this.dataProvider.setRows([]);
-          this.isLoading$.next(false);
-          this.hasError$.next(true);
-          this.cdr.markForCheck();
-        },
-      });
+    this.dataProvider.refresh();
   }
 
   onListFiltered(query: string): void {

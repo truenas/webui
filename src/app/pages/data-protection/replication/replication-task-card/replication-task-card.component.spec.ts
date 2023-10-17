@@ -10,7 +10,6 @@ import { of } from 'rxjs';
 import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { Job } from 'app/interfaces/job.interface';
 import { ReplicationTaskUi } from 'app/interfaces/replication-task.interface';
-import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
@@ -23,9 +22,9 @@ import { ReplicationTaskCardComponent } from 'app/pages/data-protection/replicat
 import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
 import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
-
 
 describe('ReplicationTaskCardComponent', () => {
   let spectator: Spectator<ReplicationTaskCardComponent>;
@@ -63,7 +62,6 @@ describe('ReplicationTaskCardComponent', () => {
     component: ReplicationTaskCardComponent,
     imports: [
       AppLoaderModule,
-      EntityModule,
       IxTable2Module,
     ],
     providers: [
@@ -85,6 +83,7 @@ describe('ReplicationTaskCardComponent', () => {
         mockCall('core.get_jobs', []),
         mockCall('replication.delete'),
         mockCall('replication.update'),
+        mockCall('core.download', [undefined, 'http://someurl/file.json']),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -99,6 +98,9 @@ describe('ReplicationTaskCardComponent', () => {
         open: jest.fn(() => ({
           afterClosed: () => of(true),
         })),
+      }),
+      mockProvider(StorageService, {
+        streamDownloadFile: jest.fn(() => of()),
       }),
     ],
   });
@@ -148,9 +150,11 @@ describe('ReplicationTaskCardComponent', () => {
       message: 'Replicate «APPS/test2 - APPS/test3» now?',
       hideCheckbox: true,
     });
+
+    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('replication.run', [1]);
   });
 
-  it('shows confirmation dialog when Restore button is pressed', async () => {
+  it('shows dialog when Restore button is pressed', async () => {
     jest.spyOn(spectator.inject(MatDialog), 'open');
     const restoreButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'restore' }), 1, 5);
     await restoreButton.click();
@@ -170,6 +174,11 @@ describe('ReplicationTaskCardComponent', () => {
       [1],
       'APPS/test2 - APPS/test3_encryption_keys.json',
     ]);
+    expect(spectator.inject(StorageService).streamDownloadFile).toHaveBeenCalledWith(
+      'http://someurl/file.json',
+      'APPS/test2 - APPS/test3_encryption_keys.json',
+      'application/json',
+    );
   });
 
   it('deletes a Replication Task with confirmation when Delete button is pressed', async () => {

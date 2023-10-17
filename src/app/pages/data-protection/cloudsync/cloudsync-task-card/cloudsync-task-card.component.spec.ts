@@ -7,10 +7,13 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
-import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
+import { Direction } from 'app/enums/direction.enum';
+import { JobState } from 'app/enums/job-state.enum';
+import { TransferMode } from 'app/enums/transfer-mode.enum';
 import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
@@ -18,8 +21,12 @@ import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { selectJobs } from 'app/modules/jobs/store/job.selectors';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
-import { CloudsyncRestoreDialogComponent } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
-import { CloudSyncTaskCardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-task-card/cloudsync-task-card.component';
+import {
+  CloudsyncRestoreDialogComponent,
+} from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
+import {
+  CloudSyncTaskCardComponent,
+} from 'app/pages/data-protection/cloudsync/cloudsync-task-card/cloudsync-task-card.component';
 import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
@@ -44,12 +51,12 @@ describe('CloudSyncTaskCardComponent', () => {
       transfers: 4,
       args: '',
       enabled: false,
-      direction: 'PULL',
-      transfer_mode: 'COPY',
+      direction: Direction.Pull,
+      transfer_mode: TransferMode.Copy,
       credentials: {
         id: 1,
         name: 'Google Drive',
-        provider: 'GOOGLE_DRIVE',
+        provider: CloudsyncProviderName.GoogleDrive,
         attributes: {
           client_id: '',
           client_secret: '',
@@ -71,11 +78,11 @@ describe('CloudSyncTaskCardComponent', () => {
       next_run_time: '2023-09-19T21:00:00.000Z',
       next_run: 'in about 21 hours',
       state: {
-        state: 'RUNNING',
+        state: JobState.Running,
       },
       job: {
         id: 1,
-        state: 'FINISHED',
+        state: JobState.Finished,
         time_finished: {
           $date: new Date().getTime() - 50000,
         },
@@ -87,7 +94,6 @@ describe('CloudSyncTaskCardComponent', () => {
     component: CloudSyncTaskCardComponent,
     imports: [
       AppLoaderModule,
-      EntityModule,
       IxTable2Module,
     ],
     providers: [
@@ -96,7 +102,7 @@ describe('CloudSyncTaskCardComponent', () => {
           {
             selector: selectJobs,
             value: [{
-              state: 'FINISHED',
+              state: JobState.Finished,
               id: 1,
               time_finished: cloudsyncTasks[0].job.time_finished,
             } as Job],
@@ -180,6 +186,8 @@ describe('CloudSyncTaskCardComponent', () => {
       message: 'Run «custom-cloudsync» Cloud Sync now?',
       hideCheckbox: true,
     });
+
+    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('cloudsync.sync', [3]);
   });
 
   it('shows confirmation dialog when Dry Run button is pressed', async () => {
@@ -191,9 +199,11 @@ describe('CloudSyncTaskCardComponent', () => {
       message: 'Start a dry run test of this cloud sync task? The  system will connect to the cloud service provider and simulate  transferring a file. No data will be sent or received.',
       hideCheckbox: true,
     });
+
+    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('cloudsync.sync', [3, { dry_run: true }]);
   });
 
-  it('shows confirmation dialog when Restore button is pressed', async () => {
+  it('shows dialog when Restore button is pressed', async () => {
     jest.spyOn(spectator.inject(MatDialog), 'open');
     const runNowButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'restore' }), 1, 6);
     await runNowButton.click();

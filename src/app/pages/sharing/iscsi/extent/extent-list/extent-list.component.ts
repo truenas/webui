@@ -68,7 +68,7 @@ export class ExtentListComponent implements EntityTableConfig<IscsiExtent> {
   constructor(
     private slideInService: IxSlideInService,
     private translate: TranslateService,
-    private dialog: MatDialog,
+    private matDialog: MatDialog,
   ) {}
 
   resourceTransformIncomingRestData(extents: IscsiExtent[]): (IscsiExtent & { deviceOrFile: string })[] {
@@ -110,7 +110,7 @@ export class ExtentListComponent implements EntityTableConfig<IscsiExtent> {
   }
 
   showDeleteDialog(extent: IscsiExtent): void {
-    this.dialog.open(DeleteExtentDialogComponent, { data: extent })
+    this.matDialog.open(DeleteExtentDialogComponent, { data: extent })
       .afterClosed()
       .pipe(untilDestroyed(this))
       .subscribe((wasDeleted) => {

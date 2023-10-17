@@ -69,7 +69,7 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
     private fb: FormBuilder,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
-    private mdDialog: MatDialog,
+    private matDialog: MatDialog,
     private dialogService: DialogService,
     protected applicationsStore: AppsStore,
     protected appsFilterStore: AppsFilterStore,
@@ -127,7 +127,7 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
   }
 
   refreshCharts(): void {
-    const dialogRef = this.mdDialog.open(EntityJobComponent, {
+    const dialogRef = this.matDialog.open(EntityJobComponent, {
       data: {
         title: helptext.refreshing,
       },

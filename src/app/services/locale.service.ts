@@ -76,25 +76,6 @@ export class LocaleService {
     }
   }
 
-  getTimeOnly(date: Date | number, seconds = true, tz?: string): string {
-    try {
-      if (tz) {
-        date = utcToZonedTime(date.valueOf(), tz);
-      } else if (this.timezone) {
-        date = utcToZonedTime(date.valueOf(), this.timezone);
-      }
-      let formatStr: string;
-      formatStr = this.timeFormat;
-      if (!seconds) {
-        formatStr = formatStr.replace(':ss', '');
-      }
-
-      return format(date, formatStr);
-    } catch {
-      return 'Invalid date';
-    }
-  }
-
   getPreferredDateFormat(): string {
     return this.dateFormat;
   }

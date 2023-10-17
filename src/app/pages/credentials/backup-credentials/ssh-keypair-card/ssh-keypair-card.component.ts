@@ -1,14 +1,12 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import {
-  BehaviorSubject, Observable, combineLatest, switchMap, of, filter,
-} from 'rxjs';
-import { EmptyType } from 'app/enums/empty-type.enum';
+import { switchMap, filter, tap } from 'rxjs';
 import { KeychainCredential, KeychainSshKeyPair } from 'app/interfaces/keychain-credential.interface';
-import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
+import { templateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table2/utils';
@@ -28,7 +26,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SshKeypairCardComponent implements OnInit {
-  dataProvider = new ArrayDataProvider<KeychainSshKeyPair>();
+  dataProvider: AsyncDataProvider<KeychainSshKeyPair>;
   credentials: KeychainSshKeyPair[] = [];
   columns = createTable<KeychainSshKeyPair>([
     textColumn({
@@ -36,34 +34,13 @@ export class SshKeypairCardComponent implements OnInit {
       propertyName: 'name',
       sortable: true,
     }),
-    textColumn({
-      propertyName: 'id',
-    }),
+    templateColumn(),
   ]);
-
-  isLoading$ = new BehaviorSubject<boolean>(true);
-  isNoData$ = new BehaviorSubject<boolean>(false);
-  hasError$ = new BehaviorSubject<boolean>(false);
-  emptyType$: Observable<EmptyType> = combineLatest([this.isLoading$, this.isNoData$, this.hasError$]).pipe(
-    switchMap(([isLoading, isNoData, isError]) => {
-      if (isLoading) {
-        return of(EmptyType.Loading);
-      }
-      if (isError) {
-        return of(EmptyType.Errors);
-      }
-      if (isNoData) {
-        return of(EmptyType.NoPageData);
-      }
-      return of(EmptyType.NoSearchResults);
-    }),
-  );
 
   constructor(
     private ws: WebSocketService,
     private slideInService: IxSlideInService,
     private translate: TranslateService,
-    private cdr: ChangeDetectorRef,
     protected emptyService: EmptyService,
     private dialog: DialogService,
     private keychainCredentialService: KeychainCredentialService,
@@ -71,28 +48,16 @@ export class SshKeypairCardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.getCredentials();
+    const credentials$ = this.keychainCredentialService.getSshKeys().pipe(
+      tap((credentials) => this.credentials = credentials),
+      untilDestroyed(this),
+    );
+    this.dataProvider = new AsyncDataProvider<KeychainSshKeyPair>(credentials$);
+    this.setDefaultSort();
   }
 
   getCredentials(): void {
-    this.keychainCredentialService.getSshKeys()
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: (credentials) => {
-          this.credentials = credentials;
-          this.dataProvider.setRows(this.credentials);
-          this.isLoading$.next(false);
-          this.isNoData$.next(!this.credentials.length);
-          this.setDefaultSort();
-          this.cdr.markForCheck();
-        },
-        error: () => {
-          this.dataProvider.setRows([]);
-          this.isLoading$.next(false);
-          this.hasError$.next(true);
-          this.cdr.markForCheck();
-        },
-      });
+    this.dataProvider.refresh();
   }
 
   setDefaultSort(): void {

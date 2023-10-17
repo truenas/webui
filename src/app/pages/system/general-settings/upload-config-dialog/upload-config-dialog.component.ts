@@ -26,7 +26,7 @@ export class UploadConfigDialogComponent {
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
-    private mdDialog: MatDialog,
+    private matDialog: MatDialog,
     private authService: AuthService,
   ) {
     this.authService.authToken$.pipe(
@@ -39,7 +39,7 @@ export class UploadConfigDialogComponent {
 
   onSubmit(): void {
     const formData: FormData = new FormData();
-    const dialogRef = this.mdDialog.open(EntityJobComponent,
+    const dialogRef = this.matDialog.open(EntityJobComponent,
       { data: { title: 'Uploading and Applying Config', closeOnClickOutside: false } });
     dialogRef.componentInstance.setDescription('Uploading and Applying Config');
     formData.append('data', JSON.stringify({

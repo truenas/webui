@@ -42,7 +42,7 @@ export class CatalogAddFormComponent {
     private fb: FormBuilder,
     private translate: TranslateService,
     private snackbar: SnackbarService,
-    private mdDialog: MatDialog,
+    private matDialog: MatDialog,
     private dialogService: DialogService,
   ) {}
 
@@ -51,7 +51,7 @@ export class CatalogAddFormComponent {
 
     this.isFormLoading = true;
 
-    const dialogRef = this.mdDialog.open(EntityJobComponent, {
+    const dialogRef = this.matDialog.open(EntityJobComponent, {
       data: {
         title: helptext.catalogForm.title,
       },

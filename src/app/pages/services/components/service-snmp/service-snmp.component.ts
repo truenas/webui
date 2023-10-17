@@ -11,6 +11,7 @@ import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
+import { emailValidator } from 'app/modules/ix-forms/validators/email-validation/email-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -27,7 +28,7 @@ export class ServiceSnmpComponent implements OnInit {
 
   form = this.fb.group({
     location: [''],
-    contact: ['', Validators.email],
+    contact: ['', emailValidator()],
     community: ['', Validators.pattern(/^[\w_\-.\s]*$/)],
 
     v3: [false],

@@ -104,7 +104,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
     private loader: AppLoaderService,
     private dialogService: DialogService,
     private router: Router,
-    protected dialog: MatDialog,
+    protected matDialog: MatDialog,
     private errorHandler: ErrorHandlerService,
     private vmService: VmService,
     private translate: TranslateService,
@@ -182,7 +182,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
         memoryString: this.formatter.convertBytesToHumanReadable(vm.memory * 1048576, 2),
       } as VirtualMachineRow;
 
-      if (this.checkDisplay(vm)) {
+      if (vm.display_available) {
         transformed.port = this.getDisplayPort(vm);
       } else {
         transformed.port = 'N/A';
@@ -193,23 +193,6 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
 
       return transformed;
     });
-  }
-
-  checkDisplay(vm: VirtualMachine | VirtualMachineRow): boolean {
-    const devices = vm.devices;
-    if (!devices || devices.length === 0) {
-      return false;
-    }
-    if (this.productType !== ProductType.Scale && ([VmBootloader.Grub, VmBootloader.UefiCsm].includes(vm.bootloader))) {
-      return false;
-    }
-    for (const device of devices) {
-      if (devices && device.dtype === VmDeviceType.Display) {
-        return true;
-      }
-    }
-
-    return false;
   }
 
   getDisplayPort(vm: VirtualMachine): boolean | number {
@@ -365,7 +348,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
       icon: 'delete',
       label: this.translate.instant('Delete'),
       onClick: (vm: VirtualMachineRow) => {
-        this.dialog.open(DeleteVmDialogComponent, {
+        this.matDialog.open(DeleteVmDialogComponent, {
           data: vm,
         })
           .afterClosed()
@@ -384,7 +367,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
       icon: 'device_hub',
       label: this.translate.instant('Devices'),
       onClick: (vm: VirtualMachineRow) => {
-        this.router.navigate(new Array('').concat(['vm', String(vm.id), 'devices', vm.name]));
+        this.router.navigate(['/', 'vm', String(vm.id), 'devices']);
       },
     },
     {
@@ -392,7 +375,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
       icon: 'filter_none',
       label: this.translate.instant('Clone'),
       onClick: (vm: VirtualMachineRow) => {
-        this.dialog.open(CloneVmDialogComponent, {
+        this.matDialog.open(CloneVmDialogComponent, {
           data: vm,
         })
           .afterClosed()
@@ -452,7 +435,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
   }
 
   isActionVisible(actionId: string, row: VirtualMachineRow): boolean {
-    if (actionId === 'DISPLAY' && (row.status.state !== ServiceStatus.Running || !this.checkDisplay(row))) {
+    if (actionId === 'DISPLAY' && (row.status.state !== ServiceStatus.Running || !row.display_available)) {
       return false;
     }
     if ((actionId === 'POWER_OFF' || actionId === 'STOP' || actionId === 'RESTART'
@@ -477,7 +460,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
   }
 
   private openStopDialog(vm: VirtualMachineRow): void {
-    this.dialog.open(StopVmDialogComponent, {
+    this.matDialog.open(StopVmDialogComponent, {
       data: vm,
     })
       .afterClosed()
@@ -494,7 +477,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
   }
 
   stopVm(vm: VirtualMachine, forceAfterTimeout: boolean): void {
-    const jobDialogRef = this.dialog.open(
+    const jobDialogRef = this.matDialog.open(
       EntityJobComponent,
       {
         data: {

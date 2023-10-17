@@ -164,6 +164,18 @@ module.exports = {
             selector: 'MemberExpression[property.name="get"][object.name="form"], MemberExpression[property.name="get"] > MemberExpression[property.name="form"]',
             message: "For type safety reasons prefer `controls.name` over `get('name')`",
           },
+          {
+            selector: 'Identifier[name="mdDialog"]:has(Identifier[name="MatDialog"])',
+            message: "For consistency reasons prefer `matDialog` over `mdDialog`",
+          },
+          {
+            selector: 'Identifier[name="dialog"]:has(Identifier[name="MatDialog"])',
+            message: "For consistency reasons prefer `dialog` for `DialogService`",
+          },
+          {
+            selector: 'MemberExpression[property.name="email"][object.name="Validators"]',
+            message: 'For email validation, it is prefer to use the `emailValidator` validator.',
+          },
         ],
         "no-param-reassign": "off",
         "@typescript-eslint/no-loop-func": "off",

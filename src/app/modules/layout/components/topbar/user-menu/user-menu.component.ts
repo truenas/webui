@@ -21,17 +21,17 @@ export class UserMenuComponent {
   loggedInUser$ = this.authService.user$.pipe(filter(Boolean));
 
   constructor(
-    private dialog: MatDialog,
+    private matDialog: MatDialog,
     private authService: AuthService,
     private router: Router,
   ) { }
 
   openChangePasswordDialog(): void {
-    this.dialog.open(ChangePasswordDialogComponent);
+    this.matDialog.open(ChangePasswordDialogComponent);
   }
 
   onShowAbout(): void {
-    this.dialog.open(AboutDialogComponent, {
+    this.matDialog.open(AboutDialogComponent, {
       disableClose: true,
     });
   }

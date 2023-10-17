@@ -26,7 +26,7 @@ export class FailoverComponent implements OnInit {
     protected router: Router,
     protected loader: AppLoaderService,
     protected dialogService: DialogService,
-    protected dialog: MatDialog,
+    protected matDialog: MatDialog,
     private location: Location,
     private store$: Store<AlertSlice>,
   ) {}
@@ -50,7 +50,7 @@ export class FailoverComponent implements OnInit {
   ngOnInit(): void {
     // Replace URL so that we don't reboot again if page is refreshed.
     this.location.replaceState('/sessions/signin');
-    this.dialog.closeAll();
+    this.matDialog.closeAll();
     this.ws.call('failover.become_passive').pipe(untilDestroyed(this)).subscribe({
       error: (error: WebsocketError) => { // error on reboot
         this.dialogService.error(this.errorHandler.parseWsError(error))

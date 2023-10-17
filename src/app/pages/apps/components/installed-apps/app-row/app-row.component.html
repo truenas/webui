@@ -1,13 +1,14 @@
+<div class="cell cell-checkbox">
+  <mat-checkbox
+    color="primary"
+    [ixTest]="app.name"
+    [checked]="app.selected"
+    (click)="$event.stopPropagation()"
+    (change)="toggleAppChecked($event.checked)"
+  ></mat-checkbox>
+</div>
 <div class="cell cell-name">
   <div class="name">
-    <mat-checkbox
-      color="primary"
-      [ixTest]="app.name"
-      [checked]="app.selected"
-      (click)="$event.stopPropagation()"
-      (change)="toggleAppChecked($event.checked)"
-    ></mat-checkbox>
-
     <div class="app-logo">
       <img [src]="app.chart_metadata.icon" [src-fallback]="imagePlaceholder" />
     </div>

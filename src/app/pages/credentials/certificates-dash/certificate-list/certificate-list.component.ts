@@ -6,16 +6,14 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { isObject } from 'lodash';
-import {
-  BehaviorSubject, Observable, combineLatest, switchMap, of, filter, map,
-} from 'rxjs';
-import { EmptyType } from 'app/enums/empty-type.enum';
+import { filter, map, tap } from 'rxjs';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
+import { templateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table2/utils';
@@ -38,7 +36,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class CertificateListComponent implements OnInit {
   filterString = '';
-  dataProvider = new ArrayDataProvider<Certificate>();
+  dataProvider: AsyncDataProvider<Certificate>;
   certificates: Certificate[] = [];
   columns = createTable<Certificate>([
     textColumn({
@@ -56,28 +54,8 @@ export class CertificateListComponent implements OnInit {
       propertyName: 'common',
       sortable: true,
     }),
-    textColumn({
-      propertyName: 'id',
-    }),
+    templateColumn(),
   ]);
-
-  isLoading$ = new BehaviorSubject<boolean>(true);
-  isNoData$ = new BehaviorSubject<boolean>(false);
-  hasError$ = new BehaviorSubject<boolean>(false);
-  emptyType$: Observable<EmptyType> = combineLatest([this.isLoading$, this.isNoData$, this.hasError$]).pipe(
-    switchMap(([isLoading, isNoData, isError]) => {
-      if (isLoading) {
-        return of(EmptyType.Loading);
-      }
-      if (isError) {
-        return of(EmptyType.Errors);
-      }
-      if (isNoData) {
-        return of(EmptyType.NoPageData);
-      }
-      return of(EmptyType.NoSearchResults);
-    }),
-  );
 
   constructor(
     private matDialog: MatDialog,
@@ -92,41 +70,26 @@ export class CertificateListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.getCertificates();
+    const certificates$ = this.ws.call('certificate.query').pipe(
+      map((certificates) => {
+        return certificates
+          .map((certificate) => {
+            if (isObject(certificate.issuer)) {
+              certificate.issuer = certificate.issuer.name;
+            }
+            return certificate;
+          })
+          .filter((certificate) => certificate.certificate !== null);
+      }),
+      tap((certificates) => this.certificates = certificates),
+      untilDestroyed(this),
+    );
+    this.dataProvider = new AsyncDataProvider<Certificate>(certificates$);
+    this.setDefaultSort();
   }
 
   getCertificates(): void {
-    this.ws
-      .call('certificate.query')
-      .pipe(
-        map((certificates) => {
-          return certificates
-            .map((certificate) => {
-              if (isObject(certificate.issuer)) {
-                certificate.issuer = certificate.issuer.name;
-              }
-              return certificate;
-            })
-            .filter((certificate) => certificate.certificate !== null);
-        }),
-        untilDestroyed(this),
-      )
-      .subscribe({
-        next: (certificates) => {
-          this.certificates = certificates;
-          this.dataProvider.setRows(this.certificates);
-          this.isLoading$.next(false);
-          this.isNoData$.next(!this.certificates.length);
-          this.setDefaultSort();
-          this.cdr.markForCheck();
-        },
-        error: () => {
-          this.dataProvider.setRows([]);
-          this.isLoading$.next(false);
-          this.hasError$.next(true);
-          this.cdr.markForCheck();
-        },
-      });
+    this.dataProvider.refresh();
   }
 
   onListFiltered(query: string): void {
@@ -263,6 +226,7 @@ export class CertificateListComponent implements OnInit {
         dialogRef.componentInstance.setCall('certificate.update', [certificate.id, { revoked: true }]);
         dialogRef.componentInstance.submit();
         dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+          this.getCertificates();
           this.matDialog.closeAll();
         });
         dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((failedJob) => {

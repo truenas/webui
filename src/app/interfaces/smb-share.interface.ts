@@ -28,6 +28,11 @@ export interface SmbShare {
   timemachine: boolean;
   vuid: string;
   path_local: string;
+  audit: {
+    enable?: boolean;
+    watch_list?: string[];
+    ignore_list?: string[];
+  };
 }
 
 export enum SmbPresetType {

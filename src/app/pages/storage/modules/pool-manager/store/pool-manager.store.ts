@@ -224,7 +224,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     private dialogService: DialogService,
     private generateVdevs: GenerateVdevsService,
     private settingsStore$: Store<AppState>,
-    private dialog: MatDialog,
+    private matDialog: MatDialog,
   ) {
     super(initialState);
   }
@@ -409,7 +409,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
         const usedDisks = topologyCategoryToDisks(state.topology[type]);
         const inventory = _.differenceBy(inventoryForStep, usedDisks, (disk: UnusedDisk) => disk.devname);
         const isVdevsLimitedToOne = type === VdevType.Spare || type === VdevType.Cache || type === VdevType.Log;
-        return this.dialog.open(ManualDiskSelectionComponent, {
+        return this.matDialog.open(ManualDiskSelectionComponent, {
           data: {
             inventory,
             layout: state.topology[type].layout,

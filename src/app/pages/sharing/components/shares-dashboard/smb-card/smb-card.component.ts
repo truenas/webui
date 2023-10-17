@@ -2,17 +2,19 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, In
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, switchMap } from 'rxjs';
+import { filter, map, switchMap, tap } from 'rxjs';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { helptextSharingSmb } from 'app/helptext/sharing/smb/smb';
 import { Service } from 'app/interfaces/service.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { SmbShare, SmbSharesec } from 'app/interfaces/smb-share.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
+import { templateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { toggleColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
 import { createTable } from 'app/modules/ix-table2/utils';
+import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
 import { DialogService } from 'app/services/dialog.service';
@@ -33,9 +35,8 @@ export class SmbCardComponent implements OnInit, OnChanges {
 
   @Output() statusChanged = new EventEmitter<ServiceStatus>();
 
-  isLoading = false;
   smbShares: SmbShare[] = [];
-  dataProvider = new ArrayDataProvider<SmbShare>();
+  dataProvider: AsyncDataProvider<SmbShare>;
   title = 'Windows (SMB) Shares';
 
   isAddActionDisabled = false;
@@ -61,8 +62,7 @@ export class SmbCardComponent implements OnInit, OnChanges {
       cssClass: 'justify-end',
       onRowToggle: (row: SmbShare) => this.onChangeEnabledState(row),
     }),
-    textColumn({
-      propertyName: 'id',
+    templateColumn({
       cssClass: 'wide-actions',
     }),
   ]);
@@ -74,6 +74,7 @@ export class SmbCardComponent implements OnInit, OnChanges {
     private ws: WebSocketService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
+    protected emptyService: EmptyService,
     private router: Router,
   ) {}
 
@@ -95,7 +96,12 @@ export class SmbCardComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
-    this.getSmbShares();
+    const smbShares$ = this.ws.call('sharing.smb.query').pipe(
+      tap((smbShares) => this.smbShares = smbShares),
+      map((smbShares) => smbShares.slice(0, 4)),
+      untilDestroyed(this),
+    );
+    this.dataProvider = new AsyncDataProvider<SmbShare>(smbShares$);
   }
 
   openForm(row?: SmbShare): void {
@@ -181,15 +187,7 @@ export class SmbCardComponent implements OnInit, OnChanges {
   }
 
   private getSmbShares(): void {
-    this.isLoading = true;
-    this.ws.call('sharing.smb.query').pipe(
-      untilDestroyed(this),
-    ).subscribe((smbShares: SmbShare[]) => {
-      this.smbShares = smbShares;
-      this.dataProvider.setRows(smbShares.slice(0, 4));
-      this.isLoading = false;
-      this.cdr.markForCheck();
-    });
+    this.dataProvider.refresh();
   }
 
   private onChangeEnabledState(row: SmbShare): void {

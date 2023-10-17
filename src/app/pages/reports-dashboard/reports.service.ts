@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Store } from '@ngrx/store';
-import { addSeconds } from 'date-fns';
 import {
-  map, Observable, shareReplay, BehaviorSubject, switchMap, interval, Subject,
+  map, Observable, shareReplay, BehaviorSubject, Subject,
 } from 'rxjs';
 import { ReportingGraphName } from 'app/enums/reporting.enum';
 import { Option } from 'app/interfaces/option.interface';
@@ -11,9 +9,8 @@ import { ReportingData } from 'app/interfaces/reporting.interface';
 import { ReportTab, reportTypeLabels, ReportType } from 'app/pages/reports-dashboard/interfaces/report-tab.interface';
 import { LegendDataWithStackedTotalHtml, Report } from 'app/pages/reports-dashboard/interfaces/report.interface';
 import { convertAggregations, optimizeLegend } from 'app/pages/reports-dashboard/utils/report.utils';
+import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
-import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 /*
  * This service acts as a proxy between middleware/web worker
@@ -24,7 +21,6 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   providedIn: 'root',
 })
 export class ReportsService {
-  serverTime: Date;
   private reportingGraphs$ = new BehaviorSubject<ReportingGraph[]>([]);
   private diskMetrics$ = new BehaviorSubject<Option[]>([]);
   private hasUps = false;
@@ -38,7 +34,7 @@ export class ReportsService {
 
   constructor(
     private ws: WebSocketService,
-    private store$: Store<AppState>,
+    private systemGeneralService: SystemGeneralService,
   ) {
     this.ws.call('reporting.netdata_graphs').subscribe((reportingGraphs) => {
       this.hasUps = reportingGraphs.some((graph) => graph.name === ReportingGraphName.Ups);
@@ -53,19 +49,6 @@ export class ReportsService {
     this.ws.call('disk.temperatures').subscribe((values) => {
       this.hasDiskTemperature = Boolean(Object.values(values).filter(Boolean).length);
     });
-
-    this.store$
-      .pipe(
-        waitForSystemInfo,
-        map((systemInfo) => systemInfo.datetime.$date),
-        switchMap((timestamp) => {
-          this.serverTime = new Date(timestamp);
-          return interval(1000);
-        }),
-      )
-      .subscribe(() => {
-        this.serverTime = addSeconds(this.serverTime, 1);
-      });
   }
 
   emitLegendEvent(data: LegendDataWithStackedTotalHtml): void {

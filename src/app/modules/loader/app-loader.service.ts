@@ -10,7 +10,7 @@ import { AppLoaderComponent } from 'app/modules/loader/components/app-loader/app
 export class AppLoaderService {
   dialogRef: MatDialogRef<AppLoaderComponent>;
 
-  constructor(private dialog: MatDialog) { }
+  constructor(private matDialog: MatDialog) { }
 
   /**
    * Opens loader when observable (request) starts and closes when it ends.
@@ -29,7 +29,7 @@ export class AppLoaderService {
       return EMPTY;
     }
 
-    this.dialogRef = this.dialog.open(AppLoaderComponent, { disableClose: true });
+    this.dialogRef = this.matDialog.open(AppLoaderComponent, { disableClose: true });
     this.dialogRef.updateSize('200px', '200px');
     this.dialogRef.componentInstance.title = title;
     return this.dialogRef.afterClosed();

@@ -27,11 +27,9 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
   @Input() dataProvider: ArrayDataProvider<T>;
   @Input() isLoading = false;
 
-  @ContentChildren(IxTableCellDirective)
-  customCells!: QueryList<IxTableCellDirective<T>>;
+  @ContentChildren(IxTableCellDirective) customCells!: QueryList<IxTableCellDirective<T>>;
 
-  @ContentChild(IxTableDetailsRowDirective)
-  detailsRow: IxTableDetailsRowDirective<T>;
+  @ContentChild(IxTableDetailsRowDirective) detailsRow: IxTableDetailsRowDirective<T>;
 
   get displayedColumns(): Column<T, ColumnComponent<T>>[] {
     return this.columns?.filter((column) => !column?.hidden);

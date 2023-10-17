@@ -23,7 +23,7 @@ export class ConfigResetComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     public translate: TranslateService,
     protected dialogService: DialogService,
-    protected dialog: MatDialog,
+    protected matDialog: MatDialog,
     private location: Location,
   ) {}
 
@@ -46,12 +46,12 @@ export class ConfigResetComponent implements OnInit {
     // Replace URL so that we don't reset config again if page is refreshed.
     this.location.replaceState('/sessions/signin');
 
-    this.dialog.closeAll();
+    this.matDialog.closeAll();
     this.resetConfigSubmit();
   }
 
   resetConfigSubmit(): void {
-    const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: this.translate.instant('Resetting. Please wait...') }, disableClose: true });
+    const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: this.translate.instant('Resetting. Please wait...') }, disableClose: true });
     dialogRef.componentInstance.setCall('config.reset', [{ reboot: true }]);
     dialogRef.componentInstance.setDescription(this.translate.instant('Resetting system configuration to default settings. The system will restart.'));
     dialogRef.componentInstance.submit();

@@ -9,30 +9,30 @@ interface LayoutColumn {
   iomIndex: number;
 }
 
-export class Es102S extends Chassis {
+export class Es60G2 extends Chassis {
   constructor() {
     super();
-    this.model = 'es102s';
+    this.model = 'es60g2';
 
     this.front = new ChassisView();
     this.front.container = new PIXI.Container();
-    this.front.chassisPath = 'assets/images/hardware/es102s/es102s_960w.png';
-    this.front.driveTrayBackgroundPath = 'assets/images/hardware/es102s/es102s_960w_drivetray_bg.png';
-    this.front.driveTrayHandlePath = 'assets/images/hardware/es102s/es102s_960w_drivetray_handle.png';
+    this.front.chassisPath = 'assets/images/hardware/es60g2/es60g2_960w.png';
+    this.front.driveTrayBackgroundPath = 'assets/images/hardware/es60g2/es60g2_960w_drivetray.png';
+    this.front.driveTrayHandlePath = 'assets/images/hardware/es60g2/es60g2_960w_drivetray_handle.png';
 
-    this.front.totalDriveTrays = 102;
+    this.front.totalDriveTrays = 60;
     this.front.rows = 12;
-    this.front.columns = 8;
+    this.front.columns = 5;
     this.front.orientation = 'columns';
 
     // Scale
-    this.front.chassisScale = { x: 1.025, y: 1.1 };
-    this.front.driveTrays.scale.x = 1;
-    this.front.driveTrays.scale.y = 1;
+    this.front.chassisScale = { x: 1.22, y: 1.22 };
+    this.front.driveTrays.scale.x = 1.21;
+    this.front.driveTrays.scale.y = 1.21;
 
     // Offsets
-    this.front.driveTraysOffsetX = 0;
-    this.front.driveTraysOffsetY = -47;
+    this.front.driveTraysOffsetX = 115;
+    this.front.driveTraysOffsetY = -43;
 
     this.front.layout = {
       generatePosition: (
@@ -42,32 +42,23 @@ export class Es102S extends Chassis {
         offsetY: number,
       ) => {
         const gapX = 4;
-        const gapY = 4;
+        const gapY = 2;
 
         const cols: LayoutColumn[] = [
           {
-            start: 0, count: 15, iomGap: 0, iomIndex: 7,
+            start: 0, count: 12, iomGap: 90, iomIndex: 6,
           },
           {
-            start: 15, count: 15, iomGap: 0, iomIndex: 7,
+            start: 12, count: 12, iomGap: 60, iomIndex: 6,
           },
           {
-            start: 30, count: 13, iomGap: 64, iomIndex: 6,
+            start: 24, count: 12, iomGap: 60, iomIndex: 6,
           },
           {
-            start: 43, count: 13, iomGap: 64, iomIndex: 6,
+            start: 36, count: 12, iomGap: 60, iomIndex: 6,
           },
           {
-            start: 56, count: 13, iomGap: 70, iomIndex: 6,
-          },
-          {
-            start: 69, count: 11, iomGap: 70, iomIndex: 6,
-          },
-          {
-            start: 80, count: 11, iomGap: 70, iomIndex: 6,
-          },
-          {
-            start: 91, count: 11, iomGap: 70, iomIndex: 6,
+            start: 48, count: 12, iomGap: 60, iomIndex: 6,
           },
         ];
 
@@ -85,15 +76,15 @@ export class Es102S extends Chassis {
         const currentColumn: number = getCurrentColumn();
         const col = cols[currentColumn];
 
-        const mod = (index - col.start) % col.count;
-        const iomGapX = currentColumn > 3 ? 30 : 0;
+        const mod = (index - col?.start) % col.count; // this.front[orientation];
+        const iomGapX = currentColumn > 0 ? 25 : 0;
         const iomGapY = (index - col.start) >= col.iomIndex ? col.iomGap : 0;
 
         const nextPositionX = (displayObject.width + gapX) * currentColumn;
         let nextPositionY = mod * (displayObject.height + gapY);
 
-        if (currentColumn > 3) {
-          nextPositionY += -5;
+        if (currentColumn > 0) {
+          nextPositionY += 15;
         }
 
         return { x: nextPositionX + offsetX + iomGapX, y: nextPositionY + offsetY + iomGapY };

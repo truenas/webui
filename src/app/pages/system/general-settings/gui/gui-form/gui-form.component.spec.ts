@@ -106,6 +106,9 @@ describe('GuiFormComponent', () => {
         location: {
           replace: jest.fn(),
         },
+        localStorage: {
+          setItem: jest.fn(),
+        },
         sessionStorage: {
           getItem: () => 'ix-dark',
           setItem: () => {},
