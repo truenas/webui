@@ -29,7 +29,7 @@ import {
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { ApiKey, CreateApiKeyRequest, UpdateApiKeyRequest } from 'app/interfaces/api-key.interface';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
-import { AuditEntry } from 'app/interfaces/audit.interface';
+import { AuditConfig, AuditEntry } from 'app/interfaces/audit.interface';
 import { AuthSession } from 'app/interfaces/auth-session.interface';
 import { CheckUserQuery } from 'app/interfaces/auth.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
@@ -314,6 +314,8 @@ export interface ApiCallDirectory {
 
   // Audit
   'audit.query': { params: QueryParams<AuditEntry>; response: AuditEntry[] };
+  'audit.update': { params: [AuditConfig]; response: AuditEntry[] };
+  'audit.config': { params: void; response: AuditConfig };
 
   // Auth
   'auth.check_user': { params: CheckUserQuery; response: boolean };
