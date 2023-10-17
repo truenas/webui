@@ -127,6 +127,7 @@
   "Filesystem": "",
   "For example if you set this value to 5, system will renew certificates that expire in 5 days or less.": "",
   "Full path to the pool, dataset or directory to share.   The path must reside within a pool. Mandatory.": "",
+  "Give your exporter configuration a name": "",
   "Global 2FA": "",
   "Global Two Factor Authentication": "",
   "Global Two Factor Authentication Settings": "",

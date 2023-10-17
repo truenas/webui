@@ -50,8 +50,6 @@ export class ReportingExportersFormComponent implements OnInit {
   protected exporterTypeOptions$: Observable<Option[]>;
   protected reportingExporterList: ReportingExporterList[] = [];
 
-  editingExpoter: ReportingExporter;
-
   constructor(
     private fb: FormBuilder,
     private slideInRef: IxSlideInRef<ReportingExportersFormComponent>,
@@ -59,14 +57,10 @@ export class ReportingExportersFormComponent implements OnInit {
     private ws: WebSocketService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
-    @Inject(SLIDE_IN_DATA) private reportingExporter: ReportingExporter,
+    @Inject(SLIDE_IN_DATA) private editingExpoter: ReportingExporter,
   ) { }
 
   ngOnInit(): void {
-    if (this.reportingExporter) {
-      this.editingExpoter = this.reportingExporter;
-    }
-
     this.loadSchemas();
   }
 

@@ -184,6 +184,7 @@
   "FreeBSD": "",
   "Full path to the pool, dataset or directory to share.   The path must reside within a pool. Mandatory.": "",
   "General Info": "",
+  "Give your exporter configuration a name": "",
   "Global 2FA": "",
   "Global Two Factor Authentication": "",
   "Global Two Factor Authentication Settings": "",

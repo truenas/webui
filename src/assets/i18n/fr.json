@@ -83,6 +83,7 @@
   "FreeBSD": "",
   "Full path to the pool, dataset or directory to share.   The path must reside within a pool. Mandatory.": "",
   "Generic": "",
+  "Give your exporter configuration a name": "",
   "Global 2FA": "",
   "Go Back": "",
   "Go To Network Settings": "",

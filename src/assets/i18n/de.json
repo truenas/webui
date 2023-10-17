@@ -1102,6 +1102,7 @@
   "Generate idmap low range based on same algorithm that SSSD uses by default.": "",
   "Generic": "",
   "Get Support": "",
+  "Give your exporter configuration a name": "",
   "Gives control of how much of the new device is made available to ZFS. Set to use the entire capacity of the new device.": "",
   "Global 2FA": "",
   "Global SED Password": "",
