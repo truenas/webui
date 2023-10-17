@@ -70,6 +70,7 @@ describe('SyslogFormComponent', () => {
       'Syslog Level': 'Error',
       'Syslog Server': 'existing.server.com',
       'Syslog Transport': 'UDP',
+      'Include Audit Logs': false,
     });
   });
 
@@ -80,6 +81,7 @@ describe('SyslogFormComponent', () => {
       'Syslog Level': 'Info',
       'Syslog Server': 'new.server.com',
       'Syslog Transport': SyslogTransport.Tcp,
+      'Include Audit Logs': true,
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -91,6 +93,7 @@ describe('SyslogFormComponent', () => {
         sysloglevel: SyslogLevel.Info,
         syslogserver: 'new.server.com',
         syslog_transport: SyslogTransport.Tcp,
+        syslog_audit: true,
       },
     ]);
   });

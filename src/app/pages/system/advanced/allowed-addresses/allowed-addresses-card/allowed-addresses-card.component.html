@@ -8,7 +8,7 @@
       <button
         mat-button
         [ixTest]="['configure', 'ip-address']"
-        [disabled]="isLoading"
+        [disabled]="dataProvider.isLoading$ | async"
         (click)="onConfigure()"
       >
         {{ 'Configure' | translate }}
@@ -16,7 +16,11 @@
     </div>
   </mat-toolbar-row>
 
-  <ix-table2 class="table" [ix-table2-empty]="!dataProvider.rows.length && !isLoading">
+  <ix-table2
+    class="table"
+    [ix-table2-empty]="!dataProvider.rows.length"
+    [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
+  >
     <thead
       ix-table-head
       [columns]="columns"
@@ -26,7 +30,7 @@
       ix-table-body
       [columns]="columns"
       [dataProvider]="dataProvider"
-      [isLoading]="isLoading"
+      [isLoading]="dataProvider.isLoading$ | async"
     >
       <ng-template
         let-address

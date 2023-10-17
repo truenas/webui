@@ -32,6 +32,7 @@ import { ErrorDialogComponent } from 'app/modules/common/dialog/error-dialog/err
 import { FullScreenDialogComponent } from 'app/modules/common/dialog/full-screen-dialog/full-screen-dialog.component';
 import { GeneralDialogComponent } from 'app/modules/common/dialog/general-dialog/general-dialog.component';
 import { InfoDialogComponent } from 'app/modules/common/dialog/info-dialog/info-dialog.component';
+import { JobProgressDialogComponent } from 'app/modules/common/dialog/job-progress/job-progress-dialog.component';
 import { ErrorTemplateComponent } from 'app/modules/common/dialog/multi-error-dialog/error-template/error-template.component';
 import { MultiErrorDialogComponent } from 'app/modules/common/dialog/multi-error-dialog/multi-error-dialog.component';
 import { RedirectDialogComponent } from 'app/modules/common/dialog/redirect-dialog/redirect-dialog.component';
@@ -39,6 +40,7 @@ import {
   ResilverProgressDialogComponent,
 } from 'app/modules/common/dialog/resilver-progress/resilver-progress.component';
 import { UpdateDialogComponent } from 'app/modules/common/dialog/update-dialog/update-dialog.component';
+import { InterfaceStatusIconComponent } from 'app/modules/common/interface-status-icon/interface-status-icon.component';
 import { SearchInputComponent } from 'app/modules/common/search-input/search-input.component';
 import { SummaryComponent } from 'app/modules/common/summary/summary.component';
 import { EntityModule } from 'app/modules/entity/entity.module';
@@ -91,6 +93,7 @@ import { ShowLogsDialogComponent } from './dialog/show-logs-dialog/show-logs-dia
     FormsModule,
   ],
   declarations: [
+    JobProgressDialogComponent,
     AboutDialogComponent,
     ConfirmDialogComponent,
     ConsolePanelDialogComponent,
@@ -99,6 +102,7 @@ import { ShowLogsDialogComponent } from './dialog/show-logs-dialog/show-logs-dia
     GeneralDialogComponent,
     InfoDialogComponent,
     ErrorTemplateComponent,
+    InterfaceStatusIconComponent,
     MultiErrorDialogComponent,
     RedirectDialogComponent,
     SearchInputComponent,
@@ -117,6 +121,7 @@ import { ShowLogsDialogComponent } from './dialog/show-logs-dialog/show-logs-dia
     SearchInputComponent,
     ShowLogsDialogComponent,
     SummaryComponent,
+    InterfaceStatusIconComponent,
   ],
 })
 export class AppCommonModule {}

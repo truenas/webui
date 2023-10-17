@@ -1,14 +1,15 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, switchMap } from 'rxjs';
+import { filter, map, switchMap, tap } from 'rxjs';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
 import { Service } from 'app/interfaces/service.interface';
-import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
 import { templateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { createTable } from 'app/modules/ix-table2/utils';
+import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
 import { DialogService } from 'app/services/dialog.service';
@@ -28,9 +29,8 @@ export class IscsiCardComponent implements OnInit {
 
   @Output() statusChanged = new EventEmitter<ServiceStatus>();
 
-  isLoading = false;
   iscsiShares: IscsiTarget[] = [];
-  dataProvider = new ArrayDataProvider<IscsiTarget>();
+  dataProvider: AsyncDataProvider<IscsiTarget>;
 
   columns = createTable<IscsiTarget>([
     textColumn({
@@ -50,11 +50,17 @@ export class IscsiCardComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private ws: WebSocketService,
     private dialogService: DialogService,
+    protected emptyService: EmptyService,
     private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
-    this.getIscsiTargets();
+    const iscsiShares$ = this.ws.call('iscsi.target.query').pipe(
+      tap((iscsiShares) => this.iscsiShares = iscsiShares),
+      map((iscsiShares) => iscsiShares.slice(0, 4)),
+      untilDestroyed(this),
+    );
+    this.dataProvider = new AsyncDataProvider<IscsiTarget>(iscsiShares$);
   }
 
   openForm(row?: IscsiTarget, openWizard?: boolean): void {
@@ -90,14 +96,6 @@ export class IscsiCardComponent implements OnInit {
   }
 
   private getIscsiTargets(): void {
-    this.isLoading = true;
-    this.ws.call('iscsi.target.query').pipe(
-      untilDestroyed(this),
-    ).subscribe((iscsiShares: IscsiTarget[]) => {
-      this.iscsiShares = iscsiShares;
-      this.dataProvider.setRows(iscsiShares.slice(0, 4));
-      this.isLoading = false;
-      this.cdr.markForCheck();
-    });
+    this.dataProvider.refresh();
   }
 }

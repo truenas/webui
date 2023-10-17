@@ -3,6 +3,7 @@ import { IxHeaderCellCheckboxComponent } from 'app/modules/ix-table2/components/
 import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.interface';
 
 @Component({
+  selector: 'ix-cell-checkbox',
   templateUrl: './ix-cell-checkbox.component.html',
 })
 export class IxCellCheckboxComponent<T> extends ColumnComponent<T> {

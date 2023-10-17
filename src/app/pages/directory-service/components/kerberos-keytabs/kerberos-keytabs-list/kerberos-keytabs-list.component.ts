@@ -2,11 +2,10 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } 
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
-import { BehaviorSubject, Observable, combineLatest, filter, of, switchMap } from 'rxjs';
-import { EmptyType } from 'app/enums/empty-type.enum';
+import { filter, switchMap, tap } from 'rxjs';
 import { KerberosKeytab } from 'app/interfaces/kerberos-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
@@ -29,7 +28,7 @@ export default class KerberosKeytabsListComponent implements OnInit {
   @Input() paginator = true;
   @Input() toolbar = false;
   filterString = '';
-  dataProvider = new ArrayDataProvider<KerberosKeytab>();
+  dataProvider: AsyncDataProvider<KerberosKeytab>;
   kerberosRealsm: KerberosKeytab[] = [];
   columns = createTable<KerberosKeytab>([
     textColumn({
@@ -74,25 +73,6 @@ export default class KerberosKeytabsListComponent implements OnInit {
     }),
   ]);
 
-
-  isLoading$ = new BehaviorSubject<boolean>(true);
-  isNoData$ = new BehaviorSubject<boolean>(false);
-  hasError$ = new BehaviorSubject<boolean>(false);
-  emptyType$: Observable<EmptyType> = combineLatest([this.isLoading$, this.isNoData$, this.hasError$]).pipe(
-    switchMap(([isLoading, isNoData, isError]) => {
-      if (isLoading) {
-        return of(EmptyType.Loading);
-      }
-      if (isError) {
-        return of(EmptyType.Errors);
-      }
-      if (isNoData) {
-        return of(EmptyType.NoPageData);
-      }
-      return of(EmptyType.NoSearchResults);
-    }),
-  );
-
   constructor(
     private translateService: TranslateService,
     private ws: WebSocketService,
@@ -104,22 +84,16 @@ export default class KerberosKeytabsListComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.getKerberosKeytabs();
+    const keytabsRows$ = this.ws.call('kerberos.keytab.query').pipe(
+      tap((keytabsRows) => this.kerberosRealsm = keytabsRows),
+      untilDestroyed(this),
+    );
+    this.dataProvider = new AsyncDataProvider<KerberosKeytab>(keytabsRows$);
+    this.setDefaultSort();
   }
 
   getKerberosKeytabs(): void {
-    this.ws.call('kerberos.keytab.query').pipe(
-      untilDestroyed(this),
-    ).subscribe({
-      next: (keytabsRows) => {
-        this.kerberosRealsm = keytabsRows;
-        this.dataProvider.setRows(keytabsRows);
-        this.isLoading$.next(false);
-        this.isNoData$.next(!keytabsRows.length);
-        this.setDefaultSort();
-        this.cdr.markForCheck();
-      },
-    });
+    this.dataProvider.refresh();
   }
 
   setDefaultSort(): void {

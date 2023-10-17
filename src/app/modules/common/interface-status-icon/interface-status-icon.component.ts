@@ -1,14 +1,17 @@
 import {
-  ChangeDetectionStrategy, Component, Input, OnChanges,
+  ChangeDetectionStrategy, Component, Input, OnChanges, ViewChild,
 } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import filesize from 'filesize';
+import { timer } from 'rxjs';
 import { KiB } from 'app/constants/bytes.constant';
 import { LinkState } from 'app/enums/network-interface.enum';
 import { NetworkInterfaceUpdate } from 'app/interfaces/reporting.interface';
-import { TableService } from 'app/modules/entity/table/table.service';
+import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 
+@UntilDestroy()
 @Component({
   selector: 'ix-interface-status-icon',
   templateUrl: './interface-status-icon.component.html',
@@ -17,6 +20,7 @@ import { TableService } from 'app/modules/entity/table/table.service';
 })
 export class InterfaceStatusIconComponent implements OnChanges {
   @Input() update: NetworkInterfaceUpdate;
+  @ViewChild('stateIcon') stateIcon: IxIconComponent;
 
   readonly LinkState = LinkState;
 
@@ -25,7 +29,6 @@ export class InterfaceStatusIconComponent implements OnChanges {
 
   constructor(
     private translate: TranslateService,
-    private tableService: TableService,
   ) {
     this.elementId = `in-out${UUID.UUID()}`;
   }
@@ -39,11 +42,25 @@ export class InterfaceStatusIconComponent implements OnChanges {
 
   ngOnChanges(): void {
     if (this.update?.sent_bytes_rate > this.minRate) {
-      this.tableService.updateStateInfoIcon(this.elementId, 'sent');
+      this.updateStateInfoIcon('sent');
     }
 
     if (this.update?.received_bytes_rate > this.minRate) {
-      this.tableService.updateStateInfoIcon(this.elementId, 'received');
+      this.updateStateInfoIcon('received');
     }
+  }
+
+  updateStateInfoIcon(type: 'sent' | 'received'): void {
+    if (!this.stateIcon) {
+      return;
+    }
+    const arrowIcons = this.stateIcon._elementRef.nativeElement.querySelectorAll('.arrow');
+    const targetIconEl = type === 'sent' ? arrowIcons[0] : arrowIcons[1];
+
+    targetIconEl.classList.add('active');
+
+    timer(2000).pipe(untilDestroyed(this)).subscribe(() => {
+      targetIconEl.classList.remove('active');
+    });
   }
 }

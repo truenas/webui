@@ -3,13 +3,9 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import {
-  EMPTY, catchError, filter, switchMap, tap,
-} from 'rxjs';
-import { EmptyType } from 'app/enums/empty-type.enum';
+import { filter, switchMap, tap } from 'rxjs';
 import { VmwareSnapshot } from 'app/interfaces/vmware.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
@@ -29,7 +25,7 @@ export class VmwareSnapshotListComponent implements OnInit {
   private filterString = '';
 
   protected snapshots: VmwareSnapshot[] = [];
-  dataProvider = new ArrayDataProvider<VmwareSnapshot>();
+  dataProvider: AsyncDataProvider<VmwareSnapshot>;
   columns = createTable<VmwareSnapshot>([
     textColumn({
       title: this.translate.instant('Hostname'),
@@ -53,17 +49,10 @@ export class VmwareSnapshotListComponent implements OnInit {
     }),
   ]);
 
-  isLoading = false;
-  emptyType = EmptyType.Loading;
-
-  get emptyConfigService(): EmptyService {
-    return this.emptyService;
-  }
-
   constructor(
     protected translate: TranslateService,
     private slideInService: IxSlideInService,
-    private emptyService: EmptyService,
+    protected emptyService: EmptyService,
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
@@ -71,59 +60,25 @@ export class VmwareSnapshotListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.getSnapshotsData();
+    const snapshots$ = this.ws.call('vmware.query').pipe(
+      tap((snapshots) => this.snapshots = snapshots),
+      untilDestroyed(this),
+    );
+    this.dataProvider = new AsyncDataProvider<VmwareSnapshot>(snapshots$);
   }
 
   onListFiltered(query: string): void {
     this.filterString = query.toLowerCase();
-    if (!this.snapshots.length) {
-      this.emptyType = EmptyType.NoPageData;
-      return;
-    }
-    if (this.filterString === '') {
-      this.dataProvider.setRows(this.snapshots);
-      this.cdr.markForCheck();
-      return;
-    }
-    const searchedRows = this.snapshots.filter((snapshot) => {
+    this.dataProvider.setRows(this.snapshots.filter((snapshot) => {
       return snapshot.hostname.toLowerCase().includes(this.filterString)
       || snapshot.datastore.toLowerCase().includes(this.filterString)
       || snapshot.filesystem.toLowerCase().includes(this.filterString)
       || snapshot.username.toLowerCase().includes(this.filterString);
-    });
-    if (!searchedRows.length) {
-      this.emptyType = EmptyType.NoSearchResults;
-    }
-    this.dataProvider.setRows(searchedRows);
-    this.cdr.markForCheck();
+    }));
   }
 
   getSnapshotsData(): void {
-    this.isLoading = true;
-    this.cdr.markForCheck();
-    this.ws.call('vmware.query').pipe(
-      tap((snapshots) => {
-        this.snapshots = snapshots;
-        if (!snapshots.length) {
-          this.emptyType = EmptyType.NoPageData;
-        }
-        this.dataProvider.setRows(snapshots);
-        this.cdr.markForCheck();
-      }),
-      catchError((error: WebsocketError) => {
-        this.emptyType = EmptyType.Errors;
-        this.dialogService.error(
-          this.errorHandler.parseError(error),
-        );
-        return EMPTY;
-      }),
-      untilDestroyed(this),
-    ).subscribe({
-      next: () => {
-        this.isLoading = false;
-        this.cdr.markForCheck();
-      },
-    });
+    this.dataProvider.refresh();
   }
 
   doAdd(): void {

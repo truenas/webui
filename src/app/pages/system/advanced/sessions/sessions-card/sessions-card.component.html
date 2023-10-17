@@ -5,7 +5,7 @@
       <button
         mat-button
         [ixTest]="['sessions', 'terminate']"
-        [disabled]="isLoading"
+        [disabled]="dataProvider.isLoading$ | async"
         (click)="onTerminateOther()"
       >
         {{ 'Terminate Other Sessions' | translate }}
@@ -31,7 +31,11 @@
     </mat-list>
   </mat-card-content>
 
-  <ix-table2 class="table">
+  <ix-table2
+    class="table"
+    [ix-table2-empty]="!dataProvider.rows.length"
+    [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
+  >
     <thead
       ix-table-head
       [columns]="columns"
@@ -41,7 +45,7 @@
       ix-table-body
       [columns]="columns"
       [dataProvider]="dataProvider"
-      [isLoading]="isLoading"
+      [isLoading]="dataProvider.isLoading$ | async"
     >
       <ng-template
         let-session
