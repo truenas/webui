@@ -136,7 +136,7 @@ export class DialogService {
   ): JobProgressDialogRef {
     const jobProgressDialog: JobProgressDialog = new JobProgressDialog();
 
-    const dialogRef = this.dialog.open(JobProgressDialogComponent, {
+    const dialogRef = this.matDialog.open(JobProgressDialogComponent, {
       data: {
         job$,
         callbacks: {
