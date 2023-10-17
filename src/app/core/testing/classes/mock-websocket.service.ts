@@ -3,6 +3,10 @@ import { Router } from '@angular/router';
 import { when } from 'jest-when';
 import { Observable, of, Subject } from 'rxjs';
 import { ValuesType } from 'utility-types';
+import {
+  CallResponseOrFactory,
+  JobResponseOrFactory,
+} from 'app/core/testing/interfaces/mock-websocket-responses.interface';
 import { ApiCallDirectory, ApiCallMethod, ApiCallParams } from 'app/interfaces/api/api-call-directory.interface';
 import { ApiEventDirectory } from 'app/interfaces/api/api-event-directory.interface';
 import { ApiJobDirectory, ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
@@ -52,11 +56,19 @@ export class MockWebsocketService extends WebSocketService {
     });
   }
 
-  mockCall<K extends ApiCallMethod>(method: K, response: ApiCallDirectory[K]['response']): void {
-    when(this.call).calledWith(method).mockReturnValue(of(response));
+  mockCall<K extends ApiCallMethod>(method: K, response: CallResponseOrFactory<K>): void {
+    const mockedImplementation = (): Observable<unknown> => {
+      if (response instanceof Function) {
+        return of(response());
+      }
+
+      return of(response);
+    };
+
+    when(this.call).calledWith(method).mockImplementation(mockedImplementation);
     when(this.call)
       .calledWith(method, anyArgument as unknown as ApiCallParams<ApiCallMethod>)
-      .mockReturnValue(of(response));
+      .mockImplementation(mockedImplementation);
   }
 
   mockCallOnce<K extends ApiCallMethod>(method: K, response: ApiCallDirectory[K]['response']): void {
@@ -64,18 +76,27 @@ export class MockWebsocketService extends WebSocketService {
       .calledWith(method, anyArgument as unknown as ApiCallParams<ApiCallMethod>)
       .mockReturnValueOnce(of(response));
   }
-  mockJob<K extends ApiJobMethod>(method: K, response: Job<ApiJobDirectory[K]['response']>): void {
-    const responseWithJobId = {
-      ...response,
-      id: this.jobIdCounter,
+  mockJob<K extends ApiJobMethod>(method: K, response: JobResponseOrFactory<K>): void {
+    const getJobResponse = (): Job<ApiJobDirectory[K]['response']> => {
+      let job: Job;
+      if (response instanceof Function) {
+        job = response();
+      } else {
+        job = response;
+      }
+
+      return {
+        ...job,
+        id: this.jobIdCounter,
+      } as Job<ApiJobDirectory[K]['response']>;
     };
     when(this.startJob).calledWith(method).mockReturnValue(of(this.jobIdCounter));
     when(this.startJob).calledWith(method, anyArgument).mockReturnValue(of(this.jobIdCounter));
-    when(this.job).calledWith(method).mockReturnValue(of(responseWithJobId));
-    when(this.job).calledWith(method, anyArgument).mockReturnValue(of(responseWithJobId));
+    when(this.job).calledWith(method).mockImplementation(() => of(getJobResponse()));
+    when(this.job).calledWith(method, anyArgument).mockImplementation(() => of(getJobResponse()));
     when(this.call)
       .calledWith('core.get_jobs', [[['id', '=', this.jobIdCounter]]])
-      .mockReturnValue(of([responseWithJobId]));
+      .mockImplementation(() => of([getJobResponse()]));
 
     this.jobIdCounter += 1;
   }

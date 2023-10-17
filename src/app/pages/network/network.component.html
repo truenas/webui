@@ -6,7 +6,7 @@
   <div class="content" fxLayout="column" fxLayout.lg="row" fxLayoutGap="8px">
     <div class="right-column" fxFlex="100" fxFlex.lg="65">
       <div fxLayout="column" fxFlexFill fxLayoutGap="8px">
-        <mat-card *ngIf="hasPendingChanges">
+        <mat-card *ngIf="hasPendingChanges" class="pending-changes-card">
           <mat-card-content>
             <div *ngIf="!checkinWaiting; else checkIn">
               <p>{{ helptext.pending_changes_text | translate }}</p>

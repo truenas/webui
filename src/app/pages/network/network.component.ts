@@ -31,7 +31,7 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-interfaces-list',
+  selector: 'ix-network',
   templateUrl: './network.component.html',
   styleUrls: ['./network.component.scss'],
 })

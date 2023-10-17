@@ -4,10 +4,11 @@ import {
 import { Router } from '@angular/router';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import {
+  CallResponseOrFactory, JobResponseOrFactory,
   MockWebsocketCallResponse, MockWebsocketJobResponse,
   MockWebsocketResponseType,
 } from 'app/core/testing/interfaces/mock-websocket-responses.interface';
-import { ApiCallDirectory, ApiCallMethod } from 'app/interfaces/api/api-call-directory.interface';
+import { ApiCallMethod } from 'app/interfaces/api/api-call-directory.interface';
 import { ApiJobDirectory, ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
@@ -19,6 +20,7 @@ import { WebSocketService } from 'app/services/ws.service';
  * providers: [
  *   mockWebsocket([
  *     mockCall('filesystem.stat': { gid: 0 } as FileSystemStat),
+ *     mockCall('filesystem.stat', () => ({ gid: 0 } as FileSystemStat)),
  *     mockJob('filesystem.setacl', fakeSuccessfulJob()),
  *     ...
  *   }),
@@ -29,7 +31,7 @@ import { WebSocketService } from 'app/services/ws.service';
  * If you need more customization, use ordinary mockProvider().
  * @example
  * providers: [
- *   mockProvider(WebSocketService2, {
+ *   mockProvider(WebSocketService, {
  *     call: jest.fn((method) => {
  *       if (method === 'filesystem.stat') {
  *         return of({ user: 'john' } as FileSystemStat);
@@ -74,7 +76,7 @@ export function mockWebsocket(
 
 export function mockCall<M extends ApiCallMethod>(
   method: M,
-  response: ApiCallDirectory[M]['response'] = undefined,
+  response: CallResponseOrFactory<M> = undefined,
 ): MockWebsocketCallResponse {
   return {
     response,
@@ -89,7 +91,7 @@ export function mockCall<M extends ApiCallMethod>(
  */
 export function mockJob<M extends ApiJobMethod>(
   method: M,
-  response: Job<ApiJobDirectory[M]['response']> = undefined,
+  response: JobResponseOrFactory<M> = undefined,
 ): MockWebsocketJobResponse {
   return {
     response,
