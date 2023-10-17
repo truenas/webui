@@ -426,7 +426,7 @@
   "{catalog} Catalog": "",
   "{count} snapshots found.": "",
   "{cpuPercentage}% Avg. Usage": "",
-  "{days, plural, =1 {# day} other {# days}},": "",
+  "{days, plural, =1 {# day} other {# days}}": "",
   "{email} via {server}": "",
   "{hours, plural, =1 {# hour} other {# hours}}": "",
   "{license} contract, expires {date}": "",

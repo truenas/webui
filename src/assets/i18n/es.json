@@ -3957,7 +3957,7 @@
   "{catalog} Catalog": "",
   "{count} snapshots found.": "",
   "{cpuPercentage}% Avg. Usage": "",
-  "{days, plural, =1 {# day} other {# days}},": "",
+  "{days, plural, =1 {# day} other {# days}}": "",
   "{duration} remaining": "",
   "{eligible} of {total} existing snapshots of dataset {targetDataset} would be replicated with this task.": "",
   "{email} via {server}": "",
