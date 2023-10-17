@@ -34,7 +34,7 @@ export class ReportingExportersFormComponent implements OnInit {
 
   form = this.fb.group({
     name: [null as string, Validators.required],
-    enabled: [false as boolean],
+    enabled: [true],
     type: [null as string, Validators.required],
     attributes: this.fb.group<Record<string, unknown>>({}),
   });

@@ -97,13 +97,6 @@ export class AcmeDnsAuthenticatorListComponent implements OnInit {
       });
   }
 
-  onListFiltered(query: string): void {
-    this.filterString = query.toLowerCase();
-    this.dataProvider.setRows(
-      this.authenticators.filter((authenticator) => [authenticator.name.toLowerCase()].includes(this.filterString)),
-    );
-  }
-
   setDefaultSort(): void {
     this.dataProvider.setSorting({
       active: 1,
