@@ -117,13 +117,6 @@ export class ReportingExporterListComponent implements OnInit {
     });
   }
 
-  onListFiltered(query: string): void {
-    this.filterString = query.toLowerCase();
-    this.dataProvider.setRows(
-      this.exporters.filter((exporter) => (JSON.stringify(exporter).includes(query))),
-    );
-  }
-
   setDefaultSort(): void {
     this.dataProvider.setSorting({
       active: 1,
