@@ -62,6 +62,15 @@ export class ReportingExportersFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadSchemas();
+    this.handleTypeChange();
+  }
+
+  handleTypeChange(): void {
+    this.form.controls.type.valueChanges.pipe(untilDestroyed(this)).subscribe({
+      next: (value) => {
+        this.onExporterTypeChanged(value as ReportingExporterType);
+      },
+    });
   }
 
   private loadSchemas(): void {
