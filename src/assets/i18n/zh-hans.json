@@ -231,6 +231,7 @@
   "Mixing disks of different sizes in a VDEV is not recommended.": "",
   "Module": "",
   "Multichannel": "",
+  "Multiprotocol": "",
   "NEW": "",
   "Name not added": "",
   "NetBIOS Name of this NAS. This name must differ from the <i>Workgroup</i> name and be no greater than 15 characters.": "",
