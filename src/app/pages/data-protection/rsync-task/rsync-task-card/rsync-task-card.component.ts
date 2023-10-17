@@ -92,8 +92,6 @@ export class RsyncTaskCardComponent implements OnInit {
 
   ngOnInit(): void {
     this.getRsyncTasks();
-    const obs$ = this.ws.job('rsynctask.run', [1]);
-    this.dialogService.jobProgress(obs$);
   }
 
   getRsyncTasks(): void {
