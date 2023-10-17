@@ -702,7 +702,7 @@ export class MockStorageGenerator {
       case 'ES102':
         chassis = new MockEs102(enclosureNumber);
         break;
-      case 'ES102S':
+      case 'ES102G2':
         chassis = new MockEs102S(enclosureNumber);
         break;
       case 'M40':
