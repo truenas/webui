@@ -1,5 +1,5 @@
 import {
-  AfterContentInit,
+  AfterContentChecked,
   Component, ElementRef, Input, OnChanges, ViewChild,
 } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
@@ -9,7 +9,7 @@ import { BehaviorSubject } from 'rxjs';
   templateUrl: './app-section-expand-collapse.component.html',
   styleUrls: ['./app-section-expand-collapse.component.scss'],
 })
-export class AppSectionExpandCollapseComponent implements OnChanges, AfterContentInit {
+export class AppSectionExpandCollapseComponent implements OnChanges, AfterContentChecked {
   @ViewChild('section', { static: true, read: ElementRef }) section: ElementRef<HTMLElement>;
   @Input() maxHeight = 250;
   height$ = new BehaviorSubject<number>(this.maxHeight);
@@ -24,7 +24,7 @@ export class AppSectionExpandCollapseComponent implements OnChanges, AfterConten
     this.section.nativeElement.style.maxHeight = `${this.maxHeight}px`;
   }
 
-  ngAfterContentInit(): void {
+  ngAfterContentChecked(): void {
     this.setHeight();
     this.section.nativeElement.style.maxHeight = `${this.maxHeight}px`;
   }
