@@ -1,3 +1,4 @@
+import { DOCUMENT } from '@angular/common';
 import {
   Component,
   Input,
@@ -14,7 +15,7 @@ import {
   BehaviorSubject, Subscription, timer,
 } from 'rxjs';
 import {
-  delay, distinctUntilChanged, filter, switchMap, throttleTime,
+  delay, distinctUntilChanged, filter, skipWhile, switchMap, throttleTime,
 } from 'rxjs/operators';
 import { toggleMenuDuration } from 'app/constants/toggle-menu-duration';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -132,6 +133,7 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
     private store$: Store<AppState>,
     private themeService: ThemeService,
     @Inject(WINDOW) private window: Window,
+    @Inject(DOCUMENT) private document: Document,
     private reportsService: ReportsService,
   ) {
     super(translate);
@@ -177,6 +179,7 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
     this.fetchReport$.pipe(
       filter((params) => !!params),
       throttleTime(100),
+      skipWhile(() => this.document.hidden),
       distinctUntilChanged(),
       untilDestroyed(this),
     ).subscribe((params) => {
@@ -186,6 +189,7 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
     this.updateReport$.pipe(
       filter((changes) => Boolean(changes?.report)),
       throttleTime(100),
+      skipWhile(() => this.document.hidden),
       distinctUntilChanged(),
       untilDestroyed(this),
     ).subscribe((changes) => {
@@ -445,6 +449,7 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
       timeFrame,
       truncate: this.stepForwardDisabled,
     }).pipe(
+      skipWhile(() => this.document.hidden),
       untilDestroyed(this),
     ).subscribe({
       next: (event) => {
