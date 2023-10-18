@@ -13,8 +13,7 @@
 
 .notes-list {
   background-color: rgba(0, 0, 0, 0.1);
-  max-height: 250px;
-  overflow: auto;
+  overflow: hidden;
   padding: 12px;
   word-wrap: break-word;
 
