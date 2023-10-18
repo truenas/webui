@@ -9,4 +9,5 @@ import { ChartRelease } from 'app/interfaces/chart-release.interface';
 })
 export class AppNotesCardComponent {
   @Input() app: ChartRelease;
+  @Input() maxHeight = 250;
 }
