@@ -48,6 +48,6 @@ export class TokenSettingsComponent implements OnInit {
   onSubmit(): void {
     this.snackbar.success(this.translate.instant('Settings saved'));
     this.store$.dispatch(lifetimeTokenUpdated({ lifetime: this.form.value.token_lifetime }));
-    this.slideInRef.close();
+    this.slideInRef.close(true);
   }
 }

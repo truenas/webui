@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { filter } from 'rxjs';
 import { IscsiAuthAccess } from 'app/interfaces/iscsi.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
@@ -57,12 +58,12 @@ export class AuthorizedAccessListComponent implements EntityTableConfig<IscsiAut
 
   doAdd(): void {
     const slideInRef = this.slideInService.open(AuthorizedAccessFormComponent);
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.entityList.getData());
   }
 
   doEdit(id: number, entityList: EntityTableComponent<IscsiAuthAccess>): void {
     const authAccess = entityList.rows.find((row) => row.id === id);
     const slideInRef = this.slideInService.open(AuthorizedAccessFormComponent, { data: authAccess });
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.entityList.getData());
   }
 }

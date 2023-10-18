@@ -23,7 +23,11 @@
     </div>
   </mat-toolbar-row>
 
-  <ix-table2 class="table" [ix-table2-empty]="!dataProvider.rows.length && !isLoading">
+  <ix-table2
+    class="table"
+    [ix-table2-empty]="!dataProvider.rows.length"
+    [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
+  >
     <thead
       ix-table-head
       [columns]="columns"
@@ -33,34 +37,8 @@
       ix-table-body
       [columns]="columns"
       [dataProvider]="dataProvider"
-      [isLoading]="isLoading"
-    >
-      <ng-template
-        let-nfs
-        ix-table-cell
-        [columnIndex]="3"
-        [dataProvider]="dataProvider"
-      >
-        <div class="justify-end">
-          <button
-            mat-icon-button
-            [ixTest]="[nfs.id, 'edit']"
-            [matTooltip]="'Edit' | translate"
-            (click)="openForm(nfs)"
-          >
-            <ix-icon name="edit"></ix-icon>
-          </button>
-          <button
-            mat-icon-button
-            [ixTest]="[nfs.id, 'delete']"
-            [matTooltip]="'Delete' | translate"
-            (click)="doDelete(nfs)"
-          >
-            <ix-icon name="delete"></ix-icon>
-          </button>
-        </div>
-      </ng-template>
-    </tbody>
+      [isLoading]="dataProvider.isLoading$ | async"
+    ></tbody>
   </ix-table2>
 
   <a

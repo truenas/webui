@@ -11,6 +11,14 @@ export interface BaseAuditEntry {
   success: boolean;
 }
 
+export interface AuditConfig {
+  retention: number;
+  reservation: number;
+  quota: number;
+  quota_fill_warning: number;
+  quota_fill_critical: number;
+}
+
 export interface SmbAuditEntry extends BaseAuditEntry {
   service: AuditService.Smb;
   service_data: AuditServiceData;

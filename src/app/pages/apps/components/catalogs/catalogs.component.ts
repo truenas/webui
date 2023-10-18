@@ -1,19 +1,15 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import {
-  BehaviorSubject, Observable, combineLatest, of,
-} from 'rxjs';
-import { filter, switchMap } from 'rxjs/operators';
-import { EmptyType } from 'app/enums/empty-type.enum';
+import { filter, tap } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/apps/apps';
 import { Catalog } from 'app/interfaces/catalog.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table2/utils';
@@ -37,10 +33,10 @@ import { CatalogEditFormComponent } from './catalog-edit-form/catalog-edit-form.
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CatalogsComponent implements OnInit {
-  filterString = '';
   catalogSyncJobIds = new Set<number>();
-  dataProvider = new ArrayDataProvider<Catalog>();
+  dataProvider: AsyncDataProvider<Catalog>;
   catalogs: Catalog[] = [];
+
   columns = createTable<Catalog>([
     textColumn({
       title: this.translate.instant('Name'),
@@ -64,37 +60,24 @@ export class CatalogsComponent implements OnInit {
     }),
   ]);
 
-  isLoading$ = new BehaviorSubject<boolean>(true);
-  isNoData$ = new BehaviorSubject<boolean>(false);
-  hasError$ = new BehaviorSubject<boolean>(false);
-  emptyType$: Observable<EmptyType> = combineLatest([this.isLoading$, this.isNoData$, this.hasError$]).pipe(
-    switchMap(([isLoading, isNoData, isError]) => {
-      if (isLoading) {
-        return of(EmptyType.Loading);
-      }
-      if (isError) {
-        return of(EmptyType.Errors);
-      }
-      if (isNoData) {
-        return of(EmptyType.NoPageData);
-      }
-      return of(EmptyType.NoSearchResults);
-    }),
-  );
-
   constructor(
     private matDialog: MatDialog,
     private dialogService: DialogService,
     private ws: WebSocketService,
     private slideInService: IxSlideInService,
     private translate: TranslateService,
-    private cdr: ChangeDetectorRef,
     protected emptyService: EmptyService,
   ) {}
 
   ngOnInit(): void {
+    const catalogs$ = this.ws.call('catalog.query', [[], { extra: { item_details: true } }]).pipe(
+      tap((catalogs) => this.catalogs = catalogs),
+      untilDestroyed(this),
+    );
+    this.dataProvider = new AsyncDataProvider<Catalog>(catalogs$);
+    this.setDefaultSort();
+
     this.listenForCatalogSyncJobs();
-    this.getCatalogs();
   }
 
   listenForCatalogSyncJobs(): void {
@@ -114,33 +97,12 @@ export class CatalogsComponent implements OnInit {
     });
   }
 
-  getCatalogs(): void {
-    this.ws.call('catalog.query', [[], { extra: { item_details: true } }]).pipe(
-      untilDestroyed(this),
-    ).subscribe({
-      next: (catalogs) => {
-        this.catalogs = catalogs;
-        this.dataProvider.setRows(catalogs);
-        this.isLoading$.next(false);
-        this.isNoData$.next(!catalogs.length);
-        this.setDefaultSort();
-        this.cdr.markForCheck();
-      },
-      error: () => {
-        this.dataProvider.setRows([]);
-        this.isLoading$.next(false);
-        this.hasError$.next(true);
-        this.cdr.markForCheck();
-      },
-    });
-  }
-
   onListFiltered(query: string): void {
-    this.filterString = query.toLowerCase();
+    const filterString = query.toLowerCase();
     this.dataProvider.setRows(this.catalogs.filter((catalog) => {
-      return catalog.label.toLowerCase().includes(this.filterString)
-        || catalog.id.toLowerCase().includes(this.filterString)
-        || catalog.repository.toString().includes(this.filterString);
+      return catalog.label.toLowerCase().includes(filterString)
+        || catalog.id.toLowerCase().includes(filterString)
+        || catalog.repository.toString().includes(filterString);
     }));
   }
 
@@ -153,7 +115,7 @@ export class CatalogsComponent implements OnInit {
   }
 
   refresh(): void {
-    this.getCatalogs();
+    this.dataProvider.refresh();
   }
 
   doAdd(): void {
@@ -164,14 +126,14 @@ export class CatalogsComponent implements OnInit {
       hideCheckbox: true,
     }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       const slideInRef = this.slideInService.open(CatalogAddFormComponent);
-      slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.refresh());
+      slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.refresh());
     });
   }
 
   doEdit(catalog: Catalog): void {
     const slideInRef = this.slideInService.open(CatalogEditFormComponent);
     slideInRef.componentInstance.setCatalogForEdit(catalog);
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.refresh());
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.refresh());
   }
 
   doDelete(catalog: Catalog): void {
@@ -180,7 +142,7 @@ export class CatalogsComponent implements OnInit {
     }).afterClosed()
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => {
-        this.getCatalogs();
+        this.refresh();
       });
   }
 

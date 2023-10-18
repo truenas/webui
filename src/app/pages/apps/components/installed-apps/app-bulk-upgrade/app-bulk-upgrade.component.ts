@@ -10,7 +10,6 @@ import { FormBuilder } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatAccordion } from '@angular/material/expansion';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
   filter, map, Observable, of, pairwise, startWith,
@@ -23,8 +22,6 @@ import { Option } from 'app/interfaces/option.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
-import { jobIndicatorPressed } from 'app/store/topbar/topbar.actions';
 
 @UntilDestroy()
 @Component({
@@ -51,7 +48,6 @@ export class AppBulkUpgradeComponent {
     private dialogRef: MatDialogRef<AppBulkUpgradeComponent>,
     private appService: ApplicationsService,
     private snackbar: SnackbarService,
-    private store$: Store<AppState>,
     @Inject(MAT_DIALOG_DATA) private apps: ChartRelease[],
   ) {
     this.apps = this.apps.filter((app) => app.update_available || app.container_images_update_available);
@@ -126,7 +122,6 @@ export class AppBulkUpgradeComponent {
         this.snackbar.success(
           this.translate.instant('Upgrading Apps. Please check on the progress in Task Manager.'),
         );
-        this.store$.dispatch(jobIndicatorPressed());
       });
   }
 

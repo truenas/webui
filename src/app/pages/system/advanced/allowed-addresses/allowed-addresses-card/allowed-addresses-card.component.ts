@@ -1,13 +1,15 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { filter } from 'rxjs';
+import { filter, map } from 'rxjs';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
+import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { createTable } from 'app/modules/ix-table2/utils';
+import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import {
   AllowedAddressesFormComponent,
@@ -26,22 +28,26 @@ interface AllowedAddressRow {
 @UntilDestroy()
 @Component({
   selector: 'ix-allowed-addresses-card',
-  styleUrls: ['../../common-card.scss', './allowed-addresses-card.component.scss'],
+  styleUrls: ['../../common-card.scss'],
   templateUrl: './allowed-addresses-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AllowedAddressesCardComponent implements OnInit {
-  dataProvider = new ArrayDataProvider<AllowedAddressRow>();
-
-  isLoading = false;
+  dataProvider: AsyncDataProvider<AllowedAddressRow>;
 
   columns = createTable<AllowedAddressRow>([
     textColumn({
       title: this.translate.instant('Address'),
       propertyName: 'address',
     }),
-    textColumn({
-      propertyName: 'address',
+    actionsColumn({
+      actions: [
+        {
+          iconName: 'delete',
+          tooltip: this.translate.instant('Delete'),
+          onClick: (row) => this.promptDeleteAllowedAddress(row),
+        },
+      ],
     }),
   ]);
 
@@ -53,11 +59,15 @@ export class AllowedAddressesCardComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     private advancedSettings: AdvancedSettingsService,
-    private cdr: ChangeDetectorRef,
+    protected emptyService: EmptyService,
   ) {}
 
   ngOnInit(): void {
-    this.getAllowedAddresses();
+    const config$ = this.ws.call('system.general.config').pipe(
+      map((config) => this.getAddressesSourceFromConfig(config)),
+      untilDestroyed(this),
+    );
+    this.dataProvider = new AsyncDataProvider<AllowedAddressRow>(config$);
   }
 
   async onConfigure(): Promise<void> {
@@ -100,12 +110,7 @@ export class AllowedAddressesCardComponent implements OnInit {
   }
 
   private getAllowedAddresses(): void {
-    this.isLoading = true;
-    this.ws.call('system.general.config').pipe(untilDestroyed(this)).subscribe((config) => {
-      this.dataProvider.setRows(this.getAddressesSourceFromConfig(config));
-      this.isLoading = false;
-      this.cdr.markForCheck();
-    });
+    this.dataProvider.refresh();
   }
 
   private getAddressesSourceFromConfig(data: SystemGeneralConfig): AllowedAddressRow[] {

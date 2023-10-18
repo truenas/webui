@@ -48,6 +48,12 @@
             [required]="true"
           ></ix-select>
         </ng-container>
+
+        <ix-checkbox
+          formControlName="syslog_audit"
+          [label]="'Include Audit Logs' | translate"
+          [tooltip]="tooltips.syslog_audit | translate"
+        ></ix-checkbox>
       </ix-fieldset>
 
       <ix-form-actions>

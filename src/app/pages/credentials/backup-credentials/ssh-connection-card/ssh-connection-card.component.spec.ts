@@ -19,6 +19,7 @@ import { WebSocketService } from 'app/services/ws.service';
 describe('SshConnectionCardComponent', () => {
   let spectator: Spectator<SshConnectionCardComponent>;
   let loader: HarnessLoader;
+  let table: IxTable2Harness;
 
   const connections = [
     {
@@ -77,9 +78,10 @@ describe('SshConnectionCardComponent', () => {
     ],
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    table = await loader.getHarness(IxTable2Harness);
   });
 
   it('checks page title', () => {
@@ -95,7 +97,7 @@ describe('SshConnectionCardComponent', () => {
   });
 
   it('opens form when "Edit" button is pressed', async () => {
-    const editButton = await loader.getHarness(MatButtonHarness.with({ selector: '[aria-label="Edit"]' }));
+    const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 1);
     await editButton.click();
 
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(SshConnectionFormComponent, {
@@ -116,7 +118,7 @@ describe('SshConnectionCardComponent', () => {
   });
 
   it('opens delete dialog when "Delete" button is pressed', async () => {
-    const deleteButton = await loader.getHarness(IxIconHarness.with({ name: 'mdi-delete' }));
+    const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'delete' }), 1, 1);
     await deleteButton.click();
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('keychaincredential.delete', [5]);
@@ -129,7 +131,6 @@ describe('SshConnectionCardComponent', () => {
       ['test-conn-2', ''],
     ];
 
-    const table = await loader.getHarness(IxTable2Harness);
     const cells = await table.getCellTexts();
     expect(cells).toEqual(expectedRows);
   });

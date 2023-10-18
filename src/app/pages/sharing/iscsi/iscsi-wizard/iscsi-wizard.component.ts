@@ -440,7 +440,7 @@ export class IscsiWizardComponent implements OnInit {
     this.loader.close();
     this.isLoading = false;
     this.cdr.markForCheck();
-    this.slideInRef.close();
+    this.slideInRef.close(true);
   }
 
   checkIfServiceRestartIsNeeded(): Observable<boolean> {
@@ -448,8 +448,6 @@ export class IscsiWizardComponent implements OnInit {
       map((service) => service.state === ServiceStatus.Running),
       filter(Boolean),
       switchMap(() => this.warnAboutActiveIscsiSessions()),
-      untilDestroyed(this),
-    ).pipe(
       switchMap((confirmed) => {
         if (confirmed) {
           this.loader.open();
@@ -466,6 +464,7 @@ export class IscsiWizardComponent implements OnInit {
         }
         return of(false);
       }),
+      untilDestroyed(this),
     );
   }
 

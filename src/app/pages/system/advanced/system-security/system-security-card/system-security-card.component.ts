@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Observable, of } from 'rxjs';
+import { Observable, filter, of } from 'rxjs';
 import { LoadingState, toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { SystemSecurityFormComponent } from 'app/pages/system/advanced/system-security/system-security-form/system-security-form.component';
@@ -27,7 +27,7 @@ export class SystemSecurityCardComponent {
   openSystemSecuritySettings(config: SystemSecurityConfig): void {
     const slideInRef = this.slideInService.open(SystemSecurityFormComponent, { data: config });
 
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.ws.call('system.security.config').pipe(untilDestroyed(this)).subscribe((result) => {
         this.systemSecurityConfig$ = of(result).pipe(toLoadingState());
         this.cdr.markForCheck();

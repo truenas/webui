@@ -13,6 +13,7 @@ import { SupportConfigUpdate } from 'app/interfaces/support.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { emailValidator } from 'app/modules/ix-forms/validators/email-validation/email-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -32,12 +33,12 @@ export class ProactiveComponent implements OnInit {
   form = this.formBuilder.group({
     name: ['', [Validators.required]],
     title: ['', [Validators.required]],
-    email: ['', [Validators.required, Validators.email]],
+    email: ['', [Validators.required, emailValidator()]],
     phone: ['', [Validators.required]],
     enabled: [false],
     secondary_name: ['', [Validators.required]],
     secondary_title: ['', [Validators.required]],
-    secondary_email: ['', [Validators.required, Validators.email]],
+    secondary_email: ['', [Validators.required, emailValidator()]],
     secondary_phone: ['', [Validators.required]],
   });
 

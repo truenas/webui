@@ -454,11 +454,11 @@ export class SmbFormComponent implements OnInit {
               );
             }
             this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Cifs }));
-            this.slideInRef.close();
+            this.slideInRef.close(true);
           });
         } else {
           this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Cifs }));
-          this.slideInRef.close();
+          this.slideInRef.close(true);
         }
       },
       error: (error: WebsocketError) => {

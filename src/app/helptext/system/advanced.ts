@@ -14,6 +14,7 @@ export const helptextSystemAdvanced = {
   dialog_button_ok: T('Proceed'),
 
   system_dataset_tooltip: T('Store system logs on the system dataset. Unset to store system logs in <i>/var/</i> on the operating system device.'),
+  syslog_audit_tooltip: T('Check to enable Audit Logs'),
 
   consolemenu_tooltip: T('Unset to add a login prompt to the system before\
  the console menu is shown.'),
@@ -51,6 +52,17 @@ simultaneously.'),
   sed_passwd2_placeholder: T('Confirm SED Password'),
 
   debug_download_failed_message: T('Debug could not be downloaded.'),
+
+  retention_tooltip: T('Number of days to retain local audit messages.'),
+  reservation_tooltip: T('Size in GiB of refreservation to set on ZFS dataset \
+ where the audit databases are stored. The refreservation specifies the \
+ minimum amount of space guaranteed to the dataset, and counts against \
+ the space available for other datasets in the zpool where the audit \
+ dataset is located.'),
+  quota_tooltip: T('Size in GiB of the maximum amount of space that may be \
+ consumed by the dataset where the audit dabases are stored.'),
+  quota_fill_warning_tooltip: T('Percentage used of dataset quota at which to generate a warning alert.'),
+  quota_fill_critical_tooltip: T('Percentage used of dataset quota at which to generate a critical alert.'),
 
   sysloglevel: {
     tooltip: T(

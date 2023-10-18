@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
-  Observable, shareReplay,
+  Observable, filter, shareReplay,
 } from 'rxjs';
 import { toLoadingState, LoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { TwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
@@ -46,7 +46,7 @@ export class GlobalTwoFactorAuthCardComponent implements OnInit {
   async onConfigurePressed(twoFactorAuthConfig: TwoFactorConfig): Promise<void> {
     await this.advancedSettings.showFirstTimeWarningIfNeeded();
     const ixSlideInRef = this.slideInService.open(GlobalTwoFactorAuthFormComponent, { data: twoFactorAuthConfig });
-    ixSlideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe({
+    ixSlideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe({
       next: (response: unknown) => {
         if (response === true) {
           this.refreshCard();

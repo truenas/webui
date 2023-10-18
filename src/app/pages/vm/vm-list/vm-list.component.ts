@@ -3,7 +3,8 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, switchMap } from 'rxjs/operators';
+import { lastValueFrom, of } from 'rxjs';
+import { catchError, filter, map, switchMap } from 'rxjs/operators';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
@@ -112,21 +113,31 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
     private slideInService: IxSlideInService,
   ) {}
 
+  prerequisite(): Promise<boolean> {
+    return lastValueFrom(
+      this.vmService.getVirtualizationDetails().pipe(
+        map((virtualization) => {
+          virtualization.error ||= '';
+          this.virtualizationDetails = virtualization;
+          this.hasVirtualizationSupport = virtualization.supported;
+          this.canAdd = virtualization.supported;
+          return true;
+        }),
+        catchError(() => {
+          return of(false);
+        }),
+      ),
+    );
+  }
+
+  prerequisiteFailedHandler(entity: EntityTableComponent<VirtualMachineRow>): void {
+    entity.configureEmptyTable(EmptyType.Errors, '');
+    entity.changeDetectorRef.detectChanges();
+  }
+
   afterInit(entityList: EntityTableComponent<VirtualMachineRow>): void {
     this.checkMemory();
     this.entityList = entityList;
-
-    this.vmService.getVirtualizationDetails().pipe(untilDestroyed(this)).subscribe({
-      next: (virtualization) => {
-        this.virtualizationDetails = virtualization;
-        this.hasVirtualizationSupport = virtualization.supported;
-        this.canAdd = virtualization.supported;
-      },
-      error: () => {
-        // fallback when endpoint is unavailable
-        this.canAdd = true;
-      },
-    });
 
     this.ws.subscribe('vm.query').pipe(untilDestroyed(this)).subscribe((event) => {
       entityList.patchCurrentRows(
@@ -173,7 +184,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
   }
 
   resourceTransformIncomingRestData(vms: VirtualMachine[]): VirtualMachineRow[] {
-    return vms.map((vm) => {
+    return !this.hasVirtualizationSupport ? [] : vms.map((vm) => {
       const transformed = {
         ...vm,
         state: vm.status.state,
@@ -340,7 +351,10 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
       label: this.translate.instant('Edit'),
       onClick: (vm: VirtualMachineRow) => {
         const slideInRef = this.slideInService.open(VmEditFormComponent, { data: vm });
-        slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
+        slideInRef.slideInClosed$.pipe(
+          filter(Boolean),
+          untilDestroyed(this),
+        ).subscribe(() => this.entityList.getData());
       },
     },
     {
@@ -456,7 +470,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
 
   doAdd(): void {
     const slideInRef = this.slideInService.open(VmWizardComponent);
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.entityList.getData());
   }
 
   private openStopDialog(vm: VirtualMachineRow): void {

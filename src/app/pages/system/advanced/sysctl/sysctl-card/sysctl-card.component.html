@@ -18,6 +18,7 @@
   <ix-table2
     class="table"
     [ix-table2-empty]="!dataProvider.rows.length"
+    [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
   >
     <thead
       ix-table-head
@@ -28,33 +29,7 @@
       ix-table-body
       [columns]="columns"
       [dataProvider]="dataProvider"
-      [isLoading]="isLoading"
-    >
-      <ng-template
-        let-row
-        ix-table-cell
-        [columnIndex]="4"
-        [dataProvider]="dataProvider"
-      >
-        <div class="buttons">
-          <button
-            mat-icon-button
-            [ixTest]="[row.id, 'edit']"
-            [matTooltip]="'Edit' | translate"
-            (click)="onEdit(row)"
-          >
-            <ix-icon name="edit"></ix-icon>
-          </button>
-          <button
-            mat-icon-button
-            [ixTest]="[row.id, 'delete']"
-            [matTooltip]="'Delete' | translate"
-            (click)="onDelete(row)"
-          >
-            <ix-icon name="delete"></ix-icon>
-          </button>
-        </div>
-      </ng-template>
-    </tbody>
+      [isLoading]="dataProvider.isLoading$ | async"
+    ></tbody>
   </ix-table2>
 </mat-card>

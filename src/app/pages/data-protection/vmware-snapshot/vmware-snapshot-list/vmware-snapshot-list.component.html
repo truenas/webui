@@ -10,7 +10,7 @@
 <div class="table-container">
   <ix-table2
     [ix-table2-empty]="!dataProvider.rows.length"
-    [emptyConfig]="emptyConfigService.defaultEmptyConfig(emptyType)"
+    [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
   >
     <thead
       ix-table-head
@@ -21,6 +21,7 @@
       ix-table-body
       [columns]="columns"
       [dataProvider]="dataProvider"
+      [isLoading]="dataProvider.isLoading$ | async"
     >
       <ng-template let-snapshot ix-table-details-row [dataProvider]="dataProvider">
         <div class="table-details-row-actions">
