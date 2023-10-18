@@ -40,6 +40,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
     this.comboboxProviderHandler = new IxComboboxProviderManager(comboboxProvider);
     this.cdr.markForCheck();
   }
+  @Input() initialValue?: Option | null;
   private comboboxProviderHandler: IxComboboxProviderManager;
 
   @ViewChild('ixInput') inputElementRef: ElementRef<HTMLInputElement>;
@@ -128,6 +129,13 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
           if (this.selectedOption) {
             this.filterChanged$.next('');
           }
+        } else if (this.initialValue?.value) {
+          /**
+           * Workaround!
+           * TODO: Redesign ix-combobox provider to reliably fetch initial values without needing fake options
+           * */
+          this.options.push(this.initialValue);
+          this.selectedOption = this.initialValue;
         } else {
           this.selectedOption = { label: this.value as string, value: this.value };
           if (this.selectedOption.value) {

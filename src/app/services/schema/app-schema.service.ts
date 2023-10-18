@@ -717,7 +717,9 @@ export class AppSchemaService {
   }
 
   private toggleFieldHiddenOrDisabled(fieldValue: ToggleFieldHiddenOrDisabledValue): void {
-    const { formField, value, schema, subquestion, isNew, isParentImmutable } = fieldValue;
+    const {
+      formField, value, schema, subquestion, isNew, isParentImmutable,
+    } = fieldValue;
 
     if (!formField.hidden$) {
       formField.hidden$ = new BehaviorSubject<boolean>(false);

@@ -180,6 +180,11 @@
     ixDetailsHeight="rightside-content-hold"
     [class.details-container-mobile]="showMobileDetails"
   >
-    <ix-app-details-panel [app]="selectedApp"></ix-app-details-panel>
+    <ix-app-details-panel
+      [app]="selectedApp"
+      [status]="getAppStatus(selectedApp.name)"
+      (startApp)="start(selectedApp.name)"
+      (stopApp)="stop(selectedApp.name)"
+    ></ix-app-details-panel>
   </div>
 </div>

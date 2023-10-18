@@ -11,7 +11,6 @@
   <mat-card-content>
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset>
-
         <div *ngIf="!(isEnterprise$ | async)" class="link">
           <a href="https://www.truenas.com/community/" ixTest="['forum-link']">
             {{ 'TrueNAS Forums - Discuss with fellow TrueNAS community users' | translate }}
