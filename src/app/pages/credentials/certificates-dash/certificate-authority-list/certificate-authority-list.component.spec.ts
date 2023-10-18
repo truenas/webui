@@ -9,6 +9,7 @@ import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-dat
 import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { CertificateAuthorityAddComponent } from 'app/pages/credentials/certificates-dash/certificate-authority-add/certificate-authority-add.component';
@@ -34,6 +35,7 @@ const certificates = Array.from({ length: 10 }).map((_, index) => ({
 describe('CertificateAuthorityListComponent', () => {
   let spectator: Spectator<CertificateAuthorityListComponent>;
   let loader: HarnessLoader;
+  let table: IxTable2Harness;
 
   const createComponent = createComponentFactory({
     component: CertificateAuthorityListComponent,
@@ -68,9 +70,10 @@ describe('CertificateAuthorityListComponent', () => {
     ],
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    table = await loader.getHarness(IxTable2Harness);
   });
 
   it('checks page title', () => {
@@ -86,7 +89,7 @@ describe('CertificateAuthorityListComponent', () => {
   });
 
   it('opens certificate edit form when "Edit" button is pressed', async () => {
-    const editButton = await loader.getHarness(MatButtonHarness.with({ selector: '[aria-label="Edit"]' }));
+    const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 3);
     await editButton.click();
 
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(CertificateAuthorityEditComponent, {
@@ -98,8 +101,8 @@ describe('CertificateAuthorityListComponent', () => {
   it('opens delete dialog when "Delete" button is pressed', async () => {
     const dialog = spectator.inject(DialogService);
     jest.spyOn(dialog, 'confirm');
-    const deleteButtons = await loader.getAllHarnesses(MatButtonHarness.with({ selector: '[aria-label="Delete"]' }));
-    await deleteButtons[0].click();
+    const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'delete' }), 1, 3);
+    await deleteButton.click();
 
     expect(dialog.confirm).toHaveBeenCalledWith({
       buttonText: 'Delete',
@@ -107,7 +110,8 @@ describe('CertificateAuthorityListComponent', () => {
       title: 'Delete Certificate Authority',
     });
 
-    await deleteButtons[1].click();
+    const deleteButton2 = await table.getHarnessInCell(IxIconHarness.with({ name: 'delete' }), 2, 3);
+    await deleteButton2.click();
     expect(dialog.confirm).toHaveBeenCalledWith({
       buttonText: 'Close',
       hideCancel: true,
@@ -126,7 +130,6 @@ describe('CertificateAuthorityListComponent', () => {
       ['Name:certificate-authority-3Issuer:certificate-issuer', 'From:2023-06-20 06:55:04Until:2024-06-20 06:55:04', 'CN:localhostSAN:DNS:localhost', ''],
     ];
 
-    const table = await loader.getHarness(IxTable2Harness);
     const cells = await table.getCellTexts();
     expect(cells).toEqual(expectedRows);
   });

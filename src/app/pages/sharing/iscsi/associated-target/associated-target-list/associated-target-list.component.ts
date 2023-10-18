@@ -92,7 +92,7 @@ export class AssociatedTargetListComponent implements EntityTableConfig {
 
   doAdd(): void {
     const slideInRef = this.slideInService.open(AssociatedTargetFormComponent);
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.entityList.getData());
   }
 
   getActions(row: IscsiTargetExtent): EntityTableAction[] {
@@ -117,7 +117,7 @@ export class AssociatedTargetListComponent implements EntityTableConfig {
 
   private editRow(extent: IscsiTargetExtent): void {
     const slideInRef = this.slideInService.open(AssociatedTargetFormComponent, { data: extent });
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.entityList.getData());
   }
 
   private deleteRow(rowInner: IscsiTargetExtent): void {

@@ -248,14 +248,14 @@ export class DatasetQuotasUserlistComponent implements OnInit, OnDestroy {
     const slideInRef = this.slideInService.open(DatasetQuotaAddFormComponent, {
       data: { quotaType: DatasetQuotaType.User, datasetId: this.datasetId },
     });
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.getUserQuotas());
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getUserQuotas());
   }
 
   doEdit(row: DatasetQuota): void {
     const slideInRef = this.slideInService.open(DatasetQuotaEditFormComponent, {
       data: { quotaType: DatasetQuotaType.User, datasetId: this.datasetId, id: row.id },
     });
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.getUserQuotas());
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getUserQuotas());
   }
 
   doDelete(row: DatasetQuota): void {

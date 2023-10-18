@@ -280,12 +280,12 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
 
   doAdd(): void {
     const slideInRef = this.slideInService.open(ReplicationWizardComponent, { wide: true });
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.entityList.getData());
   }
 
   doEdit(id: number): void {
     const replication = this.entityList.rows.find((row) => row.id === id);
     const slideInRef = this.slideInService.open(ReplicationFormComponent, { wide: true, data: replication });
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.entityList.getData());
   }
 }

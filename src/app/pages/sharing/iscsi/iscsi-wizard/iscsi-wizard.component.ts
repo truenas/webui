@@ -438,7 +438,7 @@ export class IscsiWizardComponent implements OnInit {
       next: () => {
         this.isLoading = false;
         this.cdr.markForCheck();
-        this.slideInRef.close();
+        this.slideInRef.close(true);
       },
     });
   }

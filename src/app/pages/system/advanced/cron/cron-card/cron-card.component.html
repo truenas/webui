@@ -30,40 +30,6 @@
       [columns]="columns"
       [dataProvider]="dataProvider"
       [isLoading]="dataProvider.isLoading$ | async"
-    >
-      <ng-template
-        let-cron
-        ix-table-cell
-        [columnIndex]="6"
-        [dataProvider]="dataProvider"
-      >
-        <div class="buttons">
-          <button
-            mat-icon-button
-            [ixTest]="[cron.id, 'run_now']"
-            [matTooltip]="'Run job' | translate"
-            (click)="runNow(cron)"
-          >
-            <ix-icon name="play_arrow"></ix-icon>
-          </button>
-          <button
-            mat-icon-button
-            [ixTest]="[cron.id, 'edit']"
-            [matTooltip]="'Edit' | translate"
-            (click)="doEdit(cron)"
-          >
-            <ix-icon name="edit"></ix-icon>
-          </button>
-          <button
-            mat-icon-button
-            [ixTest]="[cron.id, 'delete']"
-            [matTooltip]="'Delete' | translate"
-            (click)="doDelete(cron)"
-          >
-            <ix-icon name="delete"></ix-icon>
-          </button>
-        </div>
-      </ng-template>
-    </tbody>
+    ></tbody>
   </ix-table2>
 </mat-card>

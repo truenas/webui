@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { filter } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
 import {
@@ -138,12 +139,12 @@ export class SnapshotTaskListComponent implements EntityTableConfig<PeriodicSnap
 
   doAdd(): void {
     const slideInRef = this.slideInService.open(SnapshotTaskFormComponent, { wide: true });
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.entityList.getData());
   }
 
   doEdit(id: number): void {
     const snapshotTask = this.entityList.rows.find((row) => row.id === id);
     const slideInRef = this.slideInService.open(SnapshotTaskFormComponent, { wide: true, data: snapshotTask });
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.entityList.getData());
   }
 }

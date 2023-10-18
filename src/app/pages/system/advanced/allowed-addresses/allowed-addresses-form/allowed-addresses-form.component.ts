@@ -84,7 +84,7 @@ export class AllowedAddressesFormComponent implements OnInit {
       title: this.translate.instant(helptextSystemGeneral.dialog_confirm_title),
       message: this.translate.instant(helptextSystemGeneral.dialog_confirm_message),
     }).pipe(
-      tap(() => this.slideInRef.close()),
+      tap(() => this.slideInRef.close(true)),
       filter(Boolean),
       switchMap(() => {
         return this.ws.call('system.general.ui_restart').pipe(
