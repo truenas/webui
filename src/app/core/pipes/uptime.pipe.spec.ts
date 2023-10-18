@@ -61,7 +61,7 @@ describe('UptimePipe', () => {
   });
 
   it('should return minutes and seconds if uptime is between 1 minute and 1 hour', () => {
-    const expectedValue = '12 minutes and 34 seconds as of 15:57';
+    const expectedValue = '12 minutes 34 seconds as of 15:57';
 
     spectator = createPipe('{{ inputValue | uptime:dateTime }}', {
       hostProps: {
@@ -74,7 +74,7 @@ describe('UptimePipe', () => {
   });
 
   it('should return hours, minutes, and seconds if uptime is greater than 1 hour', () => {
-    const expectedValue = '2 hours, 5 minutes, and 30 seconds as of 15:57';
+    const expectedValue = '2 hours 5 minutes 30 seconds as of 15:57';
 
     spectator = createPipe('{{ inputValue | uptime:dateTime }}', {
       hostProps: {
@@ -87,7 +87,7 @@ describe('UptimePipe', () => {
   });
 
   it('should handle missing date/time input', () => {
-    const expectedValue = '1 hour, 15 minutes, and 30 seconds';
+    const expectedValue = '1 hour 15 minutes 30 seconds';
 
     spectator = createPipe('{{ inputValue | uptime }}', {
       hostProps: {

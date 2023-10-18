@@ -3,6 +3,7 @@
   " Est. Usable Raw Capacity": "",
   " Please click the button below to add {item}.": "",
   " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network port number of the UPS <i>Master</i> system. The default port is <i>3493</i>.": "",
+  " as of {dateTime}": "",
   " bytes.": "",
   " threads at ": "",
   "'Hosts Allow' or 'Hosts Deny' has been set": "",

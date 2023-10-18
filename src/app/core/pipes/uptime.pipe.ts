@@ -35,6 +35,7 @@ export class UptimePipe implements PipeTransform {
     }
 
     const uptimeString = uptimeStrings.join(' ');
-    return this.translate.instant(`${uptimeString} as of {dateTime}`, { dateTime });
+    const dateTimeString = dateTime ? this.translate.instant(' as of {dateTime}', { dateTime }) : '';
+    return uptimeString + dateTimeString;
   }
 }
