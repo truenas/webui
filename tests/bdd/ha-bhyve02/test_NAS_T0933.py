@@ -1,6 +1,7 @@
 # coding=utf-8
 """High Availability (tn-bhyve02) feature tests."""
 
+import os
 import pytest
 import reusableSeleniumCode as rsc
 import xpaths
@@ -128,6 +129,8 @@ def the_domain_credentials_page_should_open(driver):
 @then(parsers.parse('Input Domain name "{ad_domain}", Account name "{ad_user}", Password "{ad_password}"'))
 def input_domain_name_ad_domain_account_name_ad_user_password_ad_pasword(driver, ad_domain, ad_user, ad_password):
     """Input Domain name "{ad_domain}", Account name "{ad_user}", Password "ad_password"."""
+    os.environ["ad_user"] = ad_user
+    os.environ["ad_password"] = ad_password
     assert wait_on_element(driver, 7, '//input[@ix-auto="input__Domain Name"]')
     driver.find_element_by_xpath('//input[@ix-auto="input__Domain Name"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Domain Name"]').send_keys(ad_domain)

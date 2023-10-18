@@ -7,6 +7,7 @@ import string
 import time
 import xpaths
 from configparser import ConfigParser
+from function import get, post
 from platform import system
 from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
@@ -37,6 +38,7 @@ def nas_ip():
     elif os.path.exists('config.cfg'):
         configs = ConfigParser()
         configs.read('config.cfg')
+        os.environ["nas_ip"] = configs['NAS_CONFIG']['ip']
         return configs['NAS_CONFIG']['ip']
     else:
         return 'none'
@@ -49,6 +51,7 @@ def root_password():
     elif os.path.exists('config.cfg'):
         configs = ConfigParser()
         configs.read('config.cfg')
+        os.environ["nas_password"] = configs['NAS_CONFIG']['password']
         return configs['NAS_CONFIG']['password']
     else:
         return 'none'
@@ -162,7 +165,7 @@ def pytest_runtest_makereport(item):
                 if handle != initial_tab:
                     web_driver.close()
             web_driver.switch_to.window(initial_tab)
-        if 'T1010' in screenshot_name or 'T0933' in screenshot_name:
+        if 'T1010' in screenshot_name or 'T0933' in screenshot_name or 'NAS-T933' in screenshot_name:
             disable_active_directory()
         elif 'T1013' in screenshot_name or 'T0940' in screenshot_name:
             disable_ldap()
@@ -257,20 +260,16 @@ def enable_failover():
 
 
 def disable_active_directory():
-    wait_on_element(7, '//mat-list-item[@ix-auto="option__Directory Services"]', 'clickable')
-    web_driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Directory Services"]').click()
-    wait_on_element(7, '//mat-list-item[@ix-auto="option__Active Directory"]', 'clickable')
-    web_driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Active Directory"]').click()
-    assert wait_on_element(5, '//li[span/a/text()="Active Directory"]')
-    assert wait_on_element(5, '//h4[contains(text(),"Domain Credentials")]')
-    wait_on_element(5, '//mat-checkbox[@ix-auto="checkbox__Enable (requires password or Kerberos principal)"]', 'clickable')
-    value_exist = attribute_value_exist('//mat-checkbox[@ix-auto="checkbox__Enable (requires password or Kerberos principal)"]', 'class', 'mat-checkbox-checked')
-    if value_exist:
-        web_driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Enable (requires password or Kerberos principal)"]').click()
-        wait_on_element(7, '//button[@ix-auto="button__SAVE"]', 'clickable')
-        web_driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-        assert wait_on_element_disappear(60, '//h6[contains(.,"Please wait")]')
-        assert wait_on_element(7, '//div[contains(.,"Settings saved.")]')
+    if 'ad_user' in os.environ and 'ad_password' in os.environ:
+        results = get(os.environ.get("nas_ip"), '/activedirectory/get_state/' ('root', os.environ.get("nas_password")))
+        assert results.status_code == 200, results.text
+        if results.json() != 'DISABLED':
+            payload = {
+                "username": os.environ.get("ad_user"),
+                "password": os.environ.get("ad_password")
+            }
+            results = post(os.environ.get("nas_ip"), "/activedirectory/leave/", ('root', os.environ.get("nas_password")), payload)
+            assert results.status_code == 200, results.text
 
 
 def disable_ldap():

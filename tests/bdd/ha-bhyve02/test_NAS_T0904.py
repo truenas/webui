@@ -1,6 +1,7 @@
 # coding=utf-8
 """High Availability (tn09) feature tests."""
 
+import os
 import reusableSeleniumCode as rsc
 import xpaths
 import time
@@ -28,6 +29,7 @@ def test_verify_ssh_access_with_root_works(driver):
 @given(parsers.parse('the browser is open navigate to "{nas_url}"'))
 def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
     """the browser is open navigate to "{nas_url}"."""
+    os.environ["nas_ip"] = nas_url.replace('http://', '')
     if nas_url not in driver.current_url:
         driver.get(f"{nas_url}/ui/sessions/signin")
         time.sleep(1)
@@ -36,6 +38,7 @@ def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
 @when(parsers.parse('login appear enter "{user}" and "{password}"'))
 def login_appear_enter_root_and_password(driver, user, password):
     """login appear enter "{user}" and "{password}"."""
+    os.environ["nas_password"] = password
     if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
         assert wait_on_element(driver, 10, xpaths.login.user_input)
         driver.find_element_by_xpath(xpaths.login.user_input).clear()
