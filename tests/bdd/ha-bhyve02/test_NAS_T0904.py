@@ -1,7 +1,6 @@
 # coding=utf-8
 """High Availability (tn09) feature tests."""
 
-import os
 import reusableSeleniumCode as rsc
 import xpaths
 import time
