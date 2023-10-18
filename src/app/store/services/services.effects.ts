@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { mergeMap, map, switchMap, filter, EMPTY, catchError, of, distinctUntilChanged } from 'rxjs';
+import { mergeMap, map, switchMap, filter, EMPTY, catchError, of, take } from 'rxjs';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { StartServiceDialogComponent, StartServiceDialogResult } from 'app/modules/common/dialog/start-service-dialog/start-service-dialog.component';
@@ -46,8 +46,7 @@ export class ServicesEffects {
   checkIfServiceIsEnabled$ = createEffect(() => this.actions$.pipe(
     ofType(checkIfServiceIsEnabled),
     filter(({ serviceName }) => Boolean(serviceName)),
-    switchMap(({ serviceName }) => this.store$.select(selectService(serviceName))),
-    distinctUntilChanged((prev, curr) => prev.id === curr.id),
+    switchMap(({ serviceName }) => this.store$.select(selectService(serviceName)).pipe(take(1))),
     switchMap((service) => {
       if (!service.enable || service.state === ServiceStatus.Stopped) {
         return this.matDialog.open<StartServiceDialogComponent, unknown, StartServiceDialogResult>(

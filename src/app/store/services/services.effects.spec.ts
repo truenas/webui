@@ -147,7 +147,44 @@ describe('ServicesEffects', () => {
       });
     });
 
-    it('do not shows dialog service is running and started automatically.', async () => {
+    it('shows dialog when service is stopped twice', async () => {
+      store$.overrideSelector(selectServices, [{
+        ...cifsService,
+        enable: false,
+        state: ServiceStatus.Stopped,
+      }]);
+      store$.refreshState();
+
+      actions$.next(checkIfServiceIsEnabled({ serviceName: ServiceName.Cifs }));
+      afterClosed$.next({ start: true, startAutomatically: false });
+
+      expect(await firstValueFrom(spectator.service.checkIfServiceIsEnabled$)).toEqual(serviceStarted());
+
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(StartServiceDialogComponent, {
+        data: ServiceName.Cifs,
+        disableClose: true,
+      });
+
+      store$.overrideSelector(selectServices, [{
+        ...cifsService,
+        enable: false,
+        state: ServiceStatus.Stopped,
+      }]);
+      store$.refreshState();
+
+      actions$.next(checkIfServiceIsEnabled({ serviceName: ServiceName.Cifs }));
+      afterClosed$.next({ start: true, startAutomatically: false });
+
+      expect(await firstValueFrom(spectator.service.checkIfServiceIsEnabled$)).toEqual(serviceStarted());
+
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(StartServiceDialogComponent, {
+        data: ServiceName.Cifs,
+        disableClose: true,
+      });
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledTimes(2);
+    });
+
+    it('do not shows dialog when service is running and started automatically.', async () => {
       const service = {
         ...cifsService,
         enable: true,
