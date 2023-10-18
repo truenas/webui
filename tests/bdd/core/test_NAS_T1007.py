@@ -19,6 +19,9 @@ from pytest_bdd import (
     when,
     parsers
 )
+import pytest
+
+pytestmark = [pytest.mark.debug_test]
 
 
 @scenario('features/NAS-T1007.feature', 'Create an smb share with the tank AD permission dataset')
@@ -154,7 +157,7 @@ def click_on_the_smb_start_automatically_checkbox(driver):
 def send_a_file_to_the_share_with_ip_tanksmbshare_and_user_password(driver, nas_ip, smbname, user, password):
     """send a file to the share with ip/"tanksmbshare" and "user"%"password"."""
     run_cmd('touch testfile.txt')
-    results = run_cmd(f'smbclient //{nas_ip}/{smbname} -W AD02 -U {user}%{password} -c "put testfile.txt testfile.txt"')
+    results = run_cmd(f'smbclient //{nas_ip}/{smbname} -W AD03 -U {user}%{password} -c "put testfile.txt testfile.txt"')
     time.sleep(1)
     run_cmd('rm testfile.txt')
     assert results['result'], results['output']

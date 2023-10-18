@@ -173,7 +173,7 @@ def click_on_smb_start_automatically_checkbox(driver):
 def send_a_file_to_the_share_with_nas_url_smbname_and_user_password(driver, nas_url, smbname, ad_user, ad_password):
     """Send a file the share with "nas_url"/"smbname" and "user"%"password"."""
     run_cmd('touch testfile.txt')
-    results = run_cmd(f'smbclient //{nas_url}/{smbname} -W AD02 -U {ad_user}%{ad_password} -c "put testfile.txt testfile.txt"')
+    results = run_cmd(f'smbclient //{nas_url}/{smbname} -W AD03 -U {ad_user}%{ad_password} -c "put testfile.txt testfile.txt"')
     time.sleep(1)
     run_cmd('rm testfile.txt')
     assert results['result'], results['output']

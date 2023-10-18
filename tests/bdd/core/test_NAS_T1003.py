@@ -18,6 +18,10 @@ from pytest_bdd import (
     parsers
 )
 
+import pytest
+
+pytestmark = [pytest.mark.debug_test]
+
 
 @scenario('features/NAS-T1003.feature', 'Setup AD and verify it is working')
 def test_setup_acl_and_verify_it_is_working(driver):
