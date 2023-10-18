@@ -134,7 +134,7 @@ def on_the_Service_page_verify_smb_service_is_started(driver):
 def send_a_file_on_share_name_on_nas_hostname_with_ad_userad_password(driver, nas_hostname, share_name, ad_user, ad_password):
     """send a file on <share_name> on <nas_hostname> with <ad_user>%<ad_password>."""
     run_cmd('touch testfile.txt')
-    results = run_cmd(f'smbclient //{nas_hostname}/{share_name} -W AD02 -U {ad_user}%{ad_password} -c "put testfile.txt testfile.txt"')
+    results = run_cmd(f'smbclient //{nas_hostname}/{share_name} -W AD03 -U {ad_user}%{ad_password} -c "put testfile.txt testfile.txt"')
     run_cmd('rm testfile.txt')
     assert results['result'], f'{results["output"]}\n{results["stderr"]}'
     time.sleep(1)
@@ -174,6 +174,7 @@ def wait_for_the_login_to_appear_and_ha_to_be_enable(driver):
 def at_the_login_page_enter_user_and_password(driver, user, password):
     """At the login page, enter "user" and "password"."""
     rsc.Login(driver, user, password)
+    rsc.Login(driver, user, password)
 
 
 @then('once on the dashboard go to the Services page and verify SMB service is RUNNING')
@@ -200,13 +201,13 @@ def verify_you_can_get_the_file_from_share_name_and_modify_it_on_nas_hostname_wi
     global aduser, adpassword
     aduser = ad_user
     adpassword = ad_password
-    results1 = run_cmd(f'smbclient //{nas_hostname}/{share_name} -W AD02 -U {ad_user}%{ad_password} -c "get testfile.txt testfile.txt"')
+    results1 = run_cmd(f'smbclient //{nas_hostname}/{share_name} -W AD03 -U {ad_user}%{ad_password} -c "get testfile.txt testfile.txt"')
     assert results1['result'], f'{results1["output"]}\n{results1["stderr"]}'
 
     results2 = run_cmd('echo "test text in testfile" >> testfile.txt')
     assert results2['result'], f'{results2["output"]}\n{results2["stderr"]}'
 
-    results3 = run_cmd(f'smbclient //{nas_hostname}/{share_name} -W AD02 -U {ad_user}%{ad_password} -c "put testfile.txt testfile.txt"')
+    results3 = run_cmd(f'smbclient //{nas_hostname}/{share_name} -W AD03 -U {ad_user}%{ad_password} -c "put testfile.txt testfile.txt"')
     assert results3['result'], f'{results3["output"]}\n{results3["stderr"]}'
 
 

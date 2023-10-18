@@ -7,7 +7,9 @@ import xpaths
 from configparser import ConfigParser
 from function import (
     is_element_present,
-    wait_on_element
+    wait_on_element,
+    get,
+    post
 )
 from platform import system
 from selenium import webdriver
@@ -33,6 +35,7 @@ def nas_ip():
     elif os.path.exists('config.cfg'):
         configs = ConfigParser()
         configs.read('config.cfg')
+        os.environ["nas_ip"] = configs['NAS_CONFIG']['ip']
         return configs['NAS_CONFIG']['ip']
     else:
         return 'none'
@@ -45,6 +48,7 @@ def root_password():
     elif os.path.exists('config.cfg'):
         configs = ConfigParser()
         configs.read('config.cfg')
+        os.environ["nas_password"] = configs['NAS_CONFIG']['password']
         return configs['NAS_CONFIG']['password']
     else:
         return 'none'
@@ -138,6 +142,8 @@ def pytest_runtest_makereport(item):
                         web_driver.find_element_by_xpath('//ix-icon[@id="ix-close-icon"]').click()
                     except ElementClickInterceptedException:
                         pass
+            if 'T0962' in screenshot_name or 'T0964' in screenshot_name or 'T1120' in screenshot_name or 'T1104' in screenshot_name:
+                disable_active_directory()
 
 
 def save_screenshot(name):
@@ -148,3 +154,16 @@ def save_traceback(name):
     traceback_file = open(name, 'w')
     traceback_file.writelines(web_driver.find_element_by_xpath('//div[@id="err-bt-text"]').text)
     traceback_file.close()
+
+
+def disable_active_directory():
+    if 'ad_user' in os.environ and 'ad_password' in os.environ:
+        results = get(os.environ.get("nas_ip"), '/activedirectory/get_state/' ('root', os.environ.get("nas_password")))
+        assert results.status_code == 200, results.text
+        if results.json() != 'DISABLED':
+            payload = {
+                "username": os.environ.get("ad_user"),
+                "password": os.environ.get("ad_password")
+            }
+            results = post(os.environ.get("nas_ip"), "/activedirectory/leave/", ('root', os.environ.get("nas_password")), payload)
+            assert results.status_code == 200, results.text
