@@ -10,6 +10,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/topbar';
 import { AlertSlice, selectImportantUnreadAlertsCount } from 'app/modules/alerts/store/alert.selectors';
 import { UpdateDialogComponent } from 'app/modules/common/dialog/update-dialog/update-dialog.component';
+import { FeedbackDialogComponent } from 'app/modules/ix-feedback/feedback-dialog/feedback-dialog.component';
 import { selectUpdateJob } from 'app/modules/jobs/store/job.selectors';
 import { topbarDialogPosition } from 'app/modules/layout/components/topbar/topbar-dialog-position.constant';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -120,5 +121,9 @@ export class TopbarComponent implements OnInit {
       position: topbarDialogPosition,
     });
     this.updateDialog.componentInstance.setMessage({ title, message });
+  }
+
+  onFeedbackIndicatorPressed(): void {
+    this.matDialog.open(FeedbackDialogComponent);
   }
 }
