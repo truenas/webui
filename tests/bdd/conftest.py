@@ -158,7 +158,7 @@ def save_traceback(name):
 
 def disable_active_directory():
     if 'ad_user' in os.environ and 'ad_password' in os.environ:
-        results = get(os.environ.get("nas_ip"), '/activedirectory/get_state/' ('root', os.environ.get("nas_password")))
+        results = get(os.environ.get("nas_ip"), '/activedirectory/get_state/', ('root', os.environ.get("nas_password")))
         assert results.status_code == 200, results.text
         if results.json() != 'DISABLED':
             payload = {
