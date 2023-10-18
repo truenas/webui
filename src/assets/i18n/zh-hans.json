@@ -1,5 +1,6 @@
 {
   "": "",
+  " as of {dateTime}": "",
   "(Optional)": "",
   ", ": "",
   "...": "",
@@ -460,7 +461,7 @@
   "{app} Catalog Summary": "",
   "{catalog} Catalog": "",
   "{checked} exporter: {name}": "",
-  "{days, plural, =1 {# day} other {# days}},": "",
+  "{days, plural, =1 {# day} other {# days}}": "",
   "{email} via {server}": "",
   "{hours, plural, =1 {# hour} other {# hours}}": "",
   "{license} contract, expires {date}": "",

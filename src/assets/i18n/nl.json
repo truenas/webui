@@ -1,5 +1,6 @@
 {
   "": "",
+  " as of {dateTime}": "",
   "(Optional)": "",
   "...": "",
   "2FA has been configured for this account. Enter the OTP to continue.": "",
@@ -358,7 +359,7 @@
   "of": "",
   "{catalog} Catalog": "",
   "{checked} exporter: {name}": "",
-  "{days, plural, =1 {# day} other {# days}},": "",
+  "{days, plural, =1 {# day} other {# days}}": "",
   "{email} via {server}": "",
   "{hours, plural, =1 {# hour} other {# hours}}": "",
   "{license} contract, expires {date}": "",
