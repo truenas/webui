@@ -18,3 +18,10 @@ def wait_For_The_Tab_To_Close(driver):
         time.sleep(1)
     else:
         return False
+
+
+def scroll_To(driver, xpath):
+    assert wait_on_element(driver, 5, xpath)
+    element = driver.find_element_by_xpath(xpath)
+    driver.execute_script("arguments[0].scrollIntoView();", element)
+    time.sleep(0.2)
