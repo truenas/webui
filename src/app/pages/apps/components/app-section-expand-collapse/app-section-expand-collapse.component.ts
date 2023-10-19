@@ -25,8 +25,10 @@ export class AppSectionExpandCollapseComponent implements OnChanges, AfterConten
   }
 
   ngAfterContentChecked(): void {
-    this.setHeight();
-    this.section.nativeElement.style.maxHeight = `${this.maxHeight}px`;
+    if (this.isCollapsed) {
+      this.setHeight();
+      this.section.nativeElement.style.maxHeight = `${this.maxHeight}px`;
+    }
   }
 
   changeCollapsed(): void {
