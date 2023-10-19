@@ -74,10 +74,7 @@ export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChange
     return this.isLoading || !this.options;
   }
 
-  constructor(
-    public controlDirective: NgControl,
-    private cdr: ChangeDetectorRef,
-  ) {
+  constructor(public controlDirective: NgControl, private cdr: ChangeDetectorRef) {
     this.controlDirective.valueAccessor = this;
   }
 
