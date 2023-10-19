@@ -16,11 +16,22 @@
       [ixTest]="controlDirective.name"
       [(ngModel)]="value"
       (blur)="onTouch()"
-      (ngModelChange)="onChange($event)"
+      (ngModelChange)="onChange($event);"
     >
       <mat-select-trigger>
         {{ selectedLabel }}
       </mat-select-trigger>
+
+      <mat-checkbox
+        *ngIf="multiple"
+        ixTest="select-all"
+        class="select-all-checkbox"
+        [checked]="selectAllState.checked"
+        [indeterminate]="selectAllState.indeterminate"
+        (change)="toggleSelectAll($event.checked)"
+      >
+        {{ 'Select All' | translate }}
+      </mat-checkbox>
 
       <ng-container *ngIf="opts$ | async as opts; else loadingOrError">
         <mat-option

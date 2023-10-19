@@ -196,5 +196,26 @@ describe('IxSelectComponent', () => {
       expect(currentValue).toBe('GBR, GRL');
       expect(control.value).toEqual(['Great Britain', 'Greenland']);
     });
+
+    it('should select all options when "Select All" is checked', () => {
+      spectator.component.toggleSelectAll(true);
+      expect(spectator.component.value).toEqual(['Great Britain', 'Greenland', 'France']);
+      expect(spectator.component.selectAllState.checked).toBeTruthy();
+    });
+
+    it('should unselect all options when "Select All" is unchecked', () => {
+      spectator.component.toggleSelectAll(false);
+      expect(spectator.component.value).toEqual([]);
+      expect(spectator.component.selectAllState.checked).toBeFalsy();
+    });
+
+    it('should set "Select All" checkbox to indeterminate when some options are selected', async () => {
+      const select = await loader.getHarness(MatSelectHarness);
+      await select.open();
+      await select.clickOptions({ text: 'GBR' });
+
+      spectator.component.updateSelectAllState();
+      expect(spectator.component.selectAllState.indeterminate).toBeTruthy();
+    });
   });
 });

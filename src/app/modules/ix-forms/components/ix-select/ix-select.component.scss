@@ -5,6 +5,21 @@
   padding: 8px 0;
 }
 
+::ng-deep {
+  .select-all-checkbox {
+    margin: 0;
+    width: 100%;
+
+    > div {
+      width: 100%;
+    }
+
+    label {
+      width: 100%;
+    }
+  }
+}
+
 .full-width {
   color: var(--fg1);
   width: 100%;
