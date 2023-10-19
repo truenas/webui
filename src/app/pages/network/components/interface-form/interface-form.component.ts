@@ -8,7 +8,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { range } from 'lodash';
 import { forkJoin, of } from 'rxjs';
-import { filter } from 'rxjs/operators';
 import {
   CreateNetworkInterfaceType,
   LacpduRate,
@@ -230,18 +229,18 @@ export class InterfaceFormComponent implements OnInit {
 
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
-        this.isLoading = false;
-        this.snackbar.success(this.translate.instant('Network interface updated'));
         this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: false, checkin: false }, sender: this });
-        this.slideInRef.close(true);
 
-        this.ws.call('interface.default_route_will_be_removed').pipe(
-          filter(Boolean),
-          untilDestroyed(this),
-        ).subscribe(() => {
-          this.matDialog.open(DefaultGatewayDialogComponent, {
-            width: '600px',
-          });
+        this.ws.call('interface.default_route_will_be_removed').pipe(untilDestroyed(this)).subscribe((approved) => {
+          if (approved) {
+            this.matDialog.open(DefaultGatewayDialogComponent, {
+              width: '600px',
+            });
+          }
+
+          this.slideInRef.close(true);
+          this.isLoading = false;
+          this.snackbar.success(this.translate.instant('Network interface updated'));
         });
 
         this.cdr.markForCheck();
