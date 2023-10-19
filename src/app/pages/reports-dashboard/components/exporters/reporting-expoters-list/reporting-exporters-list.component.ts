@@ -1,11 +1,11 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, Observable, combineLatest, filter, of, switchMap, tap } from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { ReportingExporter } from 'app/interfaces/reporting-exporters.interface';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
-import { templateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component';
+import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { toggleColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
@@ -15,15 +15,17 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ReportingExportersFormComponent } from 'app/pages/reports-dashboard/components/exporters/reporting-exporters-form/reporting-exporters-form.component';
 import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { LayoutService } from 'app/services/layout.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
   templateUrl: './reporting-exporters-list.component.html',
-  styleUrls: ['./reporting-exporters-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ReportingExporterListComponent implements OnInit {
+export class ReportingExporterListComponent implements OnInit, AfterViewInit {
+  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
+
   filterString = '';
   dataProvider = new ArrayDataProvider<ReportingExporter>();
 
@@ -59,7 +61,20 @@ export class ReportingExporterListComponent implements OnInit {
         });
       },
     }),
-    templateColumn(),
+    actionsColumn({
+      actions: [
+        {
+          iconName: 'edit',
+          tooltip: this.translate.instant('Edit'),
+          onClick: (row) => this.doEdit(row),
+        },
+        {
+          iconName: 'delete',
+          tooltip: this.translate.instant('Delete'),
+          onClick: (row) => this.doDelete(row),
+        },
+      ],
+    }),
   ]);
 
   isLoading$ = new BehaviorSubject<boolean>(true);
@@ -92,10 +107,15 @@ export class ReportingExporterListComponent implements OnInit {
     private dialogService: DialogService,
     protected emptyService: EmptyService,
     private appLoader: AppLoaderService,
+    private layoutService: LayoutService,
   ) {}
 
   ngOnInit(): void {
     this.getExporters();
+  }
+
+  ngAfterViewInit(): void {
+    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
   getExporters(): void {

@@ -1,13 +1,12 @@
-<mat-card>
-  <mat-toolbar-row>
-    <h3>{{ 'Reporting Exporters' | translate }}</h3>
+<ng-template #pageHeader>
+  <ix-page-title-header>
+    <button mat-button color="primary" ixTest="add-reporting-exporter" (click)="doAdd()">
+      {{ 'Add' | translate }}
+    </button>
+  </ix-page-title-header>
+</ng-template>
 
-    <div class="actions action-icon">
-      <button mat-button color="default" [ixTest]="['add-reporting-exporter']" (click)="doAdd()">
-        {{ 'Add' | translate }}
-      </button>
-    </div>
-  </mat-toolbar-row>
+<mat-card>
   <mat-card-content>
     <ix-table2
       [ix-table2-empty]="!dataProvider.rows.length"
@@ -22,31 +21,7 @@
         ix-table-body
         [columns]="columns"
         [dataProvider]="dataProvider"
-      >
-        <ng-template
-          let-exporter
-          ix-table-cell
-          [columnIndex]="3"
-          [dataProvider]="dataProvider"
-        >
-          <div class="actions">
-            <button
-              mat-icon-button
-              [attr.aria-label]="'Edit' | translate"
-              [matTooltip]="'Edit' | translate"
-              [ixTest]="['edit', exporter.id]"
-              (click)="doEdit(exporter)"
-            ><ix-icon name="mdi-pencil"></ix-icon></button>
-            <button
-              mat-icon-button
-              [attr.aria-label]="'Delete' | translate"
-              [matTooltip]="'Delete' | translate"
-              [ixTest]="['delete', exporter.id]"
-              (click)="doDelete(exporter)"
-            ><ix-icon name="mdi-delete"></ix-icon></button>
-          </div>
-        </ng-template>
-      </tbody>
+      ></tbody>
     </ix-table2>
     <ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>
   </mat-card-content>
