@@ -16,7 +16,7 @@ import { PoolStatus } from 'app/enums/pool-status.enum';
 import { TopologyItemType, VdevType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { Enclosure, EnclosureElement, EnclosureElementsGroup } from 'app/interfaces/enclosure.interface';
-import { PoolInstance } from 'app/interfaces/pool.interface';
+import { Pool } from 'app/interfaces/pool.interface';
 import {
   Disk,
   EnclosureAndSlot,
@@ -50,7 +50,7 @@ import { MockR40 } from './enclosure-templates/mock-r40';
 import { MockR50 } from './enclosure-templates/mock-r50';
 
 export class MockStorageGenerator {
-  poolState: PoolInstance;
+  poolState: Pool;
   disks: Disk[];
   enclosures: Enclosure[] | null = null;
   private mockEnclosures: MockEnclosure[] = [];
@@ -82,7 +82,7 @@ export class MockStorageGenerator {
       autotrim: {
         value: 'off',
       },
-    } as PoolInstance;
+    } as Pool;
 
     const disks: Disk[] = [];
 

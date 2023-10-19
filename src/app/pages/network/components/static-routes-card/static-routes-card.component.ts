@@ -77,14 +77,6 @@ export class StaticRoutesCardComponent implements OnInit {
     this.dataProvider.refresh();
   }
 
-  onListFiltered(query: string): void {
-    this.filterString = query.toLowerCase();
-    this.dataProvider.setRows(this.staticRoutes.filter((route) => [
-      route.destination.toLowerCase(),
-      route.gateway.toLowerCase(),
-    ].includes(this.filterString)));
-  }
-
   setDefaultSort(): void {
     this.dataProvider.setSorting({
       active: 1,
