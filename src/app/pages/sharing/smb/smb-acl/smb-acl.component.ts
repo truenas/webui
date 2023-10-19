@@ -79,8 +79,7 @@ export class SmbAclComponent implements OnInit {
   readonly helptext = helptextSharingSmb;
   readonly nfsAclTag = NfsAclTag;
   readonly userProvider = new UserComboboxProvider(this.userService, 'uid');
-  readonly groupProvider = new GroupComboboxProvider(this.userService, 'gid');
-  initialOptions: Option[] = [];
+  protected groupProvider: GroupComboboxProvider;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -184,9 +183,9 @@ export class SmbAclComponent implements OnInit {
     });
   }
 
-  private initialValueDataFromAce(ace: SmbSharesecAce): Observable<Group[]>
-  | Observable<User[]>
-  | Observable<string[]> {
+  private initialValueDataFromAce(
+    ace: SmbSharesecAce,
+  ): Observable<Group[]> | Observable<User[]> | Observable<string[]> {
     if (ace.ae_who_id?.id_type === NfsAclTag.UserGroup) {
       const queryArgs: QueryFilter<Group>[] = [['gid', '=', ace.ae_who_id?.id]];
       return this.ws.call('group.query', [queryArgs]);
@@ -201,7 +200,6 @@ export class SmbAclComponent implements OnInit {
   }
 
   private extractOptionFromAcl(shareAcl: SmbSharesecAce[]): void {
-    const initialOptions: Option[] = [];
     from(shareAcl)
       .pipe(
         concatMap((ace: SmbSharesecAce) => {
@@ -213,6 +211,7 @@ export class SmbAclComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe((data: unknown[][]) => {
         const response = data[0];
+        const initialOptions: Option[] = [];
 
         if (response.length) {
           let option: Option;
@@ -227,11 +226,9 @@ export class SmbAclComponent implements OnInit {
             return;
           }
           initialOptions.push(option);
-        } else {
-          initialOptions.push(null);
         }
 
-        this.initialOptions = initialOptions;
+        this.groupProvider = new GroupComboboxProvider(this.userService, 'gid', initialOptions);
         this.isLoading = false;
         this.cdr.markForCheck();
       });
