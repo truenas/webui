@@ -166,20 +166,18 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   get selectedVdevSlots(): EnclosureSlot[] | null {
     if (!this.selectedVdevDisks) return [];
 
-    const selectedVdevSlots: unknown[] = this.selectedVdevDisks.map((diskName: string) => {
+    const selectedVdevSlots: EnclosureSlot[] = [];
+    this.selectedVdevDisks.forEach((diskName: string) => {
       const enclosure = this.systemState.disks.find((disk: Disk) => disk.name === diskName)?.enclosure;
 
       if (enclosure) {
-        return this.systemState.enclosureViews.find((view: EnclosureView) => {
-          return view.number === enclosure.number;
-        }).slots.find((eSlot: EnclosureSlot) => {
-          return eSlot.slot === enclosure.slot;
-        });
+        const view = this.systemState.enclosureViews.find((enclosureView) => enclosureView.number === enclosure.number);
+        const slot = view?.slots?.find((eSlot) => eSlot.slot === enclosure.slot);
+        if (slot) selectedVdevSlots.push(slot);
       }
-      return null;
     });
 
-    return selectedVdevSlots as EnclosureSlot[];
+    return selectedVdevSlots;
   }
 
   get selectedEnclosurePools(): string[] {
