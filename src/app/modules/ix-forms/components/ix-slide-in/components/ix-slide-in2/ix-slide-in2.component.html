@@ -1,4 +1,5 @@
 <div
+  [class.not-top]="!isTop"
   [id]="componentInfo.id"
   [class]="['ix-' + componentInfo.id, 'ix-slide-in2-form']"
   [class.open]="isSlideInOpen"
@@ -7,6 +8,7 @@
   <div class="ix-slide-in2-body">
     <ng-container #chainedBody></ng-container>
   </div>
+  <div *ngIf="!isTop" class="ix-slide-in2-body blurred"></div>
 </div>
 
 <div

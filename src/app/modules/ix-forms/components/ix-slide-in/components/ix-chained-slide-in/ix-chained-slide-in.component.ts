@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnInit, TrackByFunction, Type } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, TrackByFunction, Type, ViewChild } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subject } from 'rxjs';
 import { ChainedComponentSeralized as ChainedComponentInfoSeralized, IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
@@ -11,6 +11,7 @@ import { ChainedComponentSeralized as ChainedComponentInfoSeralized, IxChainedSl
 })
 export class IxChainedSlideInComponent implements OnInit {
   @Input() id: string;
+  @ViewChild('componentWrapper') container: HTMLElement;
   protected components: ChainedComponentInfoSeralized[];
   private element: HTMLElement;
 

@@ -27,6 +27,7 @@ import { ChainedComponentSeralized, IxChainedSlideInService } from 'app/services
 export class IxSlideIn2Component implements OnInit, OnDestroy {
   @Input() componentInfo: ChainedComponentSeralized;
   @Input() index: number;
+  @Input() isTop: boolean;
   @ViewChild('chainedBody', { static: true, read: ViewContainerRef }) slideInBody: ViewContainerRef;
 
   @HostListener('document:keydown.escape') onKeydownHandler(): void {
