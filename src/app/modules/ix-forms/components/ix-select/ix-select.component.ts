@@ -105,10 +105,12 @@ export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChange
   }
 
   ngOnInit(): void {
-    this.controlDirective.control.valueChanges.pipe(debounceTime(0), untilDestroyed(this)).subscribe(() => {
-      this.updateSelectAllState();
-      this.cdr.markForCheck();
-    });
+    if (this.multiple) {
+      this.controlDirective.control.valueChanges.pipe(debounceTime(0), untilDestroyed(this)).subscribe(() => {
+        this.updateSelectAllState();
+        this.cdr.markForCheck();
+      });
+    }
   }
 
   onChange: (value: IxSelectValue) => void = (): void => {};
