@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } 
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
-import { filter, switchMap, tap } from 'rxjs';
+import { filter, pipe, switchMap, tap } from 'rxjs';
 import { KerberosKeytab } from 'app/interfaces/kerberos-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
@@ -84,16 +84,17 @@ export default class KerberosKeytabsListComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    const keytabsRows$ = this.ws.call('kerberos.keytab.query').pipe(
-      tap((keytabsRows) => this.kerberosRealsm = keytabsRows),
-      untilDestroyed(this),
-    );
+    const keytabsRows$ = this.ws.call('kerberos.keytab.query');
     this.dataProvider = new AsyncDataProvider<KerberosKeytab>(keytabsRows$);
     this.setDefaultSort();
+    this.getKerberosKeytabs();
   }
 
   getKerberosKeytabs(): void {
-    this.dataProvider.refresh();
+    this.dataProvider.load<KerberosKeytab[]>(() => pipe(
+      tap((keytabsRows) => this.kerberosRealsm = keytabsRows),
+      untilDestroyed(this),
+    ));
   }
 
   setDefaultSort(): void {

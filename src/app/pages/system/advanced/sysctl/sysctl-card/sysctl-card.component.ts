@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, from, switchMap } from 'rxjs';
+import { filter, from, pipe, switchMap } from 'rxjs';
 import { Tunable } from 'app/interfaces/tunable.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
@@ -74,10 +74,9 @@ export class SysctlCardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const tunables$ = this.ws.call('tunable.query').pipe(
-      untilDestroyed(this),
-    );
+    const tunables$ = this.ws.call('tunable.query');
     this.dataProvider = new AsyncDataProvider<Tunable>(tunables$);
+    this.loadItems();
   }
 
   onAdd(): void {
@@ -85,7 +84,9 @@ export class SysctlCardComponent implements OnInit {
   }
 
   loadItems(): void {
-    this.dataProvider.refresh();
+    this.dataProvider.load<Tunable[]>(() => pipe(
+      untilDestroyed(this),
+    ));
   }
 
   onDelete(row: Tunable): void {

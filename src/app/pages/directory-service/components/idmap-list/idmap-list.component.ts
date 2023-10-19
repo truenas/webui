@@ -2,10 +2,11 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } 
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
-import { filter, map, of, switchMap, tap } from 'rxjs';
+import { filter, map, of, pipe, switchMap, tap } from 'rxjs';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { IdmapName } from 'app/enums/idmap.enum';
 import helptext from 'app/helptext/directory-service/idmap';
+import { DirectoryServicesState } from 'app/interfaces/directory-services-state.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
@@ -120,7 +121,14 @@ export default class IdmapListComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    const idmapsRows$ = this.ws.call('directoryservices.get_state').pipe(
+    const idmapsRows$ = this.ws.call('directoryservices.get_state');
+    this.dataProvider = new AsyncDataProvider<IdmapRow>(idmapsRows$);
+    this.setDefaultSort();
+    this.getIdmaps();
+  }
+
+  getIdmaps(): void {
+    this.dataProvider.load<DirectoryServicesState>(() => pipe(
       switchMap((state) => {
         if (state.ldap !== DirectoryServiceState.Disabled) {
           return this.ws.call('idmap.query', [[['name', '=', IdmapName.DsTypeLdap]]]);
@@ -150,13 +158,7 @@ export default class IdmapListComponent implements OnInit {
       }),
       tap((idmapsRows) => this.idmaps = idmapsRows),
       untilDestroyed(this),
-    );
-    this.dataProvider = new AsyncDataProvider<IdmapRow>(idmapsRows$);
-    this.setDefaultSort();
-  }
-
-  getIdmaps(): void {
-    this.dataProvider.refresh();
+    ));
   }
 
   setDefaultSort(): void {

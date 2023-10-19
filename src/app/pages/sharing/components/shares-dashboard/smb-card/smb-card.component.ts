@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, In
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, map, switchMap, tap } from 'rxjs';
+import { filter, map, pipe, switchMap, tap } from 'rxjs';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { helptextSharingSmb } from 'app/helptext/sharing/smb/smb';
 import { Service } from 'app/interfaces/service.interface';
@@ -117,12 +117,9 @@ export class SmbCardComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
-    const smbShares$ = this.ws.call('sharing.smb.query').pipe(
-      tap((smbShares) => this.smbShares = smbShares),
-      map((smbShares) => smbShares.slice(0, 4)),
-      untilDestroyed(this),
-    );
+    const smbShares$ = this.ws.call('sharing.smb.query');
     this.dataProvider = new AsyncDataProvider<SmbShare>(smbShares$);
+    this.getSmbShares();
   }
 
   openForm(row?: SmbShare): void {
@@ -208,7 +205,11 @@ export class SmbCardComponent implements OnInit, OnChanges {
   }
 
   private getSmbShares(): void {
-    this.dataProvider.refresh();
+    this.dataProvider.load<SmbShare[]>(() => pipe(
+      tap((smbShares) => this.smbShares = smbShares),
+      map((smbShares) => smbShares.slice(0, 4)),
+      untilDestroyed(this),
+    ));
   }
 
   private onChangeEnabledState(row: SmbShare): void {

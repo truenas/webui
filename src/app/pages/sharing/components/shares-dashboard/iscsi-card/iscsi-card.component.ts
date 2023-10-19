@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, map, switchMap, tap } from 'rxjs';
+import { filter, map, pipe, switchMap, tap } from 'rxjs';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
 import { Service } from 'app/interfaces/service.interface';
@@ -68,12 +68,9 @@ export class IscsiCardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const iscsiShares$ = this.ws.call('iscsi.target.query').pipe(
-      tap((iscsiShares) => this.iscsiShares = iscsiShares),
-      map((iscsiShares) => iscsiShares.slice(0, 4)),
-      untilDestroyed(this),
-    );
+    const iscsiShares$ = this.ws.call('iscsi.target.query');
     this.dataProvider = new AsyncDataProvider<IscsiTarget>(iscsiShares$);
+    this.getIscsiTargets();
   }
 
   openForm(row?: IscsiTarget, openWizard?: boolean): void {
@@ -109,6 +106,10 @@ export class IscsiCardComponent implements OnInit {
   }
 
   private getIscsiTargets(): void {
-    this.dataProvider.refresh();
+    this.dataProvider.load<IscsiTarget[]>(() => pipe(
+      tap((iscsiShares) => this.iscsiShares = iscsiShares),
+      map((iscsiShares) => iscsiShares.slice(0, 4)),
+      untilDestroyed(this),
+    ));
   }
 }

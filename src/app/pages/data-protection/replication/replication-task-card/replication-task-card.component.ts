@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { catchError, EMPTY, filter, map, of, switchMap, tap } from 'rxjs';
+import { catchError, EMPTY, filter, map, of, pipe, switchMap, tap } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import helptext from 'app/helptext/data-protection/data-protection-dashboard/data-protection-dashboard';
@@ -116,15 +116,16 @@ export class ReplicationTaskCardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const replicationTasks$ = this.ws.call('replication.query', [[], { extra: { check_dataset_encryption_keys: true } }]).pipe(
-      map((replicationTasks: ReplicationTaskUi[]) => this.transformReplicationTasks(replicationTasks)),
-      untilDestroyed(this),
-    );
+    const replicationTasks$ = this.ws.call('replication.query', [[], { extra: { check_dataset_encryption_keys: true } }]);
     this.dataProvider = new AsyncDataProvider<ReplicationTaskUi>(replicationTasks$);
+    this.getReplicationTasks();
   }
 
   getReplicationTasks(): void {
-    this.dataProvider.refresh();
+    this.dataProvider.load<ReplicationTaskUi[]>(() => pipe(
+      map((replicationTasks) => this.transformReplicationTasks(replicationTasks)),
+      untilDestroyed(this),
+    ));
   }
 
   doDelete(replicationTask: ReplicationTaskUi): void {

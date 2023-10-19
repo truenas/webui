@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, map, switchMap } from 'rxjs';
+import { filter, pipe, switchMap } from 'rxjs';
 import { ScrubTaskUi } from 'app/interfaces/scrub-task.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
@@ -79,15 +79,15 @@ export class ScrubTaskCardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const scrubTasks$ = this.ws.call('pool.scrub.query').pipe(
-      map((cloudSyncTasks) => cloudSyncTasks as ScrubTaskUi[]),
-      untilDestroyed(this),
-    );
+    const scrubTasks$ = this.ws.call('pool.scrub.query');
     this.dataProvider = new AsyncDataProvider<ScrubTaskUi>(scrubTasks$);
+    this.getScrubTasks();
   }
 
   getScrubTasks(): void {
-    this.dataProvider.refresh();
+    this.dataProvider.load<ScrubTaskUi[]>(() => pipe(
+      untilDestroyed(this),
+    ));
   }
 
   doDelete(scrubTask: ScrubTaskUi): void {

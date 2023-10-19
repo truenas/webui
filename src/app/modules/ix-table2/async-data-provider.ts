@@ -1,31 +1,20 @@
-import { BehaviorSubject, Observable, Subscription, map } from 'rxjs';
+import { Observable, OperatorFunction } from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
-import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { ApiCallDirectory, ApiCallMethod } from 'app/interfaces/api/api-call-directory.interface';
+import { BaseDataProvider } from 'app/modules/ix-table2/base-data-provider';
 
-export class AsyncDataProvider<T> extends ArrayDataProvider<T> {
-  private subscription = new Subscription();
-  readonly emptyType$ = new BehaviorSubject<EmptyType>(EmptyType.Loading);
-
-  get isLoading$(): Observable<boolean> {
-    return this.emptyType$.pipe(map((emptyType) => emptyType === EmptyType.Loading));
-  }
-
-  get isError$(): Observable<boolean> {
-    return this.emptyType$.pipe(map((emptyType) => emptyType === EmptyType.Errors));
-  }
-
+export class AsyncDataProvider<T> extends BaseDataProvider<T> {
   constructor(
-    private request$: Observable<T[]>,
+    private request$: Observable<ApiCallDirectory[ApiCallMethod]['response']>,
   ) {
     super();
-    this.refresh();
   }
 
-  refresh(): void {
+  load<K>(transformFunction?: () => OperatorFunction<K, T[]>): void {
     this.emptyType$.next(EmptyType.Loading);
     this.subscription.add(
-      this.request$.subscribe({
-        next: (rows) => {
+      (transformFunction ? this.request$.pipe(transformFunction()) : this.request$).subscribe({
+        next: (rows: T[]) => {
           this.setRows(rows);
           this.emptyType$.next(rows.length ? EmptyType.NoSearchResults : EmptyType.NoPageData);
         },
@@ -35,11 +24,5 @@ export class AsyncDataProvider<T> extends ArrayDataProvider<T> {
         },
       }),
     );
-  }
-
-  unsubscribe(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
   }
 }

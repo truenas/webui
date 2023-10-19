@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, switchMap, tap } from 'rxjs';
+import { filter, pipe, switchMap, tap } from 'rxjs';
 import { VmwareSnapshot } from 'app/interfaces/vmware.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
@@ -60,11 +60,9 @@ export class VmwareSnapshotListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const snapshots$ = this.ws.call('vmware.query').pipe(
-      tap((snapshots) => this.snapshots = snapshots),
-      untilDestroyed(this),
-    );
+    const snapshots$ = this.ws.call('vmware.query');
     this.dataProvider = new AsyncDataProvider<VmwareSnapshot>(snapshots$);
+    this.getSnapshotsData();
   }
 
   onListFiltered(query: string): void {
@@ -78,7 +76,10 @@ export class VmwareSnapshotListComponent implements OnInit {
   }
 
   getSnapshotsData(): void {
-    this.dataProvider.refresh();
+    this.dataProvider.load<VmwareSnapshot[]>(() => pipe(
+      tap((snapshots) => this.snapshots = snapshots),
+      untilDestroyed(this),
+    ));
   }
 
   doAdd(): void {

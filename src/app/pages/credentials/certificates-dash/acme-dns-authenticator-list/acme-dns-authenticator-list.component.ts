@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { switchMap, filter, tap } from 'rxjs';
+import { switchMap, filter, tap, pipe } from 'rxjs';
 import { DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
@@ -64,16 +64,17 @@ export class AcmeDnsAuthenticatorListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const authenticators$ = this.ws.call('acme.dns.authenticator.query').pipe(
-      tap((authenticators) => this.authenticators = authenticators),
-      untilDestroyed(this),
-    );
+    const authenticators$ = this.ws.call('acme.dns.authenticator.query');
     this.dataProvider = new AsyncDataProvider<DnsAuthenticator>(authenticators$);
     this.setDefaultSort();
+    this.getAuthenticators();
   }
 
   getAuthenticators(): void {
-    this.dataProvider.refresh();
+    this.dataProvider.load<DnsAuthenticator[]>(() => pipe(
+      tap((authenticators) => this.authenticators = authenticators),
+      untilDestroyed(this),
+    ));
   }
 
   setDefaultSort(): void {

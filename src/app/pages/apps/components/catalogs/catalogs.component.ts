@@ -4,6 +4,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { pipe } from 'rxjs';
 import { filter, tap } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/apps/apps';
@@ -70,12 +71,10 @@ export class CatalogsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const catalogs$ = this.ws.call('catalog.query', [[], { extra: { item_details: true } }]).pipe(
-      tap((catalogs) => this.catalogs = catalogs),
-      untilDestroyed(this),
-    );
+    const catalogs$ = this.ws.call('catalog.query', [[], { extra: { item_details: true } }]);
     this.dataProvider = new AsyncDataProvider<Catalog>(catalogs$);
     this.setDefaultSort();
+    this.refresh();
 
     this.listenForCatalogSyncJobs();
   }
@@ -115,7 +114,10 @@ export class CatalogsComponent implements OnInit {
   }
 
   refresh(): void {
-    this.dataProvider.refresh();
+    this.dataProvider.load<Catalog[]>(() => pipe(
+      tap((catalogs) => this.catalogs = catalogs),
+      untilDestroyed(this),
+    ));
   }
 
   doAdd(): void {

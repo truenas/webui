@@ -2,8 +2,9 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } 
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
-import { filter, map, switchMap, tap } from 'rxjs';
+import { filter, map, pipe, switchMap, tap } from 'rxjs';
 import helptext from 'app/helptext/directory-service/kerberos-realms-form-list';
+import { KerberosRealm } from 'app/interfaces/kerberos-realm.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
@@ -100,7 +101,14 @@ export default class KerberosRealmsListComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    const kerberosRealsm$ = this.ws.call('kerberos.realm.query').pipe(
+    const kerberosRealsm$ = this.ws.call('kerberos.realm.query');
+    this.dataProvider = new AsyncDataProvider<KerberosRealmRow>(kerberosRealsm$);
+    this.setDefaultSort();
+    this.getKerberosRealms();
+  }
+
+  getKerberosRealms(): void {
+    this.dataProvider.load<KerberosRealm[]>(() => pipe(
       map((realms) => {
         return realms.map((realm) => {
           return {
@@ -113,13 +121,7 @@ export default class KerberosRealmsListComponent implements OnInit {
       }),
       tap((kerberosRealsm) => this.kerberosRealsm = kerberosRealsm),
       untilDestroyed(this),
-    );
-    this.dataProvider = new AsyncDataProvider<KerberosRealmRow>(kerberosRealsm$);
-    this.setDefaultSort();
-  }
-
-  getKerberosRealms(): void {
-    this.dataProvider.refresh();
+    ));
   }
 
   setDefaultSort(): void {

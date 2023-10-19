@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, map, switchMap, tap } from 'rxjs';
+import { filter, map, pipe, switchMap, tap } from 'rxjs';
 import helptext_smart from 'app/helptext/data-protection/smart/smart';
 import { SmartTestTaskUi } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
@@ -86,16 +86,17 @@ export class SmartTaskCardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const smartTasks$ = this.ws.call('smart.test.query').pipe(
-      map((smartTasks: SmartTestTaskUi[]) => this.transformSmartTasks(smartTasks)),
-      tap((smartTasks) => this.smartTasks = smartTasks),
-      untilDestroyed(this),
-    );
+    const smartTasks$ = this.ws.call('smart.test.query');
     this.dataProvider = new AsyncDataProvider<SmartTestTaskUi>(smartTasks$);
+    this.getSmartTasks();
   }
 
   getSmartTasks(): void {
-    this.dataProvider.refresh();
+    this.dataProvider.load<SmartTestTaskUi[]>(() => pipe(
+      map((smartTasks) => this.transformSmartTasks(smartTasks)),
+      tap((smartTasks) => this.smartTasks = smartTasks),
+      untilDestroyed(this),
+    ));
   }
 
   doDelete(smartTask: SmartTestTaskUi): void {

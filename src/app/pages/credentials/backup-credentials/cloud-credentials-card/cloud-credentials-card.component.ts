@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { switchMap, filter, tap,
+import { switchMap, filter, tap, pipe,
 } from 'rxjs';
 import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
@@ -68,18 +68,19 @@ export class CloudCredentialsCardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const credentials$ = this.ws.call('cloudsync.credentials.query').pipe(
-      tap((credentials) => this.credentials = credentials),
-      untilDestroyed(this),
-    );
+    const credentials$ = this.ws.call('cloudsync.credentials.query');
     this.dataProvider = new AsyncDataProvider<CloudsyncCredential>(credentials$);
     this.setDefaultSort();
+    this.getCredentials();
 
     this.getProviders();
   }
 
   getCredentials(): void {
-    this.dataProvider.refresh();
+    this.dataProvider.load<CloudsyncCredential[]>(() => pipe(
+      tap((credentials) => this.credentials = credentials),
+      untilDestroyed(this),
+    ));
   }
 
   getProviders(): void {

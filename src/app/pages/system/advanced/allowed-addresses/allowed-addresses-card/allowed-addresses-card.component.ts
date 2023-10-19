@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, map } from 'rxjs';
+import { filter, map, pipe } from 'rxjs';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
@@ -63,11 +63,9 @@ export class AllowedAddressesCardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const config$ = this.ws.call('system.general.config').pipe(
-      map((config) => this.getAddressesSourceFromConfig(config)),
-      untilDestroyed(this),
-    );
+    const config$ = this.ws.call('system.general.config');
     this.dataProvider = new AsyncDataProvider<AllowedAddressRow>(config$);
+    this.getAllowedAddresses();
   }
 
   async onConfigure(): Promise<void> {
@@ -110,7 +108,10 @@ export class AllowedAddressesCardComponent implements OnInit {
   }
 
   private getAllowedAddresses(): void {
-    this.dataProvider.refresh();
+    this.dataProvider.load<SystemGeneralConfig>(() => pipe(
+      map((config) => this.getAddressesSourceFromConfig(config)),
+      untilDestroyed(this),
+    ));
   }
 
   private getAddressesSourceFromConfig(data: SystemGeneralConfig): AllowedAddressRow[] {

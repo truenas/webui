@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { EMPTY, catchError, filter, map, of, switchMap, tap } from 'rxjs';
+import { EMPTY, catchError, filter, map, of, pipe, switchMap, tap } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import helptext_cloudsync from 'app/helptext/data-protection/cloudsync/cloudsync-form';
@@ -125,16 +125,17 @@ export class CloudSyncTaskCardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const cloudsyncTasks$ = this.ws.call('cloudsync.query').pipe(
-      map((cloudsyncTasks: CloudSyncTaskUi[]) => this.transformCloudSyncTasks(cloudsyncTasks)),
-      tap((cloudsyncTasks) => this.cloudsyncTasks = cloudsyncTasks),
-      untilDestroyed(this),
-    );
+    const cloudsyncTasks$ = this.ws.call('cloudsync.query');
     this.dataProvider = new AsyncDataProvider<CloudSyncTaskUi>(cloudsyncTasks$);
+    this.getCloudSyncTasks();
   }
 
   getCloudSyncTasks(): void {
-    this.dataProvider.refresh();
+    this.dataProvider.load<CloudSyncTaskUi[]>(() => pipe(
+      map((cloudsyncTasks) => this.transformCloudSyncTasks(cloudsyncTasks)),
+      tap((cloudsyncTasks) => this.cloudsyncTasks = cloudsyncTasks),
+      untilDestroyed(this),
+    ));
   }
 
   doDelete(cloudsyncTask: CloudSyncTaskUi): void {

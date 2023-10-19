@@ -22,7 +22,10 @@
   </button>
 </div>
 
-<ix-table2>
+<ix-table2
+  [ix-table2-empty]="!dataProvider.rows.length"
+  [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
+>
   <thead
     ix-table-head
     [columns]="columns"
@@ -32,5 +35,7 @@
     ix-table-body
     [columns]="columns"
     [dataProvider]="dataProvider"
+    [isLoading]="dataProvider.isLoading$ | async"
   ></tbody>
 </ix-table2>
+<ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>

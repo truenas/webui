@@ -4,7 +4,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, tap,
+import { filter, pipe, tap,
 } from 'rxjs';
 import { StaticRoute } from 'app/interfaces/static-route.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
@@ -65,16 +65,17 @@ export class StaticRoutesCardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const staticRoutes$ = this.ws.call('staticroute.query').pipe(
-      tap((staticRoutes) => this.staticRoutes = staticRoutes),
-      untilDestroyed(this),
-    );
+    const staticRoutes$ = this.ws.call('staticroute.query');
     this.dataProvider = new AsyncDataProvider<StaticRoute>(staticRoutes$);
     this.setDefaultSort();
+    this.getStaticRoutes();
   }
 
   getStaticRoutes(): void {
-    this.dataProvider.refresh();
+    this.dataProvider.load<StaticRoute[]>(() => pipe(
+      tap((staticRoutes) => this.staticRoutes = staticRoutes),
+      untilDestroyed(this),
+    ));
   }
 
   onListFiltered(query: string): void {

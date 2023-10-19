@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, from, map, switchMap, tap } from 'rxjs';
+import { filter, from, map, pipe, switchMap, tap } from 'rxjs';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { Cronjob } from 'app/interfaces/cronjob.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -98,18 +98,9 @@ export class CronCardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const cronjobs$ = this.ws.call('cronjob.query').pipe(
-      map((cronjobs) => {
-        return cronjobs.map((job: Cronjob): CronjobRow => ({
-          ...job,
-          cron_schedule: scheduleToCrontab(job.schedule),
-          next_run: this.taskService.getTaskNextRun(scheduleToCrontab(job.schedule)),
-        }));
-      }),
-      tap((cronjobs) => this.cronjobs = cronjobs),
-      untilDestroyed(this),
-    );
+    const cronjobs$ = this.ws.call('cronjob.query');
     this.dataProvider = new AsyncDataProvider<CronjobRow>(cronjobs$);
+    this.getCronJobs();
   }
 
   onAdd(): void {
@@ -117,7 +108,17 @@ export class CronCardComponent implements OnInit {
   }
 
   getCronJobs(): void {
-    this.dataProvider.refresh();
+    this.dataProvider.load<Cronjob[]>(() => pipe(
+      map((cronjobs) => {
+        return cronjobs.map((job): CronjobRow => ({
+          ...job,
+          cron_schedule: scheduleToCrontab(job.schedule),
+          next_run: this.taskService.getTaskNextRun(scheduleToCrontab(job.schedule)),
+        }));
+      }),
+      tap((cronjobs) => this.cronjobs = cronjobs),
+      untilDestroyed(this),
+    ));
   }
 
   runNow(row: CronjobRow): void {

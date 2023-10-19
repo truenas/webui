@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { switchMap, from, filter } from 'rxjs';
+import { switchMap, from, filter, pipe } from 'rxjs';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
@@ -84,10 +84,9 @@ export class InitShutdownCardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const scripts$ = this.ws.call('initshutdownscript.query').pipe(
-      untilDestroyed(this),
-    );
+    const scripts$ = this.ws.call('initshutdownscript.query');
     this.dataProvider = new AsyncDataProvider<InitShutdownScript>(scripts$);
+    this.loadScripts();
   }
 
   onAdd(): void {
@@ -95,7 +94,9 @@ export class InitShutdownCardComponent implements OnInit {
   }
 
   loadScripts(): void {
-    this.dataProvider.refresh();
+    this.dataProvider.load<InitShutdownScript[]>(() => pipe(
+      untilDestroyed(this),
+    ));
   }
 
   onDelete(row: InitShutdownScript): void {

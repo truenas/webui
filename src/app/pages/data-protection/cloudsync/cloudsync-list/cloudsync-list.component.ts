@@ -6,7 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  EMPTY, catchError, filter, map, switchMap, tap,
+  EMPTY, catchError, filter, map, switchMap, tap, pipe,
 } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
@@ -135,12 +135,9 @@ export class CloudsyncListComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit(): void {
-    const cloudSyncTasks$ = this.ws.call('cloudsync.query').pipe(
-      map((cloudSyncTasks) => this.transformCloudSyncData(cloudSyncTasks)),
-      tap((cloudSyncTasks) => this.cloudSyncTasks = cloudSyncTasks),
-      untilDestroyed(this),
-    );
+    const cloudSyncTasks$ = this.ws.call('cloudsync.query');
     this.dataProvider = new AsyncDataProvider<CloudSyncTaskUi>(cloudSyncTasks$);
+    this.getCloudSyncTasks();
   }
 
   ngAfterViewInit(): void {
@@ -148,7 +145,11 @@ export class CloudsyncListComponent implements OnInit, AfterViewInit {
   }
 
   getCloudSyncTasks(): void {
-    this.dataProvider.refresh();
+    this.dataProvider.load<CloudSyncTaskUi[]>(() => pipe(
+      map((cloudSyncTasks) => this.transformCloudSyncData(cloudSyncTasks)),
+      tap((cloudSyncTasks) => this.cloudSyncTasks = cloudSyncTasks),
+      untilDestroyed(this),
+    ));
   }
 
   runNow(row: CloudSyncTaskUi): void {
