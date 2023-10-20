@@ -2,7 +2,6 @@
   "": "",
   "\n              It looks like your session has been inactive for more than {lifetime} seconds.<br>\n              For security reasons we will log you out at {time}.\n            ": "",
   "(Optional)": "",
-  "(Session will be extended automatically)": "",
   "...": "",
   "2FA has been configured for this account. Enter the OTP to continue.": "",
   "<i>Device</i> provides virtual storage access to zvols, zvol snapshots, or physical devices.  <i>File</i> provides virtual storage access to a single file.": "",
