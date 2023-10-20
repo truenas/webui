@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, Observable, combineLatest, filter, of, switchMap, tap } from 'rxjs';
@@ -23,9 +23,7 @@ import { WebSocketService } from 'app/services/ws.service';
   templateUrl: './reporting-exporters-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ReportingExporterListComponent implements OnInit, AfterViewInit {
-  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
-
+export class ReportingExporterListComponent implements OnInit {
   filterString = '';
   dataProvider = new ArrayDataProvider<ReportingExporter>();
 
@@ -112,10 +110,6 @@ export class ReportingExporterListComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.getExporters();
-  }
-
-  ngAfterViewInit(): void {
-    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
   getExporters(): void {
