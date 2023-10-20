@@ -15,7 +15,6 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ReportingExportersFormComponent } from 'app/pages/reports-dashboard/components/exporters/reporting-exporters-form/reporting-exporters-form.component';
 import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { LayoutService } from 'app/services/layout.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -105,7 +104,6 @@ export class ReportingExporterListComponent implements OnInit {
     private dialogService: DialogService,
     protected emptyService: EmptyService,
     private appLoader: AppLoaderService,
-    private layoutService: LayoutService,
   ) {}
 
   ngOnInit(): void {
