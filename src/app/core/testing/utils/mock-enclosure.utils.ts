@@ -1,10 +1,8 @@
 import { environment } from 'environments/environment';
 import { MockEnclosureConfig } from 'app/core/testing/interfaces/mock-enclosure-utils.interface';
-import { ApiCallMethod } from 'app/interfaces/api/api-call-directory.interface';
+import { ApiCallDirectory, ApiCallMethod } from 'app/interfaces/api/api-call-directory.interface';
 import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
-import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { IncomingWebsocketMessage, ResultMessage } from 'app/interfaces/api-message.interface';
-import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { Disk, UnusedDisk } from 'app/interfaces/storage.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { MockStorageGenerator } from './mock-storage-generator.utils';
@@ -55,64 +53,19 @@ export class MockEnclosureUtils {
 
   private enclosureOverrides<K extends ApiCallMethod | ApiJobMethod>(data: unknown, method: K): unknown {
     let mockPayload: unknown;
-    const enclosureData: Enclosure[] = this.mockStorage.enclosures;
     switch (method) {
-      case 'enclosure.query': {
-        mockPayload = enclosureData === null ? [] : enclosureData;
-        break;
-      }
-      case 'pool.query': {
-        if (this.mockConfig.diskOptions.mockPools) {
-          mockPayload = [this.mockStorage.poolState];
-          break;
-        } else if (this.mockConfig.diskOptions.enabled && !this.mockConfig.diskOptions.mockPools) {
-          mockPayload = [];
-          break;
-        } else {
-          mockPayload = data;
-          break;
-        }
-      }
-      case 'pool.dataset.query': {
-        if (this.mockConfig.diskOptions.mockPools) {
-          const rootDataset = mockRootDataset(this.mockStorage.poolState.name);
-          mockPayload = [rootDataset];
-          break;
-        } else if (this.mockConfig.diskOptions.enabled) {
-          mockPayload = [];
-          break;
-        } else {
-          return data;
-        }
-      }
-      case 'system.build_time': {
-        if (this.mockConfig.mockEnclosure) {
-          let sysBuildtimeClone: ApiTimestamp = { ...data as ApiTimestamp };
-          sysBuildtimeClone = { $date: 1676641039000 };
-          mockPayload = sysBuildtimeClone;
-        } else {
-          return data;
-        }
-        break;
-      }
-      case 'system.info': {
-        if (this.mockConfig.mockEnclosure) {
-          const sysinfoClone: SystemInfo = { ...data as SystemInfo };
-          sysinfoClone.system_manufacturer = 'iXsystems';
-          sysinfoClone.buildtime = { $date: 1676641039000 };
-          sysinfoClone.system_product = this.mockConfig.systemProduct;
-          sysinfoClone.system_serial = 'abcdefgh12345678';
-          mockPayload = sysinfoClone;
-        } else {
-          return data;
-        }
-        break;
-      }
+      case 'enclosure.query':
+        return this.mockStorage.enclosures ?? [];
+      case 'pool.query':
+        return this.mockPoolQuery() ?? data;
+      case 'pool.dataset.query':
+        return this.mockPoolDatasetQuery() ?? data;
+      case 'system.build_time':
+        return this.mockConfig.mockEnclosure ? { $date: 1676641039000 } : data;
+      case 'system.info':
+        return this.mockConfig.mockEnclosure ? this.mockSystemInfo(data as SystemInfo) : data;
       case 'system.is_ix_hardware':
-        if (this.mockConfig.mockEnclosure) {
-          return true;
-        }
-        return data;
+        return this.mockConfig.mockEnclosure ? true : data;
       case 'smart.test.results':
       case 'disk.query': {
         // Sometimes response only has two keys "name" and "type"
@@ -128,27 +81,51 @@ export class MockEnclosureUtils {
         }
         break;
       }
-      case 'disk.get_unused': {
-        if (this.mockConfig.diskOptions.enabled) {
-          const payload = this.mockStorage.disks.filter((disk: Disk) => {
-            return !Object.keys(disk).includes('pool') || typeof disk.pool === 'undefined' || disk.pool === null;
-          }).map((disk: Disk) => {
-            const unusedDisk: UnusedDisk | Disk = { ...disk };
-            (unusedDisk as UnusedDisk).partitions = [{ path: '' }];
-            (unusedDisk as UnusedDisk).exported_zpool = '';
-            return unusedDisk as UnusedDisk;
-          });
-
-          mockPayload = payload;
-          break;
-        } else {
-          return data;
-        }
-      }
+      case 'disk.get_unused':
+        return this.mockConfig.diskOptions.enabled ? this.mockDiskGetUnused() : data;
       default:
         return data;
     }
 
     return mockPayload;
+  }
+
+  private mockPoolQuery(): ApiCallDirectory['pool.query']['response'] {
+    if (this.mockConfig.diskOptions.mockPools) {
+      return [this.mockStorage.poolState];
+    } else if (this.mockConfig.diskOptions.enabled) {
+      return [];
+    }
+  }
+
+  private mockPoolDatasetQuery(): ApiCallDirectory['pool.dataset.query']['response'] {
+    if (this.mockConfig.diskOptions.mockPools) {
+      return [mockRootDataset(this.mockStorage.poolState.name)];
+    } else if (this.mockConfig.diskOptions.enabled) {
+      return [];
+    }
+    return null;
+  }
+
+  private mockSystemInfo(data: SystemInfo): ApiCallDirectory['system.info']['response'] {
+    return {
+      ...data,
+      system_manufacturer: 'iXsystems',
+      buildtime: { $date: 1676641039000 },
+      system_product: this.mockConfig.systemProduct,
+      system_serial: 'abcdefgh12345678',
+    };
+  }
+
+  private mockDiskGetUnused(): ApiCallDirectory['disk.get_unused']['response'] {
+    return this.mockStorage.disks.filter((disk: Disk) => {
+      return !Object.keys(disk).includes('pool') || typeof disk.pool === 'undefined' || disk.pool === null;
+    }).map((disk: Disk) => {
+      return {
+        ...disk,
+        partitions: [{ path: '' }],
+        exported_zpool: '',
+      } as UnusedDisk;
+    });
   }
 }
