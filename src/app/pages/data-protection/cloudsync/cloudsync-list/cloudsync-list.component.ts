@@ -1,5 +1,4 @@
-import {
-  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, TemplateRef, ViewChild,
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -28,7 +27,6 @@ import { CloudsyncRestoreDialogComponent } from 'app/pages/data-protection/cloud
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { LayoutService } from 'app/services/layout.service';
 import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
@@ -39,8 +37,7 @@ import { AppState } from 'app/store';
   styleUrls: ['./cloudsync-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CloudsyncListComponent implements OnInit, AfterViewInit {
-  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
+export class CloudsyncListComponent implements OnInit {
   cloudSyncTasks: CloudSyncTaskUi[] = [];
   filterString = '';
   dataProvider: AsyncDataProvider<CloudSyncTaskUi>;
@@ -127,7 +124,6 @@ export class CloudsyncListComponent implements OnInit, AfterViewInit {
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
     private slideInService: IxSlideInService,
-    private layoutService: LayoutService,
     private matDialog: MatDialog,
     private snackbar: SnackbarService,
     private store$: Store<AppState>,
@@ -141,10 +137,6 @@ export class CloudsyncListComponent implements OnInit, AfterViewInit {
       untilDestroyed(this),
     );
     this.dataProvider = new AsyncDataProvider<CloudSyncTaskUi>(cloudSyncTasks$);
-  }
-
-  ngAfterViewInit(): void {
-    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
   getCloudSyncTasks(): void {
