@@ -174,7 +174,6 @@ def wait_for_the_login_to_appear_and_ha_to_be_enable(driver):
 def at_the_login_page_enter_user_and_password(driver, user, password):
     """At the login page, enter "user" and "password"."""
     rsc.Login(driver, user, password)
-    rsc.Login(driver, user, password)
 
 
 @then('once on the dashboard go to the Services page and verify SMB service is RUNNING')
