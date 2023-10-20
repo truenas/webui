@@ -48,21 +48,21 @@ export class BaseDataProvider<T> implements DataProvider<T> {
   setRows(rows: T[]): void {
     this.allRows = rows;
     this.totalRows = rows.length;
-    this.updateCurrentPage();
+    this.updateCurrentPage(this.allRows);
   }
 
   setSorting(sorting: TableSort<T>): void {
     this.sorting = sorting;
-    this.updateCurrentPage();
+    this.updateCurrentPage(this.allRows);
   }
 
   setPagination(pagination: TablePagination): void {
     this.pagination = pagination;
-    this.updateCurrentPage();
+    this.updateCurrentPage(this.allRows);
   }
 
-  private updateCurrentPage(): void {
-    this.currentPage$.next(paginate(sort(this.allRows, this.sorting), this.pagination));
+  protected updateCurrentPage(rows: T[]): void {
+    this.currentPage$.next(paginate(sort(rows, this.sorting), this.pagination));
   }
 }
 

@@ -12,13 +12,13 @@ interface ApiCallParams { [key: string]: unknown }
 interface PaginationStrategy {
   getParams(pagination: TablePagination): ApiCallParams;
   paginate<T>(rows: T[], pagination: TablePagination): T[];
-  handleCurrentPage(load: () => void, update: () => void): void;
+  handleCurrentPage(loadRowsAndUpdatePage: () => void, updatePage: () => void): void;
 }
 
 interface SortingStrategy {
   getParams<T>(sorting: TableSort<T>): ApiCallParams;
   sort<T>(rows: T[], sorting: TableSort<T>): T[];
-  handleCurrentPage(load: () => void, update: () => void): void;
+  handleCurrentPage(loadRowsAndUpdatePage: () => void, updatePage: () => void): void;
 }
 
 export class PaginationClientSide implements PaginationStrategy {
@@ -30,8 +30,8 @@ export class PaginationClientSide implements PaginationStrategy {
     return paginate(rows, pagination);
   }
 
-  handleCurrentPage(load: () => void, update: () => void): void {
-    update();
+  handleCurrentPage(loadRowsAndUpdatePage: () => void, updatePage: () => void): void {
+    updatePage();
   }
 }
 
@@ -51,8 +51,8 @@ export class PaginationServerSide implements PaginationStrategy {
     return rows;
   }
 
-  handleCurrentPage(load: () => void): void {
-    load();
+  handleCurrentPage(loadRowsAndUpdatePage: () => void): void {
+    loadRowsAndUpdatePage();
   }
 }
 
@@ -65,8 +65,8 @@ export class SortingClientSide implements SortingStrategy {
     return sort(rows, sorting);
   }
 
-  handleCurrentPage(load: () => void, update: () => void): void {
-    update();
+  handleCurrentPage(loadRowsAndUpdatePage: () => void, updatePage: () => void): void {
+    updatePage();
   }
 }
 
@@ -85,8 +85,8 @@ export class SortingServerSide implements SortingStrategy {
     return rows;
   }
 
-  handleCurrentPage(load: () => void): void {
-    load();
+  handleCurrentPage(loadRowsAndUpdatePage: () => void): void {
+    loadRowsAndUpdatePage();
   }
 }
 
@@ -140,7 +140,7 @@ export class ApiDataProvider<T> extends BaseDataProvider<T> {
     this.sorting = sorting;
     this.sortingStrategy.handleCurrentPage(
       () => this.load(),
-      () => this.update(),
+      () => this.updateCurrentPage(this.rows),
     );
   }
 
@@ -148,12 +148,8 @@ export class ApiDataProvider<T> extends BaseDataProvider<T> {
     this.pagination = pagination;
     this.paginationStrategy.handleCurrentPage(
       () => this.load(),
-      () => this.update(),
+      () => this.updateCurrentPage(this.rows),
     );
-  }
-
-  private update(): void {
-    this.currentPage$.next(paginate(sort(this.rows, this.sorting), this.pagination));
   }
 
   private prepareParams(params: ApiCallParams): [ApiCallParams] {
