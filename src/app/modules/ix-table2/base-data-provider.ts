@@ -17,8 +17,11 @@ export class BaseDataProvider<T> implements DataProvider<T> {
     return this.emptyType$.pipe(map((emptyType) => emptyType === EmptyType.Errors));
   }
 
+  get currentPageCount$(): Observable<number> {
+    return this.currentPage$.pipe(map((currentPage) => currentPage.length));
+  }
+
   currentPage$ = new BehaviorSubject<T[]>([]);
-  rows: T[] = [];
   expandedRow: T;
   totalRows = 0;
 
@@ -34,6 +37,7 @@ export class BaseDataProvider<T> implements DataProvider<T> {
   };
 
   protected subscription = new Subscription();
+  private allRows: T[] = [];
 
   unsubscribe(): void {
     if (this.subscription) {
@@ -42,7 +46,7 @@ export class BaseDataProvider<T> implements DataProvider<T> {
   }
 
   setRows(rows: T[]): void {
-    this.rows = rows;
+    this.allRows = rows;
     this.totalRows = rows.length;
     this.updateCurrentPage();
   }
@@ -58,11 +62,11 @@ export class BaseDataProvider<T> implements DataProvider<T> {
   }
 
   private updateCurrentPage(): void {
-    this.currentPage$.next(paginateFn(sortFn(this.rows, this.sorting), this.pagination));
+    this.currentPage$.next(paginate(sort(this.allRows, this.sorting), this.pagination));
   }
 }
 
-export function sortFn<T>(rows: T[], sorting: TableSort<T>): T[] {
+export function sort<T>(rows: T[], sorting: TableSort<T>): T[] {
   const sorted = rows;
   const direction = sorting.direction;
   const propertyName = sorting.propertyName;
@@ -78,7 +82,7 @@ export function sortFn<T>(rows: T[], sorting: TableSort<T>): T[] {
   return _.orderBy(sorted, propertyName, direction);
 }
 
-export function  paginateFn<T>(rows: T[], pagination: TablePagination): T[] {
+export function  paginate<T>(rows: T[], pagination: TablePagination): T[] {
   const paginated = rows;
   const pageNumber = pagination.pageNumber;
   const pageSize = pagination.pageSize;

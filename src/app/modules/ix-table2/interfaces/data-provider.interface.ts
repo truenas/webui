@@ -3,9 +3,9 @@ import { TablePagination } from 'app/modules/ix-table2/interfaces/table-paginati
 import { TableSort } from 'app/modules/ix-table2/interfaces/table-sort.interface';
 
 export interface DataProvider<T> {
-  rows: T[];
   totalRows: number;
   currentPage$: Observable<T[]>;
+  currentPageCount$: Observable<number>;
   expandedRow: T;
   sorting: TableSort<T>;
   pagination: TablePagination;

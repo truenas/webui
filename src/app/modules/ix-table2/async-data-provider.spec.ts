@@ -21,7 +21,7 @@ describe('AsyncDataProvider', () => {
     const dataProvider = new AsyncDataProvider<TestTableData>(request$);
     dataProvider.load();
 
-    expect(dataProvider.rows).toEqual(testTableData);
+    expect(dataProvider.totalRows).toBe(4);
     expect(await firstValueFrom(dataProvider.currentPage$)).toEqual(testTableData);
   });
 

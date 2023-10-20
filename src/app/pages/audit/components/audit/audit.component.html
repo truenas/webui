@@ -23,7 +23,7 @@
 </div>
 
 <ix-table2
-  [ix-table2-empty]="!dataProvider.rows.length"
+  [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
   [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
 >
   <thead
