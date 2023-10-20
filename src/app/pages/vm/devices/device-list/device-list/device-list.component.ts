@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, pipe, tap } from 'rxjs';
+import { filter, tap } from 'rxjs';
 import { vmDeviceTypeLabels } from 'app/enums/vm.enum';
 import { VmDevice } from 'app/interfaces/vm-device.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
@@ -72,17 +72,17 @@ export class DeviceListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const devices$ = this.ws.call('vm.device.query', [[['vm', '=', this.vmId]]]);
+    const devices$ = this.ws.call('vm.device.query', [[['vm', '=', this.vmId]]]).pipe(
+      tap((devices) => this.devices = devices),
+      untilDestroyed(this),
+    );
     this.dataProvider = new AsyncDataProvider<VmDevice>(devices$);
     this.setDefaultSort();
     this.loadDevices();
   }
 
   loadDevices(): void {
-    this.dataProvider.load<VmDevice[]>(() => pipe(
-      tap((devices) => this.devices = devices),
-      untilDestroyed(this),
-    ));
+    this.dataProvider.load();
   }
 
   onAdd(): void {

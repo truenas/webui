@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { catchError, EMPTY, filter, map, of, pipe, switchMap, tap } from 'rxjs';
+import { catchError, EMPTY, filter, map, of, switchMap, tap } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { Job } from 'app/interfaces/job.interface';
@@ -109,17 +109,17 @@ export class RsyncTaskCardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const rsyncTasks$ = this.ws.call('rsynctask.query');
+    const rsyncTasks$ = this.ws.call('rsynctask.query').pipe(
+      map((rsyncTasks: RsyncTaskUi[]) => this.transformRsyncTasks(rsyncTasks)),
+      tap((rsyncTasks) => this.rsyncTasks = rsyncTasks),
+      untilDestroyed(this),
+    );
     this.dataProvider = new AsyncDataProvider<RsyncTaskUi>(rsyncTasks$);
     this.getRsyncTasks();
   }
 
   getRsyncTasks(): void {
-    this.dataProvider.load<RsyncTaskUi[]>(() => pipe(
-      map((rsyncTasks) => this.transformRsyncTasks(rsyncTasks)),
-      tap((rsyncTasks) => this.rsyncTasks = rsyncTasks),
-      untilDestroyed(this),
-    ));
+    this.dataProvider.load();
   }
 
   doDelete(row: RsyncTaskUi): void {

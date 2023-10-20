@@ -1,20 +1,19 @@
-import { Observable, OperatorFunction } from 'rxjs';
+import { Observable } from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
-import { ApiCallDirectory, ApiCallMethod } from 'app/interfaces/api/api-call-directory.interface';
 import { BaseDataProvider } from 'app/modules/ix-table2/base-data-provider';
 
 export class AsyncDataProvider<T> extends BaseDataProvider<T> {
   constructor(
-    private request$: Observable<ApiCallDirectory[ApiCallMethod]['response']>,
+    private request$: Observable<T[]>,
   ) {
     super();
   }
 
-  load<K>(transformFunction?: () => OperatorFunction<K, T[]>): void {
+  load(): void {
     this.emptyType$.next(EmptyType.Loading);
     this.subscription.add(
-      (transformFunction ? this.request$.pipe(transformFunction()) : this.request$).subscribe({
-        next: (rows: T[]) => {
+      this.request$.subscribe({
+        next: (rows) => {
           this.setRows(rows);
           this.emptyType$.next(rows.length ? EmptyType.NoSearchResults : EmptyType.NoPageData);
         },

@@ -4,8 +4,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, map, pipe, switchMap, tap } from 'rxjs';
-import { Cronjob } from 'app/interfaces/cronjob.interface';
+import { filter, map, switchMap, tap } from 'rxjs';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
 import { relativeDateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
@@ -93,17 +92,7 @@ export class CronListComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit(): void {
-    const cronjobs$ = this.ws.call('cronjob.query');
-    this.dataProvider = new AsyncDataProvider<CronjobRow>(cronjobs$);
-    this.getCronJobs();
-  }
-
-  ngAfterViewInit(): void {
-    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
-  }
-
-  getCronJobs(): void {
-    this.dataProvider.load<Cronjob[]>(() => pipe(
+    const cronjobs$ = this.ws.call('cronjob.query').pipe(
       map((cronjobs) => {
         return cronjobs.map((job): CronjobRow => ({
           ...job,
@@ -113,7 +102,17 @@ export class CronListComponent implements OnInit, AfterViewInit {
       }),
       tap((cronjobs) => this.cronjobs = cronjobs),
       untilDestroyed(this),
-    ));
+    );
+    this.dataProvider = new AsyncDataProvider<CronjobRow>(cronjobs$);
+    this.getCronJobs();
+  }
+
+  ngAfterViewInit(): void {
+    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
+  }
+
+  getCronJobs(): void {
+    this.dataProvider.load();
   }
 
   doAdd(): void {

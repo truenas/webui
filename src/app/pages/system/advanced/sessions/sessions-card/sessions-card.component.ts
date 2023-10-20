@@ -3,7 +3,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { formatDuration, intervalToDuration } from 'date-fns';
-import { of, pipe } from 'rxjs';
+import { of } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { AuthSession, AuthSessionCredentialsData } from 'app/interfaces/auth-session.interface';
@@ -81,15 +81,15 @@ export class SessionsCardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const sessions$ = this.ws.call('auth.sessions', [[['internal', '=', false]]]);
+    const sessions$ = this.ws.call('auth.sessions', [[['internal', '=', false]]]).pipe(
+      untilDestroyed(this),
+    );
     this.dataProvider = new AsyncDataProvider<AuthSession>(sessions$);
     this.updateSessions();
   }
 
   updateSessions(): void {
-    this.dataProvider.load<AuthSession[]>(() => pipe(
-      untilDestroyed(this),
-    ));
+    this.dataProvider.load();
   }
 
   async onConfigure(): Promise<void> {

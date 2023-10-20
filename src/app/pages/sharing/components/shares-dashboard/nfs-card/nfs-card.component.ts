@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, map, pipe, switchMap, tap } from 'rxjs';
+import { filter, map, switchMap, tap } from 'rxjs';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { helptextSharingNfs } from 'app/helptext/sharing';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
@@ -76,7 +76,11 @@ export class NfsCardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const nfsShares$ = this.ws.call('sharing.nfs.query');
+    const nfsShares$ = this.ws.call('sharing.nfs.query').pipe(
+      tap((nfsShares) => this.nfsShares = nfsShares),
+      map((nfsShares) => nfsShares.slice(0, 4)),
+      untilDestroyed(this),
+    );
     this.dataProvider = new AsyncDataProvider<NfsShare>(nfsShares$);
     this.getNfsShares();
   }
@@ -108,11 +112,7 @@ export class NfsCardComponent implements OnInit {
   }
 
   private getNfsShares(): void {
-    this.dataProvider.load<NfsShare[]>(() => pipe(
-      tap((nfsShares) => this.nfsShares = nfsShares),
-      map((nfsShares) => nfsShares.slice(0, 4)),
-      untilDestroyed(this),
-    ));
+    this.dataProvider.load();
   }
 
   private onChangeEnabledState(row: NfsShare): void {

@@ -7,7 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { isObject } from 'lodash';
 import {
-  switchMap, filter, map, EMPTY, catchError, tap, of, pipe,
+  switchMap, filter, map, EMPTY, catchError, tap, of,
 } from 'rxjs';
 import { helptextSystemCa } from 'app/helptext/system/ca';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
@@ -103,14 +103,7 @@ export class CertificateAuthorityListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const authorities$ = this.ws.call('certificateauthority.query');
-    this.dataProvider = new AsyncDataProvider<CertificateAuthority>(authorities$);
-    this.setDefaultSort();
-    this.getCertificates();
-  }
-
-  getCertificates(): void {
-    this.dataProvider.load<CertificateAuthority[]>(() => pipe(
+    const authorities$ = this.ws.call('certificateauthority.query').pipe(
       map((authorities) => {
         return authorities.map((authority) => {
           if (isObject(authority.issuer)) {
@@ -121,7 +114,14 @@ export class CertificateAuthorityListComponent implements OnInit {
       }),
       tap((authorities) => this.authorities = authorities),
       untilDestroyed(this),
-    ));
+    );
+    this.dataProvider = new AsyncDataProvider<CertificateAuthority>(authorities$);
+    this.setDefaultSort();
+    this.getCertificates();
+  }
+
+  getCertificates(): void {
+    this.dataProvider.load();
   }
 
   onListFiltered(query: string): void {

@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { switchMap, filter, tap, pipe } from 'rxjs';
+import { switchMap, filter, tap } from 'rxjs';
 import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
@@ -59,17 +59,17 @@ export class SshConnectionCardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const credentials$ = this.keychainCredentialService.getSshConnections();
+    const credentials$ = this.keychainCredentialService.getSshConnections().pipe(
+      tap((credentials) => this.credentials = credentials),
+      untilDestroyed(this),
+    );
     this.dataProvider = new AsyncDataProvider<KeychainSshCredentials>(credentials$);
     this.setDefaultSort();
     this.getCredentials();
   }
 
   getCredentials(): void {
-    this.dataProvider.load<KeychainSshCredentials[]>(() => pipe(
-      tap((credentials) => this.credentials = credentials),
-      untilDestroyed(this),
-    ));
+    this.dataProvider.load();
   }
 
   setDefaultSort(): void {

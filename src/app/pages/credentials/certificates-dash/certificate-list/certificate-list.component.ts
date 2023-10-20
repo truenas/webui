@@ -6,7 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { isObject } from 'lodash';
-import { filter, map, of, pipe, tap } from 'rxjs';
+import { filter, map, of, tap } from 'rxjs';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -100,14 +100,7 @@ export class CertificateListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const certificates$ = this.ws.call('certificate.query');
-    this.dataProvider = new AsyncDataProvider<Certificate>(certificates$);
-    this.setDefaultSort();
-    this.getCertificates();
-  }
-
-  getCertificates(): void {
-    this.dataProvider.load<Certificate[]>(() => pipe(
+    const certificates$ = this.ws.call('certificate.query').pipe(
       map((certificates) => {
         return certificates
           .map((certificate) => {
@@ -120,7 +113,14 @@ export class CertificateListComponent implements OnInit {
       }),
       tap((certificates) => this.certificates = certificates),
       untilDestroyed(this),
-    ));
+    );
+    this.dataProvider = new AsyncDataProvider<Certificate>(certificates$);
+    this.setDefaultSort();
+    this.getCertificates();
+  }
+
+  getCertificates(): void {
+    this.dataProvider.load();
   }
 
   onListFiltered(query: string): void {

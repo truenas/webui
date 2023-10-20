@@ -4,7 +4,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, pipe, tap } from 'rxjs';
+import { filter, tap } from 'rxjs';
 import { Tunable } from 'app/interfaces/tunable.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
@@ -84,17 +84,17 @@ export class TunableListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const tunables$ = this.ws.call('tunable.query');
+    const tunables$ = this.ws.call('tunable.query').pipe(
+      tap((tunables) => this.tunables = tunables),
+      untilDestroyed(this),
+    );
     this.dataProvider = new AsyncDataProvider<Tunable>(tunables$);
     this.setDefaultSort();
     this.getTunables();
   }
 
   getTunables(): void {
-    this.dataProvider.load<Tunable[]>(() => pipe(
-      tap((tunables) => this.tunables = tunables),
-      untilDestroyed(this),
-    ));
+    this.dataProvider.load();
   }
 
   doAdd(): void {

@@ -4,7 +4,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, of, pipe } from 'rxjs';
+import { filter, of } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Ipmi } from 'app/interfaces/ipmi.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
@@ -61,7 +61,7 @@ export class IpmiCardComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    const ipmi$ = this.ws.call('ipmi.lan.query');
+    const ipmi$ = this.ws.call('ipmi.lan.query').pipe(untilDestroyed(this));
     this.dataProvider = new AsyncDataProvider<Ipmi>(ipmi$);
     this.loadIpmiEntries();
   }
@@ -86,8 +86,6 @@ export class IpmiCardComponent implements OnInit {
   }
 
   private loadIpmiEntries(): void {
-    this.dataProvider.load<Ipmi[]>(() => pipe(
-      untilDestroyed(this),
-    ));
+    this.dataProvider.load();
   }
 }
