@@ -127,7 +127,7 @@
                 </span>
                 <ng-container *ngIf="tempMax || tempMax === 0; else noDataProvided">
                   <ng-container *ngIf="tempMax === 0; else tempMaxValues">
-                    {{ 'N/A' | translate }}
+                    <span>{{ 'N/A' | translate }}</span>
                   </ng-container>
                   <ng-template #tempMaxValues>
                     <span>{{ tempMax }}°C &nbsp;</span>

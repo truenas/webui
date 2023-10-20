@@ -6,7 +6,6 @@ import { DialogService } from 'app/services/dialog.service';
 
 @Injectable()
 export class AttachDebugWarningService {
-
   constructor(private dialogService: DialogService, private translate: TranslateService) { }
 
   handleAttachDebugChanges(control: FormControl<boolean>): Observable<boolean> {

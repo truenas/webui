@@ -126,3 +126,12 @@
     justify-content: center;
   }
 }
+
+.cell-clickable {
+  @media(max-width: $breakpoint-tablet) {
+    display: inline;
+    position: absolute;
+    right: 0;
+  }
+  display: none;
+}

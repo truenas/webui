@@ -120,7 +120,7 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
   }
 
   getActions(parentrow: ReplicationTaskUi): EntityTableAction[] {
-    const actions: EntityTableAction[] =  [
+    const actions: EntityTableAction[] = [
       {
         id: parentrow.name,
         icon: 'play_arrow',
