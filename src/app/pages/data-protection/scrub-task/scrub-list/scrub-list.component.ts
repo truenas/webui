@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { filter } from 'rxjs';
 import { ScrubTaskUi } from 'app/interfaces/scrub-task.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
@@ -75,7 +76,7 @@ export class ScrubListComponent implements EntityTableConfig {
 
   doAdd(): void {
     const slideInRef = this.slideInService.open(ScrubTaskFormComponent);
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.entityList.getData());
   }
 
   getActions(): EntityTableAction<ScrubTaskUi>[] {
@@ -85,7 +86,10 @@ export class ScrubListComponent implements EntityTableConfig {
       label: 'Edit',
       onClick: (row: ScrubTaskUi) => {
         const slideInRef = this.slideInService.open(ScrubTaskFormComponent, { data: row });
-        slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
+        slideInRef.slideInClosed$.pipe(
+          filter(Boolean),
+          untilDestroyed(this),
+        ).subscribe(() => this.entityList.getData());
       },
     }, {
       id: 'delete',

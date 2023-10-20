@@ -277,6 +277,7 @@ export class SmbFormComponent implements OnInit {
     if (pathControl.value && (!nameControl.value || !nameControl.dirty)) {
       const name = pathControl.value.split('/').pop();
       nameControl.setValue(name);
+      nameControl.markAsTouched();
     }
     this.cdr.markForCheck();
   }
@@ -455,10 +456,10 @@ export class SmbFormComponent implements OnInit {
                     { queryParams: { homeShare, path: smbShareResponse.path_local } },
                   );
                 }
-                this.slideInRef.close();
+                this.slideInRef.close(true);
               });
             } else {
-              this.slideInRef.close();
+              this.slideInRef.close(true);
             }
           },
           error: (err: WebsocketError) => {
@@ -469,7 +470,7 @@ export class SmbFormComponent implements OnInit {
             }
             this.isLoading = false;
             this.cdr.markForCheck();
-            this.slideInRef.close();
+            this.slideInRef.close(true);
           },
         });
       },

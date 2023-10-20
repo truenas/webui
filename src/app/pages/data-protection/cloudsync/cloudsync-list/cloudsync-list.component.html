@@ -10,7 +10,11 @@
   </ix-page-title-header>
 </ng-template>
 
-<ix-table2 class="table" [ix-table2-empty]="!dataProvider.rows.length && !isLoading">
+<ix-table2
+  class="table"
+  [ix-table2-empty]="!dataProvider.rows.length"
+  [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
+>
   <thead
     ix-table-head
     [columns]="columns"
@@ -20,7 +24,7 @@
     ix-table-body
     [columns]="columns"
     [dataProvider]="dataProvider"
-    [isLoading]="isLoading"
+    [isLoading]="dataProvider.isLoading$ | async"
   >
     <ng-template let-task ix-table-details-row [dataProvider]="dataProvider">
       <dl *ngIf="hiddenColumns.length" class="table-hidden-columns">

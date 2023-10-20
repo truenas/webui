@@ -143,7 +143,7 @@ def send_a_file_to_the_share(driver, nas_ip, share_name, ad_user, ad_password):
     adpassword = ad_password
 
     run_cmd('touch testfile.txt')
-    results = run_cmd(f'smbclient //{nas_ip}/{share_name} -W AD02 -U {ad_user}%{ad_password} -c "put testfile.txt testfile.txt"')
+    results = run_cmd(f'smbclient //{nas_ip}/{share_name} -W AD03 -U {ad_user}%{ad_password} -c "put testfile.txt testfile.txt"')
     run_cmd('rm testfile.txt')
     assert results['result'], results['output']
     time.sleep(1)

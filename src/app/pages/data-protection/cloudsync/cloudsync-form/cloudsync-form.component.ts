@@ -274,13 +274,7 @@ export class CloudsyncFormComponent implements OnInit {
 
     this.form.controls.credentials.valueChanges.pipe(untilDestroyed(this)).subscribe((credentials) => {
       if (credentials) {
-        if (this.form.controls.direction.value === Direction.Pull) {
-          this.form.controls.folder_source.enable();
-          this.form.controls.folder_destination.disable();
-        } else {
-          this.form.controls.folder_source.disable();
-          this.form.controls.folder_destination.enable();
-        }
+        this.enableRemoteExplorer();
 
         this.cloudCredentialService.getCloudsyncCredentials()
           .pipe(
@@ -771,5 +765,15 @@ export class CloudsyncFormComponent implements OnInit {
         this.cdr.markForCheck();
       },
     });
+  }
+
+  private enableRemoteExplorer(): void {
+    if (this.form.controls.direction.value === Direction.Pull) {
+      this.form.controls.folder_source.enable();
+      this.form.controls.folder_destination.disable();
+    } else {
+      this.form.controls.folder_source.disable();
+      this.form.controls.folder_destination.enable();
+    }
   }
 }

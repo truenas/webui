@@ -7,6 +7,7 @@ import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { KeychainSshKeyPair } from 'app/interfaces/keychain-credential.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { SshKeypairCardComponent } from 'app/pages/credentials/backup-credentials/ssh-keypair-card/ssh-keypair-card.component';
@@ -20,6 +21,7 @@ import { WebSocketService } from 'app/services/ws.service';
 describe('SshKeypairCardComponent', () => {
   let spectator: Spectator<SshKeypairCardComponent>;
   let loader: HarnessLoader;
+  let table: IxTable2Harness;
 
   const credentials = [
     {
@@ -73,9 +75,10 @@ describe('SshKeypairCardComponent', () => {
     ],
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    table = await loader.getHarness(IxTable2Harness);
   });
 
   it('checks page title', () => {
@@ -91,7 +94,7 @@ describe('SshKeypairCardComponent', () => {
   });
 
   it('opens form when "Edit" button is pressed', async () => {
-    const editButton = await loader.getHarness(MatButtonHarness.with({ selector: '[aria-label="Edit"]' }));
+    const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 1);
     await editButton.click();
 
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(SshKeypairFormComponent, {
@@ -100,7 +103,7 @@ describe('SshKeypairCardComponent', () => {
   });
 
   it('opens delete dialog when "Delete" button is pressed', async () => {
-    const deleteButton = await loader.getHarness(MatButtonHarness.with({ selector: '[aria-label="Delete"]' }));
+    const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'delete' }), 1, 1);
     await deleteButton.click();
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('keychaincredential.delete', [10]);
@@ -109,7 +112,7 @@ describe('SshKeypairCardComponent', () => {
   it('checks when "Download" button is pressed', async () => {
     const storage = spectator.inject(StorageService);
     jest.spyOn(storage, 'downloadBlob').mockImplementation();
-    const downloadButton = await loader.getHarness(MatButtonHarness.with({ selector: '[aria-label="Download"]' }));
+    const downloadButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'save_alt' }), 1, 1);
     await downloadButton.click();
 
     expect(storage.downloadBlob).toHaveBeenCalledWith(new Blob(), 'test1234_private_key_rsa');
@@ -123,7 +126,6 @@ describe('SshKeypairCardComponent', () => {
       ['test4321', ''],
     ];
 
-    const table = await loader.getHarness(IxTable2Harness);
     const cells = await table.getCellTexts();
     expect(cells).toEqual(expectedRows);
   });

@@ -2,13 +2,12 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } 
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
-import { BehaviorSubject, Observable, combineLatest, filter, map, of, switchMap } from 'rxjs';
+import { filter, map, of, switchMap, tap } from 'rxjs';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
-import { EmptyType } from 'app/enums/empty-type.enum';
 import { IdmapName } from 'app/enums/idmap.enum';
 import helptext from 'app/helptext/directory-service/idmap';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
@@ -37,7 +36,7 @@ export default class IdmapListComponent implements OnInit {
   requiredIdmapDomains = requiredIdmapDomains as string[];
   IdmapName = IdmapName;
   filterString = '';
-  dataProvider = new ArrayDataProvider<IdmapRow>();
+  dataProvider: AsyncDataProvider<IdmapRow>;
   idmaps: IdmapRow[] = [];
   columns = createTable<IdmapRow>([
     textColumn({
@@ -84,9 +83,7 @@ export default class IdmapListComponent implements OnInit {
         },
         {
           iconName: 'delete',
-          hidden: (row) => {
-            return of(requiredIdmapDomains.includes(row.name as IdmapName));
-          },
+          hidden: (row) => of(requiredIdmapDomains.includes(row.name as IdmapName)),
           tooltip: this.translateService.instant('Delete'),
           onClick: (row) => {
             this.dialogService.confirm({
@@ -111,25 +108,6 @@ export default class IdmapListComponent implements OnInit {
     }),
   ]);
 
-
-  isLoading$ = new BehaviorSubject<boolean>(true);
-  isNoData$ = new BehaviorSubject<boolean>(false);
-  hasError$ = new BehaviorSubject<boolean>(false);
-  emptyType$: Observable<EmptyType> = combineLatest([this.isLoading$, this.isNoData$, this.hasError$]).pipe(
-    switchMap(([isLoading, isNoData, isError]) => {
-      if (isLoading) {
-        return of(EmptyType.Loading);
-      }
-      if (isError) {
-        return of(EmptyType.Errors);
-      }
-      if (isNoData) {
-        return of(EmptyType.NoPageData);
-      }
-      return of(EmptyType.NoSearchResults);
-    }),
-  );
-
   constructor(
     private translateService: TranslateService,
     private ws: WebSocketService,
@@ -142,11 +120,7 @@ export default class IdmapListComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.getIdmaps();
-  }
-
-  getIdmaps(): void {
-    this.ws.call('directoryservices.get_state').pipe(
+    const idmapsRows$ = this.ws.call('directoryservices.get_state').pipe(
       switchMap((state) => {
         if (state.ldap !== DirectoryServiceState.Disabled) {
           return this.ws.call('idmap.query', [[['name', '=', IdmapName.DsTypeLdap]]]);
@@ -174,17 +148,15 @@ export default class IdmapListComponent implements OnInit {
         });
         return transformed;
       }),
+      tap((idmapsRows) => this.idmaps = idmapsRows),
       untilDestroyed(this),
-    ).subscribe({
-      next: (idmapsRows) => {
-        this.idmaps = idmapsRows;
-        this.dataProvider.setRows(idmapsRows);
-        this.isLoading$.next(false);
-        this.isNoData$.next(!idmapsRows.length);
-        this.setDefaultSort();
-        this.cdr.markForCheck();
-      },
-    });
+    );
+    this.dataProvider = new AsyncDataProvider<IdmapRow>(idmapsRows$);
+    this.setDefaultSort();
+  }
+
+  getIdmaps(): void {
+    this.dataProvider.refresh();
   }
 
   setDefaultSort(): void {

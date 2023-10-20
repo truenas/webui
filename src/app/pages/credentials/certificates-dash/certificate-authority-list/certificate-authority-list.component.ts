@@ -7,16 +7,15 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { isObject } from 'lodash';
 import {
-  BehaviorSubject, Observable, combineLatest, switchMap, of, filter, map, EMPTY, catchError,
+  switchMap, filter, map, EMPTY, catchError, tap, of,
 } from 'rxjs';
-import { EmptyType } from 'app/enums/empty-type.enum';
 import { helptextSystemCa } from 'app/helptext/system/ca';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
-import { templateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component';
+import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
+import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table2/utils';
@@ -39,7 +38,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class CertificateAuthorityListComponent implements OnInit {
   filterString = '';
-  dataProvider = new ArrayDataProvider<CertificateAuthority>();
+  dataProvider: AsyncDataProvider<CertificateAuthority>;
   authorities: CertificateAuthority[] = [];
   columns = createTable<CertificateAuthority>([
     textColumn({
@@ -57,26 +56,37 @@ export class CertificateAuthorityListComponent implements OnInit {
       propertyName: 'common',
       sortable: true,
     }),
-    templateColumn(),
-  ]);
-
-  isLoading$ = new BehaviorSubject<boolean>(true);
-  isNoData$ = new BehaviorSubject<boolean>(false);
-  hasError$ = new BehaviorSubject<boolean>(false);
-  emptyType$: Observable<EmptyType> = combineLatest([this.isLoading$, this.isNoData$, this.hasError$]).pipe(
-    switchMap(([isLoading, isNoData, isError]) => {
-      if (isLoading) {
-        return of(EmptyType.Loading);
-      }
-      if (isError) {
-        return of(EmptyType.Errors);
-      }
-      if (isNoData) {
-        return of(EmptyType.NoPageData);
-      }
-      return of(EmptyType.NoSearchResults);
+    actionsColumn({
+      actions: [
+        {
+          iconName: 'beenhere',
+          tooltip: this.translate.instant('Sign CSR'),
+          onClick: (row) => this.doSignCsr(row),
+        },
+        {
+          iconName: 'mdi-undo',
+          tooltip: this.translate.instant('Revoke'),
+          hidden: (row) => of(row.revoked),
+          onClick: (row) => this.doRevoke(row),
+        },
+        {
+          iconName: 'mdi-download',
+          tooltip: this.translate.instant('Download'),
+          onClick: (row) => this.doDownload(row),
+        },
+        {
+          iconName: 'edit',
+          tooltip: this.translate.instant('Edit'),
+          onClick: (row) => this.doEdit(row),
+        },
+        {
+          iconName: 'delete',
+          tooltip: this.translate.instant('Delete'),
+          onClick: (row) => this.doDelete(row),
+        },
+      ],
     }),
-  );
+  ]);
 
   helptextSystemCa = helptextSystemCa;
 
@@ -93,46 +103,24 @@ export class CertificateAuthorityListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.getCertificates();
+    const authorities$ = this.ws.call('certificateauthority.query').pipe(
+      map((authorities) => {
+        return authorities.map((authority) => {
+          if (isObject(authority.issuer)) {
+            authority.issuer = authority.issuer.name;
+          }
+          return authority;
+        });
+      }),
+      tap((authorities) => this.authorities = authorities),
+      untilDestroyed(this),
+    );
+    this.dataProvider = new AsyncDataProvider<CertificateAuthority>(authorities$);
+    this.setDefaultSort();
   }
 
   getCertificates(): void {
-    this.ws
-      .call('certificateauthority.query')
-      .pipe(
-        map((authorities) => {
-          return authorities.map((authority) => {
-            if (isObject(authority.issuer)) {
-              authority.issuer = authority.issuer.name;
-            }
-            return authority;
-          });
-        }),
-        untilDestroyed(this),
-      )
-      .subscribe({
-        next: (authorities) => {
-          this.authorities = authorities;
-          this.dataProvider.setRows(this.authorities);
-          this.isLoading$.next(false);
-          this.isNoData$.next(!this.authorities.length);
-          this.setDefaultSort();
-          this.cdr.markForCheck();
-        },
-        error: () => {
-          this.dataProvider.setRows([]);
-          this.isLoading$.next(false);
-          this.hasError$.next(true);
-          this.cdr.markForCheck();
-        },
-      });
-  }
-
-  onListFiltered(query: string): void {
-    this.filterString = query.toLowerCase();
-    this.dataProvider.setRows(
-      this.authorities.filter((certificate) => [certificate.name.toLowerCase()].includes(this.filterString)),
-    );
+    this.dataProvider.refresh();
   }
 
   setDefaultSort(): void {

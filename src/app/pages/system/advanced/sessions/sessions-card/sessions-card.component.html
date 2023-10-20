@@ -5,7 +5,7 @@
       <button
         mat-button
         [ixTest]="['sessions', 'terminate']"
-        [disabled]="isLoading"
+        [disabled]="dataProvider.isLoading$ | async"
         (click)="onTerminateOther()"
       >
         {{ 'Terminate Other Sessions' | translate }}
@@ -31,7 +31,11 @@
     </mat-list>
   </mat-card-content>
 
-  <ix-table2 class="table">
+  <ix-table2
+    class="table"
+    [ix-table2-empty]="!dataProvider.rows.length"
+    [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
+  >
     <thead
       ix-table-head
       [columns]="columns"
@@ -41,39 +45,8 @@
       ix-table-body
       [columns]="columns"
       [dataProvider]="dataProvider"
-      [isLoading]="isLoading"
-    >
-      <ng-template
-        let-session
-        ix-table-cell
-        [columnIndex]="0"
-        [dataProvider]="dataProvider"
-      >
-        {{ getUsername(session) }}
-      </ng-template>
-      <ng-template
-        let-session
-        ix-table-cell
-        [columnIndex]="2"
-        [dataProvider]="dataProvider"
-      >
-        <div
-          class="actions"
-          [matTooltip]="'This session is current and cannot be terminated' | translate"
-          [matTooltipDisabled]="!session.current"
-        >
-          <button
-            mat-icon-button
-            [matTooltip]="'Terminate session' | translate"
-            [ixTest]="['terminate-session', session.id]"
-            [disabled]="session.current"
-            (click)="onTerminate(session.id)"
-          >
-            <ix-icon name="exit_to_app"></ix-icon>
-          </button>
-        </div>
-      </ng-template>
-    </tbody>
+      [isLoading]="dataProvider.isLoading$ | async"
+    ></tbody>
   </ix-table2>
   <ix-table-pager-show-more [pageSize]="5" [dataProvider]="dataProvider"></ix-table-pager-show-more>
 </mat-card>

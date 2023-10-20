@@ -29,7 +29,7 @@ import {
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { ApiKey, CreateApiKeyRequest, UpdateApiKeyRequest } from 'app/interfaces/api-key.interface';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
-import { AuditEntry } from 'app/interfaces/audit.interface';
+import { AuditConfig, AuditEntry } from 'app/interfaces/audit.interface';
 import { AuthSession } from 'app/interfaces/auth-session.interface';
 import { CheckUserQuery } from 'app/interfaces/auth.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
@@ -190,6 +190,7 @@ import {
   ReplicationCreate,
   ReplicationTask,
 } from 'app/interfaces/replication-task.interface';
+import { CreateReportingExporter, ReportingExporter, ReportingExporterSchema, UpdateReportingExporter } from 'app/interfaces/reporting-exporters.interface';
 import { ReportingGraph } from 'app/interfaces/reporting-graph.interface';
 import {
   ReportingData,
@@ -313,6 +314,8 @@ export interface ApiCallDirectory {
 
   // Audit
   'audit.query': { params: QueryParams<AuditEntry>; response: AuditEntry[] };
+  'audit.update': { params: [AuditConfig]; response: AuditEntry[] };
+  'audit.config': { params: void; response: AuditConfig };
 
   // Auth
   'auth.check_user': { params: CheckUserQuery; response: boolean };
@@ -703,6 +706,13 @@ export interface ApiCallDirectory {
   'reporting.clear': { params: void; response: void };
   'reporting.netdata_get_data': { params: ReportingQueryParams; response: ReportingData[] };
   'reporting.netdata_graphs': { params: QueryParams<ReportingGraph>; response: ReportingGraph[] };
+  'reporting.exporters.exporter_schemas': { params: void; response: ReportingExporterSchema[] };
+  'reporting.exporters.query': { params: QueryParams<ReportingExporter>; response: ReportingExporter[] };
+  'reporting.exporters.create': { params: [CreateReportingExporter]; response: ReportingExporter };
+  'reporting.exporters.update': { params: [number, UpdateReportingExporter]; response: ReportingExporter };
+  'reporting.exporters.get_instance': { params: [id: number]; response: ReportingExporter };
+  'reporting.exporters.delete': { params: [id: number]; response: boolean };
+
 
   // SMB
   'smb.bindip_choices': { params: void; response: Choices };

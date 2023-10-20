@@ -65,7 +65,6 @@ export class ResourcesUsageStore extends ComponentStore<ResourcesUsageState> {
           };
         });
       }),
-      switchMap(() => this.getResourceUsageUpdates()),
     );
   });
 
@@ -148,7 +147,7 @@ export class ResourcesUsageStore extends ComponentStore<ResourcesUsageState> {
     );
   }
 
-  private getResourceUsageUpdates(): Observable<ReportingRealtimeUpdate> {
+  getResourceUsageUpdates(): Observable<ReportingRealtimeUpdate> {
     return this.ws.subscribe('reporting.realtime').pipe(
       map((apiEvent) => apiEvent.fields),
       tap((update) => {

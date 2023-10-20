@@ -1,5 +1,6 @@
 <ix-icon
   *ngIf="update?.link_state === LinkState.Up; else disabledIcon"
+  #stateIcon
   name="ix:network_upload_download"
   class="state-info-icon"
   [id]="elementId"

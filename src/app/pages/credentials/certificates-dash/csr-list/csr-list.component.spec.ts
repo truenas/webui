@@ -10,6 +10,7 @@ import { mockWebsocket, mockCall, mockJob } from 'app/core/testing/utils/mock-we
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { CertificateEditComponent } from 'app/pages/credentials/certificates-dash/certificate-edit/certificate-edit.component';
@@ -46,6 +47,7 @@ const certificates = Array.from({ length: 10 }).map((_, index) => ({
 describe('CertificateSigningRequestsListComponent', () => {
   let spectator: Spectator<CertificateSigningRequestsListComponent>;
   let loader: HarnessLoader;
+  let table: IxTable2Harness;
 
   const mockDialogRef = {
     componentInstance: {
@@ -90,9 +92,10 @@ describe('CertificateSigningRequestsListComponent', () => {
     ],
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    table = await loader.getHarness(IxTable2Harness);
   });
 
   it('checks page title', () => {
@@ -108,7 +111,7 @@ describe('CertificateSigningRequestsListComponent', () => {
   });
 
   it('opens certificate edit form when "Edit" button is pressed', async () => {
-    const editButton = await loader.getHarness(MatButtonHarness.with({ selector: '[aria-label="Edit"]' }));
+    const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 2);
     await editButton.click();
 
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(CertificateEditComponent, {
@@ -118,7 +121,7 @@ describe('CertificateSigningRequestsListComponent', () => {
   });
 
   it('opens delete dialog when "Delete" button is pressed', async () => {
-    const deleteButton = await loader.getHarness(MatButtonHarness.with({ selector: '[aria-label="Delete"]' }));
+    const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'delete' }), 1, 2);
     await deleteButton.click();
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(ConfirmForceDeleteCertificateComponent, {
@@ -135,7 +138,6 @@ describe('CertificateSigningRequestsListComponent', () => {
       ['Name:cert_default_3Issuer:external', 'CN:localhostSAN:DNS:localhost', ''],
     ];
 
-    const table = await loader.getHarness(IxTable2Harness);
     const cells = await table.getCellTexts();
     expect(cells).toEqual(expectedRows);
   });

@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/prefer-optional-chain */
+/* eslint-disable sonarjs/cognitive-complexity */
 import {
   animate, state, style, transition, trigger,
 } from '@angular/animations';

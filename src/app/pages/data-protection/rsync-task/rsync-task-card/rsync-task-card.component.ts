@@ -2,19 +2,20 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { catchError, EMPTY, filter, switchMap, tap } from 'rxjs';
+import { catchError, EMPTY, filter, map, of, switchMap, tap } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { Job } from 'app/interfaces/job.interface';
 import { RsyncTaskUi, RsyncTaskUpdate } from 'app/interfaces/rsync-task.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
+import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { relativeDateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
 import { stateButtonColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
-import { templateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { toggleColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
 import { createTable } from 'app/modules/ix-table2/utils';
+import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -35,8 +36,7 @@ import { AppState } from 'app/store';
 })
 export class RsyncTaskCardComponent implements OnInit {
   rsyncTasks: RsyncTaskUi[] = [];
-  dataProvider = new ArrayDataProvider<RsyncTaskUi>();
-  isLoading = false;
+  dataProvider: AsyncDataProvider<RsyncTaskUi>;
   jobStates = new Map<number, string>();
   readonly jobState = JobState;
 
@@ -64,7 +64,6 @@ export class RsyncTaskCardComponent implements OnInit {
     toggleColumn({
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
-      cssClass: 'justify-end',
       onRowToggle: (row: RsyncTaskUi) => this.onChangeEnabledState(row),
     }),
     stateButtonColumn({
@@ -73,8 +72,26 @@ export class RsyncTaskCardComponent implements OnInit {
       getJob: (row) => row.job,
       cssClass: 'state-button',
     }),
-    templateColumn({
+    actionsColumn({
       cssClass: 'wide-actions',
+      actions: [
+        {
+          iconName: 'edit',
+          tooltip: this.translate.instant('Edit'),
+          onClick: (row) => this.openForm(row),
+        },
+        {
+          iconName: 'play_arrow',
+          tooltip: this.translate.instant('Run job'),
+          hidden: (row) => of(row.job?.state === JobState.Running),
+          onClick: (row) => this.runNow(row),
+        },
+        {
+          iconName: 'delete',
+          tooltip: this.translate.instant('Delete'),
+          onClick: (row) => this.doDelete(row),
+        },
+      ],
     }),
   ]);
 
@@ -88,23 +105,20 @@ export class RsyncTaskCardComponent implements OnInit {
     private taskService: TaskService,
     private store$: Store<AppState>,
     private snackbar: SnackbarService,
+    protected emptyService: EmptyService,
   ) {}
 
   ngOnInit(): void {
-    this.getRsyncTasks();
+    const rsyncTasks$ = this.ws.call('rsynctask.query').pipe(
+      map((rsyncTasks: RsyncTaskUi[]) => this.transformRsyncTasks(rsyncTasks)),
+      tap((rsyncTasks) => this.rsyncTasks = rsyncTasks),
+      untilDestroyed(this),
+    );
+    this.dataProvider = new AsyncDataProvider<RsyncTaskUi>(rsyncTasks$);
   }
 
   getRsyncTasks(): void {
-    this.isLoading = true;
-    this.ws.call('rsynctask.query').pipe(
-      untilDestroyed(this),
-    ).subscribe((rsyncTasks: RsyncTaskUi[]) => {
-      const transformedRsyncTasks = this.transformRsyncTasks(rsyncTasks);
-      this.rsyncTasks = transformedRsyncTasks;
-      this.dataProvider.setRows(transformedRsyncTasks);
-      this.isLoading = false;
-      this.cdr.markForCheck();
-    });
+    this.dataProvider.refresh();
   }
 
   doDelete(row: RsyncTaskUi): void {

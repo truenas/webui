@@ -32,6 +32,7 @@ import { ixManualValidateError } from 'app/modules/ix-forms/components/ix-errors
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
+import { emailValidator } from 'app/modules/ix-forms/validators/email-validation/email-validation';
 import { AttachDebugWarningService } from 'app/pages/system/file-ticket/services/attach-debug-warning.service';
 import { DialogService } from 'app/services/dialog.service';
 import { IxFileUploadService } from 'app/services/ix-file-upload.service';
@@ -48,7 +49,7 @@ export class FileTicketLicensedFormComponent implements OnInit {
 
   form = this.fb.group({
     name: ['', [Validators.required]],
-    email: ['', [Validators.required, Validators.email]],
+    email: ['', [Validators.required, emailValidator()]],
     cc: [[] as string[], [
       this.validatorsService.customValidator(
         (control: AbstractControl<string[]>) => {
@@ -213,7 +214,7 @@ export class FileTicketLicensedFormComponent implements OnInit {
   getJobStatus(id: number): Observable<Job> {
     return this.ws.call('core.get_jobs', [[['id', '=', id]]]).pipe(
       map((jobs) => jobs[0]),
-      catchError((error) => throwError( () => error)),
+      catchError((error) => throwError(() => error)),
     );
   }
 

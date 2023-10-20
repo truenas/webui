@@ -1,11 +1,11 @@
 import { EnclosureDispersalStrategy, MockStorageScenario } from 'app/core/testing/enums/mock-storage.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
-import { PoolInstance } from 'app/interfaces/pool.interface';
+import { Pool } from 'app/interfaces/pool.interface';
 import { Disk, TopologyItem } from 'app/interfaces/storage.interface';
 
 export interface MockStorage {
-  poolState: PoolInstance;
+  poolState: Pool;
   disks: Disk[];
   enclosures?: Enclosure[] | null;
 }

@@ -2,12 +2,11 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatTooltip } from '@angular/material/tooltip';
-import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent, MockDirective } from 'ng-mocks';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
-import { TableService } from 'app/modules/entity/table/table.service';
 import { IxIconComponent } from 'app/modules/ix-icon/ix-icon.component';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 
@@ -20,9 +19,6 @@ describe('ServiceStateButtonComponent', () => {
     declarations: [
       MockComponent(IxIconComponent),
       MockDirective(MatTooltip),
-    ],
-    providers: [
-      mockProvider(TableService),
     ],
   });
 

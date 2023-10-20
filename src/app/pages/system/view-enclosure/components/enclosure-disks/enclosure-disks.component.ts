@@ -15,7 +15,7 @@ import { EnclosureSlotStatus } from 'app/enums/enclosure-slot-status.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import {
-  Enclosure, EnclosureElement, EnclosureSlot, EnclosureView,
+  Enclosure, EnclosureElement, EnclosureElementsGroup, EnclosureSlot, EnclosureView,
 } from 'app/interfaces/enclosure.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { CanvasExtractEvent, DriveSelectedEvent } from 'app/interfaces/events/disk-events.interface';
@@ -30,7 +30,7 @@ import { E16 } from 'app/pages/system/view-enclosure/classes/hardware/e16';
 import { E24 } from 'app/pages/system/view-enclosure/classes/hardware/e24';
 import { E60 } from 'app/pages/system/view-enclosure/classes/hardware/e60';
 import { Es102 } from 'app/pages/system/view-enclosure/classes/hardware/es102';
-import { Es102S } from 'app/pages/system/view-enclosure/classes/hardware/es102s';
+import { Es102G2 } from 'app/pages/system/view-enclosure/classes/hardware/es102g2';
 import { Es12 } from 'app/pages/system/view-enclosure/classes/hardware/es12';
 import { Es24 } from 'app/pages/system/view-enclosure/classes/hardware/es24';
 import { Es24F } from 'app/pages/system/view-enclosure/classes/hardware/es24f';
@@ -575,8 +575,8 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
         this.chassis = new Es102();
         this.showCaption = false;
         break;
-      case 'ES102S':
-        this.chassis = new Es102S();
+      case 'ES102G2':
+        this.chassis = new Es102G2();
         this.showCaption = false;
         break;
       case 'TRUENAS-F100-HA':
@@ -729,8 +729,8 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
       case 'ES102':
         extractedChassis = new Es102();
         break;
-      case 'ES102S':
-        extractedChassis = new Es102S();
+      case 'ES102G2':
+        extractedChassis = new Es102G2();
         break;
       case 'TRUENAS-F100-HA':
       case 'F100':
@@ -1242,5 +1242,13 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
 
         this.enclosureStore.updateLabel(enclosure.id, newLabel);
       });
+  }
+
+  omitDescriptor(group: EnclosureElementsGroup | EnclosureElement): EnclosureElementsGroup | EnclosureElement {
+    const returnValue = { ...group as EnclosureElementsGroup };
+    if (returnValue.header) {
+      returnValue.header = returnValue.header.filter((header) => header !== 'Descriptor');
+    }
+    return returnValue;
   }
 }

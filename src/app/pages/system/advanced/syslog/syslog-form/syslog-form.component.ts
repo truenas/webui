@@ -41,6 +41,7 @@ export class SyslogFormComponent implements OnInit {
     syslog_transport: [null as SyslogTransport],
     syslog_tls_certificate: [null as string],
     syslog_tls_certificate_authority: [null as string],
+    syslog_audit: [false],
   });
 
   readonly isTlsTransport$ = this.form.select((values) => values.syslog_transport === SyslogTransport.Tls);
@@ -52,6 +53,7 @@ export class SyslogFormComponent implements OnInit {
     syslog_transport: helptext.syslog_transport.tooltip,
     syslog_tls_certificate: helptext.syslog_tls_certificate.tooltip,
     syslog: helptext.system_dataset_tooltip,
+    syslog_audit: helptext.syslog_audit_tooltip,
   };
 
   readonly levelOptions$ = of(helptextSystemAdvanced.sysloglevel.options);
@@ -90,6 +92,7 @@ export class SyslogFormComponent implements OnInit {
       fqdn_syslog: values.fqdn_syslog,
       syslogserver: values.syslogserver,
       sysloglevel: values.sysloglevel,
+      syslog_audit: values.syslog_audit,
     };
 
     if (values.syslog_transport === SyslogTransport.Tls) {
