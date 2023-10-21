@@ -1,6 +1,6 @@
 {
   "": "",
-  "\n            It looks like your session has been inactive for more than {lifetime} seconds.<br>\n            For security reasons we will log you out at {time}.\n          ": "",
+  "\n              It looks like your session has been inactive for more than {lifetime} seconds.<br>\n              For security reasons we will log you out at {time}.\n            ": "",
   " Est. Usable Raw Capacity": "",
   " Please click the button below to add {item}.": "",
   " When the <b>UPS Mode</b> is set to <i>slave</i>. Enter the open network port number of the UPS <i>Master</i> system. The default port is <i>3493</i>.": "",
@@ -189,6 +189,7 @@
   "Administrative user": "",
   "Advanced Details": "",
   "Advanced Replication Creation": "",
+  "Advanced Settings → Sessions": "",
   "After entering the <b>Hostname, Username</b>, and <b>Password</b>, click <b>Fetch Datastores</b> and select the datastore to be synchronized.": "",
   "Agree": "",
   "Alert service saved": "",
@@ -469,6 +470,7 @@
   "Certificate to use when performing LDAP  certificate-based authentication. To configure LDAP certificate-based  authentication, create a Certificate Signing Request for the LDAP  provider to sign. A certificate is not required when using  username/password or Kerberos authentication.": "",
   "Change Enclosure Label": "",
   "Change Server": "",
+  "Change Token Lifetime in": "",
   "Change from <i>public</i> to increase system security. Can only contain alphanumeric characters, underscores, dashes, periods, and spaces. This can be left empty for <i>SNMPv3</i> networks.": "",
   "Changelog": "",
   "Changes Saved": "",
