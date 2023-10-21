@@ -1,12 +1,11 @@
-<ng-template ixPageHeader>
-  <ix-page-title-header>
+<mat-card>
+  <mat-toolbar-row>
+    <h3>{{ 'Reporting Exporters' | translate }}</h3>
+
     <button mat-button color="primary" ixTest="add-reporting-exporter" (click)="doAdd()">
       {{ 'Add' | translate }}
     </button>
-  </ix-page-title-header>
-</ng-template>
-
-<mat-card>
+  </mat-toolbar-row>
   <mat-card-content>
     <ix-table2
       [ix-table2-empty]="!dataProvider.rows.length"
