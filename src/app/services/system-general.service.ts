@@ -7,7 +7,6 @@ import * as _ from 'lodash';
 import { Subject, Observable, combineLatest } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 import { ProductType } from 'app/enums/product-type.enum';
-import { elapsedTime } from 'app/helpers/operators/elapsed-time.operator';
 import { WINDOW } from 'app/helpers/window.helper';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { Certificate } from 'app/interfaces/certificate.interface';
@@ -82,20 +81,6 @@ export class SystemGeneralService {
    * used on `support.new_ticket`, `support.get_categories` and `support.attach_ticket` endpoints
    */
   private jiraToken: string;
-
-  readonly uptime$: Observable<number> = this.store$.pipe(
-    waitForSystemInfo,
-    map((systemInfo) => Math.floor(systemInfo.uptime_seconds * 1000)),
-    elapsedTime(30000),
-    map((elapsedMilliseconds) => Math.floor(elapsedMilliseconds / 1000)),
-    shareReplay({ refCount: true, bufferSize: 1 }),
-  );
-  readonly dateTime$ = this.store$.pipe(
-    waitForSystemInfo,
-    map((systemInfo) => systemInfo.datetime.$date),
-    elapsedTime(30000),
-    shareReplay({ refCount: true, bufferSize: 1 }),
-  );
 
   constructor(
     protected ws: WebSocketService,

@@ -1,5 +1,6 @@
 {
   "": "",
+  " as of {dateTime}": "",
   "(Optional)": "",
   ", ": "",
   "...": "",
@@ -259,6 +260,7 @@
   "Mixing disks of different sizes in a VDEV is not recommended.": "",
   "Module": "",
   "Multichannel": "",
+  "Multiprotocol": "",
   "NEW": "",
   "Name not added": "",
   "NetBIOS Name of this NAS. This name must differ from the <i>Workgroup</i> name and be no greater than 15 characters.": "",
@@ -457,7 +459,7 @@
   "{app} Catalog Summary": "",
   "{catalog} Catalog": "",
   "{checked} exporter: {name}": "",
-  "{days, plural, =1 {# day} other {# days}},": "",
+  "{days, plural, =1 {# day} other {# days}}": "",
   "{email} via {server}": "",
   "{hours, plural, =1 {# hour} other {# hours}}": "",
   "{license} contract, expires {date}": "",

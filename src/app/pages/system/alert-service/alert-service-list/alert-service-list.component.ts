@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { filter } from 'rxjs';
 import { AlertServiceType } from 'app/enums/alert-service-type.enum';
 import { AlertService } from 'app/interfaces/alert-service.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -80,14 +81,14 @@ export class AlertServiceListComponent implements EntityTableConfig<AlertService
 
   doAdd(): void {
     const slideInRef = this.slideInService.open(AlertServiceComponent);
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityTable.getData());
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.entityTable.getData());
   }
 
   doEdit(id: number, entityTable: EntityTableComponent<AlertService>): void {
     const alertService = entityTable.rows.find((row) => row.id === id);
 
     const slideInRef = this.slideInService.open(AlertServiceComponent, { data: alertService });
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityTable.getData());
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.entityTable.getData());
   }
 
   onCheckboxChange(row: AlertService): void {

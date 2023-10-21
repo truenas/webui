@@ -1,5 +1,6 @@
 {
   "": "",
+  " as of {dateTime}": "",
   "(Optional)": "",
   "...": "",
   "2FA has been configured for this account. Enter the OTP to continue.": "",
@@ -229,6 +230,7 @@
   "Minutes of inactivity before the drive enters standby mode. Temperature monitoring is disabled for standby disks.": "",
   "Mixing disks of different sizes in a VDEV is not recommended.": "",
   "Module": "",
+  "Multiprotocol": "",
   "NEW": "",
   "NFS share created": "",
   "NFS share updated": "",
@@ -436,7 +438,7 @@
   "{checked} exporter: {name}": "",
   "{count} snapshots found.": "",
   "{cpuPercentage}% Avg. Usage": "",
-  "{days, plural, =1 {# day} other {# days}},": "",
+  "{days, plural, =1 {# day} other {# days}}": "",
   "{email} via {server}": "",
   "{hours, plural, =1 {# hour} other {# hours}}": "",
   "{license} contract, expires {date}": "",

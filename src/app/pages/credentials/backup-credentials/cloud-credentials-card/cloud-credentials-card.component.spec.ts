@@ -8,6 +8,7 @@ import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.u
 import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { CloudCredentialsCardComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-card/cloud-credentials-card.component';
@@ -20,6 +21,7 @@ import { WebSocketService } from 'app/services/ws.service';
 describe('CloudCredentialsCardComponent', () => {
   let spectator: Spectator<CloudCredentialsCardComponent>;
   let loader: HarnessLoader;
+  let table: IxTable2Harness;
 
   const credentials = [
     {
@@ -84,9 +86,10 @@ describe('CloudCredentialsCardComponent', () => {
     ],
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    table = await loader.getHarness(IxTable2Harness);
   });
 
   it('checks page title', () => {
@@ -102,7 +105,7 @@ describe('CloudCredentialsCardComponent', () => {
   });
 
   it('opens form when "Edit" button is pressed', async () => {
-    const editButton = await loader.getHarness(MatButtonHarness.with({ selector: '[aria-label="Edit"]' }));
+    const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 2);
     await editButton.click();
 
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(CloudCredentialsFormComponent, {
@@ -111,7 +114,7 @@ describe('CloudCredentialsCardComponent', () => {
   });
 
   it('opens delete dialog when "Delete" button is pressed', async () => {
-    const deleteButton = await loader.getHarness(MatButtonHarness.with({ selector: '[aria-label="Delete"]' }));
+    const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'delete' }), 1, 2);
     await deleteButton.click();
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.credentials.delete', [1]);
@@ -124,7 +127,6 @@ describe('CloudCredentialsCardComponent', () => {
       ['BB2', 'Backblaze B2', ''],
     ];
 
-    const table = await loader.getHarness(IxTable2Harness);
     const cells = await table.getCellTexts();
     expect(cells).toEqual(expectedRows);
   });

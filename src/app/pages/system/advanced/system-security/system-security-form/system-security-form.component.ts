@@ -82,7 +82,7 @@ export class SystemSecurityFormComponent implements OnInit {
       if (approved) {
         this.router.navigate(['/others/reboot'], { skipLocationChange: true });
       }
-      this.slideInRef.close();
+      this.slideInRef.close(true);
     });
   }
 }
