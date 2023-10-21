@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, Input,
+  ChangeDetectionStrategy, Component, EventEmitter, Input, Output,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -16,6 +16,7 @@ import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.com
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { AppRollbackModalComponent } from 'app/pages/apps/components/installed-apps/app-rollback-modal/app-rollback-modal.component';
 import { AppUpgradeDialogComponent } from 'app/pages/apps/components/installed-apps/app-upgrade-dialog/app-upgrade-dialog.component';
+import { AppStatus } from 'app/pages/apps/enum/app-status.enum';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -31,9 +32,24 @@ import { RedirectService } from 'app/services/redirect.service';
 })
 export class AppInfoCardComponent {
   @Input() app: ChartRelease;
+  @Output() startApp = new EventEmitter<void>();
+  @Output() stopApp = new EventEmitter<void>();
+  @Input() status: AppStatus;
 
   readonly imagePlaceholder = appImagePlaceholder;
   readonly isEmpty = isEmpty;
+
+  get inProgress(): boolean {
+    return [AppStatus.Deploying].includes(this.status) || this.isStartingOrStopping;
+  }
+
+  get isAppStopped(): boolean {
+    return this.status === AppStatus.Stopped;
+  }
+
+  get isStartingOrStopping(): boolean {
+    return [AppStatus.Starting, AppStatus.Stopping].includes(this.status);
+  }
 
   constructor(
     private loader: AppLoaderService,

@@ -115,20 +115,26 @@ export class ReportingExportersFormComponent implements OnInit {
     this.dynamicSection = [{
       name: '',
       description: '',
-      schema: schemas.map(
-        (schema) => this.parseSchemaForDynamicSchema(schema),
-      ).reduce((all, val) => all.concat(val), []),
+      schema: schemas
+        .map((schema) => this.parseSchemaForDynamicSchema(schema))
+        .reduce((all, val) => all.concat(val), []),
     }];
 
     this.reportingExporterList = schemas.map((schema) => this.parseSchemaForExporterList(schema));
     this.onExporterTypeChanged(null);
   }
 
+  convertToTitleSpaceCase(value: string): string {
+    let words = value.split('_');
+    words = words.map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase());
+    return words.join(' ');
+  }
+
   parseSchemaForDynamicSchema(schema: ReportingExporterSchema): DynamicFormSchemaNode[] {
     return schema.schema.map((input) => ({
       controlName: input._name_,
       type: DynamicFormSchemaType.Input,
-      title: input.title,
+      title: this.convertToTitleSpaceCase(input.title),
       required: input._required_,
     }));
   }

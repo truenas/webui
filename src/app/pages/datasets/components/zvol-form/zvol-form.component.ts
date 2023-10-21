@@ -255,19 +255,24 @@ export class ZvolFormComponent implements OnInit {
           this.ws.call('pool.dataset.query', [[['id', '=', parentDatasetId]]]).pipe(
             this.errorHandler.catchError(),
             untilDestroyed(this),
-          ).subscribe((parentDataset) => {
-            this.form.controls.sparse.disable();
-            this.form.controls.volblocksize.disable();
+          ).subscribe({
+            next: (parentDataset) => {
+              this.form.controls.sparse.disable();
+              this.form.controls.volblocksize.disable();
 
-            this.customFilter = [[['id', '=', this.parentId]]];
+              this.customFilter = [[['id', '=', this.parentId]]];
 
-            this.copyParentProperties(parent);
-            this.inheritSyncSource(parent, parentDataset);
-            this.inheritCompression(parent, parentDataset);
-            this.inheritDeduplication(parent, parentDataset);
-            this.inheritSnapdev(parent, parentDataset);
+              this.copyParentProperties(parent);
+              this.inheritSyncSource(parent, parentDataset);
+              this.inheritCompression(parent, parentDataset);
+              this.inheritDeduplication(parent, parentDataset);
+              this.inheritSnapdev(parent, parentDataset);
 
-            this.cdr.markForCheck();
+              this.cdr.markForCheck();
+            },
+            error: (error: WebsocketError): void => {
+              this.dialogService.error(this.errorHandler.parseWsError(error));
+            },
           });
         }
         this.isLoading = false;
