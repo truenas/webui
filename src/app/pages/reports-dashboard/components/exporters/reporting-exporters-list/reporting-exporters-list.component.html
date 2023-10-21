@@ -1,10 +1,11 @@
 <mat-card>
   <mat-toolbar-row>
     <h3>{{ 'Reporting Exporters' | translate }}</h3>
-
-    <button mat-button color="primary" ixTest="add-reporting-exporter" (click)="doAdd()">
-      {{ 'Add' | translate }}
-    </button>
+    <div class="actions action-icon">
+      <button mat-button color="primary" ixTest="add-reporting-exporter" (click)="doAdd()">
+        {{ 'Add' | translate }}
+      </button>
+    </div>
   </mat-toolbar-row>
   <mat-card-content>
     <ix-table2
