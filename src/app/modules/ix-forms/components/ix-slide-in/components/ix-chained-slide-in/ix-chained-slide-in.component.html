@@ -7,7 +7,7 @@
   <div *ngFor="let component of components; trackBy trackByComponentId; index as i; let last = last;">
     <ix-slide-in2
       class="slide-in2-form"
-      [isTop]="last"
+      [lastIndex]="components.length -1"
       [id]="component.id"
       [index]="i"
       [componentInfo]="component"

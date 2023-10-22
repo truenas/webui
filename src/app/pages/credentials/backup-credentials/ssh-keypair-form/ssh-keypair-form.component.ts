@@ -5,7 +5,7 @@ import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import helptext from 'app/helptext/system/ssh-keypairs';
@@ -13,13 +13,11 @@ import {
   KeychainCredentialUpdate,
   KeychainSshKeyPair,
 } from 'app/interfaces/keychain-credential.interface';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { SLIDE_IN_CLOSER, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { atLeastOne } from 'app/modules/ix-forms/validators/at-least-one-validation';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -57,14 +55,13 @@ export class SshKeypairFormComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private ws: WebSocketService,
-    private slideInRef: IxSlideInRef<SshKeypairFormComponent>,
+    @Inject(SLIDE_IN_CLOSER) private slideInCloser$: Subject<unknown>,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private snackbar: SnackbarService,
     private errorHandler: ErrorHandlerService,
     private formErrorHandler: FormErrorHandlerService,
     private loader: AppLoaderService,
-    private dialogService: DialogService,
     private storage: StorageService,
     @Inject(SLIDE_IN_DATA) private editingKeypair: KeychainSshKeyPair,
   ) { }
@@ -140,7 +137,7 @@ export class SshKeypairFormComponent implements OnInit {
 
         this.isFormLoading = false;
         this.cdr.markForCheck();
-        this.slideInRef.close(true);
+        this.slideInCloser$.next(true);
       },
       error: (error) => {
         this.isFormLoading = false;

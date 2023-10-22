@@ -70,8 +70,10 @@ import {
 import {
   WebdavProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/webdav-provider-form/webdav-provider-form.component';
+import { SshKeypairFormComponent } from 'app/pages/credentials/backup-credentials/ssh-keypair-form/ssh-keypair-form.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 // TODO: Form is partially backend driven and partially hardcoded on the frontend.
@@ -104,6 +106,7 @@ export class CloudCredentialsFormComponent implements OnInit {
     private dialogService: DialogService,
     private formErrorHandler: FormErrorHandlerService,
     private translate: TranslateService,
+    private chainedSlideInService: IxChainedSlideInService,
     private snackbarService: SnackbarService,
     @Inject(SLIDE_IN_DATA) private credential: CloudsyncCredential,
     @Inject(SLIDE_IN_CLOSER) private slideInCloser$: Subject<unknown>,
@@ -258,7 +261,12 @@ export class CloudCredentialsFormComponent implements OnInit {
   private setFormEvents(): void {
     this.commonForm.controls.provider.valueChanges
       .pipe(untilDestroyed(this))
-      .subscribe(() => {
+      .subscribe((provider) => {
+        if (provider === CloudsyncProviderName.AmazonS3) {
+          const onClose$ = new Subject();
+          this.chainedSlideInService.pushComponent({ component: SshKeypairFormComponent, close$: onClose$ });
+          return;
+        }
         this.renderProviderForm();
 
         this.setDefaultName();

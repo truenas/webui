@@ -27,11 +27,15 @@ import { ChainedComponentSeralized, IxChainedSlideInService } from 'app/services
 export class IxSlideIn2Component implements OnInit, OnDestroy {
   @Input() componentInfo: ChainedComponentSeralized;
   @Input() index: number;
-  @Input() isTop: boolean;
+  @Input() lastIndex: number;
   @ViewChild('chainedBody', { static: true, read: ViewContainerRef }) slideInBody: ViewContainerRef;
 
   @HostListener('document:keydown.escape') onKeydownHandler(): void {
     this.onBackdropClicked();
+  }
+
+  get isTop(): boolean {
+    return this.index === this.lastIndex;
   }
 
   isSlideInOpen = false;
@@ -119,10 +123,10 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
     this.wasBodyCleared = false;
     // clear body and close all slides
 
-    this.createSlideInRef<T, D>(componentType, params?.data);
+    this.createInjector<T, D>(componentType, params?.data);
   }
 
-  private createSlideInRef<T, D>(
+  private createInjector<T, D>(
     componentType: Type<T>,
     data?: D,
   ): void {

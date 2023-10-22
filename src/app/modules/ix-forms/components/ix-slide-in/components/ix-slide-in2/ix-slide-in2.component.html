@@ -4,6 +4,8 @@
   [id]="componentInfo.id"
   [class]="['ix-' + componentInfo.id, 'ix-slide-in2-form']"
   [class.open]="isSlideInOpen"
+  [style.right.px]="30 * (lastIndex - index)"
+  [style.padding-top.px]="40 * (lastIndex - index)"
   [class.wide]="wide"
 >
   <div
@@ -11,7 +13,6 @@
   >
     <ng-container #chainedBody></ng-container>
   </div>
-  <div *ngIf="!isTop" class="ix-slide-in2-body blurred"></div>
 </div>
 
 <div
