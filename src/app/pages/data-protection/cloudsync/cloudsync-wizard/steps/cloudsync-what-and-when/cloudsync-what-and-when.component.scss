@@ -1,0 +1,10 @@
+.cloudsync {
+  display: flex;
+  gap: 16px;
+
+  .source,
+  .destination,
+  .folder {
+    width: 50%;
+  }
+}

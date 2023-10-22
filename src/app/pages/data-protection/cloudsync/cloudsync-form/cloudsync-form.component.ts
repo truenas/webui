@@ -12,13 +12,14 @@ import _ from 'lodash';
 import { Observable, of } from 'rxjs';
 import { filter, map, switchMap } from 'rxjs/operators';
 import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
-import { Direction } from 'app/enums/direction.enum';
+import { Direction, directionNames } from 'app/enums/direction.enum';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
-import { TransferMode } from 'app/enums/transfer-mode.enum';
+import { TransferMode, transferModeNames } from 'app/enums/transfer-mode.enum';
+import { mapToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/data-protection/cloudsync/cloudsync-form';
 import { CloudSyncTaskUi, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
-import { CloudsyncBucket, CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
+import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { SelectOption } from 'app/interfaces/option.interface';
 import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -31,6 +32,7 @@ import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedu
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { CloudsyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
 import { CreateStorjBucketDialogComponent } from 'app/pages/data-protection/cloudsync/create-storj-bucket-dialog/create-storj-bucket-dialog.component';
 import { CustomTransfersDialogComponent } from 'app/pages/data-protection/cloudsync/custom-transfers-dialog/custom-transfers-dialog.component';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
@@ -39,7 +41,7 @@ import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
-const newStorjBucket = 'new_storj_bucket';
+export const newStorjBucket = 'new_storj_bucket';
 const customOptionValue = -1;
 
 type FormValue = CloudsyncFormComponent['form']['value'];
@@ -114,16 +116,8 @@ export class CloudsyncFormComponent implements OnInit {
 
   readonly helptext = helptext;
 
-  readonly directionOptions$ = of([
-    { label: this.translate.instant('Push'), value: Direction.Push },
-    { label: this.translate.instant('Pull'), value: Direction.Pull },
-  ]);
-
-  readonly transferModeOptions$ = of([
-    { label: this.translate.instant('SYNC'), value: TransferMode.Sync },
-    { label: this.translate.instant('COPY'), value: TransferMode.Copy },
-    { label: this.translate.instant('MOVE'), value: TransferMode.Move },
-  ]);
+  readonly directionOptions$ = of(mapToOptions(directionNames, this.translate));
+  readonly transferModeOptions$ = of(mapToOptions(transferModeNames, this.translate));
 
   credentialsList: CloudsyncCredential[] = [];
   readonly credentialsOptions$ = this.cloudCredentialService.getCloudsyncCredentials().pipe(
@@ -440,47 +434,46 @@ export class CloudsyncFormComponent implements OnInit {
   loadBucketOptions(): void {
     const targetCredentials = _.find(this.credentialsList, { id: this.form.controls.credentials.value });
 
-    this.getBuckets(targetCredentials.id).pipe(untilDestroyed(this)).subscribe({
-      next: (buckets) => {
-        const bucketOptions = buckets.map((bucket) => ({
-          label: bucket.Name,
-          value: bucket.Path,
-          disabled: !bucket.Enabled,
-        }));
-        if (targetCredentials.provider === CloudsyncProviderName.Storj) {
-          bucketOptions.unshift({
-            label: this.translate.instant('Add new'),
-            value: newStorjBucket,
-            disabled: false,
+    this.cloudCredentialService
+      .getBuckets(targetCredentials.id)
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: (buckets) => {
+          const bucketOptions = buckets.map((bucket) => ({
+            label: bucket.Name,
+            value: bucket.Path,
+            disabled: !bucket.Enabled,
+          }));
+          if (targetCredentials.provider === CloudsyncProviderName.Storj) {
+            bucketOptions.unshift({
+              label: this.translate.instant('Add new'),
+              value: newStorjBucket,
+              disabled: false,
+            });
+          }
+          this.bucketOptions$ = of(bucketOptions);
+          this.isLoading = false;
+          this.form.controls.bucket.enable();
+          this.form.controls.bucket_input.disable();
+          this.cdr.markForCheck();
+        },
+        error: (error: WebsocketError) => {
+          this.isLoading = false;
+          this.form.controls.bucket.disable();
+          this.form.controls.bucket_input.enable();
+          this.dialog.closeAllDialogs();
+          this.dialog.confirm({
+            title: error.extra ? (error.extra as { excerpt: string }).excerpt : `${this.translate.instant('Error: ')}${error.error}`,
+            message: error.reason,
+            hideCheckbox: true,
+            buttonText: this.translate.instant('Fix Credential'),
+          }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+            const navigationExtras: NavigationExtras = { state: { editCredential: 'cloudcredentials', id: targetCredentials.id } };
+            this.router.navigate(['/', 'credentials', 'backup-credentials'], navigationExtras);
           });
-        }
-        this.bucketOptions$ = of(bucketOptions);
-        this.isLoading = false;
-        this.form.controls.bucket.enable();
-        this.form.controls.bucket_input.disable();
-        this.cdr.markForCheck();
-      },
-      error: (error: WebsocketError) => {
-        this.isLoading = false;
-        this.form.controls.bucket.disable();
-        this.form.controls.bucket_input.enable();
-        this.dialog.closeAllDialogs();
-        this.dialog.confirm({
-          title: error.extra ? (error.extra as { excerpt: string }).excerpt : `${this.translate.instant('Error: ')}${error.error}`,
-          message: error.reason,
-          hideCheckbox: true,
-          buttonText: this.translate.instant('Fix Credential'),
-        }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-          const navigationExtras: NavigationExtras = { state: { editCredential: 'cloudcredentials', id: targetCredentials.id } };
-          this.router.navigate(['/', 'credentials', 'backup-credentials'], navigationExtras);
-        });
-        this.cdr.markForCheck();
-      },
-    });
-  }
-
-  getBuckets(credentialId: number): Observable<CloudsyncBucket[]> {
-    return this.ws.call('cloudsync.list_buckets', [credentialId]);
+          this.cdr.markForCheck();
+        },
+      });
   }
 
   getBucketsNodeProvider(): TreeNodeProvider {
@@ -775,5 +768,10 @@ export class CloudsyncFormComponent implements OnInit {
       this.form.controls.folder_source.disable();
       this.form.controls.folder_destination.enable();
     }
+  }
+
+  onSwitchToWizard(): void {
+    this.slideInRef.close();
+    this.slideInService.open(CloudsyncWizardComponent, { wide: true });
   }
 }
