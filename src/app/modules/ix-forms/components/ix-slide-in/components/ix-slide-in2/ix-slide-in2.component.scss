@@ -33,6 +33,7 @@
 
 .ix-slide-in2-body {
   background: #fff;
+  box-shadow: 0 5px 10px rgb(0 0 0 / 0.2);
   /* margin exposes part of the modal background */
   margin: 40px;
   padding: 0 20px 20px;
@@ -78,8 +79,4 @@
   // padding: 40px 0;
   pointer-events: none;
   // right: 30px;
-}
-
-.is-top {
-  box-shadow: 0 5px 10px rgb(0 0 0 / 0.2);
 }
