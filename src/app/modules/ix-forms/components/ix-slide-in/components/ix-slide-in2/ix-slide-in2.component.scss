@@ -40,6 +40,7 @@
 
 .ix-slide-in2-form .ix-slide-in2-body {
   background-color: var(--bg2);
+  border: 1px solid var(--accent);
   margin: 0;
   min-height: 100%;
 }
@@ -74,8 +75,11 @@
 
 .ix-slide-in2-form.open.not-top,
 .not-top {
-  filter: blur(1px);
-  padding: 50px 0;
+  padding: 40px 0;
   pointer-events: none;
-  right: 70px;
+  right: 30px;
+}
+
+.is-top {
+  box-shadow: 0 5px 10px rgb(0 0 0 / 0.2);
 }
