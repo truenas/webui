@@ -78,10 +78,11 @@ export class NfsCardComponent implements OnInit {
   ngOnInit(): void {
     const nfsShares$ = this.ws.call('sharing.nfs.query').pipe(
       tap((nfsShares) => this.nfsShares = nfsShares),
-      map((nfsShares: NfsShare[]) => nfsShares.slice(0, 4)),
+      map((nfsShares) => nfsShares.slice(0, 4)),
       untilDestroyed(this),
     );
     this.dataProvider = new AsyncDataProvider<NfsShare>(nfsShares$);
+    this.getNfsShares();
   }
 
   openForm(row?: NfsShare): void {
@@ -111,7 +112,7 @@ export class NfsCardComponent implements OnInit {
   }
 
   private getNfsShares(): void {
-    this.dataProvider.refresh();
+    this.dataProvider.load();
   }
 
   private onChangeEnabledState(row: NfsShare): void {

@@ -70,10 +70,11 @@ export class AcmeDnsAuthenticatorListComponent implements OnInit {
     );
     this.dataProvider = new AsyncDataProvider<DnsAuthenticator>(authenticators$);
     this.setDefaultSort();
+    this.getAuthenticators();
   }
 
   getAuthenticators(): void {
-    this.dataProvider.refresh();
+    this.dataProvider.load();
   }
 
   setDefaultSort(): void {

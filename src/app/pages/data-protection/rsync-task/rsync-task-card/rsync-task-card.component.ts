@@ -115,10 +115,11 @@ export class RsyncTaskCardComponent implements OnInit {
       untilDestroyed(this),
     );
     this.dataProvider = new AsyncDataProvider<RsyncTaskUi>(rsyncTasks$);
+    this.getRsyncTasks();
   }
 
   getRsyncTasks(): void {
-    this.dataProvider.refresh();
+    this.dataProvider.load();
   }
 
   doDelete(row: RsyncTaskUi): void {

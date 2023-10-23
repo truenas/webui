@@ -5,8 +5,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, map, tap,
-} from 'rxjs';
+import { filter, map, tap } from 'rxjs';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -100,7 +99,7 @@ export class CertificateSigningRequestsListComponent implements OnInit {
   }
 
   getCertificates(): void {
-    this.dataProvider.refresh();
+    this.dataProvider.load();
   }
 
   setDefaultSort(): void {

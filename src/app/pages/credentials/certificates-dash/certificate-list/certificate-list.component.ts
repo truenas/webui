@@ -116,10 +116,11 @@ export class CertificateListComponent implements OnInit {
     );
     this.dataProvider = new AsyncDataProvider<Certificate>(certificates$);
     this.setDefaultSort();
+    this.getCertificates();
   }
 
   getCertificates(): void {
-    this.dataProvider.refresh();
+    this.dataProvider.load();
   }
 
   setDefaultSort(): void {

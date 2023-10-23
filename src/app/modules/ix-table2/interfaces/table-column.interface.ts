@@ -1,4 +1,4 @@
-import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { DataProvider } from 'app/modules/ix-table2/interfaces/data-provider.interface';
 
 export abstract class ColumnComponent<T> {
   identifier?: boolean;
@@ -21,7 +21,7 @@ export abstract class ColumnComponent<T> {
   setRow(row: T): void {
     this.row = row;
   }
-  dataProvider?: ArrayDataProvider<T>;
+  dataProvider?: DataProvider<T>;
 }
 
 export type Column<T, C extends ColumnComponent<T>> = {

@@ -28,14 +28,13 @@ describe('IxCellCheckboxComponent', () => {
   });
 
   it('sets value when checkbox is changed', async () => {
+    spectator.component.onRowCheck = jest.fn();
     const checkbox = await loader.getHarness(MatCheckboxHarness);
 
     expect(await checkbox.isChecked()).toBe(true);
-    expect(spectator.component.getRow().booleanField).toBe(true);
-
     await checkbox.toggle();
 
     expect(await checkbox.isChecked()).toBe(false);
-    expect(spectator.component.getRow().booleanField).toBe(false);
+    expect(spectator.component.onRowCheck).toHaveBeenCalledWith({ booleanField: true }, false);
   });
 });

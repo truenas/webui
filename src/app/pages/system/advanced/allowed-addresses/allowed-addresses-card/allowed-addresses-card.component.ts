@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, map } from 'rxjs';
+import { filter, map, switchMap } from 'rxjs';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
@@ -68,6 +68,7 @@ export class AllowedAddressesCardComponent implements OnInit {
       untilDestroyed(this),
     );
     this.dataProvider = new AsyncDataProvider<AllowedAddressRow>(config$);
+    this.getAllowedAddresses();
   }
 
   async onConfigure(): Promise<void> {
@@ -94,11 +95,11 @@ export class AllowedAddressesCardComponent implements OnInit {
   }
 
   private deleteAllowedAddress(row: AllowedAddressRow): void {
-    const updatedAddresses = this.dataProvider.rows
-      .filter((ip) => ip.address !== row.address)
-      .map(ip => ip.address);
-
-    this.ws.call('system.general.update', [{ ui_allowlist: updatedAddresses }]).pipe(
+    this.dataProvider.currentPage$.pipe(
+      switchMap((currentPage) => {
+        const updatedAddresses = currentPage.filter((ip) => ip.address !== row.address).map(ip => ip.address);
+        return this.ws.call('system.general.update', [{ ui_allowlist: updatedAddresses }]);
+      }),
       untilDestroyed(this),
     ).subscribe({
       next: () => {
@@ -110,7 +111,7 @@ export class AllowedAddressesCardComponent implements OnInit {
   }
 
   private getAllowedAddresses(): void {
-    this.dataProvider.refresh();
+    this.dataProvider.load();
   }
 
   private getAddressesSourceFromConfig(data: SystemGeneralConfig): AllowedAddressRow[] {

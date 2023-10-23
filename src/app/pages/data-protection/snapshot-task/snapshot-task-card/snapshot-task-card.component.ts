@@ -95,10 +95,11 @@ export class SnapshotTaskCardComponent implements OnInit {
       untilDestroyed(this),
     );
     this.dataProvider = new AsyncDataProvider<PeriodicSnapshotTaskUi>(snapshotTasks$);
+    this.getSnapshotTasks();
   }
 
   getSnapshotTasks(): void {
-    this.dataProvider.refresh();
+    this.dataProvider.load();
   }
 
   doDelete(snapshotTask: PeriodicSnapshotTaskUi): void {

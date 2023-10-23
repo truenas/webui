@@ -121,10 +121,11 @@ export class ReplicationTaskCardComponent implements OnInit {
       untilDestroyed(this),
     );
     this.dataProvider = new AsyncDataProvider<ReplicationTaskUi>(replicationTasks$);
+    this.getReplicationTasks();
   }
 
   getReplicationTasks(): void {
-    this.dataProvider.refresh();
+    this.dataProvider.load();
   }
 
   doDelete(replicationTask: ReplicationTaskUi): void {

@@ -116,10 +116,11 @@ export default class KerberosRealmsListComponent implements OnInit {
     );
     this.dataProvider = new AsyncDataProvider<KerberosRealmRow>(kerberosRealsm$);
     this.setDefaultSort();
+    this.getKerberosRealms();
   }
 
   getKerberosRealms(): void {
-    this.dataProvider.refresh();
+    this.dataProvider.load();
   }
 
   setDefaultSort(): void {

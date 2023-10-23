@@ -2,8 +2,8 @@ import {
   AfterViewInit, ChangeDetectorRef, ChangeDetectionStrategy, Component, Input,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
+import { DataProvider } from 'app/modules/ix-table2/interfaces/data-provider.interface';
 import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.interface';
 
 @UntilDestroy()
@@ -15,7 +15,7 @@ import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-
 })
 export class IxTableHeadComponent<T> implements AfterViewInit {
   @Input() columns: Column<T, ColumnComponent<T>>[];
-  @Input() dataProvider: ArrayDataProvider<T>;
+  @Input() dataProvider: DataProvider<T>;
 
   readonly SortDirection = SortDirection;
 

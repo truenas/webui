@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { MatCheckboxChange } from '@angular/material/checkbox';
 import { IxHeaderCellCheckboxComponent } from 'app/modules/ix-table2/components/ix-table-head/head-cells/ix-header-cell-checkbox/ix-header-cell-checkbox.component';
 import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.interface';
 
@@ -7,15 +8,19 @@ import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-
   templateUrl: './ix-cell-checkbox.component.html',
 })
 export class IxCellCheckboxComponent<T> extends ColumnComponent<T> {
+  onRowCheck: (row: T, checked: boolean) => void;
+
   get checked(): boolean {
-    return this.row[this.propertyName] as boolean;
+    return this.value as boolean;
   }
 
-  onCheckboxChange(): void {
-    this.row[this.propertyName] = !this.row[this.propertyName] as T[keyof T];
+  onCheckboxChange(event: MatCheckboxChange): void {
+    this.onRowCheck(this.row, event.checked);
   }
 }
 
-export function checkboxColumn<T>(options: Partial<ColumnComponent<T>>): Column<T, ColumnComponent<T>> {
+export function checkboxColumn<T>(
+  options: Partial<IxCellCheckboxComponent<T> | IxHeaderCellCheckboxComponent<T>>,
+): Column<T, IxCellCheckboxComponent<T> | IxHeaderCellCheckboxComponent<T>> {
   return { type: IxCellCheckboxComponent, headerType: IxHeaderCellCheckboxComponent, ...options };
 }

@@ -20,7 +20,7 @@ describe('ArrayDataProvider', () => {
     const dataProvider = new ArrayDataProvider<TestTableData>();
     dataProvider.setRows(testTableData);
 
-    expect(dataProvider.rows).toEqual(testTableData);
+    expect(dataProvider.totalRows).toBe(4);
     expect(await firstValueFrom(dataProvider.currentPage$)).toEqual(testTableData);
   });
 
