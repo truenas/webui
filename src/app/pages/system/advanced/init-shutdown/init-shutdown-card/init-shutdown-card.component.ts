@@ -84,10 +84,9 @@ export class InitShutdownCardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const scripts$ = this.ws.call('initshutdownscript.query').pipe(
-      untilDestroyed(this),
-    );
+    const scripts$ = this.ws.call('initshutdownscript.query').pipe(untilDestroyed(this));
     this.dataProvider = new AsyncDataProvider<InitShutdownScript>(scripts$);
+    this.loadScripts();
   }
 
   onAdd(): void {
@@ -95,7 +94,7 @@ export class InitShutdownCardComponent implements OnInit {
   }
 
   loadScripts(): void {
-    this.dataProvider.refresh();
+    this.dataProvider.load();
   }
 
   onDelete(row: InitShutdownScript): void {

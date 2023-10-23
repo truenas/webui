@@ -131,10 +131,11 @@ export class CloudSyncTaskCardComponent implements OnInit {
       untilDestroyed(this),
     );
     this.dataProvider = new AsyncDataProvider<CloudSyncTaskUi>(cloudsyncTasks$);
+    this.getCloudSyncTasks();
   }
 
   getCloudSyncTasks(): void {
-    this.dataProvider.refresh();
+    this.dataProvider.load();
   }
 
   doDelete(cloudsyncTask: CloudSyncTaskUi): void {

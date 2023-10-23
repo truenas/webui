@@ -1,3 +1,4 @@
+import { DOCUMENT } from '@angular/common';
 import {
   Component, AfterViewInit, OnDestroy, ElementRef, Inject, HostListener,
 } from '@angular/core';
@@ -5,7 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { tween, styler } from 'popmotion';
-import { take, tap } from 'rxjs/operators';
+import { skipWhile, take, tap } from 'rxjs/operators';
 import { Styler } from 'stylefire';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { ScreenType } from 'app/enums/screen-type.enum';
@@ -122,6 +123,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
     private layoutService: LayoutService,
     private store$: Store<AppState>,
     @Inject(WINDOW) private window: Window,
+    @Inject(DOCUMENT) private document: Document,
     private dashboardStore$: DashboardStore,
     private resourcesUsageStore$: ResourcesUsageStore,
   ) {}
@@ -143,6 +145,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
   startListeners(): void {
     this.dashboardStore$.state$.pipe(
       deepCloneState(),
+      skipWhile(() => this.document.hidden),
       tap((state) => {
         if (state.isLoading) {
           return;

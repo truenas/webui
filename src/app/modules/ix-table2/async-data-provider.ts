@@ -1,27 +1,15 @@
-import { BehaviorSubject, Observable, Subscription, map } from 'rxjs';
+import { Observable } from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
-import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { BaseDataProvider } from 'app/modules/ix-table2/base-data-provider';
 
-export class AsyncDataProvider<T> extends ArrayDataProvider<T> {
-  private subscription = new Subscription();
-  readonly emptyType$ = new BehaviorSubject<EmptyType>(EmptyType.Loading);
-
-  get isLoading$(): Observable<boolean> {
-    return this.emptyType$.pipe(map((emptyType) => emptyType === EmptyType.Loading));
-  }
-
-  get isError$(): Observable<boolean> {
-    return this.emptyType$.pipe(map((emptyType) => emptyType === EmptyType.Errors));
-  }
-
+export class AsyncDataProvider<T> extends BaseDataProvider<T> {
   constructor(
     private request$: Observable<T[]>,
   ) {
     super();
-    this.refresh();
   }
 
-  refresh(): void {
+  load(): void {
     this.emptyType$.next(EmptyType.Loading);
     this.subscription.add(
       this.request$.subscribe({
@@ -35,11 +23,5 @@ export class AsyncDataProvider<T> extends ArrayDataProvider<T> {
         },
       }),
     );
-  }
-
-  unsubscribe(): void {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
   }
 }

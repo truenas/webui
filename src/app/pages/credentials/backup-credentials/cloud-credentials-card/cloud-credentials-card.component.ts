@@ -3,8 +3,7 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { switchMap, filter, tap,
-} from 'rxjs';
+import { switchMap, filter, tap } from 'rxjs';
 import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
@@ -74,12 +73,13 @@ export class CloudCredentialsCardComponent implements OnInit {
     );
     this.dataProvider = new AsyncDataProvider<CloudsyncCredential>(credentials$);
     this.setDefaultSort();
+    this.getCredentials();
 
     this.getProviders();
   }
 
   getCredentials(): void {
-    this.dataProvider.refresh();
+    this.dataProvider.load();
   }
 
   getProviders(): void {

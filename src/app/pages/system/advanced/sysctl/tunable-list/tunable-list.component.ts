@@ -90,10 +90,11 @@ export class TunableListComponent implements OnInit {
     );
     this.dataProvider = new AsyncDataProvider<Tunable>(tunables$);
     this.setDefaultSort();
+    this.getTunables();
   }
 
   getTunables(): void {
-    this.dataProvider.refresh();
+    this.dataProvider.load();
   }
 
   doAdd(): void {

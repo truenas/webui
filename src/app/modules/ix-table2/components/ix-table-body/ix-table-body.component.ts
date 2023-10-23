@@ -10,9 +10,9 @@ import {
   TemplateRef,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
 import { IxTableCellDirective } from 'app/modules/ix-table2/directives/ix-table-cell.directive';
 import { IxTableDetailsRowDirective } from 'app/modules/ix-table2/directives/ix-table-details-row.directive';
+import { DataProvider } from 'app/modules/ix-table2/interfaces/data-provider.interface';
 import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.interface';
 
 @UntilDestroy()
@@ -24,7 +24,7 @@ import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-
 })
 export class IxTableBodyComponent<T> implements AfterViewInit {
   @Input() columns: Column<T, ColumnComponent<T>>[];
-  @Input() dataProvider: ArrayDataProvider<T>;
+  @Input() dataProvider: DataProvider<T>;
   @Input() isLoading = false;
 
   @ContentChildren(IxTableCellDirective) customCells!: QueryList<IxTableCellDirective<T>>;

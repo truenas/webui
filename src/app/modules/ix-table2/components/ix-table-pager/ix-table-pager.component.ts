@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { MatSelectChange } from '@angular/material/select';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { DataProvider } from 'app/modules/ix-table2/interfaces/data-provider.interface';
 
 @UntilDestroy()
 @Component({
@@ -13,7 +13,7 @@ import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IxTablePagerComponent<T> implements OnInit, AfterContentChecked {
-  @Input() dataProvider!: ArrayDataProvider<T>;
+  @Input() dataProvider!: DataProvider<T>;
   @Input() pageSize = 50;
   @Input() pageSizeOptions = [10, 20, 50, 100];
 
@@ -45,7 +45,7 @@ export class IxTablePagerComponent<T> implements OnInit, AfterContentChecked {
   }
 
   ngAfterContentChecked(): void {
-    this.totalItems = this.dataProvider.rows.length;
+    this.totalItems = this.dataProvider.totalRows;
     if (this.currentPage > this.totalPages && this.currentPage !== 1) {
       this.goToPage(1);
     }

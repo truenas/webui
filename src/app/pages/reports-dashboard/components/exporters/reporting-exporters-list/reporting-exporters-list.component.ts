@@ -20,6 +20,7 @@ import { WebSocketService } from 'app/services/ws.service';
 @UntilDestroy()
 @Component({
   templateUrl: './reporting-exporters-list.component.html',
+  styleUrls: ['./reporting-exporters-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ReportingExporterListComponent implements OnInit {

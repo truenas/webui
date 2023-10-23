@@ -72,10 +72,11 @@ export class SshKeypairCardComponent implements OnInit {
     );
     this.dataProvider = new AsyncDataProvider<KeychainSshKeyPair>(credentials$);
     this.setDefaultSort();
+    this.getCredentials();
   }
 
   getCredentials(): void {
-    this.dataProvider.refresh();
+    this.dataProvider.load();
   }
 
   setDefaultSort(): void {

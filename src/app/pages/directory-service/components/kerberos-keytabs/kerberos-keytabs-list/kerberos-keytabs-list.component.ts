@@ -90,10 +90,11 @@ export default class KerberosKeytabsListComponent implements OnInit {
     );
     this.dataProvider = new AsyncDataProvider<KerberosKeytab>(keytabsRows$);
     this.setDefaultSort();
+    this.getKerberosKeytabs();
   }
 
   getKerberosKeytabs(): void {
-    this.dataProvider.refresh();
+    this.dataProvider.load();
   }
 
   setDefaultSort(): void {

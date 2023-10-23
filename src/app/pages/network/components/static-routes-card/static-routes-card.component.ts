@@ -4,8 +4,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, tap,
-} from 'rxjs';
+import { filter, tap } from 'rxjs';
 import { StaticRoute } from 'app/interfaces/static-route.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
@@ -71,10 +70,11 @@ export class StaticRoutesCardComponent implements OnInit {
     );
     this.dataProvider = new AsyncDataProvider<StaticRoute>(staticRoutes$);
     this.setDefaultSort();
+    this.getStaticRoutes();
   }
 
   getStaticRoutes(): void {
-    this.dataProvider.refresh();
+    this.dataProvider.load();
   }
 
   setDefaultSort(): void {
