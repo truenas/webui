@@ -6,7 +6,6 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, forkJoin } from 'rxjs';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
-import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -33,10 +32,6 @@ export class StartServiceDialogComponent implements OnInit {
 
   get serviceHumanName(): string {
     return serviceNames.get(this.serviceName);
-  }
-
-  get isStopped(): boolean {
-    return this.service.state === ServiceStatus.Stopped;
   }
 
   get isDisabled(): boolean {

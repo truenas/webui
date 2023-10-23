@@ -48,7 +48,7 @@ export class ServicesEffects {
     filter(({ serviceName }) => Boolean(serviceName)),
     switchMap(({ serviceName }) => this.store$.select(selectService(serviceName)).pipe(take(1))),
     switchMap((service) => {
-      if (!service.enable || service.state === ServiceStatus.Stopped) {
+      if (service.state === ServiceStatus.Stopped) {
         return this.matDialog.open<StartServiceDialogComponent, unknown, StartServiceDialogResult>(
           StartServiceDialogComponent, {
             data: service.service,
@@ -69,7 +69,11 @@ export class ServicesEffects {
           );
       }
 
-      return of(serviceEnabled());
+      if (service.enable) {
+        return of(serviceEnabled());
+      }
+
+      return of(serviceStarted());
     }),
   ));
 

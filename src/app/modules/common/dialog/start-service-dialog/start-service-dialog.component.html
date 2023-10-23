@@ -1,20 +1,9 @@
 <ix-fake-progress-bar [loading]="isLoading"></ix-fake-progress-bar>
 
-<h1 mat-dialog-title>
-  <ng-container *ngIf="!isStopped">
-    {{ 'Enable {service} Service' | translate: { service: serviceHumanName } }}
-  </ng-container>
-  <ng-container *ngIf="isStopped">
-    {{ 'Start {service} Service' | translate: { service: serviceHumanName } }}
-  </ng-container>
-</h1>
+<h1 mat-dialog-title>{{ 'Start {service} Service' | translate: { service: serviceHumanName } }}</h1>
 <div mat-dialog-content>
-  <p *ngIf="isStopped" class="description">
+  <p class="description">
     {{ '{service} Service is not currently running. Start the service now?' | translate: { service: serviceHumanName } }}
-  </p>
-
-  <p *ngIf="!isStopped" class="description">
-    {{ '{service} Service is currently running. Enable the service now?' | translate: { service: serviceHumanName } }}
   </p>
 
   <ix-slide-toggle
@@ -35,5 +24,5 @@
     color="primary"
     ixTest="enable-service"
     (click)="onSubmit()"
-  >{{ isStopped ? ('Start' | translate) : ('Enable' | translate) }}</button>
+  >{{ 'Start' | translate }}</button>
 </ix-form-actions>

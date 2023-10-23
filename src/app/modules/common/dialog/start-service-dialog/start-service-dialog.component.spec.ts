@@ -121,36 +121,6 @@ describe('StartServiceDialogComponent', () => {
     });
   });
 
-  it('cifs: shows a dialog when service is running and ask to Enable this service automatically.', async () => {
-    store$.overrideSelector(selectServices, [{
-      ...cifsService,
-      enable: false,
-      state: ServiceStatus.Running,
-    }]);
-    store$.refreshState();
-    spectator.fixture.detectChanges();
-
-    expect(spectator.query('h1')).toHaveText('Enable SMB Service');
-    expect(spectator.query('.description')).toHaveText(
-      'SMB Service is currently running. Enable the service now?',
-    );
-
-    const enableAutomaticallyCheckbox = await loader.getHarness(
-      IxSlideToggleHarness.with({ label: 'Enable this service to start automatically.' }),
-    );
-    expect(await enableAutomaticallyCheckbox.getValue()).toBe(true);
-
-    const eanbleButton = await loader.getHarness(MatButtonHarness.with({ text: 'Enable' }));
-    await eanbleButton.click();
-
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('service.update', [4, { enable: true }]);
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('service.start', ['cifs', { silent: false }]);
-    expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith({
-      start: true,
-      startAutomatically: true,
-    });
-  });
-
   it('returns false result when No is pressed', async () => {
     const noButton = await loader.getHarness(MatButtonHarness.with({ text: 'No' }));
     await noButton.click();

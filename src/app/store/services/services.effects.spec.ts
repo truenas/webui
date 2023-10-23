@@ -126,7 +126,7 @@ describe('ServicesEffects', () => {
     });
 
 
-    it('shows dialog when service is running and not set to start automatically.', async () => {
+    it('do not shows dialog when service is running and not set to start automatically.', async () => {
       const service = {
         ...cifsService,
         enable: false,
@@ -141,7 +141,7 @@ describe('ServicesEffects', () => {
       const dispatchedAction = await firstValueFrom(spectator.service.checkIfServiceIsEnabled$);
       expect(dispatchedAction).toEqual(serviceStarted());
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(StartServiceDialogComponent, {
+      expect(spectator.inject(MatDialog).open).not.toHaveBeenCalledWith(StartServiceDialogComponent, {
         data: ServiceName.Cifs,
         disableClose: true,
       });

@@ -7,7 +7,7 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { lastValueFrom, forkJoin, Observable, switchMap, tap, of, map, filter } from 'rxjs';
+import { lastValueFrom, forkJoin, Observable, switchMap, tap, of, map, take } from 'rxjs';
 import { patterns } from 'app/constants/name-patterns.constant';
 import { DatasetType } from 'app/enums/dataset.enum';
 import {
@@ -435,18 +435,20 @@ export class IscsiWizardComponent implements OnInit {
     }
 
     this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Iscsi }));
-    this.checkIfServiceRestartIsNeeded().pipe(untilDestroyed(this)).subscribe();
-
-    this.loader.close();
-    this.isLoading = false;
-    this.cdr.markForCheck();
-    this.slideInRef.close(true);
+    this.checkIfServiceRestartIsNeeded().pipe(untilDestroyed(this)).subscribe({
+      complete: () => {
+        this.loader.close();
+        this.isLoading = false;
+        this.cdr.markForCheck();
+        this.slideInRef.close(true);
+      },
+    });
   }
 
   checkIfServiceRestartIsNeeded(): Observable<boolean> {
     return this.store$.select(selectService(ServiceName.Iscsi)).pipe(
       map((service) => service.state === ServiceStatus.Running),
-      filter(Boolean),
+      take(1),
       switchMap(() => this.warnAboutActiveIscsiSessions()),
       switchMap((confirmed) => {
         if (confirmed) {
@@ -485,7 +487,7 @@ export class IscsiWizardComponent implements OnInit {
           title: this.translateService.instant('Alert'),
           message,
           hideCheckbox: true,
-          buttonText: this.translateService.instant('Stop'),
+          buttonText: this.translateService.instant('Restart'),
         });
       }),
     );
