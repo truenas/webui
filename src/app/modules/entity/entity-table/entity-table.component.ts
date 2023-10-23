@@ -1180,7 +1180,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     return this.conf.config.multiSelect ? this.currentColumns[1].prop : this.currentColumns[0].prop;
   }
 
-  getRowValue(value: string): unknown {
+  getRowValue(value: boolean | string): string {
     return typeof value === 'boolean' ? this.yesNoPipe.transform(value) : value;
   }
 
