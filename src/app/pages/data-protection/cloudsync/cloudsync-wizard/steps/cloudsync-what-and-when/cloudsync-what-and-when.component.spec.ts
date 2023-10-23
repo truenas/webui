@@ -6,12 +6,12 @@ import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
+import { googlePhotosCreds, googlePhotosProvider } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.testing.utils';
 import { CloudsyncWhatAndWhenComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-what-and-when/cloudsync-what-and-when.component';
 import { TransferModeExplanationComponent } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
@@ -37,43 +37,8 @@ describe('CloudsyncWhatAndWhenComponent', () => {
       mockWebsocket([
         mockCall('cloudsync.create'),
         mockCall('cloudsync.update'),
-        mockCall('cloudsync.credentials.query', [
-          {
-            id: 1,
-            name: 'test1',
-            provider: CloudsyncProviderName.Http,
-            attributes: {
-              url: 'http',
-            },
-          },
-          {
-            id: 2,
-            name: 'test2',
-            provider: CloudsyncProviderName.Mega,
-            attributes: {
-              user: 'login',
-              pass: 'password',
-            },
-          },
-        ]),
-        mockCall('cloudsync.providers', [{
-          name: CloudsyncProviderName.Http,
-          title: 'Http',
-          buckets: false,
-          bucket_title: 'Bucket',
-          task_schema: [],
-          credentials_schema: [],
-          credentials_oauth: null,
-        },
-        {
-          name: CloudsyncProviderName.Mega,
-          title: 'Mega',
-          buckets: false,
-          bucket_title: 'Bucket',
-          task_schema: [],
-          credentials_schema: [],
-          credentials_oauth: null,
-        }]),
+        mockCall('cloudsync.credentials.query', [googlePhotosCreds]),
+        mockCall('cloudsync.providers', [googlePhotosProvider]),
       ]),
       mockProvider(IxSlideInService),
       mockProvider(DatasetService),

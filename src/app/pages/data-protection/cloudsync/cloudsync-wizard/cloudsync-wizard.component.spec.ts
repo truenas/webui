@@ -6,30 +6,22 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { MatStepperHarness, MatStepperNextHarness } from '@angular/material/stepper/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { GooglePhotosProviderFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/google-photos-provider-form/google-photos-provider-form.component';
+import { StorjProviderFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/storj-provider-form/storj-provider-form.component';
+import { googlePhotosCreds, googlePhotosProvider, storjProvider } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.testing.utils';
 import { CloudsyncProviderComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-provider/cloudsync-provider.component';
 import { CloudsyncWhatAndWhenComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-what-and-when/cloudsync-what-and-when.component';
+import { TransferModeExplanationComponent } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
 import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { CloudsyncWizardComponent } from './cloudsync-wizard.component';
-
-const googlePhotosCreds = {
-  id: 1,
-  name: 'Google Photos',
-  provider: CloudsyncProviderName.GooglePhotos,
-  attributes: {
-    client_id: 'test-client-id',
-    client_secret: 'test-client-secret',
-    token: 'test-token',
-  },
-};
 
 describe('CloudsyncWizardComponent', () => {
   let spectator: Spectator<CloudsyncWizardComponent>;
@@ -48,6 +40,9 @@ describe('CloudsyncWizardComponent', () => {
     declarations: [
       CloudsyncProviderComponent,
       CloudsyncWhatAndWhenComponent,
+      TransferModeExplanationComponent,
+      GooglePhotosProviderFormComponent,
+      StorjProviderFormComponent,
     ],
     providers: [
       mockWebsocket([
@@ -57,6 +52,7 @@ describe('CloudsyncWizardComponent', () => {
         mockCall('cloudsync.credentials.update'),
         mockCall('cloudsync.credentials.delete'),
         mockCall('cloudsync.delete'),
+        mockCall('cloudsync.providers', [googlePhotosProvider, storjProvider]),
       ]),
       mockProvider(DialogService),
       mockProvider(IxSlideInService),
@@ -86,10 +82,16 @@ describe('CloudsyncWizardComponent', () => {
   }
 
   it('creates objects when wizard is submitted', async () => {
-    expect(await form.getValues()).toBe({});
+    expect(await form.getValues()).toEqual({
+      'Load Existing Credentials': '',
+      'Name': 'Storj',
+      'Provider': 'Storj iX',
+      'Access Key ID': '',
+      'Secret Access Key': '',
+    });
 
     await form.fillForm({
-      'Load Existing Credentials': 'Google Photos',
+      'Load Existing Credentials': 'Google Photos (Google Photos)',
     });
 
     await goToNextStep();
@@ -101,26 +103,21 @@ describe('CloudsyncWizardComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.credentials.create', [{
-      name: 'Sync Google Photos - TestUser',
-      provider: 'Google Photos',
-    }]);
-
     expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('cloudsync.create', [{
       attributes: {
         folder: '/',
       },
       bwlimit: [],
       create_empty_src_dirs: false,
-      credentials: [],
-      description: 'Sync Google Photos',
+      credentials: 1,
+      description: 'Sync Google Photos - TestUser',
       direction: 'PULL',
       enabled: true,
       encryption: false,
       exclude: [],
       follow_symlinks: false,
       include: undefined,
-      path: '/mnt/gphotos',
+      path: '/mnt',
       post_script: '',
       pre_script: '',
       schedule: {
