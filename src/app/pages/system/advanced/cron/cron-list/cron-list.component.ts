@@ -1,5 +1,4 @@
-import {
-  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, TemplateRef, ViewChild,
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -21,7 +20,6 @@ import { CronjobRow } from 'app/pages/system/advanced/cron/cron-list/cronjob-row
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { LayoutService } from 'app/services/layout.service';
 import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -31,8 +29,7 @@ import { WebSocketService } from 'app/services/ws.service';
   styleUrls: ['./cron-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CronListComponent implements OnInit, AfterViewInit {
-  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
+export class CronListComponent implements OnInit {
   cronjobs: CronjobRow[] = [];
   filterString = '';
   dataProvider: AsyncDataProvider<CronjobRow>;
@@ -86,7 +83,6 @@ export class CronListComponent implements OnInit, AfterViewInit {
     private dialog: DialogService,
     private errorHandler: ErrorHandlerService,
     private slideInService: IxSlideInService,
-    private layoutService: LayoutService,
     private matDialog: MatDialog,
     protected emptyService: EmptyService,
   ) {}
@@ -105,10 +101,6 @@ export class CronListComponent implements OnInit, AfterViewInit {
     );
     this.dataProvider = new AsyncDataProvider<CronjobRow>(cronjobs$);
     this.getCronJobs();
-  }
-
-  ngAfterViewInit(): void {
-    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
   }
 
   getCronJobs(): void {

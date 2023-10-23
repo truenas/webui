@@ -102,13 +102,6 @@ export class CertificateSigningRequestsListComponent implements OnInit {
     this.dataProvider.load();
   }
 
-  onListFiltered(query: string): void {
-    this.filterString = query.toLowerCase();
-    this.dataProvider.setRows(
-      this.certificates.filter((certificate) => [certificate.name.toLowerCase()].includes(this.filterString)),
-    );
-  }
-
   setDefaultSort(): void {
     this.dataProvider.setSorting({
       active: 1,

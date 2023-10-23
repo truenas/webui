@@ -295,7 +295,7 @@ class directory_Services:
     configure_Ldap_Button = '//button[contains(.,"Configure LDAP")]'
     show_Button = '//button[contains(*/text(),"Show")]'
     warning_Dialog = '//h1[text()="Warning"]'
-    delete_AD02_Realm_Button = '//tr[contains(.,"AD02")]//button'
+    delete_AD03_Realm_Button = '//tr[contains(.,"AD03")]//button'
     delete_Dialog = '//h1[text()="Delete"]'
     delete_Confirm_Checkbox = '//mat-checkbox[@name="confirm_checkbox"]'
     delete_Confirm_Button = '//button[@id="confirm-dialog__action-button"]'
