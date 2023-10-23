@@ -27,6 +27,7 @@ import {
 import {
   CloudSyncTaskCardComponent,
 } from 'app/pages/data-protection/cloudsync/cloudsync-task-card/cloudsync-task-card.component';
+import { CloudsyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
 import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
@@ -170,8 +171,7 @@ describe('CloudSyncTaskCardComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(CloudsyncFormComponent, {
-      data: undefined,
+    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(CloudsyncWizardComponent, {
       wide: true,
     });
   });
