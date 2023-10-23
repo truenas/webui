@@ -2,8 +2,7 @@ import {
   ChangeDetectionStrategy, Component, EventEmitter, Input, Output,
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { map } from 'rxjs';
-import { VdevType } from 'app/enums/v-dev-type.enum';
+import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import helptext from 'app/helptext/storage/volumes/manager/manager';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 
@@ -22,10 +21,8 @@ export class MetadataWizardStepComponent {
   readonly helptext = helptext;
 
   protected readonly inventory$ = this.store.getInventoryForStep(VdevType.Special);
-  protected dataVdevLayout$ = this.store.topology$.pipe(
-    map((topology) => [topology.data.layout]),
-  );
 
+  protected allowedLayouts = Object.values(CreateVdevLayout);
   constructor(
     private store: PoolManagerStore,
   ) {}
