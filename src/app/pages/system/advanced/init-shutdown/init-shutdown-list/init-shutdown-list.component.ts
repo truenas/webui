@@ -97,20 +97,21 @@ export class InitShutdownListComponent implements OnInit {
 
   ngOnInit(): void {
     this.dataProvider = new AsyncDataProvider(this.ws.call('initshutdownscript.query'));
+    this.dataProvider.load();
   }
 
   addScript(): void {
     this.slideIn.open(InitShutdownFormComponent)
       .slideInClosed$
       .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe(() => this.dataProvider.refresh());
+      .subscribe(() => this.dataProvider.load());
   }
 
   editScript(script: InitShutdownScript): void {
     this.slideIn.open(InitShutdownFormComponent, { data: script })
       .slideInClosed$
       .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe(() => this.dataProvider.refresh());
+      .subscribe(() => this.dataProvider.load());
   }
 
   deleteScript(script: InitShutdownScript): void {
@@ -127,6 +128,6 @@ export class InitShutdownListComponent implements OnInit {
         );
       }),
       untilDestroyed(this),
-    ).subscribe(() => this.dataProvider.refresh());
+    ).subscribe(() => this.dataProvider.load());
   }
 }
