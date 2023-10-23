@@ -11,6 +11,7 @@ import {
 import {
   catchError, debounceTime, filter, map,
 } from 'rxjs/operators';
+import { YesNoPipe } from 'app/core/pipes/yes-no.pipe';
 import { SmartTestResultPageType } from 'app/enums/smart-test-results-page-type.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Choices } from 'app/interfaces/choices.interface';
@@ -62,10 +63,11 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
     { name: this.translate.instant('Rotation Rate (RPM)'), prop: 'rotationrate', hidden: true },
     { name: this.translate.instant('HDD Standby'), prop: 'hddstandby', hidden: true },
     { name: this.translate.instant('Adv. Power Management'), prop: 'advpowermgmt', hidden: true },
-    { name: this.translate.instant('Enable S.M.A.R.T.'), prop: 'togglesmart', hidden: true },
+    { name: this.translate.instant('Enable S.M.A.R.T.'), prop: 'togglesmart', hidden: true, pipe: this.yesNoPipe },
     { name: this.translate.instant('S.M.A.R.T. extra options'), prop: 'smartoptions', hidden: true },
   ];
   config = {
+    columns: this.columns,
     paging: true,
     sorting: { columns: this.columns },
     multiSelect: true,
@@ -123,6 +125,7 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
     private slideInService: IxSlideInService,
     private dialogService: DialogService,
     private disksUpdate: DisksUpdateService,
+    private yesNoPipe: YesNoPipe,
   ) {}
 
   ngOnDestroy(): void {

@@ -21,7 +21,7 @@ import { AppState } from 'app/store';
   providers: [TaskService],
 })
 export class SmartTaskListComponent implements EntityTableConfig {
-  title = this.translate.instant('S.M.A.R.T. Tests');
+  title = this.translate.instant('Periodic S.M.A.R.T. Tests');
   queryCall = 'smart.test.query' as const;
   routeAdd: string[] = ['tasks', 'smart', 'add'];
   routeAddTooltip = this.translate.instant('Add S.M.A.R.T. Test');

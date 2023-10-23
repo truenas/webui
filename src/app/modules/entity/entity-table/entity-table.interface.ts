@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-redundant-type-constituents */
-import { Type } from '@angular/core';
+import { PipeTransform, Type } from '@angular/core';
 import { TooltipPosition } from '@angular/material/tooltip';
 import { Observable, Subject } from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -115,6 +115,7 @@ export interface EntityTableMultiAction<Row = unknown> {
 export interface EntityTableConfigConfig {
   name?: string; // TODO: Unclear if this field actually exists
   paging?: boolean;
+  columns?: EntityTableColumn[];
   multiSelect?: boolean;
   deleteMsg?: {
     doubleConfirm?: (item: unknown) => Observable<boolean>;
@@ -148,6 +149,7 @@ export interface EntityTableColumn {
   enableMatTooltip?: boolean;
   showLockedStatus?: boolean;
   emptyText?: string;
+  pipe?: null | PipeTransform;
 
   icon?: string;
   widget?: {

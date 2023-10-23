@@ -1178,6 +1178,11 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     return this.conf.config.multiSelect ? this.currentColumns[1].prop : this.currentColumns[0].prop;
   }
 
+  getRowValue(columnName: string, value: string): string | null {
+    const existingColumn = this.conf.config?.columns?.find((column) => column.prop === columnName);
+    return existingColumn?.pipe ? existingColumn.pipe.transform(value) : value;
+  }
+
   onHover(evt: MouseEvent, over = true): void {
     const row = this.findRow(evt);
     const cells = row.children;

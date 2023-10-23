@@ -74,7 +74,7 @@
           ></ix-select>
         </ix-fieldset>
 
-        <ix-fieldset [title]="helptext.fieldset_smartsed | translate">
+        <ix-fieldset [title]="helptext.fieldset_smart | translate">
           <ix-checkbox
             formControlName="togglesmart"
             [label]="'Enable S.M.A.R.T.' | translate"
@@ -86,7 +86,9 @@
             [label]="'S.M.A.R.T. extra options' | translate"
             [tooltip]="helptext.disk_form_smartoptions_tooltip | translate"
           ></ix-input>
+        </ix-fieldset>
 
+        <ix-fieldset [title]="helptext.fieldset_sed | translate">
           <ix-input
             formControlName="passwd"
             type="password"
