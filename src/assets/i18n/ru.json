@@ -976,7 +976,6 @@
   "List of files and directories to exclude from sync.<br>  Separate entries by pressing <code>Enter</code>. See  <a href=\"https://rclone.org/filtering/\" target=\"_blank\">rclone filtering</a>  for more details about the <code>--exclude</code> option.": "",
   "List of groups for which to generate audit messages. Keep this list empty to Watch All.": "",
   "List of groups to ignore when auditing. If conflict arises between Watch List and Ignore List  (based on user group membership), then Watch List will take precedence and ops will be audited.": "",
-  "Load Exist Provider": "",
   "Load Existing Credentials": "",
   "Load an existing provider configuration.": "",
   "Loading disks...": "",

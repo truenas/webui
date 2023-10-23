@@ -9,7 +9,6 @@ export const helptextSystemCloudcredentials = {
  to configure connection credentials.'),
   },
   exist_provider: {
-    placeholder: T('Load Exist Provider'),
     tooltip: T('Load an existing provider configuration.'),
   },
   client_id: {

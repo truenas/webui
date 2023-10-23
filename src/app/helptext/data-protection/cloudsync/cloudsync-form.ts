@@ -59,9 +59,6 @@ export default {
   source_placeholder: T('Source'),
   destination_placeholder: T('Destination'),
 
-  schedule_placeholder: T('Schedule'),
-  schedule_tooltip: T(''),
-
   path_placeholder: T('Directory/Files'),
   path_tooltip: T('Select the directories or files to be sent to the cloud\
  for Push syncs, or the destination to be written for\
