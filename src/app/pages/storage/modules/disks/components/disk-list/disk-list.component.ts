@@ -66,7 +66,6 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
     { name: this.translate.instant('S.M.A.R.T. extra options'), prop: 'smartoptions', hidden: true },
   ];
   config = {
-    columns: this.columns,
     paging: true,
     sorting: { columns: this.columns },
     multiSelect: true,
