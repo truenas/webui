@@ -177,7 +177,7 @@ describe('PoolManagerComponent – wizard step reset', () => {
     await resetLogButton.click();
     expect(await wizard.getStepValues()).toStrictEqual({
       'Disk Size': '',
-      'Layout': '',
+      Layout: '',
       'Treat Disk Size as Minimum': false,
       Width: '',
     });

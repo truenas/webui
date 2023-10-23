@@ -5,7 +5,7 @@ import { BehaviorSubject, Observable, combineLatest, filter, of, switchMap, tap 
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { ReportingExporter } from 'app/interfaces/reporting-exporters.interface';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
-import { templateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component';
+import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { toggleColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
@@ -59,7 +59,20 @@ export class ReportingExporterListComponent implements OnInit {
         });
       },
     }),
-    templateColumn(),
+    actionsColumn({
+      actions: [
+        {
+          iconName: 'edit',
+          tooltip: this.translate.instant('Edit'),
+          onClick: (row) => this.doEdit(row),
+        },
+        {
+          iconName: 'delete',
+          tooltip: this.translate.instant('Delete'),
+          onClick: (row) => this.doDelete(row),
+        },
+      ],
+    }),
   ]);
 
   isLoading$ = new BehaviorSubject<boolean>(true);

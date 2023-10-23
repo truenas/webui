@@ -7,15 +7,12 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, combineLatest } from 'rxjs';
-import { distinctUntilChanged, filter, map, switchMap, take } from 'rxjs/operators';
-import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
+import { filter, repeat, skipWhile, take } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import { ScreenType } from 'app/enums/screen-type.enum';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
-import { Timeout } from 'app/interfaces/timeout.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import {
@@ -44,11 +41,9 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
   @Input() isPassive = false;
   protected enclosureSupport = false;
   @Input() showReorderHandle = false;
-  protected systemInfo: SystemInfo;
 
   hasOnlyMismatchVersionsReason$ = this.store$.select(selectHasOnlyMismatchVersionsReason);
 
-  timeInterval: Timeout;
   data: SystemInfo;
   ready = false;
   productImage = '';
@@ -61,16 +56,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
   hasHa: boolean;
   updateMethod = 'update.update';
   screenType = ScreenType.Desktop;
-  dateTime: string;
-  uptimeString$ = combineLatest([
-    this.sysGenService.uptime$,
-    this.sysGenService.dateTime$.pipe(
-      map((datetime) => this.formatDateTimePipe.transform(datetime, null, ' ', 'HH:mm')),
-    ),
-  ]).pipe(
-    distinctUntilChanged(),
-    switchMap(([uptime, datetime]) => this.calculateUptime(uptime, datetime)),
-  );
 
   readonly ScreenType = ScreenType;
 
@@ -86,7 +71,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
     public loader: AppLoaderService,
     public dialogService: DialogService,
     private titleCase: TitleCasePipe,
-    private formatDateTimePipe: FormatDateTimePipe,
     @Inject(WINDOW) private window: Window,
   ) {
     super(translate);
@@ -111,28 +95,58 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
 
   ngOnInit(): void {
     this.checkForUpdate();
-    this.store$.pipe(waitForSystemFeatures, untilDestroyed(this)).subscribe((features) => {
-      this.enclosureSupport = features.enclosure;
-    });
-    this.store$.pipe(waitForSystemInfo, untilDestroyed(this)).subscribe((systemInfo) => {
-      this.processSysInfo(systemInfo);
-    });
-    this.store$.select(selectIsIxHardware).pipe(untilDestroyed(this)).subscribe((isIxHardware) => {
-      this.isIxHardware = isIxHardware;
-      this.setProductImage();
-    });
+    this.loadSystemInfo();
+    this.loadEnclosureSupport();
+    this.loadIsIxHardware();
+  }
+
+  loadSystemInfo(): void {
+    this.loadSystemInfoForActive();
     if (this.sysGenService.isEnterprise) {
-      this.store$.select(selectIsHaLicensed).pipe(untilDestroyed(this)).subscribe((isHaLicensed) => {
-        this.isHaLicensed = isHaLicensed;
-        if (isHaLicensed) {
-          this.updateMethod = 'failover.upgrade';
-        }
-        if (isHaLicensed && this.isPassive) {
-          this.loadSystemInfoForPassive();
-        }
-        this.checkForRunningUpdate();
-      });
+      this.store$
+        .select(selectIsHaLicensed)
+        .pipe(untilDestroyed(this))
+        .subscribe((isHaLicensed) => {
+          this.isHaLicensed = isHaLicensed;
+          if (isHaLicensed) {
+            this.updateMethod = 'failover.upgrade';
+          }
+          if (isHaLicensed && this.isPassive) {
+            this.loadSystemInfoForPassive();
+          }
+          this.checkForRunningUpdate();
+        });
     }
+  }
+
+  loadIsIxHardware(): void {
+    this.store$
+      .select(selectIsIxHardware)
+      .pipe(untilDestroyed(this))
+      .subscribe((isIxHardware) => {
+        this.isIxHardware = isIxHardware;
+        this.setProductImage();
+      });
+  }
+
+  loadEnclosureSupport(): void {
+    this.store$
+      .pipe(waitForSystemFeatures, untilDestroyed(this))
+      .subscribe((features) => {
+        this.enclosureSupport = features.enclosure;
+      });
+  }
+
+  loadSystemInfoForActive(): void {
+    this.store$
+      .pipe(
+        waitForSystemInfo,
+        skipWhile(() => this.isPassive),
+        untilDestroyed(this),
+      )
+      .subscribe((systemInfo) => {
+        this.processSysInfo(systemInfo);
+      });
   }
 
   loadSystemInfoForPassive(): void {
@@ -144,7 +158,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
         this.data = null;
 
         this.ws.call('failover.call_remote', ['system.info'])
-          .pipe(untilDestroyed(this))
+          .pipe(repeat({ delay: 30000 }), untilDestroyed(this))
           .subscribe((systemInfo: SystemInfo) => {
             this.processSysInfo(systemInfo);
           });
@@ -179,33 +193,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
     this.data = systemInfo;
     this.setProductImage();
     this.ready = true;
-  }
-
-  calculateUptime(uptime: number, dateTime: string): Observable<string> {
-    const days = Math.floor(uptime / (3600 * 24));
-    const hours = Math.floor(uptime % (3600 * 24) / 3600);
-    const minutes = Math.floor(uptime % 3600 / 60);
-    const seconds = Math.floor(uptime % 60);
-
-    let uptimeString = '';
-    if (days > 0) {
-      uptimeString += this.translate.instant('{days, plural, =1 {# day} other {# days}},', { days }) + ' ';
-    }
-    if (hours > 0) {
-      uptimeString += this.translate.instant('{hours, plural, =1 {# hour} other {# hours}}', { hours }) + ' ';
-    }
-    if (minutes > 0) {
-      uptimeString += this.translate.instant('{minutes, plural, =1 {# minute} other {# minutes}}', { minutes }) + ' ';
-    }
-    if (seconds > 0 && !(days > 0)) {
-      uptimeString += this.translate.instant('{seconds, plural, =1 {# second} other {# seconds}}', { seconds }) + ' ';
-    }
-
-    if (!days && !hours && !minutes && !seconds) {
-      return this.translate.get('N/A');
-    }
-
-    return this.translate.get(`${uptimeString} as of {dateTime}`, { dateTime });
   }
 
   setProductImage(): void {

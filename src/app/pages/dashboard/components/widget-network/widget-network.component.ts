@@ -15,7 +15,6 @@ import {
 import { KiB } from 'app/constants/bytes.constant';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { LinkState, NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
-import { elapsedTime } from 'app/helpers/operators/elapsed-time.operator';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { BaseNetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
 import { NetworkInterfaceUpdate, ReportingDatabaseError, ReportingNameAndId } from 'app/interfaces/reporting.interface';
@@ -173,7 +172,6 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
       .pipe(
         waitForSystemInfo,
         map((systemInfo) => systemInfo.datetime.$date),
-        elapsedTime(10000),
         untilDestroyed(this),
       )
       .subscribe((serverTime) => {

@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
-import { AbstractControl, UntypedFormGroup } from '@angular/forms';
+import { AbstractControl, UntypedFormArray, UntypedFormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import { ResponseErrorType } from 'app/enums/response-error-type.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { ixManualValidateError } from 'app/modules/ix-forms/components/ix-errors/ix-errors.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
@@ -51,7 +50,7 @@ export class FormErrorHandlerService {
       const field = extraItem[0].split('.')[1];
       const errorMessage = extraItem[1];
 
-      const control = this.getFormField(formGroup, field, fieldsMap);
+      let control = this.getFormField(formGroup, field, fieldsMap);
 
       if (!control) {
         console.error(`Could not find control ${field}.`);
@@ -60,13 +59,23 @@ export class FormErrorHandlerService {
         return;
       }
 
-      control.setErrors({
-        manualValidateError: true,
-        manualValidateErrorMsg: errorMessage,
-        [ixManualValidateError]: { message: errorMessage },
-      });
+      if ((control as UntypedFormArray).controls?.length) {
+        const isExactMatch = (text: string, match: string): boolean => new RegExp(`\\b${match}\\b`).test(text);
 
-      control.markAsTouched();
+        control = (control as UntypedFormArray).controls
+          .find((controlOfArray) => isExactMatch(errorMessage, controlOfArray.value));
+      }
+
+      if (!control) {
+        this.dialog.error(this.errorHandler.parseError(error));
+      } else {
+        control.setErrors({
+          manualValidateError: true,
+          manualValidateErrorMsg: errorMessage,
+          ixManualValidateError: { message: errorMessage },
+        });
+        control.markAsTouched();
+      }
     }
   }
 

@@ -256,7 +256,7 @@ describe('PoolManagerComponent – start over functionality', () => {
     expect(await (await wizard.getActiveStep()).getLabel()).toBe('Log (Optional)');
     expect(await wizard.getStepValues()).toStrictEqual({
       'Disk Size': '',
-      'Layout': '',
+      Layout: '',
       'Treat Disk Size as Minimum': false,
       Width: '',
     });
