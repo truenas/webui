@@ -15,7 +15,7 @@ export class IxHeaderCellCheckboxComponent<T> extends ColumnComponent<T> {
     this.onColumnCheck(event.checked);
   }
 
-  get allChecked(): Observable<boolean> {
+  get allChecked$(): Observable<boolean> {
     return this.dataProvider.currentPage$.pipe(
       map((rows) => rows.every((row) => row[this.propertyName])),
       untilDestroyed(this),
