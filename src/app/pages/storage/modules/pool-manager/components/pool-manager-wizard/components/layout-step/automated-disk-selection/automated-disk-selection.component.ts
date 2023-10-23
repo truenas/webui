@@ -40,6 +40,10 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
     return this.type === VdevType.Data;
   }
 
+  get isMetadataVdev(): boolean {
+    return this.type === VdevType.Special;
+  }
+
   get dataLayoutTooltip(): string {
     if (this.isDataVdev) {
       return 'Read only field: The layout of this device has been preselected to match the layout of the existing Data devices in the pool';
