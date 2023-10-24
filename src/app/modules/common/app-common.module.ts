@@ -38,6 +38,7 @@ import { RedirectDialogComponent } from 'app/modules/common/dialog/redirect-dial
 import {
   ResilverProgressDialogComponent,
 } from 'app/modules/common/dialog/resilver-progress/resilver-progress.component';
+import { SessionExpiringDialogComponent } from 'app/modules/common/dialog/session-expiring-dialog/session-expiring-dialog.component';
 import { UpdateDialogComponent } from 'app/modules/common/dialog/update-dialog/update-dialog.component';
 import { SearchInputComponent } from 'app/modules/common/search-input/search-input.component';
 import { SummaryComponent } from 'app/modules/common/summary/summary.component';
@@ -93,6 +94,7 @@ import { ShowLogsDialogComponent } from './dialog/show-logs-dialog/show-logs-dia
   declarations: [
     AboutDialogComponent,
     ConfirmDialogComponent,
+    SessionExpiringDialogComponent,
     ConsolePanelDialogComponent,
     DirectoryServicesMonitorComponent,
     ErrorDialogComponent,
