@@ -240,6 +240,7 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
       ...disk,
       pool: this.getPoolColumn(disk),
       readable_size: filesize(disk.size, { standard: 'iec' }),
+      togglesmart: this.yesNoPipe.transform(disk.togglesmart) as unknown as boolean,
     }));
   }
 
