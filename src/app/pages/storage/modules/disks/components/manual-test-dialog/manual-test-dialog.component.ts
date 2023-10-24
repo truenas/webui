@@ -100,10 +100,6 @@ export class ManualTestDialogComponent {
             next: (result) => {
               if (result?.progress) {
                 this.progressTotalPercent = result.progress.percent / 100;
-
-                if (this.progressTotalPercent === 100) {
-                  this.dialogRef.close();
-                }
               }
               this.cdr.markForCheck();
             },

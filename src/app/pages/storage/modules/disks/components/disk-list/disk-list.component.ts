@@ -11,6 +11,7 @@ import {
 import {
   catchError, debounceTime, filter, map,
 } from 'rxjs/operators';
+import { YesNoPipe } from 'app/core/pipes/yes-no.pipe';
 import { SmartTestResultPageType } from 'app/enums/smart-test-results-page-type.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Choices } from 'app/interfaces/choices.interface';
@@ -123,6 +124,7 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
     private slideInService: IxSlideInService,
     private dialogService: DialogService,
     private disksUpdate: DisksUpdateService,
+    private yesNoPipe: YesNoPipe,
   ) {}
 
   ngOnDestroy(): void {
@@ -222,6 +224,15 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
     });
     this.diskUpdateSubscriptionId = this.disksUpdate.addSubscriber(disksUpdateTrigger$);
     this.entityList = entityList;
+
+    this.entityList.dataSource$.pipe(untilDestroyed(this)).subscribe(data => {
+      this.entityList.dataSource.data = data.map(item => {
+        return {
+          ...item,
+          togglesmart: this.yesNoPipe.transform(item.togglesmart) as unknown as boolean,
+        };
+      });
+    });
   }
 
   resourceTransformIncomingRestData(disks: Disk[]): Disk[] {

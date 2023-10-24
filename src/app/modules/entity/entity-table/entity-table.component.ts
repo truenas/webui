@@ -32,7 +32,6 @@ import {
 import {
   catchError, filter, switchMap, take, tap,
 } from 'rxjs/operators';
-import { YesNoPipe } from 'app/core/pipes/yes-no.pipe';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ApiCallMethod, ApiCallParams } from 'app/interfaces/api/api-call-directory.interface';
@@ -207,7 +206,6 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     public changeDetectorRef: ChangeDetectorRef,
     private snackbar: SnackbarService,
     private errorHandler: ErrorHandlerService,
-    private yesNoPipe: YesNoPipe,
   ) {
     // watch for navigation events as ngOnDestroy doesn't always trigger on these
     this.routeSub = this.router.events.pipe(untilDestroyed(this)).subscribe((event) => {
@@ -1178,10 +1176,6 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
 
   getFirstKey(): string {
     return this.conf.config.multiSelect ? this.currentColumns[1].prop : this.currentColumns[0].prop;
-  }
-
-  getRowValue(value: boolean | string): string {
-    return typeof value === 'boolean' ? this.yesNoPipe.transform(value) : value;
   }
 
   onHover(evt: MouseEvent, over = true): void {

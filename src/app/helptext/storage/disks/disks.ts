@@ -3,11 +3,11 @@ import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 
 export default {
+  fieldset_smart: 'S.M.A.R.T.',
   disk_form_title: T('Edit Disk'),
   fieldset_disk: T('General'),
   fieldset_powermgmt: T('Power Management'),
   fieldset_temperature: T('Temperature Alerts'),
-  fieldset_smart: T('S.M.A.R.T.'),
   fieldset_sed: T('SED'),
   disk_form_name_placeholder: T('Name'),
   disk_form_name_tooltip: T('Disk device name.'),
