@@ -4,6 +4,7 @@ import { of } from 'rxjs';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import helptext from 'app/helptext/storage/volumes/manager/manager';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
 import { LayoutStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/layout-step/layout-step.component';
 import { MetadataWizardStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/7-metadata-wizard-step/metadata-wizard-step.component';
 import { PoolManagerStore, PoolManagerTopology } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
@@ -45,6 +46,10 @@ describe('DataWizardStepComponent', () => {
         } as PoolManagerTopology),
         getInventoryForStep: jest.fn(() => of(fakeInventory)),
       }),
+      mockProvider(AddVdevsStore, {
+        pool$: of(null),
+        isLoading$: of(false),
+      }),
     ],
   });
 
@@ -55,9 +60,9 @@ describe('DataWizardStepComponent', () => {
   it('has the correct inputs', () => {
     const layoutComponent = spectator.query(LayoutStepComponent);
     expect(layoutComponent.description).toBe(helptext.special_vdev_description);
-    expect(layoutComponent.canChangeLayout).toBeFalsy();
+    expect(layoutComponent.canChangeLayout).toBeTruthy();
     expect(layoutComponent.inventory).toStrictEqual([...fakeInventory]);
-    expect(layoutComponent.limitLayouts).toStrictEqual([CreateVdevLayout.Raidz1]);
+    expect(layoutComponent.limitLayouts).toStrictEqual(Object.values(CreateVdevLayout));
     expect(layoutComponent.type).toStrictEqual(VdevType.Special);
   });
 });

@@ -181,6 +181,7 @@ describe('PoolManagerComponent – create pool', () => {
     // Metadata
     await wizard.clickNext();
     await wizard.fillStep({
+      Layout: 'Stripe',
       'Disk Size': '20 GiB (HDD)',
       Width: '1',
       'Number of VDEVs': '1',

@@ -188,6 +188,7 @@ describe('PoolManagerComponent – start over functionality', () => {
     // METADATA step activated
     expect(await (await wizard.getActiveStep()).getLabel()).toBe('Metadata (Optional)');
     await wizard.fillStep({
+      Layout: 'Stripe',
       'Disk Size': '20 GiB (HDD)',
       Width: '1',
       'Number of VDEVs': '1',
@@ -282,6 +283,7 @@ describe('PoolManagerComponent – start over functionality', () => {
     expect(await (await wizard.getActiveStep()).getLabel()).toBe('Metadata (Optional)');
     expect(await wizard.getStepValues()).toStrictEqual({
       'Disk Size': '',
+      Layout: '',
       'Number of VDEVs': '',
       'Treat Disk Size as Minimum': false,
       Width: '',

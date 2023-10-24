@@ -2,8 +2,8 @@
   [description]="helptext.special_vdev_description | translate"
   [type]="VdevType.Special"
   [inventory]="inventory$ | async"
-  [canChangeLayout]="false"
-  [limitLayouts]="dataVdevLayout$ | async"
+  [canChangeLayout]="canChangeLayout"
+  [limitLayouts]="allowedLayouts"
   [isStepActive]="isStepActive"
 ></ix-layout-step>
 
