@@ -1,5 +1,7 @@
 import { TitleCasePipe } from '@angular/common';
 import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component, Inject, Input, OnInit,
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
@@ -34,6 +36,7 @@ import { selectIsIxHardware, waitForSystemFeatures, waitForSystemInfo } from 'ap
     '../widget/widget.component.scss',
     './widget-sys-info.component.scss',
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [TitleCasePipe],
 })
 export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
@@ -71,11 +74,13 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
     public loader: AppLoaderService,
     public dialogService: DialogService,
     private titleCase: TitleCasePipe,
+    private cdr: ChangeDetectorRef,
     @Inject(WINDOW) private window: Window,
   ) {
     super(translate);
     this.sysGenService.updateRunning.pipe(untilDestroyed(this)).subscribe((isUpdateRunning: string) => {
       this.isUpdateRunning = isUpdateRunning === 'true';
+      this.cdr.markForCheck();
     });
 
     mediaObserver.asObservable().pipe(untilDestroyed(this)).subscribe((changes) => {
@@ -115,6 +120,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
             this.loadSystemInfoForPassive();
           }
           this.checkForRunningUpdate();
+          this.cdr.markForCheck();
         });
     }
   }
@@ -126,6 +132,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
       .subscribe((isIxHardware) => {
         this.isIxHardware = isIxHardware;
         this.setProductImage();
+        this.cdr.markForCheck();
       });
   }
 
@@ -134,6 +141,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
       .pipe(waitForSystemFeatures, untilDestroyed(this))
       .subscribe((features) => {
         this.enclosureSupport = features.enclosure;
+        this.cdr.markForCheck();
       });
   }
 
@@ -146,6 +154,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
       )
       .subscribe((systemInfo) => {
         this.processSysInfo(systemInfo);
+        this.cdr.markForCheck();
       });
   }
 
@@ -156,11 +165,13 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
     ).subscribe((haStatus) => {
       if (haStatus.hasHa) {
         this.data = null;
+        this.cdr.markForCheck();
 
         this.ws.call('failover.call_remote', ['system.info'])
           .pipe(repeat({ delay: 30000 }), untilDestroyed(this))
           .subscribe((systemInfo: SystemInfo) => {
             this.processSysInfo(systemInfo);
+            this.cdr.markForCheck();
           });
       } else if (!haStatus.hasHa) {
         this.productImage = '';
@@ -174,6 +185,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
       next: (jobs) => {
         if (jobs && jobs.length > 0) {
           this.isUpdateRunning = true;
+          this.cdr.markForCheck();
         }
       },
       error: (err) => {
@@ -255,6 +267,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
 
       this.updateAvailable = true;
       sessionStorage.updateAvailable = 'true';
+      this.cdr.markForCheck();
     });
   }
 }

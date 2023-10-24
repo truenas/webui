@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -16,6 +16,7 @@ import { SystemGeneralService } from 'app/services/system-general.service';
     '../widget/widget.component.scss',
     './widget-help.component.scss',
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WidgetHelpComponent extends WidgetComponent implements OnInit {
   systemType: ProductType;
@@ -30,6 +31,7 @@ export class WidgetHelpComponent extends WidgetComponent implements OnInit {
     public mediaObserver: MediaObserver,
     private sysGenService: SystemGeneralService,
     public translate: TranslateService,
+    private cdr: ChangeDetectorRef,
   ) {
     super(translate);
 
@@ -42,6 +44,7 @@ export class WidgetHelpComponent extends WidgetComponent implements OnInit {
   ngOnInit(): void {
     this.sysGenService.getProductType$.pipe(untilDestroyed(this)).subscribe((productType) => {
       this.systemType = productType;
+      this.cdr.markForCheck();
     });
   }
 }
