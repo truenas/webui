@@ -4,15 +4,15 @@ import {
   Input,
   ViewContainerRef,
 } from '@angular/core';
-import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
 import { IxHeaderCellTextComponent } from 'app/modules/ix-table2/components/ix-table-head/head-cells/ix-header-cell-text/ix-header-cell-text.component';
+import { DataProvider } from 'app/modules/ix-table2/interfaces/data-provider.interface';
 import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.interface';
 
 @Directive({
   selector: '[ix-header-cell]',
 })
 export class IxTableHeaderCellDirective<T> implements AfterViewInit {
-  @Input() dataProvider: ArrayDataProvider<T>;
+  @Input() dataProvider: DataProvider<T>;
   @Input() column: Column<T, ColumnComponent<T>>;
 
   constructor(private viewContainer: ViewContainerRef) {}

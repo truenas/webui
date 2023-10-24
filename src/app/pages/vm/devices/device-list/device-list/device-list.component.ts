@@ -78,10 +78,11 @@ export class DeviceListComponent implements OnInit {
     );
     this.dataProvider = new AsyncDataProvider<VmDevice>(devices$);
     this.setDefaultSort();
+    this.loadDevices();
   }
 
   loadDevices(): void {
-    this.dataProvider.refresh();
+    this.dataProvider.load();
   }
 
   onAdd(): void {

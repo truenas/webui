@@ -92,10 +92,11 @@ export class SmartTaskCardComponent implements OnInit {
       untilDestroyed(this),
     );
     this.dataProvider = new AsyncDataProvider<SmartTestTaskUi>(smartTasks$);
+    this.getSmartTasks();
   }
 
   getSmartTasks(): void {
-    this.dataProvider.refresh();
+    this.dataProvider.load();
   }
 
   doDelete(smartTask: SmartTestTaskUi): void {

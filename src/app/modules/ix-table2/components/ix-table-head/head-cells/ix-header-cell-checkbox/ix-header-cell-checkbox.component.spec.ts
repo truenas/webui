@@ -40,26 +40,36 @@ describe('IxHeaderCellCheckboxComponent', () => {
   });
 
   it('sets value when checkbox is changed', async () => {
+    spectator.component.onColumnCheck = jest.fn();
+
     const checkbox = await loader.getHarness(MatCheckboxHarness);
     expect(await checkbox.isChecked()).toBe(false);
 
     await checkbox.toggle();
     expect(await checkbox.isChecked()).toBe(true);
-    expect(spectator.component.dataProvider.rows.map((row) => row.booleanField)).toEqual([true, true, true]);
+    expect(spectator.component.onColumnCheck).toHaveBeenCalledWith(true);
 
     await checkbox.toggle();
     expect(await checkbox.isChecked()).toBe(false);
-    expect(spectator.component.dataProvider.rows.map((row) => row.booleanField)).toEqual([false, false, false]);
+    expect(spectator.component.onColumnCheck).toHaveBeenCalledWith(false);
   });
 
   it('sets checkbox when value is changed', async () => {
     const checkbox = await loader.getHarness(MatCheckboxHarness);
     expect(await checkbox.isChecked()).toBe(false);
 
-    spectator.component.dataProvider.rows[1].booleanField = true;
+    spectator.component.dataProvider.setRows([
+      { booleanField: true },
+      { booleanField: true },
+      { booleanField: true },
+    ]);
     expect(await checkbox.isChecked()).toBe(true);
 
-    spectator.component.dataProvider.rows[0].booleanField = false;
+    spectator.component.dataProvider.setRows([
+      { booleanField: false },
+      { booleanField: false },
+      { booleanField: true },
+    ]);
     expect(await checkbox.isChecked()).toBe(false);
   });
 });

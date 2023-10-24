@@ -84,10 +84,11 @@ export class ScrubTaskCardComponent implements OnInit {
       untilDestroyed(this),
     );
     this.dataProvider = new AsyncDataProvider<ScrubTaskUi>(scrubTasks$);
+    this.getScrubTasks();
   }
 
   getScrubTasks(): void {
-    this.dataProvider.refresh();
+    this.dataProvider.load();
   }
 
   doDelete(scrubTask: ScrubTaskUi): void {

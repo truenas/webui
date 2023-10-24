@@ -1,5 +1,6 @@
+import { DOCUMENT } from '@angular/common';
 import {
-  Component, AfterViewInit, ElementRef, ChangeDetectionStrategy, ChangeDetectorRef,
+  Component, AfterViewInit, ElementRef, ChangeDetectionStrategy, ChangeDetectorRef, Inject,
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -11,7 +12,7 @@ import {
 import { ActiveElement } from 'chart.js/dist/types';
 import * as d3 from 'd3';
 import {
-  filter, throttleTime,
+  filter, skipWhile, throttleTime,
 } from 'rxjs/operators';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { ScreenType } from 'app/enums/screen-type.enum';
@@ -80,6 +81,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     private store$: Store<AppState>,
     private resourcesUsageStore$: ResourcesUsageStore,
     private cdr: ChangeDetectorRef,
+    @Inject(DOCUMENT) private document: Document,
   ) {
     super(translate);
 
@@ -87,6 +89,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
 
     this.resourcesUsageStore$.cpuUsage$.pipe(
       throttleTime(500),
+      skipWhile(() => this.document.hidden),
       deepCloneState(),
       untilDestroyed(this),
     ).subscribe({

@@ -123,6 +123,7 @@ export class SmbCardComponent implements OnInit, OnChanges {
       untilDestroyed(this),
     );
     this.dataProvider = new AsyncDataProvider<SmbShare>(smbShares$);
+    this.getSmbShares();
   }
 
   openForm(row?: SmbShare): void {
@@ -208,7 +209,7 @@ export class SmbCardComponent implements OnInit, OnChanges {
   }
 
   private getSmbShares(): void {
-    this.dataProvider.refresh();
+    this.dataProvider.load();
   }
 
   private onChangeEnabledState(row: SmbShare): void {

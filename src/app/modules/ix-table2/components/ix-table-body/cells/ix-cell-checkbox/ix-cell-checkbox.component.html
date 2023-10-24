@@ -1,7 +1,7 @@
 <mat-checkbox
   ixTest="row-checkbox"
   [checked]="checked"
-  (change)="onCheckboxChange()"
+  (change)="onCheckboxChange($event)"
   (click)="$event.stopPropagation()"
 >
 </mat-checkbox>
