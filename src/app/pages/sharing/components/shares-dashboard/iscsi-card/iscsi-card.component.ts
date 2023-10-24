@@ -75,6 +75,7 @@ export class IscsiCardComponent implements OnInit {
       untilDestroyed(this),
     );
     this.dataProvider = new AsyncDataProvider<IscsiTarget>(iscsiShares$);
+    this.getIscsiTargets();
   }
 
   openForm(row?: IscsiTarget, openWizard?: boolean): void {
@@ -110,6 +111,6 @@ export class IscsiCardComponent implements OnInit {
   }
 
   private getIscsiTargets(): void {
-    this.dataProvider.refresh();
+    this.dataProvider.load();
   }
 }

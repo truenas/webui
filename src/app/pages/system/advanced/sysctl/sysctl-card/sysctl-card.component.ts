@@ -74,10 +74,9 @@ export class SysctlCardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const tunables$ = this.ws.call('tunable.query').pipe(
-      untilDestroyed(this),
-    );
+    const tunables$ = this.ws.call('tunable.query').pipe(untilDestroyed(this));
     this.dataProvider = new AsyncDataProvider<Tunable>(tunables$);
+    this.loadItems();
   }
 
   onAdd(): void {
@@ -85,7 +84,7 @@ export class SysctlCardComponent implements OnInit {
   }
 
   loadItems(): void {
-    this.dataProvider.refresh();
+    this.dataProvider.load();
   }
 
   onDelete(row: Tunable): void {

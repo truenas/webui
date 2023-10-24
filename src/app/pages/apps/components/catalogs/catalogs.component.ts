@@ -76,6 +76,7 @@ export class CatalogsComponent implements OnInit {
     );
     this.dataProvider = new AsyncDataProvider<Catalog>(catalogs$);
     this.setDefaultSort();
+    this.refresh();
 
     this.listenForCatalogSyncJobs();
   }
@@ -115,7 +116,7 @@ export class CatalogsComponent implements OnInit {
   }
 
   refresh(): void {
-    this.dataProvider.refresh();
+    this.dataProvider.load();
   }
 
   doAdd(): void {

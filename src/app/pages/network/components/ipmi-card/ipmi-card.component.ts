@@ -63,6 +63,7 @@ export class IpmiCardComponent implements OnInit {
   ngOnInit(): void {
     const ipmi$ = this.ws.call('ipmi.lan.query').pipe(untilDestroyed(this));
     this.dataProvider = new AsyncDataProvider<Ipmi>(ipmi$);
+    this.loadIpmiEntries();
   }
 
   canOpen(ipmi: Ipmi): boolean {
@@ -85,6 +86,6 @@ export class IpmiCardComponent implements OnInit {
   }
 
   private loadIpmiEntries(): void {
-    this.dataProvider.refresh();
+    this.dataProvider.load();
   }
 }

@@ -4,7 +4,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, map, switchMap, tap } from 'rxjs';
-import { Cronjob } from 'app/interfaces/cronjob.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
 import { relativeDateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
@@ -91,7 +90,7 @@ export class CronListComponent implements OnInit {
   ngOnInit(): void {
     const cronjobs$ = this.ws.call('cronjob.query').pipe(
       map((cronjobs) => {
-        return cronjobs.map((job: Cronjob): CronjobRow => ({
+        return cronjobs.map((job): CronjobRow => ({
           ...job,
           cron_schedule: scheduleToCrontab(job.schedule),
           next_run: this.taskService.getTaskNextRun(scheduleToCrontab(job.schedule)),
@@ -101,10 +100,11 @@ export class CronListComponent implements OnInit {
       untilDestroyed(this),
     );
     this.dataProvider = new AsyncDataProvider<CronjobRow>(cronjobs$);
+    this.getCronJobs();
   }
 
   getCronJobs(): void {
-    this.dataProvider.refresh();
+    this.dataProvider.load();
   }
 
   doAdd(): void {

@@ -85,10 +85,11 @@ export class SessionsCardComponent implements OnInit {
       untilDestroyed(this),
     );
     this.dataProvider = new AsyncDataProvider<AuthSession>(sessions$);
+    this.updateSessions();
   }
 
   updateSessions(): void {
-    this.dataProvider.refresh();
+    this.dataProvider.load();
   }
 
   async onConfigure(): Promise<void> {

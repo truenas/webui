@@ -65,10 +65,11 @@ export class SshConnectionCardComponent implements OnInit {
     );
     this.dataProvider = new AsyncDataProvider<KeychainSshCredentials>(credentials$);
     this.setDefaultSort();
+    this.getCredentials();
   }
 
   getCredentials(): void {
-    this.dataProvider.refresh();
+    this.dataProvider.load();
   }
 
   setDefaultSort(): void {

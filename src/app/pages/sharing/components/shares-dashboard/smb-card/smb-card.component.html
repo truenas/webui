@@ -9,7 +9,7 @@
 
     <ix-service-state-button
       [service]="service$ | async"
-      [count]="dataProvider.rows.length"
+      [count]="dataProvider.currentPageCount$ | async"
     ></ix-service-state-button>
 
     <div class="actions">
@@ -35,7 +35,7 @@
 
   <ix-table2
     class="table"
-    [ix-table2-empty]="!dataProvider.rows.length"
+    [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
     [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
   >
     <thead

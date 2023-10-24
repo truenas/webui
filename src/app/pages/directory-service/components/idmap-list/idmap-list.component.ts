@@ -153,10 +153,11 @@ export default class IdmapListComponent implements OnInit {
     );
     this.dataProvider = new AsyncDataProvider<IdmapRow>(idmapsRows$);
     this.setDefaultSort();
+    this.getIdmaps();
   }
 
   getIdmaps(): void {
-    this.dataProvider.refresh();
+    this.dataProvider.load();
   }
 
   setDefaultSort(): void {

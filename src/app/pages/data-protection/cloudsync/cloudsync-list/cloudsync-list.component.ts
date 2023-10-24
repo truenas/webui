@@ -137,10 +137,11 @@ export class CloudsyncListComponent implements OnInit {
       untilDestroyed(this),
     );
     this.dataProvider = new AsyncDataProvider<CloudSyncTaskUi>(cloudSyncTasks$);
+    this.getCloudSyncTasks();
   }
 
   getCloudSyncTasks(): void {
-    this.dataProvider.refresh();
+    this.dataProvider.load();
   }
 
   runNow(row: CloudSyncTaskUi): void {
