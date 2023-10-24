@@ -5,6 +5,7 @@ import {
   MatRowHarnessColumnsText,
   MatTableHarness,
 } from '@angular/material/table/testing';
+
 /**
  * This class provides sugar syntax to make it easier to work with tables.
  */

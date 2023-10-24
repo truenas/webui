@@ -10,7 +10,7 @@
   </mat-toolbar-row>
   <mat-card-content>
     <ix-table2
-      [ix-table2-empty]="!dataProvider.rows.length"
+      [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
       [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
     >
       <thead
@@ -23,31 +23,7 @@
         [columns]="columns"
         [dataProvider]="dataProvider"
         [isLoading]="dataProvider.isLoading$ | async"
-      >
-        <ng-template
-          let-route
-          ix-table-cell
-          [columnIndex]="2"
-          [dataProvider]="dataProvider"
-        >
-          <div class="actions">
-            <button
-              mat-icon-button
-              [attr.aria-label]="'Edit' | translate"
-              [matTooltip]="'Edit' | translate"
-              [ixTest]="['edit', route.id]"
-              (click)="doEdit(route)"
-            ><ix-icon name="mdi-pencil"></ix-icon></button>
-            <button
-              mat-icon-button
-              [attr.aria-label]="'Delete' | translate"
-              [matTooltip]="'Delete' | translate"
-              [ixTest]="['delete', route.id]"
-              (click)="doDelete(route)"
-            ><ix-icon name="mdi-delete"></ix-icon></button>
-          </div>
-        </ng-template>
-      </tbody>
+      ></tbody>
     </ix-table2>
     <ix-table-pager-show-more [pageSize]="4" [dataProvider]="dataProvider"></ix-table-pager-show-more>
   </mat-card-content>

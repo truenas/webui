@@ -12,7 +12,9 @@ $header-height: 193px;
 .container {
   display: flex;
   flex-direction: row;
-  height: calc(100vh - #{$header-height});
+  @media(min-width: $breakpoint-tablet) {
+    height: calc(100vh - #{$header-height});
+  }
 }
 
 .table-container {

@@ -52,6 +52,8 @@ export class FileTicketFormComponent implements OnInit {
     screenshot: [null as File[]],
   });
 
+  readonly isEnterprise$ = this.sysGeneralService.isEnterprise$;
+
   readonly acceptedFiles = ticketAcceptedFiles;
   readonly typeOptions$ = of(mapToOptions(ticketTypeLabels, this.translate));
   categoryOptions$: Observable<Option[]> = this.getCategories().pipe(
@@ -71,7 +73,7 @@ export class FileTicketFormComponent implements OnInit {
   isFormDisabled$ = combineLatest([this.form.status$, this.isFormLoading$]).pipe(
     map(([status, loading]) => status === 'INVALID' || loading),
   );
-  readonly isEnterprise$ = this.sysGeneralService.isEnterprise$;
+
   constructor(
     private ws: WebSocketService,
     private fb: FormBuilder,

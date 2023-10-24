@@ -1,5 +1,6 @@
+import { DOCUMENT } from '@angular/common';
 import {
-  Component, AfterViewInit, OnInit,
+  Component, AfterViewInit, OnInit, Inject,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -10,12 +11,11 @@ import { utcToZonedTime } from 'date-fns-tz';
 import filesize from 'filesize';
 import { Subscription, timer } from 'rxjs';
 import {
-  filter, map, take, throttleTime,
+  filter, map, skipWhile, take, throttleTime,
 } from 'rxjs/operators';
 import { KiB } from 'app/constants/bytes.constant';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { LinkState, NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
-import { elapsedTime } from 'app/helpers/operators/elapsed-time.operator';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { BaseNetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
 import { NetworkInterfaceUpdate, ReportingDatabaseError, ReportingNameAndId } from 'app/interfaces/reporting.interface';
@@ -160,6 +160,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
     public themeService: ThemeService,
     private store$: Store<AppState>,
     private resourcesUsageStore$: ResourcesUsageStore,
+    @Inject(DOCUMENT) private document: Document,
   ) {
     super(translate);
 
@@ -173,7 +174,6 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
       .pipe(
         waitForSystemInfo,
         map((systemInfo) => systemInfo.datetime.$date),
-        elapsedTime(10000),
         untilDestroyed(this),
       )
       .subscribe((serverTime) => {
@@ -198,6 +198,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
   ngAfterViewInit(): void {
     if (!this.fetchDataIntervalSubscription || this.fetchDataIntervalSubscription.closed) {
       this.fetchDataIntervalSubscription = timer(0, 10000).pipe(
+        skipWhile(() => this.document.hidden),
         untilDestroyed(this),
       ).subscribe(() => {
         this.fetchReportData();

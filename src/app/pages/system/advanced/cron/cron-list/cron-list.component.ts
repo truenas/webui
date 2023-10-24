@@ -1,11 +1,9 @@
-import {
-  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, TemplateRef, ViewChild,
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, map, switchMap, tap } from 'rxjs';
-import { Cronjob } from 'app/interfaces/cronjob.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
 import { relativeDateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
@@ -22,7 +20,6 @@ import { CronjobRow } from 'app/pages/system/advanced/cron/cron-list/cronjob-row
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { LayoutService } from 'app/services/layout.service';
 import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -32,8 +29,7 @@ import { WebSocketService } from 'app/services/ws.service';
   styleUrls: ['./cron-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CronListComponent implements OnInit, AfterViewInit {
-  @ViewChild('pageHeader') pageHeader: TemplateRef<unknown>;
+export class CronListComponent implements OnInit {
   cronjobs: CronjobRow[] = [];
   filterString = '';
   dataProvider: AsyncDataProvider<CronjobRow>;
@@ -87,7 +83,6 @@ export class CronListComponent implements OnInit, AfterViewInit {
     private dialog: DialogService,
     private errorHandler: ErrorHandlerService,
     private slideInService: IxSlideInService,
-    private layoutService: LayoutService,
     private matDialog: MatDialog,
     protected emptyService: EmptyService,
   ) {}
@@ -95,7 +90,7 @@ export class CronListComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     const cronjobs$ = this.ws.call('cronjob.query').pipe(
       map((cronjobs) => {
-        return cronjobs.map((job: Cronjob): CronjobRow => ({
+        return cronjobs.map((job): CronjobRow => ({
           ...job,
           cron_schedule: scheduleToCrontab(job.schedule),
           next_run: this.taskService.getTaskNextRun(scheduleToCrontab(job.schedule)),
@@ -105,14 +100,11 @@ export class CronListComponent implements OnInit, AfterViewInit {
       untilDestroyed(this),
     );
     this.dataProvider = new AsyncDataProvider<CronjobRow>(cronjobs$);
-  }
-
-  ngAfterViewInit(): void {
-    this.layoutService.pageHeaderUpdater$.next(this.pageHeader);
+    this.getCronJobs();
   }
 
   getCronJobs(): void {
-    this.dataProvider.refresh();
+    this.dataProvider.load();
   }
 
   doAdd(): void {

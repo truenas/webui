@@ -11,7 +11,7 @@
   </mat-toolbar-row>
 
   <ix-table2
-    [ix-table2-empty]="!dataProvider.rows.length"
+    [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
     [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
   >
     <tbody
@@ -19,41 +19,6 @@
       [columns]="columns"
       [dataProvider]="dataProvider"
       [isLoading]="dataProvider.isLoading$ | async"
-    >
-      <ng-template
-        let-ipmi
-        ix-table-cell
-        [columnIndex]="0"
-        [dataProvider]="dataProvider"
-      >
-        {{ 'Channel {n}' | translate: { n: ipmi.channel } }}
-      </ng-template>
-      <ng-template
-        let-ipmi
-        ix-table-cell
-        [columnIndex]="1"
-        [dataProvider]="dataProvider"
-      >
-        <div class="actions">
-          <button
-            mat-icon-button
-            [ixTest]="['ipmi', ipmi.channel, 'edit']"
-            (click)="onEdit(ipmi)"
-          >
-            <ix-icon name="edit"></ix-icon>
-            <ix-icon name="pencil"></ix-icon>
-          </button>
-          <button
-            *ngIf="canOpen(ipmi)"
-            mat-icon-button
-            [matTooltip]="'Open' | translate"
-            [ixTest]="['ipmi', ipmi.channel, 'open']"
-            (click)="onOpen(ipmi)"
-          >
-            <ix-icon name="launch"></ix-icon>
-          </button>
-        </div>
-      </ng-template>
-    </tbody>
+    ></tbody>
   </ix-table2>
 </mat-card>

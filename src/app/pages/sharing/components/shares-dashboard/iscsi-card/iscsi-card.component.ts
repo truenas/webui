@@ -6,7 +6,7 @@ import { ServiceStatus } from 'app/enums/service-status.enum';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
-import { templateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component';
+import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
@@ -41,7 +41,20 @@ export class IscsiCardComponent implements OnInit {
       title: this.translate.instant('Target Alias'),
       propertyName: 'alias',
     }),
-    templateColumn(),
+    actionsColumn({
+      actions: [
+        {
+          iconName: 'edit',
+          tooltip: this.translate.instant('Edit'),
+          onClick: (row) => this.openForm(row),
+        },
+        {
+          iconName: 'delete',
+          tooltip: this.translate.instant('Delete'),
+          onClick: (row) => this.doDelete(row),
+        },
+      ],
+    }),
   ]);
 
   constructor(
@@ -61,6 +74,7 @@ export class IscsiCardComponent implements OnInit {
       untilDestroyed(this),
     );
     this.dataProvider = new AsyncDataProvider<IscsiTarget>(iscsiShares$);
+    this.getIscsiTargets();
   }
 
   openForm(row?: IscsiTarget, openWizard?: boolean): void {
@@ -72,7 +86,7 @@ export class IscsiCardComponent implements OnInit {
       slideInRef = this.slideInService.open(TargetFormComponent, { data: row, wide: true });
     }
 
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.getIscsiTargets();
     });
   }
@@ -96,6 +110,6 @@ export class IscsiCardComponent implements OnInit {
   }
 
   private getIscsiTargets(): void {
-    this.dataProvider.refresh();
+    this.dataProvider.load();
   }
 }

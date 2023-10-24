@@ -3,13 +3,14 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { formatDuration, intervalToDuration } from 'date-fns';
+import { of } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { AuthSession, AuthSessionCredentialsData } from 'app/interfaces/auth-session.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
+import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { dateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-date/ix-cell-date.component';
-import { templateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
@@ -27,7 +28,7 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
 @UntilDestroy()
 @Component({
   selector: 'ix-sessions-card',
-  styleUrls: ['../../common-card.scss', './sessions-card.component.scss'],
+  styleUrls: ['../../common-card.scss'],
   templateUrl: './sessions-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -46,12 +47,24 @@ export class SessionsCardComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Username'),
       propertyName: 'credentials_data',
+      getValue: (row) => this.getUsername(row),
     }),
     dateColumn({
       title: this.translate.instant('Start session time'),
       propertyName: 'created_at',
     }),
-    templateColumn(),
+    actionsColumn({
+      actions: [
+        {
+          iconName: 'exit_to_app',
+          dynamicTooltip: (row) => of(row.current
+            ? this.translate.instant('This session is current and cannot be terminated')
+            : this.translate.instant('Terminate session')),
+          onClick: (row) => this.onTerminate(row.id),
+          disabled: (row) => of(row.current),
+        },
+      ],
+    }),
   ]);
 
   constructor(
@@ -72,16 +85,17 @@ export class SessionsCardComponent implements OnInit {
       untilDestroyed(this),
     );
     this.dataProvider = new AsyncDataProvider<AuthSession>(sessions$);
+    this.updateSessions();
   }
 
   updateSessions(): void {
-    this.dataProvider.refresh();
+    this.dataProvider.load();
   }
 
   async onConfigure(): Promise<void> {
     await this.advancedSettings.showFirstTimeWarningIfNeeded();
     const slideInRef = this.slideInService.open(TokenSettingsComponent);
-    slideInRef?.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+    slideInRef?.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.updateSessions();
     });
   }

@@ -1,3 +1,4 @@
+import { DOCUMENT } from '@angular/common';
 import {
   Component, AfterViewInit, OnDestroy, ElementRef, Inject, HostListener,
 } from '@angular/core';
@@ -5,7 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { tween, styler } from 'popmotion';
-import { take, tap } from 'rxjs/operators';
+import { skipWhile, take, tap } from 'rxjs/operators';
 import { Styler } from 'stylefire';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { ScreenType } from 'app/enums/screen-type.enum';
@@ -21,6 +22,7 @@ import { VolumesData } from 'app/interfaces/volume-data.interface';
 import { DashboardFormComponent } from 'app/pages/dashboard/components/dashboard-form/dashboard-form.component';
 import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
 import { DashboardStore } from 'app/pages/dashboard/store/dashboard-store.service';
+import { ResourcesUsageStore } from 'app/pages/dashboard/store/resources-usage-store.service';
 import { deepCloneState } from 'app/pages/dashboard/utils/deep-clone-state.helper';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LayoutService } from 'app/services/layout.service';
@@ -121,7 +123,9 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
     private layoutService: LayoutService,
     private store$: Store<AppState>,
     @Inject(WINDOW) private window: Window,
+    @Inject(DOCUMENT) private document: Document,
     private dashboardStore$: DashboardStore,
+    private resourcesUsageStore$: ResourcesUsageStore,
   ) {}
 
   ngAfterViewInit(): void {
@@ -134,12 +138,14 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
         this.isLoaded = !isLoading;
       },
     });
+    this.subscribeToResourceUsageUpdates();
     this.generateDefaultConfig();
   }
 
   startListeners(): void {
     this.dashboardStore$.state$.pipe(
       deepCloneState(),
+      skipWhile(() => this.document.hidden),
       tap((state) => {
         if (state.isLoading) {
           return;
@@ -287,6 +293,10 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
   onConfirm(): void {
     this.saveState(this.dashState);
     delete this.previousState;
+  }
+
+  private subscribeToResourceUsageUpdates(): void {
+    this.resourcesUsageStore$.getResourceUsageUpdates().pipe(untilDestroyed(this)).subscribe();
   }
 
   private applyState(newState: DashConfigItem[]): void {

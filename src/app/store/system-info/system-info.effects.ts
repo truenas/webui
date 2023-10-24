@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { EMPTY, of } from 'rxjs';
 import {
-  catchError, map, mergeMap, switchMap,
+  catchError, map, mergeMap, repeat, switchMap,
 } from 'rxjs/operators';
 import { SystemFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { WebSocketService } from 'app/services/ws.service';
@@ -18,6 +18,7 @@ export class SystemInfoEffects {
     ofType(adminUiInitialized, systemInfoUpdated),
     mergeMap(() => {
       return this.ws.call('system.info').pipe(
+        repeat({ delay: 30000 }),
         map((systemInfo) => systemInfoLoaded({ systemInfo })),
         catchError((error) => {
           // TODO: Basically a fatal error. Handle it.

@@ -83,9 +83,7 @@ export default class IdmapListComponent implements OnInit {
         },
         {
           iconName: 'delete',
-          hidden: (row) => {
-            return of(requiredIdmapDomains.includes(row.name as IdmapName));
-          },
+          hidden: (row) => of(requiredIdmapDomains.includes(row.name as IdmapName)),
           tooltip: this.translateService.instant('Delete'),
           onClick: (row) => {
             this.dialogService.confirm({
@@ -155,10 +153,11 @@ export default class IdmapListComponent implements OnInit {
     );
     this.dataProvider = new AsyncDataProvider<IdmapRow>(idmapsRows$);
     this.setDefaultSort();
+    this.getIdmaps();
   }
 
   getIdmaps(): void {
-    this.dataProvider.refresh();
+    this.dataProvider.load();
   }
 
   setDefaultSort(): void {

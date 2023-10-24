@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { lastValueFrom } from 'rxjs';
+import { filter, lastValueFrom } from 'rxjs';
 import { Overwrite } from 'utility-types';
 import { Choices } from 'app/interfaces/choices.interface';
 import { IscsiPortal } from 'app/interfaces/iscsi.interface';
@@ -75,7 +75,7 @@ export class PortalListComponent implements EntityTableConfig<IscsiPortalRow> {
 
   doAdd(): void {
     const slideInRef = this.slideInService.open(PortalFormComponent);
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.entityList.getData());
   }
 
   doEdit(id: number, entityList: EntityTableComponent<IscsiPortalRow>): void {
@@ -89,7 +89,7 @@ export class PortalListComponent implements EntityTableConfig<IscsiPortalRow> {
     });
 
     const slideInRef = this.slideInService.open(PortalFormComponent, { data: { ...portal, listen } });
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.entityList.getData());
   }
 
   prerequisite(): Promise<boolean> {

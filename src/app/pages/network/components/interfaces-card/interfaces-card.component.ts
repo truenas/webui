@@ -10,13 +10,14 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import { of } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import helptext from 'app/helptext/network/interfaces/interfaces-list';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { AllNetworkInterfacesUpdate } from 'app/interfaces/reporting.interface';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
-import { templateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component';
+import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -61,7 +62,31 @@ export class InterfacesCardComponent implements OnInit {
       type: IpAddressesCellComponent,
       title: this.translate.instant('IP Addresses'),
     },
-    templateColumn(),
+    actionsColumn({
+      actions: [
+        {
+          iconName: 'edit',
+          tooltip: this.translate.instant('Edit'),
+          onClick: (row) => this.onEdit(row),
+        },
+        {
+          iconName: 'refresh',
+          hidden: (row) => of(!this.isPhysical(row)),
+          disabled: () => of(this.isHaEnabled),
+          dynamicTooltip: () => of(this.isHaEnabled
+            ? this.translate.instant(helptext.ha_enabled_reset_msg)
+            : this.translate.instant('Reset configuration')),
+          onClick: (row) => this.onReset(row),
+        },
+        {
+          iconName: 'delete',
+          tooltip: this.isHaEnabled ? this.translate.instant(helptext.ha_enabled_delete_msg) : '',
+          hidden: (row) => of(this.isPhysical(row)),
+          onClick: (row) => this.onDelete(row),
+          disabled: () => of(this.isHaEnabled),
+        },
+      ],
+    }),
   ]);
 
   readonly helptext = helptext;

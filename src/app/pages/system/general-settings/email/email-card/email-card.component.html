@@ -1,13 +1,13 @@
-<mat-card id="email-card">
+<mat-card>
   <mat-toolbar-row>
     <h3>{{ 'Email' | translate }}</h3>
     <div class="actions action-icon">
       <button
-        *ixWithLoadingState="emailConfig$ as emailConfig"
+        id="email-settings"
         mat-button
         color="default"
         [ixTest]="['email', 'settings']"
-        (click)="openEmailSettings(emailConfig)"
+        (click)="openEmailSettings()"
       >
         {{ 'Settings' | translate }}
       </button>

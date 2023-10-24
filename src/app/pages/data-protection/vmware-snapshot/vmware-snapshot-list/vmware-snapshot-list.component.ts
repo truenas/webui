@@ -65,6 +65,7 @@ export class VmwareSnapshotListComponent implements OnInit {
       untilDestroyed(this),
     );
     this.dataProvider = new AsyncDataProvider<VmwareSnapshot>(snapshots$);
+    this.getSnapshotsData();
   }
 
   onListFiltered(query: string): void {
@@ -78,17 +79,18 @@ export class VmwareSnapshotListComponent implements OnInit {
   }
 
   getSnapshotsData(): void {
-    this.dataProvider.refresh();
+    this.dataProvider.load();
   }
 
   doAdd(): void {
     const slideInRef = this.slideInService.open(VmwareSnapshotFormComponent);
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.getSnapshotsData());
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getSnapshotsData());
   }
 
   doEdit(snapshot: VmwareSnapshot): void {
     const slideInRef = this.slideInService.open(VmwareSnapshotFormComponent, { data: snapshot });
     slideInRef.slideInClosed$.pipe(
+      filter(Boolean),
       untilDestroyed(this),
     ).subscribe(() => this.getSnapshotsData());
   }

@@ -7,7 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { isObject } from 'lodash';
 import {
-  switchMap, filter, map, EMPTY, catchError, tap,
+  switchMap, filter, map, EMPTY, catchError, tap, of,
 } from 'rxjs';
 import { helptextSystemCa } from 'app/helptext/system/ca';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
@@ -15,7 +15,7 @@ import { CertificateAuthority } from 'app/interfaces/certificate-authority.inter
 import { Job } from 'app/interfaces/job.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
-import { templateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component';
+import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table2/utils';
@@ -56,7 +56,36 @@ export class CertificateAuthorityListComponent implements OnInit {
       propertyName: 'common',
       sortable: true,
     }),
-    templateColumn(),
+    actionsColumn({
+      actions: [
+        {
+          iconName: 'beenhere',
+          tooltip: this.translate.instant('Sign CSR'),
+          onClick: (row) => this.doSignCsr(row),
+        },
+        {
+          iconName: 'mdi-undo',
+          tooltip: this.translate.instant('Revoke'),
+          hidden: (row) => of(row.revoked),
+          onClick: (row) => this.doRevoke(row),
+        },
+        {
+          iconName: 'mdi-download',
+          tooltip: this.translate.instant('Download'),
+          onClick: (row) => this.doDownload(row),
+        },
+        {
+          iconName: 'edit',
+          tooltip: this.translate.instant('Edit'),
+          onClick: (row) => this.doEdit(row),
+        },
+        {
+          iconName: 'delete',
+          tooltip: this.translate.instant('Delete'),
+          onClick: (row) => this.doDelete(row),
+        },
+      ],
+    }),
   ]);
 
   helptextSystemCa = helptextSystemCa;
@@ -88,17 +117,11 @@ export class CertificateAuthorityListComponent implements OnInit {
     );
     this.dataProvider = new AsyncDataProvider<CertificateAuthority>(authorities$);
     this.setDefaultSort();
+    this.getCertificates();
   }
 
   getCertificates(): void {
-    this.dataProvider.refresh();
-  }
-
-  onListFiltered(query: string): void {
-    this.filterString = query.toLowerCase();
-    this.dataProvider.setRows(
-      this.authorities.filter((certificate) => [certificate.name.toLowerCase()].includes(this.filterString)),
-    );
+    this.dataProvider.load();
   }
 
   setDefaultSort(): void {

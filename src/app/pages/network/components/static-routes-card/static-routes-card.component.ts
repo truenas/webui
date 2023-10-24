@@ -1,14 +1,13 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, OnInit,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, tap,
-} from 'rxjs';
+import { filter, tap } from 'rxjs';
 import { StaticRoute } from 'app/interfaces/static-route.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
-import { templateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component';
+import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table2/utils';
@@ -40,7 +39,20 @@ export class StaticRoutesCardComponent implements OnInit {
       propertyName: 'gateway',
       sortable: true,
     }),
-    templateColumn(),
+    actionsColumn({
+      actions: [
+        {
+          iconName: 'edit',
+          tooltip: this.translate.instant('Edit'),
+          onClick: (row) => this.doEdit(row),
+        },
+        {
+          iconName: 'delete',
+          tooltip: this.translate.instant('Delete'),
+          onClick: (row) => this.doDelete(row),
+        },
+      ],
+    }),
   ]);
 
   constructor(
@@ -48,7 +60,6 @@ export class StaticRoutesCardComponent implements OnInit {
     private ws: WebSocketService,
     private slideInService: IxSlideInService,
     private translate: TranslateService,
-    private cdr: ChangeDetectorRef,
     protected emptyService: EmptyService,
   ) {}
 
@@ -59,18 +70,11 @@ export class StaticRoutesCardComponent implements OnInit {
     );
     this.dataProvider = new AsyncDataProvider<StaticRoute>(staticRoutes$);
     this.setDefaultSort();
+    this.getStaticRoutes();
   }
 
   getStaticRoutes(): void {
-    this.dataProvider.refresh();
-  }
-
-  onListFiltered(query: string): void {
-    this.filterString = query.toLowerCase();
-    this.dataProvider.setRows(this.staticRoutes.filter((route) => [
-      route.destination.toLowerCase(),
-      route.gateway.toLowerCase(),
-    ].includes(this.filterString)));
+    this.dataProvider.load();
   }
 
   setDefaultSort(): void {
@@ -83,14 +87,14 @@ export class StaticRoutesCardComponent implements OnInit {
 
   doAdd(): void {
     const slideInRef = this.slideInService.open(StaticRouteFormComponent);
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.getStaticRoutes();
     });
   }
 
   doEdit(route: StaticRoute): void {
     const slideInRef = this.slideInService.open(StaticRouteFormComponent, { data: route });
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.getStaticRoutes();
     });
   }

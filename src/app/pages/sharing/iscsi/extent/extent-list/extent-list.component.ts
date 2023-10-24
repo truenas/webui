@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { filter } from 'rxjs';
 import { IscsiExtentType } from 'app/enums/iscsi.enum';
 import { IscsiExtent } from 'app/interfaces/iscsi.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
@@ -84,13 +85,13 @@ export class ExtentListComponent implements EntityTableConfig<IscsiExtent> {
 
   doAdd(): void {
     const slideInRef = this.slideInService.open(ExtentFormComponent, { wide: true });
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityTable.getData());
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.entityTable.getData());
   }
 
   doEdit(id: number): void {
     const extent = this.entityTable.rows.find((row) => row.id === id);
     const slideInRef = this.slideInService.open(ExtentFormComponent, { wide: true, data: extent });
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityTable.getData());
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.entityTable.getData());
   }
 
   getActions(): EntityTableAction[] {

@@ -240,15 +240,18 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
         title: this.translate.instant('Keep'),
         message: this.translate.instant('Keep this Boot Environment?'),
         buttonText: this.translate.instant('Set Keep Flag'),
-      }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-        this.ws.call('bootenv.set_attribute', [bootenv.id, { keep: true }]).pipe(
-          this.loader.withLoader(),
-          this.errorHandler.catchError(),
-          untilDestroyed(this),
-        ).subscribe(() => {
-          this.getBootEnvironments();
-          this.checkboxColumn.clearSelection();
-        });
+      }).pipe(
+        filter(Boolean),
+        switchMap(() => {
+          return this.ws.call('bootenv.set_attribute', [bootenv.id, { keep: true }]).pipe(
+            this.loader.withLoader(),
+            this.errorHandler.catchError(),
+          );
+        }),
+        untilDestroyed(this),
+      ).subscribe(() => {
+        this.getBootEnvironments();
+        this.checkboxColumn.clearSelection();
       });
     } else {
       this.dialogService.confirm({
