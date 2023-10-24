@@ -5,16 +5,23 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import _ from 'lodash';
+import {
+  EMPTY, Observable, catchError, combineLatest, map, of, tap,
+} from 'rxjs';
 import { AclType } from 'app/enums/acl-type.enum';
+import { NfsAclTag } from 'app/enums/nfs-acl.enum';
+import { PosixAclTag } from 'app/enums/posix-acl.enum';
 import {
   Acl, AclTemplateByPath, AclTemplateCreateParams, NfsAclItem, PosixAclItem,
 } from 'app/interfaces/acl.interface';
+import { DsUncachedGroup, DsUncachedUser } from 'app/interfaces/ds-cache.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SaveAsPresetModalConfig } from 'app/pages/datasets/modules/permissions/interfaces/save-as-preset-modal-config.interface';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { UserService } from 'app/services/user.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -38,6 +45,7 @@ export class SaveAsPresetModalComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
+    private userService: UserService,
     private dialogRef: MatDialogRef<SaveAsPresetModalComponent>,
     private store: DatasetAclEditorStore,
     @Inject(MAT_DIALOG_DATA) public data: SaveAsPresetModalConfig,
@@ -125,5 +133,61 @@ export class SaveAsPresetModalComponent implements OnInit {
         this.dialogService.error(this.errorHandler.parseWsError(error));
       },
     });
+  }
+
+  loadIds(acl: Acl): Observable<Acl> {
+    const requests$: Observable<DsUncachedGroup | DsUncachedUser>[] = [];
+    const userWhoToIds = new Map<string, number>();
+    const groupWhoToIds = new Map<string, number>();
+    for (const ace of acl.acl) {
+      if ([NfsAclTag.User, PosixAclTag.User].includes(ace.tag)) {
+        requests$.push(
+          this.userService.getUserByName(ace.who).pipe(
+            tap((user: DsUncachedUser) => userWhoToIds.set(ace.who, user.pw_uid)),
+            catchError((error: WebsocketError) => {
+              this.dialogService.error(this.errorHandler.parseWsError(error));
+              return EMPTY;
+            }),
+          ),
+        );
+      }
+      if ([NfsAclTag.UserGroup, PosixAclTag.Group].includes(ace.tag)) {
+        requests$.push(
+          this.userService.getGroupByName(ace.who).pipe(
+            tap((group: DsUncachedGroup) => groupWhoToIds.set(ace.who, group.gr_gid)),
+            catchError((error: WebsocketError) => {
+              this.dialogService.error(this.errorHandler.parseWsError(error));
+              return EMPTY;
+            }),
+          ),
+        );
+      }
+    }
+
+    const result$ = combineLatest(requests$).pipe(
+      map(() => {
+        const newAcl = _.cloneDeep(acl);
+        const newAces = [];
+        for (const ace of newAcl.acl) {
+          if ([NfsAclTag.User, PosixAclTag.User].includes(ace.tag)) {
+            const id = userWhoToIds.has(ace.who) ? userWhoToIds.get(ace.who) : -1;
+            newAces.push({ ...ace, id });
+            continue;
+          }
+          if ([NfsAclTag.UserGroup, PosixAclTag.Group].includes(ace.tag)) {
+            const id = groupWhoToIds.has(ace.who) ? groupWhoToIds.get(ace.who) : -1;
+            newAces.push({ ...ace, id });
+            continue;
+          }
+          newAces.push({
+            ...ace,
+            id: -1,
+          });
+        }
+        newAcl.acl = newAces as NfsAclItem[] | PosixAclItem[];
+        return newAcl;
+      }),
+    );
+    return requests$.length ? result$ : of(acl);
   }
 }
