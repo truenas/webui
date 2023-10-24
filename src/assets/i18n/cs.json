@@ -1,6 +1,6 @@
 {
   "": "",
-  "\n            It looks like your session has been inactive for more than {lifetime} seconds.<br>\n            For security reasons we will log you out at {time}.\n          ": "",
+  "\n              It looks like your session has been inactive for more than {lifetime} seconds.<br>\n              For security reasons we will log you out at {time}.\n            ": "",
   " Est. Usable Raw Capacity": "",
   " Please click the button below to add {item}.": "",
   " bytes.": "",
@@ -231,6 +231,7 @@
   "Advanced Remote Options": "",
   "Advanced Replication Creation": "",
   "Advanced Settings": "",
+  "Advanced Settings → Sessions": "",
   "After entering the <b>Hostname, Username</b>, and <b>Password</b>, click <b>Fetch Datastores</b> and select the datastore to be synchronized.": "",
   "Agree": "",
   "Alert": "",
@@ -584,6 +585,7 @@
   "Change Enclosure Label": "",
   "Change Server": "",
   "Change Settings and Clear Report History?": "",
+  "Change Token Lifetime in": "",
   "Change from <i>public</i> to increase system security. Can only contain alphanumeric characters, underscores, dashes, periods, and spaces. This can be left empty for <i>SNMPv3</i> networks.": "",
   "Changelog": "",
   "Changes Saved": "",

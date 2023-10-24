@@ -9,6 +9,7 @@ import { format } from 'date-fns';
 import { filter } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Timeout } from 'app/interfaces/timeout.interface';
+import { SessionExpiringDialogComponent } from 'app/modules/common/dialog/session-expiring-dialog/session-expiring-dialog.component';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -70,17 +71,20 @@ export class TokenLifetimeService {
           );
           this.authService.logout().pipe(untilDestroyed(this)).subscribe();
         }, showConfirmTime);
-        this.dialogService.confirm({
-          title: this.translate.instant('Logout'),
-          message: this.translate.instant(`
-            It looks like your session has been inactive for more than {lifetime} seconds.<br>
-            For security reasons we will log you out at {time}.
-          `, { time: format(new Date(new Date().getTime() + showConfirmTime), 'HH:mm:ss'), lifetime }),
-          buttonText: this.translate.instant('Extend session'),
-          hideCancel: true,
-          hideCheckbox: true,
+
+        const dialogRef = this.matDialog.open(SessionExpiringDialogComponent, {
           disableClose: true,
-        }).pipe(untilDestroyed(this)).subscribe((isExtend) => {
+          data: {
+            title: this.translate.instant('Logout'),
+            message: this.translate.instant(`
+              It looks like your session has been inactive for more than {lifetime} seconds.<br>
+              For security reasons we will log you out at {time}.
+            `, { time: format(new Date(new Date().getTime() + showConfirmTime), 'HH:mm:ss'), lifetime }),
+            buttonText: this.translate.instant('Extend session'),
+          },
+        });
+
+        dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe((isExtend) => {
           clearTimeout(this.terminateCancelTimeout);
           if (isExtend) {
             this.start();
