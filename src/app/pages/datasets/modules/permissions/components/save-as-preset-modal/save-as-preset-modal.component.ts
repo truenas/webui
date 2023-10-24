@@ -5,7 +5,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import _ from 'lodash';
-import { EMPTY, Observable, catchError, combineLatest, map, switchMap, tap } from 'rxjs';
+import { EMPTY, Observable, catchError, combineLatest, map, of, switchMap, tap } from 'rxjs';
 import { AclType } from 'app/enums/acl-type.enum';
 import { NfsAclTag } from 'app/enums/nfs-acl.enum';
 import { PosixAclTag } from 'app/enums/posix-acl.enum';
@@ -153,7 +153,8 @@ export class SaveAsPresetModalComponent implements OnInit {
         );
       }
     }
-    return combineLatest(requests$).pipe(
+
+    const result$ = combineLatest(requests$).pipe(
       map(() => {
         const newAcl = _.cloneDeep(acl);
         const newAces = [];
@@ -177,5 +178,6 @@ export class SaveAsPresetModalComponent implements OnInit {
         return newAcl;
       }),
     );
+    return requests$.length ? result$ : of(acl);
   }
 }
