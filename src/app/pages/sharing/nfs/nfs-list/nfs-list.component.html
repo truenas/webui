@@ -1,0 +1,28 @@
+<mat-card>
+  <mat-toolbar-row>
+    <h3>{{ 'NFS' | translate }}</h3>
+    <div class="actions action-icon">
+      <button mat-button color="primary" ixTest="add-nfs-share" (click)="doAdd()">
+        {{ 'Add' | translate }}
+      </button>
+    </div>
+  </mat-toolbar-row>
+  <mat-card-content>
+    <ix-table2
+      [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
+      [emptyConfig]="emptyService.defaultEmptyConfig(emptyType$ | async)"
+    >
+      <thead
+        ix-table-head
+        [columns]="columns"
+        [dataProvider]="dataProvider"
+      ></thead>
+      <tbody
+        ix-table-body
+        [columns]="columns"
+        [dataProvider]="dataProvider"
+      ></tbody>
+    </ix-table2>
+    <ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>
+  </mat-card-content>
+</mat-card>

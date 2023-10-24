@@ -35,6 +35,7 @@ import { DeviceWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/
 import { InitiatorWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/steps/initiator-wizard-step/initiator-wizard-step.component';
 import { PortalWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/steps/portal-wizard-step/portal-wizard-step.component';
 import { TargetGlobalConfigurationComponent } from 'app/pages/sharing/iscsi/target-global-configuration/target-global-configuration.component';
+import { NfsListComponent } from 'app/pages/sharing/nfs/nfs-list/nfs-list.component';
 import { RestartSmbDialogComponent } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
 import { UserService } from 'app/services/user.service';
 import { ServiceExtraActionsComponent } from './components/shares-dashboard/service-extra-actions/service-extra-actions.component';
@@ -53,7 +54,6 @@ import { PortalListComponent } from './iscsi/portal/portal-list/portal-list.comp
 import { TargetFormComponent } from './iscsi/target/target-form/target-form.component';
 import { TargetListComponent } from './iscsi/target/target-list/target-list.component';
 import { NfsFormComponent } from './nfs/nfs-form/nfs-form.component';
-import { NfsListComponent } from './nfs/nfs-list/nfs-list.component';
 import { routing } from './sharing.routing';
 import { SmbAclComponent } from './smb/smb-acl/smb-acl.component';
 import { SmbFormComponent } from './smb/smb-form/smb-form.component';
