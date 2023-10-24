@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.interface';
 
@@ -6,6 +6,7 @@ import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-
   selector: 'ix-cell-actions',
   templateUrl: './ix-cell-actions.component.html',
   styleUrls: ['./ix-cell-actions.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IxCellActionsComponent<T> extends ColumnComponent<T> {
   actions: {

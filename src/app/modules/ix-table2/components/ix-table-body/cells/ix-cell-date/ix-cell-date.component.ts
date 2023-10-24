@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.interface';
 
 @Component({
   selector: 'ix-cell-date',
   templateUrl: './ix-cell-date.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IxCellDateComponent<T> extends ColumnComponent<T> {
   get date(): number | Date {
