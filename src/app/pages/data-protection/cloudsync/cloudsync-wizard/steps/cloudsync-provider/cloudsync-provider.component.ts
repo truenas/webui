@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, On
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { BehaviorSubject, Observable, combineLatest, filter, of, switchMap } from 'rxjs';
+import { BehaviorSubject, Observable, combineLatest, of, switchMap } from 'rxjs';
 import { CloudsyncProviderName, cloudsyncProviderNameMap } from 'app/enums/cloudsync-provider.enum';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
 import { CloudsyncCredential, CloudsyncCredentialUpdate } from 'app/interfaces/cloudsync-credential.interface';
@@ -14,7 +14,7 @@ import { forbiddenValues } from 'app/modules/ix-forms/validators/forbidden-value
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { BaseProviderFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/base-provider-form';
 import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
-import { getProviderFormClass } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-provider/cloudsync-provider.common';
+import { getName, getProviderFormClass } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-provider/cloudsync-provider.common';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -245,10 +245,7 @@ export class CloudsyncProviderComponent implements OnInit {
       });
 
     this.form.controls.exist_credential.valueChanges
-      .pipe(
-        filter(Boolean),
-        untilDestroyed(this),
-      )
+      .pipe(untilDestroyed(this))
       .subscribe((credentialId) => {
         this.existingCredential = this.credentials.find((credential) => credential.id === credentialId);
         this.renderProviderForm();
@@ -257,13 +254,11 @@ export class CloudsyncProviderComponent implements OnInit {
   }
 
   private setDefaultName(): void {
-    let name = cloudsyncProviderNameMap.get(this.form.controls.provider.value);
-    let suffix = 2;
-    while (this.forbiddenNames.includes(name)) {
-      name = `${name} ${suffix}`;
-      suffix++;
+    if (!this.form.controls.provider.value) {
+      return;
     }
 
+    const name = getName(cloudsyncProviderNameMap.get(this.form.controls.provider.value), this.forbiddenNames);
     this.form.controls.name.setValue(name);
   }
 

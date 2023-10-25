@@ -47,6 +47,7 @@ export class CloudsyncWizardComponent implements AfterViewInit {
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe((credential) => {
         this.whatAndWhen?.form.patchValue({ credentials: credential });
+        this.cdr.markForCheck();
       });
 
     this.provider.form.controls.provider.valueChanges
@@ -56,6 +57,7 @@ export class CloudsyncWizardComponent implements AfterViewInit {
         this.whatAndWhen?.form.patchValue({
           description: `${cloudsyncProviderNameMap.get(provider)} - ${sourcePath}`,
         });
+        this.cdr.markForCheck();
       });
   }
 
@@ -63,10 +65,9 @@ export class CloudsyncWizardComponent implements AfterViewInit {
     return this.ws.call('cloudsync.create', [payload]);
   }
 
-  onProviderSave(credential: CloudsyncCredential): void {
+  onProviderSaved(credential: CloudsyncCredential): void {
     this.existingCredential = credential;
     this.createdProviders.push(credential);
-    this.whatAndWhen?.form.patchValue({ credentials: credential.id });
     this.cdr.markForCheck();
   }
 

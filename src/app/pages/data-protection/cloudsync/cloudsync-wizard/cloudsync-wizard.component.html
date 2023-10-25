@@ -5,12 +5,15 @@
     <mat-vertical-stepper [linear]="true">
       <mat-step [stepControl]="provider?.form">
         <ng-template matStepLabel>{{ 'Provider' | translate }}</ng-template>
-        <ix-cloudsync-provider (save)="onProviderSave($event)"></ix-cloudsync-provider>
+        <ix-cloudsync-provider (save)="onProviderSaved($event)"></ix-cloudsync-provider>
       </mat-step>
 
       <mat-step [stepControl]="whatAndWhen?.form">
         <ng-template matStepLabel>{{ 'What and When' | translate }}</ng-template>
-        <ix-cloudsync-what-and-when (save)="onSubmit()"></ix-cloudsync-what-and-when>
+        <ix-cloudsync-what-and-when
+          [credentialId]="existingCredential?.id"
+          (save)="onSubmit()"
+        ></ix-cloudsync-what-and-when>
       </mat-step>
     </mat-vertical-stepper>
   </mat-card-content>

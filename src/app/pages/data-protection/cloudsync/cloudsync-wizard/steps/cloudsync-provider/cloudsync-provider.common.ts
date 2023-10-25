@@ -50,3 +50,30 @@ export function getProviderFormClass(providerName: CloudsyncProviderName): Type<
 
   return cloudsyncProviderFormMap.get(providerName);
 }
+
+// Will return "(1)" from "Google Photos (1)"
+const incrementRegex = new RegExp(/\s\((\d+)\)$/);
+
+// Will return "1" from "(1)"
+const incrementInt = new RegExp(/\d+(?=\)$)/);
+
+/**
+ * Get an incremented name (e.g. Google Photos (2)) from a name (e.g. Google Photos),
+ * based on an array of existing names.
+ *
+ * @param name The name to increment.
+ * @param others The array of existing names.
+ */
+export function getName(name: string, others: string[]): string {
+  const set = new Set(others);
+
+  let result = name;
+
+  while (set.has(result)) {
+    result = incrementRegex.exec(result)?.[1]
+      ? result.replace(incrementInt, (value) => (+value + 1).toString())
+      : `${result} (2)`;
+  }
+
+  return result;
+}

@@ -9,7 +9,7 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import { combineLatest, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
@@ -20,11 +20,13 @@ import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { forbiddenValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   BaseProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/base-provider-form';
-import { getProviderFormClass } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-provider/cloudsync-provider.common';
+import { getName, getProviderFormClass } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-provider/cloudsync-provider.common';
+import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -46,6 +48,8 @@ export class CloudCredentialsFormComponent implements OnInit {
   providers: CloudsyncProvider[] = [];
   providerOptions = of<Option[]>([]);
   providerForm: BaseProviderFormComponent;
+  forbiddenNames: string[] = [];
+  credentials: CloudsyncCredential[] = [];
 
   @ViewChild('providerFormContainer', { static: true, read: ViewContainerRef }) providerFormContainer: ViewContainerRef;
 
@@ -61,6 +65,7 @@ export class CloudCredentialsFormComponent implements OnInit {
     private formErrorHandler: FormErrorHandlerService,
     private translate: TranslateService,
     private snackbarService: SnackbarService,
+    private cloudCredentialService: CloudCredentialService,
     @Inject(SLIDE_IN_DATA) private credential: CloudsyncCredential,
   ) {
     // Has to be earlier than potential `setCredentialsForEdit` call
@@ -185,10 +190,13 @@ export class CloudCredentialsFormComponent implements OnInit {
 
   private loadProviders(): void {
     this.isLoading = true;
-    this.ws.call('cloudsync.providers')
+    combineLatest([
+      this.cloudCredentialService.getProviders(),
+      this.cloudCredentialService.getCloudsyncCredentials(),
+    ])
       .pipe(untilDestroyed(this))
       .subscribe({
-        next: (providers) => {
+        next: ([providers, credentials]) => {
           this.providers = providers;
           this.providerOptions = of(
             providers.map((provider) => ({
@@ -196,6 +204,8 @@ export class CloudCredentialsFormComponent implements OnInit {
               value: provider.name,
             })),
           );
+          this.credentials = credentials;
+          this.setNamesInUseValidator(credentials);
           this.renderProviderForm();
           if (this.existingCredential) {
             this.providerForm.getFormSetter$().next(this.existingCredential.attributes);
@@ -220,12 +230,17 @@ export class CloudCredentialsFormComponent implements OnInit {
       });
   }
 
+  private setNamesInUseValidator(credentials: CloudsyncCredential[]): void {
+    this.forbiddenNames = credentials.map((credential) => credential.name);
+    this.commonForm.controls.name.addValidators(forbiddenValues(this.forbiddenNames));
+  }
+
   private setDefaultName(): void {
     if (!this.isNew || this.commonForm.controls.name.touched) {
       return;
     }
 
-    this.commonForm.controls.name.setValue(this.selectedProvider.title);
+    this.commonForm.controls.name.setValue(getName(this.selectedProvider.title, this.forbiddenNames));
   }
 
   private renderProviderForm(): void {
