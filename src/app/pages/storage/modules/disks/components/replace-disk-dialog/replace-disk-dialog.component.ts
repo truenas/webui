@@ -6,11 +6,12 @@ import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dial
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
-import { Observable, of } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import helptext from 'app/helptext/storage/volumes/volume-status';
 import { Option } from 'app/interfaces/option.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -33,9 +34,8 @@ export class ReplaceDiskDialogComponent implements OnInit {
     force: [false],
   });
 
+  disksProvider = new SimpleAsyncComboboxProvider(this.loadUnusedDisks());
   unusedDisks: UnusedDisk[] = [];
-
-  unusedDisksOptions$: Observable<Option[]>;
 
   readonly helptext = helptext;
 
@@ -56,21 +56,22 @@ export class ReplaceDiskDialogComponent implements OnInit {
     this.setupExportedPoolWarning();
   }
 
-  loadUnusedDisks(): void {
-    this.ws.call('disk.get_unused').pipe(untilDestroyed(this)).subscribe((unusedDisks) => {
-      this.unusedDisks = unusedDisks;
-      const unusedDiskOptions = unusedDisks.map((disk) => {
-        const exportedPool = disk.exported_zpool ? ` (${disk.exported_zpool})` : '';
-        const size = filesize(disk.size, { standard: 'iec' });
+  loadUnusedDisks(): Observable<Option[]> {
+    return this.ws.call('disk.get_unused').pipe(
+      map((unusedDisks) => {
+        this.unusedDisks = unusedDisks;
+        return unusedDisks.map((disk) => {
+          const exportedPool = disk.exported_zpool ? ` (${disk.exported_zpool})` : '';
+          const size = filesize(disk.size, { standard: 'iec' });
 
-        return {
-          label: `${disk.devname} - ${size} ${exportedPool}`,
-          value: disk.identifier,
-        };
-      }).sort((a, b) => a.label.localeCompare(b.label));
-      this.unusedDisksOptions$ = of(unusedDiskOptions);
-      this.cdr.markForCheck();
-    });
+          return {
+            label: `${disk.devname} - ${size} ${exportedPool}`,
+            value: disk.identifier,
+          };
+        }).sort((a, b) => a.label.localeCompare(b.label));
+      }),
+      untilDestroyed(this),
+    );
   }
 
   setupExportedPoolWarning(): void {
