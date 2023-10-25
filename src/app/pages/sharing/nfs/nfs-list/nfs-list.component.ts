@@ -42,6 +42,26 @@ export class NfsListComponent implements OnInit {
       propertyName: 'comment',
       sortable: true,
     }),
+    textColumn({
+      title: this.translate.instant('Networks'),
+      propertyName: 'networks',
+      sortable: true,
+      getValue: (row) => {
+        return row.networks.reduce((networkList, network, index) => {
+          return index > 0 ? networkList + ', ' + network : network;
+        }, '');
+      },
+    }),
+    textColumn({
+      title: this.translate.instant('Hosts'),
+      propertyName: 'hosts',
+      sortable: true,
+      getValue: (row) => {
+        return row.hosts.reduce((hostsList, host, index) => {
+          return index > 0 ? hostsList + ', ' + host : host;
+        }, '');
+      },
+    }),
     toggleColumn({
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',

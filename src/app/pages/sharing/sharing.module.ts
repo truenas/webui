@@ -22,6 +22,7 @@ import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { IscsiCardComponent } from 'app/pages/sharing/components/shares-dashboard/iscsi-card/iscsi-card.component';
@@ -76,6 +77,7 @@ import { SmbListComponent } from './smb/smb-list/smb-list.component';
     MatMenuModule,
     MatFormFieldModule,
     MatTooltipModule,
+    AppLoaderModule,
     MatButtonModule,
     MatProgressSpinnerModule,
     CommonDirectivesModule,
