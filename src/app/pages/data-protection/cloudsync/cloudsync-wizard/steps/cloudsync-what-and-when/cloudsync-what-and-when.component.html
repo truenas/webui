@@ -21,31 +21,37 @@
     ></ix-transfer-mode-explanation>
     <div class="cloudsync">
       <ix-explorer
+        *ngIf="form.controls.path_destination.enabled"
+        formControlName="path_destination"
+        [label]="helptext.path_placeholder | translate"
+        [tooltip]="helptext.path_tooltip | translate"
+        [required]="true"
+        [nodeProvider]="fileNodeProvider"
+      ></ix-explorer>
+      <ix-explorer
         *ngIf="form.controls.path_source.enabled"
         formControlName="path_source"
-        class="source"
-        [label]="helptext.source_placeholder | translate"
+        [label]="helptext.path_placeholder | translate"
         [tooltip]="helptext.path_tooltip | translate"
         [required]="true"
         [multiple]="true"
         [nodeProvider]="fileNodeProvider"
       ></ix-explorer>
       <ix-explorer
-        *ngIf="form.controls.path_destination.enabled"
-        formControlName="path_destination"
-        class="destination"
-        [label]="helptext.destination_placeholder | translate"
-        [tooltip]="helptext.path_tooltip | translate"
-        [required]="true"
-        [nodeProvider]="fileNodeProvider"
-      ></ix-explorer>
-      <ix-explorer
         *ngIf="form.controls.folder_destination.enabled"
         formControlName="folder_destination"
         root="/"
-        class="folder"
         [label]="helptext.folder_placeholder | translate"
         [tooltip]="helptext.folder_tooltip | translate"
+        [nodeProvider]="bucketNodeProvider"
+      ></ix-explorer>
+      <ix-explorer
+        *ngIf="form.controls.folder_source.enabled"
+        formControlName="folder_source"
+        root="/"
+        [label]="helptext.folder_placeholder | translate"
+        [tooltip]="helptext.folder_tooltip | translate"
+        [multiple]="true"
         [nodeProvider]="bucketNodeProvider"
       ></ix-explorer>
     </div>

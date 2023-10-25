@@ -3,7 +3,6 @@ import {
   ChangeDetectorRef,
   Component, Inject,
   OnInit,
-  Type,
   ViewChild,
   ViewContainerRef,
 } from '@angular/core';
@@ -12,7 +11,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { CloudsyncProviderName, cloudsyncProviderFormMap, tokenOnlyProviders } from 'app/enums/cloudsync-provider.enum';
+import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
 import { CloudsyncCredential, CloudsyncCredentialUpdate } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
@@ -25,9 +24,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import {
   BaseProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/base-provider-form';
-import {
-  TokenProviderFormComponent,
-} from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/token-provider-form/token-provider-form.component';
+import { getProviderFormClass } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-provider/cloudsync-provider.common';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -237,17 +234,9 @@ export class CloudCredentialsFormComponent implements OnInit {
       return;
     }
 
-    const formClass = this.getProviderFormClass();
+    const formClass = getProviderFormClass(this.selectedProvider.name);
     const formRef = this.providerFormContainer.createComponent(formClass);
     formRef.instance.provider = this.selectedProvider;
     this.providerForm = formRef.instance;
-  }
-
-  private getProviderFormClass(): Type<BaseProviderFormComponent> {
-    if (tokenOnlyProviders.includes(this.selectedProvider.name)) {
-      return TokenProviderFormComponent;
-    }
-
-    return cloudsyncProviderFormMap.get(this.selectedProvider.name);
   }
 }

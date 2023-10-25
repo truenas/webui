@@ -3,7 +3,7 @@ import { Validators, FormBuilder } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
-import { Observable, filter, map, of, switchMap } from 'rxjs';
+import { Observable, filter, map, merge, of, switchMap } from 'rxjs';
 import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { Direction, directionNames } from 'app/enums/direction.enum';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
@@ -242,6 +242,18 @@ export class CloudsyncWhatAndWhenComponent implements OnInit {
       }
     });
 
+
+    merge(
+      this.form.controls.path_source.valueChanges,
+      this.form.controls.path_destination.valueChanges,
+    ).pipe(
+      filter(Boolean),
+      map((values) => (Array.isArray(values) ? values.join('/') : values)),
+      untilDestroyed(this),
+    ).subscribe((path) => {
+      this.updateDescriptionPath(path);
+    });
+
     this.form.controls.path_source.valueChanges.pipe(untilDestroyed(this)).subscribe((values: string | string[]) => {
       if (!values) {
         return;
@@ -256,7 +268,10 @@ export class CloudsyncWhatAndWhenComponent implements OnInit {
         const sliced = split.slice(0, split.length - 1);
         return sliced.join('/');
       });
+
       const allMatch = parentDirectories.every((directory: string) => directory === parentDirectories[0]);
+
+      this.updateDescriptionPath(paths.join('/'));
 
       const pathSourceControl = this.form.controls.path_source;
       let prevErrors = pathSourceControl.errors;
@@ -293,10 +308,14 @@ export class CloudsyncWhatAndWhenComponent implements OnInit {
               this.providers = providers;
               const targetCredentials = _.find(this.credentials, { id: credential });
               const targetProvider = _.find(providers, { name: targetCredentials?.provider });
+              if (targetProvider.name === CloudsyncProviderName.GoogleDrive) {
+                this.googleDriveProviderId = targetCredentials.id;
+              }
               if (targetProvider?.buckets) {
-                // this.isLoading = true;
-                if (targetCredentials.provider === CloudsyncProviderName.MicrosoftAzure
-                  || targetCredentials.provider === CloudsyncProviderName.Hubic
+                if ([
+                  CloudsyncProviderName.MicrosoftAzure,
+                  CloudsyncProviderName.Hubic,
+                ].includes(targetCredentials.provider)
                 ) {
                   this.bucketPlaceholder = this.translate.instant('Container');
                   this.bucketTooltip = this.translate.instant('Select the pre-defined container to use.');
@@ -317,7 +336,7 @@ export class CloudsyncWhatAndWhenComponent implements OnInit {
                 this.form.controls.bucket_input.disable();
               }
 
-              if (targetProvider && targetProvider.name === CloudsyncProviderName.GoogleCloudStorage) {
+              if (targetProvider?.name === CloudsyncProviderName.GoogleCloudStorage) {
                 this.form.controls.bucket_policy_only.enable();
               } else {
                 this.form.controls.bucket_policy_only.disable();
@@ -477,6 +496,14 @@ export class CloudsyncWhatAndWhenComponent implements OnInit {
     } else {
       this.form.controls.folder_source.disable();
       this.form.controls.folder_destination.enable();
+    }
+  }
+
+  private updateDescriptionPath(path: string): void {
+    console.info(this.form.controls.description.touched, this.form.controls.description.value);
+    if (!this.form.controls.description.touched) {
+      const [name] = this.form.controls.description.value.split(' - ');
+      this.form.controls.description.setValue(`${name} - ${path}`);
     }
   }
 }

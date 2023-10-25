@@ -61,7 +61,7 @@ describe('CloudsyncWhatAndWhenComponent', () => {
     form = await loader.getHarness(IxFormHarness);
 
     await form.fillForm({
-      'Destination': '/mnt/gphotos',
+      'Directory/Files': '/mnt/gphotos',
       'Description': 'Sync Google Photos',
     });
   });

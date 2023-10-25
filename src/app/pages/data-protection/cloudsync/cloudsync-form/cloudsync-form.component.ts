@@ -279,7 +279,7 @@ export class CloudsyncFormComponent implements OnInit {
             map((providersList) => {
               const targetCredentials = _.find(this.credentialsList, { id: credentials });
               const targetProvider = _.find(providersList, { name: targetCredentials?.provider });
-              if (targetProvider && targetProvider.buckets) {
+              if (targetProvider?.buckets) {
                 this.isLoading = true;
                 if (targetCredentials.provider === CloudsyncProviderName.MicrosoftAzure
                   || targetCredentials.provider === CloudsyncProviderName.Hubic
@@ -303,7 +303,7 @@ export class CloudsyncFormComponent implements OnInit {
                 this.form.controls.bucket_input.disable();
               }
 
-              if (targetProvider && targetProvider.name === CloudsyncProviderName.GoogleCloudStorage) {
+              if (targetProvider?.name === CloudsyncProviderName.GoogleCloudStorage) {
                 this.form.controls.bucket_policy_only.enable();
               } else {
                 this.form.controls.bucket_policy_only.disable();

@@ -1,10 +1,10 @@
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewChild, forwardRef } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, filter, forkJoin, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, Observable, filter, forkJoin, merge } from 'rxjs';
 import { cloudsyncProviderNameMap } from 'app/enums/cloudsync-provider.enum';
-import { CloudCredential, CloudSyncTask, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
-import { CloudsyncCredential, CloudsyncCredentialUpdate } from 'app/interfaces/cloudsync-credential.interface';
+import { CloudSyncTask, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
+import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { CloudsyncProviderComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-provider/cloudsync-provider.component';
@@ -24,9 +24,10 @@ import { WebSocketService } from 'app/services/ws.service';
 export class CloudsyncWizardComponent implements AfterViewInit {
   @ViewChild(forwardRef(() => CloudsyncProviderComponent)) provider: CloudsyncProviderComponent;
   @ViewChild(forwardRef(() => CloudsyncWhatAndWhenComponent)) whatAndWhen: CloudsyncWhatAndWhenComponent;
-  isLoading = false;
+  isLoading$ = new BehaviorSubject(false);
+  mergedLoading$: Observable<boolean>;
 
-  existCredentialId: number;
+  existingCredential: CloudsyncCredential;
   createdProviders: CloudsyncCredential[] = [];
   createdTasks: CloudSyncTask[] = [];
 
@@ -41,14 +42,14 @@ export class CloudsyncWizardComponent implements AfterViewInit {
   ) {}
 
   ngAfterViewInit(): void {
-    this.provider?.form.controls.exist_credential.valueChanges
+    this.mergedLoading$ = merge(this.isLoading$, this.provider.isLoading$);
+    this.provider.form.controls.exist_credential.valueChanges
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe((credential) => {
-        this.existCredentialId = credential;
         this.whatAndWhen?.form.patchValue({ credentials: credential });
       });
 
-    this.provider?.form.controls.provider.valueChanges
+    this.provider.form.controls.provider.valueChanges
       .pipe(untilDestroyed(this))
       .subscribe((provider) => {
         const sourcePath = this.whatAndWhen?.form.controls.path_source.value.join(', ');
@@ -58,47 +59,29 @@ export class CloudsyncWizardComponent implements AfterViewInit {
       });
   }
 
-  updateProvider(id: number, payload: CloudsyncCredentialUpdate): Observable<CloudCredential> {
-    return this.ws.call('cloudsync.credentials.update', [id, payload]);
-  }
-
-  createProvider(payload: CloudsyncCredentialUpdate): Observable<CloudsyncCredential> {
-    return this.ws.call('cloudsync.credentials.create', [payload]);
-  }
-
   createTask(payload: CloudSyncTaskUpdate): Observable<CloudSyncTask> {
     return this.ws.call('cloudsync.create', [payload]);
   }
 
+  onProviderSave(credential: CloudsyncCredential): void {
+    this.existingCredential = credential;
+    this.createdProviders.push(credential);
+    this.whatAndWhen?.form.patchValue({ credentials: credential.id });
+    this.cdr.markForCheck();
+  }
+
   onSubmit(): void {
-    this.isLoading = true;
-    this.createdProviders = [];
-    this.createdTasks = [];
+    this.isLoading$.next(true);
 
-    const providerPayload = this.provider.getPayload();
-    const taskPayload = this.whatAndWhen.getPayload();
+    const payload = this.whatAndWhen.getPayload();
 
-    let request$ = this.createProvider(providerPayload).pipe(
-      tap((provider) => this.createdProviders.push(provider)),
-      switchMap((provider) => this.createTask({
-        ...taskPayload,
-        credentials: provider.id,
-      })),
-      tap((createdTask) => this.createdTasks.push(createdTask)),
-    );
-
-    if (this.existCredentialId) {
-      request$ = this.createTask(taskPayload).pipe(
-        tap((createdTask) => this.createdTasks.push(createdTask)),
-      );
-    }
-
-    request$.pipe(
+    this.createTask(payload).pipe(
       untilDestroyed(this),
     ).subscribe({
-      next: () => {
+      next: (createdTask) => {
+        this.createdTasks.push(createdTask);
         this.snackbarService.success(this.translate.instant('Task created'));
-        this.isLoading = false;
+        this.isLoading$.next(false);
         this.slideInRef.close(true);
         this.cdr.markForCheck();
       }, error: (err) => {
@@ -124,16 +107,16 @@ export class CloudsyncWizardComponent implements AfterViewInit {
         .pipe(untilDestroyed(this))
         .subscribe({
           next: () => {
-            this.isLoading = false;
+            this.isLoading$.next(false);
             this.cdr.markForCheck();
           },
           error: () => {
-            this.isLoading = false;
+            this.isLoading$.next(false);
             this.cdr.markForCheck();
           },
         });
     } else {
-      this.isLoading = false;
+      this.isLoading$.next(false);
       this.cdr.markForCheck();
     }
   }
