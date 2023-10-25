@@ -47,6 +47,7 @@ export class ZfsInfoCardComponent {
 
   get canExtendDisk(): boolean {
     return this.topologyParentItem.type !== TopologyItemType.Mirror
+      && this.topologyParentItem.type !== TopologyItemType.Draid
       && !this.isRaidzParent
       && this.topologyItem.type === TopologyItemType.Disk
       && (this.topologyCategory === VdevType.Data
@@ -57,6 +58,7 @@ export class ZfsInfoCardComponent {
 
   get canRemoveDisk(): boolean {
     return this.topologyParentItem.type !== TopologyItemType.Mirror
+    && this.topologyParentItem.type !== TopologyItemType.Draid
     && !this.isRaidzParent
     && (!this.hasTopLevelRaidz
     || this.topologyCategory === VdevType.Cache
