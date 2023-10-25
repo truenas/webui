@@ -2,6 +2,7 @@ import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { SharesDashboardComponent } from 'app/pages/sharing/components/shares-dashboard/shares-dashboard.component';
+import { SmbSessionListComponent } from 'app/pages/sharing/smb/smb-session-list/smb-session-list.component';
 import { InitiatorFormComponent } from './iscsi/initiator/initiator-form/initiator-form.component';
 import { IscsiComponent } from './iscsi/iscsi.component';
 import { NfsListComponent } from './nfs/nfs-list/nfs-list.component';
@@ -34,6 +35,10 @@ export const routes: Routes = [
           path: '',
           component: SmbListComponent,
           data: { title: T('SMB'), breadcrumb: T('SMB') },
+        }, {
+          path: 'sessions',
+          component: SmbSessionListComponent,
+          data: { title: T('SMB Sessions'), breadcrumb: T('SMB Sessions') },
         }, {
           path: 'add',
           component: SmbFormComponent,
