@@ -17,6 +17,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
+import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { NgxDualListboxModule } from 'app/modules/common/dual-list/dual-list.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -74,6 +75,7 @@ import { SmbListComponent } from './smb/smb-list/smb-list.component';
     FlexLayoutModule,
     MatListModule,
     MatDialogModule,
+    AppCommonModule,
     MatMenuModule,
     MatFormFieldModule,
     MatTooltipModule,

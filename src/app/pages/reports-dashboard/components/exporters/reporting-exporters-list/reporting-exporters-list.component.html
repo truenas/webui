@@ -3,6 +3,7 @@
   <mat-toolbar-row>
     <h3>{{ 'Reporting Exporters' | translate }}</h3>
     <div class="actions action-icon">
+      <ix-search-input (search)="onListFiltered($event)"></ix-search-input>
       <button mat-button color="primary" ixTest="add-reporting-exporter" (click)="doAdd()">
         {{ 'Add' | translate }}
       </button>

@@ -186,7 +186,6 @@ export class NfsListComponent implements OnInit {
     });
   }
 
-
   doAdd(): void {
     const slideInRef = this.slideInService.open(NfsFormComponent);
     slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe({
@@ -194,5 +193,14 @@ export class NfsListComponent implements OnInit {
         this.loadData();
       },
     });
+  }
+
+  onListFiltered(query: string): void {
+    this.filterString = query.toLowerCase();
+    const filteredExporters = this.nfsShares.filter((share) => {
+      return JSON.stringify(share).includes(query);
+    });
+    this.dataProvider.setRows(filteredExporters);
+    this.cdr.markForCheck();
   }
 }
