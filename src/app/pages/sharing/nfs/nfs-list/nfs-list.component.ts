@@ -66,12 +66,11 @@ export class NfsListComponent implements OnInit {
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
       onRowToggle: (row) => {
-        this.appLoader.open();
         this.ws.call('sharing.nfs.update', [row.id, { enabled: row.enabled }]).pipe(
+          this.appLoader.withLoader(),
           untilDestroyed(this),
         ).subscribe({
           next: (share) => {
-            this.appLoader.close();
             row.enabled = share.enabled;
           },
           error: (error: WebsocketError) => {
@@ -104,12 +103,11 @@ export class NfsListComponent implements OnInit {
               untilDestroyed(this),
             ).subscribe({
               next: () => {
-                this.appLoader.open();
                 this.ws.call('sharing.nfs.delete', [row.id]).pipe(
+                  this.appLoader.withLoader(),
                   untilDestroyed(this),
                 ).subscribe({
                   next: () => {
-                    this.appLoader.close();
                     this.loadData();
                   },
                 });
