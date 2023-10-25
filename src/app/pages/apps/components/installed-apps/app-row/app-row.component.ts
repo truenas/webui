@@ -1,3 +1,4 @@
+import { SelectionModel } from '@angular/cdk/collections';
 import {
   ChangeDetectionStrategy,
   Component, EventEmitter, Input, Output,
@@ -17,7 +18,7 @@ import { AppStatus } from 'app/pages/apps/enum/app-status.enum';
 export class AppRowComponent {
   @Input() app: ChartRelease;
   @Input() status: AppStatus;
-  @Input() selected: boolean;
+  @Input() selection: SelectionModel<ChartRelease>;
   @Input() job?: Job<ChartScaleResult, ChartScaleQueryParams>;
   @Output() startApp = new EventEmitter<void>();
   @Output() stopApp = new EventEmitter<void>();
@@ -41,8 +42,8 @@ export class AppRowComponent {
     return [AppStatus.Starting, AppStatus.Stopping].includes(this.status);
   }
 
-  toggleAppChecked(checked: boolean): void {
-    this.app.selected = checked;
+  toggleAppChecked(): void {
+    this.selection.toggle(this.app);
   }
 
   start(): void {

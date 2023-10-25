@@ -114,7 +114,7 @@
                 color="primary"
                 ixTest="select-all-app"
                 [checked]="allAppsChecked"
-                (change)="toggleAppsChecked($event.checked)"
+                (change)="toggleAppsChecked()"
               ></mat-checkbox>
             </span>
           </div>
@@ -156,7 +156,7 @@
               routerLinkActive="selected"
               [app]="app"
               [status]="getAppStatus(app.name)"
-              [selected]="app.selected"
+              [selection]="selection"
               [job]="appJobs.get(app.name)"
               [routerLink]="['/apps/installed', app.catalog, app.catalog_train, app.id]"
               (startApp)="start(app.name)"

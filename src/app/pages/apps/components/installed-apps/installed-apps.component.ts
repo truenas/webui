@@ -1,3 +1,4 @@
+import { SelectionModel } from '@angular/cdk/collections';
 import { BreakpointObserver, BreakpointState, Breakpoints } from '@angular/cdk/layout';
 import {
   Component,
@@ -66,6 +67,8 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   appJobs = new Map<string, Job<ChartScaleResult, ChartScaleQueryParams>>();
   readonly sortableField = SortableField;
 
+  selection = new SelectionModel<ChartRelease>(true, []);
+
   entityEmptyConf: EmptyConfig = {
     type: EmptyType.Loading,
     large: false,
@@ -78,7 +81,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   }
 
   get allAppsChecked(): boolean {
-    return this.dataSource.every((app) => app.selected);
+    return this.selection.selected.length === this.filteredApps.length;
   }
 
   get hasCheckedApps(): boolean {
@@ -95,7 +98,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   }
 
   get checkedAppsNames(): string[] {
-    return this.dataSource.filter((app) => app.selected).map((app) => app.name);
+    return this.selection.selected.map((app) => app.name);
   }
 
   get isBulkStartDisabled(): boolean {
@@ -116,11 +119,11 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   }
 
   get startedCheckedApps(): ChartRelease[] {
-    return this.dataSource.filter((app) => app.status === ChartReleaseStatus.Active && app.selected);
+    return this.dataSource.filter((app) => app.status === ChartReleaseStatus.Active && this.selection.isSelected(app));
   }
 
   get stoppedCheckedApps(): ChartRelease[] {
-    return this.dataSource.filter((app) => app.status === ChartReleaseStatus.Stopped && app.selected);
+    return this.dataSource.filter((app) => app.status === ChartReleaseStatus.Stopped && this.selection.isSelected(app));
   }
 
   constructor(
@@ -205,8 +208,8 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     }
   }
 
-  toggleAppsChecked(checked: boolean): void {
-    this.dataSource.forEach((app) => app.selected = checked);
+  toggleAppsChecked(): void {
+    this.dataSource.forEach((app) => this.selection.toggle(app));
   }
 
   showLoadStatus(type: EmptyType): void {
@@ -317,21 +320,22 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   onBulkStart(): void {
     this.stoppedCheckedApps.forEach((app) => this.start(app.name));
     this.snackbar.success(this.translate.instant(helptext.bulkActions.finished));
-    this.toggleAppsChecked(false);
+    this.toggleAppsChecked();
   }
 
   onBulkStop(): void {
     this.startedCheckedApps.forEach((app) => this.stop(app.name));
     this.snackbar.success(this.translate.instant(helptext.bulkActions.finished));
-    this.toggleAppsChecked(false);
+    this.toggleAppsChecked();
   }
 
   onBulkUpgrade(updateAll = false): void {
-    const apps = this.dataSource
-      .filter((app) => (updateAll ? app.update_available || app.container_images_update_available : app.selected));
+    const apps = this.dataSource.filter((app) => (
+      updateAll ? app.update_available || app.container_images_update_available : this.selection.isSelected(app)
+    ));
     this.matDialog.open(AppBulkUpgradeComponent, { data: apps })
       .afterClosed().pipe(untilDestroyed(this)).subscribe(() => {
-        this.toggleAppsChecked(false);
+        this.toggleAppsChecked();
       });
   }
 
@@ -347,7 +351,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
           title: helptext.charts.delete_dialog.job,
         },
       });
-      this.toggleAppsChecked(false);
+      this.toggleAppsChecked();
       dialogRef.componentInstance.setCall('core.bulk', ['chart.release.delete', checkedNames.map((item) => [item])]);
       dialogRef.componentInstance.submit();
       dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(

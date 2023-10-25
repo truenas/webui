@@ -2,9 +2,9 @@
   <mat-checkbox
     color="primary"
     [ixTest]="app.name"
-    [checked]="app.selected"
+    [checked]="selection.isSelected(app)"
     (click)="$event.stopPropagation()"
-    (change)="toggleAppChecked($event.checked)"
+    (change)="toggleAppChecked()"
   ></mat-checkbox>
 </div>
 <div class="cell cell-name">
