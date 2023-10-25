@@ -72,7 +72,7 @@ describe('ReportingExportersListComponent', () => {
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ReportingExportersFormComponent);
   });
 
-  it('opens acme dns authenticator form when "Edit" button is pressed', async () => {
+  it('opens reporting exporters form when "Edit" button is pressed', async () => {
     const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 3);
     await editButton.click();
 
