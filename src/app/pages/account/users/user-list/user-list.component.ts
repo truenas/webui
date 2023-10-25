@@ -55,6 +55,11 @@ export class UserListComponent implements OnInit {
       propertyName: 'full_name',
       sortable: true,
     }),
+    textColumn({
+      title: this.translate.instant('SSH'),
+      getValue: (row) => this.getSshStatus(row),
+      sortable: true,
+    }),
   ]);
 
   isLoading$ = this.store$.select(selectUserState).pipe(map((state) => state.isLoading));
@@ -158,5 +163,20 @@ export class UserListComponent implements OnInit {
 
   handleDeletedUser(id: number): void {
     this.store$.dispatch(userRemoved({ id }));
+  }
+
+  private getSshStatus(user: User): string {
+    const keySet = this.translate.instant('Key set');
+    const passwordLoginEnabled = this.translate.instant('Password login enabled');
+
+    if (user.sshpubkey && user.ssh_password_enabled) {
+      return `${keySet}, ${passwordLoginEnabled}`;
+    } else if (user.sshpubkey) {
+      return keySet;
+    } else if (user.ssh_password_enabled) {
+      return passwordLoginEnabled;
+    }
+
+    return this.translate.instant('Key not set');
   }
 }
