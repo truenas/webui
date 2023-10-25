@@ -78,11 +78,11 @@ export const dataProtectionRoutes: Routes = [{
       }],
     }, {
       path: 'smart',
-      data: { title: T('S.M.A.R.T. Tests'), breadcrumb: T('S.M.A.R.T. Tests'), icon: 'event_note' },
+      data: { title: T('Periodic S.M.A.R.T. Tests'), breadcrumb: T('Periodic S.M.A.R.T. Tests'), icon: 'event_note' },
       children: [{
         path: '',
         component: SmartTaskListComponent,
-        data: { title: T('S.M.A.R.T. Tests'), breadcrumb: T('S.M.A.R.T. Tests') },
+        data: { title: T('Periodic S.M.A.R.T. Tests'), breadcrumb: T('Periodic S.M.A.R.T. Tests') },
       }],
     }, {
       path: 'scrub',
