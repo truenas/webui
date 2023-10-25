@@ -1,12 +1,11 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { BehaviorSubject, Observable, combineLatest, filter, of, switchMap } from 'rxjs';
-import { EmptyType } from 'app/enums/empty-type.enum';
+import { filter, tap } from 'rxjs';
 import { shared } from 'app/helptext/sharing';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { toggleColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
@@ -28,7 +27,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class NfsListComponent implements OnInit {
   filterString = '';
-  dataProvider = new ArrayDataProvider<NfsShare>();
+  dataProvider: AsyncDataProvider<NfsShare>;
 
   nfsShares: NfsShare[] = [];
   columns = createTable<NfsShare>([
@@ -87,7 +86,9 @@ export class NfsListComponent implements OnInit {
           tooltip: this.translate.instant('Edit'),
           onClick: (nfsShare) => {
             const slideInRef = this.slideInService.open(NfsFormComponent, { data: nfsShare });
-            slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.loadData());
+            slideInRef.slideInClosed$
+              .pipe(filter(Boolean), untilDestroyed(this))
+              .subscribe(() => this.dataProvider.load());
           },
         },
         {
@@ -107,9 +108,7 @@ export class NfsListComponent implements OnInit {
                   this.appLoader.withLoader(),
                   untilDestroyed(this),
                 ).subscribe({
-                  next: () => {
-                    this.loadData();
-                  },
+                  next: () => this.dataProvider.load(),
                 });
               },
             });
@@ -118,28 +117,6 @@ export class NfsListComponent implements OnInit {
       ],
     }),
   ]);
-
-  isLoading$ = new BehaviorSubject<boolean>(true);
-  isNoData$ = new BehaviorSubject<boolean>(false);
-  hasError$ = new BehaviorSubject<boolean>(false);
-  emptyType$: Observable<EmptyType> = combineLatest([
-    this.isLoading$,
-    this.isNoData$,
-    this.hasError$,
-  ]).pipe(
-    switchMap(([isLoading, isNoData, isError]) => {
-      if (isLoading) {
-        return of(EmptyType.Loading);
-      }
-      if (isError) {
-        return of(EmptyType.Errors);
-      }
-      if (isNoData) {
-        return of(EmptyType.NoPageData);
-      }
-      return of(EmptyType.NoSearchResults);
-    }),
-  );
 
   constructor(
     private appLoader: AppLoaderService,
@@ -153,36 +130,19 @@ export class NfsListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.loadData();
-  }
-
-  loadData(): void {
-    this.isLoading$.next(true);
-    this.ws.call('sharing.nfs.query').pipe(
+    const shares$ = this.ws.call('sharing.nfs.query').pipe(
+      tap((shares) => this.nfsShares = shares),
       untilDestroyed(this),
-    ).subscribe({
-      next: (shares: NfsShare[]) => {
-        this.nfsShares = shares;
-        this.dataProvider.setRows(this.nfsShares);
-        this.isLoading$.next(false);
-        this.isNoData$.next(!this.nfsShares?.length);
-        this.setDefaultSort();
-        this.cdr.markForCheck();
-      },
-      error: () => {
-        this.dataProvider.setRows([]);
-        this.isLoading$.next(false);
-        this.hasError$.next(true);
-        this.cdr.markForCheck();
-      },
-    });
+    );
+    this.dataProvider = new AsyncDataProvider<NfsShare>(shares$);
+    this.dataProvider.load();
   }
 
   setDefaultSort(): void {
     this.dataProvider.setSorting({
       active: 1,
       direction: SortDirection.Asc,
-      propertyName: 'id',
+      propertyName: 'path',
     });
   }
 
@@ -190,7 +150,7 @@ export class NfsListComponent implements OnInit {
     const slideInRef = this.slideInService.open(NfsFormComponent);
     slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe({
       next: () => {
-        this.loadData();
+        this.dataProvider.load();
       },
     });
   }

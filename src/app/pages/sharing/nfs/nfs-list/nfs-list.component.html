@@ -1,5 +1,5 @@
 <mat-card>
-  <ix-fake-progress-bar [loading]="isLoading$ | async"></ix-fake-progress-bar>
+  <ix-fake-progress-bar [loading]="dataProvider.isLoading$ | async"></ix-fake-progress-bar>
   <mat-toolbar-row>
     <h3>{{ 'NFS' | translate }}</h3>
     <div class="actions action-icon">
@@ -13,7 +13,7 @@
   <mat-card-content>
     <ix-table2
       [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
-      [emptyConfig]="emptyService.defaultEmptyConfig(emptyType$ | async)"
+      [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
     >
       <thead
         ix-table-head
@@ -24,7 +24,7 @@
         ix-table-body
         [columns]="columns"
         [dataProvider]="dataProvider"
-        [isLoading]="isLoading$ | async"
+        [isLoading]="dataProvider.isLoading$ | async"
       ></tbody>
     </ix-table2>
     <ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>
