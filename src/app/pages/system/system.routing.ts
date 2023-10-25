@@ -3,6 +3,9 @@ import { RouterModule, Routes } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { ServicesComponent } from 'app/pages/services/services.component';
 import { ShellComponent } from 'app/pages/shell/shell.component';
+import {
+  InitShutdownListComponent,
+} from 'app/pages/system/advanced/init-shutdown/init-shutdown-list/init-shutdown-list.component';
 import { AlertSettingsComponent } from 'app/pages/system/alert-settings/alert-settings.component';
 import { FailoverSettingsComponent } from 'app/pages/system/failover-settings/failover-settings.component';
 import { GeneralSettingsComponent } from 'app/pages/system/general-settings/general-settings.component';
@@ -11,7 +14,6 @@ import { ManualUpdateFormComponent } from 'app/pages/system/update/manual-update
 import { ViewEnclosureComponent } from 'app/pages/system/view-enclosure/components/view-enclosure/view-enclosure.component';
 import { AdvancedSettingsComponent } from './advanced/advanced-settings.component';
 import { CronListComponent } from './advanced/cron/cron-list/cron-list.component';
-import { InitshutdownListComponent } from './advanced/init-shutdown/initshutdown-list/initshutdown-list.component';
 import { TunableListComponent } from './advanced/sysctl/tunable-list/tunable-list.component';
 import { BootEnvironmentListComponent } from './bootenv/bootenv-list/bootenv-list.component';
 import { BootStatusListComponent } from './bootenv/bootenv-status/bootenv-status.component';
@@ -125,19 +127,11 @@ export const routes: Routes = [
     }, {
       path: 'cron',
       data: { title: 'Cron Jobs', breadcrumb: 'Cron Jobs', icon: 'event_note' },
-      children: [{
-        path: '',
-        component: CronListComponent,
-        data: { title: 'Cron Jobs', breadcrumb: 'Cron Jobs' },
-      }],
+      component: CronListComponent,
     }, {
       path: 'initshutdown',
       data: { title: T('Init/Shutdown Scripts'), breadcrumb: T('Init/Shutdown Scripts'), icon: 'event_note' },
-      children: [{
-        path: '',
-        component: InitshutdownListComponent,
-        data: { title: T('Init/Shutdown Scripts'), breadcrumb: T('Init/Shutdown Scripts') },
-      }],
+      component: InitShutdownListComponent,
     }],
   },
 ];
