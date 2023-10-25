@@ -67,7 +67,7 @@ export class ReplaceDiskDialogComponent implements OnInit {
           label: `${disk.devname} - ${size} ${exportedPool}`,
           value: disk.identifier,
         };
-      });
+      }).sort((a, b) => a.label.localeCompare(b.label));
       this.unusedDisksOptions$ = of(unusedDiskOptions);
       this.cdr.markForCheck();
     });
