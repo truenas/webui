@@ -1,3 +1,4 @@
+import { SelectionModel } from '@angular/cdk/collections';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
 import { ImgFallbackModule } from 'ngx-img-fallback';
@@ -38,7 +39,7 @@ describe('AppRowComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent({
-      props: { app, status },
+      props: { app, status, selection: new SelectionModel<ChartRelease>(true, []) },
     });
   });
 

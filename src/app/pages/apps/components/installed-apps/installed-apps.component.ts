@@ -65,9 +65,8 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   showMobileDetails = false;
   isMobileView = false;
   appJobs = new Map<string, Job<ChartScaleResult, ChartScaleQueryParams>>();
-  readonly sortableField = SortableField;
-
   selection = new SelectionModel<ChartRelease>(true, []);
+  readonly sortableField = SortableField;
 
   entityEmptyConf: EmptyConfig = {
     type: EmptyType.Loading,
