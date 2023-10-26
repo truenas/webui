@@ -6,11 +6,13 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
-import { map } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/storage/volumes/volume-status';
+import { Option } from 'app/interfaces/option.interface';
 import { PoolAttachParams } from 'app/interfaces/pool.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
+import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -30,22 +32,11 @@ export interface ExtendDialogParams {
 })
 export class ExtendDialogComponent implements OnInit {
   newDiskControl = new FormControl(null as string, Validators.required);
-  unusedDisks: UnusedDisk[] = [];
-
-  readonly unusedDiskOptions$ = this.ws.call('disk.get_unused').pipe(
-    map((disks) => {
-      return disks.map((disk) => {
-        const exportedPool = disk.exported_zpool ? ` (${disk.exported_zpool})` : '';
-        return {
-          label: `${disk.devname} (${filesize(disk.size, { standard: 'iec' })})${exportedPool}`,
-          value: disk.name,
-        };
-      });
-    }),
-  );
 
   readonly helptext = helptext;
 
+  disksProvider = new SimpleAsyncComboboxProvider(this.loadUnusedDisks());
+  unusedDisks: UnusedDisk[] = [];
   private disksWithDuplicateSerials: UnusedDisk[] = [];
 
   constructor(
@@ -110,12 +101,24 @@ export class ExtendDialogComponent implements OnInit {
       });
   }
 
-  private loadUnusedDisks(): void {
-    this.ws.call('disk.get_unused')
-      .pipe(this.errorHandler.catchError(), untilDestroyed(this))
-      .subscribe((disks) => {
-        this.unusedDisks = disks;
-        this.disksWithDuplicateSerials = disks.filter((disk) => disk.duplicate_serial.length);
-      });
+  loadUnusedDisks(): Observable<Option[]> {
+    return this.ws.call('disk.get_unused').pipe(
+      map((unusedDisks) => {
+        this.unusedDisks = unusedDisks;
+        this.disksWithDuplicateSerials = unusedDisks.filter((disk) => disk.duplicate_serial.length);
+
+        return unusedDisks.map((disk) => {
+          const exportedPool = disk.exported_zpool ? ` (${disk.exported_zpool})` : '';
+          const size = filesize(disk.size, { standard: 'iec' });
+
+          return {
+            label: `${disk.devname} - ${size} ${exportedPool}`,
+            value: disk.identifier,
+          };
+        }).sort((a, b) => a.label.localeCompare(b.label));
+      }),
+      untilDestroyed(this),
+    );
   }
+
 }

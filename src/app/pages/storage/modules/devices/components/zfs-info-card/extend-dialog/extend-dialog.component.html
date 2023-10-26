@@ -3,13 +3,13 @@
 </h1>
 
 <form class="ix-form-container" (submit)="onSubmit($event)">
-  <ix-select
+  <ix-combobox
     [formControl]="newDiskControl"
     [label]="'New Disk' | translate"
     [required]="true"
-    [options]="unusedDiskOptions$"
+    [provider]="disksProvider"
     [tooltip]="helptext.dialogFormFields.new_disk.tooltip | translate"
-  ></ix-select>
+  ></ix-combobox>
 
   <ix-form-actions>
     <button mat-button type="button" ixTest="cancel" [matDialogClose]="false">
