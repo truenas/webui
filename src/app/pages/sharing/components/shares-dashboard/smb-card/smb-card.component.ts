@@ -67,21 +67,25 @@ export class SmbCardComponent implements OnInit, OnChanges {
         {
           iconName: 'share',
           tooltip: this.translate.instant('Edit Share ACL'),
+          getTestAttr: (row) => 'smb-' + row.id + '-edit-acl',
           onClick: (row) => this.doShareAclEdit(row),
         },
         {
           iconName: 'security',
           tooltip: this.translate.instant('Edit Filesystem ACL'),
+          getTestAttr: (row) => 'smb-' + row.id + '-security',
           onClick: (row) => this.doFilesystemAclEdit(row),
         },
         {
           iconName: 'edit',
           tooltip: this.translate.instant('Edit'),
+          getTestAttr: (row) => 'smb-' + row.id + '-edit',
           onClick: (row) => this.openForm(row),
         },
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
+          getTestAttr: (row) => 'smb-' + row.id + '-delete',
           onClick: (row) => this.doDelete(row),
         },
       ],

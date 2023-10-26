@@ -56,6 +56,7 @@ export default class KerberosRealmsListComponent implements OnInit {
       actions: [
         {
           iconName: 'edit',
+          getTestAttr: (row) => 'kerbros-realm-' + row.id + '-edit',
           tooltip: this.translateService.instant('Edit'),
           onClick: (row) => {
             const slideInRef = this.slideInService.open(KerberosRealmsFormComponent, { data: row });
@@ -66,6 +67,7 @@ export default class KerberosRealmsListComponent implements OnInit {
         },
         {
           iconName: 'delete',
+          getTestAttr: (row) => 'kerbros-realm-' + row.id + '-delete',
           tooltip: this.translateService.instant('Delete'),
           onClick: (row) => {
             this.dialogService.confirm({

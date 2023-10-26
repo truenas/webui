@@ -68,16 +68,19 @@ export class CronCardComponent implements OnInit {
         {
           iconName: 'play_arrow',
           tooltip: this.translate.instant('Run job'),
+          getTestAttr: (row) => 'cron-' + row.id + '-run',
           onClick: (row) => this.runNow(row),
         },
         {
           iconName: 'edit',
           tooltip: this.translate.instant('Edit'),
+          getTestAttr: (row) => 'cron-' + row.id + '-edit',
           onClick: (row) => this.doEdit(row),
         },
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
+          getTestAttr: (row) => 'cron-' + row.id + '-delete',
           onClick: (row) => this.doDelete(row),
         },
       ],

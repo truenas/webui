@@ -40,6 +40,7 @@ export default class KerberosKeytabsListComponent implements OnInit {
       actions: [
         {
           iconName: 'edit',
+          getTestAttr: (row) => 'kerbros-' + row.id + '-edit',
           tooltip: this.translateService.instant('Edit'),
           onClick: (row) => {
             const slideInRef = this.slideInService.open(KerberosKeytabsFormComponent, { data: row });
@@ -50,6 +51,7 @@ export default class KerberosKeytabsListComponent implements OnInit {
         },
         {
           iconName: 'delete',
+          getTestAttr: (row) => 'kerbros-' + row.id + '-delete',
           tooltip: this.translateService.instant('Delete'),
           onClick: (row) => {
             this.dialogService.confirm({

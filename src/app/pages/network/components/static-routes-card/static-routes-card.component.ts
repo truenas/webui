@@ -45,11 +45,13 @@ export class StaticRoutesCardComponent implements OnInit {
         {
           iconName: 'edit',
           tooltip: this.translate.instant('Edit'),
+          getTestAttr: (row) => 'statis-routes-' + row.id + '-edit',
           onClick: (row) => this.doEdit(row),
         },
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
+          getTestAttr: (row) => 'statis-routes-' + row.id + '-delete',
           onClick: (row) => this.doDelete(row),
         },
       ],

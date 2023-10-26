@@ -68,11 +68,13 @@ export class SnapshotTaskCardComponent implements OnInit {
           iconName: 'edit',
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.openForm(row),
+          getTestAttr: (row) => 'snapshots-' + row.id + '-edit',
         },
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
+          getTestAttr: (row) => 'snapshots-' + row.id + '-delete',
         },
       ],
     }),

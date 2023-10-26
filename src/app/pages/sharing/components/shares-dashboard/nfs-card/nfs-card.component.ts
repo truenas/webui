@@ -54,11 +54,13 @@ export class NfsCardComponent implements OnInit {
         {
           iconName: 'edit',
           tooltip: this.translate.instant('Edit'),
+          getTestAttr: (row) => 'nfs-' + row.id + '-edit',
           onClick: (row) => this.openForm(row),
         },
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
+          getTestAttr: (row) => 'iscsi-' + row.id + '-delete',
           onClick: (row) => this.doDelete(row),
         },
       ],

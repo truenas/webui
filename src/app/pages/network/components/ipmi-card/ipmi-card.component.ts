@@ -37,12 +37,14 @@ export class IpmiCardComponent implements OnInit {
         {
           iconName: 'edit',
           tooltip: this.translate.instant('Edit'),
+          getTestAttr: (row) => 'ipmi-' + row.id + '-edit',
           onClick: (row) => this.onEdit(row),
         },
         {
           hidden: (row) => of(!this.canOpen(row)),
           iconName: 'launch',
           tooltip: this.translate.instant('Open'),
+          getTestAttr: (row) => 'ipmi-' + row.id + '-launch',
           onClick: (row) => this.onOpen(row),
         },
       ],

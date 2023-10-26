@@ -56,6 +56,7 @@ export class SessionsCardComponent implements OnInit {
     actionsColumn({
       actions: [
         {
+          getTestAttr: (row) => 'sessions-' + row.id + '-terminate',
           iconName: 'exit_to_app',
           dynamicTooltip: (row) => of(row.current
             ? this.translate.instant('This session is current and cannot be terminated')

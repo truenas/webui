@@ -51,11 +51,13 @@ export class SysctlCardComponent implements OnInit {
         {
           iconName: 'edit',
           tooltip: this.translate.instant('Edit'),
+          getTestAttr: (row) => 'sysctl-' + row.id + '-edit',
           onClick: (row) => this.onEdit(row),
         },
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
+          getTestAttr: (row) => 'sysctl-' + row.id + '-delete',
           onClick: (row) => this.onDelete(row),
         },
       ],

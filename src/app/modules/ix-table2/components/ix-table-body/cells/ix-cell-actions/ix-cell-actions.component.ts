@@ -15,6 +15,7 @@ export class IxCellActionsComponent<T> extends ColumnComponent<T> {
     dynamicTooltip?: (row: T) => Observable<string>;
     hidden?: (row: T) => Observable<boolean>;
     disabled?: (row: T) => Observable<boolean>;
+    getTestAttr: (row: T) => string;
   }[];
 }
 

@@ -48,10 +48,12 @@ export class CloudCredentialsCardComponent implements OnInit {
           iconName: 'edit',
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.doEdit(row),
+          getTestAttr: (row) => 'cloud-creds-' + row.id + '-edit',
         },
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
+          getTestAttr: (row) => 'cloud-creds-' + row.id + '-delete',
           onClick: (row) => this.doDelete(row),
         },
       ],

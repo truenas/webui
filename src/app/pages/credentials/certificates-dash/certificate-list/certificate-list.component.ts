@@ -60,6 +60,7 @@ export class CertificateListComponent implements OnInit {
           iconName: 'block',
           tooltip: this.translate.instant('Revoked'),
           hidden: (row) => of(!row.revoked),
+          getTestAttr: (row) => 'certs-' + row.id + '-block',
           onClick: () => {},
         },
         {
@@ -67,21 +68,25 @@ export class CertificateListComponent implements OnInit {
           tooltip: this.translate.instant('Revoke'),
           hidden: (row) => of(!row.can_be_revoked),
           onClick: (row) => this.doRevoke(row),
+          getTestAttr: (row) => 'certs-' + row.id + '-revoke',
         },
         {
           iconName: 'mdi-download',
           tooltip: this.translate.instant('Download'),
           onClick: (row) => this.doDownload(row),
+          getTestAttr: (row) => 'certs-' + row.id + '-download',
         },
         {
           iconName: 'edit',
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.doEdit(row),
+          getTestAttr: (row) => 'certs-' + row.id + '-edit',
         },
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
+          getTestAttr: (row) => 'certs-' + row.id + '-delete',
         },
       ],
     }),

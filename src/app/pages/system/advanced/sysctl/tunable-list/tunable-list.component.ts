@@ -60,11 +60,13 @@ export class TunableListComponent implements OnInit {
         {
           iconName: 'edit',
           tooltip: this.translate.instant('Edit'),
+          getTestAttr: (row) => 'tunable-' + row.id + '-edit',
           onClick: (row) => this.doEdit(row),
         },
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
+          getTestAttr: (row) => 'tunable-' + row.id + '-delete',
           onClick: (row) => this.doDelete(row),
         },
       ],
