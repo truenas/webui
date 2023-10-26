@@ -1,6 +1,7 @@
 # coding=utf-8
 """High Availability (tn-bhyve02) feature tests."""
 
+import os
 import pytest
 import reusableSeleniumCode as rsc
 import xpaths
@@ -34,6 +35,7 @@ def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
     """the browser is open navigate to "{nas_url}"."""
     global host
     host = nas_url
+    os.environ["nas_ip"] = nas_url
     if nas_url not in driver.current_url:
         driver.get(f"http://{nas_url}/ui/dashboard/")
         time.sleep(1)
@@ -44,6 +46,7 @@ def if_login_page_appear_enter_root_and_password(driver, user, password):
     """If login page appear enter "{user}" and "{password}"."""
     global passwd
     passwd = password
+    os.environ["nas_password"] = password
     if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
         assert wait_on_element(driver, 10, xpaths.login.user_input)
         driver.find_element_by_xpath(xpaths.login.user_input).clear()
@@ -128,6 +131,8 @@ def the_domain_credentials_page_should_open(driver):
 @then(parsers.parse('Input Domain name "{ad_domain}", Account name "{ad_user}", Password "{ad_password}"'))
 def input_domain_name_ad_domain_account_name_ad_user_password_ad_pasword(driver, ad_domain, ad_user, ad_password):
     """Input Domain name "{ad_domain}", Account name "{ad_user}", Password "ad_password"."""
+    os.environ["ad_user"] = ad_user
+    os.environ["ad_password"] = ad_password
     assert wait_on_element(driver, 7, '//input[@ix-auto="input__Domain Name"]')
     driver.find_element_by_xpath('//input[@ix-auto="input__Domain Name"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Domain Name"]').send_keys(ad_domain)

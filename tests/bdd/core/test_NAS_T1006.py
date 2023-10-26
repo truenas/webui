@@ -19,6 +19,9 @@ from pytest_bdd import (
     when,
     parsers
 )
+import pytest
+
+pytestmark = [pytest.mark.debug_test]
 
 
 @scenario('features/NAS-T1006.feature', 'Create an Active Directory dataset on the tank pool')

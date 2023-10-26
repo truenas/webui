@@ -1,6 +1,7 @@
 # coding=utf-8
 """Core UI feature tests."""
 
+import os
 import time
 import reusableSeleniumCode as rsc
 import xpaths
@@ -17,6 +18,10 @@ from pytest_bdd import (
     when,
     parsers
 )
+
+import pytest
+
+pytestmark = [pytest.mark.debug_test]
 
 
 @scenario('features/NAS-T1003.feature', 'Setup AD and verify it is working')
@@ -111,6 +116,8 @@ def the_domain_credentials_page_should_open(driver):
 @then(parsers.parse('input Domain name "{ad_domain}", Account name "{ad_user}", Password "{ad_password}"'))
 def input_domain_name_account_name_password(driver, ad_domain, ad_user, ad_password):
     """input Domain name "ad_domain", Account name "ad_user", Password "ad_password"."""
+    os.environ["ad_user"] = ad_user
+    os.environ["ad_password"] = ad_password
     assert wait_on_element(driver, 7, '//input[@ix-auto="input__Domain Name"]', 'clickable')
     assert wait_on_element(driver, 7, '//input[@ix-auto="input__Domain Account Name"]', 'clickable')
     assert wait_on_element(driver, 7, '//input[@ix-auto="input__Domain Account Password"]', 'clickable')
