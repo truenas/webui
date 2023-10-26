@@ -49,7 +49,6 @@ const fakeUserDataSource: User[] = [{
   locked: false,
   sudo_commands: [],
   sudo_commands_nopasswd: [],
-  ssh_password_enabled: true,
   email: null,
   group: {
     id: 101,
@@ -115,9 +114,9 @@ describe('UserListComponent', () => {
     store$.refreshState();
 
     const expectedRows = [
-      ['Username', 'UID', 'Builtin', 'Full Name', 'SSH'],
-      ['root',  '0', 'Yes', 'root', 'Key not set'],
-      ['test', '1004', 'No', 'test', 'Password login enabled'],
+      ['Username', 'UID', 'Builtin', 'Full Name'],
+      ['root',  '0', 'Yes', 'root'],
+      ['test', '1004', 'No', 'test'],
     ];
 
     const table = await loader.getHarness(IxTable2Harness);
