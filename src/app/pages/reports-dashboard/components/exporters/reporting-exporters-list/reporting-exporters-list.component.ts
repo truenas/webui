@@ -179,4 +179,13 @@ export class ReportingExporterListComponent implements OnInit {
       },
     });
   }
+
+  onListFiltered(query: string): void {
+    this.filterString = query.toLowerCase();
+    const filteredExporters = this.exporters.filter((exporter) => {
+      return JSON.stringify(exporter).includes(query);
+    });
+    this.dataProvider.setRows(filteredExporters);
+    this.cdr.markForCheck();
+  }
 }

@@ -3,11 +3,12 @@ import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 
 export default {
+  fieldset_smart: 'S.M.A.R.T.',
   disk_form_title: T('Edit Disk'),
   fieldset_disk: T('General'),
   fieldset_powermgmt: T('Power Management'),
   fieldset_temperature: T('Temperature Alerts'),
-  fieldset_smartsed: T('S.M.A.R.T./SED'),
+  fieldset_sed: T('SED'),
   disk_form_name_placeholder: T('Name'),
   disk_form_name_tooltip: T('Disk device name.'),
 
@@ -47,8 +48,9 @@ export default {
   ],
 
   disk_form_togglesmart_placeholder: T('Enable S.M.A.R.T.'),
-  disk_form_togglesmart_tooltip: T('Enabling allows the system to conduct periodic\
- <a href="https://www.truenas.com/docs/scale/scaleuireference/dataprotection/smarttestsscreensscale/" target="_blank">S.M.A.R.T. tests</a>.'),
+  disk_form_togglesmart_tooltip: T('Controls whether \
+ <a href="https://www.truenas.com/docs/scale/scaleuireference/dataprotection/smarttestsscreensscale/" target="_blank">SMART monitoring and scheduled SMART tests</a> \
+ are enabled.'),
 
   disk_form_smartoptions_placeholder: T('S.M.A.R.T. extra options'),
   disk_form_smartoptions_tooltip: T('Additional <a\

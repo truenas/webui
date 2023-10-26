@@ -106,6 +106,7 @@ export class InitShutdownCardComponent implements OnInit {
       buttonText: this.translate.instant('Delete'),
     })
       .pipe(
+        filter(Boolean),
         switchMap(() => this.ws.call('initshutdownscript.delete', [row.id])),
         filter(Boolean),
         this.errorHandler.catchError(),

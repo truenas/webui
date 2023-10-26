@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.interface';
 
 @Component({
   selector: 'ix-cell-text',
   templateUrl: './ix-cell-text.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IxCellTextComponent<T> extends ColumnComponent<T> {}
 

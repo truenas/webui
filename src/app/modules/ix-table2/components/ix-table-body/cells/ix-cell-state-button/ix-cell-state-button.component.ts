@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -23,6 +23,7 @@ interface RowState {
 @Component({
   templateUrl: './ix-cell-state-button.component.html',
   styleUrls: ['./ix-cell-state-button.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IxCellStateButtonComponent<T> extends ColumnComponent<T> {
   matDialog: MatDialog;

@@ -1,7 +1,5 @@
 import { DOCUMENT } from '@angular/common';
-import {
-  Component, AfterViewInit, OnInit, Inject,
-} from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -55,6 +53,7 @@ interface NicInfoMap {
     '../widget/widget.component.scss',
     './widget-network.component.scss',
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WidgetNetworkComponent extends WidgetComponent implements OnInit, AfterViewInit {
   readonly emptyTypes = EmptyType;
@@ -160,6 +159,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
     public themeService: ThemeService,
     private store$: Store<AppState>,
     private resourcesUsageStore$: ResourcesUsageStore,
+    private cdr: ChangeDetectorRef,
     @Inject(DOCUMENT) private document: Document,
   ) {
     super(translate);
@@ -168,6 +168,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
       .pipe(untilDestroyed(this))
       .subscribe((timezone) => {
         this.timezone = timezone;
+        this.cdr.markForCheck();
       });
 
     this.store$
@@ -178,6 +179,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
       )
       .subscribe((serverTime) => {
         this.serverTime = new Date(serverTime);
+        this.cdr.markForCheck();
       });
   }
 
@@ -189,6 +191,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
       next: (interfaces) => {
         this.availableNics = interfaces.filter((nic) => nic.state.link_state !== LinkState.Down);
         this.updateMapInfo();
+        this.cdr.markForCheck();
       },
     });
 
@@ -237,6 +240,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
             nicInfo.lastReceived = usageUpdate.received_bytes;
           }
         }
+        this.cdr.markForCheck();
       });
     });
   }
@@ -415,9 +419,11 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
           };
 
           this.nicInfoMap[networkInterfaceName].chartData = chartData;
+          this.cdr.markForCheck();
         },
         error: (err: WebsocketError) => {
           this.nicInfoMap[networkInterfaceName].emptyConfig = this.chartDataError(err, nic);
+          this.cdr.markForCheck();
         },
       });
     });
@@ -441,6 +447,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
               buttonText: this.translate.instant('Clear'),
             }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
               this.nicInfoMap[nic.state.name].emptyConfig = this.loadingEmptyConfig;
+              this.cdr.markForCheck();
               this.ws.call('reporting.clear').pipe(take(1), untilDestroyed(this)).subscribe();
             });
           },
