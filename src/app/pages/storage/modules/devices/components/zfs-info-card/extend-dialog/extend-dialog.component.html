@@ -2,9 +2,9 @@
   {{ 'Extend Vdev' | translate }}
 </h1>
 
-<form class="ix-form-container" (submit)="onSubmit($event)">
+<form class="ix-form-container" [formGroup]="form" (submit)="onSubmit($event)">
   <ix-combobox
-    [formControl]="newDiskControl"
+    formControlName="newDisk"
     [label]="'New Disk' | translate"
     [required]="true"
     [provider]="disksProvider"
@@ -20,7 +20,7 @@
       type="submit"
       color="primary"
       ixTest="extend"
-      [disabled]="!newDiskControl.valid"
+      [disabled]="form.invalid"
     >
       {{ 'Extend' | translate }}
     </button>

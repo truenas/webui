@@ -1,8 +1,9 @@
 import {
   ChangeDetectionStrategy, Component, Inject, OnInit,
 } from '@angular/core';
-import { FormControl, Validators } from '@angular/forms';
+import { Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
@@ -31,7 +32,9 @@ export interface ExtendDialogParams {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ExtendDialogComponent implements OnInit {
-  newDiskControl = new FormControl(null as string, Validators.required);
+  form = this.formBuilder.group({
+    newDisk: ['', Validators.required],
+  });
 
   readonly helptext = helptext;
 
@@ -40,6 +43,7 @@ export class ExtendDialogComponent implements OnInit {
   private disksWithDuplicateSerials: UnusedDisk[] = [];
 
   constructor(
+    private formBuilder: FormBuilder,
     private ws: WebSocketService,
     private errorHandler: ErrorHandlerService,
     private loader: AppLoaderService,
@@ -48,20 +52,20 @@ export class ExtendDialogComponent implements OnInit {
     private dialogService: DialogService,
     private dialogRef: MatDialogRef<ExtendDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ExtendDialogParams,
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.loadUnusedDisks();
-    this.setupWarningForExportedPools();
+    this.setupExportedPoolWarning();
   }
 
-  setupWarningForExportedPools(): void {
-    this.newDiskControl.valueChanges.pipe(untilDestroyed(this)).subscribe(
-      this.warnForExportedPools.bind(this),
+  setupExportedPoolWarning(): void {
+    this.form.controls.newDisk.valueChanges.pipe(untilDestroyed(this)).subscribe(
+      this.warnAboutExportedPool.bind(this),
     );
   }
 
-  warnForExportedPools(diskName: string): void {
+  warnAboutExportedPool(diskName: string): void {
     const unusedDisk = this.unusedDisks.find((disk) => disk.name === diskName);
     if (!unusedDisk?.exported_zpool) {
       return;
@@ -76,7 +80,7 @@ export class ExtendDialogComponent implements OnInit {
     event.preventDefault();
 
     const payload = {
-      new_disk: this.newDiskControl.value,
+      new_disk: this.form.value.newDisk,
       target_vdev: this.data.targetVdevGuid,
     } as PoolAttachParams;
 
@@ -109,16 +113,14 @@ export class ExtendDialogComponent implements OnInit {
 
         return unusedDisks.map((disk) => {
           const exportedPool = disk.exported_zpool ? ` (${disk.exported_zpool})` : '';
-          const size = filesize(disk.size, { standard: 'iec' });
 
           return {
-            label: `${disk.devname} - ${size} ${exportedPool}`,
-            value: disk.identifier,
+            label: `${disk.devname} (${filesize(disk.size, { standard: 'iec' })})${exportedPool}`,
+            value: disk.name,
           };
         }).sort((a, b) => a.label.localeCompare(b.label));
       }),
       untilDestroyed(this),
     );
   }
-
 }
