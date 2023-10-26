@@ -47,6 +47,12 @@ describe('TopologyCardComponent', () => {
         diskSize: 4,
         width: 7,
         repeats: 2,
+      }).addSpecialTopology({
+        scenario: MockStorageScenario.MixedDiskCapacity,
+        layout: TopologyItemType.Raidz2,
+        diskSize: 4,
+        width: 8,
+        repeats: 3,
       });
 
       spectator = createComponent({
@@ -60,10 +66,12 @@ describe('TopologyCardComponent', () => {
     it('rendering VDEVs rows', () => {
       const captions = spectator.queryAll('.vdev-line b');
       const values = spectator.queryAll('.vdev-line .vdev-value');
-      expect(spectator.queryAll('.vdev-line .warning ix-icon')).toHaveLength(1);
+      expect(spectator.queryAll('.vdev-line .warning ix-icon')).toHaveLength(2);
 
       expect(captions[0]).toHaveText('Data VDEVs');
+      expect(captions[1]).toHaveText('Metadata');
       expect(values[0]).toHaveText('2 x RAIDZ3 | 7 wide | Mixed Capacity');
+      expect(values[1]).toHaveText('3 x RAIDZ2 | 8 wide | Mixed Capacity');
     });
   });
 
