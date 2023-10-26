@@ -22,16 +22,18 @@
         {{ selectedLabel }}
       </mat-select-trigger>
 
-      <mat-checkbox
-        *ngIf="multiple"
-        ixTest="select-all"
+      <div
+        *ngIf="multiple && showSelectAll"
         class="select-all-checkbox"
-        [checked]="selectAllState.checked"
-        [indeterminate]="selectAllState.indeterminate"
-        (change)="toggleSelectAll($event.checked)"
+        [ixTest]="[controlDirective.name, 'select-all']"
+        (click)="toggleSelectAll(!selectAllState.checked)"
       >
+        <ix-icon
+          [name]="selectAllState.checked ? 'check_circle' : 'remove'"
+        ></ix-icon>
+
         {{ 'Select All' | translate }}
-      </mat-checkbox>
+      </div>
 
       <ng-container *ngIf="opts$ | async as opts; else loadingOrError">
         <mat-option

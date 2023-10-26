@@ -7,15 +7,14 @@
 
 ::ng-deep {
   .select-all-checkbox {
-    margin: 0;
-    width: 100%;
+    align-items: center;
+    border-bottom: 1px solid var(--alt-bg1);
+    cursor: pointer;
+    display: flex;
+    padding: 8px;
 
-    > div {
-      width: 100%;
-    }
-
-    label {
-      width: 100%;
+    ix-icon {
+      margin-right: 16px;
     }
   }
 }

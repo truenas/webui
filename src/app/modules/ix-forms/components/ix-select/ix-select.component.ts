@@ -29,6 +29,7 @@ export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChange
   @Input() multiple: boolean;
   @Input() emptyValue: string = null;
   @Input() hideEmpty = false;
+  @Input() showSelectAll = false;
   @Input() compareWith: (val1: unknown, val2: unknown) => boolean = (val1: unknown, val2: unknown) => val1 === val2;
 
   isDisabled = false;
@@ -38,7 +39,6 @@ export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChange
 
   selectAllState = {
     checked: false,
-    indeterminate: false,
   };
 
   private opts: SelectOption[] = [];
@@ -143,10 +143,8 @@ export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChange
   }
 
   unselectAll(): void {
-    if (this.multiple) {
-      this.value = [];
-      this.onChange(this.value);
-    }
+    this.value = [];
+    this.onChange(this.value);
   }
 
   toggleSelectAll(checked: boolean): void {
@@ -162,13 +160,10 @@ export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChange
     if (Array.isArray(this.value)) {
       if (this.value.length === 0) {
         this.selectAllState.checked = false;
-        this.selectAllState.indeterminate = false;
       } else if (this.value.length === this.opts.length) {
         this.selectAllState.checked = true;
-        this.selectAllState.indeterminate = false;
       } else {
         this.selectAllState.checked = false;
-        this.selectAllState.indeterminate = true;
       }
     }
   }
