@@ -6,8 +6,9 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, of, Subscription } from 'rxjs';
-import { InitShutdownScriptType } from 'app/enums/init-shutdown-script-type.enum';
-import { InitShutdownScriptWhen } from 'app/enums/init-shutdown-script-when.enum';
+import { InitShutdownScriptType, initShutdownScriptTypeLabels } from 'app/enums/init-shutdown-script-type.enum';
+import { InitShutdownScriptWhen, initShutdownScriptWhenLabels } from 'app/enums/init-shutdown-script-when.enum';
+import { mapToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/system/init-shutdown';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -48,16 +49,8 @@ export class InitShutdownFormComponent implements OnInit {
 
   readonly isCommand$ = this.form.select((values) => values.type === InitShutdownScriptType.Command);
 
-  readonly typeOptions$ = of([
-    { label: this.translate.instant('Command'), value: InitShutdownScriptType.Command },
-    { label: this.translate.instant('Script'), value: InitShutdownScriptType.Script },
-  ]);
-
-  readonly whenOptions$ = of([
-    { label: this.translate.instant('Pre Init'), value: InitShutdownScriptWhen.PreInit },
-    { label: this.translate.instant('Post Init'), value: InitShutdownScriptWhen.PostInit },
-    { label: this.translate.instant('Shutdown'), value: InitShutdownScriptWhen.Shutdown },
-  ]);
+  readonly typeOptions$ = of(mapToOptions(initShutdownScriptTypeLabels, this.translate));
+  readonly whenOptions$ = of(mapToOptions(initShutdownScriptWhenLabels, this.translate));
 
   readonly tooltips = {
     comment: helptext.ini_description_tooltip,

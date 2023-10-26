@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject,
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
@@ -71,6 +71,7 @@ export class ManualTestDialogComponent {
     private errorHandler: ErrorHandlerService,
     private cdr: ChangeDetectorRef,
     @Inject(MAT_DIALOG_DATA) private params: ManualTestDialogParams,
+    public dialogRef: MatDialogRef<ManualTestDialogComponent>,
   ) {
     this.setDisksBySupport();
   }
@@ -110,6 +111,7 @@ export class ManualTestDialogComponent {
           this.cdr.markForCheck();
         },
         error: (error: WebsocketError) => {
+          this.dialogRef.close();
           this.dialogService.error(this.errorHandler.parseWsError(error));
           this.cdr.markForCheck();
         },
