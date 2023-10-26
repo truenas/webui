@@ -207,8 +207,12 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     }
   }
 
-  toggleAppsChecked(): void {
-    this.dataSource.forEach((app) => this.selection.toggle(app));
+  toggleAppsChecked(checked: boolean): void {
+    if (checked) {
+      this.dataSource.forEach((app) => this.selection.select(app));
+    } else {
+      this.selection.clear();
+    }
   }
 
   showLoadStatus(type: EmptyType): void {
@@ -319,13 +323,13 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   onBulkStart(): void {
     this.stoppedCheckedApps.forEach((app) => this.start(app.name));
     this.snackbar.success(this.translate.instant(helptext.bulkActions.finished));
-    this.toggleAppsChecked();
+    this.toggleAppsChecked(false);
   }
 
   onBulkStop(): void {
     this.startedCheckedApps.forEach((app) => this.stop(app.name));
     this.snackbar.success(this.translate.instant(helptext.bulkActions.finished));
-    this.toggleAppsChecked();
+    this.toggleAppsChecked(false);
   }
 
   onBulkUpgrade(updateAll = false): void {
@@ -334,7 +338,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     ));
     this.matDialog.open(AppBulkUpgradeComponent, { data: apps })
       .afterClosed().pipe(untilDestroyed(this)).subscribe(() => {
-        this.toggleAppsChecked();
+        this.toggleAppsChecked(false);
       });
   }
 
@@ -350,7 +354,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
           title: helptext.charts.delete_dialog.job,
         },
       });
-      this.toggleAppsChecked();
+      this.toggleAppsChecked(false);
       dialogRef.componentInstance.setCall('core.bulk', ['chart.release.delete', checkedNames.map((item) => [item])]);
       dialogRef.componentInstance.submit();
       dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(
