@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
+import { of, pipe } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -10,6 +10,7 @@ import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
+import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { NfsListComponent } from 'app/pages/sharing/nfs/nfs-list/nfs-list.component';
@@ -38,11 +39,15 @@ describe('NfsListComponent', () => {
     component: NfsListComponent,
     imports: [
       IxTable2Module,
+      AppLoaderModule,
     ],
     providers: [
       mockProvider(AppLoaderService),
       mockProvider(ErrorHandlerService),
       mockProvider(EmptyService),
+      mockProvider(AppLoaderService, {
+        withLoader: jest.fn(() => pipe()),
+      }),
       mockWebsocket([
         mockCall('sharing.nfs.query', shares as NfsShare[]),
         mockCall('sharing.nfs.delete'),
