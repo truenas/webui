@@ -1,5 +1,6 @@
 import {
   AfterViewInit,
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   ElementRef,
@@ -55,6 +56,7 @@ enum PoolHealthLevel {
     '../widget/widget.component.scss',
     './widget-pool.component.scss',
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WidgetPoolComponent extends WidgetComponent implements OnInit, AfterViewInit, OnChanges {
   @Input() poolState: Pool;
@@ -249,6 +251,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
         delete disks[0].zfs_guid;
         this.currentDiskDetails = disks[0];
       }
+      this.cdr.markForCheck();
     });
   }
 
