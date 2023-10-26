@@ -56,16 +56,15 @@ export class InitShutdownCardComponent implements OnInit {
       propertyName: 'timeout',
     }),
     actionsColumn({
+      ixTestPrefix: 'init-shutdown-',
       actions: [
         {
           iconName: 'edit',
-          getTestAttr: (row) => 'init-shutdown-' + row.id + '-edit',
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.onEdit(row),
         },
         {
           iconName: 'delete',
-          getTestAttr: (row) => 'init-shutdown-' + row.id + '-delete',
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.onDelete(row),
         },

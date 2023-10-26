@@ -34,18 +34,17 @@ export class SshConnectionCardComponent implements OnInit {
       sortable: true,
     }),
     actionsColumn({
+      ixTestPrefix: 'ssh-con-',
       actions: [
         {
           iconName: 'edit',
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.doEdit(row),
-          getTestAttr: (row) => 'ssh-con-' + row.id + '-edit',
         },
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
-          getTestAttr: (row) => 'ssh-con-' + row.id + '-delete',
         },
       ],
     }),

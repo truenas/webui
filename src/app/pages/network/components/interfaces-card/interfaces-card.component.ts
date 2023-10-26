@@ -63,16 +63,15 @@ export class InterfacesCardComponent implements OnInit {
       title: this.translate.instant('IP Addresses'),
     },
     actionsColumn({
+      ixTestPrefix: 'interfaces-',
       actions: [
         {
           iconName: 'edit',
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.onEdit(row),
-          getTestAttr: (row) => 'interfaces-' + row.id + '-edit',
         },
         {
           iconName: 'refresh',
-          getTestAttr: (row) => 'interfaces-' + row.id + '-refresh',
           hidden: (row) => of(!this.isPhysical(row)),
           disabled: () => of(this.isHaEnabled),
           dynamicTooltip: () => of(this.isHaEnabled
@@ -82,7 +81,6 @@ export class InterfacesCardComponent implements OnInit {
         },
         {
           iconName: 'delete',
-          getTestAttr: (row) => 'interfaces-' + row.id + '-delete',
           tooltip: this.isHaEnabled ? this.translate.instant(helptext.ha_enabled_delete_msg) : '',
           hidden: (row) => of(this.isPhysical(row)),
           onClick: (row) => this.onDelete(row),

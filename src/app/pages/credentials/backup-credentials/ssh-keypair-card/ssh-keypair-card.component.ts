@@ -35,24 +35,22 @@ export class SshKeypairCardComponent implements OnInit {
       sortable: true,
     }),
     actionsColumn({
+      ixTestPrefix: 'ssh-keypair-',
       actions: [
         {
           iconName: 'save_alt',
           tooltip: this.translate.instant('Download'),
           onClick: (row) => this.doDownload(row),
-          getTestAttr: (row) => 'ssh-keypair-' + row.id + '-download',
         },
         {
           iconName: 'edit',
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.doEdit(row),
-          getTestAttr: (row) => 'ssh-keypair-' + row.id + '-edit',
         },
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
-          getTestAttr: (row) => 'ssh-keypair-' + row.id + '-delete',
         },
       ],
     }),

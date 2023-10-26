@@ -41,17 +41,16 @@ export class StaticRoutesCardComponent implements OnInit {
       sortable: true,
     }),
     actionsColumn({
+      ixTestPrefix: 'statis-routes-',
       actions: [
         {
           iconName: 'edit',
           tooltip: this.translate.instant('Edit'),
-          getTestAttr: (row) => 'statis-routes-' + row.id + '-edit',
           onClick: (row) => this.doEdit(row),
         },
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
-          getTestAttr: (row) => 'statis-routes-' + row.id + '-delete',
           onClick: (row) => this.doDelete(row),
         },
       ],

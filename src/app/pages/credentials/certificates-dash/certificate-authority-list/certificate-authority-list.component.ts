@@ -57,37 +57,33 @@ export class CertificateAuthorityListComponent implements OnInit {
       sortable: true,
     }),
     actionsColumn({
+      ixTestPrefix: 'ca-',
       actions: [
         {
           iconName: 'beenhere',
           tooltip: this.translate.instant('Sign CSR'),
           onClick: (row) => this.doSignCsr(row),
-          getTestAttr: (row) => 'ca-' + row.id + '-beenhere',
         },
         {
           iconName: 'mdi-undo',
           tooltip: this.translate.instant('Revoke'),
           hidden: (row) => of(row.revoked),
           onClick: (row) => this.doRevoke(row),
-          getTestAttr: (row) => 'ca-' + row.id + '-revoke',
         },
         {
           iconName: 'mdi-download',
           tooltip: this.translate.instant('Download'),
           onClick: (row) => this.doDownload(row),
-          getTestAttr: (row) => 'ca-' + row.id + '-download',
         },
         {
           iconName: 'edit',
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.doEdit(row),
-          getTestAttr: (row) => 'ca-' + row.id + '-edit',
         },
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
-          getTestAttr: (row) => 'ca-' + row.id + '-delete',
         },
       ],
     }),

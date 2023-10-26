@@ -39,18 +39,17 @@ export class AcmeDnsAuthenticatorListComponent implements OnInit {
       sortable: true,
     }),
     actionsColumn({
+      ixTestPrefix: 'acme-dns-auth-',
       actions: [
         {
           iconName: 'edit',
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.doEdit(row),
-          getTestAttr: (row) => 'acme-dns-auth-' + row.id + '-edit',
         },
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
-          getTestAttr: (row) => 'acme-dns-auth-' + row.id + '-delete',
         },
       ],
     }),

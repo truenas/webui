@@ -60,17 +60,16 @@ export class ReportingExporterListComponent implements OnInit {
       },
     }),
     actionsColumn({
+      ixTestPrefix: 'reporting-exporters-',
       actions: [
         {
           iconName: 'edit',
-          getTestAttr: (row) => 'reporting-exporters-' + row.id + '-edit',
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.doEdit(row),
         },
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
-          getTestAttr: (row) => 'reporting-exporters-' + row.id + '-delete',
           onClick: (row) => this.doDelete(row),
         },
       ],

@@ -33,18 +33,17 @@ export class IpmiCardComponent implements OnInit {
       getValue: (row) => this.translate.instant('Channel {n}', { n: row.channel }),
     }),
     actionsColumn({
+      ixTestPrefix: 'ipmi-',
       actions: [
         {
           iconName: 'edit',
           tooltip: this.translate.instant('Edit'),
-          getTestAttr: (row) => 'ipmi-' + row.id + '-edit',
           onClick: (row) => this.onEdit(row),
         },
         {
           hidden: (row) => of(!this.canOpen(row)),
           iconName: 'launch',
           tooltip: this.translate.instant('Open'),
-          getTestAttr: (row) => 'ipmi-' + row.id + '-launch',
           onClick: (row) => this.onOpen(row),
         },
       ],

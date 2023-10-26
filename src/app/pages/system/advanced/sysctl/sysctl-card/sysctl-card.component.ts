@@ -47,17 +47,16 @@ export class SysctlCardComponent implements OnInit {
       propertyName: 'comment',
     }),
     actionsColumn({
+      ixTestPrefix: 'sysctl-',
       actions: [
         {
           iconName: 'edit',
           tooltip: this.translate.instant('Edit'),
-          getTestAttr: (row) => 'sysctl-' + row.id + '-edit',
           onClick: (row) => this.onEdit(row),
         },
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
-          getTestAttr: (row) => 'sysctl-' + row.id + '-delete',
           onClick: (row) => this.onDelete(row),
         },
       ],

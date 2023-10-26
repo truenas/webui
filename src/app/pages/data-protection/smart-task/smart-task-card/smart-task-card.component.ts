@@ -54,18 +54,17 @@ export class SmartTaskCardComponent implements OnInit {
       getValue: (row) => this.taskService.getTaskNextTime(row.cron_schedule) as unknown,
     }),
     actionsColumn({
+      ixTestPrefix: 'smart-',
       actions: [
         {
           iconName: 'edit',
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.openForm(row),
-          getTestAttr: (row) => 'smart-' + row.id + '-edit',
         },
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
-          getTestAttr: (row) => 'smart-' + row.id + '-delete',
         },
       ],
     }),

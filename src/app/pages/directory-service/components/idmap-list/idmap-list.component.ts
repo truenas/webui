@@ -70,6 +70,7 @@ export default class IdmapListComponent implements OnInit {
       sortable: true,
     }),
     actionsColumn({
+      ixTestPrefix: 'idmaps-',
       actions: [
         {
           iconName: 'edit',
@@ -80,7 +81,6 @@ export default class IdmapListComponent implements OnInit {
               untilDestroyed(this),
             ).subscribe(() => this.getIdmaps());
           },
-          getTestAttr: (row) => 'idmaps-' + row.id + '-edit',
         },
         {
           iconName: 'delete',
@@ -104,7 +104,6 @@ export default class IdmapListComponent implements OnInit {
               },
             });
           },
-          getTestAttr: (row) => 'idmaps-' + row.id + '-delete',
         },
       ],
     }),

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Observable } from 'rxjs';
+import { CellActionConfig } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/cell-action-config.interface';
 import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.interface';
 
 @Component({
@@ -8,19 +8,12 @@ import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-
   styleUrls: ['./ix-cell-actions.component.scss'],
 })
 export class IxCellActionsComponent<T> extends ColumnComponent<T> {
-  actions: {
-    iconName: string;
-    tooltip?: string;
-    onClick: (row: T) => void;
-    dynamicTooltip?: (row: T) => Observable<string>;
-    hidden?: (row: T) => Observable<boolean>;
-    disabled?: (row: T) => Observable<boolean>;
-    getTestAttr: (row: T) => string;
-  }[];
+  ixTestPrefix: string;
+  actions: CellActionConfig<T>[];
 }
 
 export function actionsColumn<T>(
-  options: Partial<IxCellActionsComponent<T>>,
+  options: Partial<IxCellActionsComponent<T>> & { actions: CellActionConfig<T>[]; ixTestPrefix: string },
 ): Column<T, IxCellActionsComponent<T>> {
   return { type: IxCellActionsComponent, ...options };
 }

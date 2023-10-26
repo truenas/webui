@@ -50,17 +50,16 @@ export class NfsCardComponent implements OnInit {
     }),
     actionsColumn({
       cssClass: 'tight-actions',
+      ixTestPrefix: 'nfs-',
       actions: [
         {
           iconName: 'edit',
           tooltip: this.translate.instant('Edit'),
-          getTestAttr: (row) => 'nfs-' + row.id + '-edit',
           onClick: (row) => this.openForm(row),
         },
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
-          getTestAttr: (row) => 'iscsi-' + row.id + '-delete',
           onClick: (row) => this.doDelete(row),
         },
       ],

@@ -74,25 +74,23 @@ export class RsyncTaskCardComponent implements OnInit {
     }),
     actionsColumn({
       cssClass: 'wide-actions',
+      ixTestPrefix: 'rsync-',
       actions: [
         {
           iconName: 'edit',
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.openForm(row),
-          getTestAttr: (row) => 'rsync-' + row.id + '-edit',
         },
         {
           iconName: 'play_arrow',
           tooltip: this.translate.instant('Run job'),
           hidden: (row) => of(row.job?.state === JobState.Running),
           onClick: (row) => this.runNow(row),
-          getTestAttr: (row) => 'rsync-' + row.id + '-run',
         },
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
-          getTestAttr: (row) => 'rsync-' + row.id + '-delete',
         },
       ],
     }),

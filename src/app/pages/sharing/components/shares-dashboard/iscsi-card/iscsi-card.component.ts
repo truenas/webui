@@ -42,16 +42,15 @@ export class IscsiCardComponent implements OnInit {
       propertyName: 'alias',
     }),
     actionsColumn({
+      ixTestPrefix: 'iscsi-',
       actions: [
         {
-          getTestAttr: (row) => 'iscsi-' + row.id + '-edit',
           iconName: 'edit',
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.openForm(row),
         },
         {
           iconName: 'delete',
-          getTestAttr: (row) => 'iscsi-' + row.id + '-delete',
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
         },

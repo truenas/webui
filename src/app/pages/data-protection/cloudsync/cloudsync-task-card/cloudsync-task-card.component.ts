@@ -73,44 +73,39 @@ export class CloudSyncTaskCardComponent implements OnInit {
     }),
     actionsColumn({
       cssClass: 'wide-actions',
+      ixTestPrefix: 'cloudsync-',
       actions: [
         {
           iconName: 'edit',
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.openForm(row),
-          getTestAttr: (row) => 'cloudsync-' + row.id + '-edit',
         },
         {
           iconName: 'play_arrow',
           tooltip: this.translate.instant('Run job'),
           hidden: (row) => of(row.job?.state === JobState.Running),
           onClick: (row) => this.runNow(row),
-          getTestAttr: (row) => 'cloudsync-' + row.id + '-run',
         },
         {
           iconName: 'stop',
           tooltip: this.translate.instant('Stop'),
           hidden: (row) => of(row.job?.state !== JobState.Running),
           onClick: (row) => this.stopCloudSyncTask(row),
-          getTestAttr: (row) => 'cloudsync-' + row.id + '-stop',
         },
         {
           iconName: 'sync',
           tooltip: this.translate.instant('Dry Run'),
           onClick: (row) => this.dryRun(row),
-          getTestAttr: (row) => 'cloudsync-' + row.id + '-dry-run',
         },
         {
           iconName: 'restore',
           tooltip: this.translate.instant('Restore'),
           onClick: (row) => this.restore(row),
-          getTestAttr: (row) => 'cloudsync-' + row.id + '-restore',
         },
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
-          getTestAttr: (row) => 'cloudsync-' + row.id + '-delete',
         },
       ],
     }),

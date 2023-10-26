@@ -69,38 +69,34 @@ export class ReplicationTaskCardComponent implements OnInit {
     }),
     actionsColumn({
       cssClass: 'wide-actions',
+      ixTestPrefix: 'replication-',
       actions: [
         {
           iconName: 'edit',
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.editReplicationTask(row),
-          getTestAttr: (row) => 'replication-' + row.id + '-edit',
         },
         {
           iconName: 'play_arrow',
           tooltip: this.translate.instant('Run job'),
           hidden: (row) => of(row.job?.state === JobState.Running),
-          getTestAttr: (row) => 'replication-' + row.id + '-run',
           onClick: (row) => this.runNow(row),
         },
         {
           iconName: 'restore',
           tooltip: this.translate.instant('Restore'),
           onClick: (row) => this.restore(row),
-          getTestAttr: (row) => 'replication-' + row.id + '-restore',
         },
         {
           iconName: 'download',
           tooltip: this.translate.instant('Download encryption keys'),
           hidden: (row) => of(!row.has_encrypted_dataset_keys),
           onClick: (row) => this.downloadKeys(row),
-          getTestAttr: (row) => 'replication-' + row.id + '-download-keys',
         },
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
-          getTestAttr: (row) => 'replication-' + row.id + '-delete',
         },
       ],
     }),
