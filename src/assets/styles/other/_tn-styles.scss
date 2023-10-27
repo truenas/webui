@@ -342,7 +342,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .mat-mdc-menu-content button.mat-mdc-menu-item:hover .mat-icon:not(.theme-picker-swatch-icon),
   .mat-mdc-menu-content button.mat-mdc-menu-item:focus,
   .mat-mdc-menu-content button.mat-mdc-menu-item:focus .mat-icon:not(.theme-picker-swatch-icon) {
-    background-color: var(--hover-bg);
+    background-color: var(--hover-bg) !important;
   }
 
   // Treelists in storage/volumes
