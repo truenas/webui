@@ -81,17 +81,27 @@ describe('CloudsyncWizardComponent', () => {
     await updateStepHarnesses();
   }
 
-  it('creates objects when wizard is submitted', async () => {
+  it('checks new credentials', async () => {
+    await form.fillForm({
+      'Credentials': 'Create New',
+    });
+
     expect(await form.getValues()).toEqual({
-      'Load Existing Credentials': '',
+      'Credentials': 'Create New',
       'Name': 'Storj',
       'Provider': 'Storj iX',
       'Access Key ID': '',
       'Secret Access Key': '',
     });
+  });
+
+  it('creates objects when wizard is submitted', async () => {
+    expect(await form.getValues()).toEqual({
+      'Credentials': '',
+    });
 
     await form.fillForm({
-      'Load Existing Credentials': 'Google Photos (Google Photos)',
+      'Credentials': 'Google Photos (Google Photos)',
     });
 
     await goToNextStep();
