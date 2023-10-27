@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { map, Observable } from 'rxjs';
@@ -7,6 +7,7 @@ import { ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.i
 @UntilDestroy()
 @Component({
   templateUrl: './ix-header-cell-checkbox.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IxHeaderCellCheckboxComponent<T> extends ColumnComponent<T> {
   onColumnCheck: (checked: boolean) => void;

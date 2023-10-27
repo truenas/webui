@@ -5,7 +5,6 @@ import { mockProvider, createRoutingFactory } from '@ngneat/spectator/jest';
 import { CoreComponents } from 'app/core/core-components.module';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Catalog, CatalogTrain } from 'app/interfaces/catalog.interface';
-import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { CatalogsComponent } from 'app/pages/apps/components/catalogs/catalogs.component';
@@ -44,7 +43,7 @@ describe('CatalogsComponent', () => {
 
   const createComponent = createRoutingFactory({
     component: CatalogsComponent,
-    imports: [EntityModule, CoreComponents, IxTable2Module],
+    imports: [CoreComponents, IxTable2Module],
     declarations: [],
     providers: [
       mockProvider(DialogService),

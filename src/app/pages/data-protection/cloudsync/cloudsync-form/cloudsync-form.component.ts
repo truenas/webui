@@ -21,7 +21,7 @@ import helptext from 'app/helptext/data-protection/cloudsync/cloudsync-form';
 import { CloudSyncTaskUi, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { NewOption, SelectOption } from 'app/interfaces/option.interface';
-import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
+import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
@@ -475,7 +475,7 @@ export class CloudsyncFormComponent implements OnInit {
   }
 
   getBucketsNodeProvider(): TreeNodeProvider {
-    return () => {
+    return (node: TreeNode<ExplorerNodeData>) => {
       let bucket = '';
       if (this.form.controls.bucket.enabled) {
         bucket = this.form.controls.bucket.value;
@@ -491,7 +491,7 @@ export class CloudsyncFormComponent implements OnInit {
         encryption_salt: this.form.controls.encryption_salt.value,
         attributes: {
           bucket,
-          folder: '/',
+          folder: node.path.slice(1).join('') || '/',
         },
         args: '',
       };
@@ -509,7 +509,7 @@ export class CloudsyncFormComponent implements OnInit {
                 path: '/' + file.Name,
                 name: file.Name,
                 type: ExplorerNodeType.Directory,
-                hasChildren: false,
+                hasChildren: true,
               });
             }
           });

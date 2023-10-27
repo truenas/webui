@@ -110,7 +110,6 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
     ReplicationWizardComponent,
     ReplicationWhatAndWhereComponent,
     ReplicationWhenComponent,
-    ScrubListComponent,
     CreateStorjBucketDialogComponent,
     ScrubTaskFormComponent,
     CloudsyncListComponent,
@@ -135,6 +134,7 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
     CloudsyncWizardComponent,
     CloudsyncProviderComponent,
     CloudsyncWhatAndWhenComponent,
+    ScrubListComponent,
   ],
 })
 export class DataProtectionModule {}

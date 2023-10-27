@@ -18,7 +18,7 @@ import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interfa
 import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { NewOption, Option } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
-import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
+import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
@@ -466,7 +466,7 @@ export class CloudsyncWhatAndWhenComponent implements OnInit, OnChanges {
   }
 
   private getBucketsNodeProvider(): TreeNodeProvider {
-    return () => {
+    return (node: TreeNode<ExplorerNodeData>) => {
       let bucket = '';
       if (this.form.controls.bucket.enabled) {
         bucket = this.form.controls.bucket.value;
@@ -482,7 +482,7 @@ export class CloudsyncWhatAndWhenComponent implements OnInit, OnChanges {
         encryption_salt: this.form.controls.encryption_salt.value,
         attributes: {
           bucket,
-          folder: '/',
+          folder: node.path.slice(1).join('') || '/',
         },
         args: '',
       };
@@ -500,7 +500,7 @@ export class CloudsyncWhatAndWhenComponent implements OnInit, OnChanges {
                 path: '/' + file.Name,
                 name: file.Name,
                 type: ExplorerNodeType.Directory,
-                hasChildren: false,
+                hasChildren: true,
               });
             }
           });
