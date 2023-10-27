@@ -1,13 +1,13 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef,
-  Component, Input, OnChanges,
+  Component, Input, OnChanges, OnInit,
 } from '@angular/core';
 import {
   ControlValueAccessor, NgControl,
 } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { EMPTY, Observable } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import { catchError, debounceTime, tap } from 'rxjs/operators';
 import { SelectOption, SelectOptionValueType } from 'app/interfaces/option.interface';
 
 type IxSelectValue = SelectOptionValueType;
@@ -19,7 +19,7 @@ type IxSelectValue = SelectOptionValueType;
   templateUrl: './ix-select.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class IxSelectComponent implements ControlValueAccessor, OnChanges {
+export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChanges {
   @Input() label: string;
   @Input() value: IxSelectValue;
   @Input() hint: string;
@@ -29,12 +29,18 @@ export class IxSelectComponent implements ControlValueAccessor, OnChanges {
   @Input() multiple: boolean;
   @Input() emptyValue: string = null;
   @Input() hideEmpty = false;
+  @Input() showSelectAll = false;
   @Input() compareWith: (val1: unknown, val2: unknown) => boolean = (val1: unknown, val2: unknown) => val1 === val2;
 
   isDisabled = false;
   hasErrorInOptions = false;
   opts$: Observable<SelectOption[]>;
   isLoading = false;
+
+  selectAllState = {
+    checked: false,
+  };
+
   private opts: SelectOption[] = [];
 
   get selectedLabel(): string {
@@ -60,10 +66,15 @@ export class IxSelectComponent implements ControlValueAccessor, OnChanges {
     return selectedLabels.length > 0 ? selectedLabels : [];
   }
 
-  constructor(
-    public controlDirective: NgControl,
-    private cdr: ChangeDetectorRef,
-  ) {
+  get disabledState(): boolean {
+    return this.isDisabled || !this.options;
+  }
+
+  get isLoadingState(): boolean {
+    return this.isLoading || !this.options;
+  }
+
+  constructor(public controlDirective: NgControl, private cdr: ChangeDetectorRef) {
     this.controlDirective.valueAccessor = this;
   }
 
@@ -86,6 +97,15 @@ export class IxSelectComponent implements ControlValueAccessor, OnChanges {
 
       this.opts$.pipe(untilDestroyed(this)).subscribe((opts) => {
         this.opts = opts;
+      });
+    }
+  }
+
+  ngOnInit(): void {
+    if (this.multiple) {
+      this.controlDirective.control.valueChanges.pipe(debounceTime(0), untilDestroyed(this)).subscribe(() => {
+        this.updateSelectAllState();
+        this.cdr.markForCheck();
       });
     }
   }
@@ -115,11 +135,36 @@ export class IxSelectComponent implements ControlValueAccessor, OnChanges {
     event.stopPropagation();
   }
 
-  get disabledState(): boolean {
-    return this.isDisabled || !this.options;
+  selectAll(): void {
+    if (this.multiple) {
+      this.value = this.opts.map((opt) => opt.value) as SelectOptionValueType;
+      this.onChange(this.value);
+    }
   }
 
-  get isLoadingState(): boolean {
-    return this.isLoading || !this.options;
+  unselectAll(): void {
+    this.value = [];
+    this.onChange(this.value);
+  }
+
+  toggleSelectAll(checked: boolean): void {
+    if (checked) {
+      this.selectAll();
+    } else {
+      this.unselectAll();
+    }
+    this.updateSelectAllState();
+  }
+
+  updateSelectAllState(): void {
+    if (Array.isArray(this.value)) {
+      if (this.value.length === 0) {
+        this.selectAllState.checked = false;
+      } else if (this.value.length === this.opts.length) {
+        this.selectAllState.checked = true;
+      } else {
+        this.selectAllState.checked = false;
+      }
+    }
   }
 }

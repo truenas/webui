@@ -10,7 +10,6 @@ import { Store } from '@ngrx/store';
 import { take } from 'rxjs';
 import { ReportTab, ReportType } from 'app/pages/reports-dashboard/interfaces/report-tab.interface';
 import { ReportsService } from 'app/pages/reports-dashboard/reports.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { AppState } from 'app/store';
 import { autoRefreshReportsToggled } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -41,7 +40,6 @@ export class ReportsGlobalControlsComponent implements OnInit {
     private route: ActivatedRoute,
     private store$: Store<AppState>,
     private reportsService: ReportsService,
-    private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
   ) {}
 
