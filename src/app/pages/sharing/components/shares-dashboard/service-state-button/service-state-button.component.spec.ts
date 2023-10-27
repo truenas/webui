@@ -44,6 +44,6 @@ describe('ServiceStateButtonComponent', () => {
     expect((await (await stoppedButton.host()).getAttribute('class'))?.split(' ').includes('fn-theme-red')).toBe(true);
 
     spectator.setInput('count', 0);
-    expect((await (await stoppedButton.host()).getAttribute('class'))?.split(' ').includes('fn-theme-grey')).toBe(true);
+    expect((await (await stoppedButton.host()).getAttribute('class'))?.split(' ').includes('fn-theme-red')).toBe(true);
   });
 });

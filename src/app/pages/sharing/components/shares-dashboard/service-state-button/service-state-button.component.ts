@@ -21,7 +21,7 @@ export class ServiceStateButtonComponent {
       case ServiceStatus.Running:
         return 'fn-theme-primary';
       case ServiceStatus.Stopped:
-        return this.count > 0 ? 'fn-theme-red' : 'fn-theme-grey';
+        return 'fn-theme-red';
       default:
         return 'fn-theme-orange';
     }

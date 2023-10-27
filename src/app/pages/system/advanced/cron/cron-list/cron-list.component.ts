@@ -57,7 +57,7 @@ export class CronListComponent implements OnInit {
     relativeDateColumn({
       title: this.translate.instant('Next Run'),
       hidden: true,
-      getValue: (row) => this.taskService.getTaskNextTime(scheduleToCrontab(row.schedule)) as unknown,
+      getValue: (row) => this.taskService.getTaskNextTime(scheduleToCrontab(row.schedule)),
     }),
     yesNoColumn({
       title: this.translate.instant('Hide Stdout'),
