@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
 import { Validators, FormBuilder } from '@angular/forms';
+import { NavigationExtras, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
@@ -21,10 +22,11 @@ import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
-import { newStorjBucket } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
+import { CloudsyncFormComponent, newStorjBucket } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { DialogService } from 'app/services/dialog.service';
 import { FilesystemService } from 'app/services/filesystem.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 type FormValue = CloudsyncWhatAndWhenComponent['form']['value'];
@@ -103,6 +105,8 @@ export class CloudsyncWhatAndWhenComponent implements OnInit, OnChanges {
     private translate: TranslateService,
     private filesystemService: FilesystemService,
     private cloudCredentialService: CloudCredentialService,
+    private slideIn: IxSlideInService,
+    private router: Router,
   ) {}
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
@@ -199,6 +203,20 @@ export class CloudsyncWhatAndWhenComponent implements OnInit, OnChanges {
     value.attributes = attributes;
 
     return value;
+  }
+
+  openAdvanced(): void {
+    this.dialog.confirm({
+      title: this.translate.instant('Switch to Advanced Settings'),
+      message: this.translate.instant('You will lose entered cloud sync data. Created provider will remains. Are you sure you want to continue?'),
+      buttonText: this.translate.instant('Continue'),
+      cancelText: this.translate.instant('Cancel'),
+    }).pipe(
+      filter(Boolean),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.slideIn.open(CloudsyncFormComponent, { wide: true });
+    });
   }
 
   private setupForm(): void {
@@ -385,8 +403,7 @@ export class CloudsyncWhatAndWhenComponent implements OnInit, OnChanges {
   private loadBucketOptions(): void {
     const credential = _.find(this.credentials, { id: this.form.controls.credentials.value });
 
-    this.cloudCredentialService
-      .getBuckets(credential.id)
+    this.cloudCredentialService.getBuckets(credential.id)
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (buckets) => {
@@ -417,8 +434,8 @@ export class CloudsyncWhatAndWhenComponent implements OnInit, OnChanges {
             hideCheckbox: true,
             buttonText: this.translate.instant('Fix Credential'),
           }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-            // const extra: NavigationExtras = { state: { editCredential: 'cloudcredentials', id: credential.id } };
-            // this.router.navigate(['/', 'credentials', 'backup-credentials'], extra);
+            const extra: NavigationExtras = { state: { editCredential: 'cloudcredentials', id: credential.id } };
+            this.router.navigate(['/', 'credentials', 'backup-credentials'], extra);
           });
           this.cdr.markForCheck();
         },

@@ -11,6 +11,7 @@ import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-sl
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
+import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { googlePhotosCreds, googlePhotosProvider } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.testing.utils';
 import { CloudsyncWhatAndWhenComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-what-and-when/cloudsync-what-and-when.component';
 import { TransferModeExplanationComponent } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
@@ -49,7 +50,7 @@ describe('CloudsyncWhatAndWhenComponent', () => {
       }),
       mockProvider(IxSlideInRef),
       mockProvider(DialogService, {
-        confirm: jest.fn(() => of()),
+        confirm: jest.fn(() => of(true)),
       }),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
@@ -112,5 +113,18 @@ describe('CloudsyncWhatAndWhenComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
     expect(spectator.component.save.emit).toHaveBeenCalled();
+  });
+
+  it('opens an advanced form when Advanced Options is pressed', async () => {
+    const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
+    await advancedButton.click();
+    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
+      buttonText: 'Continue',
+      cancelText: 'Cancel',
+      message:
+        'You will lose entered cloud sync data. Created provider will remains. Are you sure you want to continue?',
+      title: 'Switch to Advanced Settings',
+    });
+    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(CloudsyncFormComponent, { wide: true });
   });
 });

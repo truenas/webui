@@ -98,5 +98,12 @@
       [disabled]="form.invalid"
       (click)="onSave()"
     >{{ 'Save' | translate }}</button>
+    <button
+      mat-button
+      type="button"
+      color="primary"
+      ixTest="advanced"
+      (click)="openAdvanced()"
+    >{{ 'Advanced Options' | translate }}</button>
   </ix-form-actions>
 </form>

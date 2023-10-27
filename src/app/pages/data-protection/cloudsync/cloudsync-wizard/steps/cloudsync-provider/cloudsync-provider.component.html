@@ -23,14 +23,6 @@
     ></ix-input>
 
     <ng-container #providerFormContainer></ng-container>
-
-    <button
-      mat-button
-      type="button"
-      ixTest="verify-credential"
-      [disabled]="areActionsDisabled"
-      (click)="onVerify()"
-    >{{ 'Verify Credential' | translate }}</button>
   </ix-fieldset>
 
   <ix-form-actions>
@@ -45,9 +37,9 @@
     <button
       mat-button
       type="button"
-      color="primary"
-      ixTest="advanced"
-      (click)="openAdvanced()"
-    >{{ 'Advanced Options' | translate }}</button>
+      ixTest="verify-credential"
+      [disabled]="areActionsDisabled"
+      (click)="onVerify()"
+    >{{ 'Verify Credential' | translate }}</button>
   </ix-form-actions>
 </form>

@@ -1,7 +1,7 @@
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewChild, forwardRef } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { BehaviorSubject, Observable, filter, forkJoin, merge } from 'rxjs';
+import { BehaviorSubject, Observable, filter, merge } from 'rxjs';
 import { cloudsyncProviderNameMap } from 'app/enums/cloudsync-provider.enum';
 import { CloudSyncTask, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
@@ -87,45 +87,7 @@ export class CloudsyncWizardComponent implements AfterViewInit {
         this.cdr.markForCheck();
       }, error: (err) => {
         this.dialogService.error(this.errorHandler.parseWsError(err));
-        this.rollBack();
       },
     });
-  }
-
-  rollBack(): void {
-    const requests: Observable<unknown>[] = [];
-
-    this.createdProviders.forEach((credential) => {
-      requests.push(this.ws.call('cloudsync.credentials.delete', [credential.id]));
-    });
-
-    this.createdTasks.forEach((task) => {
-      requests.push(this.ws.call('cloudsync.delete', [task.id]));
-    });
-
-    if (requests.length) {
-      forkJoin(requests)
-        .pipe(untilDestroyed(this))
-        .subscribe({
-          next: () => {
-            this.isLoading$.next(false);
-            this.cdr.markForCheck();
-          },
-          error: () => {
-            this.isLoading$.next(false);
-            this.cdr.markForCheck();
-          },
-        });
-    } else {
-      this.isLoading$.next(false);
-      this.cdr.markForCheck();
-    }
-  }
-
-  getSteps(): [
-    CloudsyncProviderComponent,
-    CloudsyncWhatAndWhenComponent,
-  ] {
-    return [this.provider, this.whatAndWhen];
   }
 }
