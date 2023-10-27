@@ -93,7 +93,7 @@ export class RsyncTaskFormComponent implements OnInit {
 
   readonly rsyncModes$ = of([
     { label: this.translate.instant('Module'), value: RsyncMode.Module },
-    { label: this.translate.instant('SSH'), value: RsyncMode.Ssh },
+    { label: 'SSH', value: RsyncMode.Ssh },
   ]);
 
   readonly sshConnectModes$ = of([
