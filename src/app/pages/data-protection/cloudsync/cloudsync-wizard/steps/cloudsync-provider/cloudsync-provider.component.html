@@ -2,12 +2,14 @@
   <ix-fieldset [formGroup]="form">
     <ix-select
       formControlName="exist_credential"
-      [label]="'Load Existing Credentials' | translate"
+      [label]="'Credentials' | translate"
       [options]="existCredentialOptions$"
+      [hideEmpty]="true"
       [tooltip]="helptext.exist_provider.tooltip | translate"
     ></ix-select>
 
     <ix-select
+      *ngIf="form.controls.provider.enabled"
       formControlName="provider"
       [label]="'Provider' | translate"
       [tooltip]="helptext.provider.tooltip | translate"
@@ -16,6 +18,7 @@
     ></ix-select>
 
     <ix-input
+      *ngIf="form.controls.name.enabled"
       formControlName="name"
       [label]="'Name' | translate"
       [required]="true"

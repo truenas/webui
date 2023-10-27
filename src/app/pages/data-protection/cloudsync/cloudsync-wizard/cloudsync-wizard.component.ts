@@ -26,10 +26,7 @@ export class CloudsyncWizardComponent implements AfterViewInit {
   @ViewChild(forwardRef(() => CloudsyncWhatAndWhenComponent)) whatAndWhen: CloudsyncWhatAndWhenComponent;
   isLoading$ = new BehaviorSubject(false);
   mergedLoading$: Observable<boolean>;
-
   existingCredential: CloudsyncCredential;
-  createdProviders: CloudsyncCredential[] = [];
-  createdTasks: CloudSyncTask[] = [];
 
   constructor(
     public slideInRef: IxSlideInRef<CloudsyncWizardComponent>,
@@ -46,17 +43,12 @@ export class CloudsyncWizardComponent implements AfterViewInit {
     this.provider.form.controls.exist_credential.valueChanges
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe((credential) => {
-        this.whatAndWhen?.form.patchValue({ credentials: credential });
-        this.cdr.markForCheck();
-      });
-
-    this.provider.form.controls.provider.valueChanges
-      .pipe(untilDestroyed(this))
-      .subscribe((provider) => {
-        const sourcePath = this.whatAndWhen?.form.controls.path_source.value.join(', ');
-        this.whatAndWhen?.form.patchValue({
-          description: `${cloudsyncProviderNameMap.get(provider)} - ${sourcePath}`,
-        });
+        if (typeof credential === 'number') {
+          this.whatAndWhen?.form.patchValue({ credentials: credential });
+        } else {
+          this.whatAndWhen?.form.patchValue({ credentials: null });
+        }
+        this.updateDescriptionValue();
         this.cdr.markForCheck();
       });
   }
@@ -67,7 +59,6 @@ export class CloudsyncWizardComponent implements AfterViewInit {
 
   onProviderSaved(credential: CloudsyncCredential): void {
     this.existingCredential = credential;
-    this.createdProviders.push(credential);
     this.cdr.markForCheck();
   }
 
@@ -79,8 +70,7 @@ export class CloudsyncWizardComponent implements AfterViewInit {
     this.createTask(payload).pipe(
       untilDestroyed(this),
     ).subscribe({
-      next: (createdTask) => {
-        this.createdTasks.push(createdTask);
+      next: () => {
         this.snackbarService.success(this.translate.instant('Task created'));
         this.isLoading$.next(false);
         this.slideInRef.close(true);
@@ -89,5 +79,17 @@ export class CloudsyncWizardComponent implements AfterViewInit {
         this.dialogService.error(this.errorHandler.parseWsError(err));
       },
     });
+  }
+
+  updateDescriptionValue(): void {
+    const provider = this.existingCredential?.provider
+      ? this.existingCredential.provider
+      : this.provider.form.controls.provider.value;
+
+    const sourcePath = this.whatAndWhen?.form.controls.path_source.value.join(', ');
+    this.whatAndWhen?.form.patchValue({
+      description: `${cloudsyncProviderNameMap.get(provider)} - ${sourcePath}`,
+    });
+    this.cdr.markForCheck();
   }
 }

@@ -2,18 +2,18 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, On
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { BehaviorSubject, Observable, combineLatest, of, switchMap } from 'rxjs';
+import { BehaviorSubject, Observable, combineLatest, filter, of, switchMap } from 'rxjs';
 import { CloudsyncProviderName, cloudsyncProviderNameMap } from 'app/enums/cloudsync-provider.enum';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
 import { CloudsyncCredential, CloudsyncCredentialUpdate } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
-import { Option } from 'app/interfaces/option.interface';
+import { Option, NewOption } from 'app/interfaces/option.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { forbiddenValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { BaseProviderFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/base-provider-form';
-import { getName, getProviderFormClass } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-provider/cloudsync-provider.common';
+import { defaultCloudProvider, getName, getProviderFormClass } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-provider/cloudsync-provider.common';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -30,9 +30,9 @@ export class CloudsyncProviderComponent implements OnInit {
   @Output() save = new EventEmitter<CloudsyncCredential>();
 
   form = this.formBuilder.group({
-    name: ['Storj', Validators.required],
-    provider: [CloudsyncProviderName.Storj],
-    exist_credential: [null as number],
+    name: [defaultCloudProvider.name, Validators.required],
+    provider: [defaultCloudProvider.provider],
+    exist_credential: [null as number | NewOption],
   });
 
   isLoading$ = new BehaviorSubject(false);
@@ -78,12 +78,11 @@ export class CloudsyncProviderComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.form.controls.provider.disable();
+    this.form.controls.name.disable();
+
     this.setFormEvents();
     this.loadProviders();
-
-    if (this.existingCredential) {
-      this.setCredentialsForEdit();
-    }
   }
 
   onSubmit(): boolean {
@@ -120,7 +119,7 @@ export class CloudsyncProviderComponent implements OnInit {
           this.cdr.markForCheck();
         },
         error: (error) => {
-        // TODO: Errors for nested provider form will be shown in a modal. Can be improved.
+          // TODO: Errors for nested provider form will be shown in a modal. Can be improved.
           this.isLoading$.next(false);
           this.formErrorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();
@@ -132,6 +131,12 @@ export class CloudsyncProviderComponent implements OnInit {
 
   getPayload(): CloudsyncCredentialUpdate {
     const commonValues = this.form.value;
+
+    if (this.existingCredential) {
+      const { name, provider, attributes } = this.existingCredential;
+      return { name, provider, attributes };
+    }
+
     return {
       name: commonValues.name,
       provider: commonValues.provider,
@@ -139,52 +144,34 @@ export class CloudsyncProviderComponent implements OnInit {
     };
   }
 
-  setCredentialsForEdit(): void {
-    this.form.controls.name.clearValidators();
-    this.form.patchValue({
-      provider: this.existingCredential.provider,
-      name: this.existingCredential.name,
-    });
-
-    if (this.providerForm) {
-      this.providerForm.getFormSetter$().next(this.existingCredential.attributes);
-    }
-  }
-
   onVerify(): void {
     this.isLoading$.next(true);
 
-    const beforeSubmit$ = this.providerForm.beforeSubmit();
+    const { name, ...payload } = this.getPayload();
 
-    beforeSubmit$
-      .pipe(
-        switchMap(() => {
-          const { name, ...payload } = this.getPayload();
-          return this.ws.call('cloudsync.credentials.verify', [payload]);
-        }),
-        untilDestroyed(this),
-      )
-      .subscribe({
-        next: (response) => {
-          if (response.valid) {
-            this.snackbarService.success(this.translate.instant('The credentials are valid.'));
-          } else {
-            this.dialogService.error({
-              title: this.translate.instant('Error'),
-              message: response.excerpt,
-              backtrace: response.error,
-            });
-          }
+    this.ws.call('cloudsync.credentials.verify', [payload]).pipe(
+      untilDestroyed(this),
+    ).subscribe({
+      next: (response) => {
+        if (response.valid) {
+          this.snackbarService.success(this.translate.instant('The credentials are valid.'));
+        } else {
+          this.dialogService.error({
+            title: this.translate.instant('Error'),
+            message: response.excerpt,
+            backtrace: response.error,
+          });
+        }
 
-          this.isLoading$.next(false);
-          this.cdr.markForCheck();
-        },
-        error: (error) => {
-          this.isLoading$.next(false);
-          this.formErrorHandler.handleWsFormError(error, this.form);
-          this.cdr.markForCheck();
-        },
-      });
+        this.isLoading$.next(false);
+        this.cdr.markForCheck();
+      },
+      error: (error) => {
+        this.isLoading$.next(false);
+        this.formErrorHandler.handleWsFormError(error, this.form);
+        this.cdr.markForCheck();
+      },
+    });
   }
 
   private loadProviders(): void {
@@ -198,11 +185,13 @@ export class CloudsyncProviderComponent implements OnInit {
         next: ([providers, credentials]) => {
           this.providers = providers;
           this.credentials = credentials;
+
           this.providerOptions$ = of(providers.map((provider) => ({
             label: provider.title,
             value: provider.name,
           })));
-          this.existCredentialOptions$ = of(credentials.map((credential) => {
+
+          const existCredentials: Option[] = credentials.map((credential) => {
             if (credential.provider === CloudsyncProviderName.GoogleDrive) {
               this.googleDriveProviderId = credential.id;
             }
@@ -211,9 +200,9 @@ export class CloudsyncProviderComponent implements OnInit {
               label: `${credential.name} (${cloudsyncProviderNameMap.get(credential.provider)})`,
               value: credential.id,
             };
-          }).sort((a, b) => a.label.localeCompare(b.label)));
-          this.setNamesInUseValidator(credentials);
-          this.renderProviderForm();
+          }).sort((a, b) => a.label.localeCompare(b.label));
+          existCredentials.unshift({ label: this.translate.instant('Create New'), value: NewOption.New });
+          this.existCredentialOptions$ = of(existCredentials);
           this.isLoading$.next(false);
           this.cdr.markForCheck();
         },
@@ -224,25 +213,40 @@ export class CloudsyncProviderComponent implements OnInit {
       });
   }
 
-  private setNamesInUseValidator(credentials: CloudsyncCredential[]): void {
-    this.forbiddenNames = credentials.map((credential) => credential.name);
+  private setNamesInUseValidator(): void {
+    this.forbiddenNames = this.credentials.map((credential) => credential.name);
     this.form.controls.name.addValidators(forbiddenValues(this.forbiddenNames));
   }
 
   private setFormEvents(): void {
+    this.form.controls.exist_credential.valueChanges
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe((credentialId) => {
+        if (credentialId === NewOption.New) {
+          this.existingCredential = null;
+          this.form.controls.provider.enable();
+          this.form.controls.name.enable();
+          this.form.patchValue({
+            name: defaultCloudProvider.name,
+            provider: defaultCloudProvider.provider,
+          });
+          this.renderProviderForm();
+          this.setNamesInUseValidator();
+        } else {
+          this.existingCredential = this.credentials.find((credential) => credential.id === credentialId);
+          this.form.controls.provider.disable();
+          this.form.controls.name.disable();
+          this.hideProviderForm();
+        }
+        this.save.emit(this.existingCredential);
+        this.cdr.markForCheck();
+      });
+
     this.form.controls.provider.valueChanges
-      .pipe(untilDestroyed(this))
+      .pipe(filter(() => !this.form.controls.provider.disabled), untilDestroyed(this))
       .subscribe(() => {
         this.renderProviderForm();
         this.setDefaultName();
-      });
-
-    this.form.controls.exist_credential.valueChanges
-      .pipe(untilDestroyed(this))
-      .subscribe((credentialId) => {
-        this.existingCredential = this.credentials.find((credential) => credential.id === credentialId);
-        this.renderProviderForm();
-        this.setCredentialsForEdit();
       });
   }
 
@@ -253,6 +257,11 @@ export class CloudsyncProviderComponent implements OnInit {
 
     const name = getName(cloudsyncProviderNameMap.get(this.form.controls.provider.value), this.forbiddenNames);
     this.form.controls.name.setValue(name);
+  }
+
+  private hideProviderForm(): void {
+    this.providerFormContainer?.clear();
+    this.providerForm = null;
   }
 
 

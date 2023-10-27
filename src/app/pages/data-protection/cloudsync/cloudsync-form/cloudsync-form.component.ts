@@ -20,7 +20,7 @@ import { mapToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/data-protection/cloudsync/cloudsync-form';
 import { CloudSyncTaskUi, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
-import { SelectOption } from 'app/interfaces/option.interface';
+import { NewOption, SelectOption } from 'app/interfaces/option.interface';
 import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
@@ -41,7 +41,6 @@ import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
-export const newStorjBucket = 'new_storj_bucket';
 const customOptionValue = -1;
 
 type FormValue = CloudsyncFormComponent['form']['value'];
@@ -203,7 +202,7 @@ export class CloudsyncFormComponent implements OnInit {
     this.form.controls.encryption_salt.disable();
 
     this.form.controls.bucket.valueChanges.pipe(untilDestroyed(this)).subscribe((selectedOption) => {
-      if (selectedOption !== newStorjBucket) {
+      if (selectedOption !== NewOption.New) {
         return;
       }
       const dialogRef = this.matDialog.open(CreateStorjBucketDialogComponent, {
@@ -434,8 +433,7 @@ export class CloudsyncFormComponent implements OnInit {
   loadBucketOptions(): void {
     const targetCredentials = _.find(this.credentialsList, { id: this.form.controls.credentials.value });
 
-    this.cloudCredentialService
-      .getBuckets(targetCredentials.id)
+    this.cloudCredentialService.getBuckets(targetCredentials.id)
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (buckets) => {
@@ -447,7 +445,7 @@ export class CloudsyncFormComponent implements OnInit {
           if (targetCredentials.provider === CloudsyncProviderName.Storj) {
             bucketOptions.unshift({
               label: this.translate.instant('Add new'),
-              value: newStorjBucket,
+              value: NewOption.New,
               disabled: false,
             });
           }
