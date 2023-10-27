@@ -1,8 +1,8 @@
 @import 'scss-imports/splitview';
+@import 'mixins/layout';
 
-$singlecolumn-max-width: ($card-width-slim + $gap * 2);
-$dualcolumn-slim-max-width: ($card-width-slim * 2 + $gap * 2);
-$scrollbar-offset: 20px;
+@include tree-node-with-details-container();
+
 $header-height: 193px;
 
 :host {
@@ -17,77 +17,25 @@ $header-height: 193px;
   }
 }
 
-.table-container {
-  box-sizing: border-box;
+.table-header {
+  align-items: flex-end;
+  color: var(--fg1);
   display: flex;
-  flex: 1;
-  flex-direction: column;
-  margin-right: 16px;
-  max-width: $table-width;
-  min-width: $table-min-width;
-  position: relative;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  min-height: 56px;
 
-  // Hide Details and stop compressing table width
-  @media (min-width: $breakpoint-min-mobile) and (max-width: $breakpoint-tablet) {
-    margin-right: unset;
-    min-width: $breakpoint-min-mobile;
-    width: 100%;
-  }
-
-  // Hide Details and stretch table
-  @media (min-width: $breakpoint-tablet) and (max-width: $breakpoint-hidden) {
-    margin-right: unset;
-    min-width: 100%;
-  }
-
-  // One Cards Column
-  @media (min-width: $breakpoint-singlecolumn) and (max-width: calc($breakpoint-dualcolumn-slim - 1px)) {
-    max-width: calc(100% - $singlecolumn-max-width - 16px);
-    min-width: calc($table-min-width + 0px);
-  }
-
-  // Two Cards Slim Columns
-  @media (min-width: $breakpoint-dualcolumn-slim) and (max-width: calc($breakpoint-dualcolumn - 1px)) {
-    max-width: calc(100% - $dualcolumn-slim-max-width - 16px - $scrollbar-offset);
-    min-width: calc($table-min-width + 0px);
-  }
-
-  // Two Cards Columns
-  @media (min-width: $breakpoint-dualcolumn) and (max-width: calc($breakpoint-flex - 1px)) {
-    min-width: calc(98% - 2 * ($card-width + $gap));
-  }
-
-  // Three Cards Columns
-  @media (min-width: $breakpoint-triplecolumn) and (max-width: calc($breakpoint-flex - 1px)) {
-    min-width: calc(98% - 3 * ($card-width + $gap));
-  }
-
-  // Cards spill to the right
-  @media (min-width: $breakpoint-flex) {
-    max-width: 1200px;
-    width: 50%;
-  }
-
-  .table-header {
-    align-items: flex-end;
-    color: var(--fg1);
+  h2 {
+    align-items: center;
     display: flex;
-    justify-content: space-between;
-    margin-bottom: 12px;
-    min-height: 56px;
+    margin-top: 20px;
+    min-height: 36px;
+  }
 
-    h2 {
-      align-items: center;
-      display: flex;
-      margin-top: 20px;
-      min-height: 36px;
-    }
-
-    .bulk {
-      align-items: center;
-      display: flex;
-      gap: 6px;
-    }
+  .bulk {
+    align-items: center;
+    display: flex;
+    gap: 6px;
   }
 }
 
@@ -185,13 +133,6 @@ ix-app-row,
     }
   }
 
-  .app-name-header {
-    align-items: center;
-    background: linear-gradient(90deg, var(--bg1) 0%, var(--bg1) 0, transparent 80%);
-    display: flex;
-    padding-left: 15px;
-    padding-right: 0;
-  }
 
   .app-update-header {
     align-items: center;
@@ -207,69 +148,11 @@ ix-app-row,
   }
 }
 
-.details-container {
-  color: var(--fg2);
-  display: flex;
-  flex: 1;
-  min-width: inherit;
-  overflow: hidden;
-  padding: 0;
-  position: sticky;
-  top: 0;
-
-  // Hide Details
-  @media (max-width: $breakpoint-hidden) {
-    display: none;
-  }
-
-  // One Card Column
-  @media (min-width: $breakpoint-singlecolumn) and (max-width: calc($breakpoint-dualcolumn-slim - 1px)) {
-    max-width: $singlecolumn-max-width;
-  }
-
-  // Two Cards Columns
-  @media (min-width: $breakpoint-dualcolumn-slim) and (max-width: calc($breakpoint-dualcolumn - 1px)) {
-    max-width: ($dualcolumn-slim-max-width + $scrollbar-offset);
-  }
-
-  // Two Cards Columns
-  @media (min-width: $breakpoint-dualcolumn) {
-    max-width: 70%;
-  }
-}
-
 ix-app-details-panel {
   display: flex;
   flex-direction: column;
   width: 100%;
 }
-
-.details-container.details-container-mobile {
-  // Hide Details
-  @media (max-width: $breakpoint-hidden) {
-    background: var(--bg1);
-    display: flex;
-    height: 100% !important;
-    left: 0;
-    max-width: 100%;
-    padding-top: 24px;
-    position: absolute;
-    top: 0;
-    width: 100%;
-    z-index: 3;
-  }
-
-  @media (max-width: $breakpoint-tablet) {
-    display: block;
-    overflow-y: auto;
-    padding-bottom: 96px;
-  }
-
-  ::ng-deep .cards .scroll-window {
-    display: block;
-  }
-}
-
 
 .bulk-selected {
   align-items: center;
@@ -289,7 +172,6 @@ ix-app-details-panel {
 .bulk-button-wrapper {
   display: flex;
   flex-direction: column;
-
 
   label {
     color: var(--fg2);
