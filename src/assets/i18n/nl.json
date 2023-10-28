@@ -164,6 +164,7 @@
   "Message": "",
   "Metadata VDev": "",
   "Minutes of inactivity before the drive enters standby mode. Temperature monitoring is disabled for standby disks.": "",
+  "Mixed Capacity": "",
   "Mixing Vdev layout types is not allowed. This pool already has some {type} Data Vdevs. You can only add vdevs of {type} type.": "",
   "Mixing disks of different sizes in a VDEV is not recommended.": "",
   "Module": "",

@@ -7,7 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
 import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
-import { VdevType } from 'app/enums/v-dev-type.enum';
+import { TopologyWarning, VdevType } from 'app/enums/v-dev-type.enum';
 import { Pool, PoolTopology } from 'app/interfaces/pool.interface';
 import { SmartTestResult } from 'app/interfaces/smart-test.interface';
 import {
@@ -98,22 +98,26 @@ export class TopologyCardComponent implements OnInit, OnChanges {
       return;
     }
 
-    this.topologyState.data = this.parseDevs(topology.data, VdevType.Data);
-    this.topologyState.log = this.parseDevs(topology.log, VdevType.Log);
-    this.topologyState.cache = this.parseDevs(topology.cache, VdevType.Cache);
-    this.topologyState.spare = this.parseDevs(topology.spare, VdevType.Spare);
-    this.topologyState.metadata = this.parseDevs(topology.special, VdevType.Special);
-    this.topologyState.dedup = this.parseDevs(topology.dedup, VdevType.Dedup);
-
     this.topologyWarningsState.data = this.parseDevsWarnings(topology.data, VdevType.Data);
     this.topologyWarningsState.log = this.parseDevsWarnings(topology.log, VdevType.Log);
     this.topologyWarningsState.cache = this.parseDevsWarnings(topology.cache, VdevType.Cache);
     this.topologyWarningsState.spare = this.parseDevsWarnings(topology.spare, VdevType.Spare);
     this.topologyWarningsState.metadata = this.parseDevsWarnings(topology.special, VdevType.Special, topology.data);
     this.topologyWarningsState.dedup = this.parseDevsWarnings(topology.dedup, VdevType.Dedup, topology.data);
+
+    this.topologyState.data = this.parseDevs(topology.data, VdevType.Data, this.topologyWarningsState.data);
+    this.topologyState.log = this.parseDevs(topology.log, VdevType.Log, this.topologyWarningsState.log);
+    this.topologyState.cache = this.parseDevs(topology.cache, VdevType.Cache, this.topologyWarningsState.cache);
+    this.topologyState.spare = this.parseDevs(topology.spare, VdevType.Spare, this.topologyWarningsState.spare);
+    this.topologyState.metadata = this.parseDevs(
+      topology.special,
+      VdevType.Special,
+      this.topologyWarningsState.metadata,
+    );
+    this.topologyState.dedup = this.parseDevs(topology.dedup, VdevType.Dedup, this.topologyWarningsState.dedup);
   }
 
-  private parseDevs(vdevs: TopologyItem[], category: VdevType): string {
+  private parseDevs(vdevs: TopologyItem[], category: VdevType, warning?: string): string {
     let outputString = vdevs.length ? '' : notAssignedDev;
 
     // Check VDEV Widths
@@ -149,8 +153,13 @@ export class TopologyCardComponent implements OnInit, OnChanges {
       outputString += `${type} | ${vdevWidth} wide | `;
     }
 
-    if (size) {
+    const isMixedVdevCapacity = warning.includes(TopologyWarning.MixedVdevCapacity)
+      || warning.includes(TopologyWarning.MixedDiskCapacity);
+
+    if (!isMixedVdevCapacity && size) {
       outputString += filesize(size, { standard: 'iec' });
+    } else if (isMixedVdevCapacity) {
+      outputString += this.translate.instant('Mixed Capacity');
     } else {
       outputString += '?';
     }
