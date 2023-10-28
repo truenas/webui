@@ -153,8 +153,8 @@ export class TopologyCardComponent implements OnInit, OnChanges {
       outputString += `${type} | ${vdevWidth} wide | `;
     }
 
-    const isMixedVdevCapacity = warning.includes(TopologyWarning.MixedVdevCapacity) ||
-      warning.includes(TopologyWarning.MixedDiskCapacity);
+    const isMixedVdevCapacity = warning.includes(TopologyWarning.MixedVdevCapacity)
+      || warning.includes(TopologyWarning.MixedDiskCapacity);
 
     if (!isMixedVdevCapacity && size) {
       outputString += filesize(size, { standard: 'iec' });
