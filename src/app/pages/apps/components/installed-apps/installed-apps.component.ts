@@ -65,7 +65,11 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   showMobileDetails = false;
   isMobileView = false;
   appJobs = new Map<string, Job<ChartScaleResult, ChartScaleQueryParams>>();
-  selection = new SelectionModel<ChartRelease>(true, []);
+  selection = new SelectionModel<string>(true, []);
+  sortingInfo: Sort = {
+    active: SortableField.Application,
+    direction: SortDirection.Asc,
+  };
   readonly sortableField = SortableField;
 
   entityEmptyConf: EmptyConfig = {
@@ -97,7 +101,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   }
 
   get checkedAppsNames(): string[] {
-    return this.selection.selected.map((app) => app.name);
+    return this.selection.selected;
   }
 
   get isBulkStartDisabled(): boolean {
@@ -118,11 +122,15 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   }
 
   get startedCheckedApps(): ChartRelease[] {
-    return this.dataSource.filter((app) => app.status === ChartReleaseStatus.Active && this.selection.isSelected(app));
+    return this.dataSource.filter(
+      (app) => app.status === ChartReleaseStatus.Active && this.selection.isSelected(app.id),
+    );
   }
 
   get stoppedCheckedApps(): ChartRelease[] {
-    return this.dataSource.filter((app) => app.status === ChartReleaseStatus.Stopped && this.selection.isSelected(app));
+    return this.dataSource.filter(
+      (app) => app.status === ChartReleaseStatus.Stopped && this.selection.isSelected(app.id),
+    );
   }
 
   constructor(
@@ -209,7 +217,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
   toggleAppsChecked(checked: boolean): void {
     if (checked) {
-      this.dataSource.forEach((app) => this.selection.select(app));
+      this.dataSource.forEach((app) => this.selection.select(app.id));
     } else {
       this.selection.clear();
     }
@@ -285,7 +293,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
       untilDestroyed(this),
     ).subscribe({
       next: ([,,charts]) => {
-        this.dataSource = charts.sort((a, b) => doSortCompare(a.name, b.name, true));
+        this.sortChanged(this.sortingInfo, charts);
         this.selectAppForDetails(this.activatedRoute.snapshot.paramMap.get('appId'));
         this.cdr.markForCheck();
       },
@@ -334,7 +342,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
   onBulkUpgrade(updateAll = false): void {
     const apps = this.dataSource.filter((app) => (
-      updateAll ? app.update_available || app.container_images_update_available : this.selection.isSelected(app)
+      updateAll ? app.update_available || app.container_images_update_available : this.selection.isSelected(app.id)
     ));
     this.matDialog.open(AppBulkUpgradeComponent, { data: apps })
       .afterClosed().pipe(untilDestroyed(this)).subscribe(() => {
@@ -423,8 +431,10 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     return status;
   }
 
-  sortChanged(sort: Sort): void {
-    this.dataSource = this.dataSource.sort((a, b) => {
+  sortChanged(sort: Sort, charts?: ChartRelease[]): void {
+    this.sortingInfo = sort;
+
+    this.dataSource = (charts || this.dataSource).sort((a, b) => {
       const isAsc = sort.direction === SortDirection.Asc;
 
       switch (sort.active) {
