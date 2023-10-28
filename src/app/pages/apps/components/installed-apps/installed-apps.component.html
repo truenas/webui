@@ -88,7 +88,12 @@
     </div>
 
     <div class="item-search">
-      <ix-fake-progress-bar *ngIf="!showMobileDetails" class="loader-bar" [loading]="isLoading"></ix-fake-progress-bar>
+      <ix-fake-progress-bar
+        *ngIf="!showMobileDetails"
+        class="loader-bar"
+        [loading]="isLoading"
+      ></ix-fake-progress-bar>
+
       <ix-search-input
         [htmlCharactersLimit]="100"
         [disabled]="!dataSource.length"

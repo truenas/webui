@@ -1,8 +1,20 @@
 $singlecolumn-max-width: ($card-width-slim + $gap * 2);
 $dualcolumn-slim-max-width: ($card-width-slim * 2 + $gap * 2);
 $scrollbar-offset: 20px;
+$header-height: 193px;
 
 @mixin tree-node-with-details-container {
+  .container {
+    display: flex;
+    flex-direction: row;
+    min-height: 100%;
+    width: 100%;
+
+    @media(min-width: $breakpoint-tablet) {
+      height: calc(100vh - #{$header-height});
+    }
+  }
+
   .details-container {
     color: var(--fg2);
     display: flex;
@@ -172,7 +184,6 @@ $scrollbar-offset: 20px;
     display: flex;
     flex: 1;
     flex-direction: column;
-    margin-bottom: 1.5rem;
     overflow: auto;
   }
 
@@ -211,6 +222,10 @@ $scrollbar-offset: 20px;
       min-width: unset;
       overflow-x: auto;
     }
+  }
+
+  ix-tree-node {
+    color: var(--fg1);
   }
 
   .nested-tree-root-node {

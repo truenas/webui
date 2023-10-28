@@ -3,18 +3,8 @@
 
 @include tree-node-with-details-container();
 
-$header-height: 193px;
-
 :host {
   display: block;
-}
-
-.container {
-  display: flex;
-  flex-direction: row;
-  @media(min-width: $breakpoint-tablet) {
-    height: calc(100vh - #{$header-height});
-  }
 }
 
 .table-header {
@@ -36,20 +26,6 @@ $header-height: 193px;
     align-items: center;
     display: flex;
     gap: 6px;
-  }
-}
-
-.app-search {
-  background-color: var(--bg2);
-  padding: 16px;
-  position: relative;
-
-  ix-fake-progress-bar {
-    height: 2px;
-    left: 0;
-    position: absolute;
-    right: 0;
-    top: 0;
   }
 }
 
