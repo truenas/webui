@@ -47,14 +47,12 @@
 
     .icon-container {
       align-items: center;
-      background-color: var(--bg2);
       display: flex;
       padding: 5px;
     }
 
     .name {
       align-items: center;
-      background: linear-gradient(90deg, var(--bg2) 0%, var(--bg2) calc(100% - 11px), transparent 100%);
       display: inline-flex;
       padding-right: 15px;
     }

@@ -2,10 +2,10 @@ import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { SharesDashboardComponent } from 'app/pages/sharing/components/shares-dashboard/shares-dashboard.component';
+import { NfsListComponent } from 'app/pages/sharing/nfs/nfs-list/nfs-list.component';
 import { SmbSessionListComponent } from 'app/pages/sharing/smb/smb-session-list/smb-session-list.component';
 import { InitiatorFormComponent } from './iscsi/initiator/initiator-form/initiator-form.component';
 import { IscsiComponent } from './iscsi/iscsi.component';
-import { NfsListComponent } from './nfs/nfs-list/nfs-list.component';
 import { SmbFormComponent } from './smb/smb-form/smb-form.component';
 import { SmbListComponent } from './smb/smb-list/smb-list.component';
 

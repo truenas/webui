@@ -1,5 +1,5 @@
 import {
-  Component, Input, Output, EventEmitter,
+  Component, Input, Output, EventEmitter, ChangeDetectionStrategy,
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
@@ -21,6 +21,7 @@ export interface DashConfigItem {
     '../widget/widget.component.scss',
     './widget-controller.component.scss',
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WidgetControllerComponent {
   @Input() dashState: DashConfigItem[] = [];

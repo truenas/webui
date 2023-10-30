@@ -1,6 +1,6 @@
 import { DOCUMENT } from '@angular/common';
 import {
-  Component, AfterViewInit, OnDestroy, ElementRef, Inject, HostListener,
+  Component, AfterViewInit, OnDestroy, ElementRef, Inject, HostListener, ChangeDetectionStrategy, ChangeDetectorRef,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -65,6 +65,7 @@ export interface DashboardNetworkInterfaceAlias extends NetworkInterfaceAlias {
     '../widget/widget.component.scss',
     './dashboard.component.scss',
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardComponent implements AfterViewInit, OnDestroy {
   reorderMode = false;
@@ -126,6 +127,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
     @Inject(DOCUMENT) private document: Document,
     private dashboardStore$: DashboardStore,
     private resourcesUsageStore$: ResourcesUsageStore,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngAfterViewInit(): void {
@@ -136,6 +138,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
     ).subscribe({
       next: (isLoading) => {
         this.isLoaded = !isLoading;
+        this.cdr.detectChanges();
       },
     });
     this.subscribeToResourceUsageUpdates();
@@ -277,6 +280,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
       if (dashState) {
         this.store$.dispatch(dashboardStateLoaded({ dashboardState: dashState }));
         this.setDashState(dashState);
+        this.cdr.markForCheck();
       }
     });
   }
@@ -284,10 +288,12 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
   onEnter(): void {
     this.previousState = [...this.dashState];
     this.enterReorderMode();
+    this.cdr.markForCheck();
   }
 
   onCancel(): void {
     this.exitReorderMode();
+    this.cdr.markForCheck();
   }
 
   onConfirm(): void {
@@ -369,8 +375,12 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
         next: () => {
           this.exitReorderMode();
           this.store$.dispatch(dashboardStateUpdated({ dashboardState: state }));
+          this.cdr.markForCheck();
         },
-        error: () => this.exitReorderMode(),
+        error: () => {
+          this.exitReorderMode();
+          this.cdr.markForCheck();
+        },
       });
   }
 

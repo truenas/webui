@@ -4,14 +4,15 @@ import {
   Component,
   EventEmitter,
   Input,
+  OnChanges,
   OnInit,
   Output,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { BehaviorSubject, of } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
 import { NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import helptext from 'app/helptext/network/interfaces/interfaces-list';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
@@ -41,9 +42,11 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
   styleUrls: ['./interfaces-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class InterfacesCardComponent implements OnInit {
+export class InterfacesCardComponent implements OnInit, OnChanges {
   @Input() isHaEnabled = false;
   @Output() interfacesUpdated = new EventEmitter<void>();
+
+  isHaEnabled$ = new BehaviorSubject(false);
 
   isLoading = false;
   dataProvider = new ArrayDataProvider<NetworkInterface>();
@@ -72,10 +75,10 @@ export class InterfacesCardComponent implements OnInit {
         {
           iconName: 'refresh',
           hidden: (row) => of(!this.isPhysical(row)),
-          disabled: () => of(this.isHaEnabled),
-          dynamicTooltip: () => of(this.isHaEnabled
+          disabled: () => this.isHaEnabled$,
+          dynamicTooltip: () => this.isHaEnabled$.pipe(map((isHaEnabled) => isHaEnabled
             ? this.translate.instant(helptext.ha_enabled_reset_msg)
-            : this.translate.instant('Reset configuration')),
+            : this.translate.instant('Reset configuration'))),
           onClick: (row) => this.onReset(row),
         },
         {
@@ -83,7 +86,7 @@ export class InterfacesCardComponent implements OnInit {
           tooltip: this.isHaEnabled ? this.translate.instant(helptext.ha_enabled_delete_msg) : '',
           hidden: (row) => of(this.isPhysical(row)),
           onClick: (row) => this.onDelete(row),
-          disabled: () => of(this.isHaEnabled),
+          disabled: () => this.isHaEnabled$,
         },
       ],
     }),
@@ -106,6 +109,10 @@ export class InterfacesCardComponent implements OnInit {
 
   isPhysical(row: NetworkInterface): boolean {
     return row.type === NetworkInterfaceType.Physical;
+  }
+
+  ngOnChanges(): void {
+    this.isHaEnabled$.next(this.isHaEnabled);
   }
 
   ngOnInit(): void {

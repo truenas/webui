@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component, Input,
 } from '@angular/core';
 import { Router } from '@angular/router';
@@ -12,6 +13,7 @@ import { DialogService } from 'app/services/dialog.service';
   selector: 'ix-simple-failover-button',
   templateUrl: './simple-failover-btn.component.html',
   styleUrls: ['./simple-failover-btn.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SimpleFailoverBtnComponent {
   @Input() color = 'default';

@@ -1,5 +1,5 @@
 import {
-  AfterViewInit, Component,
+  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -55,6 +55,7 @@ interface PoolInfoMap {
     '../widget/widget.component.scss',
     './widget-storage.component.scss',
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WidgetStorageComponent extends WidgetComponent implements AfterViewInit {
   protected pools: Pool[];
@@ -105,6 +106,7 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
   constructor(
     public translate: TranslateService,
     private dashboardStorageStore$: DashboardStorageStore,
+    private cdr: ChangeDetectorRef,
   ) {
     super(translate);
   }
@@ -129,6 +131,7 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
       next: () => {
         this.updateGridInfo();
         this.updatePoolInfoMap();
+        this.cdr.markForCheck();
       },
     });
   }
