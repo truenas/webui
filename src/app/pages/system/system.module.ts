@@ -52,7 +52,7 @@ import { GlobalTwoFactorAuthCardComponent } from 'app/pages/system/advanced/glob
 import { GlobalTwoFactorAuthFormComponent } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-form/global-two-factor-form.component';
 import { InitShutdownCardComponent } from 'app/pages/system/advanced/init-shutdown/init-shutdown-card/init-shutdown-card.component';
 import { InitShutdownFormComponent } from 'app/pages/system/advanced/init-shutdown/init-shutdown-form/init-shutdown-form.component';
-import { InitshutdownListComponent } from 'app/pages/system/advanced/init-shutdown/initshutdown-list/initshutdown-list.component';
+import { InitShutdownListComponent } from 'app/pages/system/advanced/init-shutdown/init-shutdown-list/init-shutdown-list.component';
 import {
   IsolatedGpusCardComponent,
 } from 'app/pages/system/advanced/isolated-gpus/isolated-gpus-card/isolated-gpus-card.component';
@@ -207,7 +207,6 @@ import { routing } from './system.routing';
     GlobalTwoFactorAuthCardComponent,
     LocalizationCardComponent,
     InitShutdownFormComponent,
-    InitshutdownListComponent,
     IsolatedGpusFormComponent,
     KernelFormComponent,
     LicenseComponent,
@@ -272,6 +271,7 @@ import { routing } from './system.routing';
     AlertSettingsComponent,
     InitShutdownCardComponent,
     SysctlCardComponent,
+    InitShutdownListComponent,
   ],
   providers: [
     TranslateService,

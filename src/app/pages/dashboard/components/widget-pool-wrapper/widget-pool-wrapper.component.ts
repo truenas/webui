@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component, EventEmitter, Input, Output,
 } from '@angular/core';
 import { filter, map } from 'rxjs';
@@ -8,6 +9,7 @@ import { deepCloneState } from 'app/pages/dashboard/utils/deep-clone-state.helpe
 @Component({
   selector: 'ix-widget-pool-wrapper',
   templateUrl: './widget-pool-wrapper.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WidgetPoolWrapperComponent {
   @Input() pool: string;

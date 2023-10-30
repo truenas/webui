@@ -55,26 +55,28 @@
 
       <mat-divider></mat-divider>
 
+      <ix-fieldset [title]="helptext.fieldset_powermgmt | translate">
+        <ix-select
+          formControlName="hddstandby"
+          [required]="true"
+          [label]="'HDD Standby' | translate"
+          [tooltip]="helptext.disk_form_hddstandby_tooltip | translate"
+          [options]="hddstandbyOptions$"
+        ></ix-select>
+
+        <ix-select
+          formControlName="advpowermgmt"
+          [required]="true"
+          [label]="'Advanced Power Management' | translate"
+          [tooltip]="helptext.disk_form_advpowermgmt_tooltip | translate"
+          [options]="advpowermgmtOptions$"
+        ></ix-select>
+      </ix-fieldset>
+
+      <mat-divider></mat-divider>
+
       <div class="two-columns">
-        <ix-fieldset [title]="helptext.fieldset_powermgmt | translate">
-          <ix-select
-            formControlName="hddstandby"
-            [required]="true"
-            [label]="'HDD Standby' | translate"
-            [tooltip]="helptext.disk_form_hddstandby_tooltip | translate"
-            [options]="hddstandbyOptions$"
-          ></ix-select>
-
-          <ix-select
-            formControlName="advpowermgmt"
-            [required]="true"
-            [label]="'Advanced Power Management' | translate"
-            [tooltip]="helptext.disk_form_advpowermgmt_tooltip | translate"
-            [options]="advpowermgmtOptions$"
-          ></ix-select>
-        </ix-fieldset>
-
-        <ix-fieldset [title]="helptext.fieldset_smartsed | translate">
+        <ix-fieldset [title]="helptext.fieldset_smart | translate">
           <ix-checkbox
             formControlName="togglesmart"
             [label]="'Enable S.M.A.R.T.' | translate"
@@ -86,7 +88,9 @@
             [label]="'S.M.A.R.T. extra options' | translate"
             [tooltip]="helptext.disk_form_smartoptions_tooltip | translate"
           ></ix-input>
+        </ix-fieldset>
 
+        <ix-fieldset [title]="helptext.fieldset_sed | translate">
           <ix-input
             formControlName="passwd"
             type="password"
@@ -101,8 +105,6 @@
           ></ix-checkbox>
         </ix-fieldset>
       </div>
-
-      <mat-divider></mat-divider>
 
       <mat-card-actions class="buttons">
         <button

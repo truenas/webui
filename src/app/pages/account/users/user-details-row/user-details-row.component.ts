@@ -48,6 +48,10 @@ export class UserDetailsRowComponent {
         label: this.translate.instant('Samba Authentication'),
         value: this.yesNoPipe.transform(user.smb),
       },
+      {
+        label: 'SSH',
+        value: this.getSshStatus(user),
+      },
     ];
 
     if (user.sudo_commands?.length > 0) {
@@ -84,5 +88,20 @@ export class UserDetailsRowComponent {
 
         this.delete.emit(user.id);
       });
+  }
+
+  private getSshStatus(user: User): string {
+    const keySet = this.translate.instant('Key set');
+    const passwordLoginEnabled = this.translate.instant('Password login enabled');
+
+    if (user.sshpubkey && user.ssh_password_enabled) {
+      return `${keySet}, ${passwordLoginEnabled}`;
+    } else if (user.sshpubkey) {
+      return keySet;
+    } else if (user.ssh_password_enabled) {
+      return passwordLoginEnabled;
+    }
+
+    return this.translate.instant('Key not set');
   }
 }

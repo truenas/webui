@@ -324,6 +324,7 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
           case TopologyItemType.Raidz1:
           case TopologyItemType.Raidz2:
           case TopologyItemType.Raidz3:
+          case TopologyItemType.Draid:
             return item.children.find((device: TopologyDisk) => device.disk === disk.name);
           default:
             return false;

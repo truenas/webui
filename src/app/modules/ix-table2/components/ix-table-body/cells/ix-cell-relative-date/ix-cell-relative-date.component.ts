@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
@@ -7,6 +7,7 @@ import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-
 @Component({
   selector: 'ix-cell-relative-date',
   templateUrl: './ix-cell-relative-date.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IxCellRelativeDateComponent<T> extends ColumnComponent<T> {
   translate: TranslateService;
