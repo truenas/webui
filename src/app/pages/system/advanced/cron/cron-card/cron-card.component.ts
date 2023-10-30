@@ -37,7 +37,7 @@ export class CronCardComponent implements OnInit {
   cronjobs: CronjobRow[] = [];
   dataProvider: AsyncDataProvider<CronjobRow>;
 
-  columns = createTable<CronjobRow>([
+  columns = createTable<CronjobRow>('cron-card', [
     textColumn({
       title: this.translate.instant('Users'),
       propertyName: 'user',
@@ -64,7 +64,6 @@ export class CronCardComponent implements OnInit {
     }),
     actionsColumn({
       cssClass: 'tight-actions',
-      ixTestPrefix: 'cron-',
       actions: [
         {
           iconName: 'play_arrow',

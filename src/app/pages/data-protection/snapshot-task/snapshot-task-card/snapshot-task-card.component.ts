@@ -30,7 +30,7 @@ import { WebSocketService } from 'app/services/ws.service';
 export class SnapshotTaskCardComponent implements OnInit {
   dataProvider: AsyncDataProvider<PeriodicSnapshotTaskUi>;
 
-  columns = createTable<PeriodicSnapshotTaskUi>([
+  columns = createTable<PeriodicSnapshotTaskUi>('snapshot-task-card', [
     textColumn({
       title: this.translate.instant('Pool/Dataset'),
       propertyName: 'dataset',
@@ -63,7 +63,6 @@ export class SnapshotTaskCardComponent implements OnInit {
       cssClass: 'state-button',
     }),
     actionsColumn({
-      ixTestPrefix: 'snapshots-',
       actions: [
         {
           iconName: 'edit',

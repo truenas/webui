@@ -13,7 +13,7 @@ interface TestTableData {
   booleanField: boolean;
 }
 
-const columns = createTable<TestTableData>([
+const columns = createTable<TestTableData>('test-table', [
   textColumn({
     title: 'Number Field',
     propertyName: 'numberField',

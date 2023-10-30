@@ -8,12 +8,15 @@ import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-
   styleUrls: ['./ix-cell-actions.component.scss'],
 })
 export class IxCellActionsComponent<T> extends ColumnComponent<T> {
-  ixTestPrefix: string;
   actions: CellActionConfig<T>[];
+
+  getRowId(): string {
+    return (this.row as { id: unknown })?.id?.toString() || '';
+  }
 }
 
 export function actionsColumn<T>(
-  options: Partial<IxCellActionsComponent<T>> & { actions: CellActionConfig<T>[]; ixTestPrefix: string },
+  options: Partial<IxCellActionsComponent<T>>,
 ): Column<T, IxCellActionsComponent<T>> {
   return { type: IxCellActionsComponent, ...options };
 }

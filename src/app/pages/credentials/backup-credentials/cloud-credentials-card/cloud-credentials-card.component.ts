@@ -30,20 +30,20 @@ export class CloudCredentialsCardComponent implements OnInit {
   dataProvider: AsyncDataProvider<CloudsyncCredential>;
   providers = new Map<string, string>();
   credentials: CloudsyncCredential[] = [];
-  columns = createTable<CloudsyncCredential>([
+  columns = createTable<CloudsyncCredential>('cloud-creds', [
     textColumn({
       title: this.translate.instant('Name'),
       propertyName: 'name',
       sortable: true,
     }),
     textColumn({
+      ixTestPrefix: '',
       title: this.translate.instant('Provider'),
       propertyName: 'provider',
       getValue: (row) => this.providers.get(row.provider) || row.provider,
       sortable: true,
     }),
     actionsColumn({
-      ixTestPrefix: 'cloud-creds-',
       actions: [
         {
           iconName: 'edit',

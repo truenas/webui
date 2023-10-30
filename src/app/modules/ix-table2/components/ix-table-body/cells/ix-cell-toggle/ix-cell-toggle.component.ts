@@ -13,6 +13,10 @@ export class IxCellToggleComponent<T> extends ColumnComponent<T> {
     return this.value as boolean;
   }
 
+  getRowId(): string {
+    return (this.row as { id: unknown }).id?.toString() || '';
+  }
+
   onSlideToggleChanged(event: MatSlideToggleChange): void {
     this.onRowToggle(this.row, event.checked);
   }

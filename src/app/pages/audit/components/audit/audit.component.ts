@@ -22,7 +22,7 @@ import { WebSocketService } from 'app/services/ws.service';
 export class AuditComponent implements OnInit {
   protected readonly searchControl = new FormControl();
   protected dataProvider = new ArrayDataProvider<AuditEntry>();
-  columns = createTable<AuditEntry>([
+  columns = createTable<AuditEntry>('audit', [
     dateColumn({
       title: this.translate.instant('Event Time'),
       propertyName: 'timestamp',

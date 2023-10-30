@@ -34,7 +34,7 @@ export class CronListComponent implements OnInit {
   cronjobs: CronjobRow[] = [];
   filterString = '';
   dataProvider: AsyncDataProvider<CronjobRow>;
-  columns = createTable<CronjobRow>([
+  columns = createTable<CronjobRow>('cron-list', [
     textColumn({
       title: this.translate.instant('Users'),
       propertyName: 'user',

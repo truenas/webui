@@ -38,7 +38,7 @@ export default class IdmapListComponent implements OnInit {
   filterString = '';
   dataProvider: AsyncDataProvider<IdmapRow>;
   idmaps: IdmapRow[] = [];
-  columns = createTable<IdmapRow>([
+  columns = createTable<IdmapRow>('idmap-list', [
     textColumn({
       title: this.translateService.instant('Name'),
       propertyName: 'label',
@@ -70,7 +70,6 @@ export default class IdmapListComponent implements OnInit {
       sortable: true,
     }),
     actionsColumn({
-      ixTestPrefix: 'idmaps-',
       actions: [
         {
           iconName: 'edit',

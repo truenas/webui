@@ -43,7 +43,7 @@ export class CloudsyncListComponent implements OnInit {
   dataProvider: AsyncDataProvider<CloudSyncTaskUi>;
   readonly jobState = JobState;
 
-  columns = createTable<CloudSyncTaskUi>([
+  columns = createTable<CloudSyncTaskUi>('cloudsync-list', [
     textColumn({
       title: this.translate.instant('Description'),
       propertyName: 'description',

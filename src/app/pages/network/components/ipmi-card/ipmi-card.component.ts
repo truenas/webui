@@ -28,12 +28,11 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class IpmiCardComponent implements OnInit {
   protected dataProvider: AsyncDataProvider<Ipmi>;
-  columns = createTable<Ipmi>([
+  columns = createTable<Ipmi>('ipmi-card', [
     textColumn({
       getValue: (row) => this.translate.instant('Channel {n}', { n: row.channel }),
     }),
     actionsColumn({
-      ixTestPrefix: 'ipmi-',
       actions: [
         {
           iconName: 'edit',

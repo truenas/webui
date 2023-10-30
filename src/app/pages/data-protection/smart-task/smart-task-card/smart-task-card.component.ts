@@ -32,7 +32,7 @@ export class SmartTaskCardComponent implements OnInit {
   dataProvider: AsyncDataProvider<SmartTestTaskUi>;
   disks: Disk[] = [];
 
-  columns = createTable<SmartTestTaskUi>([
+  columns = createTable<SmartTestTaskUi>('smart-task-card', [
     textColumn({
       title: helptext_smart.smartlist_column_disks,
       propertyName: 'disksLabel',
@@ -54,7 +54,6 @@ export class SmartTaskCardComponent implements OnInit {
       getValue: (row) => this.taskService.getTaskNextTime(row.cron_schedule) as unknown,
     }),
     actionsColumn({
-      ixTestPrefix: 'smart-',
       actions: [
         {
           iconName: 'edit',

@@ -29,7 +29,7 @@ import { WebSocketService } from 'app/services/ws.service';
 export class ScrubTaskCardComponent implements OnInit {
   dataProvider: AsyncDataProvider<ScrubTaskUi>;
 
-  columns = createTable<ScrubTaskUi>([
+  columns = createTable<ScrubTaskUi>('scrub-task-card', [
     textColumn({
       title: this.translate.instant('Pool'),
       propertyName: 'pool_name',
@@ -52,7 +52,6 @@ export class ScrubTaskCardComponent implements OnInit {
       onRowToggle: (row: ScrubTaskUi) => this.onChangeEnabledState(row),
     }),
     actionsColumn({
-      ixTestPrefix: 'scrub-',
       actions: [
         {
           iconName: 'edit',

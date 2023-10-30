@@ -33,7 +33,7 @@ import { WebSocketService } from 'app/services/ws.service';
 export class InitShutdownCardComponent implements OnInit {
   dataProvider: AsyncDataProvider<InitShutdownScript>;
 
-  columns = createTable<InitShutdownScript>([
+  columns = createTable<InitShutdownScript>('init-shutdown-card', [
     textColumn({
       title: this.translate.instant('Command / Script'),
       propertyName: 'command',
@@ -56,7 +56,6 @@ export class InitShutdownCardComponent implements OnInit {
       propertyName: 'timeout',
     }),
     actionsColumn({
-      ixTestPrefix: 'init-shutdown-',
       actions: [
         {
           iconName: 'edit',

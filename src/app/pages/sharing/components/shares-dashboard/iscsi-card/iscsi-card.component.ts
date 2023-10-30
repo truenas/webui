@@ -32,7 +32,7 @@ export class IscsiCardComponent implements OnInit {
   iscsiShares: IscsiTarget[] = [];
   dataProvider: AsyncDataProvider<IscsiTarget>;
 
-  columns = createTable<IscsiTarget>([
+  columns = createTable<IscsiTarget>('iscsi-card', [
     textColumn({
       title: this.translate.instant('Target Name'),
       propertyName: 'name',
@@ -42,7 +42,6 @@ export class IscsiCardComponent implements OnInit {
       propertyName: 'alias',
     }),
     actionsColumn({
-      ixTestPrefix: 'iscsi-',
       actions: [
         {
           iconName: 'edit',

@@ -32,7 +32,7 @@ export class DeviceListComponent implements OnInit {
   filterString = '';
   devices: VmDevice[] = [];
 
-  columns = createTable<VmDevice>([
+  columns = createTable<VmDevice>('device-list', [
     textColumn({
       title: this.translate.instant('Device ID'),
       propertyName: 'id',

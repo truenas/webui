@@ -38,7 +38,7 @@ export class CertificateListComponent implements OnInit {
   filterString = '';
   dataProvider: AsyncDataProvider<Certificate>;
   certificates: Certificate[] = [];
-  columns = createTable<Certificate>([
+  columns = createTable<Certificate>('certs-list', [
     textColumn({
       title: this.translate.instant('Name'),
       propertyName: 'name',
@@ -55,7 +55,6 @@ export class CertificateListComponent implements OnInit {
       sortable: true,
     }),
     actionsColumn({
-      ixTestPrefix: 'certs-',
       actions: [
         {
           iconName: 'block',

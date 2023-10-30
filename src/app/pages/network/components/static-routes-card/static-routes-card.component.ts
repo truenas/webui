@@ -29,7 +29,7 @@ export class StaticRoutesCardComponent implements OnInit {
   filterString = '';
   dataProvider: AsyncDataProvider<StaticRoute>;
   staticRoutes: StaticRoute[] = [];
-  columns = createTable<StaticRoute>([
+  columns = createTable<StaticRoute>('static-routes-card', [
     textColumn({
       title: this.translate.instant('Destination'),
       propertyName: 'destination',
@@ -41,7 +41,6 @@ export class StaticRoutesCardComponent implements OnInit {
       sortable: true,
     }),
     actionsColumn({
-      ixTestPrefix: 'statis-routes-',
       actions: [
         {
           iconName: 'edit',

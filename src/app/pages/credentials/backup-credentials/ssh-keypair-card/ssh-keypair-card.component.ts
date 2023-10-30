@@ -28,14 +28,13 @@ import { WebSocketService } from 'app/services/ws.service';
 export class SshKeypairCardComponent implements OnInit {
   dataProvider: AsyncDataProvider<KeychainSshKeyPair>;
   credentials: KeychainSshKeyPair[] = [];
-  columns = createTable<KeychainSshKeyPair>([
+  columns = createTable<KeychainSshKeyPair>('ssh-keypair-card', [
     textColumn({
       title: this.translate.instant('Name'),
       propertyName: 'name',
       sortable: true,
     }),
     actionsColumn({
-      ixTestPrefix: 'ssh-keypair-',
       actions: [
         {
           iconName: 'save_alt',

@@ -43,7 +43,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
   jobStates = new Map<number, string>();
   readonly jobState = JobState;
 
-  columns = createTable<CloudSyncTaskUi>([
+  columns = createTable<CloudSyncTaskUi>('cloundsync-task-card', [
     textColumn({
       title: this.translate.instant('Description'),
       propertyName: 'description',
@@ -73,7 +73,6 @@ export class CloudSyncTaskCardComponent implements OnInit {
     }),
     actionsColumn({
       cssClass: 'wide-actions',
-      ixTestPrefix: 'cloudsync-',
       actions: [
         {
           iconName: 'edit',

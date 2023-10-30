@@ -1,6 +1,7 @@
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
 
 export abstract class ColumnComponent<T> {
+  ixTestPrefix: string;
   identifier?: boolean;
   propertyName: keyof T;
   title?: string;

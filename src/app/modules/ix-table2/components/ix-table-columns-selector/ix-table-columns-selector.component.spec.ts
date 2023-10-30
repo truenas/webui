@@ -20,7 +20,7 @@ describe('IxTableColumnsSelectorComponent', () => {
   let loader: HarnessLoader;
   let menu: MatMenuHarness;
   let matDialog: MatDialog;
-  const testColumns = createTable<CronjobRow>([
+  const testColumns = createTable<CronjobRow>('test-table', [
     textColumn({
       title: 'Users',
       propertyName: 'user',

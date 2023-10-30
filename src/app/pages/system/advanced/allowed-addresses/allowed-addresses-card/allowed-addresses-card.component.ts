@@ -35,13 +35,12 @@ interface AllowedAddressRow {
 export class AllowedAddressesCardComponent implements OnInit {
   dataProvider: AsyncDataProvider<AllowedAddressRow>;
 
-  columns = createTable<AllowedAddressRow>([
+  columns = createTable<AllowedAddressRow>('allowed-addresses-card', [
     textColumn({
       title: this.translate.instant('Address'),
       propertyName: 'address',
     }),
     actionsColumn({
-      ixTestPrefix: 'allowed-addresses-',
       actions: [
         {
           iconName: 'delete',

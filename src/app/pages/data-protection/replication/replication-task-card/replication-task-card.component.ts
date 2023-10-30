@@ -43,7 +43,7 @@ export class ReplicationTaskCardComponent implements OnInit {
   jobStates = new Map<number, string>();
   readonly jobState = JobState;
 
-  columns = createTable<ReplicationTaskUi>([
+  columns = createTable<ReplicationTaskUi>('replication-task-card', [
     textColumn({
       title: this.translate.instant('Name'),
       propertyName: 'name',
@@ -69,7 +69,6 @@ export class ReplicationTaskCardComponent implements OnInit {
     }),
     actionsColumn({
       cssClass: 'wide-actions',
-      ixTestPrefix: 'replication-',
       actions: [
         {
           iconName: 'edit',

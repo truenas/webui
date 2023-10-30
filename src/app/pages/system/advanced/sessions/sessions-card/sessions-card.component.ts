@@ -43,7 +43,7 @@ export class SessionsCardComponent implements OnInit {
 
   dataProvider: AsyncDataProvider<AuthSession>;
 
-  columns = createTable<AuthSession>([
+  columns = createTable<AuthSession>('sessions-card', [
     textColumn({
       title: this.translate.instant('Username'),
       propertyName: 'credentials_data',
@@ -54,7 +54,6 @@ export class SessionsCardComponent implements OnInit {
       propertyName: 'created_at',
     }),
     actionsColumn({
-      ixTestPrefix: 'sessions-',
       actions: [
         {
           iconName: 'exit_to_app',

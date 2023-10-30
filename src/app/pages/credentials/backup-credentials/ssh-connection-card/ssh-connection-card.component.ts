@@ -27,14 +27,13 @@ import { WebSocketService } from 'app/services/ws.service';
 export class SshConnectionCardComponent implements OnInit {
   dataProvider: AsyncDataProvider<KeychainSshCredentials>;
   credentials: KeychainSshCredentials[] = [];
-  columns = createTable<KeychainSshCredentials>([
+  columns = createTable<KeychainSshCredentials>('ssh-con-card', [
     textColumn({
       title: this.translate.instant('Name'),
       propertyName: 'name',
       sortable: true,
     }),
     actionsColumn({
-      ixTestPrefix: 'ssh-con-',
       actions: [
         {
           iconName: 'edit',

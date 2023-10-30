@@ -26,7 +26,7 @@ export class VmwareSnapshotListComponent implements OnInit {
 
   protected snapshots: VmwareSnapshot[] = [];
   dataProvider: AsyncDataProvider<VmwareSnapshot>;
-  columns = createTable<VmwareSnapshot>([
+  columns = createTable<VmwareSnapshot>('vmware-snapshot-list', [
     textColumn({
       title: this.translate.instant('Hostname'),
       propertyName: 'hostname',

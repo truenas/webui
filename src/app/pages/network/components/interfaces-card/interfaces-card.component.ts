@@ -49,7 +49,7 @@ export class InterfacesCardComponent implements OnInit {
   dataProvider = new ArrayDataProvider<NetworkInterface>();
   inOutUpdates: AllNetworkInterfacesUpdate;
 
-  columns = createTable<NetworkInterface>([
+  columns = createTable<NetworkInterface>('interfaces-card', [
     textColumn({
       // In-out column
       propertyName: 'state',
@@ -63,7 +63,6 @@ export class InterfacesCardComponent implements OnInit {
       title: this.translate.instant('IP Addresses'),
     },
     actionsColumn({
-      ixTestPrefix: 'interfaces-',
       actions: [
         {
           iconName: 'edit',

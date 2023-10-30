@@ -30,14 +30,13 @@ export default class KerberosKeytabsListComponent implements OnInit {
   filterString = '';
   dataProvider: AsyncDataProvider<KerberosKeytab>;
   kerberosRealsm: KerberosKeytab[] = [];
-  columns = createTable<KerberosKeytab>([
+  columns = createTable<KerberosKeytab>('kerberos-keytabs-list', [
     textColumn({
       title: this.translateService.instant('Name'),
       propertyName: 'name',
       sortable: true,
     }),
     actionsColumn({
-      ixTestPrefix: 'kerbros-',
       actions: [
         {
           iconName: 'edit',

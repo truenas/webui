@@ -34,7 +34,7 @@ export class NfsCardComponent implements OnInit {
   nfsShares: NfsShare[] = [];
   dataProvider: AsyncDataProvider<NfsShare>;
 
-  columns = createTable<NfsShare>([
+  columns = createTable<NfsShare>('nfs-card', [
     textColumn({
       title: helptextSharingNfs.column_path,
       propertyName: 'path',
@@ -50,7 +50,6 @@ export class NfsCardComponent implements OnInit {
     }),
     actionsColumn({
       cssClass: 'tight-actions',
-      ixTestPrefix: 'nfs-',
       actions: [
         {
           iconName: 'edit',

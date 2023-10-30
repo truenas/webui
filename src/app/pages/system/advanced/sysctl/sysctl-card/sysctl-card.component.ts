@@ -29,7 +29,7 @@ import { WebSocketService } from 'app/services/ws.service';
 export class SysctlCardComponent implements OnInit {
   dataProvider: AsyncDataProvider<Tunable>;
 
-  columns = createTable<Tunable>([
+  columns = createTable<Tunable>('sysctl-card', [
     textColumn({
       title: this.translate.instant('Var'),
       propertyName: 'var',
@@ -47,7 +47,6 @@ export class SysctlCardComponent implements OnInit {
       propertyName: 'comment',
     }),
     actionsColumn({
-      ixTestPrefix: 'sysctl-',
       actions: [
         {
           iconName: 'edit',

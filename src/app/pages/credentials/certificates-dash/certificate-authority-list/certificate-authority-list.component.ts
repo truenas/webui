@@ -40,7 +40,7 @@ export class CertificateAuthorityListComponent implements OnInit {
   filterString = '';
   dataProvider: AsyncDataProvider<CertificateAuthority>;
   authorities: CertificateAuthority[] = [];
-  columns = createTable<CertificateAuthority>([
+  columns = createTable<CertificateAuthority>('ca-list', [
     textColumn({
       title: this.translate.instant('Name'),
       propertyName: 'name',
@@ -57,7 +57,6 @@ export class CertificateAuthorityListComponent implements OnInit {
       sortable: true,
     }),
     actionsColumn({
-      ixTestPrefix: 'ca-',
       actions: [
         {
           iconName: 'beenhere',

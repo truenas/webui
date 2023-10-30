@@ -43,7 +43,7 @@ export class SmbCardComponent implements OnInit, OnChanges {
   isDeleteActionDisabled = false;
   tableHint?: string;
 
-  columns = createTable<SmbShare>([
+  columns = createTable<SmbShare>('smb-card', [
     textColumn({
       title: helptextSharingSmb.column_name,
       propertyName: 'name',
@@ -63,7 +63,6 @@ export class SmbCardComponent implements OnInit, OnChanges {
     }),
     actionsColumn({
       cssClass: 'wide-actions',
-      ixTestPrefix: 'smb-',
       actions: [
         {
           iconName: 'share',

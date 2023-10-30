@@ -31,7 +31,7 @@ export class TunableListComponent implements OnInit {
   dataProvider: AsyncDataProvider<Tunable>;
   filterString = '';
   tunables: Tunable[] = [];
-  columns = createTable<Tunable>([
+  columns = createTable<Tunable>('tunable-list', [
     textColumn({
       title: this.translate.instant('Variable'),
       propertyName: 'var',
@@ -56,7 +56,6 @@ export class TunableListComponent implements OnInit {
       propertyName: 'enabled',
     }),
     actionsColumn({
-      ixTestPrefix: 'tunable-',
       actions: [
         {
           iconName: 'edit',

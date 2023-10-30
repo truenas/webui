@@ -33,7 +33,7 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
 })
 export class UserListComponent implements OnInit {
   dataProvider = new ArrayDataProvider<User>();
-  columns = createTable<User>([
+  columns = createTable<User>('user-list', [
     textColumn({
       identifier: true,
       title: this.translate.instant('Username'),

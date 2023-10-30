@@ -27,7 +27,7 @@ export class AcmeDnsAuthenticatorListComponent implements OnInit {
   filterString = '';
   dataProvider: AsyncDataProvider<DnsAuthenticator>;
   authenticators: DnsAuthenticator[] = [];
-  columns = createTable<DnsAuthenticator>([
+  columns = createTable<DnsAuthenticator>('acme-dns-auth', [
     textColumn({
       title: this.translate.instant('Name'),
       propertyName: 'name',
@@ -39,7 +39,6 @@ export class AcmeDnsAuthenticatorListComponent implements OnInit {
       sortable: true,
     }),
     actionsColumn({
-      ixTestPrefix: 'acme-dns-auth-',
       actions: [
         {
           iconName: 'edit',

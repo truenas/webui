@@ -1,6 +1,6 @@
 <mat-slide-toggle
   color="primary"
-  ixTest="row-toggle"
+  [ixTest]="['row-toggle', ixTestPrefix, getRowId()]"
   [checked]="checked"
   (change)="onSlideToggleChanged($event)"
   (click)="$event.stopPropagation()"

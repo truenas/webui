@@ -37,7 +37,7 @@ export class CatalogsComponent implements OnInit {
   dataProvider: AsyncDataProvider<Catalog>;
   catalogs: Catalog[] = [];
 
-  columns = createTable<Catalog>([
+  columns = createTable<Catalog>('catalogs', [
     textColumn({
       title: this.translate.instant('Name'),
       propertyName: 'label',

@@ -28,7 +28,7 @@ export class ReportingExporterListComponent implements OnInit {
   dataProvider = new ArrayDataProvider<ReportingExporter>();
 
   exporters: ReportingExporter[] = [];
-  columns = createTable<ReportingExporter>([
+  columns = createTable<ReportingExporter>('reporting-exporters-list', [
     textColumn({
       title: this.translate.instant('Name'),
       propertyName: 'name',
@@ -60,7 +60,6 @@ export class ReportingExporterListComponent implements OnInit {
       },
     }),
     actionsColumn({
-      ixTestPrefix: 'reporting-exporters-',
       actions: [
         {
           iconName: 'edit',

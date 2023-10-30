@@ -39,7 +39,7 @@ export class CertificateSigningRequestsListComponent implements OnInit {
   filterString = '';
   dataProvider: AsyncDataProvider<Certificate>;
   certificates: Certificate[] = [];
-  columns = createTable<Certificate>([
+  columns = createTable<Certificate>('csr-list', [
     textColumn({
       title: this.translate.instant('Name'),
       propertyName: 'name',
@@ -51,7 +51,6 @@ export class CertificateSigningRequestsListComponent implements OnInit {
       sortable: true,
     }),
     actionsColumn({
-      ixTestPrefix: 'csr-',
       actions: [
         {
           iconName: 'build',

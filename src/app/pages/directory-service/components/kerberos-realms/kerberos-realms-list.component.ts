@@ -31,7 +31,7 @@ export default class KerberosRealmsListComponent implements OnInit {
   filterString = '';
   dataProvider: AsyncDataProvider<KerberosRealmRow>;
   kerberosRealsm: KerberosRealmRow[] = [];
-  columns = createTable<KerberosRealmRow>([
+  columns = createTable<KerberosRealmRow>('kerberos-realms-list', [
     textColumn({
       title: this.translateService.instant('Realm'),
       propertyName: 'realm',
@@ -53,7 +53,6 @@ export default class KerberosRealmsListComponent implements OnInit {
       sortable: true,
     }),
     actionsColumn({
-      ixTestPrefix: 'kerbros-realm-',
       actions: [
         {
           iconName: 'edit',

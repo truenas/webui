@@ -40,7 +40,7 @@ export class RsyncTaskCardComponent implements OnInit {
   jobStates = new Map<number, string>();
   readonly jobState = JobState;
 
-  columns = createTable<RsyncTaskUi>([
+  columns = createTable<RsyncTaskUi>('rsync-task-card', [
     textColumn({
       title: this.translate.instant('Path'),
       propertyName: 'path',
@@ -74,7 +74,6 @@ export class RsyncTaskCardComponent implements OnInit {
     }),
     actionsColumn({
       cssClass: 'wide-actions',
-      ixTestPrefix: 'rsync-',
       actions: [
         {
           iconName: 'edit',
