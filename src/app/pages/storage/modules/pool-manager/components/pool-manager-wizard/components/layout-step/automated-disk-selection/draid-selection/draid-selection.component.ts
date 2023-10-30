@@ -149,7 +149,7 @@ export class DraidSelectionComponent implements OnInit, OnChanges {
     const maxPossibleGroups = this.selectedDisks.length - this.parityDevices;
     let nextOptions: Option[] = [];
     if (maxPossibleGroups) {
-      nextOptions = generateOptionsRange(1, maxPossibleGroups);
+      nextOptions = generateOptionsRange(2, maxPossibleGroups);
     }
 
     unsetControlIfNoMatchingOption(this.form.controls.dataDevicesPerGroup, nextOptions);
