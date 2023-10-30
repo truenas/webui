@@ -43,6 +43,7 @@ describe('JobItemComponent', () => {
           progress: {
             percent: 0,
           },
+          credentials: null,
           state: JobState.Failed,
           time_finished: {
             $date: 1641811015,
