@@ -175,6 +175,7 @@ export class TransportSectionComponent implements OnChanges {
 
   private openCredentialsDialog(): Observable<KeychainSshCredentials> {
     return this.matDialog.open(SshConnectionFormComponent, {
+      data: { dialog: true },
       width: '600px',
       panelClass: 'ix-overflow-dialog',
       viewContainerRef: this.viewContainerRef,

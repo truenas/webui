@@ -199,10 +199,12 @@ export class SshConnectionFormComponent implements OnInit {
         this.isLoading = false;
         this.snackbar.success(this.translate.instant('SSH Connection saved'));
         // TODO: Ideally this form shouldn't care about how it was called
-        if (this.dialogRef) {
-          this.dialogRef.close(newCredential);
+        if (this.data?.dialog) {
+          if (this.dialogRef) {
+            this.dialogRef.close(newCredential);
+          }
         } else {
-          this.slideInRef.close(newCredential);
+          this.slideInRef.close(newCredential || true);
         }
       },
       error: (error) => {

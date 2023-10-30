@@ -178,7 +178,7 @@ export class CloudCredentialsFormComponent implements OnInit {
           if (this.dialogRef) {
             this.dialogRef.close(newCredential);
           } else {
-            this.slideInRef.close(newCredential);
+            this.slideInRef.close(newCredential || true);
           }
 
           this.cdr.markForCheck();
