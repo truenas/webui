@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component, Input,
 } from '@angular/core';
+import { convertToTitleSpaceCase } from 'app/helpers/convert-to-title-space-case';
 import { Job } from 'app/interfaces/job.interface';
 
 @Component({
@@ -13,4 +14,6 @@ import { Job } from 'app/interfaces/job.interface';
 export class JobLogsRowComponent {
   @Input() job: Job;
   @Input() colspan: number;
+
+  readonly convertToTitleSpaceCase = convertToTitleSpaceCase;
 }

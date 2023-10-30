@@ -18,6 +18,12 @@ export interface Job<R = unknown, A = unknown[]> {
   exception: string;
   id: number;
   logs_excerpt: string;
+  credentials: {
+    type?: string;
+    data?: {
+      username?: string;
+    };
+  } | null;
   logs_path: string;
   method: ApiJobMethod;
   progress: JobProgress;

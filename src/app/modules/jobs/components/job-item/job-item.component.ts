@@ -2,6 +2,7 @@ import {
   Component, Input, Output, EventEmitter, ChangeDetectionStrategy,
 } from '@angular/core';
 import { JobState } from 'app/enums/job-state.enum';
+import { convertToTitleSpaceCase } from 'app/helpers/convert-to-title-space-case';
 import { Job } from 'app/interfaces/job.interface';
 
 @Component({
@@ -16,6 +17,7 @@ export class JobItemComponent {
   @Output() aborted = new EventEmitter();
   @Output() opened = new EventEmitter();
   readonly JobState = JobState;
+  readonly convertToTitleSpaceCase = convertToTitleSpaceCase;
 
   abort(): void {
     this.aborted.emit();
