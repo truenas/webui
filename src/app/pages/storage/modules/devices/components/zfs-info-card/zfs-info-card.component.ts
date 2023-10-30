@@ -42,12 +42,19 @@ export class ZfsInfoCardComponent {
     return raidzItems.includes(this.topologyItem.type);
   }
 
+  get isDraidOrMirrorParent(): boolean {
+    return [
+      TopologyItemType.Mirror,
+      TopologyItemType.Draid,
+    ].includes(this.topologyParentItem.type);
+  }
+
   get isDisk(): boolean {
     return isTopologyDisk(this.topologyItem);
   }
 
   get canExtendDisk(): boolean {
-    return this.topologyParentItem.type !== TopologyItemType.Mirror
+    return !this.isDraidOrMirrorParent
       && !this.isRaidzParent
       && this.topologyItem.type === TopologyItemType.Disk
       && (this.topologyCategory === VdevType.Data
@@ -57,7 +64,7 @@ export class ZfsInfoCardComponent {
   }
 
   get canRemoveDisk(): boolean {
-    return this.topologyParentItem.type !== TopologyItemType.Mirror
+    return !this.isDraidOrMirrorParent
       && !this.isRaidzParent
       && (!this.hasTopLevelRaidz
     || this.topologyCategory === VdevType.Cache
