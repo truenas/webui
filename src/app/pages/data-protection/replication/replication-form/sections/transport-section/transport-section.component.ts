@@ -6,7 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
-import { BehaviorSubject, Observable, filter, map, of, switchMap } from 'rxjs';
+import { BehaviorSubject, Observable, filter, map, of, switchMap, tap } from 'rxjs';
 import { CompressionType, compressionTypeNames } from 'app/enums/compression-type.enum';
 import { NetcatMode, netcatModeNames } from 'app/enums/netcat-mode.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
@@ -153,7 +153,13 @@ export class TransportSectionComponent implements OnChanges {
   private listenForNewSshConnection(): void {
     this.form.controls.ssh_credentials.valueChanges.pipe(
       filter((value) => value === SshCredentialsNewOption.New),
-      switchMap(() => this.openSshConnectionDialog()),
+      switchMap(() => this.openCredentialsDialog()),
+      tap((value) => {
+        if (!value) {
+          this.form.controls.ssh_credentials.reset();
+        }
+      }),
+      filter(Boolean),
       filter(Boolean),
       switchMap((newCredential): Observable<[KeychainSshCredentials, Option[]]> => {
         return this.keychainCredentials.getSshCredentialsOptions().pipe(
@@ -167,9 +173,8 @@ export class TransportSectionComponent implements OnChanges {
     });
   }
 
-  private openSshConnectionDialog(): Observable<KeychainSshCredentials> {
+  private openCredentialsDialog(): Observable<KeychainSshCredentials> {
     return this.matDialog.open(SshConnectionFormComponent, {
-      data: { dialog: true },
       width: '600px',
       panelClass: 'ix-overflow-dialog',
       viewContainerRef: this.viewContainerRef,

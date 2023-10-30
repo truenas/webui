@@ -3,11 +3,13 @@ import {
   ChangeDetectorRef,
   Component, Inject,
   OnInit,
+  Optional,
   Type,
   ViewChild,
   ViewContainerRef,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
@@ -107,7 +109,9 @@ export class CloudCredentialsFormComponent implements OnInit {
     private formErrorHandler: FormErrorHandlerService,
     private translate: TranslateService,
     private snackbarService: SnackbarService,
+    @Optional() public dialogRef: MatDialogRef<CloudCredentialsFormComponent>,
     @Inject(SLIDE_IN_DATA) private credential: CloudsyncCredential,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: { dialog: boolean },
   ) {
     // Has to be earlier than potential `setCredentialsForEdit` call
     this.setFormEvents();
@@ -162,14 +166,21 @@ export class CloudCredentialsFormComponent implements OnInit {
         untilDestroyed(this),
       )
       .subscribe({
-        next: () => {
+        next: (newCredential) => {
           this.isLoading = false;
           this.snackbarService.success(
             this.isNew
               ? this.translate.instant('Cloud credential added.')
               : this.translate.instant('Cloud credential updated.'),
           );
-          this.slideInRef.close(true);
+
+          // TODO: Ideally this form shouldn't care about how it was called
+          if (this.dialogRef) {
+            this.dialogRef.close(newCredential);
+          } else {
+            this.slideInRef.close(newCredential);
+          }
+
           this.cdr.markForCheck();
         },
         error: (error) => {

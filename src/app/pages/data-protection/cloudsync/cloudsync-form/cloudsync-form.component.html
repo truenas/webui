@@ -56,15 +56,6 @@
           class="fieldset"
           [title]="helptext.fieldset_remote | translate"
         >
-          <a
-            ixTest="manage-credentials"
-            [routerLink]="['/', 'credentials', 'backup-credentials']"
-            (click)="slideInRef.close()"
-          >
-            <div class="link">
-              {{ 'Manage Credentials' | translate }}<ix-icon name="open_in_new"></ix-icon>
-            </div>
-          </a>
           <ix-select
             *ngIf="form.controls.credentials.enabled"
             formControlName="credentials"

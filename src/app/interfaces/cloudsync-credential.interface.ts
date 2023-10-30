@@ -35,3 +35,7 @@ export interface CloudsyncOneDriveParams {
   client_secret: string;
   token: string;
 }
+
+export enum CloudSyncCredentialsNewOption {
+  New = 'NEW',
+}

@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit, ViewContainerRef,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -9,17 +9,17 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
 import _ from 'lodash';
-import { Observable, of } from 'rxjs';
-import { filter, map, switchMap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { filter, map, switchMap, tap } from 'rxjs/operators';
 import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import helptext from 'app/helptext/data-protection/cloudsync/cloudsync-form';
-import { CloudSyncTaskUi, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
-import { CloudsyncBucket, CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
-import { SelectOption } from 'app/interfaces/option.interface';
+import { CloudCredential, CloudSyncTaskUi, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
+import { CloudSyncCredentialsNewOption, CloudsyncBucket, CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
+import { SelectOption, Option } from 'app/interfaces/option.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
@@ -31,6 +31,7 @@ import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedu
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { CloudCredentialsFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/cloud-credentials-form.component';
 import { CreateStorjBucketDialogComponent } from 'app/pages/data-protection/cloudsync/create-storj-bucket-dialog/create-storj-bucket-dialog.component';
 import { CustomTransfersDialogComponent } from 'app/pages/data-protection/cloudsync/custom-transfers-dialog/custom-transfers-dialog.component';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
@@ -125,18 +126,9 @@ export class CloudsyncFormComponent implements OnInit {
     { label: this.translate.instant('MOVE'), value: TransferMode.Move },
   ]);
 
+  readonly credentialsOptions$ = new BehaviorSubject<Option[]>([]);
+
   credentialsList: CloudsyncCredential[] = [];
-  readonly credentialsOptions$ = this.cloudCredentialService.getCloudsyncCredentials().pipe(
-    map((options) => {
-      return options.map((option) => {
-        if (option.provider === CloudsyncProviderName.GoogleDrive) {
-          this.googleDriveProviderId = option.id;
-        }
-        return { label: `${option.name} (${option.provider})`, value: option.id };
-      });
-    }),
-    untilDestroyed(this),
-  );
 
   readonly encryptionOptions$ = of([
     { label: 'AES-256', value: 'AES256' },
@@ -181,11 +173,16 @@ export class CloudsyncFormComponent implements OnInit {
     protected slideInService: IxSlideInService,
     private filesystemService: FilesystemService,
     protected cloudCredentialService: CloudCredentialService,
+    private viewContainerRef: ViewContainerRef,
     @Inject(SLIDE_IN_DATA) private editingTask: CloudSyncTaskUi,
   ) { }
 
   ngOnInit(): void {
     this.setupForm();
+    this.listenForNewCredential();
+
+    this.getCredentialsOptions().pipe(untilDestroyed(this))
+      .subscribe((credentials) => this.credentialsOptions$.next(credentials));
 
     if (this.editingTask) {
       this.setTaskForEdit();
@@ -775,5 +772,54 @@ export class CloudsyncFormComponent implements OnInit {
       this.form.controls.folder_source.disable();
       this.form.controls.folder_destination.enable();
     }
+  }
+
+  private getCredentialsOptions(): Observable<{ label: string; value: number }[]> {
+    return this.cloudCredentialService.getCloudsyncCredentials().pipe(
+      map((options) => {
+        const mappedOptions = options.map((option) => {
+          if (option.provider === CloudsyncProviderName.GoogleDrive) {
+            this.googleDriveProviderId = option.id;
+          }
+          return { label: `${option.name} (${option.provider})`, value: option.id };
+        });
+        mappedOptions.unshift({
+          label: this.translate.instant('Create New'), value: CloudSyncCredentialsNewOption.New as unknown as number,
+        });
+        return mappedOptions;
+      }),
+      untilDestroyed(this),
+    );
+  }
+
+
+  private listenForNewCredential(): void {
+    this.form.controls.credentials.valueChanges.pipe(
+      filter((value) => value === CloudSyncCredentialsNewOption.New as unknown as number),
+      switchMap(() => this.openSshConnectionDialog()),
+      tap((value) => {
+        if (!value) {
+          this.form.controls.credentials.reset();
+        }
+      }),
+      filter(Boolean),
+      switchMap((newCredential): Observable<[CloudCredential, Option[]]> => {
+        return this.getCredentialsOptions().pipe(
+          map((options) => [newCredential, options]),
+        );
+      }),
+      untilDestroyed(this),
+    ).subscribe(([newCredential, sshConnections]) => {
+      this.credentialsOptions$.next(sshConnections);
+      this.form.controls.credentials.setValue(newCredential.id);
+    });
+  }
+
+  private openSshConnectionDialog(): Observable<CloudCredential> {
+    return this.matDialog.open(CloudCredentialsFormComponent, {
+      width: '600px',
+      panelClass: 'ix-overflow-dialog',
+      viewContainerRef: this.viewContainerRef,
+    }).afterClosed();
   }
 }

@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 
 @Component({
@@ -10,12 +11,17 @@ export class IxModalHeaderComponent {
   @Input() title: string;
   @Input() loading: boolean;
   @Input() disableClose = false;
+  @Input() dialogRef: MatDialogRef<unknown>;
 
   constructor(
     private slideInRef: IxSlideInRef<IxModalHeaderComponent>,
   ) {}
 
   close(): void {
-    this.slideInRef.close();
+    if (this.dialogRef) {
+      this.dialogRef.close();
+    } else {
+      this.slideInRef.close();
+    }
   }
 }
