@@ -15,9 +15,7 @@ export class IxModalHeader2Component implements AfterViewInit {
   @Input() title: string;
   @Input() loading: boolean;
   @Input() disableClose = false;
-
-
-  iconName = 'cancel';
+  componentsSize = 1;
 
   tooltip = this.translate.instant('Close the form');
 
@@ -31,11 +29,10 @@ export class IxModalHeader2Component implements AfterViewInit {
     this.chainedSlideIn.components$.pipe(
       untilDestroyed(this),
     ).subscribe((components) => {
+      this.componentsSize = components.length;
       if (components.length > 1) {
-        this.iconName = 'mdi-chevron-right-circle';
         this.tooltip = this.translate.instant('Go back to the previous form');
       } else {
-        this.iconName = 'cancel';
         this.tooltip = this.translate.instant('Close the form');
       }
     });

@@ -1,17 +1,27 @@
 <div
   class="ix-slidein-title-bar"
   fxLayout="row"
-  fxLayoutAlign="space-between center"
+  [fxLayoutAlign]="componentsSize > 1 ? 'left center' : 'space-between center'"
 >
-  <h3 class="ix-formtitle">{{ title | translate }}</h3>
-  <ng-container *ngIf="!disableClose">
+  <ng-container *ngIf="componentsSize > 1 && !disableClose">
     <button
       mat-icon-button
       [ixTest]="['close-slide-in']"
       [matTooltip]="tooltip"
       (click)="close()"
     >
-      <ix-icon id="ix-close-icon" [name]="iconName" ></ix-icon>
+      <ix-icon id="ix-close-icon" name="mdi-chevron-left-circle" ></ix-icon>
+    </button>
+  </ng-container>
+  <h3 class="ix-formtitle">{{ title | translate }}</h3>
+  <ng-container *ngIf="componentsSize <= 1 && !disableClose">
+    <button
+      mat-icon-button
+      [ixTest]="['close-slide-in']"
+      [matTooltip]="tooltip"
+      (click)="close()"
+    >
+      <ix-icon id="ix-close-icon" name="cancel" ></ix-icon>
     </button>
   </ng-container>
 </div>
