@@ -81,7 +81,7 @@ describe('CronCardComponent', () => {
       }),
       mockProvider(LocaleService),
       mockProvider(TaskService, {
-        getTaskNextTime: jest.fn(() => new Date(new Date().getTime() + (25 * 60 * 60 * 1000))),
+        getTaskNextTime: jest.fn(() => new Date(new Date().getTime() + (26 * 60 * 60 * 1000))),
         getTaskNextRun: jest.fn(() => 'in about 10 hours'),
       }),
       mockProvider(AdvancedSettingsService, {
