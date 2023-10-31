@@ -59,13 +59,13 @@ export class ReplaceDiskDialogComponent implements OnInit {
     return this.ws.call('disk.get_unused').pipe(
       map((unusedDisks) => {
         this.unusedDisks = unusedDisks;
+
         return unusedDisks.map((disk) => {
           const exportedPool = disk.exported_zpool ? ` (${disk.exported_zpool})` : '';
-          const size = filesize(disk.size, { standard: 'iec' });
 
           return {
-            label: `${disk.devname} - ${size} ${exportedPool}`,
-            value: disk.identifier,
+            label: `${disk.devname} (${filesize(disk.size, { standard: 'iec' })})${exportedPool}`,
+            value: disk.name,
           };
         }).sort((a, b) => a.label.localeCompare(b.label));
       }),
