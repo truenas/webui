@@ -2,7 +2,8 @@ import {
   ChangeDetectionStrategy,
   Component, Input,
 } from '@angular/core';
-import { convertToTitleSpaceCase } from 'app/helpers/convert-to-title-space-case';
+import { getCredentialsCreationSource } from 'app/helpers/get-credentials-creation-source.utils';
+import { credentialTypeLabels } from 'app/interfaces/credential-type.interface';
 import { Job } from 'app/interfaces/job.interface';
 
 @Component({
@@ -15,5 +16,6 @@ export class JobLogsRowComponent {
   @Input() job: Job;
   @Input() colspan: number;
 
-  readonly convertToTitleSpaceCase = convertToTitleSpaceCase;
+  readonly credentialTypeLabels = credentialTypeLabels;
+  readonly getCredentialsCreationSource = getCredentialsCreationSource;
 }

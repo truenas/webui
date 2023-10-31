@@ -29,11 +29,13 @@
   <div class="list-item">
     <h4>{{ 'Credentials' | translate }}</h4>
     <div *ngIf="job.credentials; else noCredentialsTemplate" class="logs">
-      <div *ngIf="job.credentials.type">
-        {{ 'Type' | translate }}: {{ convertToTitleSpaceCase(job.credentials.type) }}
-      </div>
-      <div *ngIf="job.credentials.data?.username">
-        {{ 'Username' }}: {{ job.credentials.data.username }}
+      <div>
+        {{
+          'Created by: {creationSource} ({creationType})' | translate: {
+            creationSource: getCredentialsCreationSource(job.credentials),
+            creationType: (job.credentials.type | mapValue: credentialTypeLabels | translate)
+          }
+        }}
       </div>
     </div>
     <ng-template #noCredentialsTemplate>{{ 'N/A' | translate }}</ng-template>

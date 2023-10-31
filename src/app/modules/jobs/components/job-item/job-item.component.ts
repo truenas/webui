@@ -2,7 +2,8 @@ import {
   Component, Input, Output, EventEmitter, ChangeDetectionStrategy,
 } from '@angular/core';
 import { JobState } from 'app/enums/job-state.enum';
-import { convertToTitleSpaceCase } from 'app/helpers/convert-to-title-space-case';
+import { getCredentialsCreationSource } from 'app/helpers/get-credentials-creation-source.utils';
+import { credentialTypeLabels } from 'app/interfaces/credential-type.interface';
 import { Job } from 'app/interfaces/job.interface';
 
 @Component({
@@ -17,7 +18,8 @@ export class JobItemComponent {
   @Output() aborted = new EventEmitter();
   @Output() opened = new EventEmitter();
   readonly JobState = JobState;
-  readonly convertToTitleSpaceCase = convertToTitleSpaceCase;
+  readonly credentialTypeLabels = credentialTypeLabels;
+  readonly getCredentialsCreationSource = getCredentialsCreationSource;
 
   abort(): void {
     this.aborted.emit();

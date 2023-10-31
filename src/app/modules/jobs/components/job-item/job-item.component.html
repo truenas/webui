@@ -54,10 +54,12 @@
 
     <div *ngIf="job.credentials">
       <div class="job-time">
-        {{ 'Credentials' | translate }}
-        <strong>
-          {{ convertToTitleSpaceCase(job.credentials.type) }} / {{ job.credentials.data.username }}
-        </strong>
+        {{
+          'Created by: {creationSource} ({creationType})' | translate: {
+            creationSource: getCredentialsCreationSource(job.credentials),
+            creationType: (job.credentials.type | mapValue: credentialTypeLabels | translate)
+          }
+        }}
       </div>
     </div>
   </div>
