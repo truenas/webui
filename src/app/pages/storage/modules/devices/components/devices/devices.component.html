@@ -21,18 +21,18 @@
       [loading]="isLoading$ | async"
     ></ix-fake-progress-bar>
 
-    <div class="disk-search">
+    <div class="item-search">
       <ix-search-input
         [disabled]="!dataSource?.data?.length"
         (search)="onSearch($event)"
       ></ix-search-input>
     </div>
 
-    <div class="disk-tree-wrapper">
-      <div class="disk-tree-inner">
-        <div class="disk-tree-header">
+    <div class="tree-wrapper">
+      <div class="tree-inner">
+        <div class="tree-header">
           <div>
-            <span class="disk-name-header">
+            <span class="name-header">
               {{ 'Device Name' | translate }}
             </span>
           </div>
@@ -71,7 +71,7 @@
             [treeNodeDefDataSource]="dataSource"
           >
             <div
-              class="disk-nested-tree-root-node"
+              class="nested-tree-root-node"
               (click)="onRowGroupSelected(group, $event)"
             >
               <ix-vdev-group-node [vdevGroup]="group | cast">
@@ -101,7 +101,7 @@
             [treeNodeDefDataSource]="dataSource"
           >
             <div
-              class="disk-nested-tree-root-node"
+              class="nested-tree-root-node"
               routerLinkActive="selected"
               [class.selected]="vdev.guid === selectedNode?.guid"
               [routerLink]="['/storage', poolId, 'devices', vdev.guid]"
