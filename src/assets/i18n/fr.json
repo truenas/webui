@@ -1927,7 +1927,7 @@
   "Idle": "Inactif",
   "Idmap": "Idmap",
   "Idmap Backend": "Backend Idmap",
-  "If checked, disks of the selected size or larger will be used. If unchecked, only disks of the selected size will be used.": "If checked, disks of the selected size or larger will be used. If unchecked, only disks of the selected size will be used.",
+  "If checked, disks of the selected size or larger will be used. If unchecked, only disks of the selected size will be used.": "Si cette case est cochée, les disques de la taille sélectionnée ou de plus grande taille seront utilisés. Si cette case n'est pas cochée, seuls les disques de la taille sélectionnée seront utilisés.",
   "If downloading a file returns the error \"This file has been identified as malware or spam and cannot be downloaded\" with the error code \"cannotDownloadAbusiveFile\" then enable this flag to indicate you acknowledge the risks of downloading the file and TrueNAS will download it anyway.": "Si le téléchargement d'un fichier renvoie l'erreur \"Ce fichier a été identifié comme un logiciel malveillant ou un spam et ne peut pas être téléchargé\" avec le code d'erreur \"cannotDownloadAbusiveFile\", activez ce drapeau pour indiquer que vous êtes conscient des risques de téléchargement du fichier et TrueNAS le téléchargera quand même.",
   "If selected, sets several environment variables.": "Si sélectionné, définit plusieurs variables d'environnement.",
   "If set when troubleshooting a connection, logs more verbosely.": "S'il est défini lors du dépannage d'une connexion, enregistre de manière plus détaillée.",
