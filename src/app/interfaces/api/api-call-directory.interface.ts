@@ -8,6 +8,7 @@ import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
+import { SmbInfoLevel } from 'app/enums/smb-info-level.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import {
   Acl,
@@ -211,6 +212,7 @@ import { SmbConfig, SmbConfigUpdate } from 'app/interfaces/smb-config.interface'
 import {
   SmbPresets, SmbShare, SmbSharesec, SmbSharesecAce, SmbShareUpdate,
 } from 'app/interfaces/smb-share.interface';
+import { SmbSession } from 'app/interfaces/smb-status.interface';
 import { SnmpConfig, SnmpConfigUpdate } from 'app/interfaces/snmp-config.interface';
 import { SshConfig, SshConfigUpdate } from 'app/interfaces/ssh-config.interface';
 import {
@@ -720,6 +722,7 @@ export interface ApiCallDirectory {
   'smb.get_smb_ha_mode': { params: void; response: string };
   'smb.update': { params: [SmbConfigUpdate]; response: SmbConfig };
   'smb.config': { params: void; response: SmbConfig };
+  'smb.status': { params: [level: SmbInfoLevel, params?: QueryParams<SmbSession>]; response: SmbSession[] };
 
   // SSH
   'ssh.update': { params: [SshConfigUpdate]; response: SshConfig };
