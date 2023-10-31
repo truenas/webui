@@ -1,7 +1,7 @@
 <div *ngIf="service">
   <button
     mat-icon-button
-    aria-label="Table Actions of Expandable Table"
+    [attr.aria-label]="'Table Actions of Expandable Table' | translate"
     [ixTest]="[service?.id, 'actions-menu']"
     [matMenuTriggerFor]="rowActions"
   >
@@ -21,6 +21,14 @@
       (click)="configureService(service)"
     >
       {{ configServiceLabel | translate }}
+    </button>
+    <button
+      *ngIf="isSmbService"
+      mat-menu-item
+      [ixTest]="[service?.service, 'actions-menu', 'sessions']"
+      [routerLink]="['/sharing', 'smb', 'sessions']"
+    >
+      {{ 'SMB Sessions' | translate }}
     </button>
   </mat-menu>
 </div>

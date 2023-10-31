@@ -8,7 +8,7 @@ export const routes: Routes = [
   {
     path: '',
     pathMatch: 'full',
-    redirectTo: 'users',
+    redirectTo: 'groups',
   },
   {
     path: 'groups',
