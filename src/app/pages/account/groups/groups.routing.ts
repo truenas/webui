@@ -6,6 +6,11 @@ import { GroupMembersComponent } from 'app/pages/account/groups/group-members/gr
 
 export const routes: Routes = [
   {
+    path: '',
+    pathMatch: 'full',
+    redirectTo: 'users',
+  },
+  {
     path: 'groups',
     data: { title: T('Groups'), breadcrumb: T('Groups') },
     children: [

@@ -12,7 +12,7 @@ import { DatasetTrivialPermissionsComponent } from './modules/permissions/contai
 export const routes: Routes = [
   {
     path: '',
-    data: { title: 'Datasets' },
+    data: { title: 'Datasets', breadcrumb: 'Datasets' },
     children: [
       {
         path: '',
@@ -22,22 +22,23 @@ export const routes: Routes = [
       {
         path: 'acl/edit',
         component: DatasetAclEditorComponent,
-        data: { title: 'Edit ACL', breadcrumb: 'Edit ACL' },
+        data: { title: 'Edit ACL', breadcrumb: null },
         pathMatch: 'full',
       },
       {
         path: ':datasetId',
+        data: { breadcrumb: null },
         children: [
           {
             path: '',
             pathMatch: 'full',
             component: DatasetsManagementComponent,
-            data: { title: 'Datasets', breadcrumb: 'Datasets' },
+            data: { title: 'Datasets', breadcrumb: null },
           },
           {
             path: 'permissions/edit',
             component: DatasetTrivialPermissionsComponent,
-            data: { title: 'Edit Permissions', breadcrumb: 'Edit Permissions' },
+            data: { title: 'Edit Permissions', breadcrumb: null },
           },
           {
             path: 'unlock',
@@ -66,7 +67,11 @@ export const routes: Routes = [
         component: DatasetQuotasGrouplistComponent,
         data: { title: 'Group Quotas', breadcrumb: 'Edit Group Quotas' },
       },
-
+      {
+        path: '**',
+        redirectTo: '/datasets/',
+        pathMatch: 'full',
+      },
     ],
   },
 ];

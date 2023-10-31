@@ -5,17 +5,17 @@ import { SnapshotListComponent } from 'app/pages/datasets/modules/snapshots/snap
 export const routes: Routes = [
   {
     path: 'snapshots',
-    data: { title: 'Snapshots' },
+    data: { title: 'Snapshots', breadcrumb: 'Snapshots' },
     children: [
       {
         path: '',
         component: SnapshotListComponent,
-        data: { title: 'Snapshots', breadcrumb: 'Snapshots' },
+        data: { title: 'Snapshots', breadcrumb: null },
       },
       {
         path: ':dataset',
         component: SnapshotListComponent,
-        data: { title: 'Snapshots', breadcrumb: 'Snapshots' },
+        data: { title: 'Snapshots', breadcrumb: null },
       },
     ],
   },
