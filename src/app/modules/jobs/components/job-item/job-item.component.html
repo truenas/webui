@@ -53,7 +53,7 @@
     </div>
 
     <div *ngIf="job.credentials">
-      <div class="job-time">
+      <div class="job-credentials">
         {{
           'Created by: {creationSource} ({creationType})' | translate: {
             creationSource: getCredentialsCreationSource(job.credentials),
