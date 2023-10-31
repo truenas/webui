@@ -55,9 +55,9 @@ describe('DataWizardStepComponent', () => {
   it('has the correct inputs', () => {
     const layoutComponent = spectator.query(LayoutStepComponent);
     expect(layoutComponent.description).toBe(helptext.special_vdev_description);
-    expect(layoutComponent.canChangeLayout).toBeFalsy();
+    expect(layoutComponent.canChangeLayout).toBeTruthy();
     expect(layoutComponent.inventory).toStrictEqual([...fakeInventory]);
-    expect(layoutComponent.limitLayouts).toStrictEqual([CreateVdevLayout.Raidz1]);
+    expect(layoutComponent.limitLayouts).toStrictEqual([CreateVdevLayout.Mirror, CreateVdevLayout.Stripe]);
     expect(layoutComponent.type).toStrictEqual(VdevType.Special);
   });
 });

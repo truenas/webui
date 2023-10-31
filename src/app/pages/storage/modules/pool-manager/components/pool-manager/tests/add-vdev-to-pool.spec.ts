@@ -233,6 +233,7 @@ describe('AddVdevsComponent – Add Vdev to existing pool', () => {
     expect(await (await wizard.getActiveStep()).getLabel()).toBe('Dedup (Optional)');
 
     await wizard.fillStep({
+      Layout: 'Mirror',
       'Disk Size': '20 GiB (HDD)',
       'Treat Disk Size as Minimum': true,
       Width: '3',
