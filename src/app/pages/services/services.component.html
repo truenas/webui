@@ -12,7 +12,7 @@
     ix-table
     ixTest="services-table"
     [ix-table-empty]="shouldShowEmpty"
-    [emptyConfig]="emptyConfigService.defaultEmptyConfig(loading ? EmptyType.Loading : EmptyType.NoSearchResults)"
+    [emptyConfig]="emptyConfig"
     [dataSource]="dataSource"
   >
     <ng-container matColumnDef="name">
