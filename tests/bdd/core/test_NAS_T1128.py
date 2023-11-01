@@ -99,8 +99,9 @@ def click_proceed_then_enter_the_login_user_name_and_password(driver, user_name,
 @then('click Authorize and then click Grant Access to Box')
 def click_authorize_and_then_click_grant_access_to_box(driver):
     """click Authorize and then click Grant Access to Box."""
-    assert wait_on_element(driver, 5, '//button[@id="consent_accept_button"]', 'clickable')
-    driver.find_element_by_xpath('//button[@id="consent_accept_button"]').click()
+    assert wait_on_element(driver, 5, xpaths.authorization.box_Auth_Message)
+    assert wait_on_element(driver, 5, xpaths.authorization.Grant_Access_To_Box_Button, 'clickable')
+    driver.find_element_by_xpath(xpaths.authorization.Grant_Access_To_Box_Button).click()
     assert rsc.wait_For_The_Tab_To_Close(driver) is True
     driver.switch_to.window(driver.window_handles[0])
 
