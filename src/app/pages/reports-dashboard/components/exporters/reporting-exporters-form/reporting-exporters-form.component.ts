@@ -5,6 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
+import { convertToTitleSpaceCase } from 'app/helpers/convert-to-title-space-case';
 import { DynamicFormSchema, DynamicFormSchemaNode } from 'app/interfaces/dynamic-form-schema.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { ExportingExporterList as ReportingExporterList, ReportingExporterKey as ReportingExporterType, ReportingExporterSchema, ReportingExporter } from 'app/interfaces/reporting-exporters.interface';
@@ -124,17 +125,11 @@ export class ReportingExportersFormComponent implements OnInit {
     this.onExporterTypeChanged(null);
   }
 
-  convertToTitleSpaceCase(value: string): string {
-    let words = value.split('_');
-    words = words.map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase());
-    return words.join(' ');
-  }
-
   parseSchemaForDynamicSchema(schema: ReportingExporterSchema): DynamicFormSchemaNode[] {
     return schema.schema.map((input) => ({
       controlName: input._name_,
       type: DynamicFormSchemaType.Input,
-      title: this.convertToTitleSpaceCase(input.title),
+      title: convertToTitleSpaceCase(input.title),
       required: input._required_,
     }));
   }

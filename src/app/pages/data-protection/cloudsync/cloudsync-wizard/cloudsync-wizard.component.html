@@ -1,0 +1,20 @@
+<ix-modal-header [title]="'Cloudsync Task Wizard' | translate" [loading]="mergedLoading$ | async"></ix-modal-header>
+
+<mat-card>
+  <mat-card-content>
+    <mat-vertical-stepper [linear]="true">
+      <mat-step [stepControl]="provider?.form">
+        <ng-template matStepLabel>{{ 'Provider' | translate }}</ng-template>
+        <ix-cloudsync-provider (save)="onProviderSaved($event)"></ix-cloudsync-provider>
+      </mat-step>
+
+      <mat-step [stepControl]="whatAndWhen?.form">
+        <ng-template matStepLabel>{{ 'What and When' | translate }}</ng-template>
+        <ix-cloudsync-what-and-when
+          [credentialId]="existingCredential?.id"
+          (save)="onSubmit()"
+        ></ix-cloudsync-what-and-when>
+      </mat-step>
+    </mat-vertical-stepper>
+  </mat-card-content>
+</mat-card>
