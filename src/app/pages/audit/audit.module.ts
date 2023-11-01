@@ -14,9 +14,6 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { AuditComponent } from 'app/pages/audit/components/audit/audit.component';
 import { routing } from './audit.routing';
 import { LogDetailsPanelComponent } from './components/log-details-panel/log-details-panel.component';
-import { LogRowDetailsComponent } from './components/log-row-details/log-row-details.component';
-import { ManageViewsComponent } from './components/manage-views/manage-views.component';
-import { SetupColumnsComponent } from './components/setup-columns/setup-columns.component';
 
 @NgModule({
   imports: [
@@ -37,9 +34,6 @@ import { SetupColumnsComponent } from './components/setup-columns/setup-columns.
   exports: [],
   declarations: [
     AuditComponent,
-    SetupColumnsComponent,
-    ManageViewsComponent,
-    LogRowDetailsComponent,
     LogDetailsPanelComponent,
   ],
   providers: [],

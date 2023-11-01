@@ -1312,7 +1312,6 @@
   "Establishing a connection requires  that one of the connection systems has open TCP ports. Choose which  system (<i>LOCAL</i> or <i>REMOTE</i>) will open ports. Consult your IT  department to determine which systems are allowed to open ports.": "",
   "Estimated Raw Capacity": "",
   "Event": "",
-  "Event Data": "",
   "Everything is fine": "",
   "Example: blob.core.usgovcloudapi.net": "",
   "Excellent effort": "",

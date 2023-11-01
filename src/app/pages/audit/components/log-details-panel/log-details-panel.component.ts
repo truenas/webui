@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuditEntry } from 'app/interfaces/audit.interface';
 
 @Component({
   selector: 'ix-log-details-panel',
@@ -8,6 +9,8 @@ import { Router } from '@angular/router';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LogDetailsPanelComponent {
+  @Input() log: AuditEntry;
+
   constructor(private router: Router) {}
 
   onCloseMobileDetails(): void {

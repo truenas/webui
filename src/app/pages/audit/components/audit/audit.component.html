@@ -1,6 +1,6 @@
 <ng-template ixPageHeader>
   <ix-page-title-header>
-    <button mat-button color="primary" ixTest="manage-views" (click)="onManageViewsPressed()">
+    <button mat-button color="primary" ixTest="manage-views">
       {{ 'Manage Views' | translate }}
     </button>
   </ix-page-title-header>
@@ -23,7 +23,6 @@
 <div class="container" fxLayoutGap="16px">
   <div class="table-container">
     <ix-table2
-      class=""
       [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
       [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
     >
@@ -47,7 +46,10 @@
     ixDetailsHeight="rightside-content-hold"
     [class.details-container-mobile]="showMobileDetails"
   >
-    <!-- <ix-log-details-panel></ix-log-details-panel> -->
+    <ix-log-details-panel
+      *ngIf="dataProvider.expandedRow"
+      [log]="dataProvider.expandedRow"
+    ></ix-log-details-panel>
   </div>
 </div>
 
