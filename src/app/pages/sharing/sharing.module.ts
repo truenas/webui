@@ -15,6 +15,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
+import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
@@ -44,7 +45,6 @@ import { UserService } from 'app/services/user.service';
 import { ServiceExtraActionsComponent } from './components/shares-dashboard/service-extra-actions/service-extra-actions.component';
 import { ServiceStateButtonComponent } from './components/shares-dashboard/service-state-button/service-state-button.component';
 import { SharesDashboardComponent } from './components/shares-dashboard/shares-dashboard.component';
-import { StartServiceDialogComponent } from './components/start-service-dialog/start-service-dialog.component';
 import { AssociatedTargetFormComponent } from './iscsi/associated-target/associated-target-form/associated-target-form.component';
 import { AssociatedTargetListComponent } from './iscsi/associated-target/associated-target-list/associated-target-list.component';
 import { ExtentFormComponent } from './iscsi/extent/extent-form/extent-form.component';
@@ -94,6 +94,7 @@ import { SmbSessionListComponent } from './smb/smb-session-list/smb-session-list
     NgxDualListboxModule,
     IxTable2Module,
     MatToolbarModule,
+    CoreComponents,
     LayoutModule,
   ],
   declarations: [
@@ -123,7 +124,6 @@ import { SmbSessionListComponent } from './smb/smb-session-list/smb-session-list
     AssociatedTargetListComponent,
     AssociatedTargetFormComponent,
     DeleteExtentDialogComponent,
-    StartServiceDialogComponent,
     SmbCardComponent,
     NfsCardComponent,
     IscsiCardComponent,
