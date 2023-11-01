@@ -1343,6 +1343,7 @@
   "Pool status is {status}": "",
   "Pool updated successfully": "",
   "Pool {name} successfully upgraded.": "",
+  "Pool: {name}": "",
   "Pools in Enclosure": "",
   "Portals": "",
   "Ports": "",

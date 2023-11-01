@@ -2125,6 +2125,7 @@
   "Pool updated successfully": "",
   "Pool {name} successfully upgraded.": "",
   "Pool/Dataset": "",
+  "Pool: {name}": "",
   "Pools": "",
   "Pools in Enclosure": "",
   "Port": "",

@@ -15,13 +15,18 @@
 
     <span class="prefix">{{ 'Details for' | translate }}</span>
 
-    <div class="full-path">
+    <div class="full-path" [matTooltip]="detailsTitleTooltip">
       <ix-topology-item-icon
         class="title-icon"
         [topologyItem]="topologyItem"
         [disk]="disk"
       ></ix-topology-item-icon>
-      <span class="device-name">{{ title }}</span>
+      <span class="device-name">
+        {{ title }}
+        <ng-container *ngIf="poolName">
+          ({{ poolName }})
+        </ng-container>
+      </span>
     </div>
   </h3>
 </div>

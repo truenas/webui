@@ -1899,6 +1899,7 @@
   "Pool updated successfully": "",
   "Pool {name} successfully upgraded.": "",
   "Pool/Dataset": "",
+  "Pool: {name}": "",
   "Pools": "",
   "Pools in Enclosure": "",
   "Port number on the remote system to use for the SSH  connection.": "",

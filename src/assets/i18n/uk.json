@@ -295,6 +295,7 @@
   "Pool Name": "",
   "Pool created successfully": "",
   "Pool updated successfully": "",
+  "Pool: {name}": "",
   "Proceeding will result in the loss of your current cloud task data. However, your created provider will remain unaffected. Are you sure you want to continue?": "",
   "Provide helpful notations related to the share, e.g. ‘Shared to everybody’.     Maximum length is 120 characters.": "",
   "Pull Image": "",
