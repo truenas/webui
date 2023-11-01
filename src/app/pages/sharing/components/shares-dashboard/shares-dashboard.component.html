@@ -1,17 +1,5 @@
 <div class="cards">
-  <ix-smb-card
-    [service]="smbService"
-    [isClustered]="isClustered"
-    (statusChanged)="updateTableService(smbService, $event)"
-  ></ix-smb-card>
-
-  <ix-nfs-card
-    [service]="nfsService"
-    (statusChanged)="updateTableService(nfsService, $event)"
-  ></ix-nfs-card>
-
-  <ix-iscsi-card
-    [service]="iscsiService"
-    (statusChanged)="updateTableService(iscsiService, $event)"
-  ></ix-iscsi-card>
+  <ix-smb-card [isClustered]="isClustered$ | async"></ix-smb-card>
+  <ix-nfs-card></ix-nfs-card>
+  <ix-iscsi-card></ix-iscsi-card>
 </div>
