@@ -45,6 +45,7 @@ export class ServicesComponent implements OnInit {
   loading = true;
   serviceLoadingMap = new Map<ServiceName, boolean>();
   readonly serviceNames = serviceNames;
+  readonly serviceName = ServiceName;
   readonly ServiceStatus = ServiceStatus;
 
   get emptyConfig(): EmptyConfig {
@@ -277,6 +278,12 @@ export class ServicesComponent implements OnInit {
   setLoadingServiceMapFalse(): void {
     for (const key of serviceNames.keys()) {
       this.serviceLoadingMap.set(key, false);
+    }
+  }
+
+  viewSessions(serviceName: ServiceName): void {
+    if (serviceName === ServiceName.Cifs) {
+      this.router.navigate(['/sharing', 'smb', 'sessions']);
     }
   }
 }

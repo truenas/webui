@@ -66,14 +66,27 @@
 
     <ng-container matColumnDef="actions">
       <th *matHeaderCellDef mat-header-cell></th>
-      <td *matCellDef="let service; dataSource: dataSource" mat-cell>
+      <td *matCellDef="let service; dataSource: dataSource" mat-cell class="actions">
+        <button
+          *ngIf="service.service === serviceName.Cifs"
+          mat-icon-button
+          type="button"
+          matTooltipPosition="left"
+          [ixTest]="[service.service, 'sessions']"
+          [attr.aria-label]="'Sessions' | translate"
+          [attr.name]="'sessions-' + service.name"
+          [matTooltip]="'Sessions' | translate"
+          (click)="viewSessions(service.service)"
+        >
+          <ix-icon name="list"></ix-icon>
+        </button>
         <button
           mat-icon-button
           type="button"
           matTooltipPosition="left"
           [ixTest]="[service.service, 'edit']"
           [attr.aria-label]="'Edit' | translate"
-          [attr.name]="service.name"
+          [attr.name]="'edit-' + service.name"
           [matTooltip]="'Configure' | translate"
           (click)="configureService(service)"
         >
