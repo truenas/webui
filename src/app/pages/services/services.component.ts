@@ -43,6 +43,7 @@ export class ServicesComponent implements OnInit {
   readonly EmptyType = EmptyType;
   serviceLoadingMap = new Map<ServiceName, boolean>();
   readonly serviceNames = serviceNames;
+  readonly serviceName = ServiceName;
   readonly ServiceStatus = ServiceStatus;
   private readonly hiddenServices: ServiceName[] = [ServiceName.Gluster, ServiceName.Afp];
 
@@ -277,5 +278,11 @@ export class ServicesComponent implements OnInit {
       this.serviceLoadingMap.set(service.service, false);
       this.cdr.markForCheck();
     }, 0);
+  }
+
+  viewSessions(serviceName: ServiceName): void {
+    if (serviceName === ServiceName.Cifs) {
+      this.router.navigate(['/sharing', 'smb', 'sessions']);
+    }
   }
 }

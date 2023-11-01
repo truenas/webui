@@ -5,3 +5,14 @@
 .mat-mdc-card {
   overflow: hidden;
 }
+
+.actions {
+  align-items: center;
+  display: flex;
+}
+
+:host ::ng-deep {
+  .ix-table.cdk-table .cdk-column-actions {
+    width: 50px;
+  }
+}

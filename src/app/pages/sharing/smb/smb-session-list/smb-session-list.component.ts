@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { tap } from 'rxjs';
@@ -46,14 +47,27 @@ export class SmbSessionListComponent implements OnInit {
     private ws: WebSocketService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
+    private route: ActivatedRoute,
     protected emptyService: EmptyService,
   ) {}
 
   ngOnInit(): void {
     const smbStatus$ = this.ws.call('smb.status', [SmbInfoLevel.Sessions]).pipe(
-      tap((sessions) => this.sessions = sessions),
+      tap((sessions) => {
+        this.sessions = sessions;
+        if (this.filterString) {
+          this.onListFiltered(this.filterString);
+        }
+      }),
       untilDestroyed(this),
     );
+
+    this.route.queryParams.pipe(untilDestroyed(this)).subscribe(params => {
+      if (params['s']) {
+        this.filterString = params['s'] as string;
+      }
+    });
+
     this.dataProvider = new AsyncDataProvider<SmbSession>(smbStatus$);
     this.loadData();
   }
@@ -63,7 +77,7 @@ export class SmbSessionListComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.filterString = query.toLowerCase();
+    this.filterString = query?.toString()?.toLowerCase();
     this.dataProvider.setRows(this.sessions.filter((session) => {
       return [
         session.session_id,
@@ -74,7 +88,7 @@ export class SmbSessionListComponent implements OnInit {
         session.uid,
         session.gid,
         session.session_dialect,
-      ].includes(this.filterString);
+      ].some((value) => value.toString().toLowerCase().includes(this.filterString));
     }));
   }
 
