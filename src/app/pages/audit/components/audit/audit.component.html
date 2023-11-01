@@ -6,36 +6,60 @@
   </ix-page-title-header>
 </ng-template>
 
-<div class="header">
-  <ix-input
-    class="search-control"
-    [formControl]="searchControl"
-    [placeholder]="'Search' | translate"
-  ></ix-input>
+<mat-card class="header-card">
+  <div class="header-card-item">
+    <ix-fake-progress-bar
+      class="loader-bar"
+      [loading]="dataProvider.isLoading$ | async"
+    ></ix-fake-progress-bar>
+    <ix-input
+      class="search-control"
+      [formControl]="searchControl"
+      [placeholder]="'Search' | translate"
+    ></ix-input>
+  </div>
+</mat-card>
 
-  <button mat-button ixTest="setup-columns" (click)="onSetupColumns()">
-    {{ 'Setup Columns' | translate }}
-  </button>
+<div class="container" fxLayoutGap="16px">
+  <div class="table-container">
+    <ix-table2
+      class=""
+      [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
+      [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
+    >
+      <thead
+        ix-table-head
+        [columns]="columns"
+        [dataProvider]="dataProvider"
+      ></thead>
+      <tbody
+        ix-table-body
+        [columns]="columns"
+        [dataProvider]="dataProvider"
+        [isLoading]="dataProvider.isLoading$ | async"
+      ></tbody>
+    </ix-table2>
+    <ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>
+  </div>
 
-  <button mat-button ixTest="export" (click)="onExport()">
-    {{ 'Export' | translate }}
-  </button>
+  <div
+    class="details-container"
+    ixDetailsHeight="rightside-content-hold"
+    [class.details-container-mobile]="showMobileDetails"
+  >
+    <!-- <ix-log-details-panel></ix-log-details-panel> -->
+  </div>
 </div>
 
-<ix-table2
-  [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
-  [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
->
-  <thead
-    ix-table-head
-    [columns]="columns"
-    [dataProvider]="dataProvider"
-  ></thead>
-  <tbody
-    ix-table-body
-    [columns]="columns"
-    [dataProvider]="dataProvider"
-    [isLoading]="dataProvider.isLoading$ | async"
-  ></tbody>
-</ix-table2>
-<ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>
+
+
+
+
+
+
+
+
+
+
+
+

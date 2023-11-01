@@ -1,0 +1,55 @@
+<div class="header">
+  <h2 class="title">
+    <div class="mobile-prefix">
+      <a
+        tabindex="0"
+        class="mobile-back-button"
+        ixTest="disk-details-back"
+        (click)="onCloseMobileDetails()"
+        (keydown.enter)="onCloseMobileDetails()"
+      >
+        <ix-icon name="mdi-chevron-left"></ix-icon>
+      </a>
+      {{ 'Log Details' | translate }}
+    </div>
+
+    <span class="prefix">{{ 'Log Details' | translate }}</span>
+  </h2>
+</div>
+
+<div class="cards">
+  <div class="scroll-window">
+    <mat-card class="card">
+      <mat-card-header>
+        <h3 mat-card-title>
+          {{ 'Log Metadata' | translate }}
+        </h3>
+      </mat-card-header>
+      <mat-card-content>
+        <p>Audit ID: 555557-2421412-141241-12412</p>
+        <p>Version: 0.1</p>
+        <p>Session: 1241241-12512512-125125-1251</p>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="card">
+      <mat-card-header>
+        <h3 mat-card-title>
+          {{ 'Log Message' | translate }}
+        </h3>
+      </mat-card-header>
+      <mat-card-content>
+        <p>Event Data Property: VALUE</p>
+        <p>Event Data Property: VALUE</p>
+        <p>Event Data Property: VALUE</p>
+        <p>Event Data Property: VALUE</p>
+        <p>Event Data Property: VALUE</p>
+        <p>Event Data Property: VALUE</p>
+        <p>Event Data Property: VALUE</p>
+        <p>Event Data Property: VALUE</p>
+        <p>Event Data Property: VALUE</p>
+        <p>Event Data Property: VALUE</p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

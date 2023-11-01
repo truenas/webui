@@ -23,9 +23,18 @@ import { WebSocketService } from 'app/services/ws.service';
 export class AuditComponent implements OnInit, OnDestroy {
   protected readonly searchControl = new FormControl();
   protected dataProvider: ApiDataProvider<AuditEntry>;
+  showMobileDetails = false;
   columns = createTable<AuditEntry>([
+    textColumn({
+      title: this.translate.instant('Service'),
+      propertyName: 'service',
+    }),
+    textColumn({
+      title: this.translate.instant('User'),
+      propertyName: 'username',
+    }),
     dateColumn({
-      title: this.translate.instant('Event Time'),
+      title: this.translate.instant('Timestamp'),
       propertyName: 'timestamp',
     }),
     textColumn({
@@ -33,13 +42,8 @@ export class AuditComponent implements OnInit, OnDestroy {
       propertyName: 'event',
     }),
     textColumn({
-      title: this.translate.instant('Address'),
+      title: this.translate.instant('Event Data'),
       propertyName: 'address',
-    }),
-    textColumn({
-      title: this.translate.instant('Username'),
-      propertyName: 'username',
-      sortable: true,
     }),
   ]);
 
@@ -76,5 +80,9 @@ export class AuditComponent implements OnInit, OnDestroy {
 
   onSetupColumns(): void {
     this.matDialog.open(SetupColumnsComponent);
+  }
+
+  closeMobileDetails(): void {
+    this.showMobileDetails = false;
   }
 }
