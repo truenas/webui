@@ -3304,6 +3304,7 @@
   "TrueNAS Forums - Discuss with fellow TrueNAS community users": "",
   "TrueNAS Help": "",
   "TrueNAS URL": "",
+  "TrueNAS recommends that the sync setting always  be left to the default of \"Standard\" or increased to \"Always\". The \"Disabled\" setting should  not be used in production and only where data roll back by few seconds  in case of crash or power loss is not a concern.": "",
   "TrueNAS software versions do not match between storage controllers.": "",
   "TrueNAS was unable to reach update servers.": "",
   "TrueNAS {product} is Free and <a href=\"https://github.com/truenas/\" target=\"_blank\"> Open Source</a> software, which is provided as-is with no warranty.": "",

@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy, Component, Input, OnChanges, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import { Observable, of } from 'rxjs';
@@ -20,9 +21,11 @@ import {
 import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/utils/dataset-form.service';
 import { datasetNameTooLong } from 'app/pages/datasets/components/dataset-form/utils/name-length-validation';
 import { getFieldValue } from 'app/pages/datasets/components/dataset-form/utils/zfs-property.utils';
+import { DialogService } from 'app/services/dialog.service';
 import { NameValidationService } from 'app/services/name-validation.service';
 import { WebSocketService } from 'app/services/ws.service';
 
+@UntilDestroy()
 @Component({
   selector: 'ix-name-and-options',
   templateUrl: './name-and-options-section.component.html',
@@ -60,6 +63,7 @@ export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
     private translate: TranslateService,
     private nameValidationService: NameValidationService,
     private datasetFormService: DatasetFormService,
+    private dialogService: DialogService,
   ) {}
 
   ngOnChanges(): void {
@@ -75,6 +79,7 @@ export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.form.controls.parent.disable();
+    this.listenForSyncChanges();
   }
 
   getPayload(): Partial<DatasetCreate> | Partial<DatasetUpdate> {
@@ -147,5 +152,18 @@ export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
       datasetNameTooLong(this.parent.name),
       forbiddenValues(namesInUse, isNameCaseSensitive),
     ]);
+  }
+
+  private listenForSyncChanges(): void {
+    this.form.controls.sync.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
+      if (value === DatasetSync.Disabled) {
+        return this.dialogService.confirm({
+          title: this.translate.instant('Warning'),
+          message: helptext.dataset_form_sync_disabled_warning,
+          hideCheckbox: true,
+          buttonText: null,
+        });
+      }
+    });
   }
 }

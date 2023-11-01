@@ -38,6 +38,7 @@
     {{ options.cancelText | translate }}
   </button>
   <button
+    *ngIf="options.buttonText"
     mat-button
     name="ok_button"
     class="mat-mdc-button mat-button mat-primary submit-button"
