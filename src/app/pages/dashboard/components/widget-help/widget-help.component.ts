@@ -38,6 +38,7 @@ export class WidgetHelpComponent extends WidgetComponent implements OnInit {
     mediaObserver.asObservable().pipe(untilDestroyed(this)).subscribe((changes) => {
       const currentScreenType = changes[0].mqAlias === 'xs' ? ScreenType.Mobile : ScreenType.Desktop;
       this.screenType = currentScreenType;
+      this.cdr.markForCheck();
     });
   }
 

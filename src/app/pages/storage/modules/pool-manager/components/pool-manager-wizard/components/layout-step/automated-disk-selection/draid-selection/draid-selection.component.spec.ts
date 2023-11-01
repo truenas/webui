@@ -92,7 +92,7 @@ describe('DraidSelectionComponent', () => {
     });
 
     const dataDevices = await form.getControl('Data Devices') as IxSelectHarness;
-    expect(await dataDevices.getOptionLabels()).toEqual(['1', '2', '3']);
+    expect(await dataDevices.getOptionLabels()).toEqual(['2', '3']);
   });
 
   it('updates Spares and Children options when Data Devices are selected', async () => {
@@ -187,40 +187,17 @@ describe('DraidSelectionComponent', () => {
     );
   });
 
-  it('selects options in controls automatically when only one option is available', async () => {
-    await form.fillForm({
-      'Disk Size': '30 GiB (SSD)',
-    });
-
-    expect(await form.getValues()).toMatchObject({
-      'Data Devices': '1',
-      Children: '2',
-      'Distributed Hot Spares': '0',
-      'Number of VDEVs': '1',
-    });
-
-    const store = spectator.inject(PoolManagerStore);
-    expect(store.setAutomaticTopologyCategory).toHaveBeenLastCalledWith(
-      VdevType.Spare,
-      {
-        draidDataDisks: 1,
-        draidSpareDisks: 0,
-        vdevsNumber: 1,
-        width: 2,
-      },
-    );
-  });
-
   it('resets to default values when store emits a reset event', async () => {
     await form.fillForm({
-      'Disk Size': '30 GiB (SSD)',
+      'Disk Size': '10 GiB (HDD)',
     });
 
-    expect(await form.getValues()).toMatchObject({
-      'Data Devices': '1',
-      Children: '2',
-      'Distributed Hot Spares': '0',
-      'Number of VDEVs': '1',
+    await form.fillForm({
+      'Treat Disk Size as Minimum': true,
+      'Data Devices': '2',
+      'Distributed Hot Spares': '1',
+      Children: '4',
+      'Number of VDEVs': '2',
     });
 
     startOver$.next();

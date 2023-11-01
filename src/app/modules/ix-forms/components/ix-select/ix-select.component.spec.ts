@@ -196,5 +196,19 @@ describe('IxSelectComponent', () => {
       expect(currentValue).toBe('GBR, GRL');
       expect(control.value).toEqual(['Great Britain', 'Greenland']);
     });
+
+    it('should select all options when "Select All" is checked', () => {
+      spectator.setInput('showSelectAll', true);
+      spectator.component.toggleSelectAll(true);
+      expect(spectator.component.value).toEqual(['Great Britain', 'Greenland', 'France']);
+      expect(spectator.component.selectAllState.checked).toBeTruthy();
+    });
+
+    it('should unselect all options when "Select All" is unchecked', () => {
+      spectator.setInput('showSelectAll', true);
+      spectator.component.toggleSelectAll(false);
+      expect(spectator.component.value).toEqual([]);
+      expect(spectator.component.selectAllState.checked).toBeFalsy();
+    });
   });
 });

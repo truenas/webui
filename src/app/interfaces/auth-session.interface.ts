@@ -1,4 +1,5 @@
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
+import { CredentialType } from 'app/interfaces/credential-type.interface';
 
 export interface AuthSession extends AuthSessionCredentialsData {
   id: string;
@@ -9,7 +10,7 @@ export interface AuthSession extends AuthSessionCredentialsData {
 }
 
 export interface AuthSessionCredentialsData {
-  credentials: string;
+  credentials: CredentialType;
   credentials_data: {
     username?: string;
     parent?: AuthSessionCredentialsData;

@@ -51,6 +51,17 @@
         </div>
       </ng-container>
     </div>
+
+    <div *ngIf="job.credentials">
+      <div class="job-credentials">
+        {{
+          'Created by: {creationSource} ({creationType})' | translate: {
+            creationSource: getCredentialsCreationSource(job.credentials),
+            creationType: (job.credentials.type | mapValue: credentialTypeLabels | translate)
+          }
+        }}
+      </div>
+    </div>
   </div>
 
   <button
