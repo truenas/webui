@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { tap } from 'rxjs';
@@ -47,7 +46,6 @@ export class SmbSessionListComponent implements OnInit {
     private ws: WebSocketService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
-    private route: ActivatedRoute,
     protected emptyService: EmptyService,
   ) {}
 
@@ -61,12 +59,6 @@ export class SmbSessionListComponent implements OnInit {
       }),
       untilDestroyed(this),
     );
-
-    this.route.queryParams.pipe(untilDestroyed(this)).subscribe(params => {
-      if (params['s']) {
-        this.filterString = params['s'] as string;
-      }
-    });
 
     this.dataProvider = new AsyncDataProvider<SmbSession>(smbStatus$);
     this.loadData();
