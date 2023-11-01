@@ -24,6 +24,7 @@ import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
+import { LayoutModule } from 'app/modules/layout/layout.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
@@ -60,9 +61,11 @@ import { routing } from './sharing.routing';
 import { SmbAclComponent } from './smb/smb-acl/smb-acl.component';
 import { SmbFormComponent } from './smb/smb-form/smb-form.component';
 import { SmbListComponent } from './smb/smb-list/smb-list.component';
+import { SmbSessionListComponent } from './smb/smb-session-list/smb-session-list.component';
 
 @NgModule({
   imports: [
+    AppCommonModule,
     CommonModule,
     ReactiveFormsModule,
     routing,
@@ -92,6 +95,7 @@ import { SmbListComponent } from './smb/smb-list/smb-list.component';
     IxTable2Module,
     MatToolbarModule,
     CoreComponents,
+    LayoutModule,
   ],
   declarations: [
     NfsListComponent,
@@ -125,6 +129,7 @@ import { SmbListComponent } from './smb/smb-list/smb-list.component';
     IscsiCardComponent,
     ServiceExtraActionsComponent,
     ServiceStateButtonComponent,
+    SmbSessionListComponent,
   ],
   providers: [
     UserService,

@@ -29,6 +29,10 @@ export class ServiceExtraActionsComponent {
       : this.translate.instant('Turn On Service');
   }
 
+  get isSmbService(): boolean {
+    return this.service.service === ServiceName.Cifs;
+  }
+
   constructor(
     private translate: TranslateService,
     private ws: WebSocketService,

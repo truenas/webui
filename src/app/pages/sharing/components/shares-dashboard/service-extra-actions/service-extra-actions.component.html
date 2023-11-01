@@ -22,5 +22,13 @@
     >
       {{ configServiceLabel | translate }}
     </button>
+    <button
+      *ngIf="isSmbService"
+      mat-menu-item
+      [ixTest]="[service?.service, 'actions-menu', 'sessions']"
+      [routerLink]="['/sharing', 'smb', 'sessions']"
+    >
+      {{ 'SMB Sessions' | translate }}
+    </button>
   </mat-menu>
 </div>

@@ -18,7 +18,7 @@
         [loading]="isLoading$ | async"
       ></ix-fake-progress-bar>
 
-      <div class="dataset-tree-search">
+      <div class="item-search">
         <ix-search-input
           [disabled]="!dataSource?.data.length"
           (search)="onSearch($event)"
@@ -30,9 +30,9 @@
         class="sticky-header"
         (scroll)="treeHeaderScrolled()"
       >
-        <div class="dataset-tree-header" [style.width.px]="ixTreeHeaderWidth">
+        <div class="tree-header" [style.width.px]="ixTreeHeaderWidth">
           <div>
-            <span class="dataset-name-header">
+            <span class="name-header">
               {{ 'Dataset Name' | translate }}
             </span>
           </div>
@@ -48,11 +48,10 @@
 
       <div
         #ixTree
-        class="dataset-tree-wrapper"
+        class="tree-wrapper"
       >
-        <div class="dataset-tree-inner">
+        <div class="tree-inner">
           <ix-tree-virtual-scroll-view
-            class="dataset-tree"
             [ixDataSource]="dataSource"
             [ixTreeControl]="treeControl"
             [ixItemSize]="48"
