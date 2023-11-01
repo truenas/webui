@@ -803,7 +803,7 @@ export interface ApiCallDirectory {
     params: [ServiceName, { silent: boolean }];
     response: boolean; // False indicates that service has been stopped.
   };
-  'service.restart': { params: [ServiceName]; response: void };
+  'service.restart': { params: [ServiceName]; response: boolean };
 
   // Sensor
   'sensor.query': { params: void; response: Sensor[] };

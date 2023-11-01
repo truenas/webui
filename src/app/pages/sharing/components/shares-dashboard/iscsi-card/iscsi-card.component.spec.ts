@@ -3,25 +3,26 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatDialog } from '@angular/material/dialog';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { ServiceName } from 'app/enums/service-name.enum';
+import { ServiceStatus } from 'app/enums/service-status.enum';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
+import { Service } from 'app/interfaces/service.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { IscsiCardComponent } from 'app/pages/sharing/components/shares-dashboard/iscsi-card/iscsi-card.component';
-import {
-  ServiceExtraActionsComponent,
-} from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-extra-actions.component';
-import {
-  ServiceStateButtonComponent,
-} from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
+import { ServiceExtraActionsComponent } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-extra-actions.component';
+import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
 import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { selectServices } from 'app/store/services/services.selectors';
 
 describe('IscsiCardComponent', () => {
   let spectator: Spectator<IscsiCardComponent>;
@@ -76,6 +77,19 @@ describe('IscsiCardComponent', () => {
         open: jest.fn(() => ({
           afterClosed: () => of(true),
         })),
+      }),
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectServices,
+            value: [{
+              id: 4,
+              service: ServiceName.Iscsi,
+              state: ServiceStatus.Stopped,
+              enable: false,
+            } as Service],
+          },
+        ],
       }),
     ],
   });

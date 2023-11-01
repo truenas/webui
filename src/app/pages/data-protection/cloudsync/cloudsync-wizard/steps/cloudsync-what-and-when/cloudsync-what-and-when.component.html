@@ -1,0 +1,108 @@
+<form [formGroup]="form">
+  <ix-fieldset>
+    <ix-select
+      *ngIf="form.controls.direction.enabled"
+      formControlName="direction"
+      [label]="helptext.direction_placeholder | translate"
+      [tooltip]="helptext.direction_tooltip | translate"
+      [required]="true"
+      [options]="directionOptions$"
+    ></ix-select>
+    <ix-select
+      *ngIf="form.controls.transfer_mode.enabled"
+      formControlName="transfer_mode"
+      [label]="helptext.transfer_mode_placeholder | translate"
+      [tooltip]="transferModeTooltip | translate"
+      [required]="true"
+      [options]="transferModeOptions$"
+    ></ix-select>
+    <ix-transfer-mode-explanation
+      [mode]="form.controls.transfer_mode.value"
+    ></ix-transfer-mode-explanation>
+    <div class="cloudsync">
+      <ix-explorer
+        *ngIf="form.controls.path_destination.enabled"
+        formControlName="path_destination"
+        [label]="helptext.path_placeholder | translate"
+        [tooltip]="helptext.path_tooltip | translate"
+        [required]="true"
+        [nodeProvider]="fileNodeProvider"
+      ></ix-explorer>
+      <ix-explorer
+        *ngIf="form.controls.path_source.enabled"
+        formControlName="path_source"
+        [label]="helptext.path_placeholder | translate"
+        [tooltip]="helptext.path_tooltip | translate"
+        [required]="true"
+        [multiple]="true"
+        [nodeProvider]="fileNodeProvider"
+      ></ix-explorer>
+      <ix-explorer
+        *ngIf="form.controls.folder_destination.enabled"
+        formControlName="folder_destination"
+        root="/"
+        [label]="helptext.folder_placeholder | translate"
+        [tooltip]="helptext.folder_tooltip | translate"
+        [nodeProvider]="bucketNodeProvider"
+      ></ix-explorer>
+      <ix-explorer
+        *ngIf="form.controls.folder_source.enabled"
+        formControlName="folder_source"
+        root="/"
+        [label]="helptext.folder_placeholder | translate"
+        [tooltip]="helptext.folder_tooltip | translate"
+        [multiple]="true"
+        [nodeProvider]="bucketNodeProvider"
+      ></ix-explorer>
+    </div>
+    <ix-input
+      *ngIf="form.controls.description.enabled"
+      formControlName="description"
+      [label]="helptext.description_placeholder | translate"
+      [tooltip]="helptext.description_tooltip | translate"
+      [required]="true"
+    ></ix-input>
+    <ix-select
+      *ngIf="form.controls.bucket.enabled"
+      formControlName="bucket"
+      [label]="bucketPlaceholder | translate"
+      [tooltip]="bucketTooltip | translate"
+      [options]="bucketOptions$"
+    ></ix-select>
+    <ix-input
+      *ngIf="form.controls.bucket_input.enabled"
+      formControlName="bucket_input"
+      [label]="helptext.bucket_input_placeholder | translate"
+      [tooltip]="helptext.bucket_input_tooltip | translate"
+      [required]="true"
+    ></ix-input>
+    <ix-scheduler
+      formControlName="cloudsync_picker"
+      [label]="helptext.cloudsync_picker_placeholder | translate"
+      [tooltip]="helptext.cloudsync_picker_tooltip | translate"
+      [required]="true"
+    ></ix-scheduler>
+  </ix-fieldset>
+
+  <ix-form-actions>
+    <button
+      mat-button
+      matStepperPrevious
+      ixTest="back"
+    >{{ 'Back' | translate }}</button>
+    <button
+      mat-button
+      type="button"
+      color="primary"
+      ixTest="save"
+      [disabled]="form.invalid"
+      (click)="onSave()"
+    >{{ 'Save' | translate }}</button>
+    <button
+      mat-button
+      type="button"
+      ixTest="advanced"
+      (click)="openAdvanced()"
+    >{{ 'Advanced Options' | translate }}</button>
+  </ix-form-actions>
+</form>
