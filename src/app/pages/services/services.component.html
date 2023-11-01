@@ -74,7 +74,7 @@
           matTooltipPosition="left"
           [ixTest]="[service.service, 'sessions']"
           [attr.aria-label]="'Edit' | translate"
-          [attr.name]="service.name"
+          [attr.name]="'sessions-' + service.name"
           [matTooltip]="'Sessions' | translate"
           (click)="viewSessions(service.service)"
         >
@@ -86,7 +86,7 @@
           matTooltipPosition="left"
           [ixTest]="[service.service, 'edit']"
           [attr.aria-label]="'Edit' | translate"
-          [attr.name]="service.name"
+          [attr.name]="'edit-' + service.name"
           [matTooltip]="'Configure' | translate"
           (click)="configureService(service)"
         >
