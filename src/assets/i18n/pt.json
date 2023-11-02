@@ -1729,6 +1729,7 @@
   "Offline": "",
   "Offline Disk": "",
   "Offline disk {name}?": "",
+  "Okay": "",
   "On a Different System": "",
   "On this System": "",
   "Once an enclosure is selected, all other VDEV creation steps will limit disk selection options to disks in the selected enclosure. If the enclosure selection is changed, all disk selections will be reset.": "",

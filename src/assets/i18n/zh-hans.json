@@ -289,6 +289,7 @@
   "Not enough free space. Maximum available: {space}": "",
   "Number of days to retain local audit messages.": "",
   "OTP Digits": "",
+  "Okay": "",
   "Once an enclosure is selected, all other VDEV creation steps will limit disk selection options to disks in the selected enclosure. If the enclosure selection is changed, all disk selections will be reset.": "",
   "Once enabled, users will be required to set up two factor authentication next time they login.": "",
   "One or more data VDEVs has disks of different sizes.": "",

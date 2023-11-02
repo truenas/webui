@@ -107,7 +107,7 @@ export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
       sync: getFieldValue(this.existing.sync, this.parent),
       compression: getFieldValue(this.existing.compression, this.parent),
       atime: getFieldValue(this.existing.atime, this.parent),
-    });
+    }, { emitEvent: false });
   }
 
   private setSelectOptions(): void {
@@ -160,8 +160,9 @@ export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
         return this.dialogService.confirm({
           title: this.translate.instant('Warning'),
           message: helptext.dataset_form_sync_disabled_warning,
+          buttonText: this.translate.instant('Okay'),
           hideCheckbox: true,
-          buttonText: null,
+          hideCancel: true,
         });
       }
     });

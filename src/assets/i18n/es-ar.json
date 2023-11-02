@@ -860,6 +860,7 @@
   "Oct": "",
   "Off by default. When set, <a href=\"https://www.samba.org/samba/docs/current/man-html/smbd.8.html\" target=\"_blank\">smbd(8)</a> attempts to authenticate users with the insecure and vulnerable NTLMv1 encryption. This setting allows backward compatibility with older versions of Windows, but is not recommended and should not be used on untrusted networks.": "",
   "Offline disk {name}?": "",
+  "Okay": "",
   "Once an enclosure is selected, all other VDEV creation steps will limit disk selection options to disks in the selected enclosure. If the enclosure selection is changed, all disk selections will be reset.": "",
   "Once enabled, users will be required to set up two factor authentication next time they login.": "",
   "One or more data VDEVs has disks of different sizes.": "",
