@@ -1,5 +1,6 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { DatasetsManagementComponent } from 'app/pages/datasets/components/dataset-management/dataset-management.component';
 import { DatasetQuotasGrouplistComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quotas-grouplist/dataset-quotas-grouplist.component';
 import { DatasetQuotasUserlistComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quotas-userlist/dataset-quotas-userlist.component';
@@ -12,7 +13,7 @@ import { DatasetTrivialPermissionsComponent } from './modules/permissions/contai
 export const routes: Routes = [
   {
     path: '',
-    data: { title: 'Datasets', breadcrumb: 'Datasets' },
+    data: { title: T('Datasets'), breadcrumb: null },
     children: [
       {
         path: '',
@@ -22,50 +23,50 @@ export const routes: Routes = [
       {
         path: 'acl/edit',
         component: DatasetAclEditorComponent,
-        data: { title: 'Edit ACL', breadcrumb: null },
+        data: { title: T('Edit ACL'), breadcrumb: null },
         pathMatch: 'full',
       },
       {
         path: ':datasetId',
-        data: { breadcrumb: null },
+        data: { breadcrumb: T('Datasets') },
         children: [
           {
             path: '',
             pathMatch: 'full',
             component: DatasetsManagementComponent,
-            data: { title: 'Datasets', breadcrumb: null },
+            data: { title: T('Datasets'), breadcrumb: null },
           },
           {
             path: 'permissions/edit',
             component: DatasetTrivialPermissionsComponent,
-            data: { title: 'Edit Permissions', breadcrumb: null },
+            data: { title: T('Edit Permissions'), breadcrumb: null },
           },
           {
             path: 'unlock',
             component: DatasetUnlockComponent,
-            data: { title: 'Unlock Datasets', breadcrumb: 'Unlock Datasets' },
+            data: { title: T('Unlock Datasets'), breadcrumb: null },
           },
           {
             path: 'user-quotas',
             component: DatasetQuotasUserlistComponent,
-            data: { title: 'User Quotas', breadcrumb: 'User Quotas' },
+            data: { title: T('User Quotas'), breadcrumb: null },
           },
           {
             path: 'group-quotas',
             component: DatasetQuotasGrouplistComponent,
-            data: { title: 'Group Quotas', breadcrumb: 'Edit Group Quotas' },
+            data: { title: T('Group Quotas'), breadcrumb: null },
           },
         ],
       },
       {
         path: 'user-quotas/:pk',
         component: DatasetQuotasUserlistComponent,
-        data: { title: 'User Quotas', breadcrumb: 'User Quotas' },
+        data: { title: T('User Quotas'), breadcrumb: null },
       },
       {
         path: 'group-quotas/:pk',
         component: DatasetQuotasGrouplistComponent,
-        data: { title: 'Group Quotas', breadcrumb: 'Edit Group Quotas' },
+        data: { title: T('Group Quotas'), breadcrumb: null },
       },
       {
         path: '**',

@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { tap } from 'rxjs';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
@@ -28,6 +29,7 @@ export class UploadConfigDialogComponent {
     private router: Router,
     private matDialog: MatDialog,
     private authService: AuthService,
+    private translate: TranslateService,
   ) {
     this.authService.authToken$.pipe(
       tap((token) => {
@@ -39,9 +41,11 @@ export class UploadConfigDialogComponent {
 
   onSubmit(): void {
     const formData: FormData = new FormData();
-    const dialogRef = this.matDialog.open(EntityJobComponent,
-      { data: { title: 'Uploading and Applying Config', closeOnClickOutside: false } });
-    dialogRef.componentInstance.setDescription('Uploading and Applying Config');
+    const dialogRef = this.matDialog.open(
+      EntityJobComponent,
+      { data: { title: this.translate.instant('Uploading and Applying Config'), closeOnClickOutside: false } },
+    );
+    dialogRef.componentInstance.setDescription(this.translate.instant('Uploading and Applying Config'));
     formData.append('data', JSON.stringify({
       method: 'config.upload',
       params: [],
