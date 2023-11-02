@@ -8,7 +8,7 @@ import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { helptext } from 'app/helptext/system/2fa';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
-import { TwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
+import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { User } from 'app/interfaces/user.interface';
 import { IxWarningComponent } from 'app/modules/ix-forms/components/ix-warning/ix-warning.component';
 import { QrDialogComponent } from 'app/pages/two-factor-auth/components/two-factor/qr-dialog/qr-dialog.component';
@@ -48,7 +48,7 @@ describe('TwoFactorComponent', () => {
           otp_digits: 6,
           window: 1,
           services: { ssh: false },
-        } as TwoFactorConfig),
+        } as GlobalTwoFactorConfig),
         mockCall('user.renew_2fa_secret', {} as User),
         mockCall('user.provisioning_uri', 'provisioning_uri'),
       ]),

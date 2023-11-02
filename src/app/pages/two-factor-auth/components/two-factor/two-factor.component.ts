@@ -5,17 +5,17 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
+import { combineLatest, of } from 'rxjs';
 import {
   catchError,
-  filter, shareReplay, switchMap, take, tap,
+  filter, switchMap, tap,
 } from 'rxjs/operators';
-import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { helptext } from 'app/helptext/system/2fa';
-import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { ErrorReport } from 'app/interfaces/error-report.interface';
+import { UserTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { QrDialogComponent } from 'app/pages/two-factor-auth/components/two-factor/qr-dialog/qr-dialog.component';
+import { RenewTwoFactorDialogComponent } from 'app/pages/two-factor-auth/components/two-factor/renew-two-factor-dialog/renew-two-factor-dialog.component';
 import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -31,7 +31,6 @@ export class TwoFactorComponent implements OnInit {
   isDataLoading = false;
   isFormLoading = false;
   globalTwoFactorEnabled: boolean;
-  private currentUser: LoggedInUser;
   intervalHint: string;
 
   get global2FaMsg(): string {
@@ -72,30 +71,25 @@ export class TwoFactorComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.authService.user$.pipe(
-      filter(Boolean),
-      take(1),
-      untilDestroyed(this),
-    ).subscribe((user) => {
-      this.currentUser = user;
-      this.userTwoFactorAuthConfigured = user.twofactor_auth_configured;
-      this.cdr.markForCheck();
-    });
+    this.loadTwoFactorConfigs();
+  }
+
+  loadTwoFactorConfigs(): void {
     this.isDataLoading = true;
     this.cdr.markForCheck();
-    this.ws.call('auth.twofactor.config').pipe(
-      tap((twoFactorConfig) => {
-        this.isDataLoading = false;
-        this.globalTwoFactorEnabled = twoFactorConfig.enabled;
-        this.cdr.markForCheck();
-      }),
-      toLoadingState(),
-      shareReplay({
-        refCount: false,
-        bufferSize: 1,
-      }),
+    combineLatest([
+      this.authService.getUserTwoFactorConfig(),
+      this.authService.getGlobalTwoFactorConfig(),
+    ]).pipe(
       untilDestroyed(this),
-    ).subscribe();
+    ).subscribe({
+      next: ([userConfig, globalConfig]) => {
+        this.isDataLoading = false;
+        this.userTwoFactorAuthConfigured = userConfig.secret_configured;
+        this.globalTwoFactorEnabled = globalConfig.enabled;
+        this.cdr.markForCheck();
+      },
+    });
   }
 
   openQrDialog(provisioningUri: string): void {
@@ -122,13 +116,16 @@ export class TwoFactorComponent implements OnInit {
       filter(Boolean),
       switchMap(() => {
         this.isFormLoading = true;
+        const dialogRef = this.matDialog.open(RenewTwoFactorDialogComponent);
         this.cdr.markForCheck();
-        return this.authService.renewUser2FaSecret();
+        return dialogRef.afterClosed();
       }),
-      tap(() => {
+      tap((success) => {
         this.isFormLoading = false;
         this.cdr.markForCheck();
-        this.showQrCode();
+        if (success) {
+          this.showQrCode();
+        }
       }),
       catchError((error: WebsocketError) => {
         this.isFormLoading = false;
@@ -145,11 +142,11 @@ export class TwoFactorComponent implements OnInit {
 
   showQrCode(): void {
     this.isFormLoading = true;
-    this.ws.call('user.provisioning_uri', [this.currentUser.username]).pipe(untilDestroyed(this)).subscribe({
-      next: (provisioningUri: string) => {
+    this.authService.getUserTwoFactorConfig().pipe(untilDestroyed(this)).subscribe({
+      next: (config: UserTwoFactorConfig) => {
         this.isFormLoading = false;
         this.cdr.markForCheck();
-        this.openQrDialog(provisioningUri);
+        this.openQrDialog(config.provisioning_uri);
       },
       error: (error: WebsocketError) => {
         this.isFormLoading = false;
