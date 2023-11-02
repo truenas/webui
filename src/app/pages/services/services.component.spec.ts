@@ -102,7 +102,7 @@ describe('ServicesComponent', () => {
 
   it('should redirect to configure iSCSI service page when edit button is pressed', async () => {
     const table = await loader.getHarness(IxTableHarness);
-    const editButton = await table.getHarness(MatButtonHarness.with({ selector: '[name="iSCSI"]' }));
+    const editButton = await table.getHarness(MatButtonHarness.with({ selector: '[name="edit-iSCSI"]' }));
     await editButton.click();
 
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/sharing', 'iscsi']);
@@ -110,56 +110,63 @@ describe('ServicesComponent', () => {
 
   it('should open FTP configuration when edit button is pressed', async () => {
     const table = await loader.getHarness(IxTableHarness);
-    const editButton = await table.getHarness(MatButtonHarness.with({ selector: '[name="FTP"]' }));
+    const editButton = await table.getHarness(MatButtonHarness.with({ selector: '[name="edit-FTP"]' }));
     await editButton.click();
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ServiceFtpComponent, { wide: true });
   });
 
   it('should open NFS configuration when edit button is pressed', async () => {
     const table = await loader.getHarness(IxTableHarness);
-    const editButton = await table.getHarness(MatButtonHarness.with({ selector: '[name="NFS"]' }));
+    const editButton = await table.getHarness(MatButtonHarness.with({ selector: '[name="edit-NFS"]' }));
     await editButton.click();
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ServiceNfsComponent, { wide: true });
   });
 
   it('should open SNMP configuration when edit button is pressed', async () => {
     const table = await loader.getHarness(IxTableHarness);
-    const editButton = await table.getHarness(MatButtonHarness.with({ selector: '[name="SNMP"]' }));
+    const editButton = await table.getHarness(MatButtonHarness.with({ selector: '[name="edit-SNMP"]' }));
     await editButton.click();
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ServiceSnmpComponent, { wide: true });
   });
 
   it('should open UPS configuration when edit button is pressed', async () => {
     const table = await loader.getHarness(IxTableHarness);
-    const editButton = await table.getHarness(MatButtonHarness.with({ selector: '[name="UPS"]' }));
+    const editButton = await table.getHarness(MatButtonHarness.with({ selector: '[name="edit-UPS"]' }));
     await editButton.click();
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ServiceUpsComponent, { wide: true });
   });
 
   it('should open SSH configuration when edit button is pressed', async () => {
     const table = await loader.getHarness(IxTableHarness);
-    const editButton = await table.getHarness(MatButtonHarness.with({ selector: '[name="SSH"]' }));
+    const editButton = await table.getHarness(MatButtonHarness.with({ selector: '[name="edit-SSH"]' }));
     await editButton.click();
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ServiceSshComponent);
   });
 
   it('should open SMB configuration when edit button is pressed', async () => {
     const table = await loader.getHarness(IxTableHarness);
-    const editButton = await table.getHarness(MatButtonHarness.with({ selector: '[name="SMB"]' }));
+    const editButton = await table.getHarness(MatButtonHarness.with({ selector: '[name="edit-SMB"]' }));
     await editButton.click();
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ServiceSmbComponent);
   });
 
+  it('should navigate to view Sessions for SMB when Sessions button is pressed', async () => {
+    const table = await loader.getHarness(IxTableHarness);
+    const editButton = await table.getHarness(MatButtonHarness.with({ selector: '[name="sessions-SMB"]' }));
+    await editButton.click();
+    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/sharing', 'smb', 'sessions']);
+  });
+
   it('should open S.M.A.R.T. configuration when edit button is pressed', async () => {
     const table = await loader.getHarness(IxTableHarness);
-    const editButton = await table.getHarness(MatButtonHarness.with({ selector: '[name="S.M.A.R.T."]' }));
+    const editButton = await table.getHarness(MatButtonHarness.with({ selector: '[name="edit-S.M.A.R.T."]' }));
     await editButton.click();
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ServiceSmartComponent);
   });
 
   it('should open LLDP configuration when edit button is pressed', async () => {
     const table = await loader.getHarness(IxTableHarness);
-    const editButton = await table.getHarness(MatButtonHarness.with({ selector: '[name="LLDP"]' }));
+    const editButton = await table.getHarness(MatButtonHarness.with({ selector: '[name="edit-LLDP"]' }));
     await editButton.click();
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ServiceLldpComponent);
   });
