@@ -42,7 +42,6 @@ import { ReplicationWhatAndWhereComponent } from 'app/pages/data-protection/repl
 import { ReplicationWhenComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-when/replication-when.component';
 import { RsyncTaskCardComponent } from 'app/pages/data-protection/rsync-task/rsync-task-card/rsync-task-card.component';
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
-import { RsyncTaskListComponent } from 'app/pages/data-protection/rsync-task/rsync-task-list/rsync-task-list.component';
 import { ScrubTaskCardComponent } from 'app/pages/data-protection/scrub-task/scrub-task-card/scrub-task-card.component';
 import {
   ScrubTaskFormComponent,
@@ -64,6 +63,7 @@ import { SourceSectionComponent } from './replication/replication-form/sections/
 import { TargetSectionComponent } from './replication/replication-form/sections/target-section/target-section.component';
 import { ReplicationListComponent } from './replication/replication-list/replication-list.component';
 import { ReplicationWizardComponent } from './replication/replication-wizard/replication-wizard.component';
+import { RsyncTaskListComponent } from './rsync-task/rsync-task-list/rsync-task-list.component';
 import { ResilverConfigComponent } from './scrub-task/resilver-config/resilver-config.component';
 import { ScrubListComponent } from './scrub-task/scrub-list/scrub-list.component';
 import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-list.component';
@@ -129,6 +129,7 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
     ScrubTaskCardComponent,
     SnapshotTaskCardComponent,
     ScrubListComponent,
+    RsyncTaskListComponent,
   ],
 })
 export class DataProtectionModule {}

@@ -51,7 +51,6 @@ import { EntityTableRowDetailsComponent } from 'app/modules/entity/entity-table/
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { ToolbarMultimenuComponent } from 'app/modules/entity/entity-toolbar/components/toolbar-multimenu/toolbar-multimenu.component';
 import { ToolbarSliderComponent } from 'app/modules/entity/entity-toolbar/components/toolbar-slider/toolbar-slider.component';
-import { TaskScheduleListComponent } from 'app/modules/entity/task-schedule-list/task-schedule-list.component';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -114,7 +113,6 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
     LayoutModule,
   ],
   declarations: [
-    TaskScheduleListComponent,
     EntityTableComponent,
     EntityTableRowDetailsComponent,
     EntityRowDetailsComponent,
