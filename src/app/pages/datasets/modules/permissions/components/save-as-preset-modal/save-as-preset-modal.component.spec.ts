@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AclType } from 'app/enums/acl-type.enum';
 import { Acl, AclTemplateByPath } from 'app/interfaces/acl.interface';
@@ -107,6 +108,7 @@ describe('SaveAsPresetModalComponent', () => {
   });
 
   it('creates new preset after \'Save\' button click', async () => {
+    jest.spyOn(spectator.component, 'loadIds').mockImplementation(() => of({ acl: [], acltype: AclType.Posix1e } as Acl));
     const actionsInput = await loader.getHarness(IxInputHarness);
     await actionsInput.setValue('New Preset');
     spectator.component.acl = { acl: [], acltype: AclType.Posix1e } as Acl;
