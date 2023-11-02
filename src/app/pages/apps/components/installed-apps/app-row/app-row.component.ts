@@ -22,6 +22,7 @@ export class AppRowComponent {
   @Output() startApp = new EventEmitter<void>();
   @Output() stopApp = new EventEmitter<void>();
   @Output() clickStatus = new EventEmitter<void>();
+  @Output() selectionChange = new EventEmitter<void>();
 
   readonly imagePlaceholder = appImagePlaceholder;
 
@@ -41,8 +42,8 @@ export class AppRowComponent {
     return [AppStatus.Starting, AppStatus.Stopping].includes(this.status);
   }
 
-  toggleAppChecked(checked: boolean): void {
-    this.app.selected = checked;
+  toggleAppChecked(): void {
+    this.selectionChange.emit();
   }
 
   start(): void {
