@@ -7,6 +7,7 @@ import {
   IscsiInitiatorGroup,
   IscsiPortal,
   IscsiTarget,
+  IscsiTargetExtent,
 } from 'app/interfaces/iscsi.interface';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -38,6 +39,10 @@ export class IscsiService {
 
   getTargets(): Observable<IscsiTarget[]> {
     return this.ws.call('iscsi.target.query', []);
+  }
+
+  getTargetExtents(): Observable<IscsiTargetExtent[]> {
+    return this.ws.call('iscsi.targetextent.query', []);
   }
 
   getAuth(): Observable<IscsiAuthAccess[]> {

@@ -1,5 +1,5 @@
-<mat-card>
-  <div dir="rtl">
+<ng-template ixPageHeader>
+  <ix-page-title-header [title]="'iSCSI' | translate">
     <button
       mat-button
       color="primary"
@@ -9,45 +9,30 @@
     >
       {{ 'Wizard' | translate }}
     </button>
-  </div>
-  <nav mat-tab-nav-bar [tabPanel]="tabPanel">
-    <a
-      *ngFor="let link of navLinks"
-      #rla="routerLinkActive"
-      mat-tab-link
-      routerLinkActive
-      [ixTest]="link.label"
-      [routerLink]="link.path"
-      [active]="rla.isActive"
-    >
-      {{ link.label | translate }}
-    </a>
-  </nav>
-  <router-outlet mat-tab-nav-panel [ngSwitch]="activeTab">
-    <mat-tab-nav-panel #tabPanel>
-      <ix-target-global-configuration
-        *ngSwitchCase="'configuration'"
-      ></ix-target-global-configuration>
+  </ix-page-title-header>
+</ng-template>
 
-      <ix-iscsi-portal-list *ngSwitchCase="'portals'"></ix-iscsi-portal-list>
-
-      <ix-iscsi-initiator-list
-        *ngSwitchCase="'initiator'"
-      ></ix-iscsi-initiator-list>
-
-      <ix-iscsi-authorizedaccess-list
-        *ngSwitchCase="'auth'"
-      ></ix-iscsi-authorizedaccess-list>
-
-      <ix-iscsi-target-list
-        *ngSwitchCase="'target'"
-      ></ix-iscsi-target-list>
-
-      <ix-iscsi-extent-list *ngSwitchCase="'extent'"></ix-iscsi-extent-list>
-
-      <ix-iscsi-associated-target-list
-        *ngSwitchCase="'associatedtarget'"
-      ></ix-iscsi-associated-target-list>
-    </mat-tab-nav-panel>
-  </router-outlet>
-</mat-card>
+<nav mat-tab-nav-bar [tabPanel]="tabPanel">
+  <a
+    *ngFor="let link of navLinks"
+    #rla="routerLinkActive"
+    mat-tab-link
+    routerLinkActive
+    [ixTest]="link.label"
+    [routerLink]="link.path"
+    [active]="rla.isActive"
+  >
+    {{ link.label | translate }}
+  </a>
+</nav>
+<router-outlet mat-tab-nav-panel [ngSwitch]="activeTab">
+  <mat-tab-nav-panel #tabPanel>
+    <ix-target-global-configuration *ngSwitchCase="'configuration'"></ix-target-global-configuration>
+    <ix-iscsi-portal-list *ngSwitchCase="'portals'"></ix-iscsi-portal-list>
+    <ix-iscsi-initiator-list *ngSwitchCase="'initiator'"></ix-iscsi-initiator-list>
+    <ix-iscsi-authorizedaccess-list *ngSwitchCase="'auth'"></ix-iscsi-authorizedaccess-list>
+    <ix-iscsi-target-list *ngSwitchCase="'target'"></ix-iscsi-target-list>
+    <ix-iscsi-extent-list *ngSwitchCase="'extent'"></ix-iscsi-extent-list>
+    <ix-iscsi-associated-target-list *ngSwitchCase="'associatedtarget'"></ix-iscsi-associated-target-list>
+  </mat-tab-nav-panel>
+</router-outlet>
