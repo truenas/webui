@@ -30,10 +30,6 @@
     display: grid;
     grid-gap: 8px;
     grid-template-columns: 1fr 1fr 1.5fr 1fr 1fr;
-
-    @media (max-width: $breakpoint-tablet) {
-      grid-template-columns: 45px auto 0 0 0;
-    }
   }
 
   .audit-header-row tr {
