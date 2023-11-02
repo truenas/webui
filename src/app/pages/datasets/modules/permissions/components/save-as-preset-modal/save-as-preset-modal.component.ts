@@ -6,7 +6,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import _ from 'lodash';
 import {
-  EMPTY, Observable, catchError, combineLatest, map, of, tap,
+  EMPTY, Observable, catchError, combineLatest, map, of, switchMap, tap,
 } from 'rxjs';
 import { AclType } from 'app/enums/acl-type.enum';
 import { NfsAclTag } from 'app/enums/nfs-acl.enum';
@@ -98,18 +98,21 @@ export class SaveAsPresetModalComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const newAcl = _.cloneDeep(this.acl);
-    const payload: AclTemplateCreateParams = {
-      name: this.form.value.presetName,
-      acltype: this.acl.acltype,
-      acl: newAcl.acl.map((acl) => {
-        delete acl.who;
-        return _.cloneDeep(acl);
-      }) as NfsAclItem[] | PosixAclItem[],
-    };
-
-    this.loader.open();
-    this.ws.call('filesystem.acltemplate.create', [payload]).pipe(untilDestroyed(this)).subscribe({
+    this.loadIds(_.cloneDeep(this.acl)).pipe(
+      switchMap((newAcl) => {
+        const payload: AclTemplateCreateParams = {
+          name: this.form.value.presetName,
+          acltype: this.acl.acltype,
+          acl: newAcl.acl.map((acl) => {
+            delete acl.who;
+            return _.cloneDeep(acl);
+          }) as NfsAclItem[] | PosixAclItem[],
+        };
+        this.loader.open();
+        return this.ws.call('filesystem.acltemplate.create', [payload]);
+      }),
+      untilDestroyed(this),
+    ).subscribe({
       next: () => {
         this.loader.close();
         this.dialogRef.close();
