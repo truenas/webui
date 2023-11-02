@@ -7,10 +7,6 @@ $scrollbar-offset: 20px;
     display: flex;
     flex-direction: row;
     width: 100%;
-
-    // @media(min-width: $breakpoint-tablet) {
-    //   height: calc(100vh - #{$header-height});
-    // }
   }
 
   .details-container {

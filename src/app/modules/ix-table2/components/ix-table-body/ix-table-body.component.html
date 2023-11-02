@@ -2,7 +2,9 @@
   <tr
     class="row"
     [ixTest]="getTestAttr(row)"
-    [ngStyle]="{ cursor: detailsTemplate ? 'pointer' : 'auto', display: isLoading ? 'none' : 'grid' }"
+    [ngStyle]="{ cursor: detailsTemplate ? 'pointer' : 'auto' }"
+    [ngClass]="{ hidden: isLoading }"
+    [hidden]="isLoading"
     (click)="onToggle(row)"
   >
     <td
@@ -38,6 +40,7 @@
     *ngIf="detailsTemplate && isExpanded(row)"
     ixTest="details"
     class="details"
+    [ngClass]="{ hidden: isLoading }"
   >
     <td [attr.colspan]="displayedColumns.length + 1">
       <ng-container *ngTemplateOutlet="detailsTemplate; context: { $implicit: row }"></ng-container>
