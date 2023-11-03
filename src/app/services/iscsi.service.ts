@@ -25,7 +25,7 @@ export class IscsiService {
     return this.ws.call('iscsi.portal.query', []);
   }
 
-  listInitiators(): Observable<IscsiInitiatorGroup[]> {
+  getInitiators(): Observable<IscsiInitiatorGroup[]> {
     return this.ws.call('iscsi.initiator.query', []);
   }
 

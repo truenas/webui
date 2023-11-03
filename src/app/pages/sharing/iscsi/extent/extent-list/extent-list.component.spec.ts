@@ -75,14 +75,14 @@ describe('ExtentListComponent', () => {
     expect(title).toHaveText('Extents');
   });
 
-  it('opens Extent form when "Add" button is pressed', async () => {
+  it('opens extent form when "Add" button is pressed', async () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ExtentFormComponent, { wide: true });
   });
 
-  it('opens Extent form when "Edit" button is pressed', async () => {
+  it('opens extent form when "Edit" button is pressed', async () => {
     const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 6);
     await editButton.click();
 

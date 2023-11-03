@@ -62,21 +62,21 @@ export const routes: Routes = [
                 pathMatch: 'full',
               },
               {
-                path: ':pk',
+                path: ':activeTab',
                 component: IscsiComponent,
-                data: { title: '', breadcrumb: '' },
+                data: { title: T('iSCSI'), breadcrumb: '' },
               },
               {
                 path: 'initiators',
-                data: { title: 'Initiators', breadcrumb: 'Initiators' },
+                data: { title: 'Initiators', breadcrumb: '' },
                 children: [{
                   path: 'add',
                   component: InitiatorFormComponent,
-                  data: { title: T('Add'), breadcrumb: T('Add') },
+                  data: { title: T('Add Initiator'), breadcrumb: T('Add') },
                 }, {
                   path: 'edit/:pk',
                   component: InitiatorFormComponent,
-                  data: { title: T('Edit'), breadcrumb: T('Edit') },
+                  data: { title: T('Add Initiator'), breadcrumb: T('Edit') },
                 }],
               }],
           }],

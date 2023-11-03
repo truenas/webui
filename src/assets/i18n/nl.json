@@ -9,6 +9,7 @@
   "<i>Sensitive</i> assumes filenames are case sensitive. <i>Insensitive</i> assumes filenames are not case sensitive.": "",
   "A stripe log VDEV may result in data loss if it fails combined with a power outage.": "",
   "A stripe {vdevType} VDEV is highly discouraged and will result in data loss if it fails": "",
+  "ALL Initiators Allowed": "",
   "Add Reporting Exporter": "",
   "Add Vdevs to Pool": "",
   "Adding data VDEVs of different types is not supported.": "",

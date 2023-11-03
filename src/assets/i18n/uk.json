@@ -9,6 +9,7 @@
   "A stripe log VDEV may result in data loss if it fails combined with a power outage.": "",
   "A stripe {vdevType} VDEV is highly discouraged and will result in data loss if it fails": "",
   "ACL Types & ACL Modes": "",
+  "ALL Initiators Allowed": "",
   "Add Allowed Initiators (IQN)": "",
   "Add Reporting Exporter": "",
   "Add Vdevs to Pool": "",
