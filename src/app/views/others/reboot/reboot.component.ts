@@ -1,5 +1,5 @@
 import { Location } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -14,6 +14,7 @@ import { WebSocketService } from 'app/services/ws.service';
 @Component({
   templateUrl: './reboot.component.html',
   styleUrls: ['./reboot.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RebootComponent implements OnInit {
   constructor(
