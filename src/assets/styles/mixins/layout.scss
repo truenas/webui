@@ -19,6 +19,10 @@ $scrollbar-offset: 20px;
     position: sticky;
     top: 0;
 
+    @media(min-width: $breakpoint-tablet) {
+      height: calc(100vh - #{$header-height});
+    }
+
     // Hide Details
     @media (max-width: $breakpoint-hidden) {
       display: none;
