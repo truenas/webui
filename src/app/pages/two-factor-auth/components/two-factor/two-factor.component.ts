@@ -18,7 +18,6 @@ import { QrDialogComponent } from 'app/pages/two-factor-auth/components/two-fact
 import { RenewTwoFactorDialogComponent } from 'app/pages/two-factor-auth/components/two-factor/renew-two-factor-dialog/renew-two-factor-dialog.component';
 import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -62,7 +61,6 @@ export class TwoFactorComponent implements OnInit {
   }
 
   constructor(
-    protected ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
     private translateService: TranslateService,
