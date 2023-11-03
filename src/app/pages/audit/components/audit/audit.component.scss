@@ -1,10 +1,46 @@
-.header {
-  align-items: center;
-  column-gap: 5px;
-  display: flex;
-  width: 100%;
+@import 'scss-imports/splitview';
+@import 'mixins/layout';
 
-  .search-control {
-    margin-right: auto;
+@include tree-node-with-details-container(284px);
+
+:host ::ng-deep {
+  .table-container table {
+    border: 0;
+  }
+
+  ix-empty-row {
+    height: 100%;
+  }
+}
+
+.table-container {
+  flex: 1.8;
+  max-width: 100%;
+}
+
+ix-table2 {
+  height: 100%;
+  overflow: auto;
+}
+
+.details-container {
+  flex: 1.2;
+  max-width: 100%;
+}
+
+.search-control {
+  width: 100%;
+}
+
+.header-card {
+  border-radius: 0;
+  margin-bottom: 16px;
+
+  .header-card-item {
+    align-items: center;
+    column-gap: 5px;
+    display: flex;
+    padding: 0 16px;
+    width: 100%;
   }
 }
