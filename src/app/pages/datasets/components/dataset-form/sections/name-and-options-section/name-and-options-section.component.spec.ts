@@ -1,7 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DatasetCaseSensitivity, DatasetSync } from 'app/enums/dataset.enum';
 import { OnOff } from 'app/enums/on-off.enum';
@@ -15,6 +16,7 @@ import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import {
   NameAndOptionsSectionComponent,
 } from 'app/pages/datasets/components/dataset-form/sections/name-and-options-section/name-and-options-section.component';
+import { DialogService } from 'app/services/dialog.service';
 
 describe('NameAndOptionsSectionComponent', () => {
   let spectator: Spectator<NameAndOptionsSectionComponent>;
@@ -79,6 +81,9 @@ describe('NameAndOptionsSectionComponent', () => {
       IxFormsModule,
     ],
     providers: [
+      mockProvider(DialogService, {
+        confirm: jest.fn(() => of(true)),
+      }),
       mockWebsocket([
         mockCall('pool.dataset.compression_choices', {
           LZ4: 'LZ4',
@@ -111,6 +116,24 @@ describe('NameAndOptionsSectionComponent', () => {
         'Compression Level': 'Inherit (LZJB)',
         'Enable Atime': 'Inherit (OFF)',
       });
+    });
+
+    it('shows warning if user selects "Sync" as Disabled', async () => {
+      spectator.setInput({
+        existing: null,
+        parent: parentDataset,
+      });
+
+      await form.fillForm({
+        Sync: 'Disabled',
+      });
+
+      expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(
+        expect.objectContaining({
+          title: 'Warning',
+          message: 'TrueNAS recommends that the sync setting always  be left to the default of "Standard" or increased to "Always". The "Disabled" setting should  not be used in production and only where data roll back by few seconds  in case of crash or power loss is not a concern.',
+        }),
+      );
     });
 
     it('returns payload for updating a dataset', async () => {

@@ -107,7 +107,7 @@ export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
       sync: getFieldValue(this.existing.sync, this.parent),
       compression: getFieldValue(this.existing.compression, this.parent),
       atime: getFieldValue(this.existing.atime, this.parent),
-    }, { emitEvent: false });
+    });
   }
 
   private setSelectOptions(): void {
@@ -156,8 +156,8 @@ export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
 
   private listenForSyncChanges(): void {
     this.form.controls.sync.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
-      if (value === DatasetSync.Disabled) {
-        return this.dialogService.confirm({
+      if (value === DatasetSync.Disabled && this.form.controls.sync.dirty) {
+        this.dialogService.confirm({
           title: this.translate.instant('Warning'),
           message: helptext.dataset_form_sync_disabled_warning,
           buttonText: this.translate.instant('Okay'),
