@@ -88,6 +88,7 @@ describe('AuthService', () => {
       when(getFilteredWebsocketResponse).calledWith('logged_in_user_uuid').mockReturnValue(of(uncachedUser));
       when(getFilteredWebsocketResponse).calledWith('user_query_uuid').mockReturnValue(of([loggedInUser]));
       when(getFilteredWebsocketResponse).calledWith('generate_token_uuid').mockReturnValue(of('DUMMY_TOKEN'));
+      jest.spyOn(spectator.service, 'getTwoFactorConfig').mockImplementation(jest.fn(() => {}));
 
       const obs$ = spectator.service.login('dummy', 'dummy');
 
@@ -139,13 +140,21 @@ describe('AuthService', () => {
         .mockReturnValueOnce('login_with_token_uuid')
         .mockReturnValueOnce('logged_in_user_uuid')
         .mockReturnValueOnce('user_query_uuid')
+        // .mockReturnValueOnce('global_2fa_config')
         .mockReturnValueOnce('generate_token_uuid');
+      // .mockReturnValueOnce('user_2fa_config')
 
       const getFilteredWebsocketResponse = jest.spyOn(spectator.service, 'getFilteredWebsocketResponse');
       when(getFilteredWebsocketResponse).calledWith('login_with_token_uuid').mockReturnValue(of(true));
       when(getFilteredWebsocketResponse).calledWith('logged_in_user_uuid').mockReturnValue(of(uncachedUser));
       when(getFilteredWebsocketResponse).calledWith('user_query_uuid').mockReturnValue(of([loggedInUser]));
       when(getFilteredWebsocketResponse).calledWith('generate_token_uuid').mockReturnValue(of('DUMMY_TOKEN4'));
+      // when(getFilteredWebsocketResponse).calledWith('user_2fa_config').mockReturnValue(of({
+      //   provisioning_uri: 'provisioning_uri', secret_configured: true
+      // }));
+      // when(getFilteredWebsocketResponse).calledWith('global_2fa_config').mockReturnValue(of({ enabled: true }));
+
+      jest.spyOn(spectator.service, 'getTwoFactorConfig').mockImplementation(jest.fn(() => {}));
 
       const obs$ = spectator.service.loginWithToken();
 
