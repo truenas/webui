@@ -1,7 +1,6 @@
 <div
   class="ix-slidein-title-bar"
   fxLayout="row"
-  [style.padding]="componentsSize > 1 ? '5px' : '30px'"
   [fxLayoutAlign]="componentsSize > 1 ? 'left center' : 'space-between center'"
 >
   <ng-container *ngIf="componentsSize > 1 && !disableClose">
@@ -14,7 +13,7 @@
       <ix-icon id="ix-close-icon" name="mdi-chevron-left" ></ix-icon>
     </button>
   </ng-container>
-  <h3 class="ix-formtitle">{{ title | translate }}</h3>
+  <h3 class="ix-form-title">{{ title | translate }}</h3>
   <ng-container *ngIf="componentsSize <= 1 && !disableClose">
     <button
       mat-icon-button
