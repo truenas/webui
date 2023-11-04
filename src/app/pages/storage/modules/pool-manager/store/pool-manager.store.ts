@@ -275,7 +275,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
       ...state,
       topology: {
         ...state.topology,
-        [category]: initialTopology[category],
+        [category]: { ...initialTopology[category] },
       },
     };
   });
