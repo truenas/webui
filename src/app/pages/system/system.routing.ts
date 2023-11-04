@@ -6,7 +6,7 @@ import { ShellComponent } from 'app/pages/shell/shell.component';
 import {
   InitShutdownListComponent,
 } from 'app/pages/system/advanced/init-shutdown/init-shutdown-list/init-shutdown-list.component';
-import { AlertSettingsComponent } from 'app/pages/system/alert-settings/alert-settings.component';
+import { AlertSettings2Component } from 'app/pages/system/alert-settings2/alert-settings2.component';
 import { FailoverSettingsComponent } from 'app/pages/system/failover-settings/failover-settings.component';
 import { GeneralSettingsComponent } from 'app/pages/system/general-settings/general-settings.component';
 import { SupportCardComponent } from 'app/pages/system/general-settings/support/support-card/support-card.component';
@@ -96,7 +96,7 @@ export const routes: Routes = [
       ],
     }, {
       path: 'alert-settings',
-      component: AlertSettingsComponent,
+      component: AlertSettings2Component,
       data: { title: T('Alert Settings'), breadcrumb: T('Alert Settings'), icon: 'notifications_active' },
     }, {
       path: 'failover',

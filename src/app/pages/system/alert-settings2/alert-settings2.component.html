@@ -1,0 +1,62 @@
+<ng-container>
+
+  <div class="wizard-container">
+    <ng-container *ngFor="let category of categories">
+      
+      <mat-card class="card-container" [id]="category.id">
+        <mat-toolbar-row>
+          <h3>{{ category.title | translate }}</h3>
+          <div class="actions action-icon">
+            <button
+              mat-button
+              [ixTest]="[category.id, '-class-', 'configure']"
+            >
+              {{ 'Configure' | translate }}
+            </button>
+          </div>
+        </mat-toolbar-row>
+      
+        <mat-card-content>
+          <mat-list>
+            <mat-list-item *ngFor="let cls of category.classes">
+              <div class="list-item">
+                <div class="label-container">
+                  <strong>{{ cls.title | translate }}</strong>
+                </div>
+                <div class="class-config">
+                  <div class="level">
+                    {{ 'Level' | translate }}: {{ cls.level }}
+                  </div>
+                  <div class="policy">
+                    {{ 'Frequency' | translate }}: {{ alertClasses?.classes[cls.id]?.policy || AlertPolicy.Immediately }}
+                  </div>
+                </div>
+              </div>
+            </mat-list-item>
+          </mat-list>
+        </mat-card-content>
+      </mat-card>
+    </ng-container>
+
+  </div>
+  <div class="search-container">
+    <div class="search-card">
+      <ix-input
+        prefixIcon="search"
+        [formControl]="searchControl"
+        [placeholder]="'Search Alert Categories' | translate"
+        [autocompleteOptions]="searchOptions"
+      ></ix-input>
+      <ng-container
+        *ngFor="let category of categories"
+      >
+        <div
+          class="section"
+          (click)="categoryClick(category.id)"
+        >
+          {{ category.title }}
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</ng-container>
