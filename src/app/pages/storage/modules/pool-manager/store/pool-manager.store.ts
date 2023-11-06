@@ -260,11 +260,15 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
   }
 
   readonly resetTopologyCategory = this.updater((state, category: VdevType) => {
+    const newCategory = { ...initialTopology[category] };
+    if (category === VdevType.Spare || category === VdevType.Cache) {
+      newCategory.layout = CreateVdevLayout.Stripe;
+    }
     return {
       ...state,
       topology: {
         ...state.topology,
-        [category]: { ...initialTopology[category] },
+        [category]: newCategory,
       },
     };
   });
