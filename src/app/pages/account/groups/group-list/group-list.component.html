@@ -83,7 +83,7 @@
         {{ 'Roles' | translate }}
       </th>
       <td *matCellDef="let group; dataSource: dataSource" mat-cell>
-        {{ getGroupRoles(group.roles || []) }}
+        {{ rolesListToString(group.roles || []) }}
       </td>
     </ng-container>
 

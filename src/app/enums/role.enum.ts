@@ -13,3 +13,7 @@ export const roleNames = new Map<Role, string>([
   [Role.Readonly, T('Readonly')],
   [Role.SharingManager, T('Sharing Manager')],
 ]);
+
+export function rolesListToString(roles: Role[]): string {
+  return roles.map((role) => roleNames.get(role)).join(', ') || T('N/A');
+}
