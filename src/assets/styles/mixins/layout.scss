@@ -2,7 +2,7 @@ $singlecolumn-max-width: ($card-width-slim + $gap * 2);
 $dualcolumn-slim-max-width: ($card-width-slim * 2 + $gap * 2);
 $scrollbar-offset: 20px;
 
-@mixin tree-node-with-details-container($header-height) {
+@mixin tree-node-with-details-container() {
   .container {
     display: flex;
     flex-direction: row;
@@ -18,10 +18,6 @@ $scrollbar-offset: 20px;
     padding: 0;
     position: sticky;
     top: 0;
-
-    @media(min-width: $breakpoint-tablet) {
-      height: calc(100vh - #{$header-height});
-    }
 
     // Hide Details
     @media (max-width: $breakpoint-hidden) {
