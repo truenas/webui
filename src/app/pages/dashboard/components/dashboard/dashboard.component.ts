@@ -41,6 +41,7 @@ export enum WidgetName {
   // eslint-disable-next-line @typescript-eslint/no-shadow
   Pool = 'Pool',
   Help = 'Help',
+  Backup = 'Backup',
 }
 
 // TODO: This adds additional fields. Unclear if vlan is coming from backend
@@ -270,6 +271,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
     conf.push({ name: WidgetName.Memory, rendered: true, id: conf.length.toString() });
     conf.push({ name: WidgetName.Storage, rendered: true, id: conf.length.toString() });
     conf.push({ name: WidgetName.Network, rendered: true, id: conf.length.toString() });
+    conf.push({ name: WidgetName.Backup, rendered: true, id: conf.length.toString() });
 
     this.availableWidgets = conf;
   }

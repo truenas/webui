@@ -125,12 +125,17 @@ describe('DashboardStoreService', () => {
             },
             {
               id: '6',
+              name: 'Backup',
+              rendered: true,
+            },
+            {
+              id: '7',
               identifier: 'name,Pool:pool2',
               name: 'Pool',
               rendered: false,
             },
             {
-              id: '7',
+              id: '8',
               identifier: 'name,undefined',
               name: 'Interface',
               rendered: false,
@@ -168,6 +173,11 @@ describe('DashboardStoreService', () => {
             },
             {
               id: '6',
+              name: 'Backup',
+              rendered: false,
+            },
+            {
+              id: '7',
               identifier: 'name,Pool:pool2',
               name: 'Pool',
               rendered: false,

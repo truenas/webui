@@ -1,0 +1,145 @@
+<div class="widget stats-widget" ngClass.xs="double-height xs">
+  <div class="card-container front">
+    <mat-card
+      class="front"
+      fxLayout="row"
+      fxLayoutWrap
+      fxLayoutAlign="space-between stretch"
+    >
+      <mat-card-content class="card">
+        <ix-drag-handle [showReorderHandle]="showReorderHandle">
+          <ng-content [select]="[cdkDragHandle]"></ng-content>
+
+          <mat-toolbar-row>
+            <!-- Mobile Only: Exit widget -->
+            <button
+              *ngIf="screenType === ScreenType.Mobile"
+              class="mat-card-title-text"
+              mat-icon-button
+              color="default"
+              ixTest="help-back"
+              (click)="goBack()"
+            >
+              <ix-icon name="chevron_left" class="back-arrow"></ix-icon>
+            </button>
+
+            <h3 class="mat-card-title-text">
+              <ix-drag-handle [showReorderHandle]="showReorderHandle">
+                <div class="card-title-text">
+                  <span *ngIf="showReorderHandle" class="grip"></span>
+                  <span>{{ 'Backup Tasks' | translate }}</span>
+                </div>
+              </ix-drag-handle>
+            </h3>
+
+            <div *ngIf="!!allCount" class="status-container">
+              <ix-icon
+                *ngIf="!failedCount"
+                name="mdi-check-circle"
+                class="icon healthy"
+              ></ix-icon>
+              <ix-icon
+                *ngIf="!!failedCount"
+                name="mdi-alert"
+                class="icon warning"
+              ></ix-icon>
+              <span *ngIf="!!failedCount">
+                {{ '{failed} of {all} tasks failed' | translate : { failed: failedCount, all: allCount } }}
+              </span>
+            </div>
+
+            <div class="controls">
+              <button mat-icon-button ixTest="go-to-backups">
+                <ix-icon name="open_in_new"></ix-icon>
+              </button>
+            </div>
+          </mat-toolbar-row>
+        </ix-drag-handle>
+
+        <ix-table2
+          class="backups-table"
+          [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
+          [emptyConfig]="emptyConfig$ | async"
+        >
+          <tbody
+            ix-table-body
+            [columns]="columns"
+            [dataProvider]="dataProvider"
+            [isLoading]="dataProvider.isLoading$ | async"
+          >
+            <ng-template
+              let-backup
+              ix-table-cell
+              [columnIndex]="0"
+              [dataProvider]="dataProvider"
+            >
+              <ng-container [ngSwitch]="backup.type">
+                <div class="backup-icon-container">
+                  <ix-icon
+                    *ngSwitchCase="BackupType.CloudSync"
+                    name="ix:cloud_sync"
+                  ></ix-icon>
+                  <ix-icon
+                    *ngSwitchCase="BackupType.Replication"
+                    name="ix:replication"
+                  ></ix-icon>
+                  <ix-icon
+                    *ngSwitchCase="BackupType.Rsync"
+                    name="ix:rsync"
+                  ></ix-icon>
+                </div>
+              </ng-container>
+            </ng-template>
+          </tbody>
+        </ix-table2>
+
+        <div *ngIf="!!allCount">
+          <div class="details-item">
+            <div class="label">{{ 'Replication Tasks' | translate }}:</div>
+            <div class="replication-tasks value">{{ replicationCount }}</div>
+            <a class="action" ixTest="manage-replication-tasks" [routerLink]="['/data-protection/replication']">
+              {{ 'Manage Replication Tasks' | translate }}
+            </a>
+          </div>
+          <div class="details-item">
+            <div class="label">{{ 'Cloud Sync Tasks' | translate }}:</div>
+            <div class="cloudsync-tasks value">{{ cloudSyncCount }}</div>
+            <a class="action" ixTest="manage-cloudsync-tasks" [routerLink]="['/data-protection/cloudsync']">
+              {{ 'Manage Cloud Sync Tasks' | translate }}
+            </a>
+          </div>
+          <div class="details-item">
+            <div class="label">{{ 'Rsync Tasks' | translate }}:</div>
+            <div class="rsync-tasks value">{{ rsyncCount }}</div>
+            <a class="action" ixTest="manage-rsync-tasks" [routerLink]="['/data-protection/rsync']">
+              {{ 'Manage Rsync Tasks' | translate }}
+            </a>
+          </div>
+        </div>
+
+        <div *ngIf="!allCount" class="empty-data-footer">
+          <div class="details-item">
+            <div class="label">{{ 'Actions' | translate }}</div>
+            <div class="label">{{ 'Documentation' | translate }}</div>
+          </div>
+          <div class="details-item">
+            <a class="action" ixTest="new-replication" [routerLink]="['/data-protection']">
+              {{ 'New Replication Wizard' | translate }}
+            </a>
+            <a class="action" ixTest="risks-no-backup">
+              {{ 'Risks of having no backup' | translate }}
+            </a>
+          </div>
+          <div class="details-item">
+            <a class="action" ixTest="new-cloudsync" [routerLink]="['/data-protection']">
+              {{ 'New Cloudsync Wizard' | translate }}
+            </a>
+            <a class="action" ixTest="backup-best-practices">
+              {{ 'Backup best practices' | translate }}
+            </a>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

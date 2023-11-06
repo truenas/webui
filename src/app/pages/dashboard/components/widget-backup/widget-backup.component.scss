@@ -1,0 +1,69 @@
+@import 'mixins/cards';
+
+.card {
+  @include details-card();
+}
+
+.widget .mat-mdc-card .mat-mdc-card-content > div {
+  padding: 8px 20px 8px 36px !important;
+}
+
+.backups-table {
+  ::ng-deep tr td:first-child {
+    padding-left: 35px;
+    width: 60px;
+  }
+
+  ::ng-deep tr td:nth-child(2) {
+    width: 200px;
+  }
+
+  ::ng-deep tr td:last-child {
+    align-items: center;
+    display: flex;
+    height: inherit;
+    justify-content: flex-end;
+  }
+
+  .backup-icon-container {
+    display: flex;
+  }
+}
+
+.status-container {
+  align-items: center;
+  display: flex;
+  gap: 3px;
+  margin-left: 10px;
+  margin-top: 5px;
+
+  .healthy {
+    color: var(--green);
+  }
+  
+  .warning {
+    color: var(--orange);
+  }
+}
+
+.empty-data-footer {
+  .details-item {
+    display: flex;
+    justify-content: space-between;
+
+    .action {
+      margin-left: unset;
+    }
+  }
+}
+
+/* NARROW SCREENS */
+.xs.widget {
+  height: calc(100vh - 96px);
+  position: absolute;
+  width: 100vw;
+}
+
+.xs.widget .mat-mdc-card {
+  overflow-y: scroll;
+}

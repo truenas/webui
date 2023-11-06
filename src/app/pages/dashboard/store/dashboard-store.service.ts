@@ -207,6 +207,7 @@ export class DashboardStore extends ComponentStore<DashboardState> {
       conf.push({ name: WidgetName.Memory, rendered: true, id: conf.length.toString() });
       conf.push({ name: WidgetName.Storage, rendered: true, id: conf.length.toString() });
       conf.push({ name: WidgetName.Network, rendered: true, id: conf.length.toString() });
+      conf.push({ name: WidgetName.Backup, rendered: true, id: conf.length.toString() });
 
       state.pools?.forEach((pool) => {
         conf.push({
