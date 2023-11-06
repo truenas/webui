@@ -3,6 +3,11 @@ class add_Dataset:
     unencrypted_Error_Message = '//mat-error[contains(.,"Cannot create an unencrypted dataset within an encrypted dataset (encrypted)")]'
 
 
+class authorization:
+    box_Auth_Message = '//*[contains(text(),"Read and write all files and folders stored in Box")]'
+    Grant_Access_To_Box_Button = '//button[@id="consent_accept_button"]'
+
+
 class breadcrumb:
     dashboard = '//a[text()="Dashboard"]'
 
