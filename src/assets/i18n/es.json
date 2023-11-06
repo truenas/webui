@@ -3142,6 +3142,7 @@
   "Skip automatic detection of the Endpoint URL region. Set this  when configuring a custom Endpoint URL.": "",
   "Sleep": "",
   "Slot": "",
+  "Smb Status": "",
   "Snapdev": "",
   "Snapshot": "",
   "Snapshot Directory": "",

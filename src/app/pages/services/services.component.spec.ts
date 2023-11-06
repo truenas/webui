@@ -154,7 +154,7 @@ describe('ServicesComponent', () => {
     const table = await loader.getHarness(IxTableHarness);
     const editButton = await table.getHarness(MatButtonHarness.with({ selector: '[name="sessions-SMB"]' }));
     await editButton.click();
-    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/sharing', 'smb', 'sessions']);
+    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/sharing', 'smb', 'status', 'sessions']);
   });
 
   it('should open S.M.A.R.T. configuration when edit button is pressed', async () => {

@@ -383,6 +383,7 @@
   "Size in GiB of refreservation to set on ZFS dataset  where the audit databases are stored. The refreservation specifies the  minimum amount of space guaranteed to the dataset, and counts against  the space available for other datasets in the zpool where the audit  dataset is located.": "",
   "Size in GiB of the maximum amount of space that may be  consumed by the dataset where the audit dabases are stored.": "",
   "Skip": "",
+  "Smb Status": "",
   "Snapshot Directory": "",
   "Snapshot deleted.": "",
   "Snapshots must not have dependent clones": "",

@@ -164,6 +164,7 @@
   "Signing": "",
   "Size in GiB of refreservation to set on ZFS dataset  where the audit databases are stored. The refreservation specifies the  minimum amount of space guaranteed to the dataset, and counts against  the space available for other datasets in the zpool where the audit  dataset is located.": "",
   "Skip": "",
+  "Smb Status": "",
   "Standby: TrueNAS Controller {id}": "",
   "Stateful Sets": "",
   "Storj": "",
