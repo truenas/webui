@@ -1,7 +1,6 @@
 import { MatTabsModule } from '@angular/material/tabs';
-import { Router } from '@angular/router';
 import { SpectatorRouting } from '@ngneat/spectator';
-import { mockProvider, createRoutingFactory } from '@ngneat/spectator/jest';
+import { createRoutingFactory } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
 import { SmbSessionListComponent } from 'app/pages/sharing/smb/smb-status/components/smb-session-list/smb-session-list.component';
 import { SmbStatusComponent } from 'app/pages/sharing/smb/smb-status/smb-status.component';
@@ -15,7 +14,10 @@ describe('SmbStatusComponent', () => {
       MockComponents(SmbSessionListComponent),
     ],
     imports: [MatTabsModule],
-    providers: [mockProvider(Router)],
+    providers: [],
+    params: {
+      activeTab: 'sessions',
+    },
   });
 
   beforeEach(() => {

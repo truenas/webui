@@ -1,7 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { WebSocketService } from 'app/services/ws.service';
 
 @Component({
   selector: 'ix-smb-status',
@@ -17,9 +15,6 @@ export class SmbStatusComponent {
   }];
 
   constructor(
-    protected router: Router,
-    protected aroute: ActivatedRoute,
-    protected ws: WebSocketService,
     protected translate: TranslateService,
   ) {}
 }
