@@ -1,11 +1,9 @@
 import { Component, Input } from '@angular/core';
-import { Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
 import { IscsiService } from 'app/services/iscsi.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -46,8 +44,6 @@ export class IscsiComponent {
   }];
 
   constructor(
-    protected router: Router,
-    protected ws: WebSocketService,
     protected translate: TranslateService,
     private slideInService: IxSlideInService,
   ) {}

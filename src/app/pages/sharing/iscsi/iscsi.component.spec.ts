@@ -11,9 +11,14 @@ describe('IscsiComponent', () => {
 
   const createComponent = createRoutingFactory({
     component: IscsiComponent,
-    declarations: [MockComponents(TargetGlobalConfigurationComponent)],
+    declarations: [
+      MockComponents(TargetGlobalConfigurationComponent),
+    ],
     imports: [MatTabsModule],
     providers: [IscsiService],
+    params: {
+      activeTab: 'configuration',
+    },
   });
 
   beforeEach(() => {
