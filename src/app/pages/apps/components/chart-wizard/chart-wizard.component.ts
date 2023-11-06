@@ -177,8 +177,11 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
 
   addItem(event: AddListItemEvent): void {
     this.appSchemaService.addFormListItem({
-      event,
-      isNew: this.isNew,
+      event: {
+        ...event,
+        schema: event.schema.map((item) => ({ ...item, schema: { ...item.schema, immutable: false } })),
+      },
+      isNew: true,
       isParentImmutable: false,
     });
   }
