@@ -78,6 +78,15 @@
       </td>
     </ng-container>
 
+    <ng-container matColumnDef="roles">
+      <th *matHeaderCellDef mat-header-cell mat-sort-header>
+        {{ 'Roles' | translate }}
+      </th>
+      <td *matCellDef="let group; dataSource: dataSource" mat-cell>
+        {{ getGroupRoles(group.roles || []) }}
+      </td>
+    </ng-container>
+
     <ix-expand-toggle-column
       [expandedRow]="expandedRow"
       (toggle)="onToggle($event)"

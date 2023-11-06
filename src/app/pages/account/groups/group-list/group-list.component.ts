@@ -11,9 +11,11 @@ import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { select, Store } from '@ngrx/store';
+import { TranslateService } from '@ngx-translate/core';
 import { Observable, combineLatest, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { EmptyType } from 'app/enums/empty-type.enum';
+import { Role, roleNames } from 'app/enums/role.enum';
 import { Group } from 'app/interfaces/group.interface';
 import { IxDetailRowDirective } from 'app/modules/ix-tables/directives/ix-detail-row.directive';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
@@ -34,7 +36,7 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
 export class GroupListComponent implements OnInit {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
 
-  displayedColumns: string[] = ['group', 'gid', 'builtin', 'sudo_commands', 'smb', 'actions'];
+  displayedColumns: string[] = ['group', 'gid', 'builtin', 'sudo_commands', 'smb', 'roles', 'actions'];
   dataSource = new MatTableDataSource<Group>([]);
   defaultSort: Sort = { active: 'gid', direction: 'asc' };
   expandedRow: Group;
@@ -71,6 +73,7 @@ export class GroupListComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,
     private emptyService: EmptyService,
+    private translate: TranslateService,
   ) { }
 
   ngOnInit(): void {
@@ -107,6 +110,7 @@ export class GroupListComponent implements OnInit {
 
   createDataSource(groups: Group[] = []): void {
     this.dataSource = new MatTableDataSource(groups);
+
     setTimeout(() => {
       // TODO: Figure out how to avoid setTimeout to make it work on first loading
       this.dataSource.sort = this.sort;
@@ -144,5 +148,9 @@ export class GroupListComponent implements OnInit {
 
   handleDeletedGroup(id: number): void {
     this.store$.dispatch(groupRemoved({ id }));
+  }
+
+  getGroupRoles(roles: Role[]): string {
+    return roles.map((role) => roleNames.get(role)).join(', ') || this.translate.instant('N/A');
   }
 }
