@@ -23,6 +23,7 @@ import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-cront
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { CloudsyncRestoreDialogComponent } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
+import { CloudsyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -77,7 +78,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
         {
           iconName: 'edit',
           tooltip: this.translate.instant('Edit'),
-          onClick: (row) => this.openForm(row),
+          onClick: (row) => this.onEdit(row),
         },
         {
           iconName: 'play_arrow',
@@ -158,7 +159,15 @@ export class CloudSyncTaskCardComponent implements OnInit {
     });
   }
 
-  openForm(row?: CloudSyncTaskUi): void {
+  onAdd(): void {
+    const slideInRef = this.slideInService.open(CloudsyncWizardComponent, { wide: true });
+
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+      this.getCloudSyncTasks();
+    });
+  }
+
+  onEdit(row?: CloudSyncTaskUi): void {
     const slideInRef = this.slideInService.open(CloudsyncFormComponent, { data: row, wide: true });
 
     slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {

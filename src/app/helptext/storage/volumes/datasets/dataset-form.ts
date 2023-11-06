@@ -8,6 +8,10 @@ export default {
  requested by the client software, <i>Always</i> waits for\
  data writes to complete, and <i>Disabled</i> never waits for\
  writes to complete.'),
+  dataset_form_sync_disabled_warning: T('TrueNAS recommends that the sync setting always \
+ be left to the default of "Standard" or increased to "Always". The "Disabled" setting should \
+ not be used in production and only where data roll back by few seconds \
+ in case of crash or power loss is not a concern.'),
   dataset_form_compression_tooltip: T('Encode information in less space than the \
  original data occupies. It is recommended to choose a compression algorithm \
  that balances disk performance with the amount of saved space.<br> <i>LZ4</i> is \

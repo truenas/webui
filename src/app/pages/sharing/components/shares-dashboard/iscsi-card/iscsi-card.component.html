@@ -8,7 +8,7 @@
     </a>
 
     <ix-service-state-button
-      [service]="service"
+      [service]="service$ | async"
       [count]="dataProvider.currentPageCount$ | async"
     ></ix-service-state-button>
 
@@ -25,10 +25,7 @@
         (click)="openForm(null, true)"
       >{{ 'Wizard' | translate }}</button>
 
-      <ix-service-extra-actions
-        [service]="service"
-        (statusChanged)="statusChanged.emit($event)"
-      ></ix-service-extra-actions>
+      <ix-service-extra-actions [service]="service$ | async"></ix-service-extra-actions>
     </div>
   </mat-toolbar-row>
 
