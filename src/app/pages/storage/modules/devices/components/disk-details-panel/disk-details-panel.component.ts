@@ -4,14 +4,10 @@ import {
   Input,
   Output,
   EventEmitter,
-  OnInit,
-  ChangeDetectorRef,
 } from '@angular/core';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { VdevType } from 'app/enums/v-dev-type.enum';
 import { Disk, isTopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -20,7 +16,7 @@ import { WebSocketService } from 'app/services/ws.service';
   styleUrls: ['./disk-details-panel.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DiskDetailsPanelComponent implements OnInit {
+export class DiskDetailsPanelComponent {
   @Input() topologyItem: TopologyItem;
   @Input() topologyParentItem: TopologyItem;
   @Input() disk: Disk;
@@ -48,16 +44,6 @@ export class DiskDetailsPanelComponent implements OnInit {
     }
 
     return false;
-  }
-
-  constructor(
-    private ws: WebSocketService,
-    private cdr: ChangeDetectorRef,
-    private translate: TranslateService,
-  ) {}
-
-  ngOnInit(): void {
-    this.ws.call('pool.query', [[['id', '=', this.poolId]]]).pipe(untilDestroyed(this)).subscribe();
   }
 
   onCloseMobileDetails(): void {
