@@ -27,6 +27,7 @@ import {
 import { NestedTreeDataSource } from 'app/modules/ix-tree/nested-tree-datasource';
 import { flattenTreeWithFilter } from 'app/modules/ix-tree/utils/flattern-tree-with-filter';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 const raidzItems = [TopologyItemType.Raidz, TopologyItemType.Raidz1, TopologyItemType.Raidz2, TopologyItemType.Raidz3];
 
@@ -45,6 +46,7 @@ export class DevicesComponent implements OnInit, AfterViewInit {
   diskDictionary: { [guid: string]: Disk } = {};
   dataSource: NestedTreeDataSource<DeviceNestedDataNode>;
   poolId: number;
+  poolName: string;
 
   treeControl = new NestedTreeControl<DeviceNestedDataNode, string>((vdev) => vdev.children, {
     trackBy: (vdev) => vdev.guid,
@@ -65,9 +67,8 @@ export class DevicesComponent implements OnInit, AfterViewInit {
   isMobileView = false;
 
   get pageTitle(): string {
-    const poolName = this.dataSource.data?.[0]?.children?.[0]?.name;
-    return poolName
-      ? this.translate.instant('{name} Devices', { name: stringToTitleCase(poolName) })
+    return this.poolName
+      ? this.translate.instant('{name} Devices', { name: stringToTitleCase(this.poolName) })
       : this.translate.instant('Devices');
   }
 
@@ -78,6 +79,7 @@ export class DevicesComponent implements OnInit, AfterViewInit {
     private devicesStore: DevicesStore,
     private breakpointObserver: BreakpointObserver,
     private translate: TranslateService,
+    private ws: WebSocketService,
     @Inject(WINDOW) private window: Window,
   ) { }
 
@@ -93,6 +95,7 @@ export class DevicesComponent implements OnInit, AfterViewInit {
     this.devicesStore.loadNodes(this.poolId);
     this.listenForRouteChanges();
     this.setupTree();
+    this.getPool();
   }
 
   ngAfterViewInit(): void {
@@ -220,5 +223,14 @@ export class DevicesComponent implements OnInit, AfterViewInit {
 
   closeMobileDetails(): void {
     this.showMobileDetails = false;
+  }
+
+  private getPool(): void {
+    this.ws.call('pool.query', [[['id', '=', this.poolId]]]).pipe(untilDestroyed(this)).subscribe((pools) => {
+      if (pools.length) {
+        this.poolName = pools[0]?.name;
+        this.cdr.markForCheck();
+      }
+    });
   }
 }
