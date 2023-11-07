@@ -5,6 +5,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatSelectModule } from '@angular/material/select';
 import { TranslateModule } from '@ngx-translate/core';
+import { CoreComponents } from 'app/core/core-components.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
@@ -29,6 +30,7 @@ import { LogDetailsPanelComponent } from './components/log-details-panel/log-det
     MatSelectModule,
     IxTable2Module,
     AppLoaderModule,
+    CoreComponents,
     routing,
   ],
   exports: [],
