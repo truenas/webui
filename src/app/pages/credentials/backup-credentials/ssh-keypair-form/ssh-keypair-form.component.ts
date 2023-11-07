@@ -5,7 +5,7 @@ import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, Subject } from 'rxjs';
+import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import helptext from 'app/helptext/system/ssh-keypairs';
@@ -13,7 +13,8 @@ import {
   KeychainCredentialUpdate,
   KeychainSshKeyPair,
 } from 'app/interfaces/keychain-credential.interface';
-import { SLIDE_IN_CLOSER, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { atLeastOne } from 'app/modules/ix-forms/validators/at-least-one-validation';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -55,7 +56,7 @@ export class SshKeypairFormComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private ws: WebSocketService,
-    @Inject(SLIDE_IN_CLOSER) private slideInCloser$: Subject<unknown>,
+    private slideInRef: IxSlideInRef<SshKeypairFormComponent>,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private snackbar: SnackbarService,
@@ -137,7 +138,7 @@ export class SshKeypairFormComponent implements OnInit {
 
         this.isFormLoading = false;
         this.cdr.markForCheck();
-        this.slideInCloser$.next(true);
+        this.slideInRef.close(true);
       },
       error: (error) => {
         this.isFormLoading = false;
