@@ -4,7 +4,7 @@
     [ixTest]="getTestAttr(row)"
     [ngStyle]="{ cursor: detailsTemplate ? 'pointer' : null }"
     [class.expanded]="isExpanded(row)"
-    [hidden]="isLoading"
+    [class.hidden]="isLoading"
     (click)="onToggle(row)"
   >
     <td
@@ -36,7 +36,12 @@
       </button>
     </td>
   </tr>
-  <tr *ngIf="detailsTemplate && isExpanded(row)" ixTest="details" class="details" [hidden]="isLoading">
+  <tr
+    *ngIf="detailsTemplate && isExpanded(row)"
+    ixTest="details"
+    class="details"
+    [class.hidden]="isLoading"
+  >
     <td [attr.colspan]="displayedColumns.length + 1">
       <ng-container *ngTemplateOutlet="detailsTemplate; context: { $implicit: row }"></ng-container>
     </td>

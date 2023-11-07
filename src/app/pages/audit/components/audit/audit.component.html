@@ -6,7 +6,7 @@
   </ix-page-title-header>
 </ng-template>
 
-<mat-card class="header-card">
+<mat-card class="header-card item-search">
   <div class="header-card-item">
     <ix-fake-progress-bar
       class="loader-bar"
@@ -22,15 +22,19 @@
 
 <div class="container" fxLayoutGap="16px">
   <div class="table-container">
-    <ix-table2
-      [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
-      [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
-    >
+    <div class="sticky-header">
       <thead
+        class="audit-header-row"
         ix-table-head
         [columns]="columns"
         [dataProvider]="dataProvider"
       ></thead>
+    </div>
+
+    <ix-table2
+      [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
+      [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
+    >
       <tbody
         ix-table-body
         [columns]="columns"
@@ -43,8 +47,8 @@
   </div>
 
   <div
+    ixDetailsHeight
     class="details-container"
-    ixDetailsHeight="rightside-content-hold"
     [class.details-container-mobile]="showMobileDetails"
   >
     <ix-fake-progress-bar
