@@ -1,7 +1,7 @@
 @import 'scss-imports/splitview';
 @import 'mixins/layout';
 
-@include tree-node-with-details-container(284px);
+@include tree-node-with-details-container;
 
 :host ::ng-deep {
   ix-empty-row {
@@ -74,6 +74,7 @@
 .details-container {
   flex: 1.2;
   max-width: 100%;
+  top: 65px;
 }
 
 .search-control {

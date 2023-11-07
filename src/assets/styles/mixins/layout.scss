@@ -2,7 +2,7 @@ $singlecolumn-max-width: ($card-width-slim + $gap * 2);
 $dualcolumn-slim-max-width: ($card-width-slim * 2 + $gap * 2);
 $scrollbar-offset: 20px;
 
-@mixin tree-node-with-details-container($header-height) {
+@mixin tree-node-with-details-container() {
   .container {
     display: flex;
     flex-direction: row;

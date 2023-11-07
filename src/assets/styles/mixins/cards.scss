@@ -11,7 +11,7 @@
   .scroll-window {
     columns: calc(50vw / 2.7);
     gap: 8px;
-    min-height: 100vh;
+    min-height: 100%;
 
     @media (max-width: $breakpoint-tablet) {
       columns: 1;
