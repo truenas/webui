@@ -10,7 +10,7 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Subject, of } from 'rxjs';
+import { of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
@@ -18,7 +18,8 @@ import { CloudsyncCredential, CloudsyncCredentialUpdate } from 'app/interfaces/c
 import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { SLIDE_IN_CLOSER, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
@@ -70,10 +71,8 @@ import {
 import {
   WebdavProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/webdav-provider-form/webdav-provider-form.component';
-import { SshKeypairFormComponent } from 'app/pages/credentials/backup-credentials/ssh-keypair-form/ssh-keypair-form.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 // TODO: Form is partially backend driven and partially hardcoded on the frontend.
@@ -103,13 +102,12 @@ export class CloudCredentialsFormComponent implements OnInit {
     private formBuilder: FormBuilder,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
+    private slideInRef: IxSlideInRef<CloudCredentialsFormComponent>,
     private dialogService: DialogService,
     private formErrorHandler: FormErrorHandlerService,
     private translate: TranslateService,
-    private chainedSlideInService: IxChainedSlideInService,
     private snackbarService: SnackbarService,
     @Inject(SLIDE_IN_DATA) private credential: CloudsyncCredential,
-    @Inject(SLIDE_IN_CLOSER) private slideInCloser$: Subject<unknown>,
   ) {
     // Has to be earlier than potential `setCredentialsForEdit` call
     this.setFormEvents();
@@ -171,7 +169,7 @@ export class CloudCredentialsFormComponent implements OnInit {
               ? this.translate.instant('Cloud credential added.')
               : this.translate.instant('Cloud credential updated.'),
           );
-          this.slideInCloser$.next(true);
+          this.slideInRef.close(true);
           this.cdr.markForCheck();
         },
         error: (error) => {
@@ -253,7 +251,7 @@ export class CloudCredentialsFormComponent implements OnInit {
         },
         error: (error: WebsocketError) => {
           this.dialogService.error(this.errorHandler.parseWsError(error));
-          this.slideInCloser$.next(null);
+          this.slideInRef.close();
         },
       });
   }
@@ -261,12 +259,7 @@ export class CloudCredentialsFormComponent implements OnInit {
   private setFormEvents(): void {
     this.commonForm.controls.provider.valueChanges
       .pipe(untilDestroyed(this))
-      .subscribe((provider) => {
-        if (provider === CloudsyncProviderName.AmazonS3) {
-          const onClose$ = new Subject();
-          this.chainedSlideInService.pushComponent({ component: SshKeypairFormComponent, close$: onClose$ });
-          return;
-        }
+      .subscribe(() => {
         this.renderProviderForm();
 
         this.setDefaultName();
