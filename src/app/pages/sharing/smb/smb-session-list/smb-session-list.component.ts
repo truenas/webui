@@ -51,9 +51,15 @@ export class SmbSessionListComponent implements OnInit {
 
   ngOnInit(): void {
     const smbStatus$ = this.ws.call('smb.status', [SmbInfoLevel.Sessions]).pipe(
-      tap((sessions) => this.sessions = sessions),
+      tap((sessions) => {
+        this.sessions = sessions;
+        if (this.filterString) {
+          this.onListFiltered(this.filterString);
+        }
+      }),
       untilDestroyed(this),
     );
+
     this.dataProvider = new AsyncDataProvider<SmbSession>(smbStatus$);
     this.loadData();
   }
@@ -63,7 +69,7 @@ export class SmbSessionListComponent implements OnInit {
   }
 
   onListFiltered(query: string): void {
-    this.filterString = query.toLowerCase();
+    this.filterString = query?.toString()?.toLowerCase();
     this.dataProvider.setRows(this.sessions.filter((session) => {
       return [
         session.session_id,
@@ -74,7 +80,7 @@ export class SmbSessionListComponent implements OnInit {
         session.uid,
         session.gid,
         session.session_dialect,
-      ].includes(this.filterString);
+      ].some((value) => value.toString().toLowerCase().includes(this.filterString));
     }));
   }
 

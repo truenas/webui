@@ -5,11 +5,9 @@ import {
   Output,
   EventEmitter,
 } from '@angular/core';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import { VdevType } from 'app/enums/v-dev-type.enum';
 import { Disk, isTopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-disk-details-panel',
   templateUrl: './disk-details-panel.component.html',
