@@ -7,8 +7,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
-import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
@@ -19,7 +19,7 @@ import { WebSocketService } from 'app/services/ws.service';
 describe('ExtendDialogComponent', () => {
   let spectator: Spectator<ExtendDialogComponent>;
   let loader: HarnessLoader;
-  let newDiskSelect: IxSelectHarness;
+
   const createComponent = createComponentFactory({
     component: ExtendDialogComponent,
     imports: [
@@ -59,19 +59,17 @@ describe('ExtendDialogComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
+  beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    newDiskSelect = await loader.getHarness(IxSelectHarness);
-  });
-
-  it('loads unused disks and shows them in a New Disk select', async () => {
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalled();
-    expect(await newDiskSelect.getOptionLabels()).toEqual(['sde (10.91 TiB)', 'sdf (9.1 TiB)']);
   });
 
   it('extends a vdev when new unused disk is selected', async () => {
-    await newDiskSelect.setValue('sde (10.91 TiB)');
+    const form = await loader.getHarness(IxFormHarness);
+    await form.fillForm({
+      'New Disk': 'sde (10.91 TiB)',
+    });
+
     const extendButton = await loader.getHarness(MatButtonHarness.with({ text: 'Extend' }));
     await extendButton.click();
 
@@ -87,7 +85,11 @@ describe('ExtendDialogComponent', () => {
   });
 
   it('sends submit request with allow_duplicate_serials = true when selected disk is listed as having duplicate serial', async () => {
-    await newDiskSelect.setValue('sdf (9.1 TiB)');
+    const form = await loader.getHarness(IxFormHarness);
+    await form.fillForm({
+      'New Disk': 'sdf (9.1 TiB)',
+    });
+
     const extendButton = await loader.getHarness(MatButtonHarness.with({ text: 'Extend' }));
     await extendButton.click();
 

@@ -39,6 +39,7 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
   @Input() autocomplete = 'off';
   @Input() autocompleteOptions: Option[];
   @Input() postfix?: string;
+  @Input() maxLength = 524288;
 
   /**
    * @deprecated Avoid using. Use valueChanges.

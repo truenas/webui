@@ -1,99 +1,145 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { ScrubTaskUi } from 'app/interfaces/scrub-task.interface';
-import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
-import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
-import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
+import { filter, switchMap } from 'rxjs/operators';
+import { PoolScrubTask } from 'app/interfaces/pool-scrub.interface';
+import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
 import {
-  ScrubTaskFormComponent,
-} from 'app/pages/data-protection/scrub-task/scrub-task-form/scrub-task-form.component';
+  actionsColumn,
+} from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
+import {
+  relativeDateColumn,
+} from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
+import {
+  scheduleColumn,
+} from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-schedule/ix-cell-schedule.component';
+import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import {
+  yesNoColumn,
+} from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
+import { createTable } from 'app/modules/ix-table2/utils';
+import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { CrontabExplanationPipe } from 'app/modules/scheduler/pipes/crontab-explanation.pipe';
+import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
+import { ScrubTaskFormComponent } from 'app/pages/data-protection/scrub-task/scrub-task-form/scrub-task-form.component';
+import { DialogService } from 'app/services/dialog.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { TaskService } from 'app/services/task.service';
-import { UserService } from 'app/services/user.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
-  template: '<ix-entity-table [title]="title" [conf]="this"></ix-entity-table>',
-  providers: [TaskService, UserService],
+  selector: 'ix-scrub-list',
+  templateUrl: './scrub-list.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [CrontabExplanationPipe],
 })
-export class ScrubListComponent implements EntityTableConfig {
-  title = this.translate.instant('Scrub Tasks');
-  queryCall = 'pool.scrub.query' as const;
-  wsDelete = 'pool.scrub.delete' as const;
-  routeAdd: string[] = ['tasks', 'scrub', 'add'];
-  routeAddTooltip = this.translate.instant('Add Scrub Task');
-  routeEdit: string[] = ['tasks', 'scrub', 'edit'];
-  entityList: EntityTableComponent;
-  parent: ScrubListComponent;
+export class ScrubListComponent implements OnInit {
+  dataProvider: AsyncDataProvider<PoolScrubTask>;
 
-  columns = [
-    { name: this.translate.instant('Pool'), prop: 'pool_name', always_display: true },
-    { name: this.translate.instant('Threshold days'), prop: 'threshold' },
-    { name: this.translate.instant('Description'), prop: 'description' },
-    {
-      name: this.translate.instant('Schedule'),
-      prop: 'cron_schedule',
-      widget: {
-        icon: 'calendar-range',
-        component: 'TaskScheduleListComponent',
-      },
-    },
-    { name: this.translate.instant('Frequency'), prop: 'frequency', enableMatTooltip: true },
-    { name: this.translate.instant('Next Run'), prop: 'next_run' },
-    { name: this.translate.instant('Enabled'), prop: 'enabled' },
-  ];
-  rowIdentifier = 'id';
-  config = {
-    paging: true,
-    sorting: { columns: this.columns },
-    deleteMsg: {
-      title: this.translate.instant('Scrub Task'),
-      key_props: ['pool_name'],
-    },
-  };
+  columns = createTable<PoolScrubTask>([
+    textColumn({
+      title: this.translate.instant('Pool'),
+      propertyName: 'pool_name',
+    }),
+    textColumn({
+      title: this.translate.instant('Threshold Days'),
+      propertyName: 'threshold',
+    }),
+    textColumn({
+      title: this.translate.instant('Description'),
+      propertyName: 'description',
+    }),
+    scheduleColumn({
+      title: this.translate.instant('Schedule'),
+      propertyName: 'schedule',
+    }),
+    textColumn({
+      title: this.translate.instant('Frequency'),
+      propertyName: 'schedule',
+      sortable: false,
+      getValue: (task) => this.crontabExplanation.transform(scheduleToCrontab(task.schedule)),
+    }),
+    relativeDateColumn({
+      title: this.translate.instant('Next Run'),
+      getValue: (row) => this.taskService.getTaskNextTime(scheduleToCrontab(row.schedule)),
+    }),
+    yesNoColumn({
+      title: this.translate.instant('Enabled'),
+      propertyName: 'enabled',
+    }),
+    actionsColumn({
+      actions: [
+        {
+          iconName: 'edit',
+          tooltip: this.translate.instant('Edit'),
+          onClick: (row) => this.onEdit(row),
+        },
+        {
+          iconName: 'delete',
+          tooltip: this.translate.instant('Delete'),
+          onClick: (row) => this.onDelete(row),
+        },
+      ],
+    }),
+  ]);
 
   constructor(
-    protected taskService: TaskService,
-    protected slideInService: IxSlideInService,
-    protected translate: TranslateService,
+    private translate: TranslateService,
+    private crontabExplanation: CrontabExplanationPipe,
+    private taskService: TaskService,
+    private ws: WebSocketService,
+    private slideIn: IxSlideInService,
+    private dialogService: DialogService,
+    private loader: AppLoaderService,
+    private errorHandler: ErrorHandlerService,
+    protected emptyService: EmptyService,
+    private cdr: ChangeDetectorRef,
   ) {}
 
-  afterInit(entityList: EntityTableComponent): void {
-    this.entityList = entityList;
+  ngOnInit(): void {
+    this.dataProvider = new AsyncDataProvider(this.ws.call('pool.scrub.query'));
+    this.dataProvider.load();
   }
 
-  resourceTransformIncomingRestData(data: ScrubTaskUi[]): ScrubTaskUi[] {
-    return data.map((task) => {
-      task.cron_schedule = scheduleToCrontab(task.schedule);
-      task.frequency = this.taskService.getTaskCronDescription(task.cron_schedule);
-      task.next_run = this.taskService.getTaskNextRun(task.cron_schedule);
-
-      return task;
-    });
+  protected columnsChange(columns: typeof this.columns): void {
+    this.columns = [...columns];
+    this.cdr.detectChanges();
+    this.cdr.markForCheck();
   }
 
-  doAdd(): void {
-    const slideInRef = this.slideInService.open(ScrubTaskFormComponent);
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
+  protected onAdd(): void {
+    this.slideIn.open(ScrubTaskFormComponent)
+      .slideInClosed$
+      .pipe(untilDestroyed(this))
+      .subscribe(() => this.dataProvider.load());
   }
 
-  getActions(): EntityTableAction<ScrubTaskUi>[] {
-    return [{
-      id: 'edit',
-      icon: 'edit',
-      label: 'Edit',
-      onClick: (row: ScrubTaskUi) => {
-        const slideInRef = this.slideInService.open(ScrubTaskFormComponent, { data: row });
-        slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
-      },
-    }, {
-      id: 'delete',
-      icon: 'delete',
-      label: 'Delete',
-      onClick: (rowinner: ScrubTaskUi) => {
-        this.entityList.doDelete(rowinner);
-      },
-    }] as EntityTableAction[];
+  private onEdit(row: PoolScrubTask): void {
+    this.slideIn.open(ScrubTaskFormComponent, { data: row })
+      .slideInClosed$
+      .pipe(untilDestroyed(this))
+      .subscribe(() => this.dataProvider.load());
+  }
+
+  private onDelete(row: PoolScrubTask): void {
+    this.dialogService.confirm({
+      title: this.translate.instant('Delete Scrub Task'),
+      message: this.translate.instant('Are you sure you want to delete this scrub task?'),
+      buttonText: this.translate.instant('Delete'),
+    })
+      .pipe(
+        filter(Boolean),
+        switchMap(() => {
+          return this.ws.call('pool.scrub.delete', [row.id]).pipe(
+            this.loader.withLoader(),
+            this.errorHandler.catchError(),
+          );
+        }),
+        untilDestroyed(this),
+      )
+      .subscribe(() => this.dataProvider.load());
   }
 }

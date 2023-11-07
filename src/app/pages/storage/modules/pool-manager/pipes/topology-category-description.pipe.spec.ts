@@ -49,7 +49,6 @@ describe('TopologyCategoryDescriptionPipe', () => {
       width: 3,
       diskType: DiskType.Hdd,
       vdevs: [[{}], [{}]],
-    } as PoolManagerTopologyCategory, false),
-    ).toBe('3 × 2 GiB (HDD)');
+    } as PoolManagerTopologyCategory, false)).toBe('3 × 2 GiB (HDD)');
   });
 });

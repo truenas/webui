@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { filter } from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Device } from 'app/interfaces/device.interface';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
@@ -49,7 +50,7 @@ export class IsolatedGpusCardComponent implements OnInit {
     await this.advancedSettings.showFirstTimeWarningIfNeeded();
 
     const slideInRef = this.slideInService.open(IsolatedGpusFormComponent);
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.loadIsolatedGpus());
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.loadIsolatedGpus());
   }
 
   private loadIsolatedGpus(): void {

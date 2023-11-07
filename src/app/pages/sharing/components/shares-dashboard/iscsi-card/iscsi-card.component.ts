@@ -1,12 +1,12 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, map, switchMap, tap } from 'rxjs';
-import { ServiceStatus } from 'app/enums/service-status.enum';
+import { tap, map, filter, switchMap } from 'rxjs';
+import { ServiceName } from 'app/enums/service-name.enum';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
-import { Service } from 'app/interfaces/service.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
-import { templateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component';
+import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
@@ -16,6 +16,8 @@ import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { ServicesState } from 'app/store/services/services.reducer';
+import { selectService } from 'app/store/services/services.selectors';
 
 @UntilDestroy()
 @Component({
@@ -25,9 +27,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IscsiCardComponent implements OnInit {
-  @Input() service: Service;
-
-  @Output() statusChanged = new EventEmitter<ServiceStatus>();
+  service$ = this.store$.select(selectService(ServiceName.Iscsi));
 
   iscsiShares: IscsiTarget[] = [];
   dataProvider: AsyncDataProvider<IscsiTarget>;
@@ -41,7 +41,20 @@ export class IscsiCardComponent implements OnInit {
       title: this.translate.instant('Target Alias'),
       propertyName: 'alias',
     }),
-    templateColumn(),
+    actionsColumn({
+      actions: [
+        {
+          iconName: 'edit',
+          tooltip: this.translate.instant('Edit'),
+          onClick: (row) => this.openForm(row),
+        },
+        {
+          iconName: 'delete',
+          tooltip: this.translate.instant('Delete'),
+          onClick: (row) => this.doDelete(row),
+        },
+      ],
+    }),
   ]);
 
   constructor(
@@ -52,6 +65,7 @@ export class IscsiCardComponent implements OnInit {
     private dialogService: DialogService,
     protected emptyService: EmptyService,
     private cdr: ChangeDetectorRef,
+    private store$: Store<ServicesState>,
   ) {}
 
   ngOnInit(): void {
@@ -61,6 +75,7 @@ export class IscsiCardComponent implements OnInit {
       untilDestroyed(this),
     );
     this.dataProvider = new AsyncDataProvider<IscsiTarget>(iscsiShares$);
+    this.getIscsiTargets();
   }
 
   openForm(row?: IscsiTarget, openWizard?: boolean): void {
@@ -72,7 +87,7 @@ export class IscsiCardComponent implements OnInit {
       slideInRef = this.slideInService.open(TargetFormComponent, { data: row, wide: true });
     }
 
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => {
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.getIscsiTargets();
     });
   }
@@ -96,6 +111,6 @@ export class IscsiCardComponent implements OnInit {
   }
 
   private getIscsiTargets(): void {
-    this.dataProvider.refresh();
+    this.dataProvider.load();
   }
 }

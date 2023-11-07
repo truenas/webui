@@ -6,7 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { switchMap, filter, tap } from 'rxjs';
 import { KeychainCredential, KeychainSshKeyPair } from 'app/interfaces/keychain-credential.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
-import { templateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component';
+import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table2/utils';
@@ -34,7 +34,25 @@ export class SshKeypairCardComponent implements OnInit {
       propertyName: 'name',
       sortable: true,
     }),
-    templateColumn(),
+    actionsColumn({
+      actions: [
+        {
+          iconName: 'save_alt',
+          tooltip: this.translate.instant('Download'),
+          onClick: (row) => this.doDownload(row),
+        },
+        {
+          iconName: 'edit',
+          tooltip: this.translate.instant('Edit'),
+          onClick: (row) => this.doEdit(row),
+        },
+        {
+          iconName: 'delete',
+          tooltip: this.translate.instant('Delete'),
+          onClick: (row) => this.doDelete(row),
+        },
+      ],
+    }),
   ]);
 
   constructor(
@@ -54,10 +72,11 @@ export class SshKeypairCardComponent implements OnInit {
     );
     this.dataProvider = new AsyncDataProvider<KeychainSshKeyPair>(credentials$);
     this.setDefaultSort();
+    this.getCredentials();
   }
 
   getCredentials(): void {
-    this.dataProvider.refresh();
+    this.dataProvider.load();
   }
 
   setDefaultSort(): void {

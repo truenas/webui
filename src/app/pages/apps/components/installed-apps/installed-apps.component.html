@@ -26,7 +26,6 @@
   </ix-page-title-header>
 </ng-template>
 
-
 <div class="container">
   <div class="table-container">
     <div class="table-header">
@@ -87,80 +86,97 @@
       </div>
     </div>
 
-    <div class="app-search">
-      <ix-fake-progress-bar *ngIf="!showMobileDetails" [loading]="isLoading"></ix-fake-progress-bar>
+    <div class="item-search">
+      <ix-fake-progress-bar
+        *ngIf="!showMobileDetails"
+        class="loader-bar"
+        [loading]="isLoading"
+      ></ix-fake-progress-bar>
 
       <ix-search-input
+        [maxLength]="100"
         [disabled]="!dataSource.length"
         [value]="filterString"
         (search)="onSearch($event)"
       ></ix-search-input>
     </div>
 
-    <div class="app-wrapper"
+    <div
+      class="sticky-header"
       matSort
       matSortActive="application"
       matSortDirection="asc"
       matSortDisableClear
       (matSortChange)="sortChanged($event)"
     >
-      <div class="app-inner">
-        <div class="app-header-row">
-          <div>
-            <span class="app-name-header">
-              <mat-checkbox
-                *ngIf="dataSource.length"
-                color="primary"
-                ixTest="select-all-app"
-                [checked]="allAppsChecked"
-                (change)="toggleAppsChecked($event.checked)"
-              ></mat-checkbox>
-            </span>
-          </div>
-          <div
-            [matColumnDef]="sortableField.Application"
-            [mat-sort-header]="sortableField.Application"
-          >
-            {{ 'Application' | translate }}
-          </div>
-          <div
-            [matColumnDef]="sortableField.Status"
-            [mat-sort-header]="sortableField.Status"
-          >
-            {{ 'Status' | translate }}
-          </div>
-          <div>{{ 'CPU' | translate }}</div>
-          <div>{{ 'RAM' | translate }}</div>
-          <div>{{ 'Network' | translate }}</div>
-          <div
-            class="app-update-header"
-            [matColumnDef]="sortableField.Updates"
-            [mat-sort-header]="hasUpdates ? sortableField.Updates : null"
-            [disabled]="!hasUpdates"
-          >
-            <span>{{ 'Updates' | translate }}</span>
-            <ix-icon
-              *ngIf="hasUpdates"
-              name="mdi-alert-circle"
-              matTooltipPosition="above"
-              [matTooltip]="'Updates available' | translate"
-            ></ix-icon>
-          </div>
-          <div></div>
+      <div class="app-header-row">
+        <div>
+          <span class="name-header">
+            <mat-checkbox
+              *ngIf="dataSource.length"
+              color="primary"
+              ixTest="select-all-app"
+              [checked]="allAppsChecked"
+              [indeterminate]="!allAppsChecked && !!selection.selected.length"
+              (change)="toggleAppsChecked($event.checked)"
+            ></mat-checkbox>
+          </span>
         </div>
+        <div
+          [matColumnDef]="sortableField.Application"
+          [mat-sort-header]="sortableField.Application"
+        >
+          {{ 'Application' | translate }}
+        </div>
+        <div
+          [matColumnDef]="sortableField.Status"
+          [mat-sort-header]="sortableField.Status"
+        >
+          {{ 'Status' | translate }}
+        </div>
+        <div>{{ 'CPU' | translate }}</div>
+        <div>{{ 'RAM' | translate }}</div>
+        <div>{{ 'Network' | translate }}</div>
+        <div
+          class="app-update-header"
+          [matColumnDef]="sortableField.Updates"
+          [mat-sort-header]="hasUpdates ? sortableField.Updates : null"
+          [disabled]="!hasUpdates"
+        >
+          <span>{{ 'Updates' | translate }}</span>
+          <ix-icon
+            *ngIf="hasUpdates"
+            name="mdi-alert-circle"
+            matTooltipPosition="above"
+            [matTooltip]="'Updates available' | translate"
+          ></ix-icon>
+        </div>
+        <div></div>
+      </div>
+    </div>
 
+    <div
+      matSort
+      matSortDisableClear
+      matSortActive="application"
+      matSortDirection="asc"
+      class="app-wrapper"
+      (matSortChange)="sortChanged($event)"
+    >
+      <div class="app-inner">
         <div class="apps-rows">
           <ng-container *ngFor="let app of filteredApps; trackBy: trackAppBy">
             <ix-app-row
               routerLinkActive="selected"
               [app]="app"
+              [selected]="selection.isSelected(app.id)"
               [status]="getAppStatus(app.name)"
-              [selected]="app.selected"
               [job]="appJobs.get(app.name)"
               [routerLink]="['/apps/installed', app.catalog, app.catalog_train, app.id]"
               (startApp)="start(app.name)"
               (stopApp)="stop(app.name)"
               (clickStatus)="openStatusDialog(app.name)"
+              (selectionChange)="selection.toggle(app.id)"
               (click)="viewDetails(app)"
               (keydown.enter)="viewDetails(app)"
             ></ix-app-row>
@@ -176,10 +192,15 @@
 
   <div
     *ngIf="selectedApp"
+    ixDetailsHeight
     class="details-container"
-    ixDetailsHeight="rightside-content-hold"
     [class.details-container-mobile]="showMobileDetails"
   >
-    <ix-app-details-panel [app]="selectedApp"></ix-app-details-panel>
+    <ix-app-details-panel
+      [app]="selectedApp"
+      [status]="getAppStatus(selectedApp.name)"
+      (startApp)="start(selectedApp.name)"
+      (stopApp)="stop(selectedApp.name)"
+    ></ix-app-details-panel>
   </div>
 </div>

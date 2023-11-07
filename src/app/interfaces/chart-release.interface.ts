@@ -74,9 +74,6 @@ export interface ChartRelease {
   history: { [key: string]: ChartReleaseVersion };
   resources?: ChartResources;
   stats?: ChartReleaseStats;
-
-  // TODO: Frontend field, move to another interface.
-  selected?: boolean;
 }
 
 export interface ChartReleaseStats {

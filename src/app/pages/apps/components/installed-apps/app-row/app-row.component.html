@@ -2,9 +2,9 @@
   <mat-checkbox
     color="primary"
     [ixTest]="app.name"
-    [checked]="app.selected"
+    [checked]="selected"
     (click)="$event.stopPropagation()"
-    (change)="toggleAppChecked($event.checked)"
+    (change)="toggleAppChecked()"
   ></mat-checkbox>
 </div>
 <div class="cell cell-name">
@@ -86,3 +86,7 @@
 <ng-template #notAvailable>
   {{ 'N/A' | translate }}
 </ng-template>
+
+<div class="cell-clickable">
+  <ix-icon name="mdi-chevron-right"></ix-icon>
+</div>

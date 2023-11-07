@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { TooltipPosition } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
@@ -11,6 +11,7 @@ import {
 import {
   catchError, debounceTime, filter, map,
 } from 'rxjs/operators';
+import { YesNoPipe } from 'app/core/pipes/yes-no.pipe';
 import { SmartTestResultPageType } from 'app/enums/smart-test-results-page-type.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Choices } from 'app/interfaces/choices.interface';
@@ -38,6 +39,7 @@ import { WebSocketService } from 'app/services/ws.service';
 @UntilDestroy()
 @Component({
   template: '<ix-entity-table [title]="title" [conf]="this"></ix-entity-table>',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
   title = this.translate.instant('Disks');
@@ -123,6 +125,7 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
     private slideInService: IxSlideInService,
     private dialogService: DialogService,
     private disksUpdate: DisksUpdateService,
+    private yesNoPipe: YesNoPipe,
   ) {}
 
   ngOnDestroy(): void {
@@ -222,6 +225,15 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
     });
     this.diskUpdateSubscriptionId = this.disksUpdate.addSubscriber(disksUpdateTrigger$);
     this.entityList = entityList;
+
+    this.entityList.dataSource$.pipe(untilDestroyed(this)).subscribe(data => {
+      this.entityList.dataSource.data = data.map(item => {
+        return {
+          ...item,
+          togglesmart: this.yesNoPipe.transform(item.togglesmart) as unknown as boolean,
+        };
+      });
+    });
   }
 
   resourceTransformIncomingRestData(disks: Disk[]): Disk[] {
@@ -229,6 +241,7 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
       ...disk,
       pool: this.getPoolColumn(disk),
       readable_size: filesize(disk.size, { standard: 'iec' }),
+      togglesmart: this.yesNoPipe.transform(disk.togglesmart) as unknown as boolean,
     }));
   }
 

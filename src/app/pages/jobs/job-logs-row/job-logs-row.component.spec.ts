@@ -29,6 +29,7 @@ const fakeJob: Job = {
   state: JobState.Failed,
   time_finished: { $date: 1653721201697 },
   time_started: { $date: 1653721201446 },
+  credentials: null,
 };
 
 describe('JobLogsRowComponent', () => {

@@ -118,7 +118,7 @@ export class DatasetQuotaAddFormComponent implements OnInit {
         next: () => {
           this.snackbar.success(this.translate.instant('Quotas added'));
           this.isLoading = false;
-          this.slideInRef.close();
+          this.slideInRef.close(true);
           this.cdr.markForCheck();
         },
         error: (error) => {

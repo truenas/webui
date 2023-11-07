@@ -18,16 +18,4 @@
     text-overflow: inherit !important;
     width: 78px;
   }
-
-  .justify-end {
-    display: flex;
-    height: inherit;
-    justify-content: flex-end;
-
-    mat-slide-toggle {
-      align-items: center;
-      display: flex;
-      height: 100%;
-    }
-  }
 }

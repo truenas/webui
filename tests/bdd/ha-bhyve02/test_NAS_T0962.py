@@ -1,6 +1,7 @@
 # coding=utf-8
 """SCALE High Availability (tn-bhyve06) feature tests."""
 
+import os
 import pytest
 import reusableSeleniumCode as rsc
 import time
@@ -31,6 +32,7 @@ def test_verify_active_directory_works_after_failover_with_new_system_dataset(dr
 def the_browser_is_open_navigate_to_nas_url(driver, nas_url, request):
     """the browser is open, navigate to "{nas_url}"."""
     depends(request, ["System_Dataset", 'Setup_SSH'], scope='session')
+    os.environ["nas_ip"] = nas_url
     global host
     host = nas_url
 
@@ -44,6 +46,7 @@ def if_the_login_page_appears_enter_root_and_testing(driver, user, password):
     """if the login page appears, enter "root" and "testing"."""
     global root_password
     root_password = password
+    os.environ["nas_password"] = password
     rsc.Login_If_Not_On_Dashboard(driver, user, password)
 
 
@@ -130,6 +133,8 @@ def on_the_active_cirectory_page_input_the_domain_name_ad_domain(driver, ad_doma
 @then(parsers.parse('input the Account name "{ad_user}", the Password "{ad_password}"'))
 def input_the_account_name_ad_user_the_password_ap_password(driver, ad_user, ad_password):
     """input the Account name "ad_user", the Password "ad_password"."""
+    os.environ["ad_user"] = ad_user
+    os.environ["ad_password"] = ad_password
     driver.find_element_by_xpath(xpaths.active_Directory.account_Input).clear()
     driver.find_element_by_xpath(xpaths.active_Directory.account_Input).send_keys(ad_user)
     driver.find_element_by_xpath(xpaths.active_Directory.password_Input).clear()

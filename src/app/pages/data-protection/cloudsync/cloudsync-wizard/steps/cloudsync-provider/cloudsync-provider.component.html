@@ -1,0 +1,48 @@
+<form (submit)="onSubmit()">
+  <ix-fieldset [formGroup]="form">
+    <ix-select
+      formControlName="exist_credential"
+      [label]="'Credentials' | translate"
+      [options]="existCredentialOptions$"
+      [hideEmpty]="true"
+      [tooltip]="helptext.exist_provider.tooltip | translate"
+    ></ix-select>
+
+    <ix-select
+      *ngIf="form.controls.provider.enabled"
+      formControlName="provider"
+      [label]="'Provider' | translate"
+      [tooltip]="helptext.provider.tooltip | translate"
+      [required]="true"
+      [options]="providerOptions$"
+    ></ix-select>
+
+    <ix-input
+      *ngIf="form.controls.name.enabled"
+      formControlName="name"
+      [label]="'Name' | translate"
+      [required]="true"
+      [tooltip]="helptext.name.tooltip | translate"
+    ></ix-input>
+
+    <ng-container #providerFormContainer></ng-container>
+  </ix-fieldset>
+
+  <ix-form-actions>
+    <button
+      mat-button
+      matStepperNext
+      type="submit"
+      color="primary"
+      ixTest="next"
+      [disabled]="areActionsDisabled"
+    >{{ 'Next' | translate }}</button>
+    <button
+      mat-button
+      type="button"
+      ixTest="verify-credential"
+      [disabled]="areActionsDisabled"
+      (click)="onVerify()"
+    >{{ 'Verify Credential' | translate }}</button>
+  </ix-form-actions>
+</form>

@@ -4,19 +4,21 @@ import {
   Component,
   EventEmitter,
   Input,
+  OnChanges,
   OnInit,
   Output,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { filter } from 'rxjs/operators';
+import { BehaviorSubject, of } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
 import { NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import helptext from 'app/helptext/network/interfaces/interfaces-list';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { AllNetworkInterfacesUpdate } from 'app/interfaces/reporting.interface';
 import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
-import { templateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component';
+import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -40,9 +42,11 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
   styleUrls: ['./interfaces-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class InterfacesCardComponent implements OnInit {
+export class InterfacesCardComponent implements OnInit, OnChanges {
   @Input() isHaEnabled = false;
   @Output() interfacesUpdated = new EventEmitter<void>();
+
+  isHaEnabled$ = new BehaviorSubject(false);
 
   isLoading = false;
   dataProvider = new ArrayDataProvider<NetworkInterface>();
@@ -61,7 +65,31 @@ export class InterfacesCardComponent implements OnInit {
       type: IpAddressesCellComponent,
       title: this.translate.instant('IP Addresses'),
     },
-    templateColumn(),
+    actionsColumn({
+      actions: [
+        {
+          iconName: 'edit',
+          tooltip: this.translate.instant('Edit'),
+          onClick: (row) => this.onEdit(row),
+        },
+        {
+          iconName: 'refresh',
+          hidden: (row) => of(!this.isPhysical(row)),
+          disabled: () => this.isHaEnabled$,
+          dynamicTooltip: () => this.isHaEnabled$.pipe(map((isHaEnabled) => isHaEnabled
+            ? this.translate.instant(helptext.ha_enabled_reset_msg)
+            : this.translate.instant('Reset configuration'))),
+          onClick: (row) => this.onReset(row),
+        },
+        {
+          iconName: 'delete',
+          tooltip: this.isHaEnabled ? this.translate.instant(helptext.ha_enabled_delete_msg) : '',
+          hidden: (row) => of(this.isPhysical(row)),
+          onClick: (row) => this.onDelete(row),
+          disabled: () => this.isHaEnabled$,
+        },
+      ],
+    }),
   ]);
 
   readonly helptext = helptext;
@@ -81,6 +109,10 @@ export class InterfacesCardComponent implements OnInit {
 
   isPhysical(row: NetworkInterface): boolean {
     return row.type === NetworkInterfaceType.Physical;
+  }
+
+  ngOnChanges(): void {
+    this.isHaEnabled$.next(this.isHaEnabled);
   }
 
   ngOnInit(): void {

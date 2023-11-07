@@ -19,14 +19,16 @@ describe('AsyncDataProvider', () => {
   it('sets rows after init', async () => {
     const request$ = of(testTableData);
     const dataProvider = new AsyncDataProvider<TestTableData>(request$);
+    dataProvider.load();
 
-    expect(dataProvider.rows).toEqual(testTableData);
+    expect(dataProvider.totalRows).toBe(4);
     expect(await firstValueFrom(dataProvider.currentPage$)).toEqual(testTableData);
   });
 
   it('sets EmptyType when there is data', async () => {
     const request$ = of(testTableData);
     const dataProvider = new AsyncDataProvider<TestTableData>(request$);
+    dataProvider.load();
 
     expect(await firstValueFrom(dataProvider.emptyType$)).toBe(EmptyType.NoSearchResults);
   });
@@ -34,6 +36,7 @@ describe('AsyncDataProvider', () => {
   it('sets EmptyType when not data', async () => {
     const request$ = of([]);
     const dataProvider = new AsyncDataProvider<TestTableData>(request$);
+    dataProvider.load();
 
     expect(await firstValueFrom(dataProvider.emptyType$)).toBe(EmptyType.NoPageData);
   });
@@ -41,6 +44,7 @@ describe('AsyncDataProvider', () => {
   it('sets EmptyType on loading', async () => {
     const request$ = of();
     const dataProvider = new AsyncDataProvider<TestTableData>(request$);
+    dataProvider.load();
 
     expect(await firstValueFrom(dataProvider.emptyType$)).toBe(EmptyType.Loading);
   });
@@ -48,6 +52,7 @@ describe('AsyncDataProvider', () => {
   it('sets EmptyType on error', async () => {
     const request$ = of([]).pipe(tap(() => { throw new Error(); }));
     const dataProvider = new AsyncDataProvider<TestTableData>(request$);
+    dataProvider.load();
 
     expect(await firstValueFrom(dataProvider.emptyType$)).toBe(EmptyType.Errors);
   });

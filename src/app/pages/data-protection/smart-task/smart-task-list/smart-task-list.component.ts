@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import { filter } from 'rxjs';
 import helptext from 'app/helptext/data-protection/smart/smart';
 import { SmartTestTaskUi } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
@@ -20,7 +21,7 @@ import { AppState } from 'app/store';
   providers: [TaskService],
 })
 export class SmartTaskListComponent implements EntityTableConfig {
-  title = this.translate.instant('S.M.A.R.T. Tests');
+  title = this.translate.instant('Periodic S.M.A.R.T. Tests');
   queryCall = 'smart.test.query' as const;
   routeAdd: string[] = ['tasks', 'smart', 'add'];
   routeAddTooltip = this.translate.instant('Add S.M.A.R.T. Test');
@@ -94,7 +95,7 @@ export class SmartTaskListComponent implements EntityTableConfig {
 
   doAdd(): void {
     const slideInRef = this.slideInService.open(SmartTaskFormComponent);
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.entityList.getData());
   }
 
   getActions(): EntityTableAction<SmartTestTaskUi>[] {
@@ -104,7 +105,10 @@ export class SmartTaskListComponent implements EntityTableConfig {
       label: 'Edit',
       onClick: (row: SmartTestTaskUi) => {
         const slideInRef = this.slideInService.open(SmartTaskFormComponent, { data: row });
-        slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
+        slideInRef.slideInClosed$.pipe(
+          filter(Boolean),
+          untilDestroyed(this),
+        ).subscribe(() => this.entityList.getData());
       },
     }, {
       id: 'delete',

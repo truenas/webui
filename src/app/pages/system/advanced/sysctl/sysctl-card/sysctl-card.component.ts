@@ -1,10 +1,10 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, from, switchMap } from 'rxjs';
 import { Tunable } from 'app/interfaces/tunable.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
-import { templateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component';
+import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import {
   yesNoColumn,
@@ -46,7 +46,20 @@ export class SysctlCardComponent implements OnInit {
       title: this.translate.instant('Description'),
       propertyName: 'comment',
     }),
-    templateColumn(),
+    actionsColumn({
+      actions: [
+        {
+          iconName: 'edit',
+          tooltip: this.translate.instant('Edit'),
+          onClick: (row) => this.onEdit(row),
+        },
+        {
+          iconName: 'delete',
+          tooltip: this.translate.instant('Delete'),
+          onClick: (row) => this.onDelete(row),
+        },
+      ],
+    }),
   ]);
 
   constructor(
@@ -55,17 +68,15 @@ export class SysctlCardComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private ws: WebSocketService,
     private dialog: DialogService,
-    private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
     private advancedSettings: AdvancedSettingsService,
     protected emptyService: EmptyService,
   ) {}
 
   ngOnInit(): void {
-    const tunables$ = this.ws.call('tunable.query').pipe(
-      untilDestroyed(this),
-    );
+    const tunables$ = this.ws.call('tunable.query').pipe(untilDestroyed(this));
     this.dataProvider = new AsyncDataProvider<Tunable>(tunables$);
+    this.loadItems();
   }
 
   onAdd(): void {
@@ -73,7 +84,7 @@ export class SysctlCardComponent implements OnInit {
   }
 
   loadItems(): void {
-    this.dataProvider.refresh();
+    this.dataProvider.load();
   }
 
   onDelete(row: Tunable): void {
@@ -85,6 +96,7 @@ export class SysctlCardComponent implements OnInit {
       buttonText: this.translate.instant('Delete'),
     })
       .pipe(
+        filter(Boolean),
         switchMap(() => this.ws.job('tunable.delete', [row.id])),
         this.errorHandler.catchError(),
         untilDestroyed(this),

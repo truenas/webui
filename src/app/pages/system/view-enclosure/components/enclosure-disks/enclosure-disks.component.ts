@@ -15,7 +15,7 @@ import { EnclosureSlotStatus } from 'app/enums/enclosure-slot-status.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import {
-  Enclosure, EnclosureElement, EnclosureSlot, EnclosureView,
+  Enclosure, EnclosureElement, EnclosureElementsGroup, EnclosureSlot, EnclosureView,
 } from 'app/interfaces/enclosure.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { CanvasExtractEvent, DriveSelectedEvent } from 'app/interfaces/events/disk-events.interface';
@@ -166,20 +166,18 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   get selectedVdevSlots(): EnclosureSlot[] | null {
     if (!this.selectedVdevDisks) return [];
 
-    const selectedVdevSlots: unknown[] = this.selectedVdevDisks.map((diskName: string) => {
+    const selectedVdevSlots: EnclosureSlot[] = [];
+    this.selectedVdevDisks.forEach((diskName: string) => {
       const enclosure = this.systemState.disks.find((disk: Disk) => disk.name === diskName)?.enclosure;
 
       if (enclosure) {
-        return this.systemState.enclosureViews.find((view: EnclosureView) => {
-          return view.number === enclosure.number;
-        }).slots.find((eSlot: EnclosureSlot) => {
-          return eSlot.slot === enclosure.slot;
-        });
+        const view = this.systemState.enclosureViews.find((enclosureView) => enclosureView.number === enclosure.number);
+        const slot = view?.slots?.find((eSlot) => eSlot.slot === enclosure.slot);
+        if (slot) selectedVdevSlots.push(slot);
       }
-      return null;
     });
 
-    return selectedVdevSlots as EnclosureSlot[];
+    return selectedVdevSlots;
   }
 
   get selectedEnclosurePools(): string[] {
@@ -1242,5 +1240,13 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
 
         this.enclosureStore.updateLabel(enclosure.id, newLabel);
       });
+  }
+
+  omitDescriptor(group: EnclosureElementsGroup | EnclosureElement): EnclosureElementsGroup | EnclosureElement {
+    const returnValue = { ...group as EnclosureElementsGroup };
+    if (returnValue.header) {
+      returnValue.header = returnValue.header.filter((header) => header !== 'Descriptor');
+    }
+    return returnValue;
   }
 }

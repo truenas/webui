@@ -31,6 +31,7 @@ export class IxSlideInService {
     return this.slideInComponent?.isSlideInOpen;
   }
 
+  // TODO: Rework via cdk overlays or something else that would make it easier to use in tests.
   setSlideComponent(slideComponent: IxSlideInComponent): void {
     this.slideInComponent = slideComponent;
   }

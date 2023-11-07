@@ -1,4 +1,4 @@
-<mat-card>
+<mat-card id="sessions-card">
   <mat-toolbar-row>
     <h3>{{ 'Sessions' | translate }}</h3>
     <div class="actions action-icon">
@@ -33,7 +33,7 @@
 
   <ix-table2
     class="table"
-    [ix-table2-empty]="!dataProvider.rows.length"
+    [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
     [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
   >
     <thead
@@ -46,38 +46,7 @@
       [columns]="columns"
       [dataProvider]="dataProvider"
       [isLoading]="dataProvider.isLoading$ | async"
-    >
-      <ng-template
-        let-session
-        ix-table-cell
-        [columnIndex]="0"
-        [dataProvider]="dataProvider"
-      >
-        {{ getUsername(session) }}
-      </ng-template>
-      <ng-template
-        let-session
-        ix-table-cell
-        [columnIndex]="2"
-        [dataProvider]="dataProvider"
-      >
-        <div
-          class="actions"
-          [matTooltip]="'This session is current and cannot be terminated' | translate"
-          [matTooltipDisabled]="!session.current"
-        >
-          <button
-            mat-icon-button
-            [matTooltip]="'Terminate session' | translate"
-            [ixTest]="['terminate-session', session.id]"
-            [disabled]="session.current"
-            (click)="onTerminate(session.id)"
-          >
-            <ix-icon name="exit_to_app"></ix-icon>
-          </button>
-        </div>
-      </ng-template>
-    </tbody>
+    ></tbody>
   </ix-table2>
   <ix-table-pager-show-more [pageSize]="5" [dataProvider]="dataProvider"></ix-table-pager-show-more>
 </mat-card>

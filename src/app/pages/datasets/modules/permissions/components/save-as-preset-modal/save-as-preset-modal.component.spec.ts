@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AclType } from 'app/enums/acl-type.enum';
 import { Acl, AclTemplateByPath } from 'app/interfaces/acl.interface';
@@ -14,6 +15,7 @@ import { SaveAsPresetModalComponent } from 'app/pages/datasets/modules/permissio
 import { SaveAsPresetModalConfig } from 'app/pages/datasets/modules/permissions/interfaces/save-as-preset-modal-config.interface';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
 import { DialogService } from 'app/services/dialog.service';
+import { UserService } from 'app/services/user.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('SaveAsPresetModalComponent', () => {
@@ -30,6 +32,7 @@ describe('SaveAsPresetModalComponent', () => {
       DatasetAclEditorStore,
       mockProvider(MatDialogRef),
       mockProvider(DialogService),
+      mockProvider(UserService),
       mockWebsocket([
         mockCall('filesystem.acltemplate.by_path', [
           {
@@ -81,7 +84,6 @@ describe('SaveAsPresetModalComponent', () => {
 
     expect(ws.call).toHaveBeenCalledWith('filesystem.acltemplate.by_path', [{
       'format-options': {
-        ensure_builtins: true,
         resolve_names: true,
       },
       path: '/mnt/pool/dataset',
@@ -105,6 +107,7 @@ describe('SaveAsPresetModalComponent', () => {
   });
 
   it('creates new preset after \'Save\' button click', async () => {
+    jest.spyOn(spectator.component, 'loadIds').mockImplementation(() => of({ acl: [], acltype: AclType.Posix1e } as Acl));
     const actionsInput = await loader.getHarness(IxInputHarness);
     await actionsInput.setValue('New Preset');
     spectator.component.acl = { acl: [], acltype: AclType.Posix1e } as Acl;

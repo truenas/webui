@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { catchError, EMPTY, filter, map, switchMap, tap } from 'rxjs';
+import { catchError, EMPTY, filter, map, of, switchMap, tap } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import helptext from 'app/helptext/data-protection/data-protection-dashboard/data-protection-dashboard';
@@ -12,9 +12,9 @@ import { Job } from 'app/interfaces/job.interface';
 import { ReplicationTaskUi } from 'app/interfaces/replication-task.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
+import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { relativeDateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
 import { stateButtonColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
-import { templateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { toggleColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
 import { createTable } from 'app/modules/ix-table2/utils';
@@ -55,7 +55,6 @@ export class ReplicationTaskCardComponent implements OnInit {
     toggleColumn({
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
-      cssClass: 'justify-end',
       onRowToggle: (row: ReplicationTaskUi) => this.onChangeEnabledState(row),
     }),
     stateButtonColumn({
@@ -68,8 +67,37 @@ export class ReplicationTaskCardComponent implements OnInit {
       title: this.translate.instant('Last Run'),
       getValue: (row) => row.state?.datetime?.$date,
     }),
-    templateColumn({
+    actionsColumn({
       cssClass: 'wide-actions',
+      actions: [
+        {
+          iconName: 'edit',
+          tooltip: this.translate.instant('Edit'),
+          onClick: (row) => this.editReplicationTask(row),
+        },
+        {
+          iconName: 'play_arrow',
+          tooltip: this.translate.instant('Run job'),
+          hidden: (row) => of(row.job?.state === JobState.Running),
+          onClick: (row) => this.runNow(row),
+        },
+        {
+          iconName: 'restore',
+          tooltip: this.translate.instant('Restore'),
+          onClick: (row) => this.restore(row),
+        },
+        {
+          iconName: 'download',
+          tooltip: this.translate.instant('Download encryption keys'),
+          hidden: (row) => of(!row.has_encrypted_dataset_keys),
+          onClick: (row) => this.downloadKeys(row),
+        },
+        {
+          iconName: 'delete',
+          tooltip: this.translate.instant('Delete'),
+          onClick: (row) => this.doDelete(row),
+        },
+      ],
     }),
   ]);
 
@@ -93,10 +121,11 @@ export class ReplicationTaskCardComponent implements OnInit {
       untilDestroyed(this),
     );
     this.dataProvider = new AsyncDataProvider<ReplicationTaskUi>(replicationTasks$);
+    this.getReplicationTasks();
   }
 
   getReplicationTasks(): void {
-    this.dataProvider.refresh();
+    this.dataProvider.load();
   }
 
   doDelete(replicationTask: ReplicationTaskUi): void {

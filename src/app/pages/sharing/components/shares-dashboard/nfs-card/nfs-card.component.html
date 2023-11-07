@@ -8,8 +8,8 @@
     </a>
 
     <ix-service-state-button
-      [service]="service"
-      [count]="dataProvider.rows.length"
+      [service]="service$ | async"
+      [count]="dataProvider.currentPageCount$ | async"
     ></ix-service-state-button>
 
     <div class="actions">
@@ -19,16 +19,13 @@
         (click)="openForm()"
       >{{ 'Add' | translate }}</button>
 
-      <ix-service-extra-actions
-        [service]="service"
-        (statusChanged)="statusChanged.emit($event)"
-      ></ix-service-extra-actions>
+      <ix-service-extra-actions [service]="service$ | async"></ix-service-extra-actions>
     </div>
   </mat-toolbar-row>
 
   <ix-table2
     class="table"
-    [ix-table2-empty]="!dataProvider.rows.length"
+    [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
     [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
   >
     <thead
@@ -41,33 +38,7 @@
       [columns]="columns"
       [dataProvider]="dataProvider"
       [isLoading]="dataProvider.isLoading$ | async"
-    >
-      <ng-template
-        let-nfs
-        ix-table-cell
-        [columnIndex]="3"
-        [dataProvider]="dataProvider"
-      >
-        <div class="justify-end">
-          <button
-            mat-icon-button
-            [ixTest]="[nfs.id, 'edit']"
-            [matTooltip]="'Edit' | translate"
-            (click)="openForm(nfs)"
-          >
-            <ix-icon name="edit"></ix-icon>
-          </button>
-          <button
-            mat-icon-button
-            [ixTest]="[nfs.id, 'delete']"
-            [matTooltip]="'Delete' | translate"
-            (click)="doDelete(nfs)"
-          >
-            <ix-icon name="delete"></ix-icon>
-          </button>
-        </div>
-      </ng-template>
-    </tbody>
+    ></tbody>
   </ix-table2>
 
   <a

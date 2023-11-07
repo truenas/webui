@@ -35,6 +35,8 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
     if (this.isDataVdev) {
       return 'Read only field: The layout of this device has been preselected to match the layout of the existing Data devices in the pool';
     }
+
+    return '';
   }
 
   protected vdevLayoutOptions$ = of<SelectOption<CreateVdevLayout>[]>([]);

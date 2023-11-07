@@ -1,36 +1,71 @@
 <ng-template ixPageHeader>
   <ix-page-title-header>
-    <button mat-button color="primary" ixTest="manage-views" (click)="onManageViewsPressed()">
+    <button mat-button color="primary" ixTest="manage-views">
       {{ 'Manage Views' | translate }}
     </button>
   </ix-page-title-header>
 </ng-template>
 
-<div class="header">
-  <ix-input
-    class="search-control"
-    [formControl]="searchControl"
-    [placeholder]="'Search' | translate"
-  ></ix-input>
+<mat-card class="header-card item-search">
+  <div class="header-card-item">
+    <ix-fake-progress-bar
+      class="loader-bar"
+      [loading]="dataProvider.isLoading$ | async"
+    ></ix-fake-progress-bar>
+    <ix-input
+      class="search-control"
+      [formControl]="searchControl"
+      [placeholder]="'Search' | translate"
+    ></ix-input>
+  </div>
+</mat-card>
 
-  <button mat-button ixTest="setup-columns" (click)="onSetupColumns()">
-    {{ 'Setup Columns' | translate }}
-  </button>
+<div class="container" fxLayoutGap="16px">
+  <div class="table-container">
+    <div class="sticky-header">
+      <thead
+        class="audit-header-row"
+        ix-table-head
+        [columns]="columns"
+        [dataProvider]="dataProvider"
+      ></thead>
+    </div>
 
-  <button mat-button ixTest="export" (click)="onExport()">
-    {{ 'Export' | translate }}
-  </button>
+    <ix-table2
+      [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
+      [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
+    >
+      <tbody
+        ix-table-body
+        [columns]="columns"
+        [dataProvider]="dataProvider"
+        [isLoading]="dataProvider.isLoading$ | async"
+      ></tbody>
+    </ix-table2>
+    <ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>
+  </div>
+
+  <div
+    ixDetailsHeight
+    class="details-container"
+    [class.details-container-mobile]="showMobileDetails"
+  >
+    <ix-log-details-panel
+      *ngIf="dataProvider.expandedRow"
+      [log]="dataProvider.expandedRow"
+    ></ix-log-details-panel>
+  </div>
 </div>
 
-<ix-table2>
-  <thead
-    ix-table-head
-    [columns]="columns"
-    [dataProvider]="dataProvider"
-  ></thead>
-  <tbody
-    ix-table-body
-    [columns]="columns"
-    [dataProvider]="dataProvider"
-  ></tbody>
-</ix-table2>
+
+
+
+
+
+
+
+
+
+
+
+

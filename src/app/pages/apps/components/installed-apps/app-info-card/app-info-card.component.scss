@@ -1,4 +1,5 @@
 @import 'mixins/cards';
+@import 'scss-imports/splitview';
 
 .app-logo {
   flex: 0 0 auto;
@@ -56,4 +57,11 @@
     color: var(--fg1);
     content: ', ';
   }
+}
+
+.cell-status-actions {
+  @media (max-width: $breakpoint-tablet) {
+    display: inline-block;
+  }
+  display: none;
 }

@@ -76,6 +76,7 @@ export class CatalogsComponent implements OnInit {
     );
     this.dataProvider = new AsyncDataProvider<Catalog>(catalogs$);
     this.setDefaultSort();
+    this.refresh();
 
     this.listenForCatalogSyncJobs();
   }
@@ -115,7 +116,7 @@ export class CatalogsComponent implements OnInit {
   }
 
   refresh(): void {
-    this.dataProvider.refresh();
+    this.dataProvider.load();
   }
 
   doAdd(): void {
@@ -126,14 +127,14 @@ export class CatalogsComponent implements OnInit {
       hideCheckbox: true,
     }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       const slideInRef = this.slideInService.open(CatalogAddFormComponent);
-      slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.refresh());
+      slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.refresh());
     });
   }
 
   doEdit(catalog: Catalog): void {
     const slideInRef = this.slideInService.open(CatalogEditFormComponent);
     slideInRef.componentInstance.setCatalogForEdit(catalog);
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.refresh());
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.refresh());
   }
 
   doDelete(catalog: Catalog): void {

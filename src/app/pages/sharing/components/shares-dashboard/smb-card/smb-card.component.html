@@ -8,8 +8,8 @@
     </a>
 
     <ix-service-state-button
-      [service]="service"
-      [count]="dataProvider.rows.length"
+      [service]="service$ | async"
+      [count]="dataProvider.currentPageCount$ | async"
     ></ix-service-state-button>
 
     <div class="actions">
@@ -28,15 +28,14 @@
 
       <ix-service-extra-actions
         *ngIf="!isClustered"
-        [service]="service"
-        (statusChanged)="statusChanged.emit($event)"
+        [service]="service$ | async"
       ></ix-service-extra-actions>
     </div>
   </mat-toolbar-row>
 
   <ix-table2
     class="table"
-    [ix-table2-empty]="!dataProvider.rows.length"
+    [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
     [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
   >
     <thead
@@ -49,51 +48,7 @@
       [columns]="columns"
       [dataProvider]="dataProvider"
       [isLoading]="dataProvider.isLoading$ | async"
-    >
-      <ng-template
-        let-smb
-        ix-table-cell
-        [columnIndex]="isClustered ? 3 : 4"
-        [dataProvider]="dataProvider"
-      >
-        <div class="justify-end">
-          <button
-            mat-icon-button
-            [ixTest]="[smb.id, 'share']"
-            [matTooltip]="'Edit Share ACL' | translate"
-            (click)="doShareAclEdit(smb)"
-          >
-            <ix-icon name="share"></ix-icon>
-          </button>
-          <button
-            mat-icon-button
-            [ixTest]="[smb.id, 'security']"
-            [matTooltip]="'Edit Filesystem ACL' | translate"
-            (click)="doFilesystemAclEdit(smb)"
-          >
-            <ix-icon name="security"></ix-icon>
-          </button>
-
-          <button
-            mat-icon-button
-            [ixTest]="[smb.id, 'edit']"
-            [matTooltip]="'Edit' | translate"
-            (click)="openForm(smb)"
-          >
-            <ix-icon name="edit"></ix-icon>
-          </button>
-          <button
-            mat-icon-button
-            [ixTest]="[smb.id, 'delete']"
-            [disabled]="isDeleteActionDisabled"
-            [matTooltip]="'Delete' | translate"
-            (click)="doDelete(smb)"
-          >
-            <ix-icon name="delete"></ix-icon>
-          </button>
-        </div>
-      </ng-template>
-    </tbody>
+    ></tbody>
   </ix-table2>
 
   <a

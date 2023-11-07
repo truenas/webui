@@ -5,9 +5,9 @@ import { filter, map, switchMap } from 'rxjs';
 import { PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
+import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { relativeDateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
 import { stateButtonColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
-import { templateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { toggleColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';
 import { createTable } from 'app/modules/ix-table2/utils';
@@ -46,7 +46,7 @@ export class SnapshotTaskCardComponent implements OnInit {
     }),
     relativeDateColumn({
       title: this.translate.instant('Next Run'),
-      getValue: (row) => this.taskService.getTaskNextTime(scheduleToCrontab(row.schedule)) as unknown,
+      getValue: (row) => this.taskService.getTaskNextTime(scheduleToCrontab(row.schedule)),
     }),
     relativeDateColumn({
       title: this.translate.instant('Last Run'),
@@ -55,7 +55,6 @@ export class SnapshotTaskCardComponent implements OnInit {
     toggleColumn({
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
-      cssClass: 'justify-end',
       onRowToggle: (row: PeriodicSnapshotTaskUi) => this.onChangeEnabledState(row),
     }),
     stateButtonColumn({
@@ -63,7 +62,20 @@ export class SnapshotTaskCardComponent implements OnInit {
       getValue: (row) => row.state.state,
       cssClass: 'state-button',
     }),
-    templateColumn(),
+    actionsColumn({
+      actions: [
+        {
+          iconName: 'edit',
+          tooltip: this.translate.instant('Edit'),
+          onClick: (row) => this.openForm(row),
+        },
+        {
+          iconName: 'delete',
+          tooltip: this.translate.instant('Delete'),
+          onClick: (row) => this.doDelete(row),
+        },
+      ],
+    }),
   ]);
 
   constructor(
@@ -83,10 +95,11 @@ export class SnapshotTaskCardComponent implements OnInit {
       untilDestroyed(this),
     );
     this.dataProvider = new AsyncDataProvider<PeriodicSnapshotTaskUi>(snapshotTasks$);
+    this.getSnapshotTasks();
   }
 
   getSnapshotTasks(): void {
-    this.dataProvider.refresh();
+    this.dataProvider.load();
   }
 
   doDelete(snapshotTask: PeriodicSnapshotTaskUi): void {

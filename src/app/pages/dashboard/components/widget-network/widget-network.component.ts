@@ -1,6 +1,5 @@
-import {
-  Component, AfterViewInit, OnInit,
-} from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
@@ -10,12 +9,11 @@ import { utcToZonedTime } from 'date-fns-tz';
 import filesize from 'filesize';
 import { Subscription, timer } from 'rxjs';
 import {
-  filter, map, take, throttleTime,
+  filter, map, skipWhile, take, throttleTime,
 } from 'rxjs/operators';
 import { KiB } from 'app/constants/bytes.constant';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { LinkState, NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
-import { elapsedTime } from 'app/helpers/operators/elapsed-time.operator';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { BaseNetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
 import { NetworkInterfaceUpdate, ReportingDatabaseError, ReportingNameAndId } from 'app/interfaces/reporting.interface';
@@ -55,6 +53,7 @@ interface NicInfoMap {
     '../widget/widget.component.scss',
     './widget-network.component.scss',
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WidgetNetworkComponent extends WidgetComponent implements OnInit, AfterViewInit {
   readonly emptyTypes = EmptyType;
@@ -160,6 +159,8 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
     public themeService: ThemeService,
     private store$: Store<AppState>,
     private resourcesUsageStore$: ResourcesUsageStore,
+    private cdr: ChangeDetectorRef,
+    @Inject(DOCUMENT) private document: Document,
   ) {
     super(translate);
 
@@ -167,17 +168,18 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
       .pipe(untilDestroyed(this))
       .subscribe((timezone) => {
         this.timezone = timezone;
+        this.cdr.markForCheck();
       });
 
     this.store$
       .pipe(
         waitForSystemInfo,
         map((systemInfo) => systemInfo.datetime.$date),
-        elapsedTime(10000),
         untilDestroyed(this),
       )
       .subscribe((serverTime) => {
         this.serverTime = new Date(serverTime);
+        this.cdr.markForCheck();
       });
   }
 
@@ -189,6 +191,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
       next: (interfaces) => {
         this.availableNics = interfaces.filter((nic) => nic.state.link_state !== LinkState.Down);
         this.updateMapInfo();
+        this.cdr.markForCheck();
       },
     });
 
@@ -198,6 +201,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
   ngAfterViewInit(): void {
     if (!this.fetchDataIntervalSubscription || this.fetchDataIntervalSubscription.closed) {
       this.fetchDataIntervalSubscription = timer(0, 10000).pipe(
+        skipWhile(() => this.document.hidden),
         untilDestroyed(this),
       ).subscribe(() => {
         this.fetchReportData();
@@ -219,8 +223,8 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
           if (usageUpdate.link_state) {
             nicInfo.state = usageUpdate.link_state;
           }
-          nicInfo.in = usageUpdate.received_bytes_rate * KiB;
-          nicInfo.out = usageUpdate.sent_bytes_rate * KiB;
+          nicInfo.in = usageUpdate.received_bytes_rate;
+          nicInfo.out = usageUpdate.sent_bytes_rate;
 
           if (
             usageUpdate.sent_bytes !== undefined
@@ -236,6 +240,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
             nicInfo.lastReceived = usageUpdate.received_bytes;
           }
         }
+        this.cdr.markForCheck();
       });
     });
   }
@@ -414,9 +419,11 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
           };
 
           this.nicInfoMap[networkInterfaceName].chartData = chartData;
+          this.cdr.markForCheck();
         },
         error: (err: WebsocketError) => {
           this.nicInfoMap[networkInterfaceName].emptyConfig = this.chartDataError(err, nic);
+          this.cdr.markForCheck();
         },
       });
     });
@@ -440,6 +447,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
               buttonText: this.translate.instant('Clear'),
             }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
               this.nicInfoMap[nic.state.name].emptyConfig = this.loadingEmptyConfig;
+              this.cdr.markForCheck();
               this.ws.call('reporting.clear').pipe(take(1), untilDestroyed(this)).subscribe();
             });
           },

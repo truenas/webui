@@ -1,3 +1,4 @@
+import { SelectionModel } from '@angular/cdk/collections';
 import { BreakpointObserver, BreakpointState, Breakpoints } from '@angular/cdk/layout';
 import {
   Component,
@@ -38,7 +39,6 @@ import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.se
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
 import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 enum SortableField {
   Application = 'application',
@@ -64,6 +64,12 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   showMobileDetails = false;
   isMobileView = false;
   appJobs = new Map<string, Job<ChartScaleResult, ChartScaleQueryParams>>();
+  selection = new SelectionModel<string>(true, []);
+  sortingInfo: Sort = {
+    active: SortableField.Application,
+    direction: SortDirection.Asc,
+  };
+  ixTreeHeaderWidth: number | null = null;
   readonly sortableField = SortableField;
 
   entityEmptyConf: EmptyConfig = {
@@ -78,7 +84,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   }
 
   get allAppsChecked(): boolean {
-    return this.dataSource.every((app) => app.selected);
+    return this.selection.selected.length === this.filteredApps.length;
   }
 
   get hasCheckedApps(): boolean {
@@ -95,7 +101,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   }
 
   get checkedAppsNames(): string[] {
-    return this.dataSource.filter((app) => app.selected).map((app) => app.name);
+    return this.selection.selected;
   }
 
   get isBulkStartDisabled(): boolean {
@@ -116,11 +122,15 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   }
 
   get startedCheckedApps(): ChartRelease[] {
-    return this.dataSource.filter((app) => app.status === ChartReleaseStatus.Active && app.selected);
+    return this.dataSource.filter(
+      (app) => app.status === ChartReleaseStatus.Active && this.selection.isSelected(app.id),
+    );
   }
 
   get stoppedCheckedApps(): ChartRelease[] {
-    return this.dataSource.filter((app) => app.status === ChartReleaseStatus.Stopped && app.selected);
+    return this.dataSource.filter(
+      (app) => app.status === ChartReleaseStatus.Stopped && this.selection.isSelected(app.id),
+    );
   }
 
   constructor(
@@ -137,7 +147,6 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     private slideInService: IxSlideInService,
     private breakpointObserver: BreakpointObserver,
     @Inject(WINDOW) private window: Window,
-    private ws: WebSocketService,
   ) {
     this.router.events
       .pipe(
@@ -206,7 +215,11 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   }
 
   toggleAppsChecked(checked: boolean): void {
-    this.dataSource.forEach((app) => app.selected = checked);
+    if (checked) {
+      this.dataSource.forEach((app) => this.selection.select(app.id));
+    } else {
+      this.selection.clear();
+    }
   }
 
   showLoadStatus(type: EmptyType): void {
@@ -279,7 +292,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
       untilDestroyed(this),
     ).subscribe({
       next: ([,,charts]) => {
-        this.dataSource = charts.sort((a, b) => doSortCompare(a.name, b.name, true));
+        this.sortChanged(this.sortingInfo, charts);
         this.selectAppForDetails(this.activatedRoute.snapshot.paramMap.get('appId'));
         this.cdr.markForCheck();
       },
@@ -327,8 +340,9 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   }
 
   onBulkUpgrade(updateAll = false): void {
-    const apps = this.dataSource
-      .filter((app) => (updateAll ? app.update_available || app.container_images_update_available : app.selected));
+    const apps = this.dataSource.filter((app) => (
+      updateAll ? app.update_available || app.container_images_update_available : this.selection.isSelected(app.id)
+    ));
     this.matDialog.open(AppBulkUpgradeComponent, { data: apps })
       .afterClosed().pipe(untilDestroyed(this)).subscribe(() => {
         this.toggleAppsChecked(false);
@@ -416,8 +430,10 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     return status;
   }
 
-  sortChanged(sort: Sort): void {
-    this.dataSource = this.dataSource.sort((a, b) => {
+  sortChanged(sort: Sort, charts?: ChartRelease[]): void {
+    this.sortingInfo = sort;
+
+    this.dataSource = (charts || this.dataSource).sort((a, b) => {
       const isAsc = sort.direction === SortDirection.Asc;
 
       switch (sort.active) {

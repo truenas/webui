@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -22,6 +22,7 @@ import { WebSocketService } from 'app/services/ws.service';
   template: `
     <ix-entity-table [conf]="this" [title]="tableTitle"></ix-entity-table>
   `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [IscsiService],
 })
 export class AssociatedTargetListComponent implements EntityTableConfig {
@@ -92,7 +93,7 @@ export class AssociatedTargetListComponent implements EntityTableConfig {
 
   doAdd(): void {
     const slideInRef = this.slideInService.open(AssociatedTargetFormComponent);
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.entityList.getData());
   }
 
   getActions(row: IscsiTargetExtent): EntityTableAction[] {
@@ -117,7 +118,7 @@ export class AssociatedTargetListComponent implements EntityTableConfig {
 
   private editRow(extent: IscsiTargetExtent): void {
     const slideInRef = this.slideInService.open(AssociatedTargetFormComponent, { data: extent });
-    slideInRef.slideInClosed$.pipe(untilDestroyed(this)).subscribe(() => this.entityList.getData());
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.entityList.getData());
   }
 
   private deleteRow(rowInner: IscsiTargetExtent): void {

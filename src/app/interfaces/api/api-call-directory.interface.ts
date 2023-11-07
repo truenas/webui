@@ -8,6 +8,7 @@ import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
+import { SmbInfoLevel } from 'app/enums/smb-info-level.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import {
   Acl,
@@ -190,6 +191,7 @@ import {
   ReplicationCreate,
   ReplicationTask,
 } from 'app/interfaces/replication-task.interface';
+import { CreateReportingExporter, ReportingExporter, ReportingExporterSchema, UpdateReportingExporter } from 'app/interfaces/reporting-exporters.interface';
 import { ReportingGraph } from 'app/interfaces/reporting-graph.interface';
 import {
   ReportingData,
@@ -210,6 +212,7 @@ import { SmbConfig, SmbConfigUpdate } from 'app/interfaces/smb-config.interface'
 import {
   SmbPresets, SmbShare, SmbSharesec, SmbSharesecAce, SmbShareUpdate,
 } from 'app/interfaces/smb-share.interface';
+import { SmbSession } from 'app/interfaces/smb-status.interface';
 import { SnmpConfig, SnmpConfigUpdate } from 'app/interfaces/snmp-config.interface';
 import { SshConfig, SshConfigUpdate } from 'app/interfaces/ssh-config.interface';
 import {
@@ -705,6 +708,13 @@ export interface ApiCallDirectory {
   'reporting.clear': { params: void; response: void };
   'reporting.netdata_get_data': { params: ReportingQueryParams; response: ReportingData[] };
   'reporting.netdata_graphs': { params: QueryParams<ReportingGraph>; response: ReportingGraph[] };
+  'reporting.exporters.exporter_schemas': { params: void; response: ReportingExporterSchema[] };
+  'reporting.exporters.query': { params: QueryParams<ReportingExporter>; response: ReportingExporter[] };
+  'reporting.exporters.create': { params: [CreateReportingExporter]; response: ReportingExporter };
+  'reporting.exporters.update': { params: [number, UpdateReportingExporter]; response: ReportingExporter };
+  'reporting.exporters.get_instance': { params: [id: number]; response: ReportingExporter };
+  'reporting.exporters.delete': { params: [id: number]; response: boolean };
+
 
   // SMB
   'smb.bindip_choices': { params: void; response: Choices };
@@ -712,6 +722,7 @@ export interface ApiCallDirectory {
   'smb.get_smb_ha_mode': { params: void; response: string };
   'smb.update': { params: [SmbConfigUpdate]; response: SmbConfig };
   'smb.config': { params: void; response: SmbConfig };
+  'smb.status': { params: [level: SmbInfoLevel, params?: QueryParams<SmbSession>]; response: SmbSession[] };
 
   // SSH
   'ssh.update': { params: [SshConfigUpdate]; response: SshConfig };
@@ -792,7 +803,7 @@ export interface ApiCallDirectory {
     params: [ServiceName, { silent: boolean }];
     response: boolean; // False indicates that service has been stopped.
   };
-  'service.restart': { params: [ServiceName]; response: void };
+  'service.restart': { params: [ServiceName]; response: boolean };
 
   // Sensor
   'sensor.query': { params: void; response: Sensor[] };

@@ -56,6 +56,9 @@ import { VmwareSnapshotFormComponent } from 'app/pages/data-protection/vmware-sn
 import { VmwareSnapshotListComponent } from 'app/pages/data-protection/vmware-snapshot/vmware-snapshot-list/vmware-snapshot-list.component';
 import { CloudsyncFormComponent } from './cloudsync/cloudsync-form/cloudsync-form.component';
 import { CloudsyncListComponent } from './cloudsync/cloudsync-list/cloudsync-list.component';
+import { CloudsyncWizardComponent } from './cloudsync/cloudsync-wizard/cloudsync-wizard.component';
+import { CloudsyncProviderComponent } from './cloudsync/cloudsync-wizard/steps/cloudsync-provider/cloudsync-provider.component';
+import { CloudsyncWhatAndWhenComponent } from './cloudsync/cloudsync-wizard/steps/cloudsync-what-and-when/cloudsync-what-and-when.component';
 import { dataProtectionRoutes } from './data-protection.routing';
 import { ReplicationFormComponent } from './replication/replication-form/replication-form.component';
 import { GeneralSectionComponent } from './replication/replication-form/sections/general-section/general-section.component';
@@ -107,7 +110,6 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
     ReplicationWizardComponent,
     ReplicationWhatAndWhereComponent,
     ReplicationWhenComponent,
-    ScrubListComponent,
     CreateStorjBucketDialogComponent,
     ScrubTaskFormComponent,
     CloudsyncListComponent,
@@ -129,6 +131,10 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
     ReplicationTaskCardComponent,
     ScrubTaskCardComponent,
     SnapshotTaskCardComponent,
+    CloudsyncWizardComponent,
+    CloudsyncProviderComponent,
+    CloudsyncWhatAndWhenComponent,
+    ScrubListComponent,
   ],
 })
 export class DataProtectionModule {}
