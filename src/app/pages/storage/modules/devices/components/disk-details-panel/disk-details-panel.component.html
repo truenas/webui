@@ -15,7 +15,7 @@
 
     <span class="prefix">{{ 'Details for' | translate }}</span>
 
-    <div class="full-path" [matTooltip]="detailsTitleTooltip">
+    <div class="full-path" [matTooltip]="title">
       <ix-topology-item-icon
         class="title-icon"
         [topologyItem]="topologyItem"
@@ -23,9 +23,6 @@
       ></ix-topology-item-icon>
       <span class="device-name">
         {{ title }}
-        <ng-container *ngIf="poolName">
-          {{ poolName }}
-        </ng-container>
       </span>
     </div>
   </h3>

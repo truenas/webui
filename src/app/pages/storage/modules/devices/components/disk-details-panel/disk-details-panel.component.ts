@@ -30,12 +30,6 @@ export class DiskDetailsPanelComponent implements OnInit {
 
   @Output() closeMobileDetails: EventEmitter<void> = new EventEmitter<void>();
 
-  poolName: string;
-
-  get detailsTitleTooltip(): string {
-    return `${this.title} ${this.poolName || ''}`;
-  }
-
   get title(): string {
     if (isTopologyDisk(this.topologyItem)) {
       return this.topologyItem.disk || this.topologyItem.guid;
@@ -63,12 +57,7 @@ export class DiskDetailsPanelComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.ws.call('pool.query', [[['id', '=', this.poolId]]]).pipe(untilDestroyed(this)).subscribe((pools) => {
-      if (pools.length) {
-        this.poolName = this.translate.instant('(Pool: {name})', { name: pools[0]?.name });
-        this.cdr.markForCheck();
-      }
-    });
+    this.ws.call('pool.query', [[['id', '=', this.poolId]]]).pipe(untilDestroyed(this)).subscribe();
   }
 
   onCloseMobileDetails(): void {

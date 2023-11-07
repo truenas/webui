@@ -14,9 +14,11 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
+import { stringToTitleCase } from 'app/helpers/string-to-title-case';
 import { WINDOW } from 'app/helpers/window.helper';
 import { DeviceNestedDataNode, isVdevGroup } from 'app/interfaces/device-nested-data-node.interface';
 import {
@@ -43,6 +45,7 @@ export class DevicesComponent implements OnInit, AfterViewInit {
   diskDictionary: { [guid: string]: Disk } = {};
   dataSource: NestedTreeDataSource<DeviceNestedDataNode>;
   poolId: number;
+
   treeControl = new NestedTreeControl<DeviceNestedDataNode, string>((vdev) => vdev.children, {
     trackBy: (vdev) => vdev.guid,
   });
@@ -61,12 +64,20 @@ export class DevicesComponent implements OnInit, AfterViewInit {
   showMobileDetails = false;
   isMobileView = false;
 
+  get pageTitle(): string {
+    const poolName = this.dataSource.data?.[0]?.children?.[0]?.name;
+    return poolName
+      ? this.translate.instant('{name} Devices', { name: stringToTitleCase(poolName) })
+      : this.translate.instant('Devices');
+  }
+
   constructor(
     private router: Router,
     private cdr: ChangeDetectorRef,
     private route: ActivatedRoute,
     private devicesStore: DevicesStore,
     private breakpointObserver: BreakpointObserver,
+    private translate: TranslateService,
     @Inject(WINDOW) private window: Window,
   ) { }
 
