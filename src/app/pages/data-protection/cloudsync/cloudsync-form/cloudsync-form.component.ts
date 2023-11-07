@@ -19,7 +19,7 @@ import { TransferMode } from 'app/enums/transfer-mode.enum';
 import helptext from 'app/helptext/data-protection/cloudsync/cloudsync-form';
 import { CloudSyncTaskUi, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudsyncBucket, CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
-import { SelectOption, Option } from 'app/interfaces/option.interface';
+import { SelectOption } from 'app/interfaces/option.interface';
 import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
@@ -346,6 +346,7 @@ export class CloudsyncFormComponent implements OnInit {
         this.form.controls.bucket_policy_only.disable();
         this.form.controls.folder_source.disable();
         this.form.controls.folder_destination.disable();
+
         this.form.controls.task_encryption.disable();
         this.form.controls.fast_list.disable();
         this.form.controls.chunk_size.disable();
@@ -441,22 +442,6 @@ export class CloudsyncFormComponent implements OnInit {
         this.setTransfersOptions(false, value);
       }
     });
-  }
-
-  getCloudCredentialsOptions(): Observable<Option[]> {
-    return this.cloudCredentialService.getCloudsyncCredentials().pipe(
-      map((options) => {
-        const newOptions: Option[] = [];
-        newOptions.push({ label: this.translate.instant('Add New'), value: -1 });
-        newOptions.push(...options.map((option) => {
-          if (option.provider === CloudsyncProviderName.GoogleDrive) {
-            this.googleDriveProviderId = option.id;
-          }
-          return { label: `${option.name} (${option.provider})`, value: option.id };
-        }));
-        return newOptions;
-      }),
-    );
   }
 
   loadBucketOptions(): void {
