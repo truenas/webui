@@ -272,7 +272,6 @@ export class CloudsyncFormComponent implements OnInit {
       }
     });
 
-
     this.form.controls.credentials.valueChanges.pipe(untilDestroyed(this)).subscribe((credentials) => {
       if (credentials) {
         if (this.form.controls.direction.value === Direction.Pull) {

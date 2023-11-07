@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { EMPTY, Subject, catchError, filter, map, switchMap, tap } from 'rxjs';
+import { EMPTY, catchError, filter, map, switchMap, tap } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import helptext_cloudsync from 'app/helptext/data-protection/cloudsync/cloudsync-form';
@@ -25,7 +25,6 @@ import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/clou
 import { CloudsyncRestoreDialogComponent } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -90,7 +89,6 @@ export class CloudSyncTaskCardComponent implements OnInit {
     private store$: Store<AppState>,
     private snackbar: SnackbarService,
     private matDialog: MatDialog,
-    private ixChainedSlideInService: IxChainedSlideInService,
     protected emptyService: EmptyService,
   ) {}
 
@@ -128,12 +126,8 @@ export class CloudSyncTaskCardComponent implements OnInit {
   }
 
   openForm(row?: CloudSyncTaskUi): void {
-    const onClose$ = new Subject<unknown>();
-    this.ixChainedSlideInService.pushComponent(
-      { component: CloudsyncFormComponent, close$: onClose$, wide: true, data: row },
-    );
-
-    onClose$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+    const slideInRef = this.slideInService.open(CloudsyncFormComponent, { data: row, wide: true });
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.getCloudSyncTasks();
     });
   }
