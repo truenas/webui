@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -19,6 +19,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   template: `
     <ix-entity-table [conf]="this" [title]="tableTitle"></ix-entity-table>
   `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ExtentListComponent implements EntityTableConfig<IscsiExtent> {
   tableTitle = this.translate.instant('Extents');

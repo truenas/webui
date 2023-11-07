@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -12,6 +12,7 @@ import { WebSocketService } from 'app/services/ws.service';
 @Component({
   selector: 'ix-iscsi',
   templateUrl: './iscsi.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [IscsiService],
 })
 export class IscsiComponent implements OnInit {
