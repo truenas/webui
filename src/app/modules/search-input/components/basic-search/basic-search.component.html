@@ -1,0 +1,28 @@
+<span class="prefix-icon">
+  <ix-icon name="search"></ix-icon>
+</span>
+
+<input
+  matInput
+  ixTest="search"
+  class="input"
+  [formControl]="searchControl"
+  [placeholder]="'Search' | translate"
+/>
+
+<a
+  *ngIf="allowAdvanced"
+  class="switch-link"
+  ixTest="switch-to-advanced"
+  (click)="switchToAdvanced.emit()"
+>
+  {{ 'Switch To Advanced' | translate }}
+</a>
+
+<span
+  *ngIf="searchControl.value"
+  class="reset-icon reset-input"
+  (click)="onResetInput()"
+>
+  <ix-icon name="mdi-close-circle"></ix-icon>
+</span>

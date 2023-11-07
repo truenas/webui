@@ -1,0 +1,24 @@
+<span class="prefix-icon">
+  <ix-icon name="mdi-text-search-variant"></ix-icon>
+</span>
+
+<div
+  #inputArea
+  class="input-area"
+  contenteditable="true"
+></div>
+
+<a
+  class="switch-link"
+  ixTest="switch-to-advanced"
+  (click)="switchToBasic.emit()"
+>
+  {{ 'Switch To Basic' | translate }}
+</a>
+
+<span
+  class="reset-icon reset-input"
+  (click)="onResetInput()"
+>
+  <ix-icon name="mdi-close-circle"></ix-icon>
+</span>
