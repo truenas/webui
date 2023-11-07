@@ -1,3 +1,5 @@
+import { Role } from 'app/enums/role.enum';
+
 export interface User {
   id: number;
   uid: number;
@@ -22,6 +24,7 @@ export interface User {
   twofactor_auth_configured: boolean;
   local: boolean;
   id_type_both: boolean;
+  roles: Role[];
 }
 
 export interface UserGroup {

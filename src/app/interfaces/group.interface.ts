@@ -1,3 +1,5 @@
+import { Role } from 'app/enums/role.enum';
+
 export interface Group {
   builtin: boolean;
   gid: number;
@@ -8,6 +10,7 @@ export interface Group {
   smb: boolean;
   sudo_commands_nopasswd?: string[];
   sudo_commands?: string[];
+  roles: Role[];
   /**
    * List of user ids.
    */
