@@ -2,7 +2,8 @@
   <tr
     class="row"
     [ixTest]="getTestAttr(row)"
-    [ngStyle]="{ cursor: detailsTemplate ? 'pointer' : 'auto' }"
+    [ngStyle]="{ cursor: detailsTemplate ? 'pointer' : null }"
+    [class.expanded]="isExpanded(row)"
     [hidden]="isLoading"
     (click)="onToggle(row)"
   >

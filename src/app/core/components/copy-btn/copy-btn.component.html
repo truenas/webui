@@ -1,4 +1,5 @@
 <button
+  *ngIf="!jsonText || !isValidJson"
   mat-icon-button
   matTooltipPosition="above"
   ixTest="copy-to-clipboard"
@@ -7,3 +8,20 @@
 >
   <ix-icon name="assignment"></ix-icon>
 </button>
+
+<button
+  *ngIf="jsonText && isValidJson"
+  mat-icon-button
+  ixTest="copy-to-clipboard-menu"
+  [matMenuTriggerFor]="menu"
+>
+  <ix-icon name="assignment"></ix-icon>
+</button>
+<mat-menu #menu="matMenu">
+  <button mat-menu-item ixTest="copy-text" (click)="copyToClipboard()">
+    <span>{{ 'Copy Text' | translate }}</span>
+  </button>
+  <button mat-menu-item ixTest="copy-json-text" (click)="copyJsonToClipboard()">
+    <span>{{ 'Copy Json' | translate }}</span>
+  </button>
+</mat-menu>

@@ -3,6 +3,7 @@ import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 
 export interface BaseAuditEntry {
   audit_id: string;
+  session: string;
   message_timestamp: number;
   timestamp: ApiTimestamp;
   address: string;
@@ -28,11 +29,11 @@ export interface SmbAuditEntry extends BaseAuditEntry {
 export type AuditEntry = SmbAuditEntry;
 
 export interface AuditServiceData {
-  'vers': {
-    'major': number;
-    'minor': number;
+  vers: {
+    major: number;
+    minor: number;
   };
-  'service': string;
-  'session_id': string;
-  'tcon_id': string;
+  service: string;
+  session_id: string;
+  tcon_id: string;
 }

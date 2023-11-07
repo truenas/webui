@@ -5,7 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
-import { convertToTitleSpaceCase } from 'app/helpers/convert-to-title-space-case';
+import { toHumanReadableKey } from 'app/helpers/object-object-keys-to-human-readable';
 import { DynamicFormSchema, DynamicFormSchemaNode } from 'app/interfaces/dynamic-form-schema.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { ExportingExporterList as ReportingExporterList, ReportingExporterKey as ReportingExporterType, ReportingExporterSchema, ReportingExporter } from 'app/interfaces/reporting-exporters.interface';
@@ -129,7 +129,7 @@ export class ReportingExportersFormComponent implements OnInit {
     return schema.schema.map((input) => ({
       controlName: input._name_,
       type: DynamicFormSchemaType.Input,
-      title: convertToTitleSpaceCase(input.title),
+      title: toHumanReadableKey(input.title),
       required: input._required_,
     }));
   }

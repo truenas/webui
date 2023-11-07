@@ -8,6 +8,26 @@ $scrollbar-offset: 20px;
     flex-direction: row;
     width: 100%;
 
+    &::ng-deep table tbody tr {
+      cursor: pointer;
+
+      &.expanded {
+        background-color: var(--hover-bg);
+        color: var(--fg2);
+
+        td:first-child::before {
+          background-color: var(--primary);
+          content: '';
+          height: 100%;
+          left: 0;
+          opacity: 1;
+          position: absolute;
+          top: 0;
+          width: 6px;
+        }
+      }
+    }
+
     @media(min-width: $breakpoint-tablet) {
       height: calc(100vh - #{$header-height});
     }
@@ -97,7 +117,7 @@ $scrollbar-offset: 20px;
     }
 
     ::ng-deep .cards .scroll-window {
-      display: block;
+      display: grid;
     }
 
     ix-dataset-details-panel {
