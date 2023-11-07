@@ -70,7 +70,7 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
   }
 
   onToggle(row: T): void {
-    this.dataProvider.expandedRow = this.isExpanded(row) ? null : row;
+    this.dataProvider.setExpandedRow(this.isExpanded(row) ? null : row);
   }
 
   isExpanded(row: T): boolean {

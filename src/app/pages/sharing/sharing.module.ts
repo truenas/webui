@@ -5,6 +5,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
@@ -96,6 +97,7 @@ import { SmbSessionListComponent } from './smb/smb-session-list/smb-session-list
     MatToolbarModule,
     CoreComponents,
     LayoutModule,
+    MatExpansionModule,
   ],
   declarations: [
     NfsListComponent,

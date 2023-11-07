@@ -7,10 +7,12 @@ export interface DataProvider<T> {
   currentPage$: Observable<T[]>;
   currentPageCount$: Observable<number>;
   expandedRow: T;
+  expandedRow$?: Observable<T>;
   sorting: TableSort<T>;
   pagination: TablePagination;
 
   setPagination: (pagination: TablePagination) => void;
   setSorting: (sorting: TableSort<T>) => void;
   setRows: (rows: T[]) => void;
+  setExpandedRow?: (row: T) => void;
 }

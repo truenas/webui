@@ -212,7 +212,7 @@ import { SmbConfig, SmbConfigUpdate } from 'app/interfaces/smb-config.interface'
 import {
   SmbPresets, SmbShare, SmbSharesec, SmbSharesecAce, SmbShareUpdate,
 } from 'app/interfaces/smb-share.interface';
-import { SmbSession } from 'app/interfaces/smb-status.interface';
+import { SmbStatus } from 'app/interfaces/smb-status.interface';
 import { SnmpConfig, SnmpConfigUpdate } from 'app/interfaces/snmp-config.interface';
 import { SshConfig, SshConfigUpdate } from 'app/interfaces/ssh-config.interface';
 import {
@@ -722,7 +722,7 @@ export interface ApiCallDirectory {
   'smb.get_smb_ha_mode': { params: void; response: string };
   'smb.update': { params: [SmbConfigUpdate]; response: SmbConfig };
   'smb.config': { params: void; response: SmbConfig };
-  'smb.status': { params: [level: SmbInfoLevel, params?: QueryParams<SmbSession>]; response: SmbSession[] };
+  'smb.status': { params: [level: SmbInfoLevel, params?: QueryParams<SmbStatus>]; response: SmbStatus[] };
 
   // SSH
   'ssh.update': { params: [SshConfigUpdate]; response: SshConfig };

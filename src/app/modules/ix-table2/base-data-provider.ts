@@ -22,6 +22,7 @@ export class BaseDataProvider<T> implements DataProvider<T> {
   }
 
   currentPage$ = new BehaviorSubject<T[]>([]);
+  expandedRow$ = new BehaviorSubject<T>(null);
   expandedRow: T;
   totalRows = 0;
 
@@ -59,6 +60,11 @@ export class BaseDataProvider<T> implements DataProvider<T> {
   setPagination(pagination: TablePagination): void {
     this.pagination = pagination;
     this.updateCurrentPage(this.allRows);
+  }
+
+  setExpandedRow(row: T): void {
+    this.expandedRow = row;
+    this.expandedRow$.next(row);
   }
 
   protected updateCurrentPage(rows: T[]): void {
