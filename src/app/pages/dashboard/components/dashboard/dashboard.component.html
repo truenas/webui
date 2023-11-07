@@ -61,7 +61,7 @@
   >
     <!-- LOADING WIDGETS -->
     <ng-container *ngIf="!isLoaded && screenType === ScreenType.Desktop">
-      <div *ngFor="let _ of availableWidgets">
+      <div *ngFor="let _ of [1,2,3,4,5,6]">
         <div class="widget placeholder">
           <div class="card-container front">
             <mat-card [class.loading]="true"></mat-card>
