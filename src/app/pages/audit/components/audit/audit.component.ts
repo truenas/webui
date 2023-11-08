@@ -66,6 +66,7 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.dataProvider.currentPage$.pipe(filter(Boolean), untilDestroyed(this)).subscribe((auditEntries) => {
       this.dataProvider.expandedRow = auditEntries[0];
+      this.expanded(this.dataProvider.expandedRow);
       this.cdr.markForCheck();
     });
   }

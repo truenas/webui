@@ -51,12 +51,6 @@
     class="details-container"
     [class.details-container-mobile]="showMobileDetails"
   >
-    <ix-fake-progress-bar
-      *ngIf="showMobileDetails"
-      class="loader-bar"
-      [loading]="dataProvider.isLoading$ | async"
-    ></ix-fake-progress-bar>
-
     <ix-log-details-panel
       *ngIf="dataProvider.expandedRow"
       [log]="dataProvider.expandedRow"
