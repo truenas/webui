@@ -1,22 +1,31 @@
-import { Component } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import {
-  catchError, EMPTY, filter, switchMap, take, tap,
-} from 'rxjs';
+import { filter, map, switchMap, tap } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
-import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
-import { tapOnce } from 'app/helpers/operators/tap-once.operator';
-import globalHelptext from 'app/helptext/global-helptext';
-import { Job } from 'app/interfaces/job.interface';
-import { RsyncTaskUi } from 'app/interfaces/rsync-task.interface';
-import { ShowLogsDialogComponent } from 'app/modules/common/dialog/show-logs-dialog/show-logs-dialog.component';
-import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
-import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
-import { selectJob } from 'app/modules/jobs/store/job.selectors';
+import { RsyncTask } from 'app/interfaces/rsync-task.interface';
+import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
+import {
+  actionsColumn,
+} from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
+import {
+  relativeDateColumn,
+} from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
+import {
+  scheduleColumn,
+} from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-schedule/ix-cell-schedule.component';
+import {
+  stateButtonColumn,
+} from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
+import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import {
+  yesNoColumn,
+} from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
+import { createTable } from 'app/modules/ix-table2/utils';
+import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { CrontabExplanationPipe } from 'app/modules/scheduler/pipes/crontab-explanation.pipe';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
@@ -24,188 +33,215 @@ import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { TaskService } from 'app/services/task.service';
-import { UserService } from 'app/services/user.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
 
 @UntilDestroy()
 @Component({
-  template: '<ix-entity-table [title]="title" [conf]="this"></ix-entity-table>',
-  providers: [TaskService, UserService],
+  selector: 'ix-rsync-task-list',
+  templateUrl: './rsync-task-list.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [CrontabExplanationPipe],
 })
-export class RsyncTaskListComponent implements EntityTableConfig<RsyncTaskUi> {
-  title = this.translate.instant('Rsync Tasks');
-  queryCall = 'rsynctask.query' as const;
-  wsDelete = 'rsynctask.delete' as const;
-  routeAdd: string[] = ['tasks', 'rsync', 'add'];
-  routeAddTooltip = this.translate.instant('Add Rsync Task');
-  routeEdit: string[] = ['tasks', 'rsync', 'edit'];
-  entityList: EntityTableComponent<RsyncTaskUi>;
-  filterValue = '';
+export class RsyncTaskListComponent implements OnInit {
+  dataProvider: AsyncDataProvider<RsyncTask>;
+  filterString: string;
 
-  columns = [
-    { name: this.translate.instant('Path'), prop: 'path', always_display: true },
-    { name: this.translate.instant('Remote Host'), prop: 'remotehost' },
-    { name: this.translate.instant('Remote SSH Port'), prop: 'remoteport', hidden: true },
-    { name: this.translate.instant('Remote Module Name'), prop: 'remotemodule' },
-    { name: this.translate.instant('Remote Path'), prop: 'remotepath', hidden: true },
-    { name: this.translate.instant('Direction'), prop: 'direction', hidden: true },
-    {
-      name: this.translate.instant('Schedule'),
-      prop: 'cron_schedule',
+  columns = createTable<RsyncTask>([
+    textColumn({
+      title: this.translate.instant('Path'),
+      propertyName: 'path',
+    }),
+    textColumn({
+      title: this.translate.instant('Remote Host'),
+      propertyName: 'remotehost',
+    }),
+    textColumn({
+      title: this.translate.instant('Remote SSH Port'),
+      propertyName: 'remoteport',
       hidden: true,
-      widget: {
-        icon: 'calendar-range',
-        component: 'TaskScheduleListComponent',
+    }),
+    textColumn({
+      title: this.translate.instant('Remote Module Name'),
+      propertyName: 'remotemodule',
+    }),
+    textColumn({
+      title: this.translate.instant('Remote Path'),
+      propertyName: 'remotepath',
+      hidden: true,
+    }),
+    textColumn({
+      title: this.translate.instant('Direction'),
+      propertyName: 'direction',
+    }),
+    scheduleColumn({
+      title: this.translate.instant('Schedule'),
+      propertyName: 'schedule',
+      hidden: true,
+    }),
+    textColumn({
+      title: this.translate.instant('Frequency'),
+      propertyName: 'schedule',
+      sortable: false,
+      getValue: (task) => this.crontabExplanation.transform(scheduleToCrontab(task.schedule)),
+    }),
+    relativeDateColumn({
+      title: this.translate.instant('Next Run'),
+      getValue: (row) => this.taskService.getTaskNextTime(scheduleToCrontab(row.schedule)),
+    }),
+    relativeDateColumn({
+      title: this.translate.instant('Last Run'),
+      propertyName: 'job',
+      getValue: (row) => row.job?.time_finished?.$date,
+      hidden: true,
+    }),
+    textColumn({
+      title: this.translate.instant('Short Description'),
+      propertyName: 'desc',
+    }),
+    textColumn({
+      title: this.translate.instant('User'),
+      propertyName: 'user',
+    }),
+    yesNoColumn({
+      title: this.translate.instant('Delay Updates'),
+      propertyName: 'delayupdates',
+      hidden: true,
+    }),
+    stateButtonColumn({
+      title: this.translate.instant('Status'),
+      getValue: (row) => {
+        if (!row.job) {
+          return row.locked ? JobState.Locked : JobState.Pending;
+        }
+
+        return row.job.state;
       },
-    },
-    { name: this.translate.instant('Frequency'), prop: 'frequency', enableMatTooltip: true },
-    { name: this.translate.instant('Next Run'), prop: 'next_run', hidden: true },
-    { name: this.translate.instant('Last Run'), prop: 'last_run', hidden: true },
-    { name: this.translate.instant('Short Description'), prop: 'desc', hidden: true },
-    { name: this.translate.instant('User'), prop: 'user' },
-    { name: this.translate.instant('Delay Updates'), prop: 'delayupdates', hidden: true },
-    {
-      name: this.translate.instant('Status'), prop: 'state', state: 'state', button: true,
-    },
-    { name: this.translate.instant('Enabled'), prop: 'enabled', hidden: true },
-  ];
-  rowIdentifier = 'path';
-  config = {
-    paging: true,
-    sorting: { columns: this.columns },
-    deleteMsg: {
-      title: this.translate.instant('Rsync Task'),
-      key_props: ['remotehost', 'remotemodule'],
-    },
-  };
+      getJob: (row) => row.job,
+      cssClass: 'state-button',
+    }),
+    yesNoColumn({
+      title: this.translate.instant('Enabled'),
+      propertyName: 'enabled',
+    }),
+    actionsColumn({
+      actions: [
+        {
+          iconName: 'play_arrow',
+          tooltip: this.translate.instant('Run job'),
+          onClick: (row) => this.runNow(row),
+        },
+        {
+          iconName: 'edit',
+          tooltip: this.translate.instant('Edit'),
+          onClick: (row) => this.edit(row),
+        },
+        {
+          iconName: 'delete',
+          tooltip: this.translate.instant('Delete'),
+          onClick: (row) => this.delete(row),
+        },
+      ],
+    }),
+  ]);
+
+  private allTasks: RsyncTask[] = [];
 
   constructor(
-    protected ws: WebSocketService,
-    protected taskService: TaskService,
-    protected dialog: DialogService,
-    private matDialog: MatDialog,
-    private slideInService: IxSlideInService,
+    private translate: TranslateService,
+    private ws: WebSocketService,
+    private slideIn: IxSlideInService,
+    private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
-    protected translate: TranslateService,
-    private route: ActivatedRoute,
-    private store$: Store<AppState>,
+    private loader: AppLoaderService,
+    private crontabExplanation: CrontabExplanationPipe,
+    private taskService: TaskService,
     private snackbar: SnackbarService,
-  ) {
-    this.filterValue = this.route.snapshot.paramMap.get('dataset') || '';
+    protected emptyService: EmptyService,
+    private cdr: ChangeDetectorRef,
+    private route: ActivatedRoute,
+  ) {}
+
+  ngOnInit(): void {
+    this.filterString = this.route.snapshot.paramMap.get('dataset') || '';
+
+    const request$ = this.ws.call('rsynctask.query').pipe(
+      map((tasks) => {
+        this.allTasks = tasks;
+        return tasks.filter(this.filterTask);
+      }),
+    );
+    this.dataProvider = new AsyncDataProvider(request$);
+    this.dataProvider.load();
   }
 
-  afterInit(entityList: EntityTableComponent<RsyncTaskUi>): void {
-    this.entityList = entityList;
+  protected filterUpdated(query: string): void {
+    this.filterString = query;
+    this.dataProvider.setRows(this.allTasks.filter(this.filterTask));
   }
 
-  getActions(row: RsyncTaskUi): EntityTableAction<RsyncTaskUi>[] {
-    return [{
-      id: row.path,
-      icon: 'play_arrow',
-      label: this.translate.instant('Run Now'),
-      name: 'run',
-      actionName: 'run',
-      onClick: () => {
-        this.dialog.confirm({
-          title: this.translate.instant('Run Now'),
-          message: this.translate.instant('Run «{name}» Rsync now?', {
-            name: `${row.remotehost || row.path} ${row.remotemodule ? '- ' + row.remotemodule : ''}`,
-          }),
-          hideCheckbox: true,
-        }).pipe(
-          filter(Boolean),
-          tap(() => row.state = { state: JobState.Running }),
-          switchMap(() => this.ws.job('rsynctask.run', [row.id])),
-          tapOnce(() => this.snackbar.success(
-            this.translate.instant('Rsync task «{name}» has started.', {
-              name: `${row.remotehost} - ${row.remotemodule}`,
-            }),
-          )),
-          catchError((error: Job) => {
-            this.dialog.error(this.errorHandler.parseJobError(error));
-            return EMPTY;
-          }),
-          untilDestroyed(this),
-        ).subscribe((job: Job) => {
-          row.job = { ...job };
-          row.state.state = job.state;
-        });
-      },
-    },
-    {
-      id: row.path,
-      icon: 'edit',
-      label: this.translate.instant('Edit'),
-      name: 'edit',
-      actionName: 'edit',
-      onClick: () => {
-        this.doEdit(row.id);
-      },
-    },
-    {
-      id: row.path,
-      icon: 'delete',
-      name: 'delete',
-      actionName: 'delete',
-      label: this.translate.instant('Delete'),
-      onClick: () => {
-        this.entityList.doDelete(row);
-      },
-    }];
+  protected columnsChange(columns: typeof this.columns): void {
+    this.columns = [...columns];
+    this.cdr.detectChanges();
+    this.cdr.markForCheck();
   }
 
-  resourceTransformIncomingRestData(tasks: RsyncTaskUi[]): RsyncTaskUi[] {
-    return tasks.map((task) => {
-      task.cron_schedule = scheduleToCrontab(task.schedule);
-      task.frequency = this.taskService.getTaskCronDescription(task.cron_schedule);
-      task.next_run = this.taskService.getTaskNextRun(task.cron_schedule);
-      if (task.job?.time_finished?.$date) {
-        task.last_run = formatDistanceToNowShortened(task.job?.time_finished?.$date);
-      } else {
-        task.last_run = this.translate.instant('N/A');
-      }
-      if (task.job === null) {
-        task.state = { state: task.locked ? JobState.Locked : JobState.Pending };
-      } else {
-        task.state = { state: task.job.state };
-        this.store$.select(selectJob(task.job.id)).pipe(
-          filter(Boolean),
-          take(1),
-          untilDestroyed(this),
-        ).subscribe((job: Job) => {
-          task.state = { state: job.state };
-          task.job = job;
-        });
-      }
-      return task;
-    });
+  protected runNow(row: RsyncTask): void {
+    this.dialogService.confirm({
+      title: this.translate.instant('Run Now'),
+      message: this.translate.instant('Run «{name}» Rsync now?', {
+        name: `${row.remotehost || row.path} ${row.remotemodule ? '- ' + row.remotemodule : ''}`,
+      }),
+      hideCheckbox: true,
+    })
+      .pipe(
+        filter(Boolean),
+        tap(() => {
+          this.snackbar.success(
+            this.translate.instant('Rsync task has started.'),
+          );
+        }),
+        switchMap(() => this.ws.job('rsynctask.run', [row.id])),
+        untilDestroyed(this),
+      )
+      .subscribe(() => this.dataProvider.load());
   }
 
-  onButtonClick(row: RsyncTaskUi): void {
-    this.stateButton(row);
+  protected add(): void {
+    this.slideIn.open(RsyncTaskFormComponent, { wide: true })
+      .slideInClosed$
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe(() => this.dataProvider.load());
   }
 
-  stateButton(row: RsyncTaskUi): void {
-    if (row.job) {
-      if (row.state.state === JobState.Running) {
-        this.entityList.runningStateButton(row.job.id);
-      } else {
-        this.matDialog.open(ShowLogsDialogComponent, { data: row.job });
-      }
-    } else {
-      this.dialog.warn(globalHelptext.noLogDialog.title, globalHelptext.noLogDialog.message);
-    }
+  private edit(row: RsyncTask): void {
+    this.slideIn.open(RsyncTaskFormComponent, { data: row, wide: true })
+      .slideInClosed$
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe(() => this.dataProvider.load());
   }
 
-  doAdd(): void {
-    const slideInRef = this.slideInService.open(RsyncTaskFormComponent, { wide: true });
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.entityList.getData());
+  private delete(row: RsyncTask): void {
+    this.dialogService.confirm({
+      title: this.translate.instant('Delete Task'),
+      message: this.translate.instant('Are you sure you want to delete this task?'),
+      buttonText: this.translate.instant('Delete'),
+    })
+      .pipe(
+        filter(Boolean),
+        switchMap(() => {
+          return this.ws.call('rsynctask.delete', [row.id]).pipe(
+            this.loader.withLoader(),
+            this.errorHandler.catchError(),
+          );
+        }),
+        untilDestroyed(this),
+      )
+      .subscribe(() => this.dataProvider.load());
   }
 
-  doEdit(id: number): void {
-    const rsyncTask = this.entityList.rows.find((row) => row.id === id);
-    const slideInRef = this.slideInService.open(RsyncTaskFormComponent, { wide: true, data: rsyncTask });
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.entityList.getData());
-  }
+  private filterTask = (task: RsyncTask): boolean => {
+    return task.remotehost?.includes(this.filterString)
+      || task.path.includes(this.filterString)
+      || task.desc.includes(this.filterString);
+  };
 }

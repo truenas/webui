@@ -126,8 +126,8 @@ export class ScrubListComponent implements OnInit {
 
   private onDelete(row: PoolScrubTask): void {
     this.dialogService.confirm({
-      title: this.translate.instant('Delete Scrub Task'),
-      message: this.translate.instant('Are you sure you want to delete this scrub task?'),
+      title: this.translate.instant('Delete Task'),
+      message: this.translate.instant('Are you sure you want to delete this task?'),
       buttonText: this.translate.instant('Delete'),
     })
       .pipe(
