@@ -1,9 +1,10 @@
 <div id="breadcrumb-bar" class="breadcrumb-bar">
   <ul class="breadcrumb">
     <li *ngFor="let breadcrumb of breadcrumbs;">
-      <a [routerLink]="breadcrumb.url" [ixTest]="['breadcrumb', breadcrumb.breadcrumb]">
+      <a *ngIf="breadcrumb.url" [routerLink]="breadcrumb.url" [ixTest]="['breadcrumb', breadcrumb.breadcrumb]">
         {{ breadcrumb.breadcrumb | translate }}
       </a>
+      <span *ngIf="!breadcrumb.url">{{ breadcrumb.breadcrumb | translate }}</span>
     </li>
   </ul>
 </div>
