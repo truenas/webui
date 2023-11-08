@@ -5,8 +5,8 @@
     </h3>
   </mat-card-header>
   <mat-card-content>
-    <p>{{ 'Audit ID' | translate }}: {{ log.audit_id }}</p>
+    <p>{{ 'Audit ID' | translate }}: {{ log.audit_id || '-' }}</p>
     <p>{{ 'Version' | translate }}: {{ log.service_data.vers.major ? ('Major' | translate) : ('Minor' | translate) }}</p>
-    <p>{{ 'Session' | translate }}: {{ log.session }}</p>
+    <p>{{ 'Session' | translate }}: {{ log.session || '-' }}</p>
   </mat-card-content>
 </mat-card>

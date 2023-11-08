@@ -13,6 +13,7 @@
   *ngIf="jsonText && isValidJson"
   mat-icon-button
   ixTest="copy-to-clipboard-menu"
+  [matTooltip]="'Copy to Clipboard' | translate"
   [matMenuTriggerFor]="menu"
 >
   <ix-icon name="assignment"></ix-icon>

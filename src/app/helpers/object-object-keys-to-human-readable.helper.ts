@@ -3,6 +3,8 @@ export function toHumanReadableKey(key: string): string {
   return key
     // Insert a space before all caps and split by underscores
     .replace(/([A-Z])/g, ' $1').replace(/_/g, ' ')
+    // split by hyphen
+    .replace(/-/g, ' ')
     // Trim spaces at the start of the string
     .replace(/^ /, '')
     // Capitalize the first letter of each word

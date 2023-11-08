@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { jsonToYaml } from 'app/helpers/json-to-yaml';
-import { convertObjectKeysToHumanReadable } from 'app/helpers/object-object-keys-to-human-readable';
+import { jsonToYaml } from 'app/helpers/json-to-yaml.helper';
+import { convertObjectKeysToHumanReadable } from 'app/helpers/object-object-keys-to-human-readable.helper';
 import { AuditEntry } from 'app/interfaces/audit.interface';
 
 @Component({
