@@ -3,11 +3,13 @@
 </span>
 
 <input
+  #searchControl
   matInput
   ixTest="search"
   class="input"
-  [formControl]="searchControl"
   [placeholder]="'Search' | translate"
+  [ngModel]="query"
+  (ngModelChange)="queryChange.emit($event)"
 />
 
 <a
@@ -22,7 +24,7 @@
 <span
   *ngIf="searchControl.value"
   class="reset-icon reset-input"
-  (click)="onResetInput()"
+  (click)="resetInput()"
 >
   <ix-icon name="mdi-close-circle"></ix-icon>
 </span>

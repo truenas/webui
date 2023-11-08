@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { AuditEntry } from 'app/interfaces/audit.interface';
 import { ApiDataProvider, PaginationServerSide, SortingServerSide } from 'app/modules/ix-table2/api-data-provider';
@@ -8,10 +8,14 @@ import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells
 import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import {
+  AdvancedSearchQuery,
+  SearchQuery,
+} from 'app/modules/search-input/types/search-query.interface';
+import {
   booleanProperty,
   searchProperties,
   textProperty,
-} from 'app/modules/search-input/utils/search-properties.constants';
+} from 'app/modules/search-input/utils/search-properties.utils';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -22,7 +26,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AuditComponent implements OnInit, OnDestroy {
-  protected dataProvider: ApiDataProvider<AuditEntry>;
+  protected dataProvider: ApiDataProvider<AuditEntry, 'audit.query'>;
   showMobileDetails = false;
   columns = createTable<AuditEntry>([
     textColumn({
@@ -47,8 +51,6 @@ export class AuditComponent implements OnInit, OnDestroy {
     }),
   ]);
 
-  auditEntries: AuditEntry[] = [];
-
   protected searchProperties = searchProperties<AuditEntry>([
     textProperty('audit_id', this.translate.instant('Audit ID')),
     textProperty('message_timestamp', this.translate.instant('Timestamp')),
@@ -65,21 +67,25 @@ export class AuditComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.dataProvider = new ApiDataProvider<AuditEntry>(this.ws, 'audit.query');
+    this.dataProvider = new ApiDataProvider(this.ws, 'audit.query');
     this.dataProvider.paginationStrategy = new PaginationServerSide();
     this.dataProvider.sortingStrategy = new SortingServerSide();
-
-    this.dataProvider.currentPage$.pipe(untilDestroyed(this)).subscribe((auditEntries) => {
-      this.auditEntries = auditEntries;
-    });
   }
 
   ngOnDestroy(): void {
     this.dataProvider.unsubscribe();
   }
 
-  onSearch(): void {
+  // TODO: Issue: reset icon will not trigger table update
+  onSearch(query: SearchQuery<AuditEntry>): void {
+    if (query.isBasicQuery) {
+      // TODO: Create a separate class to handle this.
+      this.dataProvider.setParams([[['event', '~', query.query]]]);
+    } else {
+      this.dataProvider.setParams([(query as AdvancedSearchQuery<AuditEntry>).filters]);
+    }
 
+    this.dataProvider.load();
   }
 
   closeMobileDetails(): void {

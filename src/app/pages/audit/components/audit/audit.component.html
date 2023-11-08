@@ -14,11 +14,11 @@
 
   <div class="search-bar">
     <ix-search-input2
-      #search
+      #searchInput
       class="search-input"
       [properties]="searchProperties"
     ></ix-search-input2>
-    <button mat-button color="primary" ixTest="search" (click)="onSearch()">
+    <button mat-button color="primary" ixTest="search" (click)="onSearch(searchInput.query)">
       {{ 'Search' | translate }}
     </button>
   </div>

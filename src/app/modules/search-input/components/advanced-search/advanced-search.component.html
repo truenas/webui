@@ -6,6 +6,7 @@
   #inputArea
   class="input-area"
   contenteditable="true"
+  (input)="onInput(inputArea.textContent)"
 ></div>
 
 <a
@@ -17,6 +18,7 @@
 </a>
 
 <span
+  *ngIf="inputArea.textContent.length > 0"
   class="reset-icon reset-input"
   (click)="onResetInput()"
 >

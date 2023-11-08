@@ -31,5 +31,3 @@ export interface SearchProperty<T, S extends SearchSuggestionsComponent = null> 
 export interface SearchSuggestionsComponent {
   suggestionSelected: EventEmitter<unknown>;
 }
-
-
