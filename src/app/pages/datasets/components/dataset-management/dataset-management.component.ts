@@ -305,7 +305,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   private listenForDatasetScrolling(): void {
     this.subscription.add(
       this.scrollSubject
-        .pipe(debounceTime(5), untilDestroyed(this))
+        .pipe(distinctUntilChanged(), debounceTime(16), untilDestroyed(this))
         .subscribe({
           next: (scrollLeft: number) => {
             this.window.dispatchEvent(new Event('resize'));
