@@ -489,6 +489,22 @@ describe('ChartWizardComponent', () => {
       });
     });
 
+    it('updates form when app version is changed and schema is updated', async () => {
+      const form = await loader.getHarness(IxFormHarness);
+
+      await form.fillForm({
+        Version: '1.2.0',
+      });
+
+      const values = await form.getValues();
+
+      expect(values).toEqual({
+        'Application Name': 'ipfs',
+        Version: '1.2.0',
+        'Provide access to node network namespace for the workload Another Version': true,
+      });
+    });
+
     it('creating when form is submitted', async () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
@@ -532,22 +548,6 @@ describe('ChartWizardComponent', () => {
         }],
       );
       expect(mockEntityJobComponentRef.componentInstance.submit).toHaveBeenCalled();
-    });
-
-    it('updates form when app version is changed and schema is updated', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-
-      await form.fillForm({
-        Version: '1.2.0',
-      });
-
-      const values = await form.getValues();
-
-      expect(values).toEqual({
-        'Application Name': 'ipfs',
-        Version: '1.2.0',
-        'Provide access to node network namespace for the workload Another Version': true,
-      });
     });
   });
 });
