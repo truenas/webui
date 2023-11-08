@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { chain } from 'lodash';
@@ -12,6 +12,7 @@ const noLinksRoutes = ['/credentials', '/reportsdashboard', '/system'];
   selector: 'ix-breadcrumb',
   templateUrl: './breadcrumb.component.html',
   styleUrls: ['./breadcrumb.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BreadcrumbComponent implements OnInit {
   breadcrumbs: RoutePart[];

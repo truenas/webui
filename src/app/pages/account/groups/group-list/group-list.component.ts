@@ -14,6 +14,7 @@ import { select, Store } from '@ngrx/store';
 import { Observable, combineLatest, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { EmptyType } from 'app/enums/empty-type.enum';
+import { rolesListToString } from 'app/enums/role.enum';
 import { Group } from 'app/interfaces/group.interface';
 import { IxDetailRowDirective } from 'app/modules/ix-tables/directives/ix-detail-row.directive';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
@@ -34,7 +35,7 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
 export class GroupListComponent implements OnInit {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
 
-  displayedColumns: string[] = ['group', 'gid', 'builtin', 'sudo_commands', 'smb', 'actions'];
+  displayedColumns: string[] = ['group', 'gid', 'builtin', 'sudo_commands', 'smb', 'roles', 'actions'];
   dataSource = new MatTableDataSource<Group>([]);
   defaultSort: Sort = { active: 'gid', direction: 'asc' };
   expandedRow: Group;
@@ -42,6 +43,7 @@ export class GroupListComponent implements OnInit {
   hideBuiltinGroups = true;
 
   readonly EmptyType = EmptyType;
+  readonly rolesListToString = rolesListToString;
   isLoading$ = this.store$.select(selectGroupState).pipe(map((state) => state.isLoading));
   emptyType$: Observable<EmptyType> = combineLatest([
     this.isLoading$,
@@ -107,6 +109,7 @@ export class GroupListComponent implements OnInit {
 
   createDataSource(groups: Group[] = []): void {
     this.dataSource = new MatTableDataSource(groups);
+
     setTimeout(() => {
       // TODO: Figure out how to avoid setTimeout to make it work on first loading
       this.dataSource.sort = this.sort;
