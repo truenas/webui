@@ -1,14 +1,13 @@
-export function toHumanReadableKey(key: string): string {
-  // Split the string at underscores or camelCase
-  return key
-    // Insert a space before all caps and split by underscores
-    .replace(/([A-Z])/g, ' $1').replace(/_/g, ' ')
-    // split by hyphen
-    .replace(/-/g, ' ')
-    // Trim spaces at the start of the string
-    .replace(/^ /, '')
+export function toHumanReadableKey(str: string): string {
+  return str
+    // Insert a space before any uppercase letters in the middle of words
+    .replace(/([a-z])([A-Z])/g, '$1 $2')
+    // Replace any underscores or dashes with spaces
+    .replace(/[_-]+/g, ' ')
+    // Trim whitespace at the start and end
+    .trim()
     // Capitalize the first letter of each word
-    .replace(/\b./g, match => match.toUpperCase());
+    .replace(/\b[a-z]/g, char => char.toUpperCase());
 }
 
 export function convertObjectKeysToHumanReadable(existingValue: unknown): unknown {

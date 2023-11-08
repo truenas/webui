@@ -5,7 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
-import { toHumanReadableKey } from 'app/helpers/object-object-keys-to-human-readable.helper';
+import { toHumanReadableKey } from 'app/helpers/object-keys-to-human-readable.helper';
 import { DynamicFormSchema, DynamicFormSchemaNode } from 'app/interfaces/dynamic-form-schema.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { ExportingExporterList as ReportingExporterList, ReportingExporterKey as ReportingExporterType, ReportingExporterSchema, ReportingExporter } from 'app/interfaces/reporting-exporters.interface';

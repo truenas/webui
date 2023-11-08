@@ -1,4 +1,4 @@
-import { convertObjectKeysToHumanReadable, toHumanReadableKey } from 'app/helpers/object-object-keys-to-human-readable.helper';
+import { convertObjectKeysToHumanReadable, toHumanReadableKey } from 'app/helpers/object-keys-to-human-readable.helper';
 
 const specObject = {
   firstName: 'Alex',
