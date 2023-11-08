@@ -32,6 +32,7 @@ import { LogDetailsPanelComponent } from './components/log-details-panel/log-det
     IxTable2Module,
     AppLoaderModule,
     SearchInputModule,
+    CoreComponents,
     routing,
     CoreComponents,
   ],

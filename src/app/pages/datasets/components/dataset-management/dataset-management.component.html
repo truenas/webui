@@ -116,8 +116,8 @@
 
     <div
       *ngIf="selectedDataset$ | async as dataset"
+      ixDetailsHeight
       class="details-container"
-      ixDetailsHeight="rightside-content-hold"
       [class.details-container-mobile]="showMobileDetails"
     >
       <ix-fake-progress-bar

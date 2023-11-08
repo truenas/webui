@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -26,6 +26,7 @@ import { WebSocketService } from 'app/services/ws.service';
 @Component({
   styleUrls: ['./export-disconnect-modal.component.scss'],
   templateUrl: './export-disconnect-modal.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ExportDisconnectModalComponent implements OnInit {
   readonly helptext = helptext;
@@ -85,6 +86,7 @@ export class ExportDisconnectModalComponent implements OnInit {
     private loader: AppLoaderService,
     private ws: WebSocketService,
     private datasetStore: DatasetTreeStore,
+    private cdr: ChangeDetectorRef,
     @Inject(MAT_DIALOG_DATA) public pool: Pool,
   ) {}
 
@@ -138,6 +140,7 @@ export class ExportDisconnectModalComponent implements OnInit {
       next: () => {
         this.handleDisconnectJobSuccess(value);
         entityJobRef.close(true);
+        this.cdr.markForCheck();
       },
       error: (error: WebsocketError | Job) => {
         this.dialogService.error(this.errorHandler.parseError(error));
@@ -150,6 +153,7 @@ export class ExportDisconnectModalComponent implements OnInit {
         this.isFormLoading = false;
         entityJobRef.close(true);
         this.handleDisconnectJobFailure(failureData);
+        this.cdr.markForCheck();
       },
       error: (error: WebsocketError | Job) => {
         this.dialogService.error(this.errorHandler.parseError(error));
@@ -229,6 +233,7 @@ export class ExportDisconnectModalComponent implements OnInit {
     ).subscribe(() => {
       this.restartServices = true;
       this.startExportDisconnectJob();
+      this.cdr.markForCheck();
     });
   }
 
@@ -263,6 +268,7 @@ export class ExportDisconnectModalComponent implements OnInit {
           this.processes = processes;
           this.systemConfig = systemConfig;
           this.prepareForm();
+          this.cdr.markForCheck();
         },
         error: (error: WebsocketError) => {
           this.dialogService.error({

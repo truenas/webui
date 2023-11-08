@@ -21,89 +21,89 @@ export const dataProtectionRoutes: Routes = [{
     },
     {
       path: 'cloudsync',
-      data: { title: T('Cloud Sync Tasks'), breadcrumb: T('Cloud Sync Tasks'), icon: 'event_note' },
+      data: { title: T('Cloud Sync Tasks'), breadcrumb: null, icon: 'event_note' },
       children: [{
         path: '',
         component: CloudsyncListComponent,
-        data: { title: T('Cloud Sync Tasks'), breadcrumb: T('Cloud Sync Tasks') },
+        data: { title: T('Cloud Sync Tasks'), breadcrumb: null },
       }, {
         path: ':dataset',
         component: CloudsyncListComponent,
-        data: { title: T('Cloud Sync Tasks'), breadcrumb: T('Cloud Sync Tasks') },
+        data: { title: T('Cloud Sync Tasks'), breadcrumb: null },
       }],
     }, {
       path: 'snapshot',
-      data: { title: T('Periodic Snapshot Tasks'), breadcrumb: T('Periodic Snapshot Tasks'), icon: 'event_note' },
+      data: { title: T('Periodic Snapshot Tasks'), breadcrumb: null, icon: 'event_note' },
       children: [{
         path: '',
         component: SnapshotTaskListComponent,
-        data: { title: T('Periodic Snapshot Tasks'), breadcrumb: T('Periodic Snapshot Tasks') },
+        data: { title: T('Periodic Snapshot Tasks'), breadcrumb: null },
       }],
     }, {
       path: 'snapshot/:dataset',
-      data: { title: T('Periodic Snapshot Tasks'), breadcrumb: T('Periodic Snapshot Tasks'), icon: 'event_note' },
+      data: { title: T('Periodic Snapshot Tasks'), breadcrumb: null, icon: 'event_note' },
       children: [{
         path: '',
         component: SnapshotTaskListComponent,
-        data: { title: T('Periodic Snapshot Tasks'), breadcrumb: T('Periodic Snapshot Tasks') },
+        data: { title: T('Periodic Snapshot Tasks'), breadcrumb: null },
       }],
     }, {
       path: 'replication',
-      data: { title: T('Replication Tasks'), breadcrumb: T('Replication Tasks'), icon: 'event_note' },
+      data: { title: T('Replication Tasks'), breadcrumb: null, icon: 'event_note' },
       children: [{
         path: '',
         component: ReplicationListComponent,
-        data: { title: T('Replication Tasks'), breadcrumb: T('Replication Tasks') },
+        data: { title: T('Replication Tasks'), breadcrumb: null },
       }, {
         path: ':dataset',
         component: ReplicationListComponent,
-        data: { title: T('Replication Tasks'), breadcrumb: T('Replication Tasks') },
+        data: { title: T('Replication Tasks'), breadcrumb: null },
       }, {
         path: 'wizard',
         component: ReplicationWizardComponent,
-        data: { title: T('Wizard'), breadcrumb: T('Wizard') },
+        data: { title: T('Wizard'), breadcrumb: null },
       },
       ],
     }, {
       path: 'rsync',
-      data: { title: T('Rsync Tasks'), breadcrumb: T('Rsync Tasks'), icon: 'event_note' },
+      data: { title: T('Rsync Tasks'), breadcrumb: null, icon: 'event_note' },
       children: [{
         path: '',
         component: RsyncTaskListComponent,
-        data: { title: T('Rsync Tasks'), breadcrumb: T('Rsync Tasks') },
+        data: { title: T('Rsync Tasks'), breadcrumb: null },
       }, {
         path: ':dataset',
         component: RsyncTaskListComponent,
-        data: { title: T('Rsync Tasks'), breadcrumb: T('Rsync Tasks') },
+        data: { title: T('Rsync Tasks'), breadcrumb: null },
       }],
     }, {
       path: 'smart',
-      data: { title: T('Periodic S.M.A.R.T. Tests'), breadcrumb: T('Periodic S.M.A.R.T. Tests'), icon: 'event_note' },
+      data: { title: T('Periodic S.M.A.R.T. Tests'), breadcrumb: null, icon: 'event_note' },
       children: [{
         path: '',
         component: SmartTaskListComponent,
-        data: { title: T('Periodic S.M.A.R.T. Tests'), breadcrumb: T('Periodic S.M.A.R.T. Tests') },
+        data: { title: T('Periodic S.M.A.R.T. Tests'), breadcrumb: null },
       }],
     }, {
       path: 'scrub',
-      data: { title: T('Scrub Tasks'), breadcrumb: T('Scrub Tasks'), icon: 'event_note' },
+      data: { title: T('Scrub Tasks'), breadcrumb: null, icon: 'event_note' },
       children: [{
         path: '',
         component: ScrubListComponent,
-        data: { title: T('Scrub Tasks'), breadcrumb: T('Scrub Tasks') },
+        data: { title: T('Scrub Tasks'), breadcrumb: null },
       }, {
         path: 'priority',
-        data: { title: T('Resilver Priority'), breadcrumb: T('Resilver Priority'), icon: 'event_note' },
+        data: { title: T('Resilver Priority'), breadcrumb: null, icon: 'event_note' },
         component: ResilverConfigComponent,
       }],
     }, {
       path: 'vmware-snapshots',
-      data: { title: T('VMware Snapshots'), breadcrumb: T('VMware Snapshots'), icon: 'camera_alt' },
+      data: { title: T('VMware Snapshots'), breadcrumb: null, icon: 'camera_alt' },
       children: [
         {
           path: '',
           component: VmwareSnapshotListComponent,
-          data: { title: T('VMware Snapshots'), breadcrumb: T('VMware Snapshots') },
+          data: { title: T('VMware Snapshots'), breadcrumb: null },
         },
       ],
     },

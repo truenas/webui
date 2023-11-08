@@ -435,8 +435,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   ngOnDestroy(): void {
     this.diskTemperatureService.diskTemperaturesUnsubscribe();
     this.destroyAllEnclosures();
-    this.app.stage.destroy(true);
-    this.app.destroy(true);
+    if (this.app) {
+      this.app.stage.destroy(true);
+      this.app.destroy(true);
+    }
   }
 
   // Recreates enclosure when switching between enclosures or front/rear/internal visualizations
@@ -797,7 +799,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
       // Clear out assets
       this.chassisView.destroy();
     }
-    this.container.destroy(true);
+    this.container?.destroy(true);
     PIXI.loader.resources = {};
   }
 
