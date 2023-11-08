@@ -19,11 +19,11 @@
       }
     }
 
-    .scrollTop {
-      bottom: 20px;
-      left: 50%;
-      position: absolute;
-      transform: translateX(-50%);
+    .scroll-top {
+      bottom: 25px;
+      left: 25px;
+      position: fixed;
+      z-index: 2;
 
       &.mat-mdc-icon-button {
         background-color: var(--alt-bg1);

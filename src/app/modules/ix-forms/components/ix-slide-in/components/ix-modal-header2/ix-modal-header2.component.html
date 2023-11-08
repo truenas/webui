@@ -1,0 +1,29 @@
+<div
+  class="ix-slidein-title-bar"
+  fxLayout="row"
+  [fxLayoutAlign]="componentsSize > 1 ? 'left center' : 'space-between center'"
+>
+  <ng-container *ngIf="componentsSize > 1 && !disableClose">
+    <button
+      mat-icon-button
+      [ixTest]="['close-slide-in']"
+      [matTooltip]="tooltip"
+      (click)="close()"
+    >
+      <ix-icon id="ix-close-icon" name="mdi-chevron-left" ></ix-icon>
+    </button>
+  </ng-container>
+  <h3 class="ix-form-title">{{ title | translate }}</h3>
+  <ng-container *ngIf="componentsSize <= 1 && !disableClose">
+    <button
+      mat-icon-button
+      [ixTest]="['close-slide-in']"
+      [matTooltip]="tooltip"
+      (click)="close()"
+    >
+      <ix-icon id="ix-close-icon" name="cancel" ></ix-icon>
+    </button>
+  </ng-container>
+</div>
+
+<mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
