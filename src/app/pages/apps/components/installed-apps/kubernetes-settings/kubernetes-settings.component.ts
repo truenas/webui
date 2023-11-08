@@ -40,6 +40,7 @@ export class KubernetesSettingsComponent implements OnInit {
     enable_container_image_update: [true],
     configure_gpus: [true],
     servicelb: [true],
+    metrics_server: [false],
     cluster_cidr: ['', Validators.required],
     service_cidr: ['', Validators.required],
     cluster_dns_ip: ['', Validators.required],
