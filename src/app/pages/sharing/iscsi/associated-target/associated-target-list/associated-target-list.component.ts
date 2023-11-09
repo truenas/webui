@@ -72,34 +72,36 @@ export class AssociatedTargetListComponent implements OnInit {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => {
-            this.iscsiService.getGlobalSessions().pipe(untilDestroyed(this)).subscribe(
-              (sessions) => {
-                let warningMsg = '';
-                sessions.forEach((session) => {
-                  if (Number(session.target.split(':')[1]) === row.target) {
-                    warningMsg = `<font color="red">${this.translate.instant('Warning: iSCSI Target is already in use.</font><br>')}`;
-                  }
-                });
-                const targetName = this.targets.find((target) => target.id === row.target)?.name;
-                const extentName = this.extents.find((extent) => extent.id === row.extent)?.name;
-                const deleteMsg = this.translate.instant('Delete Target/Extent {name}', { name: `${targetName} - ${extentName}` });
+            this.iscsiService.getGlobalSessions()
+              .pipe(this.loader.withLoader(), untilDestroyed(this))
+              .subscribe(
+                (sessions) => {
+                  let warningMsg = '';
+                  sessions.forEach((session) => {
+                    if (Number(session.target.split(':')[1]) === row.target) {
+                      warningMsg = `<font color="red">${this.translate.instant('Warning: iSCSI Target is already in use.</font><br>')}`;
+                    }
+                  });
+                  const targetName = this.targets.find((target) => target.id === row.target)?.name;
+                  const extentName = this.extents.find((extent) => extent.id === row.extent)?.name;
+                  const deleteMsg = this.translate.instant('Delete Target/Extent {name}', { name: `${targetName} - ${extentName}` });
 
-                this.dialogService.confirm({
-                  title: this.translate.instant('Delete'),
-                  message: warningMsg + deleteMsg,
-                  buttonText: this.translate.instant('Delete'),
-                }).pipe(
-                  filter(Boolean),
-                  switchMap(() => this.ws.call('iscsi.targetextent.delete', [row.id, true]).pipe(this.loader.withLoader())),
-                  untilDestroyed(this),
-                ).subscribe({
-                  next: () => this.dataProvider.load(),
-                  error: (error: WebsocketError) => {
-                    this.dialogService.error(this.errorHandler.parseWsError(error));
-                  },
-                });
-              },
-            );
+                  this.dialogService.confirm({
+                    title: this.translate.instant('Delete'),
+                    message: warningMsg + deleteMsg,
+                    buttonText: this.translate.instant('Delete'),
+                  }).pipe(
+                    filter(Boolean),
+                    switchMap(() => this.ws.call('iscsi.targetextent.delete', [row.id, true]).pipe(this.loader.withLoader())),
+                    untilDestroyed(this),
+                  ).subscribe({
+                    next: () => this.dataProvider.load(),
+                    error: (error: WebsocketError) => {
+                      this.dialogService.error(this.errorHandler.parseWsError(error));
+                    },
+                  });
+                },
+              );
           },
         },
       ],
