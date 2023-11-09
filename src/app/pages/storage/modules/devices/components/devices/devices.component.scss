@@ -1,7 +1,7 @@
 @import 'scss-imports/splitview';
 @import 'mixins/layout';
 
-@include tree-node-with-details-container(193px);
+@include tree-node-with-details-container;
 
 :host {
   display: block;

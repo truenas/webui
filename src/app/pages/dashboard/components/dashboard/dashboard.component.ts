@@ -76,7 +76,6 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
   dashState: DashConfigItem[]; // Saved State
   previousState: DashConfigItem[];
   activeMobileWidget: DashConfigItem[] = [];
-  availableWidgets: DashConfigItem[];
   renderedWidgets: DashConfigItem[];
 
   readonly ScreenType = ScreenType;
@@ -158,7 +157,6 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
         this.volumeData = state.volumesData;
         this.systemInformation = state.sysInfoWithFeatures;
         this.isHaLicensed = state.isHaLicensed;
-        this.availableWidgets = state.availableWidgets;
         this.setDashState(state.dashboardState);
       }),
       untilDestroyed(this),
@@ -270,8 +268,6 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
     conf.push({ name: WidgetName.Memory, rendered: true, id: conf.length.toString() });
     conf.push({ name: WidgetName.Storage, rendered: true, id: conf.length.toString() });
     conf.push({ name: WidgetName.Network, rendered: true, id: conf.length.toString() });
-
-    this.availableWidgets = conf;
   }
 
   showConfigForm(): void {
