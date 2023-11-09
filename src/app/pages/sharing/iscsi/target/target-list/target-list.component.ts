@@ -1,128 +1,132 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter } from 'rxjs/operators';
+import { filter, switchMap, tap } from 'rxjs/operators';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
-import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
+import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
+import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
+import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { createTable } from 'app/modules/ix-table2/utils';
+import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
   selector: 'ix-iscsi-target-list',
-  template: `
-    <ix-entity-table [conf]="this" [title]="title"></ix-entity-table>
-  `,
-  providers: [IscsiService],
+  templateUrl: './target-list.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TargetListComponent implements EntityTableConfig<IscsiTarget> {
-  title = this.translate.instant('Targets');
-  queryCall = 'iscsi.target.query' as const;
-  wsDelete = 'iscsi.target.delete' as const;
-  routeAdd: string[] = ['sharing', 'iscsi', 'target', 'add'];
-  routeAddTooltip = this.translate.instant('Add Target');
-  routeEdit: string[] = ['sharing', 'iscsi', 'target', 'edit'];
+export class TargetListComponent implements OnInit {
+  dataProvider: AsyncDataProvider<IscsiTarget>;
+  filterString = '';
+  targets: IscsiTarget[] = [];
 
-  columns = [
-    {
-      name: this.translate.instant('Target Name'),
-      prop: 'name',
-      always_display: true,
-    },
-    {
-      name: this.translate.instant('Target Alias'),
-      prop: 'alias',
-    },
-  ];
-  config = {
-    paging: true,
-    sorting: { columns: this.columns },
-    deleteMsg: {
-      title: this.translate.instant('Target'),
-      key_props: ['name'],
-    },
-  };
+  columns = createTable<IscsiTarget>([
+    textColumn({
+      title: this.translate.instant('Target Name'),
+      propertyName: 'name',
+      sortable: true,
+    }),
+    textColumn({
+      title: this.translate.instant('Target Alias'),
+      propertyName: 'alias',
+      sortable: true,
+    }),
+    actionsColumn({
+      actions: [
+        {
+          iconName: 'edit',
+          tooltip: this.translate.instant('Edit'),
+          onClick: (target) => {
+            const slideInRef = this.slideInService.open(TargetFormComponent, { data: target });
+            slideInRef.slideInClosed$
+              .pipe(filter(Boolean), untilDestroyed(this))
+              .subscribe(() => this.dataProvider.load());
+          },
+        },
+        {
+          iconName: 'delete',
+          tooltip: this.translate.instant('Delete'),
+          onClick: (row) => {
+            this.iscsiService.getGlobalSessions()
+              .pipe(this.loader.withLoader(), untilDestroyed(this))
+              .subscribe(
+                (sessions) => {
+                  let warningMsg = '';
+                  sessions.forEach((session) => {
+                    if (Number(session.target.split(':')[1]) === row.id) {
+                      warningMsg = `<font color="red">${this.translate.instant('Warning: iSCSI Target is already in use.</font><br>')}`;
+                    }
+                  });
+                  const deleteMsg = this.translate.instant('Delete Target {name}', { name: row.name });
 
-  protected entityList: EntityTableComponent<IscsiTarget>;
+                  this.dialogService.confirm({
+                    title: this.translate.instant('Delete'),
+                    message: warningMsg + deleteMsg,
+                    buttonText: this.translate.instant('Delete'),
+                  }).pipe(
+                    filter(Boolean),
+                    switchMap(() => this.ws.call('iscsi.target.delete', [row.id, true]).pipe(this.loader.withLoader())),
+                    untilDestroyed(this),
+                  ).subscribe({
+                    next: () => this.dataProvider.load(),
+                    error: (error: WebsocketError) => {
+                      this.dialogService.error(this.errorHandler.parseWsError(error));
+                    },
+                  });
+                },
+              );
+          },
+        },
+      ],
+    }),
+  ]);
+
+
   constructor(
+    public emptyService: EmptyService,
     private iscsiService: IscsiService,
     private slideInService: IxSlideInService,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private translate: TranslateService,
+    private loader: AppLoaderService,
+    private ws: WebSocketService,
+    private cdr: ChangeDetectorRef,
   ) {}
 
-  afterInit(entityList: EntityTableComponent<IscsiTarget>): void {
-    this.entityList = entityList;
+  ngOnInit(): void {
+    const targets$ = this.iscsiService.getTargets().pipe(
+      tap((targets) => this.targets = targets),
+    );
+    this.dataProvider = new AsyncDataProvider(targets$);
+    this.dataProvider.load();
   }
 
   doAdd(): void {
     const slideInRef = this.slideInService.open(TargetFormComponent, { wide: true });
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.entityList.getData());
+    slideInRef.slideInClosed$
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe(() => this.dataProvider.load());
   }
 
-  doEdit(id: number): void {
-    const target = this.entityList.rows.find((row) => row.id === id);
-    const slideInRef = this.slideInService.open(TargetFormComponent, { wide: true, data: target });
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.entityList.getData());
+  onListFiltered(query: string): void {
+    this.filterString = query.toLowerCase();
+    this.dataProvider.setRows(this.targets.filter((target) => {
+      return [target.name].includes(this.filterString);
+    }));
   }
 
-  getActions(row: IscsiTarget): EntityTableAction<IscsiTarget>[] {
-    return [{
-      id: row.name,
-      icon: 'edit',
-      name: 'edit',
-      label: this.translate.instant('Edit'),
-      onClick: (rowInner: IscsiTarget) => {
-        this.entityList.doEdit(rowInner.id);
-      },
-    }, {
-      id: row.name,
-      icon: 'delete',
-      name: 'delete',
-      label: this.translate.instant('Delete'),
-      onClick: (rowInner: IscsiTarget) => {
-        this.deleteRow(rowInner);
-      },
-    }];
-  }
-
-  private deleteRow(rowInner: IscsiTarget): void {
-    let deleteMsg = this.entityList.getDeleteMessage(rowInner);
-    this.iscsiService.getGlobalSessions().pipe(untilDestroyed(this)).subscribe(
-      (sessions) => {
-        const payload: [id: number, force?: boolean] = [rowInner.id];
-        let warningMsg = '';
-        for (const session of sessions) {
-          if (session.target.split(':')[1] === rowInner.name) {
-            warningMsg = `<font color="red">${this.translate.instant('Warning: iSCSI Target is already in use.</font><br>')}`;
-            payload.push(true); // enable force delete
-            break;
-          }
-        }
-        deleteMsg = warningMsg + deleteMsg;
-
-        this.entityList.dialogService.confirm({
-          title: this.translate.instant('Delete'),
-          message: deleteMsg,
-          buttonText: this.translate.instant('Delete'),
-        }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-          this.entityList.loader.open();
-          this.entityList.loaderOpen = true;
-          this.entityList.ws.call(this.wsDelete, payload).pipe(untilDestroyed(this)).subscribe({
-            next: () => this.entityList.getData(),
-            error: (error: WebsocketError) => {
-              this.dialogService.error(this.errorHandler.parseWsError(error));
-              this.entityList.loader.close();
-            },
-          });
-        });
-      },
-    );
+  columnsChange(columns: typeof this.columns): void {
+    this.columns = [...columns];
+    this.cdr.detectChanges();
+    this.cdr.markForCheck();
   }
 }

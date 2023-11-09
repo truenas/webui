@@ -12,6 +12,7 @@ import { WebSocketService } from 'app/services/ws.service';
 @Component({
   selector: 'ix-iscsi',
   templateUrl: './iscsi.component.html',
+  styleUrls: ['./iscsi.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [IscsiService],
 })

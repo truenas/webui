@@ -1,126 +1,134 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter } from 'rxjs';
+import { filter, tap } from 'rxjs';
 import { IscsiExtentType } from 'app/enums/iscsi.enum';
 import { IscsiExtent } from 'app/interfaces/iscsi.interface';
-import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
-import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
+import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
+import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
+import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { yesNoColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
+import { createTable } from 'app/modules/ix-table2/utils';
+import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
+import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ExtentFormComponent } from 'app/pages/sharing/iscsi/extent/extent-form/extent-form.component';
 import {
   DeleteExtentDialogComponent,
 } from 'app/pages/sharing/iscsi/extent/extent-list/delete-extent-dialog/delete-extent-dialog.component';
+import { DialogService } from 'app/services/dialog.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { IscsiService } from 'app/services/iscsi.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
   selector: 'ix-iscsi-extent-list',
-  template: `
-    <ix-entity-table [conf]="this" [title]="tableTitle"></ix-entity-table>
-  `,
+  templateUrl: './extent-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ExtentListComponent implements EntityTableConfig<IscsiExtent> {
-  tableTitle = this.translate.instant('Extents');
-  protected entityTable: EntityTableComponent<IscsiExtent>;
-  queryCall = 'iscsi.extent.query' as const;
-  routeAdd: string[] = ['sharing', 'iscsi', 'extent', 'add'];
-  routeAddTooltip = this.translate.instant('Add Extent');
-  routeEdit: string[] = ['sharing', 'iscsi', 'extent', 'edit'];
-  wsDelete = 'iscsi.extent.delete' as const;
+export class ExtentListComponent implements OnInit {
+  isLoading = false;
+  filterString = '';
+  dataProvider: AsyncDataProvider<IscsiExtent>;
 
-  columns = [
-    {
-      name: this.translate.instant('Extent Name'),
-      prop: 'name',
-      always_display: true,
-    },
-    {
-      name: this.translate.instant('Device/File'),
-      prop: 'deviceOrFile',
-      always_display: true,
-    },
-    {
-      name: this.translate.instant('Description'),
-      prop: 'comment',
-    },
-    {
-      name: this.translate.instant('Serial'),
-      prop: 'serial',
-    },
-    {
-      name: this.translate.instant('NAA'),
-      prop: 'naa',
-    },
-    {
-      name: this.translate.instant('Enabled'),
-      prop: 'enabled',
-    },
-  ];
-  config = {
-    paging: true,
-    sorting: { columns: this.columns },
-    deleteMsg: {
-      title: this.translate.instant('Extent'),
-      key_props: ['name'],
-    },
-  };
+  extents: IscsiExtent[] = [];
+
+  columns = createTable<IscsiExtent>([
+    textColumn({
+      title: this.translate.instant('Extent Name'),
+      propertyName: 'name',
+    }),
+    textColumn({
+      title: this.translate.instant('Device/File'),
+      propertyName: 'path',
+      getValue: (extent) => {
+        return extent.type === IscsiExtentType.Disk ? extent.disk : extent.path;
+      },
+    }),
+    textColumn({
+      title: this.translate.instant('Description'),
+      propertyName: 'comment',
+    }),
+    textColumn({
+      title: this.translate.instant('Serial'),
+      propertyName: 'serial',
+    }),
+    textColumn({
+      title: this.translate.instant('NAA'),
+      propertyName: 'naa',
+    }),
+    yesNoColumn({
+      title: this.translate.instant('Enabled'),
+      propertyName: 'enabled',
+    }),
+    actionsColumn({
+      actions: [
+        {
+          iconName: 'edit',
+          tooltip: this.translate.instant('Edit'),
+          onClick: (extent) => {
+            const slideInRef = this.slideInService.open(ExtentFormComponent, { wide: true, data: extent });
+            slideInRef.slideInClosed$
+              .pipe(filter(Boolean), untilDestroyed(this))
+              .subscribe(() => this.dataProvider.load());
+          },
+        },
+        {
+          iconName: 'delete',
+          tooltip: this.translate.instant('Delete'),
+          onClick: (row) => this.showDeleteDialog(row),
+        },
+      ],
+    }),
+  ]);
 
   constructor(
+    public emptyService: EmptyService,
+    private ws: WebSocketService,
     private slideInService: IxSlideInService,
     private translate: TranslateService,
     private matDialog: MatDialog,
+    private iscsiService: IscsiService,
+    private dialogService: DialogService,
+    private errorHandler: ErrorHandlerService,
+    private loader: AppLoaderService,
+    private cdr: ChangeDetectorRef,
   ) {}
 
-  resourceTransformIncomingRestData(extents: IscsiExtent[]): (IscsiExtent & { deviceOrFile: string })[] {
-    return extents.map((extent) => ({
-      ...extent,
-      deviceOrFile: extent.type === IscsiExtentType.Disk ? extent.disk : extent.path,
-    }));
-  }
-
-  afterInit(entityList: EntityTableComponent<IscsiExtent>): void {
-    this.entityTable = entityList;
+  ngOnInit(): void {
+    const extents$ = this.ws.call('iscsi.extent.query', []).pipe(
+      tap((extents) => this.extents = extents),
+    );
+    this.dataProvider = new AsyncDataProvider(extents$);
+    this.dataProvider.load();
   }
 
   doAdd(): void {
     const slideInRef = this.slideInService.open(ExtentFormComponent, { wide: true });
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.entityTable.getData());
-  }
-
-  doEdit(id: number): void {
-    const extent = this.entityTable.rows.find((row) => row.id === id);
-    const slideInRef = this.slideInService.open(ExtentFormComponent, { wide: true, data: extent });
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.entityTable.getData());
-  }
-
-  getActions(): EntityTableAction[] {
-    return [{
-      name: 'edit',
-      id: 'edit',
-      icon: 'edit',
-      label: this.translate.instant('Edit'),
-      onClick: (rowinner: IscsiExtent) => this.entityTable.doEdit(rowinner.id),
-    }, {
-      name: 'delete',
-      id: 'delete',
-      icon: 'delete',
-      label: this.translate.instant('Delete'),
-      onClick: (rowinner: IscsiExtent) => this.showDeleteDialog(rowinner),
-    }] as EntityTableAction[];
+    slideInRef.slideInClosed$
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe(() => this.dataProvider.load());
   }
 
   showDeleteDialog(extent: IscsiExtent): void {
     this.matDialog.open(DeleteExtentDialogComponent, { data: extent })
       .afterClosed()
-      .pipe(untilDestroyed(this))
-      .subscribe((wasDeleted) => {
-        if (!wasDeleted) {
-          return;
-        }
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe(() => this.dataProvider.load());
+  }
 
-        this.entityTable.getData();
-      });
+  onListFiltered(query: string): void {
+    this.filterString = query.toLowerCase();
+    this.dataProvider.setRows(this.extents.filter((extent) => {
+      return [extent.name].includes(this.filterString);
+    }));
+  }
+
+  columnsChange(columns: typeof this.columns): void {
+    this.columns = [...columns];
+    this.cdr.detectChanges();
+    this.cdr.markForCheck();
   }
 }
