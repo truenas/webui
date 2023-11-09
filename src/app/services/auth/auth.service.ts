@@ -20,7 +20,7 @@ import {
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { IncomingWebsocketMessage, ResultMessage } from 'app/interfaces/api-message.interface';
 import { DsUncachedUser, LoggedInUser } from 'app/interfaces/ds-cache.interface';
-import { GlobalTwoFactorConfig, UserTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
+import { GlobalTwoFactorConfig, UserTwoFactorConfig, UserTwoFactorConfigUpdate } from 'app/interfaces/two-factor-config.interface';
 import { User } from 'app/interfaces/user.interface';
 import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
 import { AppState } from 'app/store';
@@ -355,7 +355,7 @@ export class AuthService {
     ).subscribe();
   }
 
-  renewUser2FaSecret(interval: number, otpDigits: number): Observable<User> {
+  renewUser2FaSecret(config: UserTwoFactorConfigUpdate): Observable<User> {
     return this.user$.pipe(
       filter(Boolean),
       take(1),
@@ -365,7 +365,7 @@ export class AuthService {
           id: renewUuid,
           msg: IncomingApiMessageType.Method,
           method: 'user.renew_2fa_secret',
-          params: [user.username, { interval, otp_digits: otpDigits }],
+          params: [user.username, config],
         };
 
         const requestTriggerUserQuery$ = new Observable((subscriber) => {

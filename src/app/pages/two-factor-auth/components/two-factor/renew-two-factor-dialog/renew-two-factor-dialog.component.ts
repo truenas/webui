@@ -45,7 +45,9 @@ export class RenewTwoFactorDialogComponent {
   renew(): void {
     this.isFormLoading = true;
     this.cdr.markForCheck();
-    this.authService.renewUser2FaSecret(this.form.value.interval, this.form.value.otp_digits).pipe(
+    this.authService.renewUser2FaSecret(
+      { interval: this.form.value.interval,  otp_digits: this.form.value.otp_digits },
+    ).pipe(
       untilDestroyed(this),
     ).subscribe({
       next: () => {
