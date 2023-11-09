@@ -33,7 +33,7 @@ describe('SearchInputComponent', () => {
   it('shows appropriate mode based on the query provided', async () => {
     spectator.setInput('query',  {
       isBasicQuery: false,
-      filters: [[['username', '=', 'Bob']]],
+      filters: [['username', '=', 'Bob']],
     });
     expect(await searchHarness.isInAdvancedMode()).toBe(true);
 
