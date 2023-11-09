@@ -42,6 +42,7 @@
   "Edit Reporting Exporter": "",
   "Editing interface will result in default gateway being removed, which may result in TrueNAS being inaccessible. You can provide new default gateway now:": "",
   "Enable FIPS": "",
+  "Enable Integrated Metrics Server": "",
   "Enable for TrueNAS to periodically review data blocks and identify empty blocks, or obsolete blocks that can be deleted. Unset to use dirty block overwrites (default).": "",
   "Enable this SMB share. Unset to disable this SMB share without deleting it.": "",
   "Enable to use thin provisioning where disk space for this volume is allocated <b>‘on demand’</b> as new writes are received. Use caution when enabling this feature, as writes can fail when the pool is low on space.": "",

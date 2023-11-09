@@ -945,6 +945,7 @@
   "Enable HTTPS Redirect": "",
   "Enable Hyper-V Enlightenments": "",
   "Enable Integrated Loadbalancer": "",
+  "Enable Integrated Metrics Server": "",
   "Enable SMB2/3 Durable Handles": "",
   "Enable SMTP configuration": "",
   "Enable Two Factor Authentication Globally": "",

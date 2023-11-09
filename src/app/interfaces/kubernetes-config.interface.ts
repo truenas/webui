@@ -12,6 +12,7 @@ export interface KubernetesConfig {
   route_v6_interface: string;
   service_cidr: string;
   servicelb: boolean;
+  metrics_server: boolean;
 }
 
 export interface KubernetesConfigUpdate {
@@ -22,6 +23,7 @@ export interface KubernetesConfigUpdate {
   route_v4_gateway: string;
   route_v4_interface: string;
   service_cidr: string;
+  metrics_server: boolean;
   migrate_applications?: boolean;
   configure_gpus?: boolean;
   force?: boolean;

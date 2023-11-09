@@ -1273,6 +1273,7 @@
   "Enable HTTPS Redirect": "",
   "Enable Hyper-V Enlightenments": "",
   "Enable Integrated Loadbalancer": "",
+  "Enable Integrated Metrics Server": "",
   "Enable S.M.A.R.T.": "",
   "Enable SMB1 support": "",
   "Enable SMB2/3 Durable Handles": "",

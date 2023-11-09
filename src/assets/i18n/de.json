@@ -878,6 +878,7 @@
   "Enable HTTPS Redirect": "",
   "Enable Hyper-V Enlightenments": "",
   "Enable Integrated Loadbalancer": "",
+  "Enable Integrated Metrics Server": "",
   "Enable SMTP configuration": "",
   "Enable Two Factor Authentication Globally": "",
   "Enable Two Factor Authentication for SSH": "",

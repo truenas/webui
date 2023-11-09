@@ -39,6 +39,7 @@ describe('KubernetesSettingsComponent', () => {
           cluster_cidr: '172.16.0.0/16',
           service_cidr: '172.17.0.0/16',
           cluster_dns_ip: '172.17.0.1',
+          metrics_server: true,
         } as KubernetesConfig),
         mockJob('kubernetes.update'),
       ]),
@@ -82,6 +83,7 @@ describe('KubernetesSettingsComponent', () => {
       'Enable Container Image Updates': true,
       'Enable GPU support': true,
       'Enable Integrated Loadbalancer': true,
+      'Enable Integrated Metrics Server': true,
       'Cluster CIDR': '172.16.0.0/16',
       'Service CIDR': '172.17.0.0/16',
       'Cluster DNS IP': '172.17.0.1',
@@ -98,6 +100,7 @@ describe('KubernetesSettingsComponent', () => {
       'Enable Container Image Updates': false,
       'Enable GPU support': false,
       'Enable Integrated Loadbalancer': false,
+      'Enable Integrated Metrics Server': false,
       Force: true,
     });
 
@@ -114,6 +117,7 @@ describe('KubernetesSettingsComponent', () => {
       cluster_cidr: '172.16.0.0/16',
       service_cidr: '172.17.0.0/16',
       cluster_dns_ip: '172.17.0.1',
+      metrics_server: false,
       force: true,
     }]);
     expect(spectator.inject(ApplicationsService).updateContainerConfig).toHaveBeenCalledWith(false);
@@ -145,6 +149,7 @@ describe('KubernetesSettingsComponent', () => {
       service_cidr: '172.17.1.0/16',
       cluster_dns_ip: '172.17.1.1',
       servicelb: true,
+      metrics_server: true,
       force: false,
     }]);
   });

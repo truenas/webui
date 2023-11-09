@@ -404,6 +404,7 @@
   "Empty": "",
   "Enable FIPS": "",
   "Enable Hyper-V Enlightenments": "",
+  "Enable Integrated Metrics Server": "",
   "Enable Two Factor Authentication Globally": "",
   "Enable Two Factor Authentication for SSH": "",
   "Enable a Display (Virtual Network Computing) remote connection. Requires <i>UEFI</i> booting.": "",
