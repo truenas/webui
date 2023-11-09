@@ -3744,6 +3744,7 @@
   "{n, plural, one {# docker image} other {# docker images}} has been deleted.": "",
   "{n, plural, one {# docker image} other {# docker images}} has been updated.": "",
   "{n, plural, one {# thread} other {# threads}}": "",
+  "{name} Devices": "",
   "{name} service has been restarted": "",
   "{n}": "",
   "{n} (applies to descendants)": "",

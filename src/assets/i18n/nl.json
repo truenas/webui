@@ -443,6 +443,7 @@
   "{minutes, plural, =1 {# minute} other {# minutes}}": "",
   "{n, plural, one {# docker image} other {# docker images}} has been deleted.": "",
   "{n, plural, one {# docker image} other {# docker images}} has been updated.": "",
+  "{name} Devices": "",
   "{name} service has been restarted": "",
   "{seconds, plural, =1 {# second} other {# seconds}}": "",
   "{type} VDEVs": "",

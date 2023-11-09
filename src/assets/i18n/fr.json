@@ -228,6 +228,7 @@
   "{n, plural, one {# CPU} other {# CPUs}}": "",
   "{n, plural, one {# core} other {# cores}}": "",
   "{n, plural, one {# thread} other {# threads}}": "",
+  "{name} Devices": "",
   "{n}% Uploaded": "",
   "{type} VDEVs": "",
   "{type} | {vdevWidth} wide | ": "",
