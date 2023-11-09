@@ -1,7 +1,11 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { toSvg } from 'jdenticon';
+import { auditEventLabels } from 'app/enums/audit-event.enum';
+import { getLogImportantData } from 'app/helpers/get-log-important-data.helper';
 import { AuditEntry } from 'app/interfaces/audit.interface';
 import { ApiDataProvider, PaginationServerSide, SortingServerSide } from 'app/modules/ix-table2/api-data-provider';
 import { dateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-date/ix-cell-date.component';
@@ -28,7 +32,6 @@ export class AuditComponent implements OnInit, OnDestroy {
     }),
     textColumn({
       title: this.translate.instant('User'),
-      propertyName: 'username',
     }),
     dateColumn({
       title: this.translate.instant('Timestamp'),
@@ -36,30 +39,25 @@ export class AuditComponent implements OnInit, OnDestroy {
     }),
     textColumn({
       title: this.translate.instant('Event'),
-      propertyName: 'event',
+      getValue: (row) => auditEventLabels.get(row.event),
     }),
     textColumn({
-      title: this.translate.instant('Address'),
-      propertyName: 'address',
+      title: this.translate.instant('Event Data'),
+      getValue: (row) => this.getEventDataForLog(row),
     }),
   ]);
-
-  auditEntries: AuditEntry[] = [];
 
   constructor(
     private translate: TranslateService,
     private ws: WebSocketService,
     protected emptyService: EmptyService,
+    private sanitizer: DomSanitizer,
   ) {}
 
   ngOnInit(): void {
     this.dataProvider = new ApiDataProvider<AuditEntry>(this.ws, 'audit.query');
     this.dataProvider.paginationStrategy = new PaginationServerSide();
     this.dataProvider.sortingStrategy = new SortingServerSide();
-
-    this.dataProvider.currentPage$.pipe(untilDestroyed(this)).subscribe((auditEntries) => {
-      this.auditEntries = auditEntries;
-    });
   }
 
   ngOnDestroy(): void {
@@ -68,5 +66,13 @@ export class AuditComponent implements OnInit, OnDestroy {
 
   closeMobileDetails(): void {
     this.showMobileDetails = false;
+  }
+
+  getUserAvatarForLog(row: AuditEntry): SafeHtml {
+    return this.sanitizer.bypassSecurityTrustHtml(toSvg(`${row.username}-${row.audit_id}`, 35));
+  }
+
+  private getEventDataForLog(row: AuditEntry): string {
+    return getLogImportantData(row);
   }
 }

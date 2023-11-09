@@ -40,7 +40,19 @@
         [columns]="columns"
         [dataProvider]="dataProvider"
         [isLoading]="dataProvider.isLoading$ | async"
-      ></tbody>
+      >
+        <ng-template
+          let-audit
+          ix-table-cell
+          [columnIndex]="1"
+          [dataProvider]="dataProvider"
+        >
+          <div class="user-avatar">
+            <div [innerHTML]="getUserAvatarForLog(audit)"></div>
+            <span>{{audit.username}}</span>
+          </div>
+        </ng-template>
+      </tbody>
     </ix-table2>
     <ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>
   </div>
