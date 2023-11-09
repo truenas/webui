@@ -11,7 +11,6 @@ export interface BaseAuditEntry {
   username: string;
   event: AuditEvent;
   success: boolean;
-  session?: string;
 }
 
 export interface AuditConfig {
