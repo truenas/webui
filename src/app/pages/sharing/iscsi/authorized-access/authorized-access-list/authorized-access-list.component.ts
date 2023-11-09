@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs';
@@ -14,6 +14,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
   template: `
     <ix-entity-table [conf]="this" [title]="tableTitle"></ix-entity-table>
   `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AuthorizedAccessListComponent implements EntityTableConfig<IscsiAuthAccess> {
   tableTitle = this.translate.instant('Authorized Access');

@@ -1,16 +1,17 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { toSvg } from 'jdenticon';
+import { auditEventLabels } from 'app/enums/audit-event.enum';
+import { getLogImportantData } from 'app/helpers/get-log-important-data.helper';
 import { AuditEntry } from 'app/interfaces/audit.interface';
 import { ApiDataProvider, PaginationServerSide, SortingServerSide } from 'app/modules/ix-table2/api-data-provider';
 import { dateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-date/ix-cell-date.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
-import { ManageViewsComponent } from 'app/pages/audit/components/manage-views/manage-views.component';
-import { SetupColumnsComponent } from 'app/pages/audit/components/setup-columns/setup-columns.component';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -23,58 +24,55 @@ import { WebSocketService } from 'app/services/ws.service';
 export class AuditComponent implements OnInit, OnDestroy {
   protected readonly searchControl = new FormControl();
   protected dataProvider: ApiDataProvider<AuditEntry>;
+  showMobileDetails = false;
   columns = createTable<AuditEntry>([
+    textColumn({
+      title: this.translate.instant('Service'),
+      propertyName: 'service',
+    }),
+    textColumn({
+      title: this.translate.instant('User'),
+    }),
     dateColumn({
-      title: this.translate.instant('Event Time'),
+      title: this.translate.instant('Timestamp'),
       propertyName: 'timestamp',
     }),
     textColumn({
       title: this.translate.instant('Event'),
-      propertyName: 'event',
+      getValue: (row) => auditEventLabels.get(row.event),
     }),
     textColumn({
-      title: this.translate.instant('Address'),
-      propertyName: 'address',
-    }),
-    textColumn({
-      title: this.translate.instant('Username'),
-      propertyName: 'username',
-      sortable: true,
+      title: this.translate.instant('Event Data'),
+      getValue: (row) => this.getEventDataForLog(row),
     }),
   ]);
 
-  auditEntries: AuditEntry[] = [];
-
   constructor(
-    private matDialog: MatDialog,
     private translate: TranslateService,
     private ws: WebSocketService,
     protected emptyService: EmptyService,
+    private sanitizer: DomSanitizer,
   ) {}
 
   ngOnInit(): void {
     this.dataProvider = new ApiDataProvider<AuditEntry>(this.ws, 'audit.query');
     this.dataProvider.paginationStrategy = new PaginationServerSide();
     this.dataProvider.sortingStrategy = new SortingServerSide();
-
-    this.dataProvider.currentPage$.pipe(untilDestroyed(this)).subscribe((auditEntries) => {
-      this.auditEntries = auditEntries;
-    });
   }
 
   ngOnDestroy(): void {
     this.dataProvider.unsubscribe();
   }
 
-  onManageViewsPressed(): void {
-    this.matDialog.open(ManageViewsComponent);
+  closeMobileDetails(): void {
+    this.showMobileDetails = false;
   }
 
-  onExport(): void {
-
+  getUserAvatarForLog(row: AuditEntry): SafeHtml {
+    return this.sanitizer.bypassSecurityTrustHtml(toSvg(`${row.username}-${row.audit_id}`, 35));
   }
 
-  onSetupColumns(): void {
-    this.matDialog.open(SetupColumnsComponent);
+  private getEventDataForLog(row: AuditEntry): string {
+    return getLogImportantData(row);
   }
 }

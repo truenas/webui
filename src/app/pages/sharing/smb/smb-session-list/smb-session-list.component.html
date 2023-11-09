@@ -1,6 +1,6 @@
 <ng-template ixPageHeader>
   <ix-page-title-header>
-    <ix-search-input (search)="onListFiltered($event)"></ix-search-input>
+    <ix-search-input [value]="filterString" (search)="onListFiltered($event)"></ix-search-input>
 
     <ix-table-columns-selector [columns]="columns" (columnsChange)="columnsChange($event)"></ix-table-columns-selector>
 

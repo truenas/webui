@@ -26,7 +26,6 @@
   </ix-page-title-header>
 </ng-template>
 
-
 <div class="container">
   <div class="table-container">
     <div class="table-header">
@@ -95,66 +94,76 @@
       ></ix-fake-progress-bar>
 
       <ix-search-input
-        [htmlCharactersLimit]="100"
+        [maxLength]="100"
         [disabled]="!dataSource.length"
         [value]="filterString"
         (search)="onSearch($event)"
       ></ix-search-input>
     </div>
 
-    <div class="app-wrapper"
+    <div
+      class="sticky-header"
       matSort
       matSortActive="application"
       matSortDirection="asc"
       matSortDisableClear
       (matSortChange)="sortChanged($event)"
     >
-      <div class="app-inner">
-        <div class="app-header-row">
-          <div>
-            <span class="name-header">
-              <mat-checkbox
-                *ngIf="dataSource.length"
-                color="primary"
-                ixTest="select-all-app"
-                [checked]="allAppsChecked"
-                [indeterminate]="!allAppsChecked && !!selection.selected.length"
-                (change)="toggleAppsChecked($event.checked)"
-              ></mat-checkbox>
-            </span>
-          </div>
-          <div
-            [matColumnDef]="sortableField.Application"
-            [mat-sort-header]="sortableField.Application"
-          >
-            {{ 'Application' | translate }}
-          </div>
-          <div
-            [matColumnDef]="sortableField.Status"
-            [mat-sort-header]="sortableField.Status"
-          >
-            {{ 'Status' | translate }}
-          </div>
-          <div>{{ 'CPU' | translate }}</div>
-          <div>{{ 'RAM' | translate }}</div>
-          <div>{{ 'Network' | translate }}</div>
-          <div
-            class="app-update-header"
-            [matColumnDef]="sortableField.Updates"
-            [mat-sort-header]="hasUpdates ? sortableField.Updates : null"
-            [disabled]="!hasUpdates"
-          >
-            <span>{{ 'Updates' | translate }}</span>
-            <ix-icon
-              *ngIf="hasUpdates"
-              name="mdi-alert-circle"
-              matTooltipPosition="above"
-              [matTooltip]="'Updates available' | translate"
-            ></ix-icon>
-          </div>
-          <div></div>
+      <div class="app-header-row">
+        <div>
+          <span class="name-header">
+            <mat-checkbox
+              *ngIf="dataSource.length"
+              color="primary"
+              ixTest="select-all-app"
+              [checked]="allAppsChecked"
+              [indeterminate]="!allAppsChecked && !!selection.selected.length"
+              (change)="toggleAppsChecked($event.checked)"
+            ></mat-checkbox>
+          </span>
         </div>
+        <div
+          [matColumnDef]="sortableField.Application"
+          [mat-sort-header]="sortableField.Application"
+        >
+          {{ 'Application' | translate }}
+        </div>
+        <div
+          [matColumnDef]="sortableField.Status"
+          [mat-sort-header]="sortableField.Status"
+        >
+          {{ 'Status' | translate }}
+        </div>
+        <div>{{ 'CPU' | translate }}</div>
+        <div>{{ 'RAM' | translate }}</div>
+        <div>{{ 'Network' | translate }}</div>
+        <div
+          class="app-update-header"
+          [matColumnDef]="sortableField.Updates"
+          [mat-sort-header]="hasUpdates ? sortableField.Updates : null"
+          [disabled]="!hasUpdates"
+        >
+          <span>{{ 'Updates' | translate }}</span>
+          <ix-icon
+            *ngIf="hasUpdates"
+            name="mdi-alert-circle"
+            matTooltipPosition="above"
+            [matTooltip]="'Updates available' | translate"
+          ></ix-icon>
+        </div>
+        <div></div>
+      </div>
+    </div>
 
+    <div
+      matSort
+      matSortDisableClear
+      matSortActive="application"
+      matSortDirection="asc"
+      class="app-wrapper"
+      (matSortChange)="sortChanged($event)"
+    >
+      <div class="app-inner">
         <div class="apps-rows">
           <ng-container *ngFor="let app of filteredApps; trackBy: trackAppBy">
             <ix-app-row
@@ -183,8 +192,8 @@
 
   <div
     *ngIf="selectedApp"
+    ixDetailsHeight
     class="details-container"
-    ixDetailsHeight="rightside-content-hold"
     [class.details-container-mobile]="showMobileDetails"
   >
     <ix-app-details-panel
