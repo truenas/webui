@@ -70,17 +70,16 @@ describe('TargetListComponent', () => {
     expect(title).toHaveText('Targets');
   });
 
-  it('opens Target form when "Add" button is pressed', async () => {
+  it('opens target form when "Add" button is pressed', async () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(TargetFormComponent, { wide: true });
   });
 
-  it('opens Target form when "Edit" button is pressed', async () => {
+  it('opens target form when "Edit" button is pressed', async () => {
     const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 2);
     await editButton.click();
-
 
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(TargetFormComponent, {
       data: targets[0],

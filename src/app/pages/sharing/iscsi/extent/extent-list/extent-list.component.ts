@@ -11,16 +11,12 @@ import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells
 import { yesNoColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
-import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { ExtentFormComponent } from 'app/pages/sharing/iscsi/extent/extent-form/extent-form.component';
 import {
   DeleteExtentDialogComponent,
 } from 'app/pages/sharing/iscsi/extent/extent-list/delete-extent-dialog/delete-extent-dialog.component';
-import { DialogService } from 'app/services/dialog.service';
-import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -86,20 +82,17 @@ export class ExtentListComponent implements OnInit {
 
   constructor(
     public emptyService: EmptyService,
-    private ws: WebSocketService,
     private slideInService: IxSlideInService,
     private translate: TranslateService,
     private matDialog: MatDialog,
-    private iscsiService: IscsiService,
-    private dialogService: DialogService,
-    private errorHandler: ErrorHandlerService,
-    private loader: AppLoaderService,
     private cdr: ChangeDetectorRef,
+    private iscsiService: IscsiService,
   ) {}
 
   ngOnInit(): void {
-    const extents$ = this.ws.call('iscsi.extent.query', []).pipe(
+    const extents$ = this.iscsiService.getExtents().pipe(
       tap((extents) => this.extents = extents),
+      untilDestroyed(this),
     );
     this.dataProvider = new AsyncDataProvider(extents$);
     this.dataProvider.load();

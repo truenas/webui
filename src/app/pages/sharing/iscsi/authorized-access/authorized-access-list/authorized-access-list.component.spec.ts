@@ -5,7 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of, pipe } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { IscsiExtent } from 'app/interfaces/iscsi.interface';
+import { IscsiAuthAccess } from 'app/interfaces/iscsi.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
@@ -13,32 +13,29 @@ import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { ExtentFormComponent } from 'app/pages/sharing/iscsi/extent/extent-form/extent-form.component';
-import { DeleteExtentDialogComponent } from 'app/pages/sharing/iscsi/extent/extent-list/delete-extent-dialog/delete-extent-dialog.component';
-import { ExtentListComponent } from 'app/pages/sharing/iscsi/extent/extent-list/extent-list.component';
+import { AuthorizedAccessFormComponent } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-form/authorized-access-form.component';
+import { AuthorizedAccessListComponent } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-list/authorized-access-list.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 
-const extents: IscsiExtent[] = [
+const authAccess: IscsiAuthAccess[] = [
   {
     id: 1,
-    name: 'test-iscsi-extent',
-    path: '/dev/zvol/tank/iscsi-extent',
-    comment: 'test-iscsi-extent-comment',
-    serial: 'test-iscsi-extent-serial',
-    enabled: true,
-    naa: '0x6589cfc00000097bd2aa6aff515d84c9',
-  } as IscsiExtent,
+    tag: 1,
+    user: 'test',
+    peeruser: 'test',
+  } as IscsiAuthAccess,
 ];
 
-describe('ExtentListComponent', () => {
-  let spectator: Spectator<ExtentListComponent>;
+describe('AuthorizedAccessListComponent', () => {
+  let spectator: Spectator<AuthorizedAccessListComponent>;
   let loader: HarnessLoader;
   let table: IxTable2Harness;
 
   const createComponent = createComponentFactory({
-    component: ExtentListComponent,
+    component: AuthorizedAccessListComponent,
     imports: [IxTable2Module, AppLoaderModule],
     providers: [
       mockProvider(AppLoaderService),
@@ -48,8 +45,8 @@ describe('ExtentListComponent', () => {
         withLoader: jest.fn(() => pipe()),
       }),
       mockWebsocket([
-        mockCall('iscsi.extent.query', extents),
-        mockCall('iscsi.extent.delete'),
+        mockCall('iscsi.auth.query', authAccess),
+        mockCall('iscsi.auth.delete'),
       ]),
       mockProvider(IxSlideInRef),
       mockProvider(DialogService, {
@@ -72,45 +69,40 @@ describe('ExtentListComponent', () => {
 
   it('shows acurate page title', () => {
     const title = spectator.query('h3');
-    expect(title).toHaveText('Extents');
+    expect(title).toHaveText('Authorized Access');
   });
 
-  it('opens extent form when "Add" button is pressed', async () => {
+  it('opens authorized access form when "Add" button is pressed', async () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ExtentFormComponent, { wide: true });
+    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(AuthorizedAccessFormComponent);
   });
 
-  it('opens extent form when "Edit" button is pressed', async () => {
-    const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 6);
+  it('opens authorized access form when "Edit" button is pressed', async () => {
+    const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 3);
     await editButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ExtentFormComponent, {
-      data: extents[0],
-      wide: true,
+    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(AuthorizedAccessFormComponent, {
+      data: authAccess[0],
     });
   });
 
   it('opens delete dialog when "Delete" button is pressed', async () => {
-    const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'delete' }), 1, 6);
+    const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'delete' }), 1, 3);
     await deleteButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(DeleteExtentDialogComponent, {
-      data: extents[0],
-    });
+    expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
+    expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('iscsi.auth.delete', [1]);
   });
 
   it('should show table rows', async () => {
     const expectedRows = [
-      ['Extent Name', 'Device/File', 'Description', 'Serial', 'NAA', 'Enabled', ''],
+      ['Group ID', 'User', 'Peer User', ''],
       [
-        'test-iscsi-extent',
-        '/dev/zvol/tank/iscsi-extent',
-        'test-iscsi-extent-comment',
-        'test-iscsi-extent-serial',
-        '0x6589cfc00000097bd2aa6aff515d84c9',
-        'Yes',
+        '1',
+        'test',
+        'test',
         '',
       ],
     ];

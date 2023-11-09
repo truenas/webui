@@ -2,10 +2,12 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
-import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import { SpectatorRouting } from '@ngneat/spectator';
+import { mockProvider, createRoutingFactory } from '@ngneat/spectator/jest';
 import { of, pipe } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { IscsiExtent } from 'app/interfaces/iscsi.interface';
+import { Choices } from 'app/interfaces/choices.interface';
+import { IscsiPortal } from 'app/interfaces/iscsi.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
@@ -13,32 +15,34 @@ import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { ExtentFormComponent } from 'app/pages/sharing/iscsi/extent/extent-form/extent-form.component';
-import { DeleteExtentDialogComponent } from 'app/pages/sharing/iscsi/extent/extent-list/delete-extent-dialog/delete-extent-dialog.component';
-import { ExtentListComponent } from 'app/pages/sharing/iscsi/extent/extent-list/extent-list.component';
+import { PortalFormComponent } from 'app/pages/sharing/iscsi/portal/portal-form/portal-form.component';
+import { PortalListComponent } from 'app/pages/sharing/iscsi/portal/portal-list/portal-list.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { WebSocketService } from 'app/services/ws.service';
 
-const extents: IscsiExtent[] = [
+const portals: IscsiPortal[] = [
   {
     id: 1,
-    name: 'test-iscsi-extent',
-    path: '/dev/zvol/tank/iscsi-extent',
-    comment: 'test-iscsi-extent-comment',
-    serial: 'test-iscsi-extent-serial',
-    enabled: true,
-    naa: '0x6589cfc00000097bd2aa6aff515d84c9',
-  } as IscsiExtent,
+    listen: [{
+      ip: '0.0.0.0',
+      port: 3260,
+    }],
+    comment: 'test-portal',
+    discovery_authmethod: 'NONE',
+    discovery_authgroup: 0,
+    tag: 1,
+  } as IscsiPortal,
 ];
 
-describe('ExtentListComponent', () => {
-  let spectator: Spectator<ExtentListComponent>;
+describe('PortalListComponent', () => {
+  let spectator: SpectatorRouting<PortalListComponent>;
   let loader: HarnessLoader;
   let table: IxTable2Harness;
 
-  const createComponent = createComponentFactory({
-    component: ExtentListComponent,
+  const createComponent = createRoutingFactory({
+    component: PortalListComponent,
     imports: [IxTable2Module, AppLoaderModule],
     providers: [
       mockProvider(AppLoaderService),
@@ -48,8 +52,9 @@ describe('ExtentListComponent', () => {
         withLoader: jest.fn(() => pipe()),
       }),
       mockWebsocket([
-        mockCall('iscsi.extent.query', extents),
-        mockCall('iscsi.extent.delete'),
+        mockCall('iscsi.portal.query', portals),
+        mockCall('iscsi.portal.delete'),
+        mockCall('iscsi.portal.listen_ip_choices', { '0.0.0.0': '0.0.0.0' } as Choices),
       ]),
       mockProvider(IxSlideInRef),
       mockProvider(DialogService, {
@@ -72,45 +77,43 @@ describe('ExtentListComponent', () => {
 
   it('shows acurate page title', () => {
     const title = spectator.query('h3');
-    expect(title).toHaveText('Extents');
+    expect(title).toHaveText('Portals');
   });
 
-  it('opens extent form when "Add" button is pressed', async () => {
+  it('opens portal form when "Add" button is pressed', async () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ExtentFormComponent, { wide: true });
+    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(PortalFormComponent);
   });
 
-  it('opens extent form when "Edit" button is pressed', async () => {
-    const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 6);
+  it('opens portal form when "Edit" button is pressed', async () => {
+    const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 5);
     await editButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ExtentFormComponent, {
-      data: extents[0],
-      wide: true,
+
+    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(PortalFormComponent, {
+      data: portals[0],
     });
   });
 
   it('opens delete dialog when "Delete" button is pressed', async () => {
-    const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'delete' }), 1, 6);
+    const deleteButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'delete' }), 1, 5);
     await deleteButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(DeleteExtentDialogComponent, {
-      data: extents[0],
-    });
+    expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
+    expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith('iscsi.portal.delete', [1]);
   });
 
   it('should show table rows', async () => {
     const expectedRows = [
-      ['Extent Name', 'Device/File', 'Description', 'Serial', 'NAA', 'Enabled', ''],
+      ['Portal Group ID', 'Listen', 'Description', 'Discovery Auth Method', 'Discovery Auth Group', ''],
       [
-        'test-iscsi-extent',
-        '/dev/zvol/tank/iscsi-extent',
-        'test-iscsi-extent-comment',
-        'test-iscsi-extent-serial',
-        '0x6589cfc00000097bd2aa6aff515d84c9',
-        'Yes',
+        '1',
+        '0.0.0.0:3260',
+        'test-portal',
+        'NONE',
+        '0',
         '',
       ],
     ];

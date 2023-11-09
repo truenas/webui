@@ -125,6 +125,7 @@ export class AssociatedTargetListComponent implements OnInit {
     this.isLoading = true;
     const targetExtent$ = this.iscsiService.getTargetExtents().pipe(
       tap((targetExtents) => this.targetExtents = targetExtents),
+      untilDestroyed(this),
     );
     this.dataProvider = new AsyncDataProvider(targetExtent$);
     this.loadData();
