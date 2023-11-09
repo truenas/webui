@@ -15,8 +15,8 @@ import { ExtentFormComponent } from 'app/pages/sharing/iscsi/extent/extent-form/
 import {
   DeleteExtentDialogComponent,
 } from 'app/pages/sharing/iscsi/extent/extent-list/delete-extent-dialog/delete-extent-dialog.component';
+import { IscsiService } from 'app/services/iscsi.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -82,15 +82,15 @@ export class ExtentListComponent implements OnInit {
 
   constructor(
     public emptyService: EmptyService,
-    private ws: WebSocketService,
     private slideInService: IxSlideInService,
     private translate: TranslateService,
     private matDialog: MatDialog,
     private cdr: ChangeDetectorRef,
+    private iscsiService: IscsiService,
   ) {}
 
   ngOnInit(): void {
-    const extents$ = this.ws.call('iscsi.extent.query', []).pipe(
+    const extents$ = this.iscsiService.getExtents().pipe(
       tap((extents) => this.extents = extents),
       untilDestroyed(this),
     );
