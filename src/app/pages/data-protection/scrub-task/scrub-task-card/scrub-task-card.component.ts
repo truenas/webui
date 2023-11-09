@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, map, switchMap } from 'rxjs';
-import { ScrubTaskUi } from 'app/interfaces/scrub-task.interface';
+import { filter, switchMap } from 'rxjs';
+import { PoolScrubTask } from 'app/interfaces/pool-scrub.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
@@ -27,9 +27,9 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ScrubTaskCardComponent implements OnInit {
-  dataProvider: AsyncDataProvider<ScrubTaskUi>;
+  dataProvider: AsyncDataProvider<PoolScrubTask>;
 
-  columns = createTable<ScrubTaskUi>([
+  columns = createTable<PoolScrubTask>([
     textColumn({
       title: this.translate.instant('Pool'),
       propertyName: 'pool_name',
@@ -49,7 +49,7 @@ export class ScrubTaskCardComponent implements OnInit {
     toggleColumn({
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
-      onRowToggle: (row: ScrubTaskUi) => this.onChangeEnabledState(row),
+      onRowToggle: (row: PoolScrubTask) => this.onChangeEnabledState(row),
     }),
     actionsColumn({
       actions: [
@@ -73,17 +73,13 @@ export class ScrubTaskCardComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private ws: WebSocketService,
     private dialogService: DialogService,
-    private cdr: ChangeDetectorRef,
     private taskService: TaskService,
     protected emptyService: EmptyService,
   ) {}
 
   ngOnInit(): void {
-    const scrubTasks$ = this.ws.call('pool.scrub.query').pipe(
-      map((cloudSyncTasks) => cloudSyncTasks as ScrubTaskUi[]),
-      untilDestroyed(this),
-    );
-    this.dataProvider = new AsyncDataProvider<ScrubTaskUi>(scrubTasks$);
+    const scrubTasks$ = this.ws.call('pool.scrub.query');
+    this.dataProvider = new AsyncDataProvider<PoolScrubTask>(scrubTasks$);
     this.getScrubTasks();
   }
 
@@ -91,7 +87,7 @@ export class ScrubTaskCardComponent implements OnInit {
     this.dataProvider.load();
   }
 
-  doDelete(scrubTask: ScrubTaskUi): void {
+  doDelete(scrubTask: PoolScrubTask): void {
     this.dialogService.confirm({
       title: this.translate.instant('Confirmation'),
       message: this.translate.instant('Delete Scrub Task <b>"{name}"</b>?', { name: scrubTask.pool_name }),
@@ -109,7 +105,7 @@ export class ScrubTaskCardComponent implements OnInit {
     });
   }
 
-  openForm(row?: ScrubTaskUi): void {
+  openForm(row?: PoolScrubTask): void {
     const slideInRef = this.slideInService.open(ScrubTaskFormComponent, { data: row });
 
     slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
@@ -117,9 +113,9 @@ export class ScrubTaskCardComponent implements OnInit {
     });
   }
 
-  private onChangeEnabledState(scrubTask: ScrubTaskUi): void {
+  private onChangeEnabledState(scrubTask: PoolScrubTask): void {
     this.ws
-      .call('pool.scrub.update', [scrubTask.id, { enabled: !scrubTask.enabled } as ScrubTaskUi])
+      .call('pool.scrub.update', [scrubTask.id, { enabled: !scrubTask.enabled } as PoolScrubTask])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {

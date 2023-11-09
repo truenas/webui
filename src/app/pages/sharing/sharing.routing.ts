@@ -17,15 +17,15 @@ export const routes: Routes = [
       {
         path: '',
         component: SharesDashboardComponent,
-        data: { title: T('Sharing'), breadcrumb: T('Dashboard') },
+        data: { title: T('Sharing'), breadcrumb: null },
       },
       {
         path: 'nfs',
-        data: { title: T('NFS'), breadcrumb: T('NFS'), icon: 'share' },
+        data: { title: T('NFS'), breadcrumb: null, icon: 'share' },
         children: [{
           path: '',
           component: NfsListComponent,
-          data: { title: T('NFS'), breadcrumb: T('NFS') },
+          data: { title: T('NFS'), breadcrumb: null },
         }],
       },
       {
@@ -34,27 +34,26 @@ export const routes: Routes = [
         children: [{
           path: '',
           component: SmbListComponent,
-          data: { title: T('SMB'), breadcrumb: T('SMB') },
         }, {
           path: 'sessions',
           component: SmbSessionListComponent,
-          data: { title: T('SMB Sessions'), breadcrumb: T('SMB Sessions') },
+          data: { title: T('SMB Sessions'), breadcrumb: null },
         }, {
           path: 'add',
           component: SmbFormComponent,
-          data: { title: T('Add'), breadcrumb: T('Add') },
+          data: { title: T('Add'), breadcrumb: null },
         }, {
           path: 'edit/:pk',
           component: SmbFormComponent,
-          data: { title: T('Edit'), breadcrumb: T('Edit') },
+          data: { title: T('Edit'), breadcrumb: null },
         }],
       }, {
         path: 'iscsi',
-        data: { title: T('iSCSI'), breadcrumb: T('iSCSI'), icon: 'share' },
+        data: { title: T('iSCSI'), breadcrumb: null, icon: 'share' },
         children: [
           {
             path: '',
-            data: { title: T('iSCSI'), breadcrumb: 'iSCSI' },
+            data: { title: T('iSCSI'), breadcrumb: null },
             children: [
               {
                 path: '',
@@ -64,11 +63,11 @@ export const routes: Routes = [
               {
                 path: ':activeTab',
                 component: IscsiComponent,
-                data: { title: T('iSCSI'), breadcrumb: '' },
+                data: { breadcrumb: null },
               },
               {
                 path: 'initiators',
-                data: { title: 'Initiators', breadcrumb: '' },
+                data: { title: T('Initiators'), breadcrumb: T('Initiators') },
                 children: [{
                   path: 'add',
                   component: InitiatorFormComponent,

@@ -1,15 +1,14 @@
-import { Component, Input } from '@angular/core';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
 import { IscsiService } from 'app/services/iscsi.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-iscsi',
   templateUrl: './iscsi.component.html',
   styleUrls: ['./iscsi.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [IscsiService],
 })
 export class IscsiComponent {

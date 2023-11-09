@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
@@ -12,6 +12,7 @@ import { DialogService } from 'app/services/dialog.service';
 @Component({
   templateUrl: './truecommand-status-modal.component.html',
   styleUrls: ['./truecommand-status-modal.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TruecommandStatusModalComponent {
   parent = this.data.parent;
@@ -23,6 +24,7 @@ export class TruecommandStatusModalComponent {
     @Inject(MAT_DIALOG_DATA) public data: { parent: TruecommandButtonComponent; data: TrueCommandConfig },
     @Inject(WINDOW) private window: Window,
     private dialogService: DialogService,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   goToTrueCommand(): void {
@@ -40,5 +42,6 @@ export class TruecommandStatusModalComponent {
 
   update(data: TrueCommandConfig): void {
     this.tc = data;
+    this.cdr.detectChanges();
   }
 }

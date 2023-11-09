@@ -19,7 +19,6 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { atLeastOne } from 'app/modules/ix-forms/validators/at-least-one-validation';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -64,7 +63,6 @@ export class SshKeypairFormComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private formErrorHandler: FormErrorHandlerService,
     private loader: AppLoaderService,
-    private dialogService: DialogService,
     private storage: StorageService,
     @Inject(SLIDE_IN_DATA) private editingKeypair: KeychainSshKeyPair,
   ) { }
