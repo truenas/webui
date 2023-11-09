@@ -1,0 +1,42 @@
+
+<mat-progress-bar *ngIf="isFormLoading" mode="indeterminate"></mat-progress-bar>
+
+<h1 matDialogTitle>{{ 'Configure Two Factor Secret' | translate }}</h1>
+
+<mat-dialog-content>
+  <p>{{ 'Enter the Interval and OTP Digits information to proceed' | translate }}</p>
+  <form [formGroup]="form">
+    <ix-input
+      formControlName="interval"
+      [label]="'Interval (in seconds)' | translate"
+      [type]="'number'"
+    ></ix-input>
+    <ix-select
+      formControlName="otp_digits"
+      [hideEmpty]="true"
+      [options]="otpDigitOptions$"
+      [label]="'OTP Digits' | translate"
+    ></ix-select>
+  </form>
+
+  <div mat-dialog-actions>
+    <button
+      mat-button
+      type="button"
+      ixTest="cancel-renew-2fa"
+      [matDialogClose]="false"
+    >
+      {{ 'Cancel' | translate }}
+    </button>
+    <button
+      mat-button
+      type="submit"
+      color="primary"
+      ixTest="renew-2fa-save"
+      [disabled]="form.invalid || isFormLoading"
+      (click)="renew()"
+    >
+      {{ 'Renew' | translate }}
+    </button>
+  </div>
+</mat-dialog-content>

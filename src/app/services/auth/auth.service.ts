@@ -20,6 +20,7 @@ import {
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { IncomingWebsocketMessage, ResultMessage } from 'app/interfaces/api-message.interface';
 import { DsUncachedUser, LoggedInUser } from 'app/interfaces/ds-cache.interface';
+import { GlobalTwoFactorConfig, UserTwoFactorConfig, UserTwoFactorConfigUpdate } from 'app/interfaces/two-factor-config.interface';
 import { User } from 'app/interfaces/user.interface';
 import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
 import { AppState } from 'app/store';
@@ -58,9 +59,7 @@ export class AuthService {
     }),
   );
 
-  get user$(): Observable<LoggedInUser> {
-    return this.loggedInUser$.asObservable();
-  }
+  readonly user$ = this.loggedInUser$.asObservable();
 
   constructor(
     private wsManager: WebsocketConnectionService,
@@ -71,6 +70,64 @@ export class AuthService {
     this.setupWsConnectionUpdate();
 
     this.setupTokenUpdate();
+  }
+
+  getUserTwoFactorConfig(): Observable<UserTwoFactorConfig> {
+    return this.loggedInUser$.pipe(
+      filter(Boolean),
+      switchMap((user) => {
+        const uuid = UUID.UUID();
+        const payload = {
+          id: uuid,
+          msg: IncomingApiMessageType.Method,
+          method: 'user.twofactor_config',
+          params: [user.username],
+        };
+        const requestTrigger$ = new Observable((subscriber) => {
+          this.wsManager.send(payload);
+          subscriber.next();
+        }).pipe(take(1));
+
+        const uuidFilteredResponse$ = this.getFilteredWebsocketResponse<UserTwoFactorConfig>(uuid);
+
+        return combineLatest([
+          requestTrigger$,
+          uuidFilteredResponse$,
+        ]).pipe(
+          take(1),
+          map(([, data]) => data),
+        );
+      }),
+    );
+  }
+
+  getGlobalTwoFactorConfig(): Observable<GlobalTwoFactorConfig> {
+    const uuid2 = UUID.UUID();
+    const payload2 = {
+      id: uuid2,
+      msg: IncomingApiMessageType.Method,
+      method: 'auth.twofactor.config',
+    };
+    const requestTrigger2$ = new Observable((subscriber) => {
+      this.wsManager.send(payload2);
+      subscriber.next();
+    }).pipe(take(1));
+
+    const uuidFilteredResponse2$ = this.getFilteredWebsocketResponse<GlobalTwoFactorConfig>(uuid2);
+
+    return combineLatest([
+      requestTrigger2$,
+      uuidFilteredResponse2$,
+    ]).pipe(
+      take(1),
+      map(([, data]) => data),
+    );
+  }
+
+  getTwoFactorConfig(): void {
+    this.getUserTwoFactorConfig();
+
+    this.getGlobalTwoFactorConfig();
   }
 
   setupAuthenticationUpdate(): void {
@@ -292,12 +349,13 @@ export class AuthService {
           };
         }
         this.loggedInUser$.next(authenticatedUser);
+        this.getTwoFactorConfig();
       }),
       untilDestroyed(this),
     ).subscribe();
   }
 
-  renewUser2FaSecret(): Observable<User> {
+  renewUser2FaSecret(config: UserTwoFactorConfigUpdate): Observable<User> {
     return this.user$.pipe(
       filter(Boolean),
       take(1),
@@ -307,7 +365,7 @@ export class AuthService {
           id: renewUuid,
           msg: IncomingApiMessageType.Method,
           method: 'user.renew_2fa_secret',
-          params: [user.username],
+          params: [user.username, config],
         };
 
         const requestTriggerUserQuery$ = new Observable((subscriber) => {

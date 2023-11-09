@@ -6,7 +6,7 @@ import {
   Observable, filter, shareReplay,
 } from 'rxjs';
 import { toLoadingState, LoadingState } from 'app/helpers/operators/to-loading-state.helper';
-import { TwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
+import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { GlobalTwoFactorAuthFormComponent } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-form/global-two-factor-form.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -19,7 +19,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GlobalTwoFactorAuthCardComponent implements OnInit {
-  protected twoFactorConfig$: Observable<LoadingState<TwoFactorConfig>>;
+  protected twoFactorConfig$: Observable<LoadingState<GlobalTwoFactorConfig>>;
 
   constructor(
     private ws: WebSocketService,
@@ -43,7 +43,7 @@ export class GlobalTwoFactorAuthCardComponent implements OnInit {
     this.cdr.markForCheck();
   }
 
-  async onConfigurePressed(twoFactorAuthConfig: TwoFactorConfig): Promise<void> {
+  async onConfigurePressed(twoFactorAuthConfig: GlobalTwoFactorConfig): Promise<void> {
     await this.advancedSettings.showFirstTimeWarningIfNeeded();
     const ixSlideInRef = this.slideInService.open(GlobalTwoFactorAuthFormComponent, { data: twoFactorAuthConfig });
     ixSlideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe({
