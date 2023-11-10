@@ -192,7 +192,7 @@ export class SmbAclComponent implements OnInit {
     }
 
     if (ace.ae_who_id?.id_type === NfsAclTag.User) {
-      const queryArgs: QueryFilter<Group>[] = [['uid', '=', ace.ae_who_id?.id]];
+      const queryArgs: QueryFilter<User>[] = [['uid', '=', ace.ae_who_id?.id]];
       return this.ws.call('user.query', [queryArgs]);
     }
 

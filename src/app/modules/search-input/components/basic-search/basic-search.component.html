@@ -1,0 +1,31 @@
+<span class="prefix-icon">
+  <ix-icon name="search"></ix-icon>
+</span>
+
+<input
+  #searchControl
+  matInput
+  ixTest="search"
+  class="input"
+  [placeholder]="'Search' | translate"
+  [ngModel]="query"
+  (ngModelChange)="queryChange.emit($event)"
+/>
+
+<a
+  *ngIf="allowAdvanced"
+  class="switch-link"
+  ixTest="switch-to-advanced"
+  tabindex="0"
+  (click)="switchToAdvanced.emit()"
+>
+  {{ 'Switch To Advanced' | translate }}
+</a>
+
+<span
+  *ngIf="searchControl.value"
+  class="reset-icon reset-input"
+  (click)="resetInput()"
+>
+  <ix-icon name="mdi-close-circle"></ix-icon>
+</span>

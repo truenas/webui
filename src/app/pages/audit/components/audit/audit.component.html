@@ -7,16 +7,20 @@
 </ng-template>
 
 <mat-card class="header-card item-search">
-  <div class="header-card-item">
-    <ix-fake-progress-bar
-      class="loader-bar"
-      [loading]="dataProvider.isLoading$ | async"
-    ></ix-fake-progress-bar>
-    <ix-input
-      class="search-control"
-      [formControl]="searchControl"
-      [placeholder]="'Search' | translate"
-    ></ix-input>
+  <ix-fake-progress-bar
+    class="loader-bar"
+    [loading]="dataProvider.isLoading$ | async"
+  ></ix-fake-progress-bar>
+
+  <div class="search-bar">
+    <ix-search-input2
+      #searchInput
+      class="search-input"
+      [properties]="searchProperties"
+    ></ix-search-input2>
+    <button mat-button color="primary" ixTest="search" (click)="onSearch(searchInput.query)">
+      {{ 'Search' | translate }}
+    </button>
   </div>
 </mat-card>
 

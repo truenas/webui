@@ -1334,6 +1334,8 @@
   "Successfully saved {n, plural, one {Disk} other {Disks}} settings.": "",
   "Sudo Enabled": "",
   "Swap Size": "",
+  "Switch To Advanced": "",
+  "Switch To Basic": "",
   "Switch To Wizard": "",
   "Switch to Advanced Options": "",
   "Switched to new dataset «{name}».": "",

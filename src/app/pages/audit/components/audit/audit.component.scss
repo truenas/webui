@@ -87,19 +87,18 @@
   top: 65px;
 }
 
-.search-control {
-  width: 100%;
-}
-
 .header-card {
   border-radius: 0;
   margin-bottom: 16px;
+}
 
-  .header-card-item {
-    align-items: center;
-    column-gap: 5px;
-    display: flex;
-    padding: 0 16px;
+.search-bar {
+  column-gap: 12px;
+  display: flex;
+  padding: 8px 12px;
+
+  .search-input {
+    max-width: 400px;
     width: 100%;
   }
 }
