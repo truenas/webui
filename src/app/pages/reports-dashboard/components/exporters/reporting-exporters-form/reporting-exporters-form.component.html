@@ -1,0 +1,47 @@
+<ix-modal-header [title]="title" [loading]="isLoading"></ix-modal-header>
+
+<mat-card>
+  <mat-card-content>
+    <form
+      class="ix-form-container"
+      [formGroup]="form"
+      (submit)="onSubmit()"
+    >
+      <ix-fieldset>
+        <ix-input
+          formControlName="name"
+          [label]="'Name' | translate"
+          [tooltip]="'Give your exporter configuration a name' | translate"
+          [required]="true"
+        ></ix-input>
+        <ix-select
+        formControlName="type"
+          [label]="'Type' | translate"
+          [options]="exporterTypeOptions$"
+          [required]="true"
+        ></ix-select>
+        <ix-checkbox
+          formControlName="enabled"
+          [label]="'Enable' | translate"
+        ></ix-checkbox>
+      </ix-fieldset>
+
+      <ix-dynamic-form
+        *ngIf="!isLoadingSchemas"
+        [dynamicSection]="dynamicSection"
+        [dynamicForm]="formGroup"
+      ></ix-dynamic-form>
+      <ix-form-actions>
+        <button
+          mat-button
+          type="submit"
+          color="primary"
+          ixTest="save"
+          [disabled]="form.invalid || isLoading"
+        >
+          {{ 'Save' | translate }}
+        </button>
+      </ix-form-actions>
+    </form>
+  </mat-card-content>
+</mat-card>
