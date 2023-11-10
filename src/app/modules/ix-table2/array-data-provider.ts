@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { TablePagination } from 'app/modules/ix-table2/interfaces/table-pagination.interface';
 import { TableProvider } from 'app/modules/ix-table2/interfaces/table-provider.interface';
@@ -9,6 +10,10 @@ export class ArrayDataProvider<T> implements TableProvider<T> {
   currentPage$ = new BehaviorSubject<T[]>([]);
   rows: T[] = [];
   expandedRow: T;
+
+  get currentPageCount$(): Observable<number> {
+    return this.currentPage$.pipe(map((currentPage) => currentPage.length));
+  }
 
   sorting: TableSort<T> = {
     propertyName: null,

@@ -13,6 +13,7 @@ import { NgxFilesizeModule } from 'ngx-filesize';
 import { CoreComponents } from 'app/core/core-components.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { IxTable2EmptyRowComponent } from 'app/modules/ix-table2/components/ix-empty-row/ix-empty-row.component';
+import { IxCellActionsComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { IxCellCheckboxComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-checkbox/ix-cell-checkbox.component';
 import { IxCellDateComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-date/ix-cell-date.component';
 import { IxCellDeleteComponent } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-delete/ix-cell-delete.component';
@@ -53,6 +54,7 @@ import { IxTableColumnsSelectorComponent } from './components/ix-table-columns-s
     CoreComponents,
     MatMenuModule,
     MatDividerModule,
+    MatTooltipModule,
   ],
   declarations: [
     IxTable2Component,
@@ -68,6 +70,7 @@ import { IxTableColumnsSelectorComponent } from './components/ix-table-columns-s
     IxCellSizeComponent,
     IxCellCheckboxComponent,
     IxCellYesNoComponent,
+    IxCellActionsComponent,
     IxCellDeleteComponent,
     IxCellToggleComponent,
     IxCellScheduleComponent,

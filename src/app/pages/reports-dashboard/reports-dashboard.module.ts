@@ -16,10 +16,15 @@ import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
+import { IxDynamicFormModule } from 'app/modules/ix-dynamic-form/ix-dynamic-form.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
+import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { ReportingExportersFormComponent } from 'app/pages/reports-dashboard/components/exporters/reporting-exporters-form/reporting-exporters-form.component';
+import { ReportingExporterListComponent } from 'app/pages/reports-dashboard/components/exporters/reporting-exporters-list/reporting-exporters-list.component';
 import { LineChartComponent } from 'app/pages/reports-dashboard/components/line-chart/line-chart.component';
 import { ReportsDashboardComponent } from 'app/pages/reports-dashboard/reports-dashboard.component';
 import { routing } from 'app/pages/reports-dashboard/reports-dashboard.routing';
@@ -32,10 +37,13 @@ import { ReportsGlobalControlsComponent } from './components/reports-global-cont
     CoreComponents,
     ReactiveFormsModule,
     IxFormsModule,
+    IxDynamicFormModule,
     routing,
     ScrollingModule,
     AppCommonModule,
     MatButtonModule,
+    AppLoaderModule,
+    IxTable2Module,
     MatToolbarModule,
     TranslateModule,
     EntityModule,
@@ -53,6 +61,8 @@ import { ReportsGlobalControlsComponent } from './components/reports-global-cont
   declarations: [
     LineChartComponent,
     ReportComponent,
+    ReportingExportersFormComponent,
+    ReportingExporterListComponent,
     ReportsDashboardComponent,
     ReportsGlobalControlsComponent,
   ],
