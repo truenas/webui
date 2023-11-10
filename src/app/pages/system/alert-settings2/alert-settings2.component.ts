@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { AlertLevel } from 'app/enums/alert-level.enum';
 import { AlertPolicy } from 'app/enums/alert-policy.enum';
 import { AlertCategory, AlertClasses } from 'app/interfaces/alert.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -101,5 +102,38 @@ export class AlertSettings2Component implements OnInit {
         nextElement?.scrollIntoView();
       }
     });
+  }
+
+  getLevelColor(level: AlertLevel): string {
+    switch (level) {
+      case AlertLevel.Info:
+      case AlertLevel.Notice:
+        return 'fn-theme-primary';
+      case AlertLevel.Alert:
+      case AlertLevel.Warning:
+        return 'fn-theme-orange';
+      case AlertLevel.Critical:
+      case AlertLevel.Error:
+      case AlertLevel.Emergency:
+        return 'fn-theme-red';
+      default:
+        return 'fn-theme-primary';
+    }
+  }
+
+  getFreqColor(policy: AlertPolicy): string {
+    if (!policy) {
+      policy = AlertPolicy.Immediately;
+    }
+    switch (policy) {
+      case AlertPolicy.Daily:
+        return 'fn-theme-primary';
+      case AlertPolicy.Immediately:
+        return 'fn-theme-red';
+      case AlertPolicy.Hourly:
+        return 'fn-theme-orange';
+      default:
+        return '';
+    }
   }
 }

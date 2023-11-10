@@ -73,11 +73,13 @@
 
 .class-config {
   display: flex;
+  flex-direction: row-reverse;
 }
 
 .list-item {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  justify-content: space-between;
   width: 100%;
   
 }
@@ -94,4 +96,12 @@
 
 .card-container {
   margin-top: 16px;
+}
+
+.title {
+  width: 380px;
+}
+
+.state-button {
+  width: 200px;
 }
