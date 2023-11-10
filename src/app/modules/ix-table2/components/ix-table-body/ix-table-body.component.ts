@@ -8,6 +8,8 @@ import {
   Input,
   QueryList,
   TemplateRef,
+  Output,
+  EventEmitter,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { IxTableCellDirective } from 'app/modules/ix-table2/directives/ix-table-cell.directive';
@@ -26,6 +28,8 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
   @Input() columns: Column<T, ColumnComponent<T>>[];
   @Input() dataProvider: DataProvider<T>;
   @Input() isLoading = false;
+
+  @Output() expanded = new EventEmitter<T>();
 
   @ContentChildren(IxTableCellDirective) customCells!: QueryList<IxTableCellDirective<T>>;
 
@@ -71,6 +75,7 @@ export class IxTableBodyComponent<T> implements AfterViewInit {
 
   onToggle(row: T): void {
     this.dataProvider.expandedRow = this.isExpanded(row) ? null : row;
+    this.expanded.emit(this.dataProvider.expandedRow);
   }
 
   isExpanded(row: T): boolean {

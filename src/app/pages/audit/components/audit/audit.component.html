@@ -40,6 +40,7 @@
         [columns]="columns"
         [dataProvider]="dataProvider"
         [isLoading]="dataProvider.isLoading$ | async"
+        (expanded)="expanded($event)"
       >
         <ng-template
           let-audit
@@ -58,13 +59,14 @@
   </div>
 
   <div
-    ixDetailsHeight
+    ixDetailsHeight="rightside-content-hold"
     class="details-container"
     [class.details-container-mobile]="showMobileDetails"
   >
     <ix-log-details-panel
       *ngIf="dataProvider.expandedRow"
       [log]="dataProvider.expandedRow"
+      (hide)="closeMobileDetails()"
     ></ix-log-details-panel>
   </div>
 </div>

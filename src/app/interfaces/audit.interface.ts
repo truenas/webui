@@ -4,13 +4,13 @@ import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 
 export interface BaseAuditEntry {
   audit_id: string;
+  session: string;
   message_timestamp: number;
   timestamp: ApiTimestamp;
   address: string;
   username: string;
   event: AuditEvent;
   success: boolean;
-  session?: string;
 }
 
 export interface AuditConfig {
