@@ -1,6 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
@@ -125,5 +127,13 @@ describe('IscsiCardComponent', () => {
     await deleteIcon.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
+  });
+
+  it('checks user being redirected when pressed the Configure button', async () => {
+    jest.spyOn(spectator.inject(Router), 'navigateByUrl');
+    const configureButton = await loader.getHarness(MatButtonHarness.with({ text: 'Configure' }));
+    await configureButton.click();
+
+    expect(spectator.inject(Router).navigateByUrl).toHaveBeenCalled();
   });
 });

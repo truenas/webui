@@ -9,6 +9,7 @@
 .row {
   border-top: solid 1px var(--contrast-lighter);
   height: 48px;
+  position: relative;
 
   td {
     box-sizing: border-box;

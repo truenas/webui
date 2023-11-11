@@ -82,6 +82,7 @@ import { RoutePartsService } from './services/route-parts/route-parts.service';
     RouterModule.forRoot(rootRouterConfig, {
       useHash: false,
       preloadingStrategy: PreloadAllModules,
+      bindToComponentInputs: true,
     }),
     NgxPopperjsModule.forRoot({ appendTo: 'body', hideOnScroll: true }),
     CoreComponents,

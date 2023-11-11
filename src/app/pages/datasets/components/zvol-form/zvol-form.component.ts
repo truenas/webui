@@ -15,7 +15,6 @@ import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import helptext from 'app/helptext/storage/volumes/zvol-form';
 import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
@@ -79,7 +78,6 @@ export class ZvolFormComponent implements OnInit {
   parentId: string;
   isNew = true;
   isLoading = false;
-  customFilter: [[QueryFilter<unknown>]?] = [];
   inheritEncryptPlaceholder: string = helptext.dataset_form_encryption.inherit_checkbox_placeholder;
   namesInUse: string[] = [];
   volBlockSizeWarning: string;
@@ -259,8 +257,6 @@ export class ZvolFormComponent implements OnInit {
             next: (parentDataset) => {
               this.form.controls.sparse.disable();
               this.form.controls.volblocksize.disable();
-
-              this.customFilter = [[['id', '=', this.parentId]]];
 
               this.copyParentProperties(parent);
               this.inheritSyncSource(parent, parentDataset);
