@@ -1,5 +1,5 @@
 import {
-  ChangeDetectorRef, Component, Inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
@@ -23,6 +23,7 @@ export type TruecommandSignupModalResult = boolean | { deregistered: boolean };
 @Component({
   styleUrls: ['./truecommand-connect-modal.component.scss'],
   templateUrl: './truecommand-connect-modal.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TruecommandConnectModalComponent implements OnInit {
   readonly helptext = helptext;

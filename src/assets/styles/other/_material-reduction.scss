@@ -400,6 +400,17 @@ body .mat-mdc-card {
   padding: 0;
 }
 
+#ix-chained-slide-in-form .mat-mdc-card,
+.slide-in2-form .mat-mdc-card {
+  border: none;
+  box-shadow: none;
+}
+
+#ix-chained-slide-in-form .ix-form-container,
+.slide-in2-form .ix-form-container {
+  padding: 0;
+}
+
 .mat-mdc-card .mat-toolbar-row,
 body .mdc-card__actions,
 .mat-mdc-card .mat-mdc-card-content > div,

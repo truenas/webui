@@ -141,7 +141,7 @@ describe('ScrubListComponent', () => {
     await deleteIcon.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
-      title: 'Delete Scrub Task',
+      title: 'Delete Task',
     }));
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.scrub.delete', [1]);
   });

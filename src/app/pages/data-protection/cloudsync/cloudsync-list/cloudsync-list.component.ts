@@ -134,7 +134,6 @@ export class CloudsyncListComponent implements OnInit {
     const cloudSyncTasks$ = this.ws.call('cloudsync.query').pipe(
       map((cloudSyncTasks) => this.transformCloudSyncData(cloudSyncTasks)),
       tap((cloudSyncTasks) => this.cloudSyncTasks = cloudSyncTasks),
-      untilDestroyed(this),
     );
     this.dataProvider = new AsyncDataProvider<CloudSyncTaskUi>(cloudSyncTasks$);
     this.getCloudSyncTasks();

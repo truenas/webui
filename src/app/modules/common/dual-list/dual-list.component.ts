@@ -1,6 +1,6 @@
 import { CdkDragDrop, CdkDragStart } from '@angular/cdk/drag-drop';
 import {
-  Component, ContentChild, EventEmitter, Input, OnChanges, OnInit, Output, TemplateRef,
+  ChangeDetectionStrategy, Component, ContentChild, EventEmitter, Input, OnChanges, OnInit, Output, TemplateRef,
 } from '@angular/core';
 import _ from 'lodash';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
@@ -19,6 +19,7 @@ const transfer = <T>(from: ListSelection<T>, to: ListSelection<T>): {
   selector: 'ix-dual-listbox',
   styleUrls: ['./dual-list.component.scss'],
   templateUrl: 'dual-list.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DualListboxComponent<T extends { id: string | number; name?: string }> implements OnInit, OnChanges {
   @Input() key: keyof T = 'id';

@@ -6,30 +6,7 @@
   >
     <h4>{{ column.name | translate }}:</h4>
     <div fxLayoutAlign="start center" fxLayoutGap="4px">
-      <ng-container *ngIf="column?.widget?.component; else notScheduleList">
-        <ix-icon
-          class="widget-icon"
-          [name]="'mdi-' + column.widget.icon"
-          [matMenuTriggerFor]="widget"
-        ></ix-icon>
-        <mat-menu #widget="matMenu">
-          <!-- column widgets need to be registered with this switch case -->
-          <ng-container [ngSwitch]="column.widget.component">
-            <ix-task-schedule-list
-              *ngSwitchCase="'TaskScheduleListComponent'"
-              [value]="getColumnValue(column) | cast"
-              [config]="config"
-              [parent]="parent"
-            ></ix-task-schedule-list>
-          </ng-container>
-        </mat-menu>
-        <p>
-          {{ config.enabled ? getColumnValue(column, true) : getColumnValue(column) }}
-        </p>
-      </ng-container>
-      <ng-template #notScheduleList>
-        <p>{{ getColumnValue(column) }}</p>
-      </ng-template>
+      <p>{{ getColumnValue(column) }}</p>
     </div>
   </div>
 </section>

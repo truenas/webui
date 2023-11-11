@@ -14,6 +14,7 @@ table {
 
 /* stylelint-disable */
 :host ::ng-deep {
+  tr > th ng-component,
   tr > td > ng-component > span {
     -webkit-box-orient: vertical;
     display: -webkit-inline-box;

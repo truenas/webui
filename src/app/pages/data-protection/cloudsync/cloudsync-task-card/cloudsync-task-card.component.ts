@@ -169,7 +169,6 @@ export class CloudSyncTaskCardComponent implements OnInit {
 
   onEdit(row?: CloudSyncTaskUi): void {
     const slideInRef = this.slideInService.open(CloudsyncFormComponent, { data: row, wide: true });
-
     slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.getCloudSyncTasks();
     });

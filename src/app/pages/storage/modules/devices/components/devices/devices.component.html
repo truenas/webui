@@ -1,5 +1,5 @@
 <ng-template ixPageHeader>
-  <ix-page-title-header>
+  <ix-page-title-header [pageTitle]="pageTitle">
     <a
       mat-button
       color="primary"
@@ -28,18 +28,21 @@
       ></ix-search-input>
     </div>
 
+    <div class="sticky-header">
+      <div class="tree-header">
+        <div>
+          <span class="name-header">
+            {{ 'Device Name' | translate }}
+          </span>
+        </div>
+        <div class="disk-status-header">{{ 'Status' | translate }}</div>
+        <div>{{ 'Capacity' | translate }}</div>
+        <div>{{ 'Errors' | translate }}</div>
+      </div>
+    </div>
+
     <div class="tree-wrapper">
       <div class="tree-inner">
-        <div class="tree-header">
-          <div>
-            <span class="name-header">
-              {{ 'Device Name' | translate }}
-            </span>
-          </div>
-          <div class="disk-status-header">{{ 'Status' | translate }}</div>
-          <div>{{ 'Capacity' | translate }}</div>
-          <div>{{ 'Errors' | translate }}</div>
-        </div>
         <ix-tree-view
           class="disk-tree"
           [ixDataSource]="dataSource"
@@ -143,6 +146,7 @@
   </div>
   <div
     class="details-container"
+    ixDetailsHeight="rightside-content-hold"
     [class.details-container-mobile]="showMobileDetails"
   >
     <ix-disk-details-panel
