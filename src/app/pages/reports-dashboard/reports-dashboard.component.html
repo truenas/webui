@@ -6,6 +6,10 @@
   </ix-page-title-header>
 </ng-template>
 
+<div *ixIfUserHasRoles="[role.FullAdmin]">
+  <h2>allalal</h2>
+</div>
+
 <div
   *ngIf="visibleReports && activeReports"
   class="master-container"

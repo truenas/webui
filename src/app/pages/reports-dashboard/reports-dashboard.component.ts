@@ -5,6 +5,7 @@ import {
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ReportingGraphName } from 'app/enums/reporting.enum';
+import { Role } from 'app/enums/role.enum';
 import { stringToTitleCase } from 'app/helpers/string-to-title-case';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Option } from 'app/interfaces/option.interface';
@@ -31,6 +32,8 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
   activeReports: Report[] = [];
   visibleReports: number[] = [];
   allTabs: ReportTab[];
+
+  role = Role;
 
   constructor(
     private route: ActivatedRoute,
