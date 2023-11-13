@@ -536,7 +536,7 @@ export class AppSchemaService {
   }
 
   private handleAddFormControlWithSchemaVisible(payload: CommonSchemaAddControl): void {
-    const { schema, subscription, formGroup } = payload;
+    const { schema, subscription } = payload;
 
     const relations: Relation[] = schema.show_if.map((item) => ({
       fieldName: item[0],
@@ -545,18 +545,6 @@ export class AppSchemaService {
     }));
 
     relations.forEach((relation) => {
-      let control = formGroup.controls[relation.fieldName];
-      if (!control) {
-        formGroup.addControl(relation.fieldName, new CustomUntypedFormControl());
-        control = formGroup.controls[relation.fieldName];
-        const formField = (control as CustomUntypedFormField);
-        if (!formField.hidden$) {
-          formField.hidden$ = new BehaviorSubject<boolean>(false);
-        }
-        formField.hidden$.next(true);
-        formField.disable();
-      }
-
       if (relation.operatorName === '=') {
         subscription.add(
           timer(0).pipe(take(1)).subscribe(() => this.handleEqualOperatorNameSubscription(payload, relation)),
