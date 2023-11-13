@@ -15,17 +15,17 @@ import { FileTicketModule } from 'app/pages/system/file-ticket/file-ticket.modul
 
 @NgModule({
   imports: [
-    CommonModule,
-    TranslateModule,
-    IxIconModule,
-    MatDialogModule,
-    MatButtonModule,
-    FileTicketModule,
-    ReactiveFormsModule,
-    IxFormsModule,
-    MatTooltipModule,
-    TestIdModule,
     AppLoaderModule,
+    CommonModule,
+    FileTicketModule,
+    IxFormsModule,
+    IxIconModule,
+    MatButtonModule,
+    MatDialogModule,
+    MatTooltipModule,
+    ReactiveFormsModule,
+    TestIdModule,
+    TranslateModule,
   ],
   declarations: [
     FeedbackDialogComponent,

@@ -21,3 +21,5 @@
 <ix-warning *ngIf="warning" [message]="warning"></ix-warning>
 
 <ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>
+
+<mat-hint *ngIf="hint">{{ hint }}</mat-hint>

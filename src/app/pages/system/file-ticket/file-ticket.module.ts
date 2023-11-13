@@ -13,8 +13,6 @@ import { JobsModule } from 'app/modules/jobs/jobs.module';
 import { OauthButtonModule } from 'app/modules/oauth-button/oauth-button.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
-import { JiraOauthComponent } from 'app/pages/system/file-ticket/file-ticket-form/components/jira-oauth/jira-oauth.component';
-import { FileTicketFormComponent } from 'app/pages/system/file-ticket/file-ticket-form/file-ticket-form.component';
 import { FileTicketLicensedFormComponent } from 'app/pages/system/file-ticket/file-ticket-licensed-form/file-ticket-licensed-form.component';
 import { AttachDebugWarningService } from 'app/pages/system/file-ticket/services/attach-debug-warning.service';
 
@@ -36,12 +34,9 @@ import { AttachDebugWarningService } from 'app/pages/system/file-ticket/services
     OauthButtonModule,
   ],
   declarations: [
-    FileTicketFormComponent,
     FileTicketLicensedFormComponent,
-    JiraOauthComponent,
   ],
   exports: [
-    FileTicketFormComponent,
     FileTicketLicensedFormComponent,
   ],
   providers: [

@@ -36,3 +36,14 @@
   color: var(--primary);
   cursor: pointer;
 }
+
+.feedback-type {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+}
+
+ix-file-input {
+  margin-top: -16px;
+  padding-left: 30px;
+}

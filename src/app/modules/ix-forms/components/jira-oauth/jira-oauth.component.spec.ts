@@ -10,8 +10,8 @@ import { OauthJiraMessage } from 'app/interfaces/support.interface';
 import { IxErrorsComponent } from 'app/modules/ix-forms/components/ix-errors/ix-errors.component';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { JiraOauthComponent } from 'app/modules/ix-forms/components/jira-oauth/jira-oauth.component';
 import { OauthButtonModule } from 'app/modules/oauth-button/oauth-button.module';
-import { JiraOauthComponent } from 'app/pages/system/file-ticket/file-ticket-form/components/jira-oauth/jira-oauth.component';
 
 describe('JiraOauthComponent', () => {
   let spectator: Spectator<JiraOauthComponent>;

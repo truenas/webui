@@ -12,45 +12,80 @@
     <ix-icon name="clear"></ix-icon>
   </button>
 
-  <div class="file-ticket-helper">
-    <span>{{ 'Submitting a bug?' | translate }}</span>
-    <span>{{ 'Use' | translate }}</span>
-    <a
-      class="file-ticket-link"
-      ixTest="file-ticket"
-      (click)="openFileTicketForm()"
-    >{{ 'File Ticket' | translate }}</a>
-    <span>{{ 'form instead' | translate }}.</span>
-  </div>
-
   <form [formGroup]="form">
+    <ix-button-group
+      formControlName="type"
+      [label]="'I would like to' | translate"
+      [options]="feedbackTypeOptions$"
+      [inlineFields]="true"
+      [attr.aria-label]="'Feedback Type' | translate"
+    ></ix-button-group>
+
     <ix-star-rating
+      *ngIf="form.controls.rating.enabled"
       formControlName="rating"
       [label]="'Select rating' | translate"
       [required]="true"
     ></ix-star-rating>
 
+    <ix-select
+      *ngIf="form.controls.category.enabled"
+      formControlName="category"
+      [label]="'Category' | translate"
+      [options]="categoryOptions$"
+      [tooltip]="tooltips.category | translate"
+      [required]="true"
+    ></ix-select>
+
+    <ix-input
+      *ngIf="form.controls.subject.enabled"
+      formControlName="subject"
+      [label]="'Subject' | translate"
+      [tooltip]="tooltips.subject | translate"
+      [required]="true"
+    ></ix-input>
+
     <ix-textarea
       formControlName="message"
       [label]="'Message' | translate"
       [rows]="5"
-      [placeholder]="'Share your thoughts on our product\'s features, usability, or any suggestions for improvement.' | translate"
+      [placeholder]="messagePlaceholder | translate"
+      [required]="isReview ? false : true"
     ></ix-textarea>
 
-    <ix-slide-toggle
+    <ix-checkbox
+      *ngIf="form.controls.attach_debug.enabled"
+      formControlName="attach_debug"
+      [label]="'Attach debug' | translate"
+      [tooltip]="tooltips.attach_debug | translate"
+      [hint]="'Debugs may contain log files with personal information such as usernames or other identifying information about your system.' | translate"
+    ></ix-checkbox>
+
+    <ix-checkbox
       formControlName="take_screenshot"
       [label]="'Take screenshot of the current page' | translate"
       [tooltip]="'Capture and attach screenshot to the review' | translate"
-    ></ix-slide-toggle>
+    ></ix-checkbox>
+
+    <ix-checkbox
+      *ngIf="form.controls.attach_screenshot.enabled"
+      formControlName="attach_screenshot"
+      [label]="'Attach additional images' | translate"
+    ></ix-checkbox>
 
     <ix-file-input
-      *ngIf="!form.controls.take_screenshot.value"
+      *ngIf="form.controls.attach_screenshot.value"
       formControlName="image"
       [label]="'Attach image (optional)' | translate"
       [tooltip]="'Select image you want attach to review' | translate"
       [multiple]="false"
       [acceptedFiles]="acceptedFiles"
     ></ix-file-input>
+
+    <ix-jira-oauth
+      *ngIf="showJiraButton"
+      formControlName="token"
+    ></ix-jira-oauth>
   </form>
 </mat-dialog-content>
 

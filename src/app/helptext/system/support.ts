@@ -16,6 +16,18 @@ export const helptextSystemSupport = {
     dialog_unavailable_warning: T('Proactive support settings is not available.'),
   },
 
+  bug: {
+    message: {
+      placeholder: T('Please describe:\n1. Steps to reproduce\n2. Expected Result\n3. Actual Result'),
+    },
+  },
+
+  review: {
+    message: {
+      placeholder: T('Share your thoughts on our product\'s features, usability, or any suggestions for improvement.'),
+    },
+  },
+
   token: {
     tooltip: T('OAuth Token for current session'),
   },

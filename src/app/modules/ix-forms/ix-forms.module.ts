@@ -4,6 +4,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDividerModule } from '@angular/material/divider';
@@ -44,12 +45,15 @@ import { IxSlideToggleComponent } from 'app/modules/ix-forms/components/ix-slide
 import { IxStarRatingComponent } from 'app/modules/ix-forms/components/ix-star-rating/ix-star-rating.component';
 import { IxTextareaComponent } from 'app/modules/ix-forms/components/ix-textarea/ix-textarea.component';
 import { IxWarningComponent } from 'app/modules/ix-forms/components/ix-warning/ix-warning.component';
+import { JiraOauthComponent } from 'app/modules/ix-forms/components/jira-oauth/jira-oauth.component';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { OauthButtonModule } from 'app/modules/oauth-button/oauth-button.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { FormActionsComponent } from './components/form-actions/form-actions.component';
+import { IxButtonGroupComponent } from './components/ix-button-group/ix-button-group.component';
 import { IxLabelComponent } from './components/ix-label/ix-label.component';
 import { IxSlideInComponent } from './components/ix-slide-in/ix-slide-in.component';
 import { WithManageCertificatesLinkComponent } from './components/with-manage-certificates-link/with-manage-certificates-link.component';
@@ -64,6 +68,7 @@ import { WithManageCertificatesLinkComponent } from './components/with-manage-ce
     MatInputModule,
     MatSelectModule,
     MatButtonModule,
+    MatButtonToggleModule,
     MatAutocompleteModule,
     IxIconModule,
     MatSlideToggleModule,
@@ -82,6 +87,7 @@ import { WithManageCertificatesLinkComponent } from './components/with-manage-ce
     CastModule,
     TestIdModule,
     RouterLink,
+    OauthButtonModule,
   ],
   declarations: [
     IxInputComponent,
@@ -111,6 +117,8 @@ import { WithManageCertificatesLinkComponent } from './components/with-manage-ce
     FormActionsComponent,
     WithManageCertificatesLinkComponent,
     IxStarRatingComponent,
+    IxButtonGroupComponent,
+    JiraOauthComponent,
   ],
   exports: [
     IxErrorsComponent,
@@ -136,10 +144,12 @@ import { WithManageCertificatesLinkComponent } from './components/with-manage-ce
     IxRadioGroupComponent,
     IxIpInputWithNetmaskComponent,
     IxCheckboxListComponent,
+    IxButtonGroupComponent,
     IxLabelComponent,
     FormActionsComponent,
     WithManageCertificatesLinkComponent,
     IxStarRatingComponent,
+    JiraOauthComponent,
   ],
   providers: [
     IxFormatterService,

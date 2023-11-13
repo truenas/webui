@@ -12,9 +12,9 @@ import { filter, tap } from 'rxjs/operators';
 import { GiB } from 'app/constants/bytes.constant';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { FeedbackDialogComponent } from 'app/modules/ix-feedback/feedback-dialog/feedback-dialog.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { FileTicketFormComponent } from 'app/pages/system/file-ticket/file-ticket-form/file-ticket-form.component';
 import {
   FileTicketLicensedFormComponent,
 } from 'app/pages/system/file-ticket/file-ticket-licensed-form/file-ticket-licensed-form.component';
@@ -148,7 +148,7 @@ export class SupportCardComponent implements OnInit {
     if (this.hasLicense) {
       this.slideInService.open(FileTicketLicensedFormComponent, { wide: true });
     } else {
-      this.slideInService.open(FileTicketFormComponent);
+      this.matDialog.open(FeedbackDialogComponent);
     }
   }
 
