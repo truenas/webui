@@ -222,7 +222,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
       aclmode: getFieldValue(this.existing.aclmode, this.parent) as AclMode,
       casesensitivity: this.existing.casesensitivity?.value,
       special_small_block_size: this.existing.special_small_block_size
-        ? Number(this.existing.special_small_block_size.value)
+        ? Number(this.existing.special_small_block_size.rawvalue)
         : null,
     });
   }
