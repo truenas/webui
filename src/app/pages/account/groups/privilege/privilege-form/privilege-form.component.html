@@ -10,6 +10,27 @@
           [required]="true"
         ></ix-input>
 
+        <ix-select
+          formControlName="local_groups"
+          [label]="'Local Groups' | translate"
+          [options]="localGroupsOptions$"
+          [multiple]="true"
+        ></ix-select>
+
+        <ix-select
+          formControlName="ds_groups"
+          [label]="'DS Groups' | translate"
+          [options]="dsGroupsOptions$"
+          [multiple]="true"
+        ></ix-select>
+
+        <ix-select
+          formControlName="roles"
+          [label]="'Roles' | translate"
+          [options]="rolesOptions$"
+          [multiple]="true"
+        ></ix-select>
+
         <ix-checkbox
           formControlName="web_shell"
           [label]="'Web Shell' | translate"

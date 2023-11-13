@@ -22,3 +22,9 @@ export interface PrivilegeUpdate {
   web_shell: boolean;
   roles: Role[];
 }
+
+export interface PrivilegeRole {
+  name: Role;
+  title: string;
+  includes: Role[];
+}

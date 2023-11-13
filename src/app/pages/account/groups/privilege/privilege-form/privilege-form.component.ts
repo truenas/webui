@@ -5,7 +5,7 @@ import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { Privilege } from 'app/interfaces/privilege.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -38,6 +38,18 @@ export class PrivilegeFormComponent implements OnInit {
       ? this.translate.instant('New Privilege')
       : this.translate.instant('Edit Privilege');
   }
+
+  readonly rolesOptions$ = this.ws.call('privilege.roles').pipe(
+    map((roles) => roles.map((role) =>({ label: role.title, value: role.name }))),
+  );
+
+  readonly localGroupsOptions$ = this.ws.call('group.query', [[['local', '=', true]]]).pipe(
+    map((groups) => groups.map((group) => ({ label: group.group, value: group.gid }))),
+  );
+
+  readonly dsGroupsOptions$ = this.ws.call('group.query', [[['local', '=', false]], { extra: { search_dscache: true } }]).pipe(
+    map((groups) => groups.map((group) => ({ label: group.group, value: group.gid }))),
+  );
 
   constructor(
     private formBuilder: FormBuilder,

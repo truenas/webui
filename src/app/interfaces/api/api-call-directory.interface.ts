@@ -183,7 +183,7 @@ import { PoolUnlockQuery, PoolUnlockResult } from 'app/interfaces/pool-unlock-qu
 import {
   Pool, PoolInstance, PoolInstanceParams,
 } from 'app/interfaces/pool.interface';
-import { Privilege, PrivilegeUpdate } from 'app/interfaces/privilege.interface';
+import { Privilege, PrivilegeRole, PrivilegeUpdate } from 'app/interfaces/privilege.interface';
 import { Process } from 'app/interfaces/process.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { ReplicationConfigUpdate } from 'app/interfaces/replication-config-update.interface';
@@ -679,6 +679,7 @@ export interface ApiCallDirectory {
   'privilege.create': { params: [PrivilegeUpdate]; response: Privilege };
   'privilege.update': { params: [id: number, update: PrivilegeUpdate]; response: Privilege };
   'privilege.delete': { params: [id: number]; response: boolean };
+  'privilege.roles': { params: QueryParams<PrivilegeRole>; response: PrivilegeRole[] };
 
   // Replication
   'replication.list_datasets': { params: [transport: TransportMode, credentials?: number]; response: string[] };
