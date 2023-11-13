@@ -27,6 +27,7 @@ import { NgxDualListboxModule } from 'app/modules/common/dual-list/dual-list.mod
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { LayoutModule } from 'app/modules/layout/layout.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
@@ -35,6 +36,8 @@ import { GroupFormComponent } from 'app/pages/account/groups/group-form/group-fo
 import { GroupListComponent } from 'app/pages/account/groups/group-list/group-list.component';
 import { GroupMembersComponent } from 'app/pages/account/groups/group-members/group-members.component';
 import { routing } from 'app/pages/account/groups/groups.routing';
+import { PrivilegeFormComponent } from 'app/pages/account/groups/privilege/privilege-form/privilege-form.component';
+import { PrivilegeListComponent } from 'app/pages/account/groups/privilege/privilege-list/privilege-list.component';
 import { GroupEffects } from 'app/pages/account/groups/store/group.effects';
 import { groupReducer } from 'app/pages/account/groups/store/group.reducer';
 import { groupStateKey } from 'app/pages/account/groups/store/group.selectors';
@@ -76,6 +79,7 @@ import { DeleteGroupDialogComponent } from './group-details-row/delete-group-dia
     MatSlideToggleModule,
     LayoutModule,
     TestIdModule,
+    IxTable2Module,
   ],
   declarations: [
     GroupListComponent,
@@ -83,6 +87,8 @@ import { DeleteGroupDialogComponent } from './group-details-row/delete-group-dia
     GroupDetailsRowComponent,
     GroupMembersComponent,
     DeleteGroupDialogComponent,
+    PrivilegeListComponent,
+    PrivilegeFormComponent,
   ],
   exports: [],
 })

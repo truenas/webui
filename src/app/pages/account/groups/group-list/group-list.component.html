@@ -13,6 +13,14 @@
     >
       <label>{{ 'Show Built-In Groups' | translate }}</label>
     </mat-slide-toggle>
+    <a
+      mat-button
+      color="primary"
+      ixTest="privileges"
+      [routerLink]="['/credentials', 'groups', 'privileges']"
+    >
+      {{ 'Privileges' | translate }}
+    </a>
     <button mat-button color="primary" ixTest="add" (click)="doAdd()">
       {{ 'Add' | translate }}
     </button>
