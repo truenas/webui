@@ -2,32 +2,11 @@
 
 .card {
   @include details-card();
+  width: 100%;
 }
 
 .widget .mat-mdc-card .mat-mdc-card-content > div {
-  padding: 8px 20px 8px 36px !important;
-}
-
-.backups-table {
-  ::ng-deep tr td:first-child {
-    padding-left: 35px;
-    width: 60px;
-  }
-
-  ::ng-deep tr td:nth-child(2) {
-    width: 200px;
-  }
-
-  ::ng-deep tr td:last-child {
-    align-items: center;
-    display: flex;
-    height: inherit;
-    justify-content: flex-end;
-  }
-
-  .backup-icon-container {
-    display: flex;
-  }
+  padding: 8px 16px !important;
 }
 
 .status-container {
@@ -46,13 +25,108 @@
   }
 }
 
-.empty-data-footer {
+.footer-container {
+  padding: 16px;
+  width: 100%;
+
   .details-item {
     display: flex;
     justify-content: space-between;
 
     .action {
       margin-left: unset;
+    }
+  }
+}
+
+mat-grid-tile {
+  background-color: var(--bg1);
+  border-radius: 2px;
+  opacity: 0.7;
+
+  ul {
+    margin: 0;
+    padding-left: 0;
+  }
+
+  .tile {
+    padding-left: 16px;
+
+    &:hover,
+    &:focus,
+    &:active {
+      .tile-header-button {
+        display: inline-flex;
+      }
+    }
+
+    .tile-header-button {
+      display: none;
+      flex-shrink: 0;
+    }
+
+    .tile-header-title {
+      flex: 1;
+      font-size: 20px;
+      height: 40px;
+      line-height: 2;
+      min-height: 40px;
+      overflow: hidden;
+      text-align: left;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .tile-content {
+      font-size: 12px;
+      padding-bottom: 10px;
+
+      .divider {
+        background-color: var(--lines);
+        height: 75%;
+        margin-right: 12px;
+        width: 1px;
+      }
+
+      li {
+        line-height: 20px;
+        overflow: hidden;
+        white-space: nowrap;
+
+        .label {
+          margin-right: 6px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+      }
+    }
+
+    span.icon {
+      align-items: center;
+      cursor: default;
+      display: inline-flex;
+      height: 20px;
+      min-width: 20px;
+      user-select: none;
+      width: 20px;
+
+      &.error {
+        color: var(--red);
+      }
+
+      &.warn {
+        color: var(--orange);
+      }
+
+      &.safe {
+        color: var(--green);
+      }
+
+      .ix-icon {
+        font-size: 16px;
+        height: 16px;
+        width: 16px;
+      }
     }
   }
 }

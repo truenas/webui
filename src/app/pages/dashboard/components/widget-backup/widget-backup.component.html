@@ -56,88 +56,114 @@
           </mat-toolbar-row>
         </ix-drag-handle>
 
-        <ix-table2
-          class="backups-table"
-          [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
-          [emptyConfig]="emptyConfig$ | async"
-        >
-          <tbody
-            ix-table-body
-            [columns]="columns"
-            [dataProvider]="dataProvider"
-            [isLoading]="dataProvider.isLoading$ | async"
-          >
-            <ng-template
-              let-backup
-              ix-table-cell
-              [columnIndex]="0"
-              [dataProvider]="dataProvider"
-            >
-              <ng-container [ngSwitch]="backup.type">
-                <div class="backup-icon-container">
-                  <ix-icon
-                    *ngSwitchCase="BackupType.CloudSync"
-                    name="ix:cloud_sync"
-                  ></ix-icon>
-                  <ix-icon
-                    *ngSwitchCase="BackupType.Replication"
-                    name="ix:replication"
-                  ></ix-icon>
-                  <ix-icon
-                    *ngSwitchCase="BackupType.Rsync"
-                    name="ix:rsync"
-                  ></ix-icon>
+        <div>
+          <mat-grid-list gutterSize="5px" [cols]="1" [rowHeight]="105">
+            <mat-grid-tile *ngFor="let tile of backupsTiles; trackBy: trackByTile">
+              <div
+                class="tile"
+                fxFlexFill
+                fxLayout="column"
+                fxLayoutAlign="start stretch"
+              >
+                <div
+                  class="tile-header"
+                  fxLayout="row"
+                  fxLayoutAlign="start center"
+                >
+                  <h4 class="tile-header-title">{{ tile.title }}</h4>
+                  <div class="tile-header-button">
+                    <a mat-icon-button ixTest="manage-tasks">
+                      <ix-icon
+                        matTooltipPosition="above"
+                        [matTooltip]="'Manage Tasks' | translate"
+                      >settings</ix-icon>
+                    </a>
+                  </div>
                 </div>
-              </ng-container>
-            </ng-template>
-          </tbody>
-        </ix-table2>
-
-        <div *ngIf="!!allCount">
-          <div class="details-item">
-            <div class="label">{{ 'Replication Tasks' | translate }}:</div>
-            <div class="replication-tasks value">{{ replicationCount }}</div>
-            <a class="action" ixTest="manage-replication-tasks" [routerLink]="['/data-protection/replication']">
-              {{ 'Manage Replication Tasks' | translate }}
-            </a>
-          </div>
-          <div class="details-item">
-            <div class="label">{{ 'Cloud Sync Tasks' | translate }}:</div>
-            <div class="cloudsync-tasks value">{{ cloudSyncCount }}</div>
-            <a class="action" ixTest="manage-cloudsync-tasks" [routerLink]="['/data-protection/cloudsync']">
-              {{ 'Manage Cloud Sync Tasks' | translate }}
-            </a>
-          </div>
-          <div class="details-item">
-            <div class="label">{{ 'Rsync Tasks' | translate }}:</div>
-            <div class="rsync-tasks value">{{ rsyncCount }}</div>
-            <a class="action" ixTest="manage-rsync-tasks" [routerLink]="['/data-protection/rsync']">
-              {{ 'Manage Rsync Tasks' | translate }}
-            </a>
-          </div>
-        </div>
-
-        <div *ngIf="!allCount" class="empty-data-footer">
-          <div class="details-item">
-            <div class="label">{{ 'Actions' | translate }}</div>
-            <div class="label">{{ 'Documentation' | translate }}</div>
-          </div>
-          <div class="details-item">
-            <a class="action" ixTest="new-replication" [routerLink]="['/data-protection']">
-              {{ 'New Replication Wizard' | translate }}
-            </a>
-            <a class="action" ixTest="risks-no-backup">
-              {{ 'Risks of having no backup' | translate }}
-            </a>
-          </div>
-          <div class="details-item">
-            <a class="action" ixTest="new-cloudsync" [routerLink]="['/data-protection']">
-              {{ 'New Cloudsync Wizard' | translate }}
-            </a>
-            <a class="action" ixTest="backup-best-practices">
-              {{ 'Backup best practices' | translate }}
-            </a>
-          </div>
+                <div
+                  class="tile-content"
+                  fxFlex
+                  fxLayout="row"
+                  fxLayoutAlign="space-between center"
+                >
+                  <ul fxLayout="column" [fxFlex]="40">
+                    <li fxLayout="row">
+                      <span [class]="['icon', tile.failedSend ? 'warn' : 'safe']">
+                        <ix-icon [name]="tile.failedSend ? 'mdi-alert' : 'mdi-check-circle'"></ix-icon>
+                      </span>
+                      <span class="label">
+                        {{ '{tasks} send tasks' | translate : { tasks: tile.totalSend } }}
+                      </span>
+                    </li>
+                    <li fxLayout="row">
+                      <span [class]="['icon', tile.failedReceive ? 'warn' : 'safe']">
+                        <ix-icon [name]="tile.failedReceive ? 'mdi-alert' : 'mdi-check-circle'"></ix-icon>
+                      </span>
+                      <span class="label">
+                        {{ '{tasks} receive tasks' | translate : { tasks: tile.totalReceive } }}
+                      </span>
+                    </li>
+                    <li fxLayout="row">
+                      <span [class]="['icon', tile.failedSend + tile.failedReceive ? 'warn' : 'safe']">
+                        <ix-icon [name]="tile.failedSend + tile.failedReceive ? 'mdi-alert' : 'mdi-check-circle'"></ix-icon>
+                      </span>
+                      <span class="label">
+                        {{ 'Total failed' | translate }}: {{ tile.failedSend + tile.failedReceive }}
+                      </span>
+                    </li>
+                  </ul>
+                  <div class="divider"></div>
+                  <ul fxLayout="column" [fxFlex]="60">
+                    <li fxLayout="row">
+                      <span class="label">
+                        {{ '{tasks} successful send tasks this week' | translate : { tasks: tile.lastWeekSend } }}
+                      </span>
+                    </li>
+                    <li fxLayout="row">
+                      <span class="label">
+                        {{ '{tasks} successful receive tasks this week' | translate : { tasks: tile.lastWeekReceive } }}
+                      </span>
+                    </li>
+                    <li fxLayout="row">
+                      <span class="label">
+                        {{ 'Last successful task' }}:
+                        {{ tile.lastSuccessfulTask ? (tile.lastSuccessfulTask | formatDateTime) : ('Never' | translate) }}
+                      </span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </mat-grid-tile>
+            <mat-grid-tile *ngIf="!backupsTiles.length">
+              <div class="empty-container">
+                {{ 'No backup tasks configured' | translate }}
+              </div>
+            </mat-grid-tile>
+            <mat-grid-tile *ngIf="backupsTiles.length < 3">
+              <div class="footer-container">
+                <div class="details-item">
+                  <div class="label">{{ 'Actions' | translate }}</div>
+                  <div class="label">{{ 'Documentation' | translate }}</div>
+                </div>
+                <div class="details-item">
+                  <a class="action" ixTest="new-replication" [routerLink]="['/data-protection']">
+                    {{ 'New Replication Wizard' | translate }}
+                  </a>
+                  <a class="action" ixTest="risks-no-backup">
+                    {{ 'Risks of having no backup' | translate }}
+                  </a>
+                </div>
+                <div class="details-item">
+                  <a class="action" ixTest="new-cloudsync" [routerLink]="['/data-protection']">
+                    {{ 'New Cloudsync Wizard' | translate }}
+                  </a>
+                  <a class="action" ixTest="backup-best-practices">
+                    {{ 'Backup best practices' | translate }}
+                  </a>
+                </div>
+              </div>
+            </mat-grid-tile>
+          </mat-grid-list>
         </div>
       </mat-card-content>
     </mat-card>

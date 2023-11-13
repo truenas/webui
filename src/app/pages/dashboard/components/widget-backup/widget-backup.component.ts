@@ -1,18 +1,11 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, TrackByFunction } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { map, Observable, of, tap } from 'rxjs';
-import { EmptyType } from 'app/enums/empty-type.enum';
+import { differenceInDays } from 'date-fns';
+import { of } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { ScreenType } from 'app/enums/screen-type.enum';
-import { EmptyConfig } from 'app/interfaces/empty-config.interface';
-import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
-import { relativeDateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
-import { stateButtonColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-state-button/ix-cell-state-button.component';
-import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
-import { createTable } from 'app/modules/ix-table2/utils';
-import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 
 enum BackupType {
@@ -26,6 +19,18 @@ interface BackupRow {
   description: string;
   timestamp: Date;
   state: JobState;
+  isReceive: boolean;
+}
+
+interface BackupTile {
+  title: string;
+  totalSend: number;
+  totalReceive: number;
+  failedSend: number;
+  failedReceive: number;
+  lastWeekSend: number;
+  lastWeekReceive: number;
+  lastSuccessfulTask: Date;
 }
 
 @UntilDestroy()
@@ -42,24 +47,9 @@ export class WidgetBackupComponent extends WidgetComponent implements OnInit {
   screenType = ScreenType.Desktop;
   backups: BackupRow[] = [];
 
-  dataProvider: AsyncDataProvider<BackupRow>;
-  columns = createTable<BackupRow>([
-    textColumn({
-      propertyName: 'type',
-    }),
-    textColumn({
-      propertyName: 'description',
-    }),
-    relativeDateColumn({
-      propertyName: 'timestamp',
-    }),
-    stateButtonColumn({
-      propertyName: 'state',
-    }),
-  ]);
-
   readonly ScreenType = ScreenType;
-  readonly BackupType = BackupType;
+
+  trackByTile: TrackByFunction<BackupTile> = (_, tile) => tile.title;
 
   get allCount(): number {
     return this.backups.length;
@@ -69,32 +59,38 @@ export class WidgetBackupComponent extends WidgetComponent implements OnInit {
     return this.backups.filter((backup) => backup.state === JobState.Failed).length;
   }
 
-  get replicationCount(): number {
-    return this.backups.filter((backup) => backup.type === BackupType.Replication).length;
+  get replicationTasks(): BackupRow[] {
+    return this.backups.filter((backup) => backup.type === BackupType.Replication);
   }
 
-  get cloudSyncCount(): number {
-    return this.backups.filter((backup) => backup.type === BackupType.CloudSync).length;
+  get cloudSyncTasks(): BackupRow[] {
+    return this.backups.filter((backup) => backup.type === BackupType.CloudSync);
   }
 
-  get rsyncCount(): number {
-    return this.backups.filter((backup) => backup.type === BackupType.Rsync).length;
+  get rsyncTasks(): BackupRow[] {
+    return this.backups.filter((backup) => backup.type === BackupType.Rsync);
   }
 
-  get emptyConfig$(): Observable<EmptyConfig> {
-    return this.dataProvider.emptyType$.pipe(
-      map((emptyType) => emptyType === EmptyType.NoPageData
-        ? { title: this.translate.instant('No backup tasks found'), type: EmptyType.NoPageData, large: true }
-        : this.emptyService.defaultEmptyConfig(emptyType),
-      ),
-    );
+  get backupsTiles(): BackupTile[] {
+    const tiles: BackupTile[] = [];
+    if (this.cloudSyncTasks.length) {
+      tiles.push(this.getTile(this.translate.instant('Cloud Sync'), this.cloudSyncTasks));
+    }
+
+    if (this.replicationTasks.length) {
+      tiles.push(this.getTile(this.translate.instant('Replication'), this.replicationTasks));
+    }
+
+    if (this.rsyncTasks.length) {
+      tiles.push(this.getTile(this.translate.instant('Rsync'), this.rsyncTasks));
+    }
+    return tiles;
   }
 
   constructor(
     public mediaObserver: MediaObserver,
     public translate: TranslateService,
     private cdr: ChangeDetectorRef,
-    private emptyService: EmptyService,
   ) {
     super(translate);
 
@@ -106,30 +102,47 @@ export class WidgetBackupComponent extends WidgetComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const dateMock = new Date();
-    dateMock.setTime(dateMock.getTime() - (18 * 3600 * 1000));
-
-    const dataMock: BackupRow[] = [
-      { type: BackupType.CloudSync, description: 'Description for task 1', timestamp: dateMock, state: JobState.Success },
-      { type: BackupType.CloudSync, description: 'Description for task 2', timestamp: dateMock, state: JobState.Success },
-      { type: BackupType.Rsync, description: 'Description for task 3', timestamp: dateMock, state: JobState.Failed },
-      { type: BackupType.Replication, description: 'Description for task 4', timestamp: dateMock, state: JobState.Success },
-      { type: BackupType.CloudSync, description: 'Description for task 5', timestamp: dateMock, state: JobState.Failed },
-      { type: BackupType.CloudSync, description: 'Description for task 6', timestamp: dateMock, state: JobState.Failed },
-      { type: BackupType.Rsync, description: 'Description for task 7', timestamp: dateMock, state: JobState.Success },
-    ];
-
-    const backups$ = of(dataMock).pipe(
-      tap((backups) => this.backups = backups),
-      map((backups) => backups.slice(0, 5)),
-      untilDestroyed(this),
-    );
-
-    this.dataProvider = new AsyncDataProvider<BackupRow>(backups$);
     this.getBackups();
   }
 
   getBackups(): void {
-    this.dataProvider.load();
+    const dateMock = new Date();
+    dateMock.setTime(dateMock.getTime() - (18 * 3600 * 1000));
+
+    const dataMock: BackupRow[] = [
+      { type: BackupType.CloudSync, description: 'Description for task 1', timestamp: dateMock, state: JobState.Success, isReceive: false },
+      { type: BackupType.CloudSync, description: 'Description for task 2', timestamp: dateMock, state: JobState.Success, isReceive: true },
+      { type: BackupType.Rsync, description: 'Description for task 3', timestamp: dateMock, state: JobState.Failed, isReceive: false },
+      { type: BackupType.Replication, description: 'Description for task 4', timestamp: dateMock, state: JobState.Success, isReceive: true },
+      { type: BackupType.CloudSync, description: 'Description for task 5', timestamp: dateMock, state: JobState.Failed, isReceive: false },
+      { type: BackupType.CloudSync, description: 'Description for task 6', timestamp: dateMock, state: JobState.Failed, isReceive: true },
+      { type: BackupType.Rsync, description: 'Description for task 7', timestamp: dateMock, state: JobState.Success, isReceive: false },
+    ];
+
+    of(dataMock).pipe(untilDestroyed(this)).subscribe((backups) => {
+      this.backups = backups;
+      this.cdr.markForCheck();
+    });
+  }
+
+  private getTile(title: string, tasks: BackupRow[]): BackupTile {
+    const successfulTasks = tasks.filter((backup) => backup.state !== JobState.Failed);
+    const lastSuccessfulTask =
+      successfulTasks.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())[0]?.timestamp;
+
+    return {
+      title,
+      totalSend: tasks.filter((backup) => !backup.isReceive).length,
+      totalReceive: tasks.filter((backup) => backup.isReceive).length,
+      failedSend: tasks.filter((backup) => backup.state === JobState.Failed && !backup.isReceive).length,
+      failedReceive: tasks.filter((backup) => backup.state === JobState.Failed && backup.isReceive).length,
+      lastWeekSend: successfulTasks.filter((backup) => !backup.isReceive && this.isThisWeek(backup.timestamp)).length,
+      lastWeekReceive: successfulTasks.filter((backup) => backup.isReceive && this.isThisWeek(backup.timestamp)).length,
+      lastSuccessfulTask,
+    };
+  }
+
+  private isThisWeek(timestamp: Date): boolean {
+    return differenceInDays(new Date(), timestamp) < 7;
   }
 }
