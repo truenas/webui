@@ -24,18 +24,9 @@ describe('BackupCredentialsComponent', () => {
     spectator = createComponent();
   });
 
-  it('renders ix-cloud-credentials-card', () => {
-    const cloudCredentialsCard = spectator.query('ix-cloud-credentials-card');
-    expect(cloudCredentialsCard).toBeTruthy();
-  });
-
-  it('renders ix-ssh-connection-card', () => {
-    const sshConnectionCard = spectator.query('ix-ssh-connection-card');
-    expect(sshConnectionCard).toBeTruthy();
-  });
-
-  it('renders ix-ssh-keypair-card', () => {
-    const sshKeypairCard = spectator.query('ix-ssh-keypair-card');
-    expect(sshKeypairCard).toBeTruthy();
+  it('renders Backup Credentials Cards', () => {
+    expect(spectator.query(CloudCredentialsCardComponent)).toExist();
+    expect(spectator.query(SshConnectionCardComponent)).toExist();
+    expect(spectator.query(SshKeypairCardComponent)).toExist();
   });
 });

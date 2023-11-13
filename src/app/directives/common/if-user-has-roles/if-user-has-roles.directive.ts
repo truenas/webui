@@ -57,6 +57,14 @@ export class IfUserHasRolesDirective {
   }
 
   private checkRoles(roles: Role[]): boolean {
+    if (!roles?.length || !this.currentUserRoles?.length) {
+      return false;
+    }
+
+    if (this.currentUserRoles.includes(Role.FullAdmin)) {
+      return true;
+    }
+
     return roles.every(role => this.currentUserRoles.includes(role));
   }
 }
