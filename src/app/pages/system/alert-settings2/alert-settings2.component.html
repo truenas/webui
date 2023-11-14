@@ -20,25 +20,26 @@
           <mat-list>
             <mat-list-item *ngFor="let cls of category.classes">
               <div class="list-item">
-                <strong
-                  class="title"
-                >{{ cls.title | translate }}</strong>
-                <button
-                  mat-stroked-button
-                  class="state-button"
-                  ixTest="row-state"
-                  [ngClass]="getFreqColor(alertClasses?.classes[cls.id]?.policy)"
-                >
-                  {{ 'Frequency' | translate }}: {{ alertClasses?.classes[cls.id]?.policy || AlertPolicy.Immediately }}
-                </button>
-                <button
-                  mat-stroked-button
-                  class="state-button"
-                  ixTest="row-state"
-                  [ngClass]="getLevelColor(cls.level)"
-                >
-                  {{ 'Level' | translate }}: {{ cls.level }}
-                </button>
+
+                <div class="wrapper title">
+                  <div class="column-header">{{ 'Alert' | translate }}</div>
+                  <div class="column-cell">{{ cls.title | translate }}</div>
+                </div>
+
+                <div class="wrapper state-button">
+                  <div class="column-header">{{ 'Severity Level' | translate }}</div>
+                  <div class="column-cell">
+                    <ix-icon class="icon" [name]="getIconName(getLevel(cls))" [style.color]="getLevelColor(getLevel(cls))"/>{{ getLevel(cls) }}
+                  </div>
+                </div>
+
+                <div class="wrapper freq">
+                  <div class="column-header">{{ 'Frequency' | translate }}</div>
+                  <div
+                    class="column-cell" 
+                  >{{ getPolicy(cls) }}</div>
+                </div>
+
               </div>
             </mat-list-item>
           </mat-list>

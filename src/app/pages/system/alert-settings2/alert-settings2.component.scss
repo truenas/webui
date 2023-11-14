@@ -85,7 +85,7 @@
 }
 
 .mdc-list-item {
-  height: 78px;
+  min-height: 78px;
 }
 
 .level,
@@ -99,9 +99,36 @@
 }
 
 .title {
+  white-space: initial;
   width: 380px;
 }
 
 .state-button {
+  justify-content: center;
   width: 200px;
+}
+
+.freq {
+  justify-content: center;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.column-header {
+  font-size: 10px;
+}
+
+.column-cell {
+  align-items: center;
+  display: flex;
+  font-size: 14px;
+
+}
+
+.icon {
+  height: 100%;
+  margin-right: 10px;
 }

@@ -4,8 +4,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { AlertPolicy } from 'app/enums/alert-policy.enum';
-import { AlertCategory, AlertClasses } from 'app/interfaces/alert.interface';
+import { AlertCategory, AlertClass, AlertClasses } from 'app/interfaces/alert.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -29,6 +30,7 @@ export class AlertSettings2Component implements OnInit {
     private ws: WebSocketService,
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
+    private themeService: ThemeService,
   ) { }
 
   ngOnInit(): void {
@@ -72,6 +74,14 @@ export class AlertSettings2Component implements OnInit {
     });
   }
 
+  getPolicy(cls: AlertClass): AlertPolicy {
+    return this.alertClasses?.classes[cls.id]?.policy || AlertPolicy.Immediately;
+  }
+
+  getLevel(cls: AlertClass): AlertLevel {
+    return this.alertClasses?.classes[cls.id]?.level || cls.level;
+  }
+
   updateSearchOption(): void {
     this.searchOptions = [];
     for (const category of this.categories) {
@@ -108,32 +118,38 @@ export class AlertSettings2Component implements OnInit {
     switch (level) {
       case AlertLevel.Info:
       case AlertLevel.Notice:
-        return 'fn-theme-primary';
+        return this.themeService.getActiveTheme().primary;
       case AlertLevel.Alert:
+        return this.themeService.getActiveTheme().yellow;
       case AlertLevel.Warning:
-        return 'fn-theme-orange';
+        return this.themeService.getActiveTheme().orange;
       case AlertLevel.Critical:
       case AlertLevel.Error:
       case AlertLevel.Emergency:
-        return 'fn-theme-red';
+        return this.themeService.getActiveTheme().red;
       default:
-        return 'fn-theme-primary';
+        return this.themeService.getActiveTheme().primary;
     }
   }
 
-  getFreqColor(policy: AlertPolicy): string {
-    if (!policy) {
-      policy = AlertPolicy.Immediately;
-    }
-    switch (policy) {
-      case AlertPolicy.Daily:
-        return 'fn-theme-primary';
-      case AlertPolicy.Immediately:
-        return 'fn-theme-red';
-      case AlertPolicy.Hourly:
-        return 'fn-theme-orange';
+  getIconName(level: AlertLevel): string {
+    switch (level) {
+      case AlertLevel.Info:
+        return 'info';
+      case AlertLevel.Notice:
+        return 'event';
+      case AlertLevel.Alert:
+        return 'notifications_active';
+      case AlertLevel.Warning:
+        return 'warning';
+      case AlertLevel.Critical:
+        return 'local_fire_department';
+      case AlertLevel.Error:
+        return 'error';
+      case AlertLevel.Emergency:
+        return 'crisis_alert';
       default:
-        return '';
+        return 'info';
     }
   }
 }
