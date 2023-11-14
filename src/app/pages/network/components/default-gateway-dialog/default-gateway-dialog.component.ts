@@ -52,6 +52,12 @@ export class DefaultGatewayDialogComponent {
     private validatorsService: IxValidatorsService,
   ) {}
 
+  onInputBlur(): void {
+    if (!this.form.controls.defaultGateway.value) {
+      this.form.controls.defaultGateway.setErrors([]);
+    }
+  }
+
   onSubmit(): void {
     this.dialogRef.close();
     const formValues = this.form.value;

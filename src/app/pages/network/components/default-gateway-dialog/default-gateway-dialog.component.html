@@ -17,6 +17,7 @@
         [label]="'New IPv4 Default Gateway' | translate"
         [required]="true"
         [tooltip]="helptext.ipv4gateway_tooltip | translate"
+        (inputBlur)="onInputBlur()"
       ></ix-input>
     </ix-fieldset>
   </div>
