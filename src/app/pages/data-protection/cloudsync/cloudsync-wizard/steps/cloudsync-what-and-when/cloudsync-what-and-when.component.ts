@@ -211,9 +211,10 @@ export class CloudsyncWhatAndWhenComponent implements OnInit, OnChanges {
   openAdvanced(): void {
     this.dialog.confirm({
       title: this.translate.instant('Switch to Advanced Options'),
-      message: this.translate.instant('Proceeding will result in the loss of your current cloud task data. However, your created provider will remain unaffected. Are you sure you want to continue?'),
+      message: this.translate.instant('Switching to Advanced Options will lose data entered on second step. Do you want to continue?'),
       buttonText: this.translate.instant('Continue'),
       cancelText: this.translate.instant('Cancel'),
+      hideCheckbox: true,
     }).pipe(
       filter(Boolean),
       untilDestroyed(this),

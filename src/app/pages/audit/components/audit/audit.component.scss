@@ -8,9 +8,19 @@
     height: 100%;
   }
 
+  .user-avatar,
+  .user-avatar > div {
+    align-items: center;
+    display: flex;
+
+    span {
+      margin-left: 8px;
+    }
+  }
+
   .sticky-header {
     height: inherit;
-    top: 59px;
+    top: 38px;
 
     thead {
       align-items: center;
@@ -29,7 +39,7 @@
     align-items: center;
     display: grid;
     grid-gap: 8px;
-    grid-template-columns: 1fr 1fr 1.5fr 1fr 1fr;
+    grid-template-columns: auto 1fr 1.2fr 0.8fr 1.3fr;
   }
 
   .audit-header-row tr {
@@ -67,14 +77,14 @@
 }
 
 .table-container {
-  flex: 1.8;
+  flex: 2;
   max-width: 100%;
 }
 
 .details-container {
-  flex: 1.2;
+  flex: 1;
   max-width: 100%;
-  top: 65px;
+  top: 53px;
 }
 
 .header-card {
