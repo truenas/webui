@@ -12,6 +12,11 @@
       }
     }
   }
+
+  .mat-mdc-dialog-container,
+  .mat-mdc-dialog-content {
+    overflow-y: auto !important;
+  }
 }
 
 .close-feedback-dialog {

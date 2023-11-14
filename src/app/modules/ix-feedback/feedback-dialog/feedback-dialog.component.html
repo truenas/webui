@@ -21,76 +21,158 @@
       [attr.aria-label]="'Feedback Type' | translate"
     ></ix-button-group>
 
-    <ix-star-rating
-      *ngIf="form.controls.rating.enabled"
-      formControlName="rating"
-      [label]="'Select rating' | translate"
-      [required]="true"
-    ></ix-star-rating>
+    <ix-fieldset *ngIf="isBugOrFeature && isEnterprise">
+      <ix-input
+        *ngIf="form.controls.name.enabled"
+        formControlName="name"
+        [label]="'Name' | translate"
+        [tooltip]="tooltips.name | translate"
+        [required]="true"
+      ></ix-input>
 
-    <ix-select
-      *ngIf="form.controls.category.enabled"
-      formControlName="category"
-      [label]="'Category' | translate"
-      [options]="categoryOptions$"
-      [tooltip]="tooltips.category | translate"
-      [required]="true"
-    ></ix-select>
+      <ix-input
+        *ngIf="form.controls.email.enabled"
+        formControlName="email"
+        [label]="'Email' | translate"
+        [tooltip]="tooltips.email | translate"
+        [required]="true"
+      ></ix-input>
 
-    <ix-input
-      *ngIf="form.controls.subject.enabled"
-      formControlName="subject"
-      [label]="'Subject' | translate"
-      [tooltip]="tooltips.subject | translate"
-      [required]="true"
-    ></ix-input>
+      <ix-chips
+        formControlName="cc"
+        [label]="'CC' | translate"
+        [tooltip]="tooltips.cc | translate"
+      ></ix-chips>
 
-    <ix-textarea
-      formControlName="message"
-      [label]="'Message' | translate"
-      [rows]="5"
-      [placeholder]="messagePlaceholder | translate"
-      [required]="isReview ? false : true"
-    ></ix-textarea>
+      <ix-input
+        *ngIf="form.controls.phone.enabled"
+        formControlName="phone"
+        [label]="'Phone' | translate"
+        [tooltip]="tooltips.phone | translate"
+        [required]="true"
+      ></ix-input>
 
-    <ix-checkbox
-      *ngIf="form.controls.attach_debug.enabled"
-      formControlName="attach_debug"
-      [label]="'Attach debug' | translate"
-      [tooltip]="tooltips.attach_debug | translate"
-      [hint]="'Debugs may contain log files with personal information such as usernames or other identifying information about your system.' | translate"
-    ></ix-checkbox>
+      <ix-select
+        *ngIf="form.controls.ticketCategory.enabled"
+        formControlName="ticketCategory"
+        [label]="'Type' | translate"
+        [options]="enterpriseCategoryOptions$"
+        [tooltip]="tooltips.category | translate"
+        [required]="true"
+      ></ix-select>
 
-    <ix-checkbox
-      formControlName="take_screenshot"
-      [label]="'Take screenshot of the current page' | translate"
-      [tooltip]="'Capture and attach screenshot to the review' | translate"
-    ></ix-checkbox>
+      <ix-select
+        *ngIf="form.controls.environment.enabled"
+        formControlName="environment"
+        [label]="'Environment' | translate"
+        [options]="environmentOptions$"
+        [tooltip]="tooltips.environment | translate"
+        [required]="true"
+      ></ix-select>
 
-    <ix-checkbox
-      *ngIf="form.controls.attach_screenshot.enabled"
-      formControlName="attach_screenshot"
-      [label]="'Attach additional images' | translate"
-    ></ix-checkbox>
+      <ix-select
+        formControlName="criticality"
+        [label]="'Criticality' | translate"
+        [options]="criticalityOptions$"
+        [tooltip]="tooltips.criticality | translate"
+        [required]="true"
+      ></ix-select>
+    </ix-fieldset>
 
-    <ix-file-input
-      *ngIf="form.controls.attach_screenshot.value"
-      formControlName="image"
-      [label]="'Attach image (optional)' | translate"
-      [tooltip]="'Select image you want attach to review' | translate"
-      [multiple]="false"
-      [acceptedFiles]="acceptedFiles"
-    ></ix-file-input>
+    <ix-fieldset *ngIf="isReview">
+      <ix-star-rating
+        *ngIf="form.controls.rating.enabled"
+        formControlName="rating"
+        [label]="'Select rating' | translate"
+        [required]="true"
+      ></ix-star-rating>
+    </ix-fieldset>
 
-    <ix-jira-oauth
-      *ngIf="showJiraButton"
-      formControlName="token"
-    ></ix-jira-oauth>
+    <ix-fieldset>
+      <ix-combobox
+        *ngIf="form.controls.category.enabled || isBugOrFeature"
+        formControlName="category"
+        [label]="'Category' | translate"
+        [provider]="categoryProvider$"
+        [tooltip]="tooltips.category | translate"
+        [required]="true"
+      ></ix-combobox>
+
+      <ix-input
+        *ngIf="form.controls.subject.enabled"
+        formControlName="subject"
+        [label]="'Subject' | translate"
+        [tooltip]="tooltips.subject | translate"
+        [required]="true"
+      ></ix-input>
+
+      <ix-textarea
+        formControlName="message"
+        [label]="'Message' | translate"
+        [rows]="5"
+        [placeholder]="messagePlaceholder | translate"
+        [required]="isReview ? false : true"
+      ></ix-textarea>
+
+      <ix-checkbox
+        *ngIf="form.controls.attach_debug.enabled"
+        formControlName="attach_debug"
+        [label]="'Attach debug' | translate"
+        [tooltip]="tooltips.attach_debug | translate"
+        [hint]="'Debugs may contain log files with personal information such as usernames or other identifying information about your system.' | translate"
+      ></ix-checkbox>
+
+      <ix-checkbox
+        formControlName="take_screenshot"
+        [label]="'Take screenshot of the current page' | translate"
+        [tooltip]="'Capture and attach screenshot to the review' | translate"
+      ></ix-checkbox>
+
+      <ix-checkbox
+        *ngIf="form.controls.attach_screenshot.enabled"
+        formControlName="attach_screenshot"
+        [label]="'Attach additional images' | translate"
+      ></ix-checkbox>
+
+      <ix-file-input
+        *ngIf="form.controls.attach_screenshot.value"
+        formControlName="image"
+        [label]="'Attach image (optional)' | translate"
+        [tooltip]="'Select image you want attach to review' | translate"
+        [multiple]="false"
+        [acceptedFiles]="acceptedFiles"
+      ></ix-file-input>
+    </ix-fieldset>
   </form>
 </mat-dialog-content>
 
 <mat-dialog-actions>
   <ix-form-actions>
+    <ix-jira-oauth
+      *ngIf="isBugOrFeature && !isEnterprise"
+      [formControl]="token"
+    ></ix-jira-oauth>
+
+    <button
+      *ngIf="isEnterprise"
+      mat-button
+      type="button"
+      ixTest="user-guide"
+      (click)="onUserGuidePressed()"
+    >
+      {{ 'User Guide' | translate }}
+    </button>
+
+    <button
+      *ngIf="isEnterprise"
+      mat-button
+      type="button"
+      ixTest="eula"
+      (click)="onEulaPressed()"
+    >
+      {{ 'EULA' | translate }}
+    </button>
+
     <button
       mat-button
       type="submit"

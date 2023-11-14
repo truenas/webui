@@ -132,7 +132,6 @@ import { ConsoleCardComponent } from './advanced/console/console-card/console-ca
 import { SysctlCardComponent } from './advanced/sysctl/sysctl-card/sysctl-card.component';
 import { AlertSettingsComponent } from './alert-settings/alert-settings.component';
 import { BootenvNodeItemComponent } from './bootenv/bootenv-status/bootenv-node-item/bootenv-node-item.component';
-import { FileTicketModule } from './file-ticket/file-ticket.module';
 import { SetProductionStatusDialogComponent } from './general-settings/support/set-production-status-dialog/set-production-status-dialog.component';
 import { routing } from './system.routing';
 
@@ -173,7 +172,6 @@ import { routing } from './system.routing';
     MatDialogModule,
     AppCommonModule,
     LayoutModule,
-    FileTicketModule,
     MatExpansionModule,
     MatSlideToggleModule,
     AppLoaderModule,

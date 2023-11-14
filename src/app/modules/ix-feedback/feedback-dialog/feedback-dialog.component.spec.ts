@@ -3,37 +3,45 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { mockProvider, createRoutingFactory, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
-import { of } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockWebsocket, mockCall, mockJob } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
+import { TicketCategory, TicketEnvironment, TicketCriticality } from 'app/enums/file-ticket.enum';
 import { JobState } from 'app/enums/job-state.enum';
+import { WINDOW } from 'app/helpers/window.helper';
 import { Job } from 'app/interfaces/job.interface';
 import { NewTicketResponse } from 'app/interfaces/support.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { FeedbackDialogComponent } from 'app/modules/ix-feedback/feedback-dialog/feedback-dialog.component';
-import { FeedbackType } from 'app/modules/ix-feedback/interfaces/feedback.interface';
 import { IxFeedbackService } from 'app/modules/ix-feedback/ix-feedback.service';
 import { IxButtonGroupHarness } from 'app/modules/ix-forms/components/ix-button-group/ix-button-group.harness';
 import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxFileInputHarness } from 'app/modules/ix-forms/components/ix-file-input/ix-file-input.harness';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxStarRatingHarness } from 'app/modules/ix-forms/components/ix-star-rating/ix-star-rating.harness';
 import { IxTextareaHarness } from 'app/modules/ix-forms/components/ix-textarea/ix-textarea.harness';
 import { JiraOauthComponent } from 'app/modules/ix-forms/components/jira-oauth/jira-oauth.component';
+import { JiraOauthHarness } from 'app/modules/ix-forms/components/jira-oauth/jira-oauth.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { OauthButtonComponent } from 'app/modules/oauth-button/components/oauth-button/oauth-button.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
+import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 describe('FeedbackDialogComponent', () => {
   let spectator: Spectator<FeedbackDialogComponent>;
   let loader: HarnessLoader;
+  let ws: WebSocketService;
+  const isEnterprise$ = new BehaviorSubject(false);
 
   const mockToken = JSON.stringify({
     oauth_token: 'mock.oauth.token',
@@ -72,6 +80,7 @@ describe('FeedbackDialogComponent', () => {
         }),
         mockJob('support.new_ticket', fakeSuccessfulJob(mockNewTicketResponse as NewTicketResponse)),
         mockJob('support.attach_ticket', fakeSuccessfulJob()),
+        mockCall('system.build_time', { $date: 1694835361000 }),
       ]),
       mockProvider(AuthService, {
         authToken$: of('token.is.mocked'),
@@ -83,7 +92,6 @@ describe('FeedbackDialogComponent', () => {
         provide: MAT_DIALOG_DATA,
         useValue: {},
       },
-      mockProvider(MatDialogRef),
       mockProvider(IxFeedbackService, {
         addReview: jest.fn(() => of({ success: true, review_id: 1 })),
         addAttachment: jest.fn(() => of({
@@ -97,7 +105,6 @@ describe('FeedbackDialogComponent', () => {
         takeScreenshot: jest.fn(() => of(new File(['(⌐□_□)'], 'screenshot.png', { type: 'image/png' }))),
         getHostId: jest.fn(() => of('unique-system-host-id-1234')),
       }),
-      mockProvider(SnackbarService),
       provideMockStore({
         selectors: [
           {
@@ -108,74 +115,43 @@ describe('FeedbackDialogComponent', () => {
           },
         ],
       }),
+      mockWindow({
+        open: jest.fn(),
+        navigator: {
+          userAgent: 'mocked user agent',
+        },
+        location: {
+          pathname: '/',
+        },
+      }),
+      mockProvider(SystemGeneralService, {
+        get isEnterprise(): boolean {
+          return isEnterprise$.value;
+        },
+        getTokenForJira: jest.fn(() => mockToken),
+        setTokenForJira: jest.fn(),
+      }),
+      mockProvider(MatDialogRef),
+      mockProvider(SnackbarService),
+      mockProvider(IxSlideInRef),
+      mockProvider(Router),
     ],
   });
 
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    ws = spectator.inject(WebSocketService);
   });
 
   it('checks the header', () => {
     expect(spectator.query('h1')).toHaveText('How would you rate this page?');
   });
 
-  describe('bug or improvement', () => {
-    beforeEach(async () => {
-      const type = await loader.getHarness(IxButtonGroupHarness.with({ label: 'I would like to' }));
-      type.setValue(FeedbackType.Bug);
-    });
-
-    it('loads ticket categories using api token when form is opened', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      const values = await form.getValues();
-
-      expect(values).toEqual({
-        Token: mockToken,
-        'Attach screenshots': [],
-        Category: '',
-        Subject: '',
-        Body: '',
-        'Type': 'BUG',
-        'Attach Debug': false,
-      });
-      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('support.fetch_categories', [mockToken]);
-    });
-
-    it.skip('sends a create payload to websocket', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      expect(await form.getValues()).toBe({});
-
-      // spectator.component.token.setValue(mockToken);
-      // await form.fillForm({ "I'd like to": 'report a bug' });
-
-      // await form.fillForm({
-      //   Category: 'WebUI',
-      //   Subject: 'Test subject',
-      //   Message: 'Testing ticket body',
-      // });
-
-      // const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In To Jira' }));
-      // await saveButton.click();
-
-      expect(spectator.inject(WebSocketService).job).toHaveBeenLastCalledWith('support.new_ticket', [{
-        body: 'Testing ticket body',
-        category: '10004',
-        title: 'Test subject',
-        token: mockToken,
-        type: 'BUG',
-      }]);
-    });
-
-    it('checks submit a new improvement', () => {
-      expect(true).toBeTruthy();
-    });
-  });
-
   describe('review', () => {
     beforeEach(async () => {
       const type = await loader.getHarness(IxButtonGroupHarness.with({ label: 'I would like to' }));
-      type.setValue(FeedbackType.Review);
+      type.setValue('rate this page');
     });
 
     it('checks submit a new review', async () => {
@@ -196,7 +172,7 @@ describe('FeedbackDialogComponent', () => {
         message: 'hi there. can you improve this?. thanks.',
         rating: 5,
         page: '/',
-        user_agent: expect.anything(),
+        user_agent: 'mocked user agent',
       });
       expect(spectator.inject(IxFeedbackService).addAttachment).toHaveBeenCalled();
       expect(spectator.inject(IxFeedbackService).takeScreenshot).toHaveBeenCalled();
@@ -233,6 +209,118 @@ describe('FeedbackDialogComponent', () => {
       expect(spectator.inject(IxFeedbackService).addAttachment).toHaveBeenCalled();
       expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
+    });
+  });
+
+  describe('bug or improvement', () => {
+    beforeEach(async () => {
+      isEnterprise$.next(false);
+      const type = await loader.getHarness(IxButtonGroupHarness.with({ label: 'I would like to' }));
+      type.setValue('report a bug');
+    });
+
+    it('loads ticket categories using api token when token is provided', async () => {
+      const form = await loader.getHarness(IxFormHarness);
+
+      const jiraButton = await loader.getHarness(JiraOauthHarness);
+      await jiraButton.setValue(mockToken);
+
+      const values = await form.getValues();
+      expect(values).toEqual(
+        {
+          'I would like to': 'report a bug',
+          Category: '',
+          Subject: '',
+          Message: '',
+          'Take screenshot of the current page': true,
+          'Attach debug': false,
+          'Attach additional images': false,
+        },
+      );
+      expect(ws.call).toHaveBeenCalledWith('support.fetch_categories', [mockToken]);
+    });
+
+    it('sends a create payload to websocket', async () => {
+      const form = await loader.getHarness(IxFormHarness);
+
+      const jiraButton = await loader.getHarness(JiraOauthHarness);
+      await jiraButton.setValue(mockToken);
+
+      await form.fillForm({
+        Category: 'WebUI',
+        Subject: 'Test subject',
+        Message: 'Testing ticket body',
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Submit' }));
+      await saveButton.click();
+
+      expect(ws.job).toHaveBeenLastCalledWith('support.new_ticket', [{
+        body: 'Testing ticket body',
+        category: '10004',
+        title: 'Test subject',
+        token: mockToken,
+        type: 'BUG',
+      }]);
+    });
+  });
+
+  describe('enterprise: bug or improvement', () => {
+    beforeEach(async () => {
+      isEnterprise$.next(true);
+      const type = await loader.getHarness(IxButtonGroupHarness.with({ label: 'I would like to' }));
+      type.setValue('report a bug');
+    });
+
+    it('sends a create payload to websocket', async () => {
+      const form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({
+        'Name': 'fakename',
+        Email: 'fake@admin.com',
+        CC: ['fake@test.com'],
+        Phone: '12345678',
+        Type: 'Bug',
+        Environment: 'Production',
+        Criticality: 'Inquiry',
+        Subject: 'Test subject',
+        Message: 'Testing ticket body',
+        'Attach debug': true,
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Submit' }));
+      await saveButton.click();
+
+      expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('support.new_ticket', [{
+        name: 'fakename',
+        email: 'fake@admin.com',
+        cc: ['fake@test.com'],
+        phone: '12345678',
+        category: TicketCategory.Bug,
+        environment: TicketEnvironment.Production,
+        criticality: TicketCriticality.Inquiry,
+        title: 'Test subject',
+        body: 'Testing ticket body',
+        attach_debug: true,
+      }]);
+    });
+
+    it('opens window when User Guide is pressed', async () => {
+      const window = spectator.inject<Window>(WINDOW);
+      jest.spyOn(window, 'open');
+      const button = await loader.getHarness(MatButtonHarness.with({ text: 'User Guide' }));
+      await button.click();
+
+      expect(window.open).toHaveBeenCalledWith('https://www.truenas.com/docs/hub/');
+    });
+
+    it('redirects to eula page when EULA is pressed', async () => {
+      const router = spectator.inject(Router);
+      jest.spyOn(router, 'navigate').mockImplementation();
+
+      const button = await loader.getHarness(MatButtonHarness.with({ text: 'EULA' }));
+      await button.click();
+
+      expect(router.navigate).toHaveBeenCalledWith(['system', 'support', 'eula']);
     });
   });
 });

@@ -60,10 +60,8 @@ export const helptextSystemSupport = {
   category: {
     placeholder: T('Category'),
     tooltip: T(
-      'This field remains empty until a valid\
- <b>Username</b> and <b>Password</b> is entered.\
- Choose the category that best describes the bug or\
- feature being reported.',
+      `This field remains empty until a token is obtained.
+      Choose the category that best describes the bug or feature being reported.`,
     ),
   },
 
