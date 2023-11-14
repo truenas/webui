@@ -16,7 +16,7 @@ export type QueryFilters<T> = QueryFilter<T>[] | ['OR', QueryFilter<T>[]];
  * TODO: Potentially may be able to type unknown.
  */
 // eslint-disable-next-line unused-imports/no-unused-vars
-export type QueryFilter<T> = [string, QueryOperator, unknown];
+export type QueryFilter<T> = [string, QueryComparator, unknown];
 
 export interface QueryOptions<T> {
   /**
@@ -45,7 +45,7 @@ export interface QueryOptions<T> {
   order_by?: (keyof T | `-${Extract<keyof T, string>}`)[];
 }
 
-export type QueryOperator =
+export type QueryComparator =
   | '='
   | '!='
   | '>'
