@@ -7,6 +7,26 @@ $scrollbar-offset: 20px;
     display: flex;
     flex-direction: row;
     width: 100%;
+
+    &::ng-deep table tbody tr {
+      cursor: pointer;
+
+      &.expanded {
+        background-color: var(--hover-bg);
+        color: var(--fg2);
+
+        td:first-child::before {
+          background-color: var(--primary);
+          content: '';
+          height: 100%;
+          left: 0;
+          opacity: 1;
+          position: absolute;
+          top: 0;
+          width: 6px;
+        }
+      }
+    }
   }
 
   .details-container {
@@ -93,7 +113,7 @@ $scrollbar-offset: 20px;
     }
 
     ::ng-deep .cards .scroll-window {
-      display: block;
+      display: inline-block;
     }
 
     ix-dataset-details-panel {

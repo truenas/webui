@@ -1,0 +1,12 @@
+<mat-card class="card">
+  <mat-card-header>
+    <h3 mat-card-title>
+      {{ 'Event Data' | translate }}
+    </h3>
+
+    <ix-copy-btn [text]="yamlContent" [jsonText]="log.event_data"></ix-copy-btn>
+  </mat-card-header>
+  <mat-card-content>
+    <pre [innerHTML]="yamlContent"></pre>
+  </mat-card-content>
+</mat-card>

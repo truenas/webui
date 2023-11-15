@@ -3,6 +3,17 @@
 
 :host {
   width: 100%;
+
+  &::ng-deep {
+    .cards .card {
+      @include details-card();
+      margin: 0;
+
+      mat-card-content {
+        padding: 0 16px 16px !important;
+      }
+    }
+  }
 }
 
 .header {
@@ -14,7 +25,7 @@
 
 .title {
   margin-bottom: 12px;
-  margin-top: 6px;
+  margin-top: 0;
   min-height: 36px;
 
   @media (max-width: calc($breakpoint-hidden - 1px)) {
@@ -57,10 +68,5 @@
 
   @media (max-width: $breakpoint-tablet) {
     overflow: hidden;
-  }
-
-  .card {
-    @include details-card();
-    margin: 0;
   }
 }
