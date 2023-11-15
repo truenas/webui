@@ -1,5 +1,5 @@
 <div class="cards">
   <ix-smb-card *ixIfUserHasRoles="[Role.SharingSmbRead]" [isClustered]="isClustered$ | async"></ix-smb-card>
   <ix-nfs-card *ixIfUserHasRoles="[Role.SharingNfsRead]"></ix-nfs-card>
-  <ix-iscsi-card *ixIfUserHasRoles="[Role.SharingIscsiExtentRead]"></ix-iscsi-card>
+  <ix-iscsi-card *ixIfUserHasRoles="[Role.SharingRead]"></ix-iscsi-card>
 </div>

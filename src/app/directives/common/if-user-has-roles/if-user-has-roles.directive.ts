@@ -29,6 +29,19 @@ const roleMapping = {
     Role.SnapshotWrite,
   ],
   [Role.SharingManager]: [Role.SharingManager, Role.DatasetWrite, Role.SharingWrite],
+  [Role.FilesystemAttrsWrite]: [Role.FilesystemAttrsWrite, Role.FilesystemAttrsRead],
+  [Role.FilesystemDataWrite]: [Role.FilesystemDataWrite, Role.FilesystemDataRead],
+  [Role.FilesystemFullControl]: [
+    Role.FilesystemDataWrite, Role.FilesystemDataRead, Role.FilesystemAttrsWrite, Role.FilesystemAttrsRead,
+  ],
+  [Role.SharingIscsiAuthWrite]: [Role.SharingIscsiAuthWrite, Role.SharingIscsiAuthRead],
+  [Role.SharingIscsiGlobalWrite]: [Role.SharingIscsiGlobalWrite, Role.SharingIscsiGlobalRead],
+  [Role.SharingIscsiHostWrite]: [Role.SharingIscsiHostWrite, Role.SharingIscsiHostRead],
+  [Role.SharingIscsiInitiatorWrite]: [Role.SharingIscsiInitiatorWrite, Role.SharingIscsiInitiatorRead],
+  [Role.SharingIscsiPortalWrite]: [Role.SharingIscsiPortalWrite, Role.SharingIscsiPortalRead],
+  [Role.SharingIscsiTargetWrite]: [Role.SharingIscsiTargetWrite, Role.SharingIscsiTargetRead],
+  [Role.SharingIscsiTargetExtentWrite]: [Role.SharingIscsiTargetExtentWrite, Role.SharingIscsiTargetExtentRead],
+  [Role.SharingIscsiWrite]: [Role.SharingIscsiWrite, Role.SharingIscsiRead],
 } as { [key in Role]: Role[] };
 
 @UntilDestroy()
