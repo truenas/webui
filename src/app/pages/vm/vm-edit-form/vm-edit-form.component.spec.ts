@@ -79,6 +79,7 @@ describe('VmEditFormComponent', () => {
           Pentium: 'Pentium',
         }),
         mockCall('vm.update'),
+        mockCall('device.get_pci_ids_for_gpu_isolation', ['10DE:1401']),
       ]),
       mockProvider(DialogService),
       mockProvider(GpuService, {
@@ -212,7 +213,7 @@ describe('VmEditFormComponent', () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(VmGpuService).updateVmGpus).toHaveBeenCalledWith(existingVm, ['0000:03:00.0']);
-    expect(spectator.inject(GpuService).addIsolatedGpuPciIds).toHaveBeenCalledWith(['0000:03:00.0']);
+    expect(spectator.inject(VmGpuService).updateVmGpus).toHaveBeenCalledWith(existingVm, ['0000:03:00.0', '10DE:1401']);
+    expect(spectator.inject(GpuService).addIsolatedGpuPciIds).toHaveBeenCalledWith(['0000:03:00.0', '10DE:1401']);
   });
 });

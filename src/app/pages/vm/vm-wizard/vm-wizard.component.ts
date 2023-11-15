@@ -7,7 +7,7 @@ import * as _ from 'lodash';
 import {
   forkJoin, Observable, of, switchMap,
 } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import { GiB, MiB } from 'app/constants/bytes.constant';
 import { VmDeviceType, VmNicType, VmOs } from 'app/enums/vm.enum';
 import { VirtualMachine, VirtualMachineUpdate } from 'app/interfaces/virtual-machine.interface';
@@ -189,7 +189,7 @@ export class VmWizardComponent implements OnInit {
     }
 
     if (this.gpuForm.gpus.length) {
-      requests.push(...this.getGpuRequests(vm));
+      requests.push(this.getGpuRequests(vm));
     }
 
     return forkJoin(requests);
@@ -245,13 +245,20 @@ export class VmWizardComponent implements OnInit {
     });
   }
 
-  private getGpuRequests(vm: VirtualMachine): Observable<unknown>[] {
+  private getGpuRequests(vm: VirtualMachine): Observable<unknown> {
     const gpusIds = this.gpuForm.gpus as unknown as string[];
 
-    return [
-      this.vmGpuService.updateVmGpus(vm, gpusIds),
-      this.gpuService.addIsolatedGpuPciIds(gpusIds),
-    ];
+    const pciIdsRequests$ = gpusIds.map((gpu) => {
+      return this.ws.call('device.get_pci_ids_for_gpu_isolation', [gpu]);
+    });
+
+    return forkJoin(pciIdsRequests$).pipe(
+      map((pciIds) => pciIds.flat()),
+      switchMap((pciIds) => [
+        this.vmGpuService.updateVmGpus(vm, gpusIds.concat(pciIds)),
+        this.gpuService.addIsolatedGpuPciIds(gpusIds.concat(pciIds)),
+      ]),
+    );
   }
 
   private getDisplayRequest(vm: VirtualMachine): Observable<VmDevice> {
