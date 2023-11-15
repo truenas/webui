@@ -2,15 +2,13 @@
   display: block;
   width: 100%;
 
-  &::ng-deep {
-    ix-form-actions {
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 15px !important;
+  ix-form-actions {
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 15px !important;
 
-      button {
-        margin: 0 !important;
-      }
+    button {
+      margin: 0 !important;
     }
   }
 }
