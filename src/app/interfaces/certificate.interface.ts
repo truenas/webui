@@ -55,6 +55,7 @@ export interface Certificate {
   subject_name_hash: number;
   type: number;
   until: string;
+  renew_days?: number;
 }
 
 export interface CertificateProfiles {
