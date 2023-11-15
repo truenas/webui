@@ -38,8 +38,7 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
   @Input() type: string;
   @Input() autocomplete = 'off';
   @Input() autocompleteOptions: Option[];
-  @Input() postfix?: string;
-  @Input() htmlCharactersLimit = 524288;
+  @Input() maxLength = 524288;
 
   /**
    * @deprecated Avoid using. Use valueChanges.
@@ -49,7 +48,7 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
   /** If formatted value returned by parseAndFormatInput has non-numeric letters
    * and input 'type' is a number, the input will stay empty on the form */
   @Input() format: (value: string | number) => string;
-  @Input() parse: (value: string | number, postfix?: string) => string | number;
+  @Input() parse: (value: string | number) => string | number;
 
   @ViewChild('ixInput') inputElementRef: ElementRef<HTMLInputElement>;
 
@@ -111,7 +110,7 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
     this.value = value;
     this.formatted = value;
     if (value && this.parse) {
-      this.value = this.parse(value, this.postfix);
+      this.value = this.parse(value);
     }
     this.onChange(this.value);
     this.filterOptions();
@@ -180,7 +179,7 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
     this.onTouch();
     if (this.formatted) {
       if (this.parse) {
-        this.value = this.parse(this.formatted, this.postfix);
+        this.value = this.parse(this.formatted);
         this.formatted = this.value;
       }
       if (this.format) {
