@@ -22,6 +22,7 @@ export class ServiceExtraActionsComponent {
   @Input() service: Service;
 
   configServiceLabel = this.translate.instant('Config Service');
+  readonly serviceNames = serviceNames;
 
   get serviceStateLabel(): string {
     return this.service.state === ServiceStatus.Running
@@ -29,8 +30,8 @@ export class ServiceExtraActionsComponent {
       : this.translate.instant('Turn On Service');
   }
 
-  get isSmbService(): boolean {
-    return this.service.service === ServiceName.Cifs;
+  get hasSessions(): boolean {
+    return this.service.service === ServiceName.Cifs || this.service.service === ServiceName.Nfs;
   }
 
   constructor(
@@ -102,6 +103,14 @@ export class ServiceExtraActionsComponent {
         break;
       default:
         break;
+    }
+  }
+
+  viewSessions(serviceName: ServiceName): void {
+    if (serviceName === ServiceName.Cifs) {
+      this.router.navigate(['/sharing', 'smb', 'sessions']);
+    } else if (serviceName === ServiceName.Nfs) {
+      this.router.navigate(['/sharing', 'nfs', 'sessions']);
     }
   }
 }

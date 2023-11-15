@@ -284,6 +284,12 @@ export class ServicesComponent implements OnInit {
   viewSessions(serviceName: ServiceName): void {
     if (serviceName === ServiceName.Cifs) {
       this.router.navigate(['/sharing', 'smb', 'sessions']);
+    } else if (serviceName === ServiceName.Nfs) {
+      this.router.navigate(['/sharing', 'nfs', 'sessions']);
     }
+  }
+
+  hasSessions(serviceName: ServiceName): boolean {
+    return serviceName === ServiceName.Cifs || serviceName === ServiceName.Nfs;
   }
 }

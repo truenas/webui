@@ -2,8 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { tap } from 'rxjs';
-import { SmbInfoLevel } from 'app/enums/smb-info-level.enum';
-import { SmbSession } from 'app/interfaces/smb-status.interface';
+import { NfsSession } from 'app/interfaces/nfs-share.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { createTable } from 'app/modules/ix-table2/utils';
@@ -12,33 +11,19 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
-  templateUrl: './smb-session-list.component.html',
+  templateUrl: './nfs-session-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SmbSessionListComponent implements OnInit {
+export class NfsSessionListComponent implements OnInit {
   filterString = '';
-  dataProvider: AsyncDataProvider<SmbSession>;
-  sessions: SmbSession[] = [];
+  dataProvider: AsyncDataProvider<NfsSession>;
+  sessions: NfsSession[] = [];
 
-  columns = createTable<SmbSession>([
-    textColumn({ title: this.translate.instant('Session ID'), propertyName: 'session_id' }),
-    textColumn({ title: this.translate.instant('Hostname'), propertyName: 'hostname' }),
-    textColumn({ title: this.translate.instant('Remote machine'), propertyName: 'remote_machine' }),
-    textColumn({ title: this.translate.instant('Username'), propertyName: 'username' }),
-    textColumn({ title: this.translate.instant('Groupname'), propertyName: 'groupname' }),
-    textColumn({ title: this.translate.instant('UID'), propertyName: 'uid' }),
-    textColumn({ title: this.translate.instant('GID'), propertyName: 'gid' }),
-    textColumn({ title: this.translate.instant('Session dialect'), propertyName: 'session_dialect' }),
-    textColumn({
-      title: this.translate.instant('Encryption'),
-      propertyName: 'encryption',
-      getValue: (row) => row.encryption.cipher,
-    }),
-    textColumn({
-      title: this.translate.instant('Signing'),
-      propertyName: 'signing',
-      getValue: (row) => row.signing.cipher,
-    }),
+  columns = createTable<NfsSession>([
+    textColumn({ title: this.translate.instant('Session ID'), propertyName: 'ip' }),
+    textColumn({ title: this.translate.instant('Hostname'), propertyName: 'hostname', hidden: true }),
+    textColumn({ title: this.translate.instant('Remote machine'), propertyName: 'remote_machine', hidden: true }),
+    textColumn({ title: this.translate.instant('Username'), propertyName: 'username', hidden: true }),
   ]);
 
   constructor(
@@ -49,7 +34,7 @@ export class SmbSessionListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    const smbStatus$ = this.ws.call('smb.status', [SmbInfoLevel.Sessions]).pipe(
+    const smbStatus$ = this.ws.call('nfs.get_nfs3_clients', []).pipe(
       tap((sessions) => {
         this.sessions = sessions;
         if (this.filterString) {
@@ -59,7 +44,7 @@ export class SmbSessionListComponent implements OnInit {
       untilDestroyed(this),
     );
 
-    this.dataProvider = new AsyncDataProvider<SmbSession>(smbStatus$);
+    this.dataProvider = new AsyncDataProvider<NfsSession>(smbStatus$);
     this.loadData();
   }
 

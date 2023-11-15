@@ -40,6 +40,7 @@ import { InitiatorWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wiza
 import { PortalWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/steps/portal-wizard-step/portal-wizard-step.component';
 import { TargetGlobalConfigurationComponent } from 'app/pages/sharing/iscsi/target-global-configuration/target-global-configuration.component';
 import { NfsListComponent } from 'app/pages/sharing/nfs/nfs-list/nfs-list.component';
+import { NfsSessionListComponent } from 'app/pages/sharing/nfs/nfs-session-list/nfs-session-list.component';
 import { RestartSmbDialogComponent } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
 import { UserService } from 'app/services/user.service';
 import { ServiceExtraActionsComponent } from './components/shares-dashboard/service-extra-actions/service-extra-actions.component';
@@ -130,6 +131,7 @@ import { SmbSessionListComponent } from './smb/smb-session-list/smb-session-list
     ServiceExtraActionsComponent,
     ServiceStateButtonComponent,
     SmbSessionListComponent,
+    NfsSessionListComponent,
   ],
   providers: [
     UserService,

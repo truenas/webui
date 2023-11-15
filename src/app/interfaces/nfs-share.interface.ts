@@ -19,3 +19,29 @@ export interface NfsShare {
 }
 
 export type NfsShareUpdate = Partial<Omit<NfsShare, 'id' | 'locked'>>;
+
+export interface NfsSession {
+  session_id: string;
+  ip: string;
+  server_id: {
+    pid: string;
+    task_id: string;
+    vnn: string;
+    unique_id: string;
+  };
+  uid: number;
+  gid: number;
+  username: string;
+  groupname: string;
+  remote_machine: string;
+  hostname: string;
+  session_dialect: string;
+  encryption: {
+    cipher: string;
+    degree: string;
+  };
+  signing: {
+    cipher: string;
+    degree: string;
+  };
+}

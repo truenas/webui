@@ -68,14 +68,14 @@
       <th *matHeaderCellDef mat-header-cell></th>
       <td *matCellDef="let service; dataSource: dataSource" mat-cell class="actions">
         <button
-          *ngIf="service.service === serviceName.Cifs"
+          *ngIf="hasSessions(service.service)"
           mat-icon-button
           type="button"
           matTooltipPosition="left"
           [ixTest]="[service.service, 'sessions']"
-          [attr.aria-label]="'Sessions' | translate"
+          [attr.aria-label]="'{name} Sessions' | translate: { name: serviceNames.get(service.service) }"
+          [matTooltip]="'{name} Sessions' | translate: { name: serviceNames.get(service.service) }"
           [attr.name]="'sessions-' + service.name"
-          [matTooltip]="'Sessions' | translate"
           (click)="viewSessions(service.service)"
         >
           <ix-icon name="list"></ix-icon>

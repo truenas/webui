@@ -169,7 +169,7 @@ import {
 } from 'app/interfaces/network-interface.interface';
 import { NetworkSummary } from 'app/interfaces/network-summary.interface';
 import { AddNfsPrincipal, NfsConfig, NfsConfigUpdate } from 'app/interfaces/nfs-config.interface';
-import { NfsShare, NfsShareUpdate } from 'app/interfaces/nfs-share.interface';
+import { NfsSession, NfsShare, NfsShareUpdate } from 'app/interfaces/nfs-share.interface';
 import { CreateNtpServer, NtpServer } from 'app/interfaces/ntp-server.interface';
 import { MapOption } from 'app/interfaces/option.interface';
 import {
@@ -623,6 +623,7 @@ export interface ApiCallDirectory {
   'nfs.add_principal': { params: [AddNfsPrincipal]; response: boolean };
   'nfs.config': { params: void; response: NfsConfig };
   'nfs.update': { params: [NfsConfigUpdate]; response: NfsConfig };
+  'nfs.get_nfs3_clients': { params: [params?: QueryParams<NfsSession>]; response: NfsSession[] };
 
   // Pool
   'pool.attachments': { params: [id: number]; response: PoolAttachment[] };
