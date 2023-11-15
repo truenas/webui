@@ -2,14 +2,30 @@ $singlecolumn-max-width: ($card-width-slim + $gap * 2);
 $dualcolumn-slim-max-width: ($card-width-slim * 2 + $gap * 2);
 $scrollbar-offset: 20px;
 
-@mixin tree-node-with-details-container($header-height) {
+@mixin tree-node-with-details-container() {
   .container {
     display: flex;
     flex-direction: row;
     width: 100%;
 
-    @media(min-width: $breakpoint-tablet) {
-      height: calc(100vh - #{$header-height});
+    &::ng-deep table tbody tr {
+      cursor: pointer;
+
+      &.expanded {
+        background-color: var(--hover-bg);
+        color: var(--fg2);
+
+        td:first-child::before {
+          background-color: var(--primary);
+          content: '';
+          height: 100%;
+          left: 0;
+          opacity: 1;
+          position: absolute;
+          top: 0;
+          width: 6px;
+        }
+      }
     }
   }
 
@@ -48,7 +64,7 @@ $scrollbar-offset: 20px;
     background-color: var(--bg2);
     padding: 16px;
     position: sticky;
-    top: -15px;
+    top: -16px;
     z-index: 2;
   }
 
@@ -97,7 +113,7 @@ $scrollbar-offset: 20px;
     }
 
     ::ng-deep .cards .scroll-window {
-      display: block;
+      display: inline-block;
     }
 
     ix-dataset-details-panel {

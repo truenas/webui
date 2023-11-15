@@ -5,7 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  EMPTY, catchError, filter, map, switchMap, tap,
+  EMPTY, catchError, filter, map, switchMap, tap, Subject,
 } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
@@ -24,6 +24,7 @@ import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-cront
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { CloudsyncRestoreDialogComponent } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
+import { CloudsyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -134,7 +135,6 @@ export class CloudsyncListComponent implements OnInit {
     const cloudSyncTasks$ = this.ws.call('cloudsync.query').pipe(
       map((cloudSyncTasks) => this.transformCloudSyncData(cloudSyncTasks)),
       tap((cloudSyncTasks) => this.cloudSyncTasks = cloudSyncTasks),
-      untilDestroyed(this),
     );
     this.dataProvider = new AsyncDataProvider<CloudSyncTaskUi>(cloudSyncTasks$);
     this.getCloudSyncTasks();
@@ -228,9 +228,11 @@ export class CloudsyncListComponent implements OnInit {
   }
 
   openForm(row?: CloudSyncTaskUi): void {
-    const slideInRef = this.slideInService.open(CloudsyncFormComponent, { data: row, wide: true });
+    const slideInRef = row
+      ? this.slideInService.open(CloudsyncFormComponent, { data: row, wide: true })
+      : this.slideInService.open(CloudsyncWizardComponent, { wide: true });
 
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+    (slideInRef.slideInClosed$ as Subject<unknown>).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.getCloudSyncTasks();
     });
   }

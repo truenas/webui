@@ -36,6 +36,7 @@ import { AuthService } from 'app/services/auth/auth.service';
 import { TwoFactorGuardService } from 'app/services/auth/two-factor-guard.service';
 import { DisksUpdateService } from 'app/services/disks-update.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { IxFileUploadService } from 'app/services/ix-file-upload.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { NavigationService } from 'app/services/navigation/navigation.service';
@@ -133,6 +134,7 @@ import { RoutePartsService } from './services/route-parts/route-parts.service';
     AppLoaderService,
     EntityTableService,
     IxSlideInService,
+    IxChainedSlideInService,
     IxFileUploadService,
     DisksUpdateService,
     {

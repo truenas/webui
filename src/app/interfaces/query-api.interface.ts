@@ -3,9 +3,11 @@
  * https://github.com/truenas/middleware/blob/master/src/middlewared/middlewared/apidocs/templates/websocket/query.md
  */
 export type QueryParams<T, ExtraOptions = Record<string, unknown>> = [
-  (QueryFilter<T>[] | ['OR', QueryFilter<T>[]])?,
+  QueryFilters<T>?,
   (QueryOptions<T> & ExtraOptions)?,
 ];
+
+export type QueryFilters<T> = QueryFilter<T>[] | ['OR', QueryFilter<T>[]];
 
 /**
  * TODO: First element is not a string, but a property path of T.
