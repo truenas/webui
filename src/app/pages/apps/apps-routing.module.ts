@@ -38,7 +38,7 @@ const routes: Routes = [
           {
             path: ':catalog/:train/:appId',
             component: AppRouterOutletComponent,
-            data: { breadcrumb: T('Installed') },
+            data: { breadcrumb: null },
             children: [
               {
                 path: '',
@@ -48,6 +48,7 @@ const routes: Routes = [
               {
                 path: 'edit',
                 component: ChartWizardComponent,
+                data: { breadcrumb: null },
               },
               {
                 path: 'shell/:podName/:command',

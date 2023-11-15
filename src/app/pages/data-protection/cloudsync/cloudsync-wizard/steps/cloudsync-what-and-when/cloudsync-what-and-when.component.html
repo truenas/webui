@@ -1,24 +1,26 @@
 <form [formGroup]="form">
   <ix-fieldset>
-    <ix-select
-      *ngIf="form.controls.direction.enabled"
-      formControlName="direction"
-      [label]="helptext.direction_placeholder | translate"
-      [tooltip]="helptext.direction_tooltip | translate"
-      [required]="true"
-      [options]="directionOptions$"
-    ></ix-select>
-    <ix-select
-      *ngIf="form.controls.transfer_mode.enabled"
-      formControlName="transfer_mode"
-      [label]="helptext.transfer_mode_placeholder | translate"
-      [tooltip]="transferModeTooltip | translate"
-      [required]="true"
-      [options]="transferModeOptions$"
-    ></ix-select>
-    <ix-transfer-mode-explanation
-      [mode]="form.controls.transfer_mode.value"
-    ></ix-transfer-mode-explanation>
+    <div class="direction-mode">
+      <ix-select
+        *ngIf="form.controls.direction.enabled"
+        formControlName="direction"
+        [label]="helptext.direction_placeholder | translate"
+        [tooltip]="helptext.direction_tooltip | translate"
+        [required]="true"
+        [options]="directionOptions$"
+      ></ix-select>
+      <ix-select
+        *ngIf="form.controls.transfer_mode.enabled"
+        formControlName="transfer_mode"
+        [label]="helptext.transfer_mode_placeholder | translate"
+        [tooltip]="transferModeTooltip | translate"
+        [required]="true"
+        [options]="transferModeOptions$"
+      ></ix-select>
+      <ix-transfer-mode-explanation
+        [mode]="form.controls.transfer_mode.value"
+      ></ix-transfer-mode-explanation>
+    </div>
     <div class="cloudsync">
       <ix-explorer
         *ngIf="form.controls.path_destination.enabled"

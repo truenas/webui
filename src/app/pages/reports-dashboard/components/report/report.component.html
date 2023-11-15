@@ -22,40 +22,50 @@
         <!-- Controls/Tools -->
         <div fxFlex="35%" class="line-chart-tools-wrapper">
           <div *ngIf="localControls && !report?.errorConf" class="line-chart-tools">
-            <mat-button-toggle-group aria-label="Steps">
-              <mat-button-toggle
+            <div class="steps-group" aria-label="Steps">
+              <button
+                mat-button
                 [disabled]="stepBackDisabled"
                 [matTooltip]="'Step Back' | translate"
                 [matTooltipShowDelay]="1000"
+                [ixTest]="['steps', 'back']"
                 (click)="stepBack()"
-              ><ix-icon name="mdi-rewind"></ix-icon></mat-button-toggle>
-              <mat-button-toggle
+              ><ix-icon name="mdi-rewind"></ix-icon></button>
+              <button
+                mat-button
                 [disabled]="stepForwardDisabled"
                 [matTooltip]="'Step Forward' | translate"
                 [matTooltipShowDelay]="1000"
+                [ixTest]="['steps', 'forward']"
                 (click)="stepForward()"
-              ><ix-icon name="mdi-fast-forward"></ix-icon></mat-button-toggle>
-            </mat-button-toggle-group>
+              ><ix-icon name="mdi-fast-forward"></ix-icon></button>
+            </div>
 
-            <mat-button-toggle-group aria-label="Zoom Level">
-              <mat-button-toggle
+            <div class="zoom-group" aria-label="Zoom Level">
+              <button
+                mat-button
                 [disabled]="zoomLevelIndex === zoomLevelMin"
                 [matTooltip]="'Zoom Out' | translate"
+                [ixTest]="['zoom', 'out']"
                 (click)="timeZoomOut()"
-              ><ix-icon name="mdi-magnify-minus"></ix-icon></mat-button-toggle>
+              ><ix-icon name="mdi-magnify-minus"></ix-icon></button>
 
-              <mat-button-toggle
+              <button
+                mat-button
                 [disabled]="zoomLevelIndex === zoomLevelMax && stepForwardDisabled && !customZoom"
                 [matTooltip]="'Reset Zoom' | translate"
+                [ixTest]="['zoom', 'reset']"
                 (click)="timeZoomReset()"
-              >{{ currentZoomLevel | mapValue: zoomLevelLabels | translate }}</mat-button-toggle>
+              >{{ currentZoomLevel | mapValue: zoomLevelLabels | translate }}</button>
 
-              <mat-button-toggle
+              <button
+                mat-button
                 [disabled]="zoomLevelIndex === zoomLevelMax"
                 [matTooltip]="'Zoom In' | translate"
+                [ixTest]="['zoom', 'in']"
                 (click)="timeZoomIn()"
-              ><ix-icon name="mdi-magnify-plus"></ix-icon></mat-button-toggle>
-            </mat-button-toggle-group>
+              ><ix-icon name="mdi-magnify-plus"></ix-icon></button>
+            </div>
           </div>
         </div>
       </mat-toolbar-row>
