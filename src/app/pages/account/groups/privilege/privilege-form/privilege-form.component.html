@@ -10,19 +10,19 @@
           [required]="true"
         ></ix-input>
 
-        <ix-select
+        <ix-chips
           formControlName="local_groups"
           [label]="'Local Groups' | translate"
-          [options]="localGroupsOptions$"
-          [multiple]="true"
-        ></ix-select>
+          [autocompleteProvider]="localGroupsProvider"
+          [allowNewEntries]="false"
+        ></ix-chips>
 
-        <ix-select
+        <ix-chips
           formControlName="ds_groups"
           [label]="'DS Groups' | translate"
-          [options]="dsGroupsOptions$"
-          [multiple]="true"
-        ></ix-select>
+          [autocompleteProvider]="dsGroupsProvider"
+          [allowNewEntries]="false"
+        ></ix-chips>
 
         <ix-select
           formControlName="roles"
@@ -33,7 +33,7 @@
 
         <ix-checkbox
           formControlName="web_shell"
-          [label]="'Web Shell' | translate"
+          [label]="'Web Shell Access' | translate"
         ></ix-checkbox>
       </ix-fieldset>
 

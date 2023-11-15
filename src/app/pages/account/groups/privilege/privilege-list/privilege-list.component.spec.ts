@@ -68,7 +68,7 @@ describe('PrivilegeListComponent', () => {
 
   it('should show table rows', async () => {
     const expectedRows = [
-      ['Name', 'Roles', 'Local Groups', 'DS Groups', 'Web Shell', ''],
+      ['Name', 'Roles', 'Local Groups', 'DS Groups', 'Web Shell Access', ''],
       ['privilege1',  'SHARING_MANAGER', '1', '2', 'Yes', ''],
       ['privilege2',  'FULL_ADMIN, READONLY', '0', '1', 'No', ''],
     ];

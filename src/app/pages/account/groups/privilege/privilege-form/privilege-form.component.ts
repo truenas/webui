@@ -7,7 +7,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, map } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
-import { Privilege } from 'app/interfaces/privilege.interface';
+import { Group } from 'app/interfaces/group.interface';
+import { Privilege, PrivilegeUpdate } from 'app/interfaces/privilege.interface';
+import { ChipsProvider } from 'app/modules/ix-forms/components/ix-chips/chips-provider';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -20,11 +22,13 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class PrivilegeFormComponent implements OnInit {
   isLoading = false;
+  localGroups: Group[] = [];
+  dsGroups: Group[] = [];
 
   form = this.formBuilder.group({
     name: ['', [Validators.required]],
-    local_groups: [[] as number[]],
-    ds_groups: [[] as number[]],
+    local_groups: [[] as string[]],
+    ds_groups: [[] as string[]],
     web_shell: [false],
     roles: [[] as Role[]],
   });
@@ -43,13 +47,25 @@ export class PrivilegeFormComponent implements OnInit {
     map((roles) => roles.map((role) =>({ label: role.title, value: role.name }))),
   );
 
-  readonly localGroupsOptions$ = this.ws.call('group.query', [[['local', '=', true]]]).pipe(
-    map((groups) => groups.map((group) => ({ label: group.group, value: group.gid }))),
-  );
+  readonly localGroupsProvider: ChipsProvider = (query: string) => {
+    return this.ws.call('group.query', [[['local', '=', true]]]).pipe(
+      map((groups) => {
+        this.localGroups = groups;
+        const chips = groups.map((group) => group.group);
+        return chips.filter((item) => item.trim().toLowerCase().includes(query.trim().toLowerCase()));
+      }),
+    );
+  };
 
-  readonly dsGroupsOptions$ = this.ws.call('group.query', [[['local', '=', false]], { extra: { search_dscache: true } }]).pipe(
-    map((groups) => groups.map((group) => ({ label: group.group, value: group.gid }))),
-  );
+  readonly dsGroupsProvider: ChipsProvider = (query: string) => {
+    return this.ws.call('group.query', [[['local', '=', false]], { extra: { search_dscache: true } }]).pipe(
+      map((groups) => {
+        this.dsGroups = groups;
+        const chips = groups.map((group) => group.group);
+        return chips.filter((item) => item.trim().toLowerCase().includes(query.trim().toLowerCase()));
+      }),
+    );
+  };
 
   constructor(
     private formBuilder: FormBuilder,
@@ -70,14 +86,18 @@ export class PrivilegeFormComponent implements OnInit {
   setPrivilegeForEdit(): void {
     this.form.patchValue({
       ...this.existingPrivilege,
-      local_groups: this.existingPrivilege.local_groups.map((group) => group.gid),
-      ds_groups: this.existingPrivilege.ds_groups.map((group) => group.gid),
+      local_groups: this.existingPrivilege.local_groups.map((group) => group.group),
+      ds_groups: this.existingPrivilege.ds_groups.map((group) => group.group),
     });
     this.cdr.markForCheck();
   }
 
   onSubmit(): void {
-    const values = this.form.value;
+    const values: PrivilegeUpdate = {
+      ...this.form.value,
+      local_groups: this.localGroupsUids,
+      ds_groups: this.dsGroupsUids,
+    };
 
     this.isLoading = true;
     let request$: Observable<Privilege>;
@@ -99,5 +119,17 @@ export class PrivilegeFormComponent implements OnInit {
         this.cdr.markForCheck();
       },
     });
+  }
+
+  private get localGroupsUids(): number[] {
+    return this.localGroups
+      .filter((group) => this.form.value.local_groups.includes(group.group))
+      .map((group) => group.gid);
+  }
+
+  private get dsGroupsUids(): number[] {
+    return this.dsGroups
+      .filter((group) => this.form.value.ds_groups.includes(group.group))
+      .map((group) => group.gid);
   }
 }

@@ -11,13 +11,13 @@ import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { PrivilegeFormComponent } from 'app/pages/account/groups/privilege/privilege-form/privilege-form.component';
 import { DialogService } from 'app/services/dialog.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
   templateUrl: './privilege-list.component.html',
-  styleUrls: ['./privilege-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PrivilegeListComponent implements OnInit {
@@ -42,7 +42,7 @@ export class PrivilegeListComponent implements OnInit {
       getValue: (row) => row.ds_groups.length,
     }),
     yesNoColumn({
-      title: this.translate.instant('Web Shell'),
+      title: this.translate.instant('Web Shell Access'),
       propertyName: 'web_shell',
       sortable: true,
     }),
@@ -70,6 +70,7 @@ export class PrivilegeListComponent implements OnInit {
     private translate: TranslateService,
     private dialogService: DialogService,
     protected emptyService: EmptyService,
+    private errorHandler: ErrorHandlerService,
   ) { }
 
   ngOnInit(): void {
@@ -106,8 +107,13 @@ export class PrivilegeListComponent implements OnInit {
         switchMap(() => this.ws.call('privilege.delete', [privilege.id])),
         untilDestroyed(this),
       )
-      .subscribe(() => {
-        this.getPrivileges();
+      .subscribe({
+        next: () => {
+          this.getPrivileges();
+        },
+        error: (error) => {
+          this.dialogService.error(this.errorHandler.parseWsError(error));
+        },
       });
   }
 

@@ -9,10 +9,6 @@ export interface Privilege {
   ds_groups: Group[];
   web_shell: boolean;
   roles: Role[];
-  allowlist: {
-    method: string;
-    resource: string;
-  }[];
 }
 
 export interface PrivilegeUpdate {

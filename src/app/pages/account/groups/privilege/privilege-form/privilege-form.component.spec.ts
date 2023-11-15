@@ -23,7 +23,7 @@ describe('PrivilegeFormComponent', () => {
     id: 10,
     name: 'privilege',
     web_shell: true,
-    local_groups: [{ gid: 111 }, { gid: 222 }],
+    local_groups: [{ gid: 111, group: 'Group A' }, { gid: 222, group: 'Group B' }],
     ds_groups: [],
     roles: [Role.Readonly],
   } as Privilege;
@@ -65,17 +65,15 @@ describe('PrivilegeFormComponent', () => {
       await form.fillForm({
         Name: 'new privilege',
         Roles: 'Sharing Manager',
-        'Web Shell': true,
-        'Local Groups': ['Group A'],
-        'DS Groups': ['Group B'],
+        'Web Shell Access': true,
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
       expect(ws.call).toHaveBeenLastCalledWith('privilege.create', [{
-        ds_groups:  [222],
-        local_groups: [111],
+        ds_groups:  [],
+        local_groups: [],
         name: 'new privilege',
         roles:  [Role.SharingManager],
         web_shell: true,
@@ -100,7 +98,7 @@ describe('PrivilegeFormComponent', () => {
 
       expect(values).toEqual({
         Name: 'privilege',
-        'Web Shell': true,
+        'Web Shell Access': true,
         'Local Groups': ['Group A', 'Group B'],
         'DS Groups': [],
         'Roles': ['Readonly'],
@@ -112,7 +110,7 @@ describe('PrivilegeFormComponent', () => {
       await form.fillForm({
         Name: 'updated privilege',
         Roles: ['Full Admin', 'Readonly'],
-        'Web Shell': false,
+        'Web Shell Access': false,
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
