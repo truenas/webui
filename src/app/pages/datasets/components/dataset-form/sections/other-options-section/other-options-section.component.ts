@@ -134,7 +134,6 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     private formatter: IxFormatterService,
     private ws: WebSocketService,
     private datasetFormService: DatasetFormService,
-    private ixFormatterService: IxFormatterService,
   ) {}
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
@@ -211,7 +210,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
 
     let specialSmallBlockSize = getFieldValue(this.existing.special_small_block_size, this.parent) as (number | 'INHERIT');
     if (specialSmallBlockSize !== 'INHERIT') {
-      specialSmallBlockSize = this.ixFormatterService.convertHumanStringToNum(specialSmallBlockSize.toString());
+      specialSmallBlockSize = this.formatter.convertHumanStringToNum(specialSmallBlockSize.toString());
     }
 
     this.form.patchValue({

@@ -224,7 +224,7 @@ describe('OtherOptionsSectionComponent', () => {
         recordsize: inherit,
         snapdev: DatasetSnapdev.Hidden,
         snapdir: DatasetSnapdir.Visible,
-        special_small_block_size: 'INHERIT',
+        special_small_block_size: inherit,
         aclmode: AclMode.Discard,
         acltype: DatasetAclType.Posix,
       });
