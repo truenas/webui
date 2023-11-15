@@ -77,7 +77,7 @@ export class CertificateEditComponent implements OnInit {
   }
 
   setRenewDaysForEditIfAvailable(): void {
-    if (this.certificate) {
+    if (this.certificate?.acme) {
       this.form.addControl('renew_days', new FormControl(this.certificate?.renew_days || null));
     }
   }
