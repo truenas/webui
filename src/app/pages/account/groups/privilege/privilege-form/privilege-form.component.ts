@@ -44,7 +44,7 @@ export class PrivilegeFormComponent implements OnInit {
   }
 
   readonly rolesOptions$ = this.ws.call('privilege.roles').pipe(
-    map((roles) => roles.map((role) =>({ label: role.title, value: role.name }))),
+    map((roles) => roles.map((role) => ({ label: role.title, value: role.name }))),
   );
 
   readonly localGroupsProvider: ChipsProvider = (query: string) => {

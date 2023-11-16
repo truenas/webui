@@ -1,6 +1,7 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { of } from 'rxjs';
 import { filter, switchMap, tap } from 'rxjs/operators';
 import { Privilege } from 'app/interfaces/privilege.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
@@ -57,6 +58,7 @@ export class PrivilegeListComponent implements OnInit {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
+          hidden: (row) => of(!!row.builtin_name),
         },
       ],
     }),

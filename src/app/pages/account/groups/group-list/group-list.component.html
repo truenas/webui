@@ -4,14 +4,6 @@
       [disabled]="isLoading$ | async"
       (search)="onSearch($event)"
     ></ix-search-input>
-    <a
-      mat-button
-      color="primary"
-      ixTest="privileges"
-      [routerLink]="['/credentials', 'groups', 'privileges']"
-    >
-      {{ 'Privileges' | translate }}
-    </a>
     <button mat-button color="primary" ixTest="add" (click)="doAdd()">
       {{ 'Add' | translate }}
     </button>
@@ -24,6 +16,14 @@
     >
       {{ hideBuiltinGroups ? ('Show Built-In Groups' | translate) : ('Hide Built-In Groups' | translate) }}
     </button>
+    <a
+      mat-button
+      color="accent"
+      ixTest="privileges"
+      [routerLink]="['/credentials', 'groups', 'privileges']"
+    >
+      {{ 'Privileges' | translate }}
+    </a>
   </ix-page-title-header>
 </ng-template>
 
