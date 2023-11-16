@@ -56,9 +56,7 @@ export const roleNames = new Map<Role, string>([
   [Role.FullAdmin, T('Full Admin')],
   [Role.Readonly, T('Readonly')],
   [Role.SharingManager, T('Sharing Manager')],
-  [Role.FullAdmin, T('Full Admin')],
   [Role.HasAllowList, T('Has Allow List')],
-  [Role.Readonly, T('Readonly')],
   [Role.SharingIscsiExtentRead, T('Sharing iSCSI Extent Read')],
   [Role.SharingIscsiExtentWrite, T('Sharing iSCSI Extent Write')],
   [Role.SharingNfsRead, T('Sharing NFS Read')],
@@ -83,7 +81,6 @@ export const roleNames = new Map<Role, string>([
   [Role.SnapshotWrite, T('Snapshot Write')],
   [Role.SnapshotDelete, T('Snapshot Delete')],
   [Role.ReplicationManager, T('Replication Manager')],
-  [Role.SharingManager, T('Sharing Manager')],
   [Role.FilesystemAttrsRead, T('Filesystem Attrs Read')],
   [Role.FilesystemAttrsWrite, T('Filesystem Attrs Write')],
   [Role.FilesystemDataRead, T('Filesystem Data Read')],
@@ -106,6 +103,7 @@ export const roleNames = new Map<Role, string>([
   [Role.SharingIscsiRead, T('Sharing Iscsi Read')],
   [Role.SharingIscsiWrite, T('Sharing Iscsi Write')],
 ]);
+
 
 export function rolesListToString(roles: Role[]): string {
   return roles.map((role) => roleNames.get(role)).join(', ') || T('N/A');

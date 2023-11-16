@@ -6,7 +6,7 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, map } from 'rxjs';
-import { Role } from 'app/enums/role.enum';
+import { Role, roleNames } from 'app/enums/role.enum';
 import { Group } from 'app/interfaces/group.interface';
 import { Privilege, PrivilegeUpdate } from 'app/interfaces/privilege.interface';
 import { ChipsProvider } from 'app/modules/ix-forms/components/ix-chips/chips-provider';
@@ -44,7 +44,7 @@ export class PrivilegeFormComponent implements OnInit {
   }
 
   readonly rolesOptions$ = this.ws.call('privilege.roles').pipe(
-    map((roles) => roles.map((role) => ({ label: role.title, value: role.name }))),
+    map((roles) => roles.map((role) => ({ label: roleNames.get(role.name) || role.title, value: role.name }))),
   );
 
   readonly localGroupsProvider: ChipsProvider = (query: string) => {
