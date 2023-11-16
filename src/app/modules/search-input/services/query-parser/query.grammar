@@ -1,0 +1,84 @@
+// Lezer grammar for the key=value query language.
+// https://lezer.codemirror.net
+// To generate the parser, run:
+// yarn run compile-grammar
+
+@tokens {
+  space { @whitespace+ }
+  SingleQuotedString {
+    "'" (![\\\n'] | "\\" _)* "'"?
+  }
+  DoubleQuotedString {
+    '"' (![\\\n"] | "\\" _)* '"'?
+  }
+  UnquotedString { @asciiLetter+ }
+  Boolean { "true" | "false" | "TRUE" | "FALSE" }
+  Number { $[0-9]+ }
+  Null { "null" | "NULL" }
+
+  Comparator {
+    "="
+    | "!="
+    | ">"
+    | ">="
+    | "<"
+    | "<="
+    | "~"
+    | "in"
+    | "IN"
+    | "nin"
+    | "NIN"
+    | "^"
+    | "!^"
+    | "$"
+    | "!$"
+  }
+
+  And { "AND" | "and" }
+  Or { "OR" | "or" }
+
+  leftParenthesis { "(" }
+  rightParenthesis { ")" }
+}
+
+@skip { space }
+
+@top Query {
+  expression
+}
+
+@precedence {
+  precedenceAnd @left,
+  precedenceOr @left
+}
+
+List<item> { item ("," item)* }
+
+Property {
+  UnquotedString | SingleQuotedString | DoubleQuotedString
+}
+
+valueLiteral {
+  SingleQuotedString | DoubleQuotedString | Number | Boolean | Null
+}
+
+Value {
+  valueLiteral | parenthesized<List<valueLiteral>+>
+}
+
+Condition {
+  Property Comparator Value
+}
+
+expression {
+  ConditionGroup
+  | parenthesized<expression>
+  | Condition
+}
+
+ConditionGroup {
+  expression !precedenceAnd And expression
+  | expression !precedenceOr Or expression
+}
+
+parenthesized<item> { leftParenthesis item rightParenthesis }

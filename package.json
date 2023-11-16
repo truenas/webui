@@ -32,7 +32,8 @@
     "generate_licenses": "yarn licenses generate-disclaimer > src/assets/disclaimer.txt && yarn licenses list --json > src/assets/licenses.json",
     "generate_licenses_list": "yarn licenses list > licenses.txt",
     "prepare": "husky install",
-    "ui": "cd $(git rev-parse --show-toplevel) && yarn run --silent check-env -s -q && yarn run --silent ts-node ./scripts/ui/ui.ts"
+    "ui": "cd $(git rev-parse --show-toplevel) && yarn run --silent check-env -s -q && yarn run --silent ts-node ./scripts/ui/ui.ts",
+    "compile-grammar": "lezer-generator --typeScript --noTerms src/app/modules/search-input/services/query-parser/query.grammar -o src/app/modules/search-input/services/query-parser/query-grammar.ts"
   },
   "repository": {
     "type": "git",
@@ -59,6 +60,12 @@
     "@angular/router": "^16.1.2",
     "@biesbjerg/ngx-translate-extract-marker": "~1.0.0",
     "@bugsplat/angular-tree-component": "~13.0.1",
+    "@codemirror/autocomplete": "~6.11.0",
+    "@codemirror/language": "~6.9.2",
+    "@codemirror/view": "~6.22.0",
+    "@lezer/common": "~1.1.1",
+    "@lezer/generator": "~1.5.1",
+    "@lezer/lr": "~1.3.14",
     "@material-design-icons/font": "~0.11.7",
     "@mdi/font": "~7.0.96",
     "@ngneat/reactive-forms": "~5.0.2",
