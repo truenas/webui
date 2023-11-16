@@ -2,10 +2,12 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit, ViewChild,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { merge } from 'rxjs';
-import { debounceTime, switchMap } from 'rxjs/operators';
+import { debounceTime, filter, switchMap } from 'rxjs/operators';
 import { Direction } from 'app/enums/direction.enum';
+import { FromWizardToAdvancedSubmitted } from 'app/enums/from-wizard-to-advanced.enum';
 import { SnapshotNamingOption } from 'app/enums/snapshot-naming-option.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import helptext from 'app/helptext/data-protection/replication/replication-wizard';
@@ -43,6 +45,8 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 import { ReplicationService } from 'app/services/replication.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { AppState } from 'app/store';
+import { fromWizardToAdvancedFormSubmitted } from 'app/store/admin-panel/admin.actions';
 
 @UntilDestroy()
 @Component({
@@ -81,6 +85,7 @@ export class ReplicationFormComponent implements OnInit {
     private slideInService: IxSlideInService,
     private slideInRef: IxSlideInRef<ReplicationFormComponent>,
     private keychainCredentials: KeychainCredentialService,
+    private store$: Store<AppState>,
     @Inject(SLIDE_IN_DATA) public existingReplication: ReplicationTask,
   ) {}
 
@@ -168,7 +173,15 @@ export class ReplicationFormComponent implements OnInit {
 
   onSwitchToWizard(): void {
     this.slideInRef.close();
-    this.slideInService.open(ReplicationWizardComponent, { wide: true });
+    const slideInRef = this.slideInService.open(ReplicationWizardComponent, { wide: true });
+    slideInRef.slideInClosed$.pipe(
+      filter(Boolean),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.store$.dispatch(fromWizardToAdvancedFormSubmitted({
+        formType: FromWizardToAdvancedSubmitted.ReplicationTask,
+      }));
+    });
   }
 
   private getPayload(): ReplicationCreate {

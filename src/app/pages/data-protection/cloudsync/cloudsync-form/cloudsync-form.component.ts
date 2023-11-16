@@ -6,6 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { NavigationExtras, Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
 import _ from 'lodash';
@@ -14,6 +15,7 @@ import { filter, map, switchMap } from 'rxjs/operators';
 import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { Direction, directionNames } from 'app/enums/direction.enum';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
+import { FromWizardToAdvancedSubmitted } from 'app/enums/from-wizard-to-advanced.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { TransferMode, transferModeNames } from 'app/enums/transfer-mode.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
@@ -40,6 +42,8 @@ import { DialogService } from 'app/services/dialog.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { AppState } from 'app/store';
+import { fromWizardToAdvancedFormSubmitted } from 'app/store/admin-panel/admin.actions';
 
 const customOptionValue = -1;
 
@@ -173,6 +177,7 @@ export class CloudsyncFormComponent implements OnInit {
     protected matDialog: MatDialog,
     protected slideInService: IxSlideInService,
     private filesystemService: FilesystemService,
+    private store$: Store<AppState>,
     protected cloudCredentialService: CloudCredentialService,
     @Inject(SLIDE_IN_DATA) private editingTask: CloudSyncTaskUi,
   ) { }
@@ -770,6 +775,15 @@ export class CloudsyncFormComponent implements OnInit {
 
   onSwitchToWizard(): void {
     this.slideInRef.close();
-    this.slideInService.open(CloudsyncWizardComponent, { wide: true });
+
+    const slideInRef = this.slideInService.open(CloudsyncWizardComponent, { wide: true });
+    slideInRef.slideInClosed$.pipe(
+      filter(Boolean),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.store$.dispatch(fromWizardToAdvancedFormSubmitted({
+        formType: FromWizardToAdvancedSubmitted.CloudSyncTask,
+      }));
+    });
   }
 }

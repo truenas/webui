@@ -205,7 +205,7 @@ describe('OtherOptionsSectionComponent', () => {
         'Record Size': 'Inherit (128 KiB)',
         'ACL Type': 'POSIX',
         'ACL Mode': 'Discard',
-        'Metadata (Special) Small Block Size': '0',
+        'Metadata (Special) Small Block Size': 'Inherit (0)',
       });
     });
 
@@ -224,7 +224,7 @@ describe('OtherOptionsSectionComponent', () => {
         recordsize: inherit,
         snapdev: DatasetSnapdev.Hidden,
         snapdir: DatasetSnapdir.Visible,
-        special_small_block_size: 0,
+        special_small_block_size: inherit,
         aclmode: AclMode.Discard,
         acltype: DatasetAclType.Posix,
       });

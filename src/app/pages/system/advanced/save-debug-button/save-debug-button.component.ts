@@ -41,6 +41,7 @@ export class SaveDebugButtonComponent {
   onSaveDebug(): void {
     this.store$.pipe(
       waitForSystemInfo,
+      take(1),
       switchMap((systemInfo) => {
         const hostname = systemInfo.hostname.split('.')[0];
         const date = this.datePipe.transform(new Date(), 'yyyyMMddHHmmss');
