@@ -20,28 +20,43 @@ export interface NfsShare {
 
 export type NfsShareUpdate = Partial<Omit<NfsShare, 'id' | 'locked'>>;
 
-export interface NfsSession {
-  session_id: string;
+export interface Nfs3Session {
   ip: string;
-  server_id: {
-    pid: string;
-    task_id: string;
-    vnn: string;
-    unique_id: string;
-  };
-  uid: number;
-  gid: number;
-  username: string;
-  groupname: string;
-  remote_machine: string;
-  hostname: string;
-  session_dialect: string;
-  encryption: {
-    cipher: string;
-    degree: string;
-  };
-  signing: {
-    cipher: string;
-    degree: string;
+  export: string;
+}
+
+export interface Nfs4Session {
+  id: number;
+  info: Nfs4Info;
+  states: Nfs4State[];
+}
+
+export enum NfsType {
+  Nfs3 = 'nfs3',
+  Nfs4 = 'nfs4',
+}
+
+interface Nfs4Info {
+  clientid: number;
+  address: string;
+  status: string;
+  name: string;
+  'seconds from last renew': number;
+  'minor version': number;
+  'Implementation domain': string;
+  'Implementation name': string;
+  'Implementation time': number[];
+  'callback state': string;
+  'callback address': string;
+}
+
+interface Nfs4State {
+  [key: string]: {
+    type: string;
+    access: string;
+    deny: string;
+    superblock: string;
+    filename: string;
+    owner: string;
   };
 }

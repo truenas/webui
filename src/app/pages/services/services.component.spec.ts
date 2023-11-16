@@ -157,6 +157,13 @@ describe('ServicesComponent', () => {
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/sharing', 'smb', 'sessions']);
   });
 
+  it('should navigate to view Sessions for NFS when Sessions button is pressed', async () => {
+    const table = await loader.getHarness(IxTableHarness);
+    const editButton = await table.getHarness(MatButtonHarness.with({ selector: '[name="sessions-NFS"]' }));
+    await editButton.click();
+    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/sharing', 'nfs', 'sessions']);
+  });
+
   it('should open S.M.A.R.T. configuration when edit button is pressed', async () => {
     const table = await loader.getHarness(IxTableHarness);
     const editButton = await table.getHarness(MatButtonHarness.with({ selector: '[name="edit-S.M.A.R.T."]' }));

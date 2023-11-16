@@ -1,8 +1,26 @@
 <ng-template ixPageHeader>
   <ix-page-title-header>
-    <ix-search-input [value]="filterString" (search)="onListFiltered($event)"></ix-search-input>
+    <mat-button-toggle-group [value]="activeNfsType" (change)="nfsTypeChanged($event)">
+      <mat-button-toggle [value]="NfsType.Nfs3">NFS 3</mat-button-toggle>
+      <mat-button-toggle [value]="NfsType.Nfs4">NFS 4</mat-button-toggle>
+    </mat-button-toggle-group>
 
-    <ix-table-columns-selector [columns]="columns" (columnsChange)="columnsChange($event)"></ix-table-columns-selector>
+    <ix-search-input
+      [value]="filterString"
+      (search)="onListFiltered($event)"
+    ></ix-search-input>
+
+    <ng-container *ngIf="activeNfsType === NfsType.Nfs3">
+      <ng-container
+        *ngTemplateOutlet="nfsColumnsSelector; context: { dataProvider: nfs3DataProvider, columns: nfs3Columns }"
+      ></ng-container>
+    </ng-container>
+
+    <ng-container *ngIf="activeNfsType === NfsType.Nfs4">
+      <ng-container
+        *ngTemplateOutlet="nfsColumnsSelector; context: { dataProvider: nfs4DataProvider, columns: nfs4Columns }"
+      ></ng-container>
+    </ng-container>
 
     <button mat-button color="primary" ixTest="refresh-data" (click)="loadData()">
       {{ 'Refresh' | translate }}
@@ -10,21 +28,42 @@
   </ix-page-title-header>
 </ng-template>
 
-<ix-table2
-  class="table"
-  [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
-  [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
->
-  <thead
-    ix-table-head
+<ng-container *ngIf="activeNfsType === NfsType.Nfs3">
+  <ng-container
+    *ngTemplateOutlet="nfsTable; context: { dataProvider: nfs3DataProvider, columns: nfs3Columns }"
+  ></ng-container>
+</ng-container>
+
+<ng-container *ngIf="activeNfsType === NfsType.Nfs4">
+  <ng-container
+    *ngTemplateOutlet="nfsTable; context: { dataProvider: nfs4DataProvider, columns: nfs4Columns }"
+  ></ng-container>
+</ng-container>
+
+<ng-template #nfsColumnsSelector let-dataProvider="dataProvider" let-columns="columns">
+  <ix-table-columns-selector
     [columns]="columns"
-    [dataProvider]="dataProvider"
-  ></thead>
-  <tbody
-    ix-table-body
-    [columns]="columns"
-    [dataProvider]="dataProvider"
-    [isLoading]="dataProvider.isLoading$ | async"
-  ></tbody>
-</ix-table2>
-<ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>
+    (columnsChange)="columnsChange($event)"
+  ></ix-table-columns-selector>
+</ng-template>
+
+<ng-template #nfsTable let-dataProvider="dataProvider" let-columns="columns">
+  <ix-table2
+    class="table"
+    [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
+    [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
+  >
+    <thead
+      ix-table-head
+      [columns]="columns"
+      [dataProvider]="dataProvider"
+    ></thead>
+    <tbody
+      ix-table-body
+      [columns]="columns"
+      [dataProvider]="dataProvider"
+      [isLoading]="dataProvider.isLoading$ | async"
+    ></tbody>
+  </ix-table2>
+  <ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>
+</ng-template>
