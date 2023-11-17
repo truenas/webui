@@ -86,6 +86,13 @@ describe('QueryParserService - property names', () => {
       expect(single.tree).toMatchObject({ 'property': "User\\name'" });
     });
 
+    it('with single quote gives error', () => {
+      const singleQuoted = service.parseQuery('Username = "Bob');
+      expect(singleQuoted.hasErrors).toBe(true);
+      expect(singleQuoted.errors).toHaveLength(1);
+      expect(singleQuoted.errors[0]).toBeInstanceOf(QuerySyntaxError);
+    });
+
     // TODO: We may allow non-ASCII characters even if they are not quoted.
     it('with non-ASCII characters if they are quoted', () => {
       const withEscapes = service.parseQuery('"Ім\'я" = "Bob"');
@@ -99,6 +106,27 @@ describe('QueryParserService - property names', () => {
       const chinese = service.parseQuery('"姓名" = "Bob"');
       expect(chinese.hasErrors).toBe(false);
       expect(chinese.tree).toMatchObject({ 'property': '姓名' });
+    });
+
+    // TODO: We may allow non-ASCII characters even if they are not quoted.
+    it('with non-ASCII characters if they are not quoted', () => {
+      const noQuotes = service.parseQuery('Имя = "Bob"');
+      expect(noQuotes.hasErrors).toBe(false);
+      expect(noQuotes.tree).toMatchObject({ 'property': 'Имя' });
+
+      const noQuotesAndSpace = service.parseQuery('Я є = "Bob"');
+      expect(noQuotesAndSpace.hasErrors).toBe(true);
+      expect(noQuotesAndSpace.errors).toHaveLength(1);
+      expect(noQuotesAndSpace.errors[0]).toBeInstanceOf(QuerySyntaxError);
+
+      const noQuotesChinese = service.parseQuery('姓名 = "Bob"');
+      expect(noQuotesChinese.hasErrors).toBe(false);
+      expect(noQuotesChinese.tree).toMatchObject({ 'property': '姓名' });
+
+      const noQuotesChineseAndSpace = service.parseQuery('姓名 姓名 = "Bob"');
+      expect(noQuotesChineseAndSpace.hasErrors).toBe(true);
+      expect(noQuotesChineseAndSpace.errors).toHaveLength(1);
+      expect(noQuotesChineseAndSpace.errors[0]).toBeInstanceOf(QuerySyntaxError);
     });
   });
 });

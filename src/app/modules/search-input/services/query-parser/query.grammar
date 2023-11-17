@@ -6,12 +6,13 @@
 @tokens {
   space { @whitespace+ }
   SingleQuotedString {
-    "'" (![\\\n'] | "\\" _)* "'"?
+    "'" (![\\\n'] | "\\" _)* "'"
   }
   DoubleQuotedString {
-    '"' (![\\\n"] | "\\" _)* '"'?
+    '"' (![\\\n"] | "\\" _)* '"'
   }
-  UnquotedString { @asciiLetter+ }
+  // Updated to include a wider range of characters
+  UnquotedString { @asciiLetter+ | $[А-яЁёєЄІіґҐїЇ]+ | $[\u4E00-\u9FFF\u3040-\u30FF]+}
   Boolean { "true" | "false" | "TRUE" | "FALSE" }
   Number { $[0-9]+ }
   Null { "null" | "NULL" }
