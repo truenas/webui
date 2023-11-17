@@ -16,7 +16,7 @@
     "build": "yarn run generate_licenses && yarn run clean:dist && node --max_old_space_size=8192 node_modules/@angular/cli/bin/ng build",
     "build:prod": "node scripts/setup_prod.js && yarn run build -- --configuration production",
     "build:prod:aot": "yarn run build:prod --base-href /ui/ && node scripts/verify_build.js",
-    "test": "jest",
+    "test": "jest src/app/pages/two-factor-auth/components/two-factor/two-factor.component.spec.ts",
     "test:commit": "node scripts/run_related_tests.js",
     "test:watch": "jest --watch",
     "test:ci": "jest --runInBand",

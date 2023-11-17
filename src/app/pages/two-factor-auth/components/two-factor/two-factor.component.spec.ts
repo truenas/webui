@@ -9,6 +9,7 @@ import { helptext } from 'app/helptext/system/2fa';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { GlobalTwoFactorConfig, UserTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { IxWarningComponent } from 'app/modules/ix-forms/components/ix-warning/ix-warning.component';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { QrDialogComponent } from 'app/pages/two-factor-auth/components/two-factor/qr-dialog/qr-dialog.component';
 import { RenewTwoFactorDialogComponent } from 'app/pages/two-factor-auth/components/two-factor/renew-two-factor-dialog/renew-two-factor-dialog.component';
 import { TwoFactorComponent } from 'app/pages/two-factor-auth/components/two-factor/two-factor.component';
@@ -22,6 +23,9 @@ describe('TwoFactorComponent', () => {
 
   const createComponent = createComponentFactory({
     component: TwoFactorComponent,
+    imports: [
+      TestIdModule,
+    ],
     declarations: [
       MockComponent(IxWarningComponent),
     ],
