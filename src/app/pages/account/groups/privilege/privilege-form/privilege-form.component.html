@@ -1,0 +1,53 @@
+<ix-modal-header [title]="title" [loading]="isLoading"></ix-modal-header>
+
+<mat-card>
+  <mat-card-content>
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+      <ix-fieldset>
+        <ix-input
+          formControlName="name"
+          [label]="'Name' | translate"
+          [required]="true"
+        ></ix-input>
+
+        <ix-chips
+          formControlName="local_groups"
+          [label]="'Local Groups' | translate"
+          [autocompleteProvider]="localGroupsProvider"
+          [allowNewEntries]="false"
+        ></ix-chips>
+
+        <ix-chips
+          formControlName="ds_groups"
+          [label]="'DS Groups' | translate"
+          [autocompleteProvider]="dsGroupsProvider"
+          [allowNewEntries]="false"
+        ></ix-chips>
+
+        <ix-select
+          formControlName="roles"
+          [label]="'Roles' | translate"
+          [options]="rolesOptions$"
+          [multiple]="true"
+        ></ix-select>
+
+        <ix-checkbox
+          formControlName="web_shell"
+          [label]="'Web Shell Access' | translate"
+        ></ix-checkbox>
+      </ix-fieldset>
+
+      <ix-form-actions>
+        <button
+          type="submit"
+          mat-button
+          color="primary"
+          ixTest="save"
+          [disabled]="!form.valid || isLoading"
+        >
+          {{ 'Save' | translate }}
+        </button>
+      </ix-form-actions>
+    </form>
+  </mat-card-content>
+</mat-card>

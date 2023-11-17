@@ -26,6 +26,7 @@ $size: 24px;
 .mat-icon,
 .ix-icon {
   &.mdi-set {
+    display: flex;
     font-size: $size;
   }
 }

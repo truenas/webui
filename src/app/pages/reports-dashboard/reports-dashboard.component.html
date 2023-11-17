@@ -7,7 +7,7 @@
 </ng-template>
 
 <div
-  *ngIf="visibleReports && activeReports"
+  *ngIf="visibleReports?.length && activeReports; else initialLoader"
   class="master-container"
 >
   <cdk-virtual-scroll-viewport [itemSize]="325" [minBufferPx]="325" [maxBufferPx]="325">
@@ -25,3 +25,9 @@
     <div class="bottom-spacer"></div>
   </cdk-virtual-scroll-viewport>
 </div>
+
+<ng-template #initialLoader>
+  <div *ngFor="let _ of [1,2,3,4]" class="initial-loader">
+    <mat-card fxLayout="row wrap" fxLayoutAlign="space-between stretch"></mat-card>
+  </div>
+</ng-template>

@@ -10,6 +10,16 @@
   margin-top: -#{$outer-padding * 2};
   position: relative;
 
+  .initial-loader {
+    padding-top: 5px;
+
+    mat-card {
+      @include background-logo-loader(1);
+      margin: 0 6px;
+      min-height: 325px;
+    }
+  }
+
   &.loading {
     @include background-logo-loader(1.5);
 
