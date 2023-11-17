@@ -1,7 +1,5 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
@@ -11,13 +9,11 @@ import { helptext } from 'app/helptext/system/2fa';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { GlobalTwoFactorConfig, UserTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { IxWarningComponent } from 'app/modules/ix-forms/components/ix-warning/ix-warning.component';
-import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { QrDialogComponent } from 'app/pages/two-factor-auth/components/two-factor/qr-dialog/qr-dialog.component';
 import { RenewTwoFactorDialogComponent } from 'app/pages/two-factor-auth/components/two-factor/renew-two-factor-dialog/renew-two-factor-dialog.component';
 import { TwoFactorComponent } from 'app/pages/two-factor-auth/components/two-factor/two-factor.component';
 import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('TwoFactorComponent', () => {
   let spectator: Spectator<TwoFactorComponent>;
@@ -25,15 +21,17 @@ describe('TwoFactorComponent', () => {
 
   const createComponent = createComponentFactory({
     component: TwoFactorComponent,
-    imports: [
-      ReactiveFormsModule,
-      MatButtonModule,
-      TestIdModule,
-    ],
+    // imports: [
+    //   ReactiveFormsModule,
+    //   MatButtonModule,
+    //   TestIdModule,
+    //   TranslateModule
+    // ],
     declarations: [
       MockComponent(IxWarningComponent),
     ],
     providers: [
+      // mockProvider(TranslateService),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
@@ -71,12 +69,12 @@ describe('TwoFactorComponent', () => {
   });
 
   it('shows warning when global setting is enabled but user disabled', () => {
-    jest.spyOn(spectator.inject(WebSocketService), 'call').mockImplementationOnce(() => of({
-      id: 1,
-      enabled: true,
-      window: 1,
-      services: { ssh: false },
-    }));
+    // jest.spyOn(spectator.inject(WebSocketService), 'call').mockImplementationOnce(() => of({
+    //   id: 1,
+    //   enabled: true,
+    //   window: 1,
+    //   services: { ssh: false },
+    // }));
     spectator.component.ngOnInit();
     spectator.component.userTwoFactorAuthConfigured = false;
     spectator.detectChanges();
@@ -86,12 +84,12 @@ describe('TwoFactorComponent', () => {
   });
 
   it('shows warning when global setting is enabled and user enabled', () => {
-    jest.spyOn(spectator.inject(WebSocketService), 'call').mockImplementationOnce(() => of({
-      id: 1,
-      enabled: true,
-      window: 1,
-      services: { ssh: false },
-    }));
+    // jest.spyOn(spectator.inject(WebSocketService), 'call').mockImplementationOnce(() => of({
+    //   id: 1,
+    //   enabled: true,
+    //   window: 1,
+    //   services: { ssh: false },
+    // }));
     spectator.component.ngOnInit();
     spectator.detectChanges();
     const warning = spectator.query(IxWarningComponent);
