@@ -20,7 +20,7 @@
     "test:commit": "node scripts/run_related_tests.js",
     "test:watch": "jest --watch",
     "test:ci": "jest --runInBand",
-    "test:pr": "yarn run check-env -s && echo 'Setting up temporary environment file...\\n' && yarn run ui remote -i 'headless.local' && jest src/app/pages/two-factor-auth/components/two-factor/two-factor.component.spec.ts --runInBand --coverage --maxWorkers=2",
+    "test:pr": "yarn run check-env -s && echo 'Setting up temporary environment file...\\n' && yarn run ui remote -i 'headless.local' && jest src/app/pages/two-factor-auth/components/two-factor/two-factor.component.spec.ts --runInBand",
     "lint": "ng lint && stylelint 'src/**/*.scss' && markuplint 'src/**/*.html'",
     "lint:fix": "ng lint --fix && stylelint --fix 'src/**/*.scss' && markuplint --fix 'src/**/*.html'",
     "snyk": "snyk test",
