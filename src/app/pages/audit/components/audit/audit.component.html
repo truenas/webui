@@ -17,8 +17,14 @@
       #searchInput
       class="search-input"
       [properties]="searchProperties"
+      [query]="searchQuery"
     ></ix-search-input2>
-    <button mat-button color="primary" ixTest="search" (click)="onSearch(searchInput.query)">
+    <button
+      mat-button
+      color="primary"
+      ixTest="search"
+      (click)="onSearch(searchInput.query); updateSettings()"
+    >
       {{ 'Search' | translate }}
     </button>
   </div>
@@ -32,6 +38,7 @@
         ix-table-head
         [columns]="columns"
         [dataProvider]="dataProvider"
+        (sort)="updateSettings()"
       ></thead>
     </div>
 
@@ -59,7 +66,12 @@
         </ng-template>
       </tbody>
     </ix-table2>
-    <ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>
+    <ix-table-pager
+      [dataProvider]="dataProvider"
+      [pageSize]="pagination.pageSize"
+      [currentPage]="pagination.pageNumber"
+      (paginate)="updateSettings()"
+    ></ix-table-pager>
   </div>
 
   <div

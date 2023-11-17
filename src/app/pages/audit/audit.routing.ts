@@ -10,5 +10,11 @@ export const routes: Routes = [
     component: AuditComponent,
     pathMatch: 'full',
   },
+  {
+    path: ':options',
+    data: { title: T('Audit') },
+    component: AuditComponent,
+    pathMatch: 'full',
+  },
 ];
 export const routing: ModuleWithProviders<RouterModule> = RouterModule.forChild(routes);
