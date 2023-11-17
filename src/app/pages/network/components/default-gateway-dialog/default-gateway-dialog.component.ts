@@ -25,13 +25,16 @@ export class DefaultGatewayDialogComponent {
   form = this.fb.group({
     defaultGateway: [
       null as string,
-      [
-        this.validatorsService.withMessage(
-          ipv4Validator(),
-          this.translate.instant(helptextIpmi.ip_error),
-        ),
-        Validators.required,
-      ],
+      {
+        validators: [
+          this.validatorsService.withMessage(
+            ipv4Validator(),
+            this.translate.instant(helptextIpmi.ip_error),
+          ),
+          Validators.required,
+        ],
+        updateOn: 'blur',
+      },
     ],
   });
 
@@ -51,12 +54,6 @@ export class DefaultGatewayDialogComponent {
     private translate: TranslateService,
     private validatorsService: IxValidatorsService,
   ) {}
-
-  onInputBlur(): void {
-    if (!this.form.controls.defaultGateway.value) {
-      this.form.controls.defaultGateway.setErrors([]);
-    }
-  }
 
   onSubmit(): void {
     this.dialogRef.close();
