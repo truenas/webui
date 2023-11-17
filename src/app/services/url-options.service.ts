@@ -17,7 +17,7 @@ export class UrlOptionsService {
   ) {}
 
   setUrlOptions<T>(url: string, options: UrlOptions<T>): void {
-    delete options.sorting.sortBy;
+    delete options.sorting?.sortBy;
     this.location.replaceState(`${url}/${JSON.stringify(options)}`);
   }
 
