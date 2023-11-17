@@ -229,10 +229,6 @@ export class InterfaceFormComponent implements OnInit {
       ? this.ws.call('interface.create', [params])
       : this.ws.call('interface.update', [this.existingInterface.id, params]);
 
-    this.matDialog.open(DefaultGatewayDialogComponent, {
-      width: '600px',
-    });
-
     request$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.store$.dispatch(networkInterfacesChanged({ commit: false, checkIn: false }));
