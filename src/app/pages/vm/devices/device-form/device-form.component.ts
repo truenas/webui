@@ -207,8 +207,6 @@ export class DeviceFormComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.generateMacWhenNicIsSelected();
-
     this.usbForm.controls.usb.disable();
     this.usbForm.controls.device.valueChanges.pipe(untilDestroyed(this)).subscribe((device) => {
       if (device === specifyCustom) {
@@ -227,6 +225,8 @@ export class DeviceFormComponent implements OnInit {
       this.existingDevice = this.slideInData.device;
       this.setDeviceForEdit();
     }
+
+    this.handleDeviceTypeChange();
   }
 
   setVirtualMachineId(): void {
@@ -282,7 +282,7 @@ export class DeviceFormComponent implements OnInit {
     });
   }
 
-  generateMacWhenNicIsSelected(): void {
+  handleDeviceTypeChange(): void {
     this.typeControl.valueChanges.pipe(untilDestroyed(this)).subscribe((type) => {
       if (type === VmDeviceType.Nic && this.nicForm.value.mac === '') {
         this.generateMacAddress();
