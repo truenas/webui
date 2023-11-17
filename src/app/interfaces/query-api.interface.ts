@@ -7,7 +7,9 @@ export type QueryParams<T, ExtraOptions = Record<string, unknown>> = [
   (QueryOptions<T> & ExtraOptions)?,
 ];
 
-export type QueryFilters<T> = QueryFilter<T>[] | ['OR', QueryFilter<T>[]];
+export type QueryFilters<T> = (QueryFilter<T> | OrQueryFilter<T>)[];
+
+export type OrQueryFilter<T> = ['OR', QueryFilter<T>[]];
 
 /**
  * TODO: First element is not a string, but a property path of T.
