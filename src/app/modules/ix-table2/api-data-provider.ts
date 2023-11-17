@@ -154,6 +154,7 @@ export class ApiDataProvider<T, M extends ApiCallMethod> extends BaseDataProvide
       () => this.load(),
       () => this.updateCurrentPage(this.rows),
     );
+    this.controlsStateUpdated.emit();
   }
 
   setPagination(pagination: TablePagination): void {
@@ -162,6 +163,7 @@ export class ApiDataProvider<T, M extends ApiCallMethod> extends BaseDataProvide
       () => this.load(),
       () => this.updateCurrentPage(this.rows),
     );
+    this.controlsStateUpdated.emit();
   }
 
   private prepareParams(params: ApiCallDirectory[M]['params']): ApiCallDirectory[M]['params'] {

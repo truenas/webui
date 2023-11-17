@@ -96,6 +96,10 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
       this.cdr.markForCheck();
     });
 
+    this.dataProvider.controlsStateUpdated.pipe(untilDestroyed(this)).subscribe(() => {
+      this.updateUrlOptions();
+    });
+
     this.activatedRoute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       const options = this.urlOptionsService.parseUrlOptions(params.options);
 
@@ -151,7 +155,7 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
     this.dataProvider.load();
   }
 
-  updateSettings(): void {
+  updateUrlOptions(): void {
     this.urlOptionsService.setUrlOptions('/audit', {
       searchQuery: this.searchQuery,
       sorting: this.dataProvider.sorting,

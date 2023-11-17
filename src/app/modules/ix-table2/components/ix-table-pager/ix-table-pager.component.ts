@@ -1,5 +1,5 @@
 import {
-  AfterContentChecked, ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output,
+  AfterContentChecked, ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit,
 } from '@angular/core';
 import { MatSelectChange } from '@angular/material/select';
 import { UntilDestroy } from '@ngneat/until-destroy';
@@ -17,7 +17,6 @@ export class IxTablePagerComponent<T> implements OnInit, AfterContentChecked {
   @Input() pageSize = 50;
   @Input() pageSizeOptions = [10, 20, 50, 100];
   @Input() currentPage = 1;
-  @Output() paginate = new EventEmitter<void>();
 
   totalItems = 0;
 
@@ -60,8 +59,6 @@ export class IxTablePagerComponent<T> implements OnInit, AfterContentChecked {
         pageNumber,
         pageSize: this.pageSize,
       });
-
-      this.paginate.emit();
     }
   }
 

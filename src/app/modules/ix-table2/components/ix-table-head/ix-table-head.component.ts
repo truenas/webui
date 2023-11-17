@@ -1,5 +1,5 @@
 import {
-  AfterViewInit, ChangeDetectorRef, ChangeDetectionStrategy, Component, Input, Output, EventEmitter,
+  AfterViewInit, ChangeDetectorRef, ChangeDetectionStrategy, Component, Input,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
@@ -16,7 +16,6 @@ import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-
 export class IxTableHeadComponent<T> implements AfterViewInit {
   @Input() columns: Column<T, ColumnComponent<T>>[];
   @Input() dataProvider: DataProvider<T>;
-  @Output() sort = new EventEmitter<void>();
 
   readonly SortDirection = SortDirection;
 
@@ -63,7 +62,5 @@ export class IxTableHeadComponent<T> implements AfterViewInit {
       direction,
       active,
     });
-
-    this.sort.emit();
   }
 }

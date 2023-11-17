@@ -18,10 +18,10 @@ export class UrlOptionsService {
 
   setUrlOptions<T>(url: string, options: UrlOptions<T>): void {
     delete options.sorting?.sortBy;
-    this.location.replaceState(`${url}/${JSON.stringify(options)}`);
+    this.location.replaceState(`${url}/${encodeURIComponent(JSON.stringify(options))}`);
   }
 
   parseUrlOptions<T>(options: string): UrlOptions<T> {
-    return JSON.parse(options || '{}');
+    return JSON.parse(decodeURIComponent(options) || '{}');
   }
 }

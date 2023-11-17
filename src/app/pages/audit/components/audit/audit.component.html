@@ -23,7 +23,7 @@
       mat-button
       color="primary"
       ixTest="search"
-      (click)="onSearch(searchInput.query); updateSettings()"
+      (click)="onSearch(searchInput.query); updateUrlOptions()"
     >
       {{ 'Search' | translate }}
     </button>
@@ -38,7 +38,6 @@
         ix-table-head
         [columns]="columns"
         [dataProvider]="dataProvider"
-        (sort)="updateSettings()"
       ></thead>
     </div>
 
@@ -70,7 +69,6 @@
       [dataProvider]="dataProvider"
       [pageSize]="pagination.pageSize"
       [currentPage]="pagination.pageNumber"
-      (paginate)="updateSettings()"
     ></ix-table-pager>
   </div>
 

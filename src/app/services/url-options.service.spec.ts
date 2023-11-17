@@ -26,7 +26,7 @@ describe('UrlOptionsService', () => {
         },
       });
 
-      expect(decodeURI(location.path())).toBe('/test/url/{' +
+      expect(decodeURIComponent(location.path())).toBe('/test/url/{' +
         '"searchQuery":{"isBasicQuery":true,"query":"search query"},' +
         '"pagination":{"pageNumber":2,"pageSize":10},' +
         '"sorting":{"active":1,"direction":"desc","propertyName":"test_column"}' +
