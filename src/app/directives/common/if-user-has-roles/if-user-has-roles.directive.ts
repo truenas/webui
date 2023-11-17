@@ -72,7 +72,7 @@ function resolveRoles(inputRoles: Role[]): Role[] {
     }
   }
 
-  inputRoles.forEach(role => {
+  inputRoles?.forEach(role => {
     if (!processedRoles.has(role)) {
       resolve(role);
     }
