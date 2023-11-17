@@ -1,5 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
@@ -24,6 +26,8 @@ describe('TwoFactorComponent', () => {
   const createComponent = createComponentFactory({
     component: TwoFactorComponent,
     imports: [
+      ReactiveFormsModule,
+      MatButtonModule,
       TestIdModule,
     ],
     declarations: [
