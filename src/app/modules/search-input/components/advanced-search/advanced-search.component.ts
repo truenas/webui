@@ -8,8 +8,9 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import { closeBrackets } from '@codemirror/autocomplete';
-import { EditorView } from '@codemirror/view';
+import { CompletionSource, autocompletion, closeBrackets, startCompletion } from '@codemirror/autocomplete';
+import { EditorState } from '@codemirror/state';
+import { EditorView, keymap } from '@codemirror/view';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { QueryParserService } from 'app/modules/search-input/services/query-parser/query-parser.service';
@@ -47,12 +48,7 @@ export class AdvancedSearchComponent<T> implements OnInit, OnChanges {
     this.initEditor();
   }
 
-  protected onResetInput(): void {
-    this.setEditorContents('');
-    this.queryChange.emit([]);
-  }
-
-  private initEditor(): void {
+  initEditor(): void {
     const updateListener = EditorView.updateListener.of((update) => {
       if (!update.docChanged) {
         return;
@@ -61,15 +57,42 @@ export class AdvancedSearchComponent<T> implements OnInit, OnChanges {
       this.onInputChanged();
     });
 
+    const completionSource: CompletionSource = context => {
+      const word = context.matchBefore(/\w*/);
+      if (word.from === word.to) return null;
+
+      const completions = this.properties.map(prop => {
+        return { label: prop.label, type: 'property' };
+      });
+
+      return {
+        from: word.from,
+        options: completions,
+      };
+    };
+
+    const autocompleteExtension  = autocompletion({ override: [completionSource] });
+
     this.editorView = new EditorView({
-      extensions: [
-        EditorView.lineWrapping,
-        updateListener,
-        closeBrackets(),
-      ],
-      // doc: this.queryParser.formatFiltersToQuery(this.query, this.properties),
+      state: EditorState.create({
+        extensions: [
+          keymap.of([{
+            key: 'Ctrl-Space',
+            run: startCompletion,
+          }]),
+          autocompleteExtension,
+          EditorView.lineWrapping,
+          updateListener,
+          closeBrackets(),
+        ],
+      }),
+      parent: this.inputArea.nativeElement,
     });
-    this.inputArea.nativeElement.append(this.editorView.dom);
+  }
+
+  protected onResetInput(): void {
+    this.setEditorContents('');
+    this.queryChange.emit([]);
   }
 
   private onInputChanged(): void {

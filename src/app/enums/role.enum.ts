@@ -107,6 +107,3 @@ export const roleNames = new Map<Role, string>([
   [Role.SharingIscsiWrite, T('Sharing Iscsi Write')],
 ]);
 
-export function rolesListToString(roles: Role[]): string {
-  return roles.map((role) => roleNames.get(role)).join(', ') || T('N/A');
-}

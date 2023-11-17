@@ -51,11 +51,11 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
     }),
     textColumn({
       title: this.translate.instant('Event'),
-      getValue: (row) => auditEventLabels.get(row.event),
+      getValue: (row) => this.translate.instant(auditEventLabels.get(row.event)),
     }),
     textColumn({
       title: this.translate.instant('Event Data'),
-      getValue: (row) => this.getEventDataForLog(row),
+      getValue: (row) => this.translate.instant(this.getEventDataForLog(row)),
     }),
   ]);
 
@@ -63,6 +63,7 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
     textProperty('audit_id', this.translate.instant('Audit ID')),
     textProperty('message_timestamp', this.translate.instant('Timestamp')),
     textProperty('address', this.translate.instant('Address')),
+    textProperty('service', this.translate.instant('Service')),
     textProperty('username', this.translate.instant('Username')),
     textProperty('event', this.translate.instant('Event')),
     booleanProperty('success', this.translate.instant('Success')),

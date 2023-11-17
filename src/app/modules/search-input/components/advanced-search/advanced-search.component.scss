@@ -87,5 +87,39 @@
     .cm-line {
       padding: 0;
     }
+
+    .cm-tooltip.cm-tooltip-autocomplete {
+      border: none !important;
+      border-radius: 4px !important;
+      overflow: visible;
+      z-index: 9999;
+    }
+
+    .cm-tooltip.cm-tooltip-autocomplete ul {
+      border: 0;
+      border-radius: 4px;
+      height: 100%;
+      overflow: visible;
+      z-index: 9999;
+
+      li {
+        background-color: var(--bg2);
+        color: var(--primary-txt);
+        font-family: var(--font-family-body);
+        font-size: 14px;
+        overflow: visible;
+        padding: 8px;
+        z-index: 9999;
+
+        &[aria-selected='true'] {
+          background-color: var(--primary);
+          color: var(--primary-txt);
+        }
+
+        .cm-completionIcon {
+          display: none;
+        }
+      }
+    }
   }
 }
