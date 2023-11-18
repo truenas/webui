@@ -8,13 +8,30 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import { CompletionSource, autocompletion, closeBrackets, startCompletion } from '@codemirror/autocomplete';
+import { CompletionContext, CompletionResult, autocompletion, closeBrackets, startCompletion } from '@codemirror/autocomplete';
 import { EditorState } from '@codemirror/state';
 import { EditorView, keymap } from '@codemirror/view';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { QueryParserService } from 'app/modules/search-input/services/query-parser/query-parser.service';
 import { SearchProperty } from 'app/modules/search-input/types/search-property.interface';
+
+enum ContextType {
+  Field = 'field',
+  Logical = 'logical',
+  Operator = 'operator',
+}
+
+interface QueryContext {
+  type: ContextType;
+  startPos: number;
+  endPos: number;
+  tokens: string[];
+  lastToken: string;
+}
+
+const operatorSuggestions = ['=', '!=', '<', '>', '<=', '>=', 'IN', 'NIN', '~', '^', '!^', '$', '!$'];
+const logicalSuggestions = ['AND', 'OR', 'ORDER BY'];
 
 @Component({
   selector: 'ix-advanced-search',
@@ -57,21 +74,9 @@ export class AdvancedSearchComponent<T> implements OnInit, OnChanges {
       this.onInputChanged();
     });
 
-    const completionSource: CompletionSource = context => {
-      const word = context.matchBefore(/\w*/);
-      if (word.from === word.to) return null;
-
-      const completions = this.properties.map(prop => {
-        return { label: prop.label, type: 'property' };
-      });
-
-      return {
-        from: word.from,
-        options: completions,
-      };
-    };
-
-    const autocompleteExtension  = autocompletion({ override: [completionSource] });
+    const autocompleteExtension = autocompletion({
+      override: [this.completionSource.bind(this)],
+    });
 
     this.editorView = new EditorView({
       state: EditorState.create({
@@ -112,5 +117,128 @@ export class AdvancedSearchComponent<T> implements OnInit, OnChanges {
         insert: contents,
       },
     });
+  }
+
+  private completionSource(context: CompletionContext): CompletionResult | null {
+    const currentQuery = context.state.doc.toString();
+    const cursorPosition = context.pos;
+
+    // Analyze the query and determine the context
+    const queryContext = this.getQueryContext(currentQuery, cursorPosition);
+
+    // Generate suggestions based on the context
+    const suggestions = this.generateSuggestionsBasedOnContext(queryContext);
+
+    // Return completion result with correct 'from' position
+    return {
+      from: currentQuery.length < queryContext.startPos ? 0 : queryContext.startPos,
+      options: suggestions?.map(suggestion => ({ label: suggestion })) || [],
+    };
+  }
+
+  private getQueryContext(query: string, cursorPosition: number): QueryContext {
+    const tokens = this.tokenizeQuery(query.substring(0, cursorPosition).trim());
+    let contextType: ContextType = ContextType.Field;
+
+    const lastToken = tokens[tokens.length - 1];
+
+    if (this.isOperator(lastToken)) {
+      contextType = ContextType.Field;
+    } else if (this.isCompleteExpression(tokens, cursorPosition, query)) {
+      contextType = ContextType.Logical;
+    } else if (this.isField(lastToken)) {
+      contextType = ContextType.Operator;
+    }
+
+    // Calculate start position for replacing text
+    const startPos = query[cursorPosition - 1] === ' ' ? cursorPosition : cursorPosition - lastToken?.length;
+
+    return {
+      type: contextType,
+      lastToken: lastToken,
+      tokens: tokens,
+      startPos: startPos,
+      endPos: cursorPosition,
+    };
+  }
+
+  private tokenizeQuery(query: string): string[] {
+    // Regular expression to match quoted strings or words
+    const regex = /"[^"]*"|\S+/g;
+    return query.match(regex) || [];
+  }
+
+  private isQuotedString(token: string): boolean {
+    // Check if the token starts and ends with a quote and has more than just two quotes
+    return token.startsWith('"') && token.endsWith('"') && token.length > 1;
+  }
+
+  private isNumber(token: string): boolean {
+    // Check if the token is a valid number (not wrapped in quotes)
+    return !Number.isNaN(parseFloat(token)) && !this.isQuotedString(token);
+  }
+
+  private isCompleteExpression(tokens: string[], cursorPosition: number, query: string): boolean {
+    if (tokens.length < 3) {
+      return false;
+    }
+
+    const lastToken = tokens[tokens.length - 1];
+    const secondLastToken = tokens[tokens.length - 2];
+    const thirdLastToken = tokens[tokens.length - 3];
+
+    // Check if the pattern is field-operator-value
+    const isBasicPattern = this.isField(thirdLastToken) &&
+      this.isOperator(secondLastToken) && !this.isOperator(lastToken);
+
+    // Additional check to see if the cursor is not in the middle of typing a value
+    const isValueComplete = cursorPosition === query.length || query[cursorPosition] === ' ';
+
+    // Updated check for the last token
+    const isLastTokenValid = (this.isNumber(lastToken) || this.isQuotedString(lastToken)) && lastToken !== '"';
+
+    return isBasicPattern && isValueComplete && isLastTokenValid;
+  }
+
+
+  private isField(token: string): boolean {
+    return this.properties.map(property => property.label).includes(token);
+  }
+
+  private isOperator(token: string): boolean {
+    return operatorSuggestions.includes(token);
+  }
+
+  private generateSuggestionsBasedOnContext(context: QueryContext): string[] {
+    // TODO:
+    // eslint-disable-next-line no-console
+    console.log(context, 'Autocomplete context');
+
+    // Dynamically generate suggestions based on the context
+    switch (context.type) {
+      case ContextType.Field:
+        const withFieldSuggestions = this.properties
+          ?.find((property) => property.label === context.tokens[context.tokens.length - 2])?.fieldSuggestions || [];
+
+        if (withFieldSuggestions?.length) {
+          return withFieldSuggestions;
+        }
+
+        return this.properties.map(property => property.label);
+
+      case ContextType.Logical:
+        return logicalSuggestions;
+
+      case ContextType.Operator:
+        const withOperatorSuggestions = this.properties
+          ?.find((property) => property.label === context.lastToken)?.operatorSuggestions || [];
+
+        if (withOperatorSuggestions?.length) {
+          return withOperatorSuggestions;
+        }
+        return operatorSuggestions;
+      default:
+        return [];
+    }
   }
 }

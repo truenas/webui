@@ -5,21 +5,21 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { toSvg } from 'jdenticon';
 import { filter } from 'rxjs';
-import { auditEventLabels } from 'app/enums/audit-event.enum';
+import { AuditEvent, auditEventLabels } from 'app/enums/audit-event.enum';
 import { getLogImportantData } from 'app/helpers/get-log-important-data.helper';
 import { WINDOW } from 'app/helpers/window.helper';
-import { AuditEntry } from 'app/interfaces/audit.interface';
+import { AuditEntry, SmbAuditEntry } from 'app/interfaces/audit.interface';
 import { ApiDataProvider, PaginationServerSide, SortingServerSide } from 'app/modules/ix-table2/api-data-provider';
 import { dateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-date/ix-cell-date.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
+import { SearchProperty } from 'app/modules/search-input/types/search-property.interface';
 import {
   AdvancedSearchQuery,
   SearchQuery,
 } from 'app/modules/search-input/types/search-query.interface';
 import {
-  booleanProperty,
   searchProperties,
   textProperty,
 } from 'app/modules/search-input/utils/search-properties.utils';
@@ -59,15 +59,7 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
     }),
   ]);
 
-  protected searchProperties = searchProperties<AuditEntry>([
-    textProperty('audit_id', this.translate.instant('Audit ID')),
-    textProperty('message_timestamp', this.translate.instant('Timestamp')),
-    textProperty('address', this.translate.instant('Address')),
-    textProperty('service', this.translate.instant('Service')),
-    textProperty('username', this.translate.instant('Username')),
-    textProperty('event', this.translate.instant('Event')),
-    booleanProperty('success', this.translate.instant('Success')),
-  ]);
+  protected searchProperties: SearchProperty<SmbAuditEntry>[] = [];
 
   constructor(
     private translate: TranslateService,
@@ -87,6 +79,43 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
     this.dataProvider.currentPage$.pipe(filter(Boolean), untilDestroyed(this)).subscribe((auditEntries) => {
       this.dataProvider.expandedRow = auditEntries[0];
       this.expanded(this.dataProvider.expandedRow);
+
+      this.searchProperties = searchProperties<AuditEntry>([
+        textProperty(
+          'audit_id',
+          this.translate.instant('AuditID'),
+          ['=', '!=', '~'],
+          auditEntries.map((log) => `"${log.audit_id}"`),
+        ),
+        textProperty(
+          'message_timestamp',
+          this.translate.instant('Timestamp'),
+        ),
+        textProperty(
+          'address',
+          this.translate.instant('Address'),
+          ['=', '!=', '~'],
+          auditEntries.map((log) => `"${log.address}"`),
+        ),
+        textProperty(
+          'service',
+          this.translate.instant('Service'),
+          ['=', '!='],
+          auditEntries.map((log) => `"${log.service}"`),
+        ),
+        textProperty(
+          'username',
+          this.translate.instant('Username'),
+          ['=', '!='],
+          auditEntries.map((log) => `"${log.username}"`),
+        ),
+        textProperty(
+          'event',
+          this.translate.instant('Event'),
+          ['=', '!='],
+          Object.values(AuditEvent).map((value) => `"${value}"`),
+        ),
+      ]);
       this.cdr.markForCheck();
     });
   }

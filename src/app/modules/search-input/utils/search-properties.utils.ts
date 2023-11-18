@@ -14,8 +14,10 @@ export function searchProperties<T>(properties: SearchProperty<T>[]): SearchProp
 export function textProperty<T>(
   property: keyof T,
   label: string,
+  operatorSuggestions?: string[],
+  fieldSuggestions?: string[],
 ): SearchProperty<T> {
-  return { label, property };
+  return { label, property, operatorSuggestions, fieldSuggestions };
 }
 
 export function booleanProperty<T>(

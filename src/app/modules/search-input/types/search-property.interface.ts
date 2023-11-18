@@ -20,6 +20,8 @@ export interface SearchProperty<T, S extends SearchSuggestionsComponent = null> 
   suggestionComponent?: Class<S>;
 
   suggestionComponentInputs?: Partial<S>;
+  operatorSuggestions?: string[];
+  fieldSuggestions?: string[];
 
   /**
    * Optional functions to convert value from and to API format.
