@@ -32,6 +32,8 @@ export class ServiceFtpComponent implements OnInit {
   isFormLoading = false;
   isAdvancedMode = false;
 
+  kibParser = (value: string): number => this.iecFormatter.memorySizeParsing(value, 'KiB');
+
   form = this.formBuilder.group({
     port: [null as number, [portRangeValidator(), Validators.required]],
     clients: [null as number, [rangeValidator(1, 10000), Validators.required]],

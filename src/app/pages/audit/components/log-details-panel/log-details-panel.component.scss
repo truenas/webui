@@ -25,7 +25,7 @@
 
 .title {
   margin-bottom: 12px;
-  margin-top: 6px;
+  margin-top: 0;
   min-height: 36px;
 
   @media (max-width: calc($breakpoint-hidden - 1px)) {

@@ -14,7 +14,6 @@ import { RenewTwoFactorDialogComponent } from 'app/pages/two-factor-auth/compone
 import { TwoFactorComponent } from 'app/pages/two-factor-auth/components/two-factor/two-factor.component';
 import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 describe('TwoFactorComponent', () => {
   let spectator: Spectator<TwoFactorComponent>;
@@ -63,12 +62,6 @@ describe('TwoFactorComponent', () => {
   });
 
   it('shows warning when global setting is enabled but user disabled', () => {
-    jest.spyOn(spectator.inject(WebSocketService), 'call').mockImplementationOnce(() => of({
-      id: 1,
-      enabled: true,
-      window: 1,
-      services: { ssh: false },
-    }));
     spectator.component.ngOnInit();
     spectator.component.userTwoFactorAuthConfigured = false;
     spectator.detectChanges();
@@ -78,12 +71,6 @@ describe('TwoFactorComponent', () => {
   });
 
   it('shows warning when global setting is enabled and user enabled', () => {
-    jest.spyOn(spectator.inject(WebSocketService), 'call').mockImplementationOnce(() => of({
-      id: 1,
-      enabled: true,
-      window: 1,
-      services: { ssh: false },
-    }));
     spectator.component.ngOnInit();
     spectator.detectChanges();
     const warning = spectator.query(IxWarningComponent);

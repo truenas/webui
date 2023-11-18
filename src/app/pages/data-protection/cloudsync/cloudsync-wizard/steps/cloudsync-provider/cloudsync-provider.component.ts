@@ -1,9 +1,11 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnInit, Output, ViewChild, ViewContainerRef } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, Observable, combineLatest, filter, of, switchMap } from 'rxjs';
 import { CloudsyncProviderName, cloudsyncProviderNameMap } from 'app/enums/cloudsync-provider.enum';
+import { FromWizardToAdvancedSubmitted } from 'app/enums/from-wizard-to-advanced.enum';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
 import { CloudsyncCredential, CloudsyncCredentialUpdate } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
@@ -13,11 +15,15 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { forbiddenValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { BaseProviderFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/base-provider-form';
+import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { defaultCloudProvider, getName, getProviderFormClass } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-provider/cloudsync-provider.common';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { AppState } from 'app/store';
+import { fromWizardToAdvancedFormSubmitted } from 'app/store/admin-panel/admin.actions';
 
 @UntilDestroy()
 @Component({
@@ -63,6 +69,8 @@ export class CloudsyncProviderComponent implements OnInit {
     private translate: TranslateService,
     private snackbarService: SnackbarService,
     private cloudCredentialService: CloudCredentialService,
+    private slideIn: IxSlideInService,
+    private store$: Store<AppState>,
   ) {}
 
   get selectedProvider(): CloudsyncProvider {
@@ -171,6 +179,18 @@ export class CloudsyncProviderComponent implements OnInit {
         this.formErrorHandler.handleWsFormError(error, this.form);
         this.cdr.markForCheck();
       },
+    });
+  }
+
+  openAdvanced(): void {
+    const slideInRef = this.slideIn.open(CloudsyncFormComponent, { wide: true });
+    slideInRef.slideInClosed$.pipe(
+      filter(Boolean),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.store$.dispatch(fromWizardToAdvancedFormSubmitted({
+        formType: FromWizardToAdvancedSubmitted.CloudSyncTask,
+      }));
     });
   }
 

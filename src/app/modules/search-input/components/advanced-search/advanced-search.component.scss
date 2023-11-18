@@ -70,12 +70,22 @@
 .input-area {
   background-color: transparent;
   border: 0;
-  color: var(--fg2);
   flex-grow: 1;
-  font-size: 12px;
-  line-height: normal;
-  outline: none !important;
-  padding: 8px;
+  outline: none;
+  padding: 7px 8px;
   width: 100%;
-  word-break: break-all;
+
+  ::ng-deep {
+    .cm-content {
+      caret-color: auto;
+      color: var(--fg2);
+      font-family: var(--mdc-dialog-subhead-font);
+      font-size: 12px;
+      padding: 0;
+    }
+
+    .cm-line {
+      padding: 0;
+    }
+  }
 }
