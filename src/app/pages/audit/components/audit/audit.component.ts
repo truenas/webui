@@ -83,7 +83,7 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
       this.searchProperties = searchProperties<AuditEntry>([
         textProperty(
           'audit_id',
-          this.translate.instant('AuditID'),
+          this.translate.instant('ID'),
           ['=', '!=', '~'],
           auditEntries.map((log) => `"${log.audit_id}"`),
         ),
