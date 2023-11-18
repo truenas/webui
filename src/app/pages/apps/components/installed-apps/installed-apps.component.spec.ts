@@ -531,6 +531,9 @@ describe('Finding app', () => {
       AppCardLogoComponent,
     ],
     providers: [
+      mockProvider(AuthService, {
+        isAuthenticated$: of(true),
+      }),
       KubernetesStore,
       InstalledAppsStore,
       mockWebsocket([]),
@@ -612,6 +615,7 @@ describe('Redirect to install app', () => {
       ]),
       mockProvider(AuthService, {
         user$: of({ attributes: { appsAgreement: true } }),
+        isAuthenticated$: of(true),
       }),
       mockProvider(AppsStore, {
         availableApps$: of(appsResponse),
@@ -664,6 +668,9 @@ describe('Install app', () => {
           cluster_dns_ip: '172.17.0.1',
         } as KubernetesConfig),
       ]),
+      mockProvider(AuthService, {
+        isAuthenticated$: of(true),
+      }),
       mockProvider(MatDialog, {
         open: jest.fn(() => mockEntityJobComponentRef),
       }),

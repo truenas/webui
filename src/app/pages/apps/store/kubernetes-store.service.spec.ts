@@ -5,6 +5,7 @@ import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.util
 import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
+import { AuthService } from 'app/services/auth/auth.service';
 
 describe('KubernetesStore', () => {
   let spectator: SpectatorService<KubernetesStore>;
@@ -13,6 +14,9 @@ describe('KubernetesStore', () => {
   const createService = createServiceFactory({
     service: KubernetesStore,
     providers: [
+      mockProvider(AuthService, {
+        isAuthenticated$: of(true),
+      }),
       mockProvider(ApplicationsService, {
         getKubernetesConfig: jest.fn(() => {
           return of({ pool: 'ix-applications-pool' } as KubernetesConfig);
