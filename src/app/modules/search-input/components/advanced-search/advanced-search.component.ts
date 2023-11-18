@@ -8,9 +8,9 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import { CompletionContext, CompletionResult, autocompletion, closeBrackets, startCompletion } from '@codemirror/autocomplete';
+import { CompletionContext, CompletionResult, autocompletion, closeBrackets } from '@codemirror/autocomplete';
 import { EditorState } from '@codemirror/state';
-import { EditorView, keymap } from '@codemirror/view';
+import { EditorView } from '@codemirror/view';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { QueryParserService } from 'app/modules/search-input/services/query-parser/query-parser.service';
@@ -81,10 +81,6 @@ export class AdvancedSearchComponent<T> implements OnInit, OnChanges {
     this.editorView = new EditorView({
       state: EditorState.create({
         extensions: [
-          keymap.of([{
-            key: 'Ctrl-Space',
-            run: startCompletion,
-          }]),
           autocompleteExtension,
           EditorView.lineWrapping,
           updateListener,
