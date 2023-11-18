@@ -12,6 +12,7 @@
   ixTest="switch-to-advanced"
   tabindex="0"
   (click)="switchToBasic.emit()"
+  (keydown.enter)="switchToBasic.emit()"
 >
   {{ 'Switch To Basic' | translate }}
 </a>

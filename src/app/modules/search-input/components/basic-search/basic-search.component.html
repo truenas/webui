@@ -18,6 +18,7 @@
   ixTest="switch-to-advanced"
   tabindex="0"
   (click)="switchToAdvanced.emit()"
+  (keydown.enter)="switchToAdvanced.emit()"
 >
   {{ 'Switch To Advanced' | translate }}
 </a>

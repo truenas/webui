@@ -144,9 +144,19 @@ export class AdvancedSearchComponent<T> implements OnInit, OnChanges {
 
     if (this.isOperator(lastToken)) {
       contextType = ContextType.Field;
-    } else if (this.isCompleteExpression(tokens, cursorPosition, query)) {
+    } else if (
+      this.isCompleteExpression(tokens, cursorPosition, query) || (
+        this.isCompleteExpression(tokens.slice(0, -1), cursorPosition, query) &&
+        lastToken && !logicalSuggestions.some((value) => value.toUpperCase() === lastToken.toUpperCase())
+      )
+    ) {
       contextType = ContextType.Logical;
-    } else if (this.isField(lastToken)) {
+    } else if (
+      this.isField(lastToken) || (
+        !this.isCompleteExpression(tokens, cursorPosition, query) &&
+        lastToken && operatorSuggestions.some((operator) => operator.toUpperCase().includes(lastToken.toUpperCase()))
+      )
+    ) {
       contextType = ContextType.Operator;
     }
 
