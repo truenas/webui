@@ -137,10 +137,16 @@ export class AdvancedSearchComponent<T> implements OnInit, OnChanges {
   }
 
   private getQueryContext(query: string, cursorPosition: number): QueryContext {
-    const tokens = this.tokenizeQuery(query.substring(0, cursorPosition).trim());
+    let tokens = this.tokenizeQuery(query.substring(0, cursorPosition).trim());
     let contextType: ContextType = ContextType.Field;
 
-    const lastToken = tokens[tokens.length - 1];
+    let lastToken = tokens[tokens.length - 1];
+
+    // autocompletion for field options
+    if (this.isOperator(tokens[tokens.length - 2]) && !this.isCompleteExpression(tokens, cursorPosition, query)) {
+      tokens = [tokens[tokens.length - 3], tokens[tokens.length - 1]];
+      lastToken = tokens[tokens.length - 1];
+    }
 
     if (this.isOperator(lastToken)) {
       contextType = ContextType.Field;
@@ -183,11 +189,6 @@ export class AdvancedSearchComponent<T> implements OnInit, OnChanges {
     return token.startsWith('"') && token.endsWith('"') && token.length > 1;
   }
 
-  private isNumber(token: string): boolean {
-    // Check if the token is a valid number (not wrapped in quotes)
-    return !Number.isNaN(parseFloat(token)) && !this.isQuotedString(token);
-  }
-
   private isCompleteExpression(tokens: string[], cursorPosition: number, query: string): boolean {
     if (tokens.length < 3) {
       return false;
@@ -205,11 +206,10 @@ export class AdvancedSearchComponent<T> implements OnInit, OnChanges {
     const isValueComplete = cursorPosition === query.length || query[cursorPosition] === ' ';
 
     // Updated check for the last token
-    const isLastTokenValid = (this.isNumber(lastToken) || this.isQuotedString(lastToken)) && lastToken !== '"';
+    const isLastTokenValid = this.isQuotedString(lastToken) && lastToken !== '"';
 
     return isBasicPattern && isValueComplete && isLastTokenValid;
   }
-
 
   private isField(token: string): boolean {
     return this.properties.map(property => property.label).includes(token);
