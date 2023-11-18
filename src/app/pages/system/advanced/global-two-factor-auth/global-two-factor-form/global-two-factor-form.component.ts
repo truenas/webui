@@ -9,10 +9,11 @@ import _ from 'lodash';
 import {
   EMPTY, catchError, filter, of, switchMap, tap,
 } from 'rxjs';
-import { TwoFactorConfig, TwoFactorConfigUpdate } from 'app/interfaces/two-factor-config.interface';
+import { GlobalTwoFactorConfig, GlobalTwoFactorConfigUpdate } from 'app/interfaces/two-factor-config.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { AuthService } from 'app/services/auth/auth.service';
 import { TwoFactorGuardService } from 'app/services/auth/two-factor-guard.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -27,17 +28,9 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
   isFormLoading = false;
   form = this.fb.group({
     enabled: [false],
-    interval: [null as number, Validators.required],
-    otp_digits: [null as number, Validators.required],
     window: [null as number, Validators.required],
     ssh: [false],
   });
-
-  readonly otpDigitOptions$ = of([
-    { label: '6', value: 6 },
-    { label: '7', value: 7 },
-    { label: '8', value: 8 },
-  ]);
 
   enableWarning: string = this.translate.instant('Once enabled, users will be required to set up two factor authentication next time they login.');
 
@@ -50,8 +43,9 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private snackbar: SnackbarService,
-    private twoFactorAuthGuardService: TwoFactorGuardService,
-    @Inject(SLIDE_IN_DATA) protected twoFactorConfig: TwoFactorConfig,
+    private authService: AuthService,
+    private twoFactorGuardService: TwoFactorGuardService,
+    @Inject(SLIDE_IN_DATA) protected twoFactorConfig: GlobalTwoFactorConfig,
     private router: Router,
   ) {}
 
@@ -62,9 +56,7 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
   setupForm(): void {
     this.form.patchValue({
       enabled: this.twoFactorConfig.enabled,
-      otp_digits: this.twoFactorConfig.otp_digits,
       window: this.twoFactorConfig.window,
-      interval: this.twoFactorConfig.interval,
       ssh: this.twoFactorConfig.services.ssh,
     });
     this.cdr.markForCheck();
@@ -77,11 +69,9 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
     }
 
     const values = this.form.value;
-    const payload: TwoFactorConfigUpdate = {
+    const payload: GlobalTwoFactorConfigUpdate = {
       enabled: values.enabled,
-      otp_digits: values.otp_digits,
       services: { ssh: values.ssh },
-      interval: values.interval,
       window: values.window,
     };
     const confirmation$ = shouldWarn ? this.dialogService.confirm({
@@ -97,8 +87,10 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
       tap(() => {
         this.isFormLoading = false;
         this.snackbar.success(this.translate.instant('Settings saved'));
-        this.twoFactorAuthGuardService.updateGlobalConfig();
+        this.authService.getTwoFactorConfig();
         if (!_.isEqual(this.twoFactorConfig, payload) && payload.enabled) {
+          this.twoFactorGuardService.updateGlobalConfig();
+          this.twoFactorGuardService.updateUserConfig();
           this.router.navigate(['/two-factor-auth']);
         }
         this.cdr.markForCheck();

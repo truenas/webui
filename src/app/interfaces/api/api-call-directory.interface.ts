@@ -183,6 +183,7 @@ import { PoolUnlockQuery, PoolUnlockResult } from 'app/interfaces/pool-unlock-qu
 import {
   Pool, PoolInstance, PoolInstanceParams,
 } from 'app/interfaces/pool.interface';
+import { Privilege, PrivilegeRole, PrivilegeUpdate } from 'app/interfaces/privilege.interface';
 import { Process } from 'app/interfaces/process.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { ReplicationConfigUpdate } from 'app/interfaces/replication-config-update.interface';
@@ -243,7 +244,7 @@ import {
   UpdateTrueCommand,
 } from 'app/interfaces/true-command-config.interface';
 import { Tunable } from 'app/interfaces/tunable.interface';
-import { TwoFactorConfig, TwoFactorConfigUpdate } from 'app/interfaces/two-factor-config.interface';
+import { GlobalTwoFactorConfig, GlobalTwoFactorConfigUpdate, UserTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { UpsConfig, UpsConfigUpdate } from 'app/interfaces/ups-config.interface';
 import { DeleteUserParams, User, UserUpdate } from 'app/interfaces/user.interface';
 import {
@@ -324,11 +325,11 @@ export interface ApiCallDirectory {
   'auth.me': { params: void; response: DsUncachedUser };
   'auth.set_attribute': { params: [key: string, value: unknown]; response: void };
 
-  'auth.twofactor.update': { params: [TwoFactorConfigUpdate]; response: TwoFactorConfig };
+  'auth.twofactor.update': { params: [GlobalTwoFactorConfigUpdate]; response: GlobalTwoFactorConfig };
   'auth.twofactor.provisioning_uri': { params: void; response: string };
   'auth.two_factor_auth': { params: [string, string]; response: boolean };
   'auth.twofactor.renew_secret': { params: void; response: boolean };
-  'auth.twofactor.config': { params: void; response: TwoFactorConfig };
+  'auth.twofactor.config': { params: void; response: GlobalTwoFactorConfig };
   'auth.sessions': { params: QueryParams<AuthSession>; response: AuthSession[] };
   'auth.terminate_session': { params: [id: string]; response: void };
   'auth.terminate_other_sessions': { params: void; response: void };
@@ -673,6 +674,13 @@ export interface ApiCallDirectory {
   'pool.get_instance_by_name': { params: PoolInstanceParams; response: PoolInstance };
   'pool.validate_name': { params: string[]; response: boolean | { error: boolean } };
 
+  // Privilege
+  'privilege.query': { params: QueryParams<Privilege>; response: Privilege[] };
+  'privilege.create': { params: [PrivilegeUpdate]; response: Privilege };
+  'privilege.update': { params: [id: number, update: PrivilegeUpdate]; response: Privilege };
+  'privilege.delete': { params: [id: number]; response: boolean };
+  'privilege.roles': { params: QueryParams<PrivilegeRole>; response: PrivilegeRole[] };
+
   // Replication
   'replication.list_datasets': { params: [transport: TransportMode, credentials?: number]; response: string[] };
   'replication.create': { params: [ReplicationCreate]; response: ReplicationTask };
@@ -892,7 +900,8 @@ export interface ApiCallDirectory {
   'user.get_next_uid': { params: void; response: number };
   'user.has_local_administrator_set_up': { params: void; response: boolean };
   'user.provisioning_uri': { params: [username: string]; response: string };
-  'user.renew_2fa_secret': { params: [username: string]; response: User };
+  'user.renew_2fa_secret': { params: [string, { interval: number; otp_digits: number }]; response: User };
+  'user.twofactor_config': { params: void; response: UserTwoFactorConfig };
 
   // UPS
   'ups.update': { params: [UpsConfigUpdate]; response: UpsConfig };

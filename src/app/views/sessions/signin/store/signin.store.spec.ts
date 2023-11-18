@@ -10,7 +10,7 @@ import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { FailoverDisabledReasonEvent } from 'app/interfaces/failover-disabled-reasons.interface';
-import { TwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
+import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -32,7 +32,7 @@ describe('SigninStore', () => {
         mockCall('user.has_local_administrator_set_up', true),
         mockCall('failover.status', FailoverStatus.Single),
         mockCall('failover.get_ips', ['123.23.44.54']),
-        mockCall('auth.twofactor.config', { enabled: false } as TwoFactorConfig),
+        mockCall('auth.twofactor.config', { enabled: false } as GlobalTwoFactorConfig),
         mockCall('failover.disabled.reasons', [FailoverDisabledReason.NoLicense]),
       ]),
       mockProvider(WebsocketConnectionService, {

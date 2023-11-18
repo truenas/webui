@@ -88,6 +88,7 @@ describe('AuthService', () => {
       when(getFilteredWebsocketResponse).calledWith('logged_in_user_uuid').mockReturnValue(of(uncachedUser));
       when(getFilteredWebsocketResponse).calledWith('user_query_uuid').mockReturnValue(of([loggedInUser]));
       when(getFilteredWebsocketResponse).calledWith('generate_token_uuid').mockReturnValue(of('DUMMY_TOKEN'));
+      jest.spyOn(spectator.service, 'getTwoFactorConfig').mockImplementation(jest.fn(() => {}));
 
       const obs$ = spectator.service.login('dummy', 'dummy');
 
@@ -146,6 +147,8 @@ describe('AuthService', () => {
       when(getFilteredWebsocketResponse).calledWith('logged_in_user_uuid').mockReturnValue(of(uncachedUser));
       when(getFilteredWebsocketResponse).calledWith('user_query_uuid').mockReturnValue(of([loggedInUser]));
       when(getFilteredWebsocketResponse).calledWith('generate_token_uuid').mockReturnValue(of('DUMMY_TOKEN4'));
+
+      jest.spyOn(spectator.service, 'getTwoFactorConfig').mockImplementation(jest.fn(() => {}));
 
       const obs$ = spectator.service.loginWithToken();
 

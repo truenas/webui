@@ -3,12 +3,14 @@ import { Validators, FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { NavigationExtras, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import { Observable, combineLatest, filter, map, merge, of } from 'rxjs';
 import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { Direction, directionNames } from 'app/enums/direction.enum';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
+import { FromWizardToAdvancedSubmitted } from 'app/enums/from-wizard-to-advanced.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { TransferMode, transferModeNames } from 'app/enums/transfer-mode.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
@@ -30,6 +32,8 @@ import { DialogService } from 'app/services/dialog.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { AppState } from 'app/store';
+import { fromWizardToAdvancedFormSubmitted } from 'app/store/admin-panel/admin.actions';
 
 type FormValue = CloudsyncWhatAndWhenComponent['form']['value'];
 
@@ -110,6 +114,7 @@ export class CloudsyncWhatAndWhenComponent implements OnInit, OnChanges {
     private slideIn: IxSlideInService,
     private matDialog: MatDialog,
     private router: Router,
+    private store$: Store<AppState>,
   ) {}
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
@@ -219,7 +224,15 @@ export class CloudsyncWhatAndWhenComponent implements OnInit, OnChanges {
       filter(Boolean),
       untilDestroyed(this),
     ).subscribe(() => {
-      this.slideIn.open(CloudsyncFormComponent, { wide: true });
+      const slideInRef = this.slideIn.open(CloudsyncFormComponent, { wide: true });
+      slideInRef.slideInClosed$.pipe(
+        filter(Boolean),
+        untilDestroyed(this),
+      ).subscribe(() => {
+        this.store$.dispatch(fromWizardToAdvancedFormSubmitted({
+          formType: FromWizardToAdvancedSubmitted.CloudSyncTask,
+        }));
+      });
     });
   }
 

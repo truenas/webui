@@ -4,13 +4,15 @@ import {
   ElementRef,
   EventEmitter,
   Input,
-  OnChanges,
+  OnChanges, OnInit,
   Output,
   ViewChild,
 } from '@angular/core';
+import { closeBrackets } from '@codemirror/autocomplete';
+import { EditorView } from '@codemirror/view';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
-import { SearchQueryService } from 'app/modules/search-input/services/search-query.service';
+import { QueryParserService } from 'app/modules/search-input/services/query-parser/query-parser.service';
 import { SearchProperty } from 'app/modules/search-input/types/search-property.interface';
 
 @Component({
@@ -19,7 +21,7 @@ import { SearchProperty } from 'app/modules/search-input/types/search-property.i
   styleUrls: ['./advanced-search.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AdvancedSearchComponent<T> implements OnChanges {
+export class AdvancedSearchComponent<T> implements OnInit, OnChanges {
   @Input() query: QueryFilters<T> = [];
   @Input() properties: SearchProperty<T>[] = [];
 
@@ -28,24 +30,64 @@ export class AdvancedSearchComponent<T> implements OnChanges {
 
   @ViewChild('inputArea', { static: true }) inputArea: ElementRef<HTMLElement>;
 
+  private editorView: EditorView;
+
   constructor(
-    private queryParser: SearchQueryService,
+    private queryParser: QueryParserService,
   ) {}
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
-    if (changes.query) {
-      // TODO: Temporary
-      this.inputArea.nativeElement.textContent = this.queryParser.formatFiltersToQuery(this.query, this.properties);
+    if (changes.query && this.editorView) {
+      // TODO:
+      // this.setEditorContents(this.queryParser.formatFiltersToQuery(this.query, this.properties));
     }
   }
 
-  protected onInput(queryText: string): void {
-    const query = this.queryParser.parseTextToFilters(queryText, this.properties);
-    this.queryChange.emit(query);
+  ngOnInit(): void {
+    this.initEditor();
   }
 
   protected onResetInput(): void {
-    this.inputArea.nativeElement.textContent = '';
+    this.setEditorContents('');
     this.queryChange.emit([]);
+  }
+
+  private initEditor(): void {
+    const updateListener = EditorView.updateListener.of((update) => {
+      if (!update.docChanged) {
+        return;
+      }
+
+      this.onInputChanged();
+    });
+
+    this.editorView = new EditorView({
+      extensions: [
+        EditorView.lineWrapping,
+        updateListener,
+        closeBrackets(),
+      ],
+      // doc: this.queryParser.formatFiltersToQuery(this.query, this.properties),
+    });
+    this.inputArea.nativeElement.append(this.editorView.dom);
+  }
+
+  private onInputChanged(): void {
+    const query = this.editorView.state.doc.toString();
+    const parsedQuery = this.queryParser.parseQuery(query);
+    // TODO:
+    // eslint-disable-next-line no-console
+    console.log(parsedQuery);
+    // this.queryChange.emit(parsedQuery);
+  }
+
+  private setEditorContents(contents: string): void {
+    this.editorView.dispatch({
+      changes: {
+        from: 0,
+        to: this.editorView.state.doc.length,
+        insert: contents,
+      },
+    });
   }
 }
