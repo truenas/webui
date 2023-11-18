@@ -1,5 +1,13 @@
+<ng-template ixPageHeader>
+  <ix-page-title-header>
+    <button
+      mat-button
+      [ixTest]="['alert', 'services']"
+      [routerLink]="['/', 'system', 'alert-settings', 'services']"
+    >{{ 'Alert Services' | translate }}</button>
+  </ix-page-title-header>
+</ng-template>
 <ng-container>
-
   <div class="wizard-container">
     <ng-container *ngFor="let category of categories">
       

@@ -16,6 +16,7 @@
   "Adding data VDEVs of different types is not supported.": "",
   "Advanced Settings → Sessions": "",
   "Agree": "",
+  "Alert Services": "",
   "Allowed IP address or hostname. One entry per field. Leave empty to allow everybody.": "",
   "Allowed network in network/mask CIDR notation (example <i>1.2.3.4/24<i>).     One entry per field. Leave empty to allow everybody.": "",
   "Alternatively, you can start by configuring VDEVs in the wizard first and then opening Manual selection to make adjustments.": "",
