@@ -13,6 +13,7 @@ import { ChartRelease, ChartReleaseStats } from 'app/interfaces/chart-release.in
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
+import { AuthService } from 'app/services/auth/auth.service';
 
 export interface InstalledAppsState {
   installedApps: ChartRelease[];
@@ -36,9 +37,27 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> {
     private appsService: ApplicationsService,
     private appsStore: AppsStore,
     private kubernetesStore: KubernetesStore,
+    private authService: AuthService,
   ) {
     super(initialState);
-    this.initialize();
+    this.authService.isAuthenticated$.pipe(
+      untilDestroyed(this),
+    ).subscribe({
+      next: (authenticated) => {
+        if (authenticated) {
+          this.initialize();
+        } else {
+          if (this.installedAppsSubscription) {
+            this.installedAppsSubscription.unsubscribe();
+            this.installedAppsSubscription = null;
+          }
+          if (this.installedAppsStatisticsSubscription) {
+            this.installedAppsStatisticsSubscription.unsubscribe();
+            this.installedAppsStatisticsSubscription = null;
+          }
+        }
+      },
+    });
   }
 
   readonly initialize = this.effect((triggers$: Observable<void>) => {

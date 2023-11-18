@@ -1,14 +1,15 @@
 import { Injectable } from '@angular/core';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import {
   EMPTY,
-  Observable, catchError, combineLatest, of, switchMap, tap,
+  Observable, catchError, combineLatest, filter, of, switchMap, tap,
 } from 'rxjs';
 import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
+import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
@@ -56,9 +57,17 @@ export class AppsStore extends ComponentStore<AppsState> {
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
     private appsService: ApplicationsService,
+    private authService: AuthService,
   ) {
     super(initialState);
-    this.initialize();
+    this.authService.isAuthenticated$.pipe(
+      filter(Boolean),
+      untilDestroyed(this),
+    ).subscribe({
+      next: () => {
+        this.initialize();
+      },
+    });
   }
 
   private handleError(): void {

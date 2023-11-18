@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import {
   EMPTY,
@@ -9,6 +10,7 @@ import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
 import { KubernetesStatusData } from 'app/interfaces/kubernetes-status-data.interface';
 import { KubernetesStatus } from 'app/pages/apps/enum/kubernetes-status.enum';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
+import { AuthService } from 'app/services/auth/auth.service';
 
 export interface KubernetesState {
   kubernetesConfig: KubernetesConfig;
@@ -28,6 +30,7 @@ const initialState: KubernetesState = {
   kubernetesStatusDescription: null,
 };
 
+@UntilDestroy()
 @Injectable()
 export class KubernetesStore extends ComponentStore<KubernetesState> {
   private kubernetesStatusSubscription: Subscription;
@@ -38,9 +41,22 @@ export class KubernetesStore extends ComponentStore<KubernetesState> {
   readonly kubernetesStatus$ = this.select((state) => state.kubernetesStatus);
   readonly kubernetesStatusDescription$ = this.select((state) => state.kubernetesStatusDescription);
 
-  constructor(private appsService: ApplicationsService) {
+  constructor(private appsService: ApplicationsService, private authService: AuthService) {
     super(initialState);
-    this.initialize();
+    this.authService.isAuthenticated$.pipe(
+      untilDestroyed(this),
+    ).subscribe({
+      next: (authenticated) => {
+        if (authenticated) {
+          this.initialize();
+        } else {
+          if (this.kubernetesStatusSubscription) {
+            this.kubernetesStatusSubscription.unsubscribe();
+            this.kubernetesStatusSubscription = null;
+          }
+        }
+      },
+    });
   }
 
   readonly initialize = this.effect((triggers$: Observable<void>) => {
