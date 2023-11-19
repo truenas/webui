@@ -4,49 +4,39 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
 import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
-import { SmbSession } from 'app/interfaces/smb-status.interface';
+import { SmbShareInfo } from 'app/interfaces/smb-status.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
-import { SmbSessionListComponent } from './smb-session-list.component';
+import { SmbShareListComponent } from './smb-share-list.component';
 
-describe('SmbSessionListComponent', () => {
-  let spectator: Spectator<SmbSessionListComponent>;
+describe('SmbShareListComponent', () => {
+  let spectator: Spectator<SmbShareListComponent>;
   let loader: HarnessLoader;
   let table: IxTable2Harness;
 
-  const sessions = [
+  const shares = [
     {
-      session_id: '3411433488',
-      server_id: {
-        pid: '1484266',
-        task_id: '0',
-        vnn: '4294967295',
-        unique_id: '15357526038186397558',
-      },
-      uid: 3004,
-      gid: 3004,
-      username: 'admin',
-      groupname: 'admin',
-      remote_machine: '1.1.1.1',
-      hostname: 'ipv4:1.1.1.1:65188',
-      session_dialect: 'SMB3_11',
-      encryption: {
-        cipher: '-',
-        degree: 'none',
-      },
-      signing: {
-        cipher: 'AES-128-GMAC',
-        degree: 'partial',
-      },
+      service: 'turtles',
+      server_id: { pid: '2102401', task_id: '0', vnn: '4294967295', unique_id: '4458796888113407749' },
+      tcon_id: '1586296247',
+      session_id: '1368450234',
+      machine: '10.234.16.211',
+      connected_at: '2023-10-26T12:17:17.457352+02:00',
+      encryption: { cipher: '-', degree: 'none' },
+      signing: { cipher: '-', degree: 'none' },
     },
-  ] as SmbSession[];
+  ] as SmbShareInfo[];
 
   const createComponent = createComponentFactory({
-    component: SmbSessionListComponent,
+    component: SmbShareListComponent,
     imports: [AppLoaderModule, EntityModule, IxTable2Module],
-    providers: [mockWebsocket([mockCall('smb.status', sessions)])],
+    providers: [
+      mockWebsocket([
+        mockCall('smb.status', shares),
+      ]),
+    ],
   });
 
   beforeEach(async () => {
@@ -58,28 +48,20 @@ describe('SmbSessionListComponent', () => {
   it('should show table rows', async () => {
     const expectedRows = [
       [
+        'Service',
         'Session ID',
-        'Hostname',
-        'Remote machine',
-        'Username',
-        'Groupname',
-        'UID',
-        'GID',
-        'Session dialect',
+        'Machine',
+        'Connected at',
         'Encryption',
         'Signing',
       ],
       [
-        '3411433488',
-        'ipv4:1.1.1.1:65188',
-        '1.1.1.1',
-        'admin',
-        'admin',
-        '3004',
-        '3004',
-        'SMB3_11',
+        'turtles',
+        '1368450234',
+        '10.234.16.211',
+        '2023-10-26T12:17:17.457352+02:00',
         '-',
-        'AES-128-GMAC',
+        '-',
       ],
     ];
 
