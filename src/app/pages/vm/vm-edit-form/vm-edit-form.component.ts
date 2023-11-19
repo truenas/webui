@@ -4,7 +4,7 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { forkJoin, of } from 'rxjs';
+import { forkJoin, map, of, switchMap } from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
 import {
   VmBootloader, VmCpuMode, VmDeviceType, VmTime, vmTimeNames,
@@ -128,11 +128,19 @@ export class VmEditFormComponent implements OnInit {
     delete vmPayload.gpus;
 
     const gpusIds = this.form.value.gpus;
-    forkJoin([
-      this.ws.call('vm.update', [this.existingVm.id, vmPayload as VirtualMachineUpdate]),
-      this.vmGpuService.updateVmGpus(this.existingVm, gpusIds),
-      this.gpuService.addIsolatedGpuPciIds(gpusIds),
-    ])
+
+    const pciIdsRequests$ = gpusIds.map((gpu) => {
+      return this.ws.call('device.get_pci_ids_for_gpu_isolation', [gpu]);
+    });
+
+    forkJoin(pciIdsRequests$).pipe(
+      map((pciIds) => pciIds.flat()),
+      switchMap((pciIds) => [
+        this.ws.call('vm.update', [this.existingVm.id, vmPayload as VirtualMachineUpdate]),
+        this.vmGpuService.updateVmGpus(this.existingVm, gpusIds.concat(pciIds)),
+        this.gpuService.addIsolatedGpuPciIds(gpusIds.concat(pciIds)),
+      ]),
+    )
       .pipe(untilDestroyed(this))
       .subscribe({
         complete: () => {
