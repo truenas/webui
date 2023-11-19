@@ -93,7 +93,6 @@ describe('QueryParserService - property names', () => {
       expect(singleQuoted.errors[0]).toBeInstanceOf(QuerySyntaxError);
     });
 
-    // TODO: We may allow non-ASCII characters even if they are not quoted.
     it('with non-ASCII characters if they are quoted', () => {
       const withEscapes = service.parseQuery('"Ім\'я" = "Bob"');
       expect(withEscapes.hasErrors).toBe(false);
@@ -108,7 +107,6 @@ describe('QueryParserService - property names', () => {
       expect(chinese.tree).toMatchObject({ 'property': '姓名' });
     });
 
-    // TODO: We may allow non-ASCII characters even if they are not quoted.
     it('with non-ASCII characters if they are not quoted', () => {
       const noQuotes = service.parseQuery('Имя = "Bob"');
       expect(noQuotes.hasErrors).toBe(false);
