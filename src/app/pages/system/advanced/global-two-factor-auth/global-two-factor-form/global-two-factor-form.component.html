@@ -13,21 +13,10 @@
           [warning]="twoFactorConfig.enabled ? '' : enableWarning"
         ></ix-checkbox>
         <ix-input
-          formControlName="interval"
-          [label]="'Interval (in seconds)' | translate"
-          [type]="'number'"
-        ></ix-input>
-        <ix-input
           formControlName="window"
           [label]="'Window' | translate"
           [type]="'number'"
         ></ix-input>
-        <ix-select
-          formControlName="otp_digits"
-          [hideEmpty]="true"
-          [options]="otpDigitOptions$"
-          [label]="'OTP Digits' | translate"
-        ></ix-select>
         <ix-checkbox
           formControlName="ssh"
           [label]="'Enable Two Factor Authentication for SSH' | translate"
