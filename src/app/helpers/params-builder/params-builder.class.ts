@@ -5,9 +5,11 @@ import {
   QueryParams,
 } from 'app/interfaces/query-api.interface';
 
-export class QueryBuilder<T, ExtraOptions = Record<string, unknown>> {
+export class ParamsBuilder<T, ExtraOptions = Record<string, unknown>> {
   private filters: QueryFilters<T> = [];
   options: QueryOptions<T> & ExtraOptions = {} as QueryOptions<T> & ExtraOptions;
+
+  private wasLastConditionGroup = false;
 
   constructor(params: QueryParams<T, ExtraOptions> = []) {
     this.filters = params[0] || [];
@@ -31,6 +33,7 @@ export class QueryBuilder<T, ExtraOptions = Record<string, unknown>> {
    */
   filter(property: QueryFilter<T>[0], comparator: QueryFilter<T>[1], value: QueryFilter<T>[2]): this {
     this.filters = [[property, comparator, value]];
+    this.wasLastConditionGroup = false;
     return this;
   }
 
@@ -48,6 +51,7 @@ export class QueryBuilder<T, ExtraOptions = Record<string, unknown>> {
    */
   andFilter(property: QueryFilter<T>[0], comparator: QueryFilter<T>[1], value: QueryFilter<T>[2]): this {
     this.andFilters([[property, comparator, value]]);
+    this.wasLastConditionGroup = false;
     return this;
   }
 
@@ -65,7 +69,7 @@ export class QueryBuilder<T, ExtraOptions = Record<string, unknown>> {
    */
   orFilter(property: QueryFilter<T>[0], comparator: QueryFilter<T>[1], value: QueryFilter<T>[2]): this {
     this.orFilters([property, comparator, value] as QueryFilters<T>);
-
+    this.wasLastConditionGroup = false;
     return this;
   }
 
@@ -84,28 +88,30 @@ export class QueryBuilder<T, ExtraOptions = Record<string, unknown>> {
    * is equivalent to:
    * (username = 'bob' OR username = 'alice') AND age > 40
    */
-  group(groupBuilder: (group: QueryBuilder<T,  ExtraOptions>) => void): this {
-    const group = new QueryBuilder<T, ExtraOptions>();
+  group(groupBuilder: (group: ParamsBuilderGroup<T,  ExtraOptions>) => void): this {
+    const group = new ParamsBuilder<T, ExtraOptions>();
     groupBuilder(group);
 
     this.filters = group.getFilters();
+    this.wasLastConditionGroup = true;
 
     return this;
   }
 
-  andGroup(groupBuilder: (group: QueryBuilder<T,  ExtraOptions>) => void): this {
-    const group = new QueryBuilder<T, ExtraOptions>();
+  andGroup(groupBuilder: (group: ParamsBuilderGroup<T,  ExtraOptions>) => void): this {
+    const group = new ParamsBuilder<T, ExtraOptions>();
     groupBuilder(group);
-
     this.andFilters(group.getFilters());
+    this.wasLastConditionGroup = true;
+
     return this;
   }
 
-  orGroup(groupBuilder: (group: QueryBuilder<T,  ExtraOptions>) => void): this {
-    const group = new QueryBuilder<T, ExtraOptions>();
+  orGroup(groupBuilder: (group: ParamsBuilderGroup<T,  ExtraOptions>) => void): this {
+    const group = new ParamsBuilder<T, ExtraOptions>();
     groupBuilder(group);
-
     this.orFilters(group.getFilters());
+    this.wasLastConditionGroup = true;
 
     return this;
   }
@@ -116,6 +122,8 @@ export class QueryBuilder<T, ExtraOptions = Record<string, unknown>> {
    */
   mergeWith(params: QueryParams<T, ExtraOptions>): this {
     this.options = merge(this.options, params[1]);
+    // Treat previously added filters as a group.
+    this.wasLastConditionGroup = true;
     this.andFilters(params[0]);
     return this;
   }
@@ -126,27 +134,59 @@ export class QueryBuilder<T, ExtraOptions = Record<string, unknown>> {
   }
 
   private andFilters(toAdd: QueryFilters<T>): void {
-    if (this.isTopConnectorOr()) {
-      const orGroup = this.filters[0][1] as QueryFilter<T>;
-      const lastInOrGroup = orGroup[orGroup.length - 1] as QueryFilter<T>;
-      orGroup[orGroup.length - 1] = [lastInOrGroup, ...toAdd];
+    if ((this.isTopConnectorOr() && !this.wasLastConditionGroup)) {
+      this.addToLastConditionInOrGroup(toAdd);
     } else {
-      this.filters.push(...toAdd);
+      this.createNewAndGroup(toAdd);
     }
   }
 
+  // TODO: This is relatively convoluted because of different processing for AND and OR groups.
+  // TODO: AND groups do not use AND connector like OR groups and are flatter.
+  // TODO: Consider refactoring to make code easier (or adding a separate optimization step in getFilters())
   private orFilters(toAdd: QueryFilters<T>): void {
-    if (this.isTopConnectorOr()) {
-      // TODO: Update typings for QueryFilter to allow for nesting.
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (this.filters[0] as OrQueryFilter<T>)[1].push(toAdd as any);
+    if (this.isTopConnectorOr() && !this.wasLastConditionGroup) {
+      this.addConditionToOrGroup(toAdd);
     } else {
-      const currentFilters = this.filters as QueryFilter<T>;
-      this.filters = [['OR', [...currentFilters, toAdd]] as OrQueryFilter<T>];
+      this.createNewOrGroup(toAdd);
     }
   }
 
   private isTopConnectorOr(): boolean {
     return this.filters[0]?.[0] === 'OR';
   }
+
+  private createNewOrGroup(toAdd: QueryFilters<T>): void {
+    let topFilters = this.filters ;
+    if (topFilters.length > 1) {
+      topFilters = [topFilters] as QueryFilters<T>;
+    }
+    this.filters = [['OR', [...topFilters, toAdd]] as OrQueryFilter<T>];
+  }
+
+  private addConditionToOrGroup(toAdd: QueryFilters<T>): void {
+    // TODO: Update typings for QueryFilter to allow for nesting.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (this.filters[0] as OrQueryFilter<T>)[1].push(toAdd as any);
+  }
+
+  private addToLastConditionInOrGroup(toAdd: QueryFilters<T>): void {
+    const orGroup = this.filters[0][1] as QueryFilter<T>;
+    const lastInOrGroup = orGroup[orGroup.length - 1] as QueryFilters<T>;
+    const isAlreadyAndGroup = Array.isArray(lastInOrGroup[0]);
+    if (isAlreadyAndGroup) {
+      lastInOrGroup.push(...toAdd);
+    } else {
+      orGroup[orGroup.length - 1] = [lastInOrGroup, ...toAdd];
+    }
+  }
+
+  private createNewAndGroup(toAdd: QueryFilters<T>): void {
+    this.filters.push(...toAdd);
+  }
 }
+
+export type ParamsBuilderGroup<T, ExtraOptions = Record<string, unknown>> = Pick<
+ParamsBuilder<T, ExtraOptions>,
+'filter' | 'andFilter' | 'orFilter' | 'group' | 'andGroup' | 'orGroup' | 'mergeWith' | 'getFilters'
+>;
