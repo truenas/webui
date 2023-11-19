@@ -2,13 +2,13 @@
   {{ 'Replacing disk {name}' | translate: { name: data.diskName } }}
 </h1>
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
-  <ix-select
+  <ix-combobox
     formControlName="replacement"
     [label]="'Member Disk' | translate"
     [required]="true"
-    [options]="unusedDisksOptions$"
+    [provider]="disksProvider"
     [tooltip]="helptext.dialogFormFields.disk.tooltip | translate"
-  ></ix-select>
+  ></ix-combobox>
 
   <ix-checkbox
     formControlName="force"

@@ -25,7 +25,7 @@ export class SearchInputComponent implements OnInit, OnChanges {
   @HostBinding('class.disabled')
   @Input() disabled = false;
   @Input() value = '';
-  @Input() htmlCharactersLimit = 524288;
+  @Input() maxLength = 524288;
   @Output() search = new EventEmitter<string>();
 
   @ViewChild('ixSearchInput') input: ElementRef<HTMLInputElement>;

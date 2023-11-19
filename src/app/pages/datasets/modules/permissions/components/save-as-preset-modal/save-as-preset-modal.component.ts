@@ -72,7 +72,6 @@ export class SaveAsPresetModalComponent implements OnInit {
     this.ws.call('filesystem.acltemplate.by_path', [{
       path: this.data.datasetPath,
       'format-options': {
-        ensure_builtins: true,
         resolve_names: true,
       },
     }])

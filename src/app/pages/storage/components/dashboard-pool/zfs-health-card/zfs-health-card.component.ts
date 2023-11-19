@@ -90,8 +90,12 @@ export class ZfsHealthCardComponent implements OnChanges {
   }
 
   get timeLeftString(): string {
-    const duration = secondsToDuration(this.scan.total_secs_left);
-    return this.translate.instant('{duration} remaining', { duration: formatDuration(duration) });
+    try {
+      const duration = secondsToDuration(this.scan.total_secs_left);
+      return this.translate.instant('{duration} remaining', { duration: formatDuration(duration) });
+    } catch {
+      return ' - ';
+    }
   }
 
   get scanExplanation(): string {

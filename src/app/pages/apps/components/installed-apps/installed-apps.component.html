@@ -91,7 +91,7 @@
       <ix-fake-progress-bar *ngIf="!showMobileDetails" [loading]="isLoading"></ix-fake-progress-bar>
 
       <ix-search-input
-        [htmlCharactersLimit]="100"
+        [maxLength]="100"
         [disabled]="!dataSource.length"
         [value]="filterString"
         (search)="onSearch($event)"

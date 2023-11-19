@@ -91,7 +91,6 @@ describe('SelectPresetModalComponent', () => {
 
     expect(ws.call).toHaveBeenCalledWith('filesystem.acltemplate.by_path', [{
       'format-options': {
-        ensure_builtins: true,
         resolve_names: true,
       },
       path: '/mnt/pool/dataset',

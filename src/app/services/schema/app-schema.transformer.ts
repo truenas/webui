@@ -32,15 +32,13 @@ export function isCommonSchemaType(type: ChartSchemaType): boolean {
 }
 
 export function buildCommonSchemaBase(payload: Partial<CommonSchemaTransform>): CommonSchemaBase {
-  const {
-    schema, chartSchemaNode, isNew, isParentImmutable,
-  } = payload;
+  const { schema, chartSchemaNode } = payload;
 
   return {
     controlName: chartSchemaNode.variable,
     title: chartSchemaNode.label,
     required: schema.required,
-    editable: (!isNew && (!!schema.immutable || isParentImmutable)) ? false : schema.editable,
+    editable: schema.editable,
     tooltip: chartSchemaNode.description,
   };
 }

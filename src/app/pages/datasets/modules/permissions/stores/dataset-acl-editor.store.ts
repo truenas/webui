@@ -246,7 +246,6 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
         return this.ws.call('filesystem.acltemplate.by_path', [{
           path: this.get().mountpoint,
           'format-options': {
-            ensure_builtins: true,
             resolve_names: true,
           },
         }]).pipe(

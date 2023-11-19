@@ -207,6 +207,11 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
       return;
     }
 
+    let specialSmallBlockSize = getFieldValue(this.existing.special_small_block_size, this.parent) as (number | 'INHERIT');
+    if (specialSmallBlockSize !== 'INHERIT') {
+      specialSmallBlockSize = this.formatter.convertHumanStringToNum(specialSmallBlockSize.toString());
+    }
+
     this.form.patchValue({
       deduplication: getFieldValue(this.existing.deduplication, this.parent),
       checksum: getFieldValue(this.existing.checksum, this.parent),
@@ -222,7 +227,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
       aclmode: getFieldValue(this.existing.aclmode, this.parent) as AclMode,
       casesensitivity: this.existing.casesensitivity?.value,
       special_small_block_size: this.existing.special_small_block_size
-        ? Number(this.existing.special_small_block_size.value)
+        ? specialSmallBlockSize
         : null,
     });
   }
