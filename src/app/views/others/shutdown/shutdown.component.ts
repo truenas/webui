@@ -1,5 +1,5 @@
 import { Location } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -12,6 +12,7 @@ import { WebSocketService } from 'app/services/ws.service';
 @Component({
   templateUrl: './shutdown.component.html',
   styleUrls: ['./shutdown.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ShutdownComponent implements OnInit {
   constructor(

@@ -1,10 +1,12 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { catchError, EMPTY, filter, map, of, switchMap, tap } from 'rxjs';
+import { FromWizardToAdvancedSubmitted } from 'app/enums/from-wizard-to-advanced.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import helptext from 'app/helptext/data-protection/data-protection-dashboard/data-protection-dashboard';
@@ -30,6 +32,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
+import { fromWizardToAdvancedFormSubmitted } from 'app/store/admin-panel/admin.actions';
 
 @UntilDestroy()
 @Component({
@@ -107,11 +110,11 @@ export class ReplicationTaskCardComponent implements OnInit {
     private errorHandler: ErrorHandlerService,
     private ws: WebSocketService,
     private dialogService: DialogService,
-    private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,
     private snackbar: SnackbarService,
     private matDialog: MatDialog,
     private storage: StorageService,
+    private actions$: Actions,
     protected emptyService: EmptyService,
   ) {}
 
@@ -122,6 +125,7 @@ export class ReplicationTaskCardComponent implements OnInit {
     );
     this.dataProvider = new AsyncDataProvider<ReplicationTaskUi>(replicationTasks$);
     this.getReplicationTasks();
+    this.listenForWizardToAdvancedSwitching();
   }
 
   getReplicationTasks(): void {
@@ -263,5 +267,13 @@ export class ReplicationTaskCardComponent implements OnInit {
           this.dialogService.error(this.errorHandler.parseWsError(err));
         },
       });
+  }
+
+  private listenForWizardToAdvancedSwitching(): void {
+    this.actions$.pipe(
+      ofType(fromWizardToAdvancedFormSubmitted),
+      filter(({ formType }) => formType === FromWizardToAdvancedSubmitted.ReplicationTask),
+      untilDestroyed(this),
+    ).subscribe(() => this.getReplicationTasks());
   }
 }

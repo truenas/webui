@@ -14,7 +14,8 @@ table {
 
 /* stylelint-disable */
 :host ::ng-deep {
-  tr > td > ng-component > span {
+  tr > th ng-component,
+  tr > td span.mat-mdc-tooltip-trigger {
     -webkit-box-orient: vertical;
     display: -webkit-inline-box;
     -webkit-line-clamp: 2;

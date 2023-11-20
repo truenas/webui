@@ -36,15 +36,15 @@ export class DiskDetailsPanelComponent {
     return isTopologyDisk(this.topologyItem);
   }
 
-  onCloseMobileDetails(): void {
-    this.closeMobileDetails.emit();
-  }
-
   get hasTopologyItemDisk(): boolean {
     if (isTopologyDisk(this.topologyItem)) {
       return this.topologyItem.disk !== null;
     }
 
     return false;
+  }
+
+  onCloseMobileDetails(): void {
+    this.closeMobileDetails.emit();
   }
 }

@@ -5,6 +5,11 @@ import { UserListComponent } from 'app/pages/account/users/user-list/user-list.c
 
 export const routes: Routes = [
   {
+    path: '',
+    pathMatch: 'full',
+    redirectTo: 'users',
+  },
+  {
     path: 'users',
     data: { title: T('Users') },
     children: [

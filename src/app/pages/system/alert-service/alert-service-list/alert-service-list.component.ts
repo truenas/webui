@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -18,6 +18,7 @@ import { WebSocketService } from 'app/services/ws.service';
 @Component({
   selector: 'ix-alert-service-list',
   template: '<ix-entity-table [title]="title" [conf]="this"></ix-entity-table>',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AlertServiceListComponent implements EntityTableConfig<AlertService> {
   title = 'Alert Services';

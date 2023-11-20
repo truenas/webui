@@ -122,8 +122,9 @@ describe('CloudsyncWhatAndWhenComponent', () => {
       buttonText: 'Continue',
       cancelText: 'Cancel',
       message:
-        'Proceeding will result in the loss of your current cloud task data. However, your created provider will remain unaffected. Are you sure you want to continue?',
+        'Switching to Advanced Options will lose data entered on second step. Do you want to continue?',
       title: 'Switch to Advanced Options',
+      hideCheckbox: true,
     });
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(CloudsyncFormComponent, { wide: true });
   });

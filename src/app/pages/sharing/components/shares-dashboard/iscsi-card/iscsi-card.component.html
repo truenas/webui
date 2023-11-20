@@ -16,7 +16,7 @@
       <button
         mat-button
         [ixTest]="['iscsi-share', 'configure']"
-        (click)="openForm(null, false)"
+        [routerLink]="['/sharing', 'iscsi', 'configuration']"
       >{{ 'Configure' | translate }}</button>
 
       <button

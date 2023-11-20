@@ -1,12 +1,16 @@
 import { map, switchMap } from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
-import { ApiCallMethod } from 'app/interfaces/api/api-call-directory.interface';
+import { ApiCallDirectory, ApiCallMethod } from 'app/interfaces/api/api-call-directory.interface';
+import { QueryFilters } from 'app/interfaces/query-api.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { BaseDataProvider, paginate, sort } from 'app/modules/ix-table2/base-data-provider';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { TablePagination } from 'app/modules/ix-table2/interfaces/table-pagination.interface';
 import { TableSort } from 'app/modules/ix-table2/interfaces/table-sort.interface';
 import { WebSocketService } from 'app/services/ws.service';
 
+// TODO: Extract to separate files
+// TODO: Replace with QueryParams?
 interface ApiCallParams { [key: string]: unknown }
 
 interface PaginationStrategy {
@@ -90,7 +94,9 @@ export class SortingServerSide implements SortingStrategy {
   }
 }
 
-export class ApiDataProvider<T> extends BaseDataProvider<T> {
+// TODO: Narrow down the type of M to only include .query methods
+// TODO: T can be inferred from M
+export class ApiDataProvider<T, M extends ApiCallMethod> extends BaseDataProvider<T> {
   paginationStrategy: PaginationStrategy;
   sortingStrategy: SortingStrategy;
 
@@ -98,17 +104,22 @@ export class ApiDataProvider<T> extends BaseDataProvider<T> {
 
   constructor(
     private ws: WebSocketService,
-    private method: ApiCallMethod,
-    private params?: ApiCallParams,
+    private method: M,
+    private params: ApiCallDirectory[M]['params'] = [],
   ) {
     super();
     this.paginationStrategy = new PaginationClientSide();
     this.sortingStrategy = new SortingClientSide();
   }
 
+  setParams(params: ApiCallDirectory[M]['params']): void {
+    this.params = params;
+  }
+
   load(): void {
     this.emptyType$.next(EmptyType.Loading);
     this.subscription.add(
+      // TODO: Do params need to be included here?
       this.ws.call(this.method, [{ 'query-options': { count: true } }]).pipe(
         switchMap((count: number) => {
           this.totalRows = count;
@@ -126,7 +137,8 @@ export class ApiDataProvider<T> extends BaseDataProvider<T> {
           this.currentPage$.next(this.rows);
           this.emptyType$.next(rows.length ? EmptyType.NoSearchResults : EmptyType.NoPageData);
         },
-        error: () => {
+        error: (error: WebsocketError) => {
+          console.error(this.method, error);
           this.totalRows = 0;
           this.rows = [];
           this.currentPage$.next([]);
@@ -152,13 +164,17 @@ export class ApiDataProvider<T> extends BaseDataProvider<T> {
     );
   }
 
-  private prepareParams(params: ApiCallParams): [ApiCallParams] {
-    return [{
-      ...params,
-      'query-options': {
-        ...this.paginationStrategy.getParams(this.pagination),
-        ...this.sortingStrategy.getParams(this.sorting),
+  private prepareParams(params: ApiCallDirectory[M]['params']): ApiCallDirectory[M]['params'] {
+    // TODO: Current merge is not entirely correct. Introduce a separate function.
+    // TODO: Clarify whether we should use positional arguments or 'query-filters'
+    return [
+      {
+        'query-filters': (params as unknown as QueryFilters<T>)[0] || [],
+        'query-options': {
+          ...this.paginationStrategy.getParams(this.pagination),
+          ...this.sortingStrategy.getParams(this.sorting),
+        },
       },
-    }];
+    ] as unknown as ApiCallDirectory[M]['params'];
   }
 }

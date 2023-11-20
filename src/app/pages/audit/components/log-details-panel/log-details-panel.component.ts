@@ -1,5 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { Router } from '@angular/router';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { AuditEntry } from 'app/interfaces/audit.interface';
 
 @Component({
@@ -11,9 +10,9 @@ import { AuditEntry } from 'app/interfaces/audit.interface';
 export class LogDetailsPanelComponent {
   @Input() log: AuditEntry;
 
-  constructor(private router: Router) {}
+  @Output() hide = new EventEmitter();
 
   onCloseMobileDetails(): void {
-    this.router.navigate(['/audit'], { state: { hideMobileDetails: true } });
+    this.hide.emit();
   }
 }

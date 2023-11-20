@@ -67,6 +67,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
   appsLoaded = false;
   isNew = true;
   dynamicSection: DynamicWizardSchema[] = [];
+  rootDynamicSection: DynamicWizardSchema[] = [];
   dialogRef: MatDialogRef<EntityJobComponent>;
   subscription = new Subscription();
   chartSchema: ChartSchema['schema'];
@@ -291,6 +292,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
   }
 
   private setChartForCreation(catalogApp: CatalogApp): void {
+    this.rootDynamicSection = [];
     this.catalogApp = catalogApp;
     this._pageTitle$.next(this.catalogApp.title || this.catalogApp.name);
     let hideVersion = false;
@@ -304,7 +306,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.form.addControl('version', new FormControl(versionKeys[0], [Validators.required]));
+    this.form.addControl('version', new FormControl(catalogApp.latest_version, [Validators.required]));
     this.form.addControl('release_name', new FormControl('', [Validators.required]));
     this.form.controls.release_name.setValidators(
       this.validatorsService.withMessage(
@@ -316,8 +318,9 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
     );
     this.form.controls.release_name.setAsyncValidators(forbiddenAsyncValues(this.forbiddenAppNames$));
     this.form.controls.release_name.updateValueAndValidity();
+    this.listenForVersionChanges();
 
-    this.dynamicSection.push({
+    this.rootDynamicSection.push({
       name: 'Application name',
       description: '',
       help: '',
@@ -344,7 +347,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
     if (catalogApp?.app_metadata) {
       const controlName = 'show_metadata';
       this.form.addControl(controlName, new FormControl(true, []));
-      this.dynamicSection.push({
+      this.rootDynamicSection.push({
         name: 'Application Metadata',
         description: '',
         help: this.translate.instant('This information is provided by the catalog maintainer.'),
@@ -377,6 +380,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
   }
 
   private setChartForEdit(chart: ChartRelease): void {
+    this.rootDynamicSection = [];
     this.isNew = false;
     this.config = chart.config;
     this.config.release_name = chart.id;
@@ -385,7 +389,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
 
     this.form.addControl('release_name', new FormControl(chart.name, [Validators.required]));
 
-    this.dynamicSection.push({
+    this.rootDynamicSection.push({
       name: 'Application name',
       description: '',
       help: '',
@@ -417,6 +421,8 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
   }
 
   private buildDynamicForm(schema: ChartSchema['schema']): void {
+    this.dynamicSection = [];
+    this.dynamicSection.push(...this.rootDynamicSection);
     this.chartSchema = schema;
     try {
       schema.groups.forEach((group) => {
@@ -494,6 +500,13 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
           }
         });
       }
+    });
+  }
+
+  private listenForVersionChanges(): void {
+    this.form.controls.version?.valueChanges.pipe(filter(Boolean), untilDestroyed(this)).subscribe((version) => {
+      this.catalogApp.schema = this.catalogApp.versions[version].schema;
+      this.buildDynamicForm(this.catalogApp.schema);
     });
   }
 }

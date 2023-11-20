@@ -5,6 +5,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { MockModule } from 'ng-mocks';
 import { CoreComponents } from 'app/core/core-components.module';
+import { Role } from 'app/enums/role.enum';
 import { Group } from 'app/interfaces/group.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { IxEmptyRowHarness } from 'app/modules/ix-tables/components/ix-empty-row/ix-empty-row.component.harness';
@@ -26,6 +27,7 @@ const fakeGroupDataSource: Group[] = [{
   builtin: true,
   sudo_commands: [],
   sudo_commands_nopasswd: [],
+  roles: [],
   smb: true,
   users: [1],
 }, {
@@ -34,6 +36,7 @@ const fakeGroupDataSource: Group[] = [{
   builtin: true,
   sudo_commands: ['ls'],
   sudo_commands_nopasswd: [],
+  roles: [Role.FullAdmin],
   smb: true,
   users: [2],
 }] as Group[];
@@ -95,9 +98,9 @@ describe('GroupListComponent', () => {
     const table = await loader.getHarness(IxTableHarness);
     const cells = await table.getCells(true);
     const expectedRows = [
-      ['Group', 'GID', 'Builtin', 'Allows sudo commands', 'Samba Authentication', ''],
-      ['mock', '1000', 'Yes', 'No', 'Yes', ''],
-      ['fake', '1001', 'Yes', 'Yes', 'Yes', ''],
+      ['Group', 'GID', 'Builtin', 'Allows sudo commands', 'Samba Authentication', 'Roles', ''],
+      ['mock', '1000', 'Yes', 'No', 'Yes', 'N/A', ''],
+      ['fake', '1001', 'Yes', 'Yes', 'Yes', 'Full Admin', ''],
     ];
 
     expect(cells).toEqual(expectedRows);

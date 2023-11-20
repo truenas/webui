@@ -150,10 +150,6 @@ export interface EntityTableColumn {
   emptyText?: string;
 
   icon?: string;
-  widget?: {
-    component: string;
-    icon: string;
-  };
 
   /**
    * TODO: These below probably do not do anything.

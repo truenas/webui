@@ -15,13 +15,15 @@
 
     <span class="prefix">{{ 'Details for' | translate }}</span>
 
-    <div class="full-path">
+    <div class="full-path" [matTooltip]="title">
       <ix-topology-item-icon
         class="title-icon"
         [topologyItem]="topologyItem"
         [disk]="disk"
       ></ix-topology-item-icon>
-      <span class="device-name">{{ title }}</span>
+      <span class="device-name">
+        {{ title }}
+      </span>
     </div>
   </h3>
 </div>

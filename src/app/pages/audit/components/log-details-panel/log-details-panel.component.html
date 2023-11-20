@@ -19,37 +19,7 @@
 
 <div class="cards">
   <div class="scroll-window">
-    <mat-card class="card">
-      <mat-card-header>
-        <h3 mat-card-title>
-          {{ 'Log Metadata' | translate }}
-        </h3>
-      </mat-card-header>
-      <mat-card-content>
-        <p>Audit ID: {{ log.address }}</p>
-        <p>Version: {{ log.service }}</p>
-        <p>Session: {{ log.event }}</p>
-      </mat-card-content>
-    </mat-card>
-
-    <mat-card class="card">
-      <mat-card-header>
-        <h3 mat-card-title>
-          {{ 'Log Message' | translate }}
-        </h3>
-      </mat-card-header>
-      <mat-card-content>
-        <p>Event Data Property: VALUE</p>
-        <p>Event Data Property: VALUE</p>
-        <p>Event Data Property: VALUE</p>
-        <p>Event Data Property: VALUE</p>
-        <p>Event Data Property: VALUE</p>
-        <p>Event Data Property: VALUE</p>
-        <p>Event Data Property: VALUE</p>
-        <p>Event Data Property: VALUE</p>
-        <p>Event Data Property: VALUE</p>
-        <p>Event Data Property: VALUE</p>
-      </mat-card-content>
-    </mat-card>
+    <ix-metadata-details-card [log]="log"></ix-metadata-details-card>
+    <ix-event-data-details-card [log]="log"></ix-event-data-details-card>
   </div>
 </div>
