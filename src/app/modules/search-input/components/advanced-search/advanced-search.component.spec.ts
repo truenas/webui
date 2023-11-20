@@ -4,7 +4,7 @@ import { User } from 'app/interfaces/user.interface';
 import { AdvancedSearchComponent } from 'app/modules/search-input/components/advanced-search/advanced-search.component';
 import { AdvancedSearchHarness } from 'app/modules/search-input/components/advanced-search/advanced-search.harness';
 import { QueryParserService } from 'app/modules/search-input/services/query-parser/query-parser.service';
-import { SearchQueryService } from 'app/modules/search-input/services/search-query.service';
+import { QueryToApiService } from 'app/modules/search-input/services/query-to-api/query-to-api.service';
 
 describe('AdvancedSearchComponent', () => {
   let spectator: Spectator<AdvancedSearchComponent<User>>;
@@ -12,7 +12,7 @@ describe('AdvancedSearchComponent', () => {
   const createComponent = createComponentFactory({
     component: AdvancedSearchComponent,
     providers: [
-      SearchQueryService,
+      QueryToApiService,
       QueryParserService,
     ],
   });

@@ -2,7 +2,7 @@
   *ngIf="isInAdvancedMode; else simpleSearch"
   [query]="advancedQuery"
   [properties]="properties"
-  (queryChange)="advancedSearchUpdated($event)"
+  (paramsChange)="advancedSearchUpdated($event)"
   (switchToBasic)="toggleAdvancedMode()"
 ></ix-advanced-search>
 
