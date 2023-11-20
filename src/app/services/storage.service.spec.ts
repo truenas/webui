@@ -1,4 +1,5 @@
 import { HttpClient } from '@angular/common/http';
+import { GiB } from 'app/constants/bytes.constant';
 import { MockStorageScenario } from 'app/core/testing/enums/mock-storage.enum';
 import { AddTopologyOptions } from 'app/core/testing/interfaces/mock-storage-generator.interface';
 import { MockStorageGenerator } from 'app/core/testing/utils/mock-storage-generator.utils';
@@ -152,6 +153,10 @@ describe('StorageService', () => {
       expect(dedupVdevCapacities.size).toBe(1);
       const isDedupMixed: boolean = storageService.isMixedVdevCapacity(dedupVdevCapacities);
       expect(isDedupMixed).toBe(false);
+
+      // Check mixed VDEV when the difference is less than 2 GiB
+      expect(storageService.isMixedVdevCapacity(new Set([GiB, GiB * 3 - 1]))).toBe(false);
+      expect(storageService.isMixedVdevCapacity(new Set([GiB, GiB * 3]))).toBe(true);
     });
   });
 
