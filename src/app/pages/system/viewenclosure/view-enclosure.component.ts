@@ -1,11 +1,7 @@
 import {
-  ApplicationRef, Component, Injector, AfterContentInit, OnChanges, SimpleChanges, OnDestroy, ViewChild, ElementRef,
+  Component, AfterContentInit, OnChanges, SimpleChanges, OnDestroy, ViewChild, ElementRef,
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { RestService, WebSocketService } from 'app/services/';
-import { MaterialModule } from 'app/appMaterial.module';
-import { EnclosureDisksComponent } from './enclosure-disks/enclosure-disks.component';
-
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { Subject } from 'rxjs';
 import { SystemProfiler } from 'app/core/classes/system-profiler';
@@ -89,8 +85,6 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
   constructor(private core: CoreService, protected router: Router) {
     this.events = new Subject<CoreEvent>();
     this.events.subscribe((evt: CoreEvent) => {
-      console.log(evt);
-
       switch (evt.name) {
         case 'VisualizerReady':
           this.extractVisualizations();
