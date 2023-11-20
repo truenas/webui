@@ -96,22 +96,20 @@ def click_the_edit_button_that_appears(driver):
 def the_user_edit_page_should_open(driver):
     """The User Edit Page should open."""
     assert wait_on_element(driver, 7, xpaths.add_User.edit_Title)
-    time.sleep(0.5)
 
 
 @then('Change "Disable Password" to Yes and click save')
 def change_disable_password_to_no_and_click_save(driver):
     """Change "Disable Password" to No and click save."""
     assert wait_on_element(driver, 7, xpaths.add_User.identification_Legend)
-    assert wait_on_element(driver, 7, '//ix-slide-toggle[@formcontrolname="password_disabled"]//mat-slide-toggle', 'clickable')
-    driver.find_element_by_xpath('//ix-slide-toggle[@formcontrolname="password_disabled"]//mat-slide-toggle').click()
+    rsc.Click_On_Element(driver, xpaths.add_User.samba_Authentication_Checkbox)
+    rsc.Click_On_Element(driver, xpaths.add_User.password_Disabled_Slide)
+    rsc.Click_On_Element(driver, xpaths.button.save)
 
 
 @then('Change should be saved')
 def change_should_be_saved(driver):
     """Change should be saved."""
-    assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
-    driver.find_element_by_xpath(xpaths.button.save).click()
     assert wait_on_element_disappear(driver, 15, xpaths.progress.progressbar)
     assert wait_on_element(driver, 7, xpaths.users.title)
 
