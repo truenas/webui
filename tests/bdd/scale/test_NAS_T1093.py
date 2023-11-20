@@ -1,6 +1,7 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
 
+import reusableSeleniumCode as rsc
 import time
 import xpaths
 from function import (
@@ -69,10 +70,10 @@ def the_user_edit_page_should_open_change_disable_password_to_yes_and_click_save
     """the User Edit Page should open, change "Disable Password" to Yes and click save."""
     assert wait_on_element(driver, 10, xpaths.add_User.edit_Title)
     assert wait_on_element_disappear(driver, 10, xpaths.popup.please_Wait)
-    assert wait_on_element(driver, 3, xpaths.add_User.password_Disabled_Slide, 'clickable')
-    driver.find_element_by_xpath(xpaths.add_User.password_Disabled_Slide).click()
-    wait_on_element(driver, 10, xpaths.button.save, 'clickable')
-    driver.find_element_by_xpath(xpaths.button.save).click()
+    assert wait_on_element(driver, 7, xpaths.add_User.identification_Legend)
+    rsc.Click_On_Element(driver, xpaths.add_User.samba_Authentication_Checkbox)
+    rsc.Click_On_Element(driver, xpaths.add_User.password_Disabled_Slide)
+    rsc.Click_On_Element(driver, xpaths.button.save)
 
 
 @then('change should be saved, open the user page and verify the user Disable Password is true')
