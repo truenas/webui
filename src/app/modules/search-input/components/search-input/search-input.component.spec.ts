@@ -7,7 +7,7 @@ import { BasicSearchComponent } from 'app/modules/search-input/components/basic-
 import { SearchInputComponent } from 'app/modules/search-input/components/search-input/search-input.component';
 import { SearchInputHarness } from 'app/modules/search-input/components/search-input/search-input.harness';
 import { QueryParserService } from 'app/modules/search-input/services/query-parser/query-parser.service';
-import { SearchQueryService } from 'app/modules/search-input/services/search-query.service';
+import { QueryToApiService } from 'app/modules/search-input/services/query-to-api/query-to-api.service';
 
 describe('SearchInputComponent', () => {
   let spectator: Spectator<SearchInputComponent<User>>;
@@ -22,7 +22,7 @@ describe('SearchInputComponent', () => {
       AdvancedSearchComponent,
     ],
     providers: [
-      SearchQueryService,
+      QueryToApiService,
       QueryParserService,
     ],
   });
