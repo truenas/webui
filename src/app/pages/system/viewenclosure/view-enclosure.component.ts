@@ -37,7 +37,7 @@ interface EnclosureResponse {
 })
 export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDestroy {
   errors: ErrorMessage[] = [];
-  events: Subject<CoreEvent> ;
+  events: Subject<CoreEvent>;
   @ViewChild('navigation', { static: false }) nav: ElementRef;
 
   // public currentView: ViewConfig
@@ -89,6 +89,8 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
   constructor(private core: CoreService, protected router: Router) {
     this.events = new Subject<CoreEvent>();
     this.events.subscribe((evt: CoreEvent) => {
+      console.log(evt);
+
       switch (evt.name) {
         case 'VisualizerReady':
           this.extractVisualizations();
@@ -210,7 +212,7 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
   extractVisualizations() {
     this.system.profile.forEach((item, index) => {
       if (this.system.rearIndex && item.enclosureKey == this.system.rearIndex) { return; }
-      if (this.system.profile) {
+      if (this.system.profile && this.system.profile[index].model) {
         this.events.next({ name: 'CanvasExtract', data: this.system.profile[index], sender: this });
       }
     });
