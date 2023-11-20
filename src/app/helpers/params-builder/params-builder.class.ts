@@ -121,10 +121,12 @@ export class ParamsBuilder<T, ExtraOptions = Record<string, unknown>> {
    * Filters will be appended via AND.
    */
   mergeWith(params: QueryParams<T, ExtraOptions>): this {
+    if (params[0]) {
+      // Treat previously added filters as a group.
+      this.wasLastConditionGroup = true;
+      this.andFilters(params[0]);
+    }
     this.options = merge(this.options, params[1]);
-    // Treat previously added filters as a group.
-    this.wasLastConditionGroup = true;
-    this.andFilters(params[0]);
     return this;
   }
 
