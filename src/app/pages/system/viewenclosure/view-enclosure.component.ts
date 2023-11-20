@@ -1,11 +1,7 @@
 import {
-  ApplicationRef, Component, Injector, AfterContentInit, OnChanges, SimpleChanges, OnDestroy, ViewChild, ElementRef,
+  Component, AfterContentInit, OnChanges, SimpleChanges, OnDestroy, ViewChild, ElementRef,
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { RestService, WebSocketService } from 'app/services/';
-import { MaterialModule } from 'app/appMaterial.module';
-import { EnclosureDisksComponent } from './enclosure-disks/enclosure-disks.component';
-
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
 import { Subject } from 'rxjs';
 import { SystemProfiler } from 'app/core/classes/system-profiler';
@@ -37,7 +33,7 @@ interface EnclosureResponse {
 })
 export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDestroy {
   errors: ErrorMessage[] = [];
-  events: Subject<CoreEvent> ;
+  events: Subject<CoreEvent>;
   @ViewChild('navigation', { static: false }) nav: ElementRef;
 
   // public currentView: ViewConfig
@@ -210,7 +206,7 @@ export class ViewEnclosureComponent implements AfterContentInit, OnChanges, OnDe
   extractVisualizations() {
     this.system.profile.forEach((item, index) => {
       if (this.system.rearIndex && item.enclosureKey == this.system.rearIndex) { return; }
-      if (this.system.profile) {
+      if (this.system.profile && this.system.profile[index].model) {
         this.events.next({ name: 'CanvasExtract', data: this.system.profile[index], sender: this });
       }
     });
