@@ -103,15 +103,16 @@ def change_disable_password_to_no_and_click_save(driver):
     """Change "Disable Password" to No and click save."""
     assert wait_on_element(driver, 7, xpaths.add_User.identification_Legend)
     assert wait_on_element(driver, 7, xpaths.add_User.authentication_Legend)
-    assert wait_on_element(driver, 7, '//ix-slide-toggle[@formcontrolname="password_disabled"]//mat-slide-toggle', 'clickable')
-    driver.find_element_by_xpath('//ix-slide-toggle[@formcontrolname="password_disabled"]//mat-slide-toggle').click()
+    rsc.Click_On_Element(driver, xpaths.add_User.password_Disabled_Slide)
+    rsc.Click_On_Element(driver, xpaths.add_User.samba_Authentication_Checkbox)
+    rsc.Input_Value(driver, xpaths.add_User.password_Input, 'testing')
+    rsc.Input_Value(driver, xpaths.add_User.confirm_Password_Input, 'testing')
 
 
 @then('Change should be saved')
 def change_should_be_saved(driver):
     """Change should be saved."""
-    assert wait_on_element(driver, 7, xpaths.button.save, 'clickable')
-    driver.find_element_by_xpath(xpaths.button.save).click()
+    rsc.Click_On_Element(driver, xpaths.button.save)
     assert wait_on_element_disappear(driver, 15, xpaths.progress.progressbar)
     assert wait_on_element(driver, 7, xpaths.users.title)
 
