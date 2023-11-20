@@ -70,7 +70,7 @@ class add_User:
     wheel_Is_Selected = '//mat-select[contains(.,"wheel")]'
     home_Input = '//ix-explorer[@formcontrolname="home"]//input'
     create_Home_Directory_Checkbox = '//ix-checkbox[@formcontrolname="home_create"]//mat-checkbox'
-    password_Disabled_Slide = '//ix-slide-toggle[@formcontrolname="password_disabled"]//mat-slide-toggle'
+    password_Disabled_Slide = '//*[@data-test="toggle-password-disabled"]'
     home_Mode_Owner_Write_Checkbox = '//mat-checkbox[@data-test="checkbox-user-read"]'
     home_Mode_Owner_Read_Checkbox = '//mat-checkbox[@data-test="checkbox-user-write"]'
     home_Mode_Owner_Exec_Checkbox = '//mat-checkbox[@data-test="checkbox-user-execute"]'
@@ -84,6 +84,7 @@ class add_User:
     user_Id_And_Groups = '//legend[contains(text(),"User ID and Groups")]'
     identification_Legend = '//legend[normalize-space(text())="Identification"]'
     authentication_Legend = '//legend[normalize-space(text())="Authentication"]'
+    samba_Authentication_Checkbox = '//*[@data-test="checkbox-smb"]'
 
 
 class add_Zvol:
