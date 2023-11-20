@@ -98,18 +98,18 @@ def the_user_edit_page_should_open(driver):
     assert wait_on_element(driver, 7, xpaths.add_User.edit_Title)
 
 
-@then('Change "Disable Password" to Yes and click save')
-def change_disable_password_to_no_and_click_save(driver):
-    """Change "Disable Password" to No and click save."""
+@then('Disable Samba Authentication enable "Disable Password"')
+def disable_samba_authentication_enable_disable_password(driver):
+    """Disable Samba Authentication enable "Disable Password"."""
     assert wait_on_element(driver, 7, xpaths.add_User.identification_Legend)
     rsc.Click_On_Element(driver, xpaths.add_User.samba_Authentication_Checkbox)
     rsc.Click_On_Element(driver, xpaths.add_User.password_Disabled_Slide)
+
+
+@then('Click save, the change should be saved')
+def click_save_the_change_should_be_saved(driver):
+    """Click save, the change should be saved."""
     rsc.Click_On_Element(driver, xpaths.button.save)
-
-
-@then('Change should be saved')
-def change_should_be_saved(driver):
-    """Change should be saved."""
     assert wait_on_element_disappear(driver, 15, xpaths.progress.progressbar)
     assert wait_on_element(driver, 7, xpaths.users.title)
 
@@ -131,13 +131,7 @@ def updated_value_should_be_visible(driver):
     assert element_text == 'Yes'
 
 
-@then('Try login with ssh')
-def try_login_with_ssh(driver):
-    """Try login with ssh."""
+@then('Try login, the user should not be able to login')
+def try_login_the_user_should_not_be_able_to_login():
+    """Try login, the user should not be able to login."""
     assert ssh_sudo_exptext('ls /tmp', host, 'ericbsd', 'testing', 'Sorry, try again')
-
-
-@then('User should not be able to login')
-def user_should_not_be_able_to_login(driver):
-    """User should not be able to login."""
-    pass
