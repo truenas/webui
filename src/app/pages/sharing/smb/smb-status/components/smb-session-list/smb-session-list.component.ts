@@ -52,7 +52,7 @@ export class SmbSessionListComponent implements OnInit {
 
   ngOnInit(): void {
     const smbStatus$ = this.ws.call('smb.status', [SmbInfoLevel.Sessions]).pipe(
-      tap((sessions) => {
+      tap((sessions: SmbSession[]) => {
         this.sessions = sessions;
         if (this.filterString) {
           this.onListFiltered(this.filterString);

@@ -15,5 +15,6 @@
 <router-outlet mat-tab-nav-panel [ngSwitch]="activeTab">
   <mat-tab-nav-panel #tabPanel>
     <ix-smb-session-list *ngSwitchCase="'sessions'"></ix-smb-session-list>
+    <ix-smb-lock-list *ngSwitchCase="'locks'"></ix-smb-lock-list>
   </mat-tab-nav-panel>
 </router-outlet>

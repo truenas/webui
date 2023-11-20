@@ -8,6 +8,9 @@ ix-table2::ng-deep .details td {
 }
 
 .open-files-list {
+  list-style: none;
+  padding-left: 0;
+
   &:not(:first-of-type) {
     border-top: 1px solid var(--lines);
     margin-top: 8px;

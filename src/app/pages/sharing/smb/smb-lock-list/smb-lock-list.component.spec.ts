@@ -1,5 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
 import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
@@ -57,9 +58,11 @@ describe('SmbLockListComponent', () => {
   const createComponent = createComponentFactory({
     component: SmbLockListComponent,
     imports: [AppLoaderModule, EntityModule, IxTable2Module],
-    providers: [mockWebsocket([
-      mockCall('smb.status', locks),
-    ])],
+    providers: [
+      mockWebsocket([
+        mockCall('smb.status', locks),
+      ]),
+    ],
   });
 
   beforeEach(async () => {
@@ -90,5 +93,12 @@ describe('SmbLockListComponent', () => {
 
     const cells = await table.getCellTexts();
     expect(cells).toEqual(expectedRows);
+  });
+
+  it('should call loadData when Refresh button is pressed', async () => {
+    jest.spyOn(spectator.component.dataProvider, 'load');
+    const refreshButton = await loader.getHarness(MatButtonHarness.with({ text: 'Refresh' }));
+    await refreshButton.click();
+    expect(spectator.component.dataProvider.load).toHaveBeenCalled();
   });
 });
