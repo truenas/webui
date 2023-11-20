@@ -22,6 +22,6 @@ export class UrlOptionsService {
   }
 
   parseUrlOptions<T>(options: string): UrlOptions<T> {
-    return JSON.parse(decodeURIComponent(options) || '{}');
+    return JSON.parse(options ? decodeURIComponent(options) : '{}');
   }
 }

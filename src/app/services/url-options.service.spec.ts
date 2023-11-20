@@ -64,5 +64,10 @@ describe('UrlOptionsService', () => {
       const options = spectator.service.parseUrlOptions('');
       expect(options).toEqual({});
     });
+
+    it('parses undefined url options', () => {
+      const options = spectator.service.parseUrlOptions(undefined);
+      expect(options).toEqual({});
+    });
   });
 });
