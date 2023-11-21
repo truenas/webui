@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { CoreComponents } from 'app/core/core-components.module';
+import { Role } from 'app/enums/role.enum';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { User } from 'app/interfaces/user.interface';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
@@ -36,6 +37,7 @@ const fakeUserDataSource: User[] = [{
     bsdgrp_group: 'root',
   },
   groups: [],
+  roles: [Role.FullAdmin, Role.HasAllowList],
 }, {
   id: 69,
   uid: 1004,
@@ -58,6 +60,7 @@ const fakeUserDataSource: User[] = [{
   groups: [
     94,
   ],
+  roles: [],
 }] as User[];
 
 describe('UserListComponent', () => {
@@ -114,9 +117,9 @@ describe('UserListComponent', () => {
     store$.refreshState();
 
     const expectedRows = [
-      ['Username', 'UID', 'Builtin', 'Full Name'],
-      ['root',  '0', 'Yes', 'root'],
-      ['test', '1004', 'No', 'test'],
+      ['Username', 'UID', 'Builtin', 'Full Name', 'Roles'],
+      ['root',  '0', 'Yes', 'root', 'Full Admin, Has Allow List'],
+      ['test', '1004', 'No', 'test', 'N/A'],
     ];
 
     const table = await loader.getHarness(IxTable2Harness);

@@ -1,15 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { chain } from 'lodash';
 import { filter } from 'rxjs/operators';
 import { RoutePartsService, RoutePart } from 'app/services/route-parts/route-parts.service';
 
+const noLinksRoutes = ['/credentials', '/reportsdashboard', '/system'];
+
 @UntilDestroy()
 @Component({
   selector: 'ix-breadcrumb',
   templateUrl: './breadcrumb.component.html',
   styleUrls: ['./breadcrumb.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BreadcrumbComponent implements OnInit {
   breadcrumbs: RoutePart[];
@@ -41,6 +44,12 @@ export class BreadcrumbComponent implements OnInit {
           return false;
         }
         return Boolean(routePart.breadcrumb);
+      })
+      .map((routePart) => {
+        if (noLinksRoutes.some(url => routePart.url === url)) {
+          return { ...routePart, url: null };
+        }
+        return routePart;
       })
       .value();
   }

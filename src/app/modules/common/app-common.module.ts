@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -40,6 +40,7 @@ import {
   ResilverProgressDialogComponent,
 } from 'app/modules/common/dialog/resilver-progress/resilver-progress.component';
 import { SessionExpiringDialogComponent } from 'app/modules/common/dialog/session-expiring-dialog/session-expiring-dialog.component';
+import { StartServiceDialogComponent } from 'app/modules/common/dialog/start-service-dialog/start-service-dialog.component';
 import { UpdateDialogComponent } from 'app/modules/common/dialog/update-dialog/update-dialog.component';
 import { InterfaceStatusIconComponent } from 'app/modules/common/interface-status-icon/interface-status-icon.component';
 import { SearchInputComponent } from 'app/modules/common/search-input/search-input.component';
@@ -51,6 +52,7 @@ import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { JobsModule } from 'app/modules/jobs/jobs.module';
 import { ConsoleMessagesStore } from 'app/modules/layout/components/console-footer/console-messages.store';
 import { LayoutModule } from 'app/modules/layout/layout.module';
+import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { LanguageService } from 'app/services/language.service';
@@ -66,6 +68,7 @@ import { ShowLogsDialogComponent } from './dialog/show-logs-dialog/show-logs-dia
     FlexLayoutModule,
     HttpClientModule,
     IxFormsModule,
+    ReactiveFormsModule,
     IxDynamicFormModule,
     JobsModule,
     MatBadgeModule,
@@ -92,6 +95,7 @@ import { ShowLogsDialogComponent } from './dialog/show-logs-dialog/show-logs-dia
     LayoutModule,
     TestIdModule,
     FormsModule,
+    AppLoaderModule,
   ],
   declarations: [
     JobProgressDialogComponent,
@@ -113,6 +117,7 @@ import { ShowLogsDialogComponent } from './dialog/show-logs-dialog/show-logs-dia
     ShowLogsDialogComponent,
     SummaryComponent,
     FullScreenDialogComponent,
+    StartServiceDialogComponent,
   ],
   providers: [
     LanguageService,

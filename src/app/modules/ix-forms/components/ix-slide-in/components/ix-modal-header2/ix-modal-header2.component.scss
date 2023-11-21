@@ -1,0 +1,34 @@
+:host {
+  display: block;
+  position: sticky;
+  top: 0;
+  width: 100%;
+  z-index: 20000;
+}
+
+.ix-slidein-title-bar {
+  align-items: center;
+  background-color: var(--bg2);
+  border-bottom: 2px solid var(--lines);
+  height: 75px;
+  margin: 0 -20px;
+  padding: 30px;
+}
+
+.ix-form-title {
+  color: var(--fg1);
+  word-break: break-all;
+}
+
+#ix-close-icon {
+  color: var(--fg1);
+  cursor: pointer;
+}
+
+mat-progress-bar {
+  bottom: 0;
+  left: -20px;
+  position: absolute;
+  width: calc(100% + 40px);
+  z-index: 10005;
+}

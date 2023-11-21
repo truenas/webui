@@ -104,6 +104,7 @@ describe('CloudCredentialsFormComponent', () => {
       mockProvider(DialogService),
       { provide: SLIDE_IN_DATA, useValue: undefined },
       mockWebsocket([
+        mockCall('cloudsync.credentials.query', []),
         mockCall('cloudsync.credentials.create'),
         mockCall('cloudsync.credentials.update'),
         mockCall('cloudsync.credentials.verify', {

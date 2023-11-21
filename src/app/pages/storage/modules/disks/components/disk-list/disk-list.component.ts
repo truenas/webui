@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { TooltipPosition } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
@@ -39,6 +39,7 @@ import { WebSocketService } from 'app/services/ws.service';
 @UntilDestroy()
 @Component({
   template: '<ix-entity-table [title]="title" [conf]="this"></ix-entity-table>',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
   title = this.translate.instant('Disks');

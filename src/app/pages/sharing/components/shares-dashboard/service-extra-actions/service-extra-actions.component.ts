@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -6,7 +6,10 @@ import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
+import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
 import { DialogService } from 'app/services/dialog.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -18,8 +21,6 @@ import { WebSocketService } from 'app/services/ws.service';
 export class ServiceExtraActionsComponent {
   @Input() service: Service;
 
-  @Output() statusChanged = new EventEmitter<ServiceStatus>();
-
   configServiceLabel = this.translate.instant('Config Service');
 
   get serviceStateLabel(): string {
@@ -28,20 +29,20 @@ export class ServiceExtraActionsComponent {
       : this.translate.instant('Turn On Service');
   }
 
+  get isSmbService(): boolean {
+    return this.service.service === ServiceName.Cifs;
+  }
+
   constructor(
     private translate: TranslateService,
     private ws: WebSocketService,
     private dialogService: DialogService,
     private router: Router,
+    private slideInService: IxSlideInService,
   ) {}
-
-  updateTableServiceStatus(service: Service): void {
-    this.statusChanged.emit(service.state);
-  }
 
   changeServiceState(service: Service): void {
     const rpc = service.state === ServiceStatus.Running ? 'service.stop' : 'service.start';
-    this.updateTableServiceStatus({ ...service, state: ServiceStatus.Loading });
     this.ws.call(rpc, [service.service, { silent: false }])
       .pipe(untilDestroyed(this))
       .subscribe({
@@ -56,7 +57,6 @@ export class ServiceExtraActionsComponent {
                 ),
               );
             }
-            service.state = ServiceStatus.Running;
           } else {
             if (service.state === ServiceStatus.Stopped && rpc === 'service.start') {
               this.dialogService.warn(
@@ -67,9 +67,7 @@ export class ServiceExtraActionsComponent {
                 ),
               );
             }
-            service.state = ServiceStatus.Stopped;
           }
-          this.updateTableServiceStatus(service);
         },
         error: (error: WebsocketError) => {
           let message = this.translate.instant(
@@ -92,10 +90,18 @@ export class ServiceExtraActionsComponent {
   }
 
   configureService(service: Service): void {
-    if (service.service === ServiceName.Iscsi) {
-      this.router.navigate(['/sharing', 'iscsi']);
-    } else {
-      this.router.navigate(['/system', 'services']);
+    switch (service.service) {
+      case ServiceName.Iscsi:
+        this.router.navigate(['/sharing', 'iscsi']);
+        break;
+      case ServiceName.Nfs:
+        this.slideInService.open(ServiceNfsComponent, { wide: true });
+        break;
+      case ServiceName.Cifs:
+        this.slideInService.open(ServiceSmbComponent);
+        break;
+      default:
+        break;
     }
   }
 }

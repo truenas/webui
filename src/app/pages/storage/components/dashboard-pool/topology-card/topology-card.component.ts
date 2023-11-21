@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   Component, Input, OnChanges, OnInit,
 } from '@angular/core';
 import { Router } from '@angular/router';
@@ -40,6 +41,7 @@ const notAssignedDev = T('VDEVs not assigned');
   selector: 'ix-topology-card',
   templateUrl: './topology-card.component.html',
   styleUrls: ['./topology-card.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TopologyCardComponent implements OnInit, OnChanges {
   @Input() poolState: Pool;

@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
 
@@ -13,6 +14,7 @@ export class ServiceStateButtonComponent {
   @Input() count: number;
 
   readonly serviceStatus = ServiceStatus;
+  readonly serviceNames = serviceNames;
 
   get statusClass(): string {
     switch (this.service?.state) {

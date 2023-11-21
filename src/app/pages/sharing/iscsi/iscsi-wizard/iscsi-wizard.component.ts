@@ -5,9 +5,9 @@ import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import _ from 'lodash';
-import { lastValueFrom, forkJoin, Observable, switchMap, map, tap, of } from 'rxjs';
+import { lastValueFrom, forkJoin, Observable, switchMap, tap, of, map, take } from 'rxjs';
 import { patterns } from 'app/constants/name-patterns.constant';
 import { DatasetType } from 'app/enums/dataset.enum';
 import {
@@ -36,18 +36,19 @@ import {
   IscsiTargetExtentUpdate,
   IscsiTargetUpdate,
 } from 'app/interfaces/iscsi.interface';
-import { Service } from 'app/interfaces/service.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { forbiddenValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { matchOthersFgValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { StartServiceDialogComponent, StartServiceDialogResult } from 'app/pages/sharing/components/start-service-dialog/start-service-dialog.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
+import { ServicesState } from 'app/store/services/services.reducer';
+import { selectService } from 'app/store/services/services.selectors';
 
 @UntilDestroy()
 @Component({
@@ -227,6 +228,7 @@ export class IscsiWizardComponent implements OnInit {
     private snackbar: SnackbarService,
     private translateService: TranslateService,
     private loader: AppLoaderService,
+    private store$: Store<ServicesState>,
   ) {
     this.iscsiService.getExtents().pipe(untilDestroyed(this)).subscribe((extents) => {
       this.namesInUse.push(...extents.map((extent) => extent.name));
@@ -432,10 +434,10 @@ export class IscsiWizardComponent implements OnInit {
       return;
     }
 
-    this.activateIscsiService().pipe(
-      untilDestroyed(this),
-    ).subscribe({
-      next: () => {
+    this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Iscsi }));
+    this.checkIfServiceRestartIsNeeded().pipe(untilDestroyed(this)).subscribe({
+      complete: () => {
+        this.loader.close();
         this.isLoading = false;
         this.cdr.markForCheck();
         this.slideInRef.close(true);
@@ -443,67 +445,11 @@ export class IscsiWizardComponent implements OnInit {
     });
   }
 
-  activateIscsiService(): Observable<unknown> {
-    return this.getIscsiService().pipe(
-      switchMap((iscsiService) => {
-        if (iscsiService.state === ServiceStatus.Stopped) {
-          return this.startAndEnableService(iscsiService);
-        }
-        return this.restartService();
-      }),
-    );
-  }
-
-  getIscsiService = (): Observable<Service> => {
-    return this.ws
-      .call('service.query')
-      .pipe(map((services) => _.find(services, { service: ServiceName.Iscsi })));
-  };
-
-  startAndEnableService = (iscsiService: Service): Observable<unknown> => {
-    return this.matDialog.open(StartServiceDialogComponent, {
-      data: serviceNames.get(ServiceName.Iscsi),
-      disableClose: true,
-    })
-      .afterClosed()
-      .pipe(
-        switchMap((result: StartServiceDialogResult) => {
-          const requests: Observable<unknown>[] = [];
-
-          if (result.start && result.startAutomatically) {
-            requests.push(
-              this.ws.call('service.update', [
-                iscsiService.id,
-                { enable: result.startAutomatically },
-              ]),
-            );
-          }
-
-          if (result.start) {
-            requests.push(
-              this.ws.call('service.start', [
-                iscsiService.service,
-                { silent: false },
-              ])
-                .pipe(
-                  tap(() => {
-                    this.snackbar.success(
-                      this.translateService.instant('The {service} service has started.', {
-                        service: serviceNames.get(ServiceName.Iscsi),
-                      }),
-                    );
-                  }),
-                ),
-            );
-          }
-
-          return requests.length ? forkJoin(requests) : of(requests);
-        }),
-      );
-  };
-
-  restartService(): Observable<unknown> {
-    return this.confirmRestart().pipe(
+  checkIfServiceRestartIsNeeded(): Observable<boolean> {
+    return this.store$.select(selectService(ServiceName.Iscsi)).pipe(
+      map((service) => service.state === ServiceStatus.Running),
+      take(1),
+      switchMap(() => this.warnAboutActiveIscsiSessions()),
       switchMap((confirmed) => {
         if (confirmed) {
           this.loader.open();
@@ -518,23 +464,9 @@ export class IscsiWizardComponent implements OnInit {
             }),
           );
         }
-        return of();
-      }),
-    );
-  }
-
-  confirmRestart(): Observable<boolean> {
-    return this.dialogService.confirm({
-      title: this.translateService.instant('Restart {name} Service?', { name: serviceNames.get(ServiceName.Iscsi) }),
-      message: this.translateService.instant('Some changes might not take affect until the {name} service has been restarted. Would you like to restart the {name} service now?', { name: serviceNames.get(ServiceName.Iscsi) }),
-      hideCheckbox: true,
-    }).pipe(
-      switchMap((confirmed) => {
-        if (confirmed) {
-          return this.warnAboutActiveIscsiSessions();
-        }
         return of(false);
       }),
+      untilDestroyed(this),
     );
   }
 
@@ -555,7 +487,7 @@ export class IscsiWizardComponent implements OnInit {
           title: this.translateService.instant('Alert'),
           message,
           hideCheckbox: true,
-          buttonText: this.translateService.instant('Stop'),
+          buttonText: this.translateService.instant('Restart'),
         });
       }),
     );

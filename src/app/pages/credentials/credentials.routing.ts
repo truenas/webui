@@ -28,7 +28,7 @@ export const routes: Routes = [{
     {
       path: 'directory-services',
       component: DirectoryServicesComponent,
-      data: { title: T('Directory Services') },
+      data: { title: T('Directory Services'), breadcrumb: T('Directory Services') },
     },
     {
       path: 'backup-credentials',
@@ -38,7 +38,7 @@ export const routes: Routes = [{
     {
       path: 'certificates',
       component: CertificatesDashComponent,
-      data: { title: T('Certificates') },
+      data: { title: T('Certificates'), breadcrumb: T('Certificates') },
     },
     {
       path: 'two-factor',

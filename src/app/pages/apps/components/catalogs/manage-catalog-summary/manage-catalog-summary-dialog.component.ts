@@ -1,5 +1,5 @@
 import {
-  OnInit, Component, Inject,
+  OnInit, Component, Inject, ChangeDetectionStrategy, ChangeDetectorRef,
 } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -15,6 +15,7 @@ import { WebSocketService } from 'app/services/ws.service';
 @Component({
   styleUrls: ['./manage-catalog-summary-dialog.component.scss'],
   templateUrl: './manage-catalog-summary-dialog.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ManageCatalogSummaryDialogComponent implements OnInit {
   catalog: Catalog;
@@ -33,6 +34,7 @@ export class ManageCatalogSummaryDialogComponent implements OnInit {
     private ws: WebSocketService,
     private loader: AppLoaderService,
     protected dialogService: DialogService,
+    private cdr: ChangeDetectorRef,
   ) {
     this.catalog = data;
   }
@@ -62,6 +64,7 @@ export class ManageCatalogSummaryDialogComponent implements OnInit {
           });
           this.filteredItems = this.catalogItems;
         }
+        this.cdr.markForCheck();
       });
   }
 

@@ -29,7 +29,7 @@ export class PoolWarningsComponent implements OnInit {
     allowExportedPools: [[] as string[]],
   });
 
-  exportedPoolsWarning = helptext.manager_exportedDisksWarning;
+  exportedPoolsWarning = this.translate.instant(helptext.manager_exportedDisksWarning);
 
   nonUniqueSerialDisks: UnusedDisk[] = [];
   nonUniqueSerialDisksTooltip: string;

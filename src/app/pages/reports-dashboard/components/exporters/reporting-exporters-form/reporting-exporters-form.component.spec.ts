@@ -87,8 +87,8 @@ describe('ReportingExportersFormComponent', () => {
       });
 
       await form.fillForm({
-        'Secret access key id': 'abcd',
-        'Access key id': 'abcde',
+        'Secret Access Key Id': 'abcd',
+        'Access Key Id': 'abcde',
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -135,22 +135,22 @@ describe('ReportingExportersFormComponent', () => {
         Name: existingExporter.name,
         Type: existingExporter.type,
         Enable: existingExporter.enabled,
-        'Secret access key id': existingExporter.attributes.secret_access_key,
-        'Access key id': existingExporter.attributes.access_key_id,
+        'Secret Access Key Id': existingExporter.attributes.secret_access_key,
+        'Access Key Id': existingExporter.attributes.access_key_id,
       });
 
       expect(disabledState).toEqual({
         Name: false,
         Type: false,
-        'Access key id': false,
-        'Secret access key id': false,
+        'Access Key Id': false,
+        'Secret Access Key Id': false,
         Enable: false,
       });
     });
 
     it('edits exporter when form is submitted', async () => {
       await form.fillForm({
-        'Access key id': 'efghi',
+        'Access Key Id': 'efghi',
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));

@@ -27,6 +27,7 @@ import { ResizedEvent } from 'angular-resize-event';
 import { uniqBy } from 'lodash';
 import { Subject, Subscription } from 'rxjs';
 import {
+  debounceTime,
   distinctUntilChanged,
   filter,
   map,
@@ -304,9 +305,10 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   private listenForDatasetScrolling(): void {
     this.subscription.add(
       this.scrollSubject
-        .pipe(distinctUntilChanged(), untilDestroyed(this))
+        .pipe(debounceTime(5), untilDestroyed(this))
         .subscribe({
           next: (scrollLeft: number) => {
+            this.window.dispatchEvent(new Event('resize'));
             this.ixTreeHeader.nativeElement.scrollLeft = scrollLeft;
             this.ixTree.nativeElement.scrollLeft = scrollLeft;
           },

@@ -5,7 +5,6 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import _ from 'lodash';
 import {
   combineLatest, EMPTY, forkJoin, Observable, of,
 } from 'rxjs';
@@ -25,6 +24,7 @@ import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
+import { selectService } from 'app/store/services/services.selectors';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
@@ -132,12 +132,11 @@ export class StorageSettingsFormComponent implements OnInit {
   private confirmSmbRestartIfNeeded(): Observable<boolean> {
     this.isFormLoading = true;
     this.cdr.markForCheck();
-    return this.ws.call('service.query').pipe(
-      switchMap((services) => {
+    return this.store$.select(selectService(ServiceName.Cifs)).pipe(
+      switchMap((smbService) => {
         this.isFormLoading = false;
         this.cdr.markForCheck();
 
-        const smbService = _.find(services, { service: ServiceName.Cifs });
         if (smbService.state === ServiceStatus.Running) {
           return this.dialogService.confirm({
             title: this.translate.instant('Restart SMB Service'),

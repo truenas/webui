@@ -42,7 +42,6 @@ import { ReplicationWhatAndWhereComponent } from 'app/pages/data-protection/repl
 import { ReplicationWhenComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-when/replication-when.component';
 import { RsyncTaskCardComponent } from 'app/pages/data-protection/rsync-task/rsync-task-card/rsync-task-card.component';
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
-import { RsyncTaskListComponent } from 'app/pages/data-protection/rsync-task/rsync-task-list/rsync-task-list.component';
 import { ScrubTaskCardComponent } from 'app/pages/data-protection/scrub-task/scrub-task-card/scrub-task-card.component';
 import {
   ScrubTaskFormComponent,
@@ -56,6 +55,9 @@ import { VmwareSnapshotFormComponent } from 'app/pages/data-protection/vmware-sn
 import { VmwareSnapshotListComponent } from 'app/pages/data-protection/vmware-snapshot/vmware-snapshot-list/vmware-snapshot-list.component';
 import { CloudsyncFormComponent } from './cloudsync/cloudsync-form/cloudsync-form.component';
 import { CloudsyncListComponent } from './cloudsync/cloudsync-list/cloudsync-list.component';
+import { CloudsyncWizardComponent } from './cloudsync/cloudsync-wizard/cloudsync-wizard.component';
+import { CloudsyncProviderComponent } from './cloudsync/cloudsync-wizard/steps/cloudsync-provider/cloudsync-provider.component';
+import { CloudsyncWhatAndWhenComponent } from './cloudsync/cloudsync-wizard/steps/cloudsync-what-and-when/cloudsync-what-and-when.component';
 import { dataProtectionRoutes } from './data-protection.routing';
 import { ReplicationFormComponent } from './replication/replication-form/replication-form.component';
 import { GeneralSectionComponent } from './replication/replication-form/sections/general-section/general-section.component';
@@ -64,6 +66,7 @@ import { SourceSectionComponent } from './replication/replication-form/sections/
 import { TargetSectionComponent } from './replication/replication-form/sections/target-section/target-section.component';
 import { ReplicationListComponent } from './replication/replication-list/replication-list.component';
 import { ReplicationWizardComponent } from './replication/replication-wizard/replication-wizard.component';
+import { RsyncTaskListComponent } from './rsync-task/rsync-task-list/rsync-task-list.component';
 import { ResilverConfigComponent } from './scrub-task/resilver-config/resilver-config.component';
 import { ScrubListComponent } from './scrub-task/scrub-list/scrub-list.component';
 import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-list.component';
@@ -128,7 +131,11 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
     ReplicationTaskCardComponent,
     ScrubTaskCardComponent,
     SnapshotTaskCardComponent,
+    CloudsyncWizardComponent,
+    CloudsyncProviderComponent,
+    CloudsyncWhatAndWhenComponent,
     ScrubListComponent,
+    RsyncTaskListComponent,
   ],
 })
 export class DataProtectionModule {}

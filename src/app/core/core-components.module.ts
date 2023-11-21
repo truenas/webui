@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatButtonModule } from '@angular/material/button';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
@@ -39,6 +40,7 @@ import { CleanLinkPipe } from './pipes/clean-link.pipe';
     RouterModule,
     CommonDirectivesModule,
     TestIdModule,
+    MatMenuModule,
   ],
   declarations: [
     TextLimiterDirective,

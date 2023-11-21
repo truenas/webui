@@ -1,39 +1,40 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { ActiveDirectoryComponent } from 'app/pages/directory-service/components/active-directory/active-directory.component';
 import IdmapListComponent from 'app/pages/directory-service/components/idmap-list/idmap-list.component';
 import KerberosKeytabsListComponent from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-list/kerberos-keytabs-list.component';
 import KerberosRealmsListComponent from 'app/pages/directory-service/components/kerberos-realms/kerberos-realms-list.component';
-import { DirectoryServicesComponent } from 'app/pages/directory-service/directory-services.component';
 import { LdapComponent } from './components/ldap/ldap.component';
 
 export const routes: Routes = [{
   path: '',
-  data: { title: 'Directory Services' },
+  data: { title: T('Directory Services') },
   children: [
     {
       path: '',
-      component: DirectoryServicesComponent,
+      redirectTo: '/credentials/directory-services',
+      pathMatch: 'full',
     }, {
       path: 'ldap',
       component: LdapComponent,
-      data: { title: 'LDAP', breadcrumb: 'LDAP', icon: 'device_hub' },
+      data: { title: T('LDAP'), breadcrumb: null, icon: 'device_hub' },
     }, {
       path: 'activedirectory',
       component: ActiveDirectoryComponent,
-      data: { title: 'Active Directory', breadcrumb: 'Active Directory', icon: 'apps' },
+      data: { title: T('Active Directory'), breadcrumb: null, icon: 'apps' },
     }, {
       path: 'idmap',
       component: IdmapListComponent,
-      data: { title: 'Idmap', breadcrumb: 'Idmap' },
+      data: { title: T('Idmap'), breadcrumb: null },
     }, {
       path: 'kerberosrealms',
       component: KerberosRealmsListComponent,
-      data: { title: 'Kerberos Realms', breadcrumb: 'Kerberos Realms', icon: 'apps' },
+      data: { title: T('Kerberos Realms'), breadcrumb: null, icon: 'apps' },
     }, {
       path: 'kerberoskeytabs',
       component: KerberosKeytabsListComponent,
-      data: { title: 'Kerberos Keytab', breadcrumb: 'Kerberos Keytab', icon: 'apps' },
+      data: { title: T('Kerberos Keytab'), breadcrumb: null, icon: 'apps' },
     }],
 }];
 export const routing: ModuleWithProviders<RouterModule> = RouterModule.forChild(routes);

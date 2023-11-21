@@ -20,6 +20,7 @@ import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { StorageSettingsFormComponent } from 'app/pages/system/advanced/storage/storage-settings-form/storage-settings-form.component';
 import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { selectServices } from 'app/store/services/services.selectors';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 describe('SystemDatasetPoolComponent', () => {
@@ -34,12 +35,6 @@ describe('SystemDatasetPoolComponent', () => {
     ],
     providers: [
       mockWebsocket([
-        mockCall('service.query', [
-          {
-            service: ServiceName.Cifs,
-            state: ServiceStatus.Running,
-          },
-        ] as Service[]),
         mockCall('systemdataset.pool_choices', {
           'current-pool': 'current-pool',
           'new-pool': 'new-pool',
@@ -62,6 +57,13 @@ describe('SystemDatasetPoolComponent', () => {
             value: {
               swapondrive: 5,
             },
+          },
+          {
+            selector: selectServices,
+            value: [{
+              service: ServiceName.Cifs,
+              state: ServiceStatus.Running,
+            } as Service],
           },
         ],
       }),

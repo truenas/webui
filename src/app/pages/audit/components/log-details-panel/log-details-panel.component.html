@@ -1,0 +1,25 @@
+<div class="header">
+  <h2 class="title">
+    <div class="mobile-prefix">
+      <a
+        tabindex="0"
+        class="mobile-back-button"
+        ixTest="disk-details-back"
+        (click)="onCloseMobileDetails()"
+        (keydown.enter)="onCloseMobileDetails()"
+      >
+        <ix-icon name="mdi-chevron-left"></ix-icon>
+      </a>
+      {{ 'Log Details' | translate }}
+    </div>
+
+    <span class="prefix">{{ 'Log Details' | translate }}</span>
+  </h2>
+</div>
+
+<div class="cards">
+  <div class="scroll-window">
+    <ix-metadata-details-card [log]="log"></ix-metadata-details-card>
+    <ix-event-data-details-card [log]="log"></ix-event-data-details-card>
+  </div>
+</div>

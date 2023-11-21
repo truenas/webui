@@ -39,7 +39,7 @@ export class PoolManagerValidationService {
     private addVdevsStore: AddVdevsStore,
   ) {}
 
-  exportedPoolsWarning = helptext.manager_exportedSelectedDisksWarning;
+  exportedPoolsWarning = this.translate.instant(helptext.manager_exportedSelectedDisksWarning);
 
   readonly poolCreationErrors$ = combineLatest([
     this.addVdevsStore.pool$,

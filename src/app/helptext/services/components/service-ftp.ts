@@ -50,7 +50,7 @@ export default {
   tls_policy_tooltip: T('Define whether the control channel, \
  data channel, both channels, or neither channel of an FTP \
  session must occur over SSL/TLS. The policies are described \
- <a href="http://www.proftpd.org/docs/directives/linked/config_ref_TLSRequired.html"\
+ <a href="http://www.proftpd.org/docs/directives/configuration_full.html#TLSREQUIRED"\
  target="_blank">here</a>'),
 
   tls_policy_options: [

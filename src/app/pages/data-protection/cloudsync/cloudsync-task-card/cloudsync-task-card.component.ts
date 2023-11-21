@@ -1,9 +1,11 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { EMPTY, catchError, filter, map, of, switchMap, tap } from 'rxjs';
+import { FromWizardToAdvancedSubmitted } from 'app/enums/from-wizard-to-advanced.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import helptext_cloudsync from 'app/helptext/data-protection/cloudsync/cloudsync-form';
@@ -23,12 +25,14 @@ import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-cront
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { CloudsyncRestoreDialogComponent } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
+import { CloudsyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
+import { fromWizardToAdvancedFormSubmitted } from 'app/store/admin-panel/admin.actions';
 
 @UntilDestroy()
 @Component({
@@ -77,7 +81,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
         {
           iconName: 'edit',
           tooltip: this.translate.instant('Edit'),
-          onClick: (row) => this.openForm(row),
+          onClick: (row) => this.onEdit(row),
         },
         {
           iconName: 'play_arrow',
@@ -121,6 +125,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
     private store$: Store<AppState>,
     private snackbar: SnackbarService,
     private matDialog: MatDialog,
+    private actions$: Actions,
     protected emptyService: EmptyService,
   ) {}
 
@@ -132,6 +137,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
     );
     this.dataProvider = new AsyncDataProvider<CloudSyncTaskUi>(cloudsyncTasks$);
     this.getCloudSyncTasks();
+    this.listenForWizardToAdvancedSwitching();
   }
 
   getCloudSyncTasks(): void {
@@ -158,9 +164,16 @@ export class CloudSyncTaskCardComponent implements OnInit {
     });
   }
 
-  openForm(row?: CloudSyncTaskUi): void {
-    const slideInRef = this.slideInService.open(CloudsyncFormComponent, { data: row, wide: true });
+  onAdd(): void {
+    const slideInRef = this.slideInService.open(CloudsyncWizardComponent, { wide: true });
 
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+      this.getCloudSyncTasks();
+    });
+  }
+
+  onEdit(row?: CloudSyncTaskUi): void {
+    const slideInRef = this.slideInService.open(CloudsyncFormComponent, { data: row, wide: true });
     slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.getCloudSyncTasks();
     });
@@ -292,5 +305,13 @@ export class CloudSyncTaskCardComponent implements OnInit {
           this.dialogService.error(this.errorHandler.parseWsError(err));
         },
       });
+  }
+
+  private listenForWizardToAdvancedSwitching(): void {
+    this.actions$.pipe(
+      ofType(fromWizardToAdvancedFormSubmitted),
+      filter(({ formType }) => formType === FromWizardToAdvancedSubmitted.CloudSyncTask),
+      untilDestroyed(this),
+    ).subscribe(() => this.getCloudSyncTasks());
   }
 }

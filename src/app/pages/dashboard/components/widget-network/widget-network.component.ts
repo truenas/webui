@@ -223,8 +223,8 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
           if (usageUpdate.link_state) {
             nicInfo.state = usageUpdate.link_state;
           }
-          nicInfo.in = usageUpdate.received_bytes_rate * KiB;
-          nicInfo.out = usageUpdate.sent_bytes_rate * KiB;
+          nicInfo.in = usageUpdate.received_bytes_rate;
+          nicInfo.out = usageUpdate.sent_bytes_rate;
 
           if (
             usageUpdate.sent_bytes !== undefined

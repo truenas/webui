@@ -4,10 +4,14 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { ServiceName } from 'app/enums/service-name.enum';
+import { ServiceStatus } from 'app/enums/service-status.enum';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
+import { Service } from 'app/interfaces/service.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
@@ -15,16 +19,13 @@ import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-t
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { NfsCardComponent } from 'app/pages/sharing/components/shares-dashboard/nfs-card/nfs-card.component';
-import {
-  ServiceExtraActionsComponent,
-} from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-extra-actions.component';
-import {
-  ServiceStateButtonComponent,
-} from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
+import { ServiceExtraActionsComponent } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-extra-actions.component';
+import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { selectServices } from 'app/store/services/services.selectors';
 
 describe('NfsCardComponent', () => {
   let spectator: Spectator<NfsCardComponent>;
@@ -82,6 +83,19 @@ describe('NfsCardComponent', () => {
         open: jest.fn(() => ({
           afterClosed: () => of(true),
         })),
+      }),
+      provideMockStore({
+        selectors: [
+          {
+            selector: selectServices,
+            value: [{
+              id: 4,
+              service: ServiceName.Nfs,
+              state: ServiceStatus.Stopped,
+              enable: false,
+            } as Service],
+          },
+        ],
       }),
     ],
   });

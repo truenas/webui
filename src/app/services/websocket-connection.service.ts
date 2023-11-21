@@ -3,7 +3,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { UUID } from 'angular2-uuid';
 import { environment } from 'environments/environment';
 import {
-  BehaviorSubject, EMPTY, interval, NEVER, Observable, of, switchMap, tap, timer,
+  BehaviorSubject, interval, NEVER, Observable, of, switchMap, tap, timer,
 } from 'rxjs';
 import { webSocket as rxjsWebsocket, WebSocketSubject } from 'rxjs/webSocket';
 import { IncomingApiMessageType, OutgoingApiMessageType } from 'app/enums/api-message-type.enum';
@@ -79,7 +79,6 @@ export class WebsocketConnectionService {
       switchMap((data: IncomingWebsocketMessage) => {
         if (this.hasAuthError(data)) {
           this.ws$.complete();
-          return EMPTY;
         }
         return of(data);
       }),

@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { helptextSharingSmb } from 'app/helptext/sharing';
@@ -13,6 +13,7 @@ interface RestartDialogData {
 
 @Component({
   templateUrl: './restart-smb-dialog.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RestartSmbDialogComponent {
   readonly helptext = helptextSharingSmb;

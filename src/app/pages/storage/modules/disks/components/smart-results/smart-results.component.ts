@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -18,6 +18,7 @@ interface SmartTestResultsRow extends SmartTestResult {
 @UntilDestroy()
 @Component({
   template: '<ix-entity-table [conf]="this"></ix-entity-table>',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SmartResultsComponent implements EntityTableConfig {
   title = 'S.M.A.R.T. test results';

@@ -198,6 +198,7 @@ describe('PoolManagerComponent – creating dRAID pool', () => {
         ],
         cache: [],
         dedup: [],
+        spares: [],
         log: [],
         special: [],
       },

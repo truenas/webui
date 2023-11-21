@@ -1,7 +1,8 @@
 import {
-  ChangeDetectionStrategy, Component, Input, OnChanges, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -17,6 +18,7 @@ import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-t
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
 import { ReplicationService } from 'app/services/replication.service';
 
+@UntilDestroy()
 @Component({
   selector: 'ix-replication-target-section',
   styleUrls: ['./target-section.component.scss'],
@@ -61,6 +63,7 @@ export class TargetSectionComponent implements OnInit, OnChanges {
     private formBuilder: FormBuilder,
     private translate: TranslateService,
     private replicationService: ReplicationService,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   get hasEncryption(): boolean {
@@ -91,6 +94,11 @@ export class TargetSectionComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.setRetentionPolicyOptions();
+
+    this.form.controls.retention_policy.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+      this.form.updateValueAndValidity();
+      this.cdr.markForCheck();
+    });
   }
 
   getPayload(): Partial<ReplicationCreate> {

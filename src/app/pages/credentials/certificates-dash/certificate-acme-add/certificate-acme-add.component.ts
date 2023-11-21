@@ -89,7 +89,10 @@ export class CertificateAcmeAddComponent {
     this.isLoading = true;
     this.cdr.markForCheck();
 
-    const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: 'Creating ACME Certificate' }, disableClose: true });
+    const dialogRef = this.matDialog.open(
+      EntityJobComponent,
+      { data: { title: this.translate.instant('Creating ACME Certificate') }, disableClose: true },
+    );
     dialogRef.componentInstance.setCall('certificate.create', [payload]);
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
