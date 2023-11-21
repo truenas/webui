@@ -37,7 +37,6 @@ export class AdvancedSearchAutocompleteService<T> {
       suggestions$.pipe(
         map((suggestions) => ({
           from,
-          to,
           options: uniqBy(suggestions, 'label')
             .filter((suggestion) => {
               return suggestion.label && (
@@ -91,15 +90,17 @@ export class AdvancedSearchAutocompleteService<T> {
 
     const needCurrentCursorPosition = (this.isComparator(lastToken) || query[cursorPosition - 1] === ' ');
 
-    const startPosition = needCurrentCursorPosition ? cursorPosition : cursorPosition - lastToken?.length;
+    const startPosition = needCurrentCursorPosition
+      ? cursorPosition
+      : (lastToken?.trim()?.lastIndexOf(' ') + 1 + cursorPosition - lastToken?.length);
 
     return {
+      lastToken,
+      tokens,
+      startPosition,
+      query,
       type: contextType,
-      lastToken: lastToken,
-      tokens: tokens,
-      startPosition: startPosition,
       endPosition: cursorPosition,
-      query: query,
     };
   }
 
