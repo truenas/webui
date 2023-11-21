@@ -99,6 +99,7 @@
   "Dashboard settings saved": "",
   "Data Devices": "",
   "Data is identical in each disk. A mirror requires at least two disks, provides the most redundancy, and has the least capacity.": "",
+  "Dataset has no mountpoint": "",
   "Dataset locked": "",
   "Dataset «{name}» updated.": "",
   "De-duplication tables are stored on this special VDEV type. These VDEVs must be sized to X GiB for each X TiB of general storage.": "",

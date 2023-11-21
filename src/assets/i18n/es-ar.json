@@ -289,6 +289,7 @@
   "Data is identical in each disk. A mirror requires at least two disks, provides the most redundancy, and has the least capacity.": "",
   "Dataset Details": "",
   "Dataset Space Management": "",
+  "Dataset has no mountpoint": "",
   "Dataset is shared via NFS": "",
   "Dataset is shared via SMB": "",
   "Dataset is shared via SMB as {shares}": "",

@@ -437,6 +437,7 @@
   "Dataset Name": "",
   "Dataset Rollback From Snapshot": "",
   "Dataset Space Management": "",
+  "Dataset has no mountpoint": "",
   "Dataset is currently locked": "",
   "Dataset is shared via NFS": "",
   "Dataset is shared via SMB": "",
