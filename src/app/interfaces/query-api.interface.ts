@@ -3,9 +3,13 @@
  * https://github.com/truenas/middleware/blob/master/src/middlewared/middlewared/apidocs/templates/websocket/query.md
  */
 export type QueryParams<T, ExtraOptions = Record<string, unknown>> = [
-  (QueryFilter<T>[] | ['OR', QueryFilter<T>[]])?,
+  QueryFilters<T>?,
   (QueryOptions<T> & ExtraOptions)?,
 ];
+
+export type QueryFilters<T> = (QueryFilter<T> | OrQueryFilter<T>)[];
+
+export type OrQueryFilter<T> = ['OR', QueryFilter<T>[]];
 
 /**
  * TODO: First element is not a string, but a property path of T.
@@ -14,7 +18,7 @@ export type QueryParams<T, ExtraOptions = Record<string, unknown>> = [
  * TODO: Potentially may be able to type unknown.
  */
 // eslint-disable-next-line unused-imports/no-unused-vars
-export type QueryFilter<T> = [string, QueryOperator, unknown];
+export type QueryFilter<T> = [string, QueryComparator, unknown];
 
 export interface QueryOptions<T> {
   /**
@@ -43,7 +47,7 @@ export interface QueryOptions<T> {
   order_by?: (keyof T | `-${Extract<keyof T, string>}`)[];
 }
 
-export type QueryOperator =
+export type QueryComparator =
   | '='
   | '!='
   | '>'

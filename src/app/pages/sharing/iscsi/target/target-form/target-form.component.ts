@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -17,6 +18,8 @@ import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-sl
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IscsiService } from 'app/services/iscsi.service';
 import { WebSocketService } from 'app/services/ws.service';
+
+const allInitatorsAllowed = T('ALL Initiators Allowed');
 
 @UntilDestroy()
 @Component({
@@ -50,11 +53,13 @@ export class TargetFormComponent implements OnInit {
       return opts;
     }),
   );
-  readonly initiators$ = this.iscsiService.listInitiators().pipe(
+  readonly initiators$ = this.iscsiService.getInitiators().pipe(
     map((initiators) => {
       const opts: Option[] = [];
       initiators.forEach((initiator) => {
-        const initiatorsAllowed = initiator.initiators.length === 0 ? 'ALL Initiators Allowed' : initiator.initiators.toString();
+        const initiatorsAllowed = initiator.initiators.length === 0
+          ? allInitatorsAllowed
+          : initiator.initiators.toString();
         const optionLabel = `${initiator.id} (${initiatorsAllowed})`;
         opts.push({ label: optionLabel, value: initiator.id });
       });

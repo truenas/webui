@@ -6,6 +6,7 @@ import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
   BehaviorSubject,
@@ -14,6 +15,7 @@ import {
 import { DatasetSource } from 'app/enums/dataset.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
+import { FromWizardToAdvancedSubmitted } from 'app/enums/from-wizard-to-advanced.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { SnapshotNamingOption } from 'app/enums/snapshot-naming-option.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
@@ -39,6 +41,8 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 import { ReplicationService } from 'app/services/replication.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { AppState } from 'app/store';
+import { fromWizardToAdvancedFormSubmitted } from 'app/store/admin-panel/admin.actions';
 
 @UntilDestroy()
 @Component({
@@ -146,6 +150,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     private matDialog: MatDialog,
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
+    private store$: Store<AppState>,
     private viewContainerRef: ViewContainerRef,
   ) {}
 
@@ -489,19 +494,23 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   }
 
   loadReplicationTask(task: ReplicationTask): void {
+    if (!task) {
+      return;
+    }
+
     if (task.direction === Direction.Push) {
       this.form.patchValue({
         source_datasets_from: DatasetSource.Local,
         target_dataset_from: task.ssh_credentials ? DatasetSource.Remote : DatasetSource.Local,
       });
       if (task.ssh_credentials) {
-        this.form.controls.ssh_credentials_target.setValue(task.ssh_credentials.id);
+        this.form.controls.ssh_credentials_target.setValue(task.ssh_credentials?.id);
       }
     } else {
       this.form.patchValue({
         source_datasets_from: DatasetSource.Remote,
         target_dataset_from: DatasetSource.Local,
-        ssh_credentials_source: task.ssh_credentials.id,
+        ssh_credentials_source: task.ssh_credentials?.id,
       });
     }
 
@@ -545,7 +554,16 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
 
   openAdvanced(): void {
     this.slideInRef.close();
-    this.slideInService.open(ReplicationFormComponent, { wide: true });
+
+    const slideInRef = this.slideInService.open(ReplicationFormComponent, { wide: true });
+    slideInRef.slideInClosed$.pipe(
+      filter(Boolean),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.store$.dispatch(fromWizardToAdvancedFormSubmitted({
+        formType: FromWizardToAdvancedSubmitted.ReplicationTask,
+      }));
+    });
   }
 
   getSnapshots(): void {

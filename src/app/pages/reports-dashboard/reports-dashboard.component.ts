@@ -5,6 +5,7 @@ import {
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ReportingGraphName } from 'app/enums/reporting.enum';
+import { stringToTitleCase } from 'app/helpers/string-to-title-case';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Option } from 'app/interfaces/option.interface';
 import { ReportTab, ReportType } from 'app/pages/reports-dashboard/interfaces/report-tab.interface';
@@ -155,10 +156,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
     }
   }
 
-  convertToTitleCase(input: string): string {
-    return input.split('_').map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ');
-  }
-
   /**
    * Based on identifiers, create a single dimensional array of reports to render
    * @param list Report[]
@@ -175,7 +172,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
           if (flattenedReport.title.includes('{identifier}')) {
             flattenedReport.title = flattenedReport.title.replace(/{identifier}/, identifier);
           } else {
-            flattenedReport.title = `${flattenedReport.title} - ${this.convertToTitleCase(identifier)}`;
+            flattenedReport.title = `${flattenedReport.title} - ${stringToTitleCase(identifier)}`;
           }
 
           flattenedReport.identifiers = [identifier];

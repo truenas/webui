@@ -260,6 +260,15 @@
         >
           {{ helptext.action_button_dry_run | translate }}
         </button>
+        <button
+          *ngIf="isNew"
+          mat-button
+          type="button"
+          ixTest="switch-to-wizard"
+          (click)="onSwitchToWizard()"
+        >
+          {{ 'Switch To Wizard' | translate }}
+        </button>
       </div>
     </form>
   </mat-card-content>

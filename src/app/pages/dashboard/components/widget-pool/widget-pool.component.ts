@@ -235,7 +235,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     this.checkVolumeHealth(this.poolState);
   }
 
-  getDiskDetails(key: string, value: string): void {
+  getDiskDetails(key: keyof Disk, value: string): void {
     this.ws.call('disk.query', [[[key, '=', value]]]).pipe(untilDestroyed(this)).subscribe((disks) => {
       const currentPath = this.path[this.currentSlideIndex];
       const currentName = (currentPath?.dataSource as TopologyDisk)?.disk || 'unknown';

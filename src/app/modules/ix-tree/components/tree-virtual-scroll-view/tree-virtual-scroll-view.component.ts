@@ -8,9 +8,11 @@ import {
   Component,
   EventEmitter,
   HostBinding,
+  Inject,
   Input,
   IterableDiffers,
   OnChanges,
+  OnInit,
   Output,
   TrackByFunction,
   ViewChild,
@@ -19,6 +21,7 @@ import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { ResizedEvent } from 'angular-resize-event';
 import { animationFrameScheduler, asapScheduler, BehaviorSubject } from 'rxjs';
 import { auditTime, map } from 'rxjs/operators';
+import { WINDOW } from 'app/helpers/window.helper';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { Tree } from 'app/modules/ix-tree/components/tree/tree.component';
 import { TreeNodeOutletDirective } from 'app/modules/ix-tree/directives/tree-node-outlet.directive';
@@ -39,7 +42,7 @@ export const scrollFrameScheduler = typeof requestAnimationFrame !== 'undefined'
     { provide: Tree, useExisting: this },
   ],
 })
-export class TreeVirtualScrollViewComponent<T> extends Tree<T> implements OnChanges {
+export class TreeVirtualScrollViewComponent<T> extends Tree<T> implements OnChanges, OnInit {
   @ViewChild(TreeNodeOutletDirective, { static: true }) readonly nodeOutlet!: TreeNodeOutletDirective<T>;
   @ViewChild(CdkVirtualScrollViewport, { static: true }) readonly virtualScrollViewport!: CdkVirtualScrollViewport;
   @HostBinding('class.ix-tree') get ixTreeClass(): boolean { return true; }
@@ -54,6 +57,7 @@ export class TreeVirtualScrollViewComponent<T> extends Tree<T> implements OnChan
   nodes$ = new BehaviorSubject<TreeVirtualNodeData<T>[]>([]);
   innerTrackBy: TrackByFunction<TreeVirtualNodeData<T>> = (index: number) => index;
   private renderNodeChanges$ = new BehaviorSubject<T[] | readonly T[]>([]);
+  private scrollableElement: HTMLElement | null = null;
 
   get isScrollTopButtonVisible(): boolean {
     return this.virtualScrollViewport.measureScrollOffset('top') > this.ixItemSize * 8;
@@ -62,6 +66,7 @@ export class TreeVirtualScrollViewComponent<T> extends Tree<T> implements OnChan
   constructor(
     protected differs: IterableDiffers,
     protected changeDetectorRef: ChangeDetectorRef,
+    @Inject(WINDOW) private window: Window,
   ) {
     super(differs, changeDetectorRef);
     this.listenForNodeChanges();
@@ -77,13 +82,16 @@ export class TreeVirtualScrollViewComponent<T> extends Tree<T> implements OnChan
     }
   }
 
-  scrollToTop(): void {
-    this.virtualScrollViewport.scrollToIndex(0, 'smooth');
-    this.changeDetectorRef.markForCheck();
+  ngOnInit(): void {
+    this.scrollableElement = document.querySelector('.rightside-content-hold');
+    if (this.scrollableElement) {
+      this.scrollableElement.addEventListener('scroll', this.scrolled.bind(this));
+    }
   }
 
-  scrolled(viewport: CdkVirtualScrollViewport): void {
-    this.viewportScrolled.emit(viewport.elementRef.nativeElement.scrollLeft);
+  scrollToTop(): void {
+    this.scrollableElement?.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+    this.changeDetectorRef.markForCheck();
   }
 
   resized(event: ResizedEvent): void {
@@ -119,5 +127,9 @@ export class TreeVirtualScrollViewComponent<T> extends Tree<T> implements OnChan
       this._dataSourceChanged.next();
       this.changeDetectorRef.markForCheck();
     });
+  }
+
+  private scrolled(): void {
+    this.viewportScrolled.emit(this.virtualScrollViewport.elementRef.nativeElement.scrollLeft);
   }
 }
