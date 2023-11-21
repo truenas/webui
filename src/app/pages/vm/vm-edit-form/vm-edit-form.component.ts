@@ -5,7 +5,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  forkJoin, map, of, switchMap
+  forkJoin, map, of, switchMap,
 } from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
 import {
