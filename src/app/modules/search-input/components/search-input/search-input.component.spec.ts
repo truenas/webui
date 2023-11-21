@@ -6,6 +6,7 @@ import { AdvancedSearchComponent } from 'app/modules/search-input/components/adv
 import { BasicSearchComponent } from 'app/modules/search-input/components/basic-search/basic-search.component';
 import { SearchInputComponent } from 'app/modules/search-input/components/search-input/search-input.component';
 import { SearchInputHarness } from 'app/modules/search-input/components/search-input/search-input.harness';
+import { AdvancedSearchAutocompleteService } from 'app/modules/search-input/services/advanced-search-autocomplete.service';
 import { QueryParserService } from 'app/modules/search-input/services/query-parser/query-parser.service';
 import { QueryToApiService } from 'app/modules/search-input/services/query-to-api/query-to-api.service';
 
@@ -24,6 +25,7 @@ describe('SearchInputComponent', () => {
     providers: [
       QueryToApiService,
       QueryParserService,
+      AdvancedSearchAutocompleteService,
     ],
   });
 
