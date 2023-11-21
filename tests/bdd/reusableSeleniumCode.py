@@ -14,6 +14,11 @@ def Click_Clear_Input(driver, xpath, value):
     driver.find_element_by_xpath(xpath).send_keys(value)
 
 
+def Click_On_Element(driver, xpath):
+    assert wait_on_element(driver, 7, xpath, 'clickable')
+    driver.find_element_by_xpath(xpath).click()
+
+
 def Close_Common_Warning(driver):
     assert wait_on_element(driver, 5, xpaths.popup.warning)
     assert wait_on_element(driver, 5, xpaths.button.close, 'clickable')

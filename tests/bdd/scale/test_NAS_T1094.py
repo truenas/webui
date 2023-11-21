@@ -1,6 +1,7 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
 
+import reusableSeleniumCode as rsc
 import time
 import xpaths
 from function import (
@@ -54,36 +55,80 @@ def you_should_be_on_the_dashboard_click_on_the_accounts_on_the_side_menu_click_
     driver.find_element_by_xpath(xpaths.side_Menu.local_User).click()
 
 
-@when('the Users page should open, click the Greater-Than-Sign, the User Field should expand down, then click the Edit button')
-def the_users_page_should_open_click_the_greaterthansign_the_user_field_should_expand_down_then_click_the_edit_button(driver):
-    """the Users page should open, click the Greater-Than-Sign, the User Field should expand down, then click the Edit button."""
+@then('The Users page should open')
+def the_users_page_should_open(driver):
+    """The Users page should open."""
     assert wait_on_element(driver, 7, xpaths.users.title)
-    assert wait_on_element(driver, 10, xpaths.users.eric_User, 'clickable')
+
+
+@then('On the right side of the table, click the expand arrow for one of the users')
+def on_the_right_side_of_the_table_click_the_expand_arrow_for_one_of_the_users(driver):
+    """On the right side of the table, click the expand arrow for one of the users."""
+    assert wait_on_element(driver, 7, xpaths.users.eric_User, 'clickable')
     driver.find_element_by_xpath(xpaths.users.eric_User).click()
-    assert wait_on_element(driver, 10, xpaths.users.eric_Edit_Button, 'clickable')
+
+
+@then('The User Field should expand down to list further details')
+def the_user_field_should_expand_down_to_list_further_details(driver):
+    """The User Field should expand down to list further details."""
+    assert wait_on_element(driver, 7, xpaths.users.eric_Edit_Button, 'clickable')
+
+
+@then('Click the Edit button that appears')
+def click_the_edit_button_that_appears(driver):
+    """Click the Edit button that appears."""
     driver.find_element_by_xpath(xpaths.users.eric_Edit_Button).click()
 
 
-@then('the User Edit Page should open, change "Disable Password" to No and click save')
-def the_user_edit_page_should_open_change_disable_password_to_no_and_click_save(driver):
-    """the User Edit Page should open, change "Disable Password" to No and click save."""
-    assert wait_on_element(driver, 10, xpaths.add_User.edit_Title)
-    assert wait_on_element_disappear(driver, 10, xpaths.popup.please_Wait)
-    assert wait_on_element(driver, 3, xpaths.add_User.password_Disabled_Slide, 'clickable')
-    driver.find_element_by_xpath(xpaths.add_User.password_Disabled_Slide).click()
-    wait_on_element(driver, 10, xpaths.button.save, 'clickable')
-    driver.find_element_by_xpath(xpaths.button.save).click()
+@then('The User Edit Page should open')
+def the_user_edit_page_should_open(driver):
+    """The User Edit Page should open."""
+    assert wait_on_element(driver, 7, xpaths.add_User.edit_Title)
+    time.sleep(0.5)
 
 
-@then('change should be saved, open the user page and verify the user Disable Password is false')
-def change_should_be_saved_open_the_user_page_and_verify_the_user_disable_password_is_false(driver):
-    """change should be saved, open the user page and verify the user Disable Password is false."""
-    assert wait_on_element_disappear(driver, 20, xpaths.progress.progressbar)
-    assert wait_on_element(driver, 5, xpaths.users.title)
+@then('Enable Samba Authentication disable "Disable Password" toggle')
+def enable_samba_authentication_disable_disable_password_toggle(driver):
+    """Enable Samba Authentication disable "Disable Password" toggle."""
+    assert wait_on_element(driver, 7, xpaths.add_User.identification_Legend)
+    assert wait_on_element(driver, 7, xpaths.add_User.authentication_Legend)
+    rsc.Click_On_Element(driver, xpaths.add_User.password_Disabled_Slide)
+    rsc.Click_On_Element(driver, xpaths.add_User.samba_Authentication_Checkbox)
 
 
-@then('try login with ssh, the user should be able to login')
-def try_login_with_ssh_the_user_should_be_able_to_login(driver, nas_ip):
-    """try login with ssh, the user should be able to login."""
+@then('Enter the Password and and click save')
+def enter_the_password_and_and_click_save(driver):
+    """Enter the Password and and click save."""
+    rsc.Input_Value(driver, xpaths.add_User.password_Input, 'testing')
+    rsc.Input_Value(driver, xpaths.add_User.confirm_Password_Input, 'testing')
+    rsc.Click_On_Element(driver, xpaths.button.save)
+
+
+@then('Change should be saved')
+def change_should_be_saved(driver):
+    """Change should be saved."""
+    assert wait_on_element_disappear(driver, 15, xpaths.progress.progressbar)
+    assert wait_on_element(driver, 7, xpaths.users.title)
+
+
+@then('Open the user drop down to verify the user Disable Password is false')
+def open_the_user_drop_down_to_verify_the_user_disable_password_is_false(driver):
+    """Open the user drop down to verify the user Disable Password is false."""
+    assert wait_on_element(driver, 5, xpaths.users.eric_User, 'clickable')
+    driver.find_element_by_xpath(xpaths.users.eric_User).click()
+    assert wait_on_element(driver, 7, xpaths.users.eric_Edit_Button)
+    assert wait_on_element(driver, 7, xpaths.users.eric_Password_Disable)
+
+
+@then('Updated value should be visible')
+def updated_value_should_be_visible(driver):
+    """Updated value should be visible."""
+    element_text = driver.find_element_by_xpath(xpaths.users.eric_Password_Disable_Text).text
+    assert element_text == 'No'
+
+
+@then('Try login, the user should be able to login')
+def try_login_the_user_should_be_able_to_login(nas_ip):
+    """Try login, the user should be able to login."""
     time.sleep(1)
-    assert ssh_sudo_exptext('sudo ls /var/lib/sudo', nas_ip, 'ericbsd', 'testing', 'lectured')
+    assert ssh_sudo_exptext('ls /var/lib/sudo', nas_ip, 'ericbsd', 'testing', 'lectured')
