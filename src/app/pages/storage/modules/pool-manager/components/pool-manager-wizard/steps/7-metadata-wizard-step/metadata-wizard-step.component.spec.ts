@@ -62,7 +62,7 @@ describe('DataWizardStepComponent', () => {
     expect(layoutComponent.description).toBe(helptext.special_vdev_description);
     expect(layoutComponent.canChangeLayout).toBeTruthy();
     expect(layoutComponent.inventory).toStrictEqual([...fakeInventory]);
-    expect(layoutComponent.limitLayouts).toStrictEqual(Object.values(CreateVdevLayout));
+    expect(layoutComponent.limitLayouts).toStrictEqual([CreateVdevLayout.Mirror, CreateVdevLayout.Stripe]);
     expect(layoutComponent.type).toStrictEqual(VdevType.Special);
   });
 });
