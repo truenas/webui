@@ -456,6 +456,7 @@ export interface ApiDirectory {
 
   // Device
   'device.get_info': { params: [DeviceType]; response: Device[] };
+  'device.get_pci_ids_for_gpu_isolation': { params: [string]; response: string[] };
 
   // Disk
   'disk.query': { params: QueryParams<Disk, ExtraDiskQueryOptions>; response: Disk[] };
