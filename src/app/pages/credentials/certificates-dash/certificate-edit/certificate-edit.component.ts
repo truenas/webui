@@ -70,9 +70,16 @@ export class CertificateEditComponent implements OnInit {
     this.cdr.markForCheck();
   }
 
+  findRenewDaysValue(data: unknown[]): number | null {
+    const itemWithRenewDays = data.find(item => item.hasOwnProperty('renew_days'));
+    return itemWithRenewDays ? (itemWithRenewDays as { renew_days: number }).renew_days : null;
+  }
+
   setRenewDaysForEditIfAvailable(): void {
-    if (this.certificate?.acme) {
-      this.form.addControl('renew_days', new FormControl(this.certificate?.renew_days || null));
+    const initialValue = this.findRenewDaysValue(this.certificate?.signedby?.revoked_certs || []);
+
+    if (this.certificate?.acme || initialValue) {
+      this.form.addControl('renew_days', new FormControl(initialValue));
     }
   }
 
