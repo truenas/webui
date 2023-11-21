@@ -76,11 +76,6 @@ export class CertificateEditComponent implements OnInit {
     this.cdr.markForCheck();
   }
 
-  findRenewDaysValue(data: unknown[]): number | null {
-    const itemWithRenewDays = data.find(item => item.hasOwnProperty('renew_days'));
-    return itemWithRenewDays ? (itemWithRenewDays as { renew_days: number }).renew_days : null;
-  }
-
   setRenewDaysForEditIfAvailable(): void {
     const initialValue = this.findRenewDaysValue(this.certificate?.signedby?.revoked_certs || []);
 
@@ -135,5 +130,10 @@ export class CertificateEditComponent implements OnInit {
           this.errorHandler.handleWsFormError(error, this.form);
         },
       });
+  }
+
+  private findRenewDaysValue(data: unknown[]): number | null {
+    const itemWithRenewDays = data.find(item => item.hasOwnProperty('renew_days'));
+    return itemWithRenewDays ? (itemWithRenewDays as { renew_days: number }).renew_days : null;
   }
 }
