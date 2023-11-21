@@ -15,10 +15,6 @@
   Boolean { "true" | "false" | "TRUE" | "FALSE" }
   Number { $[0-9]+ }
   Null { "null" | "NULL" }
-  Order { "ORDER" | "order" }
-  By { "BY" | "by" }
-  Asc { "ASC" | "asc" }
-  Desc { "DESC" | "desc" }
 
   Comparator {
     "="
@@ -49,7 +45,6 @@
 
 @top Query {
   expression
-  OrderByClause?
 }
 
 @precedence {
@@ -58,11 +53,6 @@
 }
 
 List<item> { item ("," item)* }
-
-OrderByClause {
-  Order By Property (Asc | Desc)?
-  ("," Property (Asc | Desc)?)*
-}
 
 Property {
   UnquotedString | SingleQuotedString | DoubleQuotedString

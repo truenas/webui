@@ -4,7 +4,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { toSvg } from 'jdenticon';
-import { filter } from 'rxjs';
+import { filter, map, of } from 'rxjs';
 import { AuditEvent, auditEventLabels } from 'app/enums/audit-event.enum';
 import { getLogImportantData } from 'app/helpers/get-log-important-data.helper';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -81,39 +81,36 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
       this.expanded(this.dataProvider.expandedRow);
 
       this.searchProperties = searchProperties<AuditEntry>([
-        textProperty(
-          'audit_id',
-          this.translate.instant('ID'),
-          ['=', '!=', '~'],
-          auditEntries.map((log) => `"${log.audit_id}"`),
-        ),
+        textProperty('audit_id', this.translate.instant('ID'), of([])),
         textProperty(
           'message_timestamp',
           this.translate.instant('Timestamp'),
+          of([{
+            label: this.translate.instant('Tomorrow'),
+            value: `"${new Date(new Date().getTime() + (24 * 60 * 60 * 1000)).getUTCDate()}"`,
+          }]),
         ),
         textProperty(
           'address',
           this.translate.instant('Address'),
-          ['=', '!=', '~'],
-          auditEntries.map((log) => `"${log.address}"`),
+          of(auditEntries.map((log) => ({ label: log.address, value: `"${log.address}"` }))),
         ),
         textProperty(
           'service',
           this.translate.instant('Service'),
-          ['=', '!='],
-          auditEntries.map((log) => `"${log.service}"`),
+          of(auditEntries.map((log) => ({ label: log.service, value: `"${log.service}"` }))),
         ),
         textProperty(
           'username',
           this.translate.instant('Username'),
-          ['=', '!='],
-          auditEntries.map((log) => `"${log.username}"`),
+          this.ws.call('user.query').pipe((
+            map((users) => users.map((user) => ({ label: user.username, value: `"${user.username}"` })))
+          )),
         ),
         textProperty(
           'event',
           this.translate.instant('Event'),
-          ['=', '!='],
-          Object.values(AuditEvent).map((value) => `"${value}"`),
+          of(Object.values(AuditEvent).map((value) => ({ label: value, value: `"${value}"` }))),
         ),
       ]);
       this.cdr.markForCheck();

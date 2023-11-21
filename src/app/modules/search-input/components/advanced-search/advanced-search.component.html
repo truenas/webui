@@ -1,5 +1,7 @@
 <span class="prefix-icon">
-  <ix-icon name="mdi-text-search-variant"></ix-icon>
+  <ix-icon *ngIf="!queryInputValue" name="mdi-text-search-variant"></ix-icon>
+  <ix-icon *ngIf="queryInputValue && hasQueryErrors" name="warning"></ix-icon>
+  <ix-icon *ngIf="queryInputValue && !hasQueryErrors" name="done"></ix-icon>
 </span>
 
 <div
