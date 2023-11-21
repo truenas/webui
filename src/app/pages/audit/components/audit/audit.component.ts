@@ -86,7 +86,7 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
           'message_timestamp',
           this.translate.instant('Timestamp'),
           of([{
-            label: this.translate.instant('Tomorrow'),
+            label: 'Tomorrow',
             value: `"${new Date(new Date().getTime() + (24 * 60 * 60 * 1000)).getUTCDate()}"`,
           }]),
         ),
