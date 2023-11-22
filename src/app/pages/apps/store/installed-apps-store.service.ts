@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import { isEqual } from 'lodash';
@@ -26,7 +26,7 @@ const initialState: InstalledAppsState = {
 
 @UntilDestroy()
 @Injectable()
-export class InstalledAppsStore extends ComponentStore<InstalledAppsState> {
+export class InstalledAppsStore extends ComponentStore<InstalledAppsState> implements OnDestroy {
   readonly installedApps$ = this.select((state) => state.installedApps);
   readonly isLoading$ = this.select((state) => state.isLoading);
   private installedAppsSubscription: Subscription;
@@ -171,13 +171,13 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> {
               ...state,
               installedApps: state.installedApps.map(app => {
                 const appWithUpdatedStats = apiEvent.fields.find(item => item.id === app.id);
-                if (isEqual(appWithUpdatedStats.stats, app.stats)) {
+                if (appWithUpdatedStats && isEqual(appWithUpdatedStats.stats, app.stats)) {
                   return app;
                 }
 
                 return {
                   ...app,
-                  stats: appWithUpdatedStats.stats || app.stats,
+                  stats: appWithUpdatedStats?.stats || app.stats,
                 };
               }),
             };
