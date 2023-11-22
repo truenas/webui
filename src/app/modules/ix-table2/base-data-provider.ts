@@ -62,11 +62,6 @@ export class BaseDataProvider<T> implements DataProvider<T> {
     this.updateCurrentPage(this.allRows);
   }
 
-  setExpandedRow(row: T): void {
-    this.expandedRow = row;
-    this.expandedRow$.next(row);
-  }
-
   protected updateCurrentPage(rows: T[]): void {
     this.currentPage$.next(paginate(sort(rows, this.sorting), this.pagination));
   }
