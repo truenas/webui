@@ -9,7 +9,7 @@ import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
-import { SmbLockListComponent } from 'app/pages/sharing/smb/smb-lock-list/smb-lock-list.component';
+import { SmbLockListComponent } from 'app/pages/sharing/smb/smb-status/components/smb-lock-list/smb-lock-list.component';
 
 describe('SmbLockListComponent', () => {
   let spectator: Spectator<SmbLockListComponent>;

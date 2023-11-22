@@ -42,7 +42,7 @@ import { PortalWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/
 import { TargetGlobalConfigurationComponent } from 'app/pages/sharing/iscsi/target-global-configuration/target-global-configuration.component';
 import { NfsListComponent } from 'app/pages/sharing/nfs/nfs-list/nfs-list.component';
 import { RestartSmbDialogComponent } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
-import { SmbLockListComponent } from 'app/pages/sharing/smb/smb-lock-list/smb-lock-list.component';
+import { SmbLockListComponent } from 'app/pages/sharing/smb/smb-status/components/smb-lock-list/smb-lock-list.component';
 import { UserService } from 'app/services/user.service';
 import { ServiceExtraActionsComponent } from './components/shares-dashboard/service-extra-actions/service-extra-actions.component';
 import { ServiceStateButtonComponent } from './components/shares-dashboard/service-state-button/service-state-button.component';
@@ -63,6 +63,7 @@ import { routing } from './sharing.routing';
 import { SmbAclComponent } from './smb/smb-acl/smb-acl.component';
 import { SmbFormComponent } from './smb/smb-form/smb-form.component';
 import { SmbListComponent } from './smb/smb-list/smb-list.component';
+import { SmbOpenFilesComponent } from './smb/smb-status/components/smb-open-files/smb-open-files.component';
 import { SmbSessionListComponent } from './smb/smb-status/components/smb-session-list/smb-session-list.component';
 import { SmbStatusComponent } from './smb/smb-status/smb-status.component';
 
@@ -136,9 +137,10 @@ import { SmbStatusComponent } from './smb/smb-status/smb-status.component';
     SmbSessionListComponent,
     SmbLockListComponent,
     SmbStatusComponent,
+    SmbOpenFilesComponent,
   ],
   providers: [
-    UserService,
+    UserService, // TODO: Check if can be removed since service is singleton
   ],
 })
 export class SharingModule {
