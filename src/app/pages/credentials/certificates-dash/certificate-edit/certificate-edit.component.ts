@@ -78,7 +78,7 @@ export class CertificateEditComponent implements OnInit {
 
   setRenewDaysForEditIfAvailable(): void {
     if (this.certificate?.acme) {
-      this.form.addControl('renew_days', new FormControl(this.certificate.renew_days || null));
+      this.form.addControl('renew_days', new FormControl(this.certificate?.renew_days || null));
     }
   }
 
@@ -128,10 +128,5 @@ export class CertificateEditComponent implements OnInit {
           this.errorHandler.handleWsFormError(error, this.form);
         },
       });
-  }
-
-  private findRenewDaysValue(data: unknown[]): number | null {
-    const itemWithRenewDays = data.find(item => item.hasOwnProperty('renew_days'));
-    return itemWithRenewDays ? (itemWithRenewDays as { renew_days: number }).renew_days : null;
   }
 }
