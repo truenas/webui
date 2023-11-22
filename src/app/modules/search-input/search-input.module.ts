@@ -11,7 +11,7 @@ import {
   OptionsSuggestionsComponent,
 } from 'app/modules/search-input/components/options-suggestions/options-suggestions.component';
 import { QueryParserService } from 'app/modules/search-input/services/query-parser/query-parser.service';
-import { SearchQueryService } from 'app/modules/search-input/services/search-query.service';
+import { QueryToApiService } from 'app/modules/search-input/services/query-to-api/query-to-api.service';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { SearchInputComponent } from './components/search-input/search-input.component';
 
@@ -36,8 +36,8 @@ import { SearchInputComponent } from './components/search-input/search-input.com
     BasicSearchComponent,
   ],
   providers: [
-    SearchQueryService,
     QueryParserService,
+    QueryToApiService,
   ],
 })
 export class SearchInputModule {

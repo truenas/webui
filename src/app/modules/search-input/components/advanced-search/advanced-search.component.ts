@@ -13,6 +13,7 @@ import { EditorView } from '@codemirror/view';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { QueryParserService } from 'app/modules/search-input/services/query-parser/query-parser.service';
+import { QueryToApiService } from 'app/modules/search-input/services/query-to-api/query-to-api.service';
 import { SearchProperty } from 'app/modules/search-input/types/search-property.interface';
 
 @Component({
@@ -25,7 +26,7 @@ export class AdvancedSearchComponent<T> implements OnInit, OnChanges {
   @Input() query: QueryFilters<T> = [];
   @Input() properties: SearchProperty<T>[] = [];
 
-  @Output() queryChange = new EventEmitter<QueryFilters<T>>();
+  @Output() paramsChange = new EventEmitter<QueryFilters<T>>();
   @Output() switchToBasic = new EventEmitter<void>();
 
   @ViewChild('inputArea', { static: true }) inputArea: ElementRef<HTMLElement>;
@@ -34,6 +35,7 @@ export class AdvancedSearchComponent<T> implements OnInit, OnChanges {
 
   constructor(
     private queryParser: QueryParserService,
+    private queryToApi: QueryToApiService<T>,
   ) {}
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
@@ -49,7 +51,7 @@ export class AdvancedSearchComponent<T> implements OnInit, OnChanges {
 
   protected onResetInput(): void {
     this.setEditorContents('');
-    this.queryChange.emit([]);
+    this.paramsChange.emit([]);
   }
 
   private initEditor(): void {
@@ -75,10 +77,17 @@ export class AdvancedSearchComponent<T> implements OnInit, OnChanges {
   private onInputChanged(): void {
     const query = this.editorView.state.doc.toString();
     const parsedQuery = this.queryParser.parseQuery(query);
-    // TODO:
+    if (parsedQuery.hasErrors) {
+      // TODO: Handle errors.
+      return;
+    }
+
+    const filters = this.queryToApi.buildFilters(parsedQuery, this.properties);
+
+    // TODO: Remove before merge
     // eslint-disable-next-line no-console
-    console.log(parsedQuery);
-    // this.queryChange.emit(parsedQuery);
+    console.log(JSON.stringify(filters));
+    this.paramsChange.emit(filters);
   }
 
   private setEditorContents(contents: string): void {
