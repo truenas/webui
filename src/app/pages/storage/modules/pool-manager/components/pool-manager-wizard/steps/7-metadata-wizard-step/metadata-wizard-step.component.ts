@@ -19,13 +19,14 @@ export class MetadataWizardStepComponent implements OnInit {
   @Input() stepWarning: string | null;
   @Output() goToLastStep = new EventEmitter<void>();
 
+  canChangeLayout = true;
+
   protected readonly VdevType = VdevType;
   readonly helptext = helptext;
 
-  canChangeLayout = true;
   protected readonly inventory$ = this.store.getInventoryForStep(VdevType.Special);
+  protected allowedLayouts = [CreateVdevLayout.Mirror, CreateVdevLayout.Stripe];
 
-  protected allowedLayouts = Object.values(CreateVdevLayout);
   constructor(
     private addVdevsStore: AddVdevsStore,
     private store: PoolManagerStore,

@@ -2,8 +2,8 @@
   [description]="helptext.dedup_vdev_description | translate"
   [type]="VdevType.Dedup"
   [inventory]="inventory$ | async"
-  [canChangeLayout]="false"
-  [limitLayouts]="dataVdevLayout$ | async"
+  [canChangeLayout]="canChangeLayout"
+  [limitLayouts]="allowedLayouts"
   [isStepActive]="isStepActive"
 ></ix-layout-step>
 
