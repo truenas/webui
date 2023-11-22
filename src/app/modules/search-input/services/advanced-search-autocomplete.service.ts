@@ -41,8 +41,8 @@ export class AdvancedSearchAutocompleteService<T> {
           options: uniqBy(suggestions, 'label')
             .filter((suggestion) => {
               return suggestion.label && (
-                suggestion.label.toLowerCase().startsWith(currentToken?.text.toLowerCase()) ||
-                suggestion.value.toString().toLowerCase().startsWith(currentToken?.text.toLowerCase())
+                suggestion.label.toUpperCase().startsWith(currentToken?.text.toUpperCase()) ||
+                suggestion.value.toString().toUpperCase().startsWith(currentToken?.text.toUpperCase())
               );
             })
             .map((suggestion) => ({
@@ -77,13 +77,19 @@ export class AdvancedSearchAutocompleteService<T> {
     const isLogicalOperatorType = this.isCompleteExpression(tokens, cursorPosition, query) &&
       !this.isPartiallyLogicalOperator(lastToken);
 
-    const isComparatorType = ((!this.isPartiallyComparator(secondLastToken) &&
-      !this.isPartiallyLogicalOperator(secondLastToken) &&
-      !this.isPartiallyLogicalOperator(lastToken) &&
-      secondLastToken?.length > 0) || (
-      lastToken?.length > 0 &&
+    const isComparatorType = (
+      (
+        !this.isPartiallyComparator(secondLastToken) &&
+        !this.isPartiallyLogicalOperator(secondLastToken) &&
+        !this.isPartiallyLogicalOperator(lastToken) &&
+        secondLastToken?.length > 0
+      ) || (
+        lastToken?.length > 0 &&
         (lastToken?.length > 0 && (cursorPosition > 0 && query[cursorPosition - 1] === ' ' && query[cursorPosition] !== ')'))
-    )) && !isLogicalOperatorType;
+      ) || (
+        this.isProperty(lastToken) && query[cursorPosition - 1] !== ' '
+      )
+    ) && !isLogicalOperatorType;
 
     if (isPropertyType) {
       contextType = ContextType.Property;
@@ -117,14 +123,18 @@ export class AdvancedSearchAutocompleteService<T> {
     const thirdLastToken = tokens[tokens.length - 3];
 
     return (
-      (thirdLastToken?.length > 0 && (
-        this.isPartiallyComparator(secondLastToken) &&
+      (
+        thirdLastToken?.length > 0 && (
+          this.isPartiallyComparator(secondLastToken) &&
           lastToken.length > 0 &&
-          query[cursorPosition - 1] === ' ' && query[cursorPosition] !== ')'
-      )) ||
-      (lastToken?.length > 0 &&
-       secondLastToken?.length > 0 &&
-       this.isPartiallyComparator(thirdLastToken)
+          query[cursorPosition - 1] === ' '
+          && query[cursorPosition] !== ')'
+        )
+      ) ||
+      (
+        lastToken?.length > 0 &&
+        secondLastToken?.length > 0 &&
+        this.isPartiallyComparator(thirdLastToken)
       )
     );
   }
@@ -135,6 +145,10 @@ export class AdvancedSearchAutocompleteService<T> {
 
   private isPartiallyLogicalOperator(token: string): boolean {
     return logicalSuggestions.map((item) => item?.toUpperCase())?.includes(token?.toUpperCase());
+  }
+
+  private isProperty(token: string): boolean {
+    return this.properties.some(property => property.label === token);
   }
 
   private generateSuggestionsBasedOnContext(context: QueryContext): Observable<Option[]> {
@@ -152,8 +166,9 @@ export class AdvancedSearchAutocompleteService<T> {
           secondLastToken?.toUpperCase() === 'IN' || secondLastToken?.toUpperCase() === 'NIN';
 
         const searchedProperty = this.properties?.find((property) =>
-          property.label === lastToken ||
-          (property.label === secondLastToken && this.isPartiallyComparator(thirdLastToken?.toUpperCase())),
+          property.label?.toUpperCase() === lastToken?.toUpperCase() ||
+          (property.label?.toUpperCase() === secondLastToken?.toUpperCase() &&
+          this.isPartiallyComparator(thirdLastToken?.toUpperCase())),
         );
 
         if (isInOrNin && !thirdLastToken.startsWith('(') && searchedProperty) {
