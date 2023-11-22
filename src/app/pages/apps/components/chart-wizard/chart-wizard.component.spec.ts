@@ -59,24 +59,6 @@ const appVersion121 = {
     ],
     questions: [
       {
-        description: 'Please specify type of workload to deploy',
-        group: 'Workload Details',
-        label: 'Workload Type',
-        schema: {
-          default: 'Deployment',
-          enum: [
-            {
-              description: 'Deploy a Deployment workload',
-              value: 'Deployment',
-            },
-          ],
-          hidden: true,
-          required: true,
-          type: 'string',
-        } as ChartSchemaNodeConf,
-        variable: 'workloadType',
-      },
-      {
         description: 'Upgrade Policy',
         group: 'Scaling/Upgrade Policy',
         label: 'Update Strategy',
@@ -113,6 +95,24 @@ const appVersion121 = {
           type: 'string',
         },
         variable: 'jobRestartPolicy',
+      },
+      {
+        description: 'Please specify type of workload to deploy',
+        group: 'Workload Details',
+        label: 'Workload Type',
+        schema: {
+          default: 'Deployment',
+          enum: [
+            {
+              description: 'Deploy a Deployment workload',
+              value: 'Deployment',
+            },
+          ],
+          hidden: true,
+          required: true,
+          type: 'string',
+        } as ChartSchemaNodeConf,
+        variable: 'workloadType',
       },
       {
         description: 'Add External Interfaces',
