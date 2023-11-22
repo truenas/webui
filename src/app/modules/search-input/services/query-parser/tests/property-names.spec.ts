@@ -117,9 +117,9 @@ describe('QueryParserService - property names', () => {
       expect(noQuotesAndSpace.errors).toHaveLength(1);
       expect(noQuotesAndSpace.errors[0]).toBeInstanceOf(QuerySyntaxError);
 
-      const noQuotesChinese = service.parseQuery('姓名 = "Bob"');
-      expect(noQuotesChinese.hasErrors).toBe(false);
-      expect(noQuotesChinese.tree).toMatchObject({ 'property': '姓名' });
+      const noQuotesMultiLanguage = service.parseQuery('姓名úüæПрЇєß = "Bob"');
+      expect(noQuotesMultiLanguage.hasErrors).toBe(false);
+      expect(noQuotesMultiLanguage.tree).toMatchObject({ 'property': '姓名úüæПрЇєß' });
 
       const noQuotesChineseAndSpace = service.parseQuery('姓名 姓名 = "Bob"');
       expect(noQuotesChineseAndSpace.hasErrors).toBe(true);
