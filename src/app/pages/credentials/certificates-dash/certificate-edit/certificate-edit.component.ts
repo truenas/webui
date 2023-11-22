@@ -77,10 +77,8 @@ export class CertificateEditComponent implements OnInit {
   }
 
   setRenewDaysForEditIfAvailable(): void {
-    const initialValue = this.findRenewDaysValue(this.certificate?.signedby?.revoked_certs || []);
-
-    if (this.certificate?.acme || initialValue) {
-      this.form.addControl('renew_days', new FormControl(initialValue));
+    if (this.certificate?.acme) {
+      this.form.addControl('renew_days', new FormControl(this.certificate.renew_days || null));
     }
   }
 
