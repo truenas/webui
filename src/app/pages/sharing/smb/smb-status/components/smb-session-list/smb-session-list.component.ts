@@ -12,6 +12,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-smb-session-list',
   templateUrl: './smb-session-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

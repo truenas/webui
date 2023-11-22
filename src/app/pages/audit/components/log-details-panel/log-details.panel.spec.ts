@@ -27,13 +27,8 @@ describe('LogDetailsPanelComponent', () => {
     expect(title).toHaveText('Log Details');
   });
 
-  it('renders ix-metadata-details-card', () => {
-    const metadataDetailsCard = spectator.query('ix-metadata-details-card');
-    expect(metadataDetailsCard).toBeTruthy();
-  });
-
-  it('renders ix-event-data-details-card', () => {
-    const eventDataDetailsCard = spectator.query('ix-event-data-details-card');
-    expect(eventDataDetailsCard).toBeTruthy();
+  it('renders Log Details Cards', () => {
+    expect(spectator.query(MetadataDetailsCardComponent)).toExist();
+    expect(spectator.query(EventDataDetailsCardComponent)).toExist();
   });
 });

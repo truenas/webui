@@ -108,9 +108,7 @@ export class CloudCredentialsFormComponent implements OnInit {
   onSubmit(): boolean {
     this.isLoading = true;
 
-    const beforeSubmit$ = this.providerForm.beforeSubmit();
-
-    beforeSubmit$
+    this.providerForm.beforeSubmit()
       .pipe(
         switchMap(() => {
           const payload = this.preparePayload();
@@ -145,9 +143,7 @@ export class CloudCredentialsFormComponent implements OnInit {
   onVerify(): void {
     this.isLoading = true;
 
-    const beforeSubmit$ = this.providerForm.beforeSubmit();
-
-    beforeSubmit$
+    this.providerForm.beforeSubmit()
       .pipe(
         switchMap(() => {
           const { name, ...payload } = this.preparePayload();

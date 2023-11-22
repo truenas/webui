@@ -63,7 +63,8 @@ import { routing } from './sharing.routing';
 import { SmbAclComponent } from './smb/smb-acl/smb-acl.component';
 import { SmbFormComponent } from './smb/smb-form/smb-form.component';
 import { SmbListComponent } from './smb/smb-list/smb-list.component';
-import { SmbSessionListComponent } from './smb/smb-session-list/smb-session-list.component';
+import { SmbSessionListComponent } from './smb/smb-status/components/smb-session-list/smb-session-list.component';
+import { SmbStatusComponent } from './smb/smb-status/smb-status.component';
 
 @NgModule({
   imports: [
@@ -134,6 +135,7 @@ import { SmbSessionListComponent } from './smb/smb-session-list/smb-session-list
     ServiceStateButtonComponent,
     SmbSessionListComponent,
     NfsSessionListComponent,
+    SmbStatusComponent,
   ],
   providers: [
     UserService,

@@ -108,7 +108,7 @@ export class ServiceExtraActionsComponent {
 
   viewSessions(serviceName: ServiceName): void {
     if (serviceName === ServiceName.Cifs) {
-      this.router.navigate(['/sharing', 'smb', 'sessions']);
+      this.router.navigate(['/sharing', 'smb', 'status', 'sessions']);
     } else if (serviceName === ServiceName.Nfs) {
       this.router.navigate(['/sharing', 'nfs', 'sessions']);
     }

@@ -43,6 +43,11 @@
         </ng-container>
       </ng-template>
     </div>
+
+    <ix-entity-empty
+      *ngIf="!isLoading && !acl"
+      [conf]="isMissingMountpoint ? missionMountpointEmptyConfig : emptyConfig"
+    ></ix-entity-empty>
   </mat-card-content>
 </mat-card>
 
@@ -55,9 +60,4 @@
     [count]="4"
   ></ngx-skeleton-loader>
 </div>
-
-<ix-entity-empty
-  *ngIf="!isLoading && !acl"
-  [conf]="emptyConfig"
-></ix-entity-empty>
 

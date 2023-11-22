@@ -1,4 +1,4 @@
-import { map, switchMap } from 'rxjs';
+import { map, Observable, switchMap } from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { ApiCallDirectory, ApiCallMethod } from 'app/interfaces/api/api-call-directory.interface';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
@@ -119,8 +119,7 @@ export class ApiDataProvider<T, M extends ApiCallMethod> extends BaseDataProvide
   load(): void {
     this.emptyType$.next(EmptyType.Loading);
     this.subscription.add(
-      // TODO: Do params need to be included here?
-      this.ws.call(this.method, [{ 'query-options': { count: true } }]).pipe(
+      this.countRows().pipe(
         switchMap((count: number) => {
           this.totalRows = count;
           return this.ws.call(this.method, this.prepareParams(this.params));
@@ -162,6 +161,18 @@ export class ApiDataProvider<T, M extends ApiCallMethod> extends BaseDataProvide
       () => this.load(),
       () => this.updateCurrentPage(this.rows),
     );
+  }
+
+  private countRows(): Observable<number> {
+    // TODO: ApiDataProvider only currently works for audit.query that has non-standard parameters
+    const params = [
+      {
+        'query-filters': (this.params as unknown as QueryFilters<T>)[0] || [],
+        'query-options': { count: true },
+      },
+    ];
+
+    return this.ws.call(this.method, params as ApiCallDirectory[M]['params']) as Observable<number>;
   }
 
   private prepareParams(params: ApiCallDirectory[M]['params']): ApiCallDirectory[M]['params'] {
