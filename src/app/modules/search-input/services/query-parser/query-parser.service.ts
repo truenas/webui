@@ -12,8 +12,8 @@ import {
 export class QueryParserService {
   private input: string;
 
-  tokenizeQueryAsOneArray(input: string): string[] {
-    const regex = /"[^"]*"|'[^']*'|\b(IN|in|NIN|nin|AND|OR)\b|!=|>=|<=|!^|!$|\^|\$|~=|>|<|=|\w+|\(\s*[^)]*/gi;
+  extractTokens(input: string): string[] {
+    const regex = /"[^"]*"|'[^']*'|\b(IN|in|NIN|nin|AND|OR)\b|!=|>=|<=|!^|!$|\^|\$|~=|>|<|~|=|\w+|\(\s*[^)]*/gi;
     return input.match(regex) || [];
   }
 

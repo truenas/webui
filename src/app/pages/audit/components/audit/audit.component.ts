@@ -3,6 +3,7 @@ import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, I
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { format, subDays, subMonths, subWeeks } from 'date-fns';
 import { toSvg } from 'jdenticon';
 import { filter, map, of } from 'rxjs';
 import { AuditEvent, auditEventLabels } from 'app/enums/audit-event.enum';
@@ -85,10 +86,24 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
         textProperty(
           'message_timestamp',
           this.translate.instant('Timestamp'),
-          of([{
-            label: 'Tomorrow',
-            value: `"${new Date(new Date().getTime() + (24 * 60 * 60 * 1000)).getUTCDate()}"`,
-          }]),
+          of([
+            {
+              label: 'Today',
+              value: `"${format(new Date(), 'yyyy-MM-dd')}"`,
+            },
+            {
+              label: 'Yesterday',
+              value: `"${format(subDays(new Date(), 1), 'yyyy-MM-dd')}"`,
+            },
+            {
+              label: 'Last week',
+              value: `"${format(subWeeks(new Date(), 1), 'yyyy-MM-dd')}"`,
+            },
+            {
+              label: 'Last month',
+              value: `"${format(subMonths(new Date(), 1), 'yyyy-MM-dd')}"`,
+            },
+          ]),
         ),
         textProperty(
           'address',
