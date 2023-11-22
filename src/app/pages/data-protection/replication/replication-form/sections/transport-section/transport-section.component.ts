@@ -70,6 +70,12 @@ export class TransportSectionComponent implements OnChanges {
     if (this.replication) {
       this.setFormValues(this.replication);
     }
+
+    if (this.isLocal) {
+      this.form.controls.ssh_credentials.disable();
+    } else {
+      this.form.controls.ssh_credentials.enable();
+    }
   }
 
   get isLocal(): boolean {
