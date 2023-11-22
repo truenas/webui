@@ -4,7 +4,7 @@
 // yarn run compile-grammar
 
 @tokens {
-  space { " " | "\\t" | "\\n" | "\\r" }
+  space { " " | "\\t" | "\\n" | "\\r" | "\t" | "\n" | "\r" }
   SingleQuotedString {
     "'" (![\\\n'] | "\\" _)* "'"
   }
