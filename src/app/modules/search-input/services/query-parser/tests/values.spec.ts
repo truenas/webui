@@ -133,12 +133,12 @@ describe('QueryParserService - values', () => {
     it('does not support new lines in strings', () => {
       const double = service.parseQuery('Username = "B\n"ob');
       expect(double.hasErrors).toBe(true);
-      expect(double.errors).toHaveLength(1);
+      expect(double.errors).toHaveLength(2);
       expect(double.errors[0]).toBeInstanceOf(QuerySyntaxError);
 
       const single = service.parseQuery("Username = 'B\n'ob");
       expect(single.hasErrors).toBe(true);
-      expect(single.errors).toHaveLength(1);
+      expect(single.errors).toHaveLength(2);
       expect(single.errors[0]).toBeInstanceOf(QuerySyntaxError);
     });
   });
