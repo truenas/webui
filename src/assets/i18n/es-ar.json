@@ -302,6 +302,7 @@
   "Dataset Read": "",
   "Dataset Space Management": "",
   "Dataset Write": "",
+  "Dataset has no mountpoint": "",
   "Dataset is shared via NFS": "",
   "Dataset is shared via SMB": "",
   "Dataset is shared via SMB as {shares}": "",

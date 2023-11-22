@@ -35,6 +35,7 @@
   "Dataset Delete": "",
   "Dataset Read": "",
   "Dataset Write": "",
+  "Dataset has no mountpoint": "",
   "Datasets": "",
   "Define whether the control channel,  data channel, both channels, or neither channel of an FTP  session must occur over SSL/TLS. The policies are described  <a href=\"http://www.proftpd.org/docs/directives/configuration_full.html#TLSREQUIRED\" target=\"_blank\">here</a>": "",
   "Delete Cloud Sync Task <b>\"{name}\"</b>?": "",

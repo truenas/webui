@@ -112,6 +112,7 @@
   "Dataset Delete": "",
   "Dataset Read": "",
   "Dataset Write": "",
+  "Dataset has no mountpoint": "",
   "Dataset locked": "",
   "Dataset «{name}» updated.": "",
   "De-duplication tables are stored on this special VDEV type. These VDEVs must be sized to X GiB for each X TiB of general storage.": "",
