@@ -1,3 +1,4 @@
+import { EventEmitter } from '@angular/core';
 import _ from 'lodash';
 import { BehaviorSubject, Observable, Subscription, map } from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
@@ -8,6 +9,7 @@ import { TableSort } from 'app/modules/ix-table2/interfaces/table-sort.interface
 
 export class BaseDataProvider<T> implements DataProvider<T> {
   readonly emptyType$ = new BehaviorSubject<EmptyType>(EmptyType.Loading);
+  readonly controlsStateUpdated = new EventEmitter<void>();
 
   get isLoading$(): Observable<boolean> {
     return this.emptyType$.pipe(map((emptyType) => emptyType === EmptyType.Loading));
@@ -54,11 +56,13 @@ export class BaseDataProvider<T> implements DataProvider<T> {
   setSorting(sorting: TableSort<T>): void {
     this.sorting = sorting;
     this.updateCurrentPage(this.allRows);
+    this.controlsStateUpdated.emit();
   }
 
   setPagination(pagination: TablePagination): void {
     this.pagination = pagination;
     this.updateCurrentPage(this.allRows);
+    this.controlsStateUpdated.emit();
   }
 
   protected updateCurrentPage(rows: T[]): void {
