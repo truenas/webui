@@ -541,6 +541,7 @@ export class UpdateComponent implements OnInit {
       dialogRef.close();
       this.handleUpdateError(error);
     });
+    this.updateService.setForHardRefresh();
     if (!this.isHa) {
       dialogRef.componentInstance.setCall('update.update', [{ resume, reboot: true }]);
       dialogRef.componentInstance.submit();
