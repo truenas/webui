@@ -93,6 +93,7 @@ import { SnmpTrapServiceComponent } from 'app/pages/system/alert-service/alert-s
 import { TelegramServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-services/telegram-service/telegram-service.component';
 import { VictorOpsServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-services/victor-ops-service/victor-ops-service.component';
 import { AlertServiceListComponent } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.component';
+import { AlertSettings2Component } from 'app/pages/system/alert-settings2/alert-settings2.component';
 import { BootPoolAttachDialogComponent } from 'app/pages/system/bootenv/boot-pool-attach/boot-pool-attach-dialog.component';
 import { BootPoolDeleteDialogComponent } from 'app/pages/system/bootenv/boot-pool-delete-dialog/boot-pool-delete-dialog.component';
 import { BootPoolReplaceDialogComponent } from 'app/pages/system/bootenv/boot-pool-replace/boot-pool-replace-dialog.component';
@@ -269,6 +270,7 @@ import { routing } from './system.routing';
     KernelCardComponent,
     SupportCardComponent,
     AlertSettingsComponent,
+    AlertSettings2Component,
     InitShutdownCardComponent,
     SysctlCardComponent,
     InitShutdownListComponent,

@@ -16,8 +16,8 @@ export class IxTablePagerComponent<T> implements OnInit, AfterContentChecked {
   @Input() dataProvider!: DataProvider<T>;
   @Input() pageSize = 50;
   @Input() pageSizeOptions = [10, 20, 50, 100];
+  @Input() currentPage = 1;
 
-  currentPage = 1;
   totalItems = 0;
 
   get totalPages(): number {

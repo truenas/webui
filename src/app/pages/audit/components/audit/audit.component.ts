@@ -1,6 +1,7 @@
 import { BreakpointObserver, BreakpointState, Breakpoints } from '@angular/cdk/layout';
 import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { format, subDays, subMonths, subWeeks } from 'date-fns';
@@ -13,6 +14,7 @@ import { AuditEntry, SmbAuditEntry } from 'app/interfaces/audit.interface';
 import { ApiDataProvider, PaginationServerSide, SortingServerSide } from 'app/modules/ix-table2/api-data-provider';
 import { dateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-date/ix-cell-date.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { TablePagination } from 'app/modules/ix-table2/interfaces/table-pagination.interface';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { SearchProperty } from 'app/modules/search-input/types/search-property.interface';
@@ -24,6 +26,7 @@ import {
   searchProperties,
   textProperty,
 } from 'app/modules/search-input/utils/search-properties.utils';
+import { UrlOptionsService } from 'app/services/url-options.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -37,6 +40,8 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
   protected dataProvider: ApiDataProvider<AuditEntry, 'audit.query'>;
   showMobileDetails = false;
   isMobileView = false;
+  searchQuery: SearchQuery<AuditEntry>;
+  pagination: TablePagination;
 
   columns = createTable<AuditEntry>([
     textColumn({
@@ -69,6 +74,8 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
     private breakpointObserver: BreakpointObserver,
     private cdr: ChangeDetectorRef,
     private sanitizer: DomSanitizer,
+    private activatedRoute: ActivatedRoute,
+    private urlOptionsService: UrlOptionsService,
     @Inject(WINDOW) private window: Window,
   ) {}
 
@@ -130,6 +137,25 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
       ]);
       this.cdr.markForCheck();
     });
+
+    this.dataProvider.controlsStateUpdated.pipe(untilDestroyed(this)).subscribe(() => {
+      this.updateUrlOptions();
+    });
+
+    this.activatedRoute.params.pipe(untilDestroyed(this)).subscribe((params) => {
+      const options = this.urlOptionsService.parseUrlOptions(params.options);
+
+      this.pagination = {
+        pageSize: options.pagination?.pageSize || 50,
+        pageNumber: options.pagination?.pageNumber || 1,
+      };
+
+      if (options.sorting) this.dataProvider.setSorting(options.sorting);
+      if (options.searchQuery) this.searchQuery = options.searchQuery;
+
+      this.onSearch(this.searchQuery);
+    });
+
   }
 
   ngAfterViewInit(): void {
@@ -157,14 +183,26 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // TODO: Issue: reset icon will not trigger table update
   onSearch(query: SearchQuery<AuditEntry>): void {
-    if (query.isBasicQuery) {
+    this.searchQuery = query;
+
+    if (query && query.isBasicQuery) {
       // TODO: Create a separate class to handle this.
       this.dataProvider.setParams([[['event', '~', query.query]]]);
-    } else {
+    }
+
+    if (query && !query.isBasicQuery) {
       this.dataProvider.setParams([(query as AdvancedSearchQuery<AuditEntry>).filters]);
     }
 
     this.dataProvider.load();
+  }
+
+  updateUrlOptions(): void {
+    this.urlOptionsService.setUrlOptions('/audit', {
+      searchQuery: this.searchQuery,
+      sorting: this.dataProvider.sorting,
+      pagination: this.dataProvider.pagination,
+    });
   }
 
   closeMobileDetails(): void {

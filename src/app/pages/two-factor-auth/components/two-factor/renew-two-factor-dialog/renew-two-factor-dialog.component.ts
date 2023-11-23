@@ -1,14 +1,12 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { User } from '@sentry/angular';
 import { of } from 'rxjs';
 import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -33,8 +31,6 @@ export class RenewTwoFactorDialogComponent {
 
   constructor(
     public dialogRef: MatDialogRef<RenewTwoFactorDialogComponent>,
-    private ws: WebSocketService,
-    @Inject(MAT_DIALOG_DATA) public user: User,
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
