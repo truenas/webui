@@ -95,8 +95,10 @@ export class NtpServerCardComponent implements OnInit {
   doDelete(server: NtpServer): void {
     this.dialog.confirm({
       title: this.translate.instant('Delete NTP Server'),
-      message: this.translate.instant('Are you sure you want to delete the <b>{address}</b> NTP Server?',
-        { address: server.address }),
+      message: this.translate.instant(
+        'Are you sure you want to delete the <b>{address}</b> NTP Server?',
+        { address: server.address },
+      ),
       buttonText: this.translate.instant('Delete'),
     }).pipe(
       filter(Boolean),

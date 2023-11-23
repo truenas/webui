@@ -64,7 +64,6 @@ import { AppState } from 'app/store';
 import { selectTheme } from 'app/store/preferences/preferences.selectors';
 import CanvasExtract = PIXI.extract.CanvasExtract;
 
-
 export enum EnclosureLocation {
   Front = 'front',
   Rear = 'rear',

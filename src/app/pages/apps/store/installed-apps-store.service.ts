@@ -169,8 +169,8 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> {
           this.patchState((state) => {
             return {
               ...state,
-              installedApps: state.installedApps.map(app => {
-                const appWithUpdatedStats = apiEvent.fields.find(item => item.id === app.id);
+              installedApps: state.installedApps.map((app) => {
+                const appWithUpdatedStats = apiEvent.fields.find((item) => item.id === app.id);
                 if (isEqual(appWithUpdatedStats.stats, app.stats)) {
                   return app;
                 }

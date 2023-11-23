@@ -32,8 +32,8 @@ export function memoryProperty<T>(property: keyof T, label: string): SearchPrope
   return {
     label,
     property,
-    formatValue: value => formatter.memorySizeFormatting(value as string),
-    parseValue: value => formatter.memorySizeParsing(value),
+    formatValue: (value) => formatter.memorySizeFormatting(value as string),
+    parseValue: (value) => formatter.memorySizeParsing(value),
   };
 }
 

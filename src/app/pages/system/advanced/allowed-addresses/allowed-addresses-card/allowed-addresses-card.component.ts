@@ -97,7 +97,7 @@ export class AllowedAddressesCardComponent implements OnInit {
   private deleteAllowedAddress(row: AllowedAddressRow): void {
     this.dataProvider.currentPage$.pipe(
       switchMap((currentPage) => {
-        const updatedAddresses = currentPage.filter((ip) => ip.address !== row.address).map(ip => ip.address);
+        const updatedAddresses = currentPage.filter((ip) => ip.address !== row.address).map((ip) => ip.address);
         return this.ws.call('system.general.update', [{ ui_allowlist: updatedAddresses }]);
       }),
       untilDestroyed(this),

@@ -192,7 +192,9 @@ import {
   ReplicationCreate,
   ReplicationTask,
 } from 'app/interfaces/replication-task.interface';
-import { CreateReportingExporter, ReportingExporter, ReportingExporterSchema, UpdateReportingExporter } from 'app/interfaces/reporting-exporters.interface';
+import {
+  CreateReportingExporter, ReportingExporter, ReportingExporterSchema, UpdateReportingExporter,
+} from 'app/interfaces/reporting-exporters.interface';
 import { ReportingGraph } from 'app/interfaces/reporting-graph.interface';
 import {
   ReportingData,
@@ -723,7 +725,6 @@ export interface ApiCallDirectory {
   'reporting.exporters.update': { params: [number, UpdateReportingExporter]; response: ReportingExporter };
   'reporting.exporters.get_instance': { params: [id: number]; response: ReportingExporter };
   'reporting.exporters.delete': { params: [id: number]; response: boolean };
-
 
   // SMB
   'smb.bindip_choices': { params: void; response: Choices };

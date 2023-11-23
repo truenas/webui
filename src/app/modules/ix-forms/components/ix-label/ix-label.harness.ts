@@ -11,8 +11,7 @@ export class IxLabelHarness extends ComponentHarness {
 
   static with(options: IxLabelFilters): HarnessPredicate<IxLabelHarness> {
     return new HarnessPredicate(IxLabelHarness, options)
-      .addOption('label', options.label,
-        (harness, label) => HarnessPredicate.stringMatches(harness.getLabel(), label));
+      .addOption('label', options.label, (harness, label) => HarnessPredicate.stringMatches(harness.getLabel(), label));
   }
 
   async getLabel(): Promise<string> {

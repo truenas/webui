@@ -140,7 +140,8 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
   });
 
   readonly updateSelectedAce = this.updater((
-    state: DatasetAclEditorState, updatedAce: NfsAclItem | PosixAclItem,
+    state: DatasetAclEditorState,
+    updatedAce: NfsAclItem | PosixAclItem,
   ) => {
     const updatedAces = (state.acl.acl as (NfsAclItem | PosixAclItem)[]).map((ace, index) => {
       if (index !== state.selectedAceIndex) {

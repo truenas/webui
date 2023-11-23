@@ -96,7 +96,7 @@ describe('WebSocketService', () => {
         result: mockJobId,
       });
 
-      service.startJob('boot.attach').subscribe(response => {
+      service.startJob('boot.attach').subscribe((response) => {
         expect(response).toEqual(mockJobId);
       });
     });

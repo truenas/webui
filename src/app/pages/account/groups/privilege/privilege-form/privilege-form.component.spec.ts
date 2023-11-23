@@ -72,10 +72,10 @@ describe('PrivilegeFormComponent', () => {
       await saveButton.click();
 
       expect(ws.call).toHaveBeenLastCalledWith('privilege.create', [{
-        ds_groups:  [],
+        ds_groups: [],
         local_groups: [],
         name: 'new privilege',
-        roles:  [Role.SharingManager],
+        roles: [Role.SharingManager],
         web_shell: true,
       }]);
     });
@@ -101,7 +101,7 @@ describe('PrivilegeFormComponent', () => {
         'Web Shell Access': true,
         'Local Groups': ['Group A', 'Group B'],
         'DS Groups': [],
-        'Roles': ['Readonly'],
+        Roles: ['Readonly'],
       });
     });
 
@@ -117,10 +117,10 @@ describe('PrivilegeFormComponent', () => {
       await saveButton.click();
 
       expect(ws.call).toHaveBeenLastCalledWith('privilege.update', [10, {
-        ds_groups:  [],
+        ds_groups: [],
         local_groups: [111, 222],
         name: 'updated privilege',
-        roles:  [Role.FullAdmin, Role.Readonly],
+        roles: [Role.FullAdmin, Role.Readonly],
         web_shell: false,
       }]);
     });

@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+} from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -70,7 +72,7 @@ export class StartServiceDialogComponent implements OnInit {
     };
 
     if (result.start && result.startAutomatically && this.isDisabled) {
-      requests.push(this.ws.call('service.update', [this.service.id, { enable: result.startAutomatically } ]));
+      requests.push(this.ws.call('service.update', [this.service.id, { enable: result.startAutomatically }]));
     }
 
     if (result.start) {

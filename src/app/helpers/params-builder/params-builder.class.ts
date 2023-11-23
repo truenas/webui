@@ -88,7 +88,7 @@ export class ParamsBuilder<T, ExtraOptions = Record<string, unknown>> {
    * is equivalent to:
    * (username = 'bob' OR username = 'alice') AND age > 40
    */
-  group(groupBuilder: (group: ParamsBuilderGroup<T,  ExtraOptions>) => void): this {
+  group(groupBuilder: (group: ParamsBuilderGroup<T, ExtraOptions>) => void): this {
     const group = new ParamsBuilder<T, ExtraOptions>();
     groupBuilder(group);
 
@@ -98,7 +98,7 @@ export class ParamsBuilder<T, ExtraOptions = Record<string, unknown>> {
     return this;
   }
 
-  andGroup(groupBuilder: (group: ParamsBuilderGroup<T,  ExtraOptions>) => void): this {
+  andGroup(groupBuilder: (group: ParamsBuilderGroup<T, ExtraOptions>) => void): this {
     const group = new ParamsBuilder<T, ExtraOptions>();
     groupBuilder(group);
     this.andFilters(group.getFilters());
@@ -107,7 +107,7 @@ export class ParamsBuilder<T, ExtraOptions = Record<string, unknown>> {
     return this;
   }
 
-  orGroup(groupBuilder: (group: ParamsBuilderGroup<T,  ExtraOptions>) => void): this {
+  orGroup(groupBuilder: (group: ParamsBuilderGroup<T, ExtraOptions>) => void): this {
     const group = new ParamsBuilder<T, ExtraOptions>();
     groupBuilder(group);
     this.orFilters(group.getFilters());
@@ -159,7 +159,7 @@ export class ParamsBuilder<T, ExtraOptions = Record<string, unknown>> {
   }
 
   private createNewOrGroup(toAdd: QueryFilters<T>): void {
-    let topFilters = this.filters ;
+    let topFilters = this.filters;
     if (topFilters.length > 1) {
       topFilters = [topFilters] as QueryFilters<T>;
     }

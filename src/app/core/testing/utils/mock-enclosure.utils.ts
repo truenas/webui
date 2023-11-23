@@ -93,15 +93,18 @@ export class MockEnclosureUtils {
   private mockPoolQuery(): ApiCallDirectory['pool.query']['response'] {
     if (this.mockConfig.diskOptions.mockPools) {
       return [this.mockStorage.poolState];
-    } else if (this.mockConfig.diskOptions.enabled) {
+    }
+    if (this.mockConfig.diskOptions.enabled) {
       return [];
     }
+    return null;
   }
 
   private mockPoolDatasetQuery(): ApiCallDirectory['pool.dataset.query']['response'] {
     if (this.mockConfig.diskOptions.mockPools) {
       return [mockRootDataset(this.mockStorage.poolState.name)];
-    } else if (this.mockConfig.diskOptions.enabled) {
+    }
+    if (this.mockConfig.diskOptions.enabled) {
       return [];
     }
     return null;

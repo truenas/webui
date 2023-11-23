@@ -6,7 +6,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
-import { BehaviorSubject, Observable, filter, map, of, switchMap } from 'rxjs';
+import {
+  BehaviorSubject, Observable, filter, map, of, switchMap,
+} from 'rxjs';
 import { CompressionType, compressionTypeNames } from 'app/enums/compression-type.enum';
 import { NetcatMode, netcatModeNames } from 'app/enums/netcat-mode.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';

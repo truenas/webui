@@ -1,3 +1,4 @@
+/* eslint-disable max-classes-per-file */
 import { map, Observable, switchMap } from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { ApiCallDirectory, ApiCallMethod } from 'app/interfaces/api/api-call-directory.interface';
@@ -45,7 +46,7 @@ export class PaginationServerSide implements PaginationStrategy {
       return {};
     }
 
-    return  {
+    return {
       offset: (pagination.pageNumber - 1) * pagination.pageSize,
       limit: pagination.pageSize,
     };
@@ -80,7 +81,7 @@ export class SortingServerSide implements SortingStrategy {
       return {};
     }
 
-    return  {
+    return {
       order_by: [(sorting.direction === SortDirection.Desc ? '-' : '') + (sorting.propertyName as string)],
     };
   }

@@ -16,8 +16,7 @@ export class IxFieldsetHarness extends ComponentHarness {
 
   static with(options: IxFieldsetHarnessFilters): HarnessPredicate<IxFieldsetHarness> {
     return new HarnessPredicate(IxFieldsetHarness, options)
-      .addOption('title', options.title,
-        (harness, title) => HarnessPredicate.stringMatches(harness.getTitleText(), title));
+      .addOption('title', options.title, (harness, title) => HarnessPredicate.stringMatches(harness.getTitleText(), title));
   }
 
   getControlHarnesses = this.locatorForAll(...supportedFormControlSelectors);

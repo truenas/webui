@@ -69,5 +69,4 @@ describe('RenewTwoFactorDialog', () => {
 
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(false);
   });
-
 });

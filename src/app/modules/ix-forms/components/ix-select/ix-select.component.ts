@@ -137,7 +137,7 @@ export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChange
 
   selectAll(): void {
     if (this.multiple) {
-      this.value = this.opts.map(opt => opt.value) as SelectOptionValueType;
+      this.value = this.opts.map((opt) => opt.value) as SelectOptionValueType;
       this.onChange(this.value);
     }
   }

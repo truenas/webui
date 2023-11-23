@@ -35,7 +35,6 @@ describe('PasswordValidation', () => {
     });
 
     it('should throw error when no otherControl is given', () => {
-
       expect(() => {
         form.removeControl('other');
         thisControl.setValue('test');
@@ -83,7 +82,6 @@ describe('PasswordValidation', () => {
     });
 
     it('should throw error if otherControl is missing', () => {
-
       expect(() => {
         form.removeControl('other');
         thisControl.setValue('test');

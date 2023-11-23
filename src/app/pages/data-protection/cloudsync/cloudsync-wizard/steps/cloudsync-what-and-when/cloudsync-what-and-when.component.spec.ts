@@ -63,7 +63,7 @@ describe('CloudsyncWhatAndWhenComponent', () => {
 
     await form.fillForm({
       'Directory/Files': '/mnt/gphotos',
-      'Description': 'Sync Google Photos',
+      Description: 'Sync Google Photos',
     });
   });
 
@@ -101,10 +101,10 @@ describe('CloudsyncWhatAndWhenComponent', () => {
   it('when an required field is empty, the "Save" button is disabled', async () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
 
-    await form.fillForm({ 'Description': '' });
+    await form.fillForm({ Description: '' });
     expect(await saveButton.isDisabled()).toBe(true);
 
-    await form.fillForm({ 'Description': 'Sync Google Photos' });
+    await form.fillForm({ Description: 'Sync Google Photos' });
     expect(await saveButton.isDisabled()).toBe(false);
   });
 
