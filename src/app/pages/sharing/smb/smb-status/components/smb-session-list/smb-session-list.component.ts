@@ -14,7 +14,6 @@ import { WebSocketService } from 'app/services/ws.service';
 @Component({
   selector: 'ix-smb-session-list',
   templateUrl: './smb-session-list.component.html',
-  styleUrls: ['./smb-session-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SmbSessionListComponent implements OnInit {
