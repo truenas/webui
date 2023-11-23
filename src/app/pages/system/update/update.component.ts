@@ -29,7 +29,6 @@ import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { StorageService } from 'app/services/storage.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { UpdateService } from 'app/services/update.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
@@ -107,7 +106,6 @@ export class UpdateComponent implements OnInit {
     private store$: Store<AppState>,
     private fb: FormBuilder,
     private snackbar: SnackbarService,
-    private updateService: UpdateService,
     @Inject(WINDOW) private window: Window,
   ) {
     this.sysGenService.updateRunning.pipe(untilDestroyed(this)).subscribe((isUpdating: string) => {
@@ -387,7 +385,6 @@ export class UpdateComponent implements OnInit {
     dialogRef.componentInstance.jobId = jobId;
     dialogRef.componentInstance.wsshow();
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-      this.updateService.setForHardRefresh();
       this.router.navigate(['/others/reboot'], { skipLocationChange: true });
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
@@ -541,7 +538,6 @@ export class UpdateComponent implements OnInit {
       dialogRef.close();
       this.handleUpdateError(error);
     });
-    this.updateService.setForHardRefresh();
     if (!this.isHa) {
       dialogRef.componentInstance.setCall('update.update', [{ resume, reboot: true }]);
       dialogRef.componentInstance.submit();
