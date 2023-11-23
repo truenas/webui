@@ -2,7 +2,7 @@ import { Location } from '@angular/common';
 import { Injectable } from '@angular/core';
 import { TablePagination } from 'app/modules/ix-table2/interfaces/table-pagination.interface';
 import { TableSort } from 'app/modules/ix-table2/interfaces/table-sort.interface';
-import { SearchQuery } from 'app/modules/search-input/types/search-query.interface';
+import { AdvancedSearchQuery, BasicSearchQuery, SearchQuery } from 'app/modules/search-input/types/search-query.interface';
 
 export interface UrlOptions<T> {
   sorting?: TableSort<T>;
@@ -18,7 +18,24 @@ export class UrlOptionsService {
 
   setUrlOptions<T>(url: string, options: UrlOptions<T>): void {
     delete options.sorting?.sortBy;
-    this.location.replaceState(`${url}/${encodeURIComponent(JSON.stringify(options))}`);
+    if (options.sorting?.direction === null || options.sorting?.propertyName === null) {
+      delete options.sorting;
+    }
+
+    if (options.pagination?.pageNumber === null || options.pagination?.pageSize === null) {
+      delete options.pagination;
+    }
+
+    if (
+      !(options.searchQuery as AdvancedSearchQuery<T>)?.filters?.length
+        && !(options.searchQuery as BasicSearchQuery)?.query
+    ) {
+      delete options.searchQuery;
+    }
+
+    if (Object.entries(options).length) {
+      this.location.replaceState(`${url}/${encodeURIComponent(JSON.stringify(options))}`);
+    }
   }
 
   parseUrlOptions<T>(options: string): UrlOptions<T> {
