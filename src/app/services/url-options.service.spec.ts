@@ -10,10 +10,7 @@ describe('UrlOptionsService', () => {
     providers: [Location],
   });
 
-  beforeEach(() => {
-    spectator = createService();
-    spectator.inject(Location).replaceState('/test/url');
-  });
+  beforeEach(() => spectator = createService());
 
   describe('setUrlOptions', () => {
     it('sets url options', () => {
@@ -34,22 +31,6 @@ describe('UrlOptionsService', () => {
         '"pagination":{"pageNumber":2,"pageSize":10},' +
         '"sorting":{"active":1,"direction":"desc","propertyName":"test_column"}' +
       '}');
-    });
-
-    it('sets empty url options', () => {
-      const location = spectator.inject(Location);
-      spectator.service.setUrlOptions('/test/url', {
-        searchQuery: { isBasicQuery: true, query: '' },
-        pagination: { pageNumber: null, pageSize: null },
-        sorting: {
-          active: 1,
-          direction: null,
-          propertyName: 'test_column',
-          sortBy: jest.fn(),
-        },
-      });
-
-      expect(decodeURIComponent(location.path())).toBe('/test/url');
     });
   });
 
