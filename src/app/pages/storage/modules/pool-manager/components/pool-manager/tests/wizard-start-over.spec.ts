@@ -193,6 +193,7 @@ describe('PoolManagerComponent – start over functionality', () => {
     // METADATA step activated
     expect(await (await wizard.getActiveStep()).getLabel()).toBe('Metadata (Optional)');
     await wizard.fillStep({
+      Layout: 'Stripe',
       'Disk Size': '20 GiB (HDD)',
       Width: '1',
       'Number of VDEVs': '1',
@@ -202,6 +203,7 @@ describe('PoolManagerComponent – start over functionality', () => {
     // DEDUP step activated
     expect(await (await wizard.getActiveStep()).getLabel()).toBe('Dedup (Optional)');
     await wizard.fillStep({
+      Layout: 'Stripe',
       'Disk Size': '20 GiB (HDD)',
       Width: '1',
       'Number of VDEVs': '1',
@@ -283,6 +285,7 @@ describe('PoolManagerComponent – start over functionality', () => {
     // METADATA step activated and reset to default
     expect(await (await wizard.getActiveStep()).getLabel()).toBe('Metadata (Optional)');
     expect(await wizard.getStepValues()).toStrictEqual({
+      Layout: '',
       'Disk Size': '',
       'Number of VDEVs': '',
       'Treat Disk Size as Minimum': false,
@@ -293,6 +296,7 @@ describe('PoolManagerComponent – start over functionality', () => {
     // DEDUP step activated and reset to default
     expect(await (await wizard.getActiveStep()).getLabel()).toBe('Dedup (Optional)');
     expect(await wizard.getStepValues()).toStrictEqual({
+      Layout: '',
       'Disk Size': '',
       'Number of VDEVs': '',
       'Treat Disk Size as Minimum': false,

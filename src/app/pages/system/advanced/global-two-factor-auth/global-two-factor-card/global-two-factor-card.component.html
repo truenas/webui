@@ -21,18 +21,7 @@
           {{ twoFactorAuthConfig?.enabled ? ('Enabled' | translate) : ('Disabled' | translate) }}
         </span>
       </mat-list-item>
-      <mat-list-item>
-        <span class="label">{{ 'Interval' | translate }}:</span>
-        <span *ixWithLoadingState="twoFactorConfig$ as twoFactorAuthConfig" class="value">
-          {{ twoFactorAuthConfig?.interval }}
-        </span>
-      </mat-list-item>
-      <mat-list-item>
-        <span class="label">{{ 'OTP Digits' | translate }}:</span>
-        <span *ixWithLoadingState="twoFactorConfig$ as twoFactorAuthConfig" class="value">
-          {{ twoFactorAuthConfig?.otp_digits }}
-        </span>
-      </mat-list-item>
+      
       <mat-list-item>
         <span class="label">{{ 'Window' | translate }}:</span>
         <span *ixWithLoadingState="twoFactorConfig$ as twoFactorAuthConfig" class="value">

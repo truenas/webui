@@ -43,9 +43,9 @@ describe('PrivilegeFormComponent', () => {
         mockCall('privilege.create'),
         mockCall('privilege.update'),
         mockCall('privilege.roles', [
-          { name: Role.FullAdmin, title: 'Full Admin' },
-          { name: Role.SharingManager, title: 'Sharing Manager' },
-          { name: Role.Readonly, title: 'Readonly' },
+          { name: Role.FullAdmin, title: Role.FullAdmin },
+          { name: Role.SharingManager, title: Role.SharingManager },
+          { name: Role.Readonly, title: Role.Readonly },
         ] as PrivilegeRole[]),
       ]),
       mockProvider(IxSlideInRef),
