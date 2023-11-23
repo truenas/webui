@@ -91,12 +91,12 @@ export class AdvancedSearchAutocompleteService<T> {
     const isLogicalOperatorType = (
       this.isCompleteExpression(tokens, cursorPosition, query) &&
       !this.isPartiallyLogicalOperator(lastToken) &&
-      (!lastToken?.startsWith('(') || (lastToken?.startsWith('(') && lastToken.endsWith(')')))
+      (!lastToken?.startsWith('(') || (lastToken?.startsWith('(') && lastToken?.endsWith(')')))
     ) || (
       this.isPartiallyComparator(secondLastToken) && query[cursorPosition] === ')' &&
       (
         (secondLastToken?.toUpperCase() === 'IN' || secondLastToken?.toUpperCase() === 'NIN') &&
-        lastToken.startsWith('(') && lastToken.endsWith(')')
+        lastToken?.startsWith('(') && lastToken?.endsWith(')')
       )
     );
 
@@ -129,7 +129,7 @@ export class AdvancedSearchAutocompleteService<T> {
     const customCursorStart = cursorPosition - (lastToken?.length || 0);
     const customCursorLastSpaceCondition = (lastToken?.trim()?.lastIndexOf(' ') + 1 || 0);
     const customCursorAdjustment =
-      (lastToken?.includes('(') && !lastToken.includes(' ') ? 1 : 0) +
+      (lastToken?.includes('(') && !lastToken?.includes(' ') ? 1 : 0) +
       (lastToken?.includes('"') && query[cursorPosition] === '"' ? 1 : 0) +
       (lastToken?.includes("'") && query[cursorPosition] === "'" ? 1 : 0);
     const customCursorPosition = customCursorLastSpaceCondition + customCursorStart + customCursorAdjustment;
@@ -155,16 +155,10 @@ export class AdvancedSearchAutocompleteService<T> {
     return (
       (
         thirdLastToken?.length > 0 && (
-          this.isPartiallyComparator(secondLastToken) &&
-          lastToken.length > 0 &&
-          query[cursorPosition - 1] === ' '
+          this.isPartiallyComparator(secondLastToken) && lastToken?.length > 0 && query[cursorPosition - 1] === ' '
         )
       ) ||
-      (
-        lastToken?.length > 0 &&
-        secondLastToken?.length > 0 &&
-        this.isPartiallyComparator(thirdLastToken)
-      )
+      (lastToken?.length > 0 && secondLastToken?.length > 0 && this.isPartiallyComparator(thirdLastToken))
     );
   }
 
@@ -194,7 +188,7 @@ export class AdvancedSearchAutocompleteService<T> {
           this.isPartiallyComparator(lastToken?.toUpperCase())),
         );
 
-        if (isInOrNin && !lastToken.startsWith('(') && searchedProperty) {
+        if (isInOrNin && !lastToken?.startsWith('(') && searchedProperty) {
           return searchedProperty.valueSuggestions$.pipe(
             map((options) => options.map(({ label, value }) => ({ label, value: `(${value})` }))),
           );
