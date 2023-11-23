@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { SyntaxNode } from '@lezer/common';
+import { SyntaxNode, TreeCursor } from '@lezer/common';
 import { QueryComparator } from 'app/interfaces/query-api.interface';
 import { parser } from 'app/modules/search-input/services/query-parser/query-grammar';
 import {
@@ -12,9 +12,28 @@ import {
 export class QueryParserService {
   private input: string;
 
-  extractTokens(input: string): string[] {
-    const regex = /"[^"]*"|'[^']*'|\b(IN|in|NIN|nin|AND|OR)\b|!=|>=|<=|!^|!$|\^|\$|~=|>|<|~|=|\w+|\(\s*[^)]*/gi;
-    return input.match(regex) || [];
+  extractTokens(query: string): string[] {
+    const tree = parser.parse(query);
+    const cursor = tree.cursor();
+    const tokens: { type: string; text: string }[] = [];
+
+    const explore = (nextCursor: TreeCursor): void => {
+      do {
+        const nodeType = nextCursor.node.type.name;
+        tokens.push({
+          type: nodeType,
+          text: query.slice(nextCursor.from, nextCursor.to),
+        });
+        if (nextCursor.firstChild()) {
+          explore(nextCursor);
+          nextCursor.parent();
+        }
+      } while (nextCursor.nextSibling());
+    };
+
+    explore(cursor);
+
+    return this.filterAndMapTokens(tokens);
   }
 
   parseQuery(input: string): QueryParsingResult {
@@ -134,5 +153,19 @@ export class QueryParserService {
 
   private getNodeText(node: SyntaxNode): string {
     return this.input.substring(node.from, node.to);
+  }
+
+  private filterAndMapTokens(tokens: { type: string; text: string }[]): string[] {
+    const tokenTypes = ['Property', 'Comparator', 'Value', 'Or', 'And', '⚠'];
+
+    const queryTokens = tokens.filter(item => tokenTypes.includes(item.type) && item.text).map(item => item.text);
+    const lastToken = queryTokens[queryTokens.length - 1];
+    const secondLastToken = queryTokens[queryTokens.length - 2];
+
+    if (secondLastToken?.startsWith('(') && secondLastToken?.includes(lastToken)) {
+      queryTokens.pop();
+    }
+
+    return queryTokens;
   }
 }

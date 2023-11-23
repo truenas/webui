@@ -9,6 +9,5 @@ export interface QueryContext {
   startPosition: number;
   endPosition: number;
   tokens: string[];
-  lastToken: string;
   query: string;
 }
