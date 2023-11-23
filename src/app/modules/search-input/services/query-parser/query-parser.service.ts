@@ -158,7 +158,9 @@ export class QueryParserService {
   private filterAndMapTokens(tokens: { type: string; text: string }[]): string[] {
     const tokenTypes = ['Property', 'Comparator', 'Value', 'Or', 'And', '⚠'];
 
-    const queryTokens = tokens.filter(item => tokenTypes.includes(item.type) && item.text).map(item => item.text);
+    const queryTokens = tokens
+      .filter(item => tokenTypes.includes(item.type) && item.text && item.text !== '"' && item.text !== "'")
+      .map(item => item.text);
     const lastToken = queryTokens[queryTokens.length - 1];
     const secondLastToken = queryTokens[queryTokens.length - 2];
 
