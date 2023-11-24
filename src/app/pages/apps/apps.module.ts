@@ -40,6 +40,7 @@ import {
 import {
   AppDetailsSimilarComponent,
 } from 'app/pages/apps/components/app-detail-view/app-details-similar/app-details-similar.component';
+import { AppsScopeWrapperComponent } from 'app/pages/apps/components/apps-scope-wrapper.component';
 import {
   CatalogAddFormComponent,
 } from 'app/pages/apps/components/catalogs/catalog-add-form/catalog-add-form.component';
@@ -68,12 +69,7 @@ import { PodShellComponent } from 'app/pages/apps/components/installed-apps/pod-
 import { PodSelectDialogComponent } from 'app/pages/apps/components/pod-select-dialog/pod-select-dialog.component';
 import { PodSelectLogsDialogComponent } from 'app/pages/apps/components/pod-select-logs/pod-select-logs-dialog.component';
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
-import { AppsNavigateAwayGuard } from 'app/pages/apps/guards/apps-navigate-away.guard';
 import { CustomFormsModule } from 'app/pages/apps/modules/custom-forms/custom-forms.module';
-import { AppsFilterStore } from 'app/pages/apps/store/apps-filter-store.service';
-import { AppsStore } from 'app/pages/apps/store/apps-store.service';
-import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
-import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
 import { AppCatalogPipe } from 'app/pages/apps/utils/app-catalog.pipe';
 import { AppCardLogoComponent } from './components/app-card-logo/app-card-logo.component';
 import { AppAvailableInfoCardComponent } from './components/app-detail-view/app-available-info-card/app-available-info-card.component';
@@ -120,6 +116,7 @@ import { KubernetesStatusComponent } from './components/installed-apps/kubernete
     KubernetesSettingsComponent,
     AppResourcesCardComponent,
     AppHelmChartCardComponent,
+    AppsScopeWrapperComponent,
     AppAvailableInfoCardComponent,
     PodLogsComponent,
     PodShellComponent,
@@ -186,11 +183,6 @@ import { KubernetesStatusComponent } from './components/installed-apps/kubernete
     AppCatalogPipe,
   ],
   providers: [
-    AppsStore,
-    AppsFilterStore,
-    KubernetesStore,
-    InstalledAppsStore,
-    AppsNavigateAwayGuard,
     DockerImagesComponentStore,
   ],
 })
