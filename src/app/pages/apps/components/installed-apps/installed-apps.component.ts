@@ -392,6 +392,9 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
     let status: AppStatus;
 
+    if (!app) {
+      return null;
+    }
     switch (app.status) {
       case ChartReleaseStatus.Active:
         status = AppStatus.Started;
