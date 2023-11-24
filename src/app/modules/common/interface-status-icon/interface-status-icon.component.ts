@@ -34,9 +34,10 @@ export class InterfaceStatusIconComponent implements OnChanges {
   }
 
   get tooltipText(): string {
+    const empty = this.translate.instant('N/A');
     return this.translate.instant('Sent: {sent} Received: {received}', {
-      sent: filesize(this.update.sent_bytes, { standard: 'iec' }),
-      received: filesize(this.update.received_bytes, { standard: 'iec' }),
+      sent: this.update.sent_bytes ? filesize(this.update.sent_bytes, { standard: 'iec' }) : empty,
+      received: this.update.received_bytes ? filesize(this.update.received_bytes, { standard: 'iec' }) : empty,
     });
   }
 
