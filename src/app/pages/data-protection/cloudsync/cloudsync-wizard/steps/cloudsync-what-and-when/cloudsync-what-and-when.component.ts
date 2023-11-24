@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnInit, Output,
+} from '@angular/core';
 import { Validators, FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { NavigationExtras, Router } from '@angular/router';
@@ -6,7 +8,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
-import { Observable, combineLatest, filter, map, merge, of } from 'rxjs';
+import {
+  Observable, combineLatest, filter, map, merge, of,
+} from 'rxjs';
 import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { Direction, directionNames } from 'app/enums/direction.enum';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
@@ -285,7 +289,6 @@ export class CloudsyncWhatAndWhenComponent implements OnInit, OnChanges {
         this.form.controls.snapshot.enable();
       }
     });
-
 
     merge(
       this.form.controls.path_source.valueChanges,

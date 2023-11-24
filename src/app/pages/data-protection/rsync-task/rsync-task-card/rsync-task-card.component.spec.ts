@@ -168,7 +168,6 @@ describe('RsyncTaskCardComponent', () => {
     });
 
     expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('rsynctask.run', [1]);
-
   });
 
   it('deletes a Rsync Task with confirmation when Delete button is pressed', async () => {
@@ -177,7 +176,7 @@ describe('RsyncTaskCardComponent', () => {
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Confirmation',
-      message: 'Delete Rsync Task <b>\"asd - asdad\"</b>?',
+      message: 'Delete Rsync Task <b>"asd - asdad"</b>?',
     });
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('rsynctask.delete', [1]);

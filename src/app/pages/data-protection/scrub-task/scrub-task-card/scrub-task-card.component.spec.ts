@@ -129,7 +129,7 @@ describe('ScrubTaskCardComponent', () => {
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Confirmation',
-      message: 'Delete Scrub Task <b>\"APPS\"</b>?',
+      message: 'Delete Scrub Task <b>"APPS"</b>?',
     });
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.scrub.delete', [1]);

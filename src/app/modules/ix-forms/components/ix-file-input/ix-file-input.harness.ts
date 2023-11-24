@@ -14,8 +14,7 @@ export class IxFileInputHarness extends ComponentHarness implements IxFormContro
 
   static with(options: IxFileInputHarnessFilters): HarnessPredicate<IxFileInputHarness> {
     return new HarnessPredicate(IxFileInputHarness, options)
-      .addOption('label', options.label,
-        (harness, label) => HarnessPredicate.stringMatches(harness.getLabelText(), label));
+      .addOption('label', options.label, (harness, label) => HarnessPredicate.stringMatches(harness.getLabelText(), label));
   }
 
   getInput = this.locatorFor('input');

@@ -47,7 +47,7 @@ export class DatasetDetailsCardComponent {
 
   get datasetCompression(): string {
     return this.dataset?.compression?.source === ZfsPropertySource.Inherited
-      ? 'Inherit (' + this.dataset.compression?.value + ')'
+      ? `Inherit (${this.dataset.compression?.value})`
       : this.dataset.compression?.value;
   }
 

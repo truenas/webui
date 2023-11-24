@@ -35,15 +35,15 @@ describe('RsyncTaskListComponent', () => {
       remotehost: 'server.com',
       remotemodule: 'my_module',
       schedule: {
-        'minute': '0',
-        'hour': '*',
-        'dom': '*',
-        'month': '*',
-        'dow': '*',
+        minute: '0',
+        hour: '*',
+        dom: '*',
+        month: '*',
+        dow: '*',
       },
       user: 'bob',
       job: {
-        'state': JobState.Running,
+        state: JobState.Running,
       } as Job,
     },
     {
@@ -55,15 +55,15 @@ describe('RsyncTaskListComponent', () => {
       remotehost: 'server.com',
       remotemodule: '',
       schedule: {
-        'minute': '0',
-        'hour': '0',
-        'dom': '1',
-        'month': '*',
-        'dow': '*',
+        minute: '0',
+        hour: '0',
+        dom: '1',
+        month: '*',
+        dow: '*',
       },
       user: 'peter',
       job: {
-        'state': JobState.Finished,
+        state: JobState.Finished,
       } as Job,
     },
   ] as RsyncTask[];

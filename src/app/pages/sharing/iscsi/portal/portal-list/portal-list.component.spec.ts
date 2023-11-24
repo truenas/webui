@@ -91,7 +91,6 @@ describe('PortalListComponent', () => {
     const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 5);
     await editButton.click();
 
-
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(PortalFormComponent, {
       data: portals[0],
     });

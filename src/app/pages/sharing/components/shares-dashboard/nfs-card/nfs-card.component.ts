@@ -2,7 +2,9 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { tap, map, filter, switchMap } from 'rxjs';
+import {
+  tap, map, filter, switchMap,
+} from 'rxjs';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingNfs } from 'app/helptext/sharing';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';

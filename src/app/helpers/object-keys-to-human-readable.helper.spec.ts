@@ -25,12 +25,12 @@ describe('Converts object to human readable', () => {
     expect(convertObjectKeysToHumanReadable(specObject)).toEqual({
       'First Name': 'Alex',
       'Last Name': 'Test',
-      'Address': {
+      Address: {
         'Post Code': 55555,
         'Private House': {
-          'Street': 'Grace Street 1',
-          'Nested': {
-            'Value': 1,
+          Street: 'Grace Street 1',
+          Nested: {
+            Value: 1,
           },
         },
       },

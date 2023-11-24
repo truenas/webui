@@ -133,7 +133,8 @@ describe('DatasetQuotasGrouplistComponent', () => {
     (firstRow as HTMLElement).click();
 
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(
-      DatasetQuotaEditFormComponent, { data: { datasetId: 'Test', id: 1, quotaType: 'GROUP' } },
+      DatasetQuotaEditFormComponent,
+      { data: { datasetId: 'Test', id: 1, quotaType: 'GROUP' } },
     );
   });
 });

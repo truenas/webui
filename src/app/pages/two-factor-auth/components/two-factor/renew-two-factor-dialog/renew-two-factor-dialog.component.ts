@@ -15,7 +15,6 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RenewTwoFactorDialogComponent {
-
   isFormLoading = false;
 
   form = this.fb.group({
@@ -42,7 +41,7 @@ export class RenewTwoFactorDialogComponent {
     this.isFormLoading = true;
     this.cdr.markForCheck();
     this.authService.renewUser2FaSecret(
-      { interval: this.form.value.interval,  otp_digits: this.form.value.otp_digits },
+      { interval: this.form.value.interval, otp_digits: this.form.value.otp_digits },
     ).pipe(
       untilDestroyed(this),
     ).subscribe({

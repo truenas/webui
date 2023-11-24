@@ -1,7 +1,11 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+} from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, map, switchMap, tap } from 'rxjs';
+import {
+  filter, map, switchMap, tap,
+} from 'rxjs';
 import helptext_smart from 'app/helptext/data-protection/smart/smart';
 import { SmartTestTaskUi } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
@@ -39,7 +43,7 @@ export class SmartTaskCardComponent implements OnInit {
     }),
     textColumn({
       title: helptext_smart.smartlist_column_type,
-      getValue: (row) => row.type.replace(/\w\S*/g, txt => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()),
+      getValue: (row) => row.type.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()),
     }),
     textColumn({
       title: helptext_smart.smartlist_column_description,

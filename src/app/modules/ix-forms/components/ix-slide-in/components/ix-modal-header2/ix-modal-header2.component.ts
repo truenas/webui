@@ -1,4 +1,6 @@
-import { AfterViewInit, Component, Inject, Input } from '@angular/core';
+import {
+  AfterViewInit, Component, Inject, Input,
+} from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';

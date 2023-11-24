@@ -46,7 +46,7 @@ export class BreadcrumbComponent implements OnInit {
         return Boolean(routePart.breadcrumb);
       })
       .map((routePart) => {
-        if (noLinksRoutes.some(url => routePart.url === url)) {
+        if (noLinksRoutes.some((url) => routePart.url === url)) {
           return { ...routePart, url: null };
         }
         return routePart;

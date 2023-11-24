@@ -58,16 +58,14 @@ export class ServiceExtraActionsComponent {
                 ),
               );
             }
-          } else {
-            if (service.state === ServiceStatus.Stopped && rpc === 'service.start') {
-              this.dialogService.warn(
-                this.translate.instant('Service failed to start'),
-                this.translate.instant(
-                  'The {service} service failed to start.',
-                  { service: serviceNames.get(service.service) || service.service },
-                ),
-              );
-            }
+          } else if (service.state === ServiceStatus.Stopped && rpc === 'service.start') {
+            this.dialogService.warn(
+              this.translate.instant('Service failed to start'),
+              this.translate.instant(
+                'The {service} service failed to start.',
+                { service: serviceNames.get(service.service) || service.service },
+              ),
+            );
           }
         },
         error: (error: WebsocketError) => {

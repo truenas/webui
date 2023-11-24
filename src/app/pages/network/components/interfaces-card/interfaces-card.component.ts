@@ -76,9 +76,9 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
           iconName: 'refresh',
           hidden: (row) => of(!this.isPhysical(row)),
           disabled: () => this.isHaEnabled$,
-          dynamicTooltip: () => this.isHaEnabled$.pipe(map((isHaEnabled) => isHaEnabled
+          dynamicTooltip: () => this.isHaEnabled$.pipe(map((isHaEnabled) => (isHaEnabled
             ? this.translate.instant(helptext.ha_enabled_reset_msg)
-            : this.translate.instant('Reset configuration'))),
+            : this.translate.instant('Reset configuration')))),
           onClick: (row) => this.onReset(row),
         },
         {
