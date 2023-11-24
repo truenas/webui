@@ -727,7 +727,8 @@ describe('Install app', () => {
     await saveButton.click();
 
     expect(mockEntityJobComponentRef.componentInstance.setCall).toHaveBeenCalledWith(
-      'chart.release.create', [{
+      'chart.release.create',
+      [{
         catalog: 'TRUENAS',
         item: 'webdav',
         release_name: 'appname',
