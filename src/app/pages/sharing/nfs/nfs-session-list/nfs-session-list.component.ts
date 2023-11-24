@@ -7,7 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { map, tap } from 'rxjs';
 import { stringToTitleCase } from 'app/helpers/string-to-title-case';
 import { Nfs3Session, Nfs4Session, NfsType } from 'app/interfaces/nfs-share.interface';
-import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
+import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.interface';
 import { createTable } from 'app/modules/ix-table2/utils';

@@ -6,9 +6,12 @@ import {
 import { Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
-import { CoreEvent } from 'app/interfaces/events';
-import { ChangeDriveTrayColorEvent, ChangeDriveTrayOptions } from 'app/interfaces/events/enclosure-events.interface';
 import { DriveTray } from 'app/pages/system/view-enclosure/classes/drivetray';
+import {
+  ChangeDriveTrayColorEvent,
+  ChangeDriveTrayOptions,
+  EnclosureEvent,
+} from 'app/pages/system/view-enclosure/interfaces/enclosure-events.interface';
 // TODO: See if can be removed.
 // eslint-disable-next-line
 import { AdvancedBloomFilter } from '@pixi/filter-advanced-bloom';
@@ -41,7 +44,7 @@ export class ChassisView {
      * */
   readonly className: string = 'ChassisView';
   container: Container;
-  events: Subject<CoreEvent>;
+  events: Subject<EnclosureEvent>;
   model: string;
   driveTraysOffsetY = 0; // if drives don't start at top.
   driveTraysOffsetX = 0; // if drives don't start at top.
@@ -83,11 +86,11 @@ export class ChassisView {
 
     this.container = new PIXI.Container();
     this.driveTrays = new PIXI.Container();
-    this.events = new Subject<CoreEvent>();
+    this.events = new Subject<EnclosureEvent>();
 
     this.events
       .pipe(filter((event) => event.name === 'ChangeDriveTrayColor'))
-      .subscribe((evt: CoreEvent) => {
+      .subscribe((evt: EnclosureEvent) => {
         this.colorDriveTray((evt as ChangeDriveTrayColorEvent).data);
       });
 

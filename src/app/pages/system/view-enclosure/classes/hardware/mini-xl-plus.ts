@@ -1,6 +1,6 @@
-import { CoreEvent } from 'app/interfaces/events';
 import { ChassisView } from 'app/pages/system/view-enclosure/classes/chassis-view';
 import { Chassis } from 'app/pages/system/view-enclosure/classes/hardware/chassis';
+import { EnclosureEvent } from 'app/pages/system/view-enclosure/interfaces/enclosure-events.interface';
 
 export class MiniXlPlus extends Chassis {
   constructor() {
@@ -25,7 +25,7 @@ export class MiniXlPlus extends Chassis {
     this.front.totalDriveTrays = 9;
     this.front.autoPosition = false;
 
-    this.front.events.subscribe((evt: CoreEvent) => {
+    this.front.events.subscribe((evt: EnclosureEvent) => {
       if (evt.name === 'ChassisLoaded') {
         this.onLoaded();
       }
