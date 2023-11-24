@@ -118,7 +118,7 @@ describe('UserListComponent', () => {
 
     const expectedRows = [
       ['Username', 'UID', 'Builtin', 'Full Name', 'Roles'],
-      ['root',  '0', 'Yes', 'root', 'Full Admin, Has Allow List'],
+      ['root', '0', 'Yes', 'root', 'Full Admin, Has Allow List'],
       ['test', '1004', 'No', 'test', 'N/A'],
     ];
 

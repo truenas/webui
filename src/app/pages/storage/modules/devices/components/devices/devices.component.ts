@@ -14,9 +14,11 @@ import {
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
+import { stringToTitleCase } from 'app/helpers/string-to-title-case';
 import { WINDOW } from 'app/helpers/window.helper';
 import { DeviceNestedDataNode, isVdevGroup } from 'app/interfaces/device-nested-data-node.interface';
 import {
@@ -25,6 +27,7 @@ import {
 import { NestedTreeDataSource } from 'app/modules/ix-tree/nested-tree-datasource';
 import { flattenTreeWithFilter } from 'app/modules/ix-tree/utils/flattern-tree-with-filter';
 import { DevicesStore } from 'app/pages/storage/modules/devices/stores/devices-store.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 const raidzItems = [TopologyItemType.Raidz, TopologyItemType.Raidz1, TopologyItemType.Raidz2, TopologyItemType.Raidz3];
 
@@ -43,6 +46,8 @@ export class DevicesComponent implements OnInit, AfterViewInit {
   diskDictionary: { [guid: string]: Disk } = {};
   dataSource: NestedTreeDataSource<DeviceNestedDataNode>;
   poolId: number;
+  poolName: string;
+
   treeControl = new NestedTreeControl<DeviceNestedDataNode, string>((vdev) => vdev.children, {
     trackBy: (vdev) => vdev.guid,
   });
@@ -61,12 +66,20 @@ export class DevicesComponent implements OnInit, AfterViewInit {
   showMobileDetails = false;
   isMobileView = false;
 
+  get pageTitle(): string {
+    return this.poolName
+      ? this.translate.instant('{name} Devices', { name: stringToTitleCase(this.poolName) })
+      : this.translate.instant('Devices');
+  }
+
   constructor(
     private router: Router,
     private cdr: ChangeDetectorRef,
     private route: ActivatedRoute,
     private devicesStore: DevicesStore,
     private breakpointObserver: BreakpointObserver,
+    private translate: TranslateService,
+    private ws: WebSocketService,
     @Inject(WINDOW) private window: Window,
   ) { }
 
@@ -82,6 +95,7 @@ export class DevicesComponent implements OnInit, AfterViewInit {
     this.devicesStore.loadNodes(this.poolId);
     this.listenForRouteChanges();
     this.setupTree();
+    this.getPool();
   }
 
   ngAfterViewInit(): void {
@@ -209,5 +223,14 @@ export class DevicesComponent implements OnInit, AfterViewInit {
 
   closeMobileDetails(): void {
     this.showMobileDetails = false;
+  }
+
+  private getPool(): void {
+    this.ws.call('pool.query', [[['id', '=', this.poolId]]]).pipe(untilDestroyed(this)).subscribe((pools) => {
+      if (pools.length) {
+        this.poolName = pools[0]?.name;
+        this.cdr.markForCheck();
+      }
+    });
   }
 }

@@ -1,4 +1,6 @@
-import { OperatorFunction, catchError, pipe, tap, throwError } from 'rxjs';
+import {
+  OperatorFunction, catchError, pipe, tap, throwError,
+} from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';

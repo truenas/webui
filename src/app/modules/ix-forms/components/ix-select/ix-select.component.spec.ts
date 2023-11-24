@@ -82,6 +82,8 @@ describe('IxSelectComponent', () => {
       spectator.setInput({ options: opt$ });
 
       expect(spectator.query('mat-progress-spinner')).toBeVisible();
+      // TODO: Fix
+      // eslint-disable-next-line no-promise-executor-return
       await new Promise((smth) => setTimeout(smth, 100));
       spectator.detectChanges();
 

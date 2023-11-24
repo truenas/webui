@@ -8,8 +8,6 @@ import {
   indexControlsByLabel, getControlValues, IxFormBasicValueType, fillControlValues, getDisabledStates,
 } from 'app/modules/ix-forms/testing/control-harnesses.helpers';
 
-
-
 /**
  * This class provides sugar syntax to make it easier to work with forms.
  * When possibilities of this class are not enough, use individual harnesses such as IxInputHarness, etc.

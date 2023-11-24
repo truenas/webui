@@ -96,9 +96,11 @@ export class UserDetailsRowComponent {
 
     if (user.sshpubkey && user.ssh_password_enabled) {
       return `${keySet}, ${passwordLoginEnabled}`;
-    } else if (user.sshpubkey) {
+    }
+    if (user.sshpubkey) {
       return keySet;
-    } else if (user.ssh_password_enabled) {
+    }
+    if (user.ssh_password_enabled) {
       return passwordLoginEnabled;
     }
 

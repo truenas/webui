@@ -6,7 +6,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { map } from 'rxjs/operators';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
-import { assertUnreachable } from 'app/helpers/assert-unreachable.utils';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-quotas';
 import { SetDatasetQuota } from 'app/interfaces/dataset-quota.interface';
@@ -171,7 +170,7 @@ export class DatasetQuotaAddFormComponent implements OnInit {
         });
         break;
       default:
-        assertUnreachable(this.quotaType as never);
+        throw new Error(`Unexpected quota type: ${this.quotaType}`);
     }
 
     return quotas;

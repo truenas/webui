@@ -109,8 +109,10 @@ export class DiskBulkEditComponent {
 
   onSubmit(): void {
     const req = this.prepareDataSubmit();
-    const successText = this.translate.instant('Successfully saved {n, plural, one {Disk} other {Disks}} settings.',
-      { n: req.length });
+    const successText = this.translate.instant(
+      'Successfully saved {n, plural, one {Disk} other {Disks}} settings.',
+      { n: req.length },
+    );
     this.isLoading = true;
     this.ws.job('core.bulk', ['disk.update', req])
       .pipe(untilDestroyed(this)).subscribe({

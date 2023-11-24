@@ -22,17 +22,15 @@ export class IxCellRelativeDateComponent<T> extends ColumnComponent<T> {
   get date(): string {
     if (this.value) {
       return formatDistanceToNowShortened(this.value as number);
-    } else {
-      return this.translate.instant('N/A');
     }
+    return this.translate.instant('N/A');
   }
 
   get dateTooltip(): string {
     if (+this.value) {
       return this.formatDateTime.transform(this.value as number);
-    } else {
-      return this.translate.instant('N/A');
     }
+    return this.translate.instant('N/A');
   }
 }
 

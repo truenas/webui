@@ -24,9 +24,9 @@
       [required]="true"
       [tooltip]="helptext.name.tooltip | translate"
     ></ix-input>
-
-    <ng-container #providerFormContainer></ng-container>
   </ix-fieldset>
+
+  <ng-container #providerFormContainer></ng-container>
 
   <ix-form-actions>
     <button
@@ -44,5 +44,11 @@
       [disabled]="areActionsDisabled"
       (click)="onVerify()"
     >{{ 'Verify Credential' | translate }}</button>
+    <button
+      mat-button
+      type="button"
+      ixTest="advanced"
+      (click)="openAdvanced()"
+    >{{ 'Advanced Options' | translate }}</button>
   </ix-form-actions>
 </form>

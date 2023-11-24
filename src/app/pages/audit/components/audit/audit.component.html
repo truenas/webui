@@ -7,16 +7,26 @@
 </ng-template>
 
 <mat-card class="header-card item-search">
-  <div class="header-card-item">
-    <ix-fake-progress-bar
-      class="loader-bar"
-      [loading]="dataProvider.isLoading$ | async"
-    ></ix-fake-progress-bar>
-    <ix-input
-      class="search-control"
-      [formControl]="searchControl"
-      [placeholder]="'Search' | translate"
-    ></ix-input>
+  <ix-fake-progress-bar
+    class="loader-bar"
+    [loading]="dataProvider.isLoading$ | async"
+  ></ix-fake-progress-bar>
+
+  <div class="search-bar">
+    <ix-search-input2
+      #searchInput
+      class="search-input"
+      [properties]="searchProperties"
+      [query]="searchQuery"
+    ></ix-search-input2>
+    <button
+      mat-button
+      color="primary"
+      ixTest="search"
+      (click)="onSearch(searchInput.query); updateUrlOptions()"
+    >
+      {{ 'Search' | translate }}
+    </button>
   </div>
 </mat-card>
 
@@ -40,6 +50,7 @@
         [columns]="columns"
         [dataProvider]="dataProvider"
         [isLoading]="dataProvider.isLoading$ | async"
+        (expanded)="expanded($event)"
       >
         <ng-template
           let-audit
@@ -54,17 +65,22 @@
         </ng-template>
       </tbody>
     </ix-table2>
-    <ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>
+    <ix-table-pager
+      [dataProvider]="dataProvider"
+      [pageSize]="pagination.pageSize"
+      [currentPage]="pagination.pageNumber"
+    ></ix-table-pager>
   </div>
 
   <div
-    ixDetailsHeight
+    ixDetailsHeight="rightside-content-hold"
     class="details-container"
     [class.details-container-mobile]="showMobileDetails"
   >
     <ix-log-details-panel
       *ngIf="dataProvider.expandedRow"
       [log]="dataProvider.expandedRow"
+      (hide)="closeMobileDetails()"
     ></ix-log-details-panel>
   </div>
 </div>

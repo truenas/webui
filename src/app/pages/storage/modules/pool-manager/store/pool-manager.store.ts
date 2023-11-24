@@ -256,26 +256,32 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
       this.ws.call('disk.get_unused'),
       this.ws.call('enclosure.query'),
     ]).pipe(
-      tapResponse(([allDisks, enclosures]) => {
-        this.patchState({
-          isLoading: false,
-          allDisks,
-          enclosures,
-        });
-      },
-      (error: WebsocketError) => {
-        this.patchState({ isLoading: false });
-        this.dialogService.error(this.errorHandler.parseWsError(error));
-      }),
+      tapResponse(
+        ([allDisks, enclosures]) => {
+          this.patchState({
+            isLoading: false,
+            allDisks,
+            enclosures,
+          });
+        },
+        (error: WebsocketError) => {
+          this.patchState({ isLoading: false });
+          this.dialogService.error(this.errorHandler.parseWsError(error));
+        },
+      ),
     );
   }
 
   readonly resetTopologyCategory = this.updater((state, category: VdevType) => {
+    const newCategory = { ...initialTopology[category] };
+    if (category === VdevType.Spare || category === VdevType.Cache) {
+      newCategory.layout = CreateVdevLayout.Stripe;
+    }
     return {
       ...state,
       topology: {
         ...state.topology,
-        [category]: initialTopology[category],
+        [category]: newCategory,
       },
     };
   });

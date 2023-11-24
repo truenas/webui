@@ -1,20 +1,28 @@
-export interface TwoFactorConfig {
+export interface GlobalTwoFactorConfig {
   enabled: boolean;
   id: number;
-  interval: number;
-  otp_digits: number;
   services: {
     ssh: boolean;
   };
   window: number;
 }
 
-export interface TwoFactorConfigUpdate {
+export interface GlobalTwoFactorConfigUpdate {
   enabled: boolean;
-  interval?: number;
-  otp_digits?: number;
   services?: {
     ssh: boolean;
   };
   window?: number;
+}
+
+export interface UserTwoFactorConfig {
+  provisioning_uri: string;
+  secret_configured: boolean;
+  interval: number;
+  otp_digits: number;
+}
+
+export interface UserTwoFactorConfigUpdate {
+  interval: number;
+  otp_digits: number;
 }

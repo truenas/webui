@@ -72,9 +72,10 @@ export interface IscsiExtent {
   serial: string;
   type: IscsiExtentType;
   xen: boolean;
+  naa: string;
 }
 
-export type IscsiExtentUpdate = Omit<IscsiExtent, 'id'>;
+export type IscsiExtentUpdate = Omit<IscsiExtent, 'id' | 'naa'>;
 
 export interface IscsiTargetExtent {
   extent: number;

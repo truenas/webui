@@ -1,14 +1,21 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+} from '@angular/core';
 import { FormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
-import { convertToTitleSpaceCase } from 'app/helpers/convert-to-title-space-case';
+import { toHumanReadableKey } from 'app/helpers/object-keys-to-human-readable.helper';
 import { DynamicFormSchema, DynamicFormSchemaNode } from 'app/interfaces/dynamic-form-schema.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { ExportingExporterList as ReportingExporterList, ReportingExporterKey as ReportingExporterType, ReportingExporterSchema, ReportingExporter } from 'app/interfaces/reporting-exporters.interface';
+import {
+  ExportingExporterList as ReportingExporterList,
+  ReportingExporterKey as ReportingExporterType,
+  ReportingExporterSchema,
+  ReportingExporter,
+} from 'app/interfaces/reporting-exporters.interface';
 import { CustomUntypedFormField } from 'app/modules/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
@@ -22,7 +29,6 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ReportingExportersFormComponent implements OnInit {
-
   get isNew(): boolean {
     return !this.editingExpoter;
   }
@@ -108,7 +114,8 @@ export class ReportingExportersFormComponent implements OnInit {
     for (const schema of schemas) {
       for (const input of schema.schema) {
         this.form.controls.attributes.addControl(
-          input._name_, new FormControl('', input._required_ ? [Validators.required] : []),
+          input._name_,
+          new FormControl('', input._required_ ? [Validators.required] : []),
         );
       }
     }
@@ -129,7 +136,7 @@ export class ReportingExportersFormComponent implements OnInit {
     return schema.schema.map((input) => ({
       controlName: input._name_,
       type: DynamicFormSchemaType.Input,
-      title: convertToTitleSpaceCase(input.title),
+      title: toHumanReadableKey(input.title),
       required: input._required_,
     }));
   }
@@ -164,7 +171,6 @@ export class ReportingExportersFormComponent implements OnInit {
   }
 
   protected onSubmit(): void {
-
     const values = {
       ...this.form.value,
     };

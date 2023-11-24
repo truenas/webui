@@ -1,10 +1,14 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnInit,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { tap, map, filter, switchMap } from 'rxjs';
+import {
+  tap, map, filter, switchMap,
+} from 'rxjs';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingSmb } from 'app/helptext/sharing/smb/smb';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';

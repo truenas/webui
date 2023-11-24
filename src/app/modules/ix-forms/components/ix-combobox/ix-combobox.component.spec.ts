@@ -28,6 +28,9 @@ class FakeProvider implements IxComboboxProvider {
   }
 }
 
+// TODO: Replace usages of promise and remove this exception
+/* eslint-disable no-promise-executor-return */
+
 describe('IxComboboxComponent', () => {
   let spectator: Spectator<IxComboboxComponent>;
   const formControl = new FormControl<unknown>();

@@ -12,8 +12,7 @@ export class IxSlideToggleHarness extends ComponentHarness implements IxFormCont
 
   static with(options: IxSlideToggleHarnessFilters): HarnessPredicate<IxSlideToggleHarness> {
     return new HarnessPredicate(IxSlideToggleHarness, options)
-      .addOption('label', options.label,
-        (harness, label) => HarnessPredicate.stringMatches(harness.getLabelText(), label));
+      .addOption('label', options.label, (harness, label) => HarnessPredicate.stringMatches(harness.getLabelText(), label));
   }
 
   getMatSlideToggleHarness = this.locatorFor(MatSlideToggleHarness);

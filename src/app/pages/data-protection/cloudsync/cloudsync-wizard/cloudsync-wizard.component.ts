@@ -1,7 +1,11 @@
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewChild, forwardRef } from '@angular/core';
+import {
+  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewChild, forwardRef,
+} from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { BehaviorSubject, Observable, filter, merge } from 'rxjs';
+import {
+  BehaviorSubject, Observable, filter, merge,
+} from 'rxjs';
 import { cloudsyncProviderNameMap } from 'app/enums/cloudsync-provider.enum';
 import { CloudSyncTask, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
@@ -75,7 +79,8 @@ export class CloudsyncWizardComponent implements AfterViewInit {
         this.isLoading$.next(false);
         this.slideInRef.close(true);
         this.cdr.markForCheck();
-      }, error: (err) => {
+      },
+      error: (err) => {
         this.dialogService.error(this.errorHandler.parseWsError(err));
       },
     });

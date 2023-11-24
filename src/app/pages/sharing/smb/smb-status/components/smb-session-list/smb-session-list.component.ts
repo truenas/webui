@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+} from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { tap } from 'rxjs';
@@ -12,8 +14,8 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
+  selector: 'ix-smb-session-list',
   templateUrl: './smb-session-list.component.html',
-  styleUrls: ['./smb-session-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SmbSessionListComponent implements OnInit {

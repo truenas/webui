@@ -83,13 +83,13 @@ describe('CloudsyncWizardComponent', () => {
 
   it('checks new credentials', async () => {
     await form.fillForm({
-      'Credentials': 'Create New',
+      Credentials: 'Create New',
     });
 
     expect(await form.getValues()).toEqual({
-      'Credentials': 'Create New',
-      'Name': 'Storj',
-      'Provider': 'Storj iX',
+      Credentials: 'Create New',
+      Name: 'Storj',
+      Provider: 'Storj iX',
       'Access Key ID': '',
       'Secret Access Key': '',
     });
@@ -97,17 +97,17 @@ describe('CloudsyncWizardComponent', () => {
 
   it('creates objects when wizard is submitted', async () => {
     expect(await form.getValues()).toEqual({
-      'Credentials': '',
+      Credentials: '',
     });
 
     await form.fillForm({
-      'Credentials': 'Google Photos (Google Photos)',
+      Credentials: 'Google Photos (Google Photos)',
     });
 
     await goToNextStep();
 
     await form.fillForm({
-      'Description': 'Sync Google Photos - TestUser',
+      Description: 'Sync Google Photos - TestUser',
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -145,4 +145,3 @@ describe('CloudsyncWizardComponent', () => {
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Task created');
   });
 });
-

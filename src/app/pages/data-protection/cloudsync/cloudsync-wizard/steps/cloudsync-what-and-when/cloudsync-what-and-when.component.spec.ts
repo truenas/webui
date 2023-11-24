@@ -63,7 +63,7 @@ describe('CloudsyncWhatAndWhenComponent', () => {
 
     await form.fillForm({
       'Directory/Files': '/mnt/gphotos',
-      'Description': 'Sync Google Photos',
+      Description: 'Sync Google Photos',
     });
   });
 
@@ -101,10 +101,10 @@ describe('CloudsyncWhatAndWhenComponent', () => {
   it('when an required field is empty, the "Save" button is disabled', async () => {
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
 
-    await form.fillForm({ 'Description': '' });
+    await form.fillForm({ Description: '' });
     expect(await saveButton.isDisabled()).toBe(true);
 
-    await form.fillForm({ 'Description': 'Sync Google Photos' });
+    await form.fillForm({ Description: 'Sync Google Photos' });
     expect(await saveButton.isDisabled()).toBe(false);
   });
 
@@ -122,8 +122,9 @@ describe('CloudsyncWhatAndWhenComponent', () => {
       buttonText: 'Continue',
       cancelText: 'Cancel',
       message:
-        'Proceeding will result in the loss of your current cloud task data. However, your created provider will remain unaffected. Are you sure you want to continue?',
+        'Switching to Advanced Options will lose data entered on second step. Do you want to continue?',
       title: 'Switch to Advanced Options',
+      hideCheckbox: true,
     });
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(CloudsyncFormComponent, { wide: true });
   });

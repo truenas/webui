@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+} from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -19,7 +21,6 @@ import { selectHaStatus, selectIsHaLicensed } from 'app/store/ha-info/ha-info.se
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HaStatusIconComponent implements OnInit {
-
   isFailoverLicensed$ = this.store$.select(selectIsHaLicensed);
 
   failoverDisabledReasons: FailoverDisabledReason[] = [];

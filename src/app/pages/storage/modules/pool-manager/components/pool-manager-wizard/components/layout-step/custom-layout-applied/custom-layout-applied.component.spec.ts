@@ -52,6 +52,5 @@ describe('CustomLayoutAppliedComponent', () => {
     await editButton.click();
 
     expect(spectator.inject(PoolManagerStore).openManualSelectionDialog).toHaveBeenCalled();
-
   });
 });
