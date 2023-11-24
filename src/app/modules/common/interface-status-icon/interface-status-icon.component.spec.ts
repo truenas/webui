@@ -44,10 +44,8 @@ describe('InterfaceStatusIconComponent', () => {
       jest.spyOn(spectator.component, 'updateStateInfoIcon');
       spectator.setInput('update', {
         link_state: LinkState.Up,
-        sent_bytes: 100 * KiB,
         sent_bytes_rate: 100 * KiB,
-        received_bytes_rate: 20 * MiB,
-        received_bytes: 30 * MiB,
+        received_bytes_rate: 30 * MiB,
       } as NetworkInterfaceUpdate);
     });
 
