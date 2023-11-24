@@ -1,19 +1,19 @@
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { TranslateService } from '@ngx-translate/core';
 import { AuditEvent } from 'app/enums/audit-event.enum';
 import { AuditEntry } from 'app/interfaces/audit.interface';
 
-export function getLogImportantData(log: AuditEntry): string {
+export function getLogImportantData(log: AuditEntry, translateService: TranslateService): string {
   switch (log.event) {
     case AuditEvent.Rename:
       return `${log.event_data?.src_file?.path} -> ${log.event_data?.dst_file?.path}`;
     case AuditEvent.Authentication:
-      return `${T('Account')}: ${log.event_data?.clientAccount}`;
+      return translateService.instant('Account: {account}', { account: log.event_data?.clientAccount });
     case AuditEvent.Connect:
     case AuditEvent.Disconnect:
-      return `${T('Host')}: ${log.event_data?.host}`;
+      return translateService.instant('Host: {host}', { host: log.event_data?.host });
     case AuditEvent.Create:
     case AuditEvent.Unlink:
-      return `${T('File')}: ${log.event_data?.file?.path}`;
+      return translateService.instant('File: {filename}', { filename: log.event_data?.file?.path });
     case AuditEvent.Close:
     case AuditEvent.Read:
     case AuditEvent.Write:
@@ -22,7 +22,7 @@ export function getLogImportantData(log: AuditEntry): string {
     case AuditEvent.SetAcl:
     case AuditEvent.SetAttr:
     case AuditEvent.SetQuota:
-      return `${T('File')}: ${log.event_data?.file?.handle?.type}/${log.event_data?.file?.handle?.value}`;
+      return translateService.instant('File: {filename}', { filename: `${log.event_data?.file?.handle?.type}/${log.event_data?.file?.handle?.value }` });
     default:
       return ' - ';
   }

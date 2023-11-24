@@ -132,7 +132,7 @@ export const rootRouterConfig: Routes = [
         data: { title: T('Jobs'), breadcrumb: T('Jobs') },
       },
       {
-        path: 'audit',
+        path: 'system/audit',
         loadChildren: () => import('./pages/audit/audit.module').then((module) => module.AuditModule),
       },
     ],
