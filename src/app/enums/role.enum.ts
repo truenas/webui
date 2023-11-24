@@ -103,7 +103,3 @@ export const roleNames = new Map<Role, string>([
   [Role.SharingIscsiRead, T('Sharing iSCSI Read')],
   [Role.SharingIscsiWrite, T('Sharing iSCSI Write')],
 ]);
-
-export function rolesListToString(roles: Role[]): string {
-  return roles.map((role) => roleNames.get(role)).join(', ') || T('N/A');
-}

@@ -3,6 +3,7 @@ import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { User } from 'app/interfaces/user.interface';
 import { AdvancedSearchComponent } from 'app/modules/search-input/components/advanced-search/advanced-search.component';
 import { AdvancedSearchHarness } from 'app/modules/search-input/components/advanced-search/advanced-search.harness';
+import { AdvancedSearchAutocompleteService } from 'app/modules/search-input/services/advanced-search-autocomplete.service';
 import { QueryParserService } from 'app/modules/search-input/services/query-parser/query-parser.service';
 import { QueryToApiService } from 'app/modules/search-input/services/query-to-api/query-to-api.service';
 
@@ -14,6 +15,7 @@ describe('AdvancedSearchComponent', () => {
     providers: [
       QueryToApiService,
       QueryParserService,
+      AdvancedSearchAutocompleteService,
     ],
   });
 

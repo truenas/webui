@@ -6,24 +6,27 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import {
+  format, subDays, subMonths, subWeeks,
+} from 'date-fns';
 import { toSvg } from 'jdenticon';
-import { filter } from 'rxjs';
-import { auditEventLabels } from 'app/enums/audit-event.enum';
+import { filter, map, of } from 'rxjs';
+import { AuditEvent, auditEventLabels } from 'app/enums/audit-event.enum';
 import { getLogImportantData } from 'app/helpers/get-log-important-data.helper';
 import { WINDOW } from 'app/helpers/window.helper';
-import { AuditEntry } from 'app/interfaces/audit.interface';
+import { AuditEntry, SmbAuditEntry } from 'app/interfaces/audit.interface';
 import { ApiDataProvider, PaginationServerSide, SortingServerSide } from 'app/modules/ix-table2/api-data-provider';
 import { dateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-date/ix-cell-date.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { TablePagination } from 'app/modules/ix-table2/interfaces/table-pagination.interface';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
+import { SearchProperty } from 'app/modules/search-input/types/search-property.interface';
 import {
   AdvancedSearchQuery,
   SearchQuery,
 } from 'app/modules/search-input/types/search-query.interface';
 import {
-  booleanProperty,
   searchProperties,
   textProperty,
 } from 'app/modules/search-input/utils/search-properties.utils';
@@ -58,22 +61,15 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
     }),
     textColumn({
       title: this.translate.instant('Event'),
-      getValue: (row) => auditEventLabels.get(row.event),
+      getValue: (row) => this.translate.instant(auditEventLabels.get(row.event)),
     }),
     textColumn({
       title: this.translate.instant('Event Data'),
-      getValue: (row) => this.getEventDataForLog(row),
+      getValue: (row) => this.translate.instant(this.getEventDataForLog(row)),
     }),
   ]);
 
-  protected searchProperties = searchProperties<AuditEntry>([
-    textProperty('audit_id', this.translate.instant('Audit ID')),
-    textProperty('message_timestamp', this.translate.instant('Timestamp')),
-    textProperty('address', this.translate.instant('Address')),
-    textProperty('username', this.translate.instant('Username')),
-    textProperty('event', this.translate.instant('Event')),
-    booleanProperty('success', this.translate.instant('Success')),
-  ]);
+  protected searchProperties: SearchProperty<SmbAuditEntry>[] = [];
 
   constructor(
     private translate: TranslateService,
@@ -95,6 +91,54 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
     this.dataProvider.currentPage$.pipe(filter(Boolean), untilDestroyed(this)).subscribe((auditEntries) => {
       this.dataProvider.expandedRow = auditEntries[0];
       this.expanded(this.dataProvider.expandedRow);
+
+      this.searchProperties = searchProperties<AuditEntry>([
+        textProperty('audit_id', this.translate.instant('ID'), of([])),
+        textProperty(
+          'message_timestamp',
+          this.translate.instant('Timestamp'),
+          of([
+            {
+              label: 'Today',
+              value: `"${format(new Date(), 'yyyy-MM-dd')}"`,
+            },
+            {
+              label: 'Yesterday',
+              value: `"${format(subDays(new Date(), 1), 'yyyy-MM-dd')}"`,
+            },
+            {
+              label: 'Last week',
+              value: `"${format(subWeeks(new Date(), 1), 'yyyy-MM-dd')}"`,
+            },
+            {
+              label: 'Last month',
+              value: `"${format(subMonths(new Date(), 1), 'yyyy-MM-dd')}"`,
+            },
+          ]),
+        ),
+        textProperty(
+          'address',
+          this.translate.instant('Address'),
+          of(auditEntries.map((log) => ({ label: log.address, value: `"${log.address}"` }))),
+        ),
+        textProperty(
+          'service',
+          this.translate.instant('Service'),
+          of(auditEntries.map((log) => ({ label: log.service, value: `"${log.service}"` }))),
+        ),
+        textProperty(
+          'username',
+          this.translate.instant('Username'),
+          this.ws.call('user.query').pipe((
+            map((users) => users.map((user) => ({ label: user.username, value: `"${user.username}"` })))
+          )),
+        ),
+        textProperty(
+          'event',
+          this.translate.instant('Event'),
+          of(Object.values(AuditEvent).map((value) => ({ label: value, value: `"${value}"` }))),
+        ),
+      ]);
       this.cdr.markForCheck();
     });
 
