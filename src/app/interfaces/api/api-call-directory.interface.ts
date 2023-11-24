@@ -169,7 +169,9 @@ import {
 } from 'app/interfaces/network-interface.interface';
 import { NetworkSummary } from 'app/interfaces/network-summary.interface';
 import { AddNfsPrincipal, NfsConfig, NfsConfigUpdate } from 'app/interfaces/nfs-config.interface';
-import { Nfs3Session, Nfs4Session, NfsShare, NfsShareUpdate } from 'app/interfaces/nfs-share.interface';
+import {
+  Nfs3Session, Nfs4Session, NfsShare, NfsShareUpdate,
+} from 'app/interfaces/nfs-share.interface';
 import { CreateNtpServer, NtpServer } from 'app/interfaces/ntp-server.interface';
 import { MapOption } from 'app/interfaces/option.interface';
 import {
