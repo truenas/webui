@@ -79,7 +79,7 @@ export class ExportButtonComponent<T, M extends ApiJobMethod> {
 
   private getQueryFilters(searchQuery: SearchQuery<T>): QueryFilters<T> {
     if (searchQuery && searchQuery.isBasicQuery) {
-      return [['event', '~', searchQuery.query || '']];
+      return [['event', '~', `(?i)${searchQuery.query || ''}`]];
     }
 
     if (searchQuery && !searchQuery.isBasicQuery) {

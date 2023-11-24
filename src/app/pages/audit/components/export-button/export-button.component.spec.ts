@@ -76,7 +76,7 @@ describe('ExportButtonComponent', () => {
 
     expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(method, [{
       export_format: 'CSV',
-      'query-filters': [['event', '~', 'search query']],
+      'query-filters': [['event', '~', '(?i)search query']],
       'query-options': { order_by: ['-service'] },
     }]);
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith(
