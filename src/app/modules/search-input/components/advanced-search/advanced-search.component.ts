@@ -5,7 +5,7 @@ import {
   ElementRef,
   EventEmitter,
   Input,
-  OnChanges, OnDestroy, OnInit,
+  OnChanges, OnInit,
   Output,
   ViewChild,
 } from '@angular/core';
@@ -25,7 +25,7 @@ import { SearchProperty } from 'app/modules/search-input/types/search-property.i
   styleUrls: ['./advanced-search.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AdvancedSearchComponent<T> implements OnInit, OnChanges, OnDestroy {
+export class AdvancedSearchComponent<T> implements OnInit, OnChanges {
   @Input() query: QueryFilters<T> = [];
   @Input() properties: SearchProperty<T>[] = [];
 
@@ -57,9 +57,8 @@ export class AdvancedSearchComponent<T> implements OnInit, OnChanges, OnDestroy 
     this.advancedSearchAutocomplete.setProperties(this.properties);
   }
 
-  ngOnDestroy(): void {
-    this.inputArea?.nativeElement?.removeEventListener('click', this.handleClickAndFocusEvent.bind(this), true);
-    this.inputArea?.nativeElement?.removeEventListener('focus', this.handleClickAndFocusEvent.bind(this), true);
+  startSuggestionsCompletion(): void {
+    startCompletion(this.editorView);
   }
 
   initEditor(): void {
@@ -70,9 +69,6 @@ export class AdvancedSearchComponent<T> implements OnInit, OnChanges, OnDestroy 
 
       this.onInputChanged();
     });
-
-    this.inputArea?.nativeElement?.addEventListener('click', this.handleClickAndFocusEvent.bind(this), true);
-    this.inputArea?.nativeElement?.addEventListener('focus', this.handleClickAndFocusEvent.bind(this), true);
 
     const autocompleteExtension = autocompletion({
       override: [this.advancedSearchAutocomplete.setCompletionSource.bind(this.advancedSearchAutocomplete)],
@@ -125,11 +121,5 @@ export class AdvancedSearchComponent<T> implements OnInit, OnChanges, OnDestroy 
         insert: contents,
       },
     });
-  }
-
-  private handleClickAndFocusEvent(): void {
-    if (startCompletion instanceof Function) {
-      startCompletion(this.editorView);
-    }
   }
 }

@@ -15,11 +15,11 @@ export class QueryParserService {
   extractTokens(query: string): string[] {
     const tree = parser.parse(query);
     const cursor = tree.cursor();
-    const tokens: { type: string; text: string }[] = [];
+    const tokens: { type: ParsedToken; text: string }[] = [];
 
     const explore = (nextCursor: TreeCursor): void => {
       do {
-        const nodeType = nextCursor.node.type.name;
+        const nodeType = nextCursor.node.type.name as ParsedToken;
         tokens.push({
           type: nodeType,
           text: query.slice(nextCursor.from, nextCursor.to),
@@ -155,8 +155,15 @@ export class QueryParserService {
     return this.input.substring(node.from, node.to);
   }
 
-  private filterAndMapTokens(tokens: { type: string; text: string }[]): string[] {
-    const tokenTypes = ['Property', 'Comparator', 'Value', 'Or', 'And', '⚠'];
+  private filterAndMapTokens(tokens: { type: ParsedToken; text: string }[]): string[] {
+    const tokenTypes = [
+      ParsedToken.Property,
+      ParsedToken.Comparator,
+      ParsedToken.Value,
+      ParsedToken.Or,
+      ParsedToken.And,
+      ParsedToken.Error,
+    ];
 
     const queryTokens = tokens
       .filter(item => tokenTypes.includes(item.type) && item.text && item.text !== '"' && item.text !== "'")

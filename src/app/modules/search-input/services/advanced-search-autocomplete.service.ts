@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { CompletionContext, CompletionResult } from '@codemirror/autocomplete';
+import { EditorView } from '@codemirror/view';
 import { uniqBy } from 'lodash';
 import { Observable, lastValueFrom, map, of } from 'rxjs';
 import { QueryContext, ContextType } from 'app/interfaces/advanced-search.interface';
@@ -30,8 +31,8 @@ export class AdvancedSearchAutocompleteService<T> {
     const suggestions$ = this.generateSuggestionsBasedOnContext(queryContext);
     const currentToken = context.matchBefore(/\w*/);
 
-    let from = currentQuery.length < queryContext.startPosition ? 0 : queryContext.startPosition;
-    let to = queryContext.endPosition;
+    const from = currentQuery.length < queryContext.startPosition ? 0 : queryContext.startPosition;
+    const to = queryContext.endPosition;
 
     return lastValueFrom(
       suggestions$.pipe(
@@ -47,37 +48,47 @@ export class AdvancedSearchAutocompleteService<T> {
             })
             .map((suggestion) => ({
               label: suggestion.label,
-              apply(view) {
-                let updatedValue = suggestion.value.toString();
-                let anchor = /^\("\S+"\)$/.test(updatedValue)
-                  ? from + updatedValue.length - 1
-                  : from + updatedValue.length;
-
-                if (
-                  /^["'].*["']?$/.test(currentQuery[from - 1]) && /^["'].*["']?$/.test(currentQuery[to])
-                ) {
-                  updatedValue = updatedValue.replace(/['"]/g, '');
-                  anchor = from + updatedValue.length + 1;
-
-                  if (updatedValue.startsWith('(') && updatedValue.endsWith(')')) {
-                    updatedValue = `("${updatedValue.replace(/[()'"]/g, '')}")`;
-                    from = from - 1;
-                    to = to + 1;
-                    anchor = from + updatedValue.length - 1;
-                  }
-                }
-
-                view.dispatch(
-                  view.state.update({
-                    changes: { from, to, insert: updatedValue },
-                    selection: { anchor },
-                  }),
-                );
-              },
+              apply: (view) => this.applySuggestionTransformation(view, suggestion, currentQuery, from, to),
             })),
         })),
       ),
     );
+  }
+
+  private applySuggestionTransformation(
+    view: EditorView,
+    suggestion: Option,
+    currentQuery: string,
+    from: number,
+    to: number,
+  ): void {
+    {
+      let updatedValue = suggestion.value.toString();
+      let anchor = /^\("\S+"\)$/.test(updatedValue)
+        ? from + updatedValue.length - 1
+        : from + updatedValue.length;
+
+      if (
+        /^["'].*["']?$/.test(currentQuery[from - 1]) && /^["'].*["']?$/.test(currentQuery[to])
+      ) {
+        updatedValue = updatedValue.replace(/['"]/g, '');
+        anchor = from + updatedValue.length + 1;
+
+        if (updatedValue.startsWith('(') && updatedValue.endsWith(')')) {
+          updatedValue = `("${updatedValue.replace(/[()'"]/g, '')}")`;
+          from = from - 1;
+          to = to + 1;
+          anchor = from + updatedValue.length - 1;
+        }
+      }
+
+      view.dispatch(
+        view.state.update({
+          changes: { from, to, insert: updatedValue },
+          selection: { anchor },
+        }),
+      );
+    }
   }
 
   private getQueryContext(query: string, cursorPosition: number): QueryContext {
