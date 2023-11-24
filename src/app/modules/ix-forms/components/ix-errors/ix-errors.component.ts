@@ -75,7 +75,7 @@ export class IxErrorsComponent implements OnChanges {
       ).subscribe(() => {
         const newErrors: string[] = Object.keys(this.control.errors || []).map((error) => {
           if (error === ixManualValidateError) {
-            return;
+            return null;
           }
           const message = (this.control.errors[error] as SomeError)?.message as string;
           if (message) {

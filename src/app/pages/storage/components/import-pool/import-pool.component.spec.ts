@@ -31,7 +31,8 @@ describe('ImportPoolComponent', () => {
     providers: [
       mockWebsocket([
         mockJob('pool.import_pool', fakeSuccessfulJob()),
-        mockJob('pool.import_find',
+        mockJob(
+          'pool.import_find',
           fakeSuccessfulJob([{
             name: 'pool_name_1',
             guid: 'pool_guid_1',
@@ -47,7 +48,8 @@ describe('ImportPoolComponent', () => {
             guid: 'pool_guid_3',
             hostname: 'pool_hostname_3',
             status: PoolStatus.Online,
-          }] as PoolFindResult[])),
+          }] as PoolFindResult[]),
+        ),
       ]),
       mockProvider(IxSlideInRef),
       mockProvider(DialogService),

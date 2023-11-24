@@ -35,13 +35,13 @@ describe('SearchInputComponent', () => {
   });
 
   it('shows appropriate mode based on the query provided', async () => {
-    spectator.setInput('query',  {
+    spectator.setInput('query', {
       isBasicQuery: false,
       filters: [['username', '=', 'Bob']],
     });
     expect(await searchHarness.isInAdvancedMode()).toBe(true);
 
-    spectator.setInput('query',  {
+    spectator.setInput('query', {
       isBasicQuery: true,
       query: 'test',
     });

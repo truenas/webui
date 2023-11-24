@@ -13,8 +13,7 @@ export class IxInputHarness extends ComponentHarness implements IxFormControlHar
 
   static with(options: IxInputHarnessFilters): HarnessPredicate<IxInputHarness> {
     return new HarnessPredicate(IxInputHarness, options)
-      .addOption('label', options.label,
-        (harness, label) => HarnessPredicate.stringMatches(harness.getLabelText(), label));
+      .addOption('label', options.label, (harness, label) => HarnessPredicate.stringMatches(harness.getLabelText(), label));
   }
 
   getMatInputHarness = this.locatorFor(MatInputHarness);

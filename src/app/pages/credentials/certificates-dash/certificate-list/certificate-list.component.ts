@@ -6,7 +6,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { isObject } from 'lodash';
-import { filter, map, of, tap } from 'rxjs';
+import {
+  filter, map, of, tap,
+} from 'rxjs';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { Job } from 'app/interfaces/job.interface';

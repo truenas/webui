@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+} from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, switchMap, tap } from 'rxjs/operators';
@@ -86,7 +88,6 @@ export class TargetListComponent implements OnInit {
       ],
     }),
   ]);
-
 
   constructor(
     public emptyService: EmptyService,

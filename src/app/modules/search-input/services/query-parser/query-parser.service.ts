@@ -81,11 +81,12 @@ export class QueryParserService {
   private parseNode(node: SyntaxNode): ConditionGroup | Condition {
     if (node.name === ParsedToken.ConditionGroup) {
       return this.parseConditionGroup(node);
-    } else if (node.name === ParsedToken.Condition) {
-      return this.parseCondition(node);
-    } else {
-      throw new Error(`Unexpected node: ${node.name}`);
     }
+    if (node.name === ParsedToken.Condition) {
+      return this.parseCondition(node);
+    }
+
+    throw new Error(`Unexpected node: ${node.name}`);
   }
 
   private parseConditionGroup(node: SyntaxNode): ConditionGroup {
@@ -120,7 +121,8 @@ export class QueryParserService {
   }
 
   private parseLiteral(node: SyntaxNode): LiteralValue | LiteralValue[] {
-    switch (node.name) {
+    const token = node.name as ParsedToken;
+    switch (token) {
       case ParsedToken.DoubleQuotedString:
         return JSON.parse(this.getNodeText(node));
       case ParsedToken.Boolean:
@@ -148,6 +150,9 @@ export class QueryParserService {
         } while (child);
         return list;
       }
+      default: {
+        throw new Error(`Unexpected literal token: ${token}`);
+      }
     }
   }
 
@@ -166,8 +171,8 @@ export class QueryParserService {
     ];
 
     const queryTokens = tokens
-      .filter(item => tokenTypes.includes(item.type) && item.text && item.text !== '"' && item.text !== "'")
-      .map(item => item.text);
+      .filter((item) => tokenTypes.includes(item.type) && item.text && item.text !== '"' && item.text !== "'")
+      .map((item) => item.text);
     const lastToken = queryTokens[queryTokens.length - 1];
     const secondLastToken = queryTokens[queryTokens.length - 2];
 

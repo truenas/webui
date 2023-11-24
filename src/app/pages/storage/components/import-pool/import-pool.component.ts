@@ -8,7 +8,9 @@ import {
   UntilDestroy, untilDestroyed,
 } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, UnaryFunction, map, of, pipe, switchMap } from 'rxjs';
+import {
+  Observable, UnaryFunction, map, of, pipe, switchMap,
+} from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/storage/volumes/volume-import-wizard';
 import { Dataset } from 'app/interfaces/dataset.interface';

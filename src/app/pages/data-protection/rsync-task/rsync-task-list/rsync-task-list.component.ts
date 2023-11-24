@@ -1,8 +1,12 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, map, switchMap, tap } from 'rxjs/operators';
+import {
+  filter, map, switchMap, tap,
+} from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import { RsyncTask } from 'app/interfaces/rsync-task.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';

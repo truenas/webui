@@ -108,7 +108,8 @@ export class DeleteDatasetDialogComponent implements OnInit {
   private handleDeleteError(error: { reason: string; stack: string; [key: string]: unknown }): Observable<void> {
     this.dialog.error({
       title: this.translate.instant(
-        'Error deleting dataset {datasetName}.', { datasetName: this.dataset.name },
+        'Error deleting dataset {datasetName}.',
+        { datasetName: this.dataset.name },
       ),
       message: error.reason,
       backtrace: error.stack,

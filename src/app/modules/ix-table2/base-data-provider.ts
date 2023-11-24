@@ -1,6 +1,8 @@
 import { EventEmitter } from '@angular/core';
 import _ from 'lodash';
-import { BehaviorSubject, Observable, Subscription, map } from 'rxjs';
+import {
+  BehaviorSubject, Observable, Subscription, map,
+} from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { DataProvider } from 'app/modules/ix-table2/interfaces/data-provider.interface';
@@ -86,7 +88,7 @@ export function sort<T>(rows: T[], sorting: TableSort<T>): T[] {
   return _.orderBy(sorted, propertyName, direction);
 }
 
-export function  paginate<T>(rows: T[], pagination: TablePagination): T[] {
+export function paginate<T>(rows: T[], pagination: TablePagination): T[] {
   const paginated = rows;
   const pageNumber = pagination.pageNumber;
   const pageSize = pagination.pageSize;

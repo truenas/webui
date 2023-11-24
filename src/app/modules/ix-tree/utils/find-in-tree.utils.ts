@@ -6,6 +6,7 @@ export function findInTree<T extends { children?: T[] }>(
     return undefined;
   }
 
+  // eslint-disable-next-line no-unreachable-loop
   for (const item of items) {
     if (predicate(item)) {
       return item;

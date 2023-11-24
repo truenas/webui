@@ -147,7 +147,7 @@ describe('SnapshotTaskCardComponent', () => {
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
       title: 'Confirmation',
-      message: 'Delete Periodic Snapshot Task <b>\"APPS/test2 - auto-%Y-%m-%d_%H-%M - 2 WEEK(S)\"</b>?',
+      message: 'Delete Periodic Snapshot Task <b>"APPS/test2 - auto-%Y-%m-%d_%H-%M - 2 WEEK(S)"</b>?',
     });
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('pool.snapshottask.delete', [1]);

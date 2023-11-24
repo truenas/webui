@@ -26,7 +26,6 @@ export interface ChainedComponentSeralized {
   providedIn: 'root',
 })
 export class IxChainedSlideInService extends ComponentStore<ChainedSlideInState> {
-
   readonly components$: Observable<ChainedComponentSeralized[]> = this.select(
     (state) => this.mapToSerializedArray(state.components),
   );

@@ -74,7 +74,7 @@ describe('NetworkComponent', () => {
     providers: [
       InterfacesStore,
       mockWebsocket([
-        mockCall('interface.checkin_waiting', () => isTestingChanges ? 60 : null),
+        mockCall('interface.checkin_waiting', () => (isTestingChanges ? 60 : null)),
         mockCall('interface.has_pending_changes', () => wasEditMade),
         mockCall('interface.services_restarted_on_sync', []),
         mockCall('interface.checkin'),

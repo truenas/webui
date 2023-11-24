@@ -66,7 +66,8 @@ describe('SignCsrDialogComponent', () => {
     await signButton.click();
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith(
-      'certificateauthority.ca_sign_csr', [{
+      'certificateauthority.ca_sign_csr',
+      [{
         ca_id: 13,
         csr_cert_id: 1,
         name: 'new-cert',

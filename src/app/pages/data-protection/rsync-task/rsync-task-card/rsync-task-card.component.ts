@@ -1,8 +1,12 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+} from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { catchError, EMPTY, filter, map, of, switchMap, tap } from 'rxjs';
+import {
+  catchError, EMPTY, filter, map, of, switchMap, tap,
+} from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { Job } from 'app/interfaces/job.interface';

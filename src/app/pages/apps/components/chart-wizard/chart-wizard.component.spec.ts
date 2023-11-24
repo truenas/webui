@@ -426,7 +426,8 @@ describe('ChartWizardComponent', () => {
       spectator.component.onSubmit();
 
       expect(spectator.component.dialogRef.componentInstance.setCall).toHaveBeenCalledWith(
-        'chart.release.update', ['app_name', {
+        'chart.release.update',
+        ['app_name', {
           values: {
             timezone: 'Europe/Paris',
           },
@@ -513,7 +514,8 @@ describe('ChartWizardComponent', () => {
       await saveButton.click();
 
       expect(mockEntityJobComponentRef.componentInstance.setCall).toHaveBeenCalledWith(
-        'chart.release.create', [{
+        'chart.release.create',
+        [{
           catalog: 'TRUENAS',
           item: 'ipfs',
           release_name: 'appname',

@@ -68,7 +68,7 @@ describe('CloudsyncProviderComponent', () => {
   });
 
   it('loads a list of providers and shows them in Provider select', async () => {
-    await form.fillForm({ 'Credentials': 'Create New' });
+    await form.fillForm({ Credentials: 'Create New' });
 
     expect(spectator.inject(CloudCredentialService).getProviders).toHaveBeenCalledWith();
 
@@ -77,7 +77,7 @@ describe('CloudsyncProviderComponent', () => {
   });
 
   it('renders dynamic provider specific form when Provider is selected', async () => {
-    await form.fillForm({ 'Credentials': 'Create New' });
+    await form.fillForm({ Credentials: 'Create New' });
 
     const providersSelect = await form.getControl('Provider') as IxSelectHarness;
     await providersSelect.setValue('Google Photos');
@@ -88,7 +88,7 @@ describe('CloudsyncProviderComponent', () => {
   });
 
   it('returns fields default value when getPayload() is called', async () => {
-    await form.fillForm({ 'Credentials': 'Create New' });
+    await form.fillForm({ Credentials: 'Create New' });
 
     expect(spectator.component.getPayload()).toEqual({
       provider: CloudsyncProviderName.Storj,
@@ -101,17 +101,17 @@ describe('CloudsyncProviderComponent', () => {
   });
 
   it('when an existing name is entered, the "Next" button is disabled', async () => {
-    await form.fillForm({ 'Credentials': 'Create New' });
+    await form.fillForm({ Credentials: 'Create New' });
 
     const nextButton = await loader.getHarness(MatButtonHarness.with({ text: 'Next' }));
 
-    await form.fillForm({ 'Name': 'Google Photos - testUser' });
+    await form.fillForm({ Name: 'Google Photos - testUser' });
     expect(await nextButton.isDisabled()).not.toBeDisabled();
   });
 
   it('verifies entered values when user presses Verify', async () => {
     await form.fillForm({
-      'Credentials': 'Google Photos (Google Photos)',
+      Credentials: 'Google Photos (Google Photos)',
     });
 
     const verifyButton = await loader.getHarness(MatButtonHarness.with({ text: 'Verify Credential' }));

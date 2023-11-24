@@ -73,8 +73,7 @@ export class StorageService {
   }
 
   streamDownloadFile(url: string, filename: string, mimeType: string): Observable<Blob> {
-    return this.http.post(url, '',
-      { responseType: 'blob' }).pipe(
+    return this.http.post(url, '', { responseType: 'blob' }).pipe(
       map(
         (blob) => {
           return new Blob([blob], { type: mimeType });

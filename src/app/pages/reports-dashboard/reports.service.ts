@@ -64,7 +64,8 @@ export class ReportsService {
     },
   ): Observable<ReportingData> {
     return this.ws.call(
-      'reporting.netdata_get_data', [[queryData.params], queryData.timeFrame],
+      'reporting.netdata_get_data',
+      [[queryData.params], queryData.timeFrame],
     ).pipe(
       map((reportingData) => reportingData[0]),
       map((reportingData) => {

@@ -7,13 +7,15 @@ export function toHumanReadableKey(str: string): string {
     // Trim whitespace at the start and end
     .trim()
     // Capitalize the first letter of each word
-    .replace(/\b[a-z]/g, char => char.toUpperCase());
+    .replace(/\b[a-z]/g, (char) => char.toUpperCase());
 }
 
 export function convertObjectKeysToHumanReadable(existingValue: unknown): unknown {
   if (Array.isArray(existingValue)) {
-    return existingValue.map(item => convertObjectKeysToHumanReadable(item));
-  } else if (existingValue && typeof existingValue === 'object' && existingValue !== null) {
+    return existingValue.map((item) => convertObjectKeysToHumanReadable(item));
+  }
+
+  if (existingValue && typeof existingValue === 'object' && existingValue !== null) {
     const newObject: { [key: string]: unknown } = {};
     for (const key of Object.keys(existingValue)) {
       const humanReadableKey = toHumanReadableKey(key);

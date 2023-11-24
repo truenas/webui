@@ -4,7 +4,9 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { TranslateService } from '@ngx-translate/core';
 import { forkJoin, merge } from 'rxjs';
-import { filter, map, mergeMap, switchMap, tap } from 'rxjs/operators';
+import {
+  filter, map, mergeMap, switchMap, tap,
+} from 'rxjs/operators';
 import network_interfaces_helptext from 'app/helptext/network/interfaces/interfaces-list';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';

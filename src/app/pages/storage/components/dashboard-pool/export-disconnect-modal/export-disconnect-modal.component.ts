@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+} from '@angular/core';
 import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -135,7 +137,6 @@ export class ExportDisconnectModalComponent implements OnInit {
       ],
     );
 
-
     entityJobRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.handleDisconnectJobSuccess(value);
@@ -178,10 +179,9 @@ export class ExportDisconnectModalComponent implements OnInit {
         && failureData.exc_info.extra.code === 'control_services'
       ) {
         this.showServicesErrorsDialog(failureData); return;
-      } else {
-        if (failureData.extra && failureData.extra.code === 'unstoppable_processes') {
-          this.showUnstoppableErrorDialog(failureData); return;
-        }
+      }
+      if (failureData.extra && failureData.extra.code === 'unstoppable_processes') {
+        this.showUnstoppableErrorDialog(failureData); return;
       }
     }
     this.showExportErrorDialog(failureData);

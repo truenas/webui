@@ -1,8 +1,12 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit,
+} from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
-import { filter, map, switchMap, tap } from 'rxjs';
+import {
+  filter, map, switchMap, tap,
+} from 'rxjs';
 import helptext from 'app/helptext/directory-service/kerberos-realms-form-list';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';

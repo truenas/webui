@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+} from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { find } from 'lodash';
@@ -119,7 +121,6 @@ export class AssociatedTargetListComponent implements OnInit {
     private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
   ) {}
-
 
   ngOnInit(): void {
     this.isLoading = true;

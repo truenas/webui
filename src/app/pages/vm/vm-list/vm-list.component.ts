@@ -4,7 +4,9 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { lastValueFrom, of } from 'rxjs';
-import { catchError, filter, map, switchMap } from 'rxjs/operators';
+import {
+  catchError, filter, map, switchMap,
+} from 'rxjs/operators';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
