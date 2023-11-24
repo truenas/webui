@@ -45,7 +45,7 @@ describe('InterfaceStatusIconComponent', () => {
       spectator.setInput('update', {
         link_state: LinkState.Up,
         sent_bytes_rate: 100 * KiB,
-        received_bytes_rate: 20 * MiB,
+        received_bytes_rate: 30 * MiB,
       } as NetworkInterfaceUpdate);
     });
 
