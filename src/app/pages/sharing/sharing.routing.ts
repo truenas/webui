@@ -3,7 +3,6 @@ import { RouterModule, Routes } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { SharesDashboardComponent } from 'app/pages/sharing/components/shares-dashboard/shares-dashboard.component';
 import { NfsListComponent } from 'app/pages/sharing/nfs/nfs-list/nfs-list.component';
-import { NfsSessionListComponent } from 'app/pages/sharing/nfs/nfs-session-list/nfs-session-list.component';
 import { SmbStatusComponent } from 'app/pages/sharing/smb/smb-status/smb-status.component';
 import { InitiatorFormComponent } from './iscsi/initiator/initiator-form/initiator-form.component';
 import { IscsiComponent } from './iscsi/iscsi.component';
@@ -26,10 +25,6 @@ export const routes: Routes = [
           path: '',
           component: NfsListComponent,
           data: { title: T('NFS'), breadcrumb: null },
-        }, {
-          path: 'sessions',
-          component: NfsSessionListComponent,
-          data: { title: T('NFS Sessions'), breadcrumb: null },
         }],
       },
       {

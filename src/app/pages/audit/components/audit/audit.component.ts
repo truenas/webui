@@ -145,7 +145,7 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
 
     if (query && query.isBasicQuery) {
       // TODO: Create a separate class to handle this.
-      this.dataProvider.setParams([[['event', '~', query.query]]]);
+      this.dataProvider.setParams([[['event', '~', query.query || '']]]);
     }
 
     if (query && !query.isBasicQuery) {
