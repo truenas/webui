@@ -20,7 +20,12 @@ describe('SmbShareListComponent', () => {
   const shares = [
     {
       service: 'turtles',
-      server_id: { pid: '2102401', task_id: '0', vnn: '4294967295', unique_id: '4458796888113407749' },
+      server_id: {
+        pid: '2102401',
+        task_id: '0',
+        vnn: '4294967295',
+        unique_id: '4458796888113407749',
+      },
       tcon_id: '1586296247',
       session_id: '1368450234',
       machine: '10.234.16.211',
@@ -33,11 +38,7 @@ describe('SmbShareListComponent', () => {
   const createComponent = createComponentFactory({
     component: SmbShareListComponent,
     imports: [AppLoaderModule, EntityModule, IxTable2Module, AppCommonModule],
-    providers: [
-      mockWebsocket([
-        mockCall('smb.status', shares),
-      ]),
-    ],
+    providers: [mockWebsocket([mockCall('smb.status', shares)])],
   });
 
   beforeEach(async () => {
@@ -48,22 +49,8 @@ describe('SmbShareListComponent', () => {
 
   it('should show table rows', async () => {
     const expectedRows = [
-      [
-        'Service',
-        'Session ID',
-        'Machine',
-        'Connected at',
-        'Encryption',
-        'Signing',
-      ],
-      [
-        'turtles',
-        '1368450234',
-        '10.234.16.211',
-        '2023-10-26T12:17:17.457352+02:00',
-        '-',
-        '-',
-      ],
+      ['Service', 'Session ID', 'Machine', 'Connected at', 'Encryption', 'Signing'],
+      ['turtles', '1368450234', '10.234.16.211', '2023-10-26T12:17:17.457352+02:00', '-', '-'],
     ];
 
     const cells = await table.getCellTexts();
