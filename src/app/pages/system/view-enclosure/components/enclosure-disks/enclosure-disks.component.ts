@@ -17,9 +17,6 @@ import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import {
   Enclosure, EnclosureElement, EnclosureElementsGroup, EnclosureSlot, EnclosureView,
 } from 'app/interfaces/enclosure.interface';
-import { CoreEvent } from 'app/interfaces/events';
-import { CanvasExtractEvent, DriveSelectedEvent } from 'app/interfaces/events/disk-events.interface';
-import { LabelDrivesEvent } from 'app/interfaces/events/label-drives-event.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { Disk, TopologyDisk } from 'app/interfaces/storage.interface';
 import { Theme } from 'app/interfaces/theme.interface';
@@ -54,6 +51,11 @@ import {
   SetEnclosureLabelDialogData,
 } from 'app/pages/system/view-enclosure/components/set-enclosure-label-dialog/set-enclosure-label-dialog.component';
 import { SystemProfile } from 'app/pages/system/view-enclosure/components/view-enclosure/view-enclosure.component';
+import {
+  ChangeDriveTrayOptions,
+  EnclosureEvent,
+  LabelDrivesEvent,
+} from 'app/pages/system/view-enclosure/interfaces/enclosure-events.interface';
 import { ViewConfig } from 'app/pages/system/view-enclosure/interfaces/view.config';
 import { EnclosureState, EnclosureStore } from 'app/pages/system/view-enclosure/stores/enclosure-store.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -96,7 +98,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   // eslint-disable-next-line @angular-eslint/no-input-rename
   @Input('current-tab') currentTab: ViewConfig;
   // eslint-disable-next-line @angular-eslint/no-input-rename
-  @Input('controller-events') controllerEvent$: Subject<CoreEvent>;
+  @Input('controller-events') controllerEvent$: Subject<EnclosureEvent>;
   // eslint-disable-next-line @angular-eslint/no-input-rename
   @Input('profile') systemProfile: SystemProfile;
   enclosureViews: EnclosureView[] = [];
@@ -352,10 +354,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
 
   // PIXI Visualization Setup
   appSetup(): void {
-    this.controllerEvent$.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.controllerEvent$.pipe(untilDestroyed(this)).subscribe((evt: EnclosureEvent) => {
       switch (evt.name) {
         case 'CanvasExtract':
-          this.createExtractedEnclosure((evt as CanvasExtractEvent).data);
+          this.createExtractedEnclosure((evt).data);
           break;
         case 'PoolsChanged':
           this.setDisksEnabledState();
@@ -623,7 +625,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
 
           break;
         case 'DriveSelected': {
-          const slotNumber = parseInt((evt as DriveSelectedEvent).data.id);
+          const slotNumber = parseInt((evt).data.id);
 
           if (this.identifyBtnRef) {
             this.toggleSlotStatus(true);
@@ -635,7 +637,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
 
           if (isSlotEmpty) {
             this.setCurrentView(this.emptySlotView);
-          } else if ((evt as DriveSelectedEvent).data.enabled) {
+          } else if ((evt).data.enabled) {
             this.setCurrentView('details');
           }
           break;
@@ -978,7 +980,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   // Visualization Colors
   setDisksDisabled(): void {
     this.chassisView.driveTrayObjects.forEach((dt) => {
-      this.chassisView.events.next({ name: 'ChangeDriveTrayColor', data: { id: dt.id, color: 'none' } });
+      this.chassisView.events.next({
+        name: 'ChangeDriveTrayColor',
+        data: { id: dt.id, color: 'none' } as ChangeDriveTrayOptions,
+      });
     });
   }
 
@@ -1096,7 +1101,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
             color: driveColor,
             enclosure: enclosureSlot.enclosure,
             slot: enclosureSlot.slot,
-          },
+          } as ChangeDriveTrayOptions,
         });
       });
     };

@@ -1,6 +1,6 @@
 import { firstValueFrom, of, tap } from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
-import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
+import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 
 interface TestTableData {
   numberField: number;

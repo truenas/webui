@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
-import { BaseDataProvider } from 'app/modules/ix-table2/base-data-provider';
+import { BaseDataProvider } from 'app/modules/ix-table2/classes/base-data-provider';
 
 export class AsyncDataProvider<T> extends BaseDataProvider<T> {
   constructor(
