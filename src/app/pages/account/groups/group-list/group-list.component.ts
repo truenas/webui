@@ -11,10 +11,11 @@ import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { select, Store } from '@ngrx/store';
+import { TranslateService } from '@ngx-translate/core';
 import { Observable, combineLatest, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { EmptyType } from 'app/enums/empty-type.enum';
-import { rolesListToString } from 'app/enums/role.enum';
+import { Role, roleNames } from 'app/enums/role.enum';
 import { Group } from 'app/interfaces/group.interface';
 import { IxDetailRowDirective } from 'app/modules/ix-tables/directives/ix-detail-row.directive';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
@@ -43,7 +44,6 @@ export class GroupListComponent implements OnInit {
   hideBuiltinGroups = true;
 
   readonly EmptyType = EmptyType;
-  readonly rolesListToString = rolesListToString;
   isLoading$ = this.store$.select(selectGroupState).pipe(map((state) => state.isLoading));
   emptyType$: Observable<EmptyType> = combineLatest([
     this.isLoading$,
@@ -73,6 +73,7 @@ export class GroupListComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,
     private emptyService: EmptyService,
+    private translate: TranslateService,
   ) { }
 
   ngOnInit(): void {
@@ -147,5 +148,9 @@ export class GroupListComponent implements OnInit {
 
   handleDeletedGroup(id: number): void {
     this.store$.dispatch(groupRemoved({ id }));
+  }
+
+  rolesListToString(roles: Role[]): string {
+    return roles.map((role) => this.translate.instant(roleNames.get(role))).join(', ') || this.translate.instant('N/A');
   }
 }

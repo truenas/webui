@@ -58,7 +58,7 @@
           [columnIndex]="1"
           [dataProvider]="dataProvider"
         >
-          <div class="user-avatar">
+          <div class="user-avatar" [matTooltip]="audit.username">
             <div [innerHTML]="getUserAvatarForLog(audit)"></div>
             <span>{{audit.username}}</span>
           </div>
