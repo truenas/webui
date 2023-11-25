@@ -105,7 +105,6 @@ export class UpdateComponent implements OnInit, OnDestroy {
     protected storage: StorageService,
     protected http: HttpClient,
     public core: CoreService,
-    private updateService: UpdateService,
   ) {
     this.sysGenService.updateRunning.subscribe((res) => {
       res === 'true' ? this.isUpdateRunning = true : this.isUpdateRunning = false;
@@ -400,7 +399,6 @@ export class UpdateComponent implements OnInit, OnDestroy {
     this.dialogRef.componentInstance.jobId = jobId;
     this.dialogRef.componentInstance.wsshow();
     this.dialogRef.componentInstance.success.subscribe((res) => {
-      this.updateService.setForHardRefresh();
       this.router.navigate(['/others/reboot'], { skipLocationChange: true });
     });
     this.dialogRef.componentInstance.failure.subscribe((err) => {

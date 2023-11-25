@@ -85,7 +85,6 @@ export class ManualUpdateComponent extends ViewControllerComponent {
     public translate: TranslateService,
     private dialogService: DialogService,
     private systemService: SystemGeneralService,
-    private updateService: UpdateService,
   ) {
     super();
 
@@ -164,14 +163,12 @@ export class ManualUpdateComponent extends ViewControllerComponent {
         this.dialogRef.close(false);
         if (!this.isHA) {
           if (ures[0].attributes.preferences['rebootAfterManualUpdate']) {
-            this.updateService.setForHardRefresh();
             this.router.navigate(['/others/reboot'], { skipLocationChange: true });
           } else {
             this.translate.get('Restart').subscribe((reboot: string) => {
               this.translate.get(helptext.rebootAfterManualUpdate.manual_reboot_msg).subscribe((reboot_prompt: string) => {
                 this.dialogService.confirm(reboot, reboot_prompt).subscribe((reboot_res) => {
                   if (reboot_res) {
-                    this.updateService.setForHardRefresh();
                     this.router.navigate(['/others/reboot'], { skipLocationChange: true });
                   }
                 });
