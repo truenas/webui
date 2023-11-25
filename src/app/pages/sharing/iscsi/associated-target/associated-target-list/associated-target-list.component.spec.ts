@@ -93,7 +93,6 @@ describe('AssociatedTargetListComponent', () => {
     const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 3);
     await editButton.click();
 
-
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(AssociatedTargetFormComponent, {
       data: targetExtents[0],
     });

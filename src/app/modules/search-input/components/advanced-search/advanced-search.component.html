@@ -1,10 +1,13 @@
 <span class="prefix-icon">
-  <ix-icon name="mdi-text-search-variant"></ix-icon>
+  <ix-icon *ngIf="!queryInputValue" name="mdi-text-search-variant"></ix-icon>
+  <ix-icon *ngIf="queryInputValue && hasQueryErrors" name="warning"></ix-icon>
+  <ix-icon *ngIf="queryInputValue && !hasQueryErrors" name="done"></ix-icon>
 </span>
 
 <div
   #inputArea
   class="input-area"
+  (click)="startSuggestionsCompletion()"
 ></div>
 
 <a
@@ -12,6 +15,7 @@
   ixTest="switch-to-advanced"
   tabindex="0"
   (click)="switchToBasic.emit()"
+  (keydown.enter)="switchToBasic.emit()"
 >
   {{ 'Switch To Basic' | translate }}
 </a>

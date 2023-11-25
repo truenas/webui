@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { SyntaxNode } from '@lezer/common';
+import { SyntaxNode, TreeCursor } from '@lezer/common';
 import { QueryComparator } from 'app/interfaces/query-api.interface';
 import { parser } from 'app/modules/search-input/services/query-parser/query-grammar';
 import {
@@ -11,6 +11,30 @@ import {
 @Injectable()
 export class QueryParserService {
   private input: string;
+
+  extractTokens(query: string): string[] {
+    const tree = parser.parse(query);
+    const cursor = tree.cursor();
+    const tokens: { type: ParsedToken; text: string }[] = [];
+
+    const explore = (nextCursor: TreeCursor): void => {
+      do {
+        const nodeType = nextCursor.node.type.name as ParsedToken;
+        tokens.push({
+          type: nodeType,
+          text: query.slice(nextCursor.from, nextCursor.to),
+        });
+        if (nextCursor.firstChild()) {
+          explore(nextCursor);
+          nextCursor.parent();
+        }
+      } while (nextCursor.nextSibling());
+    };
+
+    explore(cursor);
+
+    return this.filterAndMapTokens(tokens);
+  }
 
   parseQuery(input: string): QueryParsingResult {
     this.input = input;
@@ -57,11 +81,12 @@ export class QueryParserService {
   private parseNode(node: SyntaxNode): ConditionGroup | Condition {
     if (node.name === ParsedToken.ConditionGroup) {
       return this.parseConditionGroup(node);
-    } else if (node.name === ParsedToken.Condition) {
-      return this.parseCondition(node);
-    } else {
-      throw new Error(`Unexpected node: ${node.name}`);
     }
+    if (node.name === ParsedToken.Condition) {
+      return this.parseCondition(node);
+    }
+
+    throw new Error(`Unexpected node: ${node.name}`);
   }
 
   private parseConditionGroup(node: SyntaxNode): ConditionGroup {
@@ -96,7 +121,8 @@ export class QueryParserService {
   }
 
   private parseLiteral(node: SyntaxNode): LiteralValue | LiteralValue[] {
-    switch (node.name) {
+    const token = node.name as ParsedToken;
+    switch (token) {
       case ParsedToken.DoubleQuotedString:
         return JSON.parse(this.getNodeText(node));
       case ParsedToken.Boolean:
@@ -124,10 +150,36 @@ export class QueryParserService {
         } while (child);
         return list;
       }
+      default: {
+        throw new Error(`Unexpected literal token: ${token}`);
+      }
     }
   }
 
   private getNodeText(node: SyntaxNode): string {
     return this.input.substring(node.from, node.to);
+  }
+
+  private filterAndMapTokens(tokens: { type: ParsedToken; text: string }[]): string[] {
+    const tokenTypes = [
+      ParsedToken.Property,
+      ParsedToken.Comparator,
+      ParsedToken.Value,
+      ParsedToken.Or,
+      ParsedToken.And,
+      ParsedToken.Error,
+    ];
+
+    const queryTokens = tokens
+      .filter((item) => tokenTypes.includes(item.type) && item.text && item.text !== '"' && item.text !== "'")
+      .map((item) => item.text);
+    const lastToken = queryTokens[queryTokens.length - 1];
+    const secondLastToken = queryTokens[queryTokens.length - 2];
+
+    if (secondLastToken?.startsWith('(') && secondLastToken?.includes(lastToken)) {
+      queryTokens.pop();
+    }
+
+    return queryTokens;
   }
 }

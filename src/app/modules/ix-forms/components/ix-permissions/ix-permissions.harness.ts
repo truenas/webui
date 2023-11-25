@@ -17,8 +17,7 @@ export class IxPermissionsHarness extends ComponentHarness implements IxFormCont
 
   static with(options: IxPermissionsHarnessFilters): HarnessPredicate<IxPermissionsHarness> {
     return new HarnessPredicate(IxPermissionsHarness, options)
-      .addOption('label', options.label,
-        (harness, label) => HarnessPredicate.stringMatches(harness.getLabelText(), label));
+      .addOption('label', options.label, (harness, label) => HarnessPredicate.stringMatches(harness.getLabelText(), label));
   }
 
   getMatCheckboxHarnesses = this.locatorForAll(MatCheckboxHarness);
@@ -110,6 +109,8 @@ export class IxPermissionsHarness extends ComponentHarness implements IxFormCont
     const checkboxes = await this.getMatCheckboxHarnesses();
     const inputState = await parallel(() => checkboxes.map((control) => control.isDisabled()));
 
-    return new Promise((resolve) => resolve(inputState.every((control) => !!control)));
+    return new Promise((resolve) => {
+      resolve(inputState.every((control) => !!control));
+    });
   }
 }

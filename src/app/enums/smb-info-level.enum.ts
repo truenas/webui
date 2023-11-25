@@ -7,4 +7,3 @@ export enum SmbInfoLevel {
   ByteRange = 'BYTERANGE',
   Notifications = 'NOTIFICATIONS',
 }
-

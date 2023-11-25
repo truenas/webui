@@ -3,8 +3,7 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { format, utcToZonedTime } from 'date-fns-tz';
-import { Subject, combineLatest } from 'rxjs';
-import { CoreEvent } from 'app/interfaces/events';
+import { combineLatest } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
 import { AppState } from 'app/store';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -17,7 +16,6 @@ export class LocaleService {
   timezone: string;
   dateFormat = 'yyyy-MM-dd';
   timeFormat = 'HH:mm:ss';
-  target = new Subject<CoreEvent>();
 
   constructor(
     private store$: Store<AppState>,

@@ -137,7 +137,8 @@ describe('DatasetQuotasUserlistComponent', () => {
     (secondRow as HTMLElement).click();
 
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(
-      DatasetQuotaEditFormComponent, { data: { datasetId: 'Test', id: 2, quotaType: 'USER' } },
+      DatasetQuotaEditFormComponent,
+      { data: { datasetId: 'Test', id: 2, quotaType: 'USER' } },
     );
   });
 });

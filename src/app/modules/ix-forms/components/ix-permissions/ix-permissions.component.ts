@@ -35,7 +35,7 @@ export class IxPermissionsComponent implements ControlValueAccessor {
   private grp = 0;
   private other = 0;
 
-  private formatRe = new RegExp('^[0-7][0-7][0-7]$');
+  private formatRe = /^[0-7][0-7][0-7]$/;
 
   constructor(
     public controlDirective: NgControl,

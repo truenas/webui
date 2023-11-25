@@ -87,5 +87,29 @@
     .cm-line {
       padding: 0;
     }
+
+    .cm-tooltip.cm-tooltip-autocomplete {
+      border: none !important;
+      border-radius: 4px !important;
+    }
+
+    .cm-tooltip.cm-tooltip-autocomplete ul {
+      border: 0;
+      border-radius: 4px;
+      height: 100%;
+
+      li {
+        background-color: var(--bg2);
+        color: var(--primary-txt);
+        font-family: var(--font-family-body);
+        font-size: 14px;
+        padding: 8px;
+
+        &[aria-selected='true'] {
+          background-color: var(--primary);
+          color: var(--primary-txt);
+        }
+      }
+    }
   }
 }

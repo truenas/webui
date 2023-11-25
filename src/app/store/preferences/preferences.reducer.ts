@@ -67,10 +67,13 @@ export const preferencesReducer = createReducer(
   on(themeNotFound, (state) => updatePreferences(state, {
     userTheme: defaultTheme.name,
   })),
-  on(updateRebootAfterManualUpdate,
+  on(
+    updateRebootAfterManualUpdate,
     (state, { rebootAfterManualUpdate }) => updatePreferences(
-      state, { rebootAfterManualUpdate },
-    )),
+      state,
+      { rebootAfterManualUpdate },
+    ),
+  ),
   on(autoRefreshReportsToggled, (state) => updatePreferences(state, {
     autoRefreshReports: !state.preferences.autoRefreshReports,
   })),

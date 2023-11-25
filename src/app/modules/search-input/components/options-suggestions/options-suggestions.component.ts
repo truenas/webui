@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, EventEmitter, Input, Output,
+} from '@angular/core';
 import { Observable } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
 import { SearchSuggestionsComponent } from 'app/modules/search-input/types/search-property.interface';

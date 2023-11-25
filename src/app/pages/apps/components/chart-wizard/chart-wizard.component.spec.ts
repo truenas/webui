@@ -58,24 +58,6 @@ const appVersion121 = {
     ],
     questions: [
       {
-        description: 'Please specify type of workload to deploy',
-        group: 'Workload Details',
-        label: 'Workload Type',
-        schema: {
-          default: 'Deployment',
-          enum: [
-            {
-              description: 'Deploy a Deployment workload',
-              value: 'Deployment',
-            },
-          ],
-          hidden: true,
-          required: true,
-          type: 'string',
-        } as ChartSchemaNodeConf,
-        variable: 'workloadType',
-      },
-      {
         description: 'Upgrade Policy',
         group: 'Scaling/Upgrade Policy',
         label: 'Update Strategy',
@@ -112,6 +94,24 @@ const appVersion121 = {
           type: 'string',
         },
         variable: 'jobRestartPolicy',
+      },
+      {
+        description: 'Please specify type of workload to deploy',
+        group: 'Workload Details',
+        label: 'Workload Type',
+        schema: {
+          default: 'Deployment',
+          enum: [
+            {
+              description: 'Deploy a Deployment workload',
+              value: 'Deployment',
+            },
+          ],
+          hidden: true,
+          required: true,
+          type: 'string',
+        } as ChartSchemaNodeConf,
+        variable: 'workloadType',
       },
       {
         description: 'Add External Interfaces',
@@ -426,7 +426,8 @@ describe('ChartWizardComponent', () => {
       spectator.component.onSubmit();
 
       expect(spectator.component.dialogRef.componentInstance.setCall).toHaveBeenCalledWith(
-        'chart.release.update', ['app_name', {
+        'chart.release.update',
+        ['app_name', {
           values: {
             timezone: 'Europe/Paris',
           },
@@ -513,7 +514,8 @@ describe('ChartWizardComponent', () => {
       await saveButton.click();
 
       expect(mockEntityJobComponentRef.componentInstance.setCall).toHaveBeenCalledWith(
-        'chart.release.create', [{
+        'chart.release.create',
+        [{
           catalog: 'TRUENAS',
           item: 'ipfs',
           release_name: 'appname',

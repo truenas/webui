@@ -2,7 +2,9 @@ import { FormGroup, UntypedFormControl, ValidatorFn } from '@angular/forms';
 import _ from 'lodash';
 
 export function matchOthersFgValidator(
-  controlName: string, comparateControlNames: string[], errMsg?: string,
+  controlName: string,
+  comparateControlNames: string[],
+  errMsg?: string,
 ): ValidatorFn {
   return function matchOthersFgValidate(fg: FormGroup<unknown>) {
     if (!fg?.get(controlName)) {
@@ -41,7 +43,9 @@ export function matchOthersFgValidator(
 }
 
 export function doesNotEqualFgValidator(
-  controlName: string, comparateControlNames: string[], errMsg?: string,
+  controlName: string,
+  comparateControlNames: string[],
+  errMsg?: string,
 ): ValidatorFn {
   return (fg: FormGroup<unknown>) => {
     if (!fg?.get(controlName)) {

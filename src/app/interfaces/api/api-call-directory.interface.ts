@@ -169,7 +169,9 @@ import {
 } from 'app/interfaces/network-interface.interface';
 import { NetworkSummary } from 'app/interfaces/network-summary.interface';
 import { AddNfsPrincipal, NfsConfig, NfsConfigUpdate } from 'app/interfaces/nfs-config.interface';
-import { NfsShare, NfsShareUpdate } from 'app/interfaces/nfs-share.interface';
+import {
+  Nfs3Session, Nfs4Session, NfsShare, NfsShareUpdate,
+} from 'app/interfaces/nfs-share.interface';
 import { CreateNtpServer, NtpServer } from 'app/interfaces/ntp-server.interface';
 import { MapOption } from 'app/interfaces/option.interface';
 import {
@@ -192,7 +194,9 @@ import {
   ReplicationCreate,
   ReplicationTask,
 } from 'app/interfaces/replication-task.interface';
-import { CreateReportingExporter, ReportingExporter, ReportingExporterSchema, UpdateReportingExporter } from 'app/interfaces/reporting-exporters.interface';
+import {
+  CreateReportingExporter, ReportingExporter, ReportingExporterSchema, UpdateReportingExporter,
+} from 'app/interfaces/reporting-exporters.interface';
 import { ReportingGraph } from 'app/interfaces/reporting-graph.interface';
 import {
   ReportingData,
@@ -424,6 +428,7 @@ export interface ApiCallDirectory {
 
   // Device
   'device.get_info': { params: [DeviceType]; response: Device[] };
+  'device.get_pci_ids_for_gpu_isolation': { params: [string]; response: string[] };
 
   // Disk
   'disk.query': { params: QueryParams<Disk, ExtraDiskQueryOptions>; response: Disk[] };
@@ -624,6 +629,8 @@ export interface ApiCallDirectory {
   'nfs.add_principal': { params: [AddNfsPrincipal]; response: boolean };
   'nfs.config': { params: void; response: NfsConfig };
   'nfs.update': { params: [NfsConfigUpdate]; response: NfsConfig };
+  'nfs.get_nfs3_clients': { params: [params?: QueryParams<Nfs3Session>]; response: Nfs3Session[] };
+  'nfs.get_nfs4_clients': { params: [params?: QueryParams<Nfs4Session>]; response: Nfs4Session[] };
 
   // Pool
   'pool.attachments': { params: [id: number]; response: PoolAttachment[] };
@@ -722,7 +729,6 @@ export interface ApiCallDirectory {
   'reporting.exporters.update': { params: [number, UpdateReportingExporter]; response: ReportingExporter };
   'reporting.exporters.get_instance': { params: [id: number]; response: ReportingExporter };
   'reporting.exporters.delete': { params: [id: number]; response: boolean };
-
 
   // SMB
   'smb.bindip_choices': { params: void; response: Choices };

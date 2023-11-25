@@ -79,7 +79,6 @@ describe('ReportingExportersFormComponent', () => {
     });
 
     it('add new exporter when form is submitted', async () => {
-
       await form.fillForm({
         Name: 'exporter1',
         Type: ReportingExporterKey.Graphite,
@@ -157,7 +156,8 @@ describe('ReportingExportersFormComponent', () => {
       await saveButton.click();
 
       expect(spectator.inject(WebSocketService).call).toHaveBeenLastCalledWith(
-        'reporting.exporters.update', [
+        'reporting.exporters.update',
+        [
           123,
           {
             name: existingExporter.name,

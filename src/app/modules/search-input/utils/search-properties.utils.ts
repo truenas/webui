@@ -2,9 +2,6 @@ import { inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
-import {
-  OptionsSuggestionsComponent,
-} from 'app/modules/search-input/components/options-suggestions/options-suggestions.component';
 import { SearchProperty } from 'app/modules/search-input/types/search-property.interface';
 
 export function searchProperties<T>(properties: SearchProperty<T>[]): SearchProperty<T>[] {
@@ -14,8 +11,9 @@ export function searchProperties<T>(properties: SearchProperty<T>[]): SearchProp
 export function textProperty<T>(
   property: keyof T,
   label: string,
+  valueSuggestions$?: Observable<Option[]>,
 ): SearchProperty<T> {
-  return { label, property };
+  return { label, property, valueSuggestions$ };
 }
 
 export function booleanProperty<T>(
@@ -32,22 +30,7 @@ export function memoryProperty<T>(property: keyof T, label: string): SearchPrope
   return {
     label,
     property,
-    formatValue: value => formatter.memorySizeFormatting(value as string),
-    parseValue: value => formatter.memorySizeParsing(value),
-  };
-}
-
-// TODO: numericProperty
-// TODO: dateProperty
-export function optionsProperty<T>(
-  property: keyof T,
-  label: string,
-  options$: Observable<Option[]>,
-): SearchProperty<T, OptionsSuggestionsComponent> {
-  return {
-    label,
-    property,
-    suggestionComponent: OptionsSuggestionsComponent,
-    suggestionComponentInputs: { options$ },
+    formatValue: (value) => formatter.memorySizeFormatting(value as string),
+    parseValue: (value) => formatter.memorySizeParsing(value),
   };
 }

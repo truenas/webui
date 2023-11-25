@@ -4,6 +4,7 @@ import { SortDirection } from '@angular/material/sort';
 import { format } from 'date-fns-tz';
 import { Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
+import { GiB } from 'app/constants/bytes.constant';
 import { VdevType, TopologyItemType, TopologyWarning } from 'app/enums/v-dev-type.enum';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -72,8 +73,7 @@ export class StorageService {
   }
 
   streamDownloadFile(url: string, filename: string, mimeType: string): Observable<Blob> {
-    return this.http.post(url, '',
-      { responseType: 'blob' }).pipe(
+    return this.http.post(url, '', { responseType: 'blob' }).pipe(
       map(
         (blob) => {
           return new Blob([blob], { type: mimeType });
@@ -308,7 +308,8 @@ export class StorageService {
 
   // Check to see if every VDEV has the same capacity. Best practices dictate every vdev should be uniform
   isMixedVdevCapacity(allVdevCapacities: Set<number>): boolean {
-    return allVdevCapacities.size > 1;
+    const diff = Math.max(...allVdevCapacities) - Math.min(...allVdevCapacities);
+    return allVdevCapacities.size > 1 && diff >= GiB * 2;
   }
 
   getVdevDiskCapacities(vdevs: TopologyItem[], disks: Disk[]): Set<number>[] {

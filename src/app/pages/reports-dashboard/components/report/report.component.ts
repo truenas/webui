@@ -298,8 +298,8 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
 
     const halfPeriodMilliseconds = this.getHalfPeriodMilliseconds();
 
-    let currentDate = this.lastEndDateForCurrentZoomLevel[this.currentZoomLevel] ||
-      ((this.currentStartDate + this.currentEndDate) / 2) + halfPeriodMilliseconds;
+    let currentDate = this.lastEndDateForCurrentZoomLevel[this.currentZoomLevel]
+      || ((this.currentStartDate + this.currentEndDate) / 2) + halfPeriodMilliseconds;
 
     if (this.stepForwardDisabled || isToday(this.currentEndDate)) {
       currentDate = this.currentEndDate;
