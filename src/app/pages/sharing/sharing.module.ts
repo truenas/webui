@@ -80,7 +80,6 @@ import { SmbStatusComponent } from './smb/smb-status/smb-status.component';
     FlexLayoutModule,
     MatListModule,
     MatDialogModule,
-    AppCommonModule,
     MatMenuModule,
     MatFormFieldModule,
     MatTooltipModule,
