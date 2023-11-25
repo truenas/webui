@@ -35,7 +35,7 @@ export const routes: Routes = [
           component: SmbListComponent,
         }, {
           path: 'status',
-          data: { title: T('Smb Status'), breadcrumb: T('Smb Status') },
+          data: { title: T('Smb Status'), breadcrumb: null },
           children: [
             {
               path: '',
