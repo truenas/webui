@@ -12,6 +12,9 @@ export class SmbStatusComponent {
   navLinks = [{
     label: this.translate.instant('Sessions'),
     path: '/sharing/smb/status/sessions',
+  }, {
+    label: this.translate.instant('Shares'),
+    path: '/sharing/smb/status/shares',
   }];
 
   constructor(

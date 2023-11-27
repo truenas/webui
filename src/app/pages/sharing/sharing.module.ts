@@ -64,6 +64,7 @@ import { SmbAclComponent } from './smb/smb-acl/smb-acl.component';
 import { SmbFormComponent } from './smb/smb-form/smb-form.component';
 import { SmbListComponent } from './smb/smb-list/smb-list.component';
 import { SmbSessionListComponent } from './smb/smb-status/components/smb-session-list/smb-session-list.component';
+import { SmbShareListComponent } from './smb/smb-status/components/smb-share-list/smb-share-list.component';
 import { SmbStatusComponent } from './smb/smb-status/smb-status.component';
 
 @NgModule({
@@ -81,7 +82,6 @@ import { SmbStatusComponent } from './smb/smb-status/smb-status.component';
     FlexLayoutModule,
     MatListModule,
     MatDialogModule,
-    AppCommonModule,
     MatMenuModule,
     MatFormFieldModule,
     MatTooltipModule,
@@ -136,6 +136,7 @@ import { SmbStatusComponent } from './smb/smb-status/smb-status.component';
     SmbSessionListComponent,
     NfsSessionListComponent,
     SmbStatusComponent,
+    SmbShareListComponent,
   ],
   providers: [
     UserService,
