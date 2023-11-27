@@ -38,11 +38,12 @@ export class AppContainersCardComponent implements OnChanges {
     this.getResources();
   }
 
-  shellButtonPressed(): void {
+  shellButtonPressed(containerImageKey: string): void {
     this.matDialog.open(PodSelectDialogComponent, {
       minWidth: '650px',
       maxWidth: '850px',
       data: {
+        containerImageKey,
         app: this.app,
         appName: this.app.name,
         title: this.translate.instant('Choose pod'),
@@ -52,11 +53,12 @@ export class AppContainersCardComponent implements OnChanges {
     });
   }
 
-  viewLogsButtonPressed(): void {
+  viewLogsButtonPressed(containerImageKey: string): void {
     this.matDialog.open(PodSelectDialogComponent, {
       minWidth: '650px',
       maxWidth: '850px',
       data: {
+        containerImageKey,
         app: this.app,
         appName: this.app.name,
         title: this.translate.instant('Choose pod'),
