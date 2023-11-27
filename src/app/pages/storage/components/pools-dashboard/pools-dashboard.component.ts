@@ -28,7 +28,7 @@ export class PoolsDashboardComponent implements OnInit {
   allDisksByPool: { [pool: string]: StorageDashboardDisk[] } = {};
   disks$ = this.store.disks$;
 
-  rootDatasets: { [key: string]: Dataset } = {};
+  rootDatasets: Record<string, Dataset> = {};
 
   entityEmptyConf: EmptyConfig = {
     type: EmptyType.NoPageData,

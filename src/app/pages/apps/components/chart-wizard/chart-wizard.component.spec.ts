@@ -311,7 +311,7 @@ describe('ChartWizardComponent', () => {
       memLimit: '1234',
       release_name: 'app_name',
       timezone: 'America/Los_Angeles',
-    } as { [key: string]: ChartFormValue },
+    } as Record<string, ChartFormValue>,
     chart_schema: {
       schema: {
         groups: [

@@ -71,7 +71,7 @@ describe('SmbFormComponent', () => {
     },
   };
 
-  const formLabels: { [key: string]: string } = {
+  const formLabels: Record<string, string> = {
     path: 'Path',
     name: 'Name',
     purpose: 'Purpose',
@@ -198,7 +198,7 @@ describe('SmbFormComponent', () => {
 
       const values = await form.getValues();
 
-      const existingShareWithLabels: { [key: string]: unknown } = {};
+      const existingShareWithLabels: Record<string, unknown> = {};
       Object.keys(existingShare).forEach((key) => {
         if (!formLabels[key]) {
           return;
@@ -385,7 +385,7 @@ describe('SmbFormComponent', () => {
       const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
       await advancedButton.click();
 
-      const attrs: { [key: string]: unknown } = {};
+      const attrs: Record<string, unknown> = {};
       Object.keys(existingShare).forEach((key) => {
         if (formLabels[key]) {
           attrs[formLabels[key]] = existingShare[key as keyof SmbShare];
@@ -483,7 +483,7 @@ describe('SmbFormComponent', () => {
       const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
       await advancedButton.click();
 
-      const attrs: { [key: string]: unknown } = {};
+      const attrs: Record<string, unknown> = {};
       Object.keys(existingShare).forEach((key) => {
         if (formLabels[key]) {
           attrs[formLabels[key]] = existingShare[key as keyof SmbShare];

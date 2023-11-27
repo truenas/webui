@@ -61,7 +61,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
   appId: string;
   catalog: string;
   train: string;
-  config: { [key: string]: ChartFormValue };
+  config: Record<string, ChartFormValue>;
   catalogApp: CatalogApp;
   isLoading = true;
   appsLoaded = false;

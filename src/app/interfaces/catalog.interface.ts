@@ -119,7 +119,7 @@ export interface CatalogAppVersion {
     };
   };
   supported: boolean;
-  values: { [key: string]: ChartFormValue };
+  values: Record<string, ChartFormValue>;
   version: string;
   train?: string;
   app?: string;

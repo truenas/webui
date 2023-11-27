@@ -19,9 +19,7 @@ export interface ReportingExporter {
   id: number;
   type: string;
   enabled: boolean;
-  attributes: {
-    [key: string]: unknown;
-  };
+  attributes: Record<string, unknown>;
 }
 
 export type CreateReportingExporter = Omit<ReportingExporter, 'id'>;
