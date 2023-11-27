@@ -1,10 +1,14 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+} from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { BehaviorSubject, Observable, combineLatest, filter, of, switchMap, tap } from 'rxjs';
+import {
+  BehaviorSubject, Observable, combineLatest, filter, of, switchMap, tap,
+} from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { ReportingExporter } from 'app/interfaces/reporting-exporters.interface';
-import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { ArrayDataProvider } from 'app/modules/ix-table2/classes/array-data-provider/array-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { toggleColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-toggle/ix-cell-toggle.component';

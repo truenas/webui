@@ -1,4 +1,6 @@
-import { Component, ElementRef, Input, OnInit, TrackByFunction, Type, ViewChild } from '@angular/core';
+import {
+  Component, ElementRef, Input, OnInit, TrackByFunction, Type, ViewChild,
+} from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subject } from 'rxjs';
 import { ChainedComponentSeralized as ChainedComponentInfoSeralized, IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';

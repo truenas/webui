@@ -21,6 +21,7 @@ module.exports = {
         "project": true,
       },
       "extends": [
+        'airbnb-base',
         "airbnb-typescript/base",
         "plugin:@angular-eslint/recommended",
         "plugin:@typescript-eslint/strict-type-checked",

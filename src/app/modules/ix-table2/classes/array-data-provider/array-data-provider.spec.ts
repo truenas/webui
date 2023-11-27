@@ -1,5 +1,5 @@
 import { firstValueFrom } from 'rxjs';
-import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { ArrayDataProvider } from 'app/modules/ix-table2/classes/array-data-provider/array-data-provider';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 
 interface TestTableData {

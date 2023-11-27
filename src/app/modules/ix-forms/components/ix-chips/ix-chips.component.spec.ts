@@ -41,9 +41,8 @@ describe('IxChipsComponent', () => {
   beforeEach(async () => {
     formControl = new FormControl([]);
     spectator = createHost(
-      '<ix-chips [formControl]="formControl"></ix-chips>', {
-        hostProps: { formControl },
-      },
+      '<ix-chips [formControl]="formControl"></ix-chips>',
+      { hostProps: { formControl } },
     );
     spectator.setInput('allowNewEntries', true);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);

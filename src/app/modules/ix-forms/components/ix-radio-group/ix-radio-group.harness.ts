@@ -15,8 +15,7 @@ export class IxRadioGroupHarness extends ComponentHarness implements IxFormContr
 
   static with(options: IxRadioGroupHarnessFilters): HarnessPredicate<IxRadioGroupHarness> {
     return new HarnessPredicate(IxRadioGroupHarness, options)
-      .addOption('label', options.label,
-        (harness, label) => HarnessPredicate.stringMatches(harness.getLabelText(), label));
+      .addOption('label', options.label, (harness, label) => HarnessPredicate.stringMatches(harness.getLabelText(), label));
   }
 
   getMatRadioGroupHarness = this.locatorFor(MatRadioGroupHarness);
@@ -44,6 +43,8 @@ export class IxRadioGroupHarness extends ComponentHarness implements IxFormContr
     const radioButtons = await (await this.getMatRadioGroupHarness()).getRadioButtons();
     const inputState = await parallel(() => radioButtons.map((control) => control.isDisabled()));
 
-    return new Promise((resolve) => resolve(inputState.every((control) => !!control)));
+    return new Promise((resolve) => {
+      resolve(inputState.every((control) => !!control));
+    });
   }
 }

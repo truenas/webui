@@ -97,11 +97,13 @@ export class DualListboxComponent<T extends { id: string | number; name?: string
     const b = div.querySelector('.draggable:active');
     const chosenItems = div.querySelectorAll('.chosen');
     if (chosenItems.length > 0 && b) {
-      b.insertAdjacentHTML('afterbegin',
+      b.insertAdjacentHTML(
+        'afterbegin',
         `<div id="counter" style="background: red; color: white; border-radius: 50%;
         width:20px; height: 20px; text-align: center; font-weight: 700;
         position: relative; top: 5px; left: 5px;">
-        ${chosenItems.length.toString()}</div>`);
+        ${chosenItems.length.toString()}</div>`,
+      );
     }
     chosenItems.forEach((item) => {
       item.classList.add('cdk-drag-placeholder');

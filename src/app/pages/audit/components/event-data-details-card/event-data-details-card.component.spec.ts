@@ -116,5 +116,4 @@ describe('EventDataDetailsCardComponent', () => {
     const cardContent = spectator.debugElement.query(By.css('mat-card pre')).nativeElement as HTMLElement;
     expect(cardContent.textContent).toContain(yamlContent);
   });
-
 });

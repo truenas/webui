@@ -64,7 +64,7 @@ function resolveRoles(inputRoles: Role[]): Role[] {
 
     const includedRoles = specificRoleMapping[role];
     if (includedRoles) {
-      includedRoles.forEach(includedRole => {
+      includedRoles.forEach((includedRole) => {
         if (!processedRoles.has(includedRole)) {
           resolve(includedRole);
         }
@@ -72,7 +72,7 @@ function resolveRoles(inputRoles: Role[]): Role[] {
     }
   }
 
-  inputRoles?.forEach(role => {
+  inputRoles?.forEach((role) => {
     if (!processedRoles.has(role)) {
       resolve(role);
     }
@@ -100,7 +100,7 @@ export class IfUserHasRolesDirective {
     private cdr: ChangeDetectorRef,
     private authService: AuthService,
   ) {
-    this.authService.user$.pipe(untilDestroyed(this)).subscribe(user => {
+    this.authService.user$.pipe(untilDestroyed(this)).subscribe((user) => {
       this.currentUserRoles = resolveRoles(user.roles);
       this.cdr.markForCheck();
     });
@@ -115,6 +115,6 @@ export class IfUserHasRolesDirective {
       return true;
     }
 
-    return roles.every(role => this.currentUserRoles.includes(role));
+    return roles.every((role) => this.currentUserRoles.includes(role));
   }
 }

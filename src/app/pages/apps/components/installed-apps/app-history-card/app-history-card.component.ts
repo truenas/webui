@@ -36,7 +36,7 @@ export class AppHistoryCardComponent implements OnInit, OnChanges {
     this.isLoading = true;
     this.appService.getChartReleaseEvents(this.app.name).pipe(
       map((events) => events.sort((a, b) => {
-        return b.metadata.creation_timestamp?.$date - a.metadata.creation_timestamp?.$date;
+        return (b.metadata.creation_timestamp?.$date || 0) - (a.metadata.creation_timestamp?.$date || 0);
       })),
       take(1),
       untilDestroyed(this),

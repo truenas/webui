@@ -13,8 +13,7 @@ export class JiraOauthHarness extends ComponentHarness implements IxFormControlH
 
   static with(options: JiraOauthHarnessFilters): HarnessPredicate<JiraOauthHarness> {
     return new HarnessPredicate(JiraOauthHarness, options)
-      .addOption('label', options.label,
-        (harness, label) => HarnessPredicate.stringMatches(harness.getLabelText(), label));
+      .addOption('label', options.label, (harness, label) => HarnessPredicate.stringMatches(harness.getLabelText(), label));
   }
 
   getMatInputHarness = this.locatorFor(MatInputHarness);

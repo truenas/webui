@@ -1,12 +1,14 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Inject, Input, Output } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Inject, Input, Output,
+} from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { WINDOW } from 'app/helpers/window.helper';
 import { GmailOauthConfig } from 'app/interfaces/mail-config.interface';
 import { OauthMessage } from 'app/interfaces/oauth-message.interface';
 import { OauthJiraMessage } from 'app/interfaces/support.interface';
+import { OauthButtonType } from 'app/modules/oauth-button/interfaces/oauth-button.interface';
 import { OauthProviderData } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/oauth-provider/oauth-provider.component';
 import { DialogService } from 'app/services/dialog.service';
-import { OauthButtonType } from './../../interfaces/oauth-button.interface';
 
 @Component({
   selector: 'ix-oauth-button',
@@ -27,22 +29,23 @@ export class OauthButtonComponent {
       case OauthButtonType.Jira:
         if (this.isLoggedIn) {
           return this.translate.instant('Logged In To Jira');
-        } else {
-          return this.translate.instant('Log In To Jira');
         }
+        return this.translate.instant('Log In To Jira');
+
       case OauthButtonType.Provider:
         if (this.isLoggedIn) {
           return this.translate.instant('Logged In To Provider');
-        } else {
-          return this.translate.instant('Log In To Provider');
         }
+        return this.translate.instant('Log In To Provider');
+
       case OauthButtonType.Gmail:
         if (this.isLoggedIn) {
           return this.translate.instant('Logged In To Gmail');
-        } else {
-          return this.translate.instant('Log In To Gmail');
         }
+        return this.translate.instant('Log In To Gmail');
     }
+
+    return '';
   }
 
   constructor(

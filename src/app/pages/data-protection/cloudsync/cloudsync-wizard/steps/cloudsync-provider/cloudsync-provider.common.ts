@@ -52,10 +52,10 @@ export function getProviderFormClass(providerName: CloudsyncProviderName): Type<
 }
 
 // Will return "(1)" from "Google Photos (1)"
-const incrementRegex = new RegExp(/\s\((\d+)\)$/);
+const incrementRegex = /\s\((\d+)\)$/;
 
 // Will return "1" from "(1)"
-const incrementInt = new RegExp(/\d+(?=\)$)/);
+const incrementInt = /\d+(?=\)$)/;
 
 /**
  * Get an incremented name (e.g. Google Photos (2)) from a name (e.g. Google Photos),

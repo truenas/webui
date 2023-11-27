@@ -1,5 +1,5 @@
 import {
-  Component, Inject, OnDestroy, OnInit,
+  Component, Inject, OnInit,
 } from '@angular/core';
 import { Navigation, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -7,13 +7,12 @@ import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  combineLatest, lastValueFrom, Subject, switchMap,
+  combineLatest, lastValueFrom, switchMap,
 } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { ProductType } from 'app/enums/product-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import helptext from 'app/helptext/network/interfaces/interfaces-list';
-import { CoreEvent } from 'app/interfaces/events';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -35,9 +34,7 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
   templateUrl: './network.component.html',
   styleUrls: ['./network.component.scss'],
 })
-export class NetworkComponent implements OnInit, OnDestroy {
-  formEvent$: Subject<CoreEvent>;
-
+export class NetworkComponent implements OnInit {
   isHaEnabled = false;
   hasPendingChanges = false;
   checkinWaiting = false;
@@ -317,12 +314,6 @@ export class NetworkComponent implements OnInit, OnDestroy {
 
   goToHa(): void {
     this.router.navigate(['/', 'system', 'failover']);
-  }
-
-  ngOnDestroy(): void {
-    if (this.formEvent$) {
-      this.formEvent$.complete();
-    }
   }
 
   private openInterfaceForEditFromRoute(): void {

@@ -1,10 +1,12 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+} from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { tap } from 'rxjs';
 import { SmbInfoLevel } from 'app/enums/smb-info-level.enum';
 import { SmbSession } from 'app/interfaces/smb-status.interface';
-import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
+import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
@@ -14,7 +16,6 @@ import { WebSocketService } from 'app/services/ws.service';
 @Component({
   selector: 'ix-smb-session-list',
   templateUrl: './smb-session-list.component.html',
-  styleUrls: ['./smb-session-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SmbSessionListComponent implements OnInit {

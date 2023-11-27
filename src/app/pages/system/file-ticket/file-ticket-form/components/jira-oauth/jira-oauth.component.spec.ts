@@ -48,9 +48,8 @@ describe('JiraOauthComponent', () => {
   beforeEach(() => {
     formControl = new FormControl('');
     spectator = createHost(
-      '<ix-jira-oauth [formControl]="formControl"></ix-jira-oauth>', {
-        hostProps: { formControl },
-      },
+      '<ix-jira-oauth [formControl]="formControl"></ix-jira-oauth>',
+      { hostProps: { formControl } },
     );
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });

@@ -45,7 +45,7 @@ export class TopologyItemNodeComponent {
   get errors(): string {
     if (this.topologyItem.stats) {
       const stats = this.topologyItem.stats;
-      const errors = stats?.checksum_errors + stats?.read_errors + stats?.write_errors;
+      const errors = (stats?.checksum_errors || 0) + (stats?.read_errors || 0) + (stats?.write_errors || 0);
       return this.translate.instant('{n, plural, =0 {No Errors} one {# Error} other {# Errors}}', { n: errors });
     }
     return '';

@@ -8,4 +8,3 @@ export const fromWizardToAdvancedFormSubmitted = createAction(
   '[Admin UI] From Wizard to Advanced Form and vice versa submitted',
   props<{ formType: FromWizardToAdvancedSubmitted }>(),
 );
-

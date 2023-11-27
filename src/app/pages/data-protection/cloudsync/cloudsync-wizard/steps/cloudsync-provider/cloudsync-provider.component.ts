@@ -1,9 +1,13 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnInit, Output, ViewChild, ViewContainerRef } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnInit, Output, ViewChild, ViewContainerRef,
+} from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { BehaviorSubject, Observable, combineLatest, filter, of, switchMap } from 'rxjs';
+import {
+  BehaviorSubject, Observable, combineLatest, filter, of, switchMap,
+} from 'rxjs';
 import { CloudsyncProviderName, cloudsyncProviderNameMap } from 'app/enums/cloudsync-provider.enum';
 import { FromWizardToAdvancedSubmitted } from 'app/enums/from-wizard-to-advanced.enum';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
@@ -283,7 +287,6 @@ export class CloudsyncProviderComponent implements OnInit {
     this.providerFormContainer?.clear();
     this.providerForm = null;
   }
-
 
   private renderProviderForm(): void {
     this.providerFormContainer?.clear();

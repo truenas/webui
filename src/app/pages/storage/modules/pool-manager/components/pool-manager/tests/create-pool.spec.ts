@@ -148,7 +148,7 @@ describe('PoolManagerComponent – create pool', () => {
 
   it('creates a pool', async () => {
     await wizard.fillStep({
-      'Name': 'pool1',
+      Name: 'pool1',
     });
     await wizard.clickNext();
 
