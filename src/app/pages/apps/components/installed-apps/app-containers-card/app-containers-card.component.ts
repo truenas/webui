@@ -26,7 +26,7 @@ export class AppContainersCardComponent implements OnChanges {
   isLoading = false;
   readonly chartReleaseStatus = ChartReleaseStatus;
 
-  containerImages: { [key: string]: ChartContainerImage };
+  containerImages: Record<string, ChartContainerImage>;
 
   constructor(
     private appService: ApplicationsService,

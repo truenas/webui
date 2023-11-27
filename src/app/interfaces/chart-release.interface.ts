@@ -27,9 +27,7 @@ export interface ChartResources {
   storage_class: { [key: string]: string };
   persistent_volumes: unknown[];
   host_path_volumes: unknown[];
-  container_images: {
-    [key: string]: ChartContainerImage;
-  };
+  container_images: Record<string, ChartContainerImage>;
   truenas_certificates: number[];
   truenas_certificate_authorities: number[];
   cronjobs: unknown[];
