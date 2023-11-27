@@ -21,7 +21,7 @@ export interface PoolsDashboardState {
   arePoolsLoading: boolean;
   areDisksLoading: boolean;
   pools: Pool[];
-  rootDatasets: { [id: string]: Dataset };
+  rootDatasets: Record<string, Dataset>;
   disks: StorageDashboardDisk[];
 }
 

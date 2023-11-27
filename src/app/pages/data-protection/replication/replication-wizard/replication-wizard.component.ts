@@ -173,7 +173,7 @@ export class ReplicationWizardComponent {
     return this.ws.call('replication.count_eligible_manual_snapshots', [payload]);
   }
 
-  getUnmatchedSnapshots(payload: TargetUnmatchedSnapshotsParams): Observable<{ [dataset: string]: string[] }> {
+  getUnmatchedSnapshots(payload: TargetUnmatchedSnapshotsParams): Observable<Record<string, string[]>> {
     return this.ws.call('replication.target_unmatched_snapshots', payload);
   }
 

@@ -72,10 +72,10 @@ export class ResourcesUsageStore extends ComponentStore<ResourcesUsageState> {
     return this.ws.call('interface.query').pipe(
       tap((interfaces) => {
         const dashboardNetworkInterfaces = [...interfaces] as DashboardNetworkInterface[];
-        const removeNics: { [nic: string]: number | string } = {};
+        const removeNics: Record<string, number | string> = {};
 
         // Store keys for fast lookup
-        const nicKeys: { [nic: string]: number | string } = {};
+        const nicKeys: Record<string, number | string> = {};
         interfaces.forEach((networkInterface, index) => {
           nicKeys[networkInterface.name] = index.toString();
 
