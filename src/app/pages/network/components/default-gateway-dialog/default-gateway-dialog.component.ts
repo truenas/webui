@@ -24,7 +24,7 @@ import { WebSocketService } from 'app/services/ws.service';
 export class DefaultGatewayDialogComponent {
   form = this.fb.group({
     defaultGateway: [
-      null as string,
+      null,
       {
         validators: [
           this.validatorsService.withMessage(

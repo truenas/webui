@@ -178,6 +178,7 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
 
   blurred(): void {
     this.onTouch();
+
     if (this.formatted) {
       if (this.parse) {
         this.value = this.parse(this.formatted, this.postfix);
@@ -188,7 +189,9 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
       }
     }
 
-    this.onChange(this.value);
+    if (this.controlDirective.dirty || this.controlDirective.control.updateOn === 'change') {
+      this.onChange(this.value);
+    }
 
     if (this.autocompleteOptions && !this.findExistingOption(this.value)) {
       this.writeValue('');
