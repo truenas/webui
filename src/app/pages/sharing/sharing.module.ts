@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -102,6 +103,7 @@ import { SmbStatusComponent } from './smb/smb-status/smb-status.component';
     CoreComponents,
     LayoutModule,
     MatExpansionModule,
+    MatButtonToggleModule,
   ],
   declarations: [
     NfsListComponent,
