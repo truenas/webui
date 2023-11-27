@@ -1,10 +1,12 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+} from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { tap } from 'rxjs';
 import { SmbInfoLevel } from 'app/enums/smb-info-level.enum';
 import { SmbLockInfo } from 'app/interfaces/smb-status.interface';
-import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
+import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
@@ -25,9 +27,6 @@ export class SmbLockListComponent implements OnInit {
     textColumn({ title: this.translate.instant('Path'), propertyName: 'service_path' }),
     textColumn({ title: this.translate.instant('Filename'), propertyName: 'filename' }),
     textColumn({ title: this.translate.instant('Num Pending Deletes'), propertyName: 'num_pending_deletes' }),
-    textColumn({ title: this.translate.instant('Dev Id'), propertyName: 'fileid', getValue: (row) => row.fileid.devid }),
-    textColumn({ title: this.translate.instant('Ext Id'), propertyName: 'fileid', getValue: (row) => row.fileid.extid }),
-    textColumn({ title: this.translate.instant('Inode'), propertyName: 'fileid', getValue: (row) => row.fileid.inode }),
   ]);
 
   constructor(
