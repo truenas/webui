@@ -25,7 +25,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 })
 export class PoolsDashboardComponent implements OnInit {
   pools$ = this.store.pools$;
-  allDisksByPool: { [pool: string]: StorageDashboardDisk[] } = {};
+  allDisksByPool: Record<string, StorageDashboardDisk[]> = {};
   disks$ = this.store.disks$;
 
   rootDatasets: Record<string, Dataset> = {};

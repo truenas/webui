@@ -38,9 +38,9 @@ export class IxListHarness extends ComponentHarness {
     return listItems[listItems.length - 1];
   }
 
-  async getFormValues(): Promise<{ [label: string]: IxFormBasicValueType }[]> {
+  async getFormValues(): Promise<Record<string, IxFormBasicValueType>[]> {
     const listItems = await this.getListItems();
-    const values: { [label: string]: IxFormBasicValueType }[] = [];
+    const values: Record<string, IxFormBasicValueType>[] = [];
     for (const listItem of listItems) {
       const formValues = await listItem.getFormValues();
       values.push(formValues);

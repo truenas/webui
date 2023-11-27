@@ -72,7 +72,7 @@ describe('BootenvStatsDialogComponent', () => {
     websocket = spectator.inject(WebSocketService);
   });
 
-  function getStatusItems(): { [name: string]: string } {
+  function getStatusItems(): Record<string, string> {
     return spectator.queryAll('.status-item').reduce((allItems, element) => {
       const label = element.querySelector('.status-name').textContent.trim();
       const value = element.querySelector('.status-value').textContent.trim();
@@ -80,7 +80,7 @@ describe('BootenvStatsDialogComponent', () => {
         ...allItems,
         [label]: value,
       };
-    }, {} as { [name: string]: string });
+    }, {} as Record<string, string>);
   }
 
   it('loads boot pool state and shows it', () => {

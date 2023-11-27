@@ -43,7 +43,7 @@ export class DevicesComponent implements OnInit, AfterViewInit {
   selectedParentNode$ = this.devicesStore.selectedParentNode$;
   selectedTopologyCategory$ = this.devicesStore.selectedTopologyCategory$;
 
-  diskDictionary: { [guid: string]: Disk } = {};
+  diskDictionary: Record<string, Disk> = {};
   dataSource: NestedTreeDataSource<DeviceNestedDataNode>;
   poolId: number;
   poolName: string;

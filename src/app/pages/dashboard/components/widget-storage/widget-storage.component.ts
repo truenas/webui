@@ -43,9 +43,7 @@ interface PoolInfo {
   disksWithError: ItemInfo;
 }
 
-interface PoolInfoMap {
-  [poolName: string]: PoolInfo;
-}
+type PoolInfoMap = Record<string, PoolInfo>;
 
 @UntilDestroy()
 @Component({
