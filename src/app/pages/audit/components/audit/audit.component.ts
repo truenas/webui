@@ -91,7 +91,7 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
     this.dataProvider.sortingStrategy = new SortingServerSide();
 
     this.dataProvider.currentPage$.pipe(filter(Boolean), untilDestroyed(this)).subscribe((auditEntries) => {
-      this.dataProvider.expandedRow = auditEntries[0];
+      this.dataProvider.expandedRow = this.isMobileView ? null : auditEntries[0];
       this.expanded(this.dataProvider.expandedRow);
 
       this.searchProperties = searchProperties<AuditEntry>([
@@ -203,7 +203,7 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   updateUrlOptions(): void {
-    this.urlOptionsService.setUrlOptions('/audit', {
+    this.urlOptionsService.setUrlOptions('/system/audit', {
       searchQuery: this.searchQuery,
       sorting: this.dataProvider.sorting,
       pagination: this.dataProvider.pagination,
@@ -234,6 +234,6 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private getEventDataForLog(row: AuditEntry): string {
-    return getLogImportantData(row);
+    return getLogImportantData(row, this.translate);
   }
 }

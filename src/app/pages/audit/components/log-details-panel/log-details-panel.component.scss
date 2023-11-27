@@ -8,10 +8,6 @@
     .cards .card {
       @include details-card();
       margin: 0;
-
-      mat-card-content {
-        padding: 0 16px 16px !important;
-      }
     }
   }
 }
