@@ -41,7 +41,9 @@ describe('TwoFactorComponent', () => {
           twofactor_auth_configured: true,
         } as LoggedInUser),
         renewUser2FaSecret: jest.fn(() => of({})),
-        getUserTwoFactorConfig: jest.fn(() => of({ provisioning_uri: 'provisioning_uri', interval: 30, otp_digits: 6, secret_configured: true } as UserTwoFactorConfig)),
+        getUserTwoFactorConfig: jest.fn(() => of({
+          provisioning_uri: 'provisioning_uri', interval: 30, otp_digits: 6, secret_configured: true,
+        } as UserTwoFactorConfig)),
         getGlobalTwoFactorConfig: jest.fn(() => of({ enabled: false } as GlobalTwoFactorConfig)),
       }),
     ],

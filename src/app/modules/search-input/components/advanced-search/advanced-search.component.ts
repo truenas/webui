@@ -1,5 +1,6 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   ElementRef,
   EventEmitter,
@@ -8,10 +9,12 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import { closeBrackets } from '@codemirror/autocomplete';
+import { autocompletion, closeBrackets, startCompletion } from '@codemirror/autocomplete';
+import { EditorState } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
+import { AdvancedSearchAutocompleteService } from 'app/modules/search-input/services/advanced-search-autocomplete.service';
 import { QueryParserService } from 'app/modules/search-input/services/query-parser/query-parser.service';
 import { QueryToApiService } from 'app/modules/search-input/services/query-to-api/query-to-api.service';
 import { SearchProperty } from 'app/modules/search-input/types/search-property.interface';
@@ -31,11 +34,15 @@ export class AdvancedSearchComponent<T> implements OnInit, OnChanges {
 
   @ViewChild('inputArea', { static: true }) inputArea: ElementRef<HTMLElement>;
 
+  hasQueryErrors = false;
+  queryInputValue: string;
   private editorView: EditorView;
 
   constructor(
     private queryParser: QueryParserService,
     private queryToApi: QueryToApiService<T>,
+    private advancedSearchAutocomplete: AdvancedSearchAutocompleteService<T>,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
@@ -47,14 +54,14 @@ export class AdvancedSearchComponent<T> implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.initEditor();
+    this.advancedSearchAutocomplete.setProperties(this.properties);
   }
 
-  protected onResetInput(): void {
-    this.setEditorContents('');
-    this.paramsChange.emit([]);
+  startSuggestionsCompletion(): void {
+    startCompletion(this.editorView);
   }
 
-  private initEditor(): void {
+  initEditor(): void {
     const updateListener = EditorView.updateListener.of((update) => {
       if (!update.docChanged) {
         return;
@@ -63,20 +70,36 @@ export class AdvancedSearchComponent<T> implements OnInit, OnChanges {
       this.onInputChanged();
     });
 
-    this.editorView = new EditorView({
-      extensions: [
-        EditorView.lineWrapping,
-        updateListener,
-        closeBrackets(),
-      ],
-      // doc: this.queryParser.formatFiltersToQuery(this.query, this.properties),
+    const autocompleteExtension = autocompletion({
+      override: [this.advancedSearchAutocomplete.setCompletionSource.bind(this.advancedSearchAutocomplete)],
+      icons: false,
     });
-    this.inputArea.nativeElement.append(this.editorView.dom);
+
+    this.editorView = new EditorView({
+      state: EditorState.create({
+        extensions: [
+          autocompleteExtension,
+          EditorView.lineWrapping,
+          updateListener,
+          closeBrackets(),
+        ],
+      }),
+      parent: this.inputArea.nativeElement,
+    });
+  }
+
+  protected onResetInput(): void {
+    this.setEditorContents('');
+    this.paramsChange.emit([]);
   }
 
   private onInputChanged(): void {
-    const query = this.editorView.state.doc.toString();
-    const parsedQuery = this.queryParser.parseQuery(query);
+    this.queryInputValue = this.editorView.state.doc.toString();
+    const parsedQuery = this.queryParser.parseQuery(this.queryInputValue);
+
+    this.hasQueryErrors = Boolean(this.queryInputValue.length && parsedQuery.hasErrors);
+    this.cdr.markForCheck();
+
     if (parsedQuery.hasErrors) {
       // TODO: Handle errors.
       return;
@@ -86,7 +109,7 @@ export class AdvancedSearchComponent<T> implements OnInit, OnChanges {
 
     // TODO: Remove before merge
     // eslint-disable-next-line no-console
-    console.log(JSON.stringify(filters));
+    console.log(JSON.stringify(filters, null, 2), parsedQuery);
     this.paramsChange.emit(filters);
   }
 

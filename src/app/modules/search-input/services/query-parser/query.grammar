@@ -4,14 +4,15 @@
 // yarn run compile-grammar
 
 @tokens {
-  space { @whitespace+ }
+  space { " " | "\\t" | "\\n" | "\\r" | "\t" | "\n" | "\r" }
   SingleQuotedString {
-    "'" (![\\\n'] | "\\" _)* "'"?
+    "'" (![\\\n'] | "\\" _)* "'"
   }
   DoubleQuotedString {
-    '"' (![\\\n"] | "\\" _)* '"'?
+    '"' (![\\\n"] | "\\" _)* '"'
   }
-  UnquotedString { @asciiLetter+ }
+  // Updated to include a wider range of characters
+  UnquotedString { @asciiLetter+ | $[a-zA-Z\u0080-\uFFFF]+ }
   Boolean { "true" | "false" | "TRUE" | "FALSE" }
   Number { $[0-9]+ }
   Null { "null" | "NULL" }

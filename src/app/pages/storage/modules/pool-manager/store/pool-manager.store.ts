@@ -256,17 +256,19 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
       this.ws.call('disk.get_unused'),
       this.ws.call('enclosure.query'),
     ]).pipe(
-      tapResponse(([allDisks, enclosures]) => {
-        this.patchState({
-          isLoading: false,
-          allDisks,
-          enclosures,
-        });
-      },
-      (error: WebsocketError) => {
-        this.patchState({ isLoading: false });
-        this.dialogService.error(this.errorHandler.parseWsError(error));
-      }),
+      tapResponse(
+        ([allDisks, enclosures]) => {
+          this.patchState({
+            isLoading: false,
+            allDisks,
+            enclosures,
+          });
+        },
+        (error: WebsocketError) => {
+          this.patchState({ isLoading: false });
+          this.dialogService.error(this.errorHandler.parseWsError(error));
+        },
+      ),
     );
   }
 

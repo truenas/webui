@@ -23,31 +23,31 @@ describe('ScrubListComponent', () => {
 
   const scrubTasks = [
     {
-      'id': 1,
-      'threshold': 35,
-      'description': 'My task',
-      'enabled': true,
-      'pool_name': 'Apps',
-      'schedule': {
-        'minute': '00',
-        'hour': '00',
-        'dom': '*',
-        'month': '*',
-        'dow': '4',
+      id: 1,
+      threshold: 35,
+      description: 'My task',
+      enabled: true,
+      pool_name: 'Apps',
+      schedule: {
+        minute: '00',
+        hour: '00',
+        dom: '*',
+        month: '*',
+        dow: '4',
       },
     },
     {
-      'id': 58,
-      'threshold': 35,
-      'description': 'Second task',
-      'enabled': false,
-      'pool_name': 'enc',
-      'schedule': {
-        'minute': '00',
-        'hour': '00',
-        'dom': '*',
-        'month': '*',
-        'dow': '7',
+      id: 58,
+      threshold: 35,
+      description: 'Second task',
+      enabled: false,
+      pool_name: 'enc',
+      schedule: {
+        minute: '00',
+        hour: '00',
+        dom: '*',
+        month: '*',
+        dow: '7',
       },
     },
   ] as PoolScrubTask[];

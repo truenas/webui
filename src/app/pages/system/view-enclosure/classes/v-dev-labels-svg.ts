@@ -3,13 +3,12 @@ import * as d3 from 'd3';
 import { Application, Container, DefaultRendererPlugins } from 'pixi.js';
 import { Subject } from 'rxjs';
 import { EnclosureSlot, SelectedEnclosureSlot } from 'app/interfaces/enclosure.interface';
-import { CoreEvent } from 'app/interfaces/events';
-import { HighlightDiskEvent } from 'app/interfaces/events/enclosure-events.interface';
-import { LabelDrivesEvent } from 'app/interfaces/events/label-drives-event.interface';
-import { ThemeChangedEvent } from 'app/interfaces/events/theme-changed-event.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { Theme } from 'app/interfaces/theme.interface';
 import { ChassisView } from 'app/pages/system/view-enclosure/classes/chassis-view';
+import {
+  EnclosureEvent,
+} from 'app/pages/system/view-enclosure/interfaces/enclosure-events.interface';
 
 export class VDevLabelsSvg {
   /*
@@ -21,7 +20,7 @@ export class VDevLabelsSvg {
   *
   */
 
-  events$: Subject<CoreEvent>;
+  events$: Subject<EnclosureEvent>;
 
   protected svg: Selection<SVGSVGElement, unknown, HTMLElement, unknown>; // Our d3 generated svg layer
   protected mainStage: Container; // WebGL Canvas
@@ -50,18 +49,18 @@ export class VDevLabelsSvg {
     this.d3Init();
 
     let tiles;
-    this.events$ = new Subject<CoreEvent>();
-    this.events$.subscribe((evt: CoreEvent): void => {
+    this.events$ = new Subject<EnclosureEvent>();
+    this.events$.subscribe((evt: EnclosureEvent): void => {
       switch (evt.name) {
         case 'ThemeChanged': {
-          const theme = (evt as ThemeChangedEvent).data;
+          const theme = (evt).data;
           this.color = theme.blue;
           this.selectedDiskColor = theme.cyan;
           this.highlightColor = theme.yellow;
           break;
         }
         case 'LabelDrives':
-          this.createVdevLabels((evt as LabelDrivesEvent).data);
+          this.createVdevLabels((evt).data);
           break;
         case 'DisableHighlightMode':
           tiles = this.getParent().querySelectorAll('rect.tile');
@@ -71,7 +70,7 @@ export class VDevLabelsSvg {
           tiles = this.getParent().querySelectorAll('rect.tile');
           this.hideAllTiles(tiles as NodeListOf<HTMLElement>);
 
-          this.highlightedDiskName = (evt as HighlightDiskEvent).data.devname;
+          this.highlightedDiskName = (evt).data.devname;
           this.showTile(this.highlightedDiskName);
           break;
         case 'UnhighlightDisk':

@@ -17,7 +17,7 @@ import { NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import helptext from 'app/helptext/network/interfaces/interfaces-list';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { AllNetworkInterfacesUpdate } from 'app/interfaces/reporting.interface';
-import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { ArrayDataProvider } from 'app/modules/ix-table2/classes/array-data-provider/array-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { createTable } from 'app/modules/ix-table2/utils';
@@ -76,9 +76,9 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
           iconName: 'refresh',
           hidden: (row) => of(!this.isPhysical(row)),
           disabled: () => this.isHaEnabled$,
-          dynamicTooltip: () => this.isHaEnabled$.pipe(map((isHaEnabled) => isHaEnabled
+          dynamicTooltip: () => this.isHaEnabled$.pipe(map((isHaEnabled) => (isHaEnabled
             ? this.translate.instant(helptext.ha_enabled_reset_msg)
-            : this.translate.instant('Reset configuration'))),
+            : this.translate.instant('Reset configuration')))),
           onClick: (row) => this.onReset(row),
         },
         {

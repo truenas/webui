@@ -1,4 +1,6 @@
-import { AfterViewChecked, ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
+import {
+  AfterViewChecked, ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
+} from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -130,10 +132,8 @@ export class JobProgressDialogComponent implements OnInit, AfterViewChecked {
           logsSubscription.unsubscribe();
         }
         this.cdr.markForCheck();
-
       },
     });
-
   }
 
   ngAfterViewChecked(): void {
@@ -174,5 +174,4 @@ export class JobProgressDialogComponent implements OnInit, AfterViewChecked {
         this.cdr.markForCheck();
       });
   }
-
 }

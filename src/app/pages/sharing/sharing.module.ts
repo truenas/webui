@@ -41,8 +41,10 @@ import { InitiatorWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wiza
 import { PortalWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/steps/portal-wizard-step/portal-wizard-step.component';
 import { TargetGlobalConfigurationComponent } from 'app/pages/sharing/iscsi/target-global-configuration/target-global-configuration.component';
 import { NfsListComponent } from 'app/pages/sharing/nfs/nfs-list/nfs-list.component';
+import { NfsSessionListComponent } from 'app/pages/sharing/nfs/nfs-session-list/nfs-session-list.component';
 import { RestartSmbDialogComponent } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
 import { SmbLockListComponent } from 'app/pages/sharing/smb/smb-status/components/smb-lock-list/smb-lock-list.component';
+import { SmbShareListComponent } from 'app/pages/sharing/smb/smb-status/components/smb-share-list/smb-share-list.component';
 import { UserService } from 'app/services/user.service';
 import { ServiceExtraActionsComponent } from './components/shares-dashboard/service-extra-actions/service-extra-actions.component';
 import { ServiceStateButtonComponent } from './components/shares-dashboard/service-state-button/service-state-button.component';
@@ -82,7 +84,6 @@ import { SmbStatusComponent } from './smb/smb-status/smb-status.component';
     FlexLayoutModule,
     MatListModule,
     MatDialogModule,
-    AppCommonModule,
     MatMenuModule,
     MatFormFieldModule,
     MatTooltipModule,
@@ -136,8 +137,10 @@ import { SmbStatusComponent } from './smb/smb-status/smb-status.component';
     ServiceStateButtonComponent,
     SmbSessionListComponent,
     SmbLockListComponent,
-    SmbStatusComponent,
     SmbOpenFilesComponent,
+    NfsSessionListComponent,
+    SmbStatusComponent,
+    SmbShareListComponent,
   ],
   providers: [
     UserService, // TODO: Check if can be removed since service is singleton

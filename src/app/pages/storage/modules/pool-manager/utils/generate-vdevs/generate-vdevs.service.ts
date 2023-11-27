@@ -80,7 +80,7 @@ export class GenerateVdevsService {
         if (a.enclosure?.slot === b.enclosure?.slot) {
           return a.devname.localeCompare(b.devname);
         }
-        return a.enclosure?.slot - b.enclosure?.slot;
+        return (a.enclosure?.slot || 0) - (b.enclosure?.slot || 0);
       }
 
       return (a.enclosure?.number || largeNumber) - (b.enclosure?.number || largeNumber);

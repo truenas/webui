@@ -1,13 +1,17 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit,
+} from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
-import { filter, map, of, switchMap, tap } from 'rxjs';
+import {
+  filter, map, of, switchMap, tap,
+} from 'rxjs';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { IdmapName } from 'app/enums/idmap.enum';
 import helptext from 'app/helptext/directory-service/idmap';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
+import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
@@ -124,11 +128,11 @@ export default class IdmapListComponent implements OnInit {
       switchMap((state) => {
         if (state.ldap !== DirectoryServiceState.Disabled) {
           return this.ws.call('idmap.query', [[['name', '=', IdmapName.DsTypeLdap]]]);
-        } else if (state.activedirectory !== DirectoryServiceState.Disabled) {
-          return this.ws.call('idmap.query', [[['name', '!=', IdmapName.DsTypeLdap]]]);
-        } else {
-          return this.ws.call('idmap.query');
         }
+        if (state.activedirectory !== DirectoryServiceState.Disabled) {
+          return this.ws.call('idmap.query', [[['name', '!=', IdmapName.DsTypeLdap]]]);
+        }
+        return this.ws.call('idmap.query');
       }),
       map((idmaps) => {
         const transformed = [...idmaps] as IdmapRow[];

@@ -37,6 +37,9 @@ describe('SmbStatusComponent', () => {
       {
         label: 'Locks',
         path: '/sharing/smb/status/locks',
+      }, {
+        label: 'Shares',
+        path: '/sharing/smb/status/shares',
       },
     ];
     expect(spectator.component.navLinks).toEqual(expectedNavLinks);

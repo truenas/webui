@@ -64,7 +64,8 @@ export class WithLoadingStateDirective<V = unknown> implements OnDestroy {
   }
 
   static ngTemplateContextGuard<V>(
-    directive: WithLoadingStateDirective<V>, context: unknown,
+    directive: WithLoadingStateDirective<V>,
+    context: unknown,
   ): context is WithLoadingStateContext<V> {
     return true;
   }

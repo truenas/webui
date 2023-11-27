@@ -156,10 +156,10 @@ describe('ReplicationWhatAndWhereComponent', () => {
     await form.fillForm({ 'Source Location': 'On a Different System' });
     await form.fillForm({ 'SSH Connection': 'non-root-ssh-connection' });
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
-      'buttonText': 'Use Sudo For ZFS Commands',
-      'hideCheckbox': true,
-      'message': helptext.sudo_warning,
-      'title': 'Sudo Enabled',
+      buttonText: 'Use Sudo For ZFS Commands',
+      hideCheckbox: true,
+      message: helptext.sudo_warning,
+      title: 'Sudo Enabled',
     });
   });
 

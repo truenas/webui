@@ -15,8 +15,7 @@ export class SchedulerHarness extends ComponentHarness implements IxFormControlH
 
   static with(options: SchedulerFilters): HarnessPredicate<SchedulerHarness> {
     return new HarnessPredicate(SchedulerHarness, options)
-      .addOption('label', options.label,
-        (harness, label) => HarnessPredicate.stringMatches(harness.getLabelText(), label));
+      .addOption('label', options.label, (harness, label) => HarnessPredicate.stringMatches(harness.getLabelText(), label));
   }
 
   getSelectHarness = this.locatorFor(MatSelectHarness);

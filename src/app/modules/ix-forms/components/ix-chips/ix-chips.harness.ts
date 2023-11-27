@@ -19,8 +19,7 @@ export class IxChipsHarness extends ComponentHarness implements IxFormControlHar
 
   static with(options: IxChipsHarnessFilters): HarnessPredicate<IxChipsHarness> {
     return new HarnessPredicate(IxChipsHarness, options)
-      .addOption('label', options.label,
-        (harness, label) => HarnessPredicate.stringMatches(harness.getLabelText(), label));
+      .addOption('label', options.label, (harness, label) => HarnessPredicate.stringMatches(harness.getLabelText(), label));
   }
 
   getMatChipListHarness = this.locatorFor(MatChipGridHarness);

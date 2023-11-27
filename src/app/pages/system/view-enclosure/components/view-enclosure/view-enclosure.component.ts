@@ -8,8 +8,7 @@ import { Store } from '@ngrx/store';
 import { Observable, ReplaySubject, Subject } from 'rxjs';
 import { filter, takeUntil } from 'rxjs/operators';
 import { Enclosure, EnclosureElement, EnclosureView } from 'app/interfaces/enclosure.interface';
-import { CoreEvent } from 'app/interfaces/events';
-import { EnclosureCanvasEvent } from 'app/interfaces/events/enclosure-events.interface';
+import { EnclosureEvent } from 'app/pages/system/view-enclosure/interfaces/enclosure-events.interface';
 import { ErrorMessage } from 'app/pages/system/view-enclosure/interfaces/error-message.interface';
 import { ViewConfig } from 'app/pages/system/view-enclosure/interfaces/view.config';
 import { EnclosureState, EnclosureStore } from 'app/pages/system/view-enclosure/stores/enclosure-store.service';
@@ -36,7 +35,7 @@ export enum EnclosureSelectorState {
 })
 export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
   errors: ErrorMessage[] = [];
-  events: Subject<CoreEvent>;
+  events: Subject<EnclosureEvent>;
   @ViewChild('navigation', { static: false }) nav: ElementRef<HTMLElement>;
   private disksUpdateSubscriptionId: string;
   private destroyed$ = new ReplaySubject<boolean>(1);
@@ -152,8 +151,8 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
     private enclosureStore: EnclosureStore,
     private changeDetectorRef: ChangeDetectorRef,
   ) {
-    this.events = new Subject<CoreEvent>();
-    this.events.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.events = new Subject<EnclosureEvent>();
+    this.events.pipe(untilDestroyed(this)).subscribe((evt: EnclosureEvent) => {
       switch (evt.name) {
         case 'VisualizerReady':
           this.extractVisualizations();
@@ -164,7 +163,7 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
             return;
           }
 
-          const selector = `.enclosure-${(evt as EnclosureCanvasEvent).data.enclosureView?.number}`;
+          const selector = `.enclosure-${(evt).data.enclosureView?.number}`;
           const el = this.nav.nativeElement.querySelector(selector);
 
           const oldCanvas = this.nav.nativeElement.querySelector(selector + ' canvas');
@@ -172,13 +171,13 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
             el.removeChild(oldCanvas);
           }
 
-          (evt as EnclosureCanvasEvent).data.canvas.setAttribute('style', 'width: 80% ;');
-          el?.appendChild((evt as EnclosureCanvasEvent).data.canvas);
+          (evt).data.canvas.setAttribute('style', 'width: 80% ;');
+          el?.appendChild((evt).data.canvas);
 
           break;
         }
         case 'Error':
-          this.errors.push(evt.data as ErrorMessage);
+          this.errors.push(evt.data);
           console.warn({ ERROR_REPORT: this.errors });
           break;
       }
