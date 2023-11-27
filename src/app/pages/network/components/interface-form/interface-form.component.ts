@@ -222,9 +222,6 @@ export class InterfaceFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.matDialog.open(DefaultGatewayDialogComponent, {
-      width: '600px',
-    });
     this.isLoading = true;
     const params = this.prepareSubmitParams();
 
