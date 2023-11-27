@@ -50,13 +50,11 @@ interface Nfs4Info {
   'callback address': string;
 }
 
-interface Nfs4State {
-  [key: string]: {
-    type: string;
-    access: string;
-    deny: string;
-    superblock: string;
-    filename: string;
-    owner: string;
-  };
-}
+type Nfs4State = Record<string, {
+  type: string;
+  access: string;
+  deny: string;
+  superblock: string;
+  filename: string;
+  owner: string;
+}>;

@@ -27,9 +27,7 @@ export interface ChartResources {
   storage_class: Record<string, string>;
   persistent_volumes: unknown[];
   host_path_volumes: unknown[];
-  container_images: {
-    [key: string]: ChartContainerImage;
-  };
+  container_images: Record<string, ChartContainerImage>;
   truenas_certificates: number[];
   truenas_certificate_authorities: number[];
   cronjobs: unknown[];
@@ -69,7 +67,7 @@ export interface ChartRelease {
   human_version: string;
   human_latest_version: string;
   container_images_update_available: boolean;
-  portals: { [portal: string]: string[] };
+  portals: Record<string, string[]>;
   chart_schema: ChartSchema;
   history: Record<string, ChartReleaseVersion>;
   resources?: ChartResources;
@@ -189,13 +187,11 @@ export interface ChartSchema {
   schema: {
     groups: ChartSchemaGroup[];
     questions: ChartSchemaNode[];
-    portals: {
-      [portal: string]: {
-        host: string[];
-        ports: string[];
-        protocols: string[];
-      };
-    };
+    portals: Record<string, {
+      host: string[];
+      ports: string[];
+      protocols: string[];
+    }>;
   };
   supported: boolean;
   values: Record<string, ChartFormValue>;
