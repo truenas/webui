@@ -44,14 +44,14 @@ describe('CertificateDetailsComponent', () => {
     });
   });
 
-  function getDetails(): { [key: string]: string } {
+  function getDetails(): Record<string, string> {
     const itemElements = spectator.queryAll('dl > div');
     return itemElements.reduce((acc, item) => {
       const key = item.querySelector('dt').textContent;
       const value = item.querySelector('dd').textContent;
       acc[key] = value;
       return acc;
-    }, {} as { [key: string]: string });
+    }, {} as Record<string, string>);
   }
 
   it('shows certificate details', () => {

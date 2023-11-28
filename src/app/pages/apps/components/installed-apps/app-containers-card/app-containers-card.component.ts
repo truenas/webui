@@ -8,7 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { map } from 'rxjs';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import { PodSelectDialogType } from 'app/enums/pod-select-dialog.enum';
-import { ChartRelease } from 'app/interfaces/chart-release.interface';
+import { ChartContainerImage, ChartRelease } from 'app/interfaces/chart-release.interface';
 import { PodDialogFormValue } from 'app/interfaces/pod-select-dialog.interface';
 import { PodSelectDialogComponent } from 'app/pages/apps/components/pod-select-dialog/pod-select-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
@@ -26,13 +26,17 @@ export class AppContainersCardComponent implements OnChanges {
   isLoading = false;
   readonly chartReleaseStatus = ChartReleaseStatus;
 
+  containerImages: Record<string, ChartContainerImage>;
+
   constructor(
     private appService: ApplicationsService,
     private cdr: ChangeDetectorRef,
     private matDialog: MatDialog,
     private router: Router,
     private translate: TranslateService,
-  ) {}
+  ) {
+    this.containerImages = this.app?.resources?.container_images;
+  }
 
   ngOnChanges(): void {
     this.getResources();
@@ -77,6 +81,7 @@ export class AppContainersCardComponent implements OnChanges {
       next: (app) => {
         this.app = app;
         this.isLoading = false;
+        this.containerImages = this.app?.resources?.container_images;
         this.cdr.markForCheck();
       },
       error: () => {
@@ -91,7 +96,7 @@ export class AppContainersCardComponent implements OnChanges {
     return getPorts(app.used_ports);
   }
 
-  private shellDialogSubmit(formValue: { [key: string]: string }): void {
+  private shellDialogSubmit(formValue: Record<string, string>): void {
     this.router.navigate([
       '/apps',
       'installed',
@@ -104,7 +109,7 @@ export class AppContainersCardComponent implements OnChanges {
     ]);
   }
 
-  private logDialogSubmit(formValue: { [key: string]: string }): void {
+  private logDialogSubmit(formValue: Record<string, string>): void {
     const tailLines = (formValue.tail_lines).toString();
     this.router.navigate([
       '/apps',

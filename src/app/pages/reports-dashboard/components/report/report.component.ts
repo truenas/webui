@@ -404,7 +404,7 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
     };
   }
 
-  getTimespan(zoomLevel: ReportZoomLevel): { [x: string]: number } {
+  getTimespan(zoomLevel: ReportZoomLevel): Record<string, number> {
     let durationUnit: keyof Duration;
     let value: number;
 

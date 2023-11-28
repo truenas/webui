@@ -1,3 +1,4 @@
+import { TranslateService } from '@ngx-translate/core';
 import { AuditEvent } from 'app/enums/audit-event.enum';
 import { getLogImportantData } from 'app/helpers/get-log-important-data.helper';
 import { AuditEntry } from 'app/interfaces/audit.interface';
@@ -138,60 +139,71 @@ const data = {
   } as unknown as AuditEntry,
 };
 
+function fakeInstant(key: string, interpolateParams?: Record<string, unknown>): string {
+  Object.entries(interpolateParams).forEach(([param, value]) => {
+    key = key.replace(`{${param}}`, String(value));
+  });
+  return key;
+}
+
 describe('get important data from log', () => {
+  const translate = {
+    instant: jest.fn((label, params) => fakeInstant(label, params)) as TranslateService['instant'],
+  } as TranslateService;
+
   it('returns value for Authentication type', () => {
-    expect(getLogImportantData(data.authentication)).toBe('Account: root');
+    expect(getLogImportantData(data.authentication, translate)).toBe('Account: root');
   });
 
   it('returns value for Connect type', () => {
-    expect(getLogImportantData(data.connect)).toBe('Host: 192.168.1.1');
+    expect(getLogImportantData(data.connect, translate)).toBe('Host: 192.168.1.1');
   });
 
   it('returns value for Disconnect type', () => {
-    expect(getLogImportantData(data.disconnect)).toBe('Host: 1.1.1.1');
+    expect(getLogImportantData(data.disconnect, translate)).toBe('Host: 1.1.1.1');
   });
 
   it('returns value for Create type', () => {
-    expect(getLogImportantData(data.create)).toBe('File: /root/mnt/create.txt');
+    expect(getLogImportantData(data.create, translate)).toBe('File: /root/mnt/create.txt');
   });
 
   it('returns value for Unlink type', () => {
-    expect(getLogImportantData(data.unlink)).toBe('File: /root/mnt/unlink.txt');
+    expect(getLogImportantData(data.unlink, translate)).toBe('File: /root/mnt/unlink.txt');
   });
 
   it('returns value for Rename type', () => {
-    expect(getLogImportantData(data.rename)).toBe('test.txt -> renamed.txt');
+    expect(getLogImportantData(data.rename, translate)).toBe('test.txt -> renamed.txt');
   });
 
   it('returns value for Close type', () => {
-    expect(getLogImportantData(data.close)).toBe('File: DEV_INO/close-5243027:2:0');
+    expect(getLogImportantData(data.close, translate)).toBe('File: DEV_INO/close-5243027:2:0');
   });
 
   it('returns value for Read type', () => {
-    expect(getLogImportantData(data.read)).toBe('File: DEV_INO/read-5243027:2:0');
+    expect(getLogImportantData(data.read, translate)).toBe('File: DEV_INO/read-5243027:2:0');
   });
 
   it('returns value for Write type', () => {
-    expect(getLogImportantData(data.write)).toBe('File: DEV_INO/write-5243027:2:0');
+    expect(getLogImportantData(data.write, translate)).toBe('File: DEV_INO/write-5243027:2:0');
   });
 
   it('returns value for OffloadRead type', () => {
-    expect(getLogImportantData(data.offloadRead)).toBe('File: DEV_INO/offloadRead-5243027:2:0');
+    expect(getLogImportantData(data.offloadRead, translate)).toBe('File: DEV_INO/offloadRead-5243027:2:0');
   });
 
   it('returns value for OffloadWrite type', () => {
-    expect(getLogImportantData(data.offloadWrite)).toBe('File: DEV_INO/offloadWrite-5243027:2:0');
+    expect(getLogImportantData(data.offloadWrite, translate)).toBe('File: DEV_INO/offloadWrite-5243027:2:0');
   });
 
   it('returns value for SetAcl type', () => {
-    expect(getLogImportantData(data.setAcl)).toBe('File: DEV_INO/setAcl-5243027:2:0');
+    expect(getLogImportantData(data.setAcl, translate)).toBe('File: DEV_INO/setAcl-5243027:2:0');
   });
 
   it('returns value for SetAttr type', () => {
-    expect(getLogImportantData(data.setAttr)).toBe('File: DEV_INO/setAttr-5243027:2:0');
+    expect(getLogImportantData(data.setAttr, translate)).toBe('File: DEV_INO/setAttr-5243027:2:0');
   });
 
   it('returns value for SetQuota type', () => {
-    expect(getLogImportantData(data.setQuota)).toBe('File: DEV_INO/setQuota-5243027:2:0');
+    expect(getLogImportantData(data.setQuota, translate)).toBe('File: DEV_INO/setQuota-5243027:2:0');
   });
 });

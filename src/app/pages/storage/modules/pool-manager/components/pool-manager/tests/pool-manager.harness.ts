@@ -36,7 +36,7 @@ export class PoolManagerHarness extends ComponentHarness {
 
   // TODO: This is similar to ix-form.harness.ts and ix-fieldset-harness.
   // TODO: Find a way to apply IxFormHarness to portions of components.
-  async getControlHarnessesInStep(): Promise<{ [label: string]: SupportedFormControlHarness }> {
+  async getControlHarnessesInStep(): Promise<Record<string, SupportedFormControlHarness>> {
     const activeStep = await this.getActiveStep();
     const controlsByTypes = await parallel(() => {
       return supportedFormControlSelectors.map((selector) => {
@@ -90,12 +90,12 @@ export class PoolManagerHarness extends ComponentHarness {
     return controlsDict[label];
   }
 
-  async getStepValues(): Promise<{ [label: string]: IxFormBasicValueType }> {
+  async getStepValues(): Promise<Record<string, IxFormBasicValueType>> {
     const controlsDict = await this.getControlHarnessesInStep();
     return getControlValues(controlsDict);
   }
 
-  async getStepDisabledStates(): Promise<{ [label: string]: boolean }> {
+  async getStepDisabledStates(): Promise<Record<string, boolean>> {
     const controls = await this.getControlHarnessesInStep();
     return getDisabledStates(controls);
   }

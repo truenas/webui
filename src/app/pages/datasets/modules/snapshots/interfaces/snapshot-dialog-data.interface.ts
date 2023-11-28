@@ -1,4 +1,4 @@
 export interface SnapshotDialogData {
   datasets: string[];
-  snapshots: { [index: string]: string[] };
+  snapshots: Record<string, string[]>;
 }

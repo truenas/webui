@@ -28,7 +28,7 @@ export interface Certificate {
   csr_path: string;
   digest_algorithm: string;
   email: string;
-  extensions: { [extension: string]: string };
+  extensions: Record<string, string>;
   fingerprint: string;
   from: string;
   id: number;
@@ -55,11 +55,10 @@ export interface Certificate {
   subject_name_hash: number;
   type: number;
   until: string;
+  renew_days?: number;
 }
 
-export interface CertificateProfiles {
-  [name: string]: CertificateProfile;
-}
+export type CertificateProfiles = Record<string, CertificateProfile>;
 
 export interface CertificateProfile {
   cert_extensions: CertificateExtensions;
@@ -71,9 +70,7 @@ export interface CertificateProfile {
 
 export type CertificateExtension = keyof CertificateExtensions;
 
-export interface ExtendedKeyUsageChoices {
-  [key: string]: string;
-}
+export type ExtendedKeyUsageChoices = Record<string, string>;
 
 export interface CertificateCreate {
   tos?: boolean;
