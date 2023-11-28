@@ -1,0 +1,92 @@
+import {
+  Component, ChangeDetectionStrategy, Inject, ChangeDetectorRef, OnInit,
+} from '@angular/core';
+import { Validators } from '@angular/forms';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { FormBuilder } from '@ngneat/reactive-forms';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { DatasetCaseSensitivity } from 'app/enums/dataset.enum';
+import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
+import { forbiddenValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
+import { datasetNameTooLong } from 'app/pages/datasets/components/dataset-form/utils/name-length-validation';
+import { DialogService } from 'app/services/dialog.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { NameValidationService } from 'app/services/name-validation.service';
+import { WebSocketService } from 'app/services/ws.service';
+
+@UntilDestroy()
+@Component({
+  templateUrl: './create-dataset-dialog.component.html',
+  styleUrls: ['./create-dataset-dialog.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class CreateDatasetDialogComponent implements OnInit {
+  isLoading = false;
+  form = this.fb.group({
+    name: ['', [
+      Validators.required,
+      Validators.pattern(this.nameValidationService.nameRegex),
+    ]],
+  });
+  parent: Dataset;
+
+  constructor(
+    private fb: FormBuilder,
+    private cdr: ChangeDetectorRef,
+    private ws: WebSocketService,
+    private dialog: DialogService,
+    private errorHandler: ErrorHandlerService,
+    private nameValidationService: NameValidationService,
+    private dialogRef: MatDialogRef<CreateDatasetDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) private data: { parentId: string; dataset: DatasetCreate },
+  ) {}
+
+  ngOnInit(): void {
+    this.loadParentDataset();
+  }
+
+  createDataset(): void {
+    this.isLoading = true;
+    this.ws.call('pool.dataset.create', [{ ...this.data.dataset, name: `${this.parent.name}/${this.form.value.name}` }])
+      .pipe(untilDestroyed(this)).subscribe({
+        next: (dataset) => {
+          this.isLoading = false;
+          this.cdr.markForCheck();
+          this.dialogRef.close(dataset);
+        },
+        error: (error) => {
+          this.isLoading = false;
+          this.cdr.markForCheck();
+          this.dialog.error(this.errorHandler.parseWsError(error));
+        },
+      });
+  }
+
+  loadParentDataset(): void {
+    this.isLoading = true;
+    this.ws.call('pool.dataset.query', [[['id', '=', this.data.parentId]]])
+      .pipe(untilDestroyed(this)).subscribe((parent) => {
+        this.isLoading = false;
+        this.parent = parent[0];
+        this.cdr.markForCheck();
+        this.addNameValidators();
+      });
+  }
+
+  private addNameValidators(): void {
+    const isNameCaseSensitive = this.parent.casesensitivity.value === DatasetCaseSensitivity.Sensitive;
+    const namesInUse = this.parent.children.map((child) => {
+      const childName = /[^/]*$/.exec(child.name)[0];
+      if (isNameCaseSensitive) {
+        return childName.toLowerCase();
+      }
+
+      return childName;
+    });
+
+    this.form.controls.name.addValidators([
+      datasetNameTooLong(this.parent.name),
+      forbiddenValues(namesInUse, isNameCaseSensitive),
+    ]);
+  }
+}

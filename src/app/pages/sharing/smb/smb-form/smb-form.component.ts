@@ -22,6 +22,7 @@ import {
   take,
   tap,
 } from 'rxjs/operators';
+import { DatasetAclType } from 'app/enums/dataset.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { helptextSharingSmb } from 'app/helptext/sharing';
@@ -69,6 +70,10 @@ export class SmbFormComponent implements OnInit {
   };
 
   title: string = helptextSharingSmb.formTitleAdd;
+
+  createDatasetProps = {
+    acltype: DatasetAclType.Nfsv4,
+  };
 
   get isNew(): boolean {
     return !this.existingSmbShare;

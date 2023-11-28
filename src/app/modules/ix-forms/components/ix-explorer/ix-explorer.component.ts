@@ -8,17 +8,20 @@ import {
   ViewChild,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import {
   IActionMapping, ITreeOptions, KEYS, TREE_ACTIONS, TreeComponent,
 } from '@bugsplat/angular-tree-component';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { lastValueFrom, Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
+import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { CreateDatasetDialogComponent } from 'app/modules/ix-forms/components/ix-explorer/create-dataset-dialog/create-dataset-dialog.component';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
 
 @UntilDestroy()
@@ -36,6 +39,8 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   @Input() required: boolean;
   @Input() root = mntPath;
   @Input() nodeProvider: TreeNodeProvider;
+  @Input() canCreateDataset = false;
+  @Input() createDatasetProps: Omit<DatasetCreate, 'name'> = {};
 
   @ViewChild('tree', { static: true }) tree: TreeComponent;
 
@@ -49,6 +54,10 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   onTouch: () => void = (): void => {};
 
   readonly ExplorerNodeType = ExplorerNodeType;
+
+  get createDatasetDisabled(): boolean {
+    return !this.parentDatasetName(Array.isArray(this.value) ? this.value[0] : this.value).length || this.isDisabled;
+  }
 
   private readonly actionMapping: IActionMapping = {
     mouse: {
@@ -77,6 +86,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   constructor(
     public controlDirective: NgControl,
     private cdr: ChangeDetectorRef,
+    private matDialog: MatDialog,
   ) {
     this.controlDirective.valueAccessor = this;
   }
@@ -166,6 +176,30 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
 
   isPathSelected(path: string): boolean {
     return typeof this.value === 'string' ? this.value === path : this.value?.some((content: string) => content === path);
+  }
+
+  parentDatasetName(path: string): string {
+    return (!path || path === this.root) ? '' : path.replace(`${this.root}/`, '');
+  }
+
+  createDataset(): void {
+    this.matDialog.open(CreateDatasetDialogComponent, {
+      data: {
+        parentId: this.parentDatasetName(Array.isArray(this.value) ? this.value[0] : this.value),
+        dataset: this.createDatasetProps,
+      },
+    }).afterClosed()
+      .pipe(untilDestroyed(this))
+      .subscribe((dataset: Dataset) => {
+        if (!dataset) {
+          return;
+        }
+
+        this.setInitialNode();
+        this.writeValue(`${this.root}/${dataset.name}`);
+        this.onChange(this.value);
+        this.tree.treeModel.update();
+      });
   }
 
   /**

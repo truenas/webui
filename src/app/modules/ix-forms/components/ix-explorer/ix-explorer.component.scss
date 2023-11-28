@@ -64,3 +64,14 @@
 .selected {
   color: var(--primary);
 }
+
+.create-dataset-btn {
+  background: var(--bg2) !important;
+  font-size: 12px;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+button.create-dataset-btn:hover {
+  background: var(--bg2) !important;
+}

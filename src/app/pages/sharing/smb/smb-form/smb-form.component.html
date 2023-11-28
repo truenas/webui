@@ -10,6 +10,8 @@
           [tooltip]="helptextSharingSmb.tooltip_path | translate"
           [label]="helptextSharingSmb.placeholder_path | translate"
           [nodeProvider]="treeNodeProvider"
+          [canCreateDataset]="true"
+          [createDatasetProps]="createDatasetProps"
         ></ix-explorer>
 
         <ix-input
