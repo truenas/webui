@@ -54,12 +54,14 @@ describe('FilesystemService', () => {
           name: 'directory',
           path: '/mnt/parent/directory',
           type: ExplorerNodeType.Directory,
+          isDirectory: true,
         },
         {
           hasChildren: false,
           name: 'file.txt',
           path: '/mnt/parent/file.txt',
           type: ExplorerNodeType.File,
+          isDirectory: true,
         },
       ]);
     });

@@ -20,17 +20,23 @@ export class FilesystemService {
   getFilesystemNodeProvider(providerOptions?: {
     directoriesOnly?: boolean;
     showHiddenFiles?: boolean;
+    hideZfs?: boolean;
   }): TreeNodeProvider {
     const options = {
       directoriesOnly: false,
       showHiddenFiles: false,
+      hideZfs: false,
       ...providerOptions,
     };
 
     return (node: TreeNode<ExplorerNodeData>) => {
-      let typeFilter: [QueryFilter<FileRecord>?] = [];
+      const typeFilter: [QueryFilter<FileRecord>?] = [];
       if (options.directoriesOnly) {
-        typeFilter = [['type', '=', FileType.Directory]];
+        typeFilter.push(['type', '=', FileType.Directory]);
+      }
+
+      if (options.hideZfs) {
+        typeFilter.push(['is_ctldir', '=', false]);
       }
 
       return this.ws.call(
@@ -51,6 +57,7 @@ export class FilesystemService {
             children.push({
               path: file.path,
               name: file.name,
+              isDirectory: !file.is_mountpoint,
               type: file.type === FileType.Directory ? ExplorerNodeType.Directory : ExplorerNodeType.File,
               hasChildren: file.type === FileType.Directory,
             });

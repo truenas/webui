@@ -36,7 +36,8 @@
         </ng-container>
 
         <ng-template #folderIcon>
-          <ix-icon name="folder"></ix-icon>
+          <ix-icon *ngIf="!node.data.isDirectory" name="folder"></ix-icon>
+          <ix-icon *ngIf="node.data.isDirectory" name="folder_open"></ix-icon>
         </ng-template>
 
         <span class="node-name">{{ node.data.name }}</span>
