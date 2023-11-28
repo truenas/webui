@@ -40,9 +40,7 @@ export interface AlertClassSettings {
 
 export interface AlertClasses {
   id: number;
-  classes: {
-    [className: string]: AlertClassSettings;
-  };
+  classes: Record<string, AlertClassSettings>;
 }
 
 export type AlertClassesUpdate = Omit<AlertClasses, 'id'>;

@@ -4,12 +4,10 @@ export type DatasetLockParams = [
 ];
 
 export interface DatasetUnlockResult {
-  failed: {
-    [path: string]: {
-      error: string;
-      skipped: string[];
-    };
-  };
+  failed: Record<string, {
+    error: string;
+    skipped: string[];
+  }>;
   unlocked: string[];
 }
 

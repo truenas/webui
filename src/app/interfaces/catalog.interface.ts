@@ -22,9 +22,7 @@ export interface Catalog {
    * E.g. https://github.com/truenas/charts.git
    */
   repository: string;
-  trains: {
-    [trainName: string]: CatalogTrain;
-  };
+  trains: Record<string, CatalogTrain>;
   error: boolean;
   cached: boolean;
   caching_job: {
@@ -59,9 +57,7 @@ export interface CatalogCreate {
   force: boolean;
 }
 
-export interface CatalogTrain {
-  [application: string]: CatalogApp;
-}
+export type CatalogTrain = Record<string, CatalogApp>;
 
 export interface CatalogApp {
   app_readme: string;
@@ -76,7 +72,7 @@ export interface CatalogApp {
   latest_version: string;
   latest_app_version: string;
   latest_human_version: string;
-  versions?: { [version: string]: CatalogAppVersion };
+  versions?: Record<string, CatalogAppVersion>;
   recommended?: boolean;
   last_update?: string;
   catalog?: {
@@ -87,13 +83,11 @@ export interface CatalogApp {
   schema?: {
     groups: ChartSchemaGroup[];
     questions: ChartSchemaNode[];
-    portals: {
-      [portal: string]: {
-        host: string[];
-        ports: string[];
-        protocols: string[];
-      };
-    };
+    portals: Record<string, {
+      host: string[];
+      ports: string[];
+      protocols: string[];
+    }>;
   };
 }
 
@@ -110,16 +104,14 @@ export interface CatalogAppVersion {
   schema: {
     groups: ChartSchemaGroup[];
     questions: ChartSchemaNode[];
-    portals: {
-      [portal: string]: {
-        host: string[];
-        ports: string[];
-        protocols: string[];
-      };
-    };
+    portals: Record<string, {
+      host: string[];
+      ports: string[];
+      protocols: string[];
+    }>;
   };
   supported: boolean;
-  values: { [key: string]: ChartFormValue };
+  values: Record<string, ChartFormValue>;
   version: string;
   train?: string;
   app?: string;
@@ -150,9 +142,7 @@ export interface ChartMetadataDependency {
   enabled: boolean;
 }
 
-export interface CatalogItems {
-  [train: string]: CatalogTrain;
-}
+export type CatalogItems = Record<string, CatalogTrain>;
 
 export interface CatalogItemsQueryParams {
   cache?: boolean;

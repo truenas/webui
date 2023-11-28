@@ -30,9 +30,8 @@ interface TopologyState {
   dedup: string;
 }
 
-export interface EmptyDiskObject {
-  [p: string]: string | number | boolean | string[] | SmartTestResult[] | EnclosureAndSlot;
-}
+export type EmptyDiskObject = Record<string, string | number | boolean | string[] |
+SmartTestResult[] | EnclosureAndSlot>;
 
 const notAssignedDev = T('VDEVs not assigned');
 

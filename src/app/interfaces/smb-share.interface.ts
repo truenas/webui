@@ -50,9 +50,7 @@ export interface SmbPreset {
   params: Partial<SmbShare>;
 }
 
-export interface SmbPresets {
-  [name: string]: SmbPreset;
-}
+export type SmbPresets = Record<string, SmbPreset>;
 
 export interface SmbSharesec {
   id: number;

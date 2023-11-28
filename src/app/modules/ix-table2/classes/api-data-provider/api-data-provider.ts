@@ -12,7 +12,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 // TODO: Extract to separate files
 // TODO: Replace with QueryParams?
-export interface ApiCallParams { [key: string]: unknown }
+export type ApiCallParams = Record<string, unknown>;
 
 // TODO: Narrow down the type of M to only include .query methods
 // TODO: T can be inferred from M

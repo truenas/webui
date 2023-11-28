@@ -5,6 +5,4 @@ export type DiskTypeSizeMap = {
   [type in DiskType]: DiskTypeSizeMapItem;
 };
 
-export interface DiskTypeSizeMapItem {
-  [size: string]: UnusedDisk[];
-}
+export type DiskTypeSizeMapItem = Record<string, UnusedDisk[]>;

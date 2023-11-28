@@ -16,17 +16,17 @@ export class IxListItemHarness extends ComponentHarness {
 
   getControlHarnesses = this.locatorForAll(...supportedFormControlSelectors);
 
-  async getControlHarnessesDict(): Promise<{ [label: string]: SupportedFormControlHarness }> {
+  async getControlHarnessesDict(): Promise<Record<string, SupportedFormControlHarness>> {
     const controls = await this.getControlHarnesses();
     return indexControlsByLabel(controls);
   }
 
-  async getFormValues(): Promise<{ [label: string]: IxFormBasicValueType }> {
+  async getFormValues(): Promise<Record<string, IxFormBasicValueType>> {
     const controlsDict = await this.getControlHarnessesDict();
     return getControlValues(controlsDict);
   }
 
-  async fillForm(values: { [label: string]: unknown }): Promise<void> {
+  async fillForm(values: Record<string, unknown>): Promise<void> {
     const controls = await this.getControlHarnessesDict();
     return fillControlValues(controls, values);
   }
