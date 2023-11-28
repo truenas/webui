@@ -80,10 +80,10 @@ export class SigninStore extends ComponentStore<SigninState> {
       return forkJoin([
         this.checkIfAdminPasswordSet(),
         this.loadFailoverStatus(),
+        this.updateService.hardRefreshIfNeeded(),
         // TODO: This is a hack to keep existing code working. Ideally it shouldn't be here.
         this.systemGeneralService.loadProductType(),
       ]).pipe(
-        tap(() => this.updateService.hardRefreshIfNeeded()),
         switchMap(() => this.authService.loginWithToken()),
         tap((wasLoggedIn: boolean) => {
           if (!wasLoggedIn) {

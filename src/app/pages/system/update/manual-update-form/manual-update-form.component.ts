@@ -24,7 +24,6 @@ import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { UpdateService } from 'app/services/update.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
@@ -66,7 +65,6 @@ export class ManualUpdateFormComponent implements OnInit {
     private translate: TranslateService,
     private store$: Store<AppState>,
     private cdr: ChangeDetectorRef,
-    private updateService: UpdateService,
   ) {
     this.authService.authToken$.pipe(
       tap((token) => {
@@ -258,7 +256,6 @@ export class ManualUpdateFormComponent implements OnInit {
   }
 
   handleUpdateSuccess(): void {
-    this.updateService.setForHardRefresh();
     if (this.isHaLicensed) {
       this.finishHaUpdate();
     } else {

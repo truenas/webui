@@ -41,7 +41,9 @@ describe('SigninStore', () => {
       }),
       mockProvider(Router),
       mockProvider(SnackbarService),
-      mockProvider(UpdateService),
+      mockProvider(UpdateService, {
+        hardRefreshIfNeeded: () => of(undefined),
+      }),
       mockProvider(SystemGeneralService, {
         loadProductType: () => of(undefined),
       }),
