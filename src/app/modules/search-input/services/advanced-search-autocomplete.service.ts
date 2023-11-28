@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CompletionContext, CompletionResult } from '@codemirror/autocomplete';
 import { EditorView } from '@codemirror/view';
+import { TranslateService } from '@ngx-translate/core';
 import { uniqBy } from 'lodash';
 import {
   BehaviorSubject,
@@ -23,7 +24,10 @@ export class AdvancedSearchAutocompleteService<T> {
 
   showDatePicker$ = new BehaviorSubject(false);
 
-  constructor(private queryParser: QueryParserService) {}
+  constructor(
+    private queryParser: QueryParserService,
+    private translate: TranslateService,
+  ) {}
 
   setProperties(properties: SearchProperty<T>[]): void {
     this.properties = properties;
@@ -55,7 +59,7 @@ export class AdvancedSearchAutocompleteService<T> {
               );
             })
             .map((suggestion) => ({
-              label: suggestion.label,
+              label: this.translate.instant(suggestion.label),
               apply: () => this.applySuggestionTransformation(suggestion, currentQuery, from, to),
             })),
         })),
