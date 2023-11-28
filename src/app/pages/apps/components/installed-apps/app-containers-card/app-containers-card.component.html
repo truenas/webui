@@ -3,6 +3,8 @@
     <h3 mat-card-title>
       {{ 'Workloads' | translate }}
     </h3>
+
+    <mat-spinner *ngIf="isLoading" [diameter]="20"></mat-spinner>
   </mat-card-header>
   <mat-card-content>
     <div class="details-list">
@@ -42,10 +44,10 @@
     <div class="containers">
       <h4>{{ 'Containers' | translate }}</h4>
       <div class="container-list">
-        <ng-container *ngIf="!isLoading; else loader">
-          <ng-container *ngIf="app?.resources?.container_images; else noContainers">
+        <ng-container *ngIf="!isLoading || containerImages; else loader">
+          <ng-container *ngIf="containerImages; else noContainers">
             <div
-              *ngFor="let containerImage of app.resources.container_images | keyvalue;"
+              *ngFor="let containerImage of containerImages | keyvalue;"
               class="container-item"
             >
               <div class="container-name">{{ containerImage.key }}</div>
