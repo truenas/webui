@@ -32,8 +32,8 @@ export class InterfaceStatusIconComponent implements OnChanges {
 
   get tooltipText(): string {
     return this.translate.instant('Sent: {sent} Received: {received}', {
-      sent: filesize(this.update.sent_bytes, { standard: 'iec' }),
-      received: filesize(this.update.received_bytes, { standard: 'iec' }),
+      sent: filesize(this.update.sent_bytes_rate, { standard: 'iec' }),
+      received: filesize(this.update.received_bytes_rate, { standard: 'iec' }),
     });
   }
 

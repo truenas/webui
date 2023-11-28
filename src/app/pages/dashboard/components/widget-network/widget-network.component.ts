@@ -208,18 +208,18 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
           nicInfo.out = usageUpdate.sent_bytes_rate * KiB;
 
           if (
-            usageUpdate.sent_bytes !== undefined
-            && usageUpdate.sent_bytes - nicInfo.lastSent > this.minSizeToActiveTrafficArrowIcon
+            usageUpdate.sent_bytes_rate !== undefined
+            && usageUpdate.sent_bytes_rate - nicInfo.lastSent > this.minSizeToActiveTrafficArrowIcon
           ) {
-            nicInfo.lastSent = usageUpdate.sent_bytes;
+            nicInfo.lastSent = usageUpdate.sent_bytes_rate;
             this.tableService.updateStateInfoIcon(nicName, 'sent');
           }
 
           if (
-            usageUpdate.received_bytes !== undefined
-            && usageUpdate.received_bytes - nicInfo.lastReceived > this.minSizeToActiveTrafficArrowIcon
+            usageUpdate.received_bytes_rate !== undefined
+            && usageUpdate.received_bytes_rate - nicInfo.lastReceived > this.minSizeToActiveTrafficArrowIcon
           ) {
-            nicInfo.lastReceived = usageUpdate.received_bytes;
+            nicInfo.lastReceived = usageUpdate.received_bytes_rate;
             this.tableService.updateStateInfoIcon(nicName, 'received');
           }
         }
