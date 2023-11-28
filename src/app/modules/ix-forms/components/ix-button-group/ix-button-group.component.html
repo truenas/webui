@@ -1,0 +1,25 @@
+<ix-label
+  *ngIf="label || tooltip"
+  [label]="label"
+  [tooltip]="tooltip"
+  [required]="required"
+  [ixTestOverride]="controlDirective.name"
+></ix-label>
+
+<mat-button-toggle-group
+  [value]="value"
+  [disabled]="isDisabled"
+  [ixTest]="controlDirective.name"
+  [vertical]="vertical"
+  (change)="onValueChanged($event)"
+>
+  <mat-button-toggle
+    *ngFor="let option of options | async"
+    [name]="option.value.toString()"
+    [disabled]="isDisabled"
+    [value]="option.value"
+    [ixTest]="[controlDirective.name, option.label]"
+  >{{ option.label }}</mat-button-toggle>
+</mat-button-toggle-group>
+
+<ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>

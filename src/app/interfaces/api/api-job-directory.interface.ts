@@ -44,11 +44,11 @@ import {
   UpdatePool,
 } from 'app/interfaces/pool.interface';
 import { DiskWipeParams } from 'app/interfaces/storage.interface';
-import { AttachTicketParams, CreateNewTicket, NewTicketResponse } from 'app/interfaces/support.interface';
 import { SystemDatasetConfig, SystemDatasetUpdate } from 'app/interfaces/system-dataset-config.interface';
 import { UpdateParams } from 'app/interfaces/system-update.interface';
 import { Tunable, TunableCreate, TunableUpdate } from 'app/interfaces/tunable.interface';
 import { VmStopParams } from 'app/interfaces/virtual-machine.interface';
+import { AttachTicketParams, CreateNewTicket, NewTicketResponse } from 'app/modules/ix-feedback/interfaces/file-ticket.interface';
 
 export interface ApiJobDirectory {
   // Active Directory

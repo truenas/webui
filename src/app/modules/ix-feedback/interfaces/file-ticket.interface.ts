@@ -5,7 +5,7 @@ import {
 export interface CreateNewTicket {
   attach_debug: boolean;
   body: string;
-  category: TicketCategory;
+  category: string | TicketCategory;
   title: string;
   type?: TicketType;
   token?: string;

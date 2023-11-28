@@ -1,7 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
@@ -9,28 +8,24 @@ import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
-import { NewTicketResponse } from 'app/interfaces/support.interface';
+import { FileTicketFormComponent } from 'app/modules/ix-feedback/file-ticket-form/file-ticket-form.component';
+import { NewTicketResponse } from 'app/modules/ix-feedback/interfaces/file-ticket.interface';
+import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { JiraOauthComponent } from 'app/modules/ix-forms/components/jira-oauth/jira-oauth.component';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
-import { JobItemComponent } from 'app/modules/jobs/components/job-item/job-item.component';
 import { OauthButtonComponent } from 'app/modules/oauth-button/components/oauth-button/oauth-button.component';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
-import { FileTicketFormComponent } from 'app/pages/system/file-ticket/file-ticket-form/file-ticket-form.component';
-import { AttachDebugWarningService } from 'app/pages/system/file-ticket/services/attach-debug-warning.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { WebSocketService } from 'app/services/ws.service';
-import { JiraOauthComponent } from './components/jira-oauth/jira-oauth.component';
 
 describe('FileTicketFormComponent', () => {
   let spectator: Spectator<FileTicketFormComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService;
 
   const mockToken = JSON.stringify({
     oauth_token: 'mock.oauth.token',
@@ -52,14 +47,10 @@ describe('FileTicketFormComponent', () => {
     declarations: [
       JiraOauthComponent,
       MockComponent(OauthButtonComponent),
-      MockComponent(JobItemComponent),
     ],
     providers: [
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
-      }),
-      mockProvider(AttachDebugWarningService, {
-        handleAttachDebugChanges: jest.fn((() => of(false))),
       }),
       mockWebsocket([
         mockCall('core.get_jobs', [{
@@ -95,48 +86,19 @@ describe('FileTicketFormComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(WebSocketService);
   });
 
-  it('loads ticket categories using api token when form is opened', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    const values = await form.getValues();
+  it('returns payload for new ticket when getPayload is called', async () => {
+    const title = await loader.getHarness(IxInputHarness.with({ label: 'Subject' }));
+    await title.setValue('Test subject');
 
-    expect(values).toEqual(
-      {
-        Token: mockToken,
-        'Attach screenshots': [],
-        Category: '',
-        Subject: '',
-        Body: '',
-        Type: 'Bug',
-        'Attach Debug': false,
-      },
-    );
-    expect(ws.call).toHaveBeenCalledWith('support.fetch_categories', [mockToken]);
-  });
+    // const category = await loader.getHarness(IxSelectHarness.with({ label: 'Category' }));
+    // await category.setValue('WebUI');
 
-  it('sends a create payload to websocket', async () => {
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({
-      Token: mockToken,
-      Category: 'WebUI',
-      Subject: 'Test subject',
-      Body: 'Testing ticket body',
-      Type: 'Bug',
-    });
-
-    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-    await saveButton.click();
-
-    expect(ws.job).toHaveBeenLastCalledWith('support.new_ticket', [{
-      body: 'Testing ticket body',
-      category: '10004',
+    expect(spectator.component.getPayload()).toEqual({
+      category: '',
       title: 'Test subject',
       token: mockToken,
-      type: 'BUG',
-    }]);
-
-    expect(spectator.query('ix-job-item')).toBeTruthy();
+    });
   });
 });

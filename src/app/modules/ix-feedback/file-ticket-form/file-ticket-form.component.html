@@ -1,0 +1,24 @@
+<ng-container [formGroup]="form">
+  <ix-jira-oauth
+    formControlName="token"
+    [label]="'Token' | translate"
+    [tooltip]="tooltips.token | translate"
+    [required]="true"
+  ></ix-jira-oauth>
+
+  <ix-select
+    formControlName="category"
+    [label]="'Category' | translate"
+    [options]="categoryOptions$"
+    [tooltip]="tooltips.category | translate"
+    [required]="true"
+  ></ix-select>
+
+  <ix-input
+    formControlName="title"
+    [label]="'Subject' | translate"
+    [tooltip]="tooltips.title | translate"
+    [placeholder]="tooltips.title | translate"
+    [required]="true"
+  ></ix-input>
+</ng-container>
