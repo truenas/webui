@@ -46,9 +46,7 @@ export interface AllNetworkInterfacesUpdate {
 
 export interface NetworkInterfaceUpdate {
   link_state: LinkState;
-  received_bytes: number;
   received_bytes_rate: number;
-  sent_bytes: number;
   sent_bytes_rate: number;
   speed: number;
 }
