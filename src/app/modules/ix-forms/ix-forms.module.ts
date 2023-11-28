@@ -112,6 +112,7 @@ import { WithManageCertificatesLinkComponent } from './components/with-manage-ce
     FormActionsComponent,
     WithManageCertificatesLinkComponent,
     IxStarRatingComponent,
+    IxButtonGroupComponent,
   ],
   exports: [
     IxErrorsComponent,
