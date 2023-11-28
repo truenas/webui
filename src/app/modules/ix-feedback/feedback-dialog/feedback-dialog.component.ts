@@ -220,9 +220,9 @@ export class FeedbackDialogComponent implements OnInit {
     const payload: CreateNewTicket = {
       category: ticketValues.category,
       body: values.message,
-      type: values.type as unknown as TicketType,
       attach_debug: values.attach_debug,
       title: ticketValues.title,
+      ...(!this.isEnterprise ? { type: values.type as unknown as TicketType } : {}),
       ...ticketValues,
     };
     this.createNewTicket(payload);
