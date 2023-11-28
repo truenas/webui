@@ -6,7 +6,7 @@
 
 <div #inputArea class="input-area" (click)="startSuggestionsCompletion()">
   <mat-card *ngIf="showDatePicker$ | async" class="calendar">
-    <mat-calendar #datePicker (selectedChange)="dateSelected($event)"></mat-calendar>
+    <mat-calendar (selectedChange)="dateSelected($event)"></mat-calendar>
   </mat-card>
 </div>
 

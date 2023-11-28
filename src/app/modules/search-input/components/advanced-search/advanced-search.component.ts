@@ -9,7 +9,6 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import { MatCalendar } from '@angular/material/datepicker';
 import { autocompletion, closeBrackets, startCompletion } from '@codemirror/autocomplete';
 import { EditorState } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
@@ -35,7 +34,6 @@ export class AdvancedSearchComponent<T> implements OnInit, OnChanges {
   @Output() switchToBasic = new EventEmitter<void>();
 
   @ViewChild('inputArea', { static: true }) inputArea: ElementRef<HTMLElement>;
-  @ViewChild('datePicker', { static: true }) datePicker: MatCalendar<Date>;
 
   hasQueryErrors = false;
   queryInputValue: string;
