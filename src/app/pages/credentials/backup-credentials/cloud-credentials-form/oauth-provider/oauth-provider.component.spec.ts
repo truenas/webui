@@ -30,6 +30,7 @@ describe('OauthProviderComponent', () => {
         open: jest.fn() as Window['open'],
         addEventListener: jest.fn((_, oAuthCallback: (message: OauthMessage<OauthProviderData>) => void) => {
           oAuthCallback({
+            origin: 'https://www.truenas.com',
             data: {
               oauth_portal: true,
               result: {
