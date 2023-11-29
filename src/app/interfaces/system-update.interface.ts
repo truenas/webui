@@ -26,9 +26,7 @@ export interface SystemUpdateChange {
 export interface SystemUpdateTrains {
   current: string;
   selected: string;
-  trains: {
-    [name: string]: SystemUpdateTrain;
-  };
+  trains: Record<string, SystemUpdateTrain>;
 }
 
 export interface SystemUpdateTrain {

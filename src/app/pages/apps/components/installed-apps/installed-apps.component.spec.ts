@@ -501,7 +501,7 @@ const existingChartEdit = {
         type: 'ixVolume',
       },
     },
-  } as { [key: string]: ChartFormValue },
+  } as Record<string, ChartFormValue>,
 } as ChartRelease;
 
 const appsResponse = [{

@@ -6,9 +6,7 @@ export interface UpgradeSummary {
     version: string;
     human_version: string;
   }[];
-  container_images_to_update: {
-    [key: string]: ChartContainerImage;
-  };
+  container_images_to_update: Record<string, ChartContainerImage>;
   item_update_available: boolean;
   image_update_available: boolean;
   latest_version: string;

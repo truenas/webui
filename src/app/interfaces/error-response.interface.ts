@@ -23,6 +23,6 @@ export interface ErrorFrame {
   filename: string;
   line: string;
   lineno: number;
-  locals: { [name: string]: string };
+  locals: Record<string, string>;
   method: string;
 }

@@ -1,3 +1,1 @@
-export interface Choices {
-  [key: string]: string;
-}
+export type Choices = Record<string, string>;

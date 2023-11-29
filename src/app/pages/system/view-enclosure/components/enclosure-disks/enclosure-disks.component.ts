@@ -154,14 +154,14 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
     return [];
   }
 
-  get selectedVdevSlotNumbers(): { [devName: string]: number } {
+  get selectedVdevSlotNumbers(): Record<string, number> {
     const result: unknown = {};
     this.selectedVdevDisks.forEach((diskName: string) => {
       const disk = this.systemState.disks.filter((drive: Disk) => drive.name === diskName);
-      if (disk.length) (result as { [devName: string]: number })[disk[0].name] = disk[0].enclosure.slot;
+      if (disk.length) (result as Record<string, number>)[disk[0].name] = disk[0].enclosure.slot;
     });
 
-    return result as { [devName: string]: number };
+    return result as Record<string, number>;
   }
 
   get selectedVdevSlots(): EnclosureSlot[] | null {
@@ -782,7 +782,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
 
   // Helper for createExtractedEnclosure
   extractEnclosure(enclosure: ChassisView, enclosureView: EnclosureView): void {
-    const canvas = (this.app.renderer.plugins as { [name: string]: CanvasExtract }).extract.canvas(enclosure.container);
+    const canvas = (this.app.renderer.plugins as Record<string, CanvasExtract>).extract.canvas(enclosure.container);
     this.controllerEvent$.next({ name: 'EnclosureCanvas', data: { canvas, enclosureView }, sender: this });
     this.container.removeChild(enclosure.container);
   }

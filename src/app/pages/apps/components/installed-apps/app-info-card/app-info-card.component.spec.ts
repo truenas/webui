@@ -34,7 +34,7 @@ describe('AppInfoCardComponent', () => {
       '1.0.11': {
         name: 'ix-test-app',
       },
-    } as { [key: string]: unknown },
+    } as Record<string, unknown>,
     update_available: true,
     chart_metadata: {
       name: 'ix-test-app',

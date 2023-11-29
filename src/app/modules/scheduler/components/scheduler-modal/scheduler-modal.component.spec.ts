@@ -53,7 +53,7 @@ describe('SchedulerModalComponent', () => {
     ],
   });
 
-  async function getFormValues(): Promise<{ [key: string]: unknown }> {
+  async function getFormValues(): Promise<Record<string, unknown>> {
     const preset = await loader.getHarness(IxSelectHarness.with({ selector: '.preset-select' }));
     const minutes = await loader.getHarness(IxInputHarness.with({ label: 'Minutes' }));
     const hours = await loader.getHarness(IxInputHarness.with({ label: 'Hours' }));

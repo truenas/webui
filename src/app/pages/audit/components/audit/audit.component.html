@@ -1,37 +1,36 @@
-<ng-template ixPageHeader>
-  <ix-page-title-header>
-    <button mat-button color="primary" ixTest="manage-views">
-      {{ 'Manage Views' | translate }}
-    </button>
-  </ix-page-title-header>
-</ng-template>
-
 <mat-card class="header-card item-search">
   <ix-fake-progress-bar
     class="loader-bar"
     [loading]="dataProvider.isLoading$ | async"
   ></ix-fake-progress-bar>
 
-  <div class="search-bar">
-    <ix-search-input2
-      #searchInput
-      class="search-input"
-      [properties]="searchProperties"
-      [query]="searchQuery"
-    ></ix-search-input2>
-    <button
-      mat-button
-      color="primary"
-      ixTest="search"
-      (click)="onSearch(searchInput.query); updateUrlOptions()"
-    >
-      {{ 'Search' | translate }}
-    </button>
+  <div class="actions-bar">
+    <div class="search-container">
+      <ix-search-input2
+        #searchInput
+        class="search-input"
+        [properties]="searchProperties"
+        [query]="searchQuery"
+      ></ix-search-input2>
+      <button
+        mat-button
+        color="primary"
+        ixTest="search"
+        (click)="onSearch(searchInput.query); updateUrlOptions()"
+      >
+        {{ 'Search' | translate }}
+      </button>
+    </div>
+    <ix-export-button
+      method="audit.export"
+      [searchQuery]="searchQuery"
+      [sorting]="this.dataProvider.sorting"
+    ></ix-export-button>
   </div>
 </mat-card>
 
 <div class="container" fxLayoutGap="16px">
-  <div class="table-container">
+  <div *ngIf="!(showMobileDetails && isMobileView)" class="table-container">
     <div class="sticky-header">
       <thead
         class="audit-header-row"
@@ -73,12 +72,12 @@
   </div>
 
   <div
+    *ngIf="dataProvider.expandedRow"
     ixDetailsHeight="rightside-content-hold"
     class="details-container"
     [class.details-container-mobile]="showMobileDetails"
   >
     <ix-log-details-panel
-      *ngIf="dataProvider.expandedRow"
       [log]="dataProvider.expandedRow"
       (hide)="closeMobileDetails()"
     ></ix-log-details-panel>
