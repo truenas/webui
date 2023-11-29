@@ -52,6 +52,7 @@ export class AdvancedSearchAutocompleteService<T> {
           from,
           to,
           options: uniqBy(suggestions, 'label')
+            .sort((a, b) => a.label.localeCompare(b.label))
             .filter((suggestion) => {
               return suggestion.label && (
                 suggestion.label.toUpperCase().startsWith(currentToken?.text?.toUpperCase())
@@ -81,23 +82,24 @@ export class AdvancedSearchAutocompleteService<T> {
     if (
       /^["'].*["']?$/.test(currentQuery[from - 1]) && /^["'].*["']?$/.test(currentQuery[to])
     ) {
-      updatedValue = updatedValue.replace(/['"]/g, '');
+      updatedValue = updatedValue.replace(/^["'](.*)["']$/, '$1');
       anchor = from + updatedValue.length + 1;
 
       if (updatedValue.startsWith('(') && updatedValue.endsWith(')')) {
-        updatedValue = `("${updatedValue.replace(/[()'"]/g, '')}")`;
+        updatedValue = `("${updatedValue.replace(/^\(["'](.*)["']\)$/, '$1')}")`;
         from = from - 1;
         to = to + 1;
         anchor = from + updatedValue.length - 1;
       }
     }
 
+    if (/\s/.test(updatedValue) && !/^["']|["']$/.test(updatedValue)) {
+      updatedValue = `"${updatedValue}"`;
+      anchor = anchor + 2;
+    }
+
     this.editorView?.dispatch({
-      changes: {
-        from,
-        to,
-        insert: updatedValue,
-      },
+      changes: { from, to, insert: updatedValue },
       selection: { anchor },
     });
   }
@@ -201,15 +203,17 @@ export class AdvancedSearchAutocompleteService<T> {
     const isInOrNin = (lastToken?.toUpperCase() === 'IN' || lastToken?.toUpperCase() === 'NIN')
       || secondLastToken?.toUpperCase() === 'IN' || secondLastToken?.toUpperCase() === 'NIN';
 
-    const searchedProperty = this.properties?.find((property) => property.label?.toUpperCase() === thirdLastToken?.replace(/['"]/g, '')?.toUpperCase()
-      || (property.label?.toUpperCase() === secondLastToken?.replace(/['"]/g, '')?.toUpperCase()
-      && this.isPartiallyComparator(lastToken?.toUpperCase())));
+    const searchedProperty = this.properties?.find((property) => {
+      return property.label?.toUpperCase() === thirdLastToken?.replace(/^["'](.*)["']$/, '$1')?.toUpperCase()
+        || (property.label?.toUpperCase() === secondLastToken?.replace(/^["'](.*)["']$/, '$1')?.toUpperCase()
+        && this.isPartiallyComparator(lastToken?.toUpperCase()));
+    });
 
     this.showDatePicker$.next(false);
 
     switch (context.type) {
       case ContextType.Property:
-        if (isInOrNin && !lastToken?.startsWith('(') && searchedProperty) {
+        if (isInOrNin && !lastToken?.startsWith('(') && searchedProperty?.valueSuggestions$) {
           return searchedProperty.valueSuggestions$.pipe(
             map((options: Option[]) => options.map(({ label, value }) => ({ label, value: `(${value})` }))),
           );
@@ -237,7 +241,7 @@ export class AdvancedSearchAutocompleteService<T> {
             return of([]);
           }
 
-          return searchedProperty?.valueSuggestions$;
+          return searchedProperty?.valueSuggestions$ || of([]);
         }
 
         return of(this.properties.map((property) => ({ label: property.label, value: property.label })));
