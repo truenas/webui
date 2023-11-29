@@ -9,9 +9,7 @@ import { filter } from 'rxjs/operators';
 import { DefaultValidationError } from 'app/enums/default-validation-error.enum';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 
-interface SomeError {
-  [key: string]: unknown;
-}
+type SomeError = Record<string, unknown>;
 
 export const ixManualValidateError = 'ixManualValidateError';
 

@@ -323,6 +323,7 @@ module.exports = {
         "angular-file-naming/service-filename-suffix": ["error", {
           "suffixes": ["service", "effects", "store", "guard", "pipe"]
         }],
+        "@typescript-eslint/consistent-indexed-object-style": "error"
       }
     },
     {
@@ -333,6 +334,7 @@ module.exports = {
         "jest/no-large-snapshots": ["error"],
         "jest/prefer-equality-matcher": ["error"],
         "jest/prefer-lowercase-title": ["error", { "ignore": ["describe"] }],
+        "@typescript-eslint/consistent-indexed-object-style": "error",
         "jest/expect-expect": [
           "error",
           {

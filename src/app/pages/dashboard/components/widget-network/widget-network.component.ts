@@ -43,9 +43,7 @@ interface NicInfo {
   emptyConfig?: EmptyConfig;
 }
 
-interface NicInfoMap {
-  [name: string]: NicInfo;
-}
+type NicInfoMap = Record<string, NicInfo>;
 
 @UntilDestroy()
 @Component({

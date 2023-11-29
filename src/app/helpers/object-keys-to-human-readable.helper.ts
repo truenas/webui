@@ -16,7 +16,7 @@ export function convertObjectKeysToHumanReadable(existingValue: unknown): unknow
   }
 
   if (existingValue && typeof existingValue === 'object' && existingValue !== null) {
-    const newObject: { [key: string]: unknown } = {};
+    const newObject: Record<string, unknown> = {};
     for (const key of Object.keys(existingValue)) {
       const humanReadableKey = toHumanReadableKey(key);
       newObject[humanReadableKey] = convertObjectKeysToHumanReadable((existingValue as typeof newObject)[key]);

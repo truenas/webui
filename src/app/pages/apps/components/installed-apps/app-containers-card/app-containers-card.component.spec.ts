@@ -38,9 +38,7 @@ describe('AppContainersCardComponent', () => {
           id: 'sha256:test',
           update_available: true,
         },
-      } as {
-        [key: string]: ChartContainerImage;
-      },
+      } as Record<string, ChartContainerImage>,
       deployments: [{}, {}],
       pods: [{}],
       statefulsets: [{}],

@@ -14,6 +14,4 @@ export interface VolumeData {
   vol_name?: string;
 }
 
-export interface VolumesData {
-  [pool: string]: VolumeData;
-}
+export type VolumesData = Record<string, VolumeData>;

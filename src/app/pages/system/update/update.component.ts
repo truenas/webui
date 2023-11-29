@@ -60,7 +60,7 @@ export class UpdateComponent implements OnInit {
   updatesAvailable = false;
   currentTrainDescription: string;
   trainDescriptionOnPageLoad: string;
-  fullTrainList: { [name: string]: SystemUpdateTrain };
+  fullTrainList: Record<string, SystemUpdateTrain>;
   isUpdateRunning = false;
   updateMethod: ApiJobMethod = 'update.update';
   isHa = false;
