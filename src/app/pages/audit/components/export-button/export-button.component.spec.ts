@@ -12,7 +12,6 @@ import { ExportButtonComponent } from 'app/pages/audit/components/export-button/
 import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 
-
 describe('ExportButtonComponent', () => {
   const method: ApiJobMethod = 'audit.export';
   type EntryType = AuditEntry;
@@ -25,7 +24,7 @@ describe('ExportButtonComponent', () => {
     providers: [
       mockWebsocket([
         mockJob(method, { result: '/path/data.csv', state: JobState.Success } as Job<string>),
-        mockCall('core.download', [, '/_download/33456?auth_token=1234567890']),
+        mockCall('core.download', [33456, '/_download/33456?auth_token=1234567890']),
       ]),
       mockProvider(StorageService, {
         downloadUrl: jest.fn(),
@@ -49,9 +48,7 @@ describe('ExportButtonComponent', () => {
       'query-filters': [],
       'query-options': {},
     }]);
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith(
-      'core.download', [method, [{}], '/path/data.csv'],
-    );
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('core.download', [method, [{}], '/path/data.csv']);
     expect(spectator.inject(StorageService).downloadUrl).toHaveBeenLastCalledWith(
       '/_download/33456?auth_token=1234567890',
       'data.csv',
@@ -79,9 +76,7 @@ describe('ExportButtonComponent', () => {
       'query-filters': [['event', '~', '(?i)search query']],
       'query-options': { order_by: ['-service'] },
     }]);
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith(
-      'core.download', [method, [{}], '/path/data.csv'],
-    );
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('core.download', [method, [{}], '/path/data.csv']);
     expect(spectator.inject(StorageService).downloadUrl).toHaveBeenLastCalledWith(
       '/_download/33456?auth_token=1234567890',
       'data.csv',

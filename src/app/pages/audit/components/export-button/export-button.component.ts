@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
+} from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { catchError, EMPTY, switchMap } from 'rxjs';
 import { ExportFormat } from 'app/enums/export-format.enum';
@@ -47,7 +49,8 @@ export class ExportButtonComponent<T, M extends ApiJobMethod> {
         if (job.state === JobState.Failed) {
           this.dialogService.error(this.errorHandler.parseJobError(job));
           return EMPTY;
-        } else if (job.state !== JobState.Success) {
+        }
+        if (job.state !== JobState.Success) {
           return EMPTY;
         }
         const url = job.result as string;
@@ -97,7 +100,7 @@ export class ExportButtonComponent<T, M extends ApiJobMethod> {
       return {};
     }
 
-    return  {
+    return {
       order_by: [
         ((sorting.direction === SortDirection.Desc ? '-' : '') + (sorting.propertyName as string)) as keyof T,
       ],
