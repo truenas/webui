@@ -22,7 +22,7 @@ export function getLogImportantData(log: AuditEntry, translateService: Translate
     case AuditEvent.SetAcl:
     case AuditEvent.SetAttr:
     case AuditEvent.SetQuota:
-      return translateService.instant('File: {filename}', { filename: `${log.event_data?.file?.handle?.type}/${log.event_data?.file?.handle?.value }` });
+      return translateService.instant('File: {filename}', { filename: `${log.event_data?.file?.handle?.type}/${log.event_data?.file?.handle?.value}` });
     default:
       return ' - ';
   }

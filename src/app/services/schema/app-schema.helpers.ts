@@ -16,7 +16,7 @@ export function findAppSchemaNode(object: unknown, pathToField: string): ChartSc
 }
 
 function findAppSchemaObjectToStartSearchFrom(object: unknown, variableName: string): ChartSchemaNode | undefined {
-  const typedObject = object as { [key: string]: unknown };
+  const typedObject = object as Record<string, unknown>;
   let value;
 
   if (typedObject) {

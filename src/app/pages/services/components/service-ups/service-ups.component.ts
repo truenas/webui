@@ -73,7 +73,7 @@ export class ServiceUpsComponent implements OnInit {
     optionsupsd: helptext.ups_optionsupsd_placeholder,
   };
 
-  readonly providers: { [key: string]: IxComboboxProvider } = {
+  readonly providers: Record<string, IxComboboxProvider> = {
     driver: new SimpleAsyncComboboxProvider(this.ws.call('ups.driver_choices').pipe(choicesToOptions())),
     port: new SimpleAsyncComboboxProvider(this.ws.call('ups.port_choices').pipe(singleArrayToOptions())),
   };

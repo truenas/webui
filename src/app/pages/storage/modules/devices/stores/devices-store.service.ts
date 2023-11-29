@@ -17,7 +17,7 @@ export interface DevicesState {
   poolId: number;
   error: WebsocketError | null;
   nodes: DeviceNestedDataNode[];
-  diskDictionary: { [key: string]: Disk };
+  diskDictionary: Record<string, Disk>;
   selectedNodeGuid: string | null;
 }
 

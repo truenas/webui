@@ -32,7 +32,7 @@ import { WebSocketService } from 'app/services/ws.service';
 export class AppBulkUpgradeComponent {
   @ViewChild(MatAccordion) accordion: MatAccordion;
 
-  form = this.formBuilder.group<{ [key: string]: string }>({});
+  form = this.formBuilder.group<Record<string, string>>({});
   bulkItems = new Map<string, BulkListItem<ChartRelease>>();
   loadingMap = new Map<string, boolean>();
   optionsMap = new Map<string, Observable<Option[]>>();

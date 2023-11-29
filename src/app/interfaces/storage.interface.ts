@@ -220,13 +220,9 @@ export type DiskWipeParams = [
   method: DiskWipeMethod,
 ];
 
-export interface DiskTemperatures {
-  [disk: string]: number | null;
-}
+export type DiskTemperatures = Record<string, number | null>;
 
-export interface DiskTemperatureAgg {
-  [disk: string]: TemperatureAgg;
-}
+export type DiskTemperatureAgg = Record<string, TemperatureAgg>;
 
 export interface TemperatureAgg {
   min: number;

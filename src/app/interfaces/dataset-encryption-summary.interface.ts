@@ -22,6 +22,4 @@ export interface DatasetEncryptionSummaryQueryParamsDataset {
   passphrase?: string;
 }
 
-export interface DatasetEncryptedRootKeys {
-  [mountpoint: string]: string;
-}
+export type DatasetEncryptedRootKeys = Record<string, string>;

@@ -39,9 +39,7 @@ export interface DisksUpdate {
   write_ops: number;
 }
 
-export interface AllNetworkInterfacesUpdate {
-  [interfaceName: string]: NetworkInterfaceUpdate;
-}
+export type AllNetworkInterfacesUpdate = Record<string, NetworkInterfaceUpdate>;
 
 export interface NetworkInterfaceUpdate {
   link_state: LinkState;
