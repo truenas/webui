@@ -10,6 +10,7 @@ import { toSvg } from 'jdenticon';
 import { filter, map, of } from 'rxjs';
 import { AuditEvent, auditEventLabels } from 'app/enums/audit-event.enum';
 import { getLogImportantData } from 'app/helpers/get-log-important-data.helper';
+import { ParamsBuilder } from 'app/helpers/params-builder/params-builder.class';
 import { WINDOW } from 'app/helpers/window.helper';
 import { AuditEntry, SmbAuditEntry } from 'app/interfaces/audit.interface';
 import { ApiDataProvider } from 'app/modules/ix-table2/classes/api-data-provider/api-data-provider';
@@ -140,7 +141,7 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
       };
 
       if (options.sorting) this.dataProvider.setSorting(options.sorting);
-      if (options.searchQuery) this.searchQuery = options.searchQuery;
+      if (options.searchQuery) this.searchQuery = options.searchQuery as SearchQuery<AuditEntry>;
 
       this.onSearch(this.searchQuery);
     });
@@ -174,8 +175,14 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
     this.searchQuery = query;
 
     if (query && query.isBasicQuery) {
-      // TODO: Create a separate class to handle this.
-      this.dataProvider.setParams([[['event', '~', query.query]]]);
+      const term = `(?i)${query.query || ''}`;
+      const params = new ParamsBuilder<AuditEntry>()
+        .filter('event', '~', term)
+        .orFilter('username', '~', term)
+        .orFilter('service', '~', term)
+        .getParams();
+
+      this.dataProvider.setParams(params);
     }
 
     if (query && !query.isBasicQuery) {

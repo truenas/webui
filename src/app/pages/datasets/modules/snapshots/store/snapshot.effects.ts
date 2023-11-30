@@ -7,6 +7,7 @@ import {
   catchError, filter, map, switchMap,
 } from 'rxjs/operators';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
+import { QueryFilters } from 'app/interfaces/query-api.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { snapshotExcludeBootQueryFilter } from 'app/pages/datasets/modules/snapshots/constants/snapshot-exclude-boot.constant';
 import {
@@ -25,7 +26,7 @@ export class SnapshotEffects {
     switchMap(() => this.store$.pipe(waitForPreferences)),
     switchMap((preferences) => {
       return this.ws.call('zfs.snapshot.query', [
-        snapshotExcludeBootQueryFilter,
+        snapshotExcludeBootQueryFilter as QueryFilters<ZfsSnapshot>,
         {
           select: ['snapshot_name', 'dataset', 'name', ...(preferences.showSnapshotExtraColumns ? ['properties' as keyof ZfsSnapshot] : [])],
           order_by: ['name'],

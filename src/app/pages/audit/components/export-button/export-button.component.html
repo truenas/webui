@@ -1,0 +1,9 @@
+<button
+  mat-button
+  color="accent"
+  ixTest="export"
+  [disabled]="isLoading"
+  (click)="onExport()"
+>
+  {{ 'Export As CSV' | translate }}
+</button>

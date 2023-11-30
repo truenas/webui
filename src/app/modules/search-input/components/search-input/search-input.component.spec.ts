@@ -14,7 +14,7 @@ describe('SearchInputComponent', () => {
   let spectator: Spectator<SearchInputComponent<User>>;
   let searchHarness: SearchInputHarness;
   const createComponent = createComponentFactory({
-    component: SearchInputComponent,
+    component: SearchInputComponent<User>,
     imports: [
       FormsModule,
     ],

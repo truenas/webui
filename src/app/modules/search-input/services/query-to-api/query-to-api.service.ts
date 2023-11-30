@@ -64,10 +64,10 @@ export class QueryToApiService<T> {
 
   private buildCondition(condition: Condition): QueryFilter<T> {
     const currentProperty = this.searchProperties.find((value) => value.label === condition.property);
-    const mappedConditionProperty = (currentProperty?.property || condition.property) as string;
+    const mappedConditionProperty = (currentProperty?.property || condition.property);
     const mappedConditionValue = this.mapValueByPropertyType(currentProperty, condition);
 
-    return [mappedConditionProperty, condition.comparator, mappedConditionValue];
+    return [mappedConditionProperty, condition.comparator, mappedConditionValue] as QueryFilter<T>;
   }
 
   private mapValueByPropertyType(property: SearchProperty<T>, condition: Condition): LiteralValue | LiteralValue[] {

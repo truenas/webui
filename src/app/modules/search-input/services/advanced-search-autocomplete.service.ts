@@ -99,7 +99,11 @@ export class AdvancedSearchAutocompleteService<T> {
     }
 
     this.editorView?.dispatch({
-      changes: { from, to, insert: updatedValue },
+      changes: {
+        from,
+        to,
+        insert: updatedValue,
+      },
       selection: { anchor },
     });
   }
@@ -208,6 +212,8 @@ export class AdvancedSearchAutocompleteService<T> {
         || (property.label?.toUpperCase() === secondLastToken?.replace(/^["'](.*)["']$/, '$1')?.toUpperCase()
         && this.isPartiallyComparator(lastToken?.toUpperCase()));
     });
+
+    this.showDatePicker$.next(false);
 
     this.showDatePicker$.next(false);
 

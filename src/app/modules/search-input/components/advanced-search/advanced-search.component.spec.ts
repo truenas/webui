@@ -11,7 +11,7 @@ describe('AdvancedSearchComponent', () => {
   let spectator: Spectator<AdvancedSearchComponent<User>>;
   let searchHarness: AdvancedSearchHarness;
   const createComponent = createComponentFactory({
-    component: AdvancedSearchComponent,
+    component: AdvancedSearchComponent<User>,
     providers: [
       QueryToApiService,
       QueryParserService,
