@@ -22,6 +22,7 @@ import { TreeModule } from '@bugsplat/angular-tree-component';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
+import { IxButtonGroupComponent } from 'app/modules/ix-forms/components/ix-button-group/ix-button-group.component';
 import { IxCheckboxComponent } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxCheckboxListComponent } from 'app/modules/ix-forms/components/ix-checkbox-list/ix-checkbox-list.component';
 import { IxChipsComponent } from 'app/modules/ix-forms/components/ix-chips/ix-chips.component';
@@ -49,11 +50,9 @@ import { JiraOauthComponent } from 'app/modules/ix-forms/components/jira-oauth/j
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
-import { OauthButtonModule } from 'app/modules/oauth-button/oauth-button.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { FormActionsComponent } from './components/form-actions/form-actions.component';
-import { IxButtonGroupComponent } from './components/ix-button-group/ix-button-group.component';
 import { IxLabelComponent } from './components/ix-label/ix-label.component';
 import { IxSlideInComponent } from './components/ix-slide-in/ix-slide-in.component';
 import { WithManageCertificatesLinkComponent } from './components/with-manage-certificates-link/with-manage-certificates-link.component';
@@ -68,7 +67,6 @@ import { WithManageCertificatesLinkComponent } from './components/with-manage-ce
     MatInputModule,
     MatSelectModule,
     MatButtonModule,
-    MatButtonToggleModule,
     MatAutocompleteModule,
     IxIconModule,
     MatSlideToggleModule,
@@ -87,7 +85,7 @@ import { WithManageCertificatesLinkComponent } from './components/with-manage-ce
     CastModule,
     TestIdModule,
     RouterLink,
-    OauthButtonModule,
+    MatButtonToggleModule,
   ],
   declarations: [
     IxInputComponent,
@@ -144,11 +142,11 @@ import { WithManageCertificatesLinkComponent } from './components/with-manage-ce
     IxRadioGroupComponent,
     IxIpInputWithNetmaskComponent,
     IxCheckboxListComponent,
-    IxButtonGroupComponent,
     IxLabelComponent,
     FormActionsComponent,
     WithManageCertificatesLinkComponent,
     IxStarRatingComponent,
+    IxButtonGroupComponent,
     JiraOauthComponent,
   ],
   providers: [

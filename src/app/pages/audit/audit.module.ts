@@ -15,6 +15,7 @@ import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { SearchInputModule } from 'app/modules/search-input/search-input.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { AuditComponent } from 'app/pages/audit/components/audit/audit.component';
+import { ExportButtonComponent } from 'app/pages/audit/components/export-button/export-button.component';
 import { routing } from './audit.routing';
 import { EventDataDetailsCardComponent } from './components/event-data-details-card/event-data-details-card.component';
 import { LogDetailsPanelComponent } from './components/log-details-panel/log-details-panel.component';
@@ -46,6 +47,7 @@ import { MetadataDetailsCardComponent } from './components/metadata-details-card
     LogDetailsPanelComponent,
     MetadataDetailsCardComponent,
     EventDataDetailsCardComponent,
+    ExportButtonComponent,
   ],
   providers: [],
 })

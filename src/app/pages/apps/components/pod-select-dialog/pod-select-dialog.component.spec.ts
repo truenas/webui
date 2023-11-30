@@ -45,6 +45,7 @@ describe('PodSelectDialogComponent', () => {
             useValue: {
               appName: 'app_name',
               type: PodSelectDialogType.Shell,
+              containerImageKey: 'test.shell/pod1:7.0.11',
               customSubmit: mockCustomSubmit,
             },
           },
@@ -52,6 +53,14 @@ describe('PodSelectDialogComponent', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
+    });
+
+    it('finds best match pod key and preselects pod and container automatically', async () => {
+      expect(await form.getValues()).toEqual({
+        Pods: 'pod1',
+        Containers: 'container11',
+        Commands: '/bin/sh',
+      });
     });
 
     it('the function should pass the value of the shell form to the relevant component when Choose is pressed', async () => {
@@ -82,6 +91,7 @@ describe('PodSelectDialogComponent', () => {
             provide: MAT_DIALOG_DATA,
             useValue: {
               appName: 'app_name',
+              containerImageKey: 'test.logs/pod1:7.0.11',
               type: PodSelectDialogType.Logs,
               customSubmit: mockCustomSubmit,
             },
@@ -90,6 +100,14 @@ describe('PodSelectDialogComponent', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
+    });
+
+    it('finds best match pod key and preselects pod and container automatically', async () => {
+      expect(await form.getValues()).toEqual({
+        Pods: 'pod1',
+        Containers: 'container11',
+        'Tail Lines': '500',
+      });
     });
 
     it('the function should pass the value of the logs form to the relevant component when Choose is pressed', async () => {

@@ -1,5 +1,6 @@
 import { SetAcl } from 'app/interfaces/acl.interface';
 import { LeaveActiveDirectory } from 'app/interfaces/active-directory-config.interface';
+import { AuditEntry } from 'app/interfaces/audit.interface';
 import { Catalog, CatalogCreate } from 'app/interfaces/catalog.interface';
 import { Certificate, CertificateCreate, CertificateUpdate } from 'app/interfaces/certificate.interface';
 import {
@@ -24,6 +25,7 @@ import {
 } from 'app/interfaces/dataset-encryption-summary.interface';
 import { DatasetLockParams, DatasetUnlockParams, DatasetUnlockResult } from 'app/interfaces/dataset-lock.interface';
 import { DatasetPermissionsUpdate } from 'app/interfaces/dataset-permissions.interface';
+import { ExportParams } from 'app/interfaces/export-params.interface';
 import { FailoverUpgradeParams } from 'app/interfaces/failover.interface';
 import { FilesystemPutParams } from 'app/interfaces/filesystem-stat.interface';
 import { IpmiEvent } from 'app/interfaces/ipmi.interface';
@@ -53,6 +55,9 @@ import { AttachTicketParams, CreateNewTicket, NewTicketResponse } from 'app/modu
 export interface ApiJobDirectory {
   // Active Directory
   'activedirectory.leave': { params: [LeaveActiveDirectory]; response: void };
+
+  // Audit
+  'audit.export': { params: [ExportParams<AuditEntry>]; response: string };
 
   // Boot
   'boot.attach': { params: [disk: string, params: { expand?: boolean }]; response: void };
