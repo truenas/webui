@@ -210,10 +210,8 @@ export class AdvancedSearchAutocompleteService<T> {
     const searchedProperty = this.properties?.find((property) => {
       return property.label?.toUpperCase() === thirdLastToken?.replace(/^["'](.*)["']$/, '$1')?.toUpperCase()
         || (property.label?.toUpperCase() === secondLastToken?.replace(/^["'](.*)["']$/, '$1')?.toUpperCase()
-        && this.isPartiallyComparator(lastToken?.toUpperCase()));
+        && this.isPartiallyComparator(lastToken));
     });
-
-    this.showDatePicker$.next(false);
 
     this.showDatePicker$.next(false);
 
