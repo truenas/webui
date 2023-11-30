@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core';
 import { CompletionContext, CompletionResult } from '@codemirror/autocomplete';
 import { EditorView } from '@codemirror/view';
+import { TranslateService } from '@ngx-translate/core';
 import { uniqBy } from 'lodash';
 import {
+  BehaviorSubject,
   Observable, lastValueFrom, map, of,
 } from 'rxjs';
 import { QueryContext, ContextType } from 'app/interfaces/advanced-search.interface';
@@ -17,24 +19,32 @@ const logicalSuggestions = ['AND', 'OR'];
 @Injectable()
 export class AdvancedSearchAutocompleteService<T> {
   private properties: SearchProperty<T>[] = [];
+  private editorView: EditorView;
+  private queryContext: QueryContext;
+
+  showDatePicker$ = new BehaviorSubject(false);
 
   constructor(
     private queryParser: QueryParserService,
+    private translate: TranslateService,
   ) {}
 
   setProperties(properties: SearchProperty<T>[]): void {
     this.properties = properties;
   }
 
+  setEditorView(editorView: EditorView): void {
+    this.editorView = editorView;
+  }
+
   setCompletionSource(context: CompletionContext): Promise<CompletionResult> {
     const currentQuery = context.state.doc.toString();
-    const cursorPosition = context.pos;
-    const queryContext = this.getQueryContext(currentQuery, cursorPosition);
-    const suggestions$ = this.generateSuggestionsBasedOnContext(queryContext);
+    this.queryContext = this.getQueryContext(currentQuery, context.pos);
+    const suggestions$ = this.generateSuggestionsBasedOnContext(this.queryContext);
     const currentToken = context.matchBefore(/\w*/);
 
-    const from = currentQuery.length < queryContext.startPosition ? 0 : queryContext.startPosition;
-    const to = queryContext.endPosition;
+    const from = currentQuery.length < this.queryContext.startPosition ? 0 : this.queryContext.startPosition;
+    const to = this.queryContext.endPosition;
 
     return lastValueFrom(
       suggestions$.pipe(
@@ -42,6 +52,7 @@ export class AdvancedSearchAutocompleteService<T> {
           from,
           to,
           options: uniqBy(suggestions, 'label')
+            .sort((a, b) => a.label.localeCompare(b.label))
             .filter((suggestion) => {
               return suggestion.label && (
                 suggestion.label.toUpperCase().startsWith(currentToken?.text?.toUpperCase())
@@ -49,8 +60,8 @@ export class AdvancedSearchAutocompleteService<T> {
               );
             })
             .map((suggestion) => ({
-              label: suggestion.label,
-              apply: (view) => this.applySuggestionTransformation(view, suggestion, currentQuery, from, to),
+              label: this.translate.instant(suggestion.label),
+              apply: () => this.applySuggestionTransformation(suggestion, currentQuery, from, to),
             })),
         })),
       ),
@@ -58,7 +69,6 @@ export class AdvancedSearchAutocompleteService<T> {
   }
 
   private applySuggestionTransformation(
-    view: EditorView,
     suggestion: Option,
     currentQuery: string,
     from: number,
@@ -72,23 +82,26 @@ export class AdvancedSearchAutocompleteService<T> {
     if (
       /^["'].*["']?$/.test(currentQuery[from - 1]) && /^["'].*["']?$/.test(currentQuery[to])
     ) {
-      updatedValue = updatedValue.replace(/['"]/g, '');
+      updatedValue = updatedValue.replace(/^["'](.*)["']$/, '$1');
       anchor = from + updatedValue.length + 1;
 
       if (updatedValue.startsWith('(') && updatedValue.endsWith(')')) {
-        updatedValue = `("${updatedValue.replace(/[()'"]/g, '')}")`;
+        updatedValue = `("${updatedValue.replace(/^\(["'](.*)["']\)$/, '$1')}")`;
         from = from - 1;
         to = to + 1;
         anchor = from + updatedValue.length - 1;
       }
     }
 
-    view.dispatch(
-      view.state.update({
-        changes: { from, to, insert: updatedValue },
-        selection: { anchor },
-      }),
-    );
+    if (/\s/.test(updatedValue) && !/^["']|["']$/.test(updatedValue)) {
+      updatedValue = `"${updatedValue}"`;
+      anchor = anchor + 2;
+    }
+
+    this.editorView?.dispatch({
+      changes: { from, to, insert: updatedValue },
+      selection: { anchor },
+    });
   }
 
   private getQueryContext(query: string, cursorPosition: number): QueryContext {
@@ -190,13 +203,17 @@ export class AdvancedSearchAutocompleteService<T> {
     const isInOrNin = (lastToken?.toUpperCase() === 'IN' || lastToken?.toUpperCase() === 'NIN')
       || secondLastToken?.toUpperCase() === 'IN' || secondLastToken?.toUpperCase() === 'NIN';
 
-    const searchedProperty = this.properties?.find((property) => property.label?.toUpperCase() === thirdLastToken?.replace(/['"]/g, '')?.toUpperCase()
-      || (property.label?.toUpperCase() === secondLastToken?.replace(/['"]/g, '')?.toUpperCase()
-      && this.isPartiallyComparator(lastToken?.toUpperCase())));
+    const searchedProperty = this.properties?.find((property) => {
+      return property.label?.toUpperCase() === thirdLastToken?.replace(/^["'](.*)["']$/, '$1')?.toUpperCase()
+        || (property.label?.toUpperCase() === secondLastToken?.replace(/^["'](.*)["']$/, '$1')?.toUpperCase()
+        && this.isPartiallyComparator(lastToken?.toUpperCase()));
+    });
+
+    this.showDatePicker$.next(false);
 
     switch (context.type) {
       case ContextType.Property:
-        if (isInOrNin && !lastToken?.startsWith('(') && searchedProperty) {
+        if (isInOrNin && !lastToken?.startsWith('(') && searchedProperty?.valueSuggestions$) {
           return searchedProperty.valueSuggestions$.pipe(
             map((options: Option[]) => options.map(({ label, value }) => ({ label, value: `(${value})` }))),
           );
@@ -215,8 +232,8 @@ export class AdvancedSearchAutocompleteService<T> {
           return of([]);
         }
 
-        if (searchedProperty) {
-          return searchedProperty?.valueSuggestions$;
+        if (searchedProperty?.valueSuggestions$) {
+          return searchedProperty.valueSuggestions$;
         }
 
         return of(this.properties.map((property) => ({ label: property.label, value: property.label })));

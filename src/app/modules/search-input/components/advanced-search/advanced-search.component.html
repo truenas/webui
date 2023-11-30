@@ -21,7 +21,7 @@
 </a>
 
 <span
-  *ngIf="inputArea.textContent.length > 0"
+  *ngIf="isEditorEmpty"
   class="reset-icon reset-input"
   (click)="onResetInput()"
 >
