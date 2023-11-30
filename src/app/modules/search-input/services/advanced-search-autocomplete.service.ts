@@ -232,8 +232,8 @@ export class AdvancedSearchAutocompleteService<T> {
           return of([]);
         }
 
-        if (searchedProperty?.valueSuggestions$) {
-          return searchedProperty.valueSuggestions$;
+        if (searchedProperty) {
+          return searchedProperty.valueSuggestions$ || of([]);
         }
 
         return of(this.properties.map((property) => ({ label: property.label, value: property.label })));
