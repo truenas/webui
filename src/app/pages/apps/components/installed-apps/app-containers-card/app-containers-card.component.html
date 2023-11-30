@@ -67,7 +67,7 @@
                     [attr.aria-label]="'Shell' | translate"
                     [ixTest]="[containerImage.key, 'shell']"
                     [matTooltip]="'Shell' | translate"
-                    (click)="shellButtonPressed()"
+                    (click)="shellButtonPressed(containerImage.key)"
                   >
                     <ix-icon name="mdi-console"></ix-icon>
                   </button>
@@ -77,7 +77,7 @@
                     [attr.aria-label]="'View Logs' | translate"
                     [ixTest]="[containerImage.key, 'view_logs']"
                     [matTooltip]="'View Logs' | translate"
-                    (click)="viewLogsButtonPressed()"
+                    (click)="viewLogsButtonPressed(containerImage.key)"
                   >
                     <ix-icon name="mdi-text-box"></ix-icon>
                   </button>
