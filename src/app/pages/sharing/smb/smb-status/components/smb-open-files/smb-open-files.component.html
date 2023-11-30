@@ -1,33 +1,25 @@
-<h3>{{ 'Open Files' | translate }}</h3>
-
-<mat-accordion multi>
-  <mat-expansion-panel
-    *ngFor="let openFile of lock?.opens | keyvalue; index as index"
-    [expanded]="index === 0"
-  >
-    <mat-expansion-panel-header>
-      <mat-panel-title>{{ openFile.key }}</mat-panel-title>
-    </mat-expansion-panel-header>
-
-    <ul class="open-files-list">
-      <li>{{ 'Process ID' | translate }}: {{ openFile.value.server_id.pid }}</li>
-      <li>{{ 'Share File ID' | translate }}: {{ openFile.value.share_file_id }}</li>
-      <li>{{ 'Task ID' | translate }}: {{ openFile.value.server_id.task_id }}</li>
-      <li>{{ 'Unique ID' | translate }}: {{ openFile.value.server_id.unique_id }}</li>
-      <li>{{ 'VNN' | translate }}: {{ openFile.value.server_id.vnn }}</li>
-      <li>{{ 'User ID' | translate }}: {{ openFile.value.uid }}</li>
-      <li>{{ 'Share Mode' | translate }}: {{ openFile.value.sharemode.text }}</li>
-      <li>{{ 'Access Mask' | translate }}: {{ openFile.value.access_mask.text }}</li>
-      <li>{{ 'Caching' | translate }}: {{ openFile.value.caching.text || 'None' }}</li>
-      <li>{{ 'Oplock' | translate }}:
-        <span *ngFor="let oplock of openFile.value.oplock | keyvalue"></span>
-        <span *ngIf="!(openFile.value.oplock | keyvalue).length">{{ 'None' | translate }}</span>
-      </li>
-      <li>{{ 'Lease' | translate }}:
-        <span *ngFor="let lease of openFile.value.lease | keyvalue"></span>
-        <span *ngIf="!(openFile.value.lease | keyvalue).length">{{ 'None' | translate }}</span>
-      </li>
-      <li>{{ 'Opened At' | translate }}: {{ openFile.value.opened_at }}</li>
-    </ul>
-  </mat-expansion-panel>
-</mat-accordion>
+<mat-card>
+  <mat-toolbar-row>
+    <h3>{{ 'Open Files' | translate }}</h3>
+  </mat-toolbar-row>
+  <mat-card-content>
+    <ix-table2
+      class="table"
+      [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
+      [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
+    >
+      <thead
+        ix-table-head
+        [columns]="columns"
+        [dataProvider]="dataProvider"
+      ></thead>
+      <tbody
+        ix-table-body
+        [columns]="columns"
+        [dataProvider]="dataProvider"
+        [isLoading]="dataProvider.isLoading$ | async"
+      ></tbody>
+    </ix-table2>
+    <ix-table-pager [dataProvider]="dataProvider"></ix-table-pager>
+  </mat-card-content>
+</mat-card>

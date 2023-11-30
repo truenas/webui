@@ -5,7 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { tap } from 'rxjs';
 import { SmbInfoLevel } from 'app/enums/smb-info-level.enum';
-import { SmbLockInfo } from 'app/interfaces/smb-status.interface';
+import { SmbLockInfo, SmbOpenInfo } from 'app/interfaces/smb-status.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { createTable } from 'app/modules/ix-table2/utils';
@@ -23,10 +23,28 @@ export class SmbLockListComponent implements OnInit {
   filterString = '';
   dataProvider: AsyncDataProvider<SmbLockInfo>;
   locks: SmbLockInfo[] = [];
+  files: SmbOpenInfo[] = [];
   columns = createTable<SmbLockInfo>([
     textColumn({ title: this.translate.instant('Path'), propertyName: 'service_path' }),
     textColumn({ title: this.translate.instant('Filename'), propertyName: 'filename' }),
-    textColumn({ title: this.translate.instant('Num Pending Deletes'), propertyName: 'num_pending_deletes' }),
+    textColumn({
+      title: this.translate.instant('File ID'),
+      propertyName: 'fileid',
+      getValue: (row) => {
+        return Object.values(row.fileid).join(':');
+      },
+    }),
+    textColumn({
+      title: this.translate.instant('Open Files'),
+      propertyName: 'opens',
+      getValue: (row) => {
+        return this.translate.instant('{n, plural, =0 {No open files} one {# open file} other {# open files}}', { n: Object.keys(row.opens).length });
+      },
+    }),
+    textColumn({
+      title: this.translate.instant('Num Pending Deletes'),
+      propertyName: 'num_pending_deletes',
+    }),
   ]);
 
   constructor(
@@ -69,5 +87,9 @@ export class SmbLockListComponent implements OnInit {
     this.columns = [...columns];
     this.cdr.detectChanges();
     this.cdr.markForCheck();
+  }
+
+  openFiles(lock: SmbLockInfo): void {
+    this.files = Object.values(lock.opens);
   }
 }

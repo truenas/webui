@@ -24,10 +24,14 @@ describe('SmbLockListComponent', () => {
       num_pending_deletes: 0,
       opens: {
         '2102401/69': {
-          server_id: { pid: '2102401', task_id: '0', vnn: '4294967295', unique_id: '4458796888113407749' },
+          server_id: {
+            pid: '2102401', task_id: '0', vnn: '4294967295', unique_id: '4458796888113407749',
+          },
           uid: 3004,
           share_file_id: '69',
-          sharemode: { hex: '0x00000007', READ: true, WRITE: true, DELETE: true, text: 'RWD' },
+          sharemode: {
+            hex: '0x00000007', READ: true, WRITE: true, DELETE: true, text: 'RWD',
+          },
           access_mask: {
             hex: '0x00100081',
             READ_DATA: true,
@@ -46,7 +50,9 @@ describe('SmbLockListComponent', () => {
             ACCESS_SYSTEM_SECURITY: false,
             text: 'R',
           },
-          caching: { READ: false, WRITE: false, HANDLE: false, hex: '0x00000000', text: '' },
+          caching: {
+            READ: false, WRITE: false, HANDLE: false, hex: '0x00000000', text: '',
+          },
           oplock: {},
           lease: {},
           opened_at: '2023-10-26T12:17:27.190608+02:00',
@@ -76,18 +82,16 @@ describe('SmbLockListComponent', () => {
       [
         'Path',
         'Filename',
+        'File ID',
+        'Open Files',
         'Num Pending Deletes',
-        'Dev Id',
-        'Ext Id',
-        'Inode',
       ],
       [
         '/mnt/APPS/turtles',
         '.',
+        '70:3:0',
+        '1 open file',
         '0',
-        '70',
-        '0',
-        '3',
       ],
     ];
 

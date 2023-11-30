@@ -47,12 +47,7 @@ export interface SmbLockInfo {
 }
 
 export interface SmbOpenInfo {
-  server_id: {
-    pid: string;
-    task_id: string;
-    vnn: string;
-    unique_id: string;
-  };
+  server_id: SmbServerId;
   uid: number;
   share_file_id: string;
   sharemode: {
