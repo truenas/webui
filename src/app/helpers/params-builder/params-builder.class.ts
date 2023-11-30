@@ -167,9 +167,7 @@ export class ParamsBuilder<T, ExtraOptions = Record<string, unknown>> {
   }
 
   private addConditionToOrGroup(toAdd: QueryFilters<T>): void {
-    // TODO: Update typings for QueryFilter to allow for nesting.
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (this.filters[0] as OrQueryFilter<T>)[1].push(toAdd as any);
+    (this.filters[0] as OrQueryFilter<T>)[1].push(toAdd);
   }
 
   private addToLastConditionInOrGroup(toAdd: QueryFilters<T>): void {
