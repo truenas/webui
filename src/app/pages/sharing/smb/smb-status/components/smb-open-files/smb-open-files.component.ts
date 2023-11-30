@@ -20,7 +20,7 @@ export class SmbOpenFilesComponent implements OnChanges {
   @Input() lock: SmbLockInfo;
 
   get files(): SmbOpenInfo[] {
-    return Object.values(this.lock?.opens) || [];
+    return Object.values(this.lock?.opens || []);
   }
 
   dataProvider: AsyncDataProvider<SmbOpenInfo>;
@@ -32,7 +32,13 @@ export class SmbOpenFilesComponent implements OnChanges {
         return Object.values(row.server_id).join(':');
       },
     }),
-    textColumn({ title: this.translate.instant('UID'), propertyName: 'uid' }),
+    textColumn({
+      title: this.translate.instant('Username'),
+      propertyName: 'uid',
+      getValue: (row) => {
+        return `${row.username} (${row.uid})`;
+      },
+    }),
     textColumn({ title: this.translate.instant('Opened at'), propertyName: 'opened_at' }),
   ]);
 

@@ -49,6 +49,7 @@ export interface SmbLockInfo {
 export interface SmbOpenInfo {
   server_id: SmbServerId;
   uid: number;
+  username: string;
   share_file_id: string;
   sharemode: {
     hex: string;
