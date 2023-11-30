@@ -48,7 +48,7 @@
   </tr>
 </ng-container>
 
-<td *ngIf="isLoading && !dataProvider.totalRows" [attr.colspan]="0">
+<td *ngIf="isLoading && !dataProvider.totalRows" [attr.colspan]="displayedColumns.length">
   <div class="spinner-container">
     <mat-spinner [diameter]="40"></mat-spinner>
   </div>
