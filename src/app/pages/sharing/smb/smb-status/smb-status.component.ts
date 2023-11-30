@@ -15,6 +15,9 @@ export class SmbStatusComponent {
   }, {
     label: this.translate.instant('Shares'),
     path: '/sharing/smb/status/shares',
+  }, {
+    label: this.translate.instant('Notifications'),
+    path: '/sharing/smb/status/notifications',
   }];
 
   constructor(
