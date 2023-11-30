@@ -14,6 +14,7 @@ export interface SearchProperty<T> {
    */
   // TODO: Add support for nested properties.
   property: keyof T;
+  propertyType: PropertyType;
 
   valueSuggestions$?: Observable<Option[]>;
 
@@ -26,4 +27,11 @@ export interface SearchProperty<T> {
 
 export interface SearchSuggestionsComponent {
   suggestionSelected: EventEmitter<unknown>;
+}
+
+export enum PropertyType {
+  Text = 'text',
+  Date = 'date',
+  Boolean = 'boolean',
+  Memory = 'memory',
 }

@@ -6,9 +6,6 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import {
-  format, subDays, subMonths, subWeeks,
-} from 'date-fns';
 import { toSvg } from 'jdenticon';
 import { filter, map, of } from 'rxjs';
 import { AuditEvent, auditEventLabels } from 'app/enums/audit-event.enum';
@@ -30,6 +27,7 @@ import {
   SearchQuery,
 } from 'app/modules/search-input/types/search-query.interface';
 import {
+  dateProperty,
   searchProperties,
   textProperty,
 } from 'app/modules/search-input/utils/search-properties.utils';
@@ -97,27 +95,9 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
 
       this.searchProperties = searchProperties<AuditEntry>([
         textProperty('audit_id', this.translate.instant('ID'), of([])),
-        textProperty(
+        dateProperty(
           'message_timestamp',
           this.translate.instant('Timestamp'),
-          of([
-            {
-              label: 'Today',
-              value: `"${format(new Date(), 'yyyy-MM-dd')}"`,
-            },
-            {
-              label: 'Yesterday',
-              value: `"${format(subDays(new Date(), 1), 'yyyy-MM-dd')}"`,
-            },
-            {
-              label: 'Last week',
-              value: `"${format(subWeeks(new Date(), 1), 'yyyy-MM-dd')}"`,
-            },
-            {
-              label: 'Last month',
-              value: `"${format(subMonths(new Date(), 1), 'yyyy-MM-dd')}"`,
-            },
-          ]),
         ),
         textProperty(
           'address',
