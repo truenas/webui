@@ -4,6 +4,7 @@ export interface Group {
   builtin: boolean;
   gid: number;
   group: string;
+  name: string;
   id: number;
   id_type_both: boolean;
   local: boolean;
