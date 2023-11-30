@@ -1,5 +1,5 @@
 import {
-  BaseHarnessFilters, ComponentHarness, HarnessPredicate, parallel,
+  BaseHarnessFilters, ComponentHarness, HarnessPredicate,
 } from '@angular/cdk/testing';
 import { MatButtonToggleGroupHarness } from '@angular/material/button-toggle/testing';
 import { IxLabelHarness } from 'app/modules/ix-forms/components/ix-label/ix-label.harness';
@@ -44,11 +44,6 @@ export class IxButtonGroupHarness extends ComponentHarness implements IxFormCont
   }
 
   async isDisabled(): Promise<boolean> {
-    const buttons = await (await this.getButtonToggleGroupHarness()).getToggles();
-    const inputState = await parallel(() => buttons.map((control) => control.isDisabled()));
-
-    return new Promise((resolve) => {
-      resolve(inputState.every((control) => !!control));
-    });
+    return (await this.getButtonToggleGroupHarness()).isDisabled();
   }
 }
