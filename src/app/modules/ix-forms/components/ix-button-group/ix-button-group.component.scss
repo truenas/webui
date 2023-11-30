@@ -1,0 +1,59 @@
+:host {
+  margin-bottom: 12px;
+  margin-top: 12px;
+
+  &.inlineFields {
+    align-items: center;
+    display: flex;
+  }
+
+  .mat-button-toggle-group {
+    $border-color: var(--lines);
+
+    &.mat-button-toggle-group-appearance-standard {
+      border-color: $border-color;
+      border-radius: 0;
+
+      .mat-button-toggle + .mat-button-toggle {
+        border-color: $border-color;
+      }
+
+      &.mat-button-toggle-checked {
+        background: var(--hover-bg);
+        color: var(--fg2);
+      }
+    }
+
+    .mat-button-toggle-appearance-standard {
+      &.mat-button-toggle-checked {
+        background: var(--hover-bg);
+        color: var(--fg2);
+      }
+    }
+
+    .mat-button-toggle {
+      background-color: transparent;
+      border-color: $border-color;
+      color: var(--fg2);
+
+      &:hover {
+        background-color: var(--hover-bg);
+      }
+
+      &.mat-button-toggle-disabled {
+        background-color: transparent;
+        color: var(--fg1);
+        opacity: var(--disabled-opacity);
+
+        .mat-button-toggle-button {
+          cursor: not-allowed;
+        }
+      }
+
+      .mat-button-toggle-label-content {
+        line-height: 34px;
+        padding: 0 12px;
+      }
+    }
+  }
+}
