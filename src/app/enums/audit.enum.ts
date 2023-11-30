@@ -1,3 +1,3 @@
 export enum AuditService {
-  Smb = 'smb',
+  Smb = 'SMB',
 }

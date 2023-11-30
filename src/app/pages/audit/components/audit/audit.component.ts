@@ -63,7 +63,9 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
     }),
     textColumn({
       title: this.translate.instant('Event'),
-      getValue: (row) => this.translate.instant(auditEventLabels.get(row.event)),
+      getValue: (row) => (auditEventLabels.has(row.event)
+        ? this.translate.instant(auditEventLabels.get(row.event))
+        : ''),
     }),
     textColumn({
       title: this.translate.instant('Event Data'),
