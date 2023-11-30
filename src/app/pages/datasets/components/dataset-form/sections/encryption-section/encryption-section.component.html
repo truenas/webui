@@ -1,4 +1,4 @@
-<ix-fieldset [title]="'Encryption Options' | translate" [formGroup]="form">
+<ix-fieldset *ngIf="advancedMode" [title]="'Encryption Options' | translate" [formGroup]="form">
   <ix-checkbox
     formControlName="inherit_encryption"
     [label]="inheritEncryptionLabel"

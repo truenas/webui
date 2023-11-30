@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit, ViewChild,
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
@@ -8,6 +9,7 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   forkJoin, Observable, of, switchMap, map, combineLatest, filter,
 } from 'rxjs';
+import { DatasetPreset } from 'app/enums/dataset.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -36,7 +38,7 @@ import { WebSocketService } from 'app/services/ws.service';
   templateUrl: './dataset-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DatasetFormComponent implements OnInit {
+export class DatasetFormComponent implements OnInit, AfterViewInit {
   @ViewChild(NameAndOptionsSectionComponent) nameAndOptionsSection: NameAndOptionsSectionComponent;
   @ViewChild(EncryptionSectionComponent) encryptionSection: EncryptionSectionComponent;
   @ViewChild(QuotasSectionComponent) quotasSection: QuotasSectionComponent;
@@ -44,6 +46,7 @@ export class DatasetFormComponent implements OnInit {
 
   isLoading = false;
   isAdvancedMode = false;
+  datasetPreset = DatasetPreset.Generic;
 
   form = new FormGroup({});
 
@@ -70,6 +73,13 @@ export class DatasetFormComponent implements OnInit {
     if (this.slideInData?.datasetId && this.slideInData?.isNew) {
       this.setForNew();
     }
+  }
+
+  ngAfterViewInit(): void {
+    this.nameAndOptionsSection.form.controls.share_type.valueChanges
+      .pipe(untilDestroyed(this)).subscribe((datasetPreset) => {
+        this.datasetPreset = datasetPreset;
+      });
   }
 
   get isNew(): boolean {

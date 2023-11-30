@@ -2,28 +2,18 @@ import {
   ChangeDetectionStrategy, Component, Input, OnChanges, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import _ from 'lodash';
-import { Observable, of } from 'rxjs';
-import { DatasetCaseSensitivity, DatasetSync, datasetSyncLabels } from 'app/enums/dataset.enum';
-import { OnOff, onOffLabels } from 'app/enums/on-off.enum';
-import { inherit, WithInherit } from 'app/enums/with-inherit.enum';
-import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
-import { choicesToOptions } from 'app/helpers/operators/options.operators';
+import { of } from 'rxjs';
+import { DatasetCaseSensitivity, DatasetPreset, datasetPresetLabels } from 'app/enums/dataset.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.interface';
-import { Option } from 'app/interfaces/option.interface';
 import {
   forbiddenValues,
 } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
-import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/utils/dataset-form.service';
 import { datasetNameTooLong } from 'app/pages/datasets/components/dataset-form/utils/name-length-validation';
-import { getFieldValue } from 'app/pages/datasets/components/dataset-form/utils/zfs-property.utils';
-import { DialogService } from 'app/services/dialog.service';
 import { NameValidationService } from 'app/services/name-validation.service';
-import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -35,35 +25,23 @@ export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
   @Input() existing: Dataset;
   @Input() parent: Dataset;
 
+  datasetPresetOptions$ = of(mapToOptions(datasetPresetLabels, this.translate));
+
   readonly form = this.formBuilder.group({
     parent: [''],
     name: ['', [
       Validators.required,
       Validators.pattern(this.nameValidationService.nameRegex),
     ]],
-    comments: [''],
-    sync: [inherit as WithInherit<DatasetSync>],
-    compression: [inherit as WithInherit<string>],
-    atime: [inherit as WithInherit<OnOff>],
+    share_type: [DatasetPreset.Generic],
   });
-
-  syncOptions$: Observable<Option[]>;
-  compressionOptions$: Observable<Option[]>;
-  atimeOptions$: Observable<Option[]>;
 
   readonly helptext = helptext;
 
-  private readonly defaultSyncOptions$ = of(mapToOptions(datasetSyncLabels, this.translate));
-  private readonly defaultCompressionOptions$ = this.ws.call('pool.dataset.compression_choices').pipe(choicesToOptions());
-  private readonly defaultAtimeOptions$ = of(mapToOptions(onOffLabels, this.translate));
-
   constructor(
-    private ws: WebSocketService,
     private formBuilder: FormBuilder,
     private translate: TranslateService,
     private nameValidationService: NameValidationService,
-    private datasetFormService: DatasetFormService,
-    private dialogService: DialogService,
   ) {}
 
   ngOnChanges(): void {
@@ -72,26 +50,26 @@ export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
       this.addNameValidators();
     }
 
-    this.setSelectOptions();
     this.setFormValues();
     this.setNameDisabledStatus();
   }
 
   ngOnInit(): void {
     this.form.controls.parent.disable();
-    this.listenForSyncChanges();
   }
 
   getPayload(): Partial<DatasetCreate> | Partial<DatasetUpdate> {
-    const commonFields = _.pick(this.form.value, ['comments', 'sync', 'compression', 'atime']);
+    const payload = this.form.value;
+
     if (this.existing) {
-      return commonFields;
+      delete payload.share_type;
+      return payload;
     }
 
     return {
-      ...commonFields,
-      name: `${this.parent.name}/${this.form.value.name}`,
-    } as Partial<DatasetCreate>;
+      ...payload,
+      name: `${this.parent.name}/${payload.name}`,
+    };
   }
 
   private setFormValues(): void {
@@ -101,32 +79,7 @@ export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
 
     this.form.patchValue({
       name: this.existing.name,
-      comments: this.existing.comments?.source === ZfsPropertySource.Local
-        ? this.existing.comments.value
-        : '',
-      sync: getFieldValue(this.existing.sync, this.parent),
-      compression: getFieldValue(this.existing.compression, this.parent),
-      atime: getFieldValue(this.existing.atime, this.parent),
     });
-  }
-
-  private setSelectOptions(): void {
-    if (!this.parent) {
-      this.syncOptions$ = this.defaultSyncOptions$;
-      this.compressionOptions$ = this.defaultCompressionOptions$;
-      this.atimeOptions$ = this.defaultAtimeOptions$;
-      return;
-    }
-
-    this.syncOptions$ = this.defaultSyncOptions$.pipe(
-      this.datasetFormService.addInheritOption(this.parent.sync.value),
-    );
-    this.compressionOptions$ = this.defaultCompressionOptions$.pipe(
-      this.datasetFormService.addInheritOption(this.parent.compression.value),
-    );
-    this.atimeOptions$ = this.defaultAtimeOptions$.pipe(
-      this.datasetFormService.addInheritOption(this.parent.atime.value),
-    );
   }
 
   private setNameDisabledStatus(): void {
@@ -152,19 +105,5 @@ export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
       datasetNameTooLong(this.parent.name),
       forbiddenValues(namesInUse, isNameCaseSensitive),
     ]);
-  }
-
-  private listenForSyncChanges(): void {
-    this.form.controls.sync.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
-      if (value === DatasetSync.Disabled && this.form.controls.sync.dirty) {
-        this.dialogService.confirm({
-          title: this.translate.instant('Warning'),
-          message: helptext.dataset_form_sync_disabled_warning,
-          buttonText: this.translate.instant('Okay'),
-          hideCheckbox: true,
-          hideCancel: true,
-        });
-      }
-    });
   }
 }

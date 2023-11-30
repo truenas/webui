@@ -1,6 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
@@ -9,6 +9,7 @@ import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AclMode } from 'app/enums/acl-type.enum';
+import { DatasetPreset } from 'app/enums/dataset.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -37,6 +38,11 @@ describe('DatasetFormComponent', () => {
   let spectator: Spectator<DatasetFormComponent>;
   let loader: HarnessLoader;
 
+  MockInstance(NameAndOptionsSectionComponent, 'form', new FormGroup({
+    name: new FormControl(''),
+    parent: new FormControl(''),
+    share_type: new FormControl(DatasetPreset.Generic),
+  }));
   MockInstance(NameAndOptionsSectionComponent, 'getPayload', () => ({
     name: 'dataset',
   }));

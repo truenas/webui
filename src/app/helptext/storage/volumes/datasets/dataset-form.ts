@@ -24,7 +24,7 @@ export default {
  when they are read. Choose <i>Off</i> to prevent\
  producing log traffic when reading files. This can\
  result in significant performance gains.'),
-  dataset_form_share_type_tooltip: T('Choose the type that matches the type of client\
+  dataset_form_dataset_preset_tooltip: T('Choose the type that matches the type of client\
  accessing the pool/dataset.'),
   dataset_form_refquota_tooltip: T('<i>0</i> disables quotas. Specify a maximum allowed\
  space for this dataset.'),

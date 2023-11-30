@@ -91,18 +91,18 @@ export const datasetCaseSensitivityLabels = new Map<DatasetCaseSensitivity, stri
   [DatasetCaseSensitivity.Insensitive, T('Insensitive')],
 ]);
 
-export enum DatasetShareType {
+export enum DatasetPreset {
   Generic = 'GENERIC',
   Smb = 'SMB',
   Apps = 'APPS',
   Multiprotocol = 'MULTIPROTOCOL',
 }
 
-export const datasetShareTypeLabels = new Map<DatasetShareType, string>([
-  [DatasetShareType.Generic, T('Generic')],
-  [DatasetShareType.Smb, T('SMB')],
-  [DatasetShareType.Apps, T('Apps')],
-  [DatasetShareType.Multiprotocol, T('Multiprotocol')],
+export const datasetPresetLabels = new Map<DatasetPreset, string>([
+  [DatasetPreset.Generic, T('Generic')],
+  [DatasetPreset.Smb, T('SMB - recommended for sharing')],
+  [DatasetPreset.Apps, T('Apps')],
+  [DatasetPreset.Multiprotocol, T('Multiprotocol')],
 ]);
 
 export enum DatasetXattr {
