@@ -1,4 +1,4 @@
-export type SmbStatus = SmbSession | SmbLockInfo | SmbShareInfo;
+export type SmbStatus = SmbSession | SmbLockInfo | SmbShareInfo | SmbNotificationInfo;
 
 interface SmbServerId {
   pid: string;
@@ -97,4 +97,12 @@ export interface SmbShareInfo {
   connected_at: string;
   encryption: SmbEncryption;
   signing: SmbEncryption;
+}
+
+export interface SmbNotificationInfo {
+  server_id: SmbServerId;
+  path: string;
+  filter: string;
+  subdir_filter: string;
+  creation_time: string;
 }

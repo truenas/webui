@@ -45,6 +45,7 @@ import { NfsListComponent } from 'app/pages/sharing/nfs/nfs-list/nfs-list.compon
 import { NfsSessionListComponent } from 'app/pages/sharing/nfs/nfs-session-list/nfs-session-list.component';
 import { RestartSmbDialogComponent } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
 import { SmbLockListComponent } from 'app/pages/sharing/smb/smb-status/components/smb-lock-list/smb-lock-list.component';
+import { SmbNotificationListComponent } from 'app/pages/sharing/smb/smb-status/components/smb-notification-list/smb-notification-list.component';
 import { SmbShareListComponent } from 'app/pages/sharing/smb/smb-status/components/smb-share-list/smb-share-list.component';
 import { UserService } from 'app/services/user.service';
 import { ServiceExtraActionsComponent } from './components/shares-dashboard/service-extra-actions/service-extra-actions.component';
@@ -143,6 +144,7 @@ import { SmbStatusComponent } from './smb/smb-status/smb-status.component';
     NfsSessionListComponent,
     SmbStatusComponent,
     SmbShareListComponent,
+    SmbNotificationListComponent,
   ],
   providers: [
     UserService, // TODO: Check if can be removed since service is singleton
