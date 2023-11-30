@@ -23,7 +23,9 @@
 <span
   *ngIf="isEditorEmpty"
   class="reset-icon reset-input"
+  tabindex="0"
   (click)="onResetInput()"
+  (keydown.enter)="onResetInput()"
 >
   <ix-icon name="mdi-close-circle"></ix-icon>
 </span>

@@ -43,7 +43,7 @@
       align-items: center;
       display: grid;
       grid-gap: 8px;
-      grid-template-columns: auto 1fr 1.2fr 0.8fr 1.3fr;
+      grid-template-columns: minmax(auto, 1.1fr) 1fr 1.2fr 0.8fr 1.3fr;
     }
 
     .audit-header-row tr {

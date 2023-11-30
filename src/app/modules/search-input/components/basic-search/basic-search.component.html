@@ -26,6 +26,8 @@
 <span
   *ngIf="searchControl.value"
   class="reset-icon reset-input"
+  tabindex="0"
+  (keydown.enter)="resetInput()"
   (click)="resetInput()"
 >
   <ix-icon name="mdi-close-circle"></ix-icon>
