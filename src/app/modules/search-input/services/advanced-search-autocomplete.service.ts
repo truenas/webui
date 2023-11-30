@@ -11,7 +11,7 @@ import { QueryContext, ContextType } from 'app/interfaces/advanced-search.interf
 import { Option } from 'app/interfaces/option.interface';
 import { QueryComparator } from 'app/interfaces/query-api.interface';
 import { QueryParserService } from 'app/modules/search-input/services/query-parser/query-parser.service';
-import { SearchProperty } from 'app/modules/search-input/types/search-property.interface';
+import { PropertyType, SearchProperty } from 'app/modules/search-input/types/search-property.interface';
 
 const comparatorSuggestions = ['=', '!=', '<', '>', '<=', '>=', 'IN', 'NIN', '~', '^', '!^', '$', '!$'] as QueryComparator[];
 const logicalSuggestions = ['AND', 'OR'];
@@ -206,7 +206,7 @@ export class AdvancedSearchAutocompleteService<T> {
     const searchedProperty = this.properties?.find((property) => {
       return property.label?.toUpperCase() === thirdLastToken?.replace(/^["'](.*)["']$/, '$1')?.toUpperCase()
         || (property.label?.toUpperCase() === secondLastToken?.replace(/^["'](.*)["']$/, '$1')?.toUpperCase()
-        && this.isPartiallyComparator(lastToken?.toUpperCase()));
+        && this.isPartiallyComparator(lastToken));
     });
 
     this.showDatePicker$.next(false);
@@ -233,7 +233,15 @@ export class AdvancedSearchAutocompleteService<T> {
         }
 
         if (searchedProperty) {
-          return searchedProperty.valueSuggestions$ || of([]);
+          if (
+            searchedProperty.propertyType === PropertyType.Date && lastToken && secondLastToken
+            && !this.isPartiallyComparator(secondLastToken) && this.isPartiallyComparator(lastToken)
+          ) {
+            this.showDatePicker$.next(true);
+            return of([]);
+          }
+
+          return searchedProperty?.valueSuggestions$ || of([]);
         }
 
         return of(this.properties.map((property) => ({ label: property.label, value: property.label })));

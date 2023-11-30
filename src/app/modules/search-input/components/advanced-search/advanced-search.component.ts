@@ -12,6 +12,7 @@ import {
 import { autocompletion, closeBrackets, startCompletion } from '@codemirror/autocomplete';
 import { EditorState } from '@codemirror/state';
 import { EditorView, placeholder } from '@codemirror/view';
+import { format } from 'date-fns';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { AdvancedSearchAutocompleteService } from 'app/modules/search-input/services/advanced-search-autocomplete.service';
@@ -41,6 +42,7 @@ export class AdvancedSearchComponent<T> implements OnInit, OnChanges {
   get isEditorEmpty(): boolean {
     return (this.editorView.state.doc as unknown as { text: string[] })?.text?.[0] !== '';
   }
+  showDatePicker$ = this.advancedSearchAutocomplete.showDatePicker$;
 
   constructor(
     private queryParser: QueryParserService,
@@ -94,8 +96,15 @@ export class AdvancedSearchComponent<T> implements OnInit, OnChanges {
     });
   }
 
+  dateSelected(value: string): void {
+    this.setEditorContents(`"${format(new Date(value), 'yyyy-MM-dd')}" `, this.editorView.state.doc.length);
+    this.editorView.focus();
+    this.showDatePicker$.next(false);
+  }
+
   protected onResetInput(): void {
-    this.setEditorContents('');
+    this.setEditorContents('', 0, this.editorView.state.doc.length);
+    this.showDatePicker$.next(false);
     this.paramsChange.emit([]);
   }
 
@@ -119,13 +128,14 @@ export class AdvancedSearchComponent<T> implements OnInit, OnChanges {
     this.paramsChange.emit(filters);
   }
 
-  private setEditorContents(contents: string): void {
+  private setEditorContents(contents: string, from = 0, to?: number): void {
     this.editorView.dispatch({
       changes: {
-        from: 0,
-        to: this.editorView.state.doc.length,
+        from,
+        to,
         insert: contents,
       },
+      selection: { anchor: from + contents.length },
     });
   }
 }

@@ -64,6 +64,6 @@ export class QueryToApiService<T> {
   private buildCondition(condition: Condition): QueryFilter<T> {
     // TODO: This should 1) map column name 2) transform column value if necessary
     // TODO: See searchProperties
-    return [condition.property, condition.comparator, condition.value];
+    return [condition.property, condition.comparator, condition.value] as QueryFilter<T>;
   }
 }
