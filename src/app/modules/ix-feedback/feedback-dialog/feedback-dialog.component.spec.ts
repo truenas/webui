@@ -6,7 +6,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { mockProvider, createRoutingFactory, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { MockComponent } from 'ng-mocks';
+import { MockComponents } from 'ng-mocks';
 import { BehaviorSubject, of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockWebsocket, mockCall, mockJob } from 'app/core/testing/utils/mock-websocket.utils';
@@ -17,6 +17,8 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { Job } from 'app/interfaces/job.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { FeedbackDialogComponent } from 'app/modules/ix-feedback/feedback-dialog/feedback-dialog.component';
+import { FileTicketFormComponent } from 'app/modules/ix-feedback/file-ticket-form/file-ticket-form.component';
+import { FileTicketLicensedFormComponent } from 'app/modules/ix-feedback/file-ticket-licensed-form/file-ticket-licensed-form.component';
 import { NewTicketResponse } from 'app/modules/ix-feedback/interfaces/file-ticket.interface';
 import { IxFeedbackService } from 'app/modules/ix-feedback/ix-feedback.service';
 import { IxButtonGroupHarness } from 'app/modules/ix-forms/components/ix-button-group/ix-button-group.harness';
@@ -61,7 +63,11 @@ describe('FeedbackDialogComponent', () => {
     ],
     declarations: [
       JiraOauthComponent,
-      MockComponent(OauthButtonComponent),
+      MockComponents(
+        OauthButtonComponent,
+        FileTicketFormComponent,
+        FileTicketLicensedFormComponent,
+      ),
     ],
     providers: [
       mockWebsocket([
@@ -214,7 +220,6 @@ describe('FeedbackDialogComponent', () => {
 
   describe('bug or improvement', () => {
     beforeEach(async () => {
-      isEnterprise$.next(false);
       const type = await loader.getHarness(IxButtonGroupHarness.with({ label: 'I would like to' }));
       type.setValue('report a bug');
     });
@@ -235,6 +240,7 @@ describe('FeedbackDialogComponent', () => {
           'Take screenshot of the current page': true,
           'Attach debug': false,
           'Attach additional images': false,
+          Token: '{"oauth_token":"mock.oauth.token","oauth_token_secret":"mock.oauth.token.secret"}',
         },
       );
       expect(ws.call).toHaveBeenCalledWith('support.fetch_categories', [mockToken]);
