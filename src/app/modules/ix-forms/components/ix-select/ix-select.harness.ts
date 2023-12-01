@@ -14,8 +14,7 @@ export class IxSelectHarness extends ComponentHarness implements IxFormControlHa
 
   static with(options: IxSelectHarnessFilters): HarnessPredicate<IxSelectHarness> {
     return new HarnessPredicate(IxSelectHarness, options)
-      .addOption('label', options.label,
-        (harness, label) => HarnessPredicate.stringMatches(harness.getLabelText(), label));
+      .addOption('label', options.label, (harness, label) => HarnessPredicate.stringMatches(harness.getLabelText(), label));
   }
 
   getSelectHarness = this.locatorFor(SelectHarness);

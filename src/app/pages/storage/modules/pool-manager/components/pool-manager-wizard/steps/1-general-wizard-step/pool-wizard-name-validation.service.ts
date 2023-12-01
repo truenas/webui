@@ -3,7 +3,9 @@ import {
   AbstractControl, ValidationErrors,
 } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, catchError, debounceTime, distinctUntilChanged, of, switchMap, take } from 'rxjs';
+import {
+  Observable, catchError, debounceTime, distinctUntilChanged, of, switchMap, take,
+} from 'rxjs';
 import { WebSocketService } from 'app/services/ws.service';
 
 @Injectable({
@@ -22,7 +24,7 @@ export class PoolWizardNameValidationService {
       debounceTime(300),
       distinctUntilChanged(),
       take(1),
-      switchMap(value => {
+      switchMap((value) => {
         return this.ws.call('pool.validate_name', [value]).pipe(
           catchError(() => {
             return of({

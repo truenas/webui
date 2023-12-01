@@ -39,15 +39,11 @@ export interface DisksUpdate {
   write_ops: number;
 }
 
-export interface AllNetworkInterfacesUpdate {
-  [interfaceName: string]: NetworkInterfaceUpdate;
-}
+export type AllNetworkInterfacesUpdate = Record<string, NetworkInterfaceUpdate>;
 
 export interface NetworkInterfaceUpdate {
   link_state: LinkState;
-  received_bytes: number;
   received_bytes_rate: number;
-  sent_bytes: number;
   sent_bytes_rate: number;
   speed: number;
 }

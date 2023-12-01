@@ -226,8 +226,8 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
     this.diskUpdateSubscriptionId = this.disksUpdate.addSubscriber(disksUpdateTrigger$);
     this.entityList = entityList;
 
-    this.entityList.dataSource$.pipe(untilDestroyed(this)).subscribe(data => {
-      this.entityList.dataSource.data = data.map(item => {
+    this.entityList.dataSource$.pipe(untilDestroyed(this)).subscribe((data) => {
+      this.entityList.dataSource.data = data.map((item) => {
         return {
           ...item,
           togglesmart: this.yesNoPipe.transform(item.togglesmart) as unknown as boolean,

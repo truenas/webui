@@ -76,7 +76,7 @@ export class Es60G2 extends Chassis {
         const currentColumn: number = getCurrentColumn();
         const col = cols[currentColumn];
 
-        const mod = (index - col?.start) % col.count; // this.front[orientation];
+        const mod = (index - (col?.start || 0)) % col.count; // this.front[orientation];
         const iomGapX = currentColumn > 0 ? 25 : 0;
         const iomGapY = (index - col.start) >= col.iomIndex ? col.iomGap : 0;
 

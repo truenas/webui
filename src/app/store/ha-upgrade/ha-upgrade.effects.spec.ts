@@ -65,7 +65,7 @@ describe('HaUpgradeEffects', () => {
       expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('failover.upgrade_pending');
     });
 
-    it('does not check whether upgrade is pending when HA is disabled',  () => {
+    it('does not check whether upgrade is pending when HA is disabled', () => {
       actions$.next(haStatusLoaded({
         haStatus: {
           hasHa: false,

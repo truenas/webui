@@ -4,10 +4,12 @@ import { Component, ChangeDetectorRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Actions, ofType } from '@ngrx/effects';
 import { TranslateService } from '@ngx-translate/core';
 import {
   filter, switchMap, tap,
 } from 'rxjs/operators';
+import { FromWizardToAdvancedSubmitted } from 'app/enums/from-wizard-to-advanced.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
@@ -35,6 +37,7 @@ import { ReplicationService } from 'app/services/replication.service';
 import { StorageService } from 'app/services/storage.service';
 import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { fromWizardToAdvancedFormSubmitted } from 'app/store/admin-panel/admin.actions';
 
 @UntilDestroy()
 @Component({
@@ -96,12 +99,14 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
     private snackbar: SnackbarService,
     private cdr: ChangeDetectorRef,
     private storage: StorageService,
+    private actions$: Actions,
   ) {
     this.filterValue = this.route.snapshot.paramMap.get('dataset') || '';
   }
 
   afterInit(entityList: EntityTableComponent<ReplicationTaskUi>): void {
     this.entityList = entityList;
+    this.listenForWizardToAdvancedSwitching();
   }
 
   resourceTransformIncomingRestData(tasks: ReplicationTask[]): ReplicationTaskUi[] {
@@ -287,5 +292,13 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
     const replication = this.entityList.rows.find((row) => row.id === id);
     const slideInRef = this.slideInService.open(ReplicationFormComponent, { wide: true, data: replication });
     slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.entityList.getData());
+  }
+
+  private listenForWizardToAdvancedSwitching(): void {
+    this.actions$.pipe(
+      ofType(fromWizardToAdvancedFormSubmitted),
+      filter(({ formType }) => formType === FromWizardToAdvancedSubmitted.ReplicationTask),
+      untilDestroyed(this),
+    ).subscribe(() => this.entityList.getData());
   }
 }

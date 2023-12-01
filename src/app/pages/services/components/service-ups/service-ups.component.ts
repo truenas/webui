@@ -73,20 +73,22 @@ export class ServiceUpsComponent implements OnInit {
     optionsupsd: helptext.ups_optionsupsd_placeholder,
   };
 
-  readonly providers: { [key: string]: IxComboboxProvider } = {
+  readonly providers: Record<string, IxComboboxProvider> = {
     driver: new SimpleAsyncComboboxProvider(this.ws.call('ups.driver_choices').pipe(choicesToOptions())),
     port: new SimpleAsyncComboboxProvider(this.ws.call('ups.port_choices').pipe(singleArrayToOptions())),
   };
 
   readonly tooltips = {
     identifier: helptext.ups_identifier_tooltip,
-    mode: this.translate.instant('Choose <i>Master</i> if the UPS is plugged directly\
+    mode: this.translate.instant(
+      'Choose <i>Master</i> if the UPS is plugged directly\
       into the system serial port. The UPS will remain the\
       last item to shut down. Choose <i>Slave</i> to have\
       this system shut down before <i>Master</i>. See the\
       <a href="{url}"\
       target="_blank">Network UPS Tools Overview</a>.',
-    { url: 'https://networkupstools.org/docs/user-manual.chunked/ar01s02.html#_monitoring_client' }),
+      { url: 'https://networkupstools.org/docs/user-manual.chunked/ar01s02.html#_monitoring_client' },
+    ),
     remotehost: helptext.ups_remotehost_tooltip,
     remoteport: helptext.ups_remoteport_tooltip,
     driver: helptext.ups_driver_tooltip,

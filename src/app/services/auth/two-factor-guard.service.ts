@@ -10,7 +10,7 @@ import {
   Observable, combineLatest, filter, of, switchMap, take, tap,
 } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
-import { TwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
+import { GlobalTwoFactorConfig, UserTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -21,7 +21,8 @@ import { selectIsUpgradePending } from 'app/store/ha-info/ha-info.selectors';
 @UntilDestroy()
 @Injectable()
 export class TwoFactorGuardService implements CanActivateChild {
-  private globalTwoFactorConfig$ = new BehaviorSubject<TwoFactorConfig>(null);
+  private globalTwoFactorConfig$ = new BehaviorSubject<GlobalTwoFactorConfig>(null);
+  private userTwoFactorConfig$ = new BehaviorSubject<UserTwoFactorConfig>(null);
 
   constructor(
     private router: Router,
@@ -35,16 +36,36 @@ export class TwoFactorGuardService implements CanActivateChild {
   ) { }
 
   updateGlobalConfig(): void {
-    this.ws.call('auth.twofactor.config').pipe(
-      tap((twoFactorConfig) => this.globalTwoFactorConfig$.next(twoFactorConfig)),
+    this.authService.getGlobalTwoFactorConfig().pipe(
       untilDestroyed(this),
-    ).subscribe();
+    ).subscribe({
+      next: (config) => {
+        this.globalTwoFactorConfig$.next(config);
+      },
+    });
+  }
+
+  updateUserConfig(): void {
+    this.authService.getUserTwoFactorConfig().pipe(
+      untilDestroyed(this),
+    ).subscribe({
+      next: (config) => {
+        this.userTwoFactorConfig$.next(config);
+      },
+    });
   }
 
   canActivateChild(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {
     return combineLatest([
       this.authService.isAuthenticated$,
-      this.authService.user$.pipe(filter(Boolean)),
+      this.userTwoFactorConfig$.pipe(
+        tap((config) => {
+          if (!config) {
+            this.updateUserConfig();
+          }
+        }),
+        filter(Boolean),
+      ),
       this.globalTwoFactorConfig$.pipe(
         tap((config) => {
           if (!config) {
@@ -55,13 +76,13 @@ export class TwoFactorGuardService implements CanActivateChild {
       ),
     ]).pipe(
       take(1),
-      switchMap(([isAuthenticated, loggedInUser, globalTwoFactorConfig]) => {
+      switchMap(([isAuthenticated, userTwoFactorConfig, globalTwoFactorConfig]) => {
         if (!isAuthenticated) {
           return of(false);
         }
         if (
           globalTwoFactorConfig.enabled
-          && !loggedInUser.twofactor_auth_configured
+          && !userTwoFactorConfig.secret_configured
           && !state.url.endsWith('/two-factor-auth')
         ) {
           this.appLoader.open('Checking for pending upgrade');

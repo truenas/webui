@@ -255,6 +255,5 @@ describe('NormalSelectionComponent', () => {
     await button.click();
 
     expect(spectator.inject(PoolManagerStore).openManualSelectionDialog).toHaveBeenCalled();
-
   });
 });

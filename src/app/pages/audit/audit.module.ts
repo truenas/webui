@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatSelectModule } from '@angular/material/select';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -14,6 +15,7 @@ import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { SearchInputModule } from 'app/modules/search-input/search-input.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { AuditComponent } from 'app/pages/audit/components/audit/audit.component';
+import { ExportButtonComponent } from 'app/pages/audit/components/export-button/export-button.component';
 import { routing } from './audit.routing';
 import { EventDataDetailsCardComponent } from './components/event-data-details-card/event-data-details-card.component';
 import { LogDetailsPanelComponent } from './components/log-details-panel/log-details-panel.component';
@@ -37,6 +39,7 @@ import { MetadataDetailsCardComponent } from './components/metadata-details-card
     CoreComponents,
     routing,
     CoreComponents,
+    MatTooltipModule,
   ],
   exports: [],
   declarations: [
@@ -44,6 +47,7 @@ import { MetadataDetailsCardComponent } from './components/metadata-details-card
     LogDetailsPanelComponent,
     MetadataDetailsCardComponent,
     EventDataDetailsCardComponent,
+    ExportButtonComponent,
   ],
   providers: [],
 })

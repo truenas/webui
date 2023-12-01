@@ -34,6 +34,7 @@ export class RoutePartsService {
       return routeParts;
     }
 
+    // eslint-disable-next-line no-unreachable-loop
     for (const child of children) {
       const routeUrl: string = child.snapshot.url.map((segment) => segment.path).join('/');
       if (routeUrl) {

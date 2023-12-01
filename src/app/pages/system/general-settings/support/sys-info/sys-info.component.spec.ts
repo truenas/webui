@@ -39,7 +39,7 @@ describe('SysInfoComponent', () => {
     const sysInfoLabels = spectator.queryAll('.sys-info-wrapper .label');
     const infoRows = sysInfoValues.reduce((acc, item, i) => {
       return { ...acc, ...{ [sysInfoLabels[i].textContent]: item.textContent } };
-    }, {} as { [key: string]: string });
+    }, {} as Record<string, string>);
     const sysLicenseBlock = spectator.query('.sys-license-wrapper');
 
     expect(sysLicenseBlock).not.toBeTruthy();
@@ -61,7 +61,7 @@ describe('SysInfoComponent', () => {
     const sysLicenseLabels = spectator.queryAll('.sys-license-wrapper .label');
     const infoRows = sysLicenseValues.reduce((acc, item, i) => {
       return { ...acc, ...{ [sysLicenseLabels[i].textContent]: item.textContent.replace(/\s{2,}/g, ' ').trim() } };
-    }, {} as { [key: string]: string });
+    }, {} as Record<string, string>);
     const sysInfoBlock = spectator.query('.sys-info-wrapper');
 
     expect(sysInfoBlock).not.toBeTruthy();

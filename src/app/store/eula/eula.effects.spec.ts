@@ -45,4 +45,3 @@ describe('EulaEffects', () => {
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('truenas.accept_eula');
   });
 });
-

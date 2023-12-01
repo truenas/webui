@@ -1,7 +1,8 @@
 import { EventEmitter } from '@angular/core';
-import { Class } from 'utility-types';
+import { Observable } from 'rxjs';
+import { Option } from 'app/interfaces/option.interface';
 
-export interface SearchProperty<T, S extends SearchSuggestionsComponent = null> {
+export interface SearchProperty<T> {
   /**
    * Human-readable name of the property to search, e.g. 'First Name'
    */
@@ -13,13 +14,9 @@ export interface SearchProperty<T, S extends SearchSuggestionsComponent = null> 
    */
   // TODO: Add support for nested properties.
   property: keyof T;
+  propertyType: PropertyType;
 
-  /**
-   * Optional component to be rendered to provide suggestions.
-   */
-  suggestionComponent?: Class<S>;
-
-  suggestionComponentInputs?: Partial<S>;
+  valueSuggestions$?: Observable<Option[]>;
 
   /**
    * Optional functions to convert value from and to API format.
@@ -30,4 +27,11 @@ export interface SearchProperty<T, S extends SearchSuggestionsComponent = null> 
 
 export interface SearchSuggestionsComponent {
   suggestionSelected: EventEmitter<unknown>;
+}
+
+export enum PropertyType {
+  Text = 'text',
+  Date = 'date',
+  Boolean = 'boolean',
+  Memory = 'memory',
 }

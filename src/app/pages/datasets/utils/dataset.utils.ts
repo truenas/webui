@@ -29,7 +29,7 @@ export function isPasswordEncrypted(dataset: Pick<Dataset, 'key_format'>): boole
 }
 
 export function isIocageMounted(dataset: Pick<Dataset, 'mountpoint'>): boolean {
-  return dataset.mountpoint.split('/')[1] === 'iocage';
+  return dataset.mountpoint?.split('/')?.[1] === 'iocage';
 }
 
 export function isPropertyInherited(property: ZfsProperty<unknown>): boolean {

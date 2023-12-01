@@ -2,7 +2,6 @@ import {
   Directive, ElementRef, HostBinding, Input, Optional,
 } from '@angular/core';
 import { kebabCase } from 'lodash';
-import { assertUnreachable } from 'app/helpers/assert-unreachable.utils';
 import { TestOverrideDirective } from 'app/modules/test-id/test-override/test-override.directive';
 
 /**
@@ -64,6 +63,8 @@ export class TestDirective {
       case 'mat-icon':
       case 'mat-row':
       case 'mat-slider':
+      case 'mat-button-toggle-group':
+      case 'mat-button-toggle':
         return tagName.replace('mat-', '');
       case 'input':
       case 'button':
@@ -79,8 +80,7 @@ export class TestDirective {
       case 'p':
         return 'text';
       default:
-        assertUnreachable(tagName as never);
-        return '';
+        throw new Error(`Unknown element type: ${tagName}`);
     }
   }
 }

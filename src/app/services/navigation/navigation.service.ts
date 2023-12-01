@@ -121,6 +121,7 @@ export class NavigationService {
         { name: T('Services'), state: 'services' },
         { name: T('Shell'), state: 'shell' },
         { name: T('Alert Settings'), state: 'alert-settings' },
+        { name: T('Audit'), state: 'audit' },
         { name: T('Enclosure'), state: 'viewenclosure', isVisible$: this.hasEnclosure$ },
       ],
     },

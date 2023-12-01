@@ -2,14 +2,18 @@ import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { mergeMap, map, switchMap, filter, EMPTY, catchError, of, take } from 'rxjs';
+import {
+  mergeMap, map, switchMap, filter, EMPTY, catchError, of, take,
+} from 'rxjs';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { StartServiceDialogComponent, StartServiceDialogResult } from 'app/modules/common/dialog/start-service-dialog/start-service-dialog.component';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
-import { checkIfServiceIsEnabled, serviceChanged, serviceDisabled, serviceStartFailed, serviceStarted, servicesLoaded } from 'app/store/services/services.actions';
+import {
+  checkIfServiceIsEnabled, serviceChanged, serviceDisabled, serviceStartFailed, serviceStarted, servicesLoaded,
+} from 'app/store/services/services.actions';
 import { selectService } from 'app/store/services/services.selectors';
 import { serviceEnabled } from './services.actions';
 
@@ -50,10 +54,12 @@ export class ServicesEffects {
     switchMap((service) => {
       if (service.state === ServiceStatus.Stopped) {
         return this.matDialog.open<StartServiceDialogComponent, unknown, StartServiceDialogResult>(
-          StartServiceDialogComponent, {
+          StartServiceDialogComponent,
+          {
             data: service.service,
             disableClose: true,
-          })
+          },
+        )
           .afterClosed()
           .pipe(
             map((data) => {

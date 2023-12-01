@@ -148,7 +148,7 @@ describe('PoolManagerComponent – create pool', () => {
 
   it('creates a pool', async () => {
     await wizard.fillStep({
-      'Name': 'pool1',
+      Name: 'pool1',
     });
     await wizard.clickNext();
 
@@ -186,6 +186,7 @@ describe('PoolManagerComponent – create pool', () => {
     // Metadata
     await wizard.clickNext();
     await wizard.fillStep({
+      Layout: 'Stripe',
       'Disk Size': '20 GiB (HDD)',
       Width: '1',
       'Number of VDEVs': '1',
@@ -194,6 +195,7 @@ describe('PoolManagerComponent – create pool', () => {
     // Dedup
     await wizard.clickNext();
     await wizard.fillStep({
+      Layout: 'Stripe',
       'Disk Size': '20 GiB (HDD)',
       Width: '1',
       'Number of VDEVs': '1',

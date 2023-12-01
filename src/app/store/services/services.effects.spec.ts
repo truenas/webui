@@ -2,7 +2,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { BehaviorSubject, firstValueFrom, of, ReplaySubject, throwError } from 'rxjs';
+import {
+  BehaviorSubject, firstValueFrom, of, ReplaySubject, throwError,
+} from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
@@ -12,7 +14,9 @@ import { StartServiceDialogComponent, StartServiceDialogResult } from 'app/modul
 import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
-import { checkIfServiceIsEnabled, serviceChanged, serviceEnabled, servicesLoaded, serviceStarted } from 'app/store/services/services.actions';
+import {
+  checkIfServiceIsEnabled, serviceChanged, serviceEnabled, servicesLoaded, serviceStarted,
+} from 'app/store/services/services.actions';
 import { ServicesEffects } from 'app/store/services/services.effects';
 import { initialState, ServicesState } from 'app/store/services/services.reducer';
 import { selectServices } from 'app/store/services/services.selectors';
@@ -92,7 +96,7 @@ describe('ServicesEffects', () => {
   describe('subscribeToUpdates$', () => {
     it('should subscribe to service updates', async () => {
       jest.spyOn(ws, 'subscribe').mockImplementation((method) => {
-        if (method == 'service.query') {
+        if (method === 'service.query') {
           return of({ fields: { ...cifsService, state: ServiceStatus.Running } } as ApiEvent<Service>);
         }
         return of();
@@ -124,7 +128,6 @@ describe('ServicesEffects', () => {
         disableClose: true,
       });
     });
-
 
     it('do not shows dialog when service is running and not set to start automatically.', async () => {
       const service = {
@@ -205,4 +208,3 @@ describe('ServicesEffects', () => {
     });
   });
 });
-

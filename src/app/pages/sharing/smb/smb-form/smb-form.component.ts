@@ -13,8 +13,7 @@ import { Actions } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
-import { noop, Observable, of,
-} from 'rxjs';
+import { noop, Observable, of } from 'rxjs';
 import {
   debounceTime,
   filter,

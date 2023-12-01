@@ -9,7 +9,9 @@ import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { ManualDiskSelectionComponent, ManualDiskSelectionParams } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/manual-disk-selection.component';
 import { DispersalStrategy } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/2-enclosure-wizard-step/enclosure-wizard-step.component';
-import { initialState, PoolManagerState, PoolManagerStore, PoolManagerTopologyCategory } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
+import {
+  initialState, PoolManagerState, PoolManagerStore, PoolManagerTopologyCategory,
+} from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import {
   GenerateVdevsService,
 } from 'app/pages/storage/modules/pool-manager/utils/generate-vdevs/generate-vdevs.service';
@@ -143,7 +145,6 @@ describe('PoolManagerStore', () => {
   });
 
   describe('methods - options', () => {
-
     it('setGeneralOptions - sets options such as name and encryption', async () => {
       const generalOptions = {
         name: 'tank',
@@ -271,7 +272,7 @@ describe('PoolManagerStore', () => {
       { devname: 'sdb' },
     ] as UnusedDisk[];
     it('opens manual selection dialog when one of the child components emits (manualSelectionClicked)', () => {
-      Object.defineProperty(spectator.service, 'state$', { value: state$ } );
+      Object.defineProperty(spectator.service, 'state$', { value: state$ });
       jest.spyOn(spectator.service, 'getInventoryForStep').mockReturnValue(of(inventory));
       jest.spyOn(spectator.service, 'setManualTopologyCategory');
       spectator.service.openManualSelectionDialog(VdevType.Data);

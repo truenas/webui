@@ -162,10 +162,12 @@ export class MockStorageGenerator {
           options.layout = TopologyItemType.Mirror;
         }
 
-        const mixedDisk = this.generateMixedDiskCapacityTopology(options.layout,
+        const mixedDisk = this.generateMixedDiskCapacityTopology(
+          options.layout,
           options.repeats,
           options.diskSize,
-          options.width);
+          options.width,
+        );
 
         this.disks = this.disks.concat(mixedDisk.disks);
         this.poolState.topology[category] = this.poolState.topology[category]
@@ -173,10 +175,12 @@ export class MockStorageGenerator {
         break;
       }
       case MockStorageScenario.MixedVdevCapacity: {
-        const mixedVdevs = this.generateMixedVdevCapacityTopology(options.layout,
+        const mixedVdevs = this.generateMixedVdevCapacityTopology(
+          options.layout,
           options.repeats,
           options.diskSize,
-          options.width);
+          options.width,
+        );
 
         this.disks = this.disks.concat(mixedVdevs.disks);
         this.poolState.topology[category] = this.poolState.topology[category]
@@ -184,10 +188,12 @@ export class MockStorageGenerator {
         break;
       }
       case MockStorageScenario.MixedVdevWidth: {
-        const mixedWidths = this.generateMixedWidthTopology(options.layout,
+        const mixedWidths = this.generateMixedWidthTopology(
+          options.layout,
           options.repeats,
           options.diskSize,
-          options.width);
+          options.width,
+        );
 
         this.disks = this.disks.concat(mixedWidths.disks);
         this.poolState.topology[category] = this.poolState.topology[category]
@@ -195,10 +201,12 @@ export class MockStorageGenerator {
         break;
       }
       case MockStorageScenario.MixedVdevLayout: {
-        const mixedLayouts = this.generateMixedLayoutTopology(options.layout,
+        const mixedLayouts = this.generateMixedLayoutTopology(
+          options.layout,
           options.repeats,
           options.diskSize,
-          options.width);
+          options.width,
+        );
 
         this.disks = this.disks.concat(mixedLayouts.disks);
         this.poolState.topology[category] = this.poolState.topology[category]
@@ -247,11 +255,13 @@ export class MockStorageGenerator {
   }
 
   // Generate Topology from Scenario
-  private generateUniformTopology(layout: TopologyItemType,
+  private generateUniformTopology(
+    layout: TopologyItemType,
     repeats: number,
     diskSize: number,
     width: number,
-    allDisks: Disk[] = this.disks): MockTopology {
+    allDisks: Disk[] = this.disks,
+  ): MockTopology {
     const vdevs: TopologyItem[] = [];
     const disks: Disk[] = [];
 
@@ -281,10 +291,12 @@ export class MockStorageGenerator {
     };
   }
 
-  private generateNoRedundancyTopology(repeats: number,
+  private generateNoRedundancyTopology(
+    repeats: number,
     diskSize: number,
     width: number,
-    allDisks: Disk[] = this.disks): MockTopology {
+    allDisks: Disk[] = this.disks,
+  ): MockTopology {
     const vdevs: TopologyItem[] = [];
     const disks: Disk[] = [];
 
@@ -302,11 +314,13 @@ export class MockStorageGenerator {
     };
   }
 
-  private generateMixedDiskCapacityTopology(layout: TopologyItemType,
+  private generateMixedDiskCapacityTopology(
+    layout: TopologyItemType,
     repeats: number,
     diskSize: number,
     width: number,
-    allDisks: Disk[] = this.disks): MockTopology {
+    allDisks: Disk[] = this.disks,
+  ): MockTopology {
     const vdevs: TopologyItem[] = [];
     const disks: Disk[] = [];
 
@@ -337,11 +351,13 @@ export class MockStorageGenerator {
     };
   }
 
-  private generateMixedVdevCapacityTopology(layout: TopologyItemType,
+  private generateMixedVdevCapacityTopology(
+    layout: TopologyItemType,
     repeats: number,
     diskSize: number,
     width: number,
-    allDisks: Disk[] = this.disks): MockTopology {
+    allDisks: Disk[] = this.disks,
+  ): MockTopology {
     if (repeats < 2) {
       console.error('ERROR: Minimum 2 VDEVs must be configured to generate mixed VDEV capacity scenario');
     }
@@ -376,11 +392,13 @@ export class MockStorageGenerator {
     };
   }
 
-  private generateMixedWidthTopology(layout: TopologyItemType,
+  private generateMixedWidthTopology(
+    layout: TopologyItemType,
     repeats: number,
     diskSize: number,
     width: number,
-    allDisks: Disk[] = this.disks): MockTopology {
+    allDisks: Disk[] = this.disks,
+  ): MockTopology {
     if (repeats < 2) {
       console.error('ERROR: Minimum 2 VDEVs must be configured to generate mixed VDEV width scenario');
     }
@@ -416,11 +434,13 @@ export class MockStorageGenerator {
     };
   }
 
-  private generateMixedLayoutTopology(layout: TopologyItemType,
+  private generateMixedLayoutTopology(
+    layout: TopologyItemType,
     repeats: number,
     diskSize: number,
     width: number,
-    allDisks: Disk[] = this.disks): MockTopology {
+    allDisks: Disk[] = this.disks,
+  ): MockTopology {
     const vdevs: TopologyItem[] = [];
     const disks: Disk[] = [];
 

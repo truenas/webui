@@ -1,3 +1,5 @@
+import { PropertyPath } from 'app/interfaces/property-path.type';
+
 /**
  * If you are typing query API, you probably just need this, i.e. QueryParams<User>
  * https://github.com/truenas/middleware/blob/master/src/middlewared/middlewared/apidocs/templates/websocket/query.md
@@ -7,16 +9,11 @@ export type QueryParams<T, ExtraOptions = Record<string, unknown>> = [
   (QueryOptions<T> & ExtraOptions)?,
 ];
 
-export type QueryFilters<T> = QueryFilter<T>[] | ['OR', QueryFilter<T>[]];
+export type QueryFilters<T> = (QueryFilters<T> | QueryFilter<T> | OrQueryFilter<T>)[];
 
-/**
- * TODO: First element is not a string, but a property path of T.
- * TODO: Once we upgrade to TS4.1, update with this:
- * TODO: https://www.reddit.com/r/typescript/comments/iywewf/ts41_is_there_a_way_to_define_this_property_path/
- * TODO: Potentially may be able to type unknown.
- */
-// eslint-disable-next-line unused-imports/no-unused-vars
-export type QueryFilter<T> = [string, QueryOperator, unknown];
+export type OrQueryFilter<T> = ['OR', QueryFilters<T>[]];
+
+export type QueryFilter<T> = [PropertyPath<T>, QueryComparator, unknown];
 
 export interface QueryOptions<T> {
   /**
@@ -37,15 +34,15 @@ export interface QueryOptions<T> {
   /**
    * Specify the exact fields to return.
    */
-  select?: (keyof T)[];
+  select?: PropertyPath<T>[];
 
   /**
    * Specify which field determines the sort order.
    */
-  order_by?: (keyof T | `-${Extract<keyof T, string>}`)[];
+  order_by?: (PropertyPath<T> | `-${Extract<PropertyPath<T>, string>}`)[];
 }
 
-export type QueryOperator =
+export type QueryComparator =
   | '='
   | '!='
   | '>'

@@ -5,7 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { filter, map, switchMap } from 'rxjs';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { AsyncDataProvider } from 'app/modules/ix-table2/async-data-provider';
+import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { createTable } from 'app/modules/ix-table2/utils';
@@ -97,7 +97,7 @@ export class AllowedAddressesCardComponent implements OnInit {
   private deleteAllowedAddress(row: AllowedAddressRow): void {
     this.dataProvider.currentPage$.pipe(
       switchMap((currentPage) => {
-        const updatedAddresses = currentPage.filter((ip) => ip.address !== row.address).map(ip => ip.address);
+        const updatedAddresses = currentPage.filter((ip) => ip.address !== row.address).map((ip) => ip.address);
         return this.ws.call('system.general.update', [{ ui_allowlist: updatedAddresses }]);
       }),
       untilDestroyed(this),

@@ -86,7 +86,8 @@ export class DatasetAclEditorComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe((state) => {
         if (this.acl === null && state.acl === null) {
-          return this.router.navigate(['/sharing']);
+          this.router.navigate(['/sharing']);
+          return;
         }
 
         const isFirstLoad = !this.acl && state.acl;

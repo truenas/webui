@@ -16,8 +16,7 @@ export class IxFieldsetHarness extends ComponentHarness {
 
   static with(options: IxFieldsetHarnessFilters): HarnessPredicate<IxFieldsetHarness> {
     return new HarnessPredicate(IxFieldsetHarness, options)
-      .addOption('title', options.title,
-        (harness, title) => HarnessPredicate.stringMatches(harness.getTitleText(), title));
+      .addOption('title', options.title, (harness, title) => HarnessPredicate.stringMatches(harness.getTitleText(), title));
   }
 
   getControlHarnesses = this.locatorForAll(...supportedFormControlSelectors);
@@ -34,7 +33,7 @@ export class IxFieldsetHarness extends ComponentHarness {
   /**
    * Returns a dictionary of form control harnesses indexed by their labels.
    */
-  async getControlHarnessesDict(): Promise<{ [label: string]: SupportedFormControlHarness }> {
+  async getControlHarnessesDict(): Promise<Record<string, SupportedFormControlHarness>> {
     const controls = await this.getControlHarnesses();
     return indexControlsByLabel(controls);
   }
@@ -44,7 +43,7 @@ export class IxFieldsetHarness extends ComponentHarness {
     return controlsDict[label];
   }
 
-  async getValues(): Promise<{ [label: string]: IxFormBasicValueType }> {
+  async getValues(): Promise<Record<string, IxFormBasicValueType>> {
     const controlsDict = await this.getControlHarnessesDict();
     return getControlValues(controlsDict);
   }
@@ -66,12 +65,12 @@ export class IxFieldsetHarness extends ComponentHarness {
    * }
    * ```
    */
-  async fillForm(values: { [label: string]: unknown }): Promise<void> {
+  async fillForm(values: Record<string, unknown>): Promise<void> {
     const controls = await this.getControlHarnessesDict();
     return fillControlValues(controls, values);
   }
 
-  async getDisabledState(): Promise<{ [label: string]: boolean }> {
+  async getDisabledState(): Promise<Record<string, boolean>> {
     const controls = await this.getControlHarnessesDict();
     return getDisabledStates(controls);
   }

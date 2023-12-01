@@ -1,11 +1,12 @@
 import { inject } from '@angular/core';
-import { Observable } from 'rxjs';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import {
+  format, subDays, subMonths, subWeeks,
+} from 'date-fns';
+import { Observable, of } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
-import {
-  OptionsSuggestionsComponent,
-} from 'app/modules/search-input/components/options-suggestions/options-suggestions.component';
-import { SearchProperty } from 'app/modules/search-input/types/search-property.interface';
+import { PropertyType, SearchProperty } from 'app/modules/search-input/types/search-property.interface';
 
 export function searchProperties<T>(properties: SearchProperty<T>[]): SearchProperty<T>[] {
   return properties;
@@ -14,15 +15,54 @@ export function searchProperties<T>(properties: SearchProperty<T>[]): SearchProp
 export function textProperty<T>(
   property: keyof T,
   label: string,
+  valueSuggestions$?: Observable<Option[]>,
 ): SearchProperty<T> {
-  return { label, property };
+  return {
+    label,
+    property,
+    valueSuggestions$,
+    propertyType: PropertyType.Text,
+  };
+}
+
+export function dateProperty<T>(
+  property: keyof T,
+  label: string,
+): SearchProperty<T> {
+  return {
+    label,
+    property,
+    propertyType: PropertyType.Date,
+    valueSuggestions$:
+      of([
+        { label: T('Today'), value: `"${format(new Date(), 'yyyy-MM-dd')}"` },
+        { label: T('Yesterday'), value: `"${format(subDays(new Date(), 1), 'yyyy-MM-dd')}"` },
+        { label: T('2 days ago'), value: `"${format(subDays(new Date(), 2), 'yyyy-MM-dd')}"` },
+        { label: T('3 days ago'), value: `"${format(subDays(new Date(), 3), 'yyyy-MM-dd')}"` },
+        { label: T('4 days ago'), value: `"${format(subDays(new Date(), 4), 'yyyy-MM-dd')}"` },
+        { label: T('5 days ago'), value: `"${format(subDays(new Date(), 5), 'yyyy-MM-dd')}"` },
+        { label: T('Last week'), value: `"${format(subWeeks(new Date(), 1), 'yyyy-MM-dd')}"` },
+        { label: T('2 weeks ago'), value: `"${format(subWeeks(new Date(), 2), 'yyyy-MM-dd')}"` },
+        { label: T('3 weeks ago'), value: `"${format(subWeeks(new Date(), 3), 'yyyy-MM-dd')}"` },
+        { label: T('Last month'), value: `"${format(subMonths(new Date(), 1), 'yyyy-MM-dd')}"` },
+        { label: T('2 months ago'), value: `"${format(subMonths(new Date(), 2), 'yyyy-MM-dd')}"` },
+        { label: T('3 months ago'), value: `"${format(subMonths(new Date(), 3), 'yyyy-MM-dd')}"` },
+        { label: T('4 months ago'), value: `"${format(subMonths(new Date(), 4), 'yyyy-MM-dd')}"` },
+        { label: T('5 months ago'), value: `"${format(subMonths(new Date(), 5), 'yyyy-MM-dd')}"` },
+        { label: T('6 months ago'), value: `"${format(subMonths(new Date(), 6), 'yyyy-MM-dd')}"` },
+      ]),
+  };
 }
 
 export function booleanProperty<T>(
   property: keyof T,
   label: string,
 ): SearchProperty<T> {
-  return { label, property };
+  return {
+    label,
+    property,
+    propertyType: PropertyType.Boolean,
+  };
 }
 
 export function memoryProperty<T>(property: keyof T, label: string): SearchProperty<T> {
@@ -32,22 +72,8 @@ export function memoryProperty<T>(property: keyof T, label: string): SearchPrope
   return {
     label,
     property,
-    formatValue: value => formatter.memorySizeFormatting(value as string),
-    parseValue: value => formatter.memorySizeParsing(value),
-  };
-}
-
-// TODO: numericProperty
-// TODO: dateProperty
-export function optionsProperty<T>(
-  property: keyof T,
-  label: string,
-  options$: Observable<Option[]>,
-): SearchProperty<T, OptionsSuggestionsComponent> {
-  return {
-    label,
-    property,
-    suggestionComponent: OptionsSuggestionsComponent,
-    suggestionComponentInputs: { options$ },
+    formatValue: (value) => formatter.memorySizeFormatting(value as string),
+    parseValue: (value) => formatter.memorySizeParsing(value),
+    propertyType: PropertyType.Memory,
   };
 }

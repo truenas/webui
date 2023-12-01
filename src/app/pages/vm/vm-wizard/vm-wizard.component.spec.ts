@@ -91,6 +91,7 @@ describe('VmWizardComponent', () => {
         mockCall('vm.device.nic_attach_choices', {
           eno2: 'eno2',
         }),
+        mockCall('device.get_pci_ids_for_gpu_isolation', ['10DE:1401']),
       ]),
       mockProvider(GpuService, {
         getGpuOptions: () => of([
@@ -316,8 +317,8 @@ describe('VmWizardComponent', () => {
         web: true,
       },
     }]);
-    expect(spectator.inject(VmGpuService).updateVmGpus).toHaveBeenCalledWith({ id: 4 }, ['0000:03:00.0']);
-    expect(spectator.inject(GpuService).addIsolatedGpuPciIds).toHaveBeenCalledWith(['0000:03:00.0']);
+    expect(spectator.inject(VmGpuService).updateVmGpus).toHaveBeenCalledWith({ id: 4 }, ['0000:03:00.0', '10DE:1401']);
+    expect(spectator.inject(GpuService).addIsolatedGpuPciIds).toHaveBeenCalledWith(['0000:03:00.0', '10DE:1401']);
     expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
   });
 });

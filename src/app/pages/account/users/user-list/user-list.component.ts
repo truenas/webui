@@ -10,9 +10,9 @@ import { TranslateService } from '@ngx-translate/core';
 import { combineLatest, Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { EmptyType } from 'app/enums/empty-type.enum';
-import { rolesListToString } from 'app/enums/role.enum';
+import { roleNames } from 'app/enums/role.enum';
 import { User } from 'app/interfaces/user.interface';
-import { ArrayDataProvider } from 'app/modules/ix-table2/array-data-provider';
+import { ArrayDataProvider } from 'app/modules/ix-table2/classes/array-data-provider/array-data-provider';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { yesNoColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-yesno/ix-cell-yesno.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
@@ -58,7 +58,8 @@ export class UserListComponent implements OnInit {
     }),
     textColumn({
       title: this.translate.instant('Roles'),
-      getValue: (row) => rolesListToString(row.roles || []),
+      getValue: (row) => row.roles
+        .map((role) => this.translate.instant(roleNames.get(role))).join(', ') || this.translate.instant('N/A'),
       sortable: true,
     }),
   ]);

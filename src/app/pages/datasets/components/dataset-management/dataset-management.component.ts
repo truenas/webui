@@ -89,7 +89,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
   private readonly scrollSubject = new Subject<number>();
 
   // Flat API
-  getLevel = (dataset: DatasetDetails): number => dataset?.name?.split('/')?.length - 1;
+  getLevel = (dataset: DatasetDetails): number => (dataset?.name?.split('/')?.length || 0) - 1;
   isExpandable = (dataset: DatasetDetails): boolean => dataset?.children?.length > 0;
   treeControl = new FlatTreeControl<DatasetDetails>(
     this.getLevel,

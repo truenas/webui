@@ -1,16 +1,23 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   ElementRef,
   EventEmitter,
   Input,
-  OnChanges,
+  OnChanges, OnInit,
   Output,
   ViewChild,
 } from '@angular/core';
+import { autocompletion, closeBrackets, startCompletion } from '@codemirror/autocomplete';
+import { EditorState } from '@codemirror/state';
+import { EditorView } from '@codemirror/view';
+import { format } from 'date-fns';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
-import { SearchQueryService } from 'app/modules/search-input/services/search-query.service';
+import { AdvancedSearchAutocompleteService } from 'app/modules/search-input/services/advanced-search-autocomplete.service';
+import { QueryParserService } from 'app/modules/search-input/services/query-parser/query-parser.service';
+import { QueryToApiService } from 'app/modules/search-input/services/query-to-api/query-to-api.service';
 import { SearchProperty } from 'app/modules/search-input/types/search-property.interface';
 
 @Component({
@@ -19,33 +26,112 @@ import { SearchProperty } from 'app/modules/search-input/types/search-property.i
   styleUrls: ['./advanced-search.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AdvancedSearchComponent<T> implements OnChanges {
+export class AdvancedSearchComponent<T> implements OnInit, OnChanges {
   @Input() query: QueryFilters<T> = [];
   @Input() properties: SearchProperty<T>[] = [];
 
-  @Output() queryChange = new EventEmitter<QueryFilters<T>>();
+  @Output() paramsChange = new EventEmitter<QueryFilters<T>>();
   @Output() switchToBasic = new EventEmitter<void>();
 
   @ViewChild('inputArea', { static: true }) inputArea: ElementRef<HTMLElement>;
 
+  hasQueryErrors = false;
+  queryInputValue: string;
+  private editorView: EditorView;
+
+  showDatePicker$ = this.advancedSearchAutocomplete.showDatePicker$;
+
   constructor(
-    private queryParser: SearchQueryService,
+    private queryParser: QueryParserService,
+    private queryToApi: QueryToApiService<T>,
+    private advancedSearchAutocomplete: AdvancedSearchAutocompleteService<T>,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
-    if (changes.query) {
-      // TODO: Temporary
-      this.inputArea.nativeElement.textContent = this.queryParser.formatFiltersToQuery(this.query, this.properties);
+    if (changes.query && this.editorView) {
+      // TODO:
+      // this.setEditorContents(this.queryParser.formatFiltersToQuery(this.query, this.properties));
     }
   }
 
-  protected onInput(queryText: string): void {
-    const query = this.queryParser.parseTextToFilters(queryText, this.properties);
-    this.queryChange.emit(query);
+  ngOnInit(): void {
+    this.initEditor();
+    this.advancedSearchAutocomplete.setProperties(this.properties);
+    this.advancedSearchAutocomplete.setEditorView(this.editorView);
+  }
+
+  startSuggestionsCompletion(): void {
+    startCompletion(this.editorView);
+  }
+
+  initEditor(): void {
+    const updateListener = EditorView.updateListener.of((update) => {
+      if (!update.docChanged) {
+        return;
+      }
+
+      this.onInputChanged();
+    });
+
+    const autocompleteExtension = autocompletion({
+      override: [this.advancedSearchAutocomplete.setCompletionSource.bind(this.advancedSearchAutocomplete)],
+      icons: false,
+    });
+
+    this.editorView = new EditorView({
+      state: EditorState.create({
+        extensions: [
+          autocompleteExtension,
+          EditorView.lineWrapping,
+          updateListener,
+          closeBrackets(),
+        ],
+      }),
+      parent: this.inputArea.nativeElement,
+    });
+  }
+
+  dateSelected(value: string): void {
+    this.setEditorContents(`"${format(new Date(value), 'yyyy-MM-dd')}" `, this.editorView.state.doc.length);
+    this.editorView.focus();
+    this.showDatePicker$.next(false);
   }
 
   protected onResetInput(): void {
-    this.inputArea.nativeElement.textContent = '';
-    this.queryChange.emit([]);
+    this.setEditorContents('', 0, this.editorView.state.doc.length);
+    this.showDatePicker$.next(false);
+    this.paramsChange.emit([]);
+  }
+
+  private onInputChanged(): void {
+    this.queryInputValue = this.editorView.state.doc.toString();
+    const parsedQuery = this.queryParser.parseQuery(this.queryInputValue);
+
+    this.hasQueryErrors = Boolean(this.queryInputValue.length && parsedQuery.hasErrors);
+    this.cdr.markForCheck();
+
+    if (parsedQuery.hasErrors) {
+      // TODO: Handle errors.
+      return;
+    }
+
+    const filters = this.queryToApi.buildFilters(parsedQuery, this.properties);
+
+    // TODO: Remove before merge
+    // eslint-disable-next-line no-console
+    console.log(JSON.stringify(filters, null, 2), parsedQuery);
+    this.paramsChange.emit(filters);
+  }
+
+  private setEditorContents(contents: string, from = 0, to?: number): void {
+    this.editorView.dispatch({
+      changes: {
+        from,
+        to,
+        insert: contents,
+      },
+      selection: { anchor: from + contents.length },
+    });
   }
 }

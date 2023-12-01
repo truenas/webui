@@ -45,7 +45,7 @@ describe('CatalogEditFormComponent', () => {
         test: {},
         stable: {},
         incubator: {},
-      } as { [trainName: string]: CatalogTrain },
+      } as Record<string, CatalogTrain>,
       preferred_trains: ['test'],
     } as Catalog);
   });

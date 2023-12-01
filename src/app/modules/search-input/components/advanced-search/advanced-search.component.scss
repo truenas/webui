@@ -70,12 +70,74 @@
 .input-area {
   background-color: transparent;
   border: 0;
-  color: var(--fg2);
   flex-grow: 1;
-  font-size: 12px;
-  line-height: normal;
-  outline: none !important;
-  padding: 8px;
+  outline: none;
+  padding: 7px 8px;
   width: 100%;
-  word-break: break-all;
+
+  ::ng-deep {
+    .cm-content {
+      caret-color: auto;
+      color: var(--fg2);
+      font-family: var(--mdc-dialog-subhead-font);
+      font-size: 12px;
+      padding: 0;
+    }
+
+    .calendar {
+      background-color: var(--bg2);
+      left: 0;
+      margin: 5px auto;
+      position: absolute;
+      top: 100%;
+      width: 100%;
+      z-index: 1;
+
+      ::ng-deep {
+        .mat-calendar-table {
+          width: 100%;
+        }
+
+        .mat-calendar-body-cell,
+        .mat-calendar-body-cell-content {
+          cursor: pointer;
+        }
+
+        .mat-calendar-content.cdk-mouse-focused,
+        .mat-calendar-content.cdk-keyboard-focused,
+        .mat-calendar-content.cdk-program-focused {
+          background-color: transparent !important;
+          box-shadow: none !important;
+        }
+      }
+    }
+
+    .cm-line {
+      padding: 0;
+    }
+
+    .cm-tooltip.cm-tooltip-autocomplete {
+      border: none !important;
+      border-radius: 4px !important;
+    }
+
+    .cm-tooltip.cm-tooltip-autocomplete ul {
+      border: 0;
+      border-radius: 4px;
+      height: 100%;
+
+      li {
+        background-color: var(--bg2);
+        color: var(--fg2);
+        font-family: var(--font-family-body);
+        font-size: 14px;
+        padding: 8px;
+
+        &[aria-selected='true'] {
+          background-color: var(--primary);
+          color: var(--primary-txt);
+        }
+      }
+    }
+  }
 }
