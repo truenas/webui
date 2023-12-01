@@ -7,9 +7,10 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  forkJoin, Observable, of, switchMap, map, combineLatest, filter,
+  forkJoin, Observable, of, switchMap, map, combineLatest, filter, catchError,
 } from 'rxjs';
 import { DatasetPreset } from 'app/enums/dataset.enum';
+import { mntPath } from 'app/enums/mnt-path.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -186,6 +187,8 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
       : this.ws.call('pool.dataset.update', [this.existingDataset.id, payload as DatasetUpdate]);
 
     request$.pipe(
+      switchMap((dataset) => this.createSmb(dataset)),
+      switchMap((dataset) => this.createNfs(dataset)),
       switchMap((dataset) => {
         return this.checkForAclOnParent().pipe(
           switchMap((isAcl) => combineLatest([of(dataset), isAcl ? this.aclDialog() : of(false)])),
@@ -244,5 +247,40 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
       buttonText: helptext.afterSubmitDialog.actionBtn,
       cancelText: helptext.afterSubmitDialog.cancelBtn,
     });
+  }
+
+  private createSmb(dataset: Dataset): Observable<Dataset> {
+    const datasetPresetFormValue = this.nameAndOptionsSection.datasetPresetForm.value;
+    if (!this.isNew || !datasetPresetFormValue.create_smb || !this.nameAndOptionsSection.isCreatingSmb) {
+      return of(dataset);
+    }
+    return this.ws.call('sharing.smb.create', [{
+      name: datasetPresetFormValue.smb_name,
+      path: `${mntPath}/${dataset.id}`,
+    }]).pipe(
+      switchMap(() => of(dataset)),
+      catchError((error) => this.rollBack(dataset, error)),
+    );
+  }
+
+  private createNfs(dataset: Dataset): Observable<Dataset> {
+    const datasetPresetFormValue = this.nameAndOptionsSection.datasetPresetForm.value;
+    if (!this.isNew || !datasetPresetFormValue.create_nfs || !this.nameAndOptionsSection.isCreatingNfs) {
+      return of(dataset);
+    }
+    return this.ws.call('sharing.nfs.create', [{
+      path: `${mntPath}/${dataset.id}`,
+    }]).pipe(
+      switchMap(() => of(dataset)),
+      catchError((error) => this.rollBack(dataset, error)),
+    );
+  }
+
+  private rollBack(dataset: Dataset, error: unknown): Observable<Dataset> {
+    return this.ws.call('pool.dataset.delete', [dataset.id, { recursive: true, force: true }]).pipe(
+      switchMap(() => {
+        throw error;
+      }),
+    );
   }
 }

@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy, Component, Input, OnChanges, OnInit,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { DatasetCaseSensitivity, DatasetPreset, datasetPresetLabels } from 'app/enums/dataset.enum';
@@ -19,6 +19,7 @@ import { NameValidationService } from 'app/services/name-validation.service';
 @Component({
   selector: 'ix-name-and-options',
   templateUrl: './name-and-options-section.component.html',
+  styleUrls: ['./name-and-options-section.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
@@ -36,7 +37,22 @@ export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
     share_type: [DatasetPreset.Generic],
   });
 
+  readonly datasetPresetForm = this.formBuilder.group({
+    create_smb: [true],
+    create_nfs: [true],
+    smb_name: [''],
+  });
+
   readonly helptext = helptext;
+
+  get isCreatingSmb(): boolean {
+    return this.form.value.share_type === DatasetPreset.Smb
+      || this.form.value.share_type === DatasetPreset.Multiprotocol;
+  }
+
+  get isCreatingNfs(): boolean {
+    return this.form.value.share_type === DatasetPreset.Multiprotocol;
+  }
 
   constructor(
     private formBuilder: FormBuilder,
@@ -56,6 +72,12 @@ export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.form.controls.parent.disable();
+
+    this.form.controls.name.valueChanges.pipe(untilDestroyed(this)).subscribe((name) => {
+      this.datasetPresetForm.patchValue({
+        smb_name: name,
+      });
+    });
   }
 
   getPayload(): Partial<DatasetCreate> | Partial<DatasetUpdate> {

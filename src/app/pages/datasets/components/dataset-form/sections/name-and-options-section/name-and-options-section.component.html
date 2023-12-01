@@ -27,3 +27,24 @@
     [tooltip]="helptext.dataset_form_dataset_preset_tooltip | translate"
   ></ix-select>
 </ix-fieldset>
+
+<ix-fieldset *ngIf="!existing" [formGroup]="datasetPresetForm">
+  <div class="preset-container">
+    Some Text
+    <ix-checkbox
+      *ngIf="isCreatingNfs"
+      formControlName="create_nfs"
+      [label]="'Create NFS Share' | translate"
+    ></ix-checkbox>
+    <ix-checkbox
+      *ngIf="isCreatingSmb"
+      formControlName="create_smb"
+      [label]="'Create SMB Share' | translate"
+    ></ix-checkbox>
+    <ix-input
+      *ngIf="isCreatingSmb && datasetPresetForm.value.create_smb"
+      formControlName="smb_name"
+      [label]="'SMB Name' | translate"
+    ></ix-input>
+  </div>
+</ix-fieldset>

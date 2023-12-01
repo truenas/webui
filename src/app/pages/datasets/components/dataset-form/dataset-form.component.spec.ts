@@ -43,6 +43,13 @@ describe('DatasetFormComponent', () => {
     parent: new FormControl(''),
     share_type: new FormControl(DatasetPreset.Generic),
   }));
+  MockInstance(NameAndOptionsSectionComponent, 'datasetPresetForm', new FormGroup({
+    create_smb: new FormControl(true),
+    create_nfs: new FormControl(true),
+    smb_name: new FormControl('new_sbm_name'),
+  }));
+  MockInstance(NameAndOptionsSectionComponent, 'isCreatingSmb', true);
+  MockInstance(NameAndOptionsSectionComponent, 'isCreatingNfs', true);
   MockInstance(NameAndOptionsSectionComponent, 'getPayload', () => ({
     name: 'dataset',
   }));
@@ -79,6 +86,8 @@ describe('DatasetFormComponent', () => {
     ],
     providers: [
       mockWebsocket([
+        mockCall('sharing.smb.create'),
+        mockCall('sharing.nfs.create'),
         mockCall('pool.dataset.create', { id: 'saved-id' } as Dataset),
         mockCall('pool.dataset.update', { id: 'saved-id' } as Dataset),
         mockCall('filesystem.acl_is_trivial', false),
@@ -164,6 +173,20 @@ describe('DatasetFormComponent', () => {
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('creates new SMB and NFS when new form is submitted', async () => {
+      const submit = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await submit.click();
+
+      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('sharing.smb.create', [{
+        name: 'new_sbm_name',
+        path: '/mnt/saved-id',
+      }]);
+
+      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('sharing.nfs.create', [{
+        path: '/mnt/saved-id',
+      }]);
     });
 
     it('creates a new dataset when new form is submitted', async () => {
