@@ -1,8 +1,11 @@
 import { By } from '@angular/platform-browser';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { AuditEntry } from 'app/interfaces/audit.interface';
+import { AuditEvent } from 'app/enums/audit-event.enum';
+import { AuditEntry, AuditEventData } from 'app/interfaces/audit.interface';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
-import { EventDataDetailsCardComponent } from 'app/pages/audit/components/event-data-details-card/event-data-details-card.component';
+import {
+  EventDataDetailsCardComponent,
+} from 'app/pages/audit/components/event-data-details-card/event-data-details-card.component';
 
 const logEntry = {
   audit_id: '557cbf43-8c04-4250-bce6-e9ee1f45ec23',
@@ -20,7 +23,7 @@ const logEntry = {
       minor: 1,
     },
   },
-  event: 'AUTHENTICATION',
+  event: AuditEvent.Authentication,
   event_data: {
     logonId: '0',
     logonType: 3,
@@ -53,9 +56,9 @@ const logEntry = {
       value_raw: 0,
       value_parsed: 'SUCCESS',
     },
-  },
+  } as unknown as AuditEventData,
   success: true,
-} as unknown as AuditEntry;
+} as AuditEntry;
 
 const yamlContent = `Logon Id: '0'
 Logon Type: 3

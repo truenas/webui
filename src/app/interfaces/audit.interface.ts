@@ -21,7 +21,7 @@ export interface AuditConfig {
   quota_fill_critical: number;
 }
 
-interface EventData {
+export interface AuditEventData {
   host?: string;
   clientAccount?: string;
   file?: {
@@ -42,7 +42,7 @@ interface EventData {
 export interface SmbAuditEntry extends BaseAuditEntry {
   service: AuditService.Smb;
   service_data: AuditServiceData;
-  event_data: EventData;
+  event_data: AuditEventData;
 }
 
 export type AuditEntry = SmbAuditEntry;

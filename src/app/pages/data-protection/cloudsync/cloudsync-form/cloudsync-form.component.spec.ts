@@ -28,7 +28,7 @@ describe('CloudsyncFormComponent', () => {
     description: 'New Cloud Sync Task',
     direction: Direction.Push,
     path: '/mnt/my pool',
-    attributes: { folder: '/test/' },
+    attributes: { folder: '/test/' } as Record<string, string>,
     enabled: false,
     transfer_mode: TransferMode.Copy,
     encryption: true,
@@ -52,7 +52,7 @@ describe('CloudsyncFormComponent', () => {
       id: 2,
       name: 'test2',
       provider: 'MEGA',
-      attributes: { user: 'login', pass: 'password' },
+      attributes: { user: 'login', pass: 'password' } as Record<string, string>,
     },
     schedule: {
       minute: '0',
@@ -69,7 +69,7 @@ describe('CloudsyncFormComponent', () => {
     next_run_time: 'Disabled',
     next_run: 'Disabled',
     state: { state: 'PENDING' },
-  } as unknown as CloudSyncTaskUi;
+  } as CloudSyncTaskUi;
 
   let loader: HarnessLoader;
   let spectator: Spectator<CloudsyncFormComponent>;
