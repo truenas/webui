@@ -47,6 +47,9 @@ export class OauthProviderComponent {
   }
 
   onOauthMessage = (message: OauthMessage<OauthProviderData>): void => {
+    if (message.origin !== 'https://www.truenas.com') {
+      return;
+    }
     this.window.removeEventListener('message', this.onOauthMessage);
 
     if (!('oauth_portal' in message.data)) {
