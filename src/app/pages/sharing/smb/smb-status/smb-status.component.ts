@@ -13,6 +13,9 @@ export class SmbStatusComponent {
     label: this.translate.instant('Sessions'),
     path: '/sharing/smb/status/sessions',
   }, {
+    label: this.translate.instant('Locks'),
+    path: '/sharing/smb/status/locks',
+  }, {
     label: this.translate.instant('Shares'),
     path: '/sharing/smb/status/shares',
   }, {
