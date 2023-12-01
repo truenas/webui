@@ -22,10 +22,11 @@ import {
   take,
   tap,
 } from 'rxjs/operators';
-import { DatasetAclType } from 'app/enums/dataset.enum';
+import { DatasetShareType } from 'app/enums/dataset.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { helptextSharingSmb } from 'app/helptext/sharing';
+import { DatasetCreate } from 'app/interfaces/dataset.interface';
 import { Option } from 'app/interfaces/option.interface';
 import {
   SmbPresets,
@@ -71,8 +72,8 @@ export class SmbFormComponent implements OnInit {
 
   title: string = helptextSharingSmb.formTitleAdd;
 
-  createDatasetProps = {
-    acltype: DatasetAclType.Nfsv4,
+  createDatasetProps: Omit<DatasetCreate, 'name'> = {
+    share_type: DatasetShareType.Smb,
   };
 
   get isNew(): boolean {

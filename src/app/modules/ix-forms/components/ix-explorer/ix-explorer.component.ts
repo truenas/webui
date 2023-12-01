@@ -56,7 +56,9 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   readonly ExplorerNodeType = ExplorerNodeType;
 
   get createDatasetDisabled(): boolean {
-    return !this.parentDatasetName(Array.isArray(this.value) ? this.value[0] : this.value).length || this.isDisabled;
+    return !this.parentDatasetName(Array.isArray(this.value) ? this.value[0] : this.value).length
+      || !this.tree.treeModel.selectedLeafNodes.every((node: TreeNode<ExplorerNodeData>) => node.data.isMountpoint)
+      || this.isDisabled;
   }
 
   private readonly actionMapping: IActionMapping = {
@@ -195,6 +197,9 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
           return;
         }
 
+        const parentNode = this.tree.treeModel.selectedLeafNodes[0] as TreeNode<ExplorerNodeData>;
+        parentNode?.expand();
+
         this.setInitialNode();
         this.writeValue(`${this.root}/${dataset.name}`);
         this.onChange(this.value);
@@ -216,6 +221,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
         name: this.root,
         hasChildren: true,
         type: ExplorerNodeType.Directory,
+        isMountpoint: true,
       },
     ];
   }

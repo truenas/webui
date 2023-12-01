@@ -25,4 +25,5 @@ export interface ExplorerNodeData {
 
   children?: ExplorerNodeData[];
   isExpanded?: boolean;
+  isMountpoint?: boolean;
 }
