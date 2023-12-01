@@ -47,7 +47,6 @@ import { RestartSmbDialogComponent } from 'app/pages/sharing/smb/smb-form/restar
 import { SmbLockListComponent } from 'app/pages/sharing/smb/smb-status/components/smb-lock-list/smb-lock-list.component';
 import { SmbNotificationListComponent } from 'app/pages/sharing/smb/smb-status/components/smb-notification-list/smb-notification-list.component';
 import { SmbShareListComponent } from 'app/pages/sharing/smb/smb-status/components/smb-share-list/smb-share-list.component';
-import { UserService } from 'app/services/user.service';
 import { ServiceExtraActionsComponent } from './components/shares-dashboard/service-extra-actions/service-extra-actions.component';
 import { ServiceStateButtonComponent } from './components/shares-dashboard/service-state-button/service-state-button.component';
 import { SharesDashboardComponent } from './components/shares-dashboard/shares-dashboard.component';
@@ -145,9 +144,6 @@ import { SmbStatusComponent } from './smb/smb-status/smb-status.component';
     SmbStatusComponent,
     SmbShareListComponent,
     SmbNotificationListComponent,
-  ],
-  providers: [
-    UserService, // TODO: Check if can be removed since service is singleton
   ],
 })
 export class SharingModule {
