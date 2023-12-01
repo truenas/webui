@@ -233,8 +233,6 @@ describe('IxInputComponent', () => {
     });
 
     it('updates form control value only on blur', () => {
-      blurFormControl.setValue('');
-
       spectator.typeInElement('new value', 'input');
       spectator.detectComponentChanges();
 
