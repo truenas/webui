@@ -17,4 +17,13 @@
     <ix-icon name="delete"></ix-icon>
     <span>{{ 'Delete' | translate }}</span>
   </button>
+
+  <button
+    mat-button
+    [ixTest]="['logs', user.username]"
+    (click)="viewLogs(user)"
+  >
+    <ix-icon name="receipt_long"></ix-icon>
+    <span>{{ 'Audit Logs' | translate }}</span>
+  </button>
 </ix-table-expandable-row>
