@@ -6,6 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCardModule } from '@angular/material/card';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
@@ -43,8 +44,9 @@ import { TargetGlobalConfigurationComponent } from 'app/pages/sharing/iscsi/targ
 import { NfsListComponent } from 'app/pages/sharing/nfs/nfs-list/nfs-list.component';
 import { NfsSessionListComponent } from 'app/pages/sharing/nfs/nfs-session-list/nfs-session-list.component';
 import { RestartSmbDialogComponent } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
+import { SmbLockListComponent } from 'app/pages/sharing/smb/smb-status/components/smb-lock-list/smb-lock-list.component';
 import { SmbNotificationListComponent } from 'app/pages/sharing/smb/smb-status/components/smb-notification-list/smb-notification-list.component';
-import { UserService } from 'app/services/user.service';
+import { SmbShareListComponent } from 'app/pages/sharing/smb/smb-status/components/smb-share-list/smb-share-list.component';
 import { ServiceExtraActionsComponent } from './components/shares-dashboard/service-extra-actions/service-extra-actions.component';
 import { ServiceStateButtonComponent } from './components/shares-dashboard/service-state-button/service-state-button.component';
 import { SharesDashboardComponent } from './components/shares-dashboard/shares-dashboard.component';
@@ -64,8 +66,8 @@ import { routing } from './sharing.routing';
 import { SmbAclComponent } from './smb/smb-acl/smb-acl.component';
 import { SmbFormComponent } from './smb/smb-form/smb-form.component';
 import { SmbListComponent } from './smb/smb-list/smb-list.component';
+import { SmbOpenFilesComponent } from './smb/smb-status/components/smb-open-files/smb-open-files.component';
 import { SmbSessionListComponent } from './smb/smb-status/components/smb-session-list/smb-session-list.component';
-import { SmbShareListComponent } from './smb/smb-status/components/smb-share-list/smb-share-list.component';
 import { SmbStatusComponent } from './smb/smb-status/smb-status.component';
 
 @NgModule({
@@ -100,6 +102,7 @@ import { SmbStatusComponent } from './smb/smb-status/smb-status.component';
     MatToolbarModule,
     CoreComponents,
     LayoutModule,
+    MatExpansionModule,
     MatButtonToggleModule,
   ],
   declarations: [
@@ -135,13 +138,12 @@ import { SmbStatusComponent } from './smb/smb-status/smb-status.component';
     ServiceExtraActionsComponent,
     ServiceStateButtonComponent,
     SmbSessionListComponent,
+    SmbLockListComponent,
+    SmbOpenFilesComponent,
     NfsSessionListComponent,
     SmbStatusComponent,
     SmbShareListComponent,
     SmbNotificationListComponent,
-  ],
-  providers: [
-    UserService,
   ],
 })
 export class SharingModule {
