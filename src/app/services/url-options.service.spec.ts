@@ -49,7 +49,28 @@ describe('UrlOptionsService', () => {
         },
       });
 
-      expect(decodeURIComponent(location.path())).toBe('/test/url');
+      expect(location.path()).toBe('/test/url');
+    });
+  });
+
+  describe('buildUrlOptions', () => {
+    it('returns a string with URL options encoded', () => {
+      const url = spectator.service.buildUrl('/test/url', {
+        searchQuery: { isBasicQuery: false, filters: [['username', '=', 'Боб']] },
+        pagination: { pageNumber: 2, pageSize: 10 },
+        sorting: {
+          active: 1,
+          direction: SortDirection.Desc,
+          propertyName: 'test_column',
+          sortBy: jest.fn(),
+        },
+      });
+
+      expect(url).toEqual('/test/url/{'
+        + '"searchQuery":{"isBasicQuery":false,"filters":[["username","=","Боб"]]},'
+        + '"pagination":{"pageNumber":2,"pageSize":10},'
+        + '"sorting":{"active":1,"direction":"desc","propertyName":"test_column"}'
+        + '}');
     });
   });
 

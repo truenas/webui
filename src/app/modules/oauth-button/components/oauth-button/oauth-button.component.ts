@@ -107,6 +107,9 @@ export class OauthButtonComponent {
   }
 
   onLoggedInWithProviderSuccess = (message: OauthMessage<OauthProviderData>): void => {
+    if (message.origin !== 'https://www.truenas.com') {
+      return;
+    }
     if (!('oauth_portal' in message.data)) {
       return;
     }

@@ -6,6 +6,7 @@ import { catchError, EMPTY, switchMap } from 'rxjs';
 import { ExportFormat } from 'app/enums/export-format.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ApiJobMethod, ApiJobParams } from 'app/interfaces/api/api-job-directory.interface';
+import { PropertyPath } from 'app/interfaces/property-path.type';
 import { QueryFilters, QueryOptions } from 'app/interfaces/query-api.interface';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { TableSort } from 'app/modules/ix-table2/interfaces/table-sort.interface';
@@ -82,7 +83,9 @@ export class ExportButtonComponent<T, M extends ApiJobMethod> {
 
   private getQueryFilters(searchQuery: SearchQuery<T>): QueryFilters<T> {
     if (searchQuery && searchQuery.isBasicQuery) {
-      return [['event', '~', `(?i)${searchQuery.query || ''}`]];
+      // TODO: Breaks encapsulation of the component.
+      // TODO: Rest of the component is generic and is not tied to specific filters.
+      return [['event', '~', `(?i)${searchQuery.query || ''}`]] as unknown as QueryFilters<T>;
     }
 
     if (searchQuery && !searchQuery.isBasicQuery) {
@@ -102,7 +105,7 @@ export class ExportButtonComponent<T, M extends ApiJobMethod> {
 
     return {
       order_by: [
-        ((sorting.direction === SortDirection.Desc ? '-' : '') + (sorting.propertyName as string)) as keyof T,
+        ((sorting.direction === SortDirection.Desc ? '-' : '') + (sorting.propertyName as string)) as PropertyPath<T>,
       ],
     };
   }
