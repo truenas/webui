@@ -182,6 +182,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
         name: this.root,
         hasChildren: true,
         type: ExplorerNodeType.Directory,
+        isMountpoint: true,
       },
     ];
   }

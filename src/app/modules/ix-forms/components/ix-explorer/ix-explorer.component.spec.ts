@@ -73,6 +73,7 @@ describe('IxExplorerComponent', () => {
           name: mntPath,
           path: mntPath,
           type: ExplorerNodeType.Directory,
+          isMountpoint: true,
         },
       ]);
     });
