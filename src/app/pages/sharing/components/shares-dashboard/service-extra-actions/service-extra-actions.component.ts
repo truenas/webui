@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { AuditService } from 'app/enums/audit.enum';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
@@ -10,8 +11,10 @@ import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/s
 import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
 import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { UrlOptionsService } from 'app/services/url-options.service';
 import { WebSocketService } from 'app/services/ws.service';
 
+// TODO: Missing tests
 @UntilDestroy()
 @Component({
   selector: 'ix-service-extra-actions',
@@ -34,12 +37,17 @@ export class ServiceExtraActionsComponent {
     return this.service.service === ServiceName.Cifs || this.service.service === ServiceName.Nfs;
   }
 
+  get hasLogs(): boolean {
+    return this.service.service === ServiceName.Cifs;
+  }
+
   constructor(
     private translate: TranslateService,
     private ws: WebSocketService,
     private dialogService: DialogService,
     private router: Router,
     private slideInService: IxSlideInService,
+    private urlOptions: UrlOptionsService,
   ) {}
 
   changeServiceState(service: Service): void {
@@ -104,11 +112,22 @@ export class ServiceExtraActionsComponent {
     }
   }
 
+  // TODO: Outside of scope for this component.
   viewSessions(serviceName: ServiceName): void {
     if (serviceName === ServiceName.Cifs) {
       this.router.navigate(['/sharing', 'smb', 'status', 'sessions']);
     } else if (serviceName === ServiceName.Nfs) {
       this.router.navigate(['/sharing', 'nfs', 'sessions']);
     }
+  }
+
+  viewLogs(): void {
+    const url = this.urlOptions.buildUrl('/system/audit', {
+      searchQuery: {
+        isBasicQuery: false,
+        filters: [['service', '=', AuditService.Smb]],
+      },
+    });
+    this.router.navigateByUrl(url);
   }
 }
