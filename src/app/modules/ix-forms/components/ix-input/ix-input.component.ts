@@ -52,13 +52,14 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
 
   @ViewChild('ixInput') inputElementRef: ElementRef<HTMLInputElement>;
 
-  private _value: string | number = '';
+  private _value: string | number = this.controlDirective.value as string;
   formatted: string | number = '';
 
   isDisabled = false;
   showPassword = false;
   invalid = false;
   filteredOptions: Option[];
+  private lastKnownValue: string | number = this._value;
 
   onChange: (value: string | number) => void = (): void => {};
   onTouch: () => void = (): void => {};
@@ -188,7 +189,8 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
       }
     }
 
-    if (this.controlDirective.dirty || this.controlDirective.control.updateOn === 'change') {
+    if (this.value !== this.lastKnownValue) {
+      this.lastKnownValue = this.value;
       this.onChange(this.value);
     }
 
