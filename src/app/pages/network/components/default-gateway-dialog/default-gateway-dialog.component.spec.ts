@@ -48,7 +48,7 @@ describe('DefaultGatewayDialogComponent', () => {
 
   it('should close dialog and call WebSocket service on form submission', async () => {
     const defaultGatewayInput = await loader.getHarness(IxInputHarness.with({ label: 'New IPv4 Default Gateway' }));
-    await defaultGatewayInput.setValue('192.168.1.1');
+    await defaultGatewayInput.setValueAndTriggerBlur('192.168.1.1');
 
     const registerGatewayButton = await loader.getHarness(MatButtonHarness.with({ text: 'Register' }));
     await registerGatewayButton.click();
