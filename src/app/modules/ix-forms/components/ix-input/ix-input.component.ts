@@ -124,7 +124,10 @@ export class IxInputComponent implements ControlValueAccessor, OnInit, OnChanges
   }
 
   registerOnChange(onChange: (value: string | number) => void): void {
-    this.onChange = onChange;
+    this.onChange = (val) => {
+      this.lastKnownValue = val;
+      onChange(val);
+    };
   }
 
   registerOnTouched(onTouched: () => void): void {
