@@ -70,7 +70,7 @@ export class NetworkService {
 
   subscribeToInOutUpdates(): Observable<AllNetworkInterfacesUpdate> {
     return this.ws.subscribe('reporting.realtime').pipe(
-      map((event) => event.fields?.interfaces || null),
+      map((event) => event.fields?.interfaces),
       filter(Boolean),
     );
   }
