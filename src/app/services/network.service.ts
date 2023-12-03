@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import { Choices } from 'app/interfaces/choices.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { AllNetworkInterfacesUpdate } from 'app/interfaces/reporting.interface';
@@ -70,7 +70,8 @@ export class NetworkService {
 
   subscribeToInOutUpdates(): Observable<AllNetworkInterfacesUpdate> {
     return this.ws.subscribe('reporting.realtime').pipe(
-      map((event) => event.fields.interfaces),
+      map((event) => event.fields?.interfaces || null),
+      filter(Boolean),
     );
   }
 }
