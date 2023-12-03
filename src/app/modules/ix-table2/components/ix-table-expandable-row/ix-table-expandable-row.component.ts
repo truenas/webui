@@ -4,7 +4,7 @@ import {
 import { Option } from 'app/interfaces/option.interface';
 
 @Component({
-  selector: 'ix-table-expandable-row',
+  selector: 'ix-table2-expandable-row',
   templateUrl: './ix-table-expandable-row.component.html',
   styleUrls: ['./ix-table-expandable-row.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,

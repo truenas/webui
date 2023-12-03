@@ -5,7 +5,7 @@ export interface Schedule {
   dom?: string;
   month?: string;
   dow?: string;
-  // TODO: May not belong here.
+
   begin?: string;
   end?: string;
 }

@@ -1,11 +1,11 @@
 import { TemplateRef, ViewContainerRef, ChangeDetectorRef } from '@angular/core';
 import { of } from 'rxjs';
+import { HasRolesDirective } from 'app/directives/common/has-roles/has-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { AuthService } from 'app/services/auth/auth.service';
-import { IfUserHasRolesDirective } from './if-user-has-roles.directive';
 
-describe('IfUserHasRolesDirective', () => {
-  let directive: IfUserHasRolesDirective;
+describe('HasRolesDirective', () => {
+  let directive: HasRolesDirective;
   let authServiceMock: Partial<AuthService>;
   let templateRefMock: Partial<TemplateRef<unknown>> = {};
   let viewContainerRefMock: Partial<ViewContainerRef> = {
@@ -31,7 +31,7 @@ describe('IfUserHasRolesDirective', () => {
         user$: of({ roles: [Role.FullAdmin] }),
       };
 
-      directive = new IfUserHasRolesDirective(
+      directive = new HasRolesDirective(
         templateRefMock as TemplateRef<unknown>,
         viewContainerRefMock as ViewContainerRef,
         cdrMock as ChangeDetectorRef,
@@ -40,7 +40,7 @@ describe('IfUserHasRolesDirective', () => {
     });
 
     it('renders components for a Full Admin role', () => {
-      directive.ixIfUserHasRoles = [Role.DatasetWrite];
+      directive.ixHasRoles = [Role.DatasetWrite];
       expect(viewContainerRefMock.clear).toHaveBeenCalled();
       expect(viewContainerRefMock.createEmbeddedView).toHaveBeenCalledWith(templateRefMock);
     });
@@ -52,7 +52,7 @@ describe('IfUserHasRolesDirective', () => {
         user$: of({ roles: [] }),
       };
 
-      directive = new IfUserHasRolesDirective(
+      directive = new HasRolesDirective(
         templateRefMock as TemplateRef<unknown>,
         viewContainerRefMock as ViewContainerRef,
         cdrMock as ChangeDetectorRef,
@@ -61,7 +61,7 @@ describe('IfUserHasRolesDirective', () => {
     });
 
     it('not rendering components when user has no roles', () => {
-      directive.ixIfUserHasRoles = [Role.DatasetWrite];
+      directive.ixHasRoles = [Role.DatasetWrite];
       expect(viewContainerRefMock.clear).toHaveBeenCalled();
       expect(viewContainerRefMock.createEmbeddedView).not.toHaveBeenCalled();
     });
@@ -73,7 +73,7 @@ describe('IfUserHasRolesDirective', () => {
         user$: of({ roles: [Role.ReplicationTaskRead] }),
       };
 
-      directive = new IfUserHasRolesDirective(
+      directive = new HasRolesDirective(
         templateRefMock as TemplateRef<unknown>,
         viewContainerRefMock as ViewContainerRef,
         cdrMock as ChangeDetectorRef,
@@ -82,7 +82,7 @@ describe('IfUserHasRolesDirective', () => {
     });
 
     it('not rendering components when empty roles to check provided', () => {
-      directive.ixIfUserHasRoles = [];
+      directive.ixHasRoles = [];
       expect(viewContainerRefMock.clear).toHaveBeenCalled();
       expect(viewContainerRefMock.createEmbeddedView).not.toHaveBeenCalled();
     });
@@ -94,7 +94,7 @@ describe('IfUserHasRolesDirective', () => {
         user$: of({ roles: [Role.ReplicationTaskWrite, Role.SharingNfsRead] }),
       };
 
-      directive = new IfUserHasRolesDirective(
+      directive = new HasRolesDirective(
         templateRefMock as TemplateRef<unknown>,
         viewContainerRefMock as ViewContainerRef,
         cdrMock as ChangeDetectorRef,
@@ -103,13 +103,13 @@ describe('IfUserHasRolesDirective', () => {
     });
 
     it('renders component because of ReplicationTaskWrite role when only ReplicationTaskRead is required', () => {
-      directive.ixIfUserHasRoles = [Role.ReplicationTaskRead];
+      directive.ixHasRoles = [Role.ReplicationTaskRead];
       expect(viewContainerRefMock.clear).toHaveBeenCalled();
       expect(viewContainerRefMock.createEmbeddedView).toHaveBeenCalledWith(templateRefMock);
     });
 
     it('not rendering component because of SharingNfsWrite role expected but user has SharingNfsRead only', () => {
-      directive.ixIfUserHasRoles = [Role.SharingNfsWrite];
+      directive.ixHasRoles = [Role.SharingNfsWrite];
       expect(viewContainerRefMock.clear).toHaveBeenCalled();
       expect(viewContainerRefMock.createEmbeddedView).not.toHaveBeenCalled();
     });

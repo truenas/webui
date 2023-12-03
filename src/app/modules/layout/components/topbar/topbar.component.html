@@ -59,20 +59,22 @@
       <ix-jobs-indicator></ix-jobs-indicator>
 
       <!-- Alert toggle button -->
-      <button
-        *appLet="alertBadgeCount$ | async as alertBadgeCount"
-        matBadgeSize="small"
-        matBadgeColor="warn"
-        mat-icon-button
-        class="topbar-button-right"
-        ixTest="alerts-indicator"
-        [matBadge]="alertBadgeCount"
-        [matBadgeHidden]="alertBadgeCount === 0"
-        [matTooltip]="tooltips.alerts | translate"
-        (click)="onAlertIndicatorPressed()"
-      >
-        <ix-icon name="notifications"></ix-icon>
-      </button>
+      <ng-container *ixHasRoles="[Role.AlertListRead]">
+        <button
+          *appLet="alertBadgeCount$ | async as alertBadgeCount"
+          matBadgeSize="small"
+          matBadgeColor="warn"
+          mat-icon-button
+          class="topbar-button-right"
+          ixTest="alerts-indicator"
+          [matBadge]="alertBadgeCount"
+          [matBadgeHidden]="alertBadgeCount === 0"
+          [matTooltip]="tooltips.alerts | translate"
+          (click)="onAlertIndicatorPressed()"
+        >
+          <ix-icon name="notifications"></ix-icon>
+        </button>
+      </ng-container>
 
       <ix-user-menu></ix-user-menu>
       <ix-power-menu></ix-power-menu>

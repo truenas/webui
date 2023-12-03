@@ -12,6 +12,7 @@ import {
 import { MockEnclosureUtils } from 'app/core/testing/utils/mock-enclosure.utils';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
+import { WebsocketErrorName } from 'app/enums/websocket-error-name.enum';
 import {
   ApiCallDirectory, ApiCallMethod,
 } from 'app/interfaces/api/api-call-directory.interface';
@@ -19,6 +20,7 @@ import { ApiEventDirectory } from 'app/interfaces/api/api-event-directory.interf
 import { ApiJobDirectory, ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { ApiEvent, IncomingWebsocketMessage, ResultMessage } from 'app/interfaces/api-message.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
 
 @UntilDestroy()
@@ -133,7 +135,7 @@ export class WebSocketService {
       filter((data: IncomingWebsocketMessage) => data.msg === IncomingApiMessageType.Result && data.id === uuid),
       switchMap((data: IncomingWebsocketMessage) => {
         if ('error' in data && data.error) {
-          console.error('Error: ', data.error);
+          this.printError(data.error, { method, params });
           return throwError(() => data.error);
         }
 
@@ -160,5 +162,15 @@ export class WebSocketService {
       filter((apiEvent) => apiEvent.id === jobId),
       map((apiEvent) => apiEvent.fields),
     );
+  }
+
+  private printError(error: WebsocketError, context: { method: string; params: unknown }): void {
+    if (error.errname === WebsocketErrorName.NoAccess) {
+      console.error(`Access denied to ${context.method} with ${context.params ? JSON.stringify(context.params) : 'no params'}`);
+      return;
+    }
+
+    // TODO: Do not log validation errors.
+    console.error('Error: ', error);
   }
 }
