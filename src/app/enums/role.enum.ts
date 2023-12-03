@@ -50,6 +50,10 @@ export enum Role {
   SharingIscsiTargetExtentWrite = 'SHARING_ISCSI_TARGETEXTENT_WRITE',
   SharingIscsiRead = 'SHARING_ISCSI_READ',
   SharingIscsiWrite = 'SHARING_ISCSI_WRITE',
+  NetworkGeneralRead = 'NETWORK_GENERAL_READ',
+  NetworkGeneralWrite = 'NETWORK_GENERAL_WRITE',
+  NetworkInterfaceRead = 'NETWORK_INTERFACE_READ',
+  NetworkInterfaceWrite = 'NETWORK_INTERFACE_WRITE',
 }
 
 export const roleNames = new Map<Role, string>([
@@ -102,4 +106,8 @@ export const roleNames = new Map<Role, string>([
   [Role.SharingIscsiTargetExtentWrite, T('Sharing iSCSI Target Extent Write')],
   [Role.SharingIscsiRead, T('Sharing iSCSI Read')],
   [Role.SharingIscsiWrite, T('Sharing iSCSI Write')],
+  [Role.NetworkGeneralRead, T('Network General Read')],
+  [Role.NetworkGeneralWrite, T('Network General Write')],
+  [Role.NetworkInterfaceRead, T('Network Interface Read')],
+  [Role.NetworkInterfaceWrite, T('Network Interface Write')],
 ]);
