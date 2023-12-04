@@ -1,117 +1,88 @@
-import { TemplateRef, ViewContainerRef, ChangeDetectorRef } from '@angular/core';
-import { of } from 'rxjs';
-import { HasRolesDirective } from 'app/directives/common/has-roles/has-roles.directive';
+import { createHostFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { BehaviorSubject } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
+import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { AuthService } from 'app/services/auth/auth.service';
+import { HasRolesDirective } from './has-roles.directive';
 
 describe('HasRolesDirective', () => {
-  let directive: HasRolesDirective;
-  let authServiceMock: Partial<AuthService>;
-  let templateRefMock: Partial<TemplateRef<unknown>> = {};
-  let viewContainerRefMock: Partial<ViewContainerRef> = {
-    clear: jest.fn(),
-    createEmbeddedView: jest.fn(),
-  };
-  let cdrMock: Partial<ChangeDetectorRef> = {
-    markForCheck: jest.fn(),
-  };
+  let spectator: Spectator<HasRolesDirective>;
+  const currentUser$ = new BehaviorSubject<LoggedInUser>(null);
 
-  templateRefMock = {};
-  viewContainerRefMock = {
-    clear: jest.fn(),
-    createEmbeddedView: jest.fn(),
-  };
-  cdrMock = {
-    markForCheck: jest.fn(),
-  };
-
-  describe('Testing Full Admin role to be able to view each component', () => {
-    beforeEach(() => {
-      authServiceMock = {
-        user$: of({ roles: [Role.FullAdmin] }),
-      };
-
-      directive = new HasRolesDirective(
-        templateRefMock as TemplateRef<unknown>,
-        viewContainerRefMock as ViewContainerRef,
-        cdrMock as ChangeDetectorRef,
-        authServiceMock as AuthService,
-      );
-    });
-
-    it('renders components for a Full Admin role', () => {
-      directive.ixHasRoles = [Role.DatasetWrite];
-      expect(viewContainerRefMock.clear).toHaveBeenCalled();
-      expect(viewContainerRefMock.createEmbeddedView).toHaveBeenCalledWith(templateRefMock);
-    });
+  const createHost = createHostFactory({
+    component: HasRolesDirective,
+    providers: [
+      mockProvider(AuthService, {
+        user$: currentUser$,
+      }),
+    ],
   });
 
-  describe('Testing user with no roles', () => {
-    beforeEach(() => {
-      authServiceMock = {
-        user$: of({ roles: [] }),
-      };
+  it('does not show an element when there is no logged in user', () => {
+    spectator = createHost(
+      '<div *ixHasRoles="[Role.Readonly]">Content</div>',
+      {
+        hostProps: { Role },
+      },
+    );
 
-      directive = new HasRolesDirective(
-        templateRefMock as TemplateRef<unknown>,
-        viewContainerRefMock as ViewContainerRef,
-        cdrMock as ChangeDetectorRef,
-        authServiceMock as AuthService,
-      );
-    });
-
-    it('not rendering components when user has no roles', () => {
-      directive.ixHasRoles = [Role.DatasetWrite];
-      expect(viewContainerRefMock.clear).toHaveBeenCalled();
-      expect(viewContainerRefMock.createEmbeddedView).not.toHaveBeenCalled();
-    });
+    expect(spectator.query('div')).not.toExist();
   });
 
-  describe('Testing edge case: Empty roles array', () => {
-    beforeEach(() => {
-      authServiceMock = {
-        user$: of({ roles: [Role.ReplicationTaskRead] }),
-      };
+  it('shows an element when user has a FullAdmin role regardless of roles on the element', () => {
+    currentUser$.next({
+      privilege: {
+        roles: {
+          $set: [Role.FullAdmin],
+        },
+      },
+    } as LoggedInUser);
 
-      directive = new HasRolesDirective(
-        templateRefMock as TemplateRef<unknown>,
-        viewContainerRefMock as ViewContainerRef,
-        cdrMock as ChangeDetectorRef,
-        authServiceMock as AuthService,
-      );
-    });
+    spectator = createHost(
+      '<div *ixHasRoles="[Role.DatasetWrite]">Content</div>',
+      {
+        hostProps: { Role },
+      },
+    );
 
-    it('not rendering components when empty roles to check provided', () => {
-      directive.ixHasRoles = [];
-      expect(viewContainerRefMock.clear).toHaveBeenCalled();
-      expect(viewContainerRefMock.createEmbeddedView).not.toHaveBeenCalled();
-    });
+    expect(spectator.query('div')).toHaveText('Content');
   });
 
-  describe('Testing non-admin roles', () => {
-    beforeEach(() => {
-      authServiceMock = {
-        user$: of({ roles: [Role.ReplicationTaskWrite, Role.SharingNfsRead] }),
-      };
+  it('shows an element when one of the user`s roles matches one of the roles required on the element', () => {
+    currentUser$.next({
+      privilege: {
+        roles: {
+          $set: [Role.DatasetRead, Role.DatasetWrite],
+        },
+      },
+    } as LoggedInUser);
 
-      directive = new HasRolesDirective(
-        templateRefMock as TemplateRef<unknown>,
-        viewContainerRefMock as ViewContainerRef,
-        cdrMock as ChangeDetectorRef,
-        authServiceMock as AuthService,
-      );
-    });
+    spectator = createHost(
+      '<div *ixHasRoles="[Role.DatasetRead, Role.Readonly]">Content</div>',
+      {
+        hostProps: { Role },
+      },
+    );
 
-    it('renders component because of ReplicationTaskWrite role when only ReplicationTaskRead is required', () => {
-      directive.ixHasRoles = [Role.ReplicationTaskRead];
-      expect(viewContainerRefMock.clear).toHaveBeenCalled();
-      expect(viewContainerRefMock.createEmbeddedView).toHaveBeenCalledWith(templateRefMock);
-    });
+    expect(spectator.query('div')).toHaveText('Content');
+  });
 
-    it('not rendering component because of SharingNfsWrite role expected but user has SharingNfsRead only', () => {
-      directive.ixHasRoles = [Role.SharingNfsWrite];
-      expect(viewContainerRefMock.clear).toHaveBeenCalled();
-      expect(viewContainerRefMock.createEmbeddedView).not.toHaveBeenCalled();
-    });
+  it('does not show an element when none of the user`s roles matches any of the roles required on the element', () => {
+    currentUser$.next({
+      privilege: {
+        roles: {
+          $set: [Role.DatasetRead, Role.DatasetWrite],
+        },
+      },
+    } as LoggedInUser);
+
+    spectator = createHost(
+      '<div *ixHasRoles="[Role.Readonly]">Content</div>',
+      {
+        hostProps: { Role },
+      },
+    );
+
+    expect(spectator.query('div')).not.toExist();
   });
 });

@@ -12,10 +12,9 @@ import {
 import { MockEnclosureUtils } from 'app/core/testing/utils/mock-enclosure.utils';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
+import { ResponseErrorType } from 'app/enums/response-error-type.enum';
 import { WebsocketErrorName } from 'app/enums/websocket-error-name.enum';
-import {
-  ApiCallDirectory, ApiCallMethod,
-} from 'app/interfaces/api/api-call-directory.interface';
+import { ApiCallDirectory, ApiCallMethod } from 'app/interfaces/api/api-call-directory.interface';
 import { ApiEventDirectory } from 'app/interfaces/api/api-event-directory.interface';
 import { ApiJobDirectory, ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { ApiEvent, IncomingWebsocketMessage, ResultMessage } from 'app/interfaces/api-message.interface';
@@ -170,7 +169,11 @@ export class WebSocketService {
       return;
     }
 
-    // TODO: Do not log validation errors.
+    // Do not log validation errors.
+    if (error.type === ResponseErrorType.Validation) {
+      return;
+    }
+
     console.error('Error: ', error);
   }
 }

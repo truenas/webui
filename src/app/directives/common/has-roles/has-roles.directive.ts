@@ -26,7 +26,7 @@ export class HasRolesDirective {
     private authService: AuthService,
   ) {
     this.authService.user$.pipe(untilDestroyed(this)).subscribe((user) => {
-      this.currentUserRoles = user.privilege.roles;
+      this.currentUserRoles = user?.privilege?.roles?.$set || [];
       this.cdr.markForCheck();
     });
   }
