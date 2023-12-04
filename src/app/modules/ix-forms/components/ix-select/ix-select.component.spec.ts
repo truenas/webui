@@ -1,5 +1,6 @@
 import { HarnessLoader, parallel } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { fakeAsync, tick } from '@angular/core/testing';
 import {
   FormControl, FormsModule, NgControl, ReactiveFormsModule,
 } from '@angular/forms';
@@ -77,18 +78,16 @@ describe('IxSelectComponent', () => {
       expect(label.tooltip).toBe('Select group to use.');
     });
 
-    it('shows loader while options are loading', async () => {
+    it('shows loader while options are loading', fakeAsync(() => {
       const opt$ = options$.pipe(delay(100));
       spectator.setInput({ options: opt$ });
 
       expect(spectator.query('mat-progress-spinner')).toBeVisible();
-      // TODO: Fix
-      // eslint-disable-next-line no-promise-executor-return
-      await new Promise((smth) => setTimeout(smth, 100));
+      tick(100);
       spectator.detectChanges();
 
       expect(spectator.query('mat-progress-spinner')).not.toBeVisible();
-    });
+    }));
 
     it('shows a list of options', async () => {
       spectator.setInput({ options: options$ });
