@@ -44,6 +44,7 @@ export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
   });
 
   readonly helptext = helptext;
+  readonly DatasetPreset = DatasetPreset;
 
   get isCreatingSmb(): boolean {
     return this.form.value.share_type === DatasetPreset.Smb

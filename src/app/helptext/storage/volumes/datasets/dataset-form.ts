@@ -105,6 +105,14 @@ export default {
  special class. Before setting this property, a special class vdev must be added to the pool.\
  See <a href="https://zfsonlinux.org/manpages/0.7.13/man8/zpool.8.html" target="_blank">zpool(8)</a> for more details on the special allocation'),
 
+  dataset_form_dataset_preset_comment: {
+    generic: T('Generic dataset suitable for any share type.'),
+    smb: T('Dataset optimized dataset for SMB shares.'),
+    multiprotocol: T('Configured for simultaneous use with SMB and NFS on the same dataset.'),
+    apps: T('Dataset for use by an application. If you plan to deploy container applications,\
+ the system automatically creates the ix-applications dataset but this is not used for application data storage.'),
+  },
+
   dataset_form_encryption: {
     inherit_checkbox_tooltip: T('Use the encryption properties of the root dataset.'),
     encryption_checkbox_tooltip: T('Secure data within this dataset. Data is unusable until \

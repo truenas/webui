@@ -100,7 +100,7 @@ export enum DatasetPreset {
 
 export const datasetPresetLabels = new Map<DatasetPreset, string>([
   [DatasetPreset.Generic, T('Generic')],
-  [DatasetPreset.Smb, T('SMB - recommended for sharing')],
+  [DatasetPreset.Smb, T('SMB')],
   [DatasetPreset.Apps, T('Apps')],
   [DatasetPreset.Multiprotocol, T('Multiprotocol')],
 ]);
