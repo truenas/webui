@@ -6,13 +6,11 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import {
-  format, subDays, subMonths, subWeeks,
-} from 'date-fns';
 import { toSvg } from 'jdenticon';
 import { filter, map, of } from 'rxjs';
 import { AuditEvent, auditEventLabels } from 'app/enums/audit-event.enum';
 import { getLogImportantData } from 'app/helpers/get-log-important-data.helper';
+import { ParamsBuilder } from 'app/helpers/params-builder/params-builder.class';
 import { WINDOW } from 'app/helpers/window.helper';
 import { AuditEntry, SmbAuditEntry } from 'app/interfaces/audit.interface';
 import { ApiDataProvider } from 'app/modules/ix-table2/classes/api-data-provider/api-data-provider';
@@ -29,6 +27,7 @@ import {
   SearchQuery,
 } from 'app/modules/search-input/types/search-query.interface';
 import {
+  dateProperty,
   searchProperties,
   textProperty,
 } from 'app/modules/search-input/utils/search-properties.utils';
@@ -63,7 +62,9 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
     }),
     textColumn({
       title: this.translate.instant('Event'),
-      getValue: (row) => this.translate.instant(auditEventLabels.get(row.event)),
+      getValue: (row) => (auditEventLabels.has(row.event)
+        ? this.translate.instant(auditEventLabels.get(row.event))
+        : ''),
     }),
     textColumn({
       title: this.translate.instant('Event Data'),
@@ -96,27 +97,9 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
 
       this.searchProperties = searchProperties<AuditEntry>([
         textProperty('audit_id', this.translate.instant('ID'), of([])),
-        textProperty(
+        dateProperty(
           'message_timestamp',
           this.translate.instant('Timestamp'),
-          of([
-            {
-              label: 'Today',
-              value: `"${format(new Date(), 'yyyy-MM-dd')}"`,
-            },
-            {
-              label: 'Yesterday',
-              value: `"${format(subDays(new Date(), 1), 'yyyy-MM-dd')}"`,
-            },
-            {
-              label: 'Last week',
-              value: `"${format(subWeeks(new Date(), 1), 'yyyy-MM-dd')}"`,
-            },
-            {
-              label: 'Last month',
-              value: `"${format(subMonths(new Date(), 1), 'yyyy-MM-dd')}"`,
-            },
-          ]),
         ),
         textProperty(
           'address',
@@ -157,7 +140,7 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
       };
 
       if (options.sorting) this.dataProvider.setSorting(options.sorting);
-      if (options.searchQuery) this.searchQuery = options.searchQuery;
+      if (options.searchQuery) this.searchQuery = options.searchQuery as SearchQuery<AuditEntry>;
 
       this.onSearch(this.searchQuery);
     });
@@ -191,8 +174,14 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
     this.searchQuery = query;
 
     if (query && query.isBasicQuery) {
-      // TODO: Create a separate class to handle this.
-      this.dataProvider.setParams([[['event', '~', `(?i)${query.query || ''}`]]]);
+      const term = `(?i)${query.query || ''}`;
+      const params = new ParamsBuilder<AuditEntry>()
+        .filter('event', '~', term)
+        .orFilter('username', '~', term)
+        .orFilter('service', '~', term)
+        .getParams();
+
+      this.dataProvider.setParams(params);
     }
 
     if (query && !query.isBasicQuery) {

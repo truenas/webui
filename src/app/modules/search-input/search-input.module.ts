@@ -1,6 +1,9 @@
-import { NgIf } from '@angular/common';
+import { CommonModule, NgIf } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatCardModule } from '@angular/material/card';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
 import { TranslateModule } from '@ngx-translate/core';
 import { CastModule } from 'app/modules/cast/cast.module';
@@ -18,6 +21,7 @@ import { SearchInputComponent } from './components/search-input/search-input.com
 
 @NgModule({
   imports: [
+    CommonModule,
     IxIconModule,
     MatInputModule,
     NgIf,
@@ -26,6 +30,9 @@ import { SearchInputComponent } from './components/search-input/search-input.com
     ReactiveFormsModule,
     FormsModule,
     CastModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatCardModule,
   ],
   exports: [
     SearchInputComponent,

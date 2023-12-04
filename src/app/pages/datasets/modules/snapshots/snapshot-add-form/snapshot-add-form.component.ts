@@ -13,7 +13,9 @@ import {
 import { map } from 'rxjs/operators';
 import { singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import helptext from 'app/helptext/storage/snapshots/snapshots';
+import { Dataset } from 'app/interfaces/dataset.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { QueryFilters } from 'app/interfaces/query-api.interface';
 import { CreateZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
@@ -144,7 +146,7 @@ export class SnapshotAddFormComponent implements OnInit {
 
   private getDatasetOptions(): Observable<Option[]> {
     return this.ws.call('pool.dataset.query', [
-      snapshotExcludeBootQueryFilter,
+      snapshotExcludeBootQueryFilter as QueryFilters<Dataset>,
       { extra: { flat: true } },
     ]).pipe(
       map((datasets) => datasets.map((dataset) => ({ label: dataset.name, value: dataset.name }))),

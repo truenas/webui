@@ -858,3 +858,8 @@ body {
     }
   }
 }
+
+body .mat-calendar-previous-button::after,
+body .mat-calendar-next-button::after {
+  margin: 10px;
+}
