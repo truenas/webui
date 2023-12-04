@@ -283,6 +283,10 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     cursor: default;
   }
 
+  .mat-calendar-body-today:not(.mat-calendar-body-selected):not(.mat-calendar-body-comparison-identical) {
+    border-color: var(--focus-brd);
+  }
+
   .mat-raised-button.mat-primary[disabled],
   .mat-raised-button.mat-accent[disabled],
   .mat-raised-button.mat-warn[disabled],
