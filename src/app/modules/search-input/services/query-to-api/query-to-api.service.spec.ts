@@ -1,13 +1,17 @@
+import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import {
   ConnectorType,
   QueryParsingResult,
 } from 'app/modules/search-input/services/query-parser/query-parsing-result.interface';
 import { QueryToApiService } from 'app/modules/search-input/services/query-to-api/query-to-api.service';
+import { dateProperty, memoryProperty } from 'app/modules/search-input/utils/search-properties.utils';
 
 interface User {
   username: string;
   age: number;
   city: string;
+  message_timestamp: string;
+  memory_size: string;
 }
 
 describe('QueryToApiService', () => {
@@ -163,6 +167,38 @@ describe('QueryToApiService', () => {
         ],
       ],
       ['city', '=', 'London'],
+    ]);
+  });
+
+  it('parses memory type and date type', () => {
+    const condition = service.buildFilters({
+      tree: {
+        left: {
+          comparator: '>',
+          value: '2023-11-15',
+          property: 'Timestamp',
+        },
+        connector: 'AND',
+        right: {
+          comparator: '<',
+          value: '55 mb',
+          property: 'Memory size',
+        },
+      },
+    } as QueryParsingResult, [
+      dateProperty(
+        'message_timestamp',
+        'Timestamp',
+      ),
+      memoryProperty(
+        'memory_size',
+        'Memory size',
+        { memorySizeParsing() { return 57671680; } } as unknown as IxFormatterService,
+      ),
+    ]);
+
+    expect(condition).toEqual([
+      ['message_timestamp', '>', 1699999200000], ['memory_size', '<', 57671680],
     ]);
   });
 });

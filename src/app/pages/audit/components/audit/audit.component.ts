@@ -121,7 +121,10 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
         textProperty(
           'event',
           this.translate.instant('Event'),
-          of(Object.values(AuditEvent).map((value) => ({ label: value, value: `"${value}"` }))),
+          of(Object.values(AuditEvent).map((value) => ({
+            label: this.translate.instant(auditEventLabels.get(value)),
+            value: `"${value}"`,
+          }))),
         ),
       ]);
       this.cdr.markForCheck();

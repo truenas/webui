@@ -3,9 +3,10 @@ import { ParamsBuilder, ParamsBuilderGroup } from 'app/helpers/params-builder/pa
 import { QueryFilter, QueryFilters } from 'app/interfaces/query-api.interface';
 import {
   Condition, ConditionGroup, ConnectorType, isConditionGroup,
+  LiteralValue,
   QueryParsingResult,
 } from 'app/modules/search-input/services/query-parser/query-parsing-result.interface';
-import { SearchProperty } from 'app/modules/search-input/types/search-property.interface';
+import { PropertyType, SearchProperty } from 'app/modules/search-input/types/search-property.interface';
 
 @Injectable()
 export class QueryToApiService<T> {
@@ -62,8 +63,49 @@ export class QueryToApiService<T> {
   }
 
   private buildCondition(condition: Condition): QueryFilter<T> {
-    // TODO: This should 1) map column name 2) transform column value if necessary
-    // TODO: See searchProperties
-    return [condition.property, condition.comparator, condition.value] as QueryFilter<T>;
+    const currentProperty = this.searchProperties.find((value) => value.label === condition.property);
+    const mappedConditionProperty = (currentProperty?.property || condition.property);
+    const mappedConditionValue = this.mapValueByPropertyType(currentProperty, condition);
+
+    return [mappedConditionProperty, condition.comparator, mappedConditionValue] as QueryFilter<T>;
+  }
+
+  private mapValueByPropertyType(property: SearchProperty<T>, condition: Condition): LiteralValue | LiteralValue[] {
+    if (property?.propertyType === PropertyType.Date) {
+      return this.convertDateToMilliseconds(condition.value);
+    }
+
+    if (property?.propertyType === PropertyType.Memory) {
+      return this.parseMemoryValue(property, condition.value);
+    }
+
+    return condition.value;
+  }
+
+  private convertDateToMilliseconds(value: LiteralValue | LiteralValue[]): number | number[] {
+    const convertDate = (dateValue: LiteralValue): number => {
+      const date = new Date(dateValue as string);
+      if (Number.isNaN(date.getTime())) {
+        return null;
+      }
+      date.setHours(0, 0, 0, 0);
+      return date.getTime();
+    };
+
+    if (Array.isArray(value)) {
+      return value.map(convertDate);
+    }
+    return convertDate(value);
+  }
+
+  private parseMemoryValue(property: SearchProperty<T>, value: LiteralValue | LiteralValue[]): number | number[] {
+    const parseValue = (memoryValue: LiteralValue): number => {
+      return property.parseValue(memoryValue as string) as number;
+    };
+
+    if (Array.isArray(value)) {
+      return value.map(parseValue);
+    }
+    return parseValue(value);
   }
 }
