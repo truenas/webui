@@ -92,9 +92,6 @@ describe('FileTicketFormComponent', () => {
     const title = await loader.getHarness(IxInputHarness.with({ label: 'Subject' }));
     await title.setValue('Test subject');
 
-    // const category = await loader.getHarness(IxSelectHarness.with({ label: 'Category' }));
-    // await category.setValue('WebUI');
-
     expect(spectator.component.getPayload()).toEqual({
       category: '',
       title: 'Test subject',

@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit, ViewChild, ViewContainerRef,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, ComponentRef, Inject, OnInit, ViewChild, ViewContainerRef,
 } from '@angular/core';
 import { Validators, FormBuilder } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
@@ -12,7 +12,7 @@ import { environment } from 'environments/environment';
 import {
   EMPTY, Observable, catchError, filter, of, switchMap, take,
 } from 'rxjs';
-import { TicketType, ticketAcceptedFiles } from 'app/enums/file-ticket.enum';
+import { ticketAcceptedFiles } from 'app/enums/file-ticket.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -28,7 +28,6 @@ import { CreateNewTicket } from 'app/modules/ix-feedback/interfaces/file-ticket.
 import { IxFeedbackService } from 'app/modules/ix-feedback/ix-feedback.service';
 import { ixManualValidateError } from 'app/modules/ix-forms/components/ix-errors/ix-errors.component';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { rangeValidator } from 'app/modules/ix-forms/validators/range-validation/range-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -81,10 +80,6 @@ export class FeedbackDialogComponent implements OnInit {
     return [FeedbackType.Bug, FeedbackType.Suggestion].includes(this.form.controls.type.value);
   }
 
-  get showSubmitButton(): boolean {
-    return true;
-  }
-
   readonly tooltips = {
     token: helptext.token.tooltip,
     type: helptext.type.tooltip,
@@ -127,7 +122,6 @@ export class FeedbackDialogComponent implements OnInit {
     private fileUpload: IxFileUploadService,
     private dialog: DialogService,
     private systemGeneralService: SystemGeneralService,
-    private validatorsService: IxValidatorsService,
     @Inject(WINDOW) private window: Window,
   ) {}
 
@@ -215,16 +209,29 @@ export class FeedbackDialogComponent implements OnInit {
 
   private submitBugOrFeature(): void {
     const values = this.form.value;
-    const ticketValues = this.ticketForm.form.value;
-
-    const payload: CreateNewTicket = {
+    const ticketValues = this.ticketForm.getPayload();
+    let payload: CreateNewTicket = {
       category: ticketValues.category,
       body: values.message,
       attach_debug: values.attach_debug,
       title: ticketValues.title,
-      ...(!this.isEnterprise ? { type: values.type as unknown as TicketType } : {}),
-      ...ticketValues,
     };
+
+    if (this.isEnterprise) {
+      payload = {
+        name: ticketValues.name,
+        email: ticketValues.email,
+        phone: ticketValues.phone,
+        cc: ticketValues.cc,
+        environment: ticketValues.environment,
+        criticality: ticketValues.criticality,
+        category: ticketValues.category,
+        title: ticketValues.title,
+        attach_debug: values.attach_debug,
+        body: values.message,
+      };
+    }
+
     this.createNewTicket(payload);
   }
 
@@ -311,8 +318,9 @@ export class FeedbackDialogComponent implements OnInit {
 
     this.form.controls.type.valueChanges.pipe(untilDestroyed(this)).subscribe((type) => {
       if (type === FeedbackType.Review) {
-        this.switchToReview();
+        this.ticketForm = null;
         this.ticketFormContainer.clear();
+        this.switchToReview();
       } else {
         this.switchToBugOrImprovement();
         this.renderTicketForm();
@@ -372,14 +380,16 @@ export class FeedbackDialogComponent implements OnInit {
     });
   }
 
+  private getFormRef(): ComponentRef<FileTicketFormComponent | FileTicketLicensedFormComponent> {
+    if (this.isEnterprise) {
+      return this.ticketFormContainer.createComponent(FileTicketLicensedFormComponent);
+    }
+    return this.ticketFormContainer.createComponent(FileTicketFormComponent);
+  }
+
   private renderTicketForm(): void {
     this.ticketFormContainer?.clear();
-    if (this.isEnterprise) {
-      const formRef = this.ticketFormContainer.createComponent(FileTicketLicensedFormComponent);
-      this.ticketForm = formRef.instance;
-    } else {
-      const formRef = this.ticketFormContainer.createComponent(FileTicketFormComponent);
-      this.ticketForm = formRef.instance;
-    }
+    const formRef = this.getFormRef();
+    this.ticketForm = formRef.instance;
   }
 }

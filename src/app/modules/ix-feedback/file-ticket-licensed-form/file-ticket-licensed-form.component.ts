@@ -1,5 +1,5 @@
 import {
-  Component, ChangeDetectionStrategy,
+  Component,
 } from '@angular/core';
 import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
@@ -24,7 +24,6 @@ import { emailValidator } from 'app/modules/ix-forms/validators/email-validation
 @UntilDestroy()
 @Component({
   templateUrl: './file-ticket-licensed-form.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FileTicketLicensedFormComponent {
   form = this.fb.group({

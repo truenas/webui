@@ -1,5 +1,5 @@
 import {
-  Component, ChangeDetectionStrategy, ChangeDetectorRef,
+  Component,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
@@ -26,7 +26,6 @@ import { WebSocketService } from 'app/services/ws.service';
 @UntilDestroy()
 @Component({
   templateUrl: './file-ticket-form.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FileTicketFormComponent {
   form = this.fb.group({
@@ -46,7 +45,6 @@ export class FileTicketFormComponent {
   constructor(
     private ws: WebSocketService,
     private fb: FormBuilder,
-    private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private sysGeneralService: SystemGeneralService,
     private errorHandler: FormErrorHandlerService,

@@ -3,7 +3,6 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { TicketCategory, TicketCriticality, TicketEnvironment } from 'app/enums/file-ticket.enum';
 import { FileTicketLicensedFormComponent } from 'app/modules/ix-feedback/file-ticket-licensed-form/file-ticket-licensed-form.component';
 import { IxChipsHarness } from 'app/modules/ix-forms/components/ix-chips/ix-chips.harness';
@@ -28,12 +27,6 @@ describe('FileTicketLicensedFormComponent', () => {
       mockProvider(DialogService, {
         generalDialog: jest.fn(() => of()),
       }),
-      mockWebsocket([
-        mockCall('support.fetch_categories', {
-          API: '11008',
-          WebUI: '10004',
-        }),
-      ]),
       mockProvider(FormErrorHandlerService),
       mockProvider(WebsocketConnectionService, {
         isConnected$: of(true),
