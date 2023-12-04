@@ -64,6 +64,9 @@ export class InterfaceStatusIconComponent implements OnChanges {
     }
     const arrowIcons = this.stateIcon._elementRef.nativeElement.querySelectorAll('.arrow');
     const targetIconEl = type === 'sent' ? arrowIcons[0] : arrowIcons[1];
+    if (!targetIconEl) {
+      return;
+    }
 
     targetIconEl.classList.add('active');
 

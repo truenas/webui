@@ -24,14 +24,17 @@ import { WebSocketService } from 'app/services/ws.service';
 export class DefaultGatewayDialogComponent {
   form = this.fb.group({
     defaultGateway: [
-      null as string,
-      [
-        this.validatorsService.withMessage(
-          ipv4Validator(),
-          this.translate.instant(helptextIpmi.ip_error),
-        ),
-        Validators.required,
-      ],
+      null,
+      {
+        validators: [
+          this.validatorsService.withMessage(
+            ipv4Validator(),
+            this.translate.instant(helptextIpmi.ip_error),
+          ),
+          Validators.required,
+        ],
+        updateOn: 'blur',
+      },
     ],
   });
 
