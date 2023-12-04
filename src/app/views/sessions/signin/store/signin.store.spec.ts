@@ -111,7 +111,8 @@ describe('SigninStore', () => {
   describe('handleSuccessfulLogin', () => {
     it.skip('redirects user', () => {
       jest.spyOn(spectator.inject(WebSocketService), 'call').mockReturnValueOnce(of({ enabled: false }));
-      jest.spyOn(spectator.inject(AuthService), 'user$', 'get').mockReturnValueOnce(of({ twofactor_auth_configured: false }));
+      // jest.spyOn(spectator.inject(AuthService), 'user$', 'get')
+      //   .mockReturnValueOnce(of({ twofactor_auth_configured: false }));
       spectator.service.handleSuccessfulLogin();
       expect(spectator.inject(Router).navigateByUrl).toHaveBeenCalledWith('/dashboard');
     });
