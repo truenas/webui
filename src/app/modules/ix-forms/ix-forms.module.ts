@@ -4,6 +4,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -22,6 +23,7 @@ import { TreeModule } from '@bugsplat/angular-tree-component';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
+import { IxButtonGroupComponent } from 'app/modules/ix-forms/components/ix-button-group/ix-button-group.component';
 import { IxCheckboxComponent } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxCheckboxListComponent } from 'app/modules/ix-forms/components/ix-checkbox-list/ix-checkbox-list.component';
 import { IxChipsComponent } from 'app/modules/ix-forms/components/ix-chips/ix-chips.component';
@@ -85,6 +87,7 @@ import { WithManageCertificatesLinkComponent } from './components/with-manage-ce
     TestIdModule,
     RouterLink,
     MatDialogModule,
+    MatButtonToggleModule,
   ],
   declarations: [
     IxInputComponent,
@@ -115,6 +118,7 @@ import { WithManageCertificatesLinkComponent } from './components/with-manage-ce
     WithManageCertificatesLinkComponent,
     IxStarRatingComponent,
     CreateDatasetDialogComponent,
+    IxButtonGroupComponent,
   ],
   exports: [
     IxErrorsComponent,
@@ -144,6 +148,7 @@ import { WithManageCertificatesLinkComponent } from './components/with-manage-ce
     FormActionsComponent,
     WithManageCertificatesLinkComponent,
     IxStarRatingComponent,
+    IxButtonGroupComponent,
   ],
   providers: [
     IxFormatterService,
