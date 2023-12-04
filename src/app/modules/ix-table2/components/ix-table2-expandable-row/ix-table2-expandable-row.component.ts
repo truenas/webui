@@ -5,10 +5,10 @@ import { Option } from 'app/interfaces/option.interface';
 
 @Component({
   selector: 'ix-table2-expandable-row',
-  templateUrl: './ix-table-expandable-row.component.html',
-  styleUrls: ['./ix-table-expandable-row.component.scss'],
+  templateUrl: './ix-table2-expandable-row.component.html',
+  styleUrls: ['./ix-table2-expandable-row.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class IxTableExpandableRowComponent {
+export class IxTable2ExpandableRowComponent {
   @Input() data: Option[];
 }

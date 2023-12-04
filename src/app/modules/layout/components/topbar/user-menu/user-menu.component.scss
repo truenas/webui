@@ -1,0 +1,23 @@
+@import 'scss-imports/cssvars';
+
+.user-menu-wrapper {
+  align-items: center;
+  display: flex;
+
+  > span {
+    -webkit-box-orient: vertical;
+    cursor: pointer;
+    display: inline-box;
+    font-size: 14px;
+    -webkit-line-clamp: 1;
+    margin-left: 0.5rem;
+    max-width: 200px;
+    overflow: hidden;
+    white-space: normal;
+    word-break: break-all;
+
+    @media(max-width: $breakpoint-xs) {
+      display: none;
+    }
+  }
+}
