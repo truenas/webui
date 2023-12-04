@@ -70,7 +70,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   @ViewChild('diskDetails', { static: false }) diskDetails: TemplateRef<void>;
   @ViewChild('empty', { static: false }) empty: TemplateRef<void>;
 
-  templates: { [template: string]: TemplateRef<void> };
+  templates: Record<string, TemplateRef<void>>;
   path: Slide[] = [];
   title: string;
   displayValue: string;

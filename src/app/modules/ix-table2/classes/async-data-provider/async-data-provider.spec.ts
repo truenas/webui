@@ -1,4 +1,6 @@
-import { firstValueFrom, of, tap } from 'rxjs';
+import {
+  firstValueFrom, of, tap,
+} from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 
@@ -55,5 +57,17 @@ describe('AsyncDataProvider', () => {
     dataProvider.load();
 
     expect(await firstValueFrom(dataProvider.emptyType$)).toBe(EmptyType.Errors);
+  });
+
+  it('filters rows based on query and columns', async () => {
+    const request$ = of(testTableData);
+    const dataProvider = new AsyncDataProvider<TestTableData>(request$);
+    dataProvider.load();
+
+    dataProvider.setFilter({ query: 'c', columns: ['stringField'] });
+    expect(dataProvider.totalRows).toBe(1);
+    expect(
+      await firstValueFrom(dataProvider.currentPage$),
+    ).toEqual([{ numberField: 2, stringField: 'c', booleanField: false }]);
   });
 });

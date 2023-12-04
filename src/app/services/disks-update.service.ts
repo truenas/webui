@@ -13,10 +13,8 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class DisksUpdateService {
   private subscription: Subscription;
-  private subscribers: {
-    [key: string]: { subscriber$: Subject<ApiEvent<Disk> | Disk[]>;
-      getUpdatedDisks: boolean; };
-  } = { };
+  private subscribers: Record<string, { subscriber$: Subject<ApiEvent<Disk> | Disk[]>;
+    getUpdatedDisks: boolean; }> = { };
 
   constructor(
     private ws: WebSocketService,

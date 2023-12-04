@@ -5,6 +5,7 @@ export interface PodDialogData {
   type: PodSelectDialogType;
   title: string;
   appName: string;
+  containerImageKey: string;
   customSubmit: (formValue: PodDialogFormValue, appName: string) => void;
 }
 

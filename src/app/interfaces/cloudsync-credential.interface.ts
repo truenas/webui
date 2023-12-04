@@ -1,9 +1,7 @@
 import { CloudsyncProviderName, OneDriveType } from 'app/enums/cloudsync-provider.enum';
 
 export interface CloudsyncCredential {
-  attributes: {
-    [attribute: string]: string | number | boolean;
-  };
+  attributes: Record<string, string | number | boolean>;
   id: number;
   name: string;
   provider: CloudsyncProviderName;
