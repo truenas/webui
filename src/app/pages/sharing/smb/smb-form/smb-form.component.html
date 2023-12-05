@@ -10,7 +10,7 @@
           [tooltip]="helptextSharingSmb.tooltip_path | translate"
           [label]="helptextSharingSmb.placeholder_path | translate"
           [nodeProvider]="treeNodeProvider"
-          [canCreateDataset]="true"
+          [canCreateDataset]="isNew"
           [createDatasetProps]="createDatasetProps"
         ></ix-explorer>
 
