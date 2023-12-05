@@ -32,16 +32,17 @@
   <div class="preset-container">
     <div *ngIf="form.value.share_type" class="comments">
       <ng-container *ngIf="form.value.share_type === DatasetPreset.Generic">
-        {{ helptext.dataset_form_dataset_preset_comment.generic| translate }}
+        {{ helptext.dataset_form_preset.generic| translate }}
       </ng-container>
-      <ng-container *ngIf="form.value.share_type === DatasetPreset.Smb">
-        {{ helptext.dataset_form_dataset_preset_comment.smb | translate }}
-      </ng-container>
+      <div *ngIf="form.value.share_type === DatasetPreset.Smb" class="smb-comment">
+        <div>{{ helptext.dataset_form_preset.smb | translate }}</div>
+        <div>{{ helptext.dataset_form_preset.smb_description | translate }}</div>
+      </div>
       <ng-container *ngIf="form.value.share_type === DatasetPreset.Apps">
-        {{ helptext.dataset_form_dataset_preset_comment.apps | translate }}
+        {{ helptext.dataset_form_preset.apps | translate }}
       </ng-container>
       <ng-container *ngIf="form.value.share_type === DatasetPreset.Multiprotocol">
-        {{ helptext.dataset_form_dataset_preset_comment.multiprotocol| translate }}
+        {{ helptext.dataset_form_preset.multiprotocol| translate }}
       </ng-container>
     </div>
     <div *ngIf="isCreatingNfs || isCreatingSmb" class="controls">
