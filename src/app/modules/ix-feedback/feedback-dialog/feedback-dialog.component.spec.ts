@@ -4,15 +4,14 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { mockProvider, createRoutingFactory, Spectator } from '@ngneat/spectator/jest';
+import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { of } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockWebsocket, mockCall, mockJob } from 'app/core/testing/utils/mock-websocket.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { TicketCategory, TicketEnvironment, TicketCriticality } from 'app/enums/file-ticket.enum';
 import { JobState } from 'app/enums/job-state.enum';
-import { ProductType } from 'app/enums/product-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Job } from 'app/interfaces/job.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
@@ -24,10 +23,13 @@ import { IxFeedbackService } from 'app/modules/ix-feedback/ix-feedback.service';
 import { IxButtonGroupHarness } from 'app/modules/ix-forms/components/ix-button-group/ix-button-group.harness';
 import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxFileInputHarness } from 'app/modules/ix-forms/components/ix-file-input/ix-file-input.harness';
+import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
+import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxStarRatingHarness } from 'app/modules/ix-forms/components/ix-star-rating/ix-star-rating.harness';
 import { IxTextareaHarness } from 'app/modules/ix-forms/components/ix-textarea/ix-textarea.harness';
 import { JiraOauthComponent } from 'app/modules/ix-forms/components/jira-oauth/jira-oauth.component';
+import { JiraOauthHarness } from 'app/modules/ix-forms/components/jira-oauth/jira-oauth.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { OauthButtonComponent } from 'app/modules/oauth-button/components/oauth-button/oauth-button.component';
@@ -43,7 +45,7 @@ describe('FeedbackDialogComponent', () => {
   let loader: HarnessLoader;
   let ws: WebSocketService;
   let form: IxFormHarness;
-  let productType: ProductType;
+  const isEnterprise$ = new BehaviorSubject(false);
 
   const mockToken = JSON.stringify({
     oauth_token: 'mock.oauth.token',
@@ -55,17 +57,17 @@ describe('FeedbackDialogComponent', () => {
     url: 'https://mock.jira/ticket',
   };
 
-  const createComponent = createRoutingFactory({
+  const createComponent = createComponentFactory({
     component: FeedbackDialogComponent,
     imports: [
       IxFormsModule,
       ReactiveFormsModule,
     ],
     declarations: [
+      OauthButtonComponent,
       JiraOauthComponent,
       FileTicketFormComponent,
       FileTicketLicensedFormComponent,
-      OauthButtonComponent,
     ],
     providers: [
       mockWebsocket([
@@ -129,11 +131,8 @@ describe('FeedbackDialogComponent', () => {
         },
       }),
       mockProvider(SystemGeneralService, {
-        getProductType(): ProductType {
-          return productType;
-        },
-        isEnterprise(): boolean {
-          return productType === ProductType.ScaleEnterprise;
+        isEnterprise: () => {
+          return isEnterprise$.value;
         },
         getTokenForJira: jest.fn(() => mockToken),
         setTokenForJira: jest.fn(),
@@ -145,23 +144,19 @@ describe('FeedbackDialogComponent', () => {
     ],
   });
 
-  async function setupTest(newProductType: ProductType): Promise<void> {
-    productType = newProductType;
+  beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     ws = spectator.inject(WebSocketService);
     form = await loader.getHarness(IxFormHarness);
-  }
+  });
 
-  it('checks the header', async () => {
-    await setupTest(ProductType.Scale);
+  it('checks the header', () => {
     expect(spectator.query('h1')).toHaveText('How would you rate this page?');
   });
 
   describe('review', () => {
     beforeEach(async () => {
-      await setupTest(ProductType.Scale);
-
       const type = await loader.getHarness(IxButtonGroupHarness.with({ label: 'I would like to' }));
       type.setValue('rate this page');
     });
@@ -226,18 +221,24 @@ describe('FeedbackDialogComponent', () => {
 
   describe('bug or improvement', () => {
     beforeEach(async () => {
-      await setupTest(ProductType.Scale);
-
       const type = await loader.getHarness(IxButtonGroupHarness.with({ label: 'I would like to' }));
       type.setValue('report a bug');
     });
 
     it('sends a create payload to websocket', async () => {
-      await form.fillForm({
-        Category: 'WebUI',
-        Subject: 'Test subject',
-        Message: 'Testing ticket body',
-      });
+      expect(spectator.component.ticketForm).toBeInstanceOf(FileTicketFormComponent);
+
+      const subjectField = await loader.getHarness(IxInputHarness.with({ label: 'Subject' }));
+      await subjectField.setValue('Test subject');
+
+      const messageField = await loader.getHarness(IxTextareaHarness.with({ label: 'Message' }));
+      await messageField.setValue('Testing ticket body');
+
+      const tokenField = await loader.getHarness(JiraOauthHarness);
+      await tokenField.setValue(mockToken);
+
+      const categoryField = await loader.getHarness(IxSelectHarness.with({ label: 'Category' }));
+      await categoryField.setValue('WebUI');
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Submit' }));
       await saveButton.click();
@@ -255,12 +256,15 @@ describe('FeedbackDialogComponent', () => {
 
   describe('enterprise: bug or improvement', () => {
     beforeEach(async () => {
-      await setupTest(ProductType.ScaleEnterprise);
+      isEnterprise$.next(true);
       const type = await loader.getHarness(IxButtonGroupHarness.with({ label: 'I would like to' }));
       type.setValue('report a bug');
     });
 
     it('sends a create payload to websocket', async () => {
+      expect(spectator.component.ticketForm).toBeInstanceOf(FileTicketLicensedFormComponent);
+      expect(spectator.component.ticketForm.getPayload()).toEqual({});
+
       await form.fillForm({
         Name: 'fakename',
         Email: 'fake@admin.com',

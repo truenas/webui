@@ -48,7 +48,7 @@ export class FileTicketLicensedFormComponent {
   readonly environmentOptions$ = of(mapToOptions(ticketEnvironmentLabels, this.translate));
   readonly criticalityOptions$ = of(mapToOptions(ticketCriticalityLabels, this.translate));
 
-  tooltips = {
+  readonly tooltips = {
     name: helptext.name.tooltip,
     email: helptext.email.tooltip,
     cc: helptext.cc.tooltip,

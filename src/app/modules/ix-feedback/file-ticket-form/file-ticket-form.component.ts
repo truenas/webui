@@ -5,14 +5,10 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
+import { Observable, EMPTY } from 'rxjs';
 import {
-  of, Observable, EMPTY,
-} from 'rxjs';
-import {
-  filter, map, switchMap, debounceTime, catchError,
+  filter, map, switchMap, catchError, debounceTime,
 } from 'rxjs/operators';
-import { ticketTypeLabels } from 'app/enums/file-ticket.enum';
-import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { Option } from 'app/interfaces/option.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -35,7 +31,6 @@ export class FileTicketFormComponent {
   });
 
   readonly categoryOptions$: Observable<Option[]> = this.getCategories();
-  readonly typeOptions$ = of(mapToOptions(ticketTypeLabels, this.translate));
   readonly tooltips = {
     token: helptext.token.tooltip,
     category: helptext.category.tooltip,

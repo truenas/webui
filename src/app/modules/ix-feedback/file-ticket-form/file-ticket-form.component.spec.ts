@@ -11,17 +11,17 @@ import { Job } from 'app/interfaces/job.interface';
 import { FileTicketFormComponent } from 'app/modules/ix-feedback/file-ticket-form/file-ticket-form.component';
 import { NewTicketResponse } from 'app/modules/ix-feedback/interfaces/file-ticket.interface';
 import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
 import { JiraOauthComponent } from 'app/modules/ix-forms/components/jira-oauth/jira-oauth.component';
+import { JiraOauthHarness } from 'app/modules/ix-forms/components/jira-oauth/jira-oauth.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { OauthButtonComponent } from 'app/modules/oauth-button/components/oauth-button/oauth-button.component';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('FileTicketFormComponent', () => {
   let spectator: Spectator<FileTicketFormComponent>;
@@ -72,20 +72,30 @@ describe('FileTicketFormComponent', () => {
       mockProvider(AuthService, {
         authToken$: of('token.is.mocked'),
       }),
-      mockProvider(IxSlideInService),
       mockProvider(FormErrorHandlerService),
       mockProvider(SystemGeneralService, {
+        isEnterprise: jest.fn(() => false),
         getTokenForJira: jest.fn(() => mockToken),
         setTokenForJira: jest.fn(),
       }),
-      mockProvider(IxSlideInRef),
-      { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
 
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+  });
+
+  it('loads ticket categories using api token when token is provided', async () => {
+    const jiraButton = await loader.getHarness(JiraOauthHarness);
+    await jiraButton.setValue(mockToken);
+
+    await spectator.fixture.whenStable();
+
+    const categorySelect = await loader.getHarness(IxSelectHarness.with({ label: 'Category' }));
+    expect(await categorySelect.getOptionLabels()).toEqual(['WebUI', 'API']);
+    await categorySelect.setValue('WebUI');
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('support.fetch_categories', [mockToken]);
   });
 
   it('returns payload for new ticket when getPayload is called', async () => {

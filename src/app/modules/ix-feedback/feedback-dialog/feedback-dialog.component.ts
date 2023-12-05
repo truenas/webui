@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, ComponentRef, Inject, OnInit, ViewChild, ViewContainerRef,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit, ViewChild, ViewContainerRef,
 } from '@angular/core';
 import { Validators, FormBuilder } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
@@ -210,6 +210,7 @@ export class FeedbackDialogComponent implements OnInit {
   private submitBugOrFeature(): void {
     const values = this.form.value;
     const ticketValues = this.ticketForm.getPayload();
+
     let payload: CreateNewTicket = {
       category: ticketValues.category,
       body: values.message,
@@ -318,11 +319,11 @@ export class FeedbackDialogComponent implements OnInit {
 
     this.form.controls.type.valueChanges.pipe(untilDestroyed(this)).subscribe((type) => {
       if (type === FeedbackType.Review) {
-        this.ticketForm = null;
-        this.ticketFormContainer.clear();
         this.switchToReview();
-      } else {
+        this.clearTicketForm();
+      } else if (type === FeedbackType.Bug || type === FeedbackType.Suggestion) {
         this.switchToBugOrImprovement();
+        this.clearTicketForm();
         this.renderTicketForm();
       }
     });
@@ -380,16 +381,21 @@ export class FeedbackDialogComponent implements OnInit {
     });
   }
 
-  private getFormRef(): ComponentRef<FileTicketFormComponent | FileTicketLicensedFormComponent> {
-    if (this.isEnterprise) {
-      return this.ticketFormContainer.createComponent(FileTicketLicensedFormComponent);
-    }
-    return this.ticketFormContainer.createComponent(FileTicketFormComponent);
+  private clearTicketForm(): void {
+    this.ticketForm = null;
+    this.ticketFormContainer?.clear();
+    this.cdr.markForCheck();
   }
 
   private renderTicketForm(): void {
-    this.ticketFormContainer?.clear();
-    const formRef = this.getFormRef();
-    this.ticketForm = formRef.instance;
+    this.clearTicketForm();
+    if (this.isEnterprise) {
+      const formRef = this.ticketFormContainer.createComponent(FileTicketLicensedFormComponent);
+      this.ticketForm = formRef.instance;
+    } else {
+      const formRef = this.ticketFormContainer.createComponent(FileTicketFormComponent);
+      this.ticketForm = formRef.instance;
+    }
+    this.cdr.markForCheck();
   }
 }
