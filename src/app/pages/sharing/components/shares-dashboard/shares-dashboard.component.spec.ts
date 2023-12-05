@@ -3,6 +3,7 @@ import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Role } from 'app/enums/role.enum';
+import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { IscsiCardComponent } from 'app/pages/sharing/components/shares-dashboard/iscsi-card/iscsi-card.component';
 import { NfsCardComponent } from 'app/pages/sharing/components/shares-dashboard/nfs-card/nfs-card.component';
 import { SharesDashboardComponent } from 'app/pages/sharing/components/shares-dashboard/shares-dashboard.component';
@@ -34,8 +35,12 @@ describe('SharesDashboardComponent', () => {
         providers: [
           mockProvider(AuthService, {
             user$: of({
-              roles: [Role.FullAdmin],
-            }),
+              privilege: {
+                roles: {
+                  $set: [Role.FullAdmin],
+                },
+              },
+            } as LoggedInUser),
           }),
         ],
       });
@@ -54,8 +59,12 @@ describe('SharesDashboardComponent', () => {
         providers: [
           mockProvider(AuthService, {
             user$: of({
-              roles: [Role.Readonly],
-            }),
+              privilege: {
+                roles: {
+                  $set: [Role.Readonly],
+                },
+              },
+            } as LoggedInUser),
           }),
         ],
       });
@@ -74,8 +83,12 @@ describe('SharesDashboardComponent', () => {
         providers: [
           mockProvider(AuthService, {
             user$: of({
-              roles: [Role.SharingSmbWrite],
-            }),
+              privilege: {
+                roles: {
+                  $set: [Role.SharingSmbRead],
+                },
+              },
+            } as LoggedInUser),
           }),
         ],
       });

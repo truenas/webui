@@ -40,7 +40,6 @@ E.g. to assign cores: 0,1,2,5,9,10,11 you can write: 1-2,5,9-11'),
   },
 
   nodeset: {
-    // TODO: If still used, replace back with variable reference
     tooltip: T('Node set allows setting NUMA nodes for multi NUMA processors when CPU set was defined. \
 Better memory locality can be achieved by setting node set based on assigned CPU set. \
 E.g. if cpus 0,1 belong to NUMA node 0 then setting nodeset to 0 will improve memory locality'),

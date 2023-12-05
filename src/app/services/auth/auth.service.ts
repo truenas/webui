@@ -19,7 +19,7 @@ import {
 } from 'rxjs';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { IncomingWebsocketMessage, ResultMessage } from 'app/interfaces/api-message.interface';
-import { DsUncachedUser, LoggedInUser } from 'app/interfaces/ds-cache.interface';
+import { AuthMeUser, LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { GlobalTwoFactorConfig, UserTwoFactorConfig, UserTwoFactorConfigUpdate } from 'app/interfaces/two-factor-config.interface';
 import { User } from 'app/interfaces/user.interface';
 import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
@@ -319,8 +319,8 @@ export class AuthService {
     ]).pipe(
       map(([, data]) => data),
     ).pipe(
-      filter((loggedInUser: DsUncachedUser) => !!loggedInUser?.pw_uid || loggedInUser?.pw_uid === 0),
-      switchMap((loggedInUser: DsUncachedUser) => {
+      filter((loggedInUser: AuthMeUser) => !!loggedInUser?.pw_uid || loggedInUser?.pw_uid === 0),
+      switchMap((loggedInUser: AuthMeUser) => {
         authenticatedUser = { ...loggedInUser };
 
         const userQueryUuid = UUID.UUID();

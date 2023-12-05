@@ -17,6 +17,11 @@ export class UrlOptionsService {
   ) {}
 
   setUrlOptions<T>(url: string, options: UrlOptions<T>): void {
+    const constructedUrl = this.buildUrl(url, options);
+    this.location.replaceState(constructedUrl);
+  }
+
+  buildUrl<T>(url: string, options: UrlOptions<T>): string {
     delete options.sorting?.sortBy;
     if (options.sorting?.direction === null || options.sorting?.propertyName === null) {
       delete options.sorting;
@@ -28,17 +33,19 @@ export class UrlOptionsService {
 
     if (
       !(options.searchQuery as AdvancedSearchQuery<T>)?.filters?.length
-        && !(options.searchQuery as BasicSearchQuery)?.query
+      && !(options.searchQuery as BasicSearchQuery)?.query
     ) {
       delete options.searchQuery;
     }
 
-    if (Object.entries(options).length) {
-      this.location.replaceState(`${url}/${encodeURIComponent(JSON.stringify(options))}`);
+    if (!Object.entries(options).length) {
+      return url;
     }
+
+    return `${url}/${JSON.stringify(options)}`;
   }
 
   parseUrlOptions<T>(options: string): UrlOptions<T> {
-    return JSON.parse(options ? decodeURIComponent(options) : '{}');
+    return JSON.parse(options || '{}');
   }
 }

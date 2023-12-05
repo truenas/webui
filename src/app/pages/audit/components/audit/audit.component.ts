@@ -62,7 +62,9 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
     }),
     textColumn({
       title: this.translate.instant('Event'),
-      getValue: (row) => this.translate.instant(auditEventLabels.get(row.event)),
+      getValue: (row) => (auditEventLabels.has(row.event)
+        ? this.translate.instant(auditEventLabels.get(row.event))
+        : ''),
     }),
     textColumn({
       title: this.translate.instant('Event Data'),
@@ -119,7 +121,10 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
         textProperty(
           'event',
           this.translate.instant('Event'),
-          of(Object.values(AuditEvent).map((value) => ({ label: value, value: `"${value}"` }))),
+          of(Object.values(AuditEvent).map((value) => ({
+            label: this.translate.instant(auditEventLabels.get(value)),
+            value: `"${value}"`,
+          }))),
         ),
         textProperty('event.event_data.host', this.translate.instant('SMB - Host')),
         textProperty('event.event_data.clientAccount', this.translate.instant('SMB - Client Account')),
