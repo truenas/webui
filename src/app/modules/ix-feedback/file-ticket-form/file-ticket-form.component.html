@@ -1,4 +1,4 @@
-<div [formGroup]="form">
+<ng-container [formGroup]="form">
   <ix-jira-oauth
     formControlName="token"
     [label]="'Token' | translate"
@@ -21,4 +21,4 @@
     [placeholder]="tooltips.title | translate"
     [required]="true"
   ></ix-input>
-</div>
+</ng-container>

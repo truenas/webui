@@ -30,7 +30,7 @@ export class FileTicketFormComponent {
     title: ['', Validators.required],
   });
 
-  readonly categoryOptions$: Observable<Option[]> = this.getCategories();
+  categoryOptions$: Observable<Option[]> = this.getCategories();
   readonly tooltips = {
     token: helptext.token.tooltip,
     category: helptext.category.tooltip,
