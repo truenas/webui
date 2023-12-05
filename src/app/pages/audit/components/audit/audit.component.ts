@@ -109,18 +109,27 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
         textProperty(
           'address',
           this.translate.instant('Address'),
-          of(auditEntries.map((log) => ({ label: log.address, value: `"${log.address}"` }))),
+          of(auditEntries.map((log) => ({
+            label: log.address,
+            value: `"${log.address}"`,
+          }))),
         ),
         textProperty(
           'service',
           this.translate.instant('Service'),
-          of([{ label: 'SMB', value: '"SMB"' }, { label: this.translate.instant('Middleware'), value: '"MIDDLEWARE"' }]),
+          of([
+            { label: 'SMB', value: '"SMB"' },
+            { label: this.translate.instant('Middleware'), value: '"MIDDLEWARE"' },
+          ]),
         ),
         textProperty(
           'username',
           this.translate.instant('Username'),
           this.ws.call('user.query').pipe((
-            map((users) => users.map((user) => ({ label: user.username, value: `"${user.username}"` })))
+            map((users) => users.map((user) => ({
+              label: user.username,
+              value: `"${user.username}"`,
+            })))
           )),
         ),
         textProperty(
@@ -130,7 +139,6 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
             label: this.translate.instant(auditEventLabels.get(value)),
             value: `"${value}"`,
           }))),
-          auditEventLabels,
         ),
       ]);
       this.cdr.markForCheck();
