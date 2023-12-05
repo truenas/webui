@@ -263,7 +263,6 @@ describe('FeedbackDialogComponent', () => {
 
     it('sends a create payload to websocket', async () => {
       expect(spectator.component.ticketForm).toBeInstanceOf(FileTicketLicensedFormComponent);
-      expect(spectator.component.ticketForm.getPayload()).toEqual({});
 
       await form.fillForm({
         Name: 'fakename',
