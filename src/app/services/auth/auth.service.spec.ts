@@ -33,10 +33,10 @@ const uncachedUser: DsUncachedUser = {
   },
 };
 
-const loggedInUser: LoggedInUser = {
+const loggedInUser = {
   ...uncachedUser,
   id: 1,
-};
+} as LoggedInUser;
 
 describe('AuthService', () => {
   let spectator: SpectatorService<AuthService>;

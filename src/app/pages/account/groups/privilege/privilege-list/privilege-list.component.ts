@@ -33,9 +33,9 @@ export class PrivilegeListComponent implements OnInit {
     }),
     textColumn({
       title: this.translate.instant('Roles'),
-      getValue: (row) => row.roles
-        .map((role) => (roleNames.get(role) ? this.translate.instant(roleNames.get(role)) : role))
-        .join(', ') || this.translate.instant('N/A'),
+      getValue: (row) => row.roles.map((role) => {
+        return roleNames.has(role) ? this.translate.instant(roleNames.get(role)) : role;
+      }).join(', ') || this.translate.instant('N/A'),
     }),
     textColumn({
       title: this.translate.instant('Local Groups'),
