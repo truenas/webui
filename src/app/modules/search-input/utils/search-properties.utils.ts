@@ -15,13 +15,11 @@ export function textProperty<T>(
   property: keyof T,
   label: string,
   valueSuggestions$?: Observable<Option[]>,
-  enumLabelsMap?: Map<unknown, string>,
 ): SearchProperty<T> {
   return {
     label,
     property,
     valueSuggestions$,
-    enumLabelsMap,
     propertyType: PropertyType.Text,
   };
 }
