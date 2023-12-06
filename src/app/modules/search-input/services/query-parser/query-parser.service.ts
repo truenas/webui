@@ -230,7 +230,7 @@ export class QueryParserService {
     value: LiteralValue | LiteralValue[],
   ): LiteralValue | LiteralValue[] {
     if (property?.propertyType === PropertyType.Date) {
-      return this.convertMillisecondsToDate(value as number | number[]);
+      return this.formatMillisecondsToDate(value as number | number[]);
     }
 
     if (property?.propertyType === PropertyType.Memory) {
@@ -244,7 +244,7 @@ export class QueryParserService {
     return value;
   }
 
-  private convertMillisecondsToDate(value: number | number[]): string | string[] {
+  private formatMillisecondsToDate(value: number | number[]): string | string[] {
     const convertMillis = (millis: number): string => {
       return format(fromUnixTime(millis / 1000), 'yyyy-MM-dd');
     };

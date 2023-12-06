@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import { parseISO, startOfDay } from 'date-fns';
 import { ParamsBuilder, ParamsBuilderGroup } from 'app/helpers/params-builder/params-builder.class';
 import { QueryFilter, QueryFilters } from 'app/interfaces/query-api.interface';
 import {
@@ -78,7 +79,7 @@ export class QueryToApiService<T> {
     value: LiteralValue | LiteralValue[],
   ): LiteralValue | LiteralValue[] {
     if (property?.propertyType === PropertyType.Date) {
-      return this.convertDateToMilliseconds(value);
+      return this.parseDateAsMilliseconds(value);
     }
 
     if (property?.propertyType === PropertyType.Memory) {
@@ -92,19 +93,19 @@ export class QueryToApiService<T> {
     return value;
   }
 
-  private convertDateToMilliseconds(value: LiteralValue | LiteralValue[]): number | number[] {
-    const convertDate = (dateValue: LiteralValue): number => {
-      const date = new Date(dateValue as string);
+  private parseDateAsMilliseconds(value: LiteralValue | LiteralValue[]): number | number[] {
+    const convertDate = (dateValue: LiteralValue): number | null => {
+      const date = parseISO(dateValue as string);
       if (Number.isNaN(date.getTime())) {
         return null;
       }
-      date.setHours(0, 0, 0, 0);
-      return date.getTime();
+      return startOfDay(date).getTime();
     };
 
     if (Array.isArray(value)) {
       return value.map(convertDate);
     }
+
     return convertDate(value);
   }
 
