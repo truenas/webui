@@ -16,7 +16,7 @@ import { PropertyType, SearchProperty } from 'app/modules/search-input/types/sea
 const inComparator = 'IN';
 const ninComparator = 'NIN';
 const comparatorSuggestions = [
-  '=', '!=', '<', '>', '<=', '>=', inComparator, ninComparator, '~', '^', '!^', '$', '!$',
+  '=', '!=', '<', '>', '<=', '>=', inComparator, ninComparator, 'RIN', 'RNIN', '~', '^', '!^', '$', '!$',
 ] as QueryComparator[];
 
 const orSuggestion = 'OR';

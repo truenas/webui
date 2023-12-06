@@ -1,16 +1,23 @@
 import { Injectable } from '@angular/core';
 import { SyntaxNode, TreeCursor } from '@lezer/common';
-import { QueryComparator } from 'app/interfaces/query-api.interface';
+import { TranslateService } from '@ngx-translate/core';
+import { format, fromUnixTime } from 'date-fns';
+import {
+  OrQueryFilter, QueryComparator, QueryFilter, QueryFilters,
+} from 'app/interfaces/query-api.interface';
 import { parser } from 'app/modules/search-input/services/query-parser/query-grammar';
 import {
   Condition,
   ConditionGroup, ConnectorType, LiteralValue, ParsedToken,
   QueryParsingResult, QuerySyntaxError,
 } from 'app/modules/search-input/services/query-parser/query-parsing-result.interface';
+import { PropertyType, SearchProperty } from 'app/modules/search-input/types/search-property.interface';
 
 @Injectable()
 export class QueryParserService {
   private input: string;
+
+  constructor(private translate: TranslateService) {}
 
   extractTokens(query: string): string[] {
     const tree = parser.parse(query);
@@ -63,6 +70,10 @@ export class QueryParserService {
         tree: null,
       };
     }
+  }
+
+  formatFiltersToQuery(structure: QueryFilters<never>, properties: SearchProperty<never>[]): string {
+    return structure.map((element) => this.parseElementFromQueryFilter(element, properties)).join(' AND ');
   }
 
   private getSyntaxErrors(startingNode: SyntaxNode): QuerySyntaxError[] {
@@ -181,5 +192,118 @@ export class QueryParserService {
     }
 
     return queryTokens;
+  }
+
+  private parseArrayFromQueryFilter(
+    array: QueryFilter<never>[],
+    operator: string,
+    properties: SearchProperty<never>[],
+  ): string {
+    const parsedConditions = array.map((element) => this.parseElementFromQueryFilter(element, properties));
+    const innerTemplate = parsedConditions.join(` ${operator} `);
+    return `(${innerTemplate})`;
+  }
+
+  private conditionToStringFromQueryFilter(
+    condition: QueryFilter<unknown>,
+    properties: SearchProperty<never>[],
+  ): string {
+    const [property, comparator, value] = condition;
+
+    const currentProperty = properties.find((prop) => prop.property === property);
+    const mappedConditionProperty = (currentProperty?.label || property);
+    const mappedConditionValue = this.mapValueByPropertyType(currentProperty, value as LiteralValue) as string;
+
+    if (comparator.toUpperCase() === 'IN' || comparator.toUpperCase() === 'NIN') {
+      const valueList = Array.isArray(value)
+        ? value.map((valueItem) => `"${this.mapValueByPropertyType(currentProperty, valueItem) as string}"`).join(', ')
+        : `"${mappedConditionValue}"`;
+
+      return `${mappedConditionProperty} ${comparator.toUpperCase()} (${valueList})`;
+    }
+
+    return `"${mappedConditionProperty}" ${comparator.toUpperCase()} "${mappedConditionValue}"`;
+  }
+
+  private mapValueByPropertyType(
+    property: SearchProperty<never>,
+    value: LiteralValue | LiteralValue[],
+  ): LiteralValue | LiteralValue[] {
+    if (property?.propertyType === PropertyType.Date) {
+      return this.convertMillisecondsToDate(value as number | number[]);
+    }
+
+    if (property?.propertyType === PropertyType.Memory) {
+      return this.formatMemoryValue(property, value);
+    }
+
+    if (property?.propertyType === PropertyType.Text && property.enumMap) {
+      return this.formatTextValue(property, value);
+    }
+
+    return value;
+  }
+
+  private convertMillisecondsToDate(value: number | number[]): string | string[] {
+    const convertMillis = (millis: number): string => {
+      return format(fromUnixTime(millis / 1000), 'yyyy-MM-dd');
+    };
+
+    if (Array.isArray(value)) {
+      return value.map(convertMillis);
+    }
+
+    return convertMillis(value);
+  }
+
+  private formatMemoryValue(
+    property: SearchProperty<never>,
+    value: LiteralValue | LiteralValue[],
+  ): string | string[] {
+    const formatValue = (memoryValue: LiteralValue): string => {
+      return property.formatValue(memoryValue);
+    };
+
+    if (Array.isArray(value)) {
+      return value.map(formatValue);
+    }
+
+    return formatValue(value);
+  }
+
+  private formatTextValue(
+    property: SearchProperty<never>,
+    value: LiteralValue | LiteralValue[],
+  ): string | string[] {
+    const parseValue = (textValue: LiteralValue): string => {
+      return (
+        property.enumMap.get(textValue) ? this.translate.instant(property.enumMap.get(textValue)) : textValue
+      ) as string;
+    };
+
+    if (Array.isArray(value)) {
+      return value.map(parseValue);
+    }
+
+    return parseValue(value);
+  }
+
+  private parseElementFromQueryFilter(
+    element: QueryFilters<never> | QueryFilter<never> | OrQueryFilter<never>,
+    properties: SearchProperty<never>[],
+  ): string {
+    if (Array.isArray(element)) {
+      if (typeof element[0] === 'string' && ['OR', 'AND'].includes(element[0])) {
+        const operator = element[0];
+        return this.parseArrayFromQueryFilter(element[1] as never, operator, properties);
+      }
+
+      if (element.length === 3) {
+        return this.conditionToStringFromQueryFilter(element as QueryFilter<never>, properties);
+      }
+
+      return this.parseArrayFromQueryFilter(element as never, 'AND', properties);
+    }
+    return this.conditionToStringFromQueryFilter(element, properties);
   }
 }

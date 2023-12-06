@@ -68,25 +68,28 @@ export class QueryToApiService<T> {
   private buildCondition(condition: Condition): QueryFilter<T> {
     const currentProperty = this.searchProperties.find((value) => value.label === condition.property);
     const mappedConditionProperty = (currentProperty?.property || condition.property);
-    const mappedConditionValue = this.mapValueByPropertyType(currentProperty, condition);
+    const mappedConditionValue = this.mapValueByPropertyType(currentProperty, condition.value);
 
-    return [mappedConditionProperty, condition.comparator, mappedConditionValue] as QueryFilter<T>;
+    return [mappedConditionProperty, condition.comparator.toUpperCase(), mappedConditionValue] as QueryFilter<T>;
   }
 
-  private mapValueByPropertyType(property: SearchProperty<T>, condition: Condition): LiteralValue | LiteralValue[] {
+  private mapValueByPropertyType(
+    property: SearchProperty<T>,
+    value: LiteralValue | LiteralValue[],
+  ): LiteralValue | LiteralValue[] {
     if (property?.propertyType === PropertyType.Date) {
-      return this.convertDateToMilliseconds(condition.value);
+      return this.convertDateToMilliseconds(value);
     }
 
     if (property?.propertyType === PropertyType.Memory) {
-      return this.parseMemoryValue(property, condition.value);
+      return this.parseMemoryValue(property, value);
     }
 
     if (property?.propertyType === PropertyType.Text && property.enumMap) {
-      return this.parseTextValue(property, condition.value);
+      return this.parseTextValue(property, value);
     }
 
-    return condition.value;
+    return value;
   }
 
   private convertDateToMilliseconds(value: LiteralValue | LiteralValue[]): number | number[] {
@@ -105,7 +108,10 @@ export class QueryToApiService<T> {
     return convertDate(value);
   }
 
-  private parseMemoryValue(property: SearchProperty<T>, value: LiteralValue | LiteralValue[]): number | number[] {
+  private parseMemoryValue(
+    property: SearchProperty<T>,
+    value: LiteralValue | LiteralValue[],
+  ): number | number[] {
     const parseValue = (memoryValue: LiteralValue): number => {
       return property.parseValue(memoryValue as string) as number;
     };
@@ -113,10 +119,14 @@ export class QueryToApiService<T> {
     if (Array.isArray(value)) {
       return value.map(parseValue);
     }
+
     return parseValue(value);
   }
 
-  private parseTextValue(property: SearchProperty<T>, value: LiteralValue | LiteralValue[]): string | string[] {
+  private parseTextValue(
+    property: SearchProperty<T>,
+    value: LiteralValue | LiteralValue[],
+  ): string | string[] {
     const parseValue = (textValue: LiteralValue): string => {
       return [...property.enumMap.keys() as unknown as string[]].find(
         (key) => this.translate.instant(property.enumMap.get(key)).toLowerCase() === textValue.toString().toLowerCase(),
