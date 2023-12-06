@@ -1,6 +1,7 @@
 import { AuditEvent } from 'app/enums/audit-event.enum';
 import { AuditService } from 'app/enums/audit.enum';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
+import { CredentialType } from 'app/interfaces/credential-type.interface';
 
 export interface BaseAuditEntry {
   audit_id: string;
@@ -23,6 +24,11 @@ export interface AuditConfig {
 
 interface EventData {
   host?: string;
+  description?: string;
+  method?: string;
+  credentials?: {
+    credentials?: CredentialType;
+  };
   clientAccount?: string;
   file?: {
     path?: string;

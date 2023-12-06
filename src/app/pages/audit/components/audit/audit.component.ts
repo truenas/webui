@@ -13,6 +13,7 @@ import { getLogImportantData } from 'app/helpers/get-log-important-data.helper';
 import { ParamsBuilder } from 'app/helpers/params-builder/params-builder.class';
 import { WINDOW } from 'app/helpers/window.helper';
 import { AuditEntry, SmbAuditEntry } from 'app/interfaces/audit.interface';
+import { QueryFilters } from 'app/interfaces/query-api.interface';
 import { ApiDataProvider } from 'app/modules/ix-table2/classes/api-data-provider/api-data-provider';
 import { PaginationServerSide } from 'app/modules/ix-table2/classes/api-data-provider/pagination-server-side.class';
 import { SortingServerSide } from 'app/modules/ix-table2/classes/api-data-provider/sorting-server-side.class';
@@ -48,6 +49,10 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
   searchQuery: SearchQuery<AuditEntry>;
   pagination: TablePagination;
 
+  get basicQueryFilters(): QueryFilters<AuditEntry> {
+    return [['event', '~', `(?i)${(this.searchQuery as { query: string })?.query || ''}`]];
+  }
+
   columns = createTable<AuditEntry>([
     textColumn({
       title: this.translate.instant('Service'),
@@ -64,7 +69,7 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
       title: this.translate.instant('Event'),
       getValue: (row) => (auditEventLabels.has(row.event)
         ? this.translate.instant(auditEventLabels.get(row.event))
-        : ''),
+        : row.event || '-'),
     }),
     textColumn({
       title: this.translate.instant('Event Data'),
@@ -104,18 +109,27 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
         textProperty(
           'address',
           this.translate.instant('Address'),
-          of(auditEntries.map((log) => ({ label: log.address, value: `"${log.address}"` }))),
+          of(auditEntries.map((log) => ({
+            label: log.address,
+            value: `"${log.address}"`,
+          }))),
         ),
         textProperty(
           'service',
           this.translate.instant('Service'),
-          of(auditEntries.map((log) => ({ label: log.service, value: `"${log.service}"` }))),
+          of([
+            { label: 'SMB', value: '"SMB"' },
+            { label: this.translate.instant('Middleware'), value: '"MIDDLEWARE"' },
+          ]),
         ),
         textProperty(
           'username',
           this.translate.instant('Username'),
           this.ws.call('user.query').pipe((
-            map((users) => users.map((user) => ({ label: user.username, value: `"${user.username}"` })))
+            map((users) => users.map((user) => ({
+              label: user.username,
+              value: `"${user.username}"`,
+            })))
           )),
         ),
         textProperty(
