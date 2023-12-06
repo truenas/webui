@@ -72,13 +72,13 @@
       </div>
 
       <div fxFlex="50%">
-        <ix-select
+        <ix-chips
           formControlName="groups"
           [label]="'Auxiliary Groups' | translate"
           [tooltip]="tooltips.groups | translate"
-          [options]="groupOptions$"
-          [multiple]="true"
-        ></ix-select>
+          [autocompleteProvider]="autocompleteProvider"
+          [allowNewEntries]="false"
+        ></ix-chips>
 
         <ix-combobox
           formControlName="group"

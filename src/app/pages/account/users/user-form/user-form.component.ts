@@ -16,9 +16,11 @@ import {
 import { allCommands } from 'app/constants/all-commands.constant';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import helptext from 'app/helptext/account/user-form';
+import { Group } from 'app/interfaces/group.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { User, UserUpdate } from 'app/interfaces/user.interface';
 import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
+import { ChipsProvider } from 'app/modules/ix-forms/components/ix-chips/chips-provider';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -47,6 +49,7 @@ const defaultHomePath = '/nonexistent';
 export class UserFormComponent implements OnInit {
   isFormLoading = false;
   subscriptions: Subscription[] = [];
+  userGroups: Group[] = [];
 
   homeModeOldValue = '';
 
@@ -81,7 +84,7 @@ export class UserFormComponent implements OnInit {
     uid: [null as number, [Validators.required]],
     group: [null as number],
     group_create: [true],
-    groups: [[] as number[]],
+    groups: [[] as string[] | number[]],
     home: [defaultHomePath, []],
     home_mode: ['700'],
     home_create: [false],
@@ -125,6 +128,11 @@ export class UserFormComponent implements OnInit {
   shellOptions$: Observable<Option[]>;
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
   readonly groupProvider = new SimpleAsyncComboboxProvider(this.groupOptions$);
+  autocompleteProvider: ChipsProvider = (query) => {
+    return this.userService.groupQueryDsCache(query).pipe(
+      map((groups) => groups.map((group) => group.group)),
+    );
+  };
 
   get homeCreateWarning(): string {
     const homeCreate = this.form.value.home_create;
@@ -170,6 +178,7 @@ export class UserFormComponent implements OnInit {
     private storageService: StorageService,
     private store$: Store<AppState>,
     private dialog: DialogService,
+    private userService: UserService,
     @Inject(SLIDE_IN_DATA) private editingUser: User,
   ) {
     this.form.controls.smb.errors$.pipe(
@@ -180,6 +189,11 @@ export class UserFormComponent implements OnInit {
       if (this.form.controls.smb.invalid) {
         this.form.controls.smb.updateValueAndValidity();
       }
+    });
+
+    this.userService.groupQueryDsCache().pipe(untilDestroyed(this)).subscribe((groups) => {
+      this.userGroups = groups;
+      this.cdr.markForCheck();
     });
   }
 
@@ -198,11 +212,11 @@ export class UserFormComponent implements OnInit {
     });
 
     this.form.controls.group.valueChanges.pipe(debounceTime(300), untilDestroyed(this)).subscribe((group) => {
-      this.updateShellOptions(group, this.form.value.groups);
+      this.updateShellOptions(group, this.userGroupsIds);
     });
 
-    this.form.controls.groups.valueChanges.pipe(debounceTime(300), untilDestroyed(this)).subscribe((groups) => {
-      this.updateShellOptions(this.form.value.group, groups);
+    this.form.controls.groups.valueChanges.pipe(debounceTime(300), untilDestroyed(this)).subscribe(() => {
+      this.updateShellOptions(this.form.value.group, this.userGroupsIds);
     });
 
     this.form.controls.home.valueChanges.pipe(untilDestroyed(this)).subscribe((home) => {
@@ -258,7 +272,7 @@ export class UserFormComponent implements OnInit {
       email: values.email ? values.email : null,
       full_name: values.full_name,
       group: values.group,
-      groups: values.groups,
+      groups: this.userGroupsIds,
       home_mode: this.homeModeOldValue !== values.home_mode ? values.home_mode : undefined,
       home_create: values.home_create,
       home: values.home,
@@ -370,7 +384,7 @@ export class UserFormComponent implements OnInit {
       full_name: user.full_name,
       group_create: false,
       group: user.group.id,
-      groups: user.groups,
+      groups: this.userGroupNames,
       home: user.home,
       locked: user.locked,
       password_disabled: user.password_disabled,
@@ -431,7 +445,7 @@ export class UserFormComponent implements OnInit {
   }
 
   private setFirstShellOption(): void {
-    this.ws.call('user.shell_choices', [this.form.value.groups]).pipe(
+    this.ws.call('user.shell_choices', [this.userGroupsIds]).pipe(
       choicesToOptions(),
       filter((shells) => !!shells.length),
       map((shells) => shells[0].value),
@@ -478,5 +492,18 @@ export class UserFormComponent implements OnInit {
         this.shellOptions$ = of(options);
         this.cdr.markForCheck();
       });
+  }
+
+  private get userGroupNames(): string[] {
+    return this.editingUser?.groups
+      .map((groupId) => this.userGroups.find((group) => group.id === groupId))
+      .map((group) => group?.group) || [];
+  }
+
+  private get userGroupsIds(): number[] {
+    return this.form.value.groups
+      .map((groupName) => this.userGroups.find((group) => group.group === groupName))
+      .filter(Boolean)
+      .map((group) => group?.id);
   }
 }

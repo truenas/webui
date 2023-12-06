@@ -88,7 +88,9 @@ describe('UserFormComponent', () => {
         downloadBlob: jest.fn(),
       }),
       mockProvider(FormErrorHandlerService),
-      mockProvider(UserService),
+      mockProvider(UserService, {
+        groupQueryDsCache: () => of(),
+      }),
       mockProvider(FilesystemService, {
         getFilesystemNodeProvider: jest.fn(() => of()),
       }),
