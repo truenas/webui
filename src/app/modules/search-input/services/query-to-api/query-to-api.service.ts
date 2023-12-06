@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import { ParamsBuilder, ParamsBuilderGroup } from 'app/helpers/params-builder/params-builder.class';
 import { QueryFilter, QueryFilters } from 'app/interfaces/query-api.interface';
 import {
@@ -12,6 +13,8 @@ import { PropertyType, SearchProperty } from 'app/modules/search-input/types/sea
 export class QueryToApiService<T> {
   private builder: ParamsBuilder<T>;
   private searchProperties: SearchProperty<T>[];
+
+  constructor(private translate: TranslateService) {}
 
   buildFilters(query: QueryParsingResult, properties: SearchProperty<T>[]): QueryFilters<T> {
     this.searchProperties = properties;
@@ -79,6 +82,10 @@ export class QueryToApiService<T> {
       return this.parseMemoryValue(property, condition.value);
     }
 
+    if (property?.propertyType === PropertyType.Text && property.enumMap) {
+      return this.parseTextValue(property, condition.value);
+    }
+
     return condition.value;
   }
 
@@ -106,6 +113,20 @@ export class QueryToApiService<T> {
     if (Array.isArray(value)) {
       return value.map(parseValue);
     }
+    return parseValue(value);
+  }
+
+  private parseTextValue(property: SearchProperty<T>, value: LiteralValue | LiteralValue[]): string | string[] {
+    const parseValue = (textValue: LiteralValue): string => {
+      return [...property.enumMap.keys() as unknown as string[]].find(
+        (key) => this.translate.instant(property.enumMap.get(key)).toLowerCase() === textValue.toString().toLowerCase(),
+      ) || textValue as string;
+    };
+
+    if (Array.isArray(value)) {
+      return value.map(parseValue);
+    }
+
     return parseValue(value);
   }
 }
