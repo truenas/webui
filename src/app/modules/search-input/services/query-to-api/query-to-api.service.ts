@@ -71,7 +71,7 @@ export class QueryToApiService<T> {
     const mappedConditionProperty = (currentProperty?.property || condition.property);
     const mappedConditionValue = this.mapValueByPropertyType(currentProperty, condition.value);
 
-    return [mappedConditionProperty, condition.comparator.toUpperCase(), mappedConditionValue] as QueryFilter<T>;
+    return [mappedConditionProperty, condition.comparator.toLowerCase(), mappedConditionValue] as QueryFilter<T>;
   }
 
   private mapValueByPropertyType(
