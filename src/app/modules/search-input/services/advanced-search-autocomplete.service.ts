@@ -110,12 +110,10 @@ export class AdvancedSearchAutocompleteService<T> {
         to = to + 1;
         anchor = from + updatedValue.length - 1;
       }
-    } else if (regexMap.containsWhitespace.test(updatedValue) && !regexMap.looselyQuotedString.test(updatedValue)) {
-      updatedValue = `"${updatedValue}"`;
-      anchor = anchor + 2;
-    }
-
-    if (/\s/.test(updatedValue) && !/^["']|["']$/.test(updatedValue)) {
+    } else if (
+      regexMap.containsWhitespace.test(updatedValue) && !regexMap.looselyQuotedString.test(updatedValue)
+      && !updatedValue.startsWith('(') && !updatedValue.endsWith(')')
+    ) {
       updatedValue = `"${updatedValue}"`;
       anchor = anchor + 2;
     }
