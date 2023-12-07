@@ -9,7 +9,6 @@ import {
   EnclosureSlot,
   EnclosureView,
 } from 'app/interfaces/enclosure.interface';
-import { Pool } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/services/dialog.service';
 import { StorageService } from 'app/services/storage.service';
 import { EnclosureState, EnclosureStore } from './enclosure-store.service';
@@ -46,7 +45,7 @@ describe('EnclosureStore', () => {
         StorageService,
         mockWebsocket([
           mockCall('enclosure.query', mockStorage.enclosures),
-          mockCall('pool.query', [mockStorage.poolState as unknown as Pool]),
+          mockCall('pool.query', [mockStorage.poolState]),
           mockCall('disk.query', mockStorage.disks),
         ]),
         mockProvider(DialogService),
@@ -124,7 +123,7 @@ describe('EnclosureStore', () => {
         StorageService,
         mockWebsocket([
           mockCall('enclosure.query', mockStorage.enclosures),
-          mockCall('pool.query', [mockStorage.poolState as unknown as Pool]),
+          mockCall('pool.query', [mockStorage.poolState]),
           mockCall('disk.query', mockStorage.disks),
         ]),
         mockProvider(DialogService),
@@ -190,7 +189,7 @@ describe('EnclosureStore', () => {
         StorageService,
         mockWebsocket([
           mockCall('enclosure.query', mockStorage.enclosures),
-          mockCall('pool.query', [mockStorage.poolState as unknown as Pool]),
+          mockCall('pool.query', [mockStorage.poolState]),
           mockCall('disk.query', mockStorage.disks),
         ]),
         mockProvider(DialogService),
