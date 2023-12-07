@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  filter, map, Observable, of, switchMap, take, tap,
+  filter, map, Observable, of, switchMap, take,
 } from 'rxjs';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
@@ -80,7 +80,7 @@ export class AppDetailsHeaderComponent {
         }).pipe(
           filter(Boolean),
           switchMap(() => this.ws.call('auth.set_attribute', ['appsAgreement', true])),
-          tap(() => this.authService.refreshUser()),
+          switchMap(() => this.authService.refreshUser()),
         );
       }),
 

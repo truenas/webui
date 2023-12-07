@@ -14,7 +14,7 @@ import { of } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { Role } from 'app/enums/role.enum';
-import { AuthMeUser, LoggedInUser } from 'app/interfaces/ds-cache.interface';
+import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
 import { AuthService } from 'app/services/auth/auth.service';
@@ -32,11 +32,6 @@ const authMeUser = {
     dashState: [] as DashConfigItem[],
     appsAgreement: true,
   },
-} as AuthMeUser;
-
-const loggedInUser = {
-  ...authMeUser,
-  id: 1,
 } as LoggedInUser;
 
 describe('AuthService', () => {
@@ -81,13 +76,11 @@ describe('AuthService', () => {
       jest.spyOn(UUID, 'UUID')
         .mockReturnValueOnce('login_uuid')
         .mockReturnValueOnce('logged_in_user_uuid')
-        .mockReturnValueOnce('user_query_uuid')
         .mockReturnValueOnce('generate_token_uuid');
 
       const getFilteredWebsocketResponse = jest.spyOn(spectator.service, 'getFilteredWebsocketResponse');
       when(getFilteredWebsocketResponse).calledWith('login_uuid').mockReturnValue(of(true));
       when(getFilteredWebsocketResponse).calledWith('logged_in_user_uuid').mockReturnValue(of(authMeUser));
-      when(getFilteredWebsocketResponse).calledWith('user_query_uuid').mockReturnValue(of([loggedInUser]));
       when(getFilteredWebsocketResponse).calledWith('generate_token_uuid').mockReturnValue(of('DUMMY_TOKEN'));
 
       const obs$ = spectator.service.login('dummy', 'dummy');
@@ -104,10 +97,6 @@ describe('AuthService', () => {
         expectObservable(spectator.service.authToken$).toBe(
           'd',
           { d: 'DUMMY_TOKEN' },
-        );
-        expectObservable(spectator.service.user$).toBe(
-          'e',
-          { e: { ...loggedInUser } },
         );
       });
       expect(spectator.inject(WebsocketConnectionService).send).toHaveBeenCalledWith({
@@ -146,7 +135,6 @@ describe('AuthService', () => {
       const getFilteredWebsocketResponse = jest.spyOn(spectator.service, 'getFilteredWebsocketResponse');
       when(getFilteredWebsocketResponse).calledWith('login_with_token_uuid').mockReturnValue(of(true));
       when(getFilteredWebsocketResponse).calledWith('logged_in_user_uuid').mockReturnValue(of(authMeUser));
-      when(getFilteredWebsocketResponse).calledWith('user_query_uuid').mockReturnValue(of([loggedInUser]));
       when(getFilteredWebsocketResponse).calledWith('generate_token_uuid').mockReturnValue(of('DUMMY_TOKEN4'));
 
       const obs$ = spectator.service.loginWithToken();
@@ -163,10 +151,6 @@ describe('AuthService', () => {
         expectObservable(spectator.service.authToken$).toBe(
           'd',
           { d: 'DUMMY_TOKEN4' },
-        );
-        expectObservable(spectator.service.user$).toBe(
-          'e',
-          { e: { ...loggedInUser } },
         );
       });
       expect(spectator.inject(WebsocketConnectionService).send).toHaveBeenCalledWith({
@@ -237,7 +221,6 @@ describe('AuthService', () => {
           },
         },
       }));
-      when(getFilteredWebsocketResponse).calledWith('user_query_uuid').mockReturnValue(of([loggedInUser]));
 
       spectator.service.refreshUser();
     }

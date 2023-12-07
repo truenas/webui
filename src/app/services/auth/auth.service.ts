@@ -20,9 +20,8 @@ import {
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { IncomingWebsocketMessage, ResultMessage } from 'app/interfaces/api-message.interface';
-import { AuthMeUser, LoggedInUser } from 'app/interfaces/ds-cache.interface';
+import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
-import { User } from 'app/interfaces/user.interface';
 import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
@@ -213,9 +212,12 @@ export class AuthService {
     );
   }
 
-  refreshUser(): void {
+  refreshUser(): Observable<void> {
     this.loggedInUser$.next(null);
-    this.getLoggedInUserInformation();
+
+    return this.getLoggedInUserInformation().pipe(
+      map(() => null),
+    );
   }
 
   // TODO: Make private and rewrite tests not to rely on it.
@@ -260,59 +262,12 @@ export class AuthService {
     ]).pipe(map(([, data]) => data));
   }
 
-  private getLoggedInUserInformation(): void {
-    let authenticatedUser: LoggedInUser;
-    const uuid = UUID.UUID();
-    const payload = {
-      id: uuid,
-      msg: IncomingApiMessageType.Method,
-      method: 'auth.me',
-    };
-
-    const requestTrigger$ = new Observable((subscriber) => {
-      this.wsManager.send(payload);
-      subscriber.next();
-    }).pipe(take(1));
-
-    combineLatest([
-      requestTrigger$,
-      this.getFilteredWebsocketResponse(uuid),
-    ]).pipe(
-      map(([, data]) => data),
-    ).pipe(
-      filter((loggedInUser: AuthMeUser) => !!loggedInUser?.pw_uid || loggedInUser?.pw_uid === 0),
-      switchMap((loggedInUser: AuthMeUser) => {
-        authenticatedUser = { ...loggedInUser };
-
-        const userQueryUuid = UUID.UUID();
-        const userQueryPayload = {
-          id: userQueryUuid,
-          msg: IncomingApiMessageType.Method,
-          method: 'user.query',
-          params: [[['uid', '=', authenticatedUser.pw_uid]]],
-        };
-
-        const requestTriggerUserQuery$ = new Observable((subscriber) => {
-          this.wsManager.send(userQueryPayload);
-          subscriber.next();
-        }).pipe(take(1));
-
-        return combineLatest([
-          requestTriggerUserQuery$,
-          this.getFilteredWebsocketResponse(userQueryUuid),
-        ]).pipe(map(([, data]) => data));
+  private getLoggedInUserInformation(): Observable<LoggedInUser> {
+    return this.ws.call('auth.me').pipe(
+      tap((loggedInUser) => {
+        this.loggedInUser$.next(loggedInUser);
       }),
-      tap((users: User[]) => {
-        if (users?.[0]?.id) {
-          authenticatedUser = {
-            ...authenticatedUser,
-            ...users[0],
-          };
-        }
-        this.loggedInUser$.next(authenticatedUser);
-      }),
-      untilDestroyed(this),
-    ).subscribe();
+    );
   }
 
   private setupAuthenticationUpdate(): void {
@@ -320,7 +275,7 @@ export class AuthService {
       next: (isAuthenticated) => {
         if (isAuthenticated) {
           this.store$.dispatch(adminUiInitialized());
-          this.refreshUser();
+          this.refreshUser().pipe(untilDestroyed(this)).subscribe();
           this.setupPeriodicTokenGeneration();
         } else if (this.generateTokenSubscription) {
           this.latestTokenGenerated$?.complete();

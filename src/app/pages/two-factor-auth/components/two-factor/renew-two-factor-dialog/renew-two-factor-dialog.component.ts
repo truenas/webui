@@ -50,10 +50,10 @@ export class RenewTwoFactorDialogComponent {
           [user.username, { interval: this.form.value.interval, otp_digits: this.form.value.otp_digits }],
         );
       }),
+      switchMap(() => this.authService.refreshUser()),
       untilDestroyed(this),
     ).subscribe({
       next: () => {
-        this.authService.refreshUser();
         this.dialogRef.close(true);
         this.cdr.markForCheck();
       },

@@ -105,7 +105,7 @@ import {
   DnsAuthenticator, UpdateDnsAuthenticator,
 } from 'app/interfaces/dns-authenticator.interface';
 import {
-  AuthMeUser, DsUncachedGroup, DsUncachedUser,
+  DsUncachedGroup, DsUncachedUser, LoggedInUser,
 } from 'app/interfaces/ds-cache.interface';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import {
@@ -328,7 +328,7 @@ export interface ApiCallDirectory {
 
   // Auth
   'auth.check_user': { params: CheckUserQuery; response: boolean };
-  'auth.me': { params: void; response: AuthMeUser };
+  'auth.me': { params: void; response: LoggedInUser };
   'auth.set_attribute': { params: [key: string, value: unknown]; response: void };
 
   'auth.twofactor.update': { params: [GlobalTwoFactorConfigUpdate]; response: GlobalTwoFactorConfig };

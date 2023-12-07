@@ -1,10 +1,10 @@
 <div *ngIf="(loggedInUser$ | async) as user" class="user-menu-wrapper">
   <span
-    *ngIf="user?.username"
-    [matTooltip]="user.username"
+    *ngIf="user?.pw_name"
+    [matTooltip]="user.pw_name"
     [matMenuTriggerFor]="userMenu"
   >
-    {{ user.username }}
+    {{ user.pw_name }}
   </span>
 
   <button
