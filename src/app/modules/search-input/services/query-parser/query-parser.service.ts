@@ -194,37 +194,6 @@ export class QueryParserService {
     return queryTokens;
   }
 
-  private parseArrayFromQueryFilter(
-    array: QueryFilter<never>[],
-    operator: string,
-    properties: SearchProperty<never>[],
-  ): string {
-    const parsedConditions = array.map((element) => this.parseElementFromQueryFilter(element, properties));
-    const innerTemplate = parsedConditions.join(` ${operator} `);
-    return `(${innerTemplate})`;
-  }
-
-  private conditionToStringFromQueryFilter(
-    condition: QueryFilter<unknown>,
-    properties: SearchProperty<never>[],
-  ): string {
-    const [property, comparator, value] = condition;
-
-    const currentProperty = properties.find((prop) => prop.property === property);
-    const mappedConditionProperty = (currentProperty?.label || property);
-    const mappedConditionValue = this.mapValueByPropertyType(currentProperty, value as LiteralValue) as string;
-
-    if (comparator.toUpperCase() === 'IN' || comparator.toUpperCase() === 'NIN') {
-      const valueList = Array.isArray(value)
-        ? value.map((valueItem) => `"${this.mapValueByPropertyType(currentProperty, valueItem) as string}"`).join(', ')
-        : `"${mappedConditionValue}"`;
-
-      return `${mappedConditionProperty} ${comparator.toUpperCase()} (${valueList})`;
-    }
-
-    return `"${mappedConditionProperty}" ${comparator.toUpperCase()} "${mappedConditionValue}"`;
-  }
-
   private mapValueByPropertyType(
     property: SearchProperty<never>,
     value: LiteralValue | LiteralValue[],
@@ -286,6 +255,37 @@ export class QueryParserService {
     }
 
     return parseValue(value);
+  }
+
+  private parseArrayFromQueryFilter(
+    array: QueryFilter<never>[],
+    operator: string,
+    properties: SearchProperty<never>[],
+  ): string {
+    const parsedConditions = array.map((element) => this.parseElementFromQueryFilter(element, properties));
+    const innerTemplate = parsedConditions.join(` ${operator} `);
+    return `(${innerTemplate})`;
+  }
+
+  private conditionToStringFromQueryFilter(
+    condition: QueryFilter<unknown>,
+    properties: SearchProperty<never>[],
+  ): string {
+    const [property, comparator, value] = condition;
+
+    const currentProperty = properties.find((prop) => prop.property === property);
+    const mappedConditionProperty = (currentProperty?.label || property);
+    const mappedConditionValue = this.mapValueByPropertyType(currentProperty, value as LiteralValue) as string;
+
+    if (comparator.toUpperCase() === 'IN' || comparator.toUpperCase() === 'NIN') {
+      const valueList = Array.isArray(value)
+        ? value.map((valueItem) => `"${this.mapValueByPropertyType(currentProperty, valueItem) as string}"`).join(', ')
+        : `"${mappedConditionValue}"`;
+
+      return `${mappedConditionProperty} ${comparator.toUpperCase()} (${valueList})`;
+    }
+
+    return `"${mappedConditionProperty}" ${comparator.toUpperCase()} "${mappedConditionValue}"`;
   }
 
   private parseElementFromQueryFilter(
