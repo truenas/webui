@@ -5,8 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  combineLatest, EMPTY, forkJoin, Observable, of, Subscription,
-  fromPromise,
+  combineLatest, EMPTY, forkJoin, Observable, of, Subscription, from,
 } from 'rxjs';
 import {
   catchError, filter, map, switchMap, tap,
@@ -112,11 +111,7 @@ export class SigninStore extends ComponentStore<SigninState> {
     }),
     // Wait for user to be loaded
     switchMap(() => this.authService.user$.pipe(filter(Boolean))),
-    switchMap(() => {
-      // TODO: False positive.
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      return fromPromise(this.router.navigateByUrl(this.getRedirectUrl()));
-    }),
+    switchMap(() => from(this.router.navigateByUrl(this.getRedirectUrl()))),
     tap(() => {
       if (this.failoverStatusSubscription && !this.failoverStatusSubscription.closed) {
         this.failoverStatusSubscription.unsubscribe();
