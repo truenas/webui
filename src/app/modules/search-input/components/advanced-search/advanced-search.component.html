@@ -21,8 +21,8 @@
 </a>
 
 <span
-  *ngIf="isEditorEmpty"
   class="reset-icon reset-input"
+  [class.hidden]="!editorHasValue"
   (click)="onResetInput()"
 >
   <ix-icon

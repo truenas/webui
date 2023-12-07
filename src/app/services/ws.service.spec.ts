@@ -44,10 +44,6 @@ describe('WebSocketService', () => {
     jest.clearAllMocks();
   });
 
-  it('should be created', () => {
-    expect(service).toBeTruthy();
-  });
-
   describe('call', () => {
     it('should make a WS call and get a response', () => {
       const uuid = 'fakeUUID';

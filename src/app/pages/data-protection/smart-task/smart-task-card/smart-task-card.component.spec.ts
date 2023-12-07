@@ -7,6 +7,7 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { DiskBus } from 'app/enums/disk-bus.enum';
 import { SmartTestTaskUi } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -68,12 +69,12 @@ describe('SmartTaskCardComponent', () => {
       togglesmart: true,
       type: 'SSD',
       zfs_guid: '6853459480607509721',
-      bus: 'UNKNOWN',
+      bus: DiskBus.Spi,
       devname: 'pmem0',
       enclosure: null,
       supports_smart: null,
       pool: null,
-    } as unknown as Disk,
+    } as Disk,
   ];
 
   const createComponent = createComponentFactory({

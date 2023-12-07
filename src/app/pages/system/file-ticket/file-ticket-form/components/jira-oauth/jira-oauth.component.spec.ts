@@ -37,8 +37,10 @@ describe('JiraOauthComponent', () => {
         open: jest.fn() as Window['open'],
         addEventListener: jest.fn((_, oAuthCallback: (message: OauthJiraMessage) => void) => {
           oAuthCallback({
-            data: 'token-arrived',
-          } as unknown as OauthJiraMessage);
+            data: {
+              data: 'token-arrived',
+            },
+          } as OauthJiraMessage);
         }) as Window['addEventListener'],
         removeEventListener: jest.fn() as Window['removeEventListener'],
       }),
