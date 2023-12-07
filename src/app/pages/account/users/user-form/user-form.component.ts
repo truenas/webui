@@ -207,8 +207,8 @@ export class UserFormComponent implements OnInit {
       this.updateShellOptions(group, this.form.value.groups);
     });
 
-    this.form.controls.groups.valueChanges.pipe(debounceTime(300), untilDestroyed(this)).subscribe(() => {
-      this.updateShellOptions(this.form.value.group, this.form.value.groups);
+    this.form.controls.groups.valueChanges.pipe(debounceTime(300), untilDestroyed(this)).subscribe((groups) => {
+      this.updateShellOptions(this.form.value.group, groups);
     });
 
     this.form.controls.home.valueChanges.pipe(untilDestroyed(this)).subscribe((home) => {
