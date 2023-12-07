@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import { environment } from 'environments/environment';
 import {
@@ -29,9 +30,11 @@ import { WebsocketConnectionService } from 'app/services/websocket-connection.se
 export class WebSocketService {
   private readonly eventSubscriptions = new Map<string, { obs$: Observable<unknown>; takeUntil$: Subject<void> }>();
   mockUtils: MockEnclosureUtils;
+
   constructor(
     protected router: Router,
     protected wsManager: WebsocketConnectionService,
+    protected translate: TranslateService,
   ) {
     if (environment.mockConfig && !environment?.production) this.mockUtils = new MockEnclosureUtils();
     this.wsManager.isConnected$?.pipe(untilDestroyed(this)).subscribe((isConnected) => {
@@ -135,7 +138,8 @@ export class WebSocketService {
       switchMap((data: IncomingWebsocketMessage) => {
         if ('error' in data && data.error) {
           this.printError(data.error, { method, params });
-          return throwError(() => data.error);
+          const error = this.enhanceError(data.error, { method });
+          return throwError(() => error);
         }
 
         if (
@@ -175,5 +179,16 @@ export class WebSocketService {
     }
 
     console.error('Error: ', error);
+  }
+
+  private enhanceError(error: WebsocketError, context: { method: string }): WebsocketError {
+    if (error.errname === WebsocketErrorName.NoAccess) {
+      return {
+        ...error,
+        reason: this.translate.instant('Access denied to {method}', { method: context.method }),
+      };
+    }
+
+    return error;
   }
 }

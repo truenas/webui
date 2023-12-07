@@ -19,7 +19,7 @@
 
         <ix-chips
           formControlName="ds_groups"
-          [label]="'DS Groups' | translate"
+          [label]="'Directory Services Groups' | translate"
           [autocompleteProvider]="dsGroupsProvider"
           [allowNewEntries]="false"
         ></ix-chips>
@@ -30,6 +30,7 @@
           [options]="rolesOptions$"
           [multiple]="true"
           [showSelectAll]="true"
+          [hint]="helptext.minimalRolesTooltip | translate"
         ></ix-select>
 
         <ix-checkbox

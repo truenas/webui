@@ -5,10 +5,12 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of, throwError } from 'rxjs';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { RenewTwoFactorDialogComponent } from 'app/pages/two-factor-auth/components/two-factor/renew-two-factor-dialog/renew-two-factor-dialog.component';
 import { AuthService } from 'app/services/auth/auth.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('RenewTwoFactorDialog', () => {
   let spectator: Spectator<RenewTwoFactorDialogComponent>;
@@ -22,8 +24,11 @@ describe('RenewTwoFactorDialog', () => {
     ],
     providers: [
       mockProvider(AuthService, {
-        renewUser2FaSecret: jest.fn(() => of(true)),
+        user$: of({ username: 'test' }),
       }),
+      mockWebsocket([
+        mockCall('user.renew_2fa_secret'),
+      ]),
       mockProvider(MatDialogRef, {
         close: jest.fn(),
       }),
@@ -46,7 +51,11 @@ describe('RenewTwoFactorDialog', () => {
     const renewBtn = await loader.getHarness(MatButtonHarness.with({ text: 'Renew' }));
     await renewBtn.click();
 
-    expect(spectator.inject(AuthService).renewUser2FaSecret).toHaveBeenCalledWith({ interval: 5, otp_digits: 5 });
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith(
+      'user.renew_2fa_secret',
+      ['test', { interval: 5, otp_digits: 5 }],
+    );
+    expect(spectator.inject(AuthService).refreshUser).toHaveBeenCalled();
 
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
   });
@@ -57,15 +66,13 @@ describe('RenewTwoFactorDialog', () => {
       otp_digits: 5,
     });
 
-    const authService = spectator.inject(AuthService);
-    jest.spyOn(authService, 'renewUser2FaSecret').mockImplementation(() => {
+    const websocket = spectator.inject(WebSocketService);
+    jest.spyOn(websocket, 'call').mockImplementation(() => {
       return throwError(() => new Error('Error something'));
     });
 
     const renewBtn = await loader.getHarness(MatButtonHarness.with({ text: 'Renew' }));
     await renewBtn.click();
-
-    expect(spectator.inject(AuthService).renewUser2FaSecret).toHaveBeenCalledWith({ interval: 5, otp_digits: 5 });
 
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(false);
   });

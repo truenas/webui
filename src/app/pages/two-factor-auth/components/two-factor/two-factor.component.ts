@@ -5,10 +5,10 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { combineLatest, of } from 'rxjs';
+import { forkJoin, of } from 'rxjs';
 import {
   catchError,
-  filter, switchMap, tap,
+  filter, switchMap, take, tap,
 } from 'rxjs/operators';
 import { helptext } from 'app/helptext/system/2fa';
 import { ErrorReport } from 'app/interfaces/error-report.interface';
@@ -75,19 +75,19 @@ export class TwoFactorComponent implements OnInit {
   loadTwoFactorConfigs(): void {
     this.isDataLoading = true;
     this.cdr.markForCheck();
-    combineLatest([
-      this.authService.getUserTwoFactorConfig(),
+    forkJoin([
+      this.authService.userTwoFactorConfig$.pipe(take(1)),
       this.authService.getGlobalTwoFactorConfig(),
-    ]).pipe(
-      untilDestroyed(this),
-    ).subscribe({
-      next: ([userConfig, globalConfig]) => {
-        this.isDataLoading = false;
-        this.userTwoFactorAuthConfigured = userConfig.secret_configured;
-        this.globalTwoFactorEnabled = globalConfig.enabled;
-        this.cdr.markForCheck();
-      },
-    });
+    ])
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: ([userConfig, globalConfig]) => {
+          this.isDataLoading = false;
+          this.userTwoFactorAuthConfigured = userConfig.secret_configured;
+          this.globalTwoFactorEnabled = globalConfig.enabled;
+          this.cdr.markForCheck();
+        },
+      });
   }
 
   openQrDialog(provisioningUri: string): void {
@@ -104,12 +104,14 @@ export class TwoFactorComponent implements OnInit {
   }
 
   renewSecret(): void {
-    const confirmation$ = this.userTwoFactorAuthConfigured ? this.dialogService.confirm({
-      title: helptext.two_factor.renewSecret.title,
-      message: helptext.two_factor.renewSecret.message,
-      hideCheckbox: true,
-      buttonText: helptext.two_factor.renewSecret.btn,
-    }) : of(true);
+    const confirmation$ = this.userTwoFactorAuthConfigured
+      ? this.dialogService.confirm({
+        title: helptext.two_factor.renewSecret.title,
+        message: helptext.two_factor.renewSecret.message,
+        hideCheckbox: true,
+        buttonText: helptext.two_factor.renewSecret.btn,
+      })
+      : of(true);
     confirmation$.pipe(
       filter(Boolean),
       switchMap(() => {
@@ -140,7 +142,7 @@ export class TwoFactorComponent implements OnInit {
 
   showQrCode(): void {
     this.isFormLoading = true;
-    this.authService.getUserTwoFactorConfig().pipe(untilDestroyed(this)).subscribe({
+    this.authService.userTwoFactorConfig$.pipe(take(1), untilDestroyed(this)).subscribe({
       next: (config: UserTwoFactorConfig) => {
         this.isFormLoading = false;
         this.cdr.markForCheck();
