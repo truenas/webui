@@ -1,5 +1,5 @@
 import { Schedule } from 'app/interfaces/schedule.interface';
-import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
+import { extractActiveHoursFromCron, scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 
 describe('scheduleToCrontab', () => {
   it('converts schedule with minutes to crontab', () => {
@@ -23,5 +23,11 @@ describe('scheduleToCrontab', () => {
     };
 
     expect(scheduleToCrontab(schedule)).toBe('0 10 * 2-5 6');
+  });
+
+  it('extracts start and end value from crontab', () => {
+    expect(extractActiveHoursFromCron('0 10 * 2-5 6')).toEqual({ start: '10:00', end: '10:00' });
+    expect(extractActiveHoursFromCron('0 08-18 * * mon,tue,wed,thu,fri,sat')).toEqual({ start: '08:00', end: '18:00' });
+    expect(extractActiveHoursFromCron('0 0 * * *')).toEqual({ start: '00:00', end: '23:59' });
   });
 });

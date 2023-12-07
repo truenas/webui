@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs';
+import { YesNoPipe } from 'app/core/pipes/yes-no.pipe';
 import { JobState } from 'app/enums/job-state.enum';
 import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
 import {
@@ -13,7 +14,7 @@ import {
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
-import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
+import { extractActiveHoursFromCron, scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -81,6 +82,7 @@ export class SnapshotTaskListComponent implements EntityTableConfig<PeriodicSnap
     private slideInService: IxSlideInService,
     private route: ActivatedRoute,
     private router: Router,
+    private yesNoPipe: YesNoPipe,
   ) {
     this.filterValue = this.route.snapshot.paramMap.get('dataset') || '';
   }
@@ -91,11 +93,19 @@ export class SnapshotTaskListComponent implements EntityTableConfig<PeriodicSnap
 
   resourceTransformIncomingRestData(tasks: PeriodicSnapshotTask[]): PeriodicSnapshotTaskUi[] {
     return tasks.map((task) => {
+      const cronSchedule = scheduleToCrontab(task.schedule);
+      const activeHours = extractActiveHoursFromCron(cronSchedule);
+
       const transformedTask = {
         ...task,
         keepfor: `${task.lifetime_value} ${task.lifetime_unit}(S)`,
-        when: this.translate.instant('From {task_begin} to {task_end}', { task_begin: task.schedule.begin, task_end: task.schedule.end }),
-        cron_schedule: scheduleToCrontab(task.schedule),
+        when: this.translate.instant('From {task_begin} to {task_end}', {
+          task_begin: activeHours.start,
+          task_end: activeHours.end,
+        }),
+        cron_schedule: cronSchedule,
+        enabled: this.yesNoPipe.transform(task.enabled) as unknown as boolean,
+        recursive: this.yesNoPipe.transform(task.recursive) as unknown as boolean,
       } as PeriodicSnapshotTaskUi;
 
       return {
