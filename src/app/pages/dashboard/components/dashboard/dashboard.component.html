@@ -168,6 +168,16 @@
             >
               <span ixDragHandle></span>
             </ix-widget-network>
+
+            <ix-widget-backup
+              *ngSwitchCase="WidgetType.Backup"
+              fxFlex.xs="100"
+              ixDrag
+              [fxFlex]="widgetWidth + 'px'"
+              [showReorderHandle]="reorderMode"
+            >
+              <span ixDragHandle></span>
+            </ix-widget-backup>
           </ng-container>
         </div>
       </ng-container>
