@@ -75,6 +75,6 @@ def verify_that_the_login_popup_appears(driver):
     assert wait_on_element(driver, 7, '//span[@aria-label="Jira"]')
     assert wait_on_element(driver, 5, '//input[@id="username"]')
     assert wait_on_element(driver, 5, '//button[@id="login-submit"]', 'clickable')
-    assert wait_on_element(driver, 5, '//button[contains(.,"Continue with Google")]', 'clickable')
+    assert wait_on_element(driver, 5, '//button[@id="google-auth-button"]', 'clickable')
     driver.close()
     driver.switch_to.window(driver.window_handles[0])
