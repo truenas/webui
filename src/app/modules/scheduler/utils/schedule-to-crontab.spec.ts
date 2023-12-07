@@ -26,8 +26,10 @@ describe('scheduleToCrontab', () => {
   });
 
   it('extracts start and end value from crontab', () => {
-    expect(extractActiveHoursFromCron('0 10 * 2-5 6')).toEqual({ start: '10:00', end: '10:00' });
+    expect(extractActiveHoursFromCron('15 10 * 2-5 6')).toEqual({ start: '10:15', end: '10:15' });
+    expect(extractActiveHoursFromCron('15,25,35 10 * 2-5 6')).toEqual({ start: '10:15,25,35', end: '10:15,25,35' });
     expect(extractActiveHoursFromCron('0 08-18 * * mon,tue,wed,thu,fri,sat')).toEqual({ start: '08:00', end: '18:00' });
+    expect(extractActiveHoursFromCron('0 08,10 * * *')).toEqual({ start: '08:00', end: '10:00' });
     expect(extractActiveHoursFromCron('0 0 * * *')).toEqual({ start: '00:00', end: '23:59' });
   });
 });

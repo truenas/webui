@@ -104,8 +104,6 @@ export class SnapshotTaskListComponent implements EntityTableConfig<PeriodicSnap
           task_end: activeHours.end,
         }),
         cron_schedule: cronSchedule,
-        enabled: this.yesNoPipe.transform(task.enabled) as unknown as boolean,
-        recursive: this.yesNoPipe.transform(task.recursive) as unknown as boolean,
       } as PeriodicSnapshotTaskUi;
 
       return {
