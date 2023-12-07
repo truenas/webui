@@ -38,7 +38,7 @@ export class AdvancedSearchComponent<T> implements OnInit {
   queryInputValue: string;
   private editorView: EditorView;
 
-  get isEditorEmpty(): boolean {
+  get editorHasValue(): boolean {
     return (this.editorView.state.doc as unknown as { text: string[] })?.text?.[0] !== '';
   }
   showDatePicker$ = this.advancedSearchAutocomplete.showDatePicker$;

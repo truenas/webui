@@ -282,7 +282,7 @@ export class QueryParserService {
         ? value.map((valueItem) => `"${this.mapValueByPropertyType(currentProperty, valueItem) as string}"`).join(', ')
         : `"${mappedConditionValue}"`;
 
-      return `${mappedConditionProperty} ${comparator.toUpperCase()} (${valueList})`;
+      return `"${mappedConditionProperty}" ${comparator.toUpperCase()} (${valueList})`;
     }
 
     return `"${mappedConditionProperty}" ${comparator.toUpperCase()} "${mappedConditionValue}"`;
@@ -293,17 +293,18 @@ export class QueryParserService {
     properties: SearchProperty<never>[],
   ): string {
     if (Array.isArray(element)) {
-      if (typeof element[0] === 'string' && ['OR', 'AND'].includes(element[0])) {
-        const operator = element[0];
-        return this.parseArrayFromQueryFilter(element[1] as never, operator, properties);
+      if (typeof element[0] === 'string' && ['OR', 'AND'].includes(element[0].toUpperCase())) {
+        const operator = element[0].toUpperCase();
+        return this.parseArrayFromQueryFilter(element[1] as QueryFilter<never>[], operator, properties);
       }
 
-      if (element.length === 3) {
+      if (element.length === 3 && typeof element[1] === 'string') {
         return this.conditionToStringFromQueryFilter(element as QueryFilter<never>, properties);
       }
 
-      return this.parseArrayFromQueryFilter(element as never, 'AND', properties);
+      return this.parseArrayFromQueryFilter(element as QueryFilter<never>[], 'AND', properties);
     }
-    return this.conditionToStringFromQueryFilter(element, properties);
+
+    return this.conditionToStringFromQueryFilter(element as QueryFilter<never>, properties);
   }
 }

@@ -1,8 +1,11 @@
+import { TranslateService } from '@ngx-translate/core';
 import { QueryParserService } from 'app/modules/search-input/services/query-parser/query-parser.service';
 import { QuerySyntaxError } from 'app/modules/search-input/services/query-parser/query-parsing-result.interface';
 
 describe('QueryParserService - values', () => {
-  const service = new QueryParserService();
+  const service = new QueryParserService({
+    instant: (key: string) => key,
+  } as TranslateService);
 
   it('supports integers', () => {
     const integer = service.parseQuery('Age = 19');
