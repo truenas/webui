@@ -16,7 +16,6 @@ import {
 import { allCommands } from 'app/constants/all-commands.constant';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import helptext from 'app/helptext/account/user-form';
-import { Group } from 'app/interfaces/group.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { User, UserUpdate } from 'app/interfaces/user.interface';
 import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
@@ -49,8 +48,6 @@ const defaultHomePath = '/nonexistent';
 export class UserFormComponent implements OnInit {
   isFormLoading = false;
   subscriptions: Subscription[] = [];
-  userGroups: Group[] = [];
-
   homeModeOldValue = '';
 
   get isNewUser(): boolean {
@@ -84,7 +81,7 @@ export class UserFormComponent implements OnInit {
     uid: [null as number, [Validators.required]],
     group: [null as number],
     group_create: [true],
-    groups: [[] as string[] | number[]],
+    groups: [[] as number[]],
     home: [defaultHomePath, []],
     home_mode: ['700'],
     home_create: [false],
@@ -190,11 +187,6 @@ export class UserFormComponent implements OnInit {
         this.form.controls.smb.updateValueAndValidity();
       }
     });
-
-    this.userService.groupQueryDsCache().pipe(untilDestroyed(this)).subscribe((groups) => {
-      this.userGroups = groups;
-      this.cdr.markForCheck();
-    });
   }
 
   ngOnInit(): void {
@@ -212,11 +204,11 @@ export class UserFormComponent implements OnInit {
     });
 
     this.form.controls.group.valueChanges.pipe(debounceTime(300), untilDestroyed(this)).subscribe((group) => {
-      this.updateShellOptions(group, this.userGroupsIds);
+      this.updateShellOptions(group, this.form.value.groups);
     });
 
     this.form.controls.groups.valueChanges.pipe(debounceTime(300), untilDestroyed(this)).subscribe(() => {
-      this.updateShellOptions(this.form.value.group, this.userGroupsIds);
+      this.updateShellOptions(this.form.value.group, this.form.value.groups);
     });
 
     this.form.controls.home.valueChanges.pipe(untilDestroyed(this)).subscribe((home) => {
@@ -272,7 +264,7 @@ export class UserFormComponent implements OnInit {
       email: values.email ? values.email : null,
       full_name: values.full_name,
       group: values.group,
-      groups: this.userGroupsIds,
+      groups: values.groups.map((group) => parseInt(group.toString())),
       home_mode: this.homeModeOldValue !== values.home_mode ? values.home_mode : undefined,
       home_create: values.home_create,
       home: values.home,
@@ -329,6 +321,7 @@ export class UserFormComponent implements OnInit {
 
         request$.pipe(
           switchMap((id) => nextRequest$ || of(id)),
+          filter(Boolean),
           switchMap((id) => this.ws.call('user.query', [[['id', '=', id]]])),
           map((users) => users[0]),
           untilDestroyed(this),
@@ -384,7 +377,7 @@ export class UserFormComponent implements OnInit {
       full_name: user.full_name,
       group_create: false,
       group: user.group.id,
-      groups: this.userGroupNames,
+      groups: user.groups,
       home: user.home,
       locked: user.locked,
       password_disabled: user.password_disabled,
@@ -445,7 +438,7 @@ export class UserFormComponent implements OnInit {
   }
 
   private setFirstShellOption(): void {
-    this.ws.call('user.shell_choices', [this.userGroupsIds]).pipe(
+    this.ws.call('user.shell_choices', [this.form.value.groups]).pipe(
       choicesToOptions(),
       filter((shells) => !!shells.length),
       map((shells) => shells[0].value),
@@ -492,18 +485,5 @@ export class UserFormComponent implements OnInit {
         this.shellOptions$ = of(options);
         this.cdr.markForCheck();
       });
-  }
-
-  private get userGroupNames(): string[] {
-    return this.editingUser?.groups
-      .map((groupId) => this.userGroups.find((group) => group.id === groupId))
-      .map((group) => group?.group) || [];
-  }
-
-  private get userGroupsIds(): number[] {
-    return this.form.value.groups
-      .map((groupName) => this.userGroups.find((group) => group.group === groupName))
-      .filter(Boolean)
-      .map((group) => group?.id);
   }
 }

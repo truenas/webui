@@ -14,13 +14,13 @@
     [required]="required"
   >
     <mat-chip-row
-      *ngFor="let item of values"
+      *ngFor="let label of labels"
       class="chip"
       [disabled]="false"
       [removable]="!isDisabled"
-      (removed)="onRemove(item)"
+      (removed)="onRemove(label)"
     >
-      {{ item }}
+      {{ label }}
       <ix-icon *ngIf="!isDisabled" name="cancel" matChipRemove></ix-icon>
     </mat-chip-row>
 
@@ -45,6 +45,15 @@
         [ixTest]="[controlDirective.name, suggestion]"
       >
         {{ suggestion }}
+      </mat-option>
+    </ng-container>
+    <ng-container *ngIf="options">
+      <mat-option
+        *ngFor="let option of options | async"
+        [value]="option.value"
+        [ixTest]="[controlDirective.name, option.label]"
+      >
+        {{ option.label }}
       </mat-option>
     </ng-container>
   </mat-autocomplete>

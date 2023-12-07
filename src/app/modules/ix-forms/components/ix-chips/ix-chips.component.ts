@@ -9,13 +9,14 @@ import {
   ViewChild,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
   fromEvent, merge, Observable, Subject,
 } from 'rxjs';
 import {
   debounceTime, distinctUntilChanged, startWith, switchMap,
 } from 'rxjs/operators';
+import { Option } from 'app/interfaces/option.interface';
 import { ChipsProvider } from 'app/modules/ix-forms/components/ix-chips/chips-provider';
 
 @UntilDestroy()
@@ -33,12 +34,24 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
   @Input() required: boolean;
   @Input() allowNewEntries = true;
   @Input() autocompleteProvider: ChipsProvider;
+  @Input() options: Observable<Option[]>;
+  @Input() resolveValue = false;
 
   @ViewChild('chipInput', { static: true }) chipInput: ElementRef<HTMLInputElement>;
 
   suggestions$: Observable<string[]>;
   values: string[] = [];
   isDisabled = false;
+  private _options: Option[] = [];
+
+  get labels(): string[] {
+    return this.values.map((value) => {
+      if (this.resolveValue && this._options?.length) {
+        return this._options.find((option) => option.value === parseInt(value))?.label;
+      }
+      return value;
+    });
+  }
 
   inputReset$ = new Subject<void>();
 
@@ -56,6 +69,7 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
 
   ngOnChanges(): void {
     this.setAutocomplete();
+    this.setOptions();
   }
 
   writeValue(value: string[]): void {
@@ -77,14 +91,24 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
   }
 
   onRemove(itemToRemove: string): void {
-    const updatedValues = this.values.filter((value) => value !== itemToRemove);
+    if (this.resolveValue && this._options?.length) {
+      itemToRemove = this._options.find((option) => option.label === itemToRemove)?.value.toString();
+    }
+    const updatedValues = this.values.filter((value) => String(value) !== String(itemToRemove));
     this.updateValues(updatedValues);
   }
 
   onAdd(value: string): void {
-    const newValue = (value || '').trim();
+    let newValue = value?.trim();
     if (!newValue || this.values.includes(newValue)) {
       return;
+    }
+
+    if (this.resolveValue && this._options?.length) {
+      const newOption = this._options.find((option) => option.label === newValue);
+      if (newOption) {
+        newValue = newOption.value as string;
+      }
     }
 
     this.clearInput();
@@ -97,6 +121,17 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
       return;
     }
     this.onAdd(this.chipInput.nativeElement.value);
+  }
+
+  private setOptions(): void {
+    if (!this.resolveValue) {
+      this.options = null;
+      return;
+    }
+
+    this.options?.pipe(untilDestroyed(this)).subscribe((options) => {
+      this._options = options;
+    });
   }
 
   private setAutocomplete(): void {
@@ -122,7 +157,7 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
 
   private updateValues(updatedValues: string[]): void {
     this.values = updatedValues;
-    this.onChange(updatedValues);
+    this.onChange(this.values);
     this.onTouch();
   }
 

@@ -76,8 +76,10 @@
           formControlName="groups"
           [label]="'Auxiliary Groups' | translate"
           [tooltip]="tooltips.groups | translate"
-          [autocompleteProvider]="autocompleteProvider"
+          [options]="groupOptions$"
+          [resolveValue]="true"
           [allowNewEntries]="false"
+          [autocompleteProvider]="autocompleteProvider"
         ></ix-chips>
 
         <ix-combobox
