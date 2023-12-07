@@ -4,13 +4,18 @@
   align-items: center;
   display: flex;
 
-  > span {
+  > button {
+    border-radius: 4px !important;
+    width: inherit !important;
+  }
+
+  .username {
     -webkit-box-orient: vertical;
     cursor: pointer;
     display: inline-box;
     font-size: 14px;
     -webkit-line-clamp: 1;
-    margin-left: 0.5rem;
+    margin-right: 0.5rem;
     max-width: 200px;
     overflow: hidden;
     white-space: normal;
