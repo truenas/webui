@@ -115,12 +115,13 @@ export class AdvancedSearchAutocompleteService<T> {
       anchor = anchor + 2;
     }
 
+    if (/\s/.test(updatedValue) && !/^["']|["']$/.test(updatedValue)) {
+      updatedValue = `"${updatedValue}"`;
+      anchor = anchor + 2;
+    }
+
     this.editorView?.dispatch({
-      changes: {
-        from,
-        to,
-        insert: updatedValue,
-      },
+      changes: { from, to, insert: updatedValue },
       selection: { anchor },
     });
   }
