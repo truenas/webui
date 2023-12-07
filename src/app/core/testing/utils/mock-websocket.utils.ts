@@ -2,6 +2,7 @@ import {
   ExistingProvider, FactoryProvider, forwardRef, ValueProvider,
 } from '@angular/core';
 import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import {
   CallResponseOrFactory, JobResponseOrFactory,
@@ -47,8 +48,8 @@ export function mockWebsocket(
   return [
     {
       provide: WebSocketService,
-      useFactory: (router: Router, wsManager: WebsocketConnectionService) => {
-        const mockWebsocketService = new MockWebsocketService(router, wsManager);
+      useFactory: (router: Router, wsManager: WebsocketConnectionService, translate: TranslateService) => {
+        const mockWebsocketService = new MockWebsocketService(router, wsManager, translate);
         (mockResponses || []).forEach((mockResponse) => {
           if (mockResponse.type === MockWebsocketResponseType.Call) {
             mockWebsocketService.mockCall(mockResponse.method, mockResponse.response);
@@ -61,7 +62,7 @@ export function mockWebsocket(
         });
         return mockWebsocketService;
       },
-      deps: [Router, WebsocketConnectionService],
+      deps: [Router, WebsocketConnectionService, TranslateService],
     },
     {
       provide: MockWebsocketService,

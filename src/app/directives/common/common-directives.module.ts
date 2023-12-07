@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { AutofocusDirective } from 'app/directives/common/autofocus/autofocus.directive';
-import { HasRolesDirective } from 'app/directives/common/has-roles/has-roles.directive';
+import { HasRoleDirective } from 'app/directives/common/has-role/has-role.directive';
 import { IfNightlyDirective } from 'app/directives/common/if-nightly/if-nightly.directive';
 import { StepActivationDirective } from 'app/directives/common/step-activation.directive';
 import { LetDirective } from './app-let.directive';
@@ -13,14 +13,14 @@ import { LetDirective } from './app-let.directive';
   declarations: [
     LetDirective,
     IfNightlyDirective,
-    HasRolesDirective,
+    HasRoleDirective,
     AutofocusDirective,
     StepActivationDirective,
   ],
   exports: [
     LetDirective,
     IfNightlyDirective,
-    HasRolesDirective,
+    HasRoleDirective,
     AutofocusDirective,
     StepActivationDirective,
   ],

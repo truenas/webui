@@ -5,21 +5,22 @@ import {
   LocalStorageService,
   LocalStorageStrategy,
   NgxWebstorageModule,
+  STORAGE_STRATEGIES,
   StorageStrategy,
   StorageStrategyStub,
-  STORAGE_STRATEGIES,
 } from 'ngx-webstorage';
-import { of } from 'rxjs';
 import * as rxjs from 'rxjs';
+import { firstValueFrom, of } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
-import { DsUncachedUser, LoggedInUser } from 'app/interfaces/ds-cache.interface';
+import { Role } from 'app/enums/role.enum';
+import { AuthMeUser, LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
 import { AuthService } from 'app/services/auth/auth.service';
 import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
 
-const uncachedUser: DsUncachedUser = {
+const authMeUser = {
   pw_dir: 'dir',
   pw_gecos: 'gecos',
   pw_gid: 1,
@@ -31,10 +32,10 @@ const uncachedUser: DsUncachedUser = {
     dashState: [] as DashConfigItem[],
     appsAgreement: true,
   },
-};
+} as AuthMeUser;
 
 const loggedInUser = {
-  ...uncachedUser,
+  ...authMeUser,
   id: 1,
 } as LoggedInUser;
 
@@ -74,7 +75,7 @@ describe('AuthService', () => {
   });
 
   describe('Login', () => {
-    it('initalizes auth session with triggers and token with username/password login', () => {
+    it('initializes auth session with triggers and token with username/password login', () => {
       jest.spyOn(rxjs, 'timer').mockReturnValueOnce(of(0));
 
       jest.spyOn(UUID, 'UUID')
@@ -85,10 +86,9 @@ describe('AuthService', () => {
 
       const getFilteredWebsocketResponse = jest.spyOn(spectator.service, 'getFilteredWebsocketResponse');
       when(getFilteredWebsocketResponse).calledWith('login_uuid').mockReturnValue(of(true));
-      when(getFilteredWebsocketResponse).calledWith('logged_in_user_uuid').mockReturnValue(of(uncachedUser));
+      when(getFilteredWebsocketResponse).calledWith('logged_in_user_uuid').mockReturnValue(of(authMeUser));
       when(getFilteredWebsocketResponse).calledWith('user_query_uuid').mockReturnValue(of([loggedInUser]));
       when(getFilteredWebsocketResponse).calledWith('generate_token_uuid').mockReturnValue(of('DUMMY_TOKEN'));
-      jest.spyOn(spectator.service, 'getTwoFactorConfig').mockImplementation(jest.fn(() => {}));
 
       const obs$ = spectator.service.login('dummy', 'dummy');
 
@@ -133,7 +133,8 @@ describe('AuthService', () => {
         method: 'auth.generate_token',
       });
     });
-    it('initalizes auth session with triggers and token with token login', () => {
+
+    it('initializes auth session with triggers and token with token login', () => {
       jest.spyOn(rxjs, 'timer').mockReturnValueOnce(of(0));
 
       jest.spyOn(UUID, 'UUID')
@@ -144,11 +145,9 @@ describe('AuthService', () => {
 
       const getFilteredWebsocketResponse = jest.spyOn(spectator.service, 'getFilteredWebsocketResponse');
       when(getFilteredWebsocketResponse).calledWith('login_with_token_uuid').mockReturnValue(of(true));
-      when(getFilteredWebsocketResponse).calledWith('logged_in_user_uuid').mockReturnValue(of(uncachedUser));
+      when(getFilteredWebsocketResponse).calledWith('logged_in_user_uuid').mockReturnValue(of(authMeUser));
       when(getFilteredWebsocketResponse).calledWith('user_query_uuid').mockReturnValue(of([loggedInUser]));
       when(getFilteredWebsocketResponse).calledWith('generate_token_uuid').mockReturnValue(of('DUMMY_TOKEN4'));
-
-      jest.spyOn(spectator.service, 'getTwoFactorConfig').mockImplementation(jest.fn(() => {}));
 
       const obs$ = spectator.service.loginWithToken();
 
@@ -220,6 +219,46 @@ describe('AuthService', () => {
         msg: IncomingApiMessageType.Method,
         method: 'auth.logout',
       });
+    });
+  });
+
+  describe('hasRole', () => {
+    function setUserRoles(roles: Role[]): void {
+      jest.spyOn(UUID, 'UUID')
+        .mockReturnValueOnce('logged_in_user_uuid')
+        .mockReturnValueOnce('user_query_uuid');
+
+      const getFilteredWebsocketResponse = jest.spyOn(spectator.service, 'getFilteredWebsocketResponse');
+      when(getFilteredWebsocketResponse).calledWith('logged_in_user_uuid').mockReturnValue(of({
+        ...authMeUser,
+        privilege: {
+          roles: {
+            $set: roles,
+          },
+        },
+      }));
+      when(getFilteredWebsocketResponse).calledWith('user_query_uuid').mockReturnValue(of([loggedInUser]));
+
+      spectator.service.refreshUser();
+    }
+
+    it('returns false when there is no user object', async () => {
+      expect(await firstValueFrom(spectator.service.hasRole([Role.AlertListRead]))).toBe(false);
+    });
+
+    it('returns false when supplied array is empty', async () => {
+      setUserRoles([Role.SharingSmbRead]);
+      expect(await firstValueFrom(spectator.service.hasRole([]))).toBe(false);
+    });
+
+    it('returns true if user has one of the roles', async () => {
+      setUserRoles([Role.SharingSmbRead, Role.SharingSmbWrite]);
+      expect(await firstValueFrom(spectator.service.hasRole([Role.SharingSmbRead]))).toBe(true);
+    });
+
+    it('returns true for any role when user has FULL_ADMIN role', async () => {
+      setUserRoles([Role.FullAdmin]);
+      expect(await firstValueFrom(spectator.service.hasRole([Role.AlertListRead]))).toBe(true);
     });
   });
 });

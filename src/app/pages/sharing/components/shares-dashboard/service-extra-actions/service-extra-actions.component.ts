@@ -90,7 +90,7 @@ export class ServiceExtraActionsComponent {
           this.dialogService.error({
             title: message,
             message: error.reason,
-            backtrace: error.trace.formatted,
+            backtrace: error.trace?.formatted,
           });
         },
       });

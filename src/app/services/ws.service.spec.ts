@@ -1,4 +1,6 @@
 import { TestBed } from '@angular/core/testing';
+import { mockProvider } from '@ngneat/spectator/jest';
+import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import {
   BehaviorSubject, Observable, Subject,
@@ -28,6 +30,7 @@ describe('WebSocketService', () => {
     TestBed.configureTestingModule({
       providers: [
         WebSocketService,
+        mockProvider(TranslateService),
         { provide: WebsocketConnectionService, useValue: mockWebsocketConnectionService },
       ],
     });
