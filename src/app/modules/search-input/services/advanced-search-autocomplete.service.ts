@@ -24,15 +24,11 @@ const andSuggestion = 'AND';
 const logicalSuggestions = [andSuggestion, orSuggestion];
 
 const regexMap = {
-  // Starts and ends with parentheses containing a quoted non-whitespace string.
   strictQuotedString: /^\("\S+"\)$/,
-  // Starts with a quote, includes any characters, optionally ends with a quote.
   looselyQuotedString: /^["'].*["']?$/,
-  // Starts and ends with a quote, capturing the content in between.
-  captureBetweenQuotes: /^["']([\s\S]*)["']$/,
-  // Starts and ends with parentheses and a quote, capturing all content in between.
-  captureBetweenQuotesWithParentheses: /^\(["']([\s\S]*)["']\)$/,
   containsWhitespace: /\s/,
+  captureBetweenQuotes: /^["']([\s\S]*)["']$/,
+  captureBetweenQuotesWithParentheses: /^\(["']([\s\S]*)["']\)$/,
 };
 
 @Injectable()
@@ -110,12 +106,10 @@ export class AdvancedSearchAutocompleteService<T> {
         to = to + 1;
         anchor = from + updatedValue.length - 1;
       }
-    } else if (regexMap.containsWhitespace.test(updatedValue) && !regexMap.looselyQuotedString.test(updatedValue)) {
-      updatedValue = `"${updatedValue}"`;
-      anchor = anchor + 2;
-    }
-
-    if (/\s/.test(updatedValue) && !/^["']|["']$/.test(updatedValue)) {
+    } else if (
+      regexMap.containsWhitespace.test(updatedValue) && !regexMap.looselyQuotedString.test(updatedValue)
+      && !updatedValue.startsWith('(') && !updatedValue.endsWith(')')
+    ) {
       updatedValue = `"${updatedValue}"`;
       anchor = anchor + 2;
     }
