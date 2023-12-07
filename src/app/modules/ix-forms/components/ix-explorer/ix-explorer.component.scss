@@ -55,6 +55,20 @@
     // Wrap long file names
     word-break: break-all;
   }
+
+  ::ng-deep .tree-node {
+    animation: slider 0.7s ease-in-out;
+  }
+
+  @keyframes slider {
+    0% {
+      max-height: 30px;
+    }
+
+    100% {
+      max-height: 300px;
+    }
+  }
 }
 
 .loading-error {
