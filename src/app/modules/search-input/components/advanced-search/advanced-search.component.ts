@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import { autocompletion, closeBrackets, startCompletion } from '@codemirror/autocomplete';
 import { EditorState } from '@codemirror/state';
-import { EditorView } from '@codemirror/view';
+import { EditorView, placeholder } from '@codemirror/view';
 import { format } from 'date-fns';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
 import { AdvancedSearchAutocompleteService } from 'app/modules/search-input/services/advanced-search-autocomplete.service';
@@ -38,6 +38,9 @@ export class AdvancedSearchComponent<T> implements OnInit {
   queryInputValue: string;
   private editorView: EditorView;
 
+  get isEditorEmpty(): boolean {
+    return (this.editorView.state.doc as unknown as { text: string[] })?.text?.[0] !== '';
+  }
   showDatePicker$ = this.advancedSearchAutocomplete.showDatePicker$;
 
   constructor(
@@ -87,6 +90,7 @@ export class AdvancedSearchComponent<T> implements OnInit {
           EditorView.lineWrapping,
           updateListener,
           closeBrackets(),
+          placeholder('Service = "SMB" AND Event = "CLOSE"'),
         ],
       }),
       parent: this.inputArea.nativeElement,
