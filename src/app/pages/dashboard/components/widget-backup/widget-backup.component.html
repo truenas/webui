@@ -119,7 +119,7 @@
                     <li fxLayout="row">
                       <span class="label">
                         {{ 'Last successful' }}:
-                        {{ tile.lastSuccessfulTask ? (tile.lastSuccessfulTask | formatDateTime) : ('Never' | translate) }}
+                        {{ tile.lastSuccessfulTask ? (tile.lastSuccessfulTask.$date | formatDateTime) : ('Never' | translate) }}
                       </span>
                     </li>
                   </ul>
@@ -132,7 +132,7 @@
           </div>
         </div>
         <div *ngIf="!backupsTiles.length">
-          <div class="empty-card-content">
+          <div *ngIf="!isLoading" class="empty-card-content">
             <ix-icon name="mdi-format-list-text" class="empty-icon"></ix-icon>
             <div class="backup-links">
               <ng-template *ngTemplateOutlet="backupLinks"></ng-template>
@@ -162,6 +162,9 @@
                 {{ 'Rsync to another server' | translate }}
               </a>
             </div>
+          </div>
+          <div *ngIf="isLoading" class="loading-card-content">
+            <mat-spinner [diameter]="40"></mat-spinner>
           </div>
         </div>
       </mat-card-content>

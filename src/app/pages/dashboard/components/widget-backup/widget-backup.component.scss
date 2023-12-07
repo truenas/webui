@@ -55,6 +55,12 @@
   }
 }
 
+.loading-card-content {
+  display: flex;
+  justify-content: center;
+  padding-top: 120px;
+}
+
 mat-grid-tile {
   background-color: var(--bg1);
   border-radius: 2px;

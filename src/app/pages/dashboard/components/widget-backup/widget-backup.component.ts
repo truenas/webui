@@ -5,11 +5,13 @@ import { MediaObserver } from '@angular/flex-layout';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { differenceInDays } from 'date-fns';
-import { of } from 'rxjs';
+import { forkJoin } from 'rxjs';
 import { Direction } from 'app/enums/direction.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ScreenType } from 'app/enums/screen-type.enum';
+import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
+import { WebSocketService } from 'app/services/ws.service';
 
 enum BackupType {
   CloudSync = 'Cloud Sync',
@@ -19,8 +21,7 @@ enum BackupType {
 
 interface BackupRow {
   type: BackupType;
-  description: string;
-  timestamp: Date;
+  timestamp: ApiTimestamp;
   state: JobState;
   direction: Direction;
 }
@@ -33,7 +34,7 @@ interface BackupTile {
   failedReceive: number;
   lastWeekSend: number;
   lastWeekReceive: number;
-  lastSuccessfulTask: Date;
+  lastSuccessfulTask: ApiTimestamp;
 }
 
 @UntilDestroy()
@@ -49,6 +50,7 @@ interface BackupTile {
 export class WidgetBackupComponent extends WidgetComponent implements OnInit {
   screenType = ScreenType.Desktop;
   backups: BackupRow[] = [];
+  isLoading = false;
 
   readonly ScreenType = ScreenType;
 
@@ -98,6 +100,7 @@ export class WidgetBackupComponent extends WidgetComponent implements OnInit {
     public mediaObserver: MediaObserver,
     public translate: TranslateService,
     private cdr: ChangeDetectorRef,
+    private ws: WebSocketService,
   ) {
     super(translate);
 
@@ -113,71 +116,41 @@ export class WidgetBackupComponent extends WidgetComponent implements OnInit {
   }
 
   getBackups(): void {
-    const dateMock = new Date();
-    dateMock.setTime(dateMock.getTime() - (18 * 3600 * 1000));
-
-    const dataMock: BackupRow[] = [
-      {
-        type: BackupType.CloudSync,
-        description: 'Description for task 1',
-        timestamp: dateMock,
-        state: JobState.Success,
-        direction: Direction.Pull,
-      },
-      {
-        type: BackupType.CloudSync,
-        description: 'Description for task 2',
-        timestamp: dateMock,
-        state: JobState.Success,
-        direction: Direction.Pull,
-      },
-      {
-        type: BackupType.Rsync,
-        description: 'Description for task 3',
-        timestamp: dateMock,
-        state: JobState.Failed,
-        direction: Direction.Pull,
-      },
-      {
-        type: BackupType.Replication,
-        description: 'Description for task 4',
-        timestamp: dateMock,
-        state: JobState.Success,
-        direction: Direction.Pull,
-      },
-      {
-        type: BackupType.CloudSync,
-        description: 'Description for task 5',
-        timestamp: dateMock,
-        state: JobState.Failed,
-        direction: Direction.Pull,
-      },
-      {
-        type: BackupType.CloudSync,
-        description: 'Description for task 6',
-        timestamp: dateMock,
-        state: JobState.Failed,
-        direction: Direction.Pull,
-      },
-      {
-        type: BackupType.Rsync,
-        description: 'Description for task 7',
-        timestamp: dateMock,
-        state: JobState.Success,
-        direction: Direction.Pull,
-      },
-    ];
-
-    of(dataMock).pipe(untilDestroyed(this)).subscribe((backups) => {
-      this.backups = backups;
+    this.isLoading = true;
+    forkJoin([
+      this.ws.call('replication.query'),
+      this.ws.call('rsynctask.query'),
+      this.ws.call('cloudsync.query'),
+    ]).pipe(untilDestroyed(this)).subscribe(([replicationTasks, rsyncTasks, cloudSyncTasks]) => {
+      this.isLoading = false;
+      this.backups = [
+        ...replicationTasks.map((task) => ({
+          type: BackupType.Replication,
+          direction: task.direction,
+          state: task.state.state,
+          timestamp: task.state.datetime,
+        })),
+        ...rsyncTasks.map((task) => ({
+          type: BackupType.Rsync,
+          direction: task.direction,
+          state: task.job?.state || (task.locked ? JobState.Locked : JobState.Pending),
+          timestamp: task.job?.time_finished,
+        })),
+        ...cloudSyncTasks.map((task) => ({
+          type: BackupType.CloudSync,
+          direction: task.direction,
+          state: task.job?.state || (task.locked ? JobState.Locked : JobState.Pending),
+          timestamp: task.job?.time_finished,
+        })),
+      ];
       this.cdr.markForCheck();
     });
   }
 
   private getTile(title: string, tasks: BackupRow[]): BackupTile {
-    const successfulTasks = tasks.filter((backup) => backup.state !== JobState.Failed);
+    const successfulTasks = tasks.filter((backup) => backup.state === JobState.Success);
     const lastSuccessfulTask = successfulTasks
-      .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime())[0]?.timestamp;
+      .sort((a, b) => b.timestamp.$date - a.timestamp.$date)[0]?.timestamp;
 
     return {
       title,
@@ -197,7 +170,7 @@ export class WidgetBackupComponent extends WidgetComponent implements OnInit {
     return backup.direction === Direction.Push;
   }
 
-  private isThisWeek(timestamp: Date): boolean {
-    return differenceInDays(new Date(), timestamp) < 7;
+  private isThisWeek(timestamp: ApiTimestamp): boolean {
+    return differenceInDays((new Date()).getTime(), timestamp.$date) < 7;
   }
 }
