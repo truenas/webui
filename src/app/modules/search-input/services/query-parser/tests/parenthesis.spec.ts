@@ -1,8 +1,11 @@
+import { TranslateService } from '@ngx-translate/core';
 import { QueryParserService } from 'app/modules/search-input/services/query-parser/query-parser.service';
 import { ConnectorType } from 'app/modules/search-input/services/query-parser/query-parsing-result.interface';
 
 describe('QueryParserService - logical connectors', () => {
-  const service = new QueryParserService();
+  const service = new QueryParserService({
+    instant: (key: string) => key,
+  } as TranslateService);
 
   it('supports parenthesis around a single condition', () => {
     const parsed = service.parseQuery('(Age = 18)');
