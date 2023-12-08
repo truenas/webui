@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import { when } from 'jest-when';
 import { Observable, of, Subject } from 'rxjs';
 import { ValuesType } from 'utility-types';
@@ -40,8 +41,9 @@ export class MockWebsocketService extends WebSocketService {
   constructor(
     protected router: Router,
     protected wsManager: WebsocketConnectionService,
+    protected translate: TranslateService,
   ) {
-    super(router, wsManager);
+    super(router, wsManager, translate);
 
     this.call = jest.fn();
     this.job = jest.fn();

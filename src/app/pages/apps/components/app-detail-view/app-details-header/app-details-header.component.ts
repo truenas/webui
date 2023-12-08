@@ -80,7 +80,7 @@ export class AppDetailsHeaderComponent {
         }).pipe(
           filter(Boolean),
           switchMap(() => this.ws.call('auth.set_attribute', ['appsAgreement', true])),
-          tap(() => this.authService.getLoggedInUserInformation()),
+          tap(() => this.authService.refreshUser()),
         );
       }),
 

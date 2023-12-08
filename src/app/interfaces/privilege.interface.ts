@@ -23,4 +23,5 @@ export interface PrivilegeRole {
   name: Role;
   title: string;
   includes: Role[];
+  builtin: boolean;
 }
