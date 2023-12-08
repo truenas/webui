@@ -43,14 +43,15 @@ export class TwoFactorGuardService implements CanActivateChild {
     return forkJoin([
       this.authService.userTwoFactorConfig$.pipe(take(1)),
       this.authService.getGlobalTwoFactorConfig(),
+      this.authService.hasRole([Role.FullAdmin]).pipe(take(1)),
     ]).pipe(
-      switchMap(([userConfig, globalConfig]) => {
+      switchMap(([userConfig, globalConfig, isFullAdmin]) => {
         if (!globalConfig.enabled || userConfig.secret_configured || state.url.endsWith('/two-factor-auth')) {
           return of(true);
         }
 
         // Allow admins to access system settings regardless of 2FA status
-        if (this.authService.hasRole([Role.FullAdmin]) && state.url.startsWith('/system')) {
+        if (isFullAdmin && state.url.startsWith('/system')) {
           return of(true);
         }
 
