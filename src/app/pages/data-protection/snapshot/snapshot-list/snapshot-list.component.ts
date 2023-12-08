@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { JobState } from 'app/enums/job-state.enum';
 import {
@@ -12,7 +11,7 @@ import {
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
-import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
+import { extractActiveHoursFromCron, scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { SnapshotTaskComponent } from 'app/pages/data-protection/snapshot/snapshot-task/snapshot-task.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -20,7 +19,6 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { StorageService } from 'app/services/storage.service';
 import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
 
 @UntilDestroy()
 @Component({
@@ -80,7 +78,6 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
     private slideInService: IxSlideInService,
     private route: ActivatedRoute,
     private router: Router,
-    private store$: Store<AppState>,
   ) {
     this.filterValue = this.route.snapshot.paramMap.get('dataset') || '';
   }
@@ -91,11 +88,17 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
 
   resourceTransformIncomingRestData(tasks: PeriodicSnapshotTask[]): PeriodicSnapshotTaskUi[] {
     return tasks.map((task) => {
+      const cronSchedule = scheduleToCrontab(task.schedule);
+      const activeHours = extractActiveHoursFromCron(cronSchedule);
+
       const transformedTask = {
         ...task,
         keepfor: `${task.lifetime_value} ${task.lifetime_unit}(S)`,
-        when: this.translate.instant('From {task_begin} to {task_end}', { task_begin: task.schedule.begin, task_end: task.schedule.end }),
-        cron_schedule: scheduleToCrontab(task.schedule),
+        when: this.translate.instant('From {task_begin} to {task_end}', {
+          task_begin: activeHours.start,
+          task_end: activeHours.end,
+        }),
+        cron_schedule: cronSchedule,
       } as PeriodicSnapshotTaskUi;
 
       return {
