@@ -5,6 +5,7 @@ import { Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { BehaviorSubject } from 'rxjs';
 import { DatasetCaseSensitivity } from 'app/enums/dataset.enum';
 import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
 import { forbiddenValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
@@ -21,7 +22,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CreateDatasetDialogComponent implements OnInit {
-  isLoading = false;
+  isLoading$ = new BehaviorSubject(false);
   form = this.fb.group({
     name: ['', [
       Validators.required,
@@ -43,30 +44,36 @@ export class CreateDatasetDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadParentDataset();
+
+    this.isLoading$.pipe(untilDestroyed(this)).subscribe((isLoading) => {
+      if (isLoading) {
+        this.form.controls.name.disable();
+      } else {
+        this.form.controls.name.enable();
+      }
+    });
   }
 
   createDataset(): void {
-    this.isLoading = true;
+    this.isLoading$.next(true);
     this.ws.call('pool.dataset.create', [{ ...this.data.dataset, name: `${this.parent.name}/${this.form.value.name}` }])
       .pipe(untilDestroyed(this)).subscribe({
         next: (dataset) => {
-          this.isLoading = false;
-          this.cdr.markForCheck();
+          this.isLoading$.next(false);
           this.dialogRef.close(dataset);
         },
         error: (error) => {
-          this.isLoading = false;
-          this.cdr.markForCheck();
+          this.isLoading$.next(false);
           this.dialog.error(this.errorHandler.parseWsError(error));
         },
       });
   }
 
   loadParentDataset(): void {
-    this.isLoading = true;
+    this.isLoading$.next(true);
     this.ws.call('pool.dataset.query', [[['id', '=', this.data.parentId]]])
       .pipe(untilDestroyed(this)).subscribe((parent) => {
-        this.isLoading = false;
+        this.isLoading$.next(false);
         this.parent = parent[0];
         this.cdr.markForCheck();
         this.addNameValidators();
