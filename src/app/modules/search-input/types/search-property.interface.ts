@@ -17,7 +17,7 @@ export interface SearchProperty<T> {
   propertyType: PropertyType;
 
   valueSuggestions$?: Observable<Option[]>;
-
+  enumMap?: Map<unknown, string>;
   /**
    * Optional functions to convert value from and to API format.
    */

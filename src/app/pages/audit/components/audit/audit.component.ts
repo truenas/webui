@@ -8,7 +8,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { toSvg } from 'jdenticon';
 import { filter, map, of } from 'rxjs';
-import { AuditEvent, auditEventLabels } from 'app/enums/audit-event.enum';
+import {
+  AuditEvent, AuditService, auditEventLabels, auditServiceLabels,
+} from 'app/enums/audit-event.enum';
 import { getLogImportantData } from 'app/helpers/get-log-important-data.helper';
 import { ParamsBuilder } from 'app/helpers/params-builder/params-builder.class';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -118,9 +120,16 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
           'service',
           this.translate.instant('Service'),
           of([
-            { label: 'SMB', value: '"SMB"' },
-            { label: this.translate.instant('Middleware'), value: '"MIDDLEWARE"' },
+            {
+              label: this.translate.instant(auditServiceLabels.get(AuditService.Smb)),
+              value: `"${this.translate.instant(auditServiceLabels.get(AuditService.Smb))}"`,
+            },
+            {
+              label: this.translate.instant(auditServiceLabels.get(AuditService.Middleware)),
+              value: `"${this.translate.instant(auditServiceLabels.get(AuditService.Middleware))}"`,
+            },
           ]),
+          auditServiceLabels,
         ),
         textProperty(
           'username',
@@ -135,10 +144,11 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
         textProperty(
           'event',
           this.translate.instant('Event'),
-          of(Object.values(AuditEvent).map((value) => ({
-            label: this.translate.instant(auditEventLabels.get(value)),
-            value: `"${value}"`,
+          of(Object.values(AuditEvent).map((key) => ({
+            label: this.translate.instant(auditEventLabels.get(key)),
+            value: `"${this.translate.instant(auditEventLabels.get(key))}"`,
           }))),
+          auditEventLabels,
         ),
         textProperty('event.event_data.host', this.translate.instant('SMB - Host')),
         textProperty('event.event_data.clientAccount', this.translate.instant('SMB - Client Account')),
