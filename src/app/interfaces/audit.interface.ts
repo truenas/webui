@@ -1,6 +1,7 @@
 import { AuditEvent } from 'app/enums/audit-event.enum';
 import { AuditService } from 'app/enums/audit.enum';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
+import { CredentialType } from 'app/interfaces/credential-type.interface';
 
 export interface BaseAuditEntry {
   audit_id: string;
@@ -21,8 +22,13 @@ export interface AuditConfig {
   quota_fill_critical: number;
 }
 
-interface EventData {
+export interface AuditEventData {
   host?: string;
+  description?: string;
+  method?: string;
+  credentials?: {
+    credentials?: CredentialType;
+  };
   clientAccount?: string;
   file?: {
     path?: string;
@@ -42,7 +48,7 @@ interface EventData {
 export interface SmbAuditEntry extends BaseAuditEntry {
   service: AuditService.Smb;
   service_data: AuditServiceData;
-  event_data: EventData;
+  event_data: AuditEventData;
 }
 
 export type AuditEntry = SmbAuditEntry;

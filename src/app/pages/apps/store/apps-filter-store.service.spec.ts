@@ -35,7 +35,7 @@ describe('AppsFilterStore', () => {
     name: 'syncthing',
     recommended: true,
     title: 'Syncthing',
-  } as unknown as AvailableApp;
+  } as AvailableApp;
 
   const plexApp: AvailableApp = {
     catalog: 'TRUENAS',
@@ -47,7 +47,7 @@ describe('AppsFilterStore', () => {
     name: 'plex',
     recommended: false,
     title: 'Plex',
-  } as unknown as AvailableApp;
+  } as AvailableApp;
   const availableApps: AvailableApp[] = [
     { ...plexApp },
     { ...installedAndRecommendedApp },

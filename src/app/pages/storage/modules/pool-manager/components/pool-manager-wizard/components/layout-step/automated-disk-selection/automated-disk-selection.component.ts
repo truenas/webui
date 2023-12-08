@@ -60,6 +60,10 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
     return isDraidLayout(this.layoutControl.value);
   }
 
+  get isMetadataVdev(): boolean {
+    return this.type === VdevType.Special;
+  }
+
   private updateStoreOnChanges(): void {
     this.store.isLoading$.pipe(filter((isLoading) => !isLoading), take(1), untilDestroyed(this)).subscribe({
       next: () => {

@@ -1,4 +1,3 @@
-import { inject } from '@angular/core';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import {
   format, subDays, subMonths, subWeeks,
@@ -13,7 +12,7 @@ export function searchProperties<T>(properties: SearchProperty<T>[]): SearchProp
 }
 
 export function textProperty<T>(
-  property: keyof T,
+  property: keyof T | string,
   label: string,
   valueSuggestions$?: Observable<Option[]>,
 ): SearchProperty<T> {
@@ -65,10 +64,7 @@ export function booleanProperty<T>(
   };
 }
 
-export function memoryProperty<T>(property: keyof T, label: string): SearchProperty<T> {
-  // TODO: Is this better or worse than making all of this a service?
-  const formatter = inject(IxFormatterService);
-
+export function memoryProperty<T>(property: keyof T, label: string, formatter: IxFormatterService): SearchProperty<T> {
   return {
     label,
     property,

@@ -21,7 +21,6 @@ type IxSelectValue = SelectOptionValueType;
 })
 export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChanges {
   @Input() label: string;
-  @Input() value: IxSelectValue;
   @Input() hint: string;
   @Input() options: Observable<SelectOption[]>;
   @Input() required: boolean;
@@ -32,12 +31,13 @@ export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChange
   @Input() showSelectAll = false;
   @Input() compareWith: (val1: unknown, val2: unknown) => boolean = (val1: unknown, val2: unknown) => val1 === val2;
 
-  isDisabled = false;
-  hasErrorInOptions = false;
-  opts$: Observable<SelectOption[]>;
-  isLoading = false;
+  protected value: IxSelectValue;
+  protected isDisabled = false;
+  protected hasErrorInOptions = false;
+  protected opts$: Observable<SelectOption[]>;
+  protected isLoading = false;
 
-  selectAllState = {
+  protected selectAllState = {
     checked: false,
   };
 
@@ -85,7 +85,8 @@ export class IxSelectComponent implements ControlValueAccessor, OnInit, OnChange
       this.hasErrorInOptions = false;
       this.isLoading = true;
       this.opts$ = this.options.pipe(
-        catchError(() => {
+        catchError((error: unknown) => {
+          console.error(error);
           this.hasErrorInOptions = true;
           return EMPTY;
         }),

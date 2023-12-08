@@ -18,7 +18,7 @@ describe('InstalledAppsStore', () => {
   const installedChartReleases: ChartRelease[] = [
     {
       name: 'minio',
-    } as unknown as ChartRelease,
+    } as ChartRelease,
   ];
 
   const createService = createServiceFactory({

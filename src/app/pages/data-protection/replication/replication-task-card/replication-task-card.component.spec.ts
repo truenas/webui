@@ -55,7 +55,7 @@ describe('ReplicationTaskCardComponent', () => {
       restrict_schedule: null,
       job: null,
       task_last_snapshot: 'APPS/test2@auto-2023-09-19_00-00',
-    } as unknown as ReplicationTaskUi,
+    } as ReplicationTaskUi,
   ];
 
   const createComponent = createComponentFactory({
