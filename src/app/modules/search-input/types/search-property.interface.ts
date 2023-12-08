@@ -13,11 +13,11 @@ export interface SearchProperty<T> {
    * Nested properties are supported: 'user.first_name'.
    */
   // TODO: Add support for nested properties.
-  property: keyof T;
+  property: keyof T | string;
   propertyType: PropertyType;
 
   valueSuggestions$?: Observable<Option[]>;
-
+  enumMap?: Map<unknown, string>;
   /**
    * Optional functions to convert value from and to API format.
    */

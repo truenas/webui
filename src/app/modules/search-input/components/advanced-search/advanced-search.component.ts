@@ -5,16 +5,15 @@ import {
   ElementRef,
   EventEmitter,
   Input,
-  OnChanges, OnInit,
+  OnInit,
   Output,
   ViewChild,
 } from '@angular/core';
 import { autocompletion, closeBrackets, startCompletion } from '@codemirror/autocomplete';
 import { EditorState } from '@codemirror/state';
-import { EditorView } from '@codemirror/view';
+import { EditorView, placeholder } from '@codemirror/view';
 import { format } from 'date-fns';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
-import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { AdvancedSearchAutocompleteService } from 'app/modules/search-input/services/advanced-search-autocomplete.service';
 import { QueryParserService } from 'app/modules/search-input/services/query-parser/query-parser.service';
 import { QueryToApiService } from 'app/modules/search-input/services/query-to-api/query-to-api.service';
@@ -26,7 +25,7 @@ import { SearchProperty } from 'app/modules/search-input/types/search-property.i
   styleUrls: ['./advanced-search.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AdvancedSearchComponent<T> implements OnInit, OnChanges {
+export class AdvancedSearchComponent<T> implements OnInit {
   @Input() query: QueryFilters<T> = [];
   @Input() properties: SearchProperty<T>[] = [];
 
@@ -39,6 +38,9 @@ export class AdvancedSearchComponent<T> implements OnInit, OnChanges {
   queryInputValue: string;
   private editorView: EditorView;
 
+  get editorHasValue(): boolean {
+    return (this.editorView.state.doc as unknown as { text: string[] })?.text?.[0] !== '';
+  }
   showDatePicker$ = this.advancedSearchAutocomplete.showDatePicker$;
 
   constructor(
@@ -48,17 +50,19 @@ export class AdvancedSearchComponent<T> implements OnInit, OnChanges {
     private cdr: ChangeDetectorRef,
   ) {}
 
-  ngOnChanges(changes: IxSimpleChanges<this>): void {
-    if (changes.query && this.editorView) {
-      // TODO:
-      // this.setEditorContents(this.queryParser.formatFiltersToQuery(this.query, this.properties));
-    }
-  }
-
   ngOnInit(): void {
     this.initEditor();
     this.advancedSearchAutocomplete.setProperties(this.properties);
     this.advancedSearchAutocomplete.setEditorView(this.editorView);
+
+    if (this.query) {
+      this.setEditorContents(
+        this.queryParser.formatFiltersToQuery(
+          this.query as QueryFilters<never>,
+          this.properties as SearchProperty<never>[],
+        ),
+      );
+    }
   }
 
   startSuggestionsCompletion(): void {
@@ -86,6 +90,7 @@ export class AdvancedSearchComponent<T> implements OnInit, OnChanges {
           EditorView.lineWrapping,
           updateListener,
           closeBrackets(),
+          placeholder('Service = "SMB" AND Event = "CLOSE"'),
         ],
       }),
       parent: this.inputArea.nativeElement,
@@ -111,8 +116,12 @@ export class AdvancedSearchComponent<T> implements OnInit, OnChanges {
     this.hasQueryErrors = Boolean(this.queryInputValue.length && parsedQuery.hasErrors);
     this.cdr.markForCheck();
 
+    if (this.queryInputValue === '') {
+      this.onResetInput();
+    }
+
     if (parsedQuery.hasErrors) {
-      // TODO: Handle errors.
+      // TODO: Handle errors. --> https://ixsystems.atlassian.net/browse/NAS-125375
       return;
     }
 
@@ -126,11 +135,7 @@ export class AdvancedSearchComponent<T> implements OnInit, OnChanges {
 
   private setEditorContents(contents: string, from = 0, to?: number): void {
     this.editorView.dispatch({
-      changes: {
-        from,
-        to,
-        insert: contents,
-      },
+      changes: { from, to, insert: contents },
       selection: { anchor: from + contents.length },
     });
   }

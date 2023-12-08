@@ -178,7 +178,7 @@ describe('SigninStore', () => {
           return of();
         }
 
-        return of({ fields: FailoverStatus.Importing } as unknown as ApiEvent<FailoverStatus>);
+        return of({ fields: FailoverStatus.Importing } as ApiEvent<FailoverStatus>);
       });
 
       spectator.service.init();
@@ -206,7 +206,7 @@ describe('SigninStore', () => {
               fields: {
                 disabled_reasons: [FailoverDisabledReason.DisagreeVip],
               },
-            } as unknown as ApiEvent<FailoverDisabledReasonEvent>,
+            } as ApiEvent<FailoverDisabledReasonEvent>,
           });
         });
 

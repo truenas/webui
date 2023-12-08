@@ -7,8 +7,8 @@ import { JobState } from 'app/enums/job-state.enum';
 import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { AuditEntry } from 'app/interfaces/audit.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { ExportButtonComponent } from 'app/modules/export-button/components/export-button/export-button.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
-import { ExportButtonComponent } from 'app/pages/audit/components/export-button/export-button.component';
 import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -34,7 +34,10 @@ describe('ExportButtonComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent({
-      props: { method },
+      props: {
+        method,
+        defaultFilters: [['event', '~', '(?i)search query']],
+      },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });

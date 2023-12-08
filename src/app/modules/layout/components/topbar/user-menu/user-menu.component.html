@@ -1,12 +1,4 @@
 <div *ngIf="(loggedInUser$ | async) as user" class="user-menu-wrapper">
-  <span
-    *ngIf="user?.username"
-    [matTooltip]="user.username"
-    [matMenuTriggerFor]="userMenu"
-  >
-    {{ user.username }}
-  </span>
-
   <button
     name="Settings"
     mat-icon-button
@@ -15,6 +7,15 @@
     [matTooltip]="tooltips.settings | translate"
     [matMenuTriggerFor]="userMenu"
   >
+    <span
+      *ngIf="user?.username"
+      class="username"
+      [matTooltip]="user.username"
+      [matMenuTriggerFor]="userMenu"
+    >
+      {{ user.username }}
+    </span>
+
     <ix-icon name="account_circle"></ix-icon>
   </button>
 

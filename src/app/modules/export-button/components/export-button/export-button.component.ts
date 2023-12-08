@@ -25,6 +25,7 @@ import { WebSocketService } from 'app/services/ws.service';
 export class ExportButtonComponent<T, M extends ApiJobMethod> {
   @Input() method: M;
   @Input() searchQuery: SearchQuery<T>;
+  @Input() defaultFilters: QueryFilters<T>;
   @Input() sorting: TableSort<T>;
   @Input() filename = 'data';
 
@@ -82,15 +83,10 @@ export class ExportButtonComponent<T, M extends ApiJobMethod> {
   }
 
   private getQueryFilters(searchQuery: SearchQuery<T>): QueryFilters<T> {
-    if (searchQuery && searchQuery.isBasicQuery) {
-      // TODO: Breaks encapsulation of the component.
-      // TODO: Rest of the component is generic and is not tied to specific filters.
-      return [['event', '~', `(?i)${searchQuery.query || ''}`]] as unknown as QueryFilters<T>;
+    if (searchQuery) {
+      return (searchQuery as AdvancedSearchQuery<T>)?.filters || this.defaultFilters;
     }
 
-    if (searchQuery && !searchQuery.isBasicQuery) {
-      return (searchQuery as AdvancedSearchQuery<T>).filters;
-    }
     return [];
   }
 

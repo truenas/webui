@@ -24,7 +24,7 @@ export default {
  when they are read. Choose <i>Off</i> to prevent\
  producing log traffic when reading files. This can\
  result in significant performance gains.'),
-  dataset_form_share_type_tooltip: T('Choose the type that matches the type of client\
+  dataset_form_dataset_preset_tooltip: T('Choose the type that matches the type of client\
  accessing the pool/dataset.'),
   dataset_form_refquota_tooltip: T('<i>0</i> disables quotas. Specify a maximum allowed\
  space for this dataset.'),
@@ -104,6 +104,16 @@ export default {
  up to 1M. The default size is 0 which means no small file blocks will be allocated in the\
  special class. Before setting this property, a special class vdev must be added to the pool.\
  See <a href="https://zfsonlinux.org/manpages/0.7.13/man8/zpool.8.html" target="_blank">zpool(8)</a> for more details on the special allocation'),
+
+  dataset_form_preset: {
+    generic: T('Generic dataset suitable for any share type.'),
+    smb: T('SMB preset sets most optimal settings for SMB sharing.'),
+    multiprotocol: T('Configured for simultaneous use with SMB and NFS on the same dataset.'),
+    apps: T('Dataset for use by an application. If you plan to deploy container applications,\
+ the system automatically creates the ix-applications dataset but this is not used for application data storage.'),
+    smb_description: T('By clicking the share creation checkbox below, a new share will be created on form submission with the default\
+ share settings Additionally, local TrueNAS users will have access to the resulting share and some more configuration options will be available.'),
+  },
 
   dataset_form_encryption: {
     inherit_checkbox_tooltip: T('Use the encryption properties of the root dataset.'),
