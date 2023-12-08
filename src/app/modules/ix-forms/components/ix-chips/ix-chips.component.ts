@@ -50,7 +50,7 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
         return this._options.find((option) => option.value === parseInt(value))?.label;
       }
       return value;
-    });
+    }).filter(Boolean);
   }
 
   inputReset$ = new Subject<void>();
@@ -99,8 +99,8 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
   }
 
   onAdd(value: string): void {
-    let newValue = value?.trim();
-    if (!newValue || this.values.includes(newValue)) {
+    let newValue = (value || '')?.trim();
+    if (!newValue || this.values.includes(newValue) || !this.allowNewEntries) {
       return;
     }
 
