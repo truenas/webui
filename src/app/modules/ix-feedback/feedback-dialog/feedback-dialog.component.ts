@@ -321,7 +321,7 @@ export class FeedbackDialogComponent implements OnInit {
       if (type === FeedbackType.Review) {
         this.switchToReview();
         this.clearTicketForm();
-      } else if (type === FeedbackType.Bug || type === FeedbackType.Suggestion) {
+      } else if ([FeedbackType.Bug, FeedbackType.Suggestion].includes(type)) {
         this.switchToBugOrImprovement();
         this.clearTicketForm();
         this.renderTicketForm();

@@ -22,10 +22,14 @@ import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { fakeAsync } from '@angular/core/testing';
+import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { createComponent } from '@angular/core';
 
 describe('FileTicketFormComponent', () => {
   let spectator: Spectator<FileTicketFormComponent>;
   let loader: HarnessLoader;
+  let ws: MockWebsocketService;
 
   const mockToken = JSON.stringify({
     oauth_token: 'mock.oauth.token',
@@ -46,7 +50,7 @@ describe('FileTicketFormComponent', () => {
     ],
     declarations: [
       JiraOauthComponent,
-      MockComponent(OauthButtonComponent),
+      OauthButtonComponent,
     ],
     providers: [
       mockProvider(DialogService, {
@@ -84,19 +88,22 @@ describe('FileTicketFormComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    ws = spectator.inject(MockWebsocketService);
   });
 
-  it.skip('loads ticket categories using api token when token is provided', async () => {
+  it('loads ticket categories using api token when token is provided', fakeAsync(async () => {
     const jiraButton = await loader.getHarness(JiraOauthHarness);
     await jiraButton.setValue(mockToken);
 
+    spectator.tick(300);
     await spectator.fixture.whenStable();
+
+    expect(ws.call).toHaveBeenCalledWith('support.fetch_categories', [mockToken]);
 
     const categorySelect = await loader.getHarness(IxSelectHarness.with({ label: 'Category' }));
     expect(await categorySelect.getOptionLabels()).toEqual(['WebUI', 'API']);
     await categorySelect.setValue('WebUI');
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('support.fetch_categories', [mockToken]);
-  });
+  }));
 
   it('returns payload for new ticket when getPayload is called', async () => {
     const title = await loader.getHarness(IxInputHarness.with({ label: 'Subject' }));

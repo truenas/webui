@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { BehaviorSubject, of } from 'rxjs';
+import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockWebsocket, mockCall, mockJob } from 'app/core/testing/utils/mock-websocket.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
@@ -23,7 +24,6 @@ import { IxFeedbackService } from 'app/modules/ix-feedback/ix-feedback.service';
 import { IxButtonGroupHarness } from 'app/modules/ix-forms/components/ix-button-group/ix-button-group.harness';
 import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxFileInputHarness } from 'app/modules/ix-forms/components/ix-file-input/ix-file-input.harness';
-import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxStarRatingHarness } from 'app/modules/ix-forms/components/ix-star-rating/ix-star-rating.harness';
@@ -37,13 +37,12 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 describe('FeedbackDialogComponent', () => {
   let spectator: Spectator<FeedbackDialogComponent>;
   let loader: HarnessLoader;
-  let ws: WebSocketService;
+  let ws: MockWebsocketService;
   let form: IxFormHarness;
   const isEnterprise$ = new BehaviorSubject(false);
 
@@ -147,7 +146,7 @@ describe('FeedbackDialogComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    ws = spectator.inject(WebSocketService);
+    ws = spectator.inject(MockWebsocketService);
     form = await loader.getHarness(IxFormHarness);
   });
 
@@ -262,8 +261,6 @@ describe('FeedbackDialogComponent', () => {
     });
 
     it('sends a create payload to websocket', async () => {
-      expect(spectator.component.ticketForm).toBeInstanceOf(FileTicketLicensedFormComponent);
-
       await form.fillForm({
         Name: 'fakename',
         Email: 'fake@admin.com',

@@ -7,9 +7,9 @@ export enum FeedbackType {
 }
 
 export const feedbackTypeOptionMap = new Map<FeedbackType, string>([
-  [FeedbackType.Review, T('rate this page')],
-  [FeedbackType.Bug, T('report a bug')],
-  [FeedbackType.Suggestion, T('suggest an improvement')],
+  [FeedbackType.Review, T('Rate this page')],
+  [FeedbackType.Bug, T('Report a bug')],
+  [FeedbackType.Suggestion, T('Suggest an improvement')],
 ]);
 
 export enum FeedbackEnvironment {

@@ -1,7 +1,7 @@
 import {
   Component,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
@@ -18,19 +18,21 @@ import {
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { choicesToOptions } from 'app/helpers/operators/options.operators';
 
 @UntilDestroy()
 @Component({
   templateUrl: './file-ticket-form.component.html',
 })
 export class FileTicketFormComponent {
-  form = this.fb.group({
-    token: ['', [Validators.required]],
-    category: ['', [Validators.required]],
-    title: ['', Validators.required],
-  });
-
-  categoryOptions$: Observable<Option[]> = this.getCategories();
+  token = new FormControl<string>('', [Validators.required]);
+  title = new FormControl<string>('', [Validators.required]);
+  category = new FormControl<string>({ value: '', disabled: true, }, [Validators.required]);
+  categoryOptions$: Observable<Option[]> = this.token.valueChanges.pipe(
+    switchMap((token) => this.ws.call('support.fetch_categories', [token])),
+    choicesToOptions(),
+    map((options) => _.sortBy(options, ['label'])),
+  );
   readonly tooltips = {
     token: helptext.token.tooltip,
     category: helptext.category.tooltip,
@@ -39,53 +41,37 @@ export class FileTicketFormComponent {
 
   constructor(
     private ws: WebSocketService,
-    private fb: FormBuilder,
-    private translate: TranslateService,
-    private sysGeneralService: SystemGeneralService,
-    private errorHandler: FormErrorHandlerService,
+    private systemGeneralService: SystemGeneralService,
   ) {
     this.restoreToken();
     this.addFormListeners();
   }
 
   private addFormListeners(): void {
-    this.form.controls.token.valueChanges.pipe(
+    this.token.valueChanges.pipe(
       filter((token) => !!token),
       untilDestroyed(this),
     ).subscribe((token) => {
-      this.sysGeneralService.setTokenForJira(token);
+      this.category.enable();
+      this.systemGeneralService.setTokenForJira(token);
     });
   }
 
-  private getCategories(): Observable<Option[]> {
-    return this.form.controls.token.valueChanges.pipe(
-      filter((token) => !!token),
-      debounceTime(300),
-      switchMap((token) => this.ws.call('support.fetch_categories', [token])),
-      map((choices) => Object.entries(choices).map(([label, value]) => ({ label, value }))),
-      map((options) => _.sortBy(options, ['label'])),
-      catchError((error: WebsocketError) => {
-        this.errorHandler.handleWsFormError(error, this.form);
-
-        return EMPTY;
-      }),
-    );
-  }
-
   private restoreToken(): void {
-    const token = this.sysGeneralService.getTokenForJira();
+    const token = this.systemGeneralService.getTokenForJira();
     if (token) {
-      this.form.patchValue({ token });
+      this.token.setValue(token);
+      this.category.enable();
+    } else {
+      this.category.disable();
     }
   }
 
   getPayload(): Partial<CreateNewTicket> {
-    const values = this.form.value;
-
     return {
-      category: values.category,
-      title: values.title,
-      token: values.token,
+      category: this.category.value,
+      title: this.title.value,
+      token: this.token.value,
     };
   }
 }
