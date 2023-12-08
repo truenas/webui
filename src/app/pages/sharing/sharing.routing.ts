@@ -1,10 +1,12 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { Role } from 'app/enums/role.enum';
 import { SharesDashboardComponent } from 'app/pages/sharing/components/shares-dashboard/shares-dashboard.component';
 import { NfsListComponent } from 'app/pages/sharing/nfs/nfs-list/nfs-list.component';
 import { NfsSessionListComponent } from 'app/pages/sharing/nfs/nfs-session-list/nfs-session-list.component';
 import { SmbStatusComponent } from 'app/pages/sharing/smb/smb-status/smb-status.component';
+import { hasRoleGuard } from 'app/services/auth/has-role-guard';
 import { InitiatorFormComponent } from './iscsi/initiator/initiator-form/initiator-form.component';
 import { IscsiComponent } from './iscsi/iscsi.component';
 import { SmbListComponent } from './smb/smb-list/smb-list.component';
@@ -13,6 +15,7 @@ export const routes: Routes = [
   {
     path: '',
     data: { title: T('Sharing') },
+    canActivate: [hasRoleGuard([Role.SharingManager])],
     children: [
       {
         path: '',
