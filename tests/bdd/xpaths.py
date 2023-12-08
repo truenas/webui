@@ -21,6 +21,7 @@ class button:
     leave_Domain = '//button[@ix-auto="button__LEAVE DOMAIN"]'
     i_Agree = '//button[@ix-auto="button__I AGREE"]'
     summit = '//button[@ix-auto="button__SUBMIT"]'
+    close_Popover = '//button[@title="Close popover"]'
 
 
 class checkbox:

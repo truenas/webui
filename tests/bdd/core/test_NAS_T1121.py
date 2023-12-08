@@ -196,6 +196,8 @@ def click_on_the_bucket_being_used_and_then_upload_a_file(driver):
     driver.find_element_by_xpath(f'//a[text()="{my_bucket}"]').click()
     assert wait_on_element(driver, 5, f'//h1[text()="{my_bucket}"]')
     assert wait_on_element(driver, 5, xpaths.aws.upload_Button, 'clickable')
+    rsc.click_If_Element_Exist(driver, xpaths.button.close_Popover)
+
     s3_client = boto3.client('s3')
     s3_client.upload_file('cloud_test.txt', my_bucket, 'cloud_test.txt')
     driver.refresh()
