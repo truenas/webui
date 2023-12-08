@@ -38,7 +38,7 @@
     width: auto;
   }
 
-  .backup-links {
+  .backup-actions {
     font-size: 15px;
     margin-bottom: 20px;
     position: relative;
@@ -51,6 +51,7 @@
 
     .action {
       margin-left: unset;
+      text-decoration: none;
     }
   }
 }
@@ -98,7 +99,7 @@ mat-grid-tile {
         font-size: 20px;
       }
 
-      .backup-links {
+      .backup-actions {
         font-size: 12px;
         padding: 0 10px;
       }
@@ -147,8 +148,7 @@ mat-grid-tile {
   }
 }
 
-.link {
-  color: var(--primary);
+.backup-action {
   cursor: pointer;
   text-decoration: underline;
 }

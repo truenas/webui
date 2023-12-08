@@ -49,9 +49,13 @@
             </div>
 
             <div class="controls">
-              <button mat-icon-button ixTest="go-to-backups">
+              <a
+                mat-icon-button
+                ixTest="go-to-backups"
+                [routerLink]="['/data-protection']"
+              >
                 <ix-icon name="open_in_new"></ix-icon>
-              </button>
+              </a>
             </div>
           </mat-toolbar-row>
         </ix-drag-handle>
@@ -73,8 +77,8 @@
                 >
                   <ul class="title" fxLayout="column" [fxFlex]="25">
                     {{ tile.title }}
-                    <div *ngIf="hasSendTasks && !tile.totalSend" class="backup-links">
-                      <ng-template *ngTemplateOutlet="backupLinks"></ng-template>
+                    <div *ngIf="hasSendTasks && !tile.totalSend" class="backup-actions">
+                      <ng-template *ngTemplateOutlet="backupActions"></ng-template>
                     </div>
                   </ul>
                   <div class="divider"></div>
@@ -128,21 +132,21 @@
             </mat-grid-tile>
           </mat-grid-list>
           <div *ngIf="!hasSendTasks" class="banner">
-            <ng-template *ngTemplateOutlet="backupLinks"></ng-template>
+            <ng-template *ngTemplateOutlet="backupActions"></ng-template>
           </div>
         </div>
         <div *ngIf="!backupsTiles.length">
           <div *ngIf="!isLoading" class="empty-card-content">
             <ix-icon name="mdi-format-list-text" class="empty-icon"></ix-icon>
-            <div class="backup-links">
-              <ng-template *ngTemplateOutlet="backupLinks"></ng-template>
+            <div class="backup-actions">
+              <ng-template *ngTemplateOutlet="backupActions"></ng-template>
             </div>
             <div class="details-item">
               <div class="label">{{ 'Actions' | translate }}</div>
               <div class="label">{{ 'Documentation' | translate }}</div>
             </div>
             <div class="details-item">
-              <a class="action" ixTest="cloud-sync">
+              <a class="action" ixTest="cloud-sync" (click)="addCloudSyncTask()">
                 {{ 'Cloud Sync to Storj or similar provider' | translate }}
               </a>
               <a class="action" ixTest="risks-no-backup">
@@ -150,7 +154,7 @@
               </a>
             </div>
             <div class="details-item">
-              <a class="action" ixTest="replication">
+              <a class="action" ixTest="replication" (click)="addReplicationTask()">
                 {{ 'ZFS Replication to another TrueNAS/ZFS server' | translate }}
               </a>
               <a class="action" ixTest="backup-best-practices">
@@ -158,7 +162,7 @@
               </a>
             </div>
             <div class="details-item">
-              <a class="action" ixTest="rsync">
+              <a class="action" ixTest="rsync" (click)="addRsyncTask()">
                 {{ 'Rsync to another server' | translate }}
               </a>
             </div>
@@ -172,12 +176,12 @@
   </div>
 </div>
 
-<ng-template #backupLinks>
+<ng-template #backupActions>
   {{ 'Backup' | translate }}
-  <a class="link" ixTest="cloud">
+  <a class="backup-action" ixTest="cloud" (click)="addCloudSyncTask()">
     {{ 'to cloud' | translate }}
   </a> /
-  <a class="link" ixTest="another-TrueNAS">
+  <a class="backup-action" ixTest="another-TrueNAS" (click)="addReplicationTask()">
     {{ 'to another TrueNAS' | translate }}
   </a>
 </ng-template>
