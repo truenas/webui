@@ -15,16 +15,17 @@ export const routes: Routes = [
   {
     path: '',
     data: { title: T('Sharing') },
-    canActivate: [hasRoleGuard([Role.SharingManager])],
     children: [
       {
         path: '',
         component: SharesDashboardComponent,
+        canActivate: [hasRoleGuard([Role.SharingSmbRead, Role.SharingIscsiTargetRead, Role.SharingNfsRead])],
         data: { title: T('Sharing'), breadcrumb: null },
       },
       {
         path: 'nfs',
         data: { title: T('NFS'), breadcrumb: null, icon: 'share' },
+        canActivate: [hasRoleGuard([Role.SharingNfsRead])],
         children: [{
           path: '',
           component: NfsListComponent,
@@ -38,6 +39,7 @@ export const routes: Routes = [
       {
         path: 'smb',
         data: { title: T('SMB'), breadcrumb: T('SMB'), icon: 'share' },
+        canActivate: [hasRoleGuard([Role.SharingSmbRead])],
         children: [{
           path: '',
           component: SmbListComponent,
@@ -60,6 +62,7 @@ export const routes: Routes = [
       }, {
         path: 'iscsi',
         data: { title: T('iSCSI'), breadcrumb: null, icon: 'share' },
+
         children: [
           {
             path: '',
@@ -74,6 +77,11 @@ export const routes: Routes = [
                 path: ':activeTab',
                 component: IscsiComponent,
                 data: { breadcrumb: null },
+                canActivate: [hasRoleGuard([
+                  Role.SharingIscsiRead, Role.SharingIscsiAuthRead, Role.SharingIscsiExtentRead,
+                  Role.SharingIscsiGlobalRead, Role.SharingIscsiHostRead, Role.SharingIscsiPortalRead,
+                  Role.SharingIscsiTargetExtentRead, Role.SharingIscsiTargetRead, Role.SharingIscsiInitiatorRead,
+                ])],
               },
               {
                 path: 'initiators',
