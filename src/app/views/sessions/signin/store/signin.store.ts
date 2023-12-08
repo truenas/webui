@@ -163,7 +163,7 @@ export class SigninStore extends ComponentStore<SigninState> {
 
   getRedirectUrl(): string {
     const redirectUrl = this.window.sessionStorage.getItem('redirectUrl');
-    if (redirectUrl) {
+    if (redirectUrl && !redirectUrl.includes('unauthorized')) {
       return redirectUrl;
     }
 
