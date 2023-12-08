@@ -10,7 +10,7 @@ import {
   StorageStrategyStub,
 } from 'ngx-webstorage';
 import * as rxjs from 'rxjs';
-import { of } from 'rxjs';
+import { firstValueFrom, of } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { Role } from 'app/enums/role.enum';
@@ -225,23 +225,23 @@ describe('AuthService', () => {
       spectator.service.refreshUser();
     }
 
-    it('returns false when there is no user object', () => {
-      expect(spectator.service.hasRole([Role.AlertListRead])).toBe(false);
+    it('returns false when there is no user object', async () => {
+      expect(await firstValueFrom(spectator.service.hasRole([Role.AlertListRead]))).toBe(false);
     });
 
-    it('returns false when supplied array is empty', () => {
+    it('returns false when supplied array is empty', async () => {
       setUserRoles([Role.SharingSmbRead]);
-      expect(spectator.service.hasRole([])).toBe(false);
+      expect(await firstValueFrom(spectator.service.hasRole([]))).toBe(false);
     });
 
-    it('returns true if user has one of the roles', () => {
+    it('returns true if user has one of the roles', async () => {
       setUserRoles([Role.SharingSmbRead, Role.SharingSmbWrite]);
-      expect(spectator.service.hasRole([Role.SharingSmbRead])).toBe(true);
+      expect(await firstValueFrom(spectator.service.hasRole([Role.SharingSmbRead]))).toBe(true);
     });
 
-    it('returns true for any role when user has FULL_ADMIN role', () => {
+    it('returns true for any role when user has FULL_ADMIN role', async () => {
       setUserRoles([Role.FullAdmin]);
-      expect(spectator.service.hasRole([Role.AlertListRead])).toBe(true);
+      expect(await firstValueFrom(spectator.service.hasRole([Role.AlertListRead]))).toBe(true);
     });
   });
 });

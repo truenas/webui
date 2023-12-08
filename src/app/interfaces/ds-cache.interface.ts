@@ -27,7 +27,7 @@ export interface AuthMePrivilege {
   roles: {
     $set: Role[];
   };
-  web_shell: true;
+  web_shell: boolean;
 }
 
 export interface DsUncachedGroup {

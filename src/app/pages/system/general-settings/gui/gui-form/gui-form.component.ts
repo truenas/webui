@@ -204,7 +204,7 @@ export class GuiFormComponent {
             this.dialog.error({
               title: helptext.dialog_error_title,
               message: error.reason,
-              backtrace: error.trace.formatted,
+              backtrace: error.trace?.formatted,
             });
           },
         });

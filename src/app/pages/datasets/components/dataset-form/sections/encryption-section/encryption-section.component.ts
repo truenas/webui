@@ -23,6 +23,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class EncryptionSectionComponent implements OnChanges {
   @Input() parent: Dataset;
+  @Input() advancedMode: boolean;
 
   inheritEncryptionLabel: string;
 

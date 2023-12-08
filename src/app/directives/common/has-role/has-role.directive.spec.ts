@@ -1,28 +1,31 @@
 import { createHostFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { BehaviorSubject } from 'rxjs';
+import { HasRoleDirective } from 'app/directives/common/has-role/has-role.directive';
 import { Role } from 'app/enums/role.enum';
 import { AuthService } from 'app/services/auth/auth.service';
-import { HasRolesDirective } from './has-roles.directive';
 
 describe('HasRolesDirective', () => {
-  let spectator: Spectator<HasRolesDirective>;
+  let spectator: Spectator<HasRoleDirective>;
+  const hasRole$ = new BehaviorSubject(false);
 
   const createHost = createHostFactory({
-    component: HasRolesDirective,
+    component: HasRoleDirective,
     providers: [
-      mockProvider(AuthService),
+      mockProvider(AuthService, {
+        hasRole: jest.fn(() => hasRole$),
+      }),
     ],
+  });
+
+  beforeEach(() => {
+    hasRole$.next(false);
   });
 
   it('does not show an element when user doe not have correct roles', () => {
     spectator = createHost(
-      '<div *ixHasRoles="[Role.Readonly]">Content</div>',
+      '<div *ixHasRole="[Role.Readonly]">Content</div>',
       {
         hostProps: { Role },
-        providers: [
-          mockProvider(AuthService, {
-            hasRole: jest.fn(() => false),
-          }),
-        ],
       },
     );
 
@@ -33,21 +36,31 @@ describe('HasRolesDirective', () => {
   });
 
   it('shows an element when user has correct roles', () => {
+    hasRole$.next(true);
     spectator = createHost(
-      '<div *ixHasRoles="[Role.NetworkInterfaceWrite]">Content</div>',
+      '<div *ixHasRole="[Role.NetworkInterfaceWrite]">Content</div>',
       {
         hostProps: { Role },
-        providers: [
-          mockProvider(AuthService, {
-            hasRole: jest.fn(() => true),
-          }),
-        ],
       },
     );
 
     const authService = spectator.inject(AuthService);
 
     expect(authService.hasRole).toHaveBeenCalledWith([Role.NetworkInterfaceWrite]);
+    expect(spectator.query('div')).toExist();
+  });
+
+  it('changes from not showing an element to showing, when user changes', () => {
+    spectator = createHost(
+      '<div *ixHasRole="[Role.NetworkInterfaceWrite]">Content</div>',
+      {
+        hostProps: { Role },
+      },
+    );
+
+    expect(spectator.query('div')).not.toExist();
+
+    hasRole$.next(true);
     expect(spectator.query('div')).toExist();
   });
 });

@@ -92,7 +92,7 @@ export class AllowedAddressesFormComponent implements OnInit {
             this.dialogService.error({
               title: helptextSystemGeneral.dialog_error_title,
               message: error.reason,
-              backtrace: error.trace.formatted,
+              backtrace: error.trace?.formatted,
             });
             return EMPTY;
           }),

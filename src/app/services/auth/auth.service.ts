@@ -33,7 +33,7 @@ import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 })
 export class AuthService {
   @LocalStorage() private token: string;
-  private loggedInUser$ = new BehaviorSubject<LoggedInUser>(null);
+  protected loggedInUser$ = new BehaviorSubject<LoggedInUser>(null);
 
   /**
    * This is 10 seconds less than 300 seconds which is the default life
@@ -171,18 +171,24 @@ export class AuthService {
   /**
    * Checks whether user has any of the supplied roles.
    * Does not ensure that user was loaded.
+   *
+   * Use mockAuth if you need to set user role in tests.
    */
-  hasRole(roles: Role[]): boolean {
-    const currentRoles = this.loggedInUser$?.value?.privilege?.roles?.$set || [];
-    if (!roles?.length || !currentRoles.length) {
-      return false;
-    }
+  hasRole(roles: Role[]): Observable<boolean> {
+    return this.loggedInUser$.pipe(
+      map((user) => {
+        const currentRoles = user?.privilege?.roles?.$set || [];
+        if (!roles?.length || !currentRoles.length) {
+          return false;
+        }
 
-    if (currentRoles.includes(Role.FullAdmin)) {
-      return true;
-    }
+        if (currentRoles.includes(Role.FullAdmin)) {
+          return true;
+        }
 
-    return roles.some((role) => currentRoles.includes(role));
+        return roles.some((role) => currentRoles.includes(role));
+      }),
+    );
   }
 
   logout(): Observable<void> {

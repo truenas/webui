@@ -1,0 +1,19 @@
+.preset-container {
+  border: solid 1px var(--lines);
+  margin-bottom: 20px;
+  padding: 16px;
+
+  .controls {
+    padding-top: 10px;
+
+    ix-input {
+      margin: 0;
+    }
+  }
+
+  .smb-comment {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+}

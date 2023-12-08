@@ -20,8 +20,8 @@ const fakeCatalogDataSource: Catalog[] = [
     location: '/tmp/ix-applications/catalogs/github_com_truenas_charts_git_master',
     id: 'TRUENAS',
     trains: {
-      charts: {} as unknown as CatalogTrain,
-    },
+      charts: {},
+    } as Record<string, CatalogTrain>,
   },
   {
     label: 'TRUECHARTS',
@@ -32,10 +32,10 @@ const fakeCatalogDataSource: Catalog[] = [
     location: '/tmp/ix-applications/catalogs/github_com_truechart_catalog_git_master',
     id: 'TRUECHARTS',
     trains: {
-      charts: {} as unknown as CatalogTrain,
-    },
+      charts: {},
+    } as Record<string, CatalogTrain>,
   },
-] as unknown as Catalog[];
+] as Catalog[];
 
 describe('CatalogsComponent', () => {
   let spectator: SpectatorRouting<CatalogsComponent>;

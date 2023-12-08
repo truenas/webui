@@ -12,14 +12,16 @@ export function searchProperties<T>(properties: SearchProperty<T>[]): SearchProp
 }
 
 export function textProperty<T>(
-  property: keyof T,
+  property: keyof T | string,
   label: string,
   valueSuggestions$?: Observable<Option[]>,
+  enumMap?: Map<unknown, string>,
 ): SearchProperty<T> {
   return {
     label,
     property,
     valueSuggestions$,
+    enumMap,
     propertyType: PropertyType.Text,
   };
 }
