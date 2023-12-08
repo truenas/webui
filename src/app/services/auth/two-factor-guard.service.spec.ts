@@ -14,7 +14,7 @@ describe('TwoFactorGuardService', () => {
   const isAuthenticated$ = new BehaviorSubject(false);
   const userTwoFactorConfig$ = new BehaviorSubject(null as UserTwoFactorConfig);
   const getGlobalTwoFactorConfig = jest.fn(() => of(null as GlobalTwoFactorConfig));
-  const hasRole = jest.fn(() => false);
+  const hasRole$ = new BehaviorSubject(false);
 
   const createService = createServiceFactory({
     service: TwoFactorGuardService,
@@ -24,7 +24,7 @@ describe('TwoFactorGuardService', () => {
         isAuthenticated$,
         userTwoFactorConfig$,
         getGlobalTwoFactorConfig,
-        hasRole,
+        hasRole: jest.fn(() => hasRole$),
       }),
       mockProvider(DialogService, {
         fullScreenDialog: jest.fn(() => of(true)),
@@ -76,7 +76,7 @@ describe('TwoFactorGuardService', () => {
     isAuthenticated$.next(true);
     getGlobalTwoFactorConfig.mockReturnValue(of({ enabled: true } as GlobalTwoFactorConfig));
     userTwoFactorConfig$.next({ secret_configured: false } as UserTwoFactorConfig);
-    hasRole.mockReturnValue(true);
+    hasRole$.next(true);
 
     const isAllowed = await firstValueFrom(spectator.service.canActivateChild(null, { url: '/system/upgrade' } as RouterStateSnapshot));
     expect(isAllowed).toBe(true);
