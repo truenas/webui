@@ -264,7 +264,7 @@ export class UserFormComponent implements OnInit {
       email: values.email ? values.email : null,
       full_name: values.full_name,
       group: values.group,
-      groups: values.groups.map((group) => parseInt(group.toString())),
+      groups: values.groups,
       home_mode: this.homeModeOldValue !== values.home_mode ? values.home_mode : undefined,
       home_create: values.home_create,
       home: values.home,

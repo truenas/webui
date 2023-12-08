@@ -47,15 +47,6 @@
         {{ suggestion }}
       </mat-option>
     </ng-container>
-    <ng-container *ngIf="options">
-      <mat-option
-        *ngFor="let option of options | async"
-        [value]="option.value"
-        [ixTest]="[controlDirective.name, option.label]"
-      >
-        {{ option.label }}
-      </mat-option>
-    </ng-container>
   </mat-autocomplete>
 </div>
 

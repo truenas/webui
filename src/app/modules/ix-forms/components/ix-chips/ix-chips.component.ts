@@ -45,7 +45,7 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
   private _options: Option[] = [];
 
   get labels(): string[] {
-    return this.values.map((value) => {
+    return this.values?.map((value) => {
       if (this.resolveValue && this._options?.length) {
         return this._options.find((option) => option.value === parseInt(value))?.label;
       }

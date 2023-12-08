@@ -91,7 +91,7 @@ describe('UserFormComponent', () => {
       }),
       mockProvider(FormErrorHandlerService),
       mockProvider(UserService, {
-        groupQueryDsCache: () => of(mockGroups),
+        groupQueryDsCache: jest.fn(() => of(mockGroups)),
       }),
       mockProvider(FilesystemService, {
         getFilesystemNodeProvider: jest.fn(() => of()),
