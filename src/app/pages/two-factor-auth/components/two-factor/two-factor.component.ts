@@ -133,7 +133,7 @@ export class TwoFactorComponent implements OnInit {
         return this.dialogService.error({
           title: helptext.two_factor.error,
           message: error.reason,
-          backtrace: error.trace.formatted,
+          backtrace: error.trace?.formatted,
         } as ErrorReport);
       }),
       untilDestroyed(this),
@@ -153,7 +153,7 @@ export class TwoFactorComponent implements OnInit {
         this.dialogService.error({
           title: helptext.two_factor.error,
           message: error.reason,
-          backtrace: error.trace.formatted,
+          backtrace: error.trace?.formatted,
         });
       },
     });
