@@ -77,7 +77,7 @@ export interface Dataset {
 }
 
 export interface ExtraDatasetQueryOptions {
-  extra: {
+  extra?: {
     retrieve_children?: boolean;
     flat?: boolean;
     properties?: string[];

@@ -3,6 +3,7 @@ import { lastValueFrom } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { FileType } from 'app/enums/file-type.enum';
+import { Dataset } from 'app/interfaces/dataset.interface';
 import { FileRecord } from 'app/interfaces/file-record.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -19,15 +20,17 @@ describe('FilesystemService', () => {
             path: '/mnt/parent/directory',
             name: 'directory',
             type: FileType.Directory,
-            is_mountpoint: true,
           },
           {
             path: '/mnt/parent/file.txt',
             name: 'file.txt',
             type: FileType.File,
-            is_mountpoint: false,
           },
         ] as FileRecord[]),
+        mockCall('pool.dataset.query', [
+          { mountpoint: '/mnt/parent' },
+          { mountpoint: '/mnt/parent/directory' },
+        ] as Dataset[]),
       ]),
     ],
   });
