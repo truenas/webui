@@ -3451,7 +3451,7 @@
   "Zvol «{name}» updated.": "",
   "by ancestor": "",
   "cores": "",
-  "dRAID is a ZFS feature that boosts resilver speed and load distribution. Due to fixed strip width disk space efficiency may be substantially worse with small files. \nOpt for dRAID over RAID-Z when handling large-capacity drives and extensive disk environments for enhanced performance.": "",
+  "dRAID is a ZFS feature that boosts resilver speed and load distribution. Due to fixed stripe width disk space efficiency may be substantially worse with small files. \nOpt for dRAID over RAID-Z when handling large-capacity drives and extensive disk environments for enhanced performance.": "",
   "dRAID1": "",
   "dRAID2": "",
   "dRAID3": "",

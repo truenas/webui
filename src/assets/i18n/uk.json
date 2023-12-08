@@ -633,7 +633,7 @@
   "You are using an insecure connection. <a href=\"{url}\">Switch to HTTPS</a> for secure access.": "",
   "ZFS L2ARC read-cache that can be used with fast devices to accelerate read operations.": "",
   "Zvol «{name}» updated.": "",
-  "dRAID is a ZFS feature that boosts resilver speed and load distribution. Due to fixed strip width disk space efficiency may be substantially worse with small files. \nOpt for dRAID over RAID-Z when handling large-capacity drives and extensive disk environments for enhanced performance.": "",
+  "dRAID is a ZFS feature that boosts resilver speed and load distribution. Due to fixed stripe width disk space efficiency may be substantially worse with small files. \nOpt for dRAID over RAID-Z when handling large-capacity drives and extensive disk environments for enhanced performance.": "",
   "dRAID1": "",
   "dRAID2": "",
   "dRAID3": "",
