@@ -12,7 +12,7 @@ export function hasRoleGuard(roles: Role[]): CanActivateFn {
     return authService.hasRole(roles).pipe(
       tap((canActivate) => {
         if (!canActivate) {
-          router.navigate(['/', 'unauthorized']);
+          router.navigate(['/', 'errors', 'unauthorized']);
         }
       }),
     );
