@@ -91,7 +91,9 @@ export default class KerberosRealmsListComponent implements OnInit {
         },
       ],
     }),
-  ]);
+  ], {
+    rowTestId: (row) => row.id.toString(),
+  });
 
   constructor(
     private translateService: TranslateService,

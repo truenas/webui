@@ -43,7 +43,9 @@ describe('IxTableColumnsSelectorComponent', () => {
       propertyName: 'enabled',
       hidden: true,
     }),
-  ]) as Column<unknown, ColumnComponent<unknown>>[];
+  ], {
+    rowTestId: (row: CronjobRow) => row.id.toString(),
+  }) as Column<unknown, ColumnComponent<unknown>>[];
 
   const createComponent = createComponentFactory({
     component: IxTableColumnsSelectorComponent,

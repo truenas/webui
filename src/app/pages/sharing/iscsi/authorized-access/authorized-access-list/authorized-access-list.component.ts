@@ -79,7 +79,9 @@ export class AuthorizedAccessListComponent implements OnInit {
         },
       ],
     }),
-  ]);
+  ], {
+    rowTestId: (row) => row.id.toString(),
+  });
 
   constructor(
     public emptyService: EmptyService,

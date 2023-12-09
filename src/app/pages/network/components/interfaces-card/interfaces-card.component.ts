@@ -90,7 +90,9 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
         },
       ],
     }),
-  ]);
+  ], {
+    rowTestId: (row) => row.id.toString(),
+  });
 
   readonly helptext = helptext;
 

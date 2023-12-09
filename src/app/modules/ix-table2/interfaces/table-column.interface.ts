@@ -5,6 +5,7 @@ export abstract class ColumnComponent<T> {
   propertyName: keyof T;
   title?: string;
   cssClass?: string;
+  rowTestId: (row: T) => string;
   sortBy?: (row: T) => string | number;
   sortable?: boolean;
   getValue?: (row: T) => unknown;

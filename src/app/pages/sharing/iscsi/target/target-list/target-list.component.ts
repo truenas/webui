@@ -87,7 +87,9 @@ export class TargetListComponent implements OnInit {
         },
       ],
     }),
-  ]);
+  ], {
+    rowTestId: (row) => row.id.toString(),
+  });
 
   constructor(
     public emptyService: EmptyService,

@@ -28,7 +28,9 @@ const columns = createTable<TestTableData>([
     title: 'Boolean Field',
     propertyName: 'booleanField',
   }),
-]);
+], {
+  rowTestId: (row) => row.numberField.toString(),
+});
 
 let headers: HTMLDivElement[];
 

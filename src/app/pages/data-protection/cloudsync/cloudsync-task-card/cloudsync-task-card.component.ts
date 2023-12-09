@@ -116,7 +116,9 @@ export class CloudSyncTaskCardComponent implements OnInit {
         },
       ],
     }),
-  ]);
+  ], {
+    rowTestId: (row) => row.id.toString(),
+  });
 
   constructor(
     private slideInService: IxSlideInService,

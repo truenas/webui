@@ -115,7 +115,9 @@ export class CloudsyncListComponent implements OnInit {
       propertyName: 'enabled',
       getValue: (task) => (task.enabled ? this.translate.instant('Yes') : this.translate.instant('No')),
     }),
-  ]);
+  ], {
+    rowTestId: (row) => row.id.toString(),
+  });
 
   get hiddenColumns(): Column<CloudSyncTaskUi, ColumnComponent<CloudSyncTaskUi>>[] {
     return this.columns.filter((column) => column?.hidden);

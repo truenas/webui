@@ -72,7 +72,9 @@ export class CronListComponent implements OnInit {
       propertyName: 'stderr',
       hidden: true,
     }),
-  ]);
+  ], {
+    rowTestId: (row) => row.id.toString(),
+  });
 
   get hiddenColumns(): Column<CronjobRow, ColumnComponent<CronjobRow>>[] {
     return this.columns.filter((column) => column?.hidden);

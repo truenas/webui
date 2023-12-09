@@ -40,7 +40,9 @@ export class SmbOpenFilesComponent implements OnChanges {
       },
     }),
     textColumn({ title: this.translate.instant('Opened at'), propertyName: 'opened_at' }),
-  ]);
+  ], {
+    rowTestId: (row) => row.uid.toString(),
+  });
 
   constructor(
     private translate: TranslateService,

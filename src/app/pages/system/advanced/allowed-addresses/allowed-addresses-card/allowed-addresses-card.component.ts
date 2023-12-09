@@ -49,7 +49,9 @@ export class AllowedAddressesCardComponent implements OnInit {
         },
       ],
     }),
-  ]);
+  ], {
+    rowTestId: (row) => row.address.toString(),
+  });
 
   constructor(
     private ws: WebSocketService,

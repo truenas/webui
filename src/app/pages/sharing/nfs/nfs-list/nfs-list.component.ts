@@ -118,7 +118,9 @@ export class NfsListComponent implements OnInit {
         },
       ],
     }),
-  ]);
+  ], {
+    rowTestId: (row) => row.id.toString(),
+  });
 
   constructor(
     private appLoader: AppLoaderService,
