@@ -45,6 +45,10 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
   private _options: Option[] = [];
 
   get labels(): string[] {
+    if (!this.resolveValue) {
+      return this.values;
+    }
+
     return this.values?.map((value) => {
       if (this.resolveValue && this._options?.length) {
         return this._options.find((option) => option.value === parseInt(value))?.label;
@@ -100,7 +104,7 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
 
   onAdd(value: string): void {
     let newValue = (value || '')?.trim();
-    if (!newValue || this.values.includes(newValue) || !this.allowNewEntries) {
+    if (!newValue || this.values.includes(newValue)) {
       return;
     }
 
