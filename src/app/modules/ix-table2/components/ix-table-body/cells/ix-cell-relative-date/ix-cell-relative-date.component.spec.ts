@@ -26,6 +26,7 @@ describe('IxCellRelativeDateComponent', () => {
     spectator = createComponent({
       props: {
         propertyName: 'dateField',
+        rowTestId: () => '',
         row: { dateField: new Date(new Date().getTime() - (24 * 60 * 60 * 10000)) },
       } as Partial<IxCellRelativeDateComponent<TestTableData>>,
     });

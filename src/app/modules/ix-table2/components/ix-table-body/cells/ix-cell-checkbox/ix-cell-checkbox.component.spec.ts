@@ -22,6 +22,7 @@ describe('IxCellCheckboxComponent', () => {
       props: {
         propertyName: 'booleanField',
         row: { booleanField: true },
+        rowTestId: (row) => row.booleanField.toString(),
       } as Partial<IxCellCheckboxComponent<TestTableData>>,
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
