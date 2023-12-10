@@ -9,7 +9,7 @@ import {
 } from 'rxjs';
 import { catchError, filter, tap } from 'rxjs/operators';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
-import globalHelptext from 'app/helptext/global-helptext';
+import { helptextGlobal } from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-quotas';
 import { DatasetQuota, SetDatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -53,12 +53,12 @@ export class DatasetQuotaEditFormComponent implements OnInit {
 
   private getUserDataQuotaLabel(): string {
     return this.translate.instant(helptext.users.data_quota.placeholder)
-      + this.translate.instant(globalHelptext.human_readable.suggestion_label);
+      + this.translate.instant(helptextGlobal.human_readable.suggestion_label);
   }
 
   private getGroupDataQuotaLabel(): string {
     return this.translate.instant(helptext.groups.data_quota.placeholder)
-      + this.translate.instant(globalHelptext.human_readable.suggestion_label);
+      + this.translate.instant(helptextGlobal.human_readable.suggestion_label);
   }
 
   get objectQuotaLabel(): string {
@@ -74,13 +74,13 @@ export class DatasetQuotaEditFormComponent implements OnInit {
 
   private getUserDataQuotaTooltip(): string {
     return this.translate.instant(helptext.users.data_quota.tooltip)
-      + this.translate.instant(globalHelptext.human_readable.suggestion_tooltip)
+      + this.translate.instant(helptextGlobal.human_readable.suggestion_tooltip)
       + this.translate.instant(' bytes.');
   }
 
   private getGroupDataQuotaTooltip(): string {
     return this.translate.instant(helptext.groups.data_quota.tooltip)
-      + this.translate.instant(globalHelptext.human_readable.suggestion_tooltip)
+      + this.translate.instant(helptextGlobal.human_readable.suggestion_tooltip)
       + this.translate.instant(' bytes.');
   }
 

@@ -11,7 +11,7 @@ import {
   mockCall, mockJob, mockWebsocket,
 } from 'app/core/testing/utils/mock-websocket.utils';
 import { IdmapBackend, IdmapName, IdmapSslEncryptionMode } from 'app/enums/idmap.enum';
-import helptext from 'app/helptext/directory-service/idmap';
+import { helptextIdmap } from 'app/helptext/directory-service/idmap';
 import { IdmapBackendOptions, IdmapBackendParameter } from 'app/interfaces/idmap-backend-options.interface';
 import { Idmap } from 'app/interfaces/idmap.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
@@ -207,8 +207,8 @@ describe('IdmapFormComponent', () => {
       await saveButton.click();
 
       expect(confirm).toHaveBeenCalledWith({
-        title: helptext.idmap.clear_cache_dialog.title,
-        message: helptext.idmap.clear_cache_dialog.message,
+        title: helptextIdmap.idmap.clear_cache_dialog.title,
+        message: helptextIdmap.idmap.clear_cache_dialog.message,
         hideCheckbox: true,
       });
       expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('idmap.clear_idmap_cache', []);

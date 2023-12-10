@@ -5,7 +5,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable, of } from 'rxjs';
-import helptext from 'app/helptext/apps/apps';
+import { helptextApps } from 'app/helptext/apps/apps';
 import { ChartRollbackParams } from 'app/interfaces/chart-release-event.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -25,7 +25,7 @@ export class AppRollbackModalComponent {
 
   versionOptions$: Observable<Option[]>;
 
-  readonly helptext = helptext.charts.rollback_dialog.version.tooltip;
+  readonly helptext = helptextApps.charts.rollback_dialog.version.tooltip;
 
   constructor(
     private dialogRef: MatDialogRef<AppRollbackModalComponent>,
@@ -41,7 +41,7 @@ export class AppRollbackModalComponent {
 
     const jobDialogRef = this.matDialog.open(EntityJobComponent, {
       data: {
-        title: helptext.charts.rollback_dialog.job,
+        title: helptextApps.charts.rollback_dialog.job,
       },
     });
     jobDialogRef.componentInstance.setCall('chart.release.rollback', [this.chartRelease.name, rollbackParams]);

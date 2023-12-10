@@ -10,7 +10,7 @@ import { TranslateService } from '@ngx-translate/core';
 import * as cronParser from 'cron-parser';
 import { DayOfTheWeekRange, MonthRange } from 'cron-parser/types';
 import { of } from 'rxjs';
-import globalHelptext from 'app/helptext/global-helptext';
+import { helptextGlobal } from 'app/helptext/global-helptext';
 import { Option } from 'app/interfaces/option.interface';
 import {
   SchedulerModalConfig,
@@ -84,11 +84,11 @@ export class SchedulerModalComponent implements OnInit {
   readonly presets = getDefaultCrontabPresets(this.translate);
   readonly presetOptions$ = of(this.presets);
   readonly tooltips = {
-    general: globalHelptext.scheduler.general.tooltip,
-    minutes: globalHelptext.scheduler.minutes.tooltip,
-    hours: globalHelptext.scheduler.hours.tooltip,
-    days: globalHelptext.scheduler.days.tooltip,
-    orTooltip: globalHelptext.scheduler.orTooltip,
+    general: helptextGlobal.scheduler.general.tooltip,
+    minutes: helptextGlobal.scheduler.minutes.tooltip,
+    hours: helptextGlobal.scheduler.hours.tooltip,
+    days: helptextGlobal.scheduler.days.tooltip,
+    orTooltip: helptextGlobal.scheduler.orTooltip,
   };
 
   readonly hasOrConditionExplanation$ = this.form.select((values) => {

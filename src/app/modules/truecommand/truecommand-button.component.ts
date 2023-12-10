@@ -7,7 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import _ from 'lodash';
 import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
-import helptext from 'app/helptext/topbar';
+import { helptextTopbar } from 'app/helptext/topbar';
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -33,7 +33,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class TruecommandButtonComponent implements OnInit {
   readonly TrueCommandStatus = TrueCommandStatus;
-  tooltips = helptext.mat_tooltips;
+  tooltips = helptextTopbar.mat_tooltips;
 
   tcStatus: TrueCommandConfig;
 
@@ -108,10 +108,10 @@ export class TruecommandButtonComponent implements OnInit {
 
   stopTrueCommandConnecting(): void {
     this.dialogService.generalDialog({
-      title: helptext.stopTCConnectingDialog.title,
-      icon: helptext.stopTCConnectingDialog.icon,
-      message: helptext.stopTCConnectingDialog.message,
-      confirmBtnMsg: helptext.stopTCConnectingDialog.confirmBtnMsg,
+      title: helptextTopbar.stopTCConnectingDialog.title,
+      icon: helptextTopbar.stopTCConnectingDialog.icon,
+      message: helptextTopbar.stopTCConnectingDialog.message,
+      confirmBtnMsg: helptextTopbar.stopTCConnectingDialog.confirmBtnMsg,
     }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
       if (confirmed) {
         this.loader.open();

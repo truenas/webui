@@ -10,7 +10,7 @@ import { forkJoin, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { singleArrayToOptions } from 'app/helpers/operators/options.operators';
-import helptext from 'app/helptext/directory-service/active-directory';
+import { helptextActiveDirectory } from 'app/helptext/directory-service/active-directory';
 import { NssInfoType } from 'app/interfaces/active-directory.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
@@ -60,7 +60,7 @@ export class ActiveDirectoryComponent implements OnInit {
 
   hasKerberosPrincipal$ = this.form.select((values) => values.kerberos_principal);
 
-  readonly helptext = helptext;
+  readonly helptext = helptextActiveDirectory;
   readonly kerberosRealms$ = this.ws.call('kerberos.realm.query').pipe(
     map((realms) => {
       return realms.map((realm) => ({
@@ -100,7 +100,7 @@ export class ActiveDirectoryComponent implements OnInit {
       next: () => {
         this.isLoading = false;
         this.snackbarService.success(
-          this.translate.instant(helptext.activedirectory_custactions_clearcache_dialog_message),
+          this.translate.instant(helptextActiveDirectory.activedirectory_custactions_clearcache_dialog_message),
         );
         this.cdr.markForCheck();
       },

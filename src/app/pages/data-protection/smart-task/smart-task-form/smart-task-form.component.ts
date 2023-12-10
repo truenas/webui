@@ -9,7 +9,7 @@ import { Observable, of } from 'rxjs';
 import { SmartTestType, smartTestTypeLabels } from 'app/enums/smart-test-type.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
-import helptext from 'app/helptext/data-protection/smart/smart';
+import { helptextSmart } from 'app/helptext/data-protection/smart/smart';
 import { SmartTestTask } from 'app/interfaces/smart-test.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
@@ -50,10 +50,10 @@ export class SmartTaskFormComponent implements OnInit {
   isAllDisksSelected$ = this.form.select((values) => values.all_disks);
 
   readonly tooltips = {
-    disks: helptext.smarttest_disks_tooltip,
-    type: helptext.smarttest_type_tooltip,
-    desc: helptext.smarttest_desc_tooltip,
-    schedule: helptext.smarttest_picker_tooltip,
+    disks: helptextSmart.smarttest_disks_tooltip,
+    type: helptextSmart.smarttest_type_tooltip,
+    desc: helptextSmart.smarttest_desc_tooltip,
+    schedule: helptextSmart.smarttest_picker_tooltip,
   };
 
   readonly diskOptions$ = this.ws.call('smart.test.disk_choices').pipe(choicesToOptions());

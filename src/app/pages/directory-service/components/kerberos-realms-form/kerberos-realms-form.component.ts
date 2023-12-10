@@ -5,7 +5,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
-import helptext from 'app/helptext/directory-service/kerberos-realms-form-list';
+import { helptextKerberosRealms } from 'app/helptext/directory-service/kerberos-realms-form-list';
 import { KerberosRealm, KerberosRealmUpdate } from 'app/interfaces/kerberos-realm.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
@@ -32,10 +32,10 @@ export class KerberosRealmsFormComponent implements OnInit {
   });
 
   readonly tooltips = {
-    realm: helptext.krbrealm_form_realm_tooltip,
-    kdc: `${helptext.krbrealm_form_kdc_tooltip} ${helptext.multiple_values}`,
-    admin_server: `${helptext.krbrealm_form_admin_server_tooltip} ${helptext.multiple_values}`,
-    kpasswd_server: `${helptext.krbrealm_form_kpasswd_server_tooltip} ${helptext.multiple_values}`,
+    realm: helptextKerberosRealms.krbrealm_form_realm_tooltip,
+    kdc: `${helptextKerberosRealms.krbrealm_form_kdc_tooltip} ${helptextKerberosRealms.multiple_values}`,
+    admin_server: `${helptextKerberosRealms.krbrealm_form_admin_server_tooltip} ${helptextKerberosRealms.multiple_values}`,
+    kpasswd_server: `${helptextKerberosRealms.krbrealm_form_kpasswd_server_tooltip} ${helptextKerberosRealms.multiple_values}`,
   };
 
   get title(): string {

@@ -15,7 +15,7 @@ import {
 } from 'rxjs/operators';
 import { allCommands } from 'app/constants/all-commands.constant';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
-import helptext from 'app/helptext/account/user-form';
+import { helptextUsers } from 'app/helptext/account/user-form';
 import { Option } from 'app/interfaces/option.interface';
 import { User, UserUpdate } from 'app/interfaces/user.interface';
 import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
@@ -99,24 +99,24 @@ export class UserFormComponent implements OnInit {
   });
 
   readonly tooltips = {
-    full_name: helptext.user_form_full_name_tooltip,
-    username: helptext.user_form_username_tooltip,
-    email: helptext.user_form_email_tooltip,
-    password: helptext.user_form_password_tooltip,
-    password_edit: helptext.user_form_password_edit_tooltip,
-    password_conf_edit: helptext.user_form_password_edit_tooltip,
-    uid: helptext.user_form_uid_tooltip,
-    group: helptext.user_form_primary_group_tooltip,
-    group_create: helptext.user_form_group_create_tooltip,
-    groups: helptext.user_form_aux_groups_tooltip,
-    home: helptext.user_form_dirs_explorer_tooltip,
-    home_mode: helptext.user_form_home_dir_permissions_tooltip,
-    home_create: helptext.user_form_home_create_tooltip,
-    sshpubkey: helptext.user_form_auth_sshkey_tooltip,
-    password_disabled: helptext.user_form_auth_pw_enable_tooltip,
-    shell: helptext.user_form_shell_tooltip,
-    locked: helptext.user_form_lockuser_tooltip,
-    smb: helptext.user_form_smb_tooltip,
+    full_name: helptextUsers.user_form_full_name_tooltip,
+    username: helptextUsers.user_form_username_tooltip,
+    email: helptextUsers.user_form_email_tooltip,
+    password: helptextUsers.user_form_password_tooltip,
+    password_edit: helptextUsers.user_form_password_edit_tooltip,
+    password_conf_edit: helptextUsers.user_form_password_edit_tooltip,
+    uid: helptextUsers.user_form_uid_tooltip,
+    group: helptextUsers.user_form_primary_group_tooltip,
+    group_create: helptextUsers.user_form_group_create_tooltip,
+    groups: helptextUsers.user_form_aux_groups_tooltip,
+    home: helptextUsers.user_form_dirs_explorer_tooltip,
+    home_mode: helptextUsers.user_form_home_dir_permissions_tooltip,
+    home_create: helptextUsers.user_form_home_create_tooltip,
+    sshpubkey: helptextUsers.user_form_auth_sshkey_tooltip,
+    password_disabled: helptextUsers.user_form_auth_pw_enable_tooltip,
+    shell: helptextUsers.user_form_shell_tooltip,
+    locked: helptextUsers.user_form_lockuser_tooltip,
+    smb: helptextUsers.user_form_smb_tooltip,
   };
 
   readonly groupOptions$ = this.ws.call('group.query').pipe(

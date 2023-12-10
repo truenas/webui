@@ -12,7 +12,7 @@ import {
 import { FromWizardToAdvancedSubmitted } from 'app/enums/from-wizard-to-advanced.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
-import helptext_cloudsync from 'app/helptext/data-protection/cloudsync/cloudsync-form';
+import { helptextCloudsync } from 'app/helptext/data-protection/cloudsync/cloudsync';
 import { CloudSyncTaskUi, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -241,8 +241,8 @@ export class CloudSyncTaskCardComponent implements OnInit {
 
   dryRun(row: CloudSyncTaskUi): void {
     this.dialogService.confirm({
-      title: helptext_cloudsync.dry_run_title,
-      message: helptext_cloudsync.dry_run_dialog,
+      title: helptextCloudsync.dry_run_title,
+      message: helptextCloudsync.dry_run_dialog,
       hideCheckbox: true,
     }).pipe(
       filter(Boolean),
