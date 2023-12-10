@@ -30,7 +30,7 @@ describe('AdvancedSearchComponent', () => {
     });
 
     it('resets text area when reset icon is pressed', async () => {
-      await searchHarness.setValue('test');
+      await searchHarness.setValue(spectator.component.editorView, 'test');
       await (await searchHarness.getResetIcon()).click();
       const placeholderText = await searchHarness.getPlaceholder();
 
@@ -112,7 +112,6 @@ describe('AdvancedSearchComponent', () => {
           ] as SearchProperty<User>[],
         },
       });
-      jest.spyOn(spectator.component.switchToBasic, 'emit');
       searchHarness = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, AdvancedSearchHarness);
     });
 
@@ -120,6 +119,20 @@ describe('AdvancedSearchComponent', () => {
       expect(await searchHarness.getValue()).toBe(
         '(("Event" IN ("Authentication", "Close") AND "Username" = "admin" AND "Сервіс" = "Проміжне програмне забезпечення") OR ("Event" = "Authentication" AND "Сервіс" = "Ес-ем-бе"))',
       );
+    });
+  });
+
+  describe('handles errors', () => {
+    beforeEach(async () => {
+      spectator = createComponent();
+      searchHarness = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, AdvancedSearchHarness);
+    });
+
+    it('shows error icon and stores error', async () => {
+      await searchHarness.setValue(spectator.component.editorView, 'Username = "root');
+
+      expect(spectator.query('ix-icon')).toHaveAttribute('data-mat-icon-name', 'warning');
+      expect(spectator.component.errorMessages[0].message).toBe('Syntax error at 11-16');
     });
   });
 });

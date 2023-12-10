@@ -9,6 +9,7 @@ import { parser } from 'app/modules/search-input/services/query-parser/query-gra
 import {
   Condition,
   ConditionGroup, ConnectorType, LiteralValue, ParsedToken,
+  QueryParsingError,
   QueryParsingResult, QuerySyntaxError,
 } from 'app/modules/search-input/services/query-parser/query-parsing-result.interface';
 import { PropertyType, SearchProperty } from 'app/modules/search-input/types/search-property.interface';
@@ -66,7 +67,7 @@ export class QueryParserService {
       console.error(error);
       return {
         hasErrors: true,
-        errors: [error],
+        errors: [error as QueryParsingError],
         tree: null,
       };
     }
