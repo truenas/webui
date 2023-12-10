@@ -1,7 +1,10 @@
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { of, ReplaySubject } from 'rxjs';
+import { MockAuthService } from 'app/core/testing/classes/mock-auth.service';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { Role } from 'app/enums/role.enum';
 import { DialogService } from 'app/services/dialog.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -26,6 +29,7 @@ describe('EulaEffects', () => {
       mockProvider(SystemGeneralService, {
         isEnterprise: true,
       }),
+      mockAuth(),
     ],
   });
 
@@ -43,5 +47,15 @@ describe('EulaEffects', () => {
 
   it('should call truenas.accept_eula when EULA dialog is accepted', () => {
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('truenas.accept_eula');
+  });
+
+  it('does not check for EULA if user does not have FullAdmin role', () => {
+    jest.clearAllMocks();
+
+    const authMock = spectator.inject(MockAuthService);
+    authMock.setRoles([Role.Readonly]);
+    actions$.next(adminUiInitialized());
+
+    expect(spectator.inject(WebSocketService).call).not.toHaveBeenCalledWith('truenas.is_eula_accepted');
   });
 });
