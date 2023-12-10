@@ -5,7 +5,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { forkJoin, of } from 'rxjs';
+import { of } from 'rxjs';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { NfsProtocol, nfsProtocolLabels } from 'app/enums/nfs-protocol.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
@@ -110,6 +110,7 @@ export class ServiceNfsComponent implements OnInit {
       .subscribe({
         next: (config) => {
           this.isAddSpnDisabled = !config.v4_krb;
+          this.hasNfsStatus = config.keytab_has_nfs_spn;
           this.form.patchValue(config);
           this.isFormLoading = false;
           this.cdr.markForCheck();
@@ -150,14 +151,11 @@ export class ServiceNfsComponent implements OnInit {
   }
 
   private loadState(): void {
-    forkJoin([
-      this.ws.call('kerberos.keytab.has_nfs_principal'),
-      this.ws.call('directoryservices.get_state'),
-    ])
+    this.ws.call('directoryservices.get_state')
       .pipe(untilDestroyed(this))
-      .subscribe(([nfsStatus, { activedirectory }]) => {
-        this.hasNfsStatus = nfsStatus;
+      .subscribe(({ activedirectory }) => {
         this.adHealth = activedirectory;
+        this.cdr.markForCheck();
       });
   }
 

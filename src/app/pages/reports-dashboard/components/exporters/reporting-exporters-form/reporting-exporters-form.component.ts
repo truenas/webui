@@ -20,6 +20,8 @@ import { CustomUntypedFormField } from 'app/modules/ix-dynamic-form/components/i
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { DialogService } from 'app/services/dialog.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -62,8 +64,10 @@ export class ReportingExportersFormComponent implements OnInit {
     private slideInRef: IxSlideInRef<ReportingExportersFormComponent>,
     private translate: TranslateService,
     private ws: WebSocketService,
-    private errorHandler: FormErrorHandlerService,
+    private errorHandler: ErrorHandlerService,
+    private formErrorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
+    private dialogService: DialogService,
     @Inject(SLIDE_IN_DATA) private editingExpoter: ReportingExporter,
   ) { }
 
@@ -93,6 +97,12 @@ export class ReportingExportersFormComponent implements OnInit {
           this.form.patchValue(this.editingExpoter);
         }
 
+        this.isLoading = false;
+        this.isLoadingSchemas = false;
+        this.cdr.markForCheck();
+      },
+      error: (error) => {
+        this.dialogService.error(this.errorHandler.parseWsError(error));
         this.isLoading = false;
         this.isLoadingSchemas = false;
         this.cdr.markForCheck();
@@ -204,7 +214,7 @@ export class ReportingExportersFormComponent implements OnInit {
       },
       error: (error) => {
         this.isLoading = false;
-        this.errorHandler.handleWsFormError(error, this.form);
+        this.formErrorHandler.handleWsFormError(error, this.form);
         this.cdr.markForCheck();
       },
     });

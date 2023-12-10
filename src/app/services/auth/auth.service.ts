@@ -174,11 +174,12 @@ export class AuthService {
    *
    * Use mockAuth if you need to set user role in tests.
    */
-  hasRole(roles: Role[]): Observable<boolean> {
+  hasRole(roles: Role[] | Role): Observable<boolean> {
     return this.loggedInUser$.pipe(
       map((user) => {
         const currentRoles = user?.privilege?.roles?.$set || [];
-        if (!roles?.length || !currentRoles.length) {
+        const neededRoles = Array.isArray(roles) ? roles : [roles];
+        if (!neededRoles?.length || !currentRoles.length) {
           return false;
         }
 
@@ -186,7 +187,7 @@ export class AuthService {
           return true;
         }
 
-        return roles.some((role) => currentRoles.includes(role));
+        return neededRoles.some((role) => currentRoles.includes(role));
       }),
     );
   }
