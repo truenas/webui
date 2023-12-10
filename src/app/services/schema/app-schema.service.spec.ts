@@ -849,7 +849,7 @@ describe('AppSchemaService', () => {
             },
           ],
         },
-      ] as unknown as DynamicWizardSchema[];
+      ] as DynamicWizardSchema[];
       const formValue = {
         control_name_1: '',
         control_name_2: '',

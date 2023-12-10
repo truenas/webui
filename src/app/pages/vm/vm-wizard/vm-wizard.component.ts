@@ -288,7 +288,7 @@ export class VmWizardComponent implements OnInit {
           this.dialogService.error({
             title: this.translate.instant('Error creating device'),
             message: error.reason,
-            backtrace: error.trace.formatted,
+            backtrace: error.trace?.formatted,
           });
           return of(null);
         }),

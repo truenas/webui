@@ -9,7 +9,7 @@
 </div>
 <ng-template #showLayoutInfo>
   <ix-input
-    *ngIf="isDataVdev"
+    *ngIf="isDataVdev || isMetadataVdev"
     [formControl]="layoutControl"
     [label]="'Layout' | translate"
     [readonly]="true"

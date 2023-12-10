@@ -19,7 +19,7 @@ describe('NfsSessionListComponent', () => {
 
   const nfs4Sessions = [
     {
-      id: '4',
+      id: 4,
       info: {
         clientid: 6273260596088110000,
         address: '192.168.40.247:790',
@@ -38,7 +38,7 @@ describe('NfsSessionListComponent', () => {
       },
       states: [],
     },
-  ] as unknown as Nfs4Session[];
+  ] as Nfs4Session[];
 
   const createComponent = createComponentFactory({
     component: NfsSessionListComponent,

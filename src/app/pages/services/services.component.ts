@@ -207,7 +207,7 @@ export class ServicesComponent implements OnInit {
         this.dialog.error({
           title: message,
           message: error.reason,
-          backtrace: error.trace.formatted,
+          backtrace: error.trace?.formatted,
         });
         this.serviceLoadingMap.set(service.service, false);
         this.cdr.markForCheck();

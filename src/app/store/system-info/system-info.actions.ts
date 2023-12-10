@@ -12,11 +12,6 @@ export const systemFeaturesLoaded = createAction(
   props<{ systemFeatures: SystemFeatures }>(),
 );
 
-export const systemHaCapabilityLoaded = createAction(
-  '[System Info API] System is HA capable Loaded',
-  props<{ isSystemHaCapable: boolean }>(),
-);
-
 export const ixHardwareLoaded = createAction(
   '[System Info API] System is IxHardware Loaded',
   props<{ isIxHardware: boolean }>(),

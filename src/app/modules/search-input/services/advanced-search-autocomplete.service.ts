@@ -16,7 +16,7 @@ import { PropertyType, SearchProperty } from 'app/modules/search-input/types/sea
 const inComparator = 'IN';
 const ninComparator = 'NIN';
 const comparatorSuggestions = [
-  '=', '!=', '<', '>', '<=', '>=', inComparator, ninComparator, '~', '^', '!^', '$', '!$',
+  '=', '!=', '<', '>', '<=', '>=', inComparator, ninComparator, 'RIN', 'RNIN', '~', '^', '!^', '$', '!$',
 ] as QueryComparator[];
 
 const orSuggestion = 'OR';
@@ -110,17 +110,16 @@ export class AdvancedSearchAutocompleteService<T> {
         to = to + 1;
         anchor = from + updatedValue.length - 1;
       }
-    } else if (regexMap.containsWhitespace.test(updatedValue)) {
+    } else if (
+      regexMap.containsWhitespace.test(updatedValue) && !regexMap.looselyQuotedString.test(updatedValue)
+      && !updatedValue.startsWith('(') && !updatedValue.endsWith(')')
+    ) {
       updatedValue = `"${updatedValue}"`;
       anchor = anchor + 2;
     }
 
     this.editorView?.dispatch({
-      changes: {
-        from,
-        to,
-        insert: updatedValue,
-      },
+      changes: { from, to, insert: updatedValue },
       selection: { anchor },
     });
   }

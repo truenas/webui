@@ -7,6 +7,7 @@ import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.u
 import { Role } from 'app/enums/role.enum';
 import { Group } from 'app/interfaces/group.interface';
 import { Privilege, PrivilegeRole } from 'app/interfaces/privilege.interface';
+import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -43,9 +44,11 @@ describe('PrivilegeFormComponent', () => {
         mockCall('privilege.create'),
         mockCall('privilege.update'),
         mockCall('privilege.roles', [
-          { name: Role.FullAdmin, title: Role.FullAdmin },
-          { name: Role.SharingManager, title: Role.SharingManager },
-          { name: Role.Readonly, title: Role.Readonly },
+          { name: Role.FullAdmin, title: Role.FullAdmin, builtin: false },
+          { name: Role.SharingManager, title: Role.SharingManager, builtin: false },
+          { name: Role.Readonly, title: Role.Readonly, builtin: false },
+          { name: Role.SharingSmbRead, title: Role.SharingSmbRead, builtin: false },
+          { name: Role.SharingSmbWrite, title: Role.SharingSmbWrite, builtin: false },
         ] as PrivilegeRole[]),
       ]),
       mockProvider(IxSlideInRef),
@@ -58,6 +61,18 @@ describe('PrivilegeFormComponent', () => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       ws = spectator.inject(WebSocketService);
+    });
+
+    it('shows roles sorted alphabetically with compound (non-builtin) roles on top', async () => {
+      const roles = await loader.getHarness(IxSelectHarness.with({ label: 'Roles' }));
+      const options = await roles.getOptionLabels();
+      expect(options).toEqual([
+        'Full Admin',
+        'Readonly',
+        'Sharing Manager',
+        'Sharing SMB Read',
+        'Sharing SMB Write',
+      ]);
     });
 
     it('sends a create payload to websocket and closes modal when save is pressed', async () => {
@@ -100,7 +115,7 @@ describe('PrivilegeFormComponent', () => {
         Name: 'privilege',
         'Web Shell Access': true,
         'Local Groups': ['Group A', 'Group B'],
-        'DS Groups': [],
+        'Directory Services Groups': [],
         Roles: ['Readonly'],
       });
     });

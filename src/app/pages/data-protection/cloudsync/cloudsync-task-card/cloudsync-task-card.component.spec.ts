@@ -63,7 +63,7 @@ describe('CloudSyncTaskCardComponent', () => {
           client_secret: '',
           token: '',
           team_drive: '',
-        },
+        } as Record<string, string>,
       },
       schedule: {
         minute: '0',
@@ -88,7 +88,7 @@ describe('CloudSyncTaskCardComponent', () => {
           $date: new Date().getTime() - 50000,
         },
       },
-    } as unknown as CloudSyncTaskUi,
+    } as CloudSyncTaskUi,
   ];
 
   const createComponent = createComponentFactory({
