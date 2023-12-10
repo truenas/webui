@@ -24,6 +24,7 @@ import { IxFeedbackService } from 'app/modules/ix-feedback/ix-feedback.service';
 import { IxButtonGroupHarness } from 'app/modules/ix-forms/components/ix-button-group/ix-button-group.harness';
 import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxFileInputHarness } from 'app/modules/ix-forms/components/ix-file-input/ix-file-input.harness';
+import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxStarRatingHarness } from 'app/modules/ix-forms/components/ix-star-rating/ix-star-rating.harness';
@@ -130,9 +131,7 @@ describe('FeedbackDialogComponent', () => {
         },
       }),
       mockProvider(SystemGeneralService, {
-        isEnterprise: () => {
-          return isEnterprise$.value;
-        },
+        isEnterprise: jest.fn(() => isEnterprise$.value),
         getTokenForJira: jest.fn(() => mockToken),
         setTokenForJira: jest.fn(),
       }),
@@ -143,21 +142,25 @@ describe('FeedbackDialogComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
+  async function setupTest(isEnterprise = false): Promise<void> {
+    isEnterprise$.next(isEnterprise);
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     ws = spectator.inject(MockWebsocketService);
     form = await loader.getHarness(IxFormHarness);
-  });
+  }
 
-  it('checks the header', () => {
+  it('checks the header', async () => {
+    await setupTest(false);
     expect(spectator.query('h1')).toHaveText('How would you rate this page?');
   });
 
   describe('review', () => {
     beforeEach(async () => {
+      await setupTest(false);
+
       const type = await loader.getHarness(IxButtonGroupHarness.with({ label: 'I would like to' }));
-      type.setValue('rate this page');
+      type.setValue('Rate this page');
     });
 
     it('checks submit a new review', async () => {
@@ -220,8 +223,10 @@ describe('FeedbackDialogComponent', () => {
 
   describe('bug or improvement', () => {
     beforeEach(async () => {
+      await setupTest(false);
+
       const type = await loader.getHarness(IxButtonGroupHarness.with({ label: 'I would like to' }));
-      type.setValue('report a bug');
+      type.setValue('Report a bug');
     });
 
     it.skip('sends a create payload to websocket', async () => {
@@ -255,9 +260,10 @@ describe('FeedbackDialogComponent', () => {
 
   describe('enterprise: bug or improvement', () => {
     beforeEach(async () => {
-      isEnterprise$.next(true);
+      await setupTest(true);
+
       const type = await loader.getHarness(IxButtonGroupHarness.with({ label: 'I would like to' }));
-      type.setValue('report a bug');
+      type.setValue('Report a bug');
     });
 
     it('sends a create payload to websocket', async () => {

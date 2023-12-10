@@ -389,13 +389,13 @@ export class FeedbackDialogComponent implements OnInit {
 
   private renderTicketForm(): void {
     this.clearTicketForm();
+
     if (this.isEnterprise) {
-      const formRef = this.ticketFormContainer.createComponent(FileTicketLicensedFormComponent);
-      this.ticketForm = formRef.instance;
+      this.ticketForm = this.ticketFormContainer.createComponent(FileTicketLicensedFormComponent).instance;
     } else {
-      const formRef = this.ticketFormContainer.createComponent(FileTicketFormComponent);
-      this.ticketForm = formRef.instance;
+      this.ticketForm = this.ticketFormContainer.createComponent(FileTicketFormComponent).instance;
     }
+
     this.cdr.markForCheck();
   }
 }

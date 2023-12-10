@@ -1,24 +1,21 @@
 import {
   Component,
 } from '@angular/core';
-import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { FormControl, Validators } from '@angular/forms';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
-import { Observable, EMPTY } from 'rxjs';
+import { Observable } from 'rxjs';
 import {
-  filter, map, switchMap, catchError, debounceTime,
+  filter, map, switchMap,
 } from 'rxjs/operators';
+import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { Option } from 'app/interfaces/option.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import {
   CreateNewTicket,
 } from 'app/modules/ix-feedback/interfaces/file-ticket.interface';
-import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { choicesToOptions } from 'app/helpers/operators/options.operators';
 
 @UntilDestroy()
 @Component({
@@ -27,7 +24,7 @@ import { choicesToOptions } from 'app/helpers/operators/options.operators';
 export class FileTicketFormComponent {
   token = new FormControl<string>('', [Validators.required]);
   title = new FormControl<string>('', [Validators.required]);
-  category = new FormControl<string>({ value: '', disabled: true, }, [Validators.required]);
+  category = new FormControl<string>({ value: '', disabled: true }, [Validators.required]);
   categoryOptions$: Observable<Option[]> = this.token.valueChanges.pipe(
     switchMap((token) => this.ws.call('support.fetch_categories', [token])),
     choicesToOptions(),
