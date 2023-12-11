@@ -280,7 +280,7 @@ def click_on_folder1_then_click_on_the_test_folder(driver, folder1):
     # Slow down the double click on the folder
     assert wait_on_element(driver, 5, '//div[contains(text(),"Name") and @role="button"]', 'clickable')
     assert wait_on_element(driver, 5, f'//div[@data-tooltip="Google Drive Folder: {folder1}"]', 'clickable')
-    time.sleep(0.5)
+    time.sleep(1)
     action = ActionChains(driver)
     action.double_click(driver.find_element_by_xpath(f'//div[@data-tooltip="Google Drive Folder: {folder1}"]')).perform()
     assert wait_on_element(driver, 7, f'//div[@data-tooltip="{folder1}" and @role="button"]')
@@ -605,6 +605,7 @@ def verify_all_files_are_sync_to_the_google_drive_test_folder_tab(driver):
     assert wait_on_element(driver, 5, '//div[contains(text(),"Name") and @role="button"]', 'clickable')
     assert wait_on_element(driver, 5, '//div[@data-tooltip="PDF: Explaining_BSD.pdf"]', 'clickable')
     assert wait_on_element(driver, 5, '//div[@data-tooltip="Google Drive Folder: music"]', 'clickable')
+    time.sleep(1)
     action = ActionChains(driver)
     action.double_click(driver.find_element_by_xpath('//div[@data-tooltip="Google Drive Folder: music"]')).perform()
     assert wait_on_element(driver, 5, '//div[@data-tooltip="music" and @role="button"]')
