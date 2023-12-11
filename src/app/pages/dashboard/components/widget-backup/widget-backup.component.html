@@ -177,11 +177,16 @@
 </div>
 
 <ng-template #backupActions>
-  {{ 'Backup' | translate }}
-  <a class="backup-action" ixTest="cloud" (click)="addCloudSyncTask()">
-    {{ 'to cloud' | translate }}
-  </a> /
-  <a class="backup-action" ixTest="another-TrueNAS" (click)="addReplicationTask()">
-    {{ 'to another TrueNAS' | translate }}
-  </a>
+  <ng-container *ngIf="!!allCount">
+    {{ 'Backup' | translate }}
+    <a class="backup-action" ixTest="cloud" (click)="addCloudSyncTask()">
+      {{ 'to cloud' | translate }}
+    </a> /
+    <a class="backup-action" ixTest="another-TrueNAS" (click)="addReplicationTask()">
+      {{ 'to another TrueNAS' | translate }}
+    </a>
+  </ng-container>
+  <ng-container *ngIf="!allCount">
+    {{ 'Backup to Cloud or another TrueNAS via links below' | translate }}
+  </ng-container>
 </ng-template>
