@@ -9,6 +9,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { NfsProtocol } from 'app/enums/nfs-protocol.enum';
 import { NfsSecurityProvider } from 'app/enums/nfs-security-provider.enum';
+import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingNfs } from 'app/helptext/sharing';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
@@ -17,8 +18,10 @@ import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { hasRoleAsyncFgValidator } from 'app/modules/ix-forms/validators/has-role-validation/has-role-validation';
 import { ipv4or6cidrValidator } from 'app/modules/ix-forms/validators/ip-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { AuthService } from 'app/services/auth/auth.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { UserService } from 'app/services/user.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -48,6 +51,13 @@ export class NfsFormComponent implements OnInit {
     security: [[] as NfsSecurityProvider[]],
     networks: this.formBuilder.array<string>([]),
     hosts: this.formBuilder.array<string>([]),
+  }, {
+    asyncValidators: [
+      hasRoleAsyncFgValidator(
+        this.authService,
+        [Role.SharingNfsWrite],
+      ),
+    ],
   });
 
   get isNew(): boolean {
@@ -96,6 +106,7 @@ export class NfsFormComponent implements OnInit {
     private slideInRef: IxSlideInRef<NfsFormComponent>,
     private store$: Store<ServicesState>,
     @Inject(SLIDE_IN_DATA) private existingNfsShare: NfsShare,
+    private authService: AuthService,
   ) {}
 
   setNfsShareForEdit(): void {
