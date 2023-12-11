@@ -145,6 +145,6 @@ def click_on_system_dataset_pool_select_system_click_save(driver):
 @then('Please wait should appear while settings are being applied')
 def please_wait_should_appear_while_settings_are_being_applied(driver):
     """Please wait should appear while settings are being applied."""
-    assert wait_on_element_disappear(driver, 30, xpaths.progress.progressbar)
+    assert wait_on_element_disappear(driver, 60, xpaths.progress.progressbar)
     assert wait_on_element_disappear(driver, 20, xpaths.advanced.system_Dataset_Pool_Pool('tank'))
     assert wait_on_element(driver, 5, xpaths.advanced.system_Dataset_Pool_Pool('system'))

@@ -58,6 +58,7 @@ def on_the_dashboard_click_dataset_on_the_left_sidebar(driver):
 def on_the_dataset_page_click_on_the_system_pool_tree_and_click_add_dataset(driver):
     """on the Dataset page, click on the system pool tree and click Add Dataset."""
     assert wait_on_element(driver, 7, xpaths.dataset.title)
+    assert wait_on_element_disappear(driver, 15, xpaths.progress.progressbar)
     assert wait_on_element(driver, 7, xpaths.dataset.pool_Tree_Name('system'))
     driver.find_element_by_xpath(xpaths.dataset.pool_Tree('system')).click()
     assert wait_on_element(driver, 7, xpaths.dataset.pool_Selected('system'))
