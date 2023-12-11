@@ -48,7 +48,7 @@ export class VmwareSnapshotListComponent implements OnInit {
       sortable: true,
     }),
   ], {
-    rowTestId: (row) => row.id.toString(),
+    rowTestId: (row) => 'vmware-snapshot-' + row.id.toString(),
   });
 
   constructor(

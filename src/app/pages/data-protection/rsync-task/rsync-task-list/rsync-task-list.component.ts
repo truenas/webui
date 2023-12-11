@@ -147,7 +147,7 @@ export class RsyncTaskListComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => row.id.toString(),
+    rowTestId: (row) => 'rsync-task-' + row.id.toString(),
   });
 
   private allTasks: RsyncTask[] = [];

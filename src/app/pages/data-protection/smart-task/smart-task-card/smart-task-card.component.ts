@@ -72,7 +72,7 @@ export class SmartTaskCardComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => row.id.toString(),
+    rowTestId: (row) => 'smart-task-' + row.id.toString(),
   });
 
   constructor(

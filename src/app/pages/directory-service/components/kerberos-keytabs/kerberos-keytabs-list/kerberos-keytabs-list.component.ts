@@ -74,7 +74,7 @@ export default class KerberosKeytabsListComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => row.id.toString(),
+    rowTestId: (row) => 'kerberos-keytab-' + row.id.toString(),
   });
 
   constructor(

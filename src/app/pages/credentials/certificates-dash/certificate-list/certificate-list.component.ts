@@ -88,7 +88,7 @@ export class CertificateListComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => row.id.toString(),
+    rowTestId: (row) => 'cert-' + row.id.toString(),
   });
 
   constructor(

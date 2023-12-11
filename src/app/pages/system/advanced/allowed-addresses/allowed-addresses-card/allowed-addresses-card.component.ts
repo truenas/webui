@@ -50,7 +50,7 @@ export class AllowedAddressesCardComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => row.address.toString(),
+    rowTestId: (row) => 'allowed-address-' + row.address.toString(),
   });
 
   constructor(

@@ -111,7 +111,7 @@ export default class IdmapListComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => row.id.toString(),
+    rowTestId: (row) => 'idmap-' + row.id.toString(),
   });
 
   constructor(

@@ -46,7 +46,7 @@ export class SmbLockListComponent implements OnInit {
       propertyName: 'num_pending_deletes',
     }),
   ], {
-    rowTestId: (row) => row.filename + '-' + row.fileid.devid + '-' + row.fileid.extid,
+    rowTestId: (row) => 'smb-lock-' + row.filename + '-' + row.fileid.devid + '-' + row.fileid.extid,
   });
 
   constructor(

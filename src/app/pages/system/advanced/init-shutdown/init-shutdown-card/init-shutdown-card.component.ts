@@ -70,7 +70,7 @@ export class InitShutdownCardComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => row.id.toString(),
+    rowTestId: (row) => 'card-init-shutdown-' + row.id.toString(),
   });
 
   constructor(

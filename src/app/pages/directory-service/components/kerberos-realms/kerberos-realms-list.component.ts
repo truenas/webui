@@ -92,7 +92,7 @@ export default class KerberosRealmsListComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => row.id.toString(),
+    rowTestId: (row) => 'kerberos-realm-' + row.id.toString(),
   });
 
   constructor(

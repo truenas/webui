@@ -105,7 +105,7 @@ export class ReplicationTaskCardComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => row.id.toString(),
+    rowTestId: (row) => 'replication-task-' + row.id.toString(),
   });
 
   constructor(

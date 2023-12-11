@@ -48,7 +48,7 @@ export class SshConnectionCardComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => row.id.toString(),
+    rowTestId: (row) => 'ssh-con-' + row.id.toString(),
   });
 
   constructor(

@@ -81,7 +81,7 @@ export class ExtentListComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => row.id.toString(),
+    rowTestId: (row) => 'iscsi-extent-' + row.id.toString(),
   });
 
   constructor(

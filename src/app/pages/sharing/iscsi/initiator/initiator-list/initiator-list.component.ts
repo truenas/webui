@@ -80,7 +80,7 @@ export class InitiatorListComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => row.id.toString(),
+    rowTestId: (row) => 'iscsi-initiator-' + row.id.toString(),
   });
 
   constructor(

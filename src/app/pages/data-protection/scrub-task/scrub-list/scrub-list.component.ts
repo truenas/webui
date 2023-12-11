@@ -87,7 +87,7 @@ export class ScrubListComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => row.id.toString(),
+    rowTestId: (row) => 'scrub-task-' + row.id.toString(),
   });
 
   constructor(

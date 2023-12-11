@@ -66,7 +66,7 @@ export class NfsCardComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => row.id.toString(),
+    rowTestId: (row) => 'card-nfs-share-' + row.id.toString(),
   });
 
   constructor(

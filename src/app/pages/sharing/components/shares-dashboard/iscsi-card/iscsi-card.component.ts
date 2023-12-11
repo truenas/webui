@@ -60,7 +60,7 @@ export class IscsiCardComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => row.id.toString(),
+    rowTestId: (row) => 'card-iscsi-target-' + row.id.toString(),
   });
 
   constructor(

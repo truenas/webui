@@ -80,7 +80,7 @@ export class AuthorizedAccessListComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => row.id.toString(),
+    rowTestId: (row) => 'iscsi-authorized-access-' + row.id.toString(),
   });
 
   constructor(

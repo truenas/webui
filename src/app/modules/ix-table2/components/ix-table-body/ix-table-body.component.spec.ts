@@ -54,7 +54,7 @@ const columns = createTable<TestTableData>([
     onRowToggle: () => jest.fn(),
   }),
 ], {
-  rowTestId: (row) => row.numberField.toString(),
+  rowTestId: (row) => 'row-' + row.numberField.toString(),
 });
 
 describe('IxTableBodyComponent', () => {

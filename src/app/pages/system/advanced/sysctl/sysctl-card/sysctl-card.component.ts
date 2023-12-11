@@ -61,7 +61,7 @@ export class SysctlCardComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => row.id.toString(),
+    rowTestId: (row) => 'sysctl-' + row.id.toString(),
   });
 
   constructor(
