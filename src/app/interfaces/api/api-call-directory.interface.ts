@@ -32,7 +32,7 @@ import { ApiKey, CreateApiKeyRequest, UpdateApiKeyRequest } from 'app/interfaces
 import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { AuditConfig, AuditEntry } from 'app/interfaces/audit.interface';
 import { AuthSession } from 'app/interfaces/auth-session.interface';
-import { CheckUserQuery } from 'app/interfaces/auth.interface';
+import { CheckUserQuery, LoginQuery } from 'app/interfaces/auth.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import {
   Bootenv,
@@ -330,6 +330,10 @@ export interface ApiCallDirectory {
   'auth.check_user': { params: CheckUserQuery; response: boolean };
   'auth.me': { params: void; response: LoggedInUser };
   'auth.set_attribute': { params: [key: string, value: unknown]; response: void };
+  'auth.login': { params: LoginQuery; response: boolean };
+  'auth.login_with_token': { params: [token: string]; response: boolean };
+  'auth.logout': { params: void; response: void };
+  'auth.generate_token': { params: void; response: string };
 
   'auth.twofactor.update': { params: [GlobalTwoFactorConfigUpdate]; response: GlobalTwoFactorConfig };
   'auth.twofactor.provisioning_uri': { params: void; response: string };

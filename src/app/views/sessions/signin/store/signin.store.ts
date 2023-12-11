@@ -12,6 +12,7 @@ import {
 } from 'rxjs/operators';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
+import { LoginResult } from 'app/enums/login-result.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AuthService } from 'app/services/auth/auth.service';
@@ -87,8 +88,8 @@ export class SigninStore extends ComponentStore<SigninState> {
         this.systemGeneralService.loadProductType(),
       ]).pipe(
         switchMap(() => this.authService.loginWithToken()),
-        tap((wasLoggedIn: boolean) => {
-          if (!wasLoggedIn) {
+        tap((loginResult) => {
+          if (loginResult !== LoginResult.Success) {
             this.authService.clearAuthToken();
             return;
           }

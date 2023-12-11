@@ -6,6 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+import { LoginResult } from 'app/enums/login-result.enum';
 import { SystemEnvironment } from 'app/enums/system-environment.enum';
 import { RadioOption } from 'app/interfaces/option.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -78,10 +79,10 @@ export class SetAdminPasswordFormComponent implements OnInit {
       switchMap(() => this.authService.login(username, password)),
       untilDestroyed(this),
     ).subscribe({
-      next: (wasLoggedIn) => {
+      next: (loginResult) => {
         this.signinStore.setLoadingState(false);
 
-        if (wasLoggedIn) {
+        if (loginResult === LoginResult.Success) {
           this.signinStore.handleSuccessfulLogin();
         } else {
           this.signinStore.showSnackbar(this.translate.instant('Login error. Please try again.'));
