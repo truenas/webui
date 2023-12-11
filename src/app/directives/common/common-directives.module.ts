@@ -1,5 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { ActionHasRoleWrapperComponent } from 'app/directives/common/action-has-role/action-has-role-wrapper.component';
+import { ActionHasRoleDirective } from 'app/directives/common/action-has-role/action-has-role.directive';
 import { AutofocusDirective } from 'app/directives/common/autofocus/autofocus.directive';
 import { HasRoleDirective } from 'app/directives/common/has-role/has-role.directive';
 import { IfNightlyDirective } from 'app/directives/common/if-nightly/if-nightly.directive';
@@ -14,6 +16,8 @@ import { LetDirective } from './app-let.directive';
     LetDirective,
     IfNightlyDirective,
     HasRoleDirective,
+    ActionHasRoleDirective,
+    ActionHasRoleWrapperComponent,
     AutofocusDirective,
     StepActivationDirective,
   ],
@@ -21,6 +25,7 @@ import { LetDirective } from './app-let.directive';
     LetDirective,
     IfNightlyDirective,
     HasRoleDirective,
+    ActionHasRoleDirective,
     AutofocusDirective,
     StepActivationDirective,
   ],
