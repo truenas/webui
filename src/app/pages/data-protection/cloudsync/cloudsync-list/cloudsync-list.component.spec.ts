@@ -35,7 +35,7 @@ describe('CloudsyncListComponent', () => {
         folder: '',
         fast_list: false,
         acknowledge_abuse: false,
-      },
+      } as Record<string, string | boolean>,
       pre_script: '',
       post_script: '',
       snapshot: false,
@@ -72,7 +72,7 @@ describe('CloudsyncListComponent', () => {
       state: {
         state: 'PENDING',
       },
-    } as unknown as CloudSyncTaskUi,
+    } as CloudSyncTaskUi,
   ];
 
   const createComponent = createComponentFactory({

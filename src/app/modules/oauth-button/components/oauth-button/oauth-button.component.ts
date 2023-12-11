@@ -5,7 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { WINDOW } from 'app/helpers/window.helper';
 import { GmailOauthConfig } from 'app/interfaces/mail-config.interface';
 import { OauthMessage } from 'app/interfaces/oauth-message.interface';
-import { OauthJiraMessage } from 'app/interfaces/support.interface';
+import { OauthJiraMessage } from 'app/modules/ix-feedback/interfaces/file-ticket.interface';
 import { OauthButtonType } from 'app/modules/oauth-button/interfaces/oauth-button.interface';
 import { OauthProviderData } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/oauth-provider/oauth-provider.component';
 import { DialogService } from 'app/services/dialog.service';
@@ -107,6 +107,9 @@ export class OauthButtonComponent {
   }
 
   onLoggedInWithProviderSuccess = (message: OauthMessage<OauthProviderData>): void => {
+    if (message.origin !== 'https://www.truenas.com') {
+      return;
+    }
     if (!('oauth_portal' in message.data)) {
       return;
     }

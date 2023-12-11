@@ -20,7 +20,7 @@ import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
 import { KubernetesStatusData } from 'app/interfaces/kubernetes-status-data.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { Pool } from 'app/interfaces/pool.interface';
-import { QueryFilter, QueryParams } from 'app/interfaces/query-api.interface';
+import { QueryFilters } from 'app/interfaces/query-api.interface';
 import { WebSocketService } from 'app/services/ws.service';
 
 const ignoredAppsList = [ixChartApp];
@@ -112,7 +112,7 @@ export class ApplicationsService {
       return this.ws.call(endPoint).pipe(filterIgnoredApps());
     }
 
-    const firstOption: QueryFilter<AvailableApp>[] = [];
+    const firstOption: QueryFilters<AvailableApp> = [];
     if (filters.catalogs?.length) {
       firstOption.push(['catalog', 'in', filters.catalogs]);
     }
@@ -124,8 +124,8 @@ export class ApplicationsService {
     filters.categories = filters.categories?.filter((category) => !category?.includes(AppExtraCategory.Recommended));
 
     if (filters.categories?.length) {
-      (firstOption as unknown as QueryParams<AvailableApp>[]).push(
-        ['OR', filters.categories.map((category) => ['categories', 'rin', category])] as unknown as QueryParams<AvailableApp>,
+      firstOption.push(
+        ['OR', filters.categories.map((category) => ['categories', 'rin', category])] as QueryFilters<AvailableApp>,
       );
     }
 
@@ -194,7 +194,7 @@ export class ApplicationsService {
   }
 
   convertDateToRelativeDate(date: Date): string {
-    const diff = Math.round(((new Date() as unknown as number) - (date as unknown as number)) / 1000);
+    const diff = Math.round((Number(new Date()) - Number(date)) / 1000);
     const day = 60 * 60 * 24;
 
     if (diff < day) { return this.translate.instant('Last 24 hours'); }

@@ -1,4 +1,6 @@
+import { Role } from 'app/enums/role.enum';
 import { Preferences } from 'app/interfaces/preferences.interface';
+import { UserTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
 import { User } from './user.interface';
 
@@ -16,7 +18,19 @@ export interface DsUncachedUser {
   };
 }
 
-export interface LoggedInUser extends Partial<DsUncachedUser>, Partial<User> { }
+export interface AuthMeUser extends DsUncachedUser {
+  privilege: AuthMePrivilege;
+  two_factor_config: UserTwoFactorConfig;
+}
+
+export interface AuthMePrivilege {
+  roles: {
+    $set: Role[];
+  };
+  web_shell: boolean;
+}
+
+export interface LoggedInUser extends AuthMeUser, Partial<User> { }
 
 export interface DsUncachedGroup {
   gr_gid: number;

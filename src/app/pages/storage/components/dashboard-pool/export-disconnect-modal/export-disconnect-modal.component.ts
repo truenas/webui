@@ -274,7 +274,7 @@ export class ExportDisconnectModalComponent implements OnInit {
           this.dialogService.error({
             title: helptext.exportError,
             message: error.reason,
-            backtrace: error.trace.formatted,
+            backtrace: error.trace?.formatted,
           });
         },
       });

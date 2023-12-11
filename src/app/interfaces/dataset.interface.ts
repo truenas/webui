@@ -3,8 +3,8 @@ import {
   DatasetAclType,
   DatasetCaseSensitivity,
   DatasetChecksum,
+  DatasetPreset,
   DatasetRecordSize,
-  DatasetShareType,
   DatasetSnapdev,
   DatasetSnapdir,
   DatasetSync,
@@ -56,7 +56,7 @@ export interface Dataset {
   reservation: ZfsProperty<string, number>;
   snapdev: ZfsProperty<DatasetSnapdev, string>;
   snapdir: ZfsProperty<DatasetSnapdir, string>;
-  share_type: ZfsProperty<DatasetShareType, string>;
+  share_type: ZfsProperty<DatasetPreset, string>;
   special_small_block_size: ZfsProperty<string>;
   sync: ZfsProperty<DatasetSync, string>;
   xattr: ZfsProperty<DatasetXattr, boolean>;
@@ -116,7 +116,7 @@ export interface DatasetCreate {
   casesensitivity?: DatasetCaseSensitivity;
   aclmode?: AclMode;
   acltype?: DatasetAclType;
-  share_type?: DatasetShareType;
+  share_type?: DatasetPreset;
   xattr?: DatasetXattr;
   encryption_options?: {
     generate_key?: boolean;

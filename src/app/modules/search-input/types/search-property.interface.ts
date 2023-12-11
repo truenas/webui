@@ -13,10 +13,11 @@ export interface SearchProperty<T> {
    * Nested properties are supported: 'user.first_name'.
    */
   // TODO: Add support for nested properties.
-  property: keyof T;
+  property: keyof T | string;
+  propertyType: PropertyType;
 
   valueSuggestions$?: Observable<Option[]>;
-
+  enumMap?: Map<unknown, string>;
   /**
    * Optional functions to convert value from and to API format.
    */
@@ -26,4 +27,11 @@ export interface SearchProperty<T> {
 
 export interface SearchSuggestionsComponent {
   suggestionSelected: EventEmitter<unknown>;
+}
+
+export enum PropertyType {
+  Text = 'text',
+  Date = 'date',
+  Boolean = 'boolean',
+  Memory = 'memory',
 }

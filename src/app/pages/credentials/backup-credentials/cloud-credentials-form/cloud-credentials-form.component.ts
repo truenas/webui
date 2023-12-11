@@ -55,6 +55,11 @@ export class CloudCredentialsFormComponent implements OnInit {
 
   readonly helptext = helptext;
 
+  get showProviderDescription(): boolean {
+    return this.commonForm.controls.provider.enabled
+      && this.commonForm.controls.provider.value === CloudsyncProviderName.Storj;
+  }
+
   constructor(
     private ws: WebSocketService,
     private formBuilder: FormBuilder,

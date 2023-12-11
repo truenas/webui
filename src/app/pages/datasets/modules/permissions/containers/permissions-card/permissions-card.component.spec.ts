@@ -76,7 +76,7 @@ describe('PermissionsCardComponent', () => {
     const websocket = spectator.inject(WebSocketService);
 
     expect(websocket.call).toHaveBeenCalledWith('filesystem.stat', ['/mnt/testpool/dataset']);
-    expect(websocket.call).toHaveBeenCalledWith('filesystem.getacl', ['/mnt/testpool/dataset', false, true]);
+    expect(websocket.call).toHaveBeenCalledWith('filesystem.getacl', ['/mnt/testpool/dataset', true, true]);
   });
 
   it('shows dataset ownership information', () => {

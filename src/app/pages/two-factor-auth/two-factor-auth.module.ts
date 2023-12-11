@@ -11,6 +11,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { RenewTwoFactorDialogComponent } from 'app/pages/two-factor-auth/components/two-factor/renew-two-factor-dialog/renew-two-factor-dialog.component';
 import { TwoFactorComponent } from 'app/pages/two-factor-auth/components/two-factor/two-factor.component';
 import { routing } from 'app/pages/two-factor-auth/two-factor-auth.routing';
@@ -30,6 +31,7 @@ import { routing } from 'app/pages/two-factor-auth/two-factor-auth.routing';
     MatToolbarModule,
     TranslateModule,
     routing,
+    TestIdModule,
   ],
   declarations: [
     TwoFactorComponent,

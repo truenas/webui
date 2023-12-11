@@ -28,5 +28,9 @@
   class="reset-icon reset-input"
   (click)="resetInput()"
 >
-  <ix-icon name="mdi-close-circle"></ix-icon>
+  <ix-icon
+    name="mdi-close-circle"
+    tabindex="0"
+    (keydown.enter)="resetInput()"
+  ></ix-icon>
 </span>

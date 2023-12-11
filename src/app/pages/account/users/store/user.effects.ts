@@ -25,8 +25,7 @@ export class UserEffects {
     switchMap((preferences) => {
       let params: QueryParams<User> = [];
       if (preferences.hideBuiltinUsers) {
-        // TODO: Fix QueryParams type checking
-        params = [[['OR', [['builtin', '=', false], ['username', '=', 'root']]]]] as unknown as QueryParams<User>;
+        params = [[['OR', [['builtin', '=', false], ['username', '=', 'root']]]]] as QueryParams<User>;
       }
       return this.ws.call('user.query', params).pipe(
         map((users) => usersLoaded({ users })),

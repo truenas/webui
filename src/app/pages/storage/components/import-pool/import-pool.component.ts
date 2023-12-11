@@ -132,7 +132,7 @@ export class ImportPoolComponent implements OnInit {
       this.dialogService.error({
         title: this.translate.instant('Error importing pool'),
         message: error.reason,
-        backtrace: error.trace.formatted,
+        backtrace: error.trace?.formatted,
       });
     } else if ('exception' in error && error.error && error.exception) {
       this.dialogService.error({

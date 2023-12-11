@@ -12,6 +12,7 @@ import {
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { NetworkInterfaceAliasType, NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -73,6 +74,7 @@ describe('NetworkComponent', () => {
     ],
     providers: [
       InterfacesStore,
+      mockAuth(),
       mockWebsocket([
         mockCall('interface.checkin_waiting', () => (isTestingChanges ? 60 : null)),
         mockCall('interface.has_pending_changes', () => wasEditMade),

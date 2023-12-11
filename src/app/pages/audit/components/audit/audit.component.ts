@@ -6,15 +6,16 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import {
-  format, subDays, subMonths, subWeeks,
-} from 'date-fns';
 import { toSvg } from 'jdenticon';
 import { filter, map, of } from 'rxjs';
-import { AuditEvent, auditEventLabels } from 'app/enums/audit-event.enum';
+import {
+  AuditEvent, AuditService, auditEventLabels, auditServiceLabels,
+} from 'app/enums/audit-event.enum';
 import { getLogImportantData } from 'app/helpers/get-log-important-data.helper';
+import { ParamsBuilder } from 'app/helpers/params-builder/params-builder.class';
 import { WINDOW } from 'app/helpers/window.helper';
 import { AuditEntry, SmbAuditEntry } from 'app/interfaces/audit.interface';
+import { QueryFilters } from 'app/interfaces/query-api.interface';
 import { ApiDataProvider } from 'app/modules/ix-table2/classes/api-data-provider/api-data-provider';
 import { PaginationServerSide } from 'app/modules/ix-table2/classes/api-data-provider/pagination-server-side.class';
 import { SortingServerSide } from 'app/modules/ix-table2/classes/api-data-provider/sorting-server-side.class';
@@ -29,6 +30,7 @@ import {
   SearchQuery,
 } from 'app/modules/search-input/types/search-query.interface';
 import {
+  dateProperty,
   searchProperties,
   textProperty,
 } from 'app/modules/search-input/utils/search-properties.utils';
@@ -49,6 +51,10 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
   searchQuery: SearchQuery<AuditEntry>;
   pagination: TablePagination;
 
+  get basicQueryFilters(): QueryFilters<AuditEntry> {
+    return [['event', '~', `(?i)${(this.searchQuery as { query: string })?.query || ''}`]];
+  }
+
   columns = createTable<AuditEntry>([
     textColumn({
       title: this.translate.instant('Service'),
@@ -63,7 +69,9 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
     }),
     textColumn({
       title: this.translate.instant('Event'),
-      getValue: (row) => this.translate.instant(auditEventLabels.get(row.event)),
+      getValue: (row) => (auditEventLabels.has(row.event)
+        ? this.translate.instant(auditEventLabels.get(row.event))
+        : row.event || '-'),
     }),
     textColumn({
       title: this.translate.instant('Event Data'),
@@ -96,50 +104,72 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
 
       this.searchProperties = searchProperties<AuditEntry>([
         textProperty('audit_id', this.translate.instant('ID'), of([])),
-        textProperty(
+        dateProperty(
           'message_timestamp',
           this.translate.instant('Timestamp'),
-          of([
-            {
-              label: 'Today',
-              value: `"${format(new Date(), 'yyyy-MM-dd')}"`,
-            },
-            {
-              label: 'Yesterday',
-              value: `"${format(subDays(new Date(), 1), 'yyyy-MM-dd')}"`,
-            },
-            {
-              label: 'Last week',
-              value: `"${format(subWeeks(new Date(), 1), 'yyyy-MM-dd')}"`,
-            },
-            {
-              label: 'Last month',
-              value: `"${format(subMonths(new Date(), 1), 'yyyy-MM-dd')}"`,
-            },
-          ]),
         ),
         textProperty(
           'address',
           this.translate.instant('Address'),
-          of(auditEntries.map((log) => ({ label: log.address, value: `"${log.address}"` }))),
+          of(auditEntries.map((log) => ({
+            label: log.address,
+            value: `"${log.address}"`,
+          }))),
         ),
         textProperty(
           'service',
           this.translate.instant('Service'),
-          of(auditEntries.map((log) => ({ label: log.service, value: `"${log.service}"` }))),
+          of([
+            {
+              label: this.translate.instant(auditServiceLabels.get(AuditService.Smb)),
+              value: `"${this.translate.instant(auditServiceLabels.get(AuditService.Smb))}"`,
+            },
+            {
+              label: this.translate.instant(auditServiceLabels.get(AuditService.Middleware)),
+              value: `"${this.translate.instant(auditServiceLabels.get(AuditService.Middleware))}"`,
+            },
+          ]),
+          auditServiceLabels,
         ),
         textProperty(
           'username',
           this.translate.instant('Username'),
           this.ws.call('user.query').pipe((
-            map((users) => users.map((user) => ({ label: user.username, value: `"${user.username}"` })))
+            map((users) => users.map((user) => ({
+              label: user.username,
+              value: `"${user.username}"`,
+            })))
           )),
         ),
         textProperty(
           'event',
           this.translate.instant('Event'),
-          of(Object.values(AuditEvent).map((value) => ({ label: value, value: `"${value}"` }))),
+          of(Object.values(AuditEvent).map((key) => ({
+            label: this.translate.instant(auditEventLabels.get(key)),
+            value: `"${this.translate.instant(auditEventLabels.get(key))}"`,
+          }))),
+          auditEventLabels,
         ),
+        textProperty('event.event_data.host', this.translate.instant('SMB - Host')),
+        textProperty('event.event_data.clientAccount', this.translate.instant('SMB - Client Account')),
+        textProperty('event.event_data.file.path', this.translate.instant('SMB - File Path')),
+        textProperty('event.event_data.src_file.path', this.translate.instant('SMB - Source File Path')),
+        textProperty('event.event_data.dst_file.path', this.translate.instant('SMB - Destination File Path')),
+        textProperty('event.event_data.file.handle.type', this.translate.instant('SMB - File Handle Type')),
+        textProperty('event.event_data.file.handle.value', this.translate.instant('SMB - File Handle Value')),
+        textProperty('event.event_data.unix_token.uid', this.translate.instant('SMB - UNIX Token UID')),
+        textProperty('event.event_data.unix_token.gid', this.translate.instant('SMB - UNIX Token GID')),
+        textProperty('event.event_data.unix_token.groups', this.translate.instant('SMB - UNIX Token Groups')),
+        textProperty('event.event_data.result.type', this.translate.instant('SMB - Result Type')),
+        textProperty('event.event_data.result.value_raw', this.translate.instant('SMB - Result Raw Value')),
+        textProperty('event.event_data.result.value_parsed', this.translate.instant('SMB - Result Parsed Value')),
+        textProperty('event.event_data.vers.major', this.translate.instant('SMB - Vers Major')),
+        textProperty('event.event_data.vers.minor', this.translate.instant('SMB - Vers Minor')),
+        textProperty('event.event_data.vers.minor', this.translate.instant('SMB - Vers Minor')),
+        textProperty('event.event_data.operations.create', this.translate.instant('SMB - Operation Create')),
+        textProperty('event.event_data.operations.close', this.translate.instant('SMB - Operation Close')),
+        textProperty('event.event_data.operations.read', this.translate.instant('SMB - Operation Read')),
+        textProperty('event.event_data.operations.write', this.translate.instant('SMB - Operation Write')),
       ]);
       this.cdr.markForCheck();
     });
@@ -157,7 +187,7 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
       };
 
       if (options.sorting) this.dataProvider.setSorting(options.sorting);
-      if (options.searchQuery) this.searchQuery = options.searchQuery;
+      if (options.searchQuery) this.searchQuery = options.searchQuery as SearchQuery<AuditEntry>;
 
       this.onSearch(this.searchQuery);
     });
@@ -191,8 +221,14 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
     this.searchQuery = query;
 
     if (query && query.isBasicQuery) {
-      // TODO: Create a separate class to handle this.
-      this.dataProvider.setParams([[['event', '~', query.query]]]);
+      const term = `(?i)${query.query || ''}`;
+      const params = new ParamsBuilder<AuditEntry>()
+        .filter('event', '~', term)
+        .orFilter('username', '~', term)
+        .orFilter('service', '~', term)
+        .getParams();
+
+      this.dataProvider.setParams(params);
     }
 
     if (query && !query.isBasicQuery) {

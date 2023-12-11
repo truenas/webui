@@ -16,6 +16,18 @@ export const helptextSystemSupport = {
     dialog_unavailable_warning: T('Proactive support settings is not available.'),
   },
 
+  bug: {
+    message: {
+      placeholder: T('Please describe:\n1. Steps to reproduce\n2. Expected Result\n3. Actual Result'),
+    },
+  },
+
+  review: {
+    message: {
+      placeholder: T('Share your thoughts on our product\'s features, usability, or any suggestions for improvement.'),
+    },
+  },
+
   token: {
     tooltip: T('OAuth Token for current session'),
   },
@@ -48,10 +60,8 @@ export const helptextSystemSupport = {
   category: {
     placeholder: T('Category'),
     tooltip: T(
-      'This field remains empty until a valid\
- <b>Username</b> and <b>Password</b> is entered.\
- Choose the category that best describes the bug or\
- feature being reported.',
+      `This field remains empty until a token is obtained.
+      Choose the category that best describes the bug or feature being reported.`,
     ),
   },
 

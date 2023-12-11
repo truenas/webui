@@ -12,6 +12,7 @@ import {
   DatasetCaseSensitivity, DatasetChecksum, DatasetRecordSize,
   DatasetSnapdev,
   DatasetSnapdir,
+  DatasetSync,
 } from 'app/enums/dataset.enum';
 import { DeduplicationSetting } from 'app/enums/deduplication-setting.enum';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
@@ -37,6 +38,26 @@ describe('OtherOptionsSectionComponent', () => {
   let loader: HarnessLoader;
   let form: IxFieldsetHarness;
   const existingDataset = {
+    comments: {
+      value: 'comments',
+      source: ZfsPropertySource.Inherited,
+      parsed: 'comments',
+    },
+    sync: {
+      parsed: 'standard',
+      source: ZfsPropertySource.Inherited,
+      value: DatasetSync.Standard,
+    },
+    compression: {
+      parsed: 'lzjb',
+      value: 'LZJB',
+      source: ZfsPropertySource.Local,
+    },
+    atime: {
+      parsed: false,
+      value: OnOff.Off,
+      source: ZfsPropertySource.Inherited,
+    },
     deduplication: {
       value: DeduplicationSetting.On,
       source: ZfsPropertySource.Inherited,
@@ -86,6 +107,26 @@ describe('OtherOptionsSectionComponent', () => {
 
   const parentDataset = {
     id: 'root/parent',
+    comments: {
+      value: 'comments',
+      source: ZfsPropertySource.Local,
+      parsed: 'comments',
+    },
+    sync: {
+      parsed: 'standard',
+      source: ZfsPropertySource.Default,
+      value: DatasetSync.Standard,
+    },
+    compression: {
+      parsed: 'lzjb',
+      value: 'LZJB',
+      source: ZfsPropertySource.Local,
+    },
+    atime: {
+      parsed: false,
+      value: OnOff.Off,
+      source: ZfsPropertySource.Local,
+    },
     deduplication: {
       value: DeduplicationSetting.Off,
       source: ZfsPropertySource.Default,
@@ -145,6 +186,11 @@ describe('OtherOptionsSectionComponent', () => {
           ON: 'ON',
           SHA256: 'SHA256',
         }),
+        mockCall('pool.dataset.compression_choices', {
+          LZ4: 'LZ4',
+          LZJB: 'LZJB',
+          OFF: 'OFF',
+        }),
         mockCall('pool.dataset.recordsize_choices', ['1K', '64K']),
         mockCall('pool.dataset.recommended_zvol_blocksize', '256K' as DatasetRecordSize),
       ]),
@@ -175,14 +221,11 @@ describe('OtherOptionsSectionComponent', () => {
   });
 
   describe('basic options', () => {
-    it('shows limited set of fields in Basic mode', async () => {
+    it('hides section in Basic mode', async () => {
       spectator.setInput('advancedMode', false);
+      spectator.detectChanges();
 
-      expect(await form.getLabels()).toEqual([
-        'ZFS Deduplication',
-        'Case Sensitivity',
-        'Share Type',
-      ]);
+      expect(await loader.getAllHarnesses(IxFieldsetHarness)).toHaveLength(0);
     });
   });
 
@@ -194,6 +237,10 @@ describe('OtherOptionsSectionComponent', () => {
       });
 
       expect(await form.getValues()).toEqual({
+        Comments: '',
+        'Compression Level': 'LZJB',
+        'Enable Atime': 'Inherit (OFF)',
+        Sync: 'Inherit (STANDARD)',
         'ZFS Deduplication': 'Inherit (OFF)',
         'Case Sensitivity': 'Sensitive',
         Checksum: 'SHA256',
@@ -216,6 +263,10 @@ describe('OtherOptionsSectionComponent', () => {
       });
 
       expect(spectator.component.getPayload()).toEqual({
+        comments: '',
+        atime: inherit,
+        compression: 'LZJB',
+        sync: inherit,
         checksum: 'SHA256',
         copies: 1,
         deduplication: inherit,
@@ -238,6 +289,10 @@ describe('OtherOptionsSectionComponent', () => {
       });
 
       expect(await form.getValues()).toEqual({
+        Comments: '',
+        Sync: 'Inherit (STANDARD)',
+        'Compression Level': 'Inherit (LZJB)',
+        'Enable Atime': 'Inherit (OFF)',
         'ZFS Deduplication': 'Inherit (OFF)',
         'Case Sensitivity': 'Sensitive',
         Checksum: 'Inherit (ON)',
@@ -248,42 +303,26 @@ describe('OtherOptionsSectionComponent', () => {
         'Metadata (Special) Small Block Size': 'Inherit (0)',
         'Read-only': 'Inherit (OFF)',
         'Record Size': 'Inherit (128 KiB)',
-        'Share Type': 'Generic',
         Snapdev: 'Inherit (HIDDEN)',
         'Snapshot Directory': '',
       });
     });
-  });
 
-  describe('share type', () => {
-    it('updates and disables fields based on Share Type selected', async () => {
+    it('shows warning if user selects "Sync" as Disabled', async () => {
       spectator.setInput({
         parent: parentDataset,
       });
 
       await form.fillForm({
-        'Share Type': 'SMB',
-      });
-      expect(await form.getValues()).toMatchObject({
-        'ACL Mode': 'Restricted',
-        'Case Sensitivity': 'Insensitive',
-      });
-      expect(await form.getDisabledState()).toMatchObject({
-        'ACL Mode': true,
-        'Case Sensitivity': true,
+        Sync: 'Disabled',
       });
 
-      await form.fillForm({
-        'Share Type': 'Generic',
-      });
-      expect(await form.getValues()).toMatchObject({
-        'ACL Mode': 'Passthrough',
-        'Case Sensitivity': 'Sensitive',
-      });
-      expect(await form.getDisabledState()).toMatchObject({
-        'ACL Mode': false,
-        'Case Sensitivity': false,
-      });
+      expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(
+        expect.objectContaining({
+          title: 'Warning',
+          message: 'TrueNAS recommends that the sync setting always  be left to the default of "Standard" or increased to "Always". The "Disabled" setting should  not be used in production and only where data roll back by few seconds  in case of crash or power loss is not a concern.',
+        }),
+      );
     });
   });
 

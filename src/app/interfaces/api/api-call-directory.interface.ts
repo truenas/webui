@@ -104,7 +104,9 @@ import {
   CreateDnsAuthenticator,
   DnsAuthenticator, UpdateDnsAuthenticator,
 } from 'app/interfaces/dns-authenticator.interface';
-import { DsUncachedGroup, DsUncachedUser } from 'app/interfaces/ds-cache.interface';
+import {
+  AuthMeUser, DsUncachedGroup, DsUncachedUser,
+} from 'app/interfaces/ds-cache.interface';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import {
   FailoverConfig,
@@ -229,10 +231,6 @@ import { StaticRoute, UpdateStaticRoute } from 'app/interfaces/static-route.inte
 import {
   Disk, ExtraDiskQueryOptions, DiskTemperatures, DiskTemperatureAgg, DiskUpdate, UnusedDisk,
 } from 'app/interfaces/storage.interface';
-import {
-  FetchSupportParams,
-  SupportConfig, SupportConfigUpdate,
-} from 'app/interfaces/support.interface';
 import { SystemGeneralConfig, SystemGeneralConfigUpdate } from 'app/interfaces/system-config.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
@@ -270,6 +268,10 @@ import {
   ZfsRollbackParams,
   ZfsSnapshot,
 } from 'app/interfaces/zfs-snapshot.interface';
+import {
+  FetchSupportParams,
+  SupportConfig, SupportConfigUpdate,
+} from 'app/modules/ix-feedback/interfaces/file-ticket.interface';
 
 /**
  * API definitions for `call` methods.
@@ -326,7 +328,7 @@ export interface ApiCallDirectory {
 
   // Auth
   'auth.check_user': { params: CheckUserQuery; response: boolean };
-  'auth.me': { params: void; response: DsUncachedUser };
+  'auth.me': { params: void; response: AuthMeUser };
   'auth.set_attribute': { params: [key: string, value: unknown]; response: void };
 
   'auth.twofactor.update': { params: [GlobalTwoFactorConfigUpdate]; response: GlobalTwoFactorConfig };

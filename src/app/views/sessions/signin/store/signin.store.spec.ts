@@ -111,7 +111,8 @@ describe('SigninStore', () => {
   describe('handleSuccessfulLogin', () => {
     it.skip('redirects user', () => {
       jest.spyOn(spectator.inject(WebSocketService), 'call').mockReturnValueOnce(of({ enabled: false }));
-      jest.spyOn(spectator.inject(AuthService), 'user$', 'get').mockReturnValueOnce(of({ twofactor_auth_configured: false }));
+      // jest.spyOn(spectator.inject(AuthService), 'user$', 'get')
+      //   .mockReturnValueOnce(of({ twofactor_auth_configured: false }));
       spectator.service.handleSuccessfulLogin();
       expect(spectator.inject(Router).navigateByUrl).toHaveBeenCalledWith('/dashboard');
     });
@@ -177,7 +178,7 @@ describe('SigninStore', () => {
           return of();
         }
 
-        return of({ fields: FailoverStatus.Importing } as unknown as ApiEvent<FailoverStatus>);
+        return of({ fields: FailoverStatus.Importing } as ApiEvent<FailoverStatus>);
       });
 
       spectator.service.init();
@@ -205,7 +206,7 @@ describe('SigninStore', () => {
               fields: {
                 disabled_reasons: [FailoverDisabledReason.DisagreeVip],
               },
-            } as unknown as ApiEvent<FailoverDisabledReasonEvent>,
+            } as ApiEvent<FailoverDisabledReasonEvent>,
           });
         });
 

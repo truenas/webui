@@ -17,6 +17,11 @@
       [options]="providerOptions$"
     ></ix-select>
 
+    <ix-cloudsync-provider-description
+      *ngIf="showProviderDescription"
+      [provider]="form.controls.provider.value"
+    ></ix-cloudsync-provider-description>
+
     <ix-input
       *ngIf="form.controls.name.enabled"
       formControlName="name"

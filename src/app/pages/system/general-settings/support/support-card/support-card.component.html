@@ -88,10 +88,9 @@
               </button>
               <mat-menu #menu="matMenu" overlapTrigger="false">
                 <button
-                  id="fileTicket"
                   mat-menu-item
                   ixTest="file-ticket"
-                  (click)="fileTicket()"
+                  (click)="feedbackDialog()"
                 >
                   <span>{{ ticketText | translate }}</span>
                 </button>
@@ -111,7 +110,7 @@
                 mat-button
                 color="default"
                 ixTest="file-ticket"
-                (click)="fileTicket()"
+                (click)="feedbackDialog()"
               >
                 {{ ticketText | translate }}
               </button>

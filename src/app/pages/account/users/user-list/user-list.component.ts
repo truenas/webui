@@ -59,7 +59,8 @@ export class UserListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Roles'),
       getValue: (row) => row.roles
-        .map((role) => this.translate.instant(roleNames.get(role))).join(', ') || this.translate.instant('N/A'),
+        .map((role) => (roleNames.has(role) ? this.translate.instant(roleNames.get(role)) : role))
+        .join(', ') || this.translate.instant('N/A'),
       sortable: true,
     }),
   ]);

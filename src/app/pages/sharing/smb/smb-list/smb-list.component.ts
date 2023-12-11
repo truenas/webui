@@ -174,7 +174,7 @@ export class SmbListComponent implements EntityTableConfig<SmbShare> {
               this.dialogService.error({
                 title: helptextSharingSmb.action_edit_acl_dialog.title,
                 message: error.reason,
-                backtrace: error.trace.formatted,
+                backtrace: error.trace?.formatted,
               });
             },
           });
