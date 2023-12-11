@@ -1,7 +1,10 @@
+import { TranslateService } from '@ngx-translate/core';
 import { QueryParserService } from 'app/modules/search-input/services/query-parser/query-parser.service';
 
 describe('QueryParserService - comparators', () => {
-  const service = new QueryParserService();
+  const service = new QueryParserService({
+    instant: (key: string) => key,
+  } as TranslateService);
 
   it('supports =', () => {
     const equals = service.parseQuery('Age = 19');

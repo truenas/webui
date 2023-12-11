@@ -3,7 +3,7 @@ import { ErrorHandler, Injectable, Injector } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import * as Sentry from '@sentry/angular';
 import {
-  Observable, catchError, MonoTypeOperatorFunction, EMPTY,
+  catchError, EMPTY, MonoTypeOperatorFunction, Observable,
 } from 'rxjs';
 import { sentryCustomExceptionExtraction } from 'app/helpers/error-parser.helper';
 import { ErrorReport } from 'app/interfaces/error-report.interface';
@@ -49,6 +49,13 @@ export class ErrorHandlerService implements ErrorHandler {
     if (this.isTypeOfJobError(error)) {
       return this.parseJobError(error);
     }
+    if (error instanceof Error) {
+      return {
+        title: this.translate?.instant('Error') || 'Error',
+        message: error.message,
+      };
+    }
+
     return null;
   }
 
@@ -76,7 +83,7 @@ export class ErrorHandlerService implements ErrorHandler {
     return (source$: Observable<T>) => {
       return source$.pipe(
         catchError((error: WebsocketError | Job) => {
-          this.dialog.error(this.parseErrorOrJob(error));
+          this.dialog.error(this.parseError(error));
           return EMPTY;
         }),
       );
@@ -85,7 +92,7 @@ export class ErrorHandlerService implements ErrorHandler {
 
   parseWsError(error: WebsocketError): ErrorReport {
     return {
-      title: error.type || error.trace?.class,
+      title: error.type || error.trace?.class || this.translate.instant('Error'),
       message: error.reason || error?.error?.toString(),
       backtrace: error.trace?.formatted || '',
     };
@@ -154,22 +161,6 @@ export class ErrorHandlerService implements ErrorHandler {
       };
     }
     return parsedError;
-  }
-
-  private parseErrorOrJob(errorOrJob: WebsocketError | Job | string): ErrorReport | ErrorReport[] {
-    if (typeof errorOrJob === 'object') {
-      if ('trace' in errorOrJob && errorOrJob.trace?.formatted) {
-        return this.parseWsError(errorOrJob);
-      }
-
-      if ('state' in errorOrJob && errorOrJob.error && errorOrJob.exception) {
-        return this.parseJobError(errorOrJob);
-      }
-    }
-    return {
-      title: this.translate?.instant('Error') || 'Error',
-      message: errorOrJob as string,
-    };
   }
 
   private parseHttpErrorObject(error: HttpErrorResponse): ErrorReport[] {

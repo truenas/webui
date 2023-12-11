@@ -14,6 +14,7 @@ import { AuthService } from 'app/services/auth/auth.service';
 @Component({
   selector: 'ix-user-menu',
   templateUrl: './user-menu.component.html',
+  styleUrls: ['./user-menu.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserMenuComponent {

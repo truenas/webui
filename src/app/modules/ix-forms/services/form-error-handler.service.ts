@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { AbstractControl, UntypedFormArray, UntypedFormGroup } from '@angular/forms';
-import { TranslateService } from '@ngx-translate/core';
 import { ResponseErrorType } from 'app/enums/response-error-type.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -11,7 +10,6 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 export class FormErrorHandlerService {
   constructor(
     private dialog: DialogService,
-    private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
   ) {}
 

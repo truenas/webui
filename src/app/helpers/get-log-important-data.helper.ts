@@ -1,12 +1,22 @@
 import { TranslateService } from '@ngx-translate/core';
 import { AuditEvent } from 'app/enums/audit-event.enum';
 import { AuditEntry } from 'app/interfaces/audit.interface';
+import { credentialTypeLabels } from 'app/interfaces/credential-type.interface';
 
 export function getLogImportantData(log: AuditEntry, translateService: TranslateService): string {
   switch (log.event) {
+    case AuditEvent.MethodCall:
+      return log.event_data?.description || log.event_data?.method;
     case AuditEvent.Rename:
       return `${log.event_data?.src_file?.path} -> ${log.event_data?.dst_file?.path}`;
     case AuditEvent.Authentication:
+      if (log.event_data?.credentials) {
+        const credentialType = log.event_data?.credentials.credentials;
+        const credentialTypeKey = credentialTypeLabels.get(credentialType);
+        return translateService.instant('Credentials: {credentials}', {
+          credentials: credentialType ? translateService.instant(credentialTypeKey) : credentialType,
+        });
+      }
       return translateService.instant('Account: {account}', { account: log.event_data?.clientAccount });
     case AuditEvent.Connect:
     case AuditEvent.Disconnect:

@@ -4,18 +4,14 @@
       [disabled]="isLoading$ | async"
       (search)="onSearch($event)"
     ></ix-search-input>
-    <button mat-button color="primary" ixTest="add" (click)="doAdd()">
-      {{ 'Add' | translate }}
-    </button>
-    <button
-      mat-button
-      color="accent"
+    <mat-slide-toggle
+      color="primary"
       ixTest="show-built-in-groups"
-      [disabled]="isLoading$ | async"
-      (click)="toggleBuiltins()"
+      [checked]="!hideBuiltinGroups"
+      (change)="toggleBuiltins()"
     >
-      {{ hideBuiltinGroups ? ('Show Built-In Groups' | translate) : ('Hide Built-In Groups' | translate) }}
-    </button>
+      <label>{{ 'Show Built-in Groups' | translate }}</label>
+    </mat-slide-toggle>
     <a
       mat-button
       color="accent"
@@ -24,6 +20,9 @@
     >
       {{ 'Privileges' | translate }}
     </a>
+    <button mat-button color="primary" ixTest="add" (click)="doAdd()">
+      {{ 'Add' | translate }}
+    </button>
   </ix-page-title-header>
 </ng-template>
 

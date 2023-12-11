@@ -21,10 +21,14 @@
 </a>
 
 <span
-  *ngIf="inputArea.textContent.length > 0"
   class="reset-icon reset-input"
+  [class.hidden]="!editorHasValue"
   (click)="onResetInput()"
 >
-  <ix-icon name="mdi-close-circle"></ix-icon>
+  <ix-icon
+    name="mdi-close-circle"
+    tabindex="0"
+    (keydown.enter)="onResetInput()"
+  ></ix-icon>
 </span>
 

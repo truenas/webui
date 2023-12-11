@@ -151,8 +151,8 @@ export class GroupListComponent implements OnInit {
   }
 
   rolesListToString(roles: Role[]): string {
-    return roles
-      .map((role) => (roleNames.get(role) ? this.translate.instant(roleNames.get(role)) : role))
-      .join(', ') || this.translate.instant('N/A');
+    return roles.map((role) => {
+      return roleNames.has(role) ? this.translate.instant(roleNames.get(role)) : role;
+    }).join(', ') || this.translate.instant('N/A');
   }
 }

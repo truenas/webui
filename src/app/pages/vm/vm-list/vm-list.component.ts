@@ -11,15 +11,13 @@ import { EmptyType } from 'app/enums/empty-type.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { VmBootloader, VmDeviceType } from 'app/enums/vm.enum';
+import { WebsocketErrorName } from 'app/enums/websocket-error-name.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/vm/vm-list';
 import wizardHelptext from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { ApiCallParams } from 'app/interfaces/api/api-call-directory.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
-import {
-  VirtualizationDetails,
-  VirtualMachine, VirtualMachineUpdate,
-} from 'app/interfaces/virtual-machine.interface';
+import { VirtualizationDetails, VirtualMachine, VirtualMachineUpdate } from 'app/interfaces/virtual-machine.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
@@ -39,8 +37,6 @@ import { StorageService } from 'app/services/storage.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { VmService } from 'app/services/vm.service';
 import { WebSocketService } from 'app/services/ws.service';
-
-const noMemoryError = 'ENOMEM';
 
 @UntilDestroy()
 @Component({
@@ -271,7 +267,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
       },
       error: (error: WebsocketError) => {
         this.loader.close();
-        if (method === this.wsMethods.start && error.errname === noMemoryError) {
+        if (method === this.wsMethods.start && error.errname === WebsocketErrorName.NoMemory) {
           this.onMemoryError(row);
           return;
         }

@@ -9,7 +9,7 @@ import { WebSocketService } from 'app/services/ws.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import {
   ixHardwareLoaded,
-  systemFeaturesLoaded, systemHaCapabilityLoaded, systemInfoLoaded, systemInfoUpdated,
+  systemFeaturesLoaded, systemInfoLoaded, systemInfoUpdated,
 } from 'app/store/system-info/system-info.actions';
 
 @Injectable()
@@ -56,20 +56,16 @@ export class SystemInfoEffects {
     }),
   ));
 
-  loadIsSystemHaCapable = createEffect(() => this.actions$.pipe(
-    ofType(adminUiInitialized),
-    mergeMap(() => {
-      return this.ws.call('system.is_ha_capable').pipe(
-        map((isSystemHaCapable) => systemHaCapabilityLoaded({ isSystemHaCapable })),
-      );
-    }),
-  ));
-
   loadIsIxHardware = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized),
     mergeMap(() => {
       return this.ws.call('system.is_ix_hardware').pipe(
         map((isIxHardware) => ixHardwareLoaded({ isIxHardware })),
+        catchError((error) => {
+          // TODO: Show error message to user?
+          console.error(error);
+          return of(ixHardwareLoaded({ isIxHardware: false }));
+        }),
       );
     }),
   ));
