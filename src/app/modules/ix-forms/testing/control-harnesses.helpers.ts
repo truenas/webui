@@ -15,8 +15,8 @@ import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-se
 import { IxSlideToggleHarness } from 'app/modules/ix-forms/components/ix-slide-toggle/ix-slide-toggle.harness';
 import { IxStarRatingHarness } from 'app/modules/ix-forms/components/ix-star-rating/ix-star-rating.harness';
 import { IxTextareaHarness } from 'app/modules/ix-forms/components/ix-textarea/ix-textarea.harness';
+import { JiraOauthHarness } from 'app/modules/ix-forms/components/jira-oauth/jira-oauth.harness';
 import { IxFormControlHarness } from 'app/modules/ix-forms/interfaces/ix-form-control-harness.interface';
-import { JiraOauthHarness } from 'app/modules/ix-forms/testing/jira-oauth.harness';
 import { SchedulerHarness } from 'app/modules/scheduler/components/scheduler/scheduler.harness';
 
 export const supportedFormControlSelectors = [

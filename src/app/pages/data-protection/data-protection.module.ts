@@ -21,6 +21,7 @@ import { LayoutModule } from 'app/modules/layout/layout.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { CloudsyncProviderDescriptionComponent } from 'app/pages/data-protection/cloudsync/cloudsync-provider-description/cloudsync-provider-description.component';
 import {
   CloudsyncRestoreDialogComponent,
 } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
@@ -95,6 +96,7 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
     MatToolbarModule,
     MatTooltipModule,
     MatDividerModule,
+    CloudsyncProviderDescriptionComponent,
   ],
   declarations: [
     SnapshotTaskListComponent,

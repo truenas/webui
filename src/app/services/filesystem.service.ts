@@ -51,6 +51,7 @@ export class FilesystemService {
             children.push({
               path: file.path,
               name: file.name,
+              isMountpoint: file.is_mountpoint,
               type: file.type === FileType.Directory ? ExplorerNodeType.Directory : ExplorerNodeType.File,
               hasChildren: file.type === FileType.Directory,
             });

@@ -66,6 +66,7 @@ import {
 } from 'app/pages/credentials/certificates-dash/view-certificate-dialog/view-certificate-dialog.component';
 import { routing } from 'app/pages/credentials/credentials.routing';
 import { KmipComponent } from 'app/pages/credentials/kmip/kmip.component';
+import { CloudsyncProviderDescriptionComponent } from 'app/pages/data-protection/cloudsync/cloudsync-provider-description/cloudsync-provider-description.component';
 import { BackupCredentialsComponent } from './backup-credentials/backup-credentials.component';
 import { CloudCredentialsCardComponent } from './backup-credentials/cloud-credentials-card/cloud-credentials-card.component';
 import { AzureProviderFormComponent } from './backup-credentials/cloud-credentials-form/provider-forms/azure-provider-form/azure-provider-form.component';
@@ -175,6 +176,7 @@ import { CertificateSubjectComponent } from './certificates-dash/forms/common-st
     TestIdModule,
     TranslateModule,
     OauthButtonModule,
+    CloudsyncProviderDescriptionComponent,
   ],
 })
 export class CredentialsModule { }

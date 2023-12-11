@@ -231,10 +231,6 @@ import { StaticRoute, UpdateStaticRoute } from 'app/interfaces/static-route.inte
 import {
   Disk, ExtraDiskQueryOptions, DiskTemperatures, DiskTemperatureAgg, DiskUpdate, UnusedDisk,
 } from 'app/interfaces/storage.interface';
-import {
-  FetchSupportParams,
-  SupportConfig, SupportConfigUpdate,
-} from 'app/interfaces/support.interface';
 import { SystemGeneralConfig, SystemGeneralConfigUpdate } from 'app/interfaces/system-config.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
@@ -272,6 +268,10 @@ import {
   ZfsRollbackParams,
   ZfsSnapshot,
 } from 'app/interfaces/zfs-snapshot.interface';
+import {
+  FetchSupportParams,
+  SupportConfig, SupportConfigUpdate,
+} from 'app/modules/ix-feedback/interfaces/file-ticket.interface';
 
 /**
  * API definitions for `call` methods.

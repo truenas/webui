@@ -1,3 +1,17 @@
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+
+export enum FeedbackType {
+  Review = 'REVIEW',
+  Bug = 'BUG',
+  Suggestion = 'FEATURE',
+}
+
+export const feedbackTypeOptionMap = new Map<FeedbackType, string>([
+  [FeedbackType.Review, T('Rate this page')],
+  [FeedbackType.Bug, T('Report a bug')],
+  [FeedbackType.Suggestion, T('Suggest an improvement')],
+]);
+
 export enum FeedbackEnvironment {
   Production = 'production',
   Development = 'development',
