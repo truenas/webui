@@ -1,5 +1,6 @@
 import {
-  ChangeDetectionStrategy, Component, EventEmitter, Input, Output,
+  AfterViewInit,
+  ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, Output, ViewChild,
 } from '@angular/core';
 
 @Component({
@@ -8,11 +9,18 @@ import {
   styleUrls: ['./basic-search.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class BasicSearchComponent {
+export class BasicSearchComponent implements AfterViewInit {
   @Input() query: string;
   @Input() allowAdvanced = false;
+
   @Output() switchToAdvanced = new EventEmitter<void>();
   @Output() queryChange = new EventEmitter<string>();
+
+  @ViewChild('searchControl') searchControl: ElementRef;
+
+  ngAfterViewInit(): void {
+    (this.searchControl?.nativeElement as HTMLInputElement)?.focus();
+  }
 
   protected resetInput(): void {
     this.query = '';

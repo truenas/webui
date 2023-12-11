@@ -1,4 +1,5 @@
 import { ComponentHarness } from '@angular/cdk/testing';
+import { EditorView } from '@codemirror/view';
 
 export class AdvancedSearchHarness extends ComponentHarness {
   static hostSelector = 'ix-advanced-search';
@@ -7,6 +8,12 @@ export class AdvancedSearchHarness extends ComponentHarness {
   getInputArea = this.locatorFor('.cm-content');
   getInputPlaceholder = this.locatorFor('.cm-placeholder');
   getSwitchLink = this.locatorFor('.switch-link');
+
+  editor: EditorView;
+
+  setEditor(editor: EditorView): void {
+    this.editor = editor;
+  }
 
   async getValue(): Promise<string> {
     return (await (this.getInputArea())).text();
@@ -18,7 +25,15 @@ export class AdvancedSearchHarness extends ComponentHarness {
 
   async setValue(value: string): Promise<void> {
     const inputArea = await this.getInputArea();
-    await inputArea.setContenteditableValue(value);
+
+    if (this.editor) {
+      this.editor.dispatch({
+        changes: { from: 0, to: 0, insert: value },
+      });
+    } else {
+      await inputArea.setContenteditableValue(value);
+    }
+
     return inputArea.dispatchEvent('input');
   }
 
