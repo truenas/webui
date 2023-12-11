@@ -606,6 +606,8 @@ def verify_all_files_are_sync_to_the_google_drive_test_folder_tab(driver):
     assert wait_on_element(driver, 5, '//div[@data-tooltip="PDF: Explaining_BSD.pdf"]', 'clickable')
     assert wait_on_element(driver, 5, '//div[@data-tooltip="Google Drive Folder: music"]', 'clickable')
     time.sleep(1)
+    # Select
+    driver.find_element_by_xpath('//div[@data-tooltip="Google Drive Folder: music"]').click()
     action = ActionChains(driver)
     action.double_click(driver.find_element_by_xpath('//div[@data-tooltip="Google Drive Folder: music"]')).perform()
     assert wait_on_element(driver, 5, '//div[@data-tooltip="music" and @role="button"]')
