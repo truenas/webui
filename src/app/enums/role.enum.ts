@@ -113,4 +113,7 @@ export const roleNames = new Map<Role, string>([
   [Role.SnapshotTaskRead, T('Snapshot Task Read')],
   [Role.SnapshotTaskWrite, T('Snapshot Task Write')],
   [Role.SnapshotWrite, T('Snapshot Write')],
+  [Role.AuthSessionsRead, T('Auth Sessions Read')],
+  [Role.AuthSessionsWrite, T('Auth Sessions Write')],
+  [Role.ReportingRead, T('Reporting Read')],
 ]);
