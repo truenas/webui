@@ -46,9 +46,11 @@ import { IxSlideToggleComponent } from 'app/modules/ix-forms/components/ix-slide
 import { IxStarRatingComponent } from 'app/modules/ix-forms/components/ix-star-rating/ix-star-rating.component';
 import { IxTextareaComponent } from 'app/modules/ix-forms/components/ix-textarea/ix-textarea.component';
 import { IxWarningComponent } from 'app/modules/ix-forms/components/ix-warning/ix-warning.component';
+import { JiraOauthComponent } from 'app/modules/ix-forms/components/jira-oauth/jira-oauth.component';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { OauthButtonModule } from 'app/modules/oauth-button/oauth-button.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { FormActionsComponent } from './components/form-actions/form-actions.component';
@@ -85,6 +87,7 @@ import { WithManageCertificatesLinkComponent } from './components/with-manage-ce
     TestIdModule,
     RouterLink,
     MatButtonToggleModule,
+    OauthButtonModule,
   ],
   declarations: [
     IxInputComponent,
@@ -115,6 +118,7 @@ import { WithManageCertificatesLinkComponent } from './components/with-manage-ce
     WithManageCertificatesLinkComponent,
     IxStarRatingComponent,
     IxButtonGroupComponent,
+    JiraOauthComponent,
   ],
   exports: [
     IxErrorsComponent,
@@ -145,6 +149,7 @@ import { WithManageCertificatesLinkComponent } from './components/with-manage-ce
     WithManageCertificatesLinkComponent,
     IxStarRatingComponent,
     IxButtonGroupComponent,
+    JiraOauthComponent,
   ],
   providers: [
     IxFormatterService,
