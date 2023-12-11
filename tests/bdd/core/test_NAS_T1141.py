@@ -511,6 +511,7 @@ def on_the_google_drive_test_folder_tab_delete_one_file(driver):
 def on_the_nas_cloud_sync_task_tab_click_run_now(driver):
     """on the NAS cloud sync task tab, click Run Now."""
     driver.switch_to.window(driver.window_handles[0])
+    time.sleep(0.5)
     assert wait_on_element(driver, 7, '//div[contains(.,"Cloud Sync Tasks")]')
     assert wait_on_element(driver, 10, '//div[contains(text(),"My Google Drive task")]')
     assert wait_on_element(driver, 5, '//a[@ix-auto="expander__My Google Drive task"]', 'clickable')
