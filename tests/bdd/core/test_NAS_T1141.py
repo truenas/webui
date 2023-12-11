@@ -287,7 +287,7 @@ def click_on_folder1_then_click_on_the_test_folder(driver, folder1):
     assert wait_on_element(driver, 5, '//div[contains(text(),"Name") and @role="button"]', 'clickable')
     assert wait_on_element(driver, 7, '//div[@data-tooltip="Google Drive Folder: initial"]', 'clickable')
     assert wait_on_element(driver, 5, '//div[@data-tooltip="Google Drive Folder: test"]', 'clickable')
-    time.sleep(0.5)
+    time.sleep(1)
     action = ActionChains(driver)
     action.double_click(driver.find_element_by_xpath('//div[@data-tooltip="Google Drive Folder: test"]')).perform()
     time.sleep(1)
