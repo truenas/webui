@@ -13,6 +13,7 @@ import { GiB } from 'app/constants/bytes.constant';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { FeedbackDialogComponent } from 'app/modules/ix-feedback/feedback-dialog/feedback-dialog.component';
+import { FeedbackType } from 'app/modules/ix-feedback/interfaces/feedback.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { LicenseComponent } from 'app/pages/system/general-settings/support/license/license.component';
@@ -142,7 +143,7 @@ export class SupportCardComponent implements OnInit {
   }
 
   feedbackDialog(): void {
-    this.matDialog.open(FeedbackDialogComponent);
+    this.matDialog.open(FeedbackDialogComponent, { data: FeedbackType.Bug });
   }
 
   openProactive(): void {
