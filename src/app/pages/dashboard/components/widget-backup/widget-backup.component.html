@@ -143,22 +143,15 @@
             </div>
             <div class="details-item">
               <div class="label">{{ 'Actions' | translate }}</div>
-              <div class="label">{{ 'Documentation' | translate }}</div>
             </div>
             <div class="details-item">
               <a class="action" ixTest="cloud-sync" (click)="addCloudSyncTask()">
                 {{ 'Cloud Sync to Storj or similar provider' | translate }}
               </a>
-              <a class="action" ixTest="risks-no-backup">
-                {{ 'Risks of having no backup' | translate }}
-              </a>
             </div>
             <div class="details-item">
               <a class="action" ixTest="replication" (click)="addReplicationTask()">
                 {{ 'ZFS Replication to another TrueNAS/ZFS server' | translate }}
-              </a>
-              <a class="action" ixTest="backup-best-practices">
-                {{ 'Backup best practices' | translate }}
               </a>
             </div>
             <div class="details-item">
