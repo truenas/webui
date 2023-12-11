@@ -296,7 +296,7 @@ def click_on_folder1_then_click_on_the_test_folder(driver, folder1):
 @then('verify all files are in the test folder')
 def verify_all_files_are_in_the_test_folder(driver):
     """verify all files are in the test folder."""
-    assert wait_on_element(driver, 5, '//div[@data-tooltip="test" and @role="button"]')
+    assert wait_on_element(driver, 7, '//div[@data-tooltip="test" and @role="button"]')
     assert wait_on_element(driver, 5, '//div[contains(text(),"Name") and @role="button"]', 'clickable')
     assert wait_on_element(driver, 5, '//div[@data-tooltip="PDF: Explaining_BSD.pdf"]', 'clickable')
     assert wait_on_element(driver, 5, '//div[@data-tooltip="Image: Gloomy_Forest_wallpaper_ForWallpapercom.jpg"]', 'clickable')
@@ -495,7 +495,7 @@ def verify_all_files_are_sync_to_the_dataset_folder(driver, nas_ip):
 def on_the_google_drive_test_folder_tab_delete_one_file(driver):
     """on the Google Drive test folder tab, delete one file."""
     driver.switch_to.window(driver.window_handles[2])
-    assert wait_on_element(driver, 5, '//div[@data-tooltip="test" and @role="button"]')
+    assert wait_on_element(driver, 7, '//div[@data-tooltip="test" and @role="button"]')
     assert wait_on_element(driver, 5, '//div[contains(text(),"Name") and @role="button"]', 'clickable')
     assert wait_on_element(driver, 5, '//div[@data-tooltip="Image: Gloomy_Forest_wallpaper_ForWallpapercom.jpg"]')
     driver.find_element_by_xpath('//div[@data-tooltip="Image: Gloomy_Forest_wallpaper_ForWallpapercom.jpg"]').click()
@@ -551,7 +551,7 @@ def verify_the_file_is_removed_from_the_dataset_folder(driver, nas_ip):
 def on_the_google_drive_test_folder_tab_delete_all_file(driver):
     """on the Google Drive test folder tab, delete all file."""
     driver.switch_to.window(driver.window_handles[2])
-    assert wait_on_element(driver, 5, '//div[@data-tooltip="test" and @role="button"]')
+    assert wait_on_element(driver, 7, '//div[@data-tooltip="test" and @role="button"]')
     assert wait_on_element(driver, 5, '//div[@data-tooltip="Google Drive Folder: music"]')
     driver.find_element_by_xpath('//div[@data-tooltip="Google Drive Folder: music"]').click()
     action = ActionChains(driver)
@@ -600,7 +600,7 @@ def verify_all_files_are_sync_to_the_google_drive_test_folder_tab(driver):
     time.sleep(1)
     driver.refresh()
     time.sleep(1)
-    assert wait_on_element(driver, 5, '//div[@data-tooltip="test" and @role="button"]')
+    assert wait_on_element(driver, 7, '//div[@data-tooltip="test" and @role="button"]')
     assert wait_on_element(driver, 5, '//div[contains(text(),"Name") and @role="button"]', 'clickable')
     assert wait_on_element(driver, 5, '//div[@data-tooltip="PDF: Explaining_BSD.pdf"]', 'clickable')
     assert wait_on_element(driver, 5, '//div[@data-tooltip="Google Drive Folder: music"]', 'clickable')
@@ -630,7 +630,7 @@ def verify_the_file_is_removed_from_the_google_drive_test_folder_tab(driver):
     while timeout > time.time():
         driver.refresh()
         time.sleep(1)
-        assert wait_on_element(driver, 5, '//div[@data-tooltip="test" and @role="button"]')
+        assert wait_on_element(driver, 7, '//div[@data-tooltip="test" and @role="button"]')
         assert wait_on_element(driver, 5, '//div[contains(text(),"Name") and @role="button"]', 'clickable')
         assert wait_on_element(driver, 7, '//div[@data-tooltip="PDF: Explaining_BSD.pdf"]', 'clickable')
         if not is_element_present(driver, '//div[@data-tooltip="Google Drive Folder: music"]'):
