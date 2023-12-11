@@ -1,6 +1,9 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export enum Role {
+  AuthSessionsRead = 'AUTH_SESSIONS_READ',
+  AuthSessionsWrite = 'AUTH_SESSIONS_WRITE',
+  ReportingRead = 'REPORTING_READ',
   AlertListRead = 'ALERT_LIST_READ',
   DatasetDelete = 'DATASET_DELETE',
   DatasetRead = 'DATASET_READ',
