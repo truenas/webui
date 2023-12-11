@@ -150,7 +150,9 @@ def Restart_SMB_Service(driver):
 def Return_To_Pool_list(driver):
     if wait_on_element(driver, 15, '//h1[contains(text(),"Set ACL for this dataset")]'):
         assert wait_on_element(driver, 5, xpaths.button.dialog_Cancel, 'clickable')
+        time.sleep(1)
         driver.find_element_by_xpath(xpaths.button.dialog_Cancel).click()
+        wait_on_element_disappear(driver, 15, '//h1[contains(text(),"Set ACL for this dataset")]')
 
 
 def Scroll_To(driver, xpath):
