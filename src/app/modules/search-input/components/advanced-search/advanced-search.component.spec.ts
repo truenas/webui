@@ -27,10 +27,11 @@ describe('AdvancedSearchComponent', () => {
       spectator = createComponent();
       jest.spyOn(spectator.component.switchToBasic, 'emit');
       searchHarness = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, AdvancedSearchHarness);
+      searchHarness.setEditor(spectator.component.editorView);
     });
 
     it('resets text area when reset icon is pressed', async () => {
-      await searchHarness.setValue(spectator.component.editorView, 'test');
+      await searchHarness.setValue('test');
       await (await searchHarness.getResetIcon()).click();
       const placeholderText = await searchHarness.getPlaceholder();
 
@@ -126,10 +127,11 @@ describe('AdvancedSearchComponent', () => {
     beforeEach(async () => {
       spectator = createComponent();
       searchHarness = await TestbedHarnessEnvironment.harnessForFixture(spectator.fixture, AdvancedSearchHarness);
+      searchHarness.setEditor(spectator.component.editorView);
     });
 
     it('shows error icon and stores error', async () => {
-      await searchHarness.setValue(spectator.component.editorView, 'Username = "root');
+      await searchHarness.setValue('Username = "root');
 
       expect(spectator.query('ix-icon')).toHaveAttribute('data-mat-icon-name', 'warning');
       expect(spectator.component.errorMessages[0].message).toBe('Syntax error at 11-16');
