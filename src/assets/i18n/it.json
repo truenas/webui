@@ -3388,6 +3388,7 @@
   "Store Encryption key in Sending TrueNAS database": "",
   "Store system logs on the system dataset. Unset to store system logs in <i>/var/</i> on the operating system device.": "",
   "Storj": "",
+  "Storj is a decentralized, open-source cloud storage platform. It uses blockchain technology and cryptography to secure files. Instead of storing files in a centralized server, Storj splits up files, encrypts them, and distributes them across a network of computers around the world.": "",
   "Stream Compression": "",
   "Strip ACL": "",
   "Strip ACLs": "",

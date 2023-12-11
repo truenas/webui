@@ -89,6 +89,11 @@ export class CloudsyncProviderComponent implements OnInit {
       || this.providerForm?.form?.invalid;
   }
 
+  get showProviderDescription(): boolean {
+    return this.form.controls.provider.enabled
+      && this.form.controls.provider.value === CloudsyncProviderName.Storj;
+  }
+
   ngOnInit(): void {
     this.form.controls.provider.disable();
     this.form.controls.name.disable();
