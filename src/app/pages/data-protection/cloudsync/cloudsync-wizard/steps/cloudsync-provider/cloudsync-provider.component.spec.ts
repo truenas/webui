@@ -30,7 +30,7 @@ describe('CloudsyncProviderComponent', () => {
 
   const createComponent = createComponentFactory({
     component: CloudsyncProviderComponent,
-    imports: [ReactiveFormsModule, IxFormsModule],
+    imports: [ReactiveFormsModule, IxFormsModule, CloudsyncProviderDescriptionComponent],
     declarations: [
       GooglePhotosProviderFormComponent,
       StorjProviderFormComponent,
@@ -75,10 +75,7 @@ describe('CloudsyncProviderComponent', () => {
 
     const providersSelect = await form.getControl('Provider') as IxSelectHarness;
     expect(await providersSelect.getOptionLabels()).toEqual(['Storj iX', 'Google Photos']);
-  });
 
-  it('checks storj provider specific form and description when Provider is selected', async () => {
-    const providersSelect = await form.getControl('Provider') as IxSelectHarness;
     await providersSelect.setValue('Storj iX');
 
     const providerForm = spectator.query(StorjProviderFormComponent);
