@@ -21,7 +21,8 @@ from pytest_bdd import (
     when,
     parsers
 )
-
+import pytest
+pytestmark = [pytest.mark.debug_test]
 
 user = os.environ.get('USER')
 mount_point = f'/tmp/iscsi_{"".join(random.choices(string.digits, k=2))}'

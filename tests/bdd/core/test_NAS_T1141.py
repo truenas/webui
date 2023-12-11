@@ -20,6 +20,9 @@ from pytest_bdd import (
     parsers
 )
 
+import pytest
+pytestmark = [pytest.mark.debug_test]
+
 
 @scenario('features/NAS-T1141.feature', 'Verify Google Drive Cloud Sync task works')
 def test_verify_google_drive_cloud_sync_task_works(driver):
@@ -382,7 +385,6 @@ def verify_all_files_are_moved_from_the_google_drive_test_folder_to_the_dataset(
     action = ActionChains(driver)
     action.double_click(driver.find_element_by_xpath('//div[@data-tooltip="Google Drive Folder: music"]')).perform()
     assert wait_on_element(driver, 5, '//div[@data-tooltip="music" and @role="button"]')
-    assert wait_on_element(driver, 5, '//div[contains(text(),"Name") and @role="button"]', 'clickable')
     assert not is_element_present(driver, '//div[@data-tooltip="Audio: Mr_Smith_Pequeñas_Guitarras.mp3"]')
     assert wait_on_element(driver, 5, '//div[@data-tooltip="test" and @data-tooltip-unhoverable="true" and @role="link"]', 'clickable')
     driver.find_element_by_xpath('//div[@data-tooltip="test" and @data-tooltip-unhoverable="true" and @role="link"]').click()

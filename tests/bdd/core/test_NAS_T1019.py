@@ -16,6 +16,8 @@ from pytest_bdd import (
     when,
     parsers
 )
+import pytest
+pytestmark = [pytest.mark.debug_test]
 
 
 @scenario('features/NAS-T1019.feature', 'Create a 1gb zvol call nopeer1 for the no peer iscsi test case')
