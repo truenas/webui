@@ -184,6 +184,7 @@ def once_on_the_dashboard_go_to_the_services_page_and_verify_smb_service_is_runn
     assert wait_on_element(driver, 180, xpaths.toolbar.ha_Enabled)
     if wait_on_element(driver, 3, '//button[@ix-auto="button__I AGREE"]', 'clickable'):
         driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
+    driver.refresh()
     # Wait for the directories service manager button
     assert wait_on_element(driver, 180, '//button[@id="dirservices-manager"]')
 
