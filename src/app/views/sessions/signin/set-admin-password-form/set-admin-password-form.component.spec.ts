@@ -46,12 +46,8 @@ describe('SetAdminPasswordFormComponent', () => {
 
   beforeEach(async () => {
     spectator = createComponent();
-    jest.spyOn(spectator.inject(AuthService), 'login').mockReturnValue(of(null));
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
-
-    const authService = spectator.inject(AuthService);
-    jest.spyOn(authService, 'login').mockReturnValue(of(true));
   });
 
   it('sets new root password when form is submitted', async () => {

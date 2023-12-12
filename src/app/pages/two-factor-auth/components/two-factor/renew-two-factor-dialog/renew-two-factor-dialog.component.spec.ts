@@ -4,7 +4,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
-import { of, throwError } from 'rxjs';
+import { throwError } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { RenewTwoFactorDialogComponent } from 'app/pages/two-factor-auth/components/two-factor/renew-two-factor-dialog/renew-two-factor-dialog.component';
@@ -23,9 +24,7 @@ describe('RenewTwoFactorDialog', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockProvider(AuthService, {
-        user$: of({ username: 'test' }),
-      }),
+      mockAuth(),
       mockWebsocket([
         mockCall('user.renew_2fa_secret'),
       ]),
@@ -33,7 +32,6 @@ describe('RenewTwoFactorDialog', () => {
         close: jest.fn(),
       }),
       mockProvider(ErrorHandlerService),
-
     ],
   });
 
@@ -53,7 +51,7 @@ describe('RenewTwoFactorDialog', () => {
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith(
       'user.renew_2fa_secret',
-      ['test', { interval: 5, otp_digits: 5 }],
+      ['root', { interval: 5, otp_digits: 5 }],
     );
     expect(spectator.inject(AuthService).refreshUser).toHaveBeenCalled();
 
