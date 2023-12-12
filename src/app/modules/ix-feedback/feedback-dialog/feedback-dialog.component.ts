@@ -14,6 +14,7 @@ import {
 } from 'rxjs';
 import { ticketAcceptedFiles } from 'app/enums/file-ticket.enum';
 import { JobState } from 'app/enums/job-state.enum';
+import { ProductType } from 'app/enums/product-type.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
@@ -64,6 +65,8 @@ export class FeedbackDialogComponent implements OnInit {
   });
   private release: string;
   private hostId: string;
+  private productType: ProductType;
+  private productModel: string;
   private attachments: File[] = [];
   readonly feedbackTypeOptions$: Observable<Option[]> = of(mapToOptions(feedbackTypeOptionMap, this.translate));
   readonly acceptedFiles = ticketAcceptedFiles;
@@ -130,6 +133,7 @@ export class FeedbackDialogComponent implements OnInit {
     this.switchToReview();
     this.getReleaseVersion();
     this.getHostId();
+    this.getProductType();
   }
 
   onSubmit(): void {
@@ -246,6 +250,8 @@ export class FeedbackDialogComponent implements OnInit {
       environment: environment.production ? FeedbackEnvironment.Production : FeedbackEnvironment.Development,
       release: this.release,
       extra: {},
+      product_type: this.productType,
+      product_model: this.productModel,
     };
 
     this.feedbackService
@@ -338,9 +344,19 @@ export class FeedbackDialogComponent implements OnInit {
       });
   }
 
+  private getProductType(): void {
+    this.systemGeneralService.getProductType$.pipe(
+      take(1),
+      untilDestroyed(this),
+    ).subscribe((productType) => {
+      this.productType = productType;
+    });
+  }
+
   private getReleaseVersion(): void {
-    this.store$.pipe(waitForSystemInfo, take(1), untilDestroyed(this)).subscribe(({ version }) => {
+    this.store$.pipe(waitForSystemInfo, take(1), untilDestroyed(this)).subscribe(({ version, model }) => {
       this.release = version;
+      this.productModel = model;
     });
   }
 

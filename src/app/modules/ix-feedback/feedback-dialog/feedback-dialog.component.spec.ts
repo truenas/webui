@@ -13,6 +13,7 @@ import { mockWebsocket, mockCall, mockJob } from 'app/core/testing/utils/mock-we
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { TicketCategory, TicketEnvironment, TicketCriticality } from 'app/enums/file-ticket.enum';
 import { JobState } from 'app/enums/job-state.enum';
+import { ProductType } from 'app/enums/product-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Job } from 'app/interfaces/job.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
@@ -117,6 +118,7 @@ describe('FeedbackDialogComponent', () => {
             selector: selectSystemInfo,
             value: {
               version: 'TN-RELEASE',
+              model: 'm40',
             } as SystemInfo,
           },
         ],
@@ -134,6 +136,7 @@ describe('FeedbackDialogComponent', () => {
         isEnterprise: jest.fn(() => isEnterprise$.value),
         getTokenForJira: jest.fn(() => mockToken),
         setTokenForJira: jest.fn(),
+        getProductType$: of(ProductType.Scale),
       }),
       mockProvider(MatDialogRef),
       mockProvider(SnackbarService),
@@ -182,6 +185,8 @@ describe('FeedbackDialogComponent', () => {
         rating: 5,
         page: '/',
         user_agent: 'mocked user agent',
+        product_model: 'm40',
+        product_type: ProductType.Scale,
       });
       expect(spectator.inject(IxFeedbackService).addAttachment).toHaveBeenCalled();
       expect(spectator.inject(IxFeedbackService).takeScreenshot).toHaveBeenCalled();
