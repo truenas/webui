@@ -119,31 +119,6 @@ export class GroupFormComponent implements OnInit {
     }
   }
 
-  private getInitialPrivileges(): void {
-    if (this.editingGroup?.id) {
-      this.ws.call('privilege.query', [])
-        .pipe(untilDestroyed(this)).subscribe((privileges) => {
-          this.initialGroupRelatedPrivilegesList = privileges.filter((privilege) => {
-            return privilege.local_groups.map((group) => group.gid).includes(this.editingGroup.gid);
-          });
-
-          this.form.controls.privileges.patchValue(
-            this.initialGroupRelatedPrivilegesList.map((privilege) => privilege.name),
-          );
-        });
-    }
-  }
-
-  private setNamesInUseValidator(currentName?: string): void {
-    this.ws.call('group.query').pipe(untilDestroyed(this)).subscribe((groups) => {
-      let forbiddenNames = groups.map((group) => group.group);
-      if (currentName) {
-        forbiddenNames = _.remove(forbiddenNames, currentName);
-      }
-      this.form.controls.name.addValidators(forbiddenValues(forbiddenNames));
-    });
-  }
-
   onSubmit(): void {
     const values = this.form.value;
     const commonBody = {
@@ -194,17 +169,7 @@ export class GroupFormComponent implements OnInit {
     });
   }
 
-  private mapPrivilegeToPrivilegeUpdate(privilege: Privilege, localGroups: number[]): PrivilegeUpdate {
-    return {
-      local_groups: localGroups,
-      ds_groups: [...privilege.ds_groups.map((local) => local.id)],
-      name: privilege.name,
-      roles: privilege.roles,
-      web_shell: privilege.web_shell,
-    };
-  }
-
-  private togglePrivilegesForGroup(groupId = 1111): Observable<Privilege[]> {
+  private togglePrivilegesForGroup(groupId: number): Observable<Privilege[]> {
     const requests$: Observable<Privilege>[] = [];
 
     if (this.selectedPrivilegeIds) {
@@ -242,6 +207,41 @@ export class GroupFormComponent implements OnInit {
     }
 
     return requests$.length ? combineLatest(requests$) : of([]);
+  }
+
+  private getInitialPrivileges(): void {
+    if (this.editingGroup?.id) {
+      this.ws.call('privilege.query', [])
+        .pipe(untilDestroyed(this)).subscribe((privileges) => {
+          this.initialGroupRelatedPrivilegesList = privileges.filter((privilege) => {
+            return privilege.local_groups.map((group) => group.gid).includes(this.editingGroup.gid);
+          });
+
+          this.form.controls.privileges.patchValue(
+            this.initialGroupRelatedPrivilegesList.map((privilege) => privilege.name),
+          );
+        });
+    }
+  }
+
+  private setNamesInUseValidator(currentName?: string): void {
+    this.ws.call('group.query').pipe(untilDestroyed(this)).subscribe((groups) => {
+      let forbiddenNames = groups.map((group) => group.group);
+      if (currentName) {
+        forbiddenNames = _.remove(forbiddenNames, currentName);
+      }
+      this.form.controls.name.addValidators(forbiddenValues(forbiddenNames));
+    });
+  }
+
+  private mapPrivilegeToPrivilegeUpdate(privilege: Privilege, localGroups: number[]): PrivilegeUpdate {
+    return {
+      local_groups: localGroups,
+      ds_groups: [...privilege.ds_groups.map((local) => local.id)],
+      name: privilege.name,
+      roles: privilege.roles,
+      web_shell: privilege.web_shell,
+    };
   }
 
   private setFormRelations(): void {
