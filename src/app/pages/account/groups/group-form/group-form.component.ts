@@ -57,6 +57,7 @@ export class GroupFormComponent implements OnInit {
   readonly tooltips = {
     gid: helptext.bsdgrp_gid_tooltip,
     name: helptext.bsdgrp_group_tooltip,
+    privileges: helptext.privileges_tooltip,
     sudo: helptext.bsdgrp_sudo_tooltip,
     smb: helptext.smb_tooltip,
     allowDuplicateGid: helptext.allow_tooltip,

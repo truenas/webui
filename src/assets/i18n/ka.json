@@ -452,6 +452,7 @@
   "Attach additional images": "",
   "Attach debug": "",
   "Attach image (optional)": "",
+  "Attaches privileges to the group. Only needed if you need users in this group access  to TrueNAS API or WebUI.": "",
   "Attention": "",
   "Audit": "",
   "Audit ID": "",
