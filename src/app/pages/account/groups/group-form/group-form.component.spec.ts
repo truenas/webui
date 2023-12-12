@@ -132,7 +132,6 @@ describe('GroupFormComponent', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       ws = spectator.inject(WebSocketService);
-      spectator.component.privilegesList = fakePrivilegeDataSource;
     });
 
     it('does not show Allow Duplicate Gid on edit', async () => {
