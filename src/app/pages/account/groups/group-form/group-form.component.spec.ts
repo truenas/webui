@@ -42,14 +42,6 @@ describe('GroupFormComponent', () => {
       ds_groups: [],
       roles: [Role.FullAdmin, Role.Readonly],
     },
-    {
-      id: 3,
-      name: 'Privilege 3',
-      web_shell: false,
-      local_groups: [],
-      ds_groups: [],
-      roles: [Role.FullAdmin, Role.Readonly],
-    },
   ] as Privilege[];
 
   const fakeDataGroup = {
@@ -70,10 +62,10 @@ describe('GroupFormComponent', () => {
     ],
     providers: [
       mockWebsocket([
-        mockCall('group.query', [{ group: 'existing' }] as Group[]),
+        mockCall('group.query', [{ group: 'existing', gid: 1111 }] as Group[]),
         mockCall('privilege.query', fakePrivilegeDataSource),
-        mockCall('group.create'),
-        mockCall('group.update'),
+        mockCall('group.create', 1111),
+        mockCall('group.update', 1111),
         mockCall('privilege.update'),
         mockCall('group.get_next_gid', 1234),
       ]),
@@ -140,6 +132,7 @@ describe('GroupFormComponent', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       ws = spectator.inject(WebSocketService);
+      spectator.component.privilegesList = fakePrivilegeDataSource;
     });
 
     it('does not show Allow Duplicate Gid on edit', async () => {
@@ -169,6 +162,7 @@ describe('GroupFormComponent', () => {
         Name: 'updated',
         'Samba Authentication': true,
         'Allow all sudo commands with no password': false,
+        Privileges: ['Privilege 1'],
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -184,6 +178,27 @@ describe('GroupFormComponent', () => {
           sudo_commands_nopasswd: [],
         },
       ]);
+
+      expect(ws.call).toHaveBeenCalledWith('privilege.update', [1, {
+        ds_groups: [], local_groups: [2222], name: 'Privilege 1', roles: ['SHARING_MANAGER'], web_shell: true,
+      }]);
+    });
+
+    it('updates privilege items when removed privilege from the group', async () => {
+      const form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({
+        Name: 'updated',
+        'Samba Authentication': true,
+        'Allow all sudo commands with no password': false,
+        Privileges: ['Privilege 2'],
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(ws.call).toHaveBeenCalledWith('privilege.update', [1, {
+        ds_groups: [], local_groups: [2222], name: 'Privilege 1', roles: ['SHARING_MANAGER'], web_shell: true,
+      }]);
     });
   });
 });
