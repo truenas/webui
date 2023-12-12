@@ -8,7 +8,9 @@ import {
 import { provideMockStore } from '@ngrx/store/testing';
 import { allCommands } from 'app/constants/all-commands.constant';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { Role } from 'app/enums/role.enum';
 import { Group } from 'app/interfaces/group.interface';
+import { Privilege } from 'app/interfaces/privilege.interface';
 import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
@@ -22,13 +24,42 @@ describe('GroupFormComponent', () => {
   let spectator: Spectator<GroupFormComponent>;
   let loader: HarnessLoader;
   let ws: WebSocketService;
+
+  const fakePrivilegeDataSource: Privilege[] = [
+    {
+      id: 1,
+      name: 'Privilege 1',
+      web_shell: true,
+      local_groups: [{ gid: 1111, group: 'Group A' }, { gid: 2222, group: 'Group B' }],
+      ds_groups: [],
+      roles: [Role.SharingManager],
+    },
+    {
+      id: 2,
+      name: 'Privilege 2',
+      web_shell: false,
+      local_groups: [],
+      ds_groups: [],
+      roles: [Role.FullAdmin, Role.Readonly],
+    },
+    {
+      id: 3,
+      name: 'Privilege 3',
+      web_shell: false,
+      local_groups: [],
+      ds_groups: [],
+      roles: [Role.FullAdmin, Role.Readonly],
+    },
+  ] as Privilege[];
+
   const fakeDataGroup = {
     id: 13,
     gid: 1111,
-    group: 'editing',
     sudo_commands: [],
+    name: 'Group A',
     sudo_commands_nopasswd: [allCommands],
     smb: false,
+    group: 'editing',
   } as Group;
 
   const createComponent = createComponentFactory({
@@ -40,8 +71,10 @@ describe('GroupFormComponent', () => {
     providers: [
       mockWebsocket([
         mockCall('group.query', [{ group: 'existing' }] as Group[]),
+        mockCall('privilege.query', fakePrivilegeDataSource),
         mockCall('group.create'),
         mockCall('group.update'),
+        mockCall('privilege.update'),
         mockCall('group.get_next_gid', 1234),
       ]),
       mockProvider(IxSlideInRef),
@@ -126,6 +159,7 @@ describe('GroupFormComponent', () => {
         'Allow all sudo commands with no password': true,
         'Allowed sudo commands with no password': [],
         'Samba Authentication': false,
+        Privileges: ['Privilege 1'],
       });
     });
 

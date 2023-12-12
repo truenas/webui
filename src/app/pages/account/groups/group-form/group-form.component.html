@@ -19,6 +19,13 @@
         ></ix-input>
 
         <ix-chips
+          formControlName="privileges"
+          [label]="'Privileges' | translate"
+          [autocompleteProvider]="privilegesProvider"
+          [allowNewEntries]="false"
+        ></ix-chips>
+
+        <ix-chips
           formControlName="sudo_commands"
           [label]="'Allowed sudo commands' | translate"
         ></ix-chips>

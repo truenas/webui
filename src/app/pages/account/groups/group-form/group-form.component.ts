@@ -6,11 +6,15 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
-import { Observable } from 'rxjs';
+import {
+  Observable, combineLatest, of,
+} from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { allCommands } from 'app/constants/all-commands.constant';
 import helptext from 'app/helptext/account/groups';
 import { Group } from 'app/interfaces/group.interface';
+import { Privilege, PrivilegeUpdate } from 'app/interfaces/privilege.interface';
+import { ChipsProvider } from 'app/modules/ix-forms/components/ix-chips/chips-provider';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -35,6 +39,9 @@ export class GroupFormComponent implements OnInit {
   }
   isFormLoading = false;
 
+  privilegesList: Privilege[];
+  initialPrivilegesList: Privilege[] = [];
+
   form = this.fb.group({
     gid: [null as number, [Validators.required, Validators.pattern(/^\d+$/)]],
     name: ['', [Validators.required, Validators.pattern(UserService.namePattern)]],
@@ -44,6 +51,7 @@ export class GroupFormComponent implements OnInit {
     sudo_commands_nopasswd_all: [false],
     smb: [false],
     allowDuplicateGid: [false],
+    privileges: [[] as string[] | number[]],
   });
 
   readonly tooltips = {
@@ -68,7 +76,18 @@ export class GroupFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.setupForm();
+    this.getInitialPrivileges();
   }
+
+  readonly privilegesProvider: ChipsProvider = (query: string) => {
+    return this.ws.call('privilege.query', []).pipe(
+      map((privileges) => {
+        this.privilegesList = privileges;
+        const chips = privileges.map((privilege) => privilege.name);
+        return chips.filter((item) => item.trim().toLowerCase().includes(query.trim().toLowerCase()));
+      }),
+    );
+  };
 
   setupForm(): void {
     this.setFormRelations();
@@ -96,6 +115,21 @@ export class GroupFormComponent implements OnInit {
         allowDuplicateGid: true,
       });
       this.setNamesInUseValidator(this.editingGroup.group);
+    }
+  }
+
+  private getInitialPrivileges(): void {
+    if (this.editingGroup?.id) {
+      this.ws.call('privilege.query', [])
+        .pipe(untilDestroyed(this)).subscribe((privileges) => {
+          this.initialPrivilegesList = privileges.filter((privilege) => {
+            return privilege.local_groups.map((group) => group.gid).includes(this.editingGroup.gid);
+          });
+
+          this.form.controls.privileges.patchValue(
+            this.initialPrivilegesList.map((privilege) => privilege.name),
+          );
+        });
     }
   }
 
@@ -136,6 +170,7 @@ export class GroupFormComponent implements OnInit {
     request$.pipe(
       switchMap((id) => this.ws.call('group.query', [[['id', '=', id]]])),
       map((groups) => groups[0]),
+      switchMap((group) => this.togglePrivilegesForGroup(group.gid).pipe(map(() => group))),
       untilDestroyed(this),
     ).subscribe({
       next: (group) => {
@@ -158,6 +193,56 @@ export class GroupFormComponent implements OnInit {
     });
   }
 
+  private mapPrivilegeToPrivilegeUpdate(privilege: Privilege, localGroups: number[]): PrivilegeUpdate {
+    return {
+      local_groups: localGroups,
+      ds_groups: [...privilege.ds_groups.map((local) => local.id)],
+      name: privilege.name,
+      roles: privilege.roles,
+      web_shell: privilege.web_shell,
+    };
+  }
+
+  private togglePrivilegesForGroup(groupId = 1111): Observable<Privilege[]> {
+    const requests$: Observable<Privilege>[] = [];
+
+    if (this.selectedPrivilegeIds) {
+      const privileges = this.privilegesList
+        .filter((privilege) => this.selectedPrivilegeIds.some((privilegeId) => privilege.id === privilegeId));
+
+      privileges.forEach((privilege) => {
+        requests$.push(
+          this.ws.call('privilege.update', [
+            privilege.id,
+            this.mapPrivilegeToPrivilegeUpdate(
+              privilege,
+              [...privilege.local_groups.map((group) => group.gid), groupId],
+            ),
+          ]),
+        );
+      });
+    }
+
+    if (this.existingPrivilegesRemoved) {
+      const privileges = this.privilegesList
+        .filter((privilege) => this.existingPrivilegesRemoved.some((privilegeId) => privilege.id === privilegeId));
+
+      privileges.forEach((privilege) => {
+        requests$.push(
+          this.ws.call('privilege.update', [
+            privilege.id,
+            this.mapPrivilegeToPrivilegeUpdate(
+              privilege,
+              privilege.local_groups.map((group) => group.gid).filter((gid) => gid !== groupId),
+            ),
+          ]),
+        );
+      });
+    }
+
+    return requests$.length ? combineLatest(requests$) : of([]);
+  }
+
   private setFormRelations(): void {
     this.form.controls.sudo_commands_all.valueChanges.pipe(untilDestroyed(this)).subscribe((isAll) => {
       if (isAll) {
@@ -174,5 +259,21 @@ export class GroupFormComponent implements OnInit {
         this.form.controls.sudo_commands_nopasswd.enable();
       }
     });
+  }
+
+  private get selectedPrivilegeIds(): number[] {
+    return Array.from(new Set(
+      this.privilegesList
+        .filter((privilege) => this.form.value.privileges.includes(privilege.name as never))
+        .map((privileges) => privileges.id),
+    ));
+  }
+
+  private get existingPrivilegesRemoved(): number[] {
+    return Array.from(new Set(
+      this.initialPrivilegesList
+        .filter((privilege) => !this.form.value.privileges.includes(privilege.name as never))
+        .map((privileges) => privileges.id),
+    ));
   }
 }
