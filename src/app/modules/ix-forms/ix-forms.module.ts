@@ -7,6 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -28,6 +29,7 @@ import { IxCheckboxListComponent } from 'app/modules/ix-forms/components/ix-chec
 import { IxChipsComponent } from 'app/modules/ix-forms/components/ix-chips/ix-chips.component';
 import { IxComboboxComponent } from 'app/modules/ix-forms/components/ix-combobox/ix-combobox.component';
 import { IxErrorsComponent } from 'app/modules/ix-forms/components/ix-errors/ix-errors.component';
+import { CreateDatasetDialogComponent } from 'app/modules/ix-forms/components/ix-explorer/create-dataset-dialog/create-dataset-dialog.component';
 import { IxExplorerComponent } from 'app/modules/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/modules/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxFileInputComponent } from 'app/modules/ix-forms/components/ix-file-input/ix-file-input.component';
@@ -46,9 +48,11 @@ import { IxSlideToggleComponent } from 'app/modules/ix-forms/components/ix-slide
 import { IxStarRatingComponent } from 'app/modules/ix-forms/components/ix-star-rating/ix-star-rating.component';
 import { IxTextareaComponent } from 'app/modules/ix-forms/components/ix-textarea/ix-textarea.component';
 import { IxWarningComponent } from 'app/modules/ix-forms/components/ix-warning/ix-warning.component';
+import { JiraOauthComponent } from 'app/modules/ix-forms/components/jira-oauth/jira-oauth.component';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
+import { OauthButtonModule } from 'app/modules/oauth-button/oauth-button.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { FormActionsComponent } from './components/form-actions/form-actions.component';
@@ -84,7 +88,9 @@ import { WithManageCertificatesLinkComponent } from './components/with-manage-ce
     CastModule,
     TestIdModule,
     RouterLink,
+    MatDialogModule,
     MatButtonToggleModule,
+    OauthButtonModule,
   ],
   declarations: [
     IxInputComponent,
@@ -114,7 +120,9 @@ import { WithManageCertificatesLinkComponent } from './components/with-manage-ce
     FormActionsComponent,
     WithManageCertificatesLinkComponent,
     IxStarRatingComponent,
+    CreateDatasetDialogComponent,
     IxButtonGroupComponent,
+    JiraOauthComponent,
   ],
   exports: [
     IxErrorsComponent,
@@ -145,6 +153,7 @@ import { WithManageCertificatesLinkComponent } from './components/with-manage-ce
     WithManageCertificatesLinkComponent,
     IxStarRatingComponent,
     IxButtonGroupComponent,
+    JiraOauthComponent,
   ],
   providers: [
     IxFormatterService,

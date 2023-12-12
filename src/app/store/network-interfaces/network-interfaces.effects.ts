@@ -7,7 +7,10 @@ import { forkJoin, merge } from 'rxjs';
 import {
   filter, map, mergeMap, switchMap, tap,
 } from 'rxjs/operators';
+import { Role } from 'app/enums/role.enum';
+import { filterAsync } from 'app/helpers/operators/filter-async.operator';
 import network_interfaces_helptext from 'app/helptext/network/interfaces/interfaces-list';
+import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -23,6 +26,7 @@ import {
 export class NetworkInterfacesEffects {
   loadCheckinStatus$ = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized, networkInterfacesChanged),
+    filterAsync(this.authService.hasRole([Role.NetworkInterfaceWrite])),
     mergeMap(() => {
       return forkJoin([
         this.ws.call('interface.has_pending_changes'),
@@ -68,5 +72,6 @@ export class NetworkInterfacesEffects {
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     private dialogService: DialogService,
+    private authService: AuthService,
   ) { }
 }

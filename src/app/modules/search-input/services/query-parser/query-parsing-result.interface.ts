@@ -14,8 +14,14 @@ import { QueryComparator } from 'app/interfaces/query-api.interface';
  */
 export interface QueryParsingResult {
   hasErrors: boolean;
-  errors: unknown[];
+  errors: QueryParsingError[];
   tree: ConditionGroup | Condition;
+}
+
+export interface QueryParsingError {
+  from: number;
+  to: number;
+  message: string;
 }
 
 export class QuerySyntaxError extends Error {
