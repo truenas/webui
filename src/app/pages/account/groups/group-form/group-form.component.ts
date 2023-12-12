@@ -40,7 +40,7 @@ export class GroupFormComponent implements OnInit {
   isFormLoading = false;
 
   privilegesList: Privilege[];
-  initialPrivilegesList: Privilege[] = [];
+  initialGroupRelatedPrivilegesList: Privilege[] = [];
 
   form = this.fb.group({
     gid: [null as number, [Validators.required, Validators.pattern(/^\d+$/)]],
@@ -123,12 +123,12 @@ export class GroupFormComponent implements OnInit {
     if (this.editingGroup?.id) {
       this.ws.call('privilege.query', [])
         .pipe(untilDestroyed(this)).subscribe((privileges) => {
-          this.initialPrivilegesList = privileges.filter((privilege) => {
+          this.initialGroupRelatedPrivilegesList = privileges.filter((privilege) => {
             return privilege.local_groups.map((group) => group.gid).includes(this.editingGroup.gid);
           });
 
           this.form.controls.privileges.patchValue(
-            this.initialPrivilegesList.map((privilege) => privilege.name),
+            this.initialGroupRelatedPrivilegesList.map((privilege) => privilege.name),
           );
         });
     }
@@ -272,7 +272,7 @@ export class GroupFormComponent implements OnInit {
 
   private get existingPrivilegesRemoved(): number[] {
     return Array.from(new Set(
-      this.initialPrivilegesList
+      this.initialGroupRelatedPrivilegesList
         .filter((privilege) => !this.form.value.privileges.includes(privilege.name as never))
         .map((privileges) => privileges.id),
     ));
