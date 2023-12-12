@@ -60,7 +60,9 @@ export class SysctlCardComponent implements OnInit {
         },
       ],
     }),
-  ]);
+  ], {
+    rowTestId: (row) => 'sysctl-' + row.id.toString(),
+  });
 
   constructor(
     private slideInService: IxSlideInService,

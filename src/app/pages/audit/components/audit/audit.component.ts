@@ -77,7 +77,9 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
       title: this.translate.instant('Event Data'),
       getValue: (row) => this.translate.instant(this.getEventDataForLog(row)),
     }),
-  ]);
+  ], {
+    rowTestId: (row: SmbAuditEntry) => 'smb-audit-' + row.audit_id.toString(),
+  });
 
   protected searchProperties: SearchProperty<SmbAuditEntry>[] = [];
 

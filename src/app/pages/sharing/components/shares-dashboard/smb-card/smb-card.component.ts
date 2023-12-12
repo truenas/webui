@@ -91,7 +91,9 @@ export class SmbCardComponent implements OnInit, OnChanges {
         },
       ],
     }),
-  ]);
+  ], {
+    rowTestId: (row) => 'card-smb-share-' + row.id.toString(),
+  });
 
   constructor(
     private slideInService: IxSlideInService,

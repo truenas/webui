@@ -86,7 +86,9 @@ export class CertificateAuthorityListComponent implements OnInit {
         },
       ],
     }),
-  ]);
+  ], {
+    rowTestId: (row) => 'ca-' + row.id.toString(),
+  });
 
   helptextSystemCa = helptextSystemCa;
 

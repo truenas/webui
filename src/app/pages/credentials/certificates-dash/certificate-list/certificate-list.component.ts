@@ -87,7 +87,9 @@ export class CertificateListComponent implements OnInit {
         },
       ],
     }),
-  ]);
+  ], {
+    rowTestId: (row) => 'cert-' + row.id.toString(),
+  });
 
   constructor(
     private matDialog: MatDialog,

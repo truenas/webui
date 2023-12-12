@@ -69,7 +69,9 @@ export class InitShutdownCardComponent implements OnInit {
         },
       ],
     }),
-  ]);
+  ], {
+    rowTestId: (row) => 'card-init-shutdown-' + row.id.toString(),
+  });
 
   constructor(
     private slideInService: IxSlideInService,

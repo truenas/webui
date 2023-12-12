@@ -94,7 +94,9 @@ export class PortalListComponent implements OnInit {
         },
       ],
     }),
-  ]);
+  ], {
+    rowTestId: (row) => 'iscsi-portal-' + row.id.toString(),
+  });
 
   constructor(
     public emptyService: EmptyService,

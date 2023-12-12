@@ -97,7 +97,9 @@ export class RsyncTaskCardComponent implements OnInit {
         },
       ],
     }),
-  ]);
+  ], {
+    rowTestId: (row) => 'card-rsync-task-' + row.id.toString(),
+  });
 
   constructor(
     private slideInService: IxSlideInService,
