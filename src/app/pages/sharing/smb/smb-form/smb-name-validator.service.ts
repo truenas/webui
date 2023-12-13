@@ -17,8 +17,8 @@ export class SmbNameValidationService {
     private translate: TranslateService,
   ) { }
 
-  private noSmbUsersError = 'TrueNAS server must be joined to Active Directory or have at least one local SMB user before creating an SMB share';
-  private nameExistsError = 'Share with this name already exists';
+  private noSmbUsersError = this.translate.instant('TrueNAS server must be joined to Active Directory or have at least one local SMB user before creating an SMB share');
+  private nameExistsError = this.translate.instant('Share with this name already exists');
 
   private errorText: string;
 
