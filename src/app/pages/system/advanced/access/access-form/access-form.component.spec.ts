@@ -12,7 +12,7 @@ import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-sli
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
-import { TokenSettingsComponent } from 'app/pages/system/advanced/sessions/token-settings/token-settings.component';
+import { AccessFormComponent } from 'app/pages/system/advanced/access/access-form/access-form.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -21,11 +21,11 @@ import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
 import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
-describe('TokenSettingsComponent', () => {
-  let spectator: Spectator<TokenSettingsComponent>;
+describe('AccessFormComponent', () => {
+  let spectator: Spectator<AccessFormComponent>;
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
-    component: TokenSettingsComponent,
+    component: AccessFormComponent,
     imports: [
       IxFormsModule,
       ReactiveFormsModule,

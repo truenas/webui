@@ -17,8 +17,8 @@ import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells
 import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { AccessFormComponent } from 'app/pages/system/advanced/access/access-form/access-form.component';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
-import { TokenSettingsComponent } from 'app/pages/system/advanced/sessions/token-settings/token-settings.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -31,12 +31,12 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-sessions-card',
+  selector: 'ix-access-card',
   styleUrls: ['../../common-card.scss'],
-  templateUrl: './sessions-card.component.html',
+  templateUrl: './access-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SessionsCardComponent implements OnInit {
+export class AccessCardComponent implements OnInit {
   readonly tokenLifetime$ = this.store$.pipe(
     waitForPreferences,
     map((preferences) => {
@@ -111,7 +111,7 @@ export class SessionsCardComponent implements OnInit {
 
   async onConfigure(): Promise<void> {
     await this.advancedSettings.showFirstTimeWarningIfNeeded();
-    const slideInRef = this.slideInService.open(TokenSettingsComponent);
+    const slideInRef = this.slideInService.open(AccessFormComponent);
     slideInRef?.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.updateSessions();
     });

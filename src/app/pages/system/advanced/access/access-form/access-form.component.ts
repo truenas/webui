@@ -20,10 +20,10 @@ import { selectGeneralConfig } from 'app/store/system-config/system-config.selec
 
 @UntilDestroy()
 @Component({
-  templateUrl: 'token-settings.component.html',
+  templateUrl: 'access-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TokenSettingsComponent implements OnInit {
+export class AccessFormComponent implements OnInit {
   isLoading = false;
   form = this.fb.group({
     token_lifetime: [defaultPreferences.lifetime, [
@@ -40,7 +40,7 @@ export class TokenSettingsComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private slideInRef: IxSlideInRef<TokenSettingsComponent>,
+    private slideInRef: IxSlideInRef<AccessFormComponent>,
     private store$: Store<AppState>,
     private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,

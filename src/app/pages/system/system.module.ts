@@ -36,6 +36,8 @@ import { OauthButtonModule } from 'app/modules/oauth-button/oauth-button.module'
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
+import { AccessCardComponent } from 'app/pages/system/advanced/access/access-card/access-card.component';
+import { AccessFormComponent } from 'app/pages/system/advanced/access/access-form/access-form.component';
 import { AdvancedSettingsComponent } from 'app/pages/system/advanced/advanced-settings.component';
 import {
   AllowedAddressesCardComponent,
@@ -68,8 +70,6 @@ import {
   SelfEncryptingDriveCardComponent,
 } from 'app/pages/system/advanced/self-encrypting-drive/self-encrypting-drive-card/self-encrypting-drive-card.component';
 import { SelfEncryptingDriveFormComponent } from 'app/pages/system/advanced/self-encrypting-drive/self-encrypting-drive-form/self-encrypting-drive-form.component';
-import { SessionsCardComponent } from 'app/pages/system/advanced/sessions/sessions-card/sessions-card.component';
-import { TokenSettingsComponent } from 'app/pages/system/advanced/sessions/token-settings/token-settings.component';
 import { StorageCardComponent } from 'app/pages/system/advanced/storage/storage-card/storage-card.component';
 import { StorageSettingsFormComponent } from 'app/pages/system/advanced/storage/storage-settings-form/storage-settings-form.component';
 import { TunableFormComponent } from 'app/pages/system/advanced/sysctl/tunable-form/tunable-form.component';
@@ -216,7 +216,7 @@ import { routing } from './system.routing';
     ProactiveComponent,
     QrDialogComponent,
     ReplicationSettingsFormComponent,
-    TokenSettingsComponent,
+    AccessFormComponent,
     AllowedAddressesFormComponent,
     SysInfoComponent,
     SyslogCardComponent,
@@ -261,7 +261,7 @@ import { routing } from './system.routing';
     BootPoolDeleteDialogComponent,
     SetProductionStatusDialogComponent,
     ConsoleCardComponent,
-    SessionsCardComponent,
+    AccessCardComponent,
     AllowedAddressesCardComponent,
     SelfEncryptingDriveCardComponent,
     IsolatedGpusCardComponent,
