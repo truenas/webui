@@ -182,9 +182,6 @@ export class AdvancedSearchComponent<T> implements OnInit {
 
     const filters = this.queryToApi.buildFilters(parsedQuery, this.properties);
 
-    // TODO: Remove before merge
-    // eslint-disable-next-line no-console
-    console.log(JSON.stringify(filters, null, 2), parsedQuery);
     this.paramsChange.emit(filters);
   }
 

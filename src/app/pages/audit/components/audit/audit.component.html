@@ -11,7 +11,7 @@
         class="search-input"
         [properties]="searchProperties"
         [query]="searchQuery"
-        (runSearch)="onSearch(searchInput.query)"
+        (runSearch)="onSearch(searchInput.query); updateUrlOptions()"
         (advancedSearchQueryValidityChanged)="isValidAdvancedQuery = $event"
       ></ix-search-input2>
       <button
