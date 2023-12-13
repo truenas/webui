@@ -1,6 +1,7 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export enum Role {
+  ReportingRead = 'REPORTING_READ',
   AlertListRead = 'ALERT_LIST_READ',
   AuthSessionsRead = 'AUTH_SESSIONS_READ',
   AuthSessionsWrite = 'AUTH_SESSIONS_WRITE',
@@ -114,4 +115,7 @@ export const roleNames = new Map<Role, string>([
   [Role.SnapshotTaskRead, T('Snapshot Task Read')],
   [Role.SnapshotTaskWrite, T('Snapshot Task Write')],
   [Role.SnapshotWrite, T('Snapshot Write')],
+  [Role.AuthSessionsRead, T('Auth Sessions Read')],
+  [Role.AuthSessionsWrite, T('Auth Sessions Write')],
+  [Role.ReportingRead, T('Reporting Read')],
 ]);

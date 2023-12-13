@@ -3,7 +3,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit, ViewChild, ViewContainerRef,
 } from '@angular/core';
 import { Validators, FormBuilder } from '@angular/forms';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
@@ -123,13 +123,18 @@ export class FeedbackDialogComponent implements OnInit {
     private dialog: DialogService,
     private systemGeneralService: SystemGeneralService,
     @Inject(WINDOW) private window: Window,
+    @Inject(MAT_DIALOG_DATA) private type: FeedbackType,
   ) {}
 
   ngOnInit(): void {
     this.addFormListeners();
-    this.switchToReview();
     this.getReleaseVersion();
     this.getHostId();
+
+    if (this.type) {
+      this.form.controls.type.setValue(this.type);
+      this.cdr.markForCheck();
+    }
   }
 
   onSubmit(): void {
@@ -323,7 +328,6 @@ export class FeedbackDialogComponent implements OnInit {
         this.clearTicketForm();
       } else if ([FeedbackType.Bug, FeedbackType.Suggestion].includes(type)) {
         this.switchToBugOrImprovement();
-        this.clearTicketForm();
         this.renderTicketForm();
       }
     });
@@ -339,9 +343,11 @@ export class FeedbackDialogComponent implements OnInit {
   }
 
   private getReleaseVersion(): void {
-    this.store$.pipe(waitForSystemInfo, take(1), untilDestroyed(this)).subscribe(({ version }) => {
-      this.release = version;
-    });
+    this.store$
+      .pipe(waitForSystemInfo, take(1), untilDestroyed(this))
+      .subscribe(({ version }) => {
+        this.release = version;
+      });
   }
 
   private switchToReview(): void {

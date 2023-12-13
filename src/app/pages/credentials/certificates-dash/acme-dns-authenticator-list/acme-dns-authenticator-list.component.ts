@@ -52,7 +52,9 @@ export class AcmeDnsAuthenticatorListComponent implements OnInit {
         },
       ],
     }),
-  ]);
+  ], {
+    rowTestId: (row) => 'amce-dns-' + row.id.toString(),
+  });
 
   constructor(
     private ws: WebSocketService,

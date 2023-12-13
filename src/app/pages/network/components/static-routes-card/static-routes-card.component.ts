@@ -53,7 +53,9 @@ export class StaticRoutesCardComponent implements OnInit {
         },
       ],
     }),
-  ]);
+  ], {
+    rowTestId: (row) => 'static-route-' + row.id.toString(),
+  });
 
   constructor(
     private matDialog: MatDialog,

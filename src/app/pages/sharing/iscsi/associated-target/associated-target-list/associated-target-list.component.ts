@@ -108,7 +108,9 @@ export class AssociatedTargetListComponent implements OnInit {
         },
       ],
     }),
-  ]);
+  ], {
+    rowTestId: (row) => 'iscsi-associated-target-' + row.id.toString(),
+  });
 
   constructor(
     public emptyService: EmptyService,

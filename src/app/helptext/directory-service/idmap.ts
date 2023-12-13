@@ -1,7 +1,7 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { IdmapName } from 'app/enums/idmap.enum';
 
-export default {
+export const helptextIdmap = {
   idmap: {
     name: {
       tooltip: T('Enter the pre-Windows 2000 domain name.'),

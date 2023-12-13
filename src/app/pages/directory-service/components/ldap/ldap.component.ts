@@ -8,7 +8,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { map } from 'rxjs/operators';
 import { idNameArrayToOptions, singleArrayToOptions } from 'app/helpers/operators/options.operators';
-import helptext from 'app/helptext/directory-service/ldap';
+import { helptextLdap } from 'app/helptext/directory-service/ldap';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -53,7 +53,7 @@ export class LdapComponent implements OnInit {
     schema: [''],
   });
 
-  readonly helptext = helptext;
+  readonly helptext = helptextLdap;
   readonly kerberosRealms$ = this.ws.call('kerberos.realm.query').pipe(
     map((realms) => {
       return realms.map((realm) => ({
@@ -97,7 +97,7 @@ export class LdapComponent implements OnInit {
       next: () => {
         this.isLoading = false;
         this.snackbar.success(
-          this.translate.instant(helptext.ldap_custactions_clearcache_dialog_message),
+          this.translate.instant(helptextLdap.ldap_custactions_clearcache_dialog_message),
         );
         this.cdr.markForCheck();
       },

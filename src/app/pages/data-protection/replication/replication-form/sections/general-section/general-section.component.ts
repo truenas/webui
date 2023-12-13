@@ -8,7 +8,7 @@ import { Direction, directionNames } from 'app/enums/direction.enum';
 import { LoggingLevel, loggingLevelNames } from 'app/enums/logging-level.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
-import helptext from 'app/helptext/data-protection/replication/replication';
+import { helptextReplication } from 'app/helptext/data-protection/replication/replication';
 import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-task.interface';
 
 @Component({
@@ -46,7 +46,7 @@ export class GeneralSectionComponent implements OnChanges {
     },
   ]);
 
-  readonly helptext = helptext;
+  readonly helptext = helptextReplication;
 
   constructor(
     private formBuilder: FormBuilder,

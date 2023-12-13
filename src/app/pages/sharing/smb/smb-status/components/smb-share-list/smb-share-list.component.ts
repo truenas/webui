@@ -38,7 +38,9 @@ export class SmbShareListComponent implements OnInit {
       propertyName: 'signing',
       getValue: (row) => row.signing.cipher,
     }),
-  ]);
+  ], {
+    rowTestId: (row) => 'smb-share-' + row.server_id.unique_id + '-' + row.machine,
+  });
 
   constructor(
     private ws: WebSocketService,

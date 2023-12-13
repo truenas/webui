@@ -21,7 +21,7 @@ import {
 } from 'rxjs/operators';
 import { ixChartApp } from 'app/constants/catalog.constants';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
-import helptext from 'app/helptext/apps/apps';
+import { helptextApps } from 'app/helptext/apps/apps';
 import { AppDetailsRouteParams } from 'app/interfaces/app-details-route-params.interface';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
 import {
@@ -81,7 +81,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
   searchControl = this.formBuilder.control('');
   searchOptions: Option[] = [];
 
-  readonly helptext = helptext;
+  readonly helptext = helptextApps;
 
   private _pageTitle$ = new BehaviorSubject<string>('...');
   pageTitle$ = this._pageTitle$.asObservable().pipe(
@@ -213,7 +213,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
   saveData(data: ChartFormValues): void {
     this.dialogRef = this.matDialog.open(EntityJobComponent, {
       data: {
-        title: this.isNew ? helptext.installing : helptext.updating,
+        title: this.isNew ? helptextApps.installing : helptextApps.updating,
       },
       disableClose: true,
     });
@@ -328,13 +328,13 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
         {
           controlName: 'release_name',
           type: DynamicFormSchemaType.Input,
-          title: helptext.chartForm.release_name.placeholder,
+          title: helptextApps.chartForm.release_name.placeholder,
           required: true,
         },
         {
           controlName: 'version',
           type: DynamicFormSchemaType.Select,
-          title: helptext.chartWizard.nameGroup.version,
+          title: helptextApps.chartWizard.nameGroup.version,
           required: true,
           options: of(versionKeys.map((version) => ({ value: version, label: version }))),
           hidden: hideVersion,
@@ -397,7 +397,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
         {
           controlName: 'release_name',
           type: DynamicFormSchemaType.Input,
-          title: helptext.chartForm.release_name.placeholder,
+          title: helptextApps.chartForm.release_name.placeholder,
           required: true,
           editable: false,
         },
@@ -443,8 +443,8 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
     } catch (error: unknown) {
       console.error(error);
       this.dialogService.error({
-        title: helptext.chartForm.parseError.title,
-        message: helptext.chartForm.parseError.message,
+        title: helptextApps.chartForm.parseError.title,
+        message: helptextApps.chartForm.parseError.message,
       });
     }
   }

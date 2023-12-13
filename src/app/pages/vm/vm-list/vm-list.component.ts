@@ -12,7 +12,7 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { VmBootloader, VmDeviceType } from 'app/enums/vm.enum';
 import { WebsocketErrorName } from 'app/enums/websocket-error-name.enum';
-import globalHelptext from 'app/helptext/global-helptext';
+import { helptextGlobal } from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/vm/vm-list';
 import wizardHelptext from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { ApiCallParams } from 'app/interfaces/api/api-call-directory.interface';
@@ -196,7 +196,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
       } else {
         transformed.port = 'N/A';
         if (transformed.vm_type === 'Container Provider') {
-          transformed.vm_type = globalHelptext.dockerhost;
+          transformed.vm_type = helptextGlobal.dockerhost;
         }
       }
 

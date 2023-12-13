@@ -1,6 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export default {
+export const helptextScrubForm = {
   scrub_volume_tooltip: T('Choose a pool to scrub.'),
   scrub_threshold_tooltip: T('Days before a completed scrub is allowed \
  to run again. This controls the task schedule. For example, scheduling \

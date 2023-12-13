@@ -1,6 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export default {
+export const helptextActiveDirectory = {
   activedirectory_custactions_clearcache_dialog_message: T('The cache is being rebuilt.'),
 
   ad_leave_domain_dialog: {

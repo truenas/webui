@@ -53,7 +53,9 @@ export class SshKeypairCardComponent implements OnInit {
         },
       ],
     }),
-  ]);
+  ], {
+    rowTestId: (row) => 'ssh-keypair-' + row.id.toString(),
+  });
 
   constructor(
     private ws: WebSocketService,
