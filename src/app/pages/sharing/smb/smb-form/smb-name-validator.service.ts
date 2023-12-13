@@ -48,7 +48,7 @@ export class SmbNameValidationService {
               ? of(null)
               : of({
                 customValidator: {
-                  message: this.errorText || (response as { reason: string }).reason,
+                  message: this.errorText,
                 },
                 preCheckFailed: true,
               });
