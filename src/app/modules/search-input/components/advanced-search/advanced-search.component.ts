@@ -112,9 +112,7 @@ export class AdvancedSearchComponent<T> implements OnInit {
     const customKeyMap = keymap.of([{
       key: 'Enter',
       run: () => {
-        if (!this.hasQueryErrors) {
-          this.runSearch.emit();
-        }
+        this.runSearch.emit();
         return true;
       },
     }]);

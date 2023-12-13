@@ -18,7 +18,6 @@
         mat-button
         color="primary"
         ixTest="search"
-        [disabled]="searchQuery && !searchInput.query?.isBasicQuery && !isValidAdvancedQuery"
         (click)="onSearch(searchInput.query); updateUrlOptions()"
       >
         {{ 'Search' | translate }}

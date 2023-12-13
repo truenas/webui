@@ -14,7 +14,7 @@ export function getLogImportantData(log: AuditEntry, translateService: Translate
       if (log.event_data?.credentials) {
         const credentialType = log.event_data?.credentials.credentials;
         const credentialTypeKey = credentialTypeLabels.get(credentialType);
-        return translateService.instant(T('Credentials {credentials}'), {
+        return translateService.instant(T('Credentials: {credentials}'), {
           credentials: credentialType ? translateService.instant(credentialTypeKey) : credentialType,
         });
       }
