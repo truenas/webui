@@ -5,7 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { officialCatalog } from 'app/constants/catalog.constants';
-import helptext from 'app/helptext/apps/apps';
+import { helptextApps } from 'app/helptext/apps/apps';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { KubernetesSettingsComponent } from 'app/pages/apps/components/installed-apps/kubernetes-settings/kubernetes-settings.component';
@@ -45,10 +45,10 @@ export class AppSettingsButtonComponent {
 
   onUnsetPool(): void {
     this.dialogService.confirm({
-      title: helptext.choosePool.unsetPool.confirm.title,
-      message: helptext.choosePool.unsetPool.confirm.message,
+      title: helptextApps.choosePool.unsetPool.confirm.title,
+      message: helptextApps.choosePool.unsetPool.confirm.message,
       hideCheckbox: true,
-      buttonText: helptext.choosePool.unsetPool.confirm.button,
+      buttonText: helptextApps.choosePool.unsetPool.confirm.button,
     }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
       if (!confirmed) {
         return;
@@ -56,7 +56,7 @@ export class AppSettingsButtonComponent {
 
       const dialogRef = this.matDialog.open(EntityJobComponent, {
         data: {
-          title: helptext.choosePool.jobTitle,
+          title: helptextApps.choosePool.jobTitle,
         },
         disableClose: true,
       });

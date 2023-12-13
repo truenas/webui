@@ -12,7 +12,7 @@ import { LifetimeUnit, lifetimeUnitNames } from 'app/enums/lifetime-unit.enum';
 import { ReadOnlyMode, readonlyModeNames } from 'app/enums/readonly-mode.enum';
 import { RetentionPolicy, retentionPolicyNames } from 'app/enums/retention-policy.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
-import helptext from 'app/helptext/data-protection/replication/replication';
+import { helptextReplication } from 'app/helptext/data-protection/replication/replication';
 import { Option } from 'app/interfaces/option.interface';
 import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
@@ -55,7 +55,7 @@ export class TargetSectionComponent implements OnInit, OnChanges {
 
   protected readonly RetentionPolicy = RetentionPolicy;
 
-  protected readonly helptext = helptext;
+  protected readonly helptext = helptextReplication;
 
   private allRetentionPolicies$ = of(mapToOptions(retentionPolicyNames, this.translate));
 

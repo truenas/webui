@@ -1,6 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export default {
+export const helptextAbout = {
   help: T('Looking for help?'),
 
   docs: T('The <a href="https://www.truenas.com/docs/" target="_blank">TrueNAS Documentation Site</a> \

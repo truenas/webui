@@ -11,7 +11,7 @@ import {
 } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { allCommands } from 'app/constants/all-commands.constant';
-import helptext from 'app/helptext/account/groups';
+import { helptextGroups } from 'app/helptext/account/groups';
 import { Group } from 'app/interfaces/group.interface';
 import { Privilege, PrivilegeUpdate } from 'app/interfaces/privilege.interface';
 import { ChipsProvider } from 'app/modules/ix-forms/components/ix-chips/chips-provider';
@@ -55,12 +55,12 @@ export class GroupFormComponent implements OnInit {
   });
 
   readonly tooltips = {
-    gid: helptext.bsdgrp_gid_tooltip,
-    name: helptext.bsdgrp_group_tooltip,
-    privileges: helptext.privileges_tooltip,
-    sudo: helptext.bsdgrp_sudo_tooltip,
-    smb: helptext.smb_tooltip,
-    allowDuplicateGid: helptext.allow_tooltip,
+    gid: helptextGroups.bsdgrp_gid_tooltip,
+    name: helptextGroups.bsdgrp_group_tooltip,
+    privileges: helptextGroups.privileges_tooltip,
+    sudo: helptextGroups.bsdgrp_sudo_tooltip,
+    smb: helptextGroups.smb_tooltip,
+    allowDuplicateGid: helptextGroups.allow_tooltip,
   };
 
   constructor(

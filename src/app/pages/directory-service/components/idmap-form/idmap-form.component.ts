@@ -12,7 +12,7 @@ import {
   IdmapBackend, IdmapLinkedService, IdmapName, IdmapSchemaMode, IdmapSslEncryptionMode,
 } from 'app/enums/idmap.enum';
 import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
-import helptext from 'app/helptext/directory-service/idmap';
+import { helptextIdmap } from 'app/helptext/directory-service/idmap';
 import { IdmapBackendOption, IdmapBackendOptions } from 'app/interfaces/idmap-backend-options.interface';
 import { Idmap, IdmapUpdate } from 'app/interfaces/idmap.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -100,7 +100,7 @@ export class IdmapFormComponent implements OnInit {
   backendChoices: IdmapBackendOptions;
   isLoading = false;
 
-  readonly helptext = helptext;
+  readonly helptext = helptextIdmap;
 
   readonly editIdmapNames$ = of([
     { label: this.translate.instant('Active Directory - Primary Domain'), value: IdmapName.DsTypeActiveDirectory },
@@ -303,8 +303,8 @@ export class IdmapFormComponent implements OnInit {
 
   private askAndClearCache(): Observable<unknown> {
     return this.dialogService.confirm({
-      title: helptext.idmap.clear_cache_dialog.title,
-      message: helptext.idmap.clear_cache_dialog.message,
+      title: helptextIdmap.idmap.clear_cache_dialog.title,
+      message: helptextIdmap.idmap.clear_cache_dialog.message,
       hideCheckbox: true,
     }).pipe(
       switchMap((confirmed) => {
@@ -313,14 +313,14 @@ export class IdmapFormComponent implements OnInit {
         }
 
         const dialog = this.matDialog.open(EntityJobComponent, {
-          data: { title: helptext.idmap.clear_cache_dialog.job_title },
+          data: { title: helptextIdmap.idmap.clear_cache_dialog.job_title },
           disableClose: true,
         });
         dialog.componentInstance.setCall('idmap.clear_idmap_cache');
         dialog.componentInstance.submit();
         dialog.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
           this.snackbar.success(
-            this.translate.instant(helptext.idmap.clear_cache_dialog.success_msg),
+            this.translate.instant(helptextIdmap.idmap.clear_cache_dialog.success_msg),
           );
           dialog.close();
         });

@@ -11,7 +11,7 @@ import {
 import { FromWizardToAdvancedSubmitted } from 'app/enums/from-wizard-to-advanced.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
-import helptext from 'app/helptext/data-protection/data-protection-dashboard/data-protection-dashboard';
+import { helptextDataProtection } from 'app/helptext/data-protection/data-protection-dashboard/data-protection-dashboard';
 import { Job } from 'app/interfaces/job.interface';
 import { ReplicationTaskUi } from 'app/interfaces/replication-task.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -242,7 +242,7 @@ export class ReplicationTaskCardComponent implements OnInit {
     replicationTasks.forEach((task) => {
       task.task_last_snapshot = task.state.last_snapshot
         ? task.state.last_snapshot
-        : this.translate.instant(helptext.no_snapshot_sent_yet);
+        : this.translate.instant(helptextDataProtection.no_snapshot_sent_yet);
 
       if (task.job !== null) {
         this.store$.select(selectJob(task.job.id)).pipe(

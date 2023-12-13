@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { productTypeLabels } from 'app/enums/product-type.enum';
-import helptext from 'app/helptext/about';
+import { helptextAbout } from 'app/helptext/about';
 import { SystemGeneralService } from 'app/services/system-general.service';
 
 @Component({
@@ -11,7 +11,7 @@ import { SystemGeneralService } from 'app/services/system-general.service';
 })
 export class AboutDialogComponent {
   systemType = this.systemGeneralService.getProductType();
-  helptext = helptext;
+  readonly helptext = helptextAbout;
   readonly productTypeLabels = productTypeLabels;
 
   constructor(

@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
-import helptext from 'app/helptext/apps/apps';
+import { helptextApps } from 'app/helptext/apps/apps';
 import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -123,10 +123,10 @@ describe('SelectPoolDialogComponent', () => {
     spectator.component.ngOnInit();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
-      title: helptext.noPool.title,
-      message: helptext.noPool.message,
+      title: helptextApps.noPool.title,
+      message: helptextApps.noPool.message,
       hideCheckbox: true,
-      buttonText: helptext.noPool.action,
+      buttonText: helptextApps.noPool.action,
     });
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/storage', 'create']);
   });

@@ -6,7 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { ProductType, productTypeLabels } from 'app/enums/product-type.enum';
 import { ScreenType } from 'app/enums/screen-type.enum';
-import helptext from 'app/helptext/about';
+import { helptextAbout } from 'app/helptext/about';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
 
@@ -22,7 +22,7 @@ import { SystemGeneralService } from 'app/services/system-general.service';
 })
 export class WidgetHelpComponent extends WidgetComponent implements OnInit {
   systemType: ProductType;
-  helptext = helptext;
+  helptext = helptextAbout;
   screenType = ScreenType.Desktop;
 
   readonly ProductType = ProductType;

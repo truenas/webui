@@ -1,6 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export default {
+export const helptextApps = {
   choosePool: {
     jobTitle: T('Configuring...'),
     unsetPool: {

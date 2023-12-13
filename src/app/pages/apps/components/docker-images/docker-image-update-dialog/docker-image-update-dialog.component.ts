@@ -13,7 +13,7 @@ import { filter } from 'rxjs/operators';
 import { latestVersion } from 'app/constants/catalog.constants';
 import { BulkListItem, BulkListItemState } from 'app/core/components/bulk-list-item/bulk-list-item.interface';
 import { JobState } from 'app/enums/job-state.enum';
-import helptext from 'app/helptext/apps/apps';
+import { helptextApps } from 'app/helptext/apps/apps';
 import {
   ContainerImage, PullContainerImageParams, PullContainerImageResponse,
 } from 'app/interfaces/container-image.interface';
@@ -33,7 +33,7 @@ export class DockerImageUpdateDialogComponent {
   isJobCompleted = false;
   wasSubmitted = false;
   readonly tooltips = {
-    tag: helptext.dockerImages.chooseTag.selectTag.placeholder,
+    tag: helptextApps.dockerImages.chooseTag.selectTag.placeholder,
   };
   options = new Map<string, Observable<Option[]>>();
   bulkItems = new Map<string, BulkListItem<ContainerImage>>();

@@ -1,6 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export default {
+export const helptextGroups = {
   bsdgrp_gid_tooltip: T('The Group ID (GID) is a unique number used to identify\
  a Unix group. Enter a number above 1000 for a group\
  with user accounts. Groups used by a service must have\
