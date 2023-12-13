@@ -10,7 +10,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { environment } from 'environments/environment';
 import {
-  EMPTY, Observable, catchError, filter, of, switchMap, take,
+  EMPTY, Observable, catchError, filter, of, pairwise, switchMap, take,
 } from 'rxjs';
 import { ticketAcceptedFiles } from 'app/enums/file-ticket.enum';
 import { JobState } from 'app/enums/job-state.enum';
@@ -50,7 +50,6 @@ export class FeedbackDialogComponent implements OnInit {
   @ViewChild('ticketFormContainer', { static: true, read: ViewContainerRef }) ticketFormContainer: ViewContainerRef;
   ticketForm: FileTicketFormComponent | FileTicketLicensedFormComponent;
   isLoading = false;
-  isReviewAllowed = true;
 
   protected form = this.formBuilder.group({
     type: [undefined as FeedbackType],
@@ -63,11 +62,16 @@ export class FeedbackDialogComponent implements OnInit {
     attach_screenshot: [false],
     take_screenshot: [true],
   });
+
   private release: string;
   private hostId: string;
   private attachments: File[] = [];
   protected feedbackTypeOptions$: Observable<Option[]> = of(mapToOptions(feedbackTypeOptionMap, this.translate));
   readonly acceptedFiles = ticketAcceptedFiles;
+
+  get isReviewAllowed(): boolean {
+    return this.feedbackService.getReviewAllowed();
+  }
 
   get isEnterprise(): boolean {
     return this.systemGeneralService.isEnterprise;
@@ -128,15 +132,10 @@ export class FeedbackDialogComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.checkIfFeedbackAllowed();
     this.addFormListeners();
+    this.updateTypeOptions();
     this.getReleaseVersion();
     this.getHostId();
-
-    if (this.type) {
-      this.form.controls.type.setValue(this.type);
-      this.cdr.markForCheck();
-    }
   }
 
   onSubmit(): void {
@@ -324,15 +323,19 @@ export class FeedbackDialogComponent implements OnInit {
   private addFormListeners(): void {
     this.imagesValidation();
 
-    this.form.controls.type.valueChanges.pipe(untilDestroyed(this)).subscribe((type) => {
-      if (type === FeedbackType.Review) {
-        this.switchToReview();
-        this.clearTicketForm();
-      } else if ([FeedbackType.Bug, FeedbackType.Suggestion].includes(type)) {
-        this.switchToBugOrImprovement();
-        this.renderTicketForm();
-      }
-    });
+    this.form.controls.type.valueChanges
+      .pipe(pairwise(), untilDestroyed(this))
+      .subscribe(([previousType, currentType]) => {
+        if (currentType === FeedbackType.Review) {
+          this.switchToReview();
+          this.clearTicketForm();
+        } else if ([FeedbackType.Bug, FeedbackType.Suggestion].includes(currentType)) {
+          this.switchToBugOrImprovement();
+          if (![FeedbackType.Bug, FeedbackType.Suggestion].includes(previousType)) {
+            this.renderTicketForm();
+          }
+        }
+      });
   }
 
   private getHostId(): void {
@@ -407,29 +410,19 @@ export class FeedbackDialogComponent implements OnInit {
     this.cdr.markForCheck();
   }
 
-  private checkIfFeedbackAllowed(): void {
-    this.feedbackService.checkIfFeedbackAllowed()
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: (isAllowed) => {
-          this.isReviewAllowed = isAllowed;
-          this.updateTypeOptions();
-        },
-        error: () => {
-          this.isReviewAllowed = false;
-          this.updateTypeOptions();
-        },
-      });
-  }
-
   private updateTypeOptions(): void {
-    const optionMap = feedbackTypeOptionMap;
+    const optionMap = new Map(feedbackTypeOptionMap);
+
     if (!this.isReviewAllowed) {
       optionMap.delete(FeedbackType.Review);
-      this.form.controls.rating.disable();
     }
 
     this.feedbackTypeOptions$ = of(mapToOptions(optionMap, this.translate));
-    this.form.controls.type.setValue(FeedbackType.Bug);
+    this.form.controls.type.enable();
+    if (this.type && optionMap.has(this.type)) {
+      this.form.controls.type.setValue(this.type);
+    } else {
+      this.form.controls.type.setValue([...optionMap.keys()].shift());
+    }
   }
 }

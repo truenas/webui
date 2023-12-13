@@ -111,7 +111,7 @@ describe('FeedbackDialogComponent', () => {
         })),
         takeScreenshot: jest.fn(() => of(new File(['(⌐□_□)'], 'screenshot.png', { type: 'image/png' }))),
         getHostId: jest.fn(() => of('unique-system-host-id-1234')),
-        checkIfFeedbackAllowed: jest.fn(() => isFeedbackAllowed$),
+        getReviewAllowed: jest.fn(() => isFeedbackAllowed$.value),
       }),
       provideMockStore({
         selectors: [
@@ -144,7 +144,7 @@ describe('FeedbackDialogComponent', () => {
     ],
   });
 
-  async function setupTest(isEnterprise = false, isAllowed = true): Promise<void> {
+  async function setupTest(isEnterprise = false, isAllowed = false): Promise<void> {
     isFeedbackAllowed$.next(isAllowed);
     isEnterprise$.next(isEnterprise);
     spectator = createComponent();
@@ -160,7 +160,7 @@ describe('FeedbackDialogComponent', () => {
 
   describe('review', () => {
     beforeEach(async () => {
-      await setupTest(false);
+      await setupTest(false, true);
 
       const type = await loader.getHarness(IxButtonGroupHarness.with({ label: 'I would like to' }));
       type.setValue('Rate this page');
@@ -233,6 +233,8 @@ describe('FeedbackDialogComponent', () => {
     });
 
     it.skip('sends a create payload to websocket', async () => {
+      // TODO: Figure out why
+      // Received constructor: FileTicketLicensedFormComponent
       expect(spectator.component.ticketForm).toBeInstanceOf(FileTicketFormComponent);
 
       const subjectField = await loader.getHarness(IxInputHarness.with({ label: 'Subject' }));
@@ -325,5 +327,6 @@ describe('FeedbackDialogComponent', () => {
 
     const type = await loader.getHarness(IxButtonGroupHarness.with({ label: 'I would like to' }));
     expect(await type.getOptions()).toEqual(['Report a bug', 'Suggest an improvement']);
+    expect(await type.getValue()).toBe('Report a bug');
   });
 });
