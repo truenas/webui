@@ -19,6 +19,7 @@ export interface SystemGeneralConfig {
   usage_collection: boolean;
   usage_collection_is_set: boolean;
   wizardshown: boolean;
+  ds_auth: boolean;
 }
 
 export interface SystemGeneralConfigUpdate {
@@ -38,4 +39,5 @@ export interface SystemGeneralConfigUpdate {
   sysloglevel?: string;
   syslogserver?: string;
   ui_certificate?: number;
+  ds_auth?: boolean;
 }

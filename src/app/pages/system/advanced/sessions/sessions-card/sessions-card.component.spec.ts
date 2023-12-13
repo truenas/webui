@@ -18,8 +18,10 @@ import { SessionsCardComponent } from 'app/pages/system/advanced/sessions/sessio
 import { TokenSettingsComponent } from 'app/pages/system/advanced/sessions/token-settings/token-settings.component';
 import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
+import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
 describe('SessionsCardComponent', () => {
   let spectator: Spectator<SessionsCardComponent>;
@@ -60,6 +62,12 @@ describe('SessionsCardComponent', () => {
               lifetime: 60,
             },
           },
+          {
+            selector: selectGeneralConfig,
+            value: {
+              ds_auth: true,
+            },
+          },
         ],
       }),
       mockProvider(DialogService, {
@@ -70,6 +78,9 @@ describe('SessionsCardComponent', () => {
       }),
       mockProvider(AdvancedSettingsService),
       mockProvider(IxSlideInRef),
+      mockProvider(SystemGeneralService, {
+        isEnterprise: jest.fn(() => true),
+      }),
     ],
   });
 
@@ -79,8 +90,13 @@ describe('SessionsCardComponent', () => {
   });
 
   it('shows current token lifetime', async () => {
-    const lifetime = await loader.getHarness(MatListItemHarness);
+    const lifetime = (await loader.getAllHarnesses(MatListItemHarness))[0];
     expect(await lifetime.getFullText()).toBe('Token Lifetime: 1 minute');
+  });
+
+  it('shows whether DS users are allowed access to WebUI', async () => {
+    const allowed = (await loader.getAllHarnesses(MatListItemHarness))[1];
+    expect(await allowed.getFullText()).toBe('Allow Directory Service users to access WebUI: Yes');
   });
 
   it('opens Token settings form when Configure is pressed', async () => {

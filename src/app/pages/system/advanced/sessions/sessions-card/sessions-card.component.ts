@@ -22,10 +22,12 @@ import { TokenSettingsComponent } from 'app/pages/system/advanced/sessions/token
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { defaultPreferences } from 'app/store/preferences/default-preferences.constant';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
+import { waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
 @UntilDestroy()
 @Component({
@@ -40,6 +42,12 @@ export class SessionsCardComponent implements OnInit {
     map((preferences) => {
       return preferences.lifetime ? preferences.lifetime : defaultPreferences.lifetime;
     }),
+    toLoadingState(),
+  );
+
+  readonly generalConfig$ = this.store$.pipe(
+    waitForGeneralConfig,
+    map((generalConfig) => generalConfig.ds_auth),
     toLoadingState(),
   );
 
@@ -71,6 +79,10 @@ export class SessionsCardComponent implements OnInit {
     rowTestId: (row) => 'session-' + row.id.toString(),
   });
 
+  get isEnterprise(): boolean {
+    return this.systemGeneralService.isEnterprise;
+  }
+
   constructor(
     private store$: Store<AppState>,
     private slideInService: IxSlideInService,
@@ -80,6 +92,7 @@ export class SessionsCardComponent implements OnInit {
     private loader: AppLoaderService,
     private ws: WebSocketService,
     private advancedSettings: AdvancedSettingsService,
+    private systemGeneralService: SystemGeneralService,
     protected emptyService: EmptyService,
     private cdr: ChangeDetectorRef,
   ) {}
