@@ -832,6 +832,7 @@ export interface ApiCallDirectory {
   'sharing.smb.presets': { params: void; response: SmbPresets };
   'sharing.smb.getacl': { params: [{ share_name: string }]; response: SmbSharesec };
   'sharing.smb.setacl': { params: [{ share_name: string; share_acl: SmbSharesecAce[] }]; response: SmbSharesec };
+  'sharing.smb.share_precheck': { params: [{ name: string }]; response: null | { reason: string } };
 
   'sharing.nfs.query': { params: QueryParams<NfsShare>; response: NfsShare[] };
   'sharing.nfs.update': { params: [id: number, update: NfsShareUpdate]; response: NfsShare };

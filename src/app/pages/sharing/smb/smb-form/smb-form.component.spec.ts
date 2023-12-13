@@ -144,6 +144,7 @@ describe('SmbFormComponent', () => {
         mockCall('group.query', [{ group: 'test' }] as Group[]),
         mockCall('sharing.smb.create', { ...existingShare }),
         mockCall('sharing.smb.update', { ...existingShare }),
+        mockCall('sharing.smb.share_precheck', { reason: 'ooops' }),
         mockCall('sharing.smb.query', [
           { ...existingShare },
         ]),
@@ -264,12 +265,6 @@ describe('SmbFormComponent', () => {
         'Multi-user time machine',
         'Private SMB Datasets and Shares',
       ]);
-    });
-
-    it('should have error for duplicate share name', async () => {
-      const nameControl = await loader.getHarness(IxInputHarness.with({ label: 'Name' }));
-      await nameControl.setValue('ds222');
-      expect(await nameControl.getErrorText()).toBe('The name "ds222" is already in use.');
     });
 
     it('when a preset is selected, the relevant fields should be impacted', async () => {
