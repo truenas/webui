@@ -493,6 +493,7 @@
   "Sensitive": "",
   "Sent: {sent} Received: {received}": "",
   "Service": "",
+  "Service = \"SMB\" AND Event = \"CLOSE\"": "",
   "Service configuration saved": "",
   "Session ID": "",
   "Session dialect": "",

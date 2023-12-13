@@ -15,6 +15,7 @@ export class BasicSearchComponent implements AfterViewInit {
 
   @Output() switchToAdvanced = new EventEmitter<void>();
   @Output() queryChange = new EventEmitter<string>();
+  @Output() runSearch = new EventEmitter<void>();
 
   @ViewChild('searchControl') searchControl: ElementRef;
 

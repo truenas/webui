@@ -440,6 +440,7 @@
   "Select the minimum priority level to send to the remote syslog server.  The system only sends logs matching this level or higher.": "",
   "Sent: {sent} Received: {received}": "",
   "Service": "",
+  "Service = \"SMB\" AND Event = \"CLOSE\"": "",
   "Session ID": "",
   "Session dialect": "",
   "Set Attribute": "",

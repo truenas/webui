@@ -1777,6 +1777,7 @@
   "Serial number for this disk.": "",
   "Serial numbers of each disk being edited.": "",
   "Service": "",
+  "Service = \"SMB\" AND Event = \"CLOSE\"": "",
   "Service Account Key": "",
   "Service Announcement": "",
   "Service Announcement:": "",

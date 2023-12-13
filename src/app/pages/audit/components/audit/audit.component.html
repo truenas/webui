@@ -11,11 +11,14 @@
         class="search-input"
         [properties]="searchProperties"
         [query]="searchQuery"
+        (runSearch)="onSearch(searchInput.query)"
+        (advancedSearchQueryValidityChanged)="isValidAdvancedQuery = $event"
       ></ix-search-input2>
       <button
         mat-button
         color="primary"
         ixTest="search"
+        [disabled]="searchQuery && !searchInput.query?.isBasicQuery && !isValidAdvancedQuery"
         (click)="onSearch(searchInput.query); updateUrlOptions()"
       >
         {{ 'Search' | translate }}

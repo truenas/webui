@@ -12,7 +12,8 @@ import {
 import { autocompletion, closeBrackets, startCompletion } from '@codemirror/autocomplete';
 import { linter } from '@codemirror/lint';
 import { EditorState, StateEffect, StateField } from '@codemirror/state';
-import { EditorView, placeholder } from '@codemirror/view';
+import { EditorView, keymap, placeholder } from '@codemirror/view';
+import { TranslateService } from '@ngx-translate/core';
 import { format } from 'date-fns';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
 import { AdvancedSearchAutocompleteService } from 'app/modules/search-input/services/advanced-search-autocomplete.service';
@@ -35,6 +36,8 @@ export class AdvancedSearchComponent<T> implements OnInit {
 
   @Output() paramsChange = new EventEmitter<QueryFilters<T>>();
   @Output() switchToBasic = new EventEmitter<void>();
+  @Output() runSearch = new EventEmitter<void>();
+  @Output() advancedSearchQueryValidityChanged = new EventEmitter<boolean>();
 
   @ViewChild('inputArea', { static: true }) inputArea: ElementRef<HTMLElement>;
 
@@ -54,6 +57,7 @@ export class AdvancedSearchComponent<T> implements OnInit {
     private queryToApi: QueryToApiService<T>,
     private advancedSearchAutocomplete: AdvancedSearchAutocompleteService<T>,
     private cdr: ChangeDetectorRef,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -105,6 +109,16 @@ export class AdvancedSearchComponent<T> implements OnInit {
       icons: false,
     });
 
+    const customKeyMap = keymap.of([{
+      key: 'Enter',
+      run: () => {
+        if (!this.hasQueryErrors) {
+          this.runSearch.emit();
+        }
+        return true;
+      },
+    }]);
+
     this.editorView = new EditorView({
       state: EditorState.create({
         extensions: [
@@ -112,9 +126,10 @@ export class AdvancedSearchComponent<T> implements OnInit {
           EditorView.lineWrapping,
           updateListener,
           closeBrackets(),
-          placeholder('Service = "SMB" AND Event = "CLOSE"'),
+          placeholder(this.translate.instant('Service = "SMB" AND Event = "CLOSE"')),
           advancedSearchLinter,
           diagnosticField,
+          customKeyMap,
         ],
       }),
       parent: this.inputArea.nativeElement,
@@ -140,6 +155,7 @@ export class AdvancedSearchComponent<T> implements OnInit {
     const parsedQuery = this.queryParser.parseQuery(this.queryInputValue);
 
     this.hasQueryErrors = Boolean(this.queryInputValue.length && parsedQuery.hasErrors);
+    this.advancedSearchQueryValidityChanged.emit(!this.hasQueryErrors);
     this.cdr.markForCheck();
 
     if (this.queryInputValue === '') {

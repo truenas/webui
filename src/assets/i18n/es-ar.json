@@ -1316,6 +1316,7 @@
   "Serial Shell": "",
   "Series": "",
   "Service": "",
+  "Service = \"SMB\" AND Event = \"CLOSE\"": "",
   "Service Account Key": "",
   "Service CIDR": "",
   "Service configuration saved": "",

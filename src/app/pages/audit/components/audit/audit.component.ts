@@ -50,6 +50,7 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
   isMobileView = false;
   searchQuery: SearchQuery<AuditEntry>;
   pagination: TablePagination;
+  isValidAdvancedQuery = false;
 
   get basicQueryFilters(): QueryFilters<AuditEntry> {
     return [['event', '~', `(?i)${(this.searchQuery as { query: string })?.query || ''}`]];
@@ -59,6 +60,9 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
     textColumn({
       title: this.translate.instant('Service'),
       propertyName: 'service',
+      getValue: (row) => (auditServiceLabels.has(row.service)
+        ? this.translate.instant(auditServiceLabels.get(row.service))
+        : row.event || '-'),
     }),
     textColumn({
       title: this.translate.instant('User'),
@@ -220,6 +224,10 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // TODO: Issue: reset icon will not trigger table update
   onSearch(query: SearchQuery<AuditEntry>): void {
+    if (!query) {
+      return;
+    }
+
     this.searchQuery = query;
 
     if (query && query.isBasicQuery) {

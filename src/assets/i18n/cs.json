@@ -2896,6 +2896,7 @@
   "Serve UDP NFS clients": "",
   "Server": "",
   "Service": "",
+  "Service = \"SMB\" AND Event = \"CLOSE\"": "",
   "Service Account Key": "",
   "Service Announcement": "",
   "Service Announcement:": "",
