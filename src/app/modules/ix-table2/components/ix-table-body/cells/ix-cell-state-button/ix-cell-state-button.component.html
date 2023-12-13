@@ -1,7 +1,7 @@
 <button
   mat-stroked-button
   class="state-button"
-  ixTest="row-state"
+  [ixTest]="[title, rowTestId(row), 'row-state']"
   [ngClass]="getButtonClass()"
   (click)="$event.stopPropagation(); onButtonClick()"
 >

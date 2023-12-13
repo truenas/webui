@@ -73,7 +73,9 @@ export class CertificateSigningRequestsListComponent implements OnInit {
         },
       ],
     }),
-  ]);
+  ], {
+    rowTestId: (row) => 'csr-' + row.id.toString(),
+  });
 
   constructor(
     private matDialog: MatDialog,

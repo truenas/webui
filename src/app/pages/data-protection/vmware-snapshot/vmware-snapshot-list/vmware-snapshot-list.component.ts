@@ -47,7 +47,9 @@ export class VmwareSnapshotListComponent implements OnInit {
       propertyName: 'datastore',
       sortable: true,
     }),
-  ]);
+  ], {
+    rowTestId: (row) => 'vmware-snapshot-' + row.id.toString(),
+  });
 
   constructor(
     protected translate: TranslateService,

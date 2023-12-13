@@ -78,6 +78,7 @@ export class TestDirective {
         return 'icon';
       case 'div':
       case 'p':
+      case 'span':
         return 'text';
       default:
         throw new Error(`Unknown element type: ${tagName}`);

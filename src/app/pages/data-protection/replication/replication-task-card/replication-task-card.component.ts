@@ -104,7 +104,9 @@ export class ReplicationTaskCardComponent implements OnInit {
         },
       ],
     }),
-  ]);
+  ], {
+    rowTestId: (row) => 'replication-task-' + row.id.toString(),
+  });
 
   constructor(
     private slideInService: IxSlideInService,

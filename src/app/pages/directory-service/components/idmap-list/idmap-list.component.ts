@@ -110,7 +110,9 @@ export class IdmapListComponent implements OnInit {
         },
       ],
     }),
-  ]);
+  ], {
+    rowTestId: (row) => 'idmap-' + row.id.toString(),
+  });
 
   constructor(
     private translateService: TranslateService,

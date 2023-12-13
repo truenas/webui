@@ -1,1 +1,3 @@
-{{ size | filesize: { standard: 'iec' } }}
+<span
+  [ixTest]="[title, rowTestId(row), 'row-size']"
+>{{ size | filesize: { standard: 'iec' } }}</span>

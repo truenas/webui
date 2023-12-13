@@ -7,10 +7,12 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
+import { DatasetPreset } from 'app/enums/dataset.enum';
 import { NfsProtocol } from 'app/enums/nfs-protocol.enum';
 import { NfsSecurityProvider } from 'app/enums/nfs-security-provider.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingNfs } from 'app/helptext/sharing';
+import { DatasetCreate } from 'app/interfaces/dataset.interface';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { GroupComboboxProvider } from 'app/modules/ix-forms/classes/group-combobox-provider';
 import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
@@ -35,6 +37,9 @@ export class NfsFormComponent implements OnInit {
   isLoading = false;
   isAdvancedMode = false;
   hasNfsSecurityField = false;
+  createDatasetProps: Omit<DatasetCreate, 'name'> = {
+    share_type: DatasetPreset.Multiprotocol,
+  };
 
   form = this.formBuilder.group({
     path: ['', Validators.required],

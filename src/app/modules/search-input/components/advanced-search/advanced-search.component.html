@@ -1,4 +1,4 @@
-<span class="prefix-icon">
+<span class="prefix-icon" [matTooltip]="errorMessages?.[0]?.message">
   <ix-icon *ngIf="!queryInputValue" name="mdi-text-search-variant"></ix-icon>
   <ix-icon *ngIf="queryInputValue && hasQueryErrors" name="warning"></ix-icon>
   <ix-icon *ngIf="queryInputValue && !hasQueryErrors" name="done"></ix-icon>

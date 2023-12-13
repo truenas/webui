@@ -79,7 +79,9 @@ export class InitiatorListComponent implements OnInit {
         },
       ],
     }),
-  ]);
+  ], {
+    rowTestId: (row) => 'iscsi-initiator-' + row.id.toString(),
+  });
 
   constructor(
     public emptyService: EmptyService,

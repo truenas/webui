@@ -10,6 +10,8 @@
           [label]="'Path' | translate"
           [tooltip]="helptext.tooltip_path | translate"
           [nodeProvider]="treeNodeProvider"
+          [canCreateDataset]="isNew"
+          [createDatasetProps]="createDatasetProps"
         ></ix-explorer>
       </ix-fieldset>
 
