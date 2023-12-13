@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
@@ -144,7 +144,7 @@ describe('SmbFormComponent', () => {
         mockCall('group.query', [{ group: 'test' }] as Group[]),
         mockCall('sharing.smb.create', { ...existingShare }),
         mockCall('sharing.smb.update', { ...existingShare }),
-        mockCall('sharing.smb.share_precheck', { reason: 'ooops' }),
+        mockCall('sharing.smb.share_precheck', null),
         mockCall('sharing.smb.query', [
           { ...existingShare },
         ]),
@@ -550,6 +550,31 @@ describe('SmbFormComponent', () => {
         );
 
       expect(store$.dispatch).toHaveBeenCalledWith(checkIfServiceIsEnabled({ serviceName: ServiceName.Cifs }));
+    });
+  });
+
+  describe('smb validation', () => {
+    beforeEach(async () => {
+      spectator = createComponent();
+      websocket = spectator.inject(WebSocketService);
+      jest.spyOn(websocket, 'call').mockImplementation((method) => {
+        if (method === 'sharing.smb.share_precheck') {
+          return throwError({ reason: '[EEXIST] sharing.smb.share_precheck.name: Share with this name already exists.' });
+        }
+        return null;
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+      websocket = spectator.inject(WebSocketService);
+      mockStore$ = spectator.inject(MockStore);
+      store$ = spectator.inject(Store);
+      jest.spyOn(store$, 'dispatch');
+    });
+
+    it('should have error for duplicate share name', async () => {
+      const nameControl = await loader.getHarness(IxInputHarness.with({ label: 'Name' }));
+      await nameControl.setValue('ds222');
+      expect(await nameControl.getErrorText()).toBe('Share with this name already exists');
     });
   });
 });
