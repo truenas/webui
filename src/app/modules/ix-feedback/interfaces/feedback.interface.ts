@@ -1,4 +1,5 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { ProductType } from 'app/enums/product-type.enum';
 
 export enum FeedbackType {
   Review = 'REVIEW',
@@ -54,4 +55,10 @@ export interface AttachmentAddedResponse {
     filename: string;
     id: number;
   };
+}
+
+export interface BlacklistAddedReponse {
+  id: number;
+  version: string;
+  product_types: ProductType[];
 }

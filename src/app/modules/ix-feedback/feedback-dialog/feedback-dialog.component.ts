@@ -50,9 +50,10 @@ export class FeedbackDialogComponent implements OnInit {
   @ViewChild('ticketFormContainer', { static: true, read: ViewContainerRef }) ticketFormContainer: ViewContainerRef;
   ticketForm: FileTicketFormComponent | FileTicketLicensedFormComponent;
   isLoading = false;
+  isReviewAllowed = true;
 
   protected form = this.formBuilder.group({
-    type: [FeedbackType.Review],
+    type: [undefined as FeedbackType],
 
     rating: [undefined as number, [Validators.required, rangeValidator(1, maxRatingValue)]],
     message: [''],
@@ -65,7 +66,7 @@ export class FeedbackDialogComponent implements OnInit {
   private release: string;
   private hostId: string;
   private attachments: File[] = [];
-  readonly feedbackTypeOptions$: Observable<Option[]> = of(mapToOptions(feedbackTypeOptionMap, this.translate));
+  protected feedbackTypeOptions$: Observable<Option[]> = of(mapToOptions(feedbackTypeOptionMap, this.translate));
   readonly acceptedFiles = ticketAcceptedFiles;
 
   get isEnterprise(): boolean {
@@ -127,6 +128,7 @@ export class FeedbackDialogComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.checkIfFeedbackAllowed();
     this.addFormListeners();
     this.getReleaseVersion();
     this.getHostId();
@@ -403,5 +405,31 @@ export class FeedbackDialogComponent implements OnInit {
     }
 
     this.cdr.markForCheck();
+  }
+
+  private checkIfFeedbackAllowed(): void {
+    this.feedbackService.checkIfFeedbackAllowed()
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        next: (isAllowed) => {
+          this.isReviewAllowed = isAllowed;
+          this.updateTypeOptions();
+        },
+        error: () => {
+          this.isReviewAllowed = false;
+          this.updateTypeOptions();
+        },
+      });
+  }
+
+  private updateTypeOptions(): void {
+    const optionMap = feedbackTypeOptionMap;
+    if (!this.isReviewAllowed) {
+      optionMap.delete(FeedbackType.Review);
+      this.form.controls.rating.disable();
+    }
+
+    this.feedbackTypeOptions$ = of(mapToOptions(optionMap, this.translate));
+    this.form.controls.type.setValue(FeedbackType.Bug);
   }
 }

@@ -46,6 +46,7 @@ describe('FeedbackDialogComponent', () => {
   let ws: MockWebsocketService;
   let form: IxFormHarness;
   const isEnterprise$ = new BehaviorSubject(false);
+  const isFeedbackAllowed$ = new BehaviorSubject(false);
 
   const mockToken = JSON.stringify({
     oauth_token: 'mock.oauth.token',
@@ -110,6 +111,7 @@ describe('FeedbackDialogComponent', () => {
         })),
         takeScreenshot: jest.fn(() => of(new File(['(⌐□_□)'], 'screenshot.png', { type: 'image/png' }))),
         getHostId: jest.fn(() => of('unique-system-host-id-1234')),
+        checkIfFeedbackAllowed: jest.fn(() => isFeedbackAllowed$),
       }),
       provideMockStore({
         selectors: [
@@ -142,7 +144,8 @@ describe('FeedbackDialogComponent', () => {
     ],
   });
 
-  async function setupTest(isEnterprise = false): Promise<void> {
+  async function setupTest(isEnterprise = false, isAllowed = true): Promise<void> {
+    isFeedbackAllowed$.next(isAllowed);
     isEnterprise$.next(isEnterprise);
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -315,5 +318,12 @@ describe('FeedbackDialogComponent', () => {
 
       expect(router.navigate).toHaveBeenCalledWith(['system', 'support', 'eula']);
     });
+  });
+
+  it('checks "Rate this page" option is not available when feedback is disabled', async () => {
+    await setupTest(false, false);
+
+    const type = await loader.getHarness(IxButtonGroupHarness.with({ label: 'I would like to' }));
+    expect(await type.getOptions()).toEqual(['Report a bug', 'Suggest an improvement']);
   });
 });

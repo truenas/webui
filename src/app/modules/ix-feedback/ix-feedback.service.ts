@@ -1,7 +1,9 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import html2canvas, { Options } from 'html2canvas';
-import { Observable } from 'rxjs';
+import {
+  Observable, combineLatest, map, switchMap,
+} from 'rxjs';
 import {
   AddReview, AttachmentAddedResponse,
 } from 'app/modules/ix-feedback/interfaces/feedback.interface';
@@ -53,5 +55,22 @@ export class IxFeedbackService {
         observer.error(error);
       });
     });
+  }
+
+  checkIfFeedbackAllowed(): Observable<boolean> {
+    return combineLatest([
+      this.ws.call('system.info'),
+      this.ws.call('system.product_type'),
+    ]).pipe(
+      switchMap(([systemInfo, productType]) => {
+        const params = new HttpParams();
+        params.set('version', systemInfo.version);
+        params.set('product_type', productType);
+
+        return this.httpClient
+          .get<{ value: boolean }>(`${this.hostname}/api/collect-blacklist/check`, { params })
+          .pipe(map((response) => response.value));
+      }),
+    );
   }
 }
