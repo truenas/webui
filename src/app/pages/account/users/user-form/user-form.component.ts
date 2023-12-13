@@ -19,6 +19,7 @@ import helptext from 'app/helptext/account/user-form';
 import { Option } from 'app/interfaces/option.interface';
 import { User, UserUpdate } from 'app/interfaces/user.interface';
 import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
+import { ChipsProvider } from 'app/modules/ix-forms/components/ix-chips/chips-provider';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -47,7 +48,6 @@ const defaultHomePath = '/nonexistent';
 export class UserFormComponent implements OnInit {
   isFormLoading = false;
   subscriptions: Subscription[] = [];
-
   homeModeOldValue = '';
 
   get isNewUser(): boolean {
@@ -125,6 +125,11 @@ export class UserFormComponent implements OnInit {
   shellOptions$: Observable<Option[]>;
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
   readonly groupProvider = new SimpleAsyncComboboxProvider(this.groupOptions$);
+  autocompleteProvider: ChipsProvider = (query) => {
+    return this.userService.groupQueryDsCache(query).pipe(
+      map((groups) => groups.map((group) => group.group)),
+    );
+  };
 
   get homeCreateWarning(): string {
     const homeCreate = this.form.value.home_create;
@@ -170,6 +175,7 @@ export class UserFormComponent implements OnInit {
     private storageService: StorageService,
     private store$: Store<AppState>,
     private dialog: DialogService,
+    private userService: UserService,
     @Inject(SLIDE_IN_DATA) private editingUser: User,
   ) {
     this.form.controls.smb.errors$.pipe(
@@ -315,6 +321,7 @@ export class UserFormComponent implements OnInit {
 
         request$.pipe(
           switchMap((id) => nextRequest$ || of(id)),
+          filter(Boolean),
           switchMap((id) => this.ws.call('user.query', [[['id', '=', id]]])),
           map((users) => users[0]),
           untilDestroyed(this),

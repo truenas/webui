@@ -28,6 +28,14 @@ import { WebSocketService } from 'app/services/ws.service';
 import { UserFormComponent } from './user-form.component';
 
 describe('UserFormComponent', () => {
+  const mockGroups = [{
+    id: 101,
+    group: 'test-group',
+  }, {
+    id: 102,
+    group: 'mock-group',
+  }] as Group[];
+
   const mockUser = {
     id: 69,
     uid: 1004,
@@ -70,13 +78,7 @@ describe('UserFormComponent', () => {
           '/usr/bin/zsh': 'zsh',
         } as Choices),
         mockCall('user.get_next_uid', 1234),
-        mockCall('group.query', [{
-          id: 101,
-          group: 'test-group',
-        }, {
-          id: 102,
-          group: 'mock-group',
-        }] as Group[]),
+        mockCall('group.query', mockGroups),
         mockCall('sharing.smb.query', [{ path: '/mnt/users' }] as SmbShare[]),
       ]),
       mockProvider(DialogService, {
@@ -88,7 +90,9 @@ describe('UserFormComponent', () => {
         downloadBlob: jest.fn(),
       }),
       mockProvider(FormErrorHandlerService),
-      mockProvider(UserService),
+      mockProvider(UserService, {
+        groupQueryDsCache: jest.fn(() => of(mockGroups)),
+      }),
       mockProvider(FilesystemService, {
         getFilesystemNodeProvider: jest.fn(() => of()),
       }),
@@ -247,7 +251,7 @@ describe('UserFormComponent', () => {
     it('sends an update payload to websocket and closes modal when save is pressed', async () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
-        'Auxiliary Groups': ['mock-group'],
+        'Auxiliary Groups': ['mock-group', 'test-group'],
         'Full Name': 'updated',
         'Home Directory': '/home/updated',
         'Primary Group': 'mock-group',
@@ -273,13 +277,13 @@ describe('UserFormComponent', () => {
         69, { home: '/home/updated', home_create: true },
       ]);
 
-      expect(ws.call).toHaveBeenCalledWith('user.update', [
+      expect(ws.call).toHaveBeenLastCalledWith('user.update', [
         69,
         {
           email: null,
           full_name: 'updated',
           group: 102,
-          groups: [102],
+          groups: [102, 101],
           home_mode: '755',
           locked: true,
           password_disabled: false,
