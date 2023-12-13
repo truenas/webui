@@ -150,10 +150,6 @@ export class AdvancedSearchComponent<T> implements OnInit {
     this.paramsChange.emit([]);
   }
 
-  private onEditorBlur(): void {
-    this.showDatePicker$.next(false);
-  }
-
   private onInputChanged(): void {
     this.queryInputValue = this.editorView.state.doc.toString();
     const parsedQuery = this.queryParser.parseQuery(this.queryInputValue);
