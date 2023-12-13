@@ -8,7 +8,6 @@ import { Observable } from 'rxjs';
 import {
   filter, map, switchMap,
 } from 'rxjs/operators';
-import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { Option } from 'app/interfaces/option.interface';
 import {
@@ -27,7 +26,7 @@ export class FileTicketFormComponent {
   category = new FormControl<string>({ value: '', disabled: true }, [Validators.required]);
   categoryOptions$: Observable<Option[]> = this.token.valueChanges.pipe(
     switchMap((token) => this.ws.call('support.fetch_categories', [token])),
-    choicesToOptions(),
+    map((choices) => Object.entries(choices).map(([label, value]) => ({ label, value }))),
     map((options) => _.sortBy(options, ['label'])),
   );
   readonly tooltips = {
