@@ -39,7 +39,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
-import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
+import { selectIsIxHardware, selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 describe('FeedbackDialogComponent', () => {
   let spectator: Spectator<FeedbackDialogComponent>;
@@ -118,8 +118,12 @@ describe('FeedbackDialogComponent', () => {
             selector: selectSystemInfo,
             value: {
               version: 'TN-RELEASE',
-              model: 'm40',
+              system_product: 'm40',
             } as SystemInfo,
+          },
+          {
+            selector: selectIsIxHardware,
+            value: true,
           },
         ],
       }),

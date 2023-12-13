@@ -37,7 +37,7 @@ import { IxFileUploadService } from 'app/services/ix-file-upload.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
-import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
+import { selectIsIxHardware, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 export const maxRatingValue = 5;
 
@@ -66,7 +66,8 @@ export class FeedbackDialogComponent implements OnInit {
   private release: string;
   private hostId: string;
   private productType: ProductType;
-  private productModel: string;
+  private systemProduct: string;
+  private isIxHardware = false;
   private attachments: File[] = [];
   readonly feedbackTypeOptions$: Observable<Option[]> = of(mapToOptions(feedbackTypeOptionMap, this.translate));
   readonly acceptedFiles = ticketAcceptedFiles;
@@ -134,6 +135,7 @@ export class FeedbackDialogComponent implements OnInit {
     this.getReleaseVersion();
     this.getHostId();
     this.getProductType();
+    this.loadIsIxHardware();
   }
 
   onSubmit(): void {
@@ -251,7 +253,7 @@ export class FeedbackDialogComponent implements OnInit {
       release: this.release,
       extra: {},
       product_type: this.productType,
-      product_model: this.productModel,
+      product_model: this.systemProduct && this.isIxHardware ? this.systemProduct : 'Generic',
     };
 
     this.feedbackService
@@ -353,10 +355,20 @@ export class FeedbackDialogComponent implements OnInit {
     });
   }
 
+  private loadIsIxHardware(): void {
+    this.store$
+      .select(selectIsIxHardware)
+      .pipe(untilDestroyed(this))
+      .subscribe((isIxHardware) => {
+        this.isIxHardware = isIxHardware;
+        this.cdr.markForCheck();
+      });
+  }
+
   private getReleaseVersion(): void {
-    this.store$.pipe(waitForSystemInfo, take(1), untilDestroyed(this)).subscribe(({ version, model }) => {
-      this.release = version;
-      this.productModel = model;
+    this.store$.pipe(waitForSystemInfo, take(1), untilDestroyed(this)).subscribe((systemInfo) => {
+      this.release = systemInfo.version;
+      this.systemProduct = systemInfo.system_product;
     });
   }
 
