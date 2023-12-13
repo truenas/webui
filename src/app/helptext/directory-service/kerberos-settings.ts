@@ -1,6 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export default {
+export const helptextKerberosSettings = {
   ks_appdefaults_tooltip: T('Additional Kerberos application settings.\
  See the "appdefaults" section of\
  <a href="https://web.mit.edu/kerberos/krb5-1.12/doc/admin/conf_files/krb5_conf.html" target="_blank">[krb.conf(5)]</a>.\

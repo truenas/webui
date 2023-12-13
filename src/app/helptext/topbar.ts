@@ -1,8 +1,8 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
-import globalHelptext from 'app/helptext/global-helptext';
+import { helptextGlobal } from 'app/helptext/global-helptext';
 
-export default {
+export const helptextTopbar = {
   ha_status: T('HA Status'),
   ha_status_text_enabled: T('HA Enabled'),
   ha_is_enabled: T('HA is enabled'),
@@ -28,8 +28,8 @@ export default {
   },
   updateRunning_dialog: {
     title: T('Update in Progress'),
-    message: globalHelptext.sysUpdateMessage,
-    message_pt2: T(` <b>${globalHelptext.sysUpdateMessagePt2}</b> `),
+    message: helptextGlobal.sysUpdateMessage,
+    message_pt2: `<b>${helptextGlobal.sysUpdateMessagePt2}</b>`,
   },
 
   mat_tooltips: {

@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { WINDOW } from 'app/helpers/window.helper';
-import helptext from 'app/helptext/topbar';
+import { helptextTopbar } from 'app/helptext/topbar';
 
 @Component({
   templateUrl: './truecommand-signup-modal.component.html',
@@ -11,7 +11,7 @@ import helptext from 'app/helptext/topbar';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TruecommandSignupModalComponent {
-  readonly helptext = helptext;
+  readonly helptext = helptextTopbar;
   constructor(
     private dialogRef: MatDialogRef<TruecommandSignupModalComponent>,
     @Inject(WINDOW) private window: Window,

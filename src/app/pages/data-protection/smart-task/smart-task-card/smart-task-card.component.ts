@@ -6,7 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   filter, map, switchMap, tap,
 } from 'rxjs';
-import helptext_smart from 'app/helptext/data-protection/smart/smart';
+import { helptextSmart } from 'app/helptext/data-protection/smart/smart';
 import { SmartTestTaskUi } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
@@ -38,23 +38,23 @@ export class SmartTaskCardComponent implements OnInit {
 
   columns = createTable<SmartTestTaskUi>([
     textColumn({
-      title: helptext_smart.smartlist_column_disks,
+      title: helptextSmart.smartlist_column_disks,
       propertyName: 'disksLabel',
     }),
     textColumn({
-      title: helptext_smart.smartlist_column_type,
+      title: helptextSmart.smartlist_column_type,
       getValue: (row) => row.type.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()),
     }),
     textColumn({
-      title: helptext_smart.smartlist_column_description,
+      title: helptextSmart.smartlist_column_description,
       propertyName: 'desc',
     }),
     textColumn({
-      title: helptext_smart.smartlist_column_frequency,
+      title: helptextSmart.smartlist_column_frequency,
       getValue: (row) => this.taskService.getTaskCronDescription(row.cron_schedule),
     }),
     relativeDateColumn({
-      title: helptext_smart.smartlist_column_next_run,
+      title: helptextSmart.smartlist_column_next_run,
       getValue: (row) => this.taskService.getTaskNextTime(row.cron_schedule) as unknown,
     }),
     actionsColumn({
@@ -138,7 +138,7 @@ export class SmartTaskCardComponent implements OnInit {
       test.cron_schedule = scheduleToCrontab(test.schedule);
 
       if (test.all_disks) {
-        test.disksLabel = [this.translate.instant(helptext_smart.smarttest_all_disks_placeholder)];
+        test.disksLabel = [this.translate.instant(helptextSmart.smarttest_all_disks_placeholder)];
       } else if (test.disks.length) {
         test.disksLabel = [
           test.disks

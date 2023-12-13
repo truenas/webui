@@ -11,7 +11,7 @@ import {
   debounceTime, distinctUntilChanged, filter, map, Observable, of, take, tap,
 } from 'rxjs';
 import { singleArrayToOptions } from 'app/helpers/operators/options.operators';
-import helptext from 'app/helptext/apps/apps';
+import { helptextApps } from 'app/helptext/apps/apps';
 import { AppsFiltersSort } from 'app/interfaces/apps-filters-values.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
@@ -129,7 +129,7 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
   refreshCharts(): void {
     const dialogRef = this.matDialog.open(EntityJobComponent, {
       data: {
-        title: helptext.refreshing,
+        title: helptextApps.refreshing,
       },
     });
     dialogRef.componentInstance.setCall('catalog.sync_all');

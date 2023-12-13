@@ -4,7 +4,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { JobState } from 'app/enums/job-state.enum';
-import helptext from 'app/helptext/directory-service/active-directory';
+import { helptextActiveDirectory } from 'app/helptext/directory-service/active-directory';
 import { LeaveActiveDirectory } from 'app/interfaces/active-directory-config.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -48,7 +48,7 @@ export class LeaveDomainDialogComponent {
           }
 
           this.snackbar.success(
-            this.translate.instant(helptext.ad_leave_domain_dialog.success_msg),
+            this.translate.instant(helptextActiveDirectory.ad_leave_domain_dialog.success_msg),
           );
 
           this.dialogRef.close(true);

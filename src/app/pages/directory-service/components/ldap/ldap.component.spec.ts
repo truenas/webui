@@ -8,7 +8,7 @@ import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
-import helptext from 'app/helptext/directory-service/ldap';
+import { helptextLdap } from 'app/helptext/directory-service/ldap';
 import { KerberosRealm } from 'app/interfaces/kerberos-realm.interface';
 import { LdapConfig, LdapConfigUpdateResult } from 'app/interfaces/ldap-config.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
@@ -138,7 +138,7 @@ describe('LdapComponent', () => {
 
     expect(spectator.inject(SystemGeneralService).refreshDirServicesCache).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
-      helptext.ldap_custactions_clearcache_dialog_message,
+      helptextLdap.ldap_custactions_clearcache_dialog_message,
     );
   });
 

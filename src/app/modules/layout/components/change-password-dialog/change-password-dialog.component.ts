@@ -4,7 +4,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, switchMap, tap } from 'rxjs/operators';
-import helptext from 'app/helptext/topbar';
+import { helptextTopbar } from 'app/helptext/topbar';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { matchOthersFgValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
@@ -42,7 +42,7 @@ export class ChangePasswordDialogComponent {
   private loggedInUser: LoggedInUser;
 
   readonly tooltips = {
-    password: helptext.changePasswordDialog.pw_new_pw_tooltip,
+    password: helptextTopbar.changePasswordDialog.pw_new_pw_tooltip,
   };
 
   constructor(
@@ -73,8 +73,8 @@ export class ChangePasswordDialogComponent {
         }
 
         this.dialogService.warn(
-          helptext.changePasswordDialog.pw_invalid_title,
-          helptext.changePasswordDialog.pw_invalid_title,
+          helptextTopbar.changePasswordDialog.pw_invalid_title,
+          helptextTopbar.changePasswordDialog.pw_invalid_title,
         );
         this.loader.close();
       }),
@@ -83,7 +83,7 @@ export class ChangePasswordDialogComponent {
       untilDestroyed(this),
     ).subscribe(() => {
       this.snackbar.success(
-        this.translate.instant(helptext.changePasswordDialog.pw_updated),
+        this.translate.instant(helptextTopbar.changePasswordDialog.pw_updated),
       );
       this.dialogRef.close();
     });

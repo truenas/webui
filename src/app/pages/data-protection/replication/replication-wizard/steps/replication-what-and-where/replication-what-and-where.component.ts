@@ -19,7 +19,7 @@ import { FromWizardToAdvancedSubmitted } from 'app/enums/from-wizard-to-advanced
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { SnapshotNamingOption } from 'app/enums/snapshot-naming-option.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
-import helptext from 'app/helptext/data-protection/replication/replication-wizard';
+import { helptextReplicationWizard } from 'app/helptext/data-protection/replication/replication-wizard';
 import { CountManualSnapshotsParams } from 'app/interfaces/count-manual-snapshots.interface';
 import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -58,7 +58,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   readonly datasetNodeProvider = this.datasetService.getDatasetNodeProvider();
   remoteSourceNodeProvider: TreeNodeProvider;
   remoteTargetNodeProvider: TreeNodeProvider;
-  readonly helptext = helptext;
+  readonly helptext = helptextReplicationWizard;
   readonly mntPath = mntPath;
   readonly defaultNamingSchema = 'auto-%Y-%m-%d_%H-%M';
   sshCredentials: KeychainSshCredentials[] = [];
@@ -115,8 +115,14 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   ]);
 
   schemaOrRegexOptions$ = of([
-    { label: this.translate.instant(helptext.naming_schema_placeholder), value: SnapshotNamingOption.NamingSchema },
-    { label: this.translate.instant(helptext.name_regex_placeholder), value: SnapshotNamingOption.NameRegex },
+    {
+      label: this.translate.instant(helptextReplicationWizard.naming_schema_placeholder),
+      value: SnapshotNamingOption.NamingSchema,
+    },
+    {
+      label: this.translate.instant(helptextReplicationWizard.name_regex_placeholder),
+      value: SnapshotNamingOption.NameRegex,
+    },
   ]);
 
   encryptionKeyFormatOptions$ = of([
@@ -134,7 +140,8 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
 
   get schemaOrRegexLabel(): string {
     return this.form.value.source_datasets_from === DatasetSource.Local
-      ? helptext.name_schema_or_regex_placeholder_push : helptext.name_schema_or_regex_placeholder_pull;
+      ? helptextReplicationWizard.name_schema_or_regex_placeholder_push
+      : helptextReplicationWizard.name_schema_or_regex_placeholder_pull;
   }
 
   constructor(
@@ -297,7 +304,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
 
         this.dialogService.confirm({
           title: this.translate.instant('Sudo Enabled'),
-          message: helptext.sudo_warning,
+          message: helptextReplicationWizard.sudo_warning,
           hideCheckbox: true,
           buttonText: this.translate.instant('Use Sudo For ZFS Commands'),
         }).pipe(untilDestroyed(this)).subscribe((useSudo) => {
@@ -311,8 +318,14 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     const values = this.form.value;
 
     return [
-      { label: this.translate.instant(helptext.source_datasets_placeholder), value: values.source_datasets.join(',') },
-      { label: this.translate.instant(helptext.target_dataset_placeholder), value: values.target_dataset },
+      {
+        label: this.translate.instant(helptextReplicationWizard.source_datasets_placeholder),
+        value: values.source_datasets.join(','),
+      },
+      {
+        label: this.translate.instant(helptextReplicationWizard.target_dataset_placeholder),
+        value: values.target_dataset,
+      },
     ];
   }
 

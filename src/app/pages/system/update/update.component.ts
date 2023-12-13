@@ -11,7 +11,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { SystemUpdateOperationType, SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { WINDOW } from 'app/helpers/window.helper';
-import globalHelptext from 'app/helptext/global-helptext';
+import { helptextGlobal } from 'app/helptext/global-helptext';
 import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
 import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -70,8 +70,8 @@ export class UpdateComponent implements OnInit {
   singleDescription: string;
   updateType: string;
   isHaLicensed: boolean;
-  sysUpdateMessage = globalHelptext.sysUpdateMessage;
-  sysUpdateMsgPt2 = globalHelptext.sysUpdateMessagePt2;
+  sysUpdateMessage = helptextGlobal.sysUpdateMessage;
+  sysUpdateMsgPt2 = helptextGlobal.sysUpdateMessagePt2;
   updatecheckTooltip = this.translate.instant('Check the update server daily for \
                                   any updates on the chosen train. \
                                   Automatically download an update if \

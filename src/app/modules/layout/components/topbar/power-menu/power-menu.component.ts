@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
-import helptext from 'app/helptext/topbar';
+import { helptextTopbar } from 'app/helptext/topbar';
 import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
 import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
@@ -15,7 +15,7 @@ import { WebsocketConnectionService } from 'app/services/websocket-connection.se
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PowerMenuComponent {
-  readonly tooltips = helptext.mat_tooltips;
+  readonly tooltips = helptextTopbar.mat_tooltips;
 
   constructor(
     private authService: AuthService,
