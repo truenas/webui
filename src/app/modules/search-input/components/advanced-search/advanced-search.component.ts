@@ -39,7 +39,6 @@ export class AdvancedSearchComponent<T> implements OnInit {
   @Output() paramsChange = new EventEmitter<QueryFilters<T>>();
   @Output() switchToBasic = new EventEmitter<void>();
   @Output() runSearch = new EventEmitter<void>();
-  @Output() advancedSearchQueryValidityChanged = new EventEmitter<boolean>();
 
   @ViewChild('inputArea', { static: true }) inputArea: ElementRef<HTMLElement>;
 
@@ -155,7 +154,6 @@ export class AdvancedSearchComponent<T> implements OnInit {
     const parsedQuery = this.queryParser.parseQuery(this.queryInputValue);
 
     this.hasQueryErrors = Boolean(this.queryInputValue.length && parsedQuery.hasErrors);
-    this.advancedSearchQueryValidityChanged.emit(!this.hasQueryErrors);
     this.cdr.markForCheck();
 
     if (this.queryInputValue === '') {
