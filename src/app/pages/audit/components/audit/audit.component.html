@@ -24,6 +24,7 @@
       </button>
     </div>
     <ix-export-button
+      *ngIf="this.dataProvider.totalRows"
       method="audit.export"
       [searchQuery]="searchQuery"
       [sorting]="this.dataProvider.sorting"

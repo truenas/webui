@@ -12,7 +12,9 @@ import {
 import { autocompletion, closeBrackets, startCompletion } from '@codemirror/autocomplete';
 import { linter } from '@codemirror/lint';
 import { EditorState, StateEffect, StateField } from '@codemirror/state';
-import { EditorView, keymap, placeholder } from '@codemirror/view';
+import {
+  EditorView, keymap, placeholder,
+} from '@codemirror/view';
 import { TranslateService } from '@ngx-translate/core';
 import { format } from 'date-fns';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
@@ -146,6 +148,10 @@ export class AdvancedSearchComponent<T> implements OnInit {
     this.setEditorContents('', 0, this.editorView.state.doc.length);
     this.showDatePicker$.next(false);
     this.paramsChange.emit([]);
+  }
+
+  private onEditorBlur(): void {
+    this.showDatePicker$.next(false);
   }
 
   private onInputChanged(): void {
