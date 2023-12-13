@@ -248,7 +248,9 @@ import {
 import { Tunable } from 'app/interfaces/tunable.interface';
 import { GlobalTwoFactorConfig, GlobalTwoFactorConfigUpdate, UserTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { UpsConfig, UpsConfigUpdate } from 'app/interfaces/ups-config.interface';
-import { DeleteUserParams, User, UserUpdate } from 'app/interfaces/user.interface';
+import {
+  DeleteUserParams, SetPasswordParams, User, UserUpdate,
+} from 'app/interfaces/user.interface';
 import {
   VirtualizationDetails,
   VirtualMachine, VirtualMachineUpdate, VmCloneParams, VmDeleteParams, VmDisplayWebUri,
@@ -910,6 +912,7 @@ export interface ApiCallDirectory {
   'user.provisioning_uri': { params: [username: string]; response: string };
   'user.renew_2fa_secret': { params: [string, { interval: number; otp_digits: number }]; response: User };
   'user.twofactor_config': { params: void; response: UserTwoFactorConfig };
+  'user.set_password': { params: [SetPasswordParams]; response: void };
 
   // UPS
   'ups.update': { params: [UpsConfigUpdate]; response: UpsConfig };

@@ -47,7 +47,7 @@ export class RenewTwoFactorDialogComponent {
       switchMap((user) => {
         return this.ws.call(
           'user.renew_2fa_secret',
-          [user.username, { interval: this.form.value.interval, otp_digits: this.form.value.otp_digits }],
+          [user.pw_name, { interval: this.form.value.interval, otp_digits: this.form.value.otp_digits }],
         );
       }),
       untilDestroyed(this),
