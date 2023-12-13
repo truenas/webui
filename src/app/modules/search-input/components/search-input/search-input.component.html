@@ -3,6 +3,7 @@
   [query]="advancedQuery"
   [properties]="properties"
   (paramsChange)="advancedSearchUpdated($event)"
+  (resetFilters)="resetFilters.emit($event)"
   (switchToBasic)="toggleAdvancedMode()"
   (runSearch)="runSearch.emit()"
 ></ix-advanced-search>
@@ -14,5 +15,6 @@
     (queryChange)="basicSearchUpdated($event)"
     (switchToAdvanced)="toggleAdvancedMode()"
     (runSearch)="runSearch.emit()"
+    (resetFilters)="resetFilters.emit($event)"
   ></ix-basic-search>
 </ng-template>

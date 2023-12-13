@@ -12,9 +12,11 @@
         [properties]="searchProperties"
         [query]="searchQuery"
         (runSearch)="onSearch(searchInput.query); updateUrlOptions()"
+        (resetFilters)="onSearch($event); updateUrlOptions()"
       ></ix-search-input2>
       <button
         mat-button
+        type="button"
         color="primary"
         ixTest="search"
         (click)="onSearch(searchInput.query); updateUrlOptions()"

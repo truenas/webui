@@ -243,7 +243,6 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
     this.dataProvider.unsubscribe();
   }
 
-  // TODO: Issue: reset icon will not trigger table update
   onSearch(query: SearchQuery<AuditEntry>): void {
     if (!query) {
       return;
