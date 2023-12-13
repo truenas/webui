@@ -14,7 +14,6 @@ import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-sli
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AuthService } from 'app/services/auth/auth.service';
-import { TwoFactorGuardService } from 'app/services/auth/two-factor-guard.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -44,7 +43,6 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
     private translate: TranslateService,
     private snackbar: SnackbarService,
     private authService: AuthService,
-    private twoFactorGuardService: TwoFactorGuardService,
     @Inject(SLIDE_IN_DATA) protected twoFactorConfig: GlobalTwoFactorConfig,
     private router: Router,
   ) {}
@@ -87,10 +85,8 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
       tap(() => {
         this.isFormLoading = false;
         this.snackbar.success(this.translate.instant('Settings saved'));
-        this.authService.getTwoFactorConfig();
+        this.authService.globalTwoFactorConfigUpdated();
         if (!_.isEqual(this.twoFactorConfig, payload) && payload.enabled) {
-          this.twoFactorGuardService.updateGlobalConfig();
-          this.twoFactorGuardService.updateUserConfig();
           this.router.navigate(['/two-factor-auth']);
         }
         this.cdr.markForCheck();

@@ -1,5 +1,10 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
+export enum AuditService {
+  Smb = 'SMB',
+  Middleware = 'MIDDLEWARE',
+}
+
 export enum AuditEvent {
   Connect = 'CONNECT',
   Disconnect = 'DISCONNECT',
@@ -17,6 +22,11 @@ export enum AuditEvent {
   Authentication = 'AUTHENTICATION',
   MethodCall = 'METHOD_CALL',
 }
+
+export const auditServiceLabels = new Map<AuditService, string>([
+  [AuditService.Smb, T('SMB')],
+  [AuditService.Middleware, T('Middleware')],
+]);
 
 export const auditEventLabels = new Map<AuditEvent, string>([
   [AuditEvent.Connect, T('Connect')],

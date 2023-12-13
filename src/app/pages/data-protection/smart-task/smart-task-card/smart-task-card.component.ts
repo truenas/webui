@@ -71,7 +71,9 @@ export class SmartTaskCardComponent implements OnInit {
         },
       ],
     }),
-  ]);
+  ], {
+    rowTestId: (row) => 'smart-task-' + row.id.toString(),
+  });
 
   constructor(
     private slideInService: IxSlideInService,

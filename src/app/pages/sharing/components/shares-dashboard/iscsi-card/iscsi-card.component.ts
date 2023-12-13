@@ -59,7 +59,9 @@ export class IscsiCardComponent implements OnInit {
         },
       ],
     }),
-  ]);
+  ], {
+    rowTestId: (row) => 'card-iscsi-target-' + row.id.toString(),
+  });
 
   constructor(
     private slideInService: IxSlideInService,

@@ -11,7 +11,7 @@ import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.u
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
-import { SmbShare, SmbSharesec } from 'app/interfaces/smb-share.interface';
+import { SmbPresetType, SmbShare, SmbSharesec } from 'app/interfaces/smb-share.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
@@ -35,7 +35,7 @@ describe('SmbCardComponent', () => {
   const smbShares = [
     {
       id: 3,
-      purpose: 'TIMEMACHINE',
+      purpose: SmbPresetType.MultiUserTimeMachine,
       path: '/mnt/APPS/smb1',
       path_suffix: '',
       home: true,
@@ -60,7 +60,7 @@ describe('SmbCardComponent', () => {
       cluster_volname: '',
       path_local: '/mnt/APPS/smb1',
       locked: false,
-    } as unknown as SmbShare,
+    },
   ] as SmbShare[];
 
   const createComponent = createComponentFactory({

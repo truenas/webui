@@ -12,6 +12,11 @@
       }
     }
   }
+
+  .mat-mdc-dialog-container,
+  .mat-mdc-dialog-content {
+    overflow-y: auto !important;
+  }
 }
 
 .close-feedback-dialog {
@@ -35,4 +40,15 @@
 .file-ticket-link {
   color: var(--primary);
   cursor: pointer;
+}
+
+.feedback-type {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+}
+
+ix-file-input {
+  margin-top: -16px;
+  padding-left: 30px;
 }

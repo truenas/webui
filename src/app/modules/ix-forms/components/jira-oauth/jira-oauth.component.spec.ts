@@ -6,12 +6,12 @@ import { createHostFactory, mockProvider, Spectator } from '@ngneat/spectator/je
 import { MockComponent } from 'ng-mocks';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { WINDOW } from 'app/helpers/window.helper';
-import { OauthJiraMessage } from 'app/interfaces/support.interface';
+import { OauthJiraMessage } from 'app/modules/ix-feedback/interfaces/file-ticket.interface';
 import { IxErrorsComponent } from 'app/modules/ix-forms/components/ix-errors/ix-errors.component';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { JiraOauthComponent } from 'app/modules/ix-forms/components/jira-oauth/jira-oauth.component';
 import { OauthButtonModule } from 'app/modules/oauth-button/oauth-button.module';
-import { JiraOauthComponent } from 'app/pages/system/file-ticket/file-ticket-form/components/jira-oauth/jira-oauth.component';
 
 describe('JiraOauthComponent', () => {
   let spectator: Spectator<JiraOauthComponent>;
@@ -37,8 +37,10 @@ describe('JiraOauthComponent', () => {
         open: jest.fn() as Window['open'],
         addEventListener: jest.fn((_, oAuthCallback: (message: OauthJiraMessage) => void) => {
           oAuthCallback({
-            data: 'token-arrived',
-          } as unknown as OauthJiraMessage);
+            data: {
+              data: 'token-arrived',
+            },
+          } as OauthJiraMessage);
         }) as Window['addEventListener'],
         removeEventListener: jest.fn() as Window['removeEventListener'],
       }),

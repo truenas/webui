@@ -2,9 +2,12 @@ import { Router } from '@angular/router';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { firstValueFrom, of, ReplaySubject } from 'rxjs';
+import { MockAuthService } from 'app/core/testing/classes/mock-auth.service';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import network_interfaces_helptext from 'app/helptext/network/interfaces/interfaces-list';
 import { DialogService } from 'app/services/dialog.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import {
   checkinIndicatorPressed,
@@ -29,6 +32,7 @@ describe('NetworkInterfacesEffects', () => {
       mockProvider(Router, {
         url: '/storage',
       }),
+      mockAuth(),
     ],
   });
 
@@ -44,6 +48,15 @@ describe('NetworkInterfacesEffects', () => {
         hasPendingChanges: true,
         checkinWaiting: 60,
       }));
+    });
+
+    it('does not load NIC checkin status if user does not have NetworkInterfaceWrite role', () => {
+      jest.clearAllMocks();
+
+      const authMock = spectator.inject(MockAuthService);
+      authMock.setRoles([]);
+      actions$.next(adminUiInitialized());
+      expect(spectator.inject(WebSocketService).call).not.toHaveBeenCalled();
     });
   });
 

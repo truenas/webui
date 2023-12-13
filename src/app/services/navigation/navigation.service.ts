@@ -3,10 +3,12 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { BehaviorSubject, of } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { SystemFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { MenuItem, MenuItemType } from 'app/interfaces/menu-item.interface';
+import { AuthService } from 'app/services/auth/auth.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
@@ -75,7 +77,6 @@ export class NavigationService {
         { name: T('Directory Services'), state: 'directory-services' },
         { name: T('Backup Credentials'), state: 'backup-credentials' },
         { name: T('Certificates'), state: 'certificates' },
-        { name: T('2FA'), state: 'two-factor' },
         {
           name: 'KMIP',
           state: 'kmip',
@@ -119,7 +120,11 @@ export class NavigationService {
         { name: T('Boot'), state: 'boot' },
         { name: T('Failover'), state: 'failover', isVisible$: this.hasFailover$ },
         { name: T('Services'), state: 'services' },
-        { name: T('Shell'), state: 'shell' },
+        {
+          name: T('Shell'),
+          state: 'shell',
+          isVisible$: this.authService.user$.pipe(map((user) => user?.privilege?.web_shell)),
+        },
         { name: T('Alert Settings'), state: 'alert-settings' },
         { name: T('Audit'), state: 'audit' },
         { name: T('Enclosure'), state: 'viewenclosure', isVisible$: this.hasEnclosure$ },
@@ -130,6 +135,7 @@ export class NavigationService {
   constructor(
     private store$: Store<AppState>,
     private systemGeneralService: SystemGeneralService,
+    private authService: AuthService,
   ) {
     this.checkForFailoverSupport();
     this.checkForEnclosureSupport();

@@ -65,7 +65,9 @@ export class ScrubTaskCardComponent implements OnInit {
         },
       ],
     }),
-  ]);
+  ], {
+    rowTestId: (row) => 'card-scrub-task-' + row.id.toString(),
+  });
 
   constructor(
     private slideInService: IxSlideInService,

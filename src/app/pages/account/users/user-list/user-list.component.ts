@@ -59,11 +59,13 @@ export class UserListComponent implements OnInit {
     textColumn({
       title: this.translate.instant('Roles'),
       getValue: (row) => row.roles
-        .map((role) => (roleNames.get(role) ? this.translate.instant(roleNames.get(role)) : role))
+        .map((role) => (roleNames.has(role) ? this.translate.instant(roleNames.get(role)) : role))
         .join(', ') || this.translate.instant('N/A'),
       sortable: true,
     }),
-  ]);
+  ], {
+    rowTestId: (row: User) => 'user-' + row.uid.toString(),
+  });
 
   isLoading$ = this.store$.select(selectUserState).pipe(map((state) => state.isLoading));
   emptyType$: Observable<EmptyType> = combineLatest([

@@ -59,7 +59,7 @@ const data = {
         },
       },
     },
-  } as unknown as AuditEntry,
+  } as AuditEntry,
   read: {
     event: AuditEvent.Read,
     event_data: {
@@ -70,7 +70,7 @@ const data = {
         },
       },
     },
-  } as unknown as AuditEntry,
+  } as AuditEntry,
   write: {
     event: AuditEvent.Write,
     event_data: {
@@ -81,7 +81,7 @@ const data = {
         },
       },
     },
-  } as unknown as AuditEntry,
+  } as AuditEntry,
   offloadRead: {
     event: AuditEvent.OffloadRead,
     event_data: {
@@ -92,7 +92,7 @@ const data = {
         },
       },
     },
-  } as unknown as AuditEntry,
+  } as AuditEntry,
   offloadWrite: {
     event: AuditEvent.OffloadWrite,
     event_data: {
@@ -103,7 +103,7 @@ const data = {
         },
       },
     },
-  } as unknown as AuditEntry,
+  } as AuditEntry,
   setAcl: {
     event: AuditEvent.SetAcl,
     event_data: {
@@ -114,7 +114,7 @@ const data = {
         },
       },
     },
-  } as unknown as AuditEntry,
+  } as AuditEntry,
   setAttr: {
     event: AuditEvent.SetAttr,
     event_data: {
@@ -125,7 +125,7 @@ const data = {
         },
       },
     },
-  } as unknown as AuditEntry,
+  } as AuditEntry,
   setQuota: {
     event: AuditEvent.SetQuota,
     event_data: {
@@ -136,7 +136,7 @@ const data = {
         },
       },
     },
-  } as unknown as AuditEntry,
+  } as AuditEntry,
 };
 
 function fakeInstant(key: string, interpolateParams?: Record<string, unknown>): string {

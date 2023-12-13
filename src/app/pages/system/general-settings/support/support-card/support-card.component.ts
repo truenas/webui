@@ -12,12 +12,10 @@ import { filter, tap } from 'rxjs/operators';
 import { GiB } from 'app/constants/bytes.constant';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { FeedbackDialogComponent } from 'app/modules/ix-feedback/feedback-dialog/feedback-dialog.component';
+import { FeedbackType } from 'app/modules/ix-feedback/interfaces/feedback.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { FileTicketFormComponent } from 'app/pages/system/file-ticket/file-ticket-form/file-ticket-form.component';
-import {
-  FileTicketLicensedFormComponent,
-} from 'app/pages/system/file-ticket/file-ticket-licensed-form/file-ticket-licensed-form.component';
 import { LicenseComponent } from 'app/pages/system/general-settings/support/license/license.component';
 import { LicenseInfoInSupport } from 'app/pages/system/general-settings/support/license-info-in-support.interface';
 import { ProactiveComponent } from 'app/pages/system/general-settings/support/proactive/proactive.component';
@@ -144,12 +142,8 @@ export class SupportCardComponent implements OnInit {
     this.slideInService.open(LicenseComponent);
   }
 
-  fileTicket(): void {
-    if (this.hasLicense) {
-      this.slideInService.open(FileTicketLicensedFormComponent, { wide: true });
-    } else {
-      this.slideInService.open(FileTicketFormComponent);
-    }
+  feedbackDialog(): void {
+    this.matDialog.open(FeedbackDialogComponent, { data: FeedbackType.Bug });
   }
 
   openProactive(): void {

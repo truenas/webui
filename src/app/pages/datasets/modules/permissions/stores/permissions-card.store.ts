@@ -39,7 +39,7 @@ export class PermissionsCardStore extends ComponentStore<PermissionsCardState> {
       switchMap((mountpoint) => {
         return forkJoin([
           this.ws.call('filesystem.stat', [mountpoint]),
-          this.ws.call('filesystem.getacl', [mountpoint, false, true]),
+          this.ws.call('filesystem.getacl', [mountpoint, true, true]),
         ]).pipe(
           tap(([stat, acl]) => {
             this.patchState({

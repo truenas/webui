@@ -58,7 +58,9 @@ export class CatalogsComponent implements OnInit {
       propertyName: 'preferred_trains',
       sortable: true,
     }),
-  ]);
+  ], {
+    rowTestId: (row: Catalog) => 'catalog-' + row.id.toString(),
+  });
 
   constructor(
     private matDialog: MatDialog,

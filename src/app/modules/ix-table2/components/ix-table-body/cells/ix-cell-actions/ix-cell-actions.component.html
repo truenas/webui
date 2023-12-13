@@ -6,7 +6,7 @@
       <button
         *ngIf="action.hidden ? !(action.hidden(row) | async) : true"
         mat-icon-button
-        ixTest="row-edit"
+        [ixTest]="[rowTestId(row), action.iconName, 'row-action']"
         [disabled]="action.disabled ? (action.disabled(row) | async) : false"
         (click)="$event.stopPropagation(); action.onClick(row)"
       >

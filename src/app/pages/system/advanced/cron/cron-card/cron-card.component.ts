@@ -85,7 +85,9 @@ export class CronCardComponent implements OnInit {
         },
       ],
     }),
-  ]);
+  ], {
+    rowTestId: (row) => 'card-cron-' + row.id.toString(),
+  });
 
   constructor(
     private slideInService: IxSlideInService,

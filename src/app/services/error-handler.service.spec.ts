@@ -92,7 +92,10 @@ describe('ErrorHandlerService', () => {
 
       expect(console.error).toHaveBeenCalledWith(error);
       expect(spectator.service.parseError).toHaveBeenCalledWith(error);
-      expect(spectator.service.logToSentry).toHaveBeenCalledWith(error);
+      expect(spectator.service.logToSentry).toHaveBeenCalledWith({
+        message: 'Dummy Error',
+        title: 'Error',
+      });
     });
 
     it('logs websocket error', () => {

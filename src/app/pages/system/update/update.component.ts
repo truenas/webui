@@ -475,7 +475,7 @@ export class UpdateComponent implements OnInit {
         this.dialogService.error({
           title: this.translate.instant('Error checking for updates.'),
           message: error.reason,
-          backtrace: error.trace.formatted,
+          backtrace: error.trace?.formatted,
         });
       },
       complete: () => {
