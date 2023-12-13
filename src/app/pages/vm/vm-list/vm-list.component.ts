@@ -13,8 +13,8 @@ import { ServiceStatus } from 'app/enums/service-status.enum';
 import { VmBootloader, VmDeviceType } from 'app/enums/vm.enum';
 import { WebsocketErrorName } from 'app/enums/websocket-error-name.enum';
 import { helptextGlobal } from 'app/helptext/global-helptext';
-import helptext from 'app/helptext/vm/vm-list';
-import wizardHelptext from 'app/helptext/vm/vm-wizard/vm-wizard';
+import { helptextVmList } from 'app/helptext/vm/vm-list';
+import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { ApiCallParams } from 'app/interfaces/api/api-call-directory.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { VirtualizationDetails, VirtualMachine, VirtualMachineUpdate } from 'app/interfaces/virtual-machine.interface';
@@ -93,8 +93,8 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
   } as const;
 
   availableMemory: string;
-  memTitle = wizardHelptext.vm_mem_title;
-  memWarning = wizardHelptext.memory_warning;
+  memTitle = helptextVmWizard.vm_mem_title;
+  memWarning = helptextVmWizard.memory_warning;
 
   constructor(
     private ws: WebSocketService,
@@ -231,10 +231,10 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
 
   onMemoryError(row: VirtualMachineRow): void {
     this.dialogService.confirm({
-      title: helptext.memory_dialog.title,
-      message: helptext.memory_dialog.message,
-      confirmationCheckboxText: helptext.memory_dialog.secondaryCheckboxMessage,
-      buttonText: helptext.memory_dialog.buttonMessage,
+      title: helptextVmList.memory_dialog.title,
+      message: helptextVmList.memory_dialog.message,
+      confirmationCheckboxText: helptextVmList.memory_dialog.secondaryCheckboxMessage,
+      buttonText: helptextVmList.memory_dialog.buttonMessage,
     })
       .pipe(untilDestroyed(this))
       .subscribe((confirmed) => {
@@ -506,7 +506,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
       jobDialogRef.close(false);
       this.dialogService.info(
         this.translate.instant('Finished'),
-        this.translate.instant(helptext.stop_dialog.successMessage, { vmName: vm.name }),
+        this.translate.instant(helptextVmList.stop_dialog.successMessage, { vmName: vm.name }),
         true,
       );
     });

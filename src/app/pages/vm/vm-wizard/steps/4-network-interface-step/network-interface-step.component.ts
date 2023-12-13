@@ -8,7 +8,7 @@ import { of } from 'rxjs';
 import { VmNicType, vmNicTypeLabels } from 'app/enums/vm.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
-import helptext from 'app/helptext/vm/vm-wizard/vm-wizard';
+import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { SummaryProvider, SummarySection } from 'app/modules/common/summary/summary.interface';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -21,12 +21,12 @@ import { WebSocketService } from 'app/services/ws.service';
 export class NetworkInterfaceStepComponent implements OnInit, SummaryProvider {
   form = this.formBuilder.group({
     nic_type: [VmNicType.Virtio, Validators.required],
-    nic_mac: [helptext.NIC_mac_value, Validators.pattern(/\b([0-9A-F]{2}[:-]){5}([0-9A-F]){2}\b/i)],
+    nic_mac: [helptextVmWizard.NIC_mac_value, Validators.pattern(/\b([0-9A-F]{2}[:-]){5}([0-9A-F]){2}\b/i)],
     nic_attach: ['', Validators.required],
     trust_guest_rx_filters: [false],
   });
 
-  readonly helptext = helptext;
+  readonly helptext = helptextVmWizard;
   readonly nicTypeOptions$ = of(mapToOptions(vmNicTypeLabels, this.translate));
   readonly nicAttachOptions$ = this.ws.call('vm.device.nic_attach_choices').pipe(choicesToOptions());
 

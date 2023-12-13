@@ -10,7 +10,7 @@ import {
   catchError,
   filter, switchMap, take, tap,
 } from 'rxjs/operators';
-import { helptext } from 'app/helptext/system/2fa';
+import { helptext2fa } from 'app/helptext/system/2fa';
 import { ErrorReport } from 'app/interfaces/error-report.interface';
 import { UserTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -34,24 +34,24 @@ export class TwoFactorComponent implements OnInit {
 
   get global2FaMsg(): string {
     if (!this.globalTwoFactorEnabled) {
-      return this.translateService.instant(helptext.two_factor.global_disabled);
+      return this.translateService.instant(helptext2fa.two_factor.global_disabled);
     }
     if (this.userTwoFactorAuthConfigured) {
-      return this.translateService.instant(helptext.two_factor.global_enabled_user_enabled);
+      return this.translateService.instant(helptext2fa.two_factor.global_enabled_user_enabled);
     }
-    return this.translateService.instant(helptext.two_factor.global_enabled_user_disabled);
+    return this.translateService.instant(helptext2fa.two_factor.global_enabled_user_disabled);
   }
 
-  readonly helptext = helptext;
+  readonly helptext = helptext2fa;
 
   readonly labels = {
-    secret: helptext.two_factor.secret.placeholder,
-    uri: helptext.two_factor.uri.placeholder,
+    secret: helptext2fa.two_factor.secret.placeholder,
+    uri: helptext2fa.two_factor.uri.placeholder,
   };
 
   readonly tooltips = {
-    secret: helptext.two_factor.secret.tooltip,
-    uri: helptext.two_factor.uri.tooltip,
+    secret: helptext2fa.two_factor.secret.tooltip,
+    uri: helptext2fa.two_factor.uri.tooltip,
   };
 
   get getRenewBtnText(): string {
@@ -106,10 +106,10 @@ export class TwoFactorComponent implements OnInit {
   renewSecret(): void {
     const confirmation$ = this.userTwoFactorAuthConfigured
       ? this.dialogService.confirm({
-        title: helptext.two_factor.renewSecret.title,
-        message: helptext.two_factor.renewSecret.message,
+        title: helptext2fa.two_factor.renewSecret.title,
+        message: helptext2fa.two_factor.renewSecret.message,
         hideCheckbox: true,
-        buttonText: helptext.two_factor.renewSecret.btn,
+        buttonText: helptext2fa.two_factor.renewSecret.btn,
       })
       : of(true);
     confirmation$.pipe(
@@ -131,7 +131,7 @@ export class TwoFactorComponent implements OnInit {
         this.isFormLoading = false;
         this.cdr.markForCheck();
         return this.dialogService.error({
-          title: helptext.two_factor.error,
+          title: helptext2fa.two_factor.error,
           message: error.reason,
           backtrace: error.trace?.formatted,
         } as ErrorReport);
@@ -151,7 +151,7 @@ export class TwoFactorComponent implements OnInit {
       error: (error: WebsocketError) => {
         this.isFormLoading = false;
         this.dialogService.error({
-          title: helptext.two_factor.error,
+          title: helptext2fa.two_factor.error,
           message: error.reason,
           backtrace: error.trace?.formatted,
         });

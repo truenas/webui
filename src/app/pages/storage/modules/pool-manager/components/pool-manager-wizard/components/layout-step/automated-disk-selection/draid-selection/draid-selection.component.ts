@@ -8,7 +8,7 @@ import { merge, of } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
 import { generateOptionsRange } from 'app/helpers/options.helper';
-import helptext from 'app/helptext/storage/volumes/manager/manager';
+import { helptextManager } from 'app/helptext/storage/volumes/manager/manager';
 import { Option, SelectOption } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
@@ -60,7 +60,7 @@ export class DraidSelectionComponent implements OnInit, OnChanges {
    */
   private selectedDisks: UnusedDisk[] = [];
 
-  readonly helptext = helptext;
+  readonly helptext = helptextManager;
 
   constructor(
     private formBuilder: FormBuilder,

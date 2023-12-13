@@ -1,6 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export default {
+export const helptextAcl = {
   dataset_acl_tag_tooltip: T('Access Control Entry (ACE) user or group.\
  Select a specific <i>User</i> or <i>Group</i> for this entry,\
  <i>owner@</i> to apply this entry to the user that owns the dataset,\

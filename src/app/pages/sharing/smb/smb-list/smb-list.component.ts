@@ -5,7 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import { take } from 'rxjs/operators';
 import { shared, helptextSharingSmb } from 'app/helptext/sharing';
-import vol_helptext from 'app/helptext/storage/volumes/volume-list';
+import { helptextVolumes } from 'app/helptext/storage/volumes/volume-list';
 import { SmbShare } from 'app/interfaces/smb-share.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
@@ -155,7 +155,7 @@ export class SmbListComponent implements EntityTableConfig<SmbShare> {
         icon: 'security',
         name: 'edit_acl',
         disabled: optionDisabled,
-        matTooltip: vol_helptext.acl_edit_msg,
+        matTooltip: helptextVolumes.acl_edit_msg,
         label: helptextSharingSmb.action_edit_acl,
         onClick: (row: SmbShare) => {
           this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).pipe(untilDestroyed(this)).subscribe({

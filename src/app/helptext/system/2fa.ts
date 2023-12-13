@@ -1,7 +1,7 @@
 import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export const helptext = {
+export const helptext2fa = {
   two_factor: {
     title: T('User Settings'),
     message: T('Use this form to set up Two-Factor Authentication for this system. \

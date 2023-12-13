@@ -6,8 +6,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { EMPTY } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
-import helptext from 'app/helptext/network/configuration/configuration';
-import helptextIpmi from 'app/helptext/network/ipmi/ipmi';
+import { helptextNetworkConfiguration } from 'app/helptext/network/configuration/configuration';
+import { helptextIpmi } from 'app/helptext/network/ipmi/ipmi';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { ipv4Validator } from 'app/modules/ix-forms/validators/ip-validation';
@@ -42,7 +42,7 @@ export class DefaultGatewayDialogComponent {
     toLoadingState(),
   );
 
-  readonly helptext = helptext;
+  readonly helptext = helptextNetworkConfiguration;
 
   constructor(
     private ws: WebSocketService,

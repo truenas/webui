@@ -5,7 +5,7 @@ import { FormControl, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import helptext from 'app/helptext/storage/disks/disks';
+import { helptextDisks } from 'app/helptext/storage/disks/disks';
 import { Disk } from 'app/interfaces/storage.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -24,7 +24,7 @@ export class ManageDiskSedDialogComponent implements OnInit {
 
   disk: Disk;
 
-  readonly helptext = helptext;
+  readonly helptext = helptextDisks;
 
   constructor(
     private ws: WebSocketService,

@@ -1,7 +1,7 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import helptext from 'app/helptext/storage/volumes/manager/manager';
+import { helptextManager } from 'app/helptext/storage/volumes/manager/manager';
 
-export default {
+export const helptextVolumeStatus = {
   dialogFormFields: {
     disk: {
       placeholder: T('Member disk'),
@@ -24,6 +24,6 @@ export default {
     title: T('Replacing Disk'),
     description: T('Replacing disk...'),
   },
-  exported_pool_warning: helptext.exported_pool_warning,
+  exported_pool_warning: helptextManager.exported_pool_warning,
 
 };

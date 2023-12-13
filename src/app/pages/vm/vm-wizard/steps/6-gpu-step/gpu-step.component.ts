@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
-import helptext from 'app/helptext/vm/vm-wizard/vm-wizard';
+import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { SummaryProvider, SummarySection } from 'app/modules/common/summary/summary.interface';
 import { GpuService } from 'app/services/gpu/gpu.service';
 import { IsolatedGpuValidatorService } from 'app/services/gpu/isolated-gpu-validator.service';
@@ -22,7 +22,7 @@ export class GpuStepComponent implements SummaryProvider {
     }],
   });
 
-  readonly helptext = helptext;
+  readonly helptext = helptextVmWizard;
   readonly gpuOptions$ = this.gpuService.getGpuOptions();
 
   constructor(

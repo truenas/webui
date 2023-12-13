@@ -34,7 +34,7 @@ import { WebSocketService } from 'app/services/ws.service';
   styleUrls: ['./idmap-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class IdmapListComponent implements OnInit {
+export class IdmapListComponent implements OnInit {
   @Input() paginator = true;
   @Input() toolbar = false;
   requiredIdmapDomains = requiredIdmapDomains as string[];

@@ -5,7 +5,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
-import helptext from 'app/helptext/system/cron-form';
+import { helptextCron } from 'app/helptext/system/cron-form';
 import { Cronjob, CronjobUpdate } from 'app/interfaces/cronjob.interface';
 import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -47,13 +47,13 @@ export class CronFormComponent implements OnInit {
   isLoading = false;
 
   readonly tooltips = {
-    description: helptext.cron_description_tooltip,
-    command: helptext.cron_command_tooltip,
-    user: helptext.cron_user_tooltip,
-    schedule: helptext.crontab_tooltip,
-    stdout: helptext.cron_stdout_tooltip,
-    stderr: helptext.cron_stderr_tooltip,
-    enabled: helptext.cron_enabled_tooltip,
+    description: helptextCron.cron_description_tooltip,
+    command: helptextCron.cron_command_tooltip,
+    user: helptextCron.cron_user_tooltip,
+    schedule: helptextCron.crontab_tooltip,
+    stdout: helptextCron.cron_stdout_tooltip,
+    stderr: helptextCron.cron_stderr_tooltip,
+    enabled: helptextCron.cron_enabled_tooltip,
   };
 
   readonly userProvider = new UserComboboxProvider(this.userService);

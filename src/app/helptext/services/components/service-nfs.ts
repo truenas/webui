@@ -1,6 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export default {
+export const helptextServiceNfs = {
   nfs_srv_udp_tooltip: T('Set if NFS clients need to use UDP.'),
 
   nfs_srv_bindip_tooltip: T('Select IP addresses to listen to for NFS requests.\

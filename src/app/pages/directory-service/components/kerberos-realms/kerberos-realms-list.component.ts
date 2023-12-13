@@ -29,7 +29,7 @@ import { WebSocketService } from 'app/services/ws.service';
   styleUrls: ['./kerberos-realms-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class KerberosRealmsListComponent implements OnInit {
+export class KerberosRealmsListComponent implements OnInit {
   @Input() paginator = true;
   @Input() toolbar = false;
   filterString = '';

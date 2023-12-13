@@ -8,7 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { forkJoin } from 'rxjs';
 import { filter, switchMap } from 'rxjs/operators';
 import { AclType } from 'app/enums/acl-type.enum';
-import helptext from 'app/helptext/storage/volumes/datasets/dataset-permissions';
+import { helptextPermissions } from 'app/helptext/storage/volumes/datasets/dataset-permissions';
 import { DatasetPermissionsUpdate } from 'app/interfaces/dataset-permissions.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -55,13 +55,13 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
   readonly groupProvider = new GroupComboboxProvider(this.userService);
 
   readonly tooltips = {
-    user: helptext.dataset_permissions_user_tooltip,
-    applyUser: helptext.apply_user.tooltip,
-    group: helptext.dataset_permissions_group_tooltip,
-    applyGroup: helptext.apply_group.tooltip,
-    mode: helptext.dataset_permissions_mode_tooltip,
-    recursive: helptext.dataset_permissions_recursive_tooltip,
-    traverse: helptext.dataset_permissions_traverse_tooltip,
+    user: helptextPermissions.dataset_permissions_user_tooltip,
+    applyUser: helptextPermissions.apply_user.tooltip,
+    group: helptextPermissions.dataset_permissions_group_tooltip,
+    applyGroup: helptextPermissions.apply_group.tooltip,
+    mode: helptextPermissions.dataset_permissions_mode_tooltip,
+    recursive: helptextPermissions.dataset_permissions_recursive_tooltip,
+    traverse: helptextPermissions.dataset_permissions_traverse_tooltip,
   };
 
   readonly isRecursive$ = this.form.select((values) => values.recursive);

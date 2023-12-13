@@ -11,7 +11,7 @@ import { switchMap, tap } from 'rxjs/operators';
 import { IpmiChassisIdentifyState, IpmiIpAddressSource } from 'app/enums/ipmi.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { ProductType } from 'app/enums/product-type.enum';
-import helptext from 'app/helptext/network/ipmi/ipmi';
+import { helptextIpmi } from 'app/helptext/network/ipmi/ipmi';
 import { Ipmi, IpmiUpdate } from 'app/interfaces/ipmi.interface';
 import { RadioOption } from 'app/interfaces/option.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
@@ -46,7 +46,7 @@ export class IpmiFormComponent implements OnInit {
 
   queryFilter: QueryParams<Ipmi> = null;
 
-  readonly helptext = helptext;
+  readonly helptext = helptextIpmi;
 
   form = this.fb.group({
     remoteController: [null as boolean],
@@ -54,26 +54,26 @@ export class IpmiFormComponent implements OnInit {
     ipaddress: ['', [
       this.validatorsService.withMessage(
         ipv4Validator(),
-        this.translate.instant(helptext.ip_error),
+        this.translate.instant(helptextIpmi.ip_error),
       ),
     ]],
     gateway: ['', [
       this.validatorsService.withMessage(
         ipv4Validator(),
-        this.translate.instant(helptext.ip_error),
+        this.translate.instant(helptextIpmi.ip_error),
       ),
     ]],
     netmask: ['', [
       this.validatorsService.withMessage(
         ipv4Validator(),
-        this.translate.instant(helptext.ip_error),
+        this.translate.instant(helptextIpmi.ip_error),
       ),
     ]],
     vlan: [null as number],
     password: ['', [
       this.validatorsService.withMessage(
         Validators.maxLength(20),
-        this.translate.instant(helptext.password_errors),
+        this.translate.instant(helptextIpmi.password_errors),
       ),
     ]],
   });

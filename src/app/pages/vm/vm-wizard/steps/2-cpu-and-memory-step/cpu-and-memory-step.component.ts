@@ -10,7 +10,7 @@ import { MiB } from 'app/constants/bytes.constant';
 import { VmCpuMode, vmCpuModeLabels } from 'app/enums/vm.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
-import helptext from 'app/helptext/vm/vm-wizard/vm-wizard';
+import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { SummaryProvider, SummarySection } from 'app/modules/common/summary/summary.interface';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
@@ -48,7 +48,7 @@ export class CpuAndMemoryStepComponent implements OnInit, SummaryProvider {
       Validators.required,
       this.validator.withMessage(
         Validators.min(256 * MiB),
-        this.translate.instant(helptext.memory_size_err),
+        this.translate.instant(helptextVmWizard.memory_size_err),
       ),
     ]],
     min_memory: [null as number],
@@ -57,7 +57,7 @@ export class CpuAndMemoryStepComponent implements OnInit, SummaryProvider {
 
   maxVcpus: number;
 
-  readonly helptext = helptext;
+  readonly helptext = helptextVmWizard;
 
   readonly cpuModes$ = of(mapToOptions(vmCpuModeLabels, this.translate));
   readonly cpuModels$ = this.ws.call('vm.cpu_model_choices').pipe(choicesToOptions());

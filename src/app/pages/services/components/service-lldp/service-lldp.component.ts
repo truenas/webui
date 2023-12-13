@@ -6,7 +6,7 @@ import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
-import helptext from 'app/helptext/services/components/service-lldp';
+import { helptextServiceLldp } from 'app/helptext/services/components/service-lldp';
 import { LldpConfigUpdate } from 'app/interfaces/lldp-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
@@ -38,8 +38,8 @@ export class ServiceLldpComponent implements OnInit {
     tooltip: string;
   } = {
     fcName: 'intdesc',
-    label: helptext.lldp_intdesc_placeholder,
-    tooltip: helptext.lldp_intdesc_tooltip,
+    label: helptextServiceLldp.lldp_intdesc_placeholder,
+    tooltip: helptextServiceLldp.lldp_intdesc_tooltip,
   };
 
   country: {
@@ -48,8 +48,8 @@ export class ServiceLldpComponent implements OnInit {
     tooltip: string;
   } = {
     fcName: 'country',
-    label: helptext.lldp_country_placeholder,
-    tooltip: helptext.lldp_country_tooltip,
+    label: helptextServiceLldp.lldp_country_placeholder,
+    tooltip: helptextServiceLldp.lldp_country_tooltip,
   };
 
   location: {
@@ -58,8 +58,8 @@ export class ServiceLldpComponent implements OnInit {
     tooltip: string;
   } = {
     fcName: 'location',
-    label: helptext.lldp_location_placeholder,
-    tooltip: helptext.lldp_location_tooltip,
+    label: helptextServiceLldp.lldp_location_placeholder,
+    tooltip: helptextServiceLldp.lldp_location_tooltip,
   };
 
   locationProvider = new SimpleAsyncComboboxProvider(this.ws.call('lldp.country_choices').pipe(choicesToOptions()));

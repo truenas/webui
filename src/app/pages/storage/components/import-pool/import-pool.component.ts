@@ -12,7 +12,7 @@ import {
   Observable, UnaryFunction, map, of, pipe, switchMap,
 } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
-import helptext from 'app/helptext/storage/volumes/volume-import-wizard';
+import { helptextImport } from 'app/helptext/storage/volumes/volume-import-wizard';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -30,7 +30,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ImportPoolComponent implements OnInit {
-  readonly helptext = helptext;
+  readonly helptext = helptextImport;
   isLoading = false;
   importablePools: {
     name: string;
@@ -43,8 +43,8 @@ export class ImportPoolComponent implements OnInit {
 
   pool = {
     fcName: 'guid',
-    label: helptext.guid_placeholder,
-    tooltip: helptext.guid_tooltip,
+    label: helptextImport.guid_placeholder,
+    tooltip: helptextImport.guid_tooltip,
     options: of<Option[]>([]),
   };
 

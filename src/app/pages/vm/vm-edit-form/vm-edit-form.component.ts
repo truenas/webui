@@ -13,7 +13,7 @@ import {
 } from 'app/enums/vm.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
-import helptext from 'app/helptext/vm/vm-wizard/vm-wizard';
+import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { VirtualMachine, VirtualMachineUpdate } from 'app/interfaces/virtual-machine.interface';
 import { VmPciPassthroughDevice } from 'app/interfaces/vm-device.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -58,7 +58,7 @@ export class VmEditFormComponent implements OnInit {
     cpu_model: [''],
     memory: [null as number, this.validators.withMessage(
       Validators.min(256 * MiB),
-      this.translate.instant(helptext.memory_size_err),
+      this.translate.instant(helptextVmWizard.memory_size_err),
     )],
     min_memory: [null as number],
     nodeset: ['', Validators.pattern(vmNodesetPattern)],
@@ -70,11 +70,11 @@ export class VmEditFormComponent implements OnInit {
   isLoading = false;
   timeOptions$ = of(mapToOptions(vmTimeNames, this.translate));
   bootloaderOptions$ = this.ws.call('vm.bootloader_options').pipe(choicesToOptions());
-  cpuModeOptions$ = of(helptext.cpu_mode.options);
+  cpuModeOptions$ = of(helptextVmWizard.cpu_mode.options);
   cpuModelOptions$ = this.ws.call('vm.cpu_model_choices').pipe(choicesToOptions());
   gpuOptions$ = this.gpuService.getGpuOptions();
 
-  readonly helptext = helptext;
+  readonly helptext = helptextVmWizard;
 
   constructor(
     private formBuilder: FormBuilder,

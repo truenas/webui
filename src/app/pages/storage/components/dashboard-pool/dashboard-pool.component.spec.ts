@@ -9,7 +9,7 @@ import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
-import helptext from 'app/helptext/storage/volumes/volume-list';
+import { helptextVolumes } from 'app/helptext/storage/volumes/volume-list';
 import { Pool } from 'app/interfaces/pool.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DashboardPoolComponent } from 'app/pages/storage/components/dashboard-pool/dashboard-pool.component';
@@ -93,8 +93,8 @@ describe('DashboardPoolComponent', () => {
     await expandButton.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
-      title: helptext.expand_pool_dialog.title,
-      message: helptext.expand_pool_dialog.message,
+      title: helptextVolumes.expand_pool_dialog.title,
+      message: helptextVolumes.expand_pool_dialog.message,
     });
     expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('pool.expand', [pool.id]);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();

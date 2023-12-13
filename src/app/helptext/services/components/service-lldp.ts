@@ -1,6 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export default {
+export const helptextServiceLldp = {
   lldp_intdesc_placeholder: T('Interface Description'),
   lldp_intdesc_tooltip: T('Enables <i>receive</i> mode. Any received peer \
  information is saved in interface descriptions.'),

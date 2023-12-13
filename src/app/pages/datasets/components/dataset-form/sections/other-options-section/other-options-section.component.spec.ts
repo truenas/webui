@@ -20,7 +20,7 @@ import { OnOff } from 'app/enums/on-off.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { inherit } from 'app/enums/with-inherit.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
-import helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
+import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { IxFieldsetHarness } from 'app/modules/ix-forms/components/ix-fieldset/ix-fieldset.harness';
@@ -337,7 +337,7 @@ describe('OtherOptionsSectionComponent', () => {
       });
       expect(spectator.inject(DialogService).warn).toHaveBeenCalledWith(
         'ACL Types & ACL Modes',
-        helptext.acl_type_change_warning,
+        helptextDatasetForm.acl_type_change_warning,
       );
     });
 
@@ -375,7 +375,7 @@ describe('OtherOptionsSectionComponent', () => {
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(
         expect.objectContaining({
-          message: helptext.deduplicationWarning,
+          message: helptextDatasetForm.deduplicationWarning,
         }),
       );
       expect(spectator.query('.dedup-warning')).toExist();
