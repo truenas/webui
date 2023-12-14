@@ -39,8 +39,7 @@ export class AdvancedSearchComponent<T> implements OnInit {
 
   @Output() paramsChange = new EventEmitter<QueryFilters<T>>();
   @Output() switchToBasic = new EventEmitter<void>();
-  @Output() runSearch = new EventEmitter<void>();
-  @Output() resetFilters = new EventEmitter<SearchQuery<T>>();
+  @Output() runSearch = new EventEmitter<SearchQuery<T> | void>();
 
   @ViewChild('inputArea', { static: true }) inputArea: ElementRef<HTMLElement>;
 
@@ -136,18 +135,23 @@ export class AdvancedSearchComponent<T> implements OnInit {
       parent: this.inputArea.nativeElement,
     });
 
-    this.editorView.focus();
+    this.focusInput();
   }
 
   dateSelected(value: string): void {
     this.setEditorContents(`"${format(new Date(value), 'yyyy-MM-dd')}" `, this.editorView.state.doc.length);
-    this.editorView.focus();
+    this.focusInput();
     this.showDatePicker$.next(false);
   }
 
   protected onResetInput(): void {
     this.setEditorContents('', 0, this.editorView.state.doc.length);
-    this.resetFilters.emit({ filters: [], isBasicQuery: false });
+    this.runSearch.emit({ filters: [], isBasicQuery: false });
+    this.focusInput();
+  }
+
+  private focusInput(): void {
+    this.editorView.focus();
   }
 
   private onInputChanged(): void {

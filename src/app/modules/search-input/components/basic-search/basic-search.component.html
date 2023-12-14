@@ -32,6 +32,6 @@
   <ix-icon
     name="mdi-close-circle"
     tabindex="0"
-    (keydown.enter)="resetInput()"
+    (keydown.enter)="$event.preventDefault(); resetInput()"
   ></ix-icon>
 </span>
