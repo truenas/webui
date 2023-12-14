@@ -26,7 +26,6 @@ import { IxButtonGroupHarness } from 'app/modules/ix-forms/components/ix-button-
 import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxFileInputHarness } from 'app/modules/ix-forms/components/ix-file-input/ix-file-input.harness';
 import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
-import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxStarRatingHarness } from 'app/modules/ix-forms/components/ix-star-rating/ix-star-rating.harness';
 import { IxTextareaHarness } from 'app/modules/ix-forms/components/ix-textarea/ix-textarea.harness';
@@ -250,16 +249,12 @@ describe('FeedbackDialogComponent', () => {
       const tokenField = await loader.getHarness(JiraOauthHarness);
       await tokenField.setValue(mockToken);
 
-      const categoryField = await loader.getHarness(IxSelectHarness.with({ label: 'Category' }));
-      await categoryField.setValue('WebUI');
-
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Submit' }));
       await saveButton.click();
 
       expect(ws.job).toHaveBeenCalledWith('support.new_ticket', [{
         attach_debug: false,
         body: 'Testing ticket body',
-        category: '10004',
         title: 'Test subject',
         token: mockToken,
         type: 'BUG',
@@ -281,7 +276,6 @@ describe('FeedbackDialogComponent', () => {
         Email: 'fake@admin.com',
         CC: ['fake@test.com'],
         Phone: '12345678',
-        Type: 'Bug',
         Environment: 'Production',
         Criticality: 'Inquiry',
         Subject: 'Test subject',

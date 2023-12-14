@@ -223,7 +223,6 @@ export class FeedbackDialogComponent implements OnInit {
     const ticketValues = this.ticketForm.getPayload();
 
     let payload: CreateNewTicket = {
-      category: ticketValues.category,
       body: values.message,
       attach_debug: values.attach_debug,
       title: ticketValues.title,
