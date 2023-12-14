@@ -25,8 +25,7 @@ export class SearchInputComponent<T> implements OnChanges {
   @Input() query: SearchQuery<T>;
 
   @Output() queryChange = new EventEmitter<SearchQuery<T>>();
-  @Output() runSearch = new EventEmitter<void>();
-  @Output() resetFilters = new EventEmitter<SearchQuery<T>>();
+  @Output() runSearch = new EventEmitter<SearchQuery<T> | void>();
 
   ngOnChanges(): void {
     this.selectModeFromQuery();

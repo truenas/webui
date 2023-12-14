@@ -11,8 +11,7 @@
         class="search-input"
         [properties]="searchProperties"
         [query]="searchQuery"
-        (runSearch)="onSearch(searchInput.query); updateUrlOptions()"
-        (resetFilters)="onSearch($event); updateUrlOptions()"
+        (runSearch)="onSearch($event || searchInput.query); updateUrlOptions()"
       ></ix-search-input2>
       <button
         mat-button
