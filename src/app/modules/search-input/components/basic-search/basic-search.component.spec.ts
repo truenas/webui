@@ -24,7 +24,7 @@ describe('BasicSearchComponent', () => {
   it('emits (queryChange) when user types in the field', async () => {
     await searchHarness.setValue('test');
 
-    expect(spectator.component.queryChange.emit).toHaveBeenCalledWith('test');
+    expect(spectator.component.queryChange.emit).toHaveBeenCalledWith({ query: 'test' });
   });
 
   it('resets text area when reset icon is pressed', async () => {
@@ -32,7 +32,7 @@ describe('BasicSearchComponent', () => {
     await (await searchHarness.getResetIcon()).click();
 
     expect(await searchHarness.getValue()).toBe('');
-    expect(spectator.component.queryChange.emit).toHaveBeenCalledWith('');
+    expect(spectator.component.queryChange.emit).toHaveBeenCalledWith({ query: '', reset: true });
   });
 
   describe('allowAdvanced', () => {

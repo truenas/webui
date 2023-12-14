@@ -23,7 +23,6 @@ import { QueryParserService } from 'app/modules/search-input/services/query-pars
 import { QueryParsingError } from 'app/modules/search-input/services/query-parser/query-parsing-result.interface';
 import { QueryToApiService } from 'app/modules/search-input/services/query-to-api/query-to-api.service';
 import { SearchProperty } from 'app/modules/search-input/types/search-property.interface';
-import { SearchQuery } from 'app/modules/search-input/types/search-query.interface';
 
 const setDiagnostics = StateEffect.define<unknown[] | null>();
 
@@ -37,9 +36,9 @@ export class AdvancedSearchComponent<T> implements OnInit {
   @Input() query: QueryFilters<T> = [];
   @Input() properties: SearchProperty<T>[] = [];
 
-  @Output() paramsChange = new EventEmitter<QueryFilters<T>>();
+  @Output() paramsChange = new EventEmitter<{ query: QueryFilters<T>; reset?: boolean }>();
   @Output() switchToBasic = new EventEmitter<void>();
-  @Output() runSearch = new EventEmitter<SearchQuery<T> | void>();
+  @Output() runSearch = new EventEmitter<void>();
 
   @ViewChild('inputArea', { static: true }) inputArea: ElementRef<HTMLElement>;
 
@@ -146,8 +145,9 @@ export class AdvancedSearchComponent<T> implements OnInit {
 
   protected onResetInput(): void {
     this.setEditorContents('', 0, this.editorView.state.doc.length);
-    this.runSearch.emit({ filters: [], isBasicQuery: false });
     this.focusInput();
+    this.showDatePicker$.next(false);
+    this.paramsChange.emit({ query: [], reset: true });
   }
 
   private focusInput(): void {
@@ -177,7 +177,7 @@ export class AdvancedSearchComponent<T> implements OnInit {
 
     const filters = this.queryToApi.buildFilters(parsedQuery, this.properties);
 
-    this.paramsChange.emit(filters);
+    this.paramsChange.emit({ query: filters });
   }
 
   private setEditorContents(contents: string, from = 0, to?: number): void {

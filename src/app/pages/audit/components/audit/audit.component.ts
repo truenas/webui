@@ -25,7 +25,6 @@ import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells
 import { TablePagination } from 'app/modules/ix-table2/interfaces/table-pagination.interface';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
-import { AdvancedSearchAutocompleteService } from 'app/modules/search-input/services/advanced-search-autocomplete.service';
 import { SearchProperty } from 'app/modules/search-input/types/search-property.interface';
 import {
   AdvancedSearchQuery,
@@ -97,7 +96,6 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
     private sanitizer: DomSanitizer,
     private activatedRoute: ActivatedRoute,
     private urlOptionsService: UrlOptionsService,
-    private advancedSearchAutocomplete: AdvancedSearchAutocompleteService<never>,
     @Inject(WINDOW) private window: Window,
   ) {}
 
@@ -265,8 +263,6 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
     if (query && !query.isBasicQuery) {
       this.dataProvider.setParams([(query as AdvancedSearchQuery<AuditEntry>).filters]);
     }
-
-    this.advancedSearchAutocomplete.showDatePicker$.next(false);
 
     this.dataProvider.load();
   }

@@ -15,10 +15,10 @@ export class BasicSearchComponent implements AfterViewInit {
   @Input() allowAdvanced = false;
 
   @Output() switchToAdvanced = new EventEmitter<void>();
-  @Output() queryChange = new EventEmitter<string>();
-  @Output() runSearch = new EventEmitter<SearchQuery<never> | void>();
+  @Output() queryChange = new EventEmitter<{ query: string; reset?: boolean }>();
+  @Output() runSearch = new EventEmitter<SearchQuery<void>>();
 
-  @ViewChild('searchControl') searchControl: ElementRef;
+  @ViewChild('searchControl') searchControl: ElementRef<HTMLInputElement>;
 
   ngAfterViewInit(): void {
     this.focusInput();
@@ -26,11 +26,11 @@ export class BasicSearchComponent implements AfterViewInit {
 
   protected resetInput(): void {
     this.query = '';
-    this.runSearch.emit({ query: '', isBasicQuery: true });
+    this.queryChange.emit({ query: this.query, reset: true });
     this.focusInput();
   }
 
   private focusInput(): void {
-    (this.searchControl?.nativeElement as HTMLInputElement)?.focus();
+    this.searchControl?.nativeElement?.focus();
   }
 }
