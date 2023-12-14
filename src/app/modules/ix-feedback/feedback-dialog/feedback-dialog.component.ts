@@ -14,6 +14,7 @@ import {
 } from 'rxjs';
 import { ticketAcceptedFiles } from 'app/enums/file-ticket.enum';
 import { JobState } from 'app/enums/job-state.enum';
+import { ProductType } from 'app/enums/product-type.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
@@ -36,7 +37,7 @@ import { IxFileUploadService } from 'app/services/ix-file-upload.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
-import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
+import { selectIsIxHardware, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 export const maxRatingValue = 5;
 
@@ -64,6 +65,9 @@ export class FeedbackDialogComponent implements OnInit {
   });
   private release: string;
   private hostId: string;
+  private productType: ProductType;
+  private systemProduct: string;
+  private isIxHardware = false;
   private attachments: File[] = [];
   readonly feedbackTypeOptions$: Observable<Option[]> = of(mapToOptions(feedbackTypeOptionMap, this.translate));
   readonly acceptedFiles = ticketAcceptedFiles;
@@ -130,6 +134,8 @@ export class FeedbackDialogComponent implements OnInit {
     this.addFormListeners();
     this.getReleaseVersion();
     this.getHostId();
+    this.getProductType();
+    this.loadIsIxHardware();
 
     if (this.type) {
       this.form.controls.type.setValue(this.type);
@@ -251,6 +257,8 @@ export class FeedbackDialogComponent implements OnInit {
       environment: environment.production ? FeedbackEnvironment.Production : FeedbackEnvironment.Development,
       release: this.release,
       extra: {},
+      product_type: this.productType,
+      product_model: this.systemProduct && this.isIxHardware ? this.systemProduct : 'Generic',
     };
 
     this.feedbackService
@@ -342,12 +350,30 @@ export class FeedbackDialogComponent implements OnInit {
       });
   }
 
-  private getReleaseVersion(): void {
+  private getProductType(): void {
+    this.systemGeneralService.getProductType$.pipe(
+      take(1),
+      untilDestroyed(this),
+    ).subscribe((productType) => {
+      this.productType = productType;
+    });
+  }
+
+  private loadIsIxHardware(): void {
     this.store$
-      .pipe(waitForSystemInfo, take(1), untilDestroyed(this))
-      .subscribe(({ version }) => {
-        this.release = version;
+      .select(selectIsIxHardware)
+      .pipe(untilDestroyed(this))
+      .subscribe((isIxHardware) => {
+        this.isIxHardware = isIxHardware;
+        this.cdr.markForCheck();
       });
+  }
+
+  private getReleaseVersion(): void {
+    this.store$.pipe(waitForSystemInfo, take(1), untilDestroyed(this)).subscribe((systemInfo) => {
+      this.release = systemInfo.version;
+      this.systemProduct = systemInfo.system_product;
+    });
   }
 
   private switchToReview(): void {
