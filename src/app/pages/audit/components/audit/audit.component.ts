@@ -52,7 +52,6 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
   isMobileView = false;
   searchQuery: SearchQuery<AuditEntry>;
   pagination: TablePagination;
-  isValidAdvancedQuery = false;
 
   get basicQueryFilters(): QueryFilters<AuditEntry> {
     return [['event', '~', `(?i)${(this.searchQuery as { query: string })?.query || ''}`]];
