@@ -11,18 +11,17 @@ import { WebSocketService } from 'app/services/ws.service';
 @Injectable({
   providedIn: 'root',
 })
-export class SmbNameValidationService {
+export class SmbValidationService {
+  private noSmbUsersError = this.translate.instant('TrueNAS server must be joined to Active Directory or have at least one local SMB user before creating an SMB share');
+  private nameExistsError = this.translate.instant('Share with this name already exists');
+  private errorText: string;
+
   constructor(
     private ws: WebSocketService,
     private translate: TranslateService,
   ) { }
 
-  private noSmbUsersError = this.translate.instant('TrueNAS server must be joined to Active Directory or have at least one local SMB user before creating an SMB share');
-  private nameExistsError = this.translate.instant('Share with this name already exists');
-
-  private errorText: string;
-
-  validateSmbName = (control: AbstractControl, existingName: string): Observable<ValidationErrors | null> => {
+  validate = (control: AbstractControl, existingName: string): Observable<ValidationErrors | null> => {
     return control.valueChanges.pipe(
       debounceTime(300),
       distinctUntilChanged(),

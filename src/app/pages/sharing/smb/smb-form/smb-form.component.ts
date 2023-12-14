@@ -6,7 +6,7 @@ import {
   OnInit,
 } from '@angular/core';
 import {
-  Validators, FormBuilder, AbstractControl, ValidationErrors,
+  Validators, FormBuilder, AbstractControl,
 } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -43,7 +43,7 @@ import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.s
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { RestartSmbDialogComponent } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
-import { SmbNameValidationService } from 'app/pages/sharing/smb/smb-form/smb-name-validator.service';
+import { SmbValidationService } from 'app/pages/sharing/smb/smb-form/smb-validator.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -155,7 +155,9 @@ export class SmbFormComponent implements OnInit {
     path: ['', Validators.required],
     name: ['', {
       validators: [Validators.required],
-      asyncValidators: [this.smbNameValidator.bind(this)],
+      asyncValidators: [
+        (control: AbstractControl) => this.smbValidationService.validate(control, this.existingSmbShare?.name),
+      ],
     }],
     purpose: [null as SmbPresetType],
     comment: [''],
@@ -202,7 +204,7 @@ export class SmbFormComponent implements OnInit {
     private snackbar: SnackbarService,
     private slideInRef: IxSlideInRef<SmbFormComponent>,
     private store$: Store<ServicesState>,
-    private smbNameValidationService: SmbNameValidationService,
+    private smbValidationService: SmbValidationService,
     @Inject(SLIDE_IN_DATA) private existingSmbShare: SmbShare,
   ) { }
 
@@ -526,9 +528,5 @@ export class SmbFormComponent implements OnInit {
         );
       }),
     );
-  }
-
-  private smbNameValidator(control: AbstractControl): Observable<ValidationErrors | null> {
-    return this.smbNameValidationService.validateSmbName(control, this.existingSmbShare?.name);
   }
 }
