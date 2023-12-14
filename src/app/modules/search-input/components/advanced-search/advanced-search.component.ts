@@ -147,7 +147,6 @@ export class AdvancedSearchComponent<T> implements OnInit {
 
   protected onResetInput(): void {
     this.setEditorContents('', 0, this.editorView.state.doc.length);
-    this.showDatePicker$.next(false);
     this.resetFilters.emit({ filters: [], isBasicQuery: false });
   }
 
