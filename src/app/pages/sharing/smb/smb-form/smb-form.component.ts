@@ -5,11 +5,12 @@ import {
   Inject,
   OnInit,
 } from '@angular/core';
-import { Validators, FormBuilder } from '@angular/forms';
+import {
+  Validators, FormBuilder, AbstractControl,
+} from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Actions } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
@@ -39,10 +40,10 @@ import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-sli
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
-import { forbiddenValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { RestartSmbDialogComponent } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
+import { SmbValidationService } from 'app/pages/sharing/smb/smb-form/smb-validator.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -152,7 +153,12 @@ export class SmbFormComponent implements OnInit {
 
   form = this.formBuilder.group({
     path: ['', Validators.required],
-    name: ['', [Validators.required]],
+    name: ['', {
+      validators: [Validators.required],
+      asyncValidators: [
+        (control: AbstractControl) => this.smbValidationService.validate(control, this.existingSmbShare?.name),
+      ],
+    }],
     purpose: [null as SmbPresetType],
     comment: [''],
     enabled: [true],
@@ -198,12 +204,11 @@ export class SmbFormComponent implements OnInit {
     private snackbar: SnackbarService,
     private slideInRef: IxSlideInRef<SmbFormComponent>,
     private store$: Store<ServicesState>,
-    private actions$: Actions,
+    private smbValidationService: SmbValidationService,
     @Inject(SLIDE_IN_DATA) private existingSmbShare: SmbShare,
   ) { }
 
   ngOnInit(): void {
-    this.getUnusableNamesForShare();
     this.setupPurposeControl();
 
     this.setupAndApplyPurposePresets()
@@ -349,19 +354,6 @@ export class SmbFormComponent implements OnInit {
         return of(null);
       }),
     );
-  }
-
-  getUnusableNamesForShare(): void {
-    this.ws
-      .call('sharing.smb.query', [])
-      .pipe(
-        map((shares) => shares.map((share) => share.name)),
-        untilDestroyed(this),
-      )
-      .subscribe((shareNames) => {
-        this.namesInUse = ['global', ...shareNames];
-        this.form.controls.name.setValidators(forbiddenValues(this.namesInUse));
-      });
   }
 
   showStripAclWarning(): void {
