@@ -6,6 +6,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { LoginResult } from 'app/enums/login-result.enum';
 import { SystemEnvironment } from 'app/enums/system-environment.enum';
 import { IxRadioGroupHarness } from 'app/modules/ix-forms/components/ix-radio-group/ix-radio-group.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -38,19 +39,15 @@ describe('SetAdminPasswordFormComponent', () => {
         handleSuccessfulLogin: jest.fn(),
       }),
       mockProvider(AuthService, {
-        login: jest.fn(() => of(true)),
+        login: jest.fn(() => of(LoginResult.Success)),
       }),
     ],
   });
 
   beforeEach(async () => {
     spectator = createComponent();
-    jest.spyOn(spectator.inject(AuthService), 'login').mockReturnValue(of(null));
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
-
-    const authService = spectator.inject(AuthService);
-    jest.spyOn(authService, 'login').mockReturnValue(of(true));
   });
 
   it('sets new root password when form is submitted', async () => {

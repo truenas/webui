@@ -5,7 +5,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 import network_interfaces_helptext from 'app/helptext/network/interfaces/interfaces-list';
-import helptext from 'app/helptext/topbar';
+import { helptextTopbar } from 'app/helptext/topbar';
 import { DialogService } from 'app/services/dialog.service';
 import { AppState } from 'app/store';
 import { checkinIndicatorPressed } from 'app/store/network-interfaces/network-interfaces.actions';
@@ -23,7 +23,7 @@ import {
 export class CheckinIndicatorComponent implements OnInit {
   protected hasPendingNetworkChanges$ = this.store$.select(selectHasPendingNetworkChanges);
 
-  protected readonly tooltips = helptext.mat_tooltips;
+  protected readonly tooltips = helptextTopbar.mat_tooltips;
 
   private isWaitingForCheckin = false;
 

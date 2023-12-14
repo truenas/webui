@@ -41,6 +41,8 @@ export interface AddReview {
   host_u_id: string;
   message: string;
   extra: object;
+  product_type: ProductType;
+  product_model: string;
 }
 
 export interface ReviewAddedResponse {

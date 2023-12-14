@@ -1,6 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export default {
+export const helptextUsers = {
   user_form_full_name_tooltip: T('Spaces are allowed.'),
   user_form_username_tooltip: T('Usernames can be up to 32 characters long.\
  Usernames cannot begin with a hyphen (<i>-</i>) or contain a space,\

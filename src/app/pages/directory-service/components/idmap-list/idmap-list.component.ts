@@ -9,7 +9,7 @@ import {
 } from 'rxjs';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { IdmapName } from 'app/enums/idmap.enum';
-import helptext from 'app/helptext/directory-service/idmap';
+import { helptextIdmap } from 'app/helptext/directory-service/idmap';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
@@ -147,9 +147,9 @@ export default class IdmapListComponent implements OnInit {
             obj.disableEdit = true;
           }
           row.label = row.name;
-          const index = helptext.idmap.name.options.findIndex((option) => option.value === row.name);
+          const index = helptextIdmap.idmap.name.options.findIndex((option) => option.value === row.name);
           if (index >= 0) {
-            row.label = helptext.idmap.name.options[index].label;
+            row.label = helptextIdmap.idmap.name.options[index].label;
           }
         });
         return transformed;
@@ -185,10 +185,10 @@ export default class IdmapListComponent implements OnInit {
         });
       } else {
         this.dialogService.confirm({
-          title: helptext.idmap.enable_ad_dialog.title,
-          message: helptext.idmap.enable_ad_dialog.message,
+          title: helptextIdmap.idmap.enable_ad_dialog.title,
+          message: helptextIdmap.idmap.enable_ad_dialog.message,
           hideCheckbox: true,
-          buttonText: helptext.idmap.enable_ad_dialog.button,
+          buttonText: helptextIdmap.idmap.enable_ad_dialog.button,
         }).pipe(
           filter(Boolean),
           untilDestroyed(this),

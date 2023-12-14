@@ -1,6 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export default {
+export const helptextRsyncForm = {
   rsync_path_tooltip: T('Browse to the path to be copied. Linux\
  file path limits apply. Other operating systems can have different\
  limits which might affect how they can be used as sources or\

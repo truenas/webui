@@ -9,7 +9,7 @@ import { of } from 'rxjs';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
-import helptext from 'app/helptext/directory-service/active-directory';
+import { helptextActiveDirectory } from 'app/helptext/directory-service/active-directory';
 import { ActiveDirectoryConfig } from 'app/interfaces/active-directory-config.interface';
 import { DirectoryServicesState } from 'app/interfaces/directory-services-state.interface';
 import { KerberosRealm } from 'app/interfaces/kerberos-realm.interface';
@@ -163,7 +163,7 @@ describe('ActiveDirectoryComponent', () => {
 
     expect(spectator.inject(SystemGeneralService).refreshDirServicesCache).toHaveBeenCalled();
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
-      helptext.activedirectory_custactions_clearcache_dialog_message,
+      helptextActiveDirectory.activedirectory_custactions_clearcache_dialog_message,
     );
   });
 

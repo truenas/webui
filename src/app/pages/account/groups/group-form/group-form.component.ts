@@ -9,7 +9,7 @@ import * as _ from 'lodash';
 import { Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { allCommands } from 'app/constants/all-commands.constant';
-import helptext from 'app/helptext/account/groups';
+import { helptextGroups } from 'app/helptext/account/groups';
 import { Group } from 'app/interfaces/group.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
@@ -47,11 +47,11 @@ export class GroupFormComponent implements OnInit {
   });
 
   readonly tooltips = {
-    gid: helptext.bsdgrp_gid_tooltip,
-    name: helptext.bsdgrp_group_tooltip,
-    sudo: helptext.bsdgrp_sudo_tooltip,
-    smb: helptext.smb_tooltip,
-    allowDuplicateGid: helptext.allow_tooltip,
+    gid: helptextGroups.bsdgrp_gid_tooltip,
+    name: helptextGroups.bsdgrp_group_tooltip,
+    sudo: helptextGroups.bsdgrp_sudo_tooltip,
+    smb: helptextGroups.smb_tooltip,
+    allowDuplicateGid: helptextGroups.allow_tooltip,
   };
 
   constructor(

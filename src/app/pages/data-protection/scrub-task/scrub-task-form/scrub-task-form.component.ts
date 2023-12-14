@@ -6,7 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import helptext from 'app/helptext/data-protection/scrub/scrub-form';
+import { helptextScrubForm } from 'app/helptext/data-protection/scrub/scrub-form';
 import { CreatePoolScrubTask, PoolScrubTask } from 'app/interfaces/pool-scrub.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
@@ -51,11 +51,11 @@ export class ScrubTaskFormComponent implements OnInit {
   );
 
   readonly tooltips = {
-    pool: helptext.scrub_volume_tooltip,
-    threshold: helptext.scrub_threshold_tooltip,
-    description: helptext.scrub_description_tooltip,
-    schedule: helptext.scrub_picker_tooltip,
-    enabled: helptext.scrub_enabled_tooltip,
+    pool: helptextScrubForm.scrub_volume_tooltip,
+    threshold: helptextScrubForm.scrub_threshold_tooltip,
+    description: helptextScrubForm.scrub_description_tooltip,
+    schedule: helptextScrubForm.scrub_picker_tooltip,
+    enabled: helptextScrubForm.scrub_enabled_tooltip,
   };
 
   constructor(
