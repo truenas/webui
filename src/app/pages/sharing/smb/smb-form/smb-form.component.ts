@@ -461,10 +461,7 @@ export class SmbFormComponent implements OnInit {
       error: (error: WebsocketError) => {
         if (error?.reason?.includes('[ENOENT]') || error?.reason?.includes('[EXDEV]')) {
           this.dialogService.closeAllDialogs();
-        } else {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
         }
-        this.slideInRef.close();
         this.isLoading = false;
         this.cdr.markForCheck();
         this.formErrorHandler.handleWsFormError(error, this.form);
