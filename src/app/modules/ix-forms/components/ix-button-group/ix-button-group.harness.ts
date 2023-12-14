@@ -46,4 +46,9 @@ export class IxButtonGroupHarness extends ComponentHarness implements IxFormCont
   async isDisabled(): Promise<boolean> {
     return (await this.getButtonToggleGroupHarness()).isDisabled();
   }
+
+  async getOptions(): Promise<string[]> {
+    const buttons = await (await this.getButtonToggleGroupHarness()).getToggles();
+    return Promise.all(buttons.map((button) => button.getText()));
+  }
 }
