@@ -6,6 +6,7 @@ import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import _ from 'lodash';
 import { Observable } from 'rxjs';
 import {
+  debounceTime,
   filter, map, switchMap,
 } from 'rxjs/operators';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
@@ -25,6 +26,7 @@ export class FileTicketFormComponent {
   title = new FormControl<string>('', [Validators.required]);
   category = new FormControl<string>({ value: '', disabled: true }, [Validators.required]);
   categoryOptions$: Observable<Option[]> = this.token.valueChanges.pipe(
+    debounceTime(300),
     switchMap((token) => this.ws.call('support.fetch_categories', [token])),
     map((choices) => Object.entries(choices).map(([label, value]) => ({ label, value }))),
     map((options) => _.sortBy(options, ['label'])),

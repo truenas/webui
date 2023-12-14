@@ -58,3 +58,9 @@ export interface AttachmentAddedResponse {
     id: number;
   };
 }
+
+export interface BlacklistAddedReponse {
+  id: number;
+  version: string;
+  product_types: ProductType[];
+}
