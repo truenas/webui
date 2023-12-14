@@ -1,7 +1,7 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import repwizardhelptext from 'app/helptext/data-protection/replication/replication-wizard';
+import { helptextReplicationWizard } from 'app/helptext/data-protection/replication/replication-wizard';
 
-export default {
+export const helptextReplication = {
   name_tooltip: T('Descriptive name for the replication.'),
   direction_tooltip: T('<i>PUSH</i> sends snapshots to a destination \
  system.<br><br> \
@@ -158,23 +158,23 @@ to determine snapshots creation order.'),
  datasets to have the property <code>readonly=on</code>. <br><b>IGNORE</b> disables checking the\
  <code>readonly</code> property during replication.'),
 
-  encryption_tooltip: repwizardhelptext.encryption_tooltip,
+  encryption_tooltip: helptextReplicationWizard.encryption_tooltip,
 
-  encryption_inherit_tooltip: repwizardhelptext.encryption_inherit_tooltip,
+  encryption_inherit_tooltip: helptextReplicationWizard.encryption_inherit_tooltip,
 
-  encryption_key_format_tooltip: repwizardhelptext.encryption_key_format_tooltip,
+  encryption_key_format_tooltip: helptextReplicationWizard.encryption_key_format_tooltip,
 
-  encryption_key_generate_tooltip: repwizardhelptext.encryption_key_generate_tooltip,
+  encryption_key_generate_tooltip: helptextReplicationWizard.encryption_key_generate_tooltip,
 
-  encryption_key_hex_tooltip: repwizardhelptext.encryption_key_hex_tooltip,
+  encryption_key_hex_tooltip: helptextReplicationWizard.encryption_key_hex_tooltip,
 
-  encryption_key_passphrase_tooltip: repwizardhelptext.encryption_key_passphrase_tooltip,
+  encryption_key_passphrase_tooltip: helptextReplicationWizard.encryption_key_passphrase_tooltip,
 
-  encryption_key_location_truenasdb_tooltip: repwizardhelptext.encryption_key_location_truenasdb_tooltip,
+  encryption_key_location_truenasdb_tooltip: helptextReplicationWizard.encryption_key_location_truenasdb_tooltip,
 
-  encryption_key_location_tooltip: repwizardhelptext.encryption_key_location_tooltip,
+  encryption_key_location_tooltip: helptextReplicationWizard.encryption_key_location_tooltip,
 
-  sudo_tooltip: repwizardhelptext.sudo_tooltip,
+  sudo_tooltip: helptextReplicationWizard.sudo_tooltip,
 
   allow_from_scratch_tooltip: T('If the destination system has \
  snapshots but they do not have any data in common with the source \

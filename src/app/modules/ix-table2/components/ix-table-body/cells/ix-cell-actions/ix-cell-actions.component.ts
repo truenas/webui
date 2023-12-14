@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { Observable } from 'rxjs';
+import { IconActionConfig } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.interface';
 
 @Component({
@@ -9,14 +9,7 @@ import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IxCellActionsComponent<T> extends ColumnComponent<T> {
-  actions: {
-    iconName: string;
-    tooltip?: string;
-    onClick: (row: T) => void;
-    dynamicTooltip?: (row: T) => Observable<string>;
-    hidden?: (row: T) => Observable<boolean>;
-    disabled?: (row: T) => Observable<boolean>;
-  }[];
+  actions: IconActionConfig<T>[];
 }
 
 export function actionsColumn<T>(

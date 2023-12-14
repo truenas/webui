@@ -13,7 +13,7 @@ import { FromWizardToAdvancedSubmitted } from 'app/enums/from-wizard-to-advanced
 import { JobState } from 'app/enums/job-state.enum';
 import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
-import globalHelptext from 'app/helptext/global-helptext';
+import { helptextGlobal } from 'app/helptext/global-helptext';
 import { Job } from 'app/interfaces/job.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { ReplicationTask, ReplicationTaskUi } from 'app/interfaces/replication-task.interface';
@@ -264,7 +264,7 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
         this.matDialog.open(ShowLogsDialogComponent, { data: row.job });
       }
     } else {
-      this.dialogService.warn(globalHelptext.noLogDialog.title, globalHelptext.noLogDialog.message);
+      this.dialogService.warn(helptextGlobal.noLogDialog.title, helptextGlobal.noLogDialog.message);
     }
   }
 

@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
@@ -110,5 +111,17 @@ describe('UserDetailsRowComponent', () => {
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(DeleteUserDialogComponent, {
       data: dummyUser,
     });
+  });
+
+  it('navigates to audit logs page when Audit Logs button is pressed', async () => {
+    const router = spectator.inject(Router);
+    jest.spyOn(router, 'navigateByUrl').mockImplementation(() => Promise.resolve(true));
+
+    const auditButton = await loader.getHarness(MatButtonHarness.with({ text: /Audit Logs/ }));
+    await auditButton.click();
+
+    expect(router.navigateByUrl).toHaveBeenCalledWith(
+      '/system/audit/{"searchQuery":{"isBasicQuery":false,"filters":[["username","=","test-user"]]}}',
+    );
   });
 });

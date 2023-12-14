@@ -22,7 +22,7 @@ import { RetentionPolicy } from 'app/enums/retention-policy.enum';
 import { ScheduleMethod } from 'app/enums/schedule-method.enum';
 import { SnapshotNamingOption } from 'app/enums/snapshot-naming-option.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
-import helptext from 'app/helptext/data-protection/replication/replication-wizard';
+import { helptextReplicationWizard } from 'app/helptext/data-protection/replication/replication-wizard';
 import { CountManualSnapshotsParams, EligibleManualSnapshotsCount, TargetUnmatchedSnapshotsParams } from 'app/interfaces/count-manual-snapshots.interface';
 import { PeriodicSnapshotTask, PeriodicSnapshotTaskCreate } from 'app/interfaces/periodic-snapshot-task.interface';
 import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-task.interface';
@@ -413,8 +413,8 @@ export class ReplicationWizardComponent {
           .some((snapshots: string[]) => snapshots.length > 0);
         if (hasBadSnapshots) {
           return this.dialogService.confirm({
-            title: helptext.clearSnapshotDialog_title,
-            message: helptext.clearSnapshotDialog_content,
+            title: helptextReplicationWizard.clearSnapshotDialog_title,
+            message: helptextReplicationWizard.clearSnapshotDialog_content,
           }).pipe(
             switchMap((dialogResult) => {
               replicationPayload.allow_from_scratch = dialogResult;

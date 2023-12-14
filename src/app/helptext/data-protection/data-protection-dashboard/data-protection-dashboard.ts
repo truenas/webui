@@ -1,6 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export default {
+export const helptextDataProtection = {
   fieldset_cloud_sync_tasks: T('Cloud Sync Tasks'),
   fieldset_smart_tests: T('Periodic S.M.A.R.T. Tests'),
   fieldset_replication_tasks: T('Replication Tasks'),

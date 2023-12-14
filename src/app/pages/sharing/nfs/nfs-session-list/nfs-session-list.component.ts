@@ -35,7 +35,9 @@ export class NfsSessionListComponent implements OnInit {
       title: this.translate.instant('Export'),
       propertyName: 'export',
     }),
-  ]);
+  ], {
+    rowTestId: (row) => 'nfs3-session-' + row.export + '-' + row.ip,
+  });
 
   nfs4Columns = createTable<Nfs4Session['info']>([
     textColumn({
@@ -84,7 +86,9 @@ export class NfsSessionListComponent implements OnInit {
       propertyName: 'callback address',
       hidden: true,
     }),
-  ]);
+  ], {
+    rowTestId: (row) => 'nfs4-session-' + row.address + '-' + row.clientid,
+  });
 
   nfs3ProviderRequest$ = this.ws.call('nfs.get_nfs3_clients', []).pipe(
     tap((sessions) => {

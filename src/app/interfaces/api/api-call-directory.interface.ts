@@ -32,7 +32,7 @@ import { ApiKey, CreateApiKeyRequest, UpdateApiKeyRequest } from 'app/interfaces
 import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { AuditConfig, AuditEntry } from 'app/interfaces/audit.interface';
 import { AuthSession } from 'app/interfaces/auth-session.interface';
-import { CheckUserQuery } from 'app/interfaces/auth.interface';
+import { CheckUserQuery, LoginQuery } from 'app/interfaces/auth.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import {
   Bootenv,
@@ -104,7 +104,9 @@ import {
   CreateDnsAuthenticator,
   DnsAuthenticator, UpdateDnsAuthenticator,
 } from 'app/interfaces/dns-authenticator.interface';
-import { DsUncachedGroup, DsUncachedUser } from 'app/interfaces/ds-cache.interface';
+import {
+  DsUncachedGroup, DsUncachedUser, LoggedInUser,
+} from 'app/interfaces/ds-cache.interface';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import {
   FailoverConfig,
@@ -229,10 +231,6 @@ import { StaticRoute, UpdateStaticRoute } from 'app/interfaces/static-route.inte
 import {
   Disk, ExtraDiskQueryOptions, DiskTemperatures, DiskTemperatureAgg, DiskUpdate, UnusedDisk,
 } from 'app/interfaces/storage.interface';
-import {
-  FetchSupportParams,
-  SupportConfig, SupportConfigUpdate,
-} from 'app/interfaces/support.interface';
 import { SystemGeneralConfig, SystemGeneralConfigUpdate } from 'app/interfaces/system-config.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
@@ -270,6 +268,10 @@ import {
   ZfsRollbackParams,
   ZfsSnapshot,
 } from 'app/interfaces/zfs-snapshot.interface';
+import {
+  FetchSupportParams,
+  SupportConfig, SupportConfigUpdate,
+} from 'app/modules/ix-feedback/interfaces/file-ticket.interface';
 
 /**
  * API definitions for `call` methods.
@@ -326,8 +328,12 @@ export interface ApiCallDirectory {
 
   // Auth
   'auth.check_user': { params: CheckUserQuery; response: boolean };
-  'auth.me': { params: void; response: DsUncachedUser };
+  'auth.me': { params: void; response: LoggedInUser };
   'auth.set_attribute': { params: [key: string, value: unknown]; response: void };
+  'auth.login': { params: LoginQuery; response: boolean };
+  'auth.login_with_token': { params: [token: string]; response: boolean };
+  'auth.logout': { params: void; response: void };
+  'auth.generate_token': { params: void; response: string };
 
   'auth.twofactor.update': { params: [GlobalTwoFactorConfigUpdate]; response: GlobalTwoFactorConfig };
   'auth.twofactor.provisioning_uri': { params: void; response: string };

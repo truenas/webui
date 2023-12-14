@@ -20,11 +20,13 @@ describe('FilesystemService', () => {
             path: '/mnt/parent/directory',
             name: 'directory',
             type: FileType.Directory,
+            is_mountpoint: true,
           },
           {
             path: '/mnt/parent/file.txt',
             name: 'file.txt',
             type: FileType.File,
+            is_mountpoint: false,
           },
         ] as FileRecord[]),
         mockCall('pool.dataset.query', [

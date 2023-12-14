@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { map } from 'rxjs/operators';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
-import helptext from 'app/helptext/topbar';
+import { helptextTopbar } from 'app/helptext/topbar';
 import {
   ResilverProgressDialogComponent,
 } from 'app/modules/common/dialog/resilver-progress/resilver-progress.component';
@@ -23,7 +23,7 @@ export class ResilveringIndicatorComponent {
     }),
   );
 
-  protected readonly tooltips = helptext.mat_tooltips;
+  protected readonly tooltips = helptextTopbar.mat_tooltips;
 
   constructor(
     private matDialog: MatDialog,

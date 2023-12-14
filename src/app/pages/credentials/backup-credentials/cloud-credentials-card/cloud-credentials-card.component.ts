@@ -55,7 +55,9 @@ export class CloudCredentialsCardComponent implements OnInit {
         },
       ],
     }),
-  ]);
+  ], {
+    rowTestId: (row) => 'cloud-cred-' + row.id.toString(),
+  });
 
   constructor(
     private ws: WebSocketService,

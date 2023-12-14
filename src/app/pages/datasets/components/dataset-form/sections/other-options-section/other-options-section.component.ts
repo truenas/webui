@@ -22,19 +22,22 @@ import {
   DatasetAclType,
   DatasetCaseSensitivity,
   datasetCaseSensitivityLabels,
-  DatasetChecksum, DatasetRecordSize,
-  DatasetShareType,
-  datasetShareTypeLabels,
+  DatasetChecksum,
+  DatasetPreset,
+  DatasetRecordSize,
   DatasetSnapdev,
   datasetSnapdevLabels,
   DatasetSnapdir,
   datasetSnapdirLabels,
+  DatasetSync,
+  datasetSyncLabels,
 } from 'app/enums/dataset.enum';
 import { DeduplicationSetting, deduplicationSettingLabels } from 'app/enums/deduplication-setting.enum';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { OnOff, onOffLabels } from 'app/enums/on-off.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { inherit, WithInherit } from 'app/enums/with-inherit.enum';
+import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { choicesToOptions, singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
@@ -63,6 +66,7 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   @Input() parent: Dataset;
   @Input() existing: Dataset;
+  @Input() datasetPreset: DatasetPreset;
   @Input() advancedMode: boolean;
   @Output() advancedModeChange = new EventEmitter<void>();
 
@@ -73,6 +77,10 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   minimumRecommendedRecordsize = '128K' as DatasetRecordSize;
 
   readonly form = this.formBuilder.group({
+    comments: [''],
+    sync: [inherit as WithInherit<DatasetSync>],
+    compression: [inherit as WithInherit<string>],
+    atime: [inherit as WithInherit<OnOff>],
     deduplication: [inherit as WithInherit<DeduplicationSetting>],
     checksum: [inherit as WithInherit<string>],
     readonly: [inherit as WithInherit<OnOff>],
@@ -85,9 +93,11 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     aclmode: [AclMode.Inherit as AclMode],
     casesensitivity: [DatasetCaseSensitivity.Sensitive as DatasetCaseSensitivity],
     special_small_block_size: [inherit as WithInherit<number>],
-    share_type: [DatasetShareType.Generic],
   });
 
+  syncOptions$: Observable<Option[]>;
+  compressionOptions$: Observable<Option[]>;
+  atimeOptions$: Observable<Option[]>;
   deduplicationOptions$: Observable<Option[]>;
   checksumOptions$: Observable<Option[]>;
   readonlyOptions$: Observable<Option[]>;
@@ -102,7 +112,6 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   recordsizeOptions$: Observable<Option[]>;
   caseSensitivityOptions$ = of(mapToOptions(datasetCaseSensitivityLabels, this.translate));
   specialSmallBlockSizeOptions$: Observable<Option[]>;
-  shareTypeOptions$ = of(mapToOptions(datasetShareTypeLabels, this.translate));
   aclTypeOptions$ = of([
     { label: this.translate.instant('Inherit'), value: DatasetAclType.Inherit },
     { label: this.translate.instant('Off'), value: DatasetAclType.Off },
@@ -111,6 +120,9 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   ]);
   aclModeOptions$ = of(mapToOptions(aclModeLabels, this.translate));
 
+  private readonly defaultSyncOptions$ = of(mapToOptions(datasetSyncLabels, this.translate));
+  private readonly defaultCompressionOptions$ = this.ws.call('pool.dataset.compression_choices').pipe(choicesToOptions());
+  private readonly defaultAtimeOptions$ = of(mapToOptions(onOffLabels, this.translate));
   private defaultDeduplicationOptions$ = of(mapToOptions(deduplicationSettingLabels, this.translate));
   private defaultChecksumOptions$ = this.ws.call('pool.dataset.checksum_choices').pipe(
     choicesToOptions(),
@@ -137,6 +149,10 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   ) {}
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
+    if (changes.datasetPreset?.currentValue) {
+      this.setUpDatasetPresetSelect();
+    }
+
     if (!changes.existing?.currentValue && !changes.parent?.currentValue) {
       return;
     }
@@ -148,11 +164,11 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     this.setUpAclTypeWarning();
     this.updateAclMode();
     this.disableCaseSensitivityOnEdit();
+    this.listenForSyncChanges();
   }
 
   ngOnInit(): void {
     this.checkIfDedupIsSupported();
-    this.setUpShareTypeSelect();
 
     this.form.controls.acltype.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       this.updateAclMode();
@@ -176,11 +192,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
       delete payload.snapdir;
     }
 
-    if (this.existing) {
-      delete payload.share_type;
-    }
-
-    return payload;
+    return payload as Partial<DatasetCreate> | Partial<DatasetUpdate>;
   }
 
   private checkIfDedupIsSupported(): void {
@@ -214,6 +226,10 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     }
 
     this.form.patchValue({
+      comments: this.existing.comments?.source === ZfsPropertySource.Local ? this.existing.comments.value : '',
+      sync: getFieldValue(this.existing.sync, this.parent),
+      compression: getFieldValue(this.existing.compression, this.parent),
+      atime: getFieldValue(this.existing.atime, this.parent),
       deduplication: getFieldValue(this.existing.deduplication, this.parent),
       checksum: getFieldValue(this.existing.checksum, this.parent),
       readonly: getFieldValue(this.existing.readonly, this.parent),
@@ -264,6 +280,9 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
 
   private setSelectOptions(): void {
     if (!this.parent) {
+      this.syncOptions$ = this.defaultSyncOptions$;
+      this.compressionOptions$ = this.defaultCompressionOptions$;
+      this.atimeOptions$ = this.defaultAtimeOptions$;
       this.deduplicationOptions$ = this.defaultDeduplicationOptions$;
       this.checksumOptions$ = this.defaultChecksumOptions$;
       this.readonlyOptions$ = this.onOffOptions$;
@@ -275,6 +294,15 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
       return;
     }
 
+    this.syncOptions$ = this.defaultSyncOptions$.pipe(
+      this.datasetFormService.addInheritOption(this.parent.sync.value),
+    );
+    this.compressionOptions$ = this.defaultCompressionOptions$.pipe(
+      this.datasetFormService.addInheritOption(this.parent.compression.value),
+    );
+    this.atimeOptions$ = this.defaultAtimeOptions$.pipe(
+      this.datasetFormService.addInheritOption(this.parent.atime.value),
+    );
     this.deduplicationOptions$ = this.defaultDeduplicationOptions$.pipe(
       this.datasetFormService.addInheritOption(this.parent.deduplication.value),
     );
@@ -300,28 +328,26 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     );
   }
 
-  private setUpShareTypeSelect(): void {
-    this.form.controls.share_type.valueChanges.pipe(untilDestroyed(this)).subscribe((shareType) => {
-      if (!shareType || this.existing) {
-        return;
-      }
+  private setUpDatasetPresetSelect(): void {
+    if (!this.datasetPreset || this.existing) {
+      return;
+    }
 
-      if (shareType === DatasetShareType.Smb) {
-        this.form.patchValue({
-          aclmode: AclMode.Restricted,
-          casesensitivity: DatasetCaseSensitivity.Insensitive,
-        });
-        this.form.controls.aclmode.disable();
-        this.form.controls.casesensitivity.disable();
-      } else {
-        this.form.patchValue({
-          aclmode: AclMode.Passthrough,
-          casesensitivity: DatasetCaseSensitivity.Sensitive,
-        });
-        this.form.controls.aclmode.enable();
-        this.form.controls.casesensitivity.enable();
-      }
-    });
+    if (this.datasetPreset === DatasetPreset.Smb) {
+      this.form.patchValue({
+        aclmode: AclMode.Restricted,
+        casesensitivity: DatasetCaseSensitivity.Insensitive,
+      });
+      this.form.controls.aclmode.disable();
+      this.form.controls.casesensitivity.disable();
+    } else {
+      this.form.patchValue({
+        aclmode: AclMode.Passthrough,
+        casesensitivity: DatasetCaseSensitivity.Sensitive,
+      });
+      this.form.controls.aclmode.enable();
+      this.form.controls.casesensitivity.enable();
+    }
   }
 
   private setUpDedupWarnings(): void {
@@ -403,5 +429,19 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
         }
         this.cdr.markForCheck();
       });
+  }
+
+  private listenForSyncChanges(): void {
+    this.form.controls.sync.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
+      if (value === DatasetSync.Disabled && this.form.controls.sync.dirty) {
+        this.dialogService.confirm({
+          title: this.translate.instant('Warning'),
+          message: helptext.dataset_form_sync_disabled_warning,
+          buttonText: this.translate.instant('Okay'),
+          hideCheckbox: true,
+          hideCancel: true,
+        });
+      }
+    });
   }
 }

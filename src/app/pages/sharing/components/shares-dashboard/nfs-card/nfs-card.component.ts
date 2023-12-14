@@ -65,7 +65,9 @@ export class NfsCardComponent implements OnInit {
         },
       ],
     }),
-  ]);
+  ], {
+    rowTestId: (row) => 'card-nfs-share-' + row.id.toString(),
+  });
 
   constructor(
     private slideInService: IxSlideInService,

@@ -20,6 +20,19 @@
     (blur)="onTouch()"
   />
 </div>
+<div *ngIf="canCreateDataset" class="create-dataset-container">
+  <button
+    mat-button
+    type="button"
+    class="create-dataset-btn"
+    ixTest="create-dataset"
+    [disabled]="createDatasetDisabled"
+    (click)="createDataset()"
+  >
+    <ix-icon name="create_new_folder"></ix-icon>
+    {{ 'Create Dataset' | translate }}
+  </button>
+</div>
 <div class="tree-container" [class.disabled]="isDisabled">
   <tree-root
     #tree

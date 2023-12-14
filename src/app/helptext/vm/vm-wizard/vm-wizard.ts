@@ -1,6 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { VmCpuMode } from 'app/enums/vm.enum';
-import globalHelptext from 'app/helptext/global-helptext';
+import { helptextGlobal } from 'app/helptext/global-helptext';
 
 export default {
   os_tooltip: T('Choose the VM operating system type.'),
@@ -40,7 +40,6 @@ E.g. to assign cores: 0,1,2,5,9,10,11 you can write: 1-2,5,9-11'),
   },
 
   nodeset: {
-    // TODO: If still used, replace back with variable reference
     tooltip: T('Node set allows setting NUMA nodes for multi NUMA processors when CPU set was defined. \
 Better memory locality can be achieved by setting node set based on assigned CPU set. \
 E.g. if cpus 0,1 belong to NUMA node 0 then setting nodeset to 0 will improve memory locality'),
@@ -79,9 +78,9 @@ This will improve CPU cache locality and can reduce possible stutter in GPU pass
   running on top of a Hyper-V compatible hypervisor and use Hyper-V specific features. \
   In some cases enabling these Enlightenments might improve usability and performance on the guest.'),
 
-  global_label: globalHelptext.human_readable.suggestion_label,
+  global_label: helptextGlobal.human_readable.suggestion_label,
   memory_tooltip: T('Allocate RAM for the VM. Minimum value is 256 MiB.'),
-  global_tooltip: globalHelptext.human_readable.suggestion_tooltip,
+  global_tooltip: helptextGlobal.human_readable.suggestion_tooltip,
   memory_size_err: T('Allocate at least 256 MiB.'),
   memory_warning: T('Caution: Allocating too much memory can slow the \
  system or prevent VMs from running.'),

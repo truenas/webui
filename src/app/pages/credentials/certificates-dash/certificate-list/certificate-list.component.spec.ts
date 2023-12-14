@@ -47,9 +47,8 @@ const certificates = Array.from({ length: 10 }).map((_, index) => ({
   until: 'Sun Jun 20 06:55:04 2024',
   serial: 878189416,
   chain: false,
-  expired: false,
   parsed: true,
-})) as unknown as Certificate[];
+})) as Certificate[];
 
 describe('CertificateListComponent', () => {
   let spectator: Spectator<CertificateListComponent>;

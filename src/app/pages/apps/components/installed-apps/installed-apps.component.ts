@@ -22,7 +22,7 @@ import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { WINDOW } from 'app/helpers/window.helper';
-import helptext from 'app/helptext/apps/apps';
+import { helptextApps } from 'app/helptext/apps/apps';
 import { ChartScaleResult, ChartScaleQueryParams } from 'app/interfaces/chart-release-event.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
@@ -75,7 +75,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   entityEmptyConf: EmptyConfig = {
     type: EmptyType.Loading,
     large: false,
-    title: helptext.message.loading,
+    title: helptextApps.message.loading,
   };
 
   get filteredApps(): ChartRelease[] {
@@ -226,7 +226,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     switch (type) {
       case EmptyType.FirstUse:
       case EmptyType.NoPageData:
-        this.entityEmptyConf.title = helptext.message.no_installed;
+        this.entityEmptyConf.title = helptextApps.message.no_installed;
         this.entityEmptyConf.message = this.translate.instant('Applications you install will automatically appear here. Click below and browse available apps to get started.');
         this.entityEmptyConf.button = {
           label: this.translate.instant('Check Available Apps'),
@@ -234,7 +234,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
         };
         break;
       case EmptyType.Errors:
-        this.entityEmptyConf.title = helptext.message.not_running;
+        this.entityEmptyConf.title = helptextApps.message.not_running;
         this.entityEmptyConf.message = undefined;
         this.entityEmptyConf.button = {
           label: this.translate.instant('Open Settings'),
@@ -242,7 +242,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
         };
         break;
       case EmptyType.NoSearchResults:
-        this.entityEmptyConf.title = helptext.message.no_search_result;
+        this.entityEmptyConf.title = helptextApps.message.no_search_result;
         this.entityEmptyConf.message = undefined;
         this.entityEmptyConf.button = {
           label: this.translate.instant('Reset Search'),
@@ -329,13 +329,13 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
   onBulkStart(): void {
     this.stoppedCheckedApps.forEach((app) => this.start(app.name));
-    this.snackbar.success(this.translate.instant(helptext.bulkActions.finished));
+    this.snackbar.success(this.translate.instant(helptextApps.bulkActions.finished));
     this.toggleAppsChecked(false);
   }
 
   onBulkStop(): void {
     this.startedCheckedApps.forEach((app) => this.stop(app.name));
-    this.snackbar.success(this.translate.instant(helptext.bulkActions.finished));
+    this.snackbar.success(this.translate.instant(helptextApps.bulkActions.finished));
     this.toggleAppsChecked(false);
   }
 
@@ -353,12 +353,12 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     const checkedNames = this.checkedAppsNames;
     const name = checkedNames.join(', ');
     this.dialogService.confirm({
-      title: helptext.charts.delete_dialog.title,
+      title: helptextApps.charts.delete_dialog.title,
       message: this.translate.instant('Delete {name}?', { name }),
     }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       const dialogRef = this.matDialog.open(EntityJobComponent, {
         data: {
-          title: helptext.charts.delete_dialog.job,
+          title: helptextApps.charts.delete_dialog.job,
         },
       });
       this.toggleAppsChecked(false);
@@ -379,7 +379,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
 
           if (message !== '') {
             message = '<ul>' + message + '</ul>';
-            this.dialogService.error({ title: helptext.bulkActions.title, message });
+            this.dialogService.error({ title: helptextApps.bulkActions.title, message });
           }
         },
       );

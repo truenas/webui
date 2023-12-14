@@ -8,7 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { startCase, isEmpty } from 'lodash';
 import { filter, map, take } from 'rxjs';
 import { appImagePlaceholder, ixChartApp } from 'app/constants/catalog.constants';
-import helptext from 'app/helptext/apps/apps';
+import { helptextApps } from 'app/helptext/apps/apps';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { ChartUpgradeDialogConfig } from 'app/interfaces/chart-upgrade-dialog-config.interface';
@@ -102,7 +102,7 @@ export class AppInfoCardComponent {
       ).subscribe((version: string) => {
         const jobDialogRef = this.matDialog.open(EntityJobComponent, {
           data: {
-            title: helptext.charts.upgrade_dialog.job,
+            title: helptextApps.charts.upgrade_dialog.job,
           },
         });
         jobDialogRef.componentInstance.setCall('chart.release.upgrade', [name, { item_version: version }]);
@@ -126,7 +126,7 @@ export class AppInfoCardComponent {
     const name = this.app.name;
 
     this.dialogService.confirm({
-      title: helptext.charts.delete_dialog.title,
+      title: helptextApps.charts.delete_dialog.title,
       message: this.translate.instant('Delete {name}?', { name }),
     })
       .pipe(filter(Boolean), untilDestroyed(this))
@@ -136,7 +136,7 @@ export class AppInfoCardComponent {
   executeDelete(name: string): void {
     const dialogRef = this.matDialog.open(EntityJobComponent, {
       data: {
-        title: helptext.charts.delete_dialog.job,
+        title: helptextApps.charts.delete_dialog.job,
       },
     });
     dialogRef.componentInstance.setCall('chart.release.delete', [name, { delete_unused_images: true }]);

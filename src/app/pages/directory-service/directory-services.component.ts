@@ -7,8 +7,8 @@ import {
 } from 'rxjs';
 import { filter, switchMap } from 'rxjs/operators';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
-import helptext from 'app/helptext/directory-service/dashboard';
-import idmapHelptext from 'app/helptext/directory-service/idmap';
+import { helptextDashboard } from 'app/helptext/directory-service/dashboard';
+import { helptextIdmap } from 'app/helptext/directory-service/idmap';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Idmap } from 'app/interfaces/idmap.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -82,54 +82,54 @@ export class DirectoryServicesComponent implements OnInit {
         this.isLdapEnabled = servicesState.ldap !== DirectoryServiceState.Disabled;
 
         this.activeDirectoryDataCard = {
-          title: helptext.activeDirectory.title,
+          title: helptextDashboard.activeDirectory.title,
           items: [
             {
-              label: helptext.activeDirectory.status,
+              label: helptextDashboard.activeDirectory.status,
               value: servicesState.activedirectory,
             },
             {
-              label: helptext.activeDirectory.domainName,
+              label: helptextDashboard.activeDirectory.domainName,
               value: activeDirectoryConfig?.domainname || null,
             },
             {
-              label: helptext.activeDirectory.domainAccountName,
+              label: helptextDashboard.activeDirectory.domainAccountName,
               value: activeDirectoryConfig?.bindname || null,
             },
           ],
           onSettingsPressed: () => this.openActiveDirectoryForm(),
         };
         this.ldapDataCard = {
-          title: helptext.ldap.title,
+          title: helptextDashboard.ldap.title,
           items: [
             {
-              label: helptext.ldap.status,
+              label: helptextDashboard.ldap.status,
               value: servicesState.ldap,
             },
             {
-              label: helptext.ldap.hostname,
+              label: helptextDashboard.ldap.hostname,
               value: ldapConfig ? ldapConfig.hostname.join(',') : null,
             },
             {
-              label: helptext.ldap.baseDN,
+              label: helptextDashboard.ldap.baseDN,
               value: ldapConfig?.basedn || null,
             },
             {
-              label: helptext.ldap.bindDN,
+              label: helptextDashboard.ldap.bindDN,
               value: ldapConfig?.binddn || null,
             },
           ],
           onSettingsPressed: () => this.openLdapForm(),
         };
         this.kerberosSettingsDataCard = {
-          title: helptext.kerberosSettings.title,
+          title: helptextDashboard.kerberosSettings.title,
           items: [
             {
-              label: helptext.kerberosSettings.appdefaults,
+              label: helptextDashboard.kerberosSettings.appdefaults,
               value: kerberosSettings?.appdefaults_aux || null,
             },
             {
-              label: helptext.kerberosSettings.libdefaults,
+              label: helptextDashboard.kerberosSettings.libdefaults,
               value: kerberosSettings?.libdefaults_aux || null,
             },
           ],
@@ -144,9 +144,9 @@ export class DirectoryServicesComponent implements OnInit {
     // Immediately show additional setting, so that user knows what they are.
     expansionPanel.open();
     this.dialog.confirm({
-      title: helptext.advancedEdit.title,
+      title: helptextDashboard.advancedEdit.title,
       hideCheckbox: true,
-      message: helptext.advancedEdit.message,
+      message: helptextDashboard.advancedEdit.message,
     })
       .pipe(filter((confirmed) => !confirmed), untilDestroyed(this))
       .subscribe(() => {
@@ -197,10 +197,10 @@ export class DirectoryServicesComponent implements OnInit {
         }
 
         return this.dialog.confirm({
-          title: idmapHelptext.idmap.enable_ad_dialog.title,
-          message: idmapHelptext.idmap.enable_ad_dialog.message,
+          title: helptextIdmap.idmap.enable_ad_dialog.title,
+          message: helptextIdmap.idmap.enable_ad_dialog.message,
           hideCheckbox: true,
-          buttonText: idmapHelptext.idmap.enable_ad_dialog.button,
+          buttonText: helptextIdmap.idmap.enable_ad_dialog.button,
         })
           .pipe(
             filter((confirmed) => confirmed),

@@ -4,7 +4,7 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import helptext from 'app/helptext/api-keys';
+import { helptextApiKeys } from 'app/helptext/api-keys';
 import { ApiKey, UpdateApiKeyRequest } from 'app/interfaces/api-key.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -27,8 +27,8 @@ export class ApiKeyFormDialogComponent implements OnInit {
   });
 
   readonly tooltips = {
-    name: helptext.name.tooltip,
-    reset: helptext.reset.tooltip,
+    name: helptextApiKeys.name.tooltip,
+    reset: helptextApiKeys.reset.tooltip,
   };
 
   constructor(

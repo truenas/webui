@@ -7,6 +7,7 @@ import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.util
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
+import { LoginResult } from 'app/enums/login-result.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { FailoverDisabledReasonEvent } from 'app/interfaces/failover-disabled-reasons.interface';
@@ -72,7 +73,7 @@ describe('SigninStore', () => {
     Object.defineProperty(authService, 'user$', {
       get: () => of({ twofactor_auth_configured: false }),
     });
-    jest.spyOn(authService, 'loginWithToken').mockReturnValue(of(true));
+    jest.spyOn(authService, 'loginWithToken').mockReturnValue(of(LoginResult.Success));
   });
 
   describe('selectors', () => {
@@ -111,7 +112,8 @@ describe('SigninStore', () => {
   describe('handleSuccessfulLogin', () => {
     it.skip('redirects user', () => {
       jest.spyOn(spectator.inject(WebSocketService), 'call').mockReturnValueOnce(of({ enabled: false }));
-      jest.spyOn(spectator.inject(AuthService), 'user$', 'get').mockReturnValueOnce(of({ twofactor_auth_configured: false }));
+      // jest.spyOn(spectator.inject(AuthService), 'user$', 'get')
+      //   .mockReturnValueOnce(of({ twofactor_auth_configured: false }));
       spectator.service.handleSuccessfulLogin();
       expect(spectator.inject(Router).navigateByUrl).toHaveBeenCalledWith('/dashboard');
     });
@@ -177,7 +179,7 @@ describe('SigninStore', () => {
           return of();
         }
 
-        return of({ fields: FailoverStatus.Importing } as unknown as ApiEvent<FailoverStatus>);
+        return of({ fields: FailoverStatus.Importing } as ApiEvent<FailoverStatus>);
       });
 
       spectator.service.init();
@@ -205,7 +207,7 @@ describe('SigninStore', () => {
               fields: {
                 disabled_reasons: [FailoverDisabledReason.DisagreeVip],
               },
-            } as unknown as ApiEvent<FailoverDisabledReasonEvent>,
+            } as ApiEvent<FailoverDisabledReasonEvent>,
           });
         });
 

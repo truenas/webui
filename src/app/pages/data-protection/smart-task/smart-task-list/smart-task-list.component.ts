@@ -3,7 +3,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs';
-import helptext from 'app/helptext/data-protection/smart/smart';
+import { helptextSmart } from 'app/helptext/data-protection/smart/smart';
 import { SmartTestTaskUi } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
@@ -32,19 +32,19 @@ export class SmartTaskListComponent implements EntityTableConfig {
 
   columns = [
     {
-      name: helptext.smartlist_column_disks,
+      name: helptextSmart.smartlist_column_disks,
       prop: 'disksLabel',
       always_display: true,
     },
     {
-      name: helptext.smartlist_column_type,
+      name: helptextSmart.smartlist_column_type,
       prop: 'type',
       always_display: true,
     },
-    { name: helptext.smartlist_column_description, prop: 'desc' },
-    { name: helptext.smartlist_column_frequency, prop: 'frequency', enableMatTooltip: true },
+    { name: helptextSmart.smartlist_column_description, prop: 'desc' },
+    { name: helptextSmart.smartlist_column_frequency, prop: 'frequency', enableMatTooltip: true },
     {
-      name: helptext.smartlist_column_next_run,
+      name: helptextSmart.smartlist_column_next_run,
       prop: 'next_run',
     },
   ];
@@ -82,7 +82,7 @@ export class SmartTaskListComponent implements EntityTableConfig {
       test.next_run = this.taskService.getTaskNextRun(test.cron_schedule);
 
       if (test.all_disks) {
-        test.disksLabel = [this.translate.instant(helptext.smarttest_all_disks_placeholder)];
+        test.disksLabel = [this.translate.instant(helptextSmart.smarttest_all_disks_placeholder)];
       } else if (test.disks.length) {
         const readableDisks = test.disks.map((disk) => {
           return this.listDisks.find((item) => item.identifier === disk).devname;

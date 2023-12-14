@@ -47,7 +47,6 @@ import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
-import { selectIsSystemHaCapable } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
 @Component({
@@ -58,8 +57,6 @@ import { selectIsSystemHaCapable } from 'app/store/system-info/system-info.selec
 export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('ixTreeHeader', { static: false }) ixTreeHeader: ElementRef<HTMLElement>;
   @ViewChild('ixTree', { static: false }) ixTree: ElementRef<HTMLElement>;
-
-  isSystemHaCapable$ = this.store$.select(selectIsSystemHaCapable);
 
   isLoading$ = this.datasetStore.isLoading$;
   selectedDataset$ = this.datasetStore.selectedDataset$;

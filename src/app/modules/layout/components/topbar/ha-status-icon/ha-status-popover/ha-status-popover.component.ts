@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
-import helptext from 'app/helptext/topbar';
+import { helptextTopbar } from 'app/helptext/topbar';
 
 @Component({
   selector: 'ix-ha-status-popover',
@@ -10,7 +10,7 @@ import helptext from 'app/helptext/topbar';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HaStatusPopoverComponent {
-  protected readonly disabledReasonExplanations = helptext.ha_disabled_reasons;
+  protected readonly disabledReasonExplanations = helptextTopbar.ha_disabled_reasons;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public failoverDisabledReasons: FailoverDisabledReason[],

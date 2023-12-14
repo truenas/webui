@@ -1,17 +1,27 @@
+import { TranslateService } from '@ngx-translate/core';
+import { of } from 'rxjs';
+import { AuditService } from 'app/enums/audit-event.enum';
+import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import {
   ConnectorType,
   QueryParsingResult,
 } from 'app/modules/search-input/services/query-parser/query-parsing-result.interface';
 import { QueryToApiService } from 'app/modules/search-input/services/query-to-api/query-to-api.service';
+import { dateProperty, memoryProperty, textProperty } from 'app/modules/search-input/utils/search-properties.utils';
 
 interface User {
   username: string;
   age: number;
   city: string;
+  message_timestamp: string;
+  memory_size: string;
+  service: AuditService;
 }
 
 describe('QueryToApiService', () => {
-  const service = new QueryToApiService<User>();
+  const service = new QueryToApiService<User>({
+    instant: (key: string) => key,
+  } as TranslateService);
 
   it('converts an array of parsed conditions to an API query - condition in root', () => {
     const condition = service.buildFilters({
@@ -164,5 +174,62 @@ describe('QueryToApiService', () => {
       ],
       ['city', '=', 'London'],
     ]);
+  });
+
+  it('parses memory type and date type', () => {
+    const condition = service.buildFilters({
+      tree: {
+        left: {
+          comparator: '>',
+          value: '2023-11-15',
+          property: 'Timestamp',
+        },
+        connector: 'AND',
+        right: {
+          comparator: '<',
+          value: '55 mb',
+          property: 'Memory size',
+        },
+      },
+    } as QueryParsingResult, [
+      dateProperty(
+        'message_timestamp',
+        'Timestamp',
+      ),
+      memoryProperty(
+        'memory_size',
+        'Memory size',
+        { memorySizeParsing() { return 57671680; } } as unknown as IxFormatterService,
+      ),
+    ]);
+
+    expect(condition).toEqual([
+      ['message_timestamp', '>', 1699999200000], ['memory_size', '<', 57671680],
+    ]);
+  });
+
+  it('parses text type with enum', () => {
+    const condition = service.buildFilters({
+      tree: {
+        comparator: 'in',
+        value: [
+          'Проміжне програмне забезпечення',
+          'Ес-ем-бе',
+        ],
+        property: 'Сервіс',
+      },
+    } as QueryParsingResult, [
+      textProperty(
+        'service',
+        'Сервіс',
+        of([]),
+        new Map<AuditService, string>([
+          [AuditService.Middleware, 'Проміжне програмне забезпечення'],
+          [AuditService.Smb, 'Ес-ем-бе'],
+        ]),
+      ),
+    ]);
+
+    expect(condition).toEqual([['service', 'in', ['MIDDLEWARE', 'SMB']]]);
   });
 });

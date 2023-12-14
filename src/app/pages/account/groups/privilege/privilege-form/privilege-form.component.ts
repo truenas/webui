@@ -7,6 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, map } from 'rxjs';
 import { Role, roleNames } from 'app/enums/role.enum';
+import { helptextPriviledge } from 'app/helptext/account/priviledge';
 import { Group } from 'app/interfaces/group.interface';
 import { Privilege, PrivilegeUpdate } from 'app/interfaces/privilege.interface';
 import { ChipsProvider } from 'app/modules/ix-forms/components/ix-chips/chips-provider';
@@ -21,17 +22,19 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PrivilegeFormComponent implements OnInit {
-  isLoading = false;
-  localGroups: Group[] = [];
-  dsGroups: Group[] = [];
+  protected isLoading = false;
+  protected localGroups: Group[] = [];
+  protected dsGroups: Group[] = [];
 
-  form = this.formBuilder.group({
+  protected form = this.formBuilder.group({
     name: ['', [Validators.required]],
     local_groups: [[] as string[]],
     ds_groups: [[] as string[]],
     web_shell: [false],
     roles: [[] as Role[]],
   });
+
+  protected readonly helptext = helptextPriviledge;
 
   get isNew(): boolean {
     return !this.existingPrivilege;
@@ -44,9 +47,21 @@ export class PrivilegeFormComponent implements OnInit {
   }
 
   readonly rolesOptions$ = this.ws.call('privilege.roles').pipe(
-    map((roles) => roles.map((role) => ({
-      label: this.translate.instant(roleNames.get(role.name)), value: role.name,
-    }))),
+    map((roles) => {
+      const sortedRoles = roles.sort((a, b) => {
+        // Show compound roles first, then sort by name.
+        if (a.builtin === b.builtin) {
+          return a.name.localeCompare(b.name);
+        }
+
+        return a.builtin ? 1 : -1;
+      });
+
+      return sortedRoles.map((role) => ({
+        label: roleNames.has(role.name) ? this.translate.instant(roleNames.get(role.name)) : role.name,
+        value: role.name,
+      }));
+    }),
   );
 
   readonly localGroupsProvider: ChipsProvider = (query: string) => {

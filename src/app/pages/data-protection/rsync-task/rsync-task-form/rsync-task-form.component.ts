@@ -11,7 +11,7 @@ import { filter, map, switchMap } from 'rxjs/operators';
 import { Direction } from 'app/enums/direction.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { RsyncMode, RsyncSshConnectMode } from 'app/enums/rsync-mode.enum';
-import helptext from 'app/helptext/data-protection/resync/resync-form';
+import { helptextRsyncForm } from 'app/helptext/data-protection/rsync/rsync-form';
 import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { RsyncTask, RsyncTaskUpdate } from 'app/interfaces/rsync-task.interface';
@@ -84,7 +84,7 @@ export class RsyncTaskFormComponent implements OnInit {
 
   isLoading = false;
 
-  readonly helptext = helptext;
+  readonly helptext = helptextRsyncForm;
 
   readonly directions$ = of([
     { label: this.translate.instant('Push'), value: Direction.Push },

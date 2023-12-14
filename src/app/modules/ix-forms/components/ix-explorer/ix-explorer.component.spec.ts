@@ -1,14 +1,20 @@
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { EventEmitter } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatDialog } from '@angular/material/dialog';
 import { TreeComponent as BaseTreeComponent, TreeModel } from '@bugsplat/angular-tree-component';
 import { IDTypeDictionary } from '@bugsplat/angular-tree-component/lib/defs/api';
 import { FormControl } from '@ngneat/reactive-forms';
-import { createHostFactory, Spectator } from '@ngneat/spectator/jest';
+import { createHostFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent, MockInstance } from 'ng-mocks';
 import { of } from 'rxjs';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
+import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
 import { IxErrorsComponent } from 'app/modules/ix-forms/components/ix-errors/ix-errors.component';
+import { CreateDatasetDialogComponent } from 'app/modules/ix-forms/components/ix-explorer/create-dataset-dialog/create-dataset-dialog.component';
 import { IxExplorerComponent } from 'app/modules/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxLabelComponent } from 'app/modules/ix-forms/components/ix-label/ix-label.component';
 
@@ -23,6 +29,9 @@ class TreeComponent extends BaseTreeComponent {
 describe('IxExplorerComponent', () => {
   const mockTreeMock = {
     selectedLeafNodeIds: {},
+    get selectedLeafNodes(): unknown[] {
+      return [];
+    },
     setState(newState: { selectedLeafNodeIds: IDTypeDictionary }) {
       this.selectedLeafNodeIds = newState.selectedLeafNodeIds;
     },
@@ -31,6 +40,7 @@ describe('IxExplorerComponent', () => {
         selectedLeafNodeIds: this.selectedLeafNodeIds,
       };
     },
+    update() {},
   } as TreeModel;
   jest.spyOn(mockTreeMock, 'setState');
   jest.spyOn(mockTreeMock, 'getState');
@@ -39,6 +49,7 @@ describe('IxExplorerComponent', () => {
   const fakeNodeProvider = jest.fn(() => of([]));
 
   let spectator: Spectator<IxExplorerComponent>;
+  let loader: HarnessLoader;
   const formControl = new FormControl<string | string[]>();
   const createHost = createHostFactory({
     component: IxExplorerComponent,
@@ -51,6 +62,13 @@ describe('IxExplorerComponent', () => {
       MockComponent(IxLabelComponent),
       MockComponent(TreeComponent),
     ],
+    providers: [
+      mockProvider(MatDialog, {
+        open: jest.fn(() => ({
+          afterClosed: () => of({ name: 'new_dataset' } as Dataset),
+        })),
+      }),
+    ],
   });
 
   beforeEach(() => {
@@ -60,6 +78,7 @@ describe('IxExplorerComponent', () => {
         nodeProvider: fakeNodeProvider,
       },
     });
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     (mockTreeMock.setState as unknown as jest.SpiedFunction<TreeModel['setState']>).mockClear();
     (mockTreeMock.getState as unknown as jest.SpiedFunction<TreeModel['getState']>).mockClear();
   });
@@ -212,6 +231,89 @@ describe('IxExplorerComponent', () => {
         selectedLeafNodeIds: { '/mnt/new2': true },
       });
       expect(formControl.value).toEqual(['/mnt/new2']);
+    });
+  });
+
+  describe('creating new dataset', () => {
+    it('hides Create Dataset buttton when canCreateDataset is false', async () => {
+      spectator.setInput('canCreateDataset', false);
+
+      const createDatasetButton = await loader.getHarnessOrNull(MatButtonHarness.with({ text: 'Create Dataset' }));
+      expect(createDatasetButton).toBeNull();
+    });
+
+    it('disables Create Dataset button when node is unselected', async () => {
+      spectator.setInput('canCreateDataset', true);
+      formControl.setValue([]);
+
+      spectator.component.tree.treeModel = {
+        ...mockTreeMock,
+        selectedLeafNodes: [{ data: { isMountpoint: true } }],
+      } as TreeModel;
+
+      const createDatasetButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Dataset' }));
+      expect(await createDatasetButton.isDisabled()).toBeTruthy();
+    });
+
+    it('disables Create Dataset button when node is not mountpoint', async () => {
+      spectator.setInput('canCreateDataset', true);
+      formControl.setValue('/mnt/place');
+
+      spectator.component.tree.treeModel = {
+        ...mockTreeMock,
+        selectedLeafNodes: [{ data: { isMountpoint: false } }],
+      } as TreeModel;
+
+      const createDatasetButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Dataset' }));
+      expect(await createDatasetButton.isDisabled()).toBeTruthy();
+    });
+
+    it('disables Create Dataset button when form control is disabled', async () => {
+      spectator.setInput('canCreateDataset', true);
+      spectator.setInput('createDatasetProps', {});
+      formControl.setValue('/mnt/place');
+
+      spectator.component.tree.treeModel = {
+        ...mockTreeMock,
+        selectedLeafNodes: [{ data: { isMountpoint: true } }],
+      } as TreeModel;
+
+      formControl.disable();
+      spectator.detectComponentChanges();
+
+      const createDatasetButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Dataset' }));
+      expect(await createDatasetButton.isDisabled()).toBeTruthy();
+    });
+
+    it('opens a creating dataset dialog when Create Dataset button is pressed', async () => {
+      const createDatasetProps: Omit<DatasetCreate, 'name'> = { encryption: true };
+
+      spectator.setInput('canCreateDataset', true);
+      spectator.setInput('createDatasetProps', createDatasetProps);
+      formControl.setValue('/mnt/place');
+      formControl.enable();
+
+      spectator.component.tree.treeModel = {
+        ...mockTreeMock,
+        selectedLeafNodes: [{
+          data: { isMountpoint: true },
+          expand: jest.fn(),
+        }],
+      } as TreeModel;
+
+      const createDatasetButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create Dataset' }));
+      expect(await createDatasetButton.isDisabled()).toBeFalsy();
+
+      await createDatasetButton.click();
+
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(CreateDatasetDialogComponent, {
+        data: {
+          dataset: createDatasetProps,
+          parentId: 'place',
+        },
+      });
+
+      expect(formControl.value).toBe('/mnt/new_dataset');
     });
   });
 

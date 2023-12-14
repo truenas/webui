@@ -65,7 +65,7 @@ describe('RsyncTaskCardComponent', () => {
       state: {
         state: 'FAILED',
       },
-    } as unknown as RsyncTaskUi,
+    } as RsyncTaskUi,
   ];
 
   const createComponent = createComponentFactory({

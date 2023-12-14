@@ -18,11 +18,14 @@ import {
   timer,
 } from 'rxjs';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
+import { LoginResult } from 'app/enums/login-result.enum';
+import { Role } from 'app/enums/role.enum';
+import { ApiCallDirectory, ApiCallMethod } from 'app/interfaces/api/api-call-directory.interface';
 import { IncomingWebsocketMessage, ResultMessage } from 'app/interfaces/api-message.interface';
-import { DsUncachedUser, LoggedInUser } from 'app/interfaces/ds-cache.interface';
-import { GlobalTwoFactorConfig, UserTwoFactorConfig, UserTwoFactorConfigUpdate } from 'app/interfaces/two-factor-config.interface';
-import { User } from 'app/interfaces/user.interface';
+import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
+import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
+import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 
@@ -32,7 +35,7 @@ import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 })
 export class AuthService {
   @LocalStorage() private token: string;
-  private loggedInUser$ = new BehaviorSubject<LoggedInUser>(null);
+  protected loggedInUser$ = new BehaviorSubject<LoggedInUser>(null);
 
   /**
    * This is 10 seconds less than 300 seconds which is the default life
@@ -61,9 +64,17 @@ export class AuthService {
 
   readonly user$ = this.loggedInUser$.asObservable();
 
+  readonly userTwoFactorConfig$ = this.loggedInUser$.pipe(
+    filter(Boolean),
+    map((user) => user.two_factor_config),
+  );
+
+  private cachedGlobalTwoFactorConfig: GlobalTwoFactorConfig;
+
   constructor(
     private wsManager: WebsocketConnectionService,
     private store$: Store<AppState>,
+    private ws: WebSocketService,
   ) {
     this.setupAuthenticationUpdate();
 
@@ -72,92 +83,20 @@ export class AuthService {
     this.setupTokenUpdate();
   }
 
-  getUserTwoFactorConfig(): Observable<UserTwoFactorConfig> {
-    return this.loggedInUser$.pipe(
-      filter(Boolean),
-      switchMap((user) => {
-        const uuid = UUID.UUID();
-        const payload = {
-          id: uuid,
-          msg: IncomingApiMessageType.Method,
-          method: 'user.twofactor_config',
-          params: [user.username],
-        };
-        const requestTrigger$ = new Observable((subscriber) => {
-          this.wsManager.send(payload);
-          subscriber.next();
-        }).pipe(take(1));
+  getGlobalTwoFactorConfig(): Observable<GlobalTwoFactorConfig> {
+    if (this.cachedGlobalTwoFactorConfig) {
+      return of(this.cachedGlobalTwoFactorConfig);
+    }
 
-        const uuidFilteredResponse$ = this.getFilteredWebsocketResponse<UserTwoFactorConfig>(uuid);
-
-        return combineLatest([
-          requestTrigger$,
-          uuidFilteredResponse$,
-        ]).pipe(
-          take(1),
-          map(([, data]) => data),
-        );
+    return this.ws.call('auth.twofactor.config').pipe(
+      tap((config) => {
+        this.cachedGlobalTwoFactorConfig = config;
       }),
     );
   }
 
-  getGlobalTwoFactorConfig(): Observable<GlobalTwoFactorConfig> {
-    const uuid2 = UUID.UUID();
-    const payload2 = {
-      id: uuid2,
-      msg: IncomingApiMessageType.Method,
-      method: 'auth.twofactor.config',
-    };
-    const requestTrigger2$ = new Observable((subscriber) => {
-      this.wsManager.send(payload2);
-      subscriber.next();
-    }).pipe(take(1));
-
-    const uuidFilteredResponse2$ = this.getFilteredWebsocketResponse<GlobalTwoFactorConfig>(uuid2);
-
-    return combineLatest([
-      requestTrigger2$,
-      uuidFilteredResponse2$,
-    ]).pipe(
-      take(1),
-      map(([, data]) => data),
-    );
-  }
-
-  getTwoFactorConfig(): void {
-    this.getUserTwoFactorConfig();
-
-    this.getGlobalTwoFactorConfig();
-  }
-
-  setupAuthenticationUpdate(): void {
-    this.isAuthenticated$.pipe(untilDestroyed(this)).subscribe({
-      next: (isAuthenticated) => {
-        if (isAuthenticated) {
-          this.store$.dispatch(adminUiInitialized());
-          this.getLoggedInUserInformation();
-          this.setupPeriodicTokenGeneration();
-        } else if (this.generateTokenSubscription) {
-          this.latestTokenGenerated$?.complete();
-          this.latestTokenGenerated$ = new ReplaySubject<string>(1);
-          this.setupTokenUpdate();
-          this.generateTokenSubscription.unsubscribe();
-          this.generateTokenSubscription = null;
-        }
-      },
-    });
-  }
-
-  setupWsConnectionUpdate(): void {
-    this.wsManager.isConnected$.pipe(filter((isConnected) => !isConnected), untilDestroyed(this)).subscribe(() => {
-      this.isLoggedIn$.next(false);
-    });
-  }
-
-  setupTokenUpdate(): void {
-    this.latestTokenGenerated$.pipe(untilDestroyed(this)).subscribe((token) => {
-      this.token = token;
-    });
+  globalTwoFactorConfigUpdated(): void {
+    this.cachedGlobalTwoFactorConfig = null;
   }
 
   /**
@@ -171,13 +110,109 @@ export class AuthService {
     this.setupTokenUpdate();
   }
 
-  login(username: string, password: string, otp: string = null): Observable<boolean> {
+  login(username: string, password: string, otp: string = null): Observable<LoginResult> {
+    return this.makeRequest('auth.login', otp ? [username, password, otp] : [username, password]).pipe(
+      switchMap((wasLoggedIn) => {
+        return this.processLoginResult(wasLoggedIn).pipe(
+          switchMap((loginResult) => {
+            if (loginResult === LoginResult.Success) {
+              return this.authToken$.pipe(
+                map(() => LoginResult.Success),
+              );
+            }
+
+            return of(loginResult);
+          }),
+        );
+      }),
+    );
+  }
+
+  loginWithToken(): Observable<LoginResult> {
+    return this.makeRequest('auth.login_with_token', [this.token || '']).pipe(
+      switchMap((wasLoggedIn) => {
+        return this.processLoginResult(wasLoggedIn);
+      }),
+    );
+  }
+
+  /**
+   * Checks whether user has any of the supplied roles.
+   * Does not ensure that user was loaded.
+   *
+   * Use mockAuth if you need to set user role in tests.
+   */
+  hasRole(roles: Role[] | Role): Observable<boolean> {
+    return this.loggedInUser$.pipe(
+      map((user) => {
+        const currentRoles = user?.privilege?.roles?.$set || [];
+        const neededRoles = Array.isArray(roles) ? roles : [roles];
+        if (!neededRoles?.length || !currentRoles.length) {
+          return false;
+        }
+
+        if (currentRoles.includes(Role.FullAdmin)) {
+          return true;
+        }
+
+        return neededRoles.some((role) => currentRoles.includes(role));
+      }),
+    );
+  }
+
+  logout(): Observable<void> {
+    return this.makeRequest('auth.logout').pipe(
+      tap(() => {
+        this.clearAuthToken();
+        this.isLoggedIn$.next(false);
+      }),
+    );
+  }
+
+  refreshUser(): Observable<void> {
+    this.loggedInUser$.next(null);
+
+    return this.getLoggedInUserInformation().pipe(
+      map(() => null),
+    );
+  }
+
+  private processLoginResult(wasLoggedIn: boolean): Observable<LoginResult> {
+    return of(wasLoggedIn).pipe(
+      switchMap((loggedIn) => {
+        if (!loggedIn) {
+          this.isLoggedIn$.next(false);
+          return of(LoginResult.IncorrectDetails);
+        }
+
+        // Check if user has access to webui.
+        return this.getLoggedInUserInformation().pipe(
+          switchMap((user) => {
+            if (!user.privilege.webui_access) {
+              this.isLoggedIn$.next(false);
+              return of(LoginResult.NoAccess);
+            }
+
+            this.isLoggedIn$.next(true);
+            return this.authToken$.pipe(
+              take(1),
+              map(() => LoginResult.Success),
+            );
+          }),
+        );
+      }),
+    );
+  }
+
+  // TODO: See if we can move this somewhere, like in wsManager.
+  // TODO: Rewrite tests not to rely on mocking this private method.
+  makeRequest<M extends ApiCallMethod>(method: M, params?: ApiCallDirectory[M]['params']): Observable<ApiCallDirectory[M]['response']> {
     const uuid = UUID.UUID();
     const payload = {
+      method,
+      params,
       id: uuid,
       msg: IncomingApiMessageType.Method,
-      method: 'auth.login',
-      params: otp ? [username, password, otp] : [username, password],
     };
 
     const requestTrigger$ = new Observable((subscriber) => {
@@ -192,42 +227,15 @@ export class AuthService {
       uuidFilteredResponse$,
     ]).pipe(
       take(1),
-      map(([, data]) => data),
-      switchMap((loginResponse) => {
-        this.isLoggedIn$.next(loginResponse);
-        if (!loginResponse) {
-          return of(false);
-        }
-
-        return this.authToken$.pipe(map(() => loginResponse));
-      }),
+      map(([, response]) => response),
     );
   }
 
-  loginWithToken(): Observable<boolean> {
-    const uuid = UUID.UUID();
-    const payload = {
-      id: uuid,
-      msg: IncomingApiMessageType.Method,
-      method: 'auth.login_with_token',
-      params: [this.token || ''],
-    };
-
-    const requestTrigger$ = new Observable((subscriber) => {
-      this.wsManager.send(payload);
-      subscriber.next();
-    }).pipe(take(1));
-
-    const uuidFilteredResponse$ = this.getFilteredWebsocketResponse<boolean>(uuid);
-
-    return combineLatest([
-      requestTrigger$,
-      uuidFilteredResponse$,
-    ]).pipe(
-      map(([, data]) => data),
-      tap((response) => {
-        this.isLoggedIn$.next(response);
-      }),
+  private getFilteredWebsocketResponse<T>(uuid: string): Observable<T> {
+    return this.wsManager.websocket$.pipe(
+      filter((data: IncomingWebsocketMessage) => data.msg === IncomingApiMessageType.Result && data.id === uuid),
+      map((data: ResultMessage<T>) => data.result),
+      take(1),
     );
   }
 
@@ -236,151 +244,63 @@ export class AuthService {
       this.generateTokenSubscription = timer(0, this.tokenRegenerationTimeMillis).pipe(
         switchMap(() => this.isAuthenticated$.pipe(take(1))),
         filter((isAuthenticated) => isAuthenticated),
-        switchMap(() => this.generateToken()),
+        switchMap(() => this.makeRequest('auth.generate_token')),
         tap((token) => this.latestTokenGenerated$.next(token)),
         untilDestroyed(this),
       ).subscribe();
     }
   }
 
-  getFilteredWebsocketResponse<T>(uuid: string): Observable<T> {
-    return this.wsManager.websocket$.pipe(
-      filter((data: IncomingWebsocketMessage) => data.msg === IncomingApiMessageType.Result && data.id === uuid),
-      map((data: ResultMessage<T>) => data.result),
-      take(1),
-    );
-  }
-
-  private generateToken(): Observable<string> {
-    const uuid = UUID.UUID();
-    const payload = {
-      id: uuid,
-      msg: IncomingApiMessageType.Method,
-      method: 'auth.generate_token',
-    };
-
-    const requestTrigger$ = new Observable((subscriber) => {
-      this.wsManager.send(payload);
-      subscriber.next();
-    }).pipe(take(1));
-
-    const uuidFilteredResponse$ = this.getFilteredWebsocketResponse<string>(uuid);
-
-    return combineLatest([
-      requestTrigger$,
-      uuidFilteredResponse$,
-    ]).pipe(map(([, data]) => data));
-  }
-
-  logout(): Observable<void> {
-    const uuid = UUID.UUID();
-    const payload = {
-      id: uuid,
-      msg: IncomingApiMessageType.Method,
-      method: 'auth.logout',
-    };
-
-    const requestTrigger$ = new Observable((subscriber) => {
-      this.wsManager.send(payload);
-      this.clearAuthToken();
-      subscriber.next();
-    }).pipe(take(1));
-
-    const uuidFilteredResponse$ = this.getFilteredWebsocketResponse<void>(uuid);
-
-    return combineLatest([
-      requestTrigger$,
-      uuidFilteredResponse$,
-    ]).pipe(
-      map(([, data]) => data),
-      tap(() => {
-        this.isLoggedIn$.next(false);
-      }),
-    );
-  }
-
-  getLoggedInUserInformation(): void {
-    let authenticatedUser: LoggedInUser;
-    const uuid = UUID.UUID();
-    const payload = {
-      id: uuid,
-      msg: IncomingApiMessageType.Method,
-      method: 'auth.me',
-    };
-
-    const requestTrigger$ = new Observable((subscriber) => {
-      this.wsManager.send(payload);
-      subscriber.next();
-    }).pipe(take(1));
-
-    combineLatest([
-      requestTrigger$,
-      this.getFilteredWebsocketResponse(uuid),
-    ]).pipe(
-      map(([, data]) => data),
-    ).pipe(
-      filter((loggedInUser: DsUncachedUser) => !!loggedInUser?.pw_uid || loggedInUser?.pw_uid === 0),
-      switchMap((loggedInUser: DsUncachedUser) => {
-        authenticatedUser = { ...loggedInUser };
-
-        const userQueryUuid = UUID.UUID();
-        const userQueryPayload = {
-          id: userQueryUuid,
-          msg: IncomingApiMessageType.Method,
-          method: 'user.query',
-          params: [[['uid', '=', authenticatedUser.pw_uid]]],
-        };
-
-        const requestTriggerUserQuery$ = new Observable((subscriber) => {
-          this.wsManager.send(userQueryPayload);
-          subscriber.next();
-        }).pipe(take(1));
-
-        return combineLatest([
-          requestTriggerUserQuery$,
-          this.getFilteredWebsocketResponse(userQueryUuid),
-        ]).pipe(map(([, data]) => data));
-      }),
-      tap((users: User[]) => {
-        if (users?.[0]?.id) {
-          authenticatedUser = {
-            ...authenticatedUser,
-            ...users[0],
-          };
+  private getLoggedInUserInformation(): Observable<LoggedInUser> {
+    return this.ws.call('auth.me').pipe(
+      switchMap((loggedInUser) => {
+        // TODO: This will be simplified https://github.com/truenas/middleware/pull/12670
+        if (!loggedInUser.privilege.webui_access) {
+          return of(loggedInUser);
         }
-        this.loggedInUser$.next(authenticatedUser);
-        this.getTwoFactorConfig();
+
+        return this.ws.call('user.query', [[['username', '=', loggedInUser.pw_name]]]).pipe(
+          map((users) => {
+            return {
+              ...loggedInUser,
+              ...users[0],
+            };
+          }),
+        );
       }),
-      untilDestroyed(this),
-    ).subscribe();
-  }
-
-  renewUser2FaSecret(config: UserTwoFactorConfigUpdate): Observable<User> {
-    return this.user$.pipe(
-      filter(Boolean),
-      take(1),
-      switchMap((user) => {
-        const renewUuid = UUID.UUID();
-        const renewPayload = {
-          id: renewUuid,
-          msg: IncomingApiMessageType.Method,
-          method: 'user.renew_2fa_secret',
-          params: [user.username, config],
-        };
-
-        const requestTriggerUserQuery$ = new Observable((subscriber) => {
-          this.wsManager.send(renewPayload);
-          subscriber.next();
-        }).pipe(take(1));
-
-        return combineLatest([
-          requestTriggerUserQuery$,
-          this.getFilteredWebsocketResponse(renewUuid),
-        ]).pipe(map(([, data]) => data as User));
-      }),
-      tap(() => {
-        this.getLoggedInUserInformation();
+      tap((loggedInUser) => {
+        this.loggedInUser$.next(loggedInUser);
       }),
     );
+  }
+
+  private setupAuthenticationUpdate(): void {
+    this.isAuthenticated$.pipe(untilDestroyed(this)).subscribe({
+      next: (isAuthenticated) => {
+        if (isAuthenticated) {
+          this.store$.dispatch(adminUiInitialized());
+          this.refreshUser().pipe(untilDestroyed(this)).subscribe();
+          this.setupPeriodicTokenGeneration();
+        } else if (this.generateTokenSubscription) {
+          this.latestTokenGenerated$?.complete();
+          this.latestTokenGenerated$ = new ReplaySubject<string>(1);
+          this.setupTokenUpdate();
+          this.generateTokenSubscription.unsubscribe();
+          this.generateTokenSubscription = null;
+        }
+      },
+    });
+  }
+
+  private setupWsConnectionUpdate(): void {
+    this.wsManager.isConnected$.pipe(filter((isConnected) => !isConnected), untilDestroyed(this)).subscribe(() => {
+      this.isLoggedIn$.next(false);
+    });
+  }
+
+  private setupTokenUpdate(): void {
+    this.latestTokenGenerated$.pipe(untilDestroyed(this)).subscribe((token) => {
+      this.token = token;
+    });
   }
 }

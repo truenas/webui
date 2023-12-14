@@ -61,6 +61,7 @@ describe('EncryptionSectionComponent', () => {
         parent: {
           encrypted: false,
         } as Dataset,
+        advancedMode: true,
       },
     });
 

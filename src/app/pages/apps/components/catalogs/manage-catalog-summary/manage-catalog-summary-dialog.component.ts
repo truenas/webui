@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import helptext from 'app/helptext/apps/apps';
+import { helptextApps } from 'app/helptext/apps/apps';
 import { Catalog, CatalogItems } from 'app/interfaces/catalog.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -21,7 +21,7 @@ export class ManageCatalogSummaryDialogComponent implements OnInit {
   catalog: Catalog;
   statusOptions: string[] = ['All', 'Healthy', 'Unhealthy'];
   trainOptions: string[] = ['All'];
-  helptext = helptext;
+  helptext = helptextApps;
   selectedStatus: string = this.statusOptions[0];
   selectedTrain: string = this.trainOptions[0];
   filteredItems: { train: string; app: string; healthy: boolean }[] = [];

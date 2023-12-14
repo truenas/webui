@@ -40,10 +40,12 @@ describe('TwoFactorComponent', () => {
           username: 'dummy',
           twofactor_auth_configured: true,
         } as LoggedInUser),
-        renewUser2FaSecret: jest.fn(() => of({})),
-        getUserTwoFactorConfig: jest.fn(() => of({
-          provisioning_uri: 'provisioning_uri', interval: 30, otp_digits: 6, secret_configured: true,
-        } as UserTwoFactorConfig)),
+        userTwoFactorConfig$: of({
+          provisioning_uri: 'provisioning_uri',
+          interval: 30,
+          otp_digits: 6,
+          secret_configured: true,
+        } as UserTwoFactorConfig),
         getGlobalTwoFactorConfig: jest.fn(() => of({ enabled: false } as GlobalTwoFactorConfig)),
       }),
     ],
@@ -99,8 +101,6 @@ describe('TwoFactorComponent', () => {
   it('opens qr dialog when button clicked', async () => {
     const qrBtn = await loader.getHarness(MatButtonHarness.with({ text: 'Show QR' }));
     await qrBtn.click();
-
-    expect(spectator.inject(AuthService).getUserTwoFactorConfig).toHaveBeenCalled();
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
       QrDialogComponent,

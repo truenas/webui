@@ -1,3 +1,4 @@
-<span [matTooltip]="value?.toString()">
-  {{ value }}
-</span>
+<span
+  [matTooltip]="value?.toString()"
+  [ixTest]="[title, rowTestId(row), 'row-text']"
+>{{ value }}</span>

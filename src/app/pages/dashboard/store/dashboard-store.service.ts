@@ -90,7 +90,7 @@ export class DashboardStore extends ComponentStore<DashboardState> {
         this.setState((state) => {
           return {
             ...state,
-            sysInfoWithFeatures: sysInfo as unknown as SystemInfoWithFeatures,
+            sysInfoWithFeatures: sysInfo as SystemInfoWithFeatures,
           };
         });
       }),

@@ -7,10 +7,11 @@ import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  combineLatest, lastValueFrom, switchMap,
+  combineLatest, firstValueFrom, lastValueFrom, switchMap,
 } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { ProductType } from 'app/enums/product-type.enum';
+import { Role } from 'app/enums/role.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import helptext from 'app/helptext/network/interfaces/interfaces-list';
 import { Interval } from 'app/interfaces/timeout.interface';
@@ -19,6 +20,7 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
 import { InterfacesStore } from 'app/pages/network/stores/interfaces.store';
+import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -61,6 +63,7 @@ export class NetworkComponent implements OnInit {
     private systemGeneralService: SystemGeneralService,
     private interfacesStore: InterfacesStore,
     private actions$: Actions,
+    private authService: AuthService,
     @Inject(WINDOW) private window: Window,
   ) {
     this.navigation = this.router.getCurrentNavigation();
@@ -98,11 +101,19 @@ export class NetworkComponent implements OnInit {
   }
 
   async loadCheckinStatus(): Promise<void> {
+    if (!await firstValueFrom(this.authService.hasRole(Role.NetworkInterfaceWrite))) {
+      return;
+    }
+
     this.hasPendingChanges = await this.getPendingChanges();
     this.handleWaitingCheckin(await this.getCheckinWaitingSeconds());
   }
 
   async loadCheckinStatusAfterChange(): Promise<void> {
+    if (!await firstValueFrom(this.authService.hasRole(Role.NetworkInterfaceWrite))) {
+      return;
+    }
+
     let hasPendingChanges = await this.getPendingChanges();
     let checkinWaitingSeconds = await this.getCheckinWaitingSeconds();
 

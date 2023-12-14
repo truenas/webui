@@ -11,8 +11,8 @@ import {
   mockCall, mockJob, mockWebsocket,
 } from 'app/core/testing/utils/mock-websocket.utils';
 import { IdmapBackend, IdmapName, IdmapSslEncryptionMode } from 'app/enums/idmap.enum';
-import helptext from 'app/helptext/directory-service/idmap';
-import { IdmapBackendOptions } from 'app/interfaces/idmap-backend-options.interface';
+import { helptextIdmap } from 'app/helptext/directory-service/idmap';
+import { IdmapBackendOptions, IdmapBackendParameter } from 'app/interfaces/idmap-backend-options.interface';
 import { Idmap } from 'app/interfaces/idmap.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -75,7 +75,7 @@ describe('IdmapFormComponent', () => {
               schema_mode: { required: false, default: 'RFC2307' },
               unix_primary_group: { required: false, default: false },
               unix_nss_info: { required: false, default: false },
-            },
+            } as Record<string, IdmapBackendParameter>,
           },
           [IdmapBackend.Ldap]: {
             parameters: {
@@ -86,14 +86,14 @@ describe('IdmapFormComponent', () => {
               ssl: { required: false, default: IdmapSslEncryptionMode.Off },
               validate_certificates: { required: false, default: true },
               readonly: { required: false, default: false },
-            },
+            } as Record<string, IdmapBackendParameter>,
           },
           [IdmapBackend.Tdb]: {
             parameters: {
               readonly: { required: false, default: false },
-            },
+            } as Record<string, IdmapBackendParameter>,
           },
-        } as unknown as IdmapBackendOptions),
+        } as IdmapBackendOptions),
       }),
       mockProvider(IxSlideInService),
       mockProvider(IxSlideInService),
@@ -207,8 +207,8 @@ describe('IdmapFormComponent', () => {
       await saveButton.click();
 
       expect(confirm).toHaveBeenCalledWith({
-        title: helptext.idmap.clear_cache_dialog.title,
-        message: helptext.idmap.clear_cache_dialog.message,
+        title: helptextIdmap.idmap.clear_cache_dialog.title,
+        message: helptextIdmap.idmap.clear_cache_dialog.message,
         hideCheckbox: true,
       });
       expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith('idmap.clear_idmap_cache', []);

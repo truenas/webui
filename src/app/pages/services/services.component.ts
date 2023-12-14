@@ -1,5 +1,5 @@
 import {
-  Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
@@ -7,6 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { map, switchMap } from 'rxjs/operators';
+import { AuditService } from 'app/enums/audit.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
@@ -25,6 +26,7 @@ import { ServiceUpsComponent } from 'app/pages/services/components/service-ups/s
 import { DialogService } from 'app/services/dialog.service';
 import { IscsiService } from 'app/services/iscsi.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { UrlOptionsService } from 'app/services/url-options.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { waitForServices } from 'app/store/services/services.selectors';
@@ -71,6 +73,7 @@ export class ServicesComponent implements OnInit {
     private emptyService: EmptyService,
     private slideInService: IxSlideInService,
     private store$: Store<ServicesState>,
+    private urlOptions: UrlOptionsService,
   ) {}
 
   ngOnInit(): void {
@@ -204,7 +207,7 @@ export class ServicesComponent implements OnInit {
         this.dialog.error({
           title: message,
           message: error.reason,
-          backtrace: error.trace.formatted,
+          backtrace: error.trace?.formatted,
         });
         this.serviceLoadingMap.set(service.service, false);
         this.cdr.markForCheck();
@@ -280,15 +283,31 @@ export class ServicesComponent implements OnInit {
     }
   }
 
-  viewSessions(serviceName: ServiceName): void {
+  sessionsUrl(serviceName: ServiceName): string[] {
     if (serviceName === ServiceName.Cifs) {
-      this.router.navigate(['/sharing', 'smb', 'status', 'sessions']);
-    } else if (serviceName === ServiceName.Nfs) {
-      this.router.navigate(['/sharing', 'nfs', 'sessions']);
+      return ['/sharing', 'smb', 'status', 'sessions'];
     }
+    if (serviceName === ServiceName.Nfs) {
+      return ['/sharing', 'nfs', 'sessions'];
+    }
+
+    return [];
   }
 
   hasSessions(serviceName: ServiceName): boolean {
     return serviceName === ServiceName.Cifs || serviceName === ServiceName.Nfs;
+  }
+
+  auditLogsUrl(): string {
+    return this.urlOptions.buildUrl('/system/audit', {
+      searchQuery: {
+        isBasicQuery: false,
+        filters: [['service', '=', AuditService.Smb]],
+      },
+    });
+  }
+
+  hasLogs(serviceName: ServiceName): boolean {
+    return serviceName === ServiceName.Cifs;
   }
 }
