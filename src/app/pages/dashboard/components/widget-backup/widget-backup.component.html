@@ -44,7 +44,7 @@
                 class="icon warning"
               ></ix-icon>
               <span *ngIf="!!failedCount">
-                {{ '{failed} of {all} tasks failed' | translate : { failed: failedCount, all: allCount } }}
+                {{ '{failedCount} of {allCount, plural, =1 {# task} other {# tasks}} failed' | translate : { failedCount, allCount } }}
               </span>
             </div>
 
@@ -88,7 +88,7 @@
                         <ix-icon [name]="tile.failedSend ? 'mdi-alert' : 'mdi-check-circle'"></ix-icon>
                       </span>
                       <span class="label">
-                        {{ '{tasks} send tasks' | translate : { tasks: tile.totalSend } }}
+                        {{ '{tasks, plural, =1 {# send task} other {# send tasks}}' | translate : { tasks: tile.totalSend } }}
                       </span>
                     </li>
                     <li fxLayout="row">
@@ -96,7 +96,7 @@
                         <ix-icon [name]="tile.failedReceive ? 'mdi-alert' : 'mdi-check-circle'"></ix-icon>
                       </span>
                       <span class="label">
-                        {{ '{tasks} receive tasks' | translate : { tasks: tile.totalReceive } }}
+                        {{ '{tasks, plural, =1 {# receive task} other {# receive tasks}}' | translate : { tasks: tile.totalReceive } }}
                       </span>
                     </li>
                     <li fxLayout="row">
@@ -112,17 +112,17 @@
                   <ul fxLayout="column" [fxFlex]="50">
                     <li fxLayout="row">
                       <span class="label">
-                        {{ '{tasks} successful tasks this week' | translate : { tasks: tile.lastWeekSend } }}
+                        {{ '{tasks, plural, =1 {# successful task} other {# successful tasks}} this week' | translate : { tasks: tile.lastWeekSend } }}
                       </span>
                     </li>
                     <li fxLayout="row">
                       <span class="label">
-                        {{ '{tasks} successful tasks this week' | translate : { tasks: tile.lastWeekReceive } }}
+                        {{ '{tasks, plural, =1 {# successful task} other {# successful tasks}} this week' | translate : { tasks: tile.lastWeekReceive } }}
                       </span>
                     </li>
                     <li fxLayout="row">
                       <span class="label">
-                        {{ 'Last successful' }}:
+                        {{ 'Last successful' | translate }}:
                         {{ tile.lastSuccessfulTask ? (tile.lastSuccessfulTask.$date | formatDateTime) : ('Never' | translate) }}
                       </span>
                     </li>
@@ -174,7 +174,8 @@
     {{ 'Backup' | translate }}
     <a class="backup-action" ixTest="cloud" (click)="addCloudSyncTask()">
       {{ 'to cloud' | translate }}
-    </a> /
+    </a>
+    {{ 'or' | translate }}
     <a class="backup-action" ixTest="another-TrueNAS" (click)="addReplicationTask()">
       {{ 'to another TrueNAS' | translate }}
     </a>
