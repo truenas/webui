@@ -36,7 +36,7 @@ export class AdvancedSearchComponent<T> implements OnInit {
   @Input() query: QueryFilters<T> = [];
   @Input() properties: SearchProperty<T>[] = [];
 
-  @Output() paramsChange = new EventEmitter<{ query: QueryFilters<T>; reset?: boolean }>();
+  @Output() paramsChange = new EventEmitter<QueryFilters<T>>();
   @Output() switchToBasic = new EventEmitter<void>();
   @Output() runSearch = new EventEmitter<void>();
 
@@ -147,7 +147,8 @@ export class AdvancedSearchComponent<T> implements OnInit {
     this.setEditorContents('', 0, this.editorView.state.doc.length);
     this.focusInput();
     this.showDatePicker$.next(false);
-    this.paramsChange.emit({ query: [], reset: true });
+    this.paramsChange.emit([]);
+    this.runSearch.emit();
   }
 
   private focusInput(): void {
@@ -177,7 +178,7 @@ export class AdvancedSearchComponent<T> implements OnInit {
 
     const filters = this.queryToApi.buildFilters(parsedQuery, this.properties);
 
-    this.paramsChange.emit({ query: filters });
+    this.paramsChange.emit(filters);
   }
 
   private setEditorContents(contents: string, from = 0, to?: number): void {

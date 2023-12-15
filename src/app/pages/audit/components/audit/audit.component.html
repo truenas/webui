@@ -12,7 +12,6 @@
         [properties]="searchProperties"
         [query]="searchQuery"
         (runSearch)="onSearch(searchInput.query); updateUrlOptions()"
-        (queryChange)="$event.reset && onSearch($event.query); updateUrlOptions()"
       ></ix-search-input2>
       <button
         mat-button

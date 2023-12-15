@@ -9,7 +9,7 @@
   class="input"
   [placeholder]="'Search' | translate"
   [ngModel]="query"
-  (ngModelChange)="queryChange.emit({ query: $event })"
+  (ngModelChange)="queryChange.emit($event)"
   (keydown.enter)="runSearch.emit()"
 />
 

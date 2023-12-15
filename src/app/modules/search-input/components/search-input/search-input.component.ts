@@ -24,7 +24,7 @@ export class SearchInputComponent<T> implements OnChanges {
   @Input() properties: SearchProperty<T>[] = [];
   @Input() query: SearchQuery<T>;
 
-  @Output() queryChange = new EventEmitter<{ query: SearchQuery<T>; reset?: boolean }>();
+  @Output() queryChange = new EventEmitter<SearchQuery<T>>();
   @Output() runSearch = new EventEmitter<void>();
 
   ngOnChanges(): void {
@@ -41,16 +41,16 @@ export class SearchInputComponent<T> implements OnChanges {
   protected basicQuery: string;
   protected advancedQuery: QueryFilters<T> = [];
 
-  protected basicSearchUpdated({ query, reset }: { query: string; reset?: boolean }): void {
+  protected basicSearchUpdated(query: string): void {
     this.basicQuery = query;
     this.updateQuery();
-    this.queryChange.emit({ query: this.query, reset });
+    this.queryChange.emit(this.query);
   }
 
-  protected advancedSearchUpdated({ query, reset }: { query: QueryFilters<T>; reset?: boolean }): void {
+  protected advancedSearchUpdated(query: QueryFilters<T>): void {
     this.advancedQuery = query;
     this.updateQuery();
-    this.queryChange.emit({ query: this.query, reset });
+    this.queryChange.emit(this.query);
   }
 
   private updateQuery(): void {

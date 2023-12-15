@@ -2,7 +2,6 @@ import {
   AfterViewInit,
   ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, Output, ViewChild,
 } from '@angular/core';
-import { SearchQuery } from 'app/modules/search-input/types/search-query.interface';
 
 @Component({
   selector: 'ix-basic-search',
@@ -15,8 +14,8 @@ export class BasicSearchComponent implements AfterViewInit {
   @Input() allowAdvanced = false;
 
   @Output() switchToAdvanced = new EventEmitter<void>();
-  @Output() queryChange = new EventEmitter<{ query: string; reset?: boolean }>();
-  @Output() runSearch = new EventEmitter<SearchQuery<void>>();
+  @Output() queryChange = new EventEmitter<string>();
+  @Output() runSearch = new EventEmitter<void>();
 
   @ViewChild('searchControl') searchControl: ElementRef<HTMLInputElement>;
 
@@ -26,7 +25,8 @@ export class BasicSearchComponent implements AfterViewInit {
 
   protected resetInput(): void {
     this.query = '';
-    this.queryChange.emit({ query: this.query, reset: true });
+    this.queryChange.emit(this.query);
+    this.runSearch.emit();
     this.focusInput();
   }
 
