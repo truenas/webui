@@ -213,20 +213,18 @@ export class GroupFormComponent implements OnInit {
   }
 
   private getPrivilegesList(): void {
-    if (this.editingGroup?.id) {
-      this.ws.call('privilege.query', [])
-        .pipe(untilDestroyed(this)).subscribe((privileges) => {
-          this.initialGroupRelatedPrivilegesList = privileges.filter((privilege) => {
-            return privilege.local_groups.map((group) => group.gid).includes(this.editingGroup.gid);
-          });
-
-          this.privilegesList = privileges;
-
-          this.form.controls.privileges.patchValue(
-            this.initialGroupRelatedPrivilegesList.map((privilege) => privilege.id),
-          );
+    this.ws.call('privilege.query', [])
+      .pipe(untilDestroyed(this)).subscribe((privileges) => {
+        this.initialGroupRelatedPrivilegesList = privileges.filter((privilege) => {
+          return privilege.local_groups.map((group) => group.gid).includes(this.editingGroup?.gid);
         });
-    }
+
+        this.privilegesList = privileges;
+
+        this.form.controls.privileges.patchValue(
+          this.initialGroupRelatedPrivilegesList.map((privilege) => privilege.id),
+        );
+      });
   }
 
   private setNamesInUseValidator(currentName?: string): void {
