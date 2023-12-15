@@ -47,6 +47,7 @@ describe('FeedbackDialogComponent', () => {
   let ws: MockWebsocketService;
   let form: IxFormHarness;
   const isEnterprise$ = new BehaviorSubject(false);
+  const isFeedbackAllowed$ = new BehaviorSubject(false);
 
   const mockToken = JSON.stringify({
     oauth_token: 'mock.oauth.token',
@@ -111,6 +112,7 @@ describe('FeedbackDialogComponent', () => {
         })),
         takeScreenshot: jest.fn(() => of(new File(['(⌐□_□)'], 'screenshot.png', { type: 'image/png' }))),
         getHostId: jest.fn(() => of('unique-system-host-id-1234')),
+        getReviewAllowed: jest.fn(() => isFeedbackAllowed$.value),
       }),
       provideMockStore({
         selectors: [
@@ -149,7 +151,8 @@ describe('FeedbackDialogComponent', () => {
     ],
   });
 
-  async function setupTest(isEnterprise = false): Promise<void> {
+  async function setupTest(isEnterprise = false, isAllowed = false): Promise<void> {
+    isFeedbackAllowed$.next(isAllowed);
     isEnterprise$.next(isEnterprise);
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -164,7 +167,7 @@ describe('FeedbackDialogComponent', () => {
 
   describe('review', () => {
     beforeEach(async () => {
-      await setupTest(false);
+      await setupTest(false, true);
 
       const type = await loader.getHarness(IxButtonGroupHarness.with({ label: 'I would like to' }));
       type.setValue('Rate this page');
@@ -239,6 +242,8 @@ describe('FeedbackDialogComponent', () => {
     });
 
     it.skip('sends a create payload to websocket', async () => {
+      // TODO: Figure out why
+      // Received constructor: FileTicketLicensedFormComponent
       expect(spectator.component.ticketForm).toBeInstanceOf(FileTicketFormComponent);
 
       const subjectField = await loader.getHarness(IxInputHarness.with({ label: 'Subject' }));
@@ -324,5 +329,13 @@ describe('FeedbackDialogComponent', () => {
 
       expect(router.navigate).toHaveBeenCalledWith(['system', 'support', 'eula']);
     });
+  });
+
+  it('checks "Rate this page" option is not available when feedback is disabled', async () => {
+    await setupTest(false, false);
+
+    const type = await loader.getHarness(IxButtonGroupHarness.with({ label: 'I would like to' }));
+    expect(await type.getOptions()).toEqual(['Report a bug', 'Suggest an improvement']);
+    expect(await type.getValue()).toBe('Report a bug');
   });
 });

@@ -1,3 +1,4 @@
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateService } from '@ngx-translate/core';
 import { AuditEvent } from 'app/enums/audit-event.enum';
 import { AuditEntry } from 'app/interfaces/audit.interface';
@@ -13,17 +14,17 @@ export function getLogImportantData(log: AuditEntry, translateService: Translate
       if (log.event_data?.credentials) {
         const credentialType = log.event_data?.credentials.credentials;
         const credentialTypeKey = credentialTypeLabels.get(credentialType);
-        return translateService.instant('Credentials: {credentials}', {
+        return translateService.instant(T('Credentials: {credentials}'), {
           credentials: credentialType ? translateService.instant(credentialTypeKey) : credentialType,
         });
       }
-      return translateService.instant('Account: {account}', { account: log.event_data?.clientAccount });
+      return translateService.instant(T('Account: {account}'), { account: log.event_data?.clientAccount });
     case AuditEvent.Connect:
     case AuditEvent.Disconnect:
-      return translateService.instant('Host: {host}', { host: log.event_data?.host });
+      return translateService.instant(T('Host: {host}'), { host: log.event_data?.host });
     case AuditEvent.Create:
     case AuditEvent.Unlink:
-      return translateService.instant('File: {filename}', { filename: log.event_data?.file?.path });
+      return translateService.instant(T('File: {filename}'), { filename: log.event_data?.file?.path });
     case AuditEvent.Close:
     case AuditEvent.Read:
     case AuditEvent.Write:
@@ -32,7 +33,7 @@ export function getLogImportantData(log: AuditEntry, translateService: Translate
     case AuditEvent.SetAcl:
     case AuditEvent.SetAttr:
     case AuditEvent.SetQuota:
-      return translateService.instant('File: {filename}', { filename: `${log.event_data?.file?.handle?.type}/${log.event_data?.file?.handle?.value}` });
+      return translateService.instant(T('File: {filename}'), { filename: `${log.event_data?.file?.handle?.type}/${log.event_data?.file?.handle?.value}` });
     default:
       return ' - ';
   }

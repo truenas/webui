@@ -574,7 +574,7 @@ export interface ApiCallDirectory {
   // Group
   'group.query': { params: QueryParams<Group>; response: Group[] };
   'group.create': { params: [CreateGroup]; response: number };
-  'group.update': { params: [number, UpdateGroup]; response: void };
+  'group.update': { params: [number, UpdateGroup]; response: number };
   'group.delete': { params: DeleteGroupParams; response: number };
   'group.get_group_obj': { params: [{ groupname?: string; gid?: number }]; response: DsUncachedGroup };
   'group.get_next_gid': { params: void; response: number };
