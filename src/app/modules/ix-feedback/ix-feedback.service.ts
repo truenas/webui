@@ -1,22 +1,44 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Store } from '@ngrx/store';
 import html2canvas, { Options } from 'html2canvas';
-import { Observable } from 'rxjs';
+import {
+  Observable, combineLatest, first, map, switchMap,
+} from 'rxjs';
 import {
   AddReview, AttachmentAddedResponse,
 } from 'app/modules/ix-feedback/interfaces/feedback.interface';
+import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { AppState } from 'app/store';
+import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 import { ReviewAddedResponse } from './interfaces/feedback.interface';
 
 @Injectable()
 export class IxFeedbackService {
   private readonly hostname = 'https://feedback.ui.truenas.com';
   private oauthToken: string;
+  private isReviewAllowed = false;
 
   constructor(
     private httpClient: HttpClient,
     private ws: WebSocketService,
-  ) {}
+    private store$: Store<AppState>,
+    private systemGeneralService: SystemGeneralService,
+  ) {
+    this.checkIfReviewAllowed().subscribe({
+      next: (isAllowed) => {
+        this.isReviewAllowed = isAllowed;
+      },
+      error: () => {
+        this.isReviewAllowed = false;
+      },
+    });
+  }
+
+  getReviewAllowed(): boolean {
+    return this.isReviewAllowed;
+  }
 
   getHostId(): Observable<string> {
     return this.ws.call('system.host_id');
@@ -62,5 +84,23 @@ export class IxFeedbackService {
 
   setOauthToken(token: string): void {
     this.oauthToken = token;
+  }
+
+  checkIfReviewAllowed(): Observable<boolean> {
+    return combineLatest([
+      this.store$.pipe(waitForSystemInfo),
+      this.systemGeneralService.getProductType$,
+    ]).pipe(
+      first(),
+      switchMap(([systemInfo, productType]) => {
+        const params = new HttpParams()
+          .set('version', systemInfo.version)
+          .set('product_type', productType);
+
+        return this.httpClient
+          .get<{ value: boolean }>(`${this.hostname}/api/collect-blacklist/check/`, { params })
+          .pipe(map((response) => !response.value));
+      }),
+    );
   }
 }

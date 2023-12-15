@@ -10,7 +10,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { environment } from 'environments/environment';
 import {
-  EMPTY, Observable, catchError, filter, of, switchMap, take,
+  EMPTY, Observable, catchError, filter, of, pairwise, switchMap, take,
 } from 'rxjs';
 import { TicketType, ticketAcceptedFiles } from 'app/enums/file-ticket.enum';
 import { JobState } from 'app/enums/job-state.enum';
@@ -53,7 +53,7 @@ export class FeedbackDialogComponent implements OnInit {
   isLoading = false;
 
   protected form = this.formBuilder.group({
-    type: [FeedbackType.Review],
+    type: [undefined as FeedbackType],
 
     rating: [undefined as number, [Validators.required, rangeValidator(1, maxRatingValue)]],
     message: [''],
@@ -65,14 +65,19 @@ export class FeedbackDialogComponent implements OnInit {
     attach_screenshot: [false],
     take_screenshot: [true],
   });
+
   private release: string;
   private hostId: string;
   private productType: ProductType;
   private systemProduct: string;
   private isIxHardware = false;
   private attachments: File[] = [];
-  readonly feedbackTypeOptions$: Observable<Option[]> = of(mapToOptions(feedbackTypeOptionMap, this.translate));
+  protected feedbackTypeOptions$: Observable<Option[]> = of(mapToOptions(feedbackTypeOptionMap, this.translate));
   readonly acceptedFiles = ticketAcceptedFiles;
+
+  get isReviewAllowed(): boolean {
+    return this.feedbackService.getReviewAllowed();
+  }
 
   get isEnterprise(): boolean {
     return this.systemGeneralService.isEnterprise;
@@ -146,16 +151,12 @@ export class FeedbackDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.addFormListeners();
+    this.updateTypeOptions();
     this.getReleaseVersion();
     this.getHostId();
     this.getProductType();
     this.loadIsIxHardware();
     this.restoreToken();
-
-    if (this.type) {
-      this.form.controls.type.setValue(this.type);
-      this.cdr.markForCheck();
-    }
   }
 
   onSubmit(): void {
@@ -346,15 +347,19 @@ export class FeedbackDialogComponent implements OnInit {
   private addFormListeners(): void {
     this.imagesValidation();
 
-    this.form.controls.type.valueChanges.pipe(untilDestroyed(this)).subscribe((type) => {
-      if (type === FeedbackType.Review) {
-        this.switchToReview();
-        this.clearTicketForm();
-      } else if ([FeedbackType.Bug, FeedbackType.Suggestion].includes(type)) {
-        this.switchToBugOrImprovement();
-        this.renderTicketForm();
-      }
-    });
+    this.form.controls.type.valueChanges
+      .pipe(pairwise(), untilDestroyed(this))
+      .subscribe(([previousType, currentType]) => {
+        if (currentType === FeedbackType.Review) {
+          this.switchToReview();
+          this.clearTicketForm();
+        } else if ([FeedbackType.Bug, FeedbackType.Suggestion].includes(currentType)) {
+          this.switchToBugOrImprovement();
+          if (![FeedbackType.Bug, FeedbackType.Suggestion].includes(previousType)) {
+            this.renderTicketForm();
+          }
+        }
+      });
 
     this.form.controls.token.valueChanges.pipe(
       filter((token) => !!token),
@@ -462,6 +467,22 @@ export class FeedbackDialogComponent implements OnInit {
     const token = this.feedbackService.getOauthToken();
     if (token) {
       this.form.controls.token.setValue(token);
+    }
+  }
+
+  private updateTypeOptions(): void {
+    const optionMap = new Map(feedbackTypeOptionMap);
+
+    if (!this.isReviewAllowed) {
+      optionMap.delete(FeedbackType.Review);
+    }
+
+    this.feedbackTypeOptions$ = of(mapToOptions(optionMap, this.translate));
+    this.form.controls.type.enable();
+    if (this.type && optionMap.has(this.type)) {
+      this.form.controls.type.setValue(this.type);
+    } else {
+      this.form.controls.type.setValue([...optionMap.keys()].shift());
     }
   }
 }

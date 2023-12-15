@@ -14,6 +14,7 @@ import {
 })
 export class FileTicketFormComponent {
   title = new FormControl<string>('', [Validators.required]);
+
   readonly tooltips = {
     title: helptext.title.tooltip,
   };
