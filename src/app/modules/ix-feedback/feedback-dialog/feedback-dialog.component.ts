@@ -86,6 +86,29 @@ export class FeedbackDialogComponent implements OnInit {
     return [FeedbackType.Bug, FeedbackType.Suggestion].includes(this.form.controls.type.value);
   }
 
+  get messagePlaceholder(): string {
+    switch (this.form.controls.type.value) {
+      case FeedbackType.Review:
+        return helptext.review.message.placeholder;
+      case FeedbackType.Bug:
+      case FeedbackType.Suggestion:
+      default:
+        return helptext.bug.message.placeholder;
+    }
+  }
+
+  get showJiraButton(): boolean {
+    if (this.isReview
+        || this.isEnterprise
+        || this.form.controls.token.disabled
+        || this.form.controls.token.value
+    ) {
+      return false;
+    }
+
+    return true;
+  }
+
   readonly tooltips = {
     token: helptext.token.tooltip,
     type: helptext.type.tooltip,
@@ -100,25 +123,6 @@ export class FeedbackDialogComponent implements OnInit {
     environment: helptext.environment.tooltip,
     criticality: helptext.criticality.tooltip,
   };
-
-  get messagePlaceholder(): string {
-    switch (this.form.controls.type.value) {
-      case FeedbackType.Review:
-        return helptext.review.message.placeholder;
-      case FeedbackType.Bug:
-      case FeedbackType.Suggestion:
-      default:
-        return helptext.bug.message.placeholder;
-    }
-  }
-
-  get showJiraButton(): boolean {
-    if (this.isReview || this.isEnterprise || this.form.controls.token.value) {
-      return false;
-    }
-
-    return true;
-  }
 
   constructor(
     private ws: WebSocketService,
@@ -396,6 +400,8 @@ export class FeedbackDialogComponent implements OnInit {
   }
 
   private switchToReview(): void {
+    this.form.controls.token.disable();
+    this.form.controls.token.removeValidators(Validators.required);
     this.form.controls.message.removeValidators(Validators.required);
     this.form.controls.attach_debug.disable();
 
@@ -403,6 +409,8 @@ export class FeedbackDialogComponent implements OnInit {
   }
 
   private switchToBugOrImprovement(): void {
+    this.form.controls.token.enable();
+    this.form.controls.token.addValidators(Validators.required);
     this.form.controls.message.addValidators(Validators.required);
     this.form.controls.attach_debug.enable();
 
