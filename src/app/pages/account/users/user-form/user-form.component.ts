@@ -125,7 +125,7 @@ export class UserFormComponent implements OnInit {
   shellOptions$: Observable<Option[]>;
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
   readonly groupProvider = new SimpleAsyncComboboxProvider(this.groupOptions$);
-  autocompleteProvider: ChipsProvider = (query) => {
+  autocompleteProvider: ChipsProvider = (query: string) => {
     return this.userService.groupQueryDsCache(query).pipe(
       map((groups) => groups.map((group) => group.group)),
     );

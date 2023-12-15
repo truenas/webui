@@ -12,6 +12,7 @@
   "Amazon S3": "",
   "Attach additional images": "",
   "Attach debug": "",
+  "Attaches privileges to the group. Only needed if you need users in this group access  to TrueNAS API or WebUI.": "",
   "Audit": "",
   "Audit ID": "",
   "Audit Logging": "",
