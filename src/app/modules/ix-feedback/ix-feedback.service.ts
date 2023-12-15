@@ -11,6 +11,7 @@ import { ReviewAddedResponse } from './interfaces/feedback.interface';
 @Injectable()
 export class IxFeedbackService {
   private readonly hostname = 'https://feedback.ui.truenas.com';
+  private oauthToken: string;
 
   constructor(
     private httpClient: HttpClient,
@@ -53,5 +54,13 @@ export class IxFeedbackService {
         observer.error(error);
       });
     });
+  }
+
+  getOauthToken(): string {
+    return this.oauthToken;
+  }
+
+  setOauthToken(token: string): void {
+    this.oauthToken = token;
   }
 }

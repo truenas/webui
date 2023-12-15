@@ -110,6 +110,8 @@ describe('FeedbackDialogComponent', () => {
         })),
         takeScreenshot: jest.fn(() => of(new File(['(⌐□_□)'], 'screenshot.png', { type: 'image/png' }))),
         getHostId: jest.fn(() => of('unique-system-host-id-1234')),
+        getOauthToken: jest.fn(() => mockToken),
+        setOauthToken: jest.fn(),
       }),
       provideMockStore({
         selectors: [
@@ -137,8 +139,6 @@ describe('FeedbackDialogComponent', () => {
       }),
       mockProvider(SystemGeneralService, {
         isEnterprise: jest.fn(() => isEnterprise$.value),
-        getTokenForJira: jest.fn(() => mockToken),
-        setTokenForJira: jest.fn(),
         getProductType$: of(ProductType.Scale),
       }),
       mockProvider(MatDialogRef),

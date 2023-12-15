@@ -76,12 +76,6 @@ export class SystemGeneralService {
     shareReplay({ refCount: false, bufferSize: 1 }),
   );
 
-  /**
-   * OAuth token for JIRA access
-   * used on `support.new_ticket`, `support.get_categories` and `support.attach_ticket` endpoints
-   */
-  private jiraToken: string;
-
   constructor(
     protected ws: WebSocketService,
     @Inject(WINDOW) private window: Window,
@@ -176,20 +170,5 @@ export class SystemGeneralService {
 
   updateDone(): void {
     this.updateIsDone$.next();
-  }
-
-  /**
-   *
-   * @returns OAuth Token for JIRA
-   */
-  getTokenForJira(): string {
-    return this.jiraToken;
-  }
-
-  /**
-   * Accepts string and set it as token
-   */
-  setTokenForJira(token: string): void {
-    this.jiraToken = token;
   }
 }

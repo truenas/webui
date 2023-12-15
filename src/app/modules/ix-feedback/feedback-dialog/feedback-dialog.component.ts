@@ -356,7 +356,7 @@ export class FeedbackDialogComponent implements OnInit {
       filter((token) => !!token),
       untilDestroyed(this),
     ).subscribe((token) => {
-      this.systemGeneralService.setTokenForJira(token);
+      this.feedbackService.setOauthToken(token);
     });
   }
 
@@ -451,7 +451,7 @@ export class FeedbackDialogComponent implements OnInit {
   }
 
   private restoreToken(): void {
-    const token = this.systemGeneralService.getTokenForJira();
+    const token = this.feedbackService.getOauthToken();
     if (token) {
       this.form.controls.token.setValue(token);
     }
