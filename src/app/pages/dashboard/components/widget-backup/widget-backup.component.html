@@ -75,14 +75,14 @@
                   fxLayout="row"
                   fxLayoutAlign="space-between center"
                 >
-                  <ul class="title" fxLayout="column" [fxFlex]="25">
-                    {{ tile.title }}
+                  <ul fxLayout="column" [fxFlex]="screenType === ScreenType.Mobile ? 50 : 25">
+                    <span class="title">{{ tile.title }}</span>
                     <div *ngIf="hasSendTasks && !tile.totalSend" class="backup-actions">
                       <ng-template *ngTemplateOutlet="backupActions"></ng-template>
                     </div>
                   </ul>
                   <div class="divider"></div>
-                  <ul fxLayout="column" [fxFlex]="25">
+                  <ul fxLayout="column" [fxFlex]="screenType === ScreenType.Mobile ? 50 : 25">
                     <li fxLayout="row">
                       <span [class]="['icon', tile.failedSend ? 'warn' : 'safe']">
                         <ix-icon [name]="tile.failedSend ? 'mdi-alert' : 'mdi-check-circle'"></ix-icon>
@@ -108,8 +108,8 @@
                       </span>
                     </li>
                   </ul>
-                  <div class="divider"></div>
-                  <ul fxLayout="column" [fxFlex]="50">
+                  <div *ngIf="screenType !== ScreenType.Mobile" class="divider"></div>
+                  <ul *ngIf="screenType !== ScreenType.Mobile" fxLayout="column" [fxFlex]="50">
                     <li fxLayout="row">
                       <span class="label">
                         {{ '{tasks, plural, =1 {# successful task} other {# successful tasks}} this week' | translate : { tasks: tile.lastWeekSend } }}
@@ -151,7 +151,7 @@
             </div>
             <div class="details-item">
               <a class="action" ixTest="replication" (click)="addReplicationTask()">
-                {{ 'ZFS Replication to another TrueNAS/ZFS server' | translate }}
+                {{ 'ZFS Replication to another TrueNAS' | translate }}
               </a>
             </div>
             <div class="details-item">

@@ -258,6 +258,11 @@
               *ngSwitchCase="WidgetType.Network"
               (back)="onMobileBack()"
             ></ix-widget-network>
+
+            <ix-widget-backup
+              *ngSwitchCase="WidgetType.Backup"
+              (back)="onMobileBack()"
+            ></ix-widget-backup>
           </ng-container>
         </ng-container>
       </ng-container>

@@ -3883,7 +3883,7 @@
   "ZFS Info": "",
   "ZFS L2ARC read-cache that can be used with fast devices to accelerate read operations.": "",
   "ZFS LOG device that can improve speeds of synchronous writes. Optional write-cache that can be removed.": "",
-  "ZFS Replication to another TrueNAS/ZFS server": "",
+  "ZFS Replication to another TrueNAS": "",
   "ZFS pools must conform to strict naming  <a href=\"https://docs.oracle.com/cd/E23824_01/html/821-1448/gbcpt.html\" target=\"_blank\">conventions</a>.  Choose a memorable name.": "",
   "ZFS/SED keys synced between KMIP Server and TN database.": "",
   "Zoom In": "",

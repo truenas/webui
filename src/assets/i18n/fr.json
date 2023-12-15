@@ -267,7 +267,7 @@
   "Yandex": "",
   "Yesterday": "",
   "You do not have the permissions to access the requested information. If you think this was a mistake, please contact your system administrator.": "",
-  "ZFS Replication to another TrueNAS/ZFS server": "",
+  "ZFS Replication to another TrueNAS": "",
   "dRAID is a ZFS feature that boosts resilver speed and load distribution. Due to fixed stripe width disk space efficiency may be substantially worse with small files. \nOpt for dRAID over RAID-Z when handling large-capacity drives and extensive disk environments for enhanced performance.": "",
   "dRAID1": "",
   "dRAID2": "",
