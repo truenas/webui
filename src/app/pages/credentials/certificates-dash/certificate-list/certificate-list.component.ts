@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -37,6 +37,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CertificateListComponent implements OnInit {
+  @Output() certificateDeleted = new EventEmitter<void>();
+
   filterString = '';
   dataProvider: AsyncDataProvider<Certificate>;
   certificates: Certificate[] = [];
@@ -96,7 +98,6 @@ export class CertificateListComponent implements OnInit {
     private ws: WebSocketService,
     private slideInService: IxSlideInService,
     private translate: TranslateService,
-    private cdr: ChangeDetectorRef,
     protected emptyService: EmptyService,
     private storageService: StorageService,
     private dialogService: DialogService,
@@ -169,6 +170,7 @@ export class CertificateListComponent implements OnInit {
         jobDialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
           jobDialogRef.close(true);
           this.getCertificates();
+          this.certificateDeleted.emit();
         });
         jobDialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
           this.dialogService.error(this.errorHandler.parseJobError(err));
