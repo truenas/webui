@@ -21,12 +21,12 @@ export class FilesystemService {
   getFilesystemNodeProvider(providerOptions?: {
     directoriesOnly?: boolean;
     showHiddenFiles?: boolean;
-    hideZfs?: boolean;
+    includeSnapshots?: boolean;
   }): TreeNodeProvider {
     const options = {
       directoriesOnly: false,
       showHiddenFiles: false,
-      hideZfs: false,
+      includeSnapshots: true,
       ...providerOptions,
     };
 
@@ -36,7 +36,7 @@ export class FilesystemService {
         typeFilter.push(['type', '=', FileType.Directory]);
       }
 
-      if (options.hideZfs) {
+      if (!options.includeSnapshots) {
         typeFilter.push(['is_ctldir', '=', false]);
       }
 
