@@ -37,7 +37,7 @@ import { UserService } from 'app/services/user.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 
-const defaultHomePath = '/nonexistent';
+const defaultHomePath = '/var/empty';
 
 @UntilDestroy({ arrayName: 'subscriptions' })
 @Component({
