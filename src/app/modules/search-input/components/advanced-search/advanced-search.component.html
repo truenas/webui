@@ -28,7 +28,7 @@
   <ix-icon
     name="mdi-close-circle"
     tabindex="0"
-    (keydown.enter)="onResetInput()"
+    (keydown.enter)="$event.preventDefault(); onResetInput()"
   ></ix-icon>
 </span>
 

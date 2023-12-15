@@ -273,6 +273,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .mat-calendar-table-header,
   .mat-calendar-table,
   .mat-calendar-body-cell-content,
+  .mat-calendar-table-header th,
   .mat-calendar-body-label {
     @include variable(color, --fg2, $fg2);
   }

@@ -25,6 +25,7 @@ export class SearchInputComponent<T> implements OnChanges {
   @Input() query: SearchQuery<T>;
 
   @Output() queryChange = new EventEmitter<SearchQuery<T>>();
+  @Output() runSearch = new EventEmitter<void>();
 
   ngOnChanges(): void {
     this.selectModeFromQuery();
@@ -46,8 +47,8 @@ export class SearchInputComponent<T> implements OnChanges {
     this.queryChange.emit(this.query);
   }
 
-  protected advancedSearchUpdated(filters: QueryFilters<T>): void {
-    this.advancedQuery = filters;
+  protected advancedSearchUpdated(query: QueryFilters<T>): void {
+    this.advancedQuery = query;
     this.updateQuery();
     this.queryChange.emit(this.query);
   }

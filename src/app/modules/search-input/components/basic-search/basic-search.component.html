@@ -10,6 +10,7 @@
   [placeholder]="'Search' | translate"
   [ngModel]="query"
   (ngModelChange)="queryChange.emit($event)"
+  (keydown.enter)="runSearch.emit()"
 />
 
 <a
@@ -18,7 +19,7 @@
   ixTest="switch-to-advanced"
   tabindex="0"
   (click)="switchToAdvanced.emit()"
-  (keydown.enter)="switchToAdvanced.emit()"
+  (keydown.enter)="$event.preventDefault(); switchToAdvanced.emit()"
 >
   {{ 'Switch To Advanced' | translate }}
 </a>
@@ -31,6 +32,6 @@
   <ix-icon
     name="mdi-close-circle"
     tabindex="0"
-    (keydown.enter)="resetInput()"
+    (keydown.enter)="$event.preventDefault(); resetInput()"
   ></ix-icon>
 </span>

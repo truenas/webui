@@ -12,7 +12,10 @@ import {
 import { autocompletion, closeBrackets, startCompletion } from '@codemirror/autocomplete';
 import { linter } from '@codemirror/lint';
 import { EditorState, StateEffect, StateField } from '@codemirror/state';
-import { EditorView, placeholder } from '@codemirror/view';
+import {
+  EditorView, keymap, placeholder,
+} from '@codemirror/view';
+import { TranslateService } from '@ngx-translate/core';
 import { format } from 'date-fns';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
 import { AdvancedSearchAutocompleteService } from 'app/modules/search-input/services/advanced-search-autocomplete.service';
@@ -35,6 +38,7 @@ export class AdvancedSearchComponent<T> implements OnInit {
 
   @Output() paramsChange = new EventEmitter<QueryFilters<T>>();
   @Output() switchToBasic = new EventEmitter<void>();
+  @Output() runSearch = new EventEmitter<void>();
 
   @ViewChild('inputArea', { static: true }) inputArea: ElementRef<HTMLElement>;
 
@@ -54,6 +58,7 @@ export class AdvancedSearchComponent<T> implements OnInit {
     private queryToApi: QueryToApiService<T>,
     private advancedSearchAutocomplete: AdvancedSearchAutocompleteService<T>,
     private cdr: ChangeDetectorRef,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -105,6 +110,14 @@ export class AdvancedSearchComponent<T> implements OnInit {
       icons: false,
     });
 
+    const customKeyMap = keymap.of([{
+      key: 'Enter',
+      run: () => {
+        this.runSearch.emit();
+        return true;
+      },
+    }]);
+
     this.editorView = new EditorView({
       state: EditorState.create({
         extensions: [
@@ -112,27 +125,34 @@ export class AdvancedSearchComponent<T> implements OnInit {
           EditorView.lineWrapping,
           updateListener,
           closeBrackets(),
-          placeholder('Service = "SMB" AND Event = "CLOSE"'),
+          placeholder(this.translate.instant('Service = "SMB" AND Event = "CLOSE"')),
           advancedSearchLinter,
           diagnosticField,
+          customKeyMap,
         ],
       }),
       parent: this.inputArea.nativeElement,
     });
 
-    this.editorView.focus();
+    this.focusInput();
   }
 
   dateSelected(value: string): void {
     this.setEditorContents(`"${format(new Date(value), 'yyyy-MM-dd')}" `, this.editorView.state.doc.length);
-    this.editorView.focus();
+    this.focusInput();
     this.showDatePicker$.next(false);
   }
 
   protected onResetInput(): void {
     this.setEditorContents('', 0, this.editorView.state.doc.length);
+    this.focusInput();
     this.showDatePicker$.next(false);
     this.paramsChange.emit([]);
+    this.runSearch.emit();
+  }
+
+  private focusInput(): void {
+    this.editorView.focus();
   }
 
   private onInputChanged(): void {
@@ -141,10 +161,6 @@ export class AdvancedSearchComponent<T> implements OnInit {
 
     this.hasQueryErrors = Boolean(this.queryInputValue.length && parsedQuery.hasErrors);
     this.cdr.markForCheck();
-
-    if (this.queryInputValue === '') {
-      this.onResetInput();
-    }
 
     if (parsedQuery.hasErrors && this.queryInputValue?.length) {
       this.errorMessages = parsedQuery.errors;
@@ -162,9 +178,6 @@ export class AdvancedSearchComponent<T> implements OnInit {
 
     const filters = this.queryToApi.buildFilters(parsedQuery, this.properties);
 
-    // TODO: Remove before merge
-    // eslint-disable-next-line no-console
-    console.log(JSON.stringify(filters, null, 2), parsedQuery);
     this.paramsChange.emit(filters);
   }
 
