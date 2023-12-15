@@ -2,8 +2,8 @@ import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { lastValueFrom } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
+import { FileAttribute } from 'app/enums/file-attribute.enum';
 import { FileType } from 'app/enums/file-type.enum';
-import { Dataset } from 'app/interfaces/dataset.interface';
 import { FileRecord } from 'app/interfaces/file-record.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -20,19 +20,15 @@ describe('FilesystemService', () => {
             path: '/mnt/parent/directory',
             name: 'directory',
             type: FileType.Directory,
-            is_mountpoint: true,
+            attributes: [FileAttribute.MountRoot],
           },
           {
             path: '/mnt/parent/file.txt',
             name: 'file.txt',
             type: FileType.File,
-            is_mountpoint: false,
+            attributes: [FileAttribute.Immutable],
           },
         ] as FileRecord[]),
-        mockCall('pool.dataset.query', [
-          { mountpoint: '/mnt/parent' },
-          { mountpoint: '/mnt/parent/directory' },
-        ] as Dataset[]),
       ]),
     ],
   });
@@ -62,6 +58,7 @@ describe('FilesystemService', () => {
           path: '/mnt/parent/directory',
           type: ExplorerNodeType.Directory,
           isMountpoint: true,
+          isLock: false,
         },
         {
           hasChildren: false,
@@ -69,6 +66,7 @@ describe('FilesystemService', () => {
           path: '/mnt/parent/file.txt',
           type: ExplorerNodeType.File,
           isMountpoint: false,
+          isLock: true,
         },
       ]);
     });

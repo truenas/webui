@@ -1,3 +1,4 @@
+import { FileAttribute } from 'app/enums/file-attribute.enum';
 import { FileType } from 'app/enums/file-type.enum';
 import { QueryFilter, QueryOptions } from 'app/interfaces/query-api.interface';
 
@@ -13,6 +14,7 @@ export interface FileRecord {
   uid: number;
   is_ctldir: boolean;
   is_mountpoint: boolean;
+  attributes: FileAttribute[];
 }
 
 export type ListdirQueryParams = [

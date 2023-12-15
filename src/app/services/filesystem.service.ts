@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { forkJoin, map } from 'rxjs';
+import { map } from 'rxjs';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
+import { FileAttribute } from 'app/enums/file-attribute.enum';
 import { FileType } from 'app/enums/file-type.enum';
 import { FileRecord } from 'app/interfaces/file-record.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
@@ -39,11 +40,11 @@ export class FilesystemService {
         typeFilter.push(['is_ctldir', '=', false]);
       }
 
-      return forkJoin([
-        this.ws.call('filesystem.listdir', [node.data.path, typeFilter, { order_by: ['name'], limit: 1000 }]),
-        this.ws.call('pool.dataset.query', [[], { select: ['mountpoint'] }]),
-      ]).pipe(
-        map(([files, datasets]) => {
+      return this.ws.call(
+        'filesystem.listdir',
+        [node.data.path, typeFilter, { order_by: ['name'], limit: 1000 }],
+      ).pipe(
+        map((files) => {
           const children: ExplorerNodeData[] = [];
           files.forEach((file) => {
             if (file.type === FileType.Symlink || !file.hasOwnProperty('name')) {
@@ -57,7 +58,8 @@ export class FilesystemService {
             children.push({
               path: file.path,
               name: file.name,
-              isMountpoint: !!datasets.find((dataset) => dataset.mountpoint === file.path),
+              isMountpoint: file.attributes.includes(FileAttribute.MountRoot),
+              isLock: file.attributes.includes(FileAttribute.Immutable),
               type: file.type === FileType.Directory ? ExplorerNodeType.Directory : ExplorerNodeType.File,
               hasChildren: file.type === FileType.Directory,
             });
