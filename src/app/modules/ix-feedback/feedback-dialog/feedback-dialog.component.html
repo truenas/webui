@@ -91,7 +91,16 @@
       {{ 'EULA' | translate }}
     </button>
 
+    <ix-jira-oauth
+      *ngIf="showJiraButton"
+      [formControl]="form.controls.token"
+      [label]="'Token' | translate"
+      [tooltip]="tooltips.token | translate"
+      [required]="true"
+    ></ix-jira-oauth>
+
     <button
+      *ngIf="!showJiraButton"
       mat-button
       type="submit"
       color="primary"

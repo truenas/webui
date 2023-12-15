@@ -12,7 +12,7 @@ import { environment } from 'environments/environment';
 import {
   EMPTY, Observable, catchError, filter, of, switchMap, take,
 } from 'rxjs';
-import { ticketAcceptedFiles } from 'app/enums/file-ticket.enum';
+import { TicketType, ticketAcceptedFiles } from 'app/enums/file-ticket.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
@@ -57,6 +57,8 @@ export class FeedbackDialogComponent implements OnInit {
 
     rating: [undefined as number, [Validators.required, rangeValidator(1, maxRatingValue)]],
     message: [''],
+
+    token: [''],
 
     image: [null as File[]],
     attach_debug: [false],
@@ -110,6 +112,14 @@ export class FeedbackDialogComponent implements OnInit {
     }
   }
 
+  get showJiraButton(): boolean {
+    if (this.isReview || this.isEnterprise || this.form.controls.token.value) {
+      return false;
+    }
+
+    return true;
+  }
+
   constructor(
     private ws: WebSocketService,
     private router: Router,
@@ -136,6 +146,7 @@ export class FeedbackDialogComponent implements OnInit {
     this.getHostId();
     this.getProductType();
     this.loadIsIxHardware();
+    this.restoreToken();
 
     if (this.type) {
       this.form.controls.type.setValue(this.type);
@@ -223,6 +234,8 @@ export class FeedbackDialogComponent implements OnInit {
     const ticketValues = this.ticketForm.getPayload();
 
     let payload: CreateNewTicket = {
+      token: values.token,
+      type: values.type === FeedbackType.Bug ? TicketType.Bug : TicketType.Suggestion,
       body: values.message,
       attach_debug: values.attach_debug,
       title: ticketValues.title,
@@ -338,6 +351,13 @@ export class FeedbackDialogComponent implements OnInit {
         this.renderTicketForm();
       }
     });
+
+    this.form.controls.token.valueChanges.pipe(
+      filter((token) => !!token),
+      untilDestroyed(this),
+    ).subscribe((token) => {
+      this.systemGeneralService.setTokenForJira(token);
+    });
   }
 
   private getHostId(): void {
@@ -428,5 +448,12 @@ export class FeedbackDialogComponent implements OnInit {
     }
 
     this.cdr.markForCheck();
+  }
+
+  private restoreToken(): void {
+    const token = this.systemGeneralService.getTokenForJira();
+    if (token) {
+      this.form.controls.token.setValue(token);
+    }
   }
 }
