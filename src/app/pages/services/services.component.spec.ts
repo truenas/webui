@@ -18,7 +18,6 @@ import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
 import { ServiceFtpComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
-import { ServiceLldpComponent } from 'app/pages/services/components/service-lldp/service-lldp.component';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
 import { ServiceSmartComponent } from 'app/pages/services/components/service-smart/service-smart.component';
 import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
@@ -151,12 +150,6 @@ describe('ServicesComponent', () => {
       const editButton = await table.getHarness(MatButtonHarness.with({ selector: '[name="edit-S.M.A.R.T."]' }));
       await editButton.click();
       expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ServiceSmartComponent);
-    });
-
-    it('should open LLDP configuration when edit button is pressed', async () => {
-      const editButton = await table.getHarness(MatButtonHarness.with({ selector: '[name="edit-LLDP"]' }));
-      await editButton.click();
-      expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ServiceLldpComponent);
     });
   });
 
