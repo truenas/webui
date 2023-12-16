@@ -8,8 +8,10 @@ import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { NfsProtocol } from 'app/enums/nfs-protocol.enum';
+import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { NfsConfig } from 'app/interfaces/nfs-config.interface';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
@@ -65,6 +67,15 @@ describe('NfsFormComponent', () => {
       IxFormsModule,
     ],
     providers: [
+      mockAuth({
+        privilege: {
+          roles: {
+            $set: [
+              Role.SharingNfsWrite,
+            ],
+          },
+        },
+      }),
       mockWebsocket([
         mockCall('sharing.nfs.create'),
         mockCall('sharing.nfs.update'),
