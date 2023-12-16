@@ -1,5 +1,8 @@
-import { Directive, HostBinding, Input } from '@angular/core';
+import {
+  Directive, HostBinding, HostListener, Input,
+} from '@angular/core';
 import { MatButton } from '@angular/material/button';
+import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Role } from 'app/enums/role.enum';
 import { AuthService } from 'app/services/auth/auth.service';
@@ -7,30 +10,31 @@ import { AuthService } from 'app/services/auth/auth.service';
 @UntilDestroy()
 @Directive({
   selector: '[ixMatButtonRoles]',
-  // host: {
-  //   '[attr.disabled]': 'disabled || null',
-  //   '[class.mat-button-disabled]': 'disabled',
-  // },
+  providers: [MatTooltip],
 })
 export class RequiresRoleDirective {
   protected _elementClass: string[] = [];
   private hasRole = true;
 
-  // @HostBinding('attr.disabled')
-  // private attrDisabled: boolean;
-
-  // @HostBinding('class.mat-button-disabled')
-  // private classMatButtonDisabled: boolean;
-
   @Input() set disabled(disabled: boolean) {
     if (!this.hasRole) {
       this._elementClass.push('role-missing');
       this.button.disabled = true;
-      // this.attrDisabled = true;
-      // this.classMatButtonDisabled = true;
       return;
     }
     this.button.disabled = disabled;
+  }
+
+  @HostListener('mouseover') mouseover(): void {
+    if (!this.hasRole) {
+      this.matTooltip.message = 'Role missing';
+      this.matTooltip.show();
+    }
+  }
+  @HostListener('mouseleave') mouseleave(): void {
+    if (!this.hasRole) {
+      this.matTooltip.hide();
+    }
   }
 
   @Input() set ixMatButtonRoles(roles: Role[]) {
@@ -58,6 +62,7 @@ export class RequiresRoleDirective {
 
   constructor(
     private button: MatButton,
+    private matTooltip: MatTooltip,
     private authService: AuthService,
   ) { }
 }
