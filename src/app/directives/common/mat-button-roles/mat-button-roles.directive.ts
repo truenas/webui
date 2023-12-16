@@ -4,6 +4,7 @@ import {
 import { MatButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { Role } from 'app/enums/role.enum';
 import { AuthService } from 'app/services/auth/auth.service';
 
@@ -27,7 +28,7 @@ export class MatButtonRolesDirective {
 
   @HostListener('mouseover') mouseover(): void {
     if (!this.hasRole) {
-      this.matTooltip.message = 'Role missing';
+      this.matTooltip.message = this.translateService.instant('Missing required permissions for this action');
       this.matTooltip.show();
     }
   }
@@ -64,5 +65,6 @@ export class MatButtonRolesDirective {
     private button: MatButton,
     private matTooltip: MatTooltip,
     private authService: AuthService,
+    private translateService: TranslateService,
   ) { }
 }
