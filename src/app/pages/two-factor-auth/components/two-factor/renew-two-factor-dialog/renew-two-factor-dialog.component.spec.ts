@@ -5,7 +5,6 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { throwError } from 'rxjs';
-import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { RenewTwoFactorDialogComponent } from 'app/pages/two-factor-auth/components/two-factor/renew-two-factor-dialog/renew-two-factor-dialog.component';
@@ -24,7 +23,6 @@ describe('RenewTwoFactorDialog', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockAuth(),
       mockWebsocket([
         mockCall('user.renew_2fa_secret'),
       ]),

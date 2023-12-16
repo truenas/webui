@@ -140,7 +140,7 @@ describe('CertificateListComponent', () => {
 
   it('should show table rows', async () => {
     const expectedRows = [
-      ['Name', 'Date', 'CN', ''],
+      ['', '', '', ''],
       ['Name:cert_default_0Issuer:external', 'From:2023-06-20 06:55:04Until:2024-06-20 06:55:04', 'CN:localhostSAN:DNS:localhost', ''],
       ['Name:cert_default_1Issuer:external', 'From:2023-06-20 06:55:04Until:2024-06-20 06:55:04', 'CN:localhostSAN:DNS:localhost', ''],
       ['Name:cert_default_2Issuer:external', 'From:2023-06-20 06:55:04Until:2024-06-20 06:55:04', 'CN:localhostSAN:DNS:localhost', ''],

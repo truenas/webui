@@ -32,6 +32,7 @@ import { NgxFilesizeModule } from 'ngx-filesize';
 import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler';
 import { Observable } from 'rxjs';
 import { IcuMissingTranslationHandler } from 'app/core/classes/icu-missing-translation-handler';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { WINDOW } from 'app/helpers/window.helper';
 import { CastModule } from 'app/modules/cast/cast.module';
@@ -112,6 +113,7 @@ defineGlobalsInjections({
     mockProvider(ErrorHandlerService, {
       catchError: () => (source$: Observable<unknown>) => source$,
     }),
+    mockAuth(),
   ],
 });
 

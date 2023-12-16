@@ -2,7 +2,6 @@ import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/sp
 import { provideMockActions } from '@ngrx/effects/testing';
 import { of, ReplaySubject } from 'rxjs';
 import { MockAuthService } from 'app/core/testing/classes/mock-auth.service';
-import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Role } from 'app/enums/role.enum';
 import { DialogService } from 'app/services/dialog.service';
@@ -29,7 +28,6 @@ describe('EulaEffects', () => {
       mockProvider(SystemGeneralService, {
         isEnterprise: true,
       }),
-      mockAuth(),
     ],
   });
 

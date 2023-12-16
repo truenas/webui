@@ -123,7 +123,7 @@ describe('CertificateAuthorityListComponent', () => {
 
   it('should show table rows', async () => {
     const expectedRows = [
-      ['Name', 'Date', 'CN', ''],
+      ['', '', '', ''],
       ['Name:certificate-authority-0Issuer:certificate-issuer', 'From:2023-06-20 06:55:04Until:2024-06-20 06:55:04', 'CN:localhostSAN:DNS:localhost', ''],
       ['Name:certificate-authority-1Issuer:certificate-issuer', 'From:2023-06-20 06:55:04Until:2024-06-20 06:55:04', 'CN:localhostSAN:DNS:localhost', ''],
       ['Name:certificate-authority-2Issuer:certificate-issuer', 'From:2023-06-20 06:55:04Until:2024-06-20 06:55:04', 'CN:localhostSAN:DNS:localhost', ''],

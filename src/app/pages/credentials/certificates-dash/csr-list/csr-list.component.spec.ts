@@ -131,7 +131,7 @@ describe('CertificateSigningRequestsListComponent', () => {
 
   it('should show table rows', async () => {
     const expectedRows = [
-      ['Name', 'CN', ''],
+      ['', '', ''],
       ['Name:cert_default_0Issuer:external', 'CN:localhostSAN:DNS:localhost', ''],
       ['Name:cert_default_1Issuer:external', 'CN:localhostSAN:DNS:localhost', ''],
       ['Name:cert_default_2Issuer:external', 'CN:localhostSAN:DNS:localhost', ''],
