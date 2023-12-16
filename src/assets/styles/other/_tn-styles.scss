@@ -273,6 +273,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .mat-calendar-table-header,
   .mat-calendar-table,
   .mat-calendar-body-cell-content,
+  .mat-calendar-table-header th,
   .mat-calendar-body-label {
     @include variable(color, --fg2, $fg2);
   }
@@ -568,7 +569,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   // Style file trees to be highlighted with a theme color
   .node-content-wrapper:hover,
   .node-content-wrapper-focused {
-    background-color: var(--bg2);
+    background-color: var(--bg1);
     box-shadow: none;
   }
 

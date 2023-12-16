@@ -1,6 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export default {
+export const helptextGlobal = {
   dockerhost: T('Docker Host'),
 
   Ctrlr: T('TrueNAS Controller'),

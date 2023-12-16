@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { of } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { AuthService } from 'app/services/auth/auth.service';
@@ -21,4 +22,6 @@ export class MockAuthService extends AuthService {
       },
     });
   }
+
+  refreshUser = jest.fn(() => of(null));
 }

@@ -14,6 +14,7 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { GooglePhotosProviderFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/google-photos-provider-form/google-photos-provider-form.component';
 import { StorjProviderFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/storj-provider-form/storj-provider-form.component';
+import { CloudsyncProviderDescriptionComponent } from 'app/pages/data-protection/cloudsync/cloudsync-provider-description/cloudsync-provider-description.component';
 import { storjProvider, googlePhotosProvider, googlePhotosCreds } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.testing.utils';
 import { CloudsyncProviderComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-provider/cloudsync-provider.component';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
@@ -29,7 +30,7 @@ describe('CloudsyncProviderComponent', () => {
 
   const createComponent = createComponentFactory({
     component: CloudsyncProviderComponent,
-    imports: [ReactiveFormsModule, IxFormsModule],
+    imports: [ReactiveFormsModule, IxFormsModule, CloudsyncProviderDescriptionComponent],
     declarations: [
       GooglePhotosProviderFormComponent,
       StorjProviderFormComponent,
@@ -74,6 +75,13 @@ describe('CloudsyncProviderComponent', () => {
 
     const providersSelect = await form.getControl('Provider') as IxSelectHarness;
     expect(await providersSelect.getOptionLabels()).toEqual(['Storj iX', 'Google Photos']);
+
+    await providersSelect.setValue('Storj iX');
+
+    const providerForm = spectator.query(StorjProviderFormComponent);
+    expect(providerForm).toBeTruthy();
+    expect(providerForm.provider).toBe(storjProvider);
+    expect(spectator.query(CloudsyncProviderDescriptionComponent)).toBeTruthy();
   });
 
   it('renders dynamic provider specific form when Provider is selected', async () => {

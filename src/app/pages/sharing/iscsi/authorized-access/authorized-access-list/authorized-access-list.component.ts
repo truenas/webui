@@ -79,7 +79,9 @@ export class AuthorizedAccessListComponent implements OnInit {
         },
       ],
     }),
-  ]);
+  ], {
+    rowTestId: (row) => 'iscsi-authorized-access-' + row.id.toString(),
+  });
 
   constructor(
     public emptyService: EmptyService,

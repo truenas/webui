@@ -67,7 +67,9 @@ export class SessionsCardComponent implements OnInit {
         },
       ],
     }),
-  ]);
+  ], {
+    rowTestId: (row) => 'session-' + row.id.toString(),
+  });
 
   constructor(
     private store$: Store<AppState>,

@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { of } from 'rxjs';
-import helptext from 'app/helptext/data-protection/replication/replication';
+import { helptextReplication } from 'app/helptext/data-protection/replication/replication';
 import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
@@ -29,7 +29,7 @@ export class ScheduleSectionComponent implements OnChanges {
 
   readonly timeOptions$ = of(this.taskService.getTimeOptions());
 
-  protected readonly helptext = helptext;
+  protected readonly helptext = helptextReplication;
   protected readonly CronPresetValue = CronPresetValue;
 
   constructor(

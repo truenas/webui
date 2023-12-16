@@ -83,7 +83,9 @@ export class InitShutdownListComponent implements OnInit {
         },
       ],
     }),
-  ]);
+  ], {
+    rowTestId: (row) => 'init-shutdown-' + row.id.toString(),
+  });
 
   constructor(
     private translate: TranslateService,

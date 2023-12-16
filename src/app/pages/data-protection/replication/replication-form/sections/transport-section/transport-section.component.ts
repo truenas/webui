@@ -13,8 +13,8 @@ import { CompressionType, compressionTypeNames } from 'app/enums/compression-typ
 import { NetcatMode, netcatModeNames } from 'app/enums/netcat-mode.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
-import helptext from 'app/helptext/data-protection/replication/replication';
-import globalHelptext from 'app/helptext/global-helptext';
+import { helptextReplication } from 'app/helptext/data-protection/replication/replication';
+import { helptextGlobal } from 'app/helptext/global-helptext';
 import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-task.interface';
@@ -50,9 +50,9 @@ export class TransportSectionComponent implements OnChanges {
   readonly compressions$ = of(mapToOptions(compressionTypeNames, this.translate));
   readonly sshCredentialsOptions$ = new BehaviorSubject<Option[]>([]);
 
-  readonly sizeSuggestion = this.translate.instant(globalHelptext.human_readable.suggestion_label);
+  readonly sizeSuggestion = this.translate.instant(helptextGlobal.human_readable.suggestion_label);
 
-  protected readonly helptext = helptext;
+  protected readonly helptext = helptextReplication;
 
   constructor(
     private formBuilder: FormBuilder,

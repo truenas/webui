@@ -18,9 +18,10 @@ export interface DsUncachedUser {
   };
 }
 
-export interface AuthMeUser extends DsUncachedUser {
+export interface LoggedInUser extends DsUncachedUser, Partial<User> {
   privilege: AuthMePrivilege;
   two_factor_config: UserTwoFactorConfig;
+  local: boolean;
 }
 
 export interface AuthMePrivilege {
@@ -28,9 +29,8 @@ export interface AuthMePrivilege {
     $set: Role[];
   };
   web_shell: boolean;
+  webui_access: boolean;
 }
-
-export interface LoggedInUser extends AuthMeUser, Partial<User> { }
 
 export interface DsUncachedGroup {
   gr_gid: number;

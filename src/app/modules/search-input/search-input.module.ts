@@ -5,6 +5,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { CastModule } from 'app/modules/cast/cast.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
@@ -33,6 +34,7 @@ import { SearchInputComponent } from './components/search-input/search-input.com
     MatDatepickerModule,
     MatNativeDateModule,
     MatCardModule,
+    MatTooltipModule,
   ],
   exports: [
     SearchInputComponent,

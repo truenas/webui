@@ -42,7 +42,9 @@ export class SmbSessionListComponent implements OnInit {
       propertyName: 'signing',
       getValue: (row) => row.signing.cipher,
     }),
-  ]);
+  ], {
+    rowTestId: (row) => 'smb-session-' + row.session_id.toString(),
+  });
 
   constructor(
     private ws: WebSocketService,

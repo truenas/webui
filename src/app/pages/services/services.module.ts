@@ -22,7 +22,6 @@ import { LayoutModule } from 'app/modules/layout/layout.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { ServiceFtpComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
-import { ServiceLldpComponent } from 'app/pages/services/components/service-lldp/service-lldp.component';
 import { AddSpnDialogComponent } from 'app/pages/services/components/service-nfs/add-spn-dialog/add-spn-dialog.component';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
 import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
@@ -64,7 +63,6 @@ import { routing } from './services.routing';
     ServicesComponent,
     ServiceSshComponent,
     ServiceFtpComponent,
-    ServiceLldpComponent,
     ServiceSmartComponent,
     ServiceNfsComponent,
     ServiceUpsComponent,

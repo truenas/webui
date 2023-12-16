@@ -52,7 +52,6 @@ describe('ServiceNfsComponent', () => {
           '192.168.1.119': '192.168.1.119',
         }),
         mockCall('nfs.update'),
-        mockCall('kerberos.keytab.has_nfs_principal', false),
         mockCall('directoryservices.get_state', {
           activedirectory: DirectoryServiceState.Healthy,
           ldap: DirectoryServiceState.Disabled,

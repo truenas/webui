@@ -53,7 +53,9 @@ const columns = createTable<TestTableData>([
     propertyName: 'enabledField',
     onRowToggle: () => jest.fn(),
   }),
-]);
+], {
+  rowTestId: (row) => 'row-' + row.numberField.toString(),
+});
 
 describe('IxTableBodyComponent', () => {
   let spectator: Spectator<IxTableBodyComponent<TestTableData>>;

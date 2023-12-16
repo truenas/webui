@@ -19,7 +19,7 @@ import { FromWizardToAdvancedSubmitted } from 'app/enums/from-wizard-to-advanced
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { TransferMode, transferModeNames } from 'app/enums/transfer-mode.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
-import helptext from 'app/helptext/data-protection/cloudsync/cloudsync-form';
+import { helptextCloudsync } from 'app/helptext/data-protection/cloudsync/cloudsync';
 import { CloudSyncTaskUi, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { NewOption, SelectOption } from 'app/interfaces/option.interface';
@@ -106,18 +106,18 @@ export class CloudsyncFormComponent implements OnInit {
   });
 
   isLoading = false;
-  bucketPlaceholder: string = helptext.bucket_placeholder;
-  bucketTooltip: string = helptext.bucket_tooltip;
-  bucketInputPlaceholder: string = helptext.bucket_input_placeholder;
-  bucketInputTooltip: string = helptext.bucket_input_tooltip;
+  bucketPlaceholder: string = helptextCloudsync.bucket_placeholder;
+  bucketTooltip: string = helptextCloudsync.bucket_tooltip;
+  bucketInputPlaceholder: string = helptextCloudsync.bucket_input_placeholder;
+  bucketInputTooltip: string = helptextCloudsync.bucket_input_tooltip;
 
   readonly transferModeTooltip = `
-    ${helptext.transfer_mode_warning_sync}<br><br>
-    ${helptext.transfer_mode_warning_copy}<br><br>
-    ${helptext.transfer_mode_warning_move}
+    ${helptextCloudsync.transfer_mode_warning_sync}<br><br>
+    ${helptextCloudsync.transfer_mode_warning_copy}<br><br>
+    ${helptextCloudsync.transfer_mode_warning_move}
   `;
 
-  readonly helptext = helptext;
+  readonly helptext = helptextCloudsync;
 
   readonly directionOptions$ = of(mapToOptions(directionNames, this.translate));
   readonly transferModeOptions$ = of(mapToOptions(transferModeNames, this.translate));
@@ -293,10 +293,10 @@ export class CloudsyncFormComponent implements OnInit {
                   this.bucketInputPlaceholder = this.translate.instant('Container');
                   this.bucketInputTooltip = this.translate.instant('Input the pre-defined container to use.');
                 } else {
-                  this.bucketPlaceholder = helptext.bucket_placeholder;
-                  this.bucketTooltip = helptext.bucket_tooltip;
-                  this.bucketInputPlaceholder = helptext.bucket_input_placeholder;
-                  this.bucketInputTooltip = helptext.bucket_input_tooltip;
+                  this.bucketPlaceholder = helptextCloudsync.bucket_placeholder;
+                  this.bucketTooltip = helptextCloudsync.bucket_tooltip;
+                  this.bucketInputPlaceholder = helptextCloudsync.bucket_input_placeholder;
+                  this.bucketInputTooltip = helptextCloudsync.bucket_input_tooltip;
                 }
 
                 this.loadBucketOptions();
@@ -710,7 +710,7 @@ export class CloudsyncFormComponent implements OnInit {
   onDryRun(): void {
     const payload = this.prepareData(this.form.value);
     const dialogRef = this.matDialog.open(EntityJobComponent, {
-      data: { title: helptext.job_dialog_title_dry_run },
+      data: { title: helptextCloudsync.job_dialog_title_dry_run },
       disableClose: true,
     });
     dialogRef.componentInstance.setCall('cloudsync.sync_onetime', [payload, { dry_run: true }]);

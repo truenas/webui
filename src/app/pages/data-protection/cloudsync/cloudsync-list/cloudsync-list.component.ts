@@ -13,7 +13,7 @@ import { FromWizardToAdvancedSubmitted } from 'app/enums/from-wizard-to-advanced
 import { JobState } from 'app/enums/job-state.enum';
 import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
-import helptext_cloudsync from 'app/helptext/data-protection/cloudsync/cloudsync-form';
+import { helptextCloudsync } from 'app/helptext/data-protection/cloudsync/cloudsync';
 import { CloudSyncTask, CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
@@ -115,7 +115,9 @@ export class CloudsyncListComponent implements OnInit {
       propertyName: 'enabled',
       getValue: (task) => (task.enabled ? this.translate.instant('Yes') : this.translate.instant('No')),
     }),
-  ]);
+  ], {
+    rowTestId: (row) => 'cloudsync-task-' + row.id.toString(),
+  });
 
   get hiddenColumns(): Column<CloudSyncTaskUi, ColumnComponent<CloudSyncTaskUi>>[] {
     return this.columns.filter((column) => column?.hidden);
@@ -205,8 +207,8 @@ export class CloudsyncListComponent implements OnInit {
 
   dryRun(row: CloudSyncTaskUi): void {
     this.dialogService.confirm({
-      title: helptext_cloudsync.dry_run_title,
-      message: helptext_cloudsync.dry_run_dialog,
+      title: helptextCloudsync.dry_run_title,
+      message: helptextCloudsync.dry_run_dialog,
       hideCheckbox: true,
     }).pipe(
       filter(Boolean),

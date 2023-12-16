@@ -1,6 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export default {
+export const helptextSnapshotForm = {
   dataset_placeholder: T('Dataset'),
   dataset_tooltip: T('Select a pool, dataset, or zvol.'),
 

@@ -6,11 +6,15 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
-import { Observable } from 'rxjs';
+import {
+  Observable, combineLatest, of,
+} from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { allCommands } from 'app/constants/all-commands.constant';
-import helptext from 'app/helptext/account/groups';
+import { helptextGroups } from 'app/helptext/account/groups';
 import { Group } from 'app/interfaces/group.interface';
+import { Privilege, PrivilegeUpdate } from 'app/interfaces/privilege.interface';
+import { ChipsProvider } from 'app/modules/ix-forms/components/ix-chips/chips-provider';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -35,6 +39,9 @@ export class GroupFormComponent implements OnInit {
   }
   isFormLoading = false;
 
+  privilegesList: Privilege[];
+  initialGroupRelatedPrivilegesList: Privilege[] = [];
+
   form = this.fb.group({
     gid: [null as number, [Validators.required, Validators.pattern(/^\d+$/)]],
     name: ['', [Validators.required, Validators.pattern(UserService.namePattern)]],
@@ -44,15 +51,21 @@ export class GroupFormComponent implements OnInit {
     sudo_commands_nopasswd_all: [false],
     smb: [false],
     allowDuplicateGid: [false],
+    privileges: [[] as string[] | number[]],
   });
 
   readonly tooltips = {
-    gid: helptext.bsdgrp_gid_tooltip,
-    name: helptext.bsdgrp_group_tooltip,
-    sudo: helptext.bsdgrp_sudo_tooltip,
-    smb: helptext.smb_tooltip,
-    allowDuplicateGid: helptext.allow_tooltip,
+    gid: helptextGroups.bsdgrp_gid_tooltip,
+    name: helptextGroups.bsdgrp_group_tooltip,
+    privileges: helptextGroups.privileges_tooltip,
+    sudo: helptextGroups.bsdgrp_sudo_tooltip,
+    smb: helptextGroups.smb_tooltip,
+    allowDuplicateGid: helptextGroups.allow_tooltip,
   };
+
+  readonly privilegeOptions$ = this.ws.call('privilege.query').pipe(
+    map((privileges) => privileges.map((privilege) => ({ label: privilege.name, value: privilege.id }))),
+  );
 
   constructor(
     private fb: FormBuilder,
@@ -68,7 +81,17 @@ export class GroupFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.setupForm();
+    this.getPrivilegesList();
   }
+
+  readonly privilegesProvider: ChipsProvider = (query: string) => {
+    return this.ws.call('privilege.query', []).pipe(
+      map((privileges) => {
+        const chips = privileges.map((privilege) => privilege.name);
+        return chips.filter((item) => item.trim().toLowerCase().includes(query.trim().toLowerCase()));
+      }),
+    );
+  };
 
   setupForm(): void {
     this.setFormRelations();
@@ -99,16 +122,6 @@ export class GroupFormComponent implements OnInit {
     }
   }
 
-  private setNamesInUseValidator(currentName?: string): void {
-    this.ws.call('group.query').pipe(untilDestroyed(this)).subscribe((groups) => {
-      let forbiddenNames = groups.map((group) => group.group);
-      if (currentName) {
-        forbiddenNames = _.remove(forbiddenNames, currentName);
-      }
-      this.form.controls.name.addValidators(forbiddenValues(forbiddenNames));
-    });
-  }
-
   onSubmit(): void {
     const values = this.form.value;
     const commonBody = {
@@ -136,6 +149,7 @@ export class GroupFormComponent implements OnInit {
     request$.pipe(
       switchMap((id) => this.ws.call('group.query', [[['id', '=', id]]])),
       map((groups) => groups[0]),
+      switchMap((group) => this.togglePrivilegesForGroup(group.gid).pipe(map(() => group))),
       untilDestroyed(this),
     ).subscribe({
       next: (group) => {
@@ -158,6 +172,81 @@ export class GroupFormComponent implements OnInit {
     });
   }
 
+  private togglePrivilegesForGroup(groupId: number): Observable<Privilege[]> {
+    const requests$: Observable<Privilege>[] = [];
+
+    if (this.form.value.privileges) {
+      const privileges = this.privilegesList
+        .filter((privilege) => this.form.value.privileges.some((privilegeId) => privilege.id === privilegeId));
+
+      privileges.forEach((privilege) => {
+        requests$.push(
+          this.ws.call('privilege.update', [
+            privilege.id,
+            this.mapPrivilegeToPrivilegeUpdate(
+              privilege,
+              Array.from(new Set([...privilege.local_groups.map((group) => group.gid), groupId])),
+            ),
+          ]),
+        );
+      });
+    }
+
+    if (this.existingPrivilegesRemoved) {
+      const privileges = this.privilegesList
+        .filter((privilege) => this.existingPrivilegesRemoved.some((privilegeId) => privilege.id === privilegeId));
+
+      privileges.forEach((privilege) => {
+        requests$.push(
+          this.ws.call('privilege.update', [
+            privilege.id,
+            this.mapPrivilegeToPrivilegeUpdate(
+              privilege,
+              privilege.local_groups.map((group) => group.gid).filter((gid) => gid !== groupId),
+            ),
+          ]),
+        );
+      });
+    }
+
+    return requests$.length ? combineLatest(requests$) : of([]);
+  }
+
+  private getPrivilegesList(): void {
+    this.ws.call('privilege.query', [])
+      .pipe(untilDestroyed(this)).subscribe((privileges) => {
+        this.initialGroupRelatedPrivilegesList = privileges.filter((privilege) => {
+          return privilege.local_groups.map((group) => group.gid).includes(this.editingGroup?.gid);
+        });
+
+        this.privilegesList = privileges;
+
+        this.form.controls.privileges.patchValue(
+          this.initialGroupRelatedPrivilegesList.map((privilege) => privilege.id),
+        );
+      });
+  }
+
+  private setNamesInUseValidator(currentName?: string): void {
+    this.ws.call('group.query').pipe(untilDestroyed(this)).subscribe((groups) => {
+      let forbiddenNames = groups.map((group) => group.group);
+      if (currentName) {
+        forbiddenNames = _.remove(forbiddenNames, currentName);
+      }
+      this.form.controls.name.addValidators(forbiddenValues(forbiddenNames));
+    });
+  }
+
+  private mapPrivilegeToPrivilegeUpdate(privilege: Privilege, localGroups: number[]): PrivilegeUpdate {
+    return {
+      local_groups: localGroups,
+      ds_groups: [...privilege.ds_groups.map((local) => local.id)],
+      name: privilege.name,
+      roles: privilege.roles,
+      web_shell: privilege.web_shell,
+    };
+  }
+
   private setFormRelations(): void {
     this.form.controls.sudo_commands_all.valueChanges.pipe(untilDestroyed(this)).subscribe((isAll) => {
       if (isAll) {
@@ -174,5 +263,13 @@ export class GroupFormComponent implements OnInit {
         this.form.controls.sudo_commands_nopasswd.enable();
       }
     });
+  }
+
+  private get existingPrivilegesRemoved(): number[] {
+    return Array.from(new Set(
+      this.initialGroupRelatedPrivilegesList
+        .filter((privilege) => !this.form.value.privileges.includes(privilege.id as never))
+        .map((privileges) => privileges.id),
+    ));
   }
 }

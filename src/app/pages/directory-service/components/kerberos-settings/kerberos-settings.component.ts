@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import helptext from 'app/helptext/directory-service/kerberos-settings';
+import { helptextKerberosSettings } from 'app/helptext/directory-service/kerberos-settings';
 import { KerberosConfigUpdate } from 'app/interfaces/kerberos-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -26,8 +26,8 @@ export class KerberosSettingsComponent implements OnInit {
   });
 
   readonly tooltips = {
-    appdefaults_aux: helptext.ks_appdefaults_tooltip,
-    libdefaults_aux: helptext.ks_libdefaults_tooltip,
+    appdefaults_aux: helptextKerberosSettings.ks_appdefaults_tooltip,
+    libdefaults_aux: helptextKerberosSettings.ks_libdefaults_tooltip,
   };
 
   constructor(

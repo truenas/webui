@@ -73,7 +73,9 @@ export default class KerberosKeytabsListComponent implements OnInit {
         },
       ],
     }),
-  ]);
+  ], {
+    rowTestId: (row) => 'kerberos-keytab-' + row.id.toString(),
+  });
 
   constructor(
     private translateService: TranslateService,

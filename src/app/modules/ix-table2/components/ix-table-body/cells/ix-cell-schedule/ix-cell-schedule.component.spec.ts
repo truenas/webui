@@ -26,6 +26,7 @@ describe('IxCellScheduleComponent', () => {
       props: {
         propertyName: 'scheduleField',
         row: { scheduleField: schedule },
+        rowTestId: () => '',
       } as Partial<IxCellScheduleComponent<TestTableData>>,
     });
   });

@@ -10,14 +10,21 @@ import {
   ViewChild,
 } from '@angular/core';
 import { autocompletion, closeBrackets, startCompletion } from '@codemirror/autocomplete';
-import { EditorState } from '@codemirror/state';
-import { EditorView, placeholder } from '@codemirror/view';
+import { linter } from '@codemirror/lint';
+import { EditorState, StateEffect, StateField } from '@codemirror/state';
+import {
+  EditorView, keymap, placeholder,
+} from '@codemirror/view';
+import { TranslateService } from '@ngx-translate/core';
 import { format } from 'date-fns';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
 import { AdvancedSearchAutocompleteService } from 'app/modules/search-input/services/advanced-search-autocomplete.service';
 import { QueryParserService } from 'app/modules/search-input/services/query-parser/query-parser.service';
+import { QueryParsingError } from 'app/modules/search-input/services/query-parser/query-parsing-result.interface';
 import { QueryToApiService } from 'app/modules/search-input/services/query-to-api/query-to-api.service';
 import { SearchProperty } from 'app/modules/search-input/types/search-property.interface';
+
+const setDiagnostics = StateEffect.define<unknown[] | null>();
 
 @Component({
   selector: 'ix-advanced-search',
@@ -31,23 +38,27 @@ export class AdvancedSearchComponent<T> implements OnInit {
 
   @Output() paramsChange = new EventEmitter<QueryFilters<T>>();
   @Output() switchToBasic = new EventEmitter<void>();
+  @Output() runSearch = new EventEmitter<void>();
 
   @ViewChild('inputArea', { static: true }) inputArea: ElementRef<HTMLElement>;
 
   hasQueryErrors = false;
   queryInputValue: string;
-  private editorView: EditorView;
+  errorMessages: QueryParsingError[] | null = null;
+  editorView: EditorView;
+
+  showDatePicker$ = this.advancedSearchAutocomplete.showDatePicker$;
 
   get editorHasValue(): boolean {
     return (this.editorView.state.doc as unknown as { text: string[] })?.text?.[0] !== '';
   }
-  showDatePicker$ = this.advancedSearchAutocomplete.showDatePicker$;
 
   constructor(
     private queryParser: QueryParserService,
     private queryToApi: QueryToApiService<T>,
     private advancedSearchAutocomplete: AdvancedSearchAutocompleteService<T>,
     private cdr: ChangeDetectorRef,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -78,10 +89,34 @@ export class AdvancedSearchComponent<T> implements OnInit {
       this.onInputChanged();
     });
 
+    const diagnosticField = StateField.define({
+      create() {
+        return [];
+      },
+      update(diagnostics, transaction) {
+        for (const effect of transaction.effects) {
+          if (effect.is(setDiagnostics)) {
+            return effect.value;
+          }
+        }
+        return diagnostics;
+      },
+    });
+
+    const advancedSearchLinter = linter((view) => view.state.field(diagnosticField));
+
     const autocompleteExtension = autocompletion({
       override: [this.advancedSearchAutocomplete.setCompletionSource.bind(this.advancedSearchAutocomplete)],
       icons: false,
     });
+
+    const customKeyMap = keymap.of([{
+      key: 'Enter',
+      run: () => {
+        this.runSearch.emit();
+        return true;
+      },
+    }]);
 
     this.editorView = new EditorView({
       state: EditorState.create({
@@ -90,23 +125,34 @@ export class AdvancedSearchComponent<T> implements OnInit {
           EditorView.lineWrapping,
           updateListener,
           closeBrackets(),
-          placeholder('Service = "SMB" AND Event = "CLOSE"'),
+          placeholder(this.translate.instant('Service = "SMB" AND Event = "CLOSE"')),
+          advancedSearchLinter,
+          diagnosticField,
+          customKeyMap,
         ],
       }),
       parent: this.inputArea.nativeElement,
     });
+
+    this.focusInput();
   }
 
   dateSelected(value: string): void {
     this.setEditorContents(`"${format(new Date(value), 'yyyy-MM-dd')}" `, this.editorView.state.doc.length);
-    this.editorView.focus();
+    this.focusInput();
     this.showDatePicker$.next(false);
   }
 
   protected onResetInput(): void {
     this.setEditorContents('', 0, this.editorView.state.doc.length);
+    this.focusInput();
     this.showDatePicker$.next(false);
     this.paramsChange.emit([]);
+    this.runSearch.emit();
+  }
+
+  private focusInput(): void {
+    this.editorView.focus();
   }
 
   private onInputChanged(): void {
@@ -116,20 +162,22 @@ export class AdvancedSearchComponent<T> implements OnInit {
     this.hasQueryErrors = Boolean(this.queryInputValue.length && parsedQuery.hasErrors);
     this.cdr.markForCheck();
 
-    if (this.queryInputValue === '') {
-      this.onResetInput();
-    }
-
-    if (parsedQuery.hasErrors) {
-      // TODO: Handle errors. --> https://ixsystems.atlassian.net/browse/NAS-125375
-      return;
+    if (parsedQuery.hasErrors && this.queryInputValue?.length) {
+      this.errorMessages = parsedQuery.errors;
+      this.editorView.dispatch({
+        effects: setDiagnostics.of(
+          parsedQuery.errors.filter((error) => error.from !== error.to),
+        ),
+      });
+    } else {
+      this.editorView.dispatch({
+        effects: setDiagnostics.of([]),
+      });
+      this.errorMessages = null;
     }
 
     const filters = this.queryToApi.buildFilters(parsedQuery, this.properties);
 
-    // TODO: Remove before merge
-    // eslint-disable-next-line no-console
-    console.log(JSON.stringify(filters, null, 2), parsedQuery);
     this.paramsChange.emit(filters);
   }
 

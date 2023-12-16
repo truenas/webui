@@ -31,7 +31,7 @@
       {{ 'Log In' | translate }}
     </button>
     <div *ngIf="isLastLoginAttemptFailed" class="error">
-      <p>{{ 'Wrong username or password. Please try again.' | translate }}</p>
+      <p>{{ lastLoginError }}</p>
     </div>
   </ng-container>
   <ng-container *ngIf="hasTwoFactor">
@@ -67,7 +67,7 @@
       >{{ 'Cancel' | translate }}</button>
     </div>
     <div *ngIf="isLastOtpAttemptFailed" class="error">
-      <p>{{ 'Invalid or expired OTP. Please try again.' | translate }}</p>
+      <p>{{ lastLoginError }}</p>
     </div>
   </ng-container>
 </form>

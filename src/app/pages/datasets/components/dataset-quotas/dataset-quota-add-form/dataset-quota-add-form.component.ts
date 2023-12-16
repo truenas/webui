@@ -6,7 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { map } from 'rxjs/operators';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
-import globalHelptext from 'app/helptext/global-helptext';
+import { helptextGlobal } from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-quotas';
 import { SetDatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { ChipsProvider } from 'app/modules/ix-forms/components/ix-chips/chips-provider';
@@ -36,9 +36,9 @@ export class DatasetQuotaAddFormComponent implements OnInit {
   get dataQuotaLabel(): string {
     return this.quotaType === DatasetQuotaType.User
       ? this.translate.instant(helptext.users.data_quota.placeholder)
-        + this.translate.instant(globalHelptext.human_readable.suggestion_label)
+        + this.translate.instant(helptextGlobal.human_readable.suggestion_label)
       : this.translate.instant(helptext.groups.data_quota.placeholder)
-        + this.translate.instant(globalHelptext.human_readable.suggestion_label);
+        + this.translate.instant(helptextGlobal.human_readable.suggestion_label);
   }
   get objectQuotaLabel(): string {
     return this.quotaType === DatasetQuotaType.User
