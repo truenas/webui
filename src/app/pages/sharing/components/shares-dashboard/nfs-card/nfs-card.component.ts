@@ -5,6 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   tap, map, filter, switchMap,
 } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingNfs } from 'app/helptext/sharing';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
@@ -57,6 +58,7 @@ export class NfsCardComponent implements OnInit {
           iconName: 'edit',
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.openForm(row),
+          roles: [Role.SharingNfsWrite],
         },
         {
           iconName: 'delete',

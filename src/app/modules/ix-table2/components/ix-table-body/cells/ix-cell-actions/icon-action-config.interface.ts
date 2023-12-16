@@ -1,4 +1,5 @@
 import { Observable } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 
 export interface IconActionConfig<T> {
   iconName: string;
@@ -7,4 +8,5 @@ export interface IconActionConfig<T> {
   dynamicTooltip?: (row: T) => Observable<string>;
   hidden?: (row: T) => Observable<boolean>;
   disabled?: (row: T) => Observable<boolean>;
+  roles?: Role[];
 }
