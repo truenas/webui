@@ -19,6 +19,7 @@ import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { AllNetworkInterfacesUpdate } from 'app/interfaces/reporting.interface';
 import { ArrayDataProvider } from 'app/modules/ix-table2/classes/array-data-provider/array-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
+import { templateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -53,10 +54,7 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
   inOutUpdates: AllNetworkInterfacesUpdate;
 
   columns = createTable<NetworkInterface>([
-    textColumn({
-      // In-out column
-      propertyName: 'state',
-    }),
+    templateColumn(),
     textColumn({
       title: this.translate.instant('Name'),
       propertyName: 'name',

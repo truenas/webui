@@ -21,6 +21,7 @@ import { ApiDataProvider } from 'app/modules/ix-table2/classes/api-data-provider
 import { PaginationServerSide } from 'app/modules/ix-table2/classes/api-data-provider/pagination-server-side.class';
 import { SortingServerSide } from 'app/modules/ix-table2/classes/api-data-provider/sorting-server-side.class';
 import { dateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-date/ix-cell-date.component';
+import { templateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { TablePagination } from 'app/modules/ix-table2/interfaces/table-pagination.interface';
 import { createTable } from 'app/modules/ix-table2/utils';
@@ -64,9 +65,7 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
         ? this.translate.instant(auditServiceLabels.get(row.service))
         : row.event || '-'),
     }),
-    textColumn({
-      title: this.translate.instant('User'),
-    }),
+    templateColumn(),
     dateColumn({
       title: this.translate.instant('Timestamp'),
       propertyName: 'timestamp',

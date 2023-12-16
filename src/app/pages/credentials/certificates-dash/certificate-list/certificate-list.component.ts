@@ -16,7 +16,7 @@ import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
-import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { templateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-template/ix-cell-template.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
@@ -41,21 +41,9 @@ export class CertificateListComponent implements OnInit {
   dataProvider: AsyncDataProvider<Certificate>;
   certificates: Certificate[] = [];
   columns = createTable<Certificate>([
-    textColumn({
-      title: this.translate.instant('Name'),
-      propertyName: 'name',
-      sortable: true,
-    }),
-    textColumn({
-      title: this.translate.instant('Date'),
-      propertyName: 'from',
-      sortable: true,
-    }),
-    textColumn({
-      title: this.translate.instant('CN'),
-      propertyName: 'common',
-      sortable: true,
-    }),
+    templateColumn(),
+    templateColumn(),
+    templateColumn(),
     actionsColumn({
       actions: [
         {
