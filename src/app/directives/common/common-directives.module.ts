@@ -5,6 +5,7 @@ import { ActionHasRoleDirective } from 'app/directives/common/action-has-role/ac
 import { AutofocusDirective } from 'app/directives/common/autofocus/autofocus.directive';
 import { HasRoleDirective } from 'app/directives/common/has-role/has-role.directive';
 import { IfNightlyDirective } from 'app/directives/common/if-nightly/if-nightly.directive';
+import { RequiresRoleDirective } from 'app/directives/common/requires-role/requires-role.directive';
 import { StepActivationDirective } from 'app/directives/common/step-activation.directive';
 import { LetDirective } from './app-let.directive';
 
@@ -17,6 +18,7 @@ import { LetDirective } from './app-let.directive';
     IfNightlyDirective,
     HasRoleDirective,
     ActionHasRoleDirective,
+    RequiresRoleDirective,
     ActionHasRoleWrapperComponent,
     AutofocusDirective,
     StepActivationDirective,
@@ -24,6 +26,7 @@ import { LetDirective } from './app-let.directive';
   exports: [
     LetDirective,
     IfNightlyDirective,
+    RequiresRoleDirective,
     HasRoleDirective,
     ActionHasRoleDirective,
     AutofocusDirective,

@@ -120,6 +120,7 @@
           type="submit"
           color="primary"
           ixTest="save"
+          [ixMatButtonRoles]="[Role.FullAdmin]"
           [disabled]="form.invalid || isLoading"
         >
           {{ 'Save' | translate }}

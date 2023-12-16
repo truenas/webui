@@ -18,7 +18,6 @@ import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { hasRoleAsyncFgValidator } from 'app/modules/ix-forms/validators/has-role-validation/has-role-validation';
 import { ipv4or6cidrValidator } from 'app/modules/ix-forms/validators/ip-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AuthService } from 'app/services/auth/auth.service';
@@ -39,6 +38,8 @@ export class NfsFormComponent implements OnInit {
   isAdvancedMode = false;
   hasNfsSecurityField = false;
 
+  Role = Role;
+
   form = this.formBuilder.group({
     path: ['', Validators.required],
     comment: [''],
@@ -51,13 +52,6 @@ export class NfsFormComponent implements OnInit {
     security: [[] as NfsSecurityProvider[]],
     networks: this.formBuilder.array<string>([]),
     hosts: this.formBuilder.array<string>([]),
-  }, {
-    asyncValidators: [
-      hasRoleAsyncFgValidator(
-        this.authService,
-        [Role.SharingNfsWrite],
-      ),
-    ],
   });
 
   get isNew(): boolean {
