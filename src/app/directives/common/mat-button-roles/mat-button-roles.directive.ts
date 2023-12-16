@@ -12,7 +12,7 @@ import { AuthService } from 'app/services/auth/auth.service';
   selector: '[ixMatButtonRoles]',
   providers: [MatTooltip],
 })
-export class RequiresRoleDirective {
+export class MatButtonRolesDirective {
   protected _elementClass: string[] = [];
   private hasRole = true;
 
