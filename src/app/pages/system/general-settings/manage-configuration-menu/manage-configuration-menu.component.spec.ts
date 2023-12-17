@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
 import {
   ManageConfigurationMenuComponent,
 } from 'app/pages/system/general-settings/manage-configuration-menu/manage-configuration-menu.component';
@@ -14,16 +14,21 @@ import {
 import {
   UploadConfigDialogComponent,
 } from 'app/pages/system/general-settings/upload-config-dialog/upload-config-dialog.component';
+import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
 
 describe('ManageConfigurationMenuComponent', () => {
   let spectator: Spectator<ManageConfigurationMenuComponent>;
   let loader: HarnessLoader;
   let menu: MatMenuHarness;
+  const isSysAdmin$ = new BehaviorSubject(true);
   const createComponent = createComponentFactory({
     component: ManageConfigurationMenuComponent,
     providers: [
       mockProvider(Router),
+      mockProvider(AuthService, {
+        isSysAdmin$,
+      }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
@@ -56,11 +61,21 @@ describe('ManageConfigurationMenuComponent', () => {
     expect(matDialog.open).toHaveBeenCalledWith(UploadConfigDialogComponent);
   });
 
-  it('redirects to reset config page with confirmation when Reset to Defaults is pressed', async () => {
-    await menu.open();
-    await menu.clickItem({ text: 'Reset to Defaults' });
+  describe('if logged user is a system administrator', () => {
+    it('redirects to reset config page with confirmation when Reset to Defaults is pressed', async () => {
+      await menu.open();
+      await menu.clickItem({ text: 'Reset to Defaults' });
 
-    expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
-    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/others/config-reset'], { skipLocationChange: true });
+      expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
+      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/others/config-reset'], { skipLocationChange: true });
+    });
+  });
+
+  it('does not show Reset to Defaults menu item if logged in user is not a system administrator', async () => {
+    isSysAdmin$.next(false);
+    await menu.open();
+    const resetToDefaults = await menu.getItems({ text: /Reset to Defaults$/ });
+
+    expect(resetToDefaults).toHaveLength(0);
   });
 });
