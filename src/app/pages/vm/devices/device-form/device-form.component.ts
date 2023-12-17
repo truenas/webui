@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, forkJoin, of } from 'rxjs';
@@ -28,7 +29,7 @@ import { NetworkService } from 'app/services/network.service';
 import { VmService } from 'app/services/vm.service';
 import { WebSocketService } from 'app/services/ws.service';
 
-const specifyCustom = 'Specify custom';
+const specifyCustom = T('Specify custom');
 
 @UntilDestroy()
 @Component({
@@ -110,7 +111,7 @@ export class DeviceFormComponent implements OnInit {
         return { label, value: id };
       });
       options.push({
-        label: specifyCustom,
+        label: this.translate.instant(specifyCustom),
         value: specifyCustom,
       });
       return options;

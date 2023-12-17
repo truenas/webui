@@ -37,7 +37,7 @@ import { UserService } from 'app/services/user.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 
-const defaultHomePath = '/nonexistent';
+const defaultHomePath = '/var/empty';
 
 @UntilDestroy({ arrayName: 'subscriptions' })
 @Component({
@@ -125,7 +125,7 @@ export class UserFormComponent implements OnInit {
   shellOptions$: Observable<Option[]>;
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
   readonly groupProvider = new SimpleAsyncComboboxProvider(this.groupOptions$);
-  autocompleteProvider: ChipsProvider = (query) => {
+  autocompleteProvider: ChipsProvider = (query: string) => {
     return this.userService.groupQueryDsCache(query).pipe(
       map((groups) => groups.map((group) => group.group)),
     );

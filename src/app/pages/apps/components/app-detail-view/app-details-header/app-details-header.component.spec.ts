@@ -7,6 +7,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { officialCatalog } from 'app/constants/catalog.constants';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
@@ -54,8 +55,10 @@ describe('AppDetailsHeaderComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(AuthService, {
-        user$: of({ attributes: { appsAgreement: true } }),
+      mockAuth({
+        attributes: {
+          appsAgreement: true,
+        },
       }),
       mockWebsocket([
         mockCall('auth.set_attribute'),

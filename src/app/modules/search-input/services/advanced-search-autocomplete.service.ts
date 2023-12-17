@@ -60,7 +60,6 @@ export class AdvancedSearchAutocompleteService<T> {
     const currentQuery = context.state.doc.toString();
     this.queryContext = this.getQueryContext(currentQuery, context.pos);
     const suggestions$ = this.generateSuggestionsBasedOnContext(this.queryContext);
-    const currentToken = context.matchBefore(/\w*/);
 
     const from = currentQuery.length < this.queryContext.startPosition ? 0 : this.queryContext.startPosition;
     const to = this.queryContext.endPosition;
@@ -72,12 +71,6 @@ export class AdvancedSearchAutocompleteService<T> {
           to,
           options: uniqBy(suggestions, 'label')
             .sort((a, b) => a.label.localeCompare(b.label))
-            .filter((suggestion) => {
-              return suggestion.label && (
-                suggestion.label.toUpperCase().startsWith(currentToken?.text?.toUpperCase())
-                || suggestion.value.toString().toUpperCase().startsWith(currentToken?.text?.toUpperCase())
-              );
-            })
             .map((suggestion) => ({
               label: this.translate.instant(suggestion.label),
               apply: () => this.applySuggestionTransformation(suggestion, currentQuery, from, to),
@@ -214,10 +207,6 @@ export class AdvancedSearchAutocompleteService<T> {
   }
 
   private generateSuggestionsBasedOnContext(context: QueryContext): Observable<Option[]> {
-    // TODO:
-    // eslint-disable-next-line no-console
-    console.log(context);
-
     const { lastToken, secondLastToken, thirdLastToken } = this.getTokenParts(context.tokens);
 
     const isInOrNin = (lastToken?.toUpperCase() === inComparator || lastToken?.toUpperCase() === ninComparator)

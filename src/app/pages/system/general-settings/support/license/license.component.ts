@@ -1,11 +1,10 @@
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef, Component, Inject,
+  ChangeDetectorRef, Component,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter } from 'rxjs/operators';
-import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -37,7 +36,6 @@ export class LicenseComponent {
     protected ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
-    @Inject(WINDOW) private window: Window,
   ) {}
 
   onSubmit(): void {
@@ -47,8 +45,6 @@ export class LicenseComponent {
     this.ws.call('system.license_update', [license]).pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isFormLoading = false;
-        // To make sure EULA opens on reload; removed from local storage (in topbar) on acceptance of EULA
-        this.window.localStorage.setItem('upgrading_status', 'upgrading');
         this.slideInRef.close();
         this.cdr.markForCheck();
         setTimeout(() => {
