@@ -25,7 +25,7 @@ export class IxCellActionsComponent<T> extends ColumnComponent<T> {
     return this.authService.hasRole(action.roles?.length ? action.roles : [Role.Readonly]).pipe(
       switchMap((hasRole) => {
         if (!hasRole) {
-          return of(this.translateService.instant('Missing required permissions for this action'));
+          return of(this.translateService.instant('Missing permissions for this action'));
         }
 
         return action.dynamicTooltip ? action.dynamicTooltip(row) : of(action.tooltip || '');

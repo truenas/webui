@@ -28,7 +28,7 @@ export class MatButtonRolesDirective {
 
   @HostListener('mouseover') mouseover(): void {
     if (!this.hasRole) {
-      this.matTooltip.message = this.translateService.instant('Missing required permissions for this action');
+      this.matTooltip.message = this.translateService.instant('Missing permissions for this action');
       this.matTooltip.show();
     }
   }
