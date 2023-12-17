@@ -17,29 +17,37 @@ import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells
 import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
+import { AccessFormComponent } from 'app/pages/system/advanced/access/access-form/access-form.component';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
-import { TokenSettingsComponent } from 'app/pages/system/advanced/sessions/token-settings/token-settings.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { defaultPreferences } from 'app/store/preferences/default-preferences.constant';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
+import { waitForGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-sessions-card',
+  selector: 'ix-access-card',
   styleUrls: ['../../common-card.scss'],
-  templateUrl: './sessions-card.component.html',
+  templateUrl: './access-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SessionsCardComponent implements OnInit {
+export class AccessCardComponent implements OnInit {
   readonly tokenLifetime$ = this.store$.pipe(
     waitForPreferences,
     map((preferences) => {
       return preferences.lifetime ? preferences.lifetime : defaultPreferences.lifetime;
     }),
+    toLoadingState(),
+  );
+
+  readonly generalConfig$ = this.store$.pipe(
+    waitForGeneralConfig,
+    map((generalConfig) => generalConfig.ds_auth),
     toLoadingState(),
   );
 
@@ -71,6 +79,10 @@ export class SessionsCardComponent implements OnInit {
     rowTestId: (row) => 'session-' + row.id.toString(),
   });
 
+  get isEnterprise(): boolean {
+    return this.systemGeneralService.isEnterprise;
+  }
+
   constructor(
     private store$: Store<AppState>,
     private slideInService: IxSlideInService,
@@ -80,6 +92,7 @@ export class SessionsCardComponent implements OnInit {
     private loader: AppLoaderService,
     private ws: WebSocketService,
     private advancedSettings: AdvancedSettingsService,
+    private systemGeneralService: SystemGeneralService,
     protected emptyService: EmptyService,
     private cdr: ChangeDetectorRef,
   ) {}
@@ -98,7 +111,7 @@ export class SessionsCardComponent implements OnInit {
 
   async onConfigure(): Promise<void> {
     await this.advancedSettings.showFirstTimeWarningIfNeeded();
-    const slideInRef = this.slideInService.open(TokenSettingsComponent);
+    const slideInRef = this.slideInService.open(AccessFormComponent);
     slideInRef?.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.updateSessions();
     });

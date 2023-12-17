@@ -1,6 +1,6 @@
 <ix-modal-header
-  [title]="'Token Settings' | translate"
-  [loading]="isFormLoading"
+  [title]="'Access Settings' | translate"
+  [loading]="isLoading"
 ></ix-modal-header>
 <mat-card>
   <mat-card-content>
@@ -12,6 +12,11 @@
           [label]="'Token Lifetime' | translate"
           [tooltip]="'Time in seconds after which current user session will be disconnected. Interacting with UI extends the session.' | translate"
         ></ix-input>
+        <ix-checkbox
+          *ngIf="isEnterprise"
+          formControlName="ds_auth"
+          [label]="'Allow Directory Service users to access WebUI' | translate"
+        ></ix-checkbox>
       </ix-fieldset>
 
       <ix-form-actions>
@@ -20,7 +25,7 @@
           type="submit"
           color="primary"
           ixTest="save"
-          [disabled]="form.invalid || isFormLoading"
+          [disabled]="form.invalid || isLoading"
         >
           {{ 'Save' | translate }}
         </button>

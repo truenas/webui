@@ -1,6 +1,6 @@
 <mat-card id="sessions-card">
   <mat-toolbar-row>
-    <h3>{{ 'Sessions' | translate }}</h3>
+    <h3>{{ 'Access' | translate }}</h3>
     <div class="actions action-icon">
       <button
         mat-button
@@ -26,6 +26,12 @@
         <span class="label">{{ 'Token Lifetime' | translate }}:</span>
         <span *ixWithLoadingState="tokenLifetime$ as tokenLifetime" class="value">
           {{ asDuration(tokenLifetime) }}
+        </span>
+      </mat-list-item>
+      <mat-list-item *ngIf="isEnterprise">
+        <span class="label">{{ 'Allow Directory Service users to access WebUI' | translate }}:</span>
+        <span *ixWithLoadingState="generalConfig$ as generalConfig" class="value">
+          {{ generalConfig | yesNo }}
         </span>
       </mat-list-item>
     </mat-list>

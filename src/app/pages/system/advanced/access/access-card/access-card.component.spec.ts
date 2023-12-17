@@ -13,16 +13,18 @@ import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
+import { AccessCardComponent } from 'app/pages/system/advanced/access/access-card/access-card.component';
+import { AccessFormComponent } from 'app/pages/system/advanced/access/access-form/access-form.component';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
-import { SessionsCardComponent } from 'app/pages/system/advanced/sessions/sessions-card/sessions-card.component';
-import { TokenSettingsComponent } from 'app/pages/system/advanced/sessions/token-settings/token-settings.component';
 import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
+import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 
-describe('SessionsCardComponent', () => {
-  let spectator: Spectator<SessionsCardComponent>;
+describe('AccessCardComponent', () => {
+  let spectator: Spectator<AccessCardComponent>;
   let loader: HarnessLoader;
   const sessions = Array.from({ length: 6 }).map((_, index) => (
     {
@@ -44,7 +46,7 @@ describe('SessionsCardComponent', () => {
       },
     }));
   const createComponent = createComponentFactory({
-    component: SessionsCardComponent,
+    component: AccessCardComponent,
     imports: [AppLoaderModule, IxTable2Module, FakeFormatDateTimePipe],
     providers: [
       mockWebsocket([
@@ -60,6 +62,12 @@ describe('SessionsCardComponent', () => {
               lifetime: 60,
             },
           },
+          {
+            selector: selectGeneralConfig,
+            value: {
+              ds_auth: true,
+            },
+          },
         ],
       }),
       mockProvider(DialogService, {
@@ -70,6 +78,9 @@ describe('SessionsCardComponent', () => {
       }),
       mockProvider(AdvancedSettingsService),
       mockProvider(IxSlideInRef),
+      mockProvider(SystemGeneralService, {
+        isEnterprise: jest.fn(() => true),
+      }),
     ],
   });
 
@@ -79,8 +90,13 @@ describe('SessionsCardComponent', () => {
   });
 
   it('shows current token lifetime', async () => {
-    const lifetime = await loader.getHarness(MatListItemHarness);
+    const lifetime = (await loader.getAllHarnesses(MatListItemHarness))[0];
     expect(await lifetime.getFullText()).toBe('Token Lifetime: 1 minute');
+  });
+
+  it('shows whether DS users are allowed access to WebUI', async () => {
+    const allowed = (await loader.getAllHarnesses(MatListItemHarness))[1];
+    expect(await allowed.getFullText()).toBe('Allow Directory Service users to access WebUI: Yes');
   });
 
   it('opens Token settings form when Configure is pressed', async () => {
@@ -88,7 +104,7 @@ describe('SessionsCardComponent', () => {
     await configure.click();
 
     expect(spectator.inject(AdvancedSettingsService).showFirstTimeWarningIfNeeded).toHaveBeenCalled();
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(TokenSettingsComponent);
+    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(AccessFormComponent);
   });
 
   it('terminates the session when corresponding Terminate is pressed', async () => {
