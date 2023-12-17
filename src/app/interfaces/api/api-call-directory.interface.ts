@@ -17,8 +17,6 @@ import {
   AclTemplateByPathParams,
   AclTemplateCreateParams,
   AclTemplateCreateResponse,
-  NfsAclItem,
-  PosixAclItem,
 } from 'app/interfaces/acl.interface';
 import { ActiveDirectoryConfig } from 'app/interfaces/active-directory-config.interface';
 import { ActiveDirectoryUpdate } from 'app/interfaces/active-directory.interface';
@@ -32,7 +30,7 @@ import { ApiKey, CreateApiKeyRequest, UpdateApiKeyRequest } from 'app/interfaces
 import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { AuditConfig, AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { AuthSession } from 'app/interfaces/auth-session.interface';
-import { CheckUserQuery, LoginQuery } from 'app/interfaces/auth.interface';
+import { LoginQuery } from 'app/interfaces/auth.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import {
   Bootenv,
@@ -75,7 +73,7 @@ import {
   CloudsyncBucket,
   CloudsyncCredential,
   CloudsyncCredentialUpdate,
-  CloudsyncCredentialVerify, CloudsyncCredentialVerifyResult, CloudsyncOneDriveDrive, CloudsyncOneDriveParams,
+  CloudsyncCredentialVerify, CloudsyncCredentialVerifyResult,
 } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudsyncProvider, CloudsyncRestoreParams } from 'app/interfaces/cloudsync-provider.interface';
 import { ContainerConfig, ContainerConfigUpdate } from 'app/interfaces/container-config.interface';
@@ -89,9 +87,6 @@ import {
   TargetUnmatchedSnapshotsParams,
 } from 'app/interfaces/count-manual-snapshots.interface';
 import { Cronjob, CronjobUpdate } from 'app/interfaces/cronjob.interface';
-import {
-  DatasetEncryptedRootKeys,
-} from 'app/interfaces/dataset-encryption-summary.interface';
 import { DatasetHasVmsQueryParams } from 'app/interfaces/dataset-has-vms-query-params.interface';
 import { DatasetQuota, DatasetQuotaQueryParams, SetDatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import {
@@ -158,7 +153,6 @@ import { KmipConfig } from 'app/interfaces/kmip-config.interface';
 import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
 import { KubernetesStatusData } from 'app/interfaces/kubernetes-status-data.interface';
 import { LdapConfig, LdapConfigUpdate, LdapConfigUpdateResult } from 'app/interfaces/ldap-config.interface';
-import { LldpConfig, LldpConfigUpdate } from 'app/interfaces/lldp-config.interface';
 import { MailConfig, MailConfigUpdate } from 'app/interfaces/mail-config.interface';
 import {
   NetworkConfiguration,
@@ -183,9 +177,8 @@ import {
 } from 'app/interfaces/periodic-snapshot-task.interface';
 import { DatasetAttachment, PoolAttachment } from 'app/interfaces/pool-attachment.interface';
 import { CreatePoolScrubTask, PoolScrubTask } from 'app/interfaces/pool-scrub.interface';
-import { PoolUnlockQuery, PoolUnlockResult } from 'app/interfaces/pool-unlock-query.interface';
 import {
-  Pool, PoolInstance, PoolInstanceParams,
+  Pool, PoolInstance,
 } from 'app/interfaces/pool.interface';
 import { Privilege, PrivilegeRole, PrivilegeUpdate } from 'app/interfaces/privilege.interface';
 import { Process } from 'app/interfaces/process.interface';
@@ -205,10 +198,7 @@ import {
   ReportingQueryParams,
 } from 'app/interfaces/reporting.interface';
 import { ResilverConfig, ResilverConfigUpdate } from 'app/interfaces/resilver-config.interface';
-import { RsyncConfig, RsyncConfigUpdate } from 'app/interfaces/rsync-config.interface';
-import { RsyncModule, RsyncModuleCreate } from 'app/interfaces/rsync-module.interface';
 import { RsyncTask, RsyncTaskUpdate } from 'app/interfaces/rsync-task.interface';
-import { Sensor } from 'app/interfaces/sensor.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { ResizeShellRequest } from 'app/interfaces/shell.interface';
 import {
@@ -329,7 +319,6 @@ export interface ApiCallDirectory {
   'audit.config': { params: void; response: AuditConfig };
 
   // Auth
-  'auth.check_user': { params: CheckUserQuery; response: boolean };
   'auth.me': { params: void; response: LoggedInUser };
   'auth.set_attribute': { params: [key: string, value: unknown]; response: void };
   'auth.login': { params: LoginQuery; response: boolean };
@@ -338,9 +327,7 @@ export interface ApiCallDirectory {
   'auth.generate_token': { params: void; response: string };
 
   'auth.twofactor.update': { params: [GlobalTwoFactorConfigUpdate]; response: GlobalTwoFactorConfig };
-  'auth.twofactor.provisioning_uri': { params: void; response: string };
   'auth.two_factor_auth': { params: [string, string]; response: boolean };
-  'auth.twofactor.renew_secret': { params: void; response: boolean };
   'auth.twofactor.config': { params: void; response: GlobalTwoFactorConfig };
   'auth.sessions': { params: QueryParams<AuthSession>; response: AuthSession[] };
   'auth.terminate_session': { params: [id: string]; response: void };
@@ -415,7 +402,6 @@ export interface ApiCallDirectory {
   'cloudsync.create_bucket': { params: [number, string]; response: void };
   'cloudsync.credentials.delete': { params: [id: number]; response: boolean };
   'cloudsync.credentials.verify': { params: [CloudsyncCredentialVerify]; response: CloudsyncCredentialVerifyResult };
-  'cloudsync.onedrive_list_drives': { params: [CloudsyncOneDriveParams]; response: CloudsyncOneDriveDrive[] };
   'cloudsync.list_buckets': { params: [id: number]; response: CloudsyncBucket[] };
   'cloudsync.list_directory': { params: [CloudSyncListDirectoryParams]; response: CloudSyncDirectoryListing[] };
   'cloudsync.update': { params: [id: number, task: CloudSyncTaskUpdate]; response: CloudSyncTask };
@@ -466,7 +452,6 @@ export interface ApiCallDirectory {
   'filesystem.listdir': { params: ListdirQueryParams; response: FileRecord[] };
   'filesystem.stat': { params: [path: string]; response: FileSystemStat };
   'filesystem.default_acl_choices': { params: [path: string]; response: DefaultAclType[] };
-  'filesystem.get_default_acl': { params: [DefaultAclType]; response: NfsAclItem[] | PosixAclItem[] };
   'filesystem.statfs': { params: [path: string]; response: Statfs };
   'filesystem.getacl': { params: AclQueryParams; response: Acl };
   'filesystem.acltemplate.by_path': { params: [AclTemplateByPathParams]; response: AclTemplateByPath[] };
@@ -522,7 +507,6 @@ export interface ApiCallDirectory {
   'idmap.delete': { params: [id: number]; response: boolean };
 
   // Interface
-  'interface.websocket_local_ip': { params: void; response: string };
   'interface.commit': { params: [{ checkin_timeout: number }]; response: void };
   'interface.services_restarted_on_sync': { params: void; response: ServiceRestartedOnNetworkSync[] };
   'interface.rollback': { params: void; response: void };
@@ -606,7 +590,6 @@ export interface ApiCallDirectory {
   'kerberos.realm.create': { params: [KerberosRealmUpdate]; response: KerberosRealm };
   'kerberos.realm.update': { params: [id: number, update: KerberosRealmUpdate]; response: KerberosRealm };
   'kerberos.realm.delete': { params: [id: number]; response: boolean };
-  'kerberos.keytab.has_nfs_principal': { params: void; response: boolean };
   'kerberos.config': { params: void; response: KerberosConfig };
   'kerberos.update': { params: [KerberosConfigUpdate]; response: KerberosConfig };
   'kerberos.keytab.kerberos_principal_choices': { params: void; response: string[] };
@@ -626,11 +609,6 @@ export interface ApiCallDirectory {
   'ldap.update': { params: [LdapConfigUpdate]; response: LdapConfigUpdateResult };
   'ldap.schema_choices': { params: void; response: string[] };
   'ldap.config': { params: void; response: LdapConfig };
-
-  // LLDP
-  'lldp.country_choices': { params: void; response: Choices };
-  'lldp.update': { params: [LldpConfigUpdate]; response: LldpConfig };
-  'lldp.config': { params: void; response: LldpConfig };
 
   // NFS
   'nfs.bindip_choices': { params: void; response: Choices };
@@ -656,23 +634,19 @@ export interface ApiCallDirectory {
   'pool.dataset.promote': { params: [id: string]; response: void };
   'pool.dataset.query': { params: QueryParams<Dataset, ExtraDatasetQueryOptions>; response: Dataset[] };
   'pool.dataset.details': { params: void; response: DatasetDetails[] };
-  'pool.dataset.query_encrypted_roots_keys': { params: void; response: DatasetEncryptedRootKeys };
   'pool.dataset.recommended_zvol_blocksize': { params: [name: string]; response: DatasetRecordSize };
   'pool.dataset.set_quota': { params: [dataset: string, quotas: SetDatasetQuota[]]; response: void };
   'pool.dataset.unlock_services_restart_choices': { params: [id: string]; response: Choices };
   'pool.dataset.update': { params: [id: string, update: DatasetUpdate]; response: Dataset };
   'pool.dataset.recordsize_choices': { params: void; response: string[] };
   'pool.detach': { params: [id: number, params: { label: string }]; response: boolean };
-  'pool.download_encryption_key': { params: [volumeId: number, fileName?: string]; response: string };
   'pool.filesystem_choices': { params: [DatasetType[]?]; response: string[] };
   'pool.get_disks': { params: [ids: string[]]; response: string[] };
   'pool.is_upgraded': { params: [poolId: number]; response: boolean };
   'pool.offline': { params: [id: number, params: { label: string }]; response: boolean };
   'pool.online': { params: [id: number, params: { label: string }]; response: boolean };
-  'pool.passphrase': { params: [number, { passphrase: string; admin_password: string }]; response: void };
   'pool.processes': { params: [id: number]; response: Process[] };
   'pool.query': { params: QueryParams<Pool>; response: Pool[] };
-  'pool.recoverykey_rm': { params: [number, { admin_password: string }]; response: void };
   'pool.resilver.config': { params: void; response: ResilverConfig };
   'pool.resilver.update': { params: [ResilverConfigUpdate]; response: ResilverConfig };
   'pool.scrub.create': { params: [CreatePoolScrubTask]; response: PoolScrubTask };
@@ -683,10 +657,7 @@ export interface ApiCallDirectory {
   'pool.snapshottask.delete': { params: [id: number]; response: boolean };
   'pool.snapshottask.query': { params: QueryParams<PeriodicSnapshotTask>; response: PeriodicSnapshotTask[] };
   'pool.snapshottask.update': { params: [id: number, update: PeriodicSnapshotTaskUpdate]; response: PeriodicSnapshotTask };
-  'pool.unlock': { params: PoolUnlockQuery; response: PoolUnlockResult };
-  'pool.unlock_services_restart_choices': { params: [id: number]; response: Choices };
   'pool.upgrade': { params: [id: number]; response: boolean };
-  'pool.get_instance_by_name': { params: PoolInstanceParams; response: PoolInstance };
   'pool.validate_name': { params: string[]; response: boolean | { error: boolean } };
 
   // Privilege
@@ -717,16 +688,6 @@ export interface ApiCallDirectory {
   'rsynctask.update': { params: [id: number, params: RsyncTaskUpdate]; response: RsyncTask };
   'rsynctask.delete': { params: [id: number]; response: boolean };
 
-  // Rsyncd
-  'rsyncd.update': { params: [RsyncConfigUpdate]; response: RsyncConfig };
-  'rsyncd.config': { params: void; response: RsyncConfig };
-
-  // Rsyncmod
-  'rsyncmod.query': { params: QueryParams<RsyncModule>; response: RsyncModule[] };
-  'rsyncmod.update': { params: [id: number, params: RsyncModuleCreate]; response: RsyncModule };
-  'rsyncmod.create': { params: [RsyncModuleCreate]; response: RsyncModule };
-  'rsyncmod.delete': { params: [id: number]; response: boolean };
-
   // Reporting
   'reporting.clear': { params: void; response: void };
   'reporting.netdata_get_data': { params: ReportingQueryParams; response: ReportingData[] };
@@ -741,7 +702,6 @@ export interface ApiCallDirectory {
   // SMB
   'smb.bindip_choices': { params: void; response: Choices };
   'smb.unixcharset_choices': { params: void; response: Choices };
-  'smb.get_smb_ha_mode': { params: void; response: string };
   'smb.update': { params: [SmbConfigUpdate]; response: SmbConfig };
   'smb.config': { params: void; response: SmbConfig };
   'smb.status': { params: [level: SmbInfoLevel, params?: QueryParams<SmbStatus>]; response: SmbStatus[] };
@@ -752,13 +712,11 @@ export interface ApiCallDirectory {
   'ssh.bindiface_choices': { params: void; response: Choices };
 
   // System
-  'system.feature_enabled': { params: [feature: string]; response: boolean };
   'system.advanced.update': { params: [Partial<AdvancedConfigUpdate>]; response: AdvancedConfig };
   'system.advanced.update_gpu_pci_ids': { params: [isolated_gpu_pci_ids: string[]]; response: void };
   'system.advanced.serial_port_choices': { params: void; response: Choices };
   'system.info': { params: void; response: SystemInfo };
   'system.host_id': { params: void; response: string };
-  'system.is_ha_capable': { params: void; response: boolean };
   'system.is_ix_hardware': { params: void; response: boolean };
   'system.advanced.config': { params: void; response: AdvancedConfig };
   'system.general.update': { params: [SystemGeneralConfigUpdate]; response: SystemGeneralConfig };
@@ -798,7 +756,6 @@ export interface ApiCallDirectory {
   'support.config': { params: void; response: SupportConfig };
   'support.update': { params: [SupportConfigUpdate]; response: SupportConfig };
   'support.fetch_categories': { params: FetchSupportParams; response: Choices };
-  'support.attach_ticket_max_size': { params: void; response: number };
 
   // SMART
   'smart.test.disk_choices': { params: void; response: Choices };
@@ -826,9 +783,6 @@ export interface ApiCallDirectory {
     response: boolean; // False indicates that service has been stopped.
   };
   'service.restart': { params: [ServiceName]; response: boolean };
-
-  // Sensor
-  'sensor.query': { params: void; response: Sensor[] };
 
   // Sharing
   'sharing.smb.query': { params: QueryParams<SmbShare>; response: SmbShare[] };
@@ -914,7 +868,6 @@ export interface ApiCallDirectory {
   'user.shell_choices': { params: [ids: number[]]; response: Choices };
   'user.get_next_uid': { params: void; response: number };
   'user.has_local_administrator_set_up': { params: void; response: boolean };
-  'user.provisioning_uri': { params: [username: string]; response: string };
   'user.renew_2fa_secret': { params: [string, { interval: number; otp_digits: number }]; response: User };
   'user.twofactor_config': { params: void; response: UserTwoFactorConfig };
   'user.set_password': { params: [SetPasswordParams]; response: void };

@@ -11,9 +11,11 @@
         class="search-input"
         [properties]="searchProperties"
         [query]="searchQuery"
+        (runSearch)="onSearch(searchInput.query); updateUrlOptions()"
       ></ix-search-input2>
       <button
         mat-button
+        type="button"
         color="primary"
         ixTest="search"
         (click)="onSearch(searchInput.query); updateUrlOptions()"
@@ -22,6 +24,7 @@
       </button>
     </div>
     <ix-export-button
+      *ngIf="this.dataProvider.totalRows"
       method="audit.export"
       [searchQuery]="searchQuery"
       [sorting]="this.dataProvider.sorting"
