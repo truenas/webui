@@ -83,6 +83,7 @@ export class SmbFormComponent implements OnInit {
 
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider({
     directoriesOnly: true,
+    includeSnapshots: false,
   });
 
   presets: SmbPresets;
