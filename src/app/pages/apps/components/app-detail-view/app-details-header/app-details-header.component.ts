@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, Input,
+  ChangeDetectionStrategy, Component, Input, ViewContainerRef,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -36,6 +36,7 @@ export class AppDetailsHeaderComponent {
     private dialogService: DialogService,
     private translate: TranslateService,
     private ws: WebSocketService,
+    private viewContainerRef: ViewContainerRef,
   ) {}
 
   get description(): string {
@@ -96,7 +97,7 @@ export class AppDetailsHeaderComponent {
   }
 
   showChoosePoolModal(): void {
-    const dialog = this.matDialog.open(SelectPoolDialogComponent);
+    const dialog = this.matDialog.open(SelectPoolDialogComponent, { viewContainerRef: this.viewContainerRef });
     dialog.afterClosed().pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.navigateToInstallPage();
     });
