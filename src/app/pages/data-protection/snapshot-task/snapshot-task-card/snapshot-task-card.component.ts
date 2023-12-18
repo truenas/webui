@@ -79,7 +79,7 @@ export class SnapshotTaskCardComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => 'snapshot-task-' + row.id.toString(),
+    rowTestId: (row) => 'snapshot-task-' + row.dataset + '-' + row.state.state,
   });
 
   constructor(

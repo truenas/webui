@@ -54,7 +54,7 @@ export class SshKeypairCardComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => 'ssh-keypair-' + row.id.toString(),
+    rowTestId: (row) => 'ssh-keypair-' + row.name,
   });
 
   constructor(

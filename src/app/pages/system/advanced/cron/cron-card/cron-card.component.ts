@@ -86,7 +86,7 @@ export class CronCardComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => 'card-cron-' + row.id.toString(),
+    rowTestId: (row) => 'card-cron-' + row.command + '-' + row.user,
   });
 
   constructor(

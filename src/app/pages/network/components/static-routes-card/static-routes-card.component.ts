@@ -54,7 +54,7 @@ export class StaticRoutesCardComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => 'static-route-' + row.id.toString(),
+    rowTestId: (row) => 'static-route-' + row.destination + '-' + row.gateway,
   });
 
   constructor(

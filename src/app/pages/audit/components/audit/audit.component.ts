@@ -82,7 +82,7 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
       getValue: (row) => this.translate.instant(this.getEventDataForLog(row)),
     }),
   ], {
-    rowTestId: (row: AuditEntry) => 'audit-' + row.audit_id.toString(),
+    rowTestId: (row) => 'audit-' + row.service + '-' + row.username + '-' + row.event,
   });
 
   protected searchProperties: SearchProperty<AuditEntry>[] = [];

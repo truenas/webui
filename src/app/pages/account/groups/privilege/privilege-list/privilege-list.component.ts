@@ -66,7 +66,7 @@ export class PrivilegeListComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row: Privilege) => 'privilege-' + row.id.toString(),
+    rowTestId: (row) => 'privilege-' + row.name,
   });
 
   privileges: Privilege[] = [];
