@@ -38,6 +38,11 @@ class domain_Credentials:
     title = '//h4[contains(.,"Domain Credentials")]'
 
 
+class google_Drive:
+    name_Sort = '//div[contains(text(),"Name") and @role="button"]'
+    music_Folder = '//div[@data-tooltip="Google Drive Folder: music"]'
+    move_To_Trash = '//div[text()="Move to trash?"]'
+
 class input:
     username = '//input[@ix-auto="input__Username"]'
     password = '//input[@ix-auto="input__Password"]'
