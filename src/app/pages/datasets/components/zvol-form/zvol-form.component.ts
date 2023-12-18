@@ -12,7 +12,7 @@ import { DeduplicationSetting } from 'app/enums/deduplication-setting.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { inherit } from 'app/enums/with-inherit.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
-import helptext from 'app/helptext/storage/volumes/zvol-form';
+import { helptextZvol } from 'app/helptext/storage/volumes/zvol-form';
 import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -70,15 +70,15 @@ interface ZvolFormData {
 export class ZvolFormComponent implements OnInit {
   get title(): string {
     return this.isNew
-      ? this.translate.instant(helptext.zvol_title_add)
-      : this.translate.instant(helptext.zvol_title_edit);
+      ? this.translate.instant(helptextZvol.zvol_title_add)
+      : this.translate.instant(helptextZvol.zvol_title_edit);
   }
 
-  readonly helptext = helptext;
+  readonly helptext = helptextZvol;
   parentId: string;
   isNew = true;
   isLoading = false;
-  inheritEncryptPlaceholder: string = helptext.dataset_form_encryption.inherit_checkbox_placeholder;
+  inheritEncryptPlaceholder: string = helptextZvol.dataset_form_encryption.inherit_checkbox_placeholder;
   namesInUse: string[] = [];
   volBlockSizeWarning: string;
 
@@ -310,7 +310,7 @@ export class ZvolFormComponent implements OnInit {
     this.encryptedParent = parent.encrypted;
     this.encryptionAlgorithm = parent.encryption_algorithm.value;
 
-    this.inheritEncryptPlaceholder = helptext.dataset_form_encryption.inherit_checkbox_notencrypted;
+    this.inheritEncryptPlaceholder = helptextZvol.dataset_form_encryption.inherit_checkbox_notencrypted;
     if (this.encryptedParent) {
       if (parent.key_format.value === DatasetEncryptionType.Passphrase) {
         this.passphraseParent = true;
@@ -318,7 +318,7 @@ export class ZvolFormComponent implements OnInit {
         this.encryptionType = 'passphrase';
         this.form.controls.encryption_type.disable();
       }
-      this.inheritEncryptPlaceholder = helptext.dataset_form_encryption.inherit_checkbox_encrypted;
+      this.inheritEncryptPlaceholder = helptextZvol.dataset_form_encryption.inherit_checkbox_encrypted;
     }
 
     if (this.isNew) {
@@ -450,8 +450,8 @@ export class ZvolFormComponent implements OnInit {
       // if on an encrypted parent we should warn the user, otherwise just disable the fields
         if (this.encryptedParent && !encryption && !this.nonEncryptedWarned) {
           this.dialogService.confirm({
-            title: helptext.dataset_form_encryption.non_encrypted_warning_title,
-            message: helptext.dataset_form_encryption.non_encrypted_warning_warning,
+            title: helptextZvol.dataset_form_encryption.non_encrypted_warning_title,
+            message: helptextZvol.dataset_form_encryption.non_encrypted_warning_warning,
           }).pipe(untilDestroyed(this)).subscribe((isConfirm) => {
             this.nonEncryptedWarned = true;
             if (isConfirm) {
@@ -676,8 +676,8 @@ export class ZvolFormComponent implements OnInit {
         } else {
           this.isLoading = false;
           this.dialogService.error({
-            title: helptext.zvol_save_errDialog.title,
-            message: helptext.zvol_save_errDialog.msg,
+            title: helptextZvol.zvol_save_errDialog.title,
+            message: helptextZvol.zvol_save_errDialog.msg,
           });
           this.slideInRef.close(false);
         }
@@ -719,7 +719,7 @@ export class ZvolFormComponent implements OnInit {
           return;
         }
 
-        this.volBlockSizeWarning = `${this.translate.instant(helptext.blocksize_warning.a)} ${this.minimumRecommendedBlockSize}. ${this.translate.instant(helptext.blocksize_warning.b)}`;
+        this.volBlockSizeWarning = `${this.translate.instant(helptextZvol.blocksize_warning.a)} ${this.minimumRecommendedBlockSize}. ${this.translate.instant(helptextZvol.blocksize_warning.b)}`;
       });
   }
 

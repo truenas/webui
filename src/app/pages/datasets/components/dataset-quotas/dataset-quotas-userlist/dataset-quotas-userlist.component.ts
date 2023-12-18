@@ -17,7 +17,7 @@ import {
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
-import helptext from 'app/helptext/storage/volumes/datasets/dataset-quotas';
+import { helptextQuotas } from 'app/helptext/storage/volumes/datasets/dataset-quotas';
 import { DatasetQuota, SetDatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { ConfirmOptions } from 'app/interfaces/dialog.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -93,7 +93,7 @@ export class DatasetQuotasUserlistComponent implements OnInit, OnDestroy {
     switch (field) {
       case 'name':
         if (!row[field]) {
-          return `*ERR* (${this.translate.instant(helptext.shared.nameErr)}), ID: ${row.id}`;
+          return `*ERR* (${this.translate.instant(helptextQuotas.shared.nameErr)}), ID: ${row.id}`;
         }
         return row[field];
       case 'quota':
@@ -196,19 +196,19 @@ export class DatasetQuotasUserlistComponent implements OnInit, OnDestroy {
 
   confirmShowAllUsers(): Observable<boolean> {
     return this.dialogService.confirm({
-      title: helptext.users.filter_dialog.title_show,
-      message: helptext.users.filter_dialog.message_show,
+      title: helptextQuotas.users.filter_dialog.title_show,
+      message: helptextQuotas.users.filter_dialog.message_show,
       hideCheckbox: true,
-      buttonText: helptext.users.filter_dialog.button_show,
+      buttonText: helptextQuotas.users.filter_dialog.button_show,
     });
   }
 
   confirmFilterUsers(): Observable<boolean> {
     return this.dialogService.confirm({
-      title: helptext.users.filter_dialog.title_filter,
-      message: helptext.users.filter_dialog.message_filter,
+      title: helptextQuotas.users.filter_dialog.title_filter,
+      message: helptextQuotas.users.filter_dialog.message_filter,
       hideCheckbox: true,
-      buttonText: helptext.users.filter_dialog.button_filter,
+      buttonText: helptextQuotas.users.filter_dialog.button_filter,
     });
   }
 

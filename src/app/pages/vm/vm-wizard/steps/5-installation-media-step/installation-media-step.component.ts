@@ -3,7 +3,7 @@ import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import helptext from 'app/helptext/vm/vm-wizard/vm-wizard';
+import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { SummaryProvider, SummarySection } from 'app/modules/common/summary/summary.interface';
 import { UploadIsoDialogComponent } from 'app/pages/vm/vm-wizard/upload-iso-dialog/upload-iso-dialog.component';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -20,7 +20,7 @@ export class InstallationMediaStepComponent implements SummaryProvider {
     iso_path: [''],
   });
 
-  readonly helptext = helptext;
+  readonly helptext = helptextVmWizard;
   readonly fileNodeProvider = this.filesystemService.getFilesystemNodeProvider();
 
   constructor(

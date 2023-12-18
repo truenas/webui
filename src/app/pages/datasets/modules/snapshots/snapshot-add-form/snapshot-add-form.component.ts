@@ -12,7 +12,7 @@ import {
 } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { singleArrayToOptions } from 'app/helpers/operators/options.operators';
-import helptext from 'app/helptext/storage/snapshots/snapshots';
+import { helptextSnapshots } from 'app/helptext/storage/snapshots/snapshots';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
@@ -37,7 +37,7 @@ export class SnapshotAddFormComponent implements OnInit {
   form = this.fb.group({
     dataset: ['', Validators.required],
     name: [this.getDefaultSnapshotName(), [this.validatorsService.withMessage(
-      atLeastOne('naming_schema', [helptext.snapshot_add_name_placeholder, helptext.snapshot_add_naming_schema_placeholder]),
+      atLeastOne('naming_schema', [helptextSnapshots.snapshot_add_name_placeholder, helptextSnapshots.snapshot_add_naming_schema_placeholder]),
       this.translate.instant('Name or Naming Schema must be provided.'),
     ), this.validatorsService.validateOnCondition(
       (control: AbstractControl) => control.value && control.parent?.get('naming_schema').value,
@@ -55,7 +55,7 @@ export class SnapshotAddFormComponent implements OnInit {
   namingSchemaOptions$: Observable<Option[]>;
   hasVmsInDataset = false;
 
-  readonly helptext = helptext;
+  readonly helptext = helptextSnapshots;
 
   constructor(
     private fb: FormBuilder,

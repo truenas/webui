@@ -9,7 +9,7 @@ import { of } from 'rxjs';
 import { filter, switchMap } from 'rxjs/operators';
 import { invertUmask } from 'app/helpers/mode.helper';
 import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
-import helptext from 'app/helptext/services/components/service-ftp';
+import { helptextServiceFtp } from 'app/helptext/services/components/service-ftp';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -77,10 +77,10 @@ export class ServiceFtpComponent implements OnInit {
     options: [''],
   });
 
-  readonly helptext = helptext;
+  readonly helptext = helptextServiceFtp;
 
   readonly certificates$ = this.systemGeneralService.getCertificates().pipe(idNameArrayToOptions());
-  readonly tlsPolicyOptions$ = of(helptext.tls_policy_options);
+  readonly tlsPolicyOptions$ = of(helptextServiceFtp.tls_policy_options);
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider();
 
   readonly isAnonymousLoginAllowed$ = this.form.select((values) => values.onlyanonymous);
@@ -175,8 +175,8 @@ export class ServiceFtpComponent implements OnInit {
       filter(Boolean),
       switchMap(() => {
         return this.dialogService.confirm({
-          title: helptext.rootlogin_dialog_title,
-          message: helptext.rootlogin_dialog_message,
+          title: helptextServiceFtp.rootlogin_dialog_title,
+          message: helptextServiceFtp.rootlogin_dialog_message,
           buttonText: this.translate.instant('Continue'),
           cancelText: this.translate.instant('Cancel'),
         });

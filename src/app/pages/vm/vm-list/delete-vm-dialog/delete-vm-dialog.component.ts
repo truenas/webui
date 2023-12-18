@@ -5,7 +5,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import helptext from 'app/helptext/vm/vm-list';
+import { helptextVmList } from 'app/helptext/vm/vm-list';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { VirtualMachineRow } from 'app/pages/vm/vm-list/virtual-machine-row.interface';
@@ -25,7 +25,7 @@ export class DeleteVmDialogComponent implements OnInit {
     confirmName: [''],
   });
 
-  readonly helptext = helptext;
+  readonly helptext = helptextVmList;
 
   constructor(
     private ws: WebSocketService,

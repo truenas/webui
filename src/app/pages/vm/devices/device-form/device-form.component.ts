@@ -14,7 +14,7 @@ import {
 import { assertUnreachable } from 'app/helpers/assert-unreachable.utils';
 import { arrayToOptions, choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
-import helptext from 'app/helptext/vm/devices/device-add-edit';
+import { helptextDevice } from 'app/helptext/vm/devices/device-add-edit';
 import {
   VmDevice, VmDeviceUpdate,
 } from 'app/interfaces/vm-device.interface';
@@ -100,7 +100,7 @@ export class DeviceFormComponent implements OnInit {
     }),
   });
 
-  readonly helptext = helptext;
+  readonly helptext = helptextDevice;
   readonly VmDeviceType = VmDeviceType;
   readonly usbDeviceOptions$ = this.ws.call('vm.device.usb_passthrough_choices').pipe(
     map((usbDevices) => {

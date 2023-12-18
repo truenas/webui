@@ -10,7 +10,7 @@ import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { NfsProtocol, nfsProtocolLabels } from 'app/enums/nfs-protocol.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
-import helptext from 'app/helptext/services/components/service-nfs';
+import { helptextServiceNfs } from 'app/helptext/services/components/service-nfs';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -48,16 +48,16 @@ export class ServiceNfsComponent implements OnInit {
   });
 
   readonly tooltips = {
-    allow_nonroot: helptext.nfs_srv_allow_nonroot_tooltip,
-    bindip: helptext.nfs_srv_bindip_tooltip,
-    servers: helptext.nfs_srv_servers_tooltip,
-    v4_v3owner: helptext.nfs_srv_v4_v3owner_tooltip,
-    v4_krb: helptext.nfs_srv_v4_krb_tooltip,
-    mountd_port: helptext.nfs_srv_mountd_port_tooltip,
-    rpcstatd_port: helptext.nfs_srv_rpcstatd_port_tooltip,
-    rpclockd_port: helptext.nfs_srv_rpclockd_port_tooltip,
-    udp: helptext.nfs_srv_udp_tooltip,
-    userd_manage_gids: helptext.nfs_srv_16_tooltip,
+    allow_nonroot: helptextServiceNfs.nfs_srv_allow_nonroot_tooltip,
+    bindip: helptextServiceNfs.nfs_srv_bindip_tooltip,
+    servers: helptextServiceNfs.nfs_srv_servers_tooltip,
+    v4_v3owner: helptextServiceNfs.nfs_srv_v4_v3owner_tooltip,
+    v4_krb: helptextServiceNfs.nfs_srv_v4_krb_tooltip,
+    mountd_port: helptextServiceNfs.nfs_srv_mountd_port_tooltip,
+    rpcstatd_port: helptextServiceNfs.nfs_srv_rpcstatd_port_tooltip,
+    rpclockd_port: helptextServiceNfs.nfs_srv_rpclockd_port_tooltip,
+    udp: helptextServiceNfs.nfs_srv_udp_tooltip,
+    userd_manage_gids: helptextServiceNfs.nfs_srv_16_tooltip,
   };
 
   readonly ipChoices$ = this.ws.call('nfs.bindip_choices').pipe(choicesToOptions());

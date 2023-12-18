@@ -10,7 +10,7 @@ import {
   Observable, Subject, Subscriber, combineLatest,
 } from 'rxjs';
 import { PodSelectDialogType } from 'app/enums/pod-select-dialog.enum';
-import helptext from 'app/helptext/shell/shell';
+import { helptextShell } from 'app/helptext/shell/shell';
 import { PodDialogFormValue } from 'app/interfaces/pod-select-dialog.interface';
 import { TerminalConfiguration, TerminalConnectionData } from 'app/interfaces/terminal.interface';
 import { PodSelectDialogComponent } from 'app/pages/apps/components/pod-select-dialog/pod-select-dialog.component';
@@ -67,8 +67,8 @@ export class PodShellComponent implements TerminalConfiguration {
               const podDetail = this.podDetails[this.podName];
               if (!podDetail) {
                 this.dialogService.confirm({
-                  title: helptext.podConsole.nopod.title,
-                  message: helptext.podConsole.nopod.message,
+                  title: helptextShell.podConsole.nopod.title,
+                  message: helptextShell.podConsole.nopod.message,
                   hideCheckbox: true,
                   buttonText: this.translate.instant('Close'),
                   hideCancel: true,

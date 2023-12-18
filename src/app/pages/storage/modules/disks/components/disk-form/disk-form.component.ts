@@ -11,7 +11,7 @@ import { of } from 'rxjs';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { translateOptions } from 'app/helpers/translate.helper';
-import helptext from 'app/helptext/storage/disks/disks';
+import { helptextDisks } from 'app/helptext/storage/disks/disks';
 import { Disk, DiskUpdate } from 'app/interfaces/storage.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -39,9 +39,9 @@ export class DiskFormComponent implements OnInit {
     passwd: [''],
     clear_pw: [false],
   });
-  readonly helptext = helptext;
-  readonly title = helptext.disk_form_title;
-  readonly hddstandbyOptions$ = of(helptext.disk_form_hddstandby_options);
+  readonly helptext = helptextDisks;
+  readonly title = helptextDisks.disk_form_title;
+  readonly hddstandbyOptions$ = of(helptextDisks.disk_form_hddstandby_options);
   readonly advpowermgmtOptions$ = of(translateOptions(this.translate, this.helptext.disk_form_advpowermgmt_options));
   isLoading = false;
   existingDisk: Disk;

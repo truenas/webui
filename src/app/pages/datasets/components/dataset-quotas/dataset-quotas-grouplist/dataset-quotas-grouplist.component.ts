@@ -15,7 +15,7 @@ import { filter, switchMap } from 'rxjs/operators';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
-import helptext from 'app/helptext/storage/volumes/datasets/dataset-quotas';
+import { helptextQuotas } from 'app/helptext/storage/volumes/datasets/dataset-quotas';
 import { DatasetQuota, SetDatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { QueryFilter, QueryParams } from 'app/interfaces/query-api.interface';
@@ -95,7 +95,7 @@ export class DatasetQuotasGrouplistComponent implements OnInit, OnDestroy {
     switch (field) {
       case 'name':
         if (!row[field]) {
-          return `*ERR* (${this.translate.instant(helptext.shared.nameErr)}), ID: ${row.id}`;
+          return `*ERR* (${this.translate.instant(helptextQuotas.shared.nameErr)}), ID: ${row.id}`;
         }
         return row[field];
       case 'quota':
@@ -196,19 +196,19 @@ export class DatasetQuotasGrouplistComponent implements OnInit, OnDestroy {
 
   private confirmShowAllUsers(): Observable<boolean> {
     return this.dialogService.confirm({
-      title: helptext.groups.filter_dialog.title_show,
-      message: helptext.groups.filter_dialog.message_show,
+      title: helptextQuotas.groups.filter_dialog.title_show,
+      message: helptextQuotas.groups.filter_dialog.message_show,
       hideCheckbox: true,
-      buttonText: helptext.groups.filter_dialog.button_show,
+      buttonText: helptextQuotas.groups.filter_dialog.button_show,
     });
   }
 
   private confirmFilterUsers(): Observable<boolean> {
     return this.dialogService.confirm({
-      title: helptext.groups.filter_dialog.title_filter,
-      message: helptext.groups.filter_dialog.message_filter,
+      title: helptextQuotas.groups.filter_dialog.title_filter,
+      message: helptextQuotas.groups.filter_dialog.message_filter,
       hideCheckbox: true,
-      buttonText: helptext.groups.filter_dialog.button_filter,
+      buttonText: helptextQuotas.groups.filter_dialog.button_filter,
     });
   }
 

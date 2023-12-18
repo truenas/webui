@@ -8,7 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
-import helptext from 'app/helptext/system/ssh-keypairs';
+import { helptextSshKeypairs } from 'app/helptext/system/ssh-keypairs';
 import {
   KeychainCredentialUpdate,
   KeychainSshKeyPair,
@@ -39,16 +39,16 @@ export class SshKeypairFormComponent implements OnInit {
   form = this.fb.group({
     name: ['', Validators.required],
     private_key: [''],
-    public_key: ['', atLeastOne('private_key', [helptext.private_key_placeholder, helptext.public_key_placeholder])],
+    public_key: ['', atLeastOne('private_key', [helptextSshKeypairs.private_key_placeholder, helptextSshKeypairs.public_key_placeholder])],
   });
 
   readonly tooltips = {
-    name: helptext.name_tooltip,
-    privateKey: helptext.private_key_tooltip,
-    publicKey: helptext.public_key_tooltip,
+    name: helptextSshKeypairs.name_tooltip,
+    privateKey: helptextSshKeypairs.private_key_tooltip,
+    publicKey: helptextSshKeypairs.public_key_tooltip,
   };
 
-  readonly keyInstructions = helptext.key_instructions;
+  readonly keyInstructions = helptextSshKeypairs.key_instructions;
 
   readonly canDownloadPublicKey$ = this.form.value$.pipe(map((value) => value.name && value.public_key));
   readonly canDownloadPrivateKey$ = this.form.value$.pipe(map((value) => value.name && value.private_key));

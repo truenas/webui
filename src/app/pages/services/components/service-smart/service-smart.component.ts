@@ -6,7 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { SmartPowerMode } from 'app/enums/smart-power.mode';
-import helptext from 'app/helptext/services/components/service-smart';
+import { helptextServiceSmart } from 'app/helptext/services/components/service-smart';
 import { SmartConfigUpdate } from 'app/interfaces/smart-test.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -34,11 +34,11 @@ export class ServiceSmartComponent implements OnInit {
   });
 
   readonly tooltips = {
-    interval: helptext.smart_interval_tooltip,
-    powermode: helptext.smart_powermode_tooltip,
-    difference: helptext.smart_difference_tooltip,
-    informational: helptext.smart_informational_tooltip,
-    critical: helptext.smart_critical_tooltip,
+    interval: helptextServiceSmart.smart_interval_tooltip,
+    powermode: helptextServiceSmart.smart_powermode_tooltip,
+    difference: helptextServiceSmart.smart_difference_tooltip,
+    informational: helptextServiceSmart.smart_informational_tooltip,
+    critical: helptextServiceSmart.smart_critical_tooltip,
   };
 
   readonly powermodeOptions$ = of([

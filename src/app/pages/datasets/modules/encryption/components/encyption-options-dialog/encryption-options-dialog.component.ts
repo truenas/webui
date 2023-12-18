@@ -10,7 +10,7 @@ import { of, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { DatasetEncryptionType } from 'app/enums/dataset.enum';
 import { combineLatestIsAny } from 'app/helpers/operators/combine-latest-is-any.helper';
-import dataset_helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
+import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { DatasetChangeKeyParams } from 'app/interfaces/dataset-change-key.interface';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -68,14 +68,14 @@ export class EncryptionOptionsDialogComponent implements OnInit {
   isSetToGenerateKey$ = this.form.select((values) => values.generate_key);
 
   readonly tooltips = {
-    encryption_type: dataset_helptext.dataset_form_encryption.encryption_type_tooltip,
-    generate_key: dataset_helptext.dataset_form_encryption.generate_key_checkbox_tooltip,
-    key: dataset_helptext.dataset_form_encryption.key_tooltip,
-    passphrase: dataset_helptext.dataset_form_encryption.passphrase_tooltip,
-    pbkdf2iters: dataset_helptext.dataset_form_encryption.pbkdf2iters_tooltip,
+    encryption_type: helptextDatasetForm.dataset_form_encryption.encryption_type_tooltip,
+    generate_key: helptextDatasetForm.dataset_form_encryption.generate_key_checkbox_tooltip,
+    key: helptextDatasetForm.dataset_form_encryption.key_tooltip,
+    passphrase: helptextDatasetForm.dataset_form_encryption.passphrase_tooltip,
+    pbkdf2iters: helptextDatasetForm.dataset_form_encryption.pbkdf2iters_tooltip,
   };
 
-  readonly encryptionTypeOptions$ = of(dataset_helptext.dataset_form_encryption.encryption_type_options);
+  readonly encryptionTypeOptions$ = of(helptextDatasetForm.dataset_form_encryption.encryption_type_options);
 
   constructor(
     private fb: FormBuilder,

@@ -10,7 +10,7 @@ import { GiB } from 'app/constants/bytes.constant';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AclMode } from 'app/enums/acl-type.enum';
 import { DatasetPreset } from 'app/enums/dataset.enum';
-import helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
+import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
@@ -222,8 +222,8 @@ describe('DatasetFormComponent', () => {
       expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('filesystem.acl_is_trivial', ['/mnt/parent']);
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(
         expect.objectContaining({
-          title: helptext.afterSubmitDialog.title,
-          message: helptext.afterSubmitDialog.message,
+          title: helptextDatasetForm.afterSubmitDialog.title,
+          message: helptextDatasetForm.afterSubmitDialog.message,
         }),
       );
     });

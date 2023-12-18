@@ -9,7 +9,7 @@ import { map } from 'rxjs/operators';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { AlertPolicy } from 'app/enums/alert-policy.enum';
 import { trackById } from 'app/helpers/track-by.utils';
-import helptext from 'app/helptext/system/alert-settings';
+import { helptextAlertSettings } from 'app/helptext/system/alert-settings';
 import { AlertCategory, AlertClassesUpdate, AlertClassSettings } from 'app/interfaces/alert.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -29,7 +29,7 @@ export class AlertConfigFormComponent implements OnInit {
   selectedCategory: AlertCategory;
   form = this.formBuilder.group({});
   isFormLoading = false;
-  readonly helptext = helptext;
+  readonly helptext = helptextAlertSettings;
 
   readonly trackById = trackById;
 

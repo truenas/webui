@@ -18,7 +18,7 @@ import {
 } from 'app/enums/network-interface.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { choicesToOptions, singleArrayToOptions } from 'app/helpers/operators/options.operators';
-import helptext from 'app/helptext/network/interfaces/interfaces-form';
+import { helptextInterfacesForm } from 'app/helptext/network/interfaces/interfaces-form';
 import {
   NetworkInterface,
   NetworkInterfaceCreate,
@@ -125,7 +125,7 @@ export class InterfaceFormComponent implements OnInit {
 
   failoverGroups$ = of(range(1, 32)).pipe(singleArrayToOptions());
 
-  readonly helptext = helptext;
+  readonly helptext = helptextInterfacesForm;
 
   constructor(
     private formBuilder: FormBuilder,

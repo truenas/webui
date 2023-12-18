@@ -9,7 +9,7 @@ import _ from 'lodash';
 import { forkJoin } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { PoolStatus } from 'app/enums/pool-status.enum';
-import helptext from 'app/helptext/storage/volumes/volume-list';
+import { helptextVolumes } from 'app/helptext/storage/volumes/volume-list';
 import { Job } from 'app/interfaces/job.interface';
 import { PoolAttachment } from 'app/interfaces/pool-attachment.interface';
 import { Pool } from 'app/interfaces/pool.interface';
@@ -31,7 +31,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ExportDisconnectModalComponent implements OnInit {
-  readonly helptext = helptext;
+  readonly helptext = helptextVolumes;
 
   readonly nameInputRequired = this.validatorsService.withMessage(
     Validators.required,
@@ -48,7 +48,7 @@ export class ExportDisconnectModalComponent implements OnInit {
   showUnknownStatusDetachWarning: boolean;
   showDestroy: boolean;
 
-  confirmLabelText = this.translate.instant(helptext.exportDialog.confirm);
+  confirmLabelText = this.translate.instant(helptextVolumes.exportDialog.confirm);
   process = {
     knownProcesses: [] as Process[],
     unknownProcesses: [] as Process[],
@@ -120,10 +120,10 @@ export class ExportDisconnectModalComponent implements OnInit {
     nameInput: string;
   }>): MatDialogRef<EntityJobComponent> {
     const entityJobRef = this.matDialog.open(EntityJobComponent, {
-      data: { title: helptext.exporting },
+      data: { title: helptextVolumes.exporting },
       disableClose: true,
     });
-    entityJobRef.componentInstance.setDescription(helptext.exporting);
+    entityJobRef.componentInstance.setDescription(helptextVolumes.exporting);
 
     entityJobRef.componentInstance.setCall(
       'pool.export',
@@ -165,7 +165,7 @@ export class ExportDisconnectModalComponent implements OnInit {
 
   showExportErrorDialog(failureData: Job): void {
     this.dialogService.error({
-      title: helptext.exportError,
+      title: helptextVolumes.exportError,
       message: failureData.error,
       backtrace: failureData.exception,
     });
@@ -189,17 +189,17 @@ export class ExportDisconnectModalComponent implements OnInit {
 
   showUnstoppableErrorDialog(failureData: Job): void {
     let conditionalErrMessage = '';
-    const msg = this.translate.instant(helptext.exportMessages.onfail.unableToTerminate);
+    const msg = this.translate.instant(helptextVolumes.exportMessages.onfail.unableToTerminate);
     conditionalErrMessage = msg + (failureData.extra.processes as string);
     this.dialogService.error({
-      title: helptext.exportError,
+      title: helptextVolumes.exportError,
       message: conditionalErrMessage,
       backtrace: failureData.exception,
     });
   }
   showServicesErrorsDialog(failureData: Job): void {
-    const stopMsg = this.translate.instant(helptext.exportMessages.onfail.stopServices);
-    const restartMsg = this.translate.instant(helptext.exportMessages.onfail.restartServices);
+    const stopMsg = this.translate.instant(helptextVolumes.exportMessages.onfail.stopServices);
+    const restartMsg = this.translate.instant(helptextVolumes.exportMessages.onfail.restartServices);
     let conditionalErrMessage = '';
     if (_.isObject(failureData.exc_info.extra) && !Array.isArray(failureData.exc_info.extra)) {
       if ((failureData.exc_info.extra.stop_services as string[]).length > 0) {
@@ -219,14 +219,14 @@ export class ExportDisconnectModalComponent implements OnInit {
       }
     }
 
-    const continueMsg = this.translate.instant(helptext.exportMessages.onfail.continueMessage);
+    const continueMsg = this.translate.instant(helptextVolumes.exportMessages.onfail.continueMessage);
     conditionalErrMessage += '<br><br>' + continueMsg + '</div><br />';
 
     this.dialogService.confirm({
-      title: helptext.exportError,
+      title: helptextVolumes.exportError,
       message: conditionalErrMessage,
       hideCheckbox: true,
-      buttonText: helptext.exportMessages.onfail.continueAction,
+      buttonText: helptextVolumes.exportMessages.onfail.continueAction,
     }).pipe(
       filter(Boolean),
       untilDestroyed(this),
@@ -249,9 +249,9 @@ export class ExportDisconnectModalComponent implements OnInit {
     const message = this.translate.instant('Successfully exported/disconnected {pool}.', { pool: this.pool.name });
     const destroyed = this.translate.instant('All data on that pool was destroyed.');
     if (!value.destroy) {
-      this.dialogService.info(helptext.exportDisconnect, message);
+      this.dialogService.info(helptextVolumes.exportDisconnect, message);
     } else {
-      this.dialogService.info(helptext.exportDisconnect, message + ' ' + destroyed);
+      this.dialogService.info(helptextVolumes.exportDisconnect, message + ' ' + destroyed);
     }
   }
 
@@ -272,7 +272,7 @@ export class ExportDisconnectModalComponent implements OnInit {
         },
         error: (error: WebsocketError) => {
           this.dialogService.error({
-            title: helptext.exportError,
+            title: helptextVolumes.exportError,
             message: error.reason,
             backtrace: error.trace?.formatted,
           });
@@ -287,9 +287,9 @@ export class ExportDisconnectModalComponent implements OnInit {
     this.showDestroy = this.pool.status !== PoolStatus.Unknown;
 
     this.confirmLabelText = this.pool.status === PoolStatus.Unknown
-      ? this.translate.instant(helptext.exportDialog.confirm)
-        + ' ' + this.translate.instant(helptext.exportDialog.unknown_status_alt_text)
-      : this.translate.instant(helptext.exportDialog.confirm);
+      ? this.translate.instant(helptextVolumes.exportDialog.confirm)
+        + ' ' + this.translate.instant(helptextVolumes.exportDialog.unknown_status_alt_text)
+      : this.translate.instant(helptextVolumes.exportDialog.confirm);
 
     this.processes.forEach((process) => {
       if (process.service) {

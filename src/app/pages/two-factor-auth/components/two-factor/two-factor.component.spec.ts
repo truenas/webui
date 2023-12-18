@@ -5,7 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
-import { helptext } from 'app/helptext/system/2fa';
+import { helptext2fa } from 'app/helptext/system/2fa';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { GlobalTwoFactorConfig, UserTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { IxWarningComponent } from 'app/modules/ix-forms/components/ix-warning/ix-warning.component';
@@ -62,7 +62,7 @@ describe('TwoFactorComponent', () => {
     }));
     const warning = spectator.query(IxWarningComponent);
     expect(warning).toBeTruthy();
-    expect(warning).toHaveAttribute('message', helptext.two_factor.global_disabled);
+    expect(warning).toHaveAttribute('message', helptext2fa.two_factor.global_disabled);
   });
 
   it('shows warning when global setting is enabled but user disabled', () => {
@@ -71,7 +71,7 @@ describe('TwoFactorComponent', () => {
     spectator.detectChanges();
     const warning = spectator.query(IxWarningComponent);
     expect(warning).toBeTruthy();
-    expect(warning).toHaveAttribute('message', helptext.two_factor.global_enabled_user_disabled);
+    expect(warning).toHaveAttribute('message', helptext2fa.two_factor.global_enabled_user_disabled);
   });
 
   it('shows warning when global setting is enabled and user enabled', () => {
@@ -79,7 +79,7 @@ describe('TwoFactorComponent', () => {
     spectator.detectChanges();
     const warning = spectator.query(IxWarningComponent);
     expect(warning).toBeTruthy();
-    expect(warning).toHaveAttribute('message', helptext.two_factor.global_enabled_user_enabled);
+    expect(warning).toHaveAttribute('message', helptext2fa.two_factor.global_enabled_user_enabled);
   });
 
   it('renews secret when button is clicked', async () => {
@@ -88,10 +88,10 @@ describe('TwoFactorComponent', () => {
     await renewBtn.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
-      title: helptext.two_factor.renewSecret.title,
-      message: helptext.two_factor.renewSecret.message,
+      title: helptext2fa.two_factor.renewSecret.title,
+      message: helptext2fa.two_factor.renewSecret.message,
       hideCheckbox: true,
-      buttonText: helptext.two_factor.renewSecret.btn,
+      buttonText: helptext2fa.two_factor.renewSecret.btn,
     });
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(RenewTwoFactorDialogComponent);

@@ -9,7 +9,7 @@ import { Observable, of, Subscription } from 'rxjs';
 import { InitShutdownScriptType, initShutdownScriptTypeLabels } from 'app/enums/init-shutdown-script-type.enum';
 import { InitShutdownScriptWhen, initShutdownScriptWhenLabels } from 'app/enums/init-shutdown-script-when.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
-import helptext from 'app/helptext/system/init-shutdown';
+import { helptextInitShutdown } from 'app/helptext/system/init-shutdown';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
@@ -53,13 +53,13 @@ export class InitShutdownFormComponent implements OnInit {
   readonly whenOptions$ = of(mapToOptions(initShutdownScriptWhenLabels, this.translate));
 
   readonly tooltips = {
-    comment: helptext.ini_description_tooltip,
-    type: helptext.ini_type_tooltip,
-    command: helptext.ini_command_tooltip,
-    script: helptext.ini_script_tooltip,
-    when: helptext.ini_when_tooltip,
-    enabled: helptext.ini_enabled_tooltip,
-    timeout: helptext.ini_timeout_tooltip,
+    comment: helptextInitShutdown.ini_description_tooltip,
+    type: helptextInitShutdown.ini_type_tooltip,
+    command: helptextInitShutdown.ini_command_tooltip,
+    script: helptextInitShutdown.ini_script_tooltip,
+    when: helptextInitShutdown.ini_when_tooltip,
+    enabled: helptextInitShutdown.ini_enabled_tooltip,
+    timeout: helptextInitShutdown.ini_timeout_tooltip,
   };
 
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider();

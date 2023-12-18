@@ -26,7 +26,7 @@ import { WebSocketService } from 'app/services/ws.service';
   selector: 'ix-kerberos-keytabs-list',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export default class KerberosKeytabsListComponent implements OnInit {
+export class KerberosKeytabsListComponent implements OnInit {
   @Input() paginator = true;
   @Input() toolbar = false;
   filterString = '';

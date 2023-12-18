@@ -1,6 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export default {
+export const helptextVmwareSnapshot = {
   VMware_snapshot_form_hostname_placeholder: T('Hostname'),
   VMware_snapshot_form_hostname_tooltip: T('Enter the IP address or hostname of the VMware host.\
  When clustering, this is the vCenter server for the cluster.'),
