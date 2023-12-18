@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -37,6 +37,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CertificateAuthorityListComponent implements OnInit {
+  @Output() certificateSigned = new EventEmitter<void>();
+
   filterString = '';
   dataProvider: AsyncDataProvider<CertificateAuthority>;
   authorities: CertificateAuthority[] = [];
@@ -97,7 +99,6 @@ export class CertificateAuthorityListComponent implements OnInit {
     private ws: WebSocketService,
     private slideInService: IxSlideInService,
     private translate: TranslateService,
-    private cdr: ChangeDetectorRef,
     protected emptyService: EmptyService,
     private storageService: StorageService,
     private dialogService: DialogService,
@@ -259,7 +260,9 @@ export class CertificateAuthorityListComponent implements OnInit {
         }),
         untilDestroyed(this),
       )
-      .subscribe();
+      .subscribe(() => {
+        this.getCertificates();
+      });
   }
 
   doSignCsr(certificate: CertificateAuthority): void {
@@ -269,6 +272,7 @@ export class CertificateAuthorityListComponent implements OnInit {
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => {
         this.getCertificates();
+        this.certificateSigned.emit();
       });
   }
 }
