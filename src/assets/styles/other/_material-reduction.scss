@@ -863,3 +863,21 @@ body .mat-calendar-previous-button::after,
 body .mat-calendar-next-button::after {
   margin: 10px;
 }
+
+.role-missing button {
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.role-missing .mat-mdc-button,
+.role-missing .mdc-button {
+  margin-right: 8px;
+}
+
+.role-missing .mdc-button__label,
+.role-missing .mat-icon,
+.role-missing .mat-mdc-menu-item-text {
+  color: var(--alt-fg1);
+  opacity: 0.5;
+  text-decoration: line-through;
+}

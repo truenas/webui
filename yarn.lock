@@ -1494,7 +1494,7 @@
     "@codemirror/view" "^6.0.0"
     crelt "^1.0.5"
 
-"@codemirror/state@^6.0.0", "@codemirror/state@^6.1.4", "@codemirror/state@^6.2.0", "@codemirror/state@~6.3.1":
+"@codemirror/state@^6.0.0", "@codemirror/state@^6.1.4", "@codemirror/state@~6.3.1":
   version "6.3.3"
   resolved "https://registry.yarnpkg.com/@codemirror/state/-/state-6.3.3.tgz#6a647c2fa62b68604187152de497e91aabf43f82"
   integrity sha512-0wufKcTw2dEwEaADajjHf6hBy1sh3M6V0e+q4JKIhLuiMSe5td5HOWpUdvKth1fT1M9VYOboajoBHpkCd7PG7A==
