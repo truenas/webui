@@ -97,6 +97,7 @@ def create_a_second_smb_dataset_rtacltest2_under_rtacltest1(driver, dataset2_nam
     driver.find_element_by_xpath(xpaths.add_Dataset.share_Type_SMB_Option).click()
     assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
+    assert wait_on_element(driver, 30, xpaths.progress.progressbar)
     rsc.Return_To_Pool_list(driver)
     assert wait_on_element_disappear(driver, 30, xpaths.progress.progressbar)
     assert wait_on_element(driver, 7, xpaths.dataset.dataset_Name(dataset2_name))
