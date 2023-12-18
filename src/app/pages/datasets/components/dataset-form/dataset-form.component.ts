@@ -5,12 +5,14 @@ import {
 import { FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
   forkJoin, Observable, of, switchMap, map, combineLatest, filter, catchError,
 } from 'rxjs';
 import { DatasetPreset } from 'app/enums/dataset.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
+import { ServiceName } from 'app/enums/service-name.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -33,6 +35,8 @@ import { getDatasetLabel } from 'app/pages/datasets/utils/dataset.utils';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { AppState } from 'app/store';
+import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 
 @UntilDestroy()
 @Component({
@@ -64,6 +68,7 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
     private snackbar: SnackbarService,
     private translate: TranslateService,
     private slideInRef: IxSlideInRef<DatasetFormComponent>,
+    private store$: Store<AppState>,
     @Inject(SLIDE_IN_DATA) private slideInData: { datasetId: string; isNew?: boolean },
   ) {}
 
@@ -197,6 +202,12 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
       untilDestroyed(this),
     ).subscribe({
       next: ([createdDataset, shouldGoToEditor]) => {
+        if (this.nameAndOptionsSection.isCreatingSmb) {
+          this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Cifs }));
+        }
+        if (this.nameAndOptionsSection.isCreatingNfs) {
+          this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Nfs }));
+        }
         this.isLoading = false;
         this.cdr.markForCheck();
         this.slideInRef.close(createdDataset);
