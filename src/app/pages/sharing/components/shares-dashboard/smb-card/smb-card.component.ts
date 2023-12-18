@@ -92,7 +92,7 @@ export class SmbCardComponent implements OnInit, OnChanges {
       ],
     }),
   ], {
-    rowTestId: (row) => 'card-smb-share-' + row.id.toString(),
+    rowTestId: (row) => 'card-smb-share-' + row.name,
   });
 
   constructor(

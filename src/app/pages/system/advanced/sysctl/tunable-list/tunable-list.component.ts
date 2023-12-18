@@ -70,7 +70,7 @@ export class TunableListComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => 'tunable-' + row.id.toString(),
+    rowTestId: (row) => 'tunable-' + row.var + '-' + row.value,
   });
 
   constructor(
