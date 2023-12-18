@@ -6,7 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, switchMap, tap } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
-import helptext from 'app/helptext/storage/volumes/volume-list';
+import { helptextVolumes } from 'app/helptext/storage/volumes/volume-list';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { StorageDashboardDisk } from 'app/interfaces/storage.interface';
@@ -63,8 +63,8 @@ export class DashboardPoolComponent {
 
   onExpand(): void {
     this.dialogService.confirm({
-      title: this.translate.instant(helptext.expand_pool_dialog.title),
-      message: this.translate.instant(helptext.expand_pool_dialog.message),
+      title: this.translate.instant(helptextVolumes.expand_pool_dialog.title),
+      message: this.translate.instant(helptextVolumes.expand_pool_dialog.message),
     })
       .pipe(
         filter(Boolean),
@@ -87,7 +87,7 @@ export class DashboardPoolComponent {
   onUpgrade(): void {
     this.dialogService.confirm({
       title: this.translate.instant('Upgrade Pool'),
-      message: this.translate.instant(helptext.upgradePoolDialog_warning) + this.pool.name,
+      message: this.translate.instant(helptextVolumes.upgradePoolDialog_warning) + this.pool.name,
     }).pipe(
       filter(Boolean),
       switchMap(() => {

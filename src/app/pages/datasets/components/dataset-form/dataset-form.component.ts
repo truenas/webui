@@ -13,7 +13,7 @@ import {
 import { DatasetPreset } from 'app/enums/dataset.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
-import helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
+import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
@@ -252,11 +252,11 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
 
   private aclDialog(): Observable<boolean> {
     return this.dialog.confirm({
-      title: helptext.afterSubmitDialog.title,
-      message: helptext.afterSubmitDialog.message,
+      title: helptextDatasetForm.afterSubmitDialog.title,
+      message: helptextDatasetForm.afterSubmitDialog.message,
       hideCheckbox: true,
-      buttonText: helptext.afterSubmitDialog.actionBtn,
-      cancelText: helptext.afterSubmitDialog.cancelBtn,
+      buttonText: helptextDatasetForm.afterSubmitDialog.actionBtn,
+      cancelText: helptextDatasetForm.afterSubmitDialog.cancelBtn,
     });
   }
 

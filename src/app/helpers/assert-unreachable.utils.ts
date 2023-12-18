@@ -7,6 +7,6 @@
  * then you forgot to handle a case in a switch statement.
  * DO NOT JUST USE `as never` TO SILENCE THE ERROR.
  */
-export function assertUnreachable(value: never): never {
-  throw new Error(`No such case in exhaustive switch: ${String(value)}`);
+export function assertUnreachable(value: never): void {
+  console.error(`No such case in exhaustive switch: ${String(value)}`);
 }

@@ -7,7 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { Weekday } from 'app/enums/weekday.enum';
-import helptext from 'app/helptext/storage/resilver/resilver';
+import { helptextResilver } from 'app/helptext/storage/resilver/resilver';
 import { ResilverConfigUpdate } from 'app/interfaces/resilver-config.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -42,10 +42,10 @@ export class ResilverConfigComponent implements OnInit {
   });
 
   readonly tooltips = {
-    enabled: helptext.enabled_tooltip,
-    begin: helptext.begin_tooltip,
-    end: helptext.end_tooltip,
-    weekday: helptext.weekday_tooltip,
+    enabled: helptextResilver.enabled_tooltip,
+    begin: helptextResilver.begin_tooltip,
+    end: helptextResilver.end_tooltip,
+    weekday: helptextResilver.weekday_tooltip,
   };
 
   daysOfWeek$ = of(this.calendarService.getWeekdayOptions());

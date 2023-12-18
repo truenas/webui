@@ -12,7 +12,7 @@ import {
 } from 'rxjs/operators';
 import { SshConnectionsSetupMethod } from 'app/enums/ssh-connections-setup-method.enum';
 import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
-import helptext from 'app/helptext/system/ssh-connections';
+import { helptextSshConnections } from 'app/helptext/system/ssh-connections';
 import {
   KeychainCredential,
   KeychainCredentialUpdate,
@@ -122,7 +122,7 @@ export class SshConnectionFormComponent implements OnInit {
     map((username) => username !== 'root'),
   );
 
-  readonly helptext = helptext;
+  readonly helptext = helptextSshConnections;
 
   constructor(
     private formBuilder: FormBuilder,

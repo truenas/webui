@@ -5,7 +5,7 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { EMPTY, switchMap } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
-import helptext from 'app/helptext/storage/volumes/download-key';
+import { helptextDownloadKey } from 'app/helptext/storage/volumes/download-key';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -25,7 +25,7 @@ export interface DownloadKeyDialogParams {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DownloadKeyDialogComponent {
-  protected helptext = helptext;
+  protected helptext = helptextDownloadKey;
   protected wasDownloaded = false;
 
   private filename: string;

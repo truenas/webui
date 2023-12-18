@@ -442,6 +442,7 @@ export class SmbFormComponent implements OnInit {
             title: this.translate.instant('Configure ACL'),
             message: this.translate.instant('Do you want to configure the ACL?'),
             buttonText: this.translate.instant('Configure'),
+            cancelText: this.translate.instant('No'),
             hideCheckbox: true,
           }).pipe(untilDestroyed(this)).subscribe((isConfigure) => {
             if (isConfigure) {
@@ -462,10 +463,7 @@ export class SmbFormComponent implements OnInit {
       error: (error: WebsocketError) => {
         if (error?.reason?.includes('[ENOENT]') || error?.reason?.includes('[EXDEV]')) {
           this.dialogService.closeAllDialogs();
-        } else {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
         }
-        this.slideInRef.close();
         this.isLoading = false;
         this.cdr.markForCheck();
         this.formErrorHandler.handleWsFormError(error, this.form);

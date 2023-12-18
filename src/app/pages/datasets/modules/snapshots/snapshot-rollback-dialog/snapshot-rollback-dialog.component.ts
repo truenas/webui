@@ -7,7 +7,7 @@ import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { RollbackRecursiveType } from 'app/enums/rollback-recursive-type.enum';
-import helptext from 'app/helptext/storage/snapshots/snapshots';
+import { helptextSnapshots } from 'app/helptext/storage/snapshots/snapshots';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ZfsRollbackParams, ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -33,30 +33,30 @@ export class SnapshotRollbackDialogComponent implements OnInit {
 
   readonly recursive = {
     fcName: 'recursive',
-    tooltip: helptext.rollback_recursive_radio_tooltip,
-    label: helptext.rollback_recursive_radio_placeholder,
+    tooltip: helptextSnapshots.rollback_recursive_radio_tooltip,
+    label: helptextSnapshots.rollback_recursive_radio_placeholder,
     options: of([
       {
         value: '',
-        label: helptext.rollback_dataset_placeholder,
-        tooltip: helptext.rollback_dataset_tooltip,
+        label: helptextSnapshots.rollback_dataset_placeholder,
+        tooltip: helptextSnapshots.rollback_dataset_tooltip,
       },
       {
         value: RollbackRecursiveType.Recursive,
-        label: helptext.rollback_recursive_placeholder,
-        tooltip: helptext.rollback_recursive_tooltip,
+        label: helptextSnapshots.rollback_recursive_placeholder,
+        tooltip: helptextSnapshots.rollback_recursive_tooltip,
       },
       {
         value: RollbackRecursiveType.RecursiveClones,
-        label: helptext.rollback_recursive_clones_placeholder,
-        tooltip: helptext.rollback_recursive_clones_tooltip,
+        label: helptextSnapshots.rollback_recursive_clones_placeholder,
+        tooltip: helptextSnapshots.rollback_recursive_clones_tooltip,
       },
     ]),
   };
 
   readonly force = {
     fcName: 'force',
-    label: helptext.rollback_confirm,
+    label: helptextSnapshots.rollback_confirm,
     required: true,
   };
 

@@ -1,7 +1,7 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UpsMode, UpsShutdownMode } from 'app/enums/ups-mode.enum';
 
-export default {
+export const helptextServiceUps = {
   ups_fieldset_general: T('General Options'),
   ups_fieldset_monitor: T('Monitor'),
   ups_fieldset_shutdown: T('Shutdown'),

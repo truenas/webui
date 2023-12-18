@@ -13,7 +13,7 @@ import {
   NfsBasicFlag, nfsBasicFlagLabels, nfsBasicPermissionLabels,
 } from 'app/enums/nfs-acl.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
-import helptext from 'app/helptext/storage/volumes/datasets/dataset-acl';
+import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import {
   AdvancedNfsFlags,
   AdvancedNfsPermissions,
@@ -68,16 +68,16 @@ export class EditNfsAceComponent implements OnChanges, OnInit {
   readonly advancedFlags$ = of(mapToOptions(nfsAdvancedFlagLabels, this.translate));
 
   readonly tooltips = {
-    tag: helptext.dataset_acl_tag_tooltip,
-    user: helptext.dataset_acl_user_tooltip,
-    group: helptext.dataset_acl_group_tooltip,
-    type: helptext.dataset_acl_type_tooltip,
-    permissionType: helptext.dataset_acl_perms_type_tooltip,
-    basicPermission: helptext.dataset_acl_perms_tooltip,
-    advancedPermissions: helptext.dataset_acl_perms_tooltip,
-    flagsType: helptext.dataset_acl_flags_type_tooltip,
-    basicFlag: helptext.dataset_acl_flags_tooltip,
-    advancedFlags: helptext.dataset_acl_flags_tooltip,
+    tag: helptextAcl.dataset_acl_tag_tooltip,
+    user: helptextAcl.dataset_acl_user_tooltip,
+    group: helptextAcl.dataset_acl_group_tooltip,
+    type: helptextAcl.dataset_acl_type_tooltip,
+    permissionType: helptextAcl.dataset_acl_perms_type_tooltip,
+    basicPermission: helptextAcl.dataset_acl_perms_tooltip,
+    advancedPermissions: helptextAcl.dataset_acl_perms_tooltip,
+    flagsType: helptextAcl.dataset_acl_flags_type_tooltip,
+    basicFlag: helptextAcl.dataset_acl_flags_tooltip,
+    advancedFlags: helptextAcl.dataset_acl_flags_tooltip,
   };
 
   readonly userProvider = new UserComboboxProvider(this.userService);

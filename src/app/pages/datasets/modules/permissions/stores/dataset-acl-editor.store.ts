@@ -14,7 +14,7 @@ import { AclType, DefaultAclType } from 'app/enums/acl-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { NfsAclTag } from 'app/enums/nfs-acl.enum';
 import { PosixAclTag } from 'app/enums/posix-acl.enum';
-import helptext from 'app/helptext/storage/volumes/datasets/dataset-acl';
+import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import {
   Acl, AclTemplateByPath, NfsAclItem, PosixAclItem, SetAcl,
 } from 'app/interfaces/acl.interface';
@@ -178,8 +178,8 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
       switchMap(() => {
         if (this.storageService.isDatasetTopLevel(this.get().mountpoint.replace('mnt/', ''))) {
           return this.dialogService.confirm({
-            title: helptext.dataset_acl_dialog_warning,
-            message: helptext.dataset_acl_toplevel_dialog_message,
+            title: helptextAcl.dataset_acl_dialog_warning,
+            message: helptextAcl.dataset_acl_toplevel_dialog_message,
           });
         }
 
@@ -193,8 +193,8 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
 
       // Save
       tap((setAcl: SetAcl) => {
-        const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: helptext.save_dialog.title } });
-        dialogRef.componentInstance.setDescription(helptext.save_dialog.message);
+        const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: helptextAcl.save_dialog.title } });
+        dialogRef.componentInstance.setDescription(helptextAcl.save_dialog.message);
 
         dialogRef.componentInstance.setCall('filesystem.setacl', [setAcl]);
         dialogRef.componentInstance.success.pipe(takeUntil(this.destroy$)).subscribe({

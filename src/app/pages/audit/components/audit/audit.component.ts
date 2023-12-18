@@ -11,10 +11,9 @@ import { filter, map, of } from 'rxjs';
 import {
   AuditEvent, AuditService, auditEventLabels, auditServiceLabels,
 } from 'app/enums/audit-event.enum';
-import { getLogImportantData } from 'app/helpers/get-log-important-data.helper';
 import { ParamsBuilder } from 'app/helpers/params-builder/params-builder.class';
 import { WINDOW } from 'app/helpers/window.helper';
-import { AuditEntry, SmbAuditEntry } from 'app/interfaces/audit.interface';
+import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { CredentialType, credentialTypeLabels } from 'app/interfaces/credential-type.interface';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
 import { ApiDataProvider } from 'app/modules/ix-table2/classes/api-data-provider/api-data-provider';
@@ -35,6 +34,7 @@ import {
   searchProperties,
   textProperty,
 } from 'app/modules/search-input/utils/search-properties.utils';
+import { getLogImportantData } from 'app/pages/audit/utils/get-log-important-data.utils';
 import { UrlOptionsService } from 'app/services/url-options.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -82,10 +82,10 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
       getValue: (row) => this.translate.instant(this.getEventDataForLog(row)),
     }),
   ], {
-    rowTestId: (row: SmbAuditEntry) => 'smb-audit-' + row.audit_id.toString(),
+    rowTestId: (row: AuditEntry) => 'audit-' + row.audit_id.toString(),
   });
 
-  protected searchProperties: SearchProperty<SmbAuditEntry>[] = [];
+  protected searchProperties: SearchProperty<AuditEntry>[] = [];
 
   constructor(
     private translate: TranslateService,
@@ -289,6 +289,7 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.isMobileView) {
       this.showMobileDetails = true;
 
+      // TODO: Do not rely on querying DOM elements
       // focus on details container
       setTimeout(() => (this.window.document.getElementsByClassName('mobile-back-button')[0] as HTMLElement).focus(), 0);
     }

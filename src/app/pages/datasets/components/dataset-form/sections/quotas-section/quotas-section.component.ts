@@ -6,7 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import { GiB } from 'app/constants/bytes.constant';
-import helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
+import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
@@ -27,7 +27,7 @@ export class QuotasSectionComponent implements OnInit {
   readonly form = this.formBuilder.group({
     refquota: [null as number, this.validators.withMessage(
       Validators.min(GiB),
-      this.translate.instant(helptext.dataset_form_quota_too_small),
+      this.translate.instant(helptextDatasetForm.dataset_form_quota_too_small),
     )],
     refquota_warning: [warning, [Validators.min(0), Validators.max(100)]],
     refquota_warning_inherit: [true],
@@ -36,7 +36,7 @@ export class QuotasSectionComponent implements OnInit {
     refreservation: [null as number],
     quota: [null as number, this.validators.withMessage(
       Validators.min(GiB),
-      this.translate.instant(helptext.dataset_form_quota_too_small),
+      this.translate.instant(helptextDatasetForm.dataset_form_quota_too_small),
     )],
     quota_warning: [warning, [Validators.min(0), Validators.max(100)]],
     quota_warning_inherit: [true],
@@ -45,7 +45,7 @@ export class QuotasSectionComponent implements OnInit {
     reservation: [null as number],
   });
 
-  readonly helptext = helptext;
+  readonly helptext = helptextDatasetForm;
 
   constructor(
     private formBuilder: FormBuilder,

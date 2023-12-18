@@ -8,7 +8,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter, switchMap } from 'rxjs/operators';
 import { AclType } from 'app/enums/acl-type.enum';
-import helptext from 'app/helptext/storage/volumes/datasets/dataset-acl';
+import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { Acl } from 'app/interfaces/acl.interface';
 import { GroupComboboxProvider } from 'app/modules/ix-forms/classes/group-combobox-provider';
 import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
@@ -64,7 +64,7 @@ export class DatasetAclEditorComponent implements OnInit {
 
   readonly userProvider = new UserComboboxProvider(this.userService);
   readonly groupProvider = new GroupComboboxProvider(this.userService);
-  readonly helptext = helptext;
+  readonly helptext = helptextAcl;
 
   constructor(
     private store: DatasetAclEditorStore,
@@ -112,8 +112,8 @@ export class DatasetAclEditorComponent implements OnInit {
       filter(Boolean),
       switchMap(() => {
         return this.dialogService.confirm({
-          title: helptext.dataset_acl_recursive_dialog_warning,
-          message: helptext.dataset_acl_recursive_dialog_warning_message,
+          title: helptextAcl.dataset_acl_recursive_dialog_warning,
+          message: helptextAcl.dataset_acl_recursive_dialog_warning_message,
         });
       }),
       untilDestroyed(this),

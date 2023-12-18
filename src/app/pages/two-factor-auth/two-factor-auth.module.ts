@@ -38,4 +38,4 @@ import { routing } from 'app/pages/two-factor-auth/two-factor-auth.routing';
     RenewTwoFactorDialogComponent,
   ],
 })
-export default class TwoFactorAuthModule { }
+export class TwoFactorAuthModule { }

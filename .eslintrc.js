@@ -291,6 +291,7 @@ module.exports = {
         }],
         "@shopify/typescript/prefer-singular-enums": "error",
         "@shopify/prefer-early-return": ["error", { maximumStatements: 3 }],
+        "import/no-default-export": "error",
 
         // RxJS rules
         "rxjs/no-unsafe-takeuntil": ["error", {

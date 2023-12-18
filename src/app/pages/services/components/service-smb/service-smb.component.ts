@@ -9,7 +9,7 @@ import { of, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { LogLevel } from 'app/enums/log-level.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
-import helptext from 'app/helptext/services/components/service-smb';
+import { helptextServiceSmb } from 'app/helptext/services/components/service-smb';
 import { SmbConfigUpdate } from 'app/interfaces/smb-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
@@ -60,25 +60,25 @@ export class ServiceSmbComponent implements OnInit {
     multichannel: [false, []],
   });
 
-  readonly helptext = helptext;
+  readonly helptext = helptextServiceSmb;
   readonly tooltips = {
-    netbiosname: helptext.cifs_srv_netbiosname_tooltip,
-    netbiosalias: helptext.cifs_srv_netbiosalias_tooltip,
-    workgroup: helptext.cifs_srv_workgroup_tooltip,
-    description: helptext.cifs_srv_description_tooltip,
-    enable_smb1: helptext.cifs_srv_enable_smb1_tooltip,
-    ntlmv1_auth: helptext.cifs_srv_ntlmv1_auth_tooltip,
-    unixcharset: helptext.cifs_srv_unixcharset_tooltip,
-    loglevel: helptext.cifs_srv_loglevel_tooltip,
-    syslog: helptext.cifs_srv_syslog_tooltip,
-    localmaster: helptext.cifs_srv_localmaster_tooltip,
-    guest: helptext.cifs_srv_guest_tooltip,
-    filemask: helptext.cifs_srv_filemask_tooltip,
-    dirmask: helptext.cifs_srv_dirmask_tooltip,
-    admin_group: helptext.cifs_srv_admin_group_tooltip,
-    bindip: helptext.cifs_srv_bindip_tooltip,
-    aapl_extensions: helptext.cifs_srv_aapl_extensions_tooltip,
-    multichannel: helptext.cifs_srv_multichannel_tooltip,
+    netbiosname: helptextServiceSmb.cifs_srv_netbiosname_tooltip,
+    netbiosalias: helptextServiceSmb.cifs_srv_netbiosalias_tooltip,
+    workgroup: helptextServiceSmb.cifs_srv_workgroup_tooltip,
+    description: helptextServiceSmb.cifs_srv_description_tooltip,
+    enable_smb1: helptextServiceSmb.cifs_srv_enable_smb1_tooltip,
+    ntlmv1_auth: helptextServiceSmb.cifs_srv_ntlmv1_auth_tooltip,
+    unixcharset: helptextServiceSmb.cifs_srv_unixcharset_tooltip,
+    loglevel: helptextServiceSmb.cifs_srv_loglevel_tooltip,
+    syslog: helptextServiceSmb.cifs_srv_syslog_tooltip,
+    localmaster: helptextServiceSmb.cifs_srv_localmaster_tooltip,
+    guest: helptextServiceSmb.cifs_srv_guest_tooltip,
+    filemask: helptextServiceSmb.cifs_srv_filemask_tooltip,
+    dirmask: helptextServiceSmb.cifs_srv_dirmask_tooltip,
+    admin_group: helptextServiceSmb.cifs_srv_admin_group_tooltip,
+    bindip: helptextServiceSmb.cifs_srv_bindip_tooltip,
+    aapl_extensions: helptextServiceSmb.cifs_srv_aapl_extensions_tooltip,
+    multichannel: helptextServiceSmb.cifs_srv_multichannel_tooltip,
   };
 
   readonly logLevelOptions$ = of([

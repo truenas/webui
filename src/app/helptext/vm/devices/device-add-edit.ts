@@ -1,6 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export default {
+export const helptextDevice = {
   cd_path_tooltip: T('Browse to a CD-ROM file present on the system storage.'),
   zvol_path_tooltip: T('Define the path to an existing zvol for VM use.'),
 

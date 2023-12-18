@@ -1,6 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export default {
+export const helptextInitShutdown = {
   ini_type_tooltip: T('Select <i>Command</i> for an executable or\
      <i>Script</i> for an executable script.'),
   ini_command_tooltip: T('Enter the command with any options.'),

@@ -1,7 +1,11 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { AuditEntry } from 'app/interfaces/audit.interface';
+import { AuditEvent } from 'app/enums/audit-event.enum';
+import { AuditService } from 'app/enums/audit.enum';
+import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
-import { MetadataDetailsCardComponent } from 'app/pages/audit/components/metadata-details-card/metadata-details-card.component';
+import {
+  MetadataDetailsCardComponent,
+} from 'app/pages/audit/components/metadata-details-card/metadata-details-card.component';
 
 const logEntry = {
   audit_id: '557cbf43-8c04-4250-bce6-e9ee1f45ec23',
@@ -12,17 +16,17 @@ const logEntry = {
   address: '10.220.2.21',
   username: 'Administrator',
   session: '',
-  service: 'SMB',
+  service: AuditService.Smb,
   service_data: {
     vers: {
       major: 0,
       minor: 1,
     },
   },
-  event: 'AUTHENTICATION',
+  event: AuditEvent.Authentication,
   event_data: {},
   success: true,
-} as unknown as AuditEntry;
+} as AuditEntry;
 
 describe('MetadataDetailsCardComponent', () => {
   let spectator: Spectator<MetadataDetailsCardComponent>;

@@ -1,6 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export default {
+export const helptextDownloadKey = {
 // Add key form
   downloadkey_dialog_title: T('WARNING'),
   downloadkey_dialog_legacy_message: T('Back up the encryption key now! If the key is lost,\
