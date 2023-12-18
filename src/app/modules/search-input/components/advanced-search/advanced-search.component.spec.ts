@@ -1,6 +1,6 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { auditEventLabels, AuditService } from 'app/enums/audit-event.enum';
+import { auditEventLabels, AuditService } from 'app/enums/audit.enum';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
 import { AdvancedSearchComponent } from 'app/modules/search-input/components/advanced-search/advanced-search.component';

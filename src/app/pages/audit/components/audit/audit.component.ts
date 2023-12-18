@@ -1,19 +1,21 @@
 import { BreakpointObserver, BreakpointState, Breakpoints } from '@angular/cdk/layout';
 import {
-  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit,
 } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { toSvg } from 'jdenticon';
-import { filter, map, of } from 'rxjs';
+import {
+  filter, map, of, shareReplay,
+} from 'rxjs';
 import {
   AuditEvent, AuditService, auditEventLabels, auditServiceLabels,
-} from 'app/enums/audit-event.enum';
+} from 'app/enums/audit.enum';
 import { ParamsBuilder } from 'app/helpers/params-builder/params-builder.class';
 import { WINDOW } from 'app/helpers/window.helper';
-import { AuditEntry } from 'app/interfaces/audit/audit.interface';
+import { AuditEntry, AuditQueryParams } from 'app/interfaces/audit/audit.interface';
 import { CredentialType, credentialTypeLabels } from 'app/interfaces/credential-type.interface';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
 import { ApiDataProvider } from 'app/modules/ix-table2/classes/api-data-provider/api-data-provider';
@@ -45,7 +47,7 @@ import { WebSocketService } from 'app/services/ws.service';
   styleUrls: ['./audit.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
+export class AuditComponent implements OnInit, OnDestroy {
   protected dataProvider: ApiDataProvider<AuditEntry, 'audit.query'>;
   showMobileDetails = false;
   isMobileView = false;
@@ -62,7 +64,7 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
       propertyName: 'service',
       getValue: (row) => (auditServiceLabels.has(row.service)
         ? this.translate.instant(auditServiceLabels.get(row.service))
-        : row.event || '-'),
+        : row.service || '-'),
     }),
     textColumn({
       title: this.translate.instant('User'),
@@ -87,6 +89,14 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
 
   protected searchProperties: SearchProperty<AuditEntry>[] = [];
 
+  private userSuggestions = this.ws.call('user.query').pipe(
+    map((users) => users.map((user) => ({
+      label: user.username,
+      value: `"${user.username}"`,
+    }))),
+    shareReplay({ refCount: true, bufferSize: 1 }),
+  );
+
   constructor(
     private translate: TranslateService,
     private ws: WebSocketService,
@@ -108,95 +118,7 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
       this.dataProvider.expandedRow = this.isMobileView ? null : auditEntries[0];
       this.expanded(this.dataProvider.expandedRow);
 
-      this.searchProperties = searchProperties<AuditEntry>([
-        textProperty('audit_id', this.translate.instant('ID'), of([])),
-        dateProperty(
-          'message_timestamp',
-          this.translate.instant('Timestamp'),
-        ),
-        textProperty(
-          'address',
-          this.translate.instant('Address'),
-          of(auditEntries.map((log) => ({
-            label: log.address,
-            value: `"${log.address}"`,
-          }))),
-        ),
-        textProperty(
-          'service',
-          this.translate.instant('Service'),
-          of(Object.values(AuditService).map((key) => ({
-            label: this.translate.instant(auditServiceLabels.get(key)),
-            value: `"${this.translate.instant(auditServiceLabels.get(key))}"`,
-          }))),
-          auditServiceLabels,
-        ),
-        textProperty(
-          'username',
-          this.translate.instant('Username'),
-          this.ws.call('user.query').pipe((
-            map((users) => users.map((user) => ({
-              label: user.username,
-              value: `"${user.username}"`,
-            })))
-          )),
-        ),
-        textProperty(
-          'event',
-          this.translate.instant('Event'),
-          of(Object.values(AuditEvent).map((key) => ({
-            label: this.translate.instant(auditEventLabels.get(key)),
-            value: `"${this.translate.instant(auditEventLabels.get(key))}"`,
-          }))),
-          auditEventLabels,
-        ),
-        textProperty(
-          'event_data.clientAccount',
-          this.translate.instant('SMB - Client Account'),
-          this.ws.call('user.query').pipe((
-            map((users) => users.map((user) => ({
-              label: user.username,
-              value: `"${user.username}"`,
-            })))
-          )),
-        ),
-        textProperty('event_data.host', this.translate.instant('SMB - Host')),
-        textProperty('event_data.file.path', this.translate.instant('SMB - File Path')),
-        textProperty('event_data.src_file.path', this.translate.instant('SMB - Source File Path')),
-        textProperty('event_data.dst_file.path', this.translate.instant('SMB - Destination File Path')),
-        textProperty('event_data.file.handle.type', this.translate.instant('SMB - File Handle Type')),
-        textProperty('event_data.file.handle.value', this.translate.instant('SMB - File Handle Value')),
-        textProperty('event_data.unix_token.uid', this.translate.instant('SMB - UNIX Token UID')),
-        textProperty('event_data.unix_token.gid', this.translate.instant('SMB - UNIX Token GID')),
-        textProperty('event_data.unix_token.groups', this.translate.instant('SMB - UNIX Token Groups')),
-        textProperty('event_data.result.type', this.translate.instant('SMB - Result Type')),
-        textProperty('event_data.result.value_raw', this.translate.instant('SMB - Result Raw Value')),
-        textProperty('event_data.result.value_parsed', this.translate.instant('SMB - Result Parsed Value')),
-        textProperty(
-          'event_data.vers.major',
-          this.translate.instant('SMB - Vers Major'),
-          of([{ label: '0', value: 0 }, { label: '1', value: 1 }]),
-        ),
-        textProperty(
-          'event_data.vers.minor',
-          this.translate.instant('SMB - Vers Minor'),
-          of([{ label: '0', value: 0 }, { label: '1', value: 1 }]),
-        ),
-        textProperty('event_data.operations.create', this.translate.instant('SMB - Operation Create')),
-        textProperty('event_data.operations.close', this.translate.instant('SMB - Operation Close')),
-        textProperty('event_data.operations.read', this.translate.instant('SMB - Operation Read')),
-        textProperty('event_data.operations.write', this.translate.instant('SMB - Operation Write')),
-        textProperty(
-          'event_data.credentials.credentials',
-          this.translate.instant('Middleware - Credentials'),
-          of(Object.values(CredentialType).map((key) => ({
-            label: this.translate.instant(credentialTypeLabels.get(key)),
-            value: `"${this.translate.instant(credentialTypeLabels.get(key))}"`,
-          }))),
-          credentialTypeLabels,
-        ),
-        textProperty('event_data.method', this.translate.instant('Middleware - Method')),
-      ]);
+      this.setSearchProperties(auditEntries);
       this.cdr.markForCheck();
     });
 
@@ -204,38 +126,8 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
       this.updateUrlOptions();
     });
 
-    this.activatedRoute.params.pipe(untilDestroyed(this)).subscribe((params) => {
-      const options = this.urlOptionsService.parseUrlOptions(params.options);
-
-      this.pagination = {
-        pageSize: options.pagination?.pageSize || 50,
-        pageNumber: options.pagination?.pageNumber || 1,
-      };
-
-      if (options.sorting) this.dataProvider.setSorting(options.sorting);
-      if (options.searchQuery) this.searchQuery = options.searchQuery as SearchQuery<AuditEntry>;
-
-      this.onSearch(this.searchQuery);
-    });
-  }
-
-  ngAfterViewInit(): void {
-    this.breakpointObserver
-      .observe([Breakpoints.XSmall, Breakpoints.Small, Breakpoints.Medium])
-      .pipe(untilDestroyed(this))
-      .subscribe((state: BreakpointState) => {
-        if (state.matches) {
-          this.isMobileView = true;
-          if (this.dataProvider.expandedRow) {
-            this.expanded(this.dataProvider.expandedRow);
-          } else {
-            this.closeMobileDetails();
-          }
-        } else {
-          this.isMobileView = false;
-        }
-        this.cdr.markForCheck();
-      });
+    this.loadParamsFromRoute();
+    this.initMobileView();
   }
 
   ngOnDestroy(): void {
@@ -257,11 +149,15 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
         .orFilter('service', '~', term)
         .getParams();
 
-      this.dataProvider.setParams(params);
+      // TODO: Incorrect cast, because of incorrect typing inside of DataProvider
+      this.dataProvider.setParams(params as unknown as [AuditQueryParams]);
     }
 
     if (query && !query.isBasicQuery) {
-      this.dataProvider.setParams([(query as AdvancedSearchQuery<AuditEntry>).filters]);
+      // TODO: Incorrect cast, because of incorrect typing inside of DataProvider
+      this.dataProvider.setParams(
+        [(query as AdvancedSearchQuery<AuditEntry>).filters] as unknown as [AuditQueryParams],
+      );
     }
 
     this.dataProvider.load();
@@ -297,6 +193,123 @@ export class AuditComponent implements OnInit, AfterViewInit, OnDestroy {
 
   getUserAvatarForLog(row: AuditEntry): SafeHtml {
     return this.sanitizer.bypassSecurityTrustHtml(toSvg(`${row.username}`, 35));
+  }
+
+  private initMobileView(): void {
+    this.breakpointObserver
+      .observe([Breakpoints.XSmall, Breakpoints.Small, Breakpoints.Medium])
+      .pipe(untilDestroyed(this))
+      .subscribe((state: BreakpointState) => {
+        if (state.matches) {
+          this.isMobileView = true;
+          if (this.dataProvider.expandedRow) {
+            this.expanded(this.dataProvider.expandedRow);
+          } else {
+            this.closeMobileDetails();
+          }
+        } else {
+          this.isMobileView = false;
+        }
+        this.cdr.markForCheck();
+      });
+  }
+
+  private setSearchProperties(auditEntries: AuditEntry[]): void {
+    this.searchProperties = searchProperties<AuditEntry>([
+      textProperty('audit_id', this.translate.instant('ID'), of([])),
+      dateProperty(
+        'message_timestamp',
+        this.translate.instant('Timestamp'),
+      ),
+      textProperty(
+        'address',
+        this.translate.instant('Address'),
+        of(auditEntries.map((log) => ({
+          label: log.address,
+          value: `"${log.address}"`,
+        }))),
+      ),
+      textProperty(
+        'service',
+        this.translate.instant('Service'),
+        of(Object.values(AuditService).map((key) => ({
+          label: this.translate.instant(auditServiceLabels.get(key)),
+          value: `"${this.translate.instant(auditServiceLabels.get(key))}"`,
+        }))),
+        auditServiceLabels,
+      ),
+      textProperty(
+        'username',
+        this.translate.instant('Username'),
+        this.userSuggestions,
+      ),
+      textProperty(
+        'event',
+        this.translate.instant('Event'),
+        of(Object.values(AuditEvent).map((key) => ({
+          label: this.translate.instant(auditEventLabels.get(key)),
+          value: `"${this.translate.instant(auditEventLabels.get(key))}"`,
+        }))),
+        auditEventLabels,
+      ),
+      textProperty(
+        'event_data.clientAccount',
+        this.translate.instant('SMB - Client Account'),
+        this.userSuggestions,
+      ),
+      textProperty('event_data.host', this.translate.instant('SMB - Host')),
+      textProperty('event_data.file.path', this.translate.instant('SMB - File Path')),
+      textProperty('event_data.src_file.path', this.translate.instant('SMB - Source File Path')),
+      textProperty('event_data.dst_file.path', this.translate.instant('SMB - Destination File Path')),
+      textProperty('event_data.file.handle.type', this.translate.instant('SMB - File Handle Type')),
+      textProperty('event_data.file.handle.value', this.translate.instant('SMB - File Handle Value')),
+      textProperty('event_data.unix_token.uid', this.translate.instant('SMB - UNIX Token UID')),
+      textProperty('event_data.unix_token.gid', this.translate.instant('SMB - UNIX Token GID')),
+      textProperty('event_data.unix_token.groups', this.translate.instant('SMB - UNIX Token Groups')),
+      textProperty('event_data.result.type', this.translate.instant('SMB - Result Type')),
+      textProperty('event_data.result.value_raw', this.translate.instant('SMB - Result Raw Value')),
+      textProperty('event_data.result.value_parsed', this.translate.instant('SMB - Result Parsed Value')),
+      textProperty(
+        'event_data.vers.major',
+        this.translate.instant('SMB - Vers Major'),
+        of([{ label: '0', value: 0 }, { label: '1', value: 1 }]),
+      ),
+      textProperty(
+        'event_data.vers.minor',
+        this.translate.instant('SMB - Vers Minor'),
+        of([{ label: '0', value: 0 }, { label: '1', value: 1 }]),
+      ),
+      textProperty('event_data.operations.create', this.translate.instant('SMB - Operation Create')),
+      textProperty('event_data.operations.close', this.translate.instant('SMB - Operation Close')),
+      textProperty('event_data.operations.read', this.translate.instant('SMB - Operation Read')),
+      textProperty('event_data.operations.write', this.translate.instant('SMB - Operation Write')),
+      textProperty(
+        'event_data.credentials.credentials',
+        this.translate.instant('Middleware - Credentials'),
+        of(Object.values(CredentialType).map((key) => ({
+          label: this.translate.instant(credentialTypeLabels.get(key)),
+          value: `"${this.translate.instant(credentialTypeLabels.get(key))}"`,
+        }))),
+        credentialTypeLabels,
+      ),
+      textProperty('event_data.method', this.translate.instant('Middleware - Method')),
+    ]);
+  }
+
+  private loadParamsFromRoute(): void {
+    this.activatedRoute.params.pipe(untilDestroyed(this)).subscribe((params) => {
+      const options = this.urlOptionsService.parseUrlOptions(params.options);
+
+      this.pagination = {
+        pageSize: options.pagination?.pageSize || 50,
+        pageNumber: options.pagination?.pageNumber || 1,
+      };
+
+      if (options.sorting) this.dataProvider.setSorting(options.sorting);
+      if (options.searchQuery) this.searchQuery = options.searchQuery as SearchQuery<AuditEntry>;
+
+      this.onSearch(this.searchQuery);
+    });
   }
 
   private getEventDataForLog(row: AuditEntry): string {
