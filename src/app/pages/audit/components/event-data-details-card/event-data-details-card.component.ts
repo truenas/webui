@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { jsonToYaml } from 'app/helpers/json-to-yaml.helper';
 import { convertObjectKeysToHumanReadable } from 'app/helpers/object-keys-to-human-readable.helper';
-import { AuditEntry } from 'app/interfaces/audit.interface';
+import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 
 @Component({
   selector: 'ix-event-data-details-card',

@@ -442,6 +442,7 @@ export class SmbFormComponent implements OnInit {
             title: this.translate.instant('Configure ACL'),
             message: this.translate.instant('Do you want to configure the ACL?'),
             buttonText: this.translate.instant('Configure'),
+            cancelText: this.translate.instant('No'),
             hideCheckbox: true,
           }).pipe(untilDestroyed(this)).subscribe((isConfigure) => {
             if (isConfigure) {
