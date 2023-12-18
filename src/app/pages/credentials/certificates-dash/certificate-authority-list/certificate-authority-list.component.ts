@@ -260,7 +260,9 @@ export class CertificateAuthorityListComponent implements OnInit {
         }),
         untilDestroyed(this),
       )
-      .subscribe();
+      .subscribe(() => {
+        this.getCertificates();
+      });
   }
 
   doSignCsr(certificate: CertificateAuthority): void {
