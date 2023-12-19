@@ -43,7 +43,6 @@ export class ServiceNfsComponent implements OnInit {
     mountd_port: [null as number, portRangeValidator()],
     rpcstatd_port: [null as number, portRangeValidator()],
     rpclockd_port: [null as number, portRangeValidator()],
-    udp: [false],
     userd_manage_gids: [false],
   });
 
@@ -56,7 +55,6 @@ export class ServiceNfsComponent implements OnInit {
     mountd_port: helptextServiceNfs.nfs_srv_mountd_port_tooltip,
     rpcstatd_port: helptextServiceNfs.nfs_srv_rpcstatd_port_tooltip,
     rpclockd_port: helptextServiceNfs.nfs_srv_rpclockd_port_tooltip,
-    udp: helptextServiceNfs.nfs_srv_udp_tooltip,
     userd_manage_gids: helptextServiceNfs.nfs_srv_16_tooltip,
   };
 
