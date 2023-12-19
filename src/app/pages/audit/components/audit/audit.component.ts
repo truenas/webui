@@ -23,6 +23,7 @@ import { PaginationServerSide } from 'app/modules/ix-table2/classes/api-data-pro
 import { SortingServerSide } from 'app/modules/ix-table2/classes/api-data-provider/sorting-server-side.class';
 import { dateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-date/ix-cell-date.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { TablePagination } from 'app/modules/ix-table2/interfaces/table-pagination.interface';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
@@ -50,6 +51,7 @@ import { WebSocketService } from 'app/services/ws.service';
 export class AuditComponent implements OnInit, OnDestroy {
   protected dataProvider: ApiDataProvider<AuditEntry, 'audit.query'>;
   showMobileDetails = false;
+  auditEntries: AuditEntry[];
   isMobileView = false;
   searchQuery: SearchQuery<AuditEntry>;
   pagination: TablePagination;
@@ -71,7 +73,8 @@ export class AuditComponent implements OnInit, OnDestroy {
     }),
     dateColumn({
       title: this.translate.instant('Timestamp'),
-      propertyName: 'timestamp',
+      propertyName: 'message_timestamp',
+      getValue: (row) => row.message_timestamp * 1000,
     }),
     textColumn({
       title: this.translate.instant('Event'),
@@ -90,10 +93,12 @@ export class AuditComponent implements OnInit, OnDestroy {
   protected searchProperties: SearchProperty<AuditEntry>[] = [];
 
   private userSuggestions = this.ws.call('user.query').pipe(
-    map((users) => users.map((user) => ({
-      label: user.username,
-      value: `"${user.username}"`,
-    }))),
+    map((users) => (
+      [...users, ...this.auditEntries].map((user) => ({
+        label: user.username,
+        value: `"${user.username}"`,
+      }))
+    )),
     shareReplay({ refCount: true, bufferSize: 1 }),
   );
 
@@ -116,6 +121,7 @@ export class AuditComponent implements OnInit, OnDestroy {
 
     this.dataProvider.currentPage$.pipe(filter(Boolean), untilDestroyed(this)).subscribe((auditEntries) => {
       this.dataProvider.expandedRow = this.isMobileView ? null : auditEntries[0];
+      this.auditEntries = auditEntries;
       this.expanded(this.dataProvider.expandedRow);
 
       this.setSearchProperties(auditEntries);
@@ -192,7 +198,7 @@ export class AuditComponent implements OnInit, OnDestroy {
   }
 
   getUserAvatarForLog(row: AuditEntry): SafeHtml {
-    return this.sanitizer.bypassSecurityTrustHtml(toSvg(`${row.username}`, 35));
+    return this.sanitizer.bypassSecurityTrustHtml(toSvg(`${row.username}`, this.isMobileView ? 15 : 35));
   }
 
   private initMobileView(): void {
@@ -240,7 +246,7 @@ export class AuditComponent implements OnInit, OnDestroy {
       ),
       textProperty(
         'username',
-        this.translate.instant('Username'),
+        this.translate.instant('User'),
         this.userSuggestions,
       ),
       textProperty(
@@ -305,7 +311,12 @@ export class AuditComponent implements OnInit, OnDestroy {
         pageNumber: options.pagination?.pageNumber || 1,
       };
 
-      if (options.sorting) this.dataProvider.setSorting(options.sorting);
+      this.dataProvider.setSorting(options.sorting || {
+        propertyName: 'message_timestamp',
+        direction: SortDirection.Desc,
+        active: 1,
+      });
+
       if (options.searchQuery) this.searchQuery = options.searchQuery as SearchQuery<AuditEntry>;
 
       this.onSearch(this.searchQuery);

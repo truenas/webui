@@ -3,7 +3,7 @@ import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { AuditService, AuditEvent } from 'app/enums/audit.enum';
+import { AuditEvent, AuditService } from 'app/enums/audit.enum';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { ExportButtonComponent } from 'app/modules/export-button/components/export-button/export-button.component';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';

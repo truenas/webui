@@ -5,8 +5,10 @@ import {
   Input,
   OnChanges,
   Output,
+  ViewChild,
 } from '@angular/core';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
+import { AdvancedSearchComponent } from 'app/modules/search-input/components/advanced-search/advanced-search.component';
 import { SearchProperty } from 'app/modules/search-input/types/search-property.interface';
 import {
   AdvancedSearchQuery,
@@ -26,6 +28,8 @@ export class SearchInputComponent<T> implements OnChanges {
 
   @Output() queryChange = new EventEmitter<SearchQuery<T>>();
   @Output() runSearch = new EventEmitter<void>();
+
+  @ViewChild('advancedSearch', { static: false }) advancedSearch: AdvancedSearchComponent<T>;
 
   ngOnChanges(): void {
     this.selectModeFromQuery();
