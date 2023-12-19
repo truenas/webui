@@ -39,6 +39,7 @@ import { IxListItemComponent } from 'app/modules/ix-forms/components/ix-list/ix-
 import { IxListComponent } from 'app/modules/ix-forms/components/ix-list/ix-list.component';
 import { IxPermissionsComponent } from 'app/modules/ix-forms/components/ix-permissions/ix-permissions.component';
 import { IxRadioGroupComponent } from 'app/modules/ix-forms/components/ix-radio-group/ix-radio-group.component';
+import { AddNewOptionDirective } from 'app/modules/ix-forms/components/ix-select/ix-add-new-option.directive';
 import { IxSelectComponent } from 'app/modules/ix-forms/components/ix-select/ix-select.component';
 import { IxChainedSlideInComponent } from 'app/modules/ix-forms/components/ix-slide-in/components/ix-chained-slide-in/ix-chained-slide-in.component';
 import { IxModalHeaderComponent } from 'app/modules/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
@@ -97,6 +98,7 @@ import { WithManageCertificatesLinkComponent } from './components/with-manage-ce
     IxErrorsComponent,
     IxWarningComponent,
     IxSelectComponent,
+    AddNewOptionDirective,
     IxFieldsetComponent,
     IxSlideInComponent,
     IxSlideIn2Component,
@@ -129,6 +131,7 @@ import { WithManageCertificatesLinkComponent } from './components/with-manage-ce
     IxWarningComponent,
     IxInputComponent,
     IxSelectComponent,
+    AddNewOptionDirective,
     IxSlideInComponent,
     IxSlideIn2Component,
     IxChainedSlideInComponent,

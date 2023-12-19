@@ -1,4 +1,4 @@
-<ix-modal-header [title]="title" [loading]="isLoading"></ix-modal-header>
+<ix-modal-header2 [title]="title" [loading]="isLoading"></ix-modal-header2>
 <mat-card>
   <mat-card-content>
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
@@ -59,7 +59,8 @@
           <a
             ixTest="manage-credentials"
             [routerLink]="['/', 'credentials', 'backup-credentials']"
-            (click)="slideInRef.close()"
+            (click)="closer$.next(null)"
+
           >
             <div class="link">
               {{ 'Manage Credentials' | translate }}<ix-icon name="open_in_new"></ix-icon>
@@ -71,7 +72,9 @@
             [label]="helptext.credentials_placeholder | translate"
             [tooltip]="helptext.credentials_tooltip | translate"
             [required]="true"
+            [ixAddNewOption]="CloudCredentialsFormComponent"
             [options]="credentialsOptions$"
+            (newOptionAdded)="newCloudCredAdded($event)"
           ></ix-select>
           <ix-select
             *ngIf="form.controls.bucket.enabled"

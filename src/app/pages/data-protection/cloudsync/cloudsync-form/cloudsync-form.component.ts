@@ -10,8 +10,10 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
 import _ from 'lodash';
-import { Observable, of } from 'rxjs';
-import { filter, map, switchMap } from 'rxjs/operators';
+import { Observable, Subject, of } from 'rxjs';
+import {
+  filter, map, switchMap,
+} from 'rxjs/operators';
 import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { Direction, directionNames } from 'app/enums/direction.enum';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
@@ -27,13 +29,13 @@ import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { SLIDE_IN_CLOSER, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { CloudCredentialsFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/cloud-credentials-form.component';
 import { CloudsyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
 import { CreateStorjBucketDialogComponent } from 'app/pages/data-protection/cloudsync/create-storj-bucket-dialog/create-storj-bucket-dialog.component';
 import { CustomTransfersDialogComponent } from 'app/pages/data-protection/cloudsync/custom-transfers-dialog/custom-transfers-dialog.component';
@@ -66,6 +68,8 @@ export class CloudsyncFormComponent implements OnInit {
       ? this.translate.instant('Add Cloud Sync Task')
       : this.translate.instant('Edit Cloud Sync Task');
   }
+
+  CloudCredentialsFormComponent = CloudCredentialsFormComponent;
 
   googleDriveProviderId: number;
 
@@ -123,7 +127,8 @@ export class CloudsyncFormComponent implements OnInit {
   readonly transferModeOptions$ = of(mapToOptions(transferModeNames, this.translate));
 
   credentialsList: CloudsyncCredential[] = [];
-  readonly credentialsOptions$ = this.cloudCredentialService.getCloudsyncCredentials().pipe(
+  readonly fetchCredentialsOptions$ = new Subject<void>();
+  credentialsOptions$ = this.cloudCredentialService.getCloudsyncCredentials().pipe(
     map((options) => {
       return options.map((option) => {
         if (option.provider === CloudsyncProviderName.GoogleDrive) {
@@ -165,7 +170,6 @@ export class CloudsyncFormComponent implements OnInit {
   readonly bucketNodeProvider = this.getBucketsNodeProvider();
 
   constructor(
-    public slideInRef: IxSlideInRef<CloudsyncFormComponent>,
     private translate: TranslateService,
     private formBuilder: FormBuilder,
     private ws: WebSocketService,
@@ -180,7 +184,23 @@ export class CloudsyncFormComponent implements OnInit {
     private store$: Store<AppState>,
     protected cloudCredentialService: CloudCredentialService,
     @Inject(SLIDE_IN_DATA) private editingTask: CloudSyncTaskUi,
+    @Inject(SLIDE_IN_CLOSER) protected closer$: Subject<unknown>,
   ) { }
+
+  newCloudCredAdded(value: unknown): void {
+    this.credentialsOptions$ = this.cloudCredentialService.getCloudsyncCredentials().pipe(
+      map((options) => {
+        return options.map((option) => {
+          if (option.provider === CloudsyncProviderName.GoogleDrive) {
+            this.googleDriveProviderId = option.id;
+          }
+          return { label: `${option.name} (${option.provider})`, value: option.id };
+        });
+      }),
+      untilDestroyed(this),
+    );
+    this.form.controls.credentials.setValue(value as number);
+  }
 
   ngOnInit(): void {
     this.setupForm();
@@ -753,7 +773,7 @@ export class CloudsyncFormComponent implements OnInit {
           this.snackbar.success(this.translate.instant('Task updated'));
         }
         this.isLoading = false;
-        this.slideInRef.close(true);
+        this.closer$.next(true);
       },
       error: (error) => {
         this.isLoading = false;
@@ -774,7 +794,7 @@ export class CloudsyncFormComponent implements OnInit {
   }
 
   onSwitchToWizard(): void {
-    this.slideInRef.close();
+    this.closer$.next(null);
 
     const slideInRef = this.slideInService.open(CloudsyncWizardComponent, { wide: true });
     slideInRef.slideInClosed$.pipe(

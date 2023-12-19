@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, inject,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -7,7 +7,7 @@ import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  EMPTY, catchError, filter, map, of, switchMap, tap,
+  EMPTY, Subject, catchError, filter, map, of, switchMap, tap,
 } from 'rxjs';
 import { FromWizardToAdvancedSubmitted } from 'app/enums/from-wizard-to-advanced.enum';
 import { JobState } from 'app/enums/job-state.enum';
@@ -29,9 +29,9 @@ import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-cront
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { CloudsyncRestoreDialogComponent } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
-import { CloudsyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -50,6 +50,8 @@ export class CloudSyncTaskCardComponent implements OnInit {
   dataProvider: AsyncDataProvider<CloudSyncTaskUi>;
   jobStates = new Map<number, string>();
   readonly jobState = JobState;
+
+  private ixChainedSlideInService = inject(IxChainedSlideInService);
 
   columns = createTable<CloudSyncTaskUi>([
     textColumn({
@@ -171,10 +173,12 @@ export class CloudSyncTaskCardComponent implements OnInit {
   }
 
   onAdd(): void {
-    const slideInRef = this.slideInService.open(CloudsyncWizardComponent, { wide: true });
-
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-      this.getCloudSyncTasks();
+    const close$ = new Subject();
+    this.ixChainedSlideInService.pushComponent({ component: CloudsyncFormComponent, close$, wide: true });
+    close$.pipe(untilDestroyed(this)).subscribe({
+      next: () => {
+        // console.log('closed', value);
+      },
     });
   }
 
