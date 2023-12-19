@@ -32,6 +32,7 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { rangeValidator } from 'app/modules/ix-forms/validators/range-validation/range-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services/dialog.service';
+import { ErrorAccumulatorService } from 'app/services/error-accumulator.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxFileUploadService } from 'app/services/ix-file-upload.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -131,6 +132,7 @@ export class FeedbackDialogComponent implements OnInit {
     private fileUpload: IxFileUploadService,
     private dialog: DialogService,
     private systemGeneralService: SystemGeneralService,
+    private errorAccumulator: ErrorAccumulatorService,
     @Inject(WINDOW) private window: Window,
     @Inject(MAT_DIALOG_DATA) private type: FeedbackType,
   ) {}
@@ -222,12 +224,14 @@ export class FeedbackDialogComponent implements OnInit {
   private submitBugOrFeature(): void {
     const values = this.form.value;
     const ticketValues = this.ticketForm.getPayload();
+    const debugExtra = { 'ui/info.txt': this.errorAccumulator.getErrorLogs() };
 
     let payload: CreateNewTicket = {
       category: ticketValues.category,
       body: values.message,
       attach_debug: values.attach_debug,
       title: ticketValues.title,
+      debug_extra: debugExtra,
     };
 
     if (this.isEnterprise) {
@@ -242,6 +246,7 @@ export class FeedbackDialogComponent implements OnInit {
         title: ticketValues.title,
         attach_debug: values.attach_debug,
         body: values.message,
+        debug_extra: debugExtra,
       };
     }
 

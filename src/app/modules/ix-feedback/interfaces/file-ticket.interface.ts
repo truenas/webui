@@ -15,6 +15,7 @@ export interface CreateNewTicket {
   phone?: string;
   environment?: TicketEnvironment;
   criticality?: TicketCriticality;
+  debug_extra?: Record<string, string>;
 }
 
 export interface SupportConfig {

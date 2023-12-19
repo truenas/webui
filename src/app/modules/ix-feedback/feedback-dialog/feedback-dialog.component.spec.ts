@@ -38,6 +38,7 @@ import { OauthButtonComponent } from 'app/modules/oauth-button/components/oauth-
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
+import { ErrorAccumulatorService } from 'app/services/error-accumulator.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { selectIsIxHardware, selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
@@ -95,6 +96,9 @@ describe('FeedbackDialogComponent', () => {
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
+      }),
+      mockProvider(ErrorAccumulatorService, {
+        getErrorLogs: jest.fn(() => 'error message 1\nerror message 2'),
       }),
       {
         provide: MAT_DIALOG_DATA,
@@ -308,6 +312,7 @@ describe('FeedbackDialogComponent', () => {
         title: 'Test subject',
         body: 'Testing ticket body',
         attach_debug: true,
+        debug_extra: { 'ui/info.txt': 'error message 1\nerror message 2' },
       }]);
     });
 

@@ -10,6 +10,7 @@ import { ErrorReport } from 'app/interfaces/error-report.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/services/dialog.service';
+import { ErrorAccumulatorService } from 'app/services/error-accumulator.service';
 
 @Injectable({
   providedIn: 'root',
@@ -31,13 +32,21 @@ export class ErrorHandlerService implements ErrorHandler {
     return this.dialogService;
   }
 
-  constructor(private injector: Injector) { }
+  constructor(
+    private injector: Injector,
+    private errorAccumulator: ErrorAccumulatorService,
+  ) {}
 
   handleError(error: unknown): void {
     console.error(error);
     const parsedError = this.parseError(error);
     if (parsedError) {
       error = parsedError;
+      if (Array.isArray(parsedError)) {
+        parsedError.forEach((err) => this.errorAccumulator.saveError(err.message));
+      } else {
+        this.errorAccumulator.saveError(parsedError.message);
+      }
     }
     this.logToSentry(error);
   }
