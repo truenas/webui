@@ -54,8 +54,6 @@ export class AdvancedSearchAutocompleteService<T> {
     '!$': this.translate.instant('{comparator} (Not Ends With)', { comparator: '!$' }),
     in: this.translate.instant('{comparator} (In)', { comparator: 'IN' }),
     nin: this.translate.instant('{comparator} (Not In)', { comparator: 'NIN' }),
-    rin: this.translate.instant('{comparator} (Range In)', { comparator: 'RIN' }),
-    rnin: this.translate.instant('{comparator} - (Range Not In)', { comparator: 'RNIN' }),
     $: this.translate.instant('{comparator} (Ends With)', { comparator: '$' }),
   } as { [key in QueryComparator]: string };
 
