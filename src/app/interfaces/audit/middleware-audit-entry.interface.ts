@@ -1,5 +1,4 @@
-import { AuditEvent } from 'app/enums/audit-event.enum';
-import { AuditService } from 'app/enums/audit.enum';
+import { AuditEvent, AuditService } from 'app/enums/audit.enum';
 import { AuditVersions, BaseAuditEntry } from 'app/interfaces/audit/audit.interface';
 import { CredentialType } from 'app/interfaces/credential-type.interface';
 

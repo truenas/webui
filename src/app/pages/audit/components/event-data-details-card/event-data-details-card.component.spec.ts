@@ -1,8 +1,7 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { CopyButtonComponent } from 'app/core/components/copy-btn/copy-btn.component';
-import { AuditEvent } from 'app/enums/audit-event.enum';
-import { AuditService } from 'app/enums/audit.enum';
+import { AuditEvent, AuditService } from 'app/enums/audit.enum';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import {

@@ -1,7 +1,14 @@
-import { AuditEvent } from 'app/enums/audit-event.enum';
+import { AuditEvent, AuditService } from 'app/enums/audit.enum';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { MiddlewareAuditEntry } from 'app/interfaces/audit/middleware-audit-entry.interface';
 import { SmbAuditEntry } from 'app/interfaces/audit/smb-audit-entry.interface';
+import { QueryFilters, QueryOptions } from 'app/interfaces/query-api.interface';
+
+export interface AuditQueryParams {
+  services?: AuditService[];
+  'query-filters'?: QueryFilters<AuditEntry>;
+  'query-options'?: QueryOptions<AuditEntry>;
+}
 
 export interface BaseAuditEntry {
   audit_id: string;

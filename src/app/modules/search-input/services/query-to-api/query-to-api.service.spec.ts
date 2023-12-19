@@ -1,6 +1,6 @@
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
-import { AuditService } from 'app/enums/audit-event.enum';
+import { AuditService } from 'app/enums/audit.enum';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import {
   ConnectorType,
