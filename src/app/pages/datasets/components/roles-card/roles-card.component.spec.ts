@@ -142,4 +142,19 @@ describe('RolesCardComponent', () => {
       'This dataset is used by the system',
     );
   });
+
+  it('shows not shared row', () => {
+    spectator.setInput('dataset', {
+      ...datasetDummy,
+      smb_shares: [],
+      nfs_shares: [],
+      iscsi_shares: [],
+      children: [],
+      apps: [],
+      vms: [],
+    });
+    spectator.setInput('hasChildrenWithShares', false);
+
+    expect(spectator.query('.details-item .label')).toHaveText('Not Shared');
+  });
 });

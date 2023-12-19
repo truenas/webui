@@ -401,6 +401,7 @@
   "No events to display.": "",
   "Normal VDEV type, used for primary storage operations. ZFS pools always have at least one DATA VDEV.": "",
   "Not Allowed": "",
+  "Not Shared": "",
   "Not enough free space. Maximum available: {space}": "",
   "Notifications": "",
   "Num Pending Deletes": "",
