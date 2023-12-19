@@ -7,6 +7,7 @@ import { Component, Input, TemplateRef } from '@angular/core';
   <ng-container *ngTemplateOutlet="template"></ng-container>
 </span>
 `,
+  styleUrls: ['./requires-roles-wrapper.component.scss'],
 })
 export class RequiresRolesWrapperComponent {
   @Input() template: TemplateRef<unknown>;

@@ -63,7 +63,7 @@ export class NfsCardComponent implements OnInit {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
-          roles: [Role.SharingNfsWrite],
+          requiresRoles: [Role.SharingNfsWrite],
         },
       ],
     }),

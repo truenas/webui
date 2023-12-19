@@ -2,7 +2,10 @@
   <ng-container
     *ngFor="let action of actions"
   >
-    <div *ixRequiresRoles="action.roles?.length ? action.roles : [Role.Readonly]" [matTooltip]="action.dynamicTooltip ? (action.dynamicTooltip(row) | async) : action.tooltip || ''">
+    <div
+      *ixRequiresRoles="action.requiresRoles?.length ? action.requiresRoles : [Role.Readonly]" 
+      [matTooltip]="action.dynamicTooltip ? (action.dynamicTooltip(row) | async) : action.tooltip || ''"
+    >
       <button
         *ngIf="action.hidden ? !(action.hidden(row) | async) : true"
         mat-icon-button
