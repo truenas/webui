@@ -75,6 +75,7 @@ export class RolesCardComponent {
   createSmbShare(): void {
     const slideInRef = this.slideInService.open(SmbFormComponent);
     slideInRef.componentInstance.form.patchValue({ path: this.dataset.mountpoint });
+    slideInRef.componentInstance.setNameFromPath();
     slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.datasetStore.datasetUpdated();
     });

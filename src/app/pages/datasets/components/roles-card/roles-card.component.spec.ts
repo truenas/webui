@@ -1,9 +1,14 @@
+import { FormGroup } from '@angular/forms';
 import { MatIconTestingModule } from '@angular/material/icon/testing';
-import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { of } from 'rxjs';
 import { IscsiExtentType } from 'app/enums/iscsi.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { RolesCardComponent } from 'app/pages/datasets/components/roles-card/roles-card.component';
+import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
+import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 const datasetDummy = {
   id: '/mnt/pool/ds',
@@ -35,6 +40,17 @@ describe('RolesCardComponent', () => {
     imports: [
       IxIconModule,
       MatIconTestingModule,
+    ],
+    providers: [
+      mockProvider(IxSlideInService, {
+        open: jest.fn(() => ({
+          slideInClosed$: of(),
+          componentInstance: {
+            form: new FormGroup({}),
+            setNameFromPath: jest.fn(),
+          },
+        })),
+      }),
     ],
     component: RolesCardComponent,
   });
@@ -156,5 +172,14 @@ describe('RolesCardComponent', () => {
     spectator.setInput('hasChildrenWithShares', false);
 
     expect(spectator.query('.details-item .label')).toHaveText('Not Shared');
+
+    const createSmbShareLink = spectator.queryAll('.details-item .action')[0] as HTMLLinkElement;
+    const createNfsShareLink = spectator.queryAll('.details-item .action')[1] as HTMLLinkElement;
+
+    createSmbShareLink.click();
+    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(SmbFormComponent);
+
+    createNfsShareLink.click();
+    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(NfsFormComponent);
   });
 });
