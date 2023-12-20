@@ -1,7 +1,15 @@
+@import 'scss-imports/splitview';
+@import 'mixins/layout';
+
 pre {
   font-family: var(--mdc-dialog-subhead-font);
   line-height: 32px;
   margin: 0;
   white-space: pre-wrap;
   word-wrap: break-word;
+
+  @media (max-width: $breakpoint-xs) {
+    max-height: 45vh;
+    overflow: auto;
+  }
 }
