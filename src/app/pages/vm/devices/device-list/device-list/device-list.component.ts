@@ -58,7 +58,7 @@ export class DeviceListComponent implements OnInit {
     }),
     actionsColumn({}),
   ], {
-    rowTestId: (row) => 'vm-device-' + row.id.toString(),
+    rowTestId: (row) => 'vm-device-' + row.dtype + '-' + row.order,
   });
 
   get vmId(): number {

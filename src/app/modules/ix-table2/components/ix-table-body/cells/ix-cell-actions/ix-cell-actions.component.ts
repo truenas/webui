@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { Role } from 'app/enums/role.enum';
 import { IconActionConfig } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/icon-action-config.interface';
 import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.interface';
 
@@ -10,6 +11,7 @@ import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-
 })
 export class IxCellActionsComponent<T> extends ColumnComponent<T> {
   actions: IconActionConfig<T>[];
+  Role = Role;
 }
 
 export function actionsColumn<T>(

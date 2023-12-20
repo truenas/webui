@@ -109,7 +109,7 @@ export class AssociatedTargetListComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => 'iscsi-associated-target-' + row.id.toString(),
+    rowTestId: (row) => 'iscsi-associated-target-' + row.target + '-' + row.extent,
   });
 
   constructor(

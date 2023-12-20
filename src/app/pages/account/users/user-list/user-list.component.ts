@@ -64,7 +64,7 @@ export class UserListComponent implements OnInit {
       sortable: true,
     }),
   ], {
-    rowTestId: (row: User) => 'user-' + row.uid.toString(),
+    rowTestId: (row) => 'user-' + row.username,
   });
 
   isLoading$ = this.store$.select(selectUserState).pipe(map((state) => state.isLoading));

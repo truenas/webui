@@ -98,7 +98,7 @@ export class RsyncTaskCardComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => 'card-rsync-task-' + row.id.toString(),
+    rowTestId: (row) => 'card-rsync-task-' + row.path + '-' + row.remotehost,
   });
 
   constructor(

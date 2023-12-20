@@ -1,7 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateService } from '@ngx-translate/core';
-import { AuditEvent } from 'app/enums/audit-event.enum';
-import { AuditService } from 'app/enums/audit.enum';
+import { AuditEvent, AuditService } from 'app/enums/audit.enum';
 import { assertUnreachable } from 'app/helpers/assert-unreachable.utils';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { MiddlewareAuditEntry } from 'app/interfaces/audit/middleware-audit-entry.interface';

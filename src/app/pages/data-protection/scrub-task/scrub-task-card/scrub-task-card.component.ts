@@ -66,7 +66,7 @@ export class ScrubTaskCardComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => 'card-scrub-task-' + row.id.toString(),
+    rowTestId: (row) => 'card-scrub-task-' + row.pool + '-' + row.description,
   });
 
   constructor(

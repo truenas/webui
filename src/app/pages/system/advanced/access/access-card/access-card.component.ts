@@ -76,7 +76,7 @@ export class AccessCardComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => 'session-' + row.id.toString(),
+    rowTestId: (row) => 'session-' + this.getUsername(row) + '-' + row.origin,
   });
 
   get isEnterprise(): boolean {

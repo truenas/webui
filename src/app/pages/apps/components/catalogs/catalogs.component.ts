@@ -59,7 +59,7 @@ export class CatalogsComponent implements OnInit {
       sortable: true,
     }),
   ], {
-    rowTestId: (row: Catalog) => 'catalog-' + row.id.toString(),
+    rowTestId: (row) => 'catalog-' + row.label,
   });
 
   constructor(

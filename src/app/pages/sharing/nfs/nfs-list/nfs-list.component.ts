@@ -119,7 +119,7 @@ export class NfsListComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => 'nfs-share-' + row.id.toString(),
+    rowTestId: (row) => 'nfs-share-' + row.path + '-' + row.comment,
   });
 
   constructor(

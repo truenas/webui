@@ -1,5 +1,5 @@
-import { ApiCallDirectory, ApiCallMethod } from 'app/interfaces/api/api-call-directory.interface';
-import { ApiJobDirectory, ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
+import { ApiCallDirectory, ApiCallMethod, ApiCallParams } from 'app/interfaces/api/api-call-directory.interface';
+import { ApiJobDirectory, ApiJobMethod, ApiJobParams } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
 
 export enum MockWebsocketResponseType {
@@ -18,8 +18,13 @@ export interface MockWebsocketCallResponse {
 export interface MockWebsocketJobResponse {
   type: MockWebsocketResponseType.Job;
   method: ApiJobMethod;
-  response: Job | (() => Job);
+  response: Job | ((params: unknown) => Job);
   id?: number;
 }
-export type CallResponseOrFactory<M extends ApiCallMethod> = ApiCallDirectory[M]['response'] | (() => ApiCallDirectory[M]['response']);
-export type JobResponseOrFactory<M extends ApiJobMethod> = Job<ApiJobDirectory[M]['response']> | (() => Job<ApiJobDirectory[M]['response']>);
+export type CallResponseOrFactory<M extends ApiCallMethod> =
+  | ApiCallDirectory[M]['response']
+  | ((params: ApiCallParams<M>) => ApiCallDirectory[M]['response']);
+
+export type JobResponseOrFactory<M extends ApiJobMethod> =
+  | Job<ApiJobDirectory[M]['response']>
+  | ((params: ApiJobParams<M>) => Job<ApiJobDirectory[M]['response']>);

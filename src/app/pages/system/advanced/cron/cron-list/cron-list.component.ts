@@ -73,7 +73,7 @@ export class CronListComponent implements OnInit {
       hidden: true,
     }),
   ], {
-    rowTestId: (row) => 'cron-' + row.id.toString(),
+    rowTestId: (row) => 'cron-' + row.command + '-' + row.description,
   });
 
   get hiddenColumns(): Column<CronjobRow, ColumnComponent<CronjobRow>>[] {

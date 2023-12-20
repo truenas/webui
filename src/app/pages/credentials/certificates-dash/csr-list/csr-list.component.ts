@@ -74,7 +74,7 @@ export class CertificateSigningRequestsListComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => 'csr-' + row.id.toString(),
+    rowTestId: (row) => 'csr-' + row.name,
   });
 
   constructor(

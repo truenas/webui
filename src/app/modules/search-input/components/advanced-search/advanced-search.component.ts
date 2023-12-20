@@ -137,16 +137,20 @@ export class AdvancedSearchComponent<T> implements OnInit {
     this.focusInput();
   }
 
+  hideDatePicker(): void {
+    this.showDatePicker$.next(false);
+  }
+
   dateSelected(value: string): void {
     this.setEditorContents(`"${format(new Date(value), 'yyyy-MM-dd')}" `, this.editorView.state.doc.length);
     this.focusInput();
-    this.showDatePicker$.next(false);
+    this.hideDatePicker();
   }
 
   protected onResetInput(): void {
     this.setEditorContents('', 0, this.editorView.state.doc.length);
     this.focusInput();
-    this.showDatePicker$.next(false);
+    this.hideDatePicker();
     this.paramsChange.emit([]);
     this.runSearch.emit();
   }

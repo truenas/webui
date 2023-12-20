@@ -1,5 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { ViewContainerRef } from '@angular/core';
+import { TestBed } from '@angular/core/testing';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -24,6 +26,7 @@ import { DialogService } from 'app/services/dialog.service';
 describe('AppDetailsHeaderComponent', () => {
   let spectator: Spectator<AppDetailsHeaderComponent>;
   let loader: HarnessLoader;
+  let viewContainerRef: ViewContainerRef;
   const application = {
     icon_url: 'http://github.com/truenas/icon.png',
     name: 'SETI@home',
@@ -38,7 +41,7 @@ describe('AppDetailsHeaderComponent', () => {
 
   const createComponent = createComponentFactory({
     component: AppDetailsHeaderComponent,
-    imports: [AppCatalogPipe],
+    imports: [AppCatalogPipe, ViewContainerRef],
     declarations: [
       MockComponent(AppCardLogoComponent),
     ],
@@ -78,13 +81,18 @@ describe('AppDetailsHeaderComponent', () => {
           }),
         ],
       });
+      viewContainerRef = TestBed.inject(ViewContainerRef);
+      Object.defineProperty(spectator.component, 'viewContainerRef', {
+        value: viewContainerRef,
+      });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
+
     it('shows Setup Pool To Install instead if pool is not set', async () => {
       const setupPool = await loader.getHarness(MatButtonHarness.with({ text: 'Setup Pool To Install' }));
       await setupPool.click();
 
-      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(SelectPoolDialogComponent);
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(SelectPoolDialogComponent, { viewContainerRef });
     });
   });
 

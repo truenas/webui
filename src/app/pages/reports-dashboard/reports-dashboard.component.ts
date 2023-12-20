@@ -100,6 +100,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
               ReportingGraphName.Cpu,
               ReportingGraphName.CpuTemp,
               ReportingGraphName.SystemLoad,
+              ReportingGraphName.Processes,
             ].includes(graphName);
             break;
           case ReportType.Memory:
