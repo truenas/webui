@@ -34,7 +34,7 @@
 </mat-card>
 
 <div class="container" fxLayoutGap="16px">
-  <div *ngIf="!(showMobileDetails && isMobileView)" class="table-container">
+  <div class="table-container" [class.mobile-hidden]="showMobileDetails && dataProvider.expandedRow">
     <div class="sticky-header">
       <thead
         class="audit-header-row"

@@ -136,6 +136,7 @@
   "Created by: {creationSource} ({creationType})": "",
   "Creating ACME Certificate": "",
   "Creation Time": "",
+  "Credentials Issue: {credentials}": "",
   "Cron job created": "",
   "Cron job updated": "",
   "Cronjob deleted": "",
