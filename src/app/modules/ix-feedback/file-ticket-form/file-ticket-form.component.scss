@@ -1,0 +1,34 @@
+@import 'mixins/animations';
+
+.similar-tickets {
+  background: var(--bg1);
+  padding: 8px 0;
+}
+
+.similar-ticket {
+  align-items: center;
+  display: flex;
+  gap: 4px;
+  padding: 0 8px;
+
+  .ix-icon.mdi-set {
+    font-size: inherit;
+  }
+}
+
+.ticket-type-icon {
+  @include fade-in();
+  background: var(--bg2);
+  border-radius: 2px;
+  display: inline-flex;
+  flex: 0 0 auto;
+  height: 16px;
+  width: 16px;
+}
+
+.similar-tickets-header {
+  font-weight: bold;
+  margin-bottom: 8px;
+  margin-top: -12px;
+}
+

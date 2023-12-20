@@ -3,11 +3,12 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import html2canvas, { Options } from 'html2canvas';
 import {
-  Observable, combineLatest, first, map, switchMap,
+  Observable, combineLatest, first, map, of, switchMap,
 } from 'rxjs';
 import {
   AddReview, AttachmentAddedResponse,
 } from 'app/modules/ix-feedback/interfaces/feedback.interface';
+import { SimilarTicket } from 'app/modules/ix-feedback/interfaces/file-ticket.interface';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
@@ -102,5 +103,16 @@ export class IxFeedbackService {
           .pipe(map((response) => !response.value));
       }),
     );
+  }
+
+  findSimilarTickets(query: string): Observable<SimilarTicket[]> {
+    // use this endpoint to mock response with similar tickets
+    return this.ws.call('support.fetch_categories', []);
+
+    if (!this.oauthToken) {
+      return of([]);
+    }
+
+    return this.ws.call('support.similar_tickets', [this.oauthToken, query]);
   }
 }

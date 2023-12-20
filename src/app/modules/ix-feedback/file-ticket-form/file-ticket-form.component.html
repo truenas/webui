@@ -5,3 +5,30 @@
   [placeholder]="tooltips.title | translate"
   [required]="true"
 ></ix-input>
+
+<ng-container *ngIf="similarTickets$ | async as tickets">
+  <div class="similar-tickets-header">
+    <div class="similar-tickets-title">
+      {{ 'The following issues were already reported.' | translate }}
+    </div>
+    <div class="similar-tickets-subtitle">
+      {{ 'Do any of them look similar?' | translate }}
+    </div>
+  </div>
+  <div class="similar-tickets">
+    <a
+      *ngFor="let ticket of tickets"
+      class="similar-ticket"
+      target="_blank"
+      [href]="ticket.url"
+      [ixTest]="['similar-ticket', ticket.id]"
+    >
+      <div
+        class="ticket-type-icon"
+        [style.background-image]="'url(https://ixsystems.atlassian.net' + ticket.img + ')'"
+      ></div>
+      <span [innerHTML]="sanitizeHtml(ticket.summary)"></span>
+      <ix-icon name="mdi-open-in-new"></ix-icon>
+    </a>
+  </div>
+</ng-container>
