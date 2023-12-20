@@ -13,11 +13,11 @@ import { QueryComparator } from 'app/interfaces/query-api.interface';
 import { QueryParserService } from 'app/modules/search-input/services/query-parser/query-parser.service';
 import { PropertyType, SearchProperty } from 'app/modules/search-input/types/search-property.interface';
 
-const inComparator = 'IN';
-const ninComparator = 'NIN';
-const comparatorSuggestions = [
-  '=', '!=', '<', '>', '<=', '>=', inComparator, ninComparator, 'RIN', 'RNIN', '~', '^', '!^', '$', '!$',
-] as QueryComparator[];
+const inComparator = 'in';
+const ninComparator = 'nin';
+const comparatorSuggestions: QueryComparator[] = [
+  '=', '!=', '<', '>', '<=', '>=', inComparator, ninComparator, '~', '^', '!^', '$', '!$',
+];
 
 const orSuggestion = 'OR';
 const andSuggestion = 'AND';
@@ -40,6 +40,22 @@ export class AdvancedSearchAutocompleteService<T> {
   private properties: SearchProperty<T>[] = [];
   private editorView: EditorView;
   private queryContext: QueryContext;
+
+  private comparatorHints = {
+    '=': this.translate.instant('{comparator} (Equals)', { comparator: '=' }),
+    '!=': this.translate.instant('{comparator} (Not Equals)', { comparator: '!=' }),
+    '<': this.translate.instant('{comparator} (Less Than)', { comparator: '<' }),
+    '>': this.translate.instant('{comparator} (Greater Than)', { comparator: '>' }),
+    '<=': this.translate.instant('{comparator} (Less Than or Equal To)', { comparator: '<=' }),
+    '>=': this.translate.instant('{comparator} (Greater Than or Equal To)', { comparator: '>=' }),
+    '~': this.translate.instant('{comparator} (Contains)', { comparator: '~' }),
+    '^': this.translate.instant('{comparator} (Starts With)', { comparator: '^' }),
+    '!^': this.translate.instant('{comparator} (Not Starts With)', { comparator: '!^' }),
+    '!$': this.translate.instant('{comparator} (Not Ends With)', { comparator: '!$' }),
+    in: this.translate.instant('{comparator} (In)', { comparator: 'IN' }),
+    nin: this.translate.instant('{comparator} (Not In)', { comparator: 'NIN' }),
+    $: this.translate.instant('{comparator} (Ends With)', { comparator: '$' }),
+  } as { [key in QueryComparator]: string };
 
   showDatePicker$ = new BehaviorSubject(false);
 
@@ -122,7 +138,7 @@ export class AdvancedSearchAutocompleteService<T> {
     const { lastToken, secondLastToken } = this.getTokenParts(tokens);
     let contextType = ContextType.Property;
 
-    const isPropertyType = comparatorSuggestions.some((item) => item?.toUpperCase() === lastToken?.toUpperCase())
+    const isPropertyType = comparatorSuggestions.some((item) => item?.toLowerCase() === lastToken?.toLowerCase())
       || this.isPartiallyLogicalOperator(lastToken);
 
     const isLogicalOperatorType = (
@@ -132,7 +148,7 @@ export class AdvancedSearchAutocompleteService<T> {
     ) || (
       this.isPartiallyComparator(secondLastToken) && query[cursorPosition] === ')'
       && (
-        (secondLastToken?.toUpperCase() === inComparator || secondLastToken?.toUpperCase() === ninComparator)
+        (secondLastToken?.toLowerCase() === inComparator || secondLastToken?.toLowerCase() === ninComparator)
         && lastToken?.startsWith('(') && lastToken?.endsWith(')')
       )
     );
@@ -199,22 +215,22 @@ export class AdvancedSearchAutocompleteService<T> {
   }
 
   private isPartiallyComparator(token: string): boolean {
-    return comparatorSuggestions.map((item) => item?.toUpperCase())?.includes(token?.toUpperCase());
+    return comparatorSuggestions.map((item) => item?.toLowerCase())?.includes(token?.toLowerCase());
   }
 
   private isPartiallyLogicalOperator(token: string): boolean {
-    return logicalSuggestions.map((item) => item?.toUpperCase())?.includes(token?.toUpperCase());
+    return logicalSuggestions.map((item) => item?.toLowerCase())?.includes(token?.toLowerCase());
   }
 
   private generateSuggestionsBasedOnContext(context: QueryContext): Observable<Option[]> {
     const { lastToken, secondLastToken, thirdLastToken } = this.getTokenParts(context.tokens);
 
-    const isInOrNin = (lastToken?.toUpperCase() === inComparator || lastToken?.toUpperCase() === ninComparator)
-      || secondLastToken?.toUpperCase() === inComparator || secondLastToken?.toUpperCase() === ninComparator;
+    const isInOrNin = (lastToken?.toLowerCase() === inComparator || lastToken?.toLowerCase() === ninComparator)
+      || secondLastToken?.toLowerCase() === inComparator || secondLastToken?.toLowerCase() === ninComparator;
 
     const searchedProperty = this.properties?.find((property) => {
-      return property.label?.toUpperCase() === thirdLastToken?.replace(regexMap.captureBetweenQuotes, '$1')?.toUpperCase()
-        || (property.label?.toUpperCase() === secondLastToken?.replace(regexMap.captureBetweenQuotes, '$1')?.toUpperCase()
+      return property.label?.toLowerCase() === thirdLastToken?.replace(regexMap.captureBetweenQuotes, '$1')?.toLowerCase()
+        || (property.label?.toLowerCase() === secondLastToken?.replace(regexMap.captureBetweenQuotes, '$1')?.toLowerCase()
         && this.isPartiallyComparator(lastToken));
     });
 
@@ -259,7 +275,9 @@ export class AdvancedSearchAutocompleteService<T> {
         return of(logicalSuggestions.map((property) => ({ label: property, value: property })));
 
       case ContextType.Comparator:
-        return of(comparatorSuggestions.map((property) => ({ label: property, value: property.toUpperCase() })));
+        return of(comparatorSuggestions.map((property) => ({
+          label: this.comparatorHints?.[property] || property, value: property.toUpperCase(),
+        })));
       default:
         return of([]);
     }

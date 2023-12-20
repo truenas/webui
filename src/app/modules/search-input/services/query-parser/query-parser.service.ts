@@ -200,7 +200,7 @@ export class QueryParserService {
     value: LiteralValue | LiteralValue[],
   ): LiteralValue | LiteralValue[] {
     if (property?.propertyType === PropertyType.Date) {
-      return this.formatMillisecondsToDate(value as number | number[]);
+      return this.formatUnixSecondsToDate(value as number | number[]);
     }
 
     if (property?.propertyType === PropertyType.Memory) {
@@ -214,16 +214,16 @@ export class QueryParserService {
     return value;
   }
 
-  private formatMillisecondsToDate(value: number | number[]): string | string[] {
-    const convertMillis = (millis: number): string => {
-      return format(fromUnixTime(millis / 1000), 'yyyy-MM-dd');
+  private formatUnixSecondsToDate(value: number | number[]): string | string[] {
+    const convertUnixSeconds = (seconds: number): string => {
+      return format(fromUnixTime(seconds), 'yyyy-MM-dd');
     };
 
     if (Array.isArray(value)) {
-      return value.map(convertMillis);
+      return value.map(convertUnixSeconds);
     }
 
-    return convertMillis(value);
+    return convertUnixSeconds(value);
   }
 
   private formatMemoryValue(

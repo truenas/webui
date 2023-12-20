@@ -8,7 +8,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { toSvg } from 'jdenticon';
 import {
-  filter, map, of, shareReplay,
+  Observable,
+  combineLatest,
+  filter, map, of, shareReplay, take,
 } from 'rxjs';
 import {
   AuditEvent, AuditService, auditEventLabels, auditServiceLabels,
@@ -17,12 +19,15 @@ import { ParamsBuilder } from 'app/helpers/params-builder/params-builder.class';
 import { WINDOW } from 'app/helpers/window.helper';
 import { AuditEntry, AuditQueryParams } from 'app/interfaces/audit/audit.interface';
 import { CredentialType, credentialTypeLabels } from 'app/interfaces/credential-type.interface';
+import { Option } from 'app/interfaces/option.interface';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
+import { User } from 'app/interfaces/user.interface';
 import { ApiDataProvider } from 'app/modules/ix-table2/classes/api-data-provider/api-data-provider';
 import { PaginationServerSide } from 'app/modules/ix-table2/classes/api-data-provider/pagination-server-side.class';
 import { SortingServerSide } from 'app/modules/ix-table2/classes/api-data-provider/sorting-server-side.class';
 import { dateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-date/ix-cell-date.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
+import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { TablePagination } from 'app/modules/ix-table2/interfaces/table-pagination.interface';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
@@ -71,7 +76,8 @@ export class AuditComponent implements OnInit, OnDestroy {
     }),
     dateColumn({
       title: this.translate.instant('Timestamp'),
-      propertyName: 'timestamp',
+      propertyName: 'message_timestamp',
+      getValue: (row) => row.message_timestamp * 1000,
     }),
     textColumn({
       title: this.translate.instant('Event'),
@@ -89,13 +95,13 @@ export class AuditComponent implements OnInit, OnDestroy {
 
   protected searchProperties: SearchProperty<AuditEntry>[] = [];
 
-  private userSuggestions = this.ws.call('user.query').pipe(
-    map((users) => users.map((user) => ({
-      label: user.username,
-      value: `"${user.username}"`,
-    }))),
+  private userSuggestions$ = this.ws.call('user.query').pipe(
+    map((users) => this.mapUsersForSuggestions(users)),
+    take(1),
     shareReplay({ refCount: true, bufferSize: 1 }),
   );
+
+  private apiAndLocalUserSuggestions$: Observable<Option[]>;
 
   constructor(
     private translate: TranslateService,
@@ -113,6 +119,14 @@ export class AuditComponent implements OnInit, OnDestroy {
     this.dataProvider = new ApiDataProvider(this.ws, 'audit.query');
     this.dataProvider.paginationStrategy = new PaginationServerSide();
     this.dataProvider.sortingStrategy = new SortingServerSide();
+    this.setDefaultSort();
+
+    this.apiAndLocalUserSuggestions$ = combineLatest(
+      this.userSuggestions$,
+      this.dataProvider.currentPage$.pipe(take(1), map((users) => this.mapUsersForSuggestions(users))),
+    ).pipe(
+      map(([apiUsers, localUsers]) => [...apiUsers, ...localUsers]),
+    );
 
     this.dataProvider.currentPage$.pipe(filter(Boolean), untilDestroyed(this)).subscribe((auditEntries) => {
       this.dataProvider.expandedRow = this.isMobileView ? null : auditEntries[0];
@@ -192,7 +206,7 @@ export class AuditComponent implements OnInit, OnDestroy {
   }
 
   getUserAvatarForLog(row: AuditEntry): SafeHtml {
-    return this.sanitizer.bypassSecurityTrustHtml(toSvg(`${row.username}`, 35));
+    return this.sanitizer.bypassSecurityTrustHtml(toSvg(`${row.username}`, this.isMobileView ? 15 : 35));
   }
 
   private initMobileView(): void {
@@ -240,8 +254,8 @@ export class AuditComponent implements OnInit, OnDestroy {
       ),
       textProperty(
         'username',
-        this.translate.instant('Username'),
-        this.userSuggestions,
+        this.translate.instant('User'),
+        this.apiAndLocalUserSuggestions$,
       ),
       textProperty(
         'event',
@@ -255,7 +269,7 @@ export class AuditComponent implements OnInit, OnDestroy {
       textProperty(
         'event_data.clientAccount',
         this.translate.instant('SMB - Client Account'),
-        this.userSuggestions,
+        this.apiAndLocalUserSuggestions$,
       ),
       textProperty('event_data.host', this.translate.instant('SMB - Host')),
       textProperty('event_data.file.path', this.translate.instant('SMB - File Path')),
@@ -306,6 +320,7 @@ export class AuditComponent implements OnInit, OnDestroy {
       };
 
       if (options.sorting) this.dataProvider.setSorting(options.sorting);
+
       if (options.searchQuery) this.searchQuery = options.searchQuery as SearchQuery<AuditEntry>;
 
       this.onSearch(this.searchQuery);
@@ -314,5 +329,20 @@ export class AuditComponent implements OnInit, OnDestroy {
 
   private getEventDataForLog(row: AuditEntry): string {
     return getLogImportantData(row, this.translate);
+  }
+
+  private setDefaultSort(): void {
+    this.dataProvider.setSorting({
+      propertyName: 'message_timestamp',
+      direction: SortDirection.Desc,
+      active: 1,
+    });
+  }
+
+  private mapUsersForSuggestions(users: User[] | AuditEntry[]): Option[] {
+    return users.map((user) => ({
+      label: user.username,
+      value: `"${user.username}"`,
+    }));
   }
 }
