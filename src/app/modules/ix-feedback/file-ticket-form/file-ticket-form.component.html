@@ -7,7 +7,7 @@
 ></ix-input>
 
 <ng-container *ngIf="similarTickets$ | async as tickets">
-  <div class="similar-tickets-header">
+  <div *ngIf="tickets.length" class="similar-tickets-header">
     <div class="similar-tickets-title">
       {{ 'The following issues were already reported.' | translate }}
     </div>
@@ -15,7 +15,7 @@
       {{ 'Do any of them look similar?' | translate }}
     </div>
   </div>
-  <div class="similar-tickets">
+  <div *ngIf="tickets.length" class="similar-tickets">
     <a
       *ngFor="let ticket of tickets"
       class="similar-ticket"

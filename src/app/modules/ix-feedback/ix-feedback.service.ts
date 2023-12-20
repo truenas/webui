@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import html2canvas, { Options } from 'html2canvas';
 import {
-  Observable, combineLatest, first, map, of, switchMap,
+  Observable, combineLatest, first, map, switchMap,
 } from 'rxjs';
 import {
   AddReview, AttachmentAddedResponse,
@@ -106,13 +106,17 @@ export class IxFeedbackService {
   }
 
   findSimilarTickets(query: string): Observable<SimilarTicket[]> {
-    // use this endpoint to mock response with similar tickets
-    return this.ws.call('support.fetch_categories', []);
+    // Use this endpoint to mock response with similar tickets
+    // TODO: Remove after backend is ready
+    return this.ws.call('support.fetch_categories', []).pipe(
+      map((tickets) => tickets.filter((ticket) => ticket.summary.includes(query))),
+    );
 
-    if (!this.oauthToken) {
-      return of([]);
-    }
+    // TODO: Uncomment
+    // if (!this.oauthToken) {
+    //   return of([]);
+    // }
 
-    return this.ws.call('support.similar_tickets', [this.oauthToken, query]);
+    // return this.ws.call('support.similar_tickets', [this.oauthToken, query]);
   }
 }
