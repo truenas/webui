@@ -6,9 +6,9 @@ import { KiB } from 'app/constants/bytes.constant';
 })
 export class ErrorAccumulatorService {
   private errorLogs: string[] = [];
-  private maxSizeLogs = KiB * 50;
+  private maxLength = KiB * 50;
 
-  saveError(errorMsg: string): void {
+  appendError(errorMsg: string): void {
     this.errorLogs.push(errorMsg);
     this.truncateErrors();
   }
@@ -18,7 +18,7 @@ export class ErrorAccumulatorService {
   }
 
   private truncateErrors(): void {
-    if (JSON.stringify(this.errorLogs).length > this.maxSizeLogs) {
+    if (JSON.stringify(this.errorLogs).length > this.maxLength) {
       this.errorLogs.shift();
       this.truncateErrors();
     }

@@ -43,9 +43,9 @@ export class ErrorHandlerService implements ErrorHandler {
     if (parsedError) {
       error = parsedError;
       if (Array.isArray(parsedError)) {
-        parsedError.forEach((err) => this.errorAccumulator.saveError(err.message));
+        parsedError.forEach((err) => this.errorAccumulator.appendError(err.message));
       } else {
-        this.errorAccumulator.saveError(parsedError.message);
+        this.errorAccumulator.appendError(parsedError.message);
       }
     }
     this.logToSentry(error);
