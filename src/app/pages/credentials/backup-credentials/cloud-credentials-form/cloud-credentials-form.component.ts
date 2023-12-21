@@ -215,6 +215,8 @@ export class CloudCredentialsFormComponent implements OnInit {
           this.cdr.markForCheck();
         },
         error: (error: WebsocketError) => {
+          this.isLoading = false;
+          this.cdr.markForCheck();
           this.dialogService.error(this.errorHandler.parseWsError(error));
           this.slideInRef.close();
         },
