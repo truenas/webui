@@ -17,7 +17,6 @@ import { Role } from 'app/enums/role.enum';
 import { ApiCallMethod } from 'app/interfaces/api/api-call-directory.interface';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
-import { User } from 'app/interfaces/user.interface';
 import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
 import { AuthService } from 'app/services/auth/auth.service';
 import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
@@ -52,7 +51,6 @@ describe('AuthService', () => {
       mockProvider(LocalStorageService),
       mockWebsocket([
         mockCall('auth.me', authMeUser),
-        mockCall('user.query', [{} as User]),
       ]),
       mockProvider(WebsocketConnectionService, {
         send: jest.fn(),
