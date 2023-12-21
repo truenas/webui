@@ -102,21 +102,19 @@ describe('AdvancedSearchComponent – autocomplete', () => {
 
       const autocomplete = await searchHarness.getAutocomplete();
       expect(await autocomplete.getOptions()).toEqual([
-        '!^',
-        '!=',
-        '!$',
-        '^',
-        '<',
-        '<=',
-        '=',
-        '>',
-        '>=',
-        '~',
-        '$',
-        'IN',
-        'NIN',
-        'RIN',
-        'RNIN',
+        '!^ (Not Starts With)',
+        '!= (Not Equals)',
+        '!$ (Not Ends With)',
+        '^ (Starts With)',
+        '< (Less Than)',
+        '<= (Less Than or Equal To)',
+        '= (Equals)',
+        '> (Greater Than)',
+        '>= (Greater Than or Equal To)',
+        '~ (Contains)',
+        '$ (Ends With)',
+        'IN (In)',
+        'NIN (Not In)',
       ]);
     });
 
@@ -197,7 +195,7 @@ describe('AdvancedSearchComponent – autocomplete', () => {
       await searchHarness.setValue('Username ');
       const autocomplete = await searchHarness.getAutocomplete();
 
-      await autocomplete.select('=');
+      await autocomplete.select('= (Equals)');
 
       expect(await searchHarness.getValue()).toBe('Username =');
     });
