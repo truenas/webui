@@ -1,4 +1,3 @@
-import { EventEmitter } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
 
@@ -23,10 +22,6 @@ export interface SearchProperty<T> {
    */
   formatValue?: (value: unknown) => string;
   parseValue?: (value: string) => unknown;
-}
-
-export interface SearchSuggestionsComponent {
-  suggestionSelected: EventEmitter<unknown>;
 }
 
 export enum PropertyType {

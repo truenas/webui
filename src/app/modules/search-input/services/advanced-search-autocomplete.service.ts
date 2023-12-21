@@ -44,7 +44,7 @@ export class AdvancedSearchAutocompleteService<T> {
   showDatePicker$ = new BehaviorSubject(false);
 
   constructor(
-    private queryParser: QueryParserService,
+    private queryParser: QueryParserService<T>,
     private translate: TranslateService,
   ) {}
 
@@ -56,7 +56,7 @@ export class AdvancedSearchAutocompleteService<T> {
     this.editorView = editorView;
   }
 
-  setCompletionSource(context: CompletionContext): Promise<CompletionResult> {
+  getCompletions(context: CompletionContext): Promise<CompletionResult> {
     const currentQuery = context.state.doc.toString();
     this.queryContext = this.getQueryContext(currentQuery, context.pos);
     const suggestions$ = this.generateSuggestionsBasedOnContext(this.queryContext);
