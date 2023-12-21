@@ -10,7 +10,6 @@ export interface NfsConfig {
   rpcstatd_port: number;
   servers: number;
   statd_lockd_log: boolean;
-  udp: boolean;
   userd_manage_gids: boolean;
   protocols: NfsProtocol[];
   v4_domain: string;
