@@ -46,7 +46,7 @@
       mat-button
       type="button"
       ixTest="verify-credential"
-      [disabled]="areActionsDisabled || !form.controls.exist_credential.value"
+      [disabled]="areActionsDisabled"
       (click)="onVerify()"
     >{{ 'Verify Credential' | translate }}</button>
     <button
