@@ -86,6 +86,7 @@ export class CloudsyncProviderComponent implements OnInit {
   get areActionsDisabled(): boolean {
     return this.isLoading$.value
       || this.form.invalid
+      || !this.form.controls.exist_credential.value
       || this.providerForm?.form?.invalid;
   }
 
