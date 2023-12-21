@@ -1,5 +1,6 @@
 
 :host ::ng-deep .role-missing {
+  .mdc-switch__handle,
   button {
     cursor: none;
     pointer-events: none;
@@ -10,6 +11,7 @@
     margin-right: 8px;
   }
   
+  .mat-mdc-slide-toggle,
   .mdc-button__label,
   .mat-icon,
   .mat-mdc-menu-item-text {
