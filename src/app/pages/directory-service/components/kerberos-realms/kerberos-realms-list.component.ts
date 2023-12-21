@@ -7,6 +7,7 @@ import _ from 'lodash';
 import {
   filter, map, switchMap, tap,
 } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { helptextKerberosRealms } from 'app/helptext/directory-service/kerberos-realms-form-list';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
@@ -24,8 +25,8 @@ import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
-  templateUrl: './kerberos-realms-list.component.html',
   selector: 'ix-kerberos-realms-list',
+  templateUrl: './kerberos-realms-list.component.html',
   styleUrls: ['./kerberos-realms-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -71,6 +72,7 @@ export class KerberosRealmsListComponent implements OnInit {
         {
           iconName: 'delete',
           tooltip: this.translateService.instant('Delete'),
+          requiresRoles: [Role.FullAdmin],
           onClick: (row) => {
             this.dialogService.confirm({
               title: this.translateService.instant(helptextKerberosRealms.krb_realmlist_deletemessage_title),

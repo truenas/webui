@@ -8,6 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
+import { Role } from 'app/enums/role.enum';
 import { choicesToOptions, idNameArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { Certificate } from 'app/interfaces/certificate.interface';
@@ -49,6 +50,8 @@ export class CertificateAcmeAddComponent {
   readonly authenticators$ = this.ws.call('acme.dns.authenticator.query').pipe(idNameArrayToOptions());
 
   readonly helptext = helptextSystemCertificates;
+
+  protected readonly Role = Role;
 
   constructor(
     private formBuilder: FormBuilder,

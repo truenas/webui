@@ -14,6 +14,7 @@ import {
   debounceTime, filter, map, switchMap, take,
 } from 'rxjs/operators';
 import { allCommands } from 'app/constants/all-commands.constant';
+import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextUsers } from 'app/helptext/account/user-form';
 import { Option } from 'app/interfaces/option.interface';
@@ -161,6 +162,8 @@ export class UserFormComponent implements OnInit {
     }
     return '';
   }
+
+  protected readonly Role = Role;
 
   constructor(
     private ws: WebSocketService,

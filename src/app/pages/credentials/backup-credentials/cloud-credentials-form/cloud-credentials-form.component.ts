@@ -12,6 +12,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { combineLatest, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
+import { Role } from 'app/enums/role.enum';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
 import { CloudsyncCredential, CloudsyncCredentialUpdate } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
@@ -55,10 +56,7 @@ export class CloudCredentialsFormComponent implements OnInit {
 
   readonly helptext = helptext;
 
-  get showProviderDescription(): boolean {
-    return this.commonForm.controls.provider.enabled
-      && this.commonForm.controls.provider.value === CloudsyncProviderName.Storj;
-  }
+  protected readonly Role = Role;
 
   constructor(
     private ws: WebSocketService,
@@ -75,6 +73,11 @@ export class CloudCredentialsFormComponent implements OnInit {
   ) {
     // Has to be earlier than potential `setCredentialsForEdit` call
     this.setFormEvents();
+  }
+
+  get showProviderDescription(): boolean {
+    return this.commonForm.controls.provider.enabled
+      && this.commonForm.controls.provider.value === CloudsyncProviderName.Storj;
   }
 
   get isNew(): boolean {

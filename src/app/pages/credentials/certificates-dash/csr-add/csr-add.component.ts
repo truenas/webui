@@ -5,6 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
+import { Role } from 'app/enums/role.enum';
 import { CertificateCreate, CertificateProfile } from 'app/interfaces/certificate.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { SummarySection } from 'app/modules/common/summary/summary.interface';
@@ -48,6 +49,8 @@ export class CsrAddComponent {
 
   isLoading = false;
   summary: SummarySection[];
+
+  protected readonly Role = Role;
 
   constructor(
     private ws: WebSocketService,

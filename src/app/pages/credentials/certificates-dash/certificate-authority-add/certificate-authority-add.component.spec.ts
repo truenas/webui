@@ -8,6 +8,7 @@ import { MatStepperHarness, MatStepperNextHarness } from '@angular/material/step
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CaCreateType } from 'app/enums/ca-create-type.enum';
 import { CertificateDigestAlgorithm } from 'app/enums/certificate-digest-algorithm.enum';
@@ -127,6 +128,7 @@ describe('CertificateAuthorityAddComponent', () => {
       ]),
       mockProvider(IxSlideInRef),
       mockProvider(MatSnackBar),
+      mockAuth(),
       mockProvider(SystemGeneralService, {
         getUnsignedCas: () => of([
           { id: 1, name: 'Test CA' },

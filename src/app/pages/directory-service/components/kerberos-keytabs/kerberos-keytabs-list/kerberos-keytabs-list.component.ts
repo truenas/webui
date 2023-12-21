@@ -5,6 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import { filter, switchMap, tap } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { KerberosKeytab } from 'app/interfaces/kerberos-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
@@ -53,6 +54,7 @@ export class KerberosKeytabsListComponent implements OnInit {
         {
           iconName: 'delete',
           tooltip: this.translateService.instant('Delete'),
+          requiresRoles: [Role.FullAdmin],
           onClick: (row) => {
             this.dialogService.confirm({
               title: this.translateService.instant('Delete'),

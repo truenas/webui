@@ -4,6 +4,7 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Role } from 'app/enums/role.enum';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -33,6 +34,8 @@ export class CertificateAuthorityEditComponent implements OnInit {
   certificateAuthority: CertificateAuthority;
 
   readonly helptext = helptextSystemCertificates;
+
+  protected readonly Role = Role;
 
   constructor(
     private ws: WebSocketService,

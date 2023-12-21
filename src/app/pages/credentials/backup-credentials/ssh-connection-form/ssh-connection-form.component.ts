@@ -10,6 +10,7 @@ import { Observable, of, throwError } from 'rxjs';
 import {
   catchError, map, switchMap,
 } from 'rxjs/operators';
+import { Role } from 'app/enums/role.enum';
 import { SshConnectionsSetupMethod } from 'app/enums/ssh-connections-setup-method.enum';
 import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSshConnections } from 'app/helptext/system/ssh-connections';
@@ -123,6 +124,8 @@ export class SshConnectionFormComponent implements OnInit {
   );
 
   readonly helptext = helptextSshConnections;
+
+  protected readonly Role = Role;
 
   constructor(
     private formBuilder: FormBuilder,
