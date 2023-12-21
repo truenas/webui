@@ -4,6 +4,7 @@ import {
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
+import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { IscsiGlobalConfigUpdate } from 'app/interfaces/iscsi-global-config.interface';
@@ -42,6 +43,13 @@ export class TargetGlobalConfigurationComponent implements OnInit {
     pool_avail_threshold: helptextSharingIscsi.globalconf_tooltip_pool_avail_threshold,
     alua: helptextSharingIscsi.globalconf_tooltip_alua,
   };
+
+  readonly requiresRoles = [
+    Role.SharingIscsiGlobalWrite,
+    Role.SharingIscsiWrite,
+    Role.SharingManager,
+    Role.SharingWrite,
+  ];
 
   constructor(
     private ws: WebSocketService,

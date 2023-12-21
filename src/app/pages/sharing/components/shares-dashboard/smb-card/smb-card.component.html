@@ -29,6 +29,7 @@
       <ix-service-extra-actions
         *ngIf="!isClustered"
         [service]="service$ | async"
+        [requiresRoles]="requiresRoles"
       ></ix-service-extra-actions>
     </div>
   </mat-toolbar-row>

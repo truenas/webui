@@ -7,6 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   tap, map, filter, switchMap,
 } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
@@ -32,6 +33,12 @@ import { selectService } from 'app/store/services/services.selectors';
 })
 export class IscsiCardComponent implements OnInit {
   service$ = this.store$.select(selectService(ServiceName.Iscsi));
+  requiresRoles = [
+    Role.SharingIscsiTargetWrite,
+    Role.SharingIscsiWrite,
+    Role.SharingManager,
+    Role.SharingWrite,
+  ];
 
   iscsiShares: IscsiTarget[] = [];
   dataProvider: AsyncDataProvider<IscsiTarget>;
@@ -56,6 +63,7 @@ export class IscsiCardComponent implements OnInit {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
+          requiresRoles: this.requiresRoles,
         },
       ],
     }),

@@ -6,6 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, tap } from 'rxjs';
 import { IscsiExtentType } from 'app/enums/iscsi.enum';
+import { Role } from 'app/enums/role.enum';
 import { IscsiExtent } from 'app/interfaces/iscsi.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
@@ -77,6 +78,12 @@ export class ExtentListComponent implements OnInit {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.showDeleteDialog(row),
+          requiresRoles: [
+            Role.SharingIscsiExtentWrite,
+            Role.SharingIscsiWrite,
+            Role.SharingManager,
+            Role.SharingWrite,
+          ],
         },
       ],
     }),

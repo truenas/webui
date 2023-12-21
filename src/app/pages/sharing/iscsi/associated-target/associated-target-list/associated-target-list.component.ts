@@ -6,6 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { find } from 'lodash';
 import { combineLatest } from 'rxjs';
 import { filter, switchMap, tap } from 'rxjs/operators';
+import { Role } from 'app/enums/role.enum';
 import { IscsiExtent, IscsiTarget, IscsiTargetExtent } from 'app/interfaces/iscsi.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
@@ -105,6 +106,12 @@ export class AssociatedTargetListComponent implements OnInit {
                 },
               );
           },
+          requiresRoles: [
+            Role.SharingIscsiTargetExtentWrite,
+            Role.SharingIscsiWrite,
+            Role.SharingManager,
+            Role.SharingWrite,
+          ],
         },
       ],
     }),

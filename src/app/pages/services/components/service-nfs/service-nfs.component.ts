@@ -8,6 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { NfsProtocol, nfsProtocolLabels } from 'app/enums/nfs-protocol.enum';
+import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextServiceNfs } from 'app/helptext/services/components/service-nfs';
@@ -62,6 +63,7 @@ export class ServiceNfsComponent implements OnInit {
 
   readonly ipChoices$ = this.ws.call('nfs.bindip_choices').pipe(choicesToOptions());
   readonly protocolOptions$ = of(mapToOptions(nfsProtocolLabels, this.translate));
+  readonly requiresRoles = [Role.SharingNfsWrite, Role.SharingManager, Role.SharingWrite];
 
   constructor(
     private ws: WebSocketService,

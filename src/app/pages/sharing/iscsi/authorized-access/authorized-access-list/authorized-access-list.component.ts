@@ -4,6 +4,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, switchMap, tap } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { IscsiAuthAccess } from 'app/interfaces/iscsi.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
@@ -76,6 +77,12 @@ export class AuthorizedAccessListComponent implements OnInit {
               },
             });
           },
+          requiresRoles: [
+            Role.SharingIscsiAuthWrite,
+            Role.SharingIscsiWrite,
+            Role.SharingManager,
+            Role.SharingWrite,
+          ],
         },
       ],
     }),

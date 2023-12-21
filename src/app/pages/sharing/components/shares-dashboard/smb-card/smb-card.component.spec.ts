@@ -7,6 +7,7 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
@@ -77,6 +78,7 @@ describe('SmbCardComponent', () => {
       ),
     ],
     providers: [
+      mockAuth(),
       mockWebsocket([
         mockCall('sharing.smb.query', smbShares),
         mockCall('pool.dataset.path_in_locked_datasets', false),
