@@ -7,9 +7,4 @@ pre {
   margin: 0;
   white-space: pre-wrap;
   word-wrap: break-word;
-
-  @media (max-width: $breakpoint-xs) {
-    max-height: 45vh;
-    overflow: auto;
-  }
 }

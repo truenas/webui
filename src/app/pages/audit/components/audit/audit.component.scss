@@ -143,6 +143,8 @@
   }
 }
 
-.hidden {
-  display: none;
+.mobile-hidden {
+  @media (max-width: $breakpoint-md) {
+    display: none;
+  }
 }

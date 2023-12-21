@@ -31,7 +31,7 @@
 </mat-card>
 
 <div class="container" fxLayoutGap="16px">
-  <div class="table-container" [class.hidden]="showMobileDetails && isMobileView">
+  <div class="table-container" [class.mobile-hidden]="showMobileDetails && dataProvider.expandedRow">
     <div class="sticky-header">
       <thead
         class="audit-header-row"

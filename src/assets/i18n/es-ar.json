@@ -534,6 +534,7 @@
   "Exporters": "",
   "Extend session": "",
   "FTP": "",
+  "Failed Authentication: {credentials}": "",
   "Failed S.M.A.R.T. Tests": "",
   "Faulted": "",
   "Feedback Type": "",

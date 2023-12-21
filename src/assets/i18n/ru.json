@@ -790,6 +790,7 @@
   "FAULT": "",
   "FRONT": "",
   "FTP": "",
+  "Failed Authentication: {credentials}": "",
   "Failed Disks": "",
   "Failed S.M.A.R.T. Tests": "",
   "Faulted": "",

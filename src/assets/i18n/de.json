@@ -1087,6 +1087,7 @@
   "FTP": "",
   "FTP Host to connect to. Example: <i>ftp.example.com</i>.": "",
   "FTP Port number. Leave blank to use the default port <i>21</i>.": "",
+  "Failed Authentication: {credentials}": "",
   "Failed Disks": "",
   "Failed S.M.A.R.T. Tests": "",
   "Failover": "",

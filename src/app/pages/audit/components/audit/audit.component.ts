@@ -198,6 +198,7 @@ export class AuditComponent implements OnInit, OnDestroy {
 
     if (this.isMobileView) {
       this.showMobileDetails = true;
+      this.cdr.markForCheck();
 
       // TODO: Do not rely on querying DOM elements
       // focus on details container

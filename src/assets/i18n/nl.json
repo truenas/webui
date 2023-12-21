@@ -208,6 +208,7 @@
   "Export As CSV": "",
   "Exporters": "",
   "FTP": "",
+  "Failed Authentication: {credentials}": "",
   "Feedback Type": "",
   "File ID": "",
   "File: {filename}": "",
