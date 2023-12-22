@@ -417,9 +417,6 @@ export interface ApiCallDirectory {
   'container.image.query': { params: QueryParams<ContainerImage>; response: ContainerImage[] };
   'container.image.delete': { params: DeleteContainerImageParams; response: void };
 
-  // Cluster
-  'cluster.utils.is_clustered': { params: void; response: boolean };
-
   // Device
   'device.get_info': { params: [DeviceType]; response: Device[] };
   'device.get_pci_ids_for_gpu_isolation': { params: [string]; response: string[] };

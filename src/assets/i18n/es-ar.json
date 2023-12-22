@@ -1624,7 +1624,6 @@
   "This option controls how metadata and alternate data streams read write to disks. Only enable this when the share configuration was migrated from the deprecated Apple Filing Protocol (AFP). Do not attempt to force a previous AFP share to behave like a pure SMB share or file corruption can occur.": "",
   "This pool has an encrypted root dataset which is locked. Do you want to unlock it?": "",
   "This session is current and cannot be terminated": "",
-  "This share is configured through TrueCommand": "",
   "Thread #": "",
   "Thread responsible for syncing db transactions not running on other node.": "",
   "Thread responsible for syncing db transactions not running on this node.": "",
