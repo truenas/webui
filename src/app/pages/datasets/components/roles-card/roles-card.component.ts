@@ -73,17 +73,18 @@ export class RolesCardComponent {
   ) {}
 
   createSmbShare(): void {
-    const slideInRef = this.slideInService.open(SmbFormComponent);
-    slideInRef.componentInstance.form.patchValue({ path: this.dataset.mountpoint });
-    slideInRef.componentInstance.setNameFromPath();
+    const slideInRef = this.slideInService.open(SmbFormComponent, {
+      data: { defaultSmbShare: { path: this.dataset.mountpoint } },
+    });
     slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.datasetStore.datasetUpdated();
     });
   }
 
   createNfsShare(): void {
-    const slideInRef = this.slideInService.open(NfsFormComponent);
-    slideInRef.componentInstance.form.patchValue({ path: this.dataset.mountpoint });
+    const slideInRef = this.slideInService.open(NfsFormComponent, {
+      data: { defaultNfsShare: { path: this.dataset.mountpoint } },
+    });
     slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.datasetStore.datasetUpdated();
     });

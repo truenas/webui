@@ -59,6 +59,9 @@ import { selectService } from 'app/store/services/services.selectors';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SmbFormComponent implements OnInit {
+  existingSmbShare: SmbShare;
+  defaultSmbShare: SmbShare;
+
   isLoading = false;
   isAdvancedMode = false;
   namesInUse: string[] = [];
@@ -206,8 +209,11 @@ export class SmbFormComponent implements OnInit {
     private slideInRef: IxSlideInRef<SmbFormComponent>,
     private store$: Store<ServicesState>,
     private smbValidationService: SmbValidationService,
-    @Inject(SLIDE_IN_DATA) private existingSmbShare: SmbShare,
-  ) { }
+    @Inject(SLIDE_IN_DATA) private data: { existingSmbShare?: SmbShare; defaultSmbShare?: SmbShare },
+  ) {
+    this.existingSmbShare = this.data?.existingSmbShare;
+    this.defaultSmbShare = this.data?.defaultSmbShare;
+  }
 
   ngOnInit(): void {
     this.setupPurposeControl();
@@ -223,6 +229,11 @@ export class SmbFormComponent implements OnInit {
         untilDestroyed(this),
       )
       .subscribe(noop);
+
+    if (this.defaultSmbShare) {
+      this.form.patchValue(this.defaultSmbShare);
+      this.setNameFromPath();
+    }
 
     if (this.existingSmbShare) {
       this.setSmbShareForEdit();

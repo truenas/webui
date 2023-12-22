@@ -135,7 +135,7 @@ describe('SmbCardComponent', () => {
     await editButton.click();
 
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(SmbFormComponent, {
-      data: expect.objectContaining(smbShares[0]),
+      data: { existingSmbShare: expect.objectContaining(smbShares[0]) },
     });
   });
 

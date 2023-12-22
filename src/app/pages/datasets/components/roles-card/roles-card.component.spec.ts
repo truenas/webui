@@ -24,7 +24,7 @@ const datasetDummy = {
   key_format: null,
   key_loaded: null,
   locked: null,
-  mountpoint: null,
+  mountpoint: '/mnt/pool/ds',
   name: null,
   pool: null,
   type: null,
@@ -173,13 +173,17 @@ describe('RolesCardComponent', () => {
 
     expect(spectator.query('.details-item .label')).toHaveText('Not Shared');
 
-    const createSmbShareLink = spectator.queryAll('.details-item .action')[0] as HTMLLinkElement;
-    const createNfsShareLink = spectator.queryAll('.details-item .action')[1] as HTMLLinkElement;
+    const createSmbShareLink = spectator.queryAll('.details-item .action')[0] as HTMLAnchorElement;
+    const createNfsShareLink = spectator.queryAll('.details-item .action')[1] as HTMLAnchorElement;
 
     createSmbShareLink.click();
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(SmbFormComponent);
+    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(SmbFormComponent, {
+      data: { defaultSmbShare: { path: '/mnt/pool/ds' } },
+    });
 
     createNfsShareLink.click();
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(NfsFormComponent);
+    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(NfsFormComponent, {
+      data: { defaultNfsShare: { path: '/mnt/pool/ds' } },
+    });
   });
 });
