@@ -4,6 +4,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { IscsiExtentType } from 'app/enums/iscsi.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
+import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { RolesCardComponent } from 'app/pages/datasets/components/roles-card/roles-card.component';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
@@ -51,6 +52,7 @@ describe('RolesCardComponent', () => {
           },
         })),
       }),
+      mockProvider(IxSlideInRef),
     ],
     component: RolesCardComponent,
   });
