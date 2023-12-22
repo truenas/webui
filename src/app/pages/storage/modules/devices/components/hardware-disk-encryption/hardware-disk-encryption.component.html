@@ -11,7 +11,11 @@
           {{ hasDiskEncryption ? ('Password is set' | translate) : ('Password is not set' | translate) }}
         </div>
       </ng-container>
-      <a ixTest="manage-sed-password" (click)="onManageSedPassword()">
+      <a
+        *ixHasRole="[Role.FullAdmin]"
+        ixTest="manage-sed-password"
+        (click)="onManageSedPassword()"
+      >
         {{ 'Manage SED Password' | translate }}
       </a>
     </div>
@@ -23,7 +27,11 @@
           {{ hasGlobalEncryption ? ('Password is set' | translate) : ('Password is not set' | translate) }}
         </div>
       </ng-container>
-      <a ixTest="manage-global-sed-password" [routerLink]="['/system/advanced']">
+      <a
+        *ixHasRole="[Role.FullAdmin]"
+        ixTest="manage-global-sed-password"
+        [routerLink]="['/system/advanced']"
+      >
         {{ 'Manage Global SED Password' | translate }}
       </a>
     </div>

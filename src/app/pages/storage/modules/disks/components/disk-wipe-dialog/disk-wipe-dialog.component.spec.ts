@@ -5,6 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DiskWipeMethod } from 'app/enums/disk-wipe-method.enum';
 import { EntityModule } from 'app/modules/entity/entity.module';
@@ -38,6 +39,7 @@ describe('DiskWipeDialogComponent', () => {
         provide: MAT_DIALOG_DATA,
         useValue: { diskName: 'sda' },
       },
+      mockAuth(),
     ],
   });
 

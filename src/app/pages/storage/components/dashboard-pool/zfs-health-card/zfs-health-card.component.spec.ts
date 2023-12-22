@@ -10,6 +10,7 @@ import { MockComponent } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
 import { CoreComponents } from 'app/core/core-components.module';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
@@ -91,6 +92,7 @@ describe('ZfsHealthCardComponent', () => {
         }),
         startJob: jest.fn(() => of(undefined)),
       }),
+      mockAuth(),
     ],
     declarations: [
       FakeFormatDateTimePipe,

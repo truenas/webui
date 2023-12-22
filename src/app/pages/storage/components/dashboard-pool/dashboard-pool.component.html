@@ -16,7 +16,12 @@
         {{ 'Export/Disconnect' | translate }}
       </button>
 
-      <button mat-button [ixTest]="['expand', pool.name]" (click)="onExpand()">
+      <button
+        *ixRequiresRoles="[Role.FullAdmin]"
+        mat-button
+        [ixTest]="['expand', pool.name]"
+        (click)="onExpand()"
+      >
         {{ 'Expand' | translate }}
       </button>
     </div>
