@@ -8,6 +8,7 @@ import { forkJoin, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { AlertPolicy } from 'app/enums/alert-policy.enum';
+import { Role } from 'app/enums/role.enum';
 import { trackById } from 'app/helpers/track-by.utils';
 import { helptextAlertSettings } from 'app/helptext/system/alert-settings';
 import { AlertCategory, AlertClassesUpdate, AlertClassSettings } from 'app/interfaces/alert.interface';
@@ -48,6 +49,8 @@ export class AlertConfigFormComponent implements OnInit {
       return policyList.map((policy) => ({ label: policy, value: policy }));
     }),
   );
+
+  protected readonly Role = Role;
 
   constructor(
     private ws: WebSocketService,

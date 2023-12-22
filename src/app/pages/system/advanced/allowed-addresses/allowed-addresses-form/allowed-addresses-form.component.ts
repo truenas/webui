@@ -9,6 +9,7 @@ import {
   EMPTY, filter, switchMap, tap,
 } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { Role } from 'app/enums/role.enum';
 import { helptextSystemGeneral } from 'app/helptext/system/general';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -33,6 +34,7 @@ export class AllowedAddressesFormComponent implements OnInit {
   form = this.fb.group({
     addresses: this.fb.array<string>([]),
   });
+  protected readonly Role = Role;
 
   constructor(
     private fb: FormBuilder,

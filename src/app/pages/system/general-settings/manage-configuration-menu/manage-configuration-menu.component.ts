@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter } from 'rxjs/operators';
+import { Role } from 'app/enums/role.enum';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import {
   SaveConfigDialogComponent,
@@ -19,6 +20,7 @@ import { DialogService } from 'app/services/dialog.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ManageConfigurationMenuComponent {
+  protected readonly Role = Role;
   constructor(
     private dialogService: DialogService,
     private matDialog: MatDialog,

@@ -8,6 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Observable, of, Subscription } from 'rxjs';
 import { InitShutdownScriptType, initShutdownScriptTypeLabels } from 'app/enums/init-shutdown-script-type.enum';
 import { InitShutdownScriptWhen, initShutdownScriptWhenLabels } from 'app/enums/init-shutdown-script-when.enum';
+import { Role } from 'app/enums/role.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextInitShutdown } from 'app/helptext/system/init-shutdown';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
@@ -63,6 +64,7 @@ export class InitShutdownFormComponent implements OnInit {
   };
 
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider();
+  protected readonly Role = Role;
 
   constructor(
     private ws: WebSocketService,

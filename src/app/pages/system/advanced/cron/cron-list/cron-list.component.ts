@@ -7,6 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   filter, map, switchMap, tap,
 } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { relativeDateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
@@ -79,6 +80,8 @@ export class CronListComponent implements OnInit {
   get hiddenColumns(): Column<CronjobRow, ColumnComponent<CronjobRow>>[] {
     return this.columns.filter((column) => column?.hidden);
   }
+
+  protected readonly Role = Role;
 
   constructor(
     private cdr: ChangeDetectorRef,

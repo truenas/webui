@@ -5,6 +5,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import { Role } from 'app/enums/role.enum';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -27,7 +28,8 @@ export class IsolatedGpusFormComponent implements OnInit {
       asyncValidators: [this.gpuValidator.validateGpu],
     }),
   });
-  options$ = this.gpuService.getGpuOptions();
+  readonly options$ = this.gpuService.getGpuOptions();
+  protected readonly Role = Role;
 
   constructor(
     protected ws: WebSocketService,

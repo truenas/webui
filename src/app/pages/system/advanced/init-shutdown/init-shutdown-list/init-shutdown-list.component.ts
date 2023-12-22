@@ -5,6 +5,7 @@ import { switchMap } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { InitShutdownScriptType, initShutdownScriptTypeLabels } from 'app/enums/init-shutdown-script-type.enum';
 import { initShutdownScriptWhenLabels } from 'app/enums/init-shutdown-script-when.enum';
+import { Role } from 'app/enums/role.enum';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import {
@@ -75,11 +76,13 @@ export class InitShutdownListComponent implements OnInit {
           iconName: 'edit',
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.editScript(row),
+          requiresRoles: [Role.FullAdmin],
         },
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.deleteScript(row),
+          requiresRoles: [Role.FullAdmin],
         },
       ],
     }),

@@ -5,6 +5,7 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
   mockWebsocket, mockCall, mockJob,
 } from 'app/core/testing/utils/mock-websocket.utils';
@@ -114,6 +115,7 @@ describe('TunableListComponent', () => {
         mockCall('tunable.query', tunables),
         mockJob('tunable.delete', fakeSuccessfulJob()),
       ]),
+      mockAuth(),
     ],
   });
 

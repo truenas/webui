@@ -11,7 +11,7 @@ import { WebSocketService } from 'app/services/ws.service';
 export class SharesDashboardComponent {
   isClustered$ = this.ws.call('cluster.utils.is_clustered');
 
-  readonly Role = Role;
+  protected readonly Role = Role;
 
   constructor(private ws: WebSocketService) {}
 }
