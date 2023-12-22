@@ -15,7 +15,7 @@ import {
 import { PropertyType, SearchProperty } from 'app/modules/search-input/types/search-property.interface';
 
 @Injectable()
-export class QueryParserService {
+export class QueryParserService<T> {
   private input: string;
 
   constructor(private translate: TranslateService) {}
@@ -73,7 +73,7 @@ export class QueryParserService {
     }
   }
 
-  formatFiltersToQuery(structure: QueryFilters<never>, properties: SearchProperty<never>[]): string {
+  formatFiltersToQuery(structure: QueryFilters<T>, properties: SearchProperty<T>[]): string {
     return structure.map((element) => this.parseElementFromQueryFilter(element, properties)).join(' AND ');
   }
 
@@ -196,7 +196,7 @@ export class QueryParserService {
   }
 
   private mapValueByPropertyType(
-    property: SearchProperty<never>,
+    property: SearchProperty<T>,
     value: LiteralValue | LiteralValue[],
   ): LiteralValue | LiteralValue[] {
     if (property?.propertyType === PropertyType.Date) {
@@ -227,7 +227,7 @@ export class QueryParserService {
   }
 
   private formatMemoryValue(
-    property: SearchProperty<never>,
+    property: SearchProperty<T>,
     value: LiteralValue | LiteralValue[],
   ): string | string[] {
     const formatValue = (memoryValue: LiteralValue): string => {
@@ -242,7 +242,7 @@ export class QueryParserService {
   }
 
   private formatTextValue(
-    property: SearchProperty<never>,
+    property: SearchProperty<T>,
     value: LiteralValue | LiteralValue[],
   ): string | string[] {
     const parseValue = (textValue: LiteralValue): string => {
@@ -259,9 +259,9 @@ export class QueryParserService {
   }
 
   private parseArrayFromQueryFilter(
-    array: QueryFilter<never>[],
+    array: QueryFilter<T>[],
     operator: string,
-    properties: SearchProperty<never>[],
+    properties: SearchProperty<T>[],
   ): string {
     const parsedConditions = array.map((element) => this.parseElementFromQueryFilter(element, properties));
     const innerTemplate = parsedConditions.join(` ${operator} `);
@@ -269,8 +269,8 @@ export class QueryParserService {
   }
 
   private conditionToStringFromQueryFilter(
-    condition: QueryFilter<unknown>,
-    properties: SearchProperty<never>[],
+    condition: QueryFilter<T>,
+    properties: SearchProperty<T>[],
   ): string {
     const [property, comparator, value] = condition;
 
@@ -290,22 +290,22 @@ export class QueryParserService {
   }
 
   private parseElementFromQueryFilter(
-    element: QueryFilters<never> | QueryFilter<never> | OrQueryFilter<never>,
-    properties: SearchProperty<never>[],
+    element: QueryFilters<T> | QueryFilter<T> | OrQueryFilter<T>,
+    properties: SearchProperty<T>[],
   ): string {
     if (Array.isArray(element)) {
-      if (typeof element[0] === 'string' && ['OR', 'AND'].includes(element[0].toUpperCase())) {
-        const operator = element[0].toUpperCase();
-        return this.parseArrayFromQueryFilter(element[1] as QueryFilter<never>[], operator, properties);
+      if (typeof element[0] === 'string' && ['OR', 'AND'].includes((element[0] as string).toUpperCase())) {
+        const operator = (element[0] as string).toUpperCase();
+        return this.parseArrayFromQueryFilter(element[1] as QueryFilter<T>[], operator, properties);
       }
 
       if (element.length === 3 && typeof element[1] === 'string') {
-        return this.conditionToStringFromQueryFilter(element as QueryFilter<never>, properties);
+        return this.conditionToStringFromQueryFilter(element as QueryFilter<T>, properties);
       }
 
-      return this.parseArrayFromQueryFilter(element as QueryFilter<never>[], 'AND', properties);
+      return this.parseArrayFromQueryFilter(element as QueryFilter<T>[], 'AND', properties);
     }
 
-    return this.conditionToStringFromQueryFilter(element as QueryFilter<never>, properties);
+    return this.conditionToStringFromQueryFilter(element as QueryFilter<T>, properties);
   }
 }
