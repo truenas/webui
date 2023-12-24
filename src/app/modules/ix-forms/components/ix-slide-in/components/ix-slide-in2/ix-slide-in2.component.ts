@@ -15,10 +15,10 @@ import {
 import { NavigationEnd, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
-  Observable, Subscription, filter, merge, timer,
+  Observable, Subject, Subscription, filter, merge, timer,
 } from 'rxjs';
 import { SLIDE_IN_CLOSER, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
-import { ChainedComponentSeralized, IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
+import { ChainedComponentSeralized, ChainedSlideInCloseResponse, IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -135,7 +135,7 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
     const injector = Injector.create({
       providers: [
         { provide: SLIDE_IN_DATA, useValue: data },
-        { provide: SLIDE_IN_CLOSER, useValue: this.componentInfo.close$ },
+        { provide: SLIDE_IN_CLOSER, useValue: this.componentInfo.close$ as Subject<ChainedSlideInCloseResponse> },
       ],
     });
     this.slideInBody.createComponent<T>(componentType, { injector });

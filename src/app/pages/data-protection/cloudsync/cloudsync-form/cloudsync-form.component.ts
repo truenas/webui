@@ -22,7 +22,7 @@ import { mntPath } from 'app/enums/mnt-path.enum';
 import { TransferMode, transferModeNames } from 'app/enums/transfer-mode.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextCloudsync } from 'app/helptext/data-protection/cloudsync/cloudsync';
-import { CloudSyncTaskUi, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
+import { CloudSyncTask, CloudSyncTaskUi, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { NewOption, SelectOption } from 'app/interfaces/option.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
@@ -42,6 +42,7 @@ import { CustomTransfersDialogComponent } from 'app/pages/data-protection/clouds
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { DialogService } from 'app/services/dialog.service';
 import { FilesystemService } from 'app/services/filesystem.service';
+import { ChainedSlideInCloseResponse } from 'app/services/ix-chained-slide-in.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
@@ -184,7 +185,7 @@ export class CloudsyncFormComponent implements OnInit {
     private store$: Store<AppState>,
     protected cloudCredentialService: CloudCredentialService,
     @Inject(SLIDE_IN_DATA) private editingTask: CloudSyncTaskUi,
-    @Inject(SLIDE_IN_CLOSER) protected closer$: Subject<unknown>,
+    @Inject(SLIDE_IN_CLOSER) protected closer$: Subject<ChainedSlideInCloseResponse>,
   ) { }
 
   newCloudCredAdded(value: unknown): void {
@@ -766,14 +767,14 @@ export class CloudsyncFormComponent implements OnInit {
     }
 
     request$.pipe(untilDestroyed(this)).subscribe({
-      next: () => {
+      next: (response: CloudSyncTask) => {
         if (this.isNew) {
           this.snackbar.success(this.translate.instant('Task created'));
         } else {
           this.snackbar.success(this.translate.instant('Task updated'));
         }
         this.isLoading = false;
-        this.closer$.next(true);
+        this.closer$.next({ response, error: null });
       },
       error: (error) => {
         this.isLoading = false;

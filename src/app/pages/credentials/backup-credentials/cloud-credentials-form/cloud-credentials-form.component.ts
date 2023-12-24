@@ -28,6 +28,7 @@ import { getName, getProviderFormClass } from 'app/pages/data-protection/cloudsy
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ChainedSlideInCloseResponse } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 // TODO: Form is partially backend driven and partially hardcoded on the frontend.
@@ -70,7 +71,7 @@ export class CloudCredentialsFormComponent implements OnInit {
     private snackbarService: SnackbarService,
     private cloudCredentialService: CloudCredentialService,
     @Inject(SLIDE_IN_DATA) private credential: CloudsyncCredential,
-    @Inject(SLIDE_IN_CLOSER) protected closer$: Subject<unknown>,
+    @Inject(SLIDE_IN_CLOSER) protected closer$: Subject<ChainedSlideInCloseResponse>,
   ) {
     // Has to be earlier than potential `setCredentialsForEdit` call
     this.setFormEvents();
@@ -130,7 +131,7 @@ export class CloudCredentialsFormComponent implements OnInit {
               ? this.translate.instant('Cloud credential added.')
               : this.translate.instant('Cloud credential updated.'),
           );
-          this.closer$.next(response.id);
+          this.closer$.next({ response, error: null });
           this.cdr.markForCheck();
         },
         error: (error) => {

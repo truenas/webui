@@ -14,6 +14,11 @@ export interface ChainedComponentInfo {
   data?: unknown;
 }
 
+export interface ChainedSlideInCloseResponse {
+  response: unknown;
+  error: unknown;
+}
+
 export interface ChainedComponentSeralized {
   id: string;
   component: Type<unknown>;
@@ -51,7 +56,7 @@ export class IxChainedSlideInService extends ComponentStore<ChainedSlideInState>
     );
   });
 
-  pushComponent = this.updater((state, chainedComponentInfo: ChainedComponentInfo) => {
+  pushComponentToStore = this.updater((state, chainedComponentInfo: ChainedComponentInfo) => {
     const newMap = new Map(state.components);
     newMap.set(UUID.UUID(), {
       ...chainedComponentInfo,
@@ -60,6 +65,17 @@ export class IxChainedSlideInService extends ComponentStore<ChainedSlideInState>
       components: newMap,
     };
   });
+
+  pushComponent(component: Type<unknown>, wide: boolean, data?: unknown): Observable<ChainedSlideInCloseResponse> {
+    const close$ = new Subject<ChainedSlideInCloseResponse>();
+    this.pushComponentToStore({
+      component,
+      wide,
+      data,
+      close$,
+    });
+    return close$.asObservable();
+  }
 
   popComponent = this.updater((state) => {
     const newMap = new Map(state.components);
