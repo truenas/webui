@@ -188,7 +188,7 @@ export class CloudsyncFormComponent implements OnInit {
     @Inject(SLIDE_IN_CLOSER) protected closer$: Subject<ChainedSlideInCloseResponse>,
   ) { }
 
-  newCloudCredAdded(value: unknown): void {
+  newCloudCredAdded(value: ChainedSlideInCloseResponse): void {
     this.credentialsOptions$ = this.cloudCredentialService.getCloudsyncCredentials().pipe(
       map((options) => {
         return options.map((option) => {
@@ -200,7 +200,7 @@ export class CloudsyncFormComponent implements OnInit {
       }),
       untilDestroyed(this),
     );
-    this.form.controls.credentials.setValue(value as number);
+    this.form.controls.credentials.setValue((value.response as CloudsyncCredential).id);
   }
 
   ngOnInit(): void {

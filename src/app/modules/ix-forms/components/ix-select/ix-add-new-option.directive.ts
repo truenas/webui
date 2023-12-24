@@ -4,11 +4,11 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  Observable, Subject, map, take,
+  Observable, map, take,
 } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
 import { IxSelectComponent } from 'app/modules/ix-forms/components/ix-select/ix-select.component';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
+import { ChainedSlideInCloseResponse, IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 
 export const addNewValue = 'ADD_NEW';
 
@@ -18,7 +18,7 @@ export const addNewValue = 'ADD_NEW';
 })
 export class AddNewOptionDirective implements OnInit {
   @Input() ixAddNewOption: Type<unknown>;
-  @Output() newOptionAdded = new EventEmitter<unknown>();
+  @Output() newOptionAdded = new EventEmitter<ChainedSlideInCloseResponse>();
 
   private chainedSlideIn = inject(IxChainedSlideInService);
   private translateService = inject(TranslateService);
@@ -44,10 +44,9 @@ export class AddNewOptionDirective implements OnInit {
     this.ixSelect.controlDirective.control.valueChanges.pipe(untilDestroyed(this)).subscribe({
       next: (value) => {
         if (value === addNewValue) {
-          const close$ = new Subject();
-          this.chainedSlideIn.pushComponent({ component: this.ixAddNewOption, close$ });
+          const close$ = this.chainedSlideIn.pushComponent(this.ixAddNewOption, false);
           close$.pipe(take(1), untilDestroyed(this)).subscribe({
-            next: (response) => {
+            next: (response: ChainedSlideInCloseResponse) => {
               this.newOptionAdded.emit(response);
             },
           });

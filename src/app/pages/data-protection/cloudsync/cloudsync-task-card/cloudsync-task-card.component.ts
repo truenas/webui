@@ -7,7 +7,7 @@ import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  EMPTY, Subject, catchError, filter, map, of, switchMap, tap,
+  EMPTY, catchError, filter, map, of, switchMap, tap,
 } from 'rxjs';
 import { FromWizardToAdvancedSubmitted } from 'app/enums/from-wizard-to-advanced.enum';
 import { JobState } from 'app/enums/job-state.enum';
@@ -173,8 +173,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
   }
 
   onAdd(): void {
-    const close$ = new Subject();
-    this.ixChainedSlideInService.pushComponent({ component: CloudsyncFormComponent, close$, wide: true });
+    const close$ = this.ixChainedSlideInService.pushComponent(CloudsyncFormComponent, true);
     close$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
         // console.log('closed', value);
