@@ -26,12 +26,14 @@
   >
     {{ 'Upload File' | translate }}
   </button>
-  <button
-    *ixRequiresRoles="[Role.FullAdmin]"
-    mat-menu-item
-    ixTest="reset-configuration"
-    (click)="onResetDefaults()"
-  >
-    {{ 'Reset to Defaults' | translate }}
-  </button>
+  <ng-container *ngIf="isSysAdmin$ | async">
+    <button
+      *ixRequiresRoles="[Role.FullAdmin]"
+      mat-menu-item
+      ixTest="reset-configuration"
+      (click)="onResetDefaults()"
+    >
+      {{ 'Reset to Defaults' | translate }}
+    </button>
+  </ng-container>
 </mat-menu>

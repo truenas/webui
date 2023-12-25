@@ -44,7 +44,6 @@ describe('ServiceNfsComponent', () => {
           mountd_port: 123,
           rpcstatd_port: 124,
           rpclockd_port: 124,
-          udp: true,
           userd_manage_gids: false,
         } as NfsConfig),
         mockCall('nfs.bindip_choices', {
@@ -94,7 +93,6 @@ describe('ServiceNfsComponent', () => {
       'mountd(8) bind port': '123',
       'rpc.lockd(8) bind port': '124',
       'rpc.statd(8) bind port': '124',
-      'Serve UDP NFS clients': true,
       'Allow non-root mount': false,
       'Support >16 groups': false,
     });
@@ -107,7 +105,6 @@ describe('ServiceNfsComponent', () => {
       'Number of threads': '4',
       'Enabled Protocols': ['NFSv4'],
       'NFSv3 ownership model for NFSv4': false,
-      'Serve UDP NFS clients': false,
       'Allow non-root mount': true,
       'Support >16 groups': true,
       'mountd(8) bind port': 554,
@@ -128,7 +125,6 @@ describe('ServiceNfsComponent', () => {
       rpclockd_port: 510,
       rpcstatd_port: 562,
       servers: 4,
-      udp: false,
       userd_manage_gids: true,
     }]);
   });

@@ -4,6 +4,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { filter } from 'rxjs';
+import { AccountAttribute } from 'app/enums/account-attribute.enum';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { AboutDialogComponent } from 'app/modules/common/dialog/about/about-dialog.component';
 import {
@@ -40,4 +41,6 @@ export class UserMenuComponent {
   onTwoFactorAuth(): void {
     this.router.navigate(['/two-factor-auth']);
   }
+
+  protected readonly AccountAttribute = AccountAttribute;
 }
