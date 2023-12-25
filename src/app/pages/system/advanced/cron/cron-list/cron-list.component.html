@@ -43,7 +43,6 @@
           (click)="runNow(cronjob)"
         >{{ 'Run Now' | translate }}</button>
         <button
-          *ixRequiresRoles="[Role.FullAdmin]"
           mat-button
           [ixTest]="[cronjob.id, 'edit']"
           (click)="doEdit(cronjob)"

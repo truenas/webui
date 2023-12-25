@@ -62,7 +62,6 @@ export class InitShutdownCardComponent implements OnInit {
           iconName: 'edit',
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.onEdit(row),
-          requiresRoles: [Role.FullAdmin],
         },
         {
           iconName: 'delete',

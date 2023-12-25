@@ -62,7 +62,6 @@ export class TunableListComponent implements OnInit {
           iconName: 'edit',
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.doEdit(row),
-          requiresRoles: [Role.FullAdmin],
         },
         {
           iconName: 'delete',

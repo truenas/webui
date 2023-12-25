@@ -76,7 +76,6 @@ export class InitShutdownListComponent implements OnInit {
           iconName: 'edit',
           tooltip: this.translate.instant('Edit'),
           onClick: (row) => this.editScript(row),
-          requiresRoles: [Role.FullAdmin],
         },
         {
           iconName: 'delete',

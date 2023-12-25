@@ -5,6 +5,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { SmartPowerMode } from 'app/enums/smart-power.mode';
 import { helptextServiceSmart } from 'app/helptext/services/components/service-smart';
 import { SmartConfigUpdate } from 'app/interfaces/smart-test.interface';
@@ -47,7 +48,7 @@ export class ServiceSmartComponent implements OnInit {
     { label: this.translate.instant('Standby'), value: SmartPowerMode.Standby },
     { label: this.translate.instant('Idle'), value: SmartPowerMode.Idle },
   ]);
-
+  protected readonly Role = Role;
   constructor(
     private ws: WebSocketService,
     private formErrorHandler: FormErrorHandlerService,
