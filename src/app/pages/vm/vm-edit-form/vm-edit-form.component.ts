@@ -5,7 +5,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  defaultIfEmpty, forkJoin, map, of, switchMap,
+  Observable, forkJoin, map, of, switchMap,
 } from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
 import {
@@ -134,29 +134,28 @@ export class VmEditFormComponent implements OnInit {
       return this.ws.call('vm.device.get_pci_ids_for_gpu_isolation', [gpu]);
     });
 
-    forkJoin(pciIdsRequests$).pipe(
-      defaultIfEmpty([]),
+    const updateVm$: Observable<unknown> = pciIdsRequests$.length ? forkJoin(pciIdsRequests$).pipe(
       map((pciIds) => pciIds.flat()),
       switchMap((pciIds) => forkJoin([
         this.ws.call('vm.update', [this.existingVm.id, vmPayload as VirtualMachineUpdate]),
         this.vmGpuService.updateVmGpus(this.existingVm, gpusIds.concat(pciIds)),
         this.gpuService.addIsolatedGpuPciIds(gpusIds.concat(pciIds)),
       ])),
-    )
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        complete: () => {
-          this.isLoading = false;
-          this.cdr.markForCheck();
-          this.snackbar.success(this.translate.instant('VM updated successfully.'));
-          this.slideInRef.close();
-        },
-        error: (error: WebsocketError) => {
-          this.isLoading = false;
-          this.cdr.markForCheck();
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-        },
-      });
+    ) : this.ws.call('vm.update', [this.existingVm.id, vmPayload as VirtualMachineUpdate]);
+
+    updateVm$.pipe(untilDestroyed(this)).subscribe({
+      next: () => {
+        this.isLoading = false;
+        this.cdr.markForCheck();
+        this.snackbar.success(this.translate.instant('VM updated successfully.'));
+        this.slideInRef.close();
+      },
+      error: (error: WebsocketError) => {
+        this.isLoading = false;
+        this.cdr.markForCheck();
+        this.dialogService.error(this.errorHandler.parseWsError(error));
+      },
+    });
   }
 
   private setupGpuControl(vm: VirtualMachine): void {
