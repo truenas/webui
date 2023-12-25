@@ -135,16 +135,22 @@ export class VmEditFormComponent implements OnInit {
       return this.ws.call('vm.device.get_pci_ids_for_gpu_isolation', [gpu]);
     });
 
-    const updateVm$: Observable<unknown> = pciIdsRequests$.length ? forkJoin(pciIdsRequests$).pipe(
-      map((pciIds) => pciIds.flat()),
-      switchMap((pciIds) => forkJoin([
-        this.ws.call('vm.update', [this.existingVm.id, vmPayload as VirtualMachineUpdate]),
-        this.vmGpuService.updateVmGpus(this.existingVm, gpusIds.concat(pciIds)),
-        this.gpuService.addIsolatedGpuPciIds(gpusIds.concat(pciIds)),
-      ])),
-    ) : this.ws.call('vm.update', [this.existingVm.id, vmPayload as VirtualMachineUpdate]);
+    let updateVmRequest$: Observable<unknown>;
 
-    updateVm$.pipe(untilDestroyed(this)).subscribe({
+    if (pciIdsRequests$.length) {
+      updateVmRequest$ = forkJoin(pciIdsRequests$).pipe(
+        map((pciIds) => pciIds.flat()),
+        switchMap((pciIds) => forkJoin([
+          this.ws.call('vm.update', [this.existingVm.id, vmPayload as VirtualMachineUpdate]),
+          this.vmGpuService.updateVmGpus(this.existingVm, gpusIds.concat(pciIds)),
+          this.gpuService.addIsolatedGpuPciIds(gpusIds.concat(pciIds)),
+        ])),
+      );
+    } else {
+      updateVmRequest$ = this.ws.call('vm.update', [this.existingVm.id, vmPayload as VirtualMachineUpdate]);
+    }
+
+    updateVmRequest$.pipe(untilDestroyed(this)).subscribe({
       next: () => {
         this.isLoading = false;
         this.cdr.markForCheck();
