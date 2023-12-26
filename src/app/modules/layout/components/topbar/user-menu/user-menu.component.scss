@@ -1,5 +1,17 @@
 @import 'scss-imports/cssvars';
 
+::ng-deep {
+  .user-menu-buttons {
+    button,
+    a {
+      > span {
+        align-items: center;
+        display: flex;
+      }
+    }
+  }
+}
+
 .user-menu-wrapper {
   align-items: center;
   display: flex;
