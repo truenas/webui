@@ -10,7 +10,7 @@ import { format } from 'date-fns-tz';
 import {
   Observable, combineLatest, of, merge,
 } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
 import { singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSnapshots } from 'app/helptext/storage/snapshots/snapshots';
@@ -26,6 +26,7 @@ import { atLeastOne } from 'app/modules/ix-forms/validators/at-least-one-validat
 import { requiredEmpty } from 'app/modules/ix-forms/validators/required-empty-validation';
 import { snapshotExcludeBootQueryFilter } from 'app/pages/datasets/modules/snapshots/constants/snapshot-exclude-boot.constant';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
+import { AuthService } from 'app/services/auth/auth.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -64,6 +65,7 @@ export class SnapshotAddFormComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private ws: WebSocketService,
     private translate: TranslateService,
+    private authService: AuthService,
     private errorHandler: FormErrorHandlerService,
     private validatorsService: IxValidatorsService,
     private datasetStore: DatasetTreeStore,
@@ -156,8 +158,13 @@ export class SnapshotAddFormComponent implements OnInit {
   }
 
   private getNamingSchemaOptions(): Observable<Option[]> {
-    return this.ws.call('replication.list_naming_schemas').pipe(
-      singleArrayToOptions(),
+    return this.authService.hasRole(this.requiresRoles).pipe(
+      switchMap((hasRole) => {
+        if (hasRole) {
+          return this.ws.call('replication.list_naming_schemas').pipe(singleArrayToOptions());
+        }
+        return of([]);
+      }),
     );
   }
 
