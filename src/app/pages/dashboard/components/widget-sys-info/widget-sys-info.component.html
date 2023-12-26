@@ -169,7 +169,7 @@
             <!-- Details Section -->
             <div class="right" fxFlex.xs fxFlex.gt-xs="60" fxLayout="column">
               <div
-                *ngIf="!data && isHaLicensed && isPassive && hasHa"
+                *ngIf="!systemInfo && isHaLicensed && isPassive && hasHa"
                 class="data-container ha-status"
                 fxFlex
               >
@@ -179,7 +179,7 @@
               </div>
 
               <div
-                *ngIf="!data || (isHaLicensed && isPassive && !hasHa)"
+                *ngIf="!systemInfo || (isHaLicensed && isPassive && !hasHa)"
                 class="data-container ha-status"
                 fxFlex
               >
@@ -188,11 +188,11 @@
                 </h3>
               </div>
 
-              <div *ngIf="!data && !isHaLicensed" class="loader">
+              <div *ngIf="!systemInfo && !isHaLicensed" class="loader">
                 <mat-spinner class="spinner" [diameter]="40"></mat-spinner>
               </div>
 
-              <div *ngIf="(data && !isPassive) || (data && isPassive && hasHa)" class="data-container" fxFlex>
+              <div *ngIf="(systemInfo && !isPassive) || (systemInfo && isPassive && hasHa)" class="data-container" fxFlex>
                 <div fxHide.gt-xs class="list-subheader">
                   {{ isPassive ? ('System Information (Standby)' | translate) : ('System Information' | translate) }}
                 </div>
@@ -204,42 +204,42 @@
                   <mat-list-item>
                     <strong>{{ 'Platform' | translate }}:</strong>
                     <span>
-                      {{ data.system_product && isIxHardware ? data.system_product : 'Generic' }}
+                      {{ systemInfo.platform && isIxHardware ? systemInfo.platform : 'Generic' }}
                     </span>
                   </mat-list-item>
                   <mat-list-item>
                     <strong>{{ 'Version' | translate }}:</strong>
                     <div class="copy-version">
                       <div class="copy-version-text">
-                        <span>{{ data.version }}</span>
+                        <span>{{ systemInfo.version }}</span>
                       </div>
                       <ix-copy-btn
                         class="copy-version-button"
-                        [text]="data.version"
+                        [text]="systemInfo.version"
                       ></ix-copy-btn>
                     </div>
                   </mat-list-item>
 
-                  <mat-list-item *ngIf="data.license">
+                  <mat-list-item *ngIf="systemInfo.license">
                     <strong>{{ 'License' | translate }}:</strong>
                     <span>
                       {{ licenseString }}
                     </span>
                   </mat-list-item>
 
-                  <mat-list-item *ngIf="data.system_serial && isIxHardware">
+                  <mat-list-item *ngIf="systemInfo.system_serial && isIxHardware">
                     <strong>{{ 'System Serial' | translate }}:</strong>
-                    <span>{{ data.system_serial }}</span>
+                    <span>{{ systemInfo.system_serial }}</span>
                   </mat-list-item>
 
                   <mat-list-item>
                     <strong>{{ 'Hostname' | translate }}:</strong>
-                    <span>{{ data.hostname }}</span>
+                    <span>{{ systemInfo.hostname }}</span>
                   </mat-list-item>
 
                   <mat-list-item>
                     <strong>{{ 'Uptime' | translate }}:</strong>
-                    <span>{{ data.uptime_seconds | uptime: (data.datetime.$date | formatDateTime:null:' ':'HH:mm') }}</span>
+                    <span>{{ systemInfo.uptime_seconds | uptime: (systemInfo.datetime.$date | formatDateTime:null:' ':'HH:mm') }}</span>
                   </mat-list-item>
                 </mat-list>
 
