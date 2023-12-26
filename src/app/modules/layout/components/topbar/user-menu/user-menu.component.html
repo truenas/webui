@@ -19,7 +19,7 @@
     <ix-icon name="account_circle"></ix-icon>
   </button>
 
-  <mat-menu #userMenu="matMenu" class="user-menu-buttons">
+  <mat-menu #userMenu="matMenu">
     <button
       *ngIf="user?.account_attributes.includes(AccountAttribute.Local)"
       name="settings-change-password"
