@@ -9,6 +9,7 @@
   <form class="ix-form-container" [formGroup]="form">
     <div class="train-card-row">
       <ix-checkbox
+        *ixRequiresRoles="[Role.FullAdmin]"
         formControlName="auto_check"
         [label]="'Check for Updates Daily and Download if Available' | translate"
         [tooltip]="updatecheckTooltip | translate"

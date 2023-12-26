@@ -5,6 +5,7 @@ import { MatMenuHarness } from '@angular/material/menu/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { BehaviorSubject, of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
   ManageConfigurationMenuComponent,
 } from 'app/pages/system/general-settings/manage-configuration-menu/manage-configuration-menu.component';
@@ -32,6 +33,7 @@ describe('ManageConfigurationMenuComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
+      mockAuth(),
     ],
   });
 

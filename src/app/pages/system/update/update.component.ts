@@ -9,6 +9,7 @@ import { Observable, of } from 'rxjs';
 import { filter, pairwise, tap } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
+import { Role } from 'app/enums/role.enum';
 import { SystemUpdateOperationType, SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextGlobal } from 'app/helptext/global-helptext';
@@ -92,6 +93,7 @@ export class UpdateComponent implements OnInit {
 
   readonly ProductType = ProductType;
   readonly SystemUpdateStatus = SystemUpdateStatus;
+  protected readonly Role = Role;
 
   constructor(
     protected router: Router,
