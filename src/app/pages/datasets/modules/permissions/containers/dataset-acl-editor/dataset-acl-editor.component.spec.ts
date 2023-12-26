@@ -11,6 +11,7 @@ import { of } from 'rxjs';
 import { CoreComponents } from 'app/core/core-components.module';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AclType } from 'app/enums/acl-type.enum';
 import { NfsAclTag, NfsAclType, NfsBasicPermission } from 'app/enums/nfs-acl.enum';
@@ -114,6 +115,7 @@ describe('DatasetAclEditorComponent', () => {
           afterClosed: () => of(),
         })),
       }),
+      mockAuth(),
     ],
     queryParams: {
       path: '/mnt/pool/dataset',

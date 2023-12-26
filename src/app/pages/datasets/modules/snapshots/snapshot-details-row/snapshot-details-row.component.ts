@@ -8,12 +8,14 @@ import _ from 'lodash';
 import {
   filter, switchMap, tap, map,
 } from 'rxjs/operators';
+import { Role } from 'app/enums/role.enum';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SnapshotCloneDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-clone-dialog/snapshot-clone-dialog.component';
 import { SnapshotRollbackDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
+import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -37,6 +39,8 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
     return !!this.snapshotInfo?.properties?.clones?.value;
   }
 
+  protected readonly Role = Role;
+
   constructor(
     private dialogService: DialogService,
     private ws: WebSocketService,
@@ -46,6 +50,7 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
     private matDialog: MatDialog,
     private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
+    protected authService: AuthService,
   ) {}
 
   ngOnInit(): void {
@@ -78,10 +83,17 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
   doHold(): void {
     if (!this.isHold) {
       this.ws.call('zfs.snapshot.hold', [this.snapshotInfo.name])
-        .pipe(untilDestroyed(this)).subscribe(() => this.isHold = true);
+        .pipe(
+          this.errorHandler.catchError(),
+          untilDestroyed(this),
+        )
+        .subscribe(() => this.isHold = true);
     } else {
       this.ws.call('zfs.snapshot.release', [this.snapshotInfo.name])
-        .pipe(untilDestroyed(this)).subscribe(() => this.isHold = false);
+        .pipe(
+          this.errorHandler.catchError(),
+          untilDestroyed(this),
+        ).subscribe(() => this.isHold = false);
     }
   }
 

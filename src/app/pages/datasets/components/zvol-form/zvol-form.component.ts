@@ -10,6 +10,7 @@ import {
 } from 'app/enums/dataset.enum';
 import { DeduplicationSetting } from 'app/enums/deduplication-setting.enum';
 import { OnOff } from 'app/enums/on-off.enum';
+import { Role } from 'app/enums/role.enum';
 import { inherit } from 'app/enums/with-inherit.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { helptextZvol } from 'app/helptext/storage/volumes/zvol-form';
@@ -92,6 +93,8 @@ export class ZvolFormComponent implements OnInit {
   protected minimumRecommendedBlockSize: DatasetRecordSize;
   protected origVolSize: number;
   protected origHuman: string | number;
+
+  protected readonly Role = Role;
 
   form = this.formBuilder.group({
     name: ['', [Validators.required, forbiddenValues(this.namesInUse)]],

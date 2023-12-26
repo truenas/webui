@@ -9,6 +9,7 @@ import {
 } from 'rxjs';
 import { catchError, filter, tap } from 'rxjs/operators';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
+import { Role } from 'app/enums/role.enum';
 import { helptextGlobal } from 'app/helptext/global-helptext';
 import { helptextQuotas } from 'app/helptext/storage/volumes/datasets/dataset-quotas';
 import { DatasetQuota, SetDatasetQuota } from 'app/interfaces/dataset-quota.interface';
@@ -95,6 +96,8 @@ export class DatasetQuotaEditFormComponent implements OnInit {
     data_quota: [null as number],
     obj_quota: [null as number],
   });
+
+  protected readonly Role = Role;
 
   constructor(
     private formBuilder: FormBuilder,
