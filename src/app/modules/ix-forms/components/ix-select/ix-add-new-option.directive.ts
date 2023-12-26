@@ -10,7 +10,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { IxSelectComponent } from 'app/modules/ix-forms/components/ix-select/ix-select.component';
 import { ChainedSlideInCloseResponse, IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 
-export const addNewValue = 'ADD_NEW';
+const addNewValue = 'ADD_NEW';
 
 @UntilDestroy()
 @Directive({

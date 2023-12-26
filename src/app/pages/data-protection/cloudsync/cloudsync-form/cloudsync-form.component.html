@@ -66,16 +66,13 @@
               {{ 'Manage Credentials' | translate }}<ix-icon name="open_in_new"></ix-icon>
             </div>
           </a>
-          <ix-select
+          <ix-credentials-select
             *ngIf="form.controls.credentials.enabled"
             formControlName="credentials"
             [label]="helptext.credentials_placeholder | translate"
             [tooltip]="helptext.credentials_tooltip | translate"
             [required]="true"
-            [ixAddNewOption]="CloudCredentialsFormComponent"
-            [options]="credentialsOptions$"
-            (newOptionAdded)="newCloudCredAdded($event)"
-          ></ix-select>
+          ></ix-credentials-select>
           <ix-select
             *ngIf="form.controls.bucket.enabled"
             formControlName="bucket"

@@ -13,6 +13,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
+import { CredentialsSelectModule } from 'app/modules/custom-selects/credentials-select.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
@@ -84,6 +85,7 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
     TranslateModule,
     IxTable2Module,
     IxFormsModule,
+    CredentialsSelectModule,
     PageHeaderModule,
     SchedulerModule,
     MatButtonModule,

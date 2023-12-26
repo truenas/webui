@@ -12,7 +12,7 @@ import filesize from 'filesize';
 import _ from 'lodash';
 import { Observable, Subject, of } from 'rxjs';
 import {
-  filter, map, switchMap,
+  filter, map, switchMap, tap,
 } from 'rxjs/operators';
 import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { Direction, directionNames } from 'app/enums/direction.enum';
@@ -128,18 +128,6 @@ export class CloudsyncFormComponent implements OnInit {
   readonly transferModeOptions$ = of(mapToOptions(transferModeNames, this.translate));
 
   credentialsList: CloudsyncCredential[] = [];
-  readonly fetchCredentialsOptions$ = new Subject<void>();
-  credentialsOptions$ = this.cloudCredentialService.getCloudsyncCredentials().pipe(
-    map((options) => {
-      return options.map((option) => {
-        if (option.provider === CloudsyncProviderName.GoogleDrive) {
-          this.googleDriveProviderId = option.id;
-        }
-        return { label: `${option.name} (${option.provider})`, value: option.id };
-      });
-    }),
-    untilDestroyed(this),
-  );
 
   readonly encryptionOptions$ = of([
     { label: 'AES-256', value: 'AES256' },
@@ -188,22 +176,21 @@ export class CloudsyncFormComponent implements OnInit {
     @Inject(SLIDE_IN_CLOSER) protected closer$: Subject<ChainedSlideInCloseResponse>,
   ) { }
 
-  newCloudCredAdded(value: ChainedSlideInCloseResponse): void {
-    this.credentialsOptions$ = this.cloudCredentialService.getCloudsyncCredentials().pipe(
-      map((options) => {
-        return options.map((option) => {
+  getGoogleDriveProvider(): void {
+    this.cloudCredentialService.getCloudsyncCredentials().pipe(
+      tap((options) => {
+        for (const option of options) {
           if (option.provider === CloudsyncProviderName.GoogleDrive) {
             this.googleDriveProviderId = option.id;
           }
-          return { label: `${option.name} (${option.provider})`, value: option.id };
-        });
+        }
       }),
       untilDestroyed(this),
-    );
-    this.form.controls.credentials.setValue((value.response as CloudsyncCredential).id);
+    ).subscribe();
   }
 
   ngOnInit(): void {
+    this.getGoogleDriveProvider();
     this.setupForm();
 
     if (this.editingTask) {
