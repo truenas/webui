@@ -17,7 +17,7 @@ export class RequiresRolesDirective {
   set ixRequiresRoles(roles: Role[]) {
     this.authService.hasRole(roles).pipe(untilDestroyed(this)).subscribe({
       next: (hasRole) => {
-        if (!hasRole) {
+        if (!hasRole && roles?.length) {
           this.wrapperContainer = this.viewContainerRef.createComponent(RequiresRolesWrapperComponent);
           this.wrapperContainer.instance.template = this.templateRef;
           this.wrapperContainer.instance.class = this.elementClass;
