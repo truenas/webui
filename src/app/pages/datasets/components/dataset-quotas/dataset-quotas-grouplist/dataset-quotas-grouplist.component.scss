@@ -22,3 +22,13 @@ button:focus-visible {
   box-shadow: 0 0 0 1px var(--focus-brd) inset !important;
   outline-width: 0;
 }
+
+:host ::ng-deep {
+  .ix-table.cdk-table .cdk-column-actions {
+    width: auto;
+  }
+
+  .mat-mdc-icon-button {
+    display: block;
+  }
+}
