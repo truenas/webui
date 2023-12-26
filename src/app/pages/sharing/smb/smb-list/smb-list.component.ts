@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import _ from 'lodash';
 import { take } from 'rxjs/operators';
 import { shared, helptextSharingSmb } from 'app/helptext/sharing';
 import { helptextVolumes } from 'app/helptext/storage/volumes/volume-list';
@@ -79,18 +78,6 @@ export class SmbListComponent implements EntityTableConfig<SmbShare> {
     private translate: TranslateService,
     private appLoader: AppLoaderService,
   ) {}
-
-  preInit(entityList: EntityTableComponent<SmbShare>): void {
-    this.entityList = entityList;
-    this.ws.call('cluster.utils.is_clustered').pipe(untilDestroyed(this)).subscribe((isClustered) => {
-      this.isClustered = isClustered;
-      if (this.isClustered) {
-        this.addBtnDisabled = true;
-        this.noAdd = true;
-        _.find(this.entityList.allColumns, { name: helptextSharingSmb.column_enabled }).disabled = true;
-      }
-    });
-  }
 
   afterInit(entityList: EntityTableComponent<SmbShare>): void {
     this.entityList = entityList;
