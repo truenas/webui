@@ -7,7 +7,7 @@ import * as _ from 'lodash';
 import {
   forkJoin, Observable, of, switchMap,
 } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, defaultIfEmpty, map } from 'rxjs/operators';
 import { GiB, MiB } from 'app/constants/bytes.constant';
 import { VmDeviceType, VmNicType, VmOs } from 'app/enums/vm.enum';
 import { VirtualMachine, VirtualMachineUpdate } from 'app/interfaces/virtual-machine.interface';
@@ -249,15 +249,16 @@ export class VmWizardComponent implements OnInit {
     const gpusIds = this.gpuForm.gpus as unknown as string[];
 
     const pciIdsRequests$ = gpusIds.map((gpu) => {
-      return this.ws.call('device.get_pci_ids_for_gpu_isolation', [gpu]);
+      return this.ws.call('vm.device.get_pci_ids_for_gpu_isolation', [gpu]);
     });
 
     return forkJoin(pciIdsRequests$).pipe(
+      defaultIfEmpty([]),
       map((pciIds) => pciIds.flat()),
-      switchMap((pciIds) => [
+      switchMap((pciIds) => forkJoin([
         this.vmGpuService.updateVmGpus(vm, gpusIds.concat(pciIds)),
         this.gpuService.addIsolatedGpuPciIds(gpusIds.concat(pciIds)),
-      ]),
+      ])),
     );
   }
 

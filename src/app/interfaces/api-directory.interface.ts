@@ -456,7 +456,6 @@ export interface ApiDirectory {
 
   // Device
   'device.get_info': { params: [DeviceType]; response: Device[] };
-  'device.get_pci_ids_for_gpu_isolation': { params: [string]; response: string[] };
 
   // Disk
   'disk.query': { params: QueryParams<Disk, ExtraDiskQueryOptions>; response: Disk[] };
@@ -930,6 +929,7 @@ export interface ApiDirectory {
   'vm.device.create': { params: [VmDeviceUpdate]; response: VmDevice };
   'vm.device.delete': { params: [number, VmDeviceDelete?]; response: boolean };
   'vm.device.disk_choices': { params: void; response: Choices };
+  'vm.device.get_pci_ids_for_gpu_isolation': { params: [string]; response: string[] };
   'vm.random_mac': { params: void; response: string };
   'vm.device.query': { params: QueryParams<VmDevice>; response: VmDevice[] };
   'vm.stop': { params: VmStopParams; response: void };
