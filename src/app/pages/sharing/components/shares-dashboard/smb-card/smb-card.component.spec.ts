@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
+import { Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
@@ -166,5 +167,15 @@ describe('SmbCardComponent', () => {
       'sharing.smb.getacl',
       [{ share_name: 'homes' }],
     );
+  });
+
+  it('handles edit Filesystem ACL', async () => {
+    const router = spectator.inject(Router);
+    jest.spyOn(router, 'navigate').mockImplementation();
+
+    const editIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'security' }), 1, 4);
+    await editIcon.click();
+
+    expect(router.navigate).toHaveBeenCalledWith(['/', 'datasets', 'acl', 'edit'], { queryParams: { path: '/mnt/APPS/smb1' } });
   });
 });
