@@ -137,46 +137,38 @@ export class SmbCardComponent implements OnInit {
   }
 
   doShareAclEdit(row: SmbShare): void {
-    this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).pipe(untilDestroyed(this)).subscribe(
-      (isLocked) => {
-        if (isLocked) {
-          this.showLockedPathDialog(row.path);
-        } else {
-          // A home share has a name (homes) set; row.name works for other shares
-          const searchName = row.home ? 'homes' : row.name;
-          this.ws.call('sharing.smb.getacl', [{ share_name: searchName }])
-            .pipe(untilDestroyed(this))
-            .subscribe({
-              next: (shareAcl: SmbSharesec) => {
-                const slideInRef = this.slideInService.open(SmbAclComponent, { data: shareAcl.share_name });
+    if (row.locked) {
+      this.showLockedPathDialog(row.path);
+    } else {
+      // A home share has a name (homes) set; row.name works for other shares
+      const searchName = row.home ? 'homes' : row.name;
+      this.ws.call('sharing.smb.getacl', [{ share_name: searchName }])
+        .pipe(untilDestroyed(this))
+        .subscribe({
+          next: (shareAcl: SmbSharesec) => {
+            const slideInRef = this.slideInService.open(SmbAclComponent, { data: shareAcl.share_name });
 
-                slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-                  this.getSmbShares();
-                });
-              },
-              error: (error: WebsocketError) => {
-                this.dialogService.error(this.errorHandler.parseWsError(error));
-              },
+            slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+              this.getSmbShares();
             });
-        }
-      },
-    );
+          },
+          error: (error: WebsocketError) => {
+            this.dialogService.error(this.errorHandler.parseWsError(error));
+          },
+        });
+    }
   }
 
   doFilesystemAclEdit(row: SmbShare): void {
-    this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).pipe(untilDestroyed(this)).subscribe(
-      (isLocked) => {
-        if (isLocked) {
-          this.showLockedPathDialog(row.path);
-        } else {
-          this.router.navigate(['/', 'datasets', 'acl', 'edit'], {
-            queryParams: {
-              path: row.path_local,
-            },
-          });
-        }
-      },
-    );
+    if (row.locked) {
+      this.showLockedPathDialog(row.path);
+    } else {
+      this.router.navigate(['/', 'datasets', 'acl', 'edit'], {
+        queryParams: {
+          path: row.path_local,
+        },
+      });
+    }
   }
 
   private showLockedPathDialog(path: string): void {

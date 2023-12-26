@@ -79,7 +79,6 @@ describe('SmbCardComponent', () => {
     providers: [
       mockWebsocket([
         mockCall('sharing.smb.query', smbShares),
-        mockCall('pool.dataset.path_in_locked_datasets', false),
         mockCall('sharing.smb.delete'),
         mockCall('sharing.smb.update'),
         mockCall('sharing.smb.getacl', { share_name: 'test' } as SmbSharesec),
@@ -160,27 +159,12 @@ describe('SmbCardComponent', () => {
   });
 
   it('handles edit Share ACL', async () => {
-    const deleteIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'share' }), 1, 4);
-    await deleteIcon.click();
-
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith(
-      'pool.dataset.path_in_locked_datasets',
-      ['/mnt/APPS/smb1'],
-    );
+    const editIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'share' }), 1, 4);
+    await editIcon.click();
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith(
       'sharing.smb.getacl',
       [{ share_name: 'homes' }],
-    );
-  });
-
-  it('handles edit Filesystem ACL', async () => {
-    const deleteIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'security' }), 1, 4);
-    await deleteIcon.click();
-
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith(
-      'pool.dataset.path_in_locked_datasets',
-      ['/mnt/APPS/smb1'],
     );
   });
 });
