@@ -5,7 +5,6 @@ import { MatMenuHarness } from '@angular/material/menu/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { BehaviorSubject, of } from 'rxjs';
-import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
   ManageConfigurationMenuComponent,
 } from 'app/pages/system/general-settings/manage-configuration-menu/manage-configuration-menu.component';
@@ -29,11 +28,11 @@ describe('ManageConfigurationMenuComponent', () => {
       mockProvider(Router),
       mockProvider(AuthService, {
         isSysAdmin$,
+        hasRole: jest.fn(() => of(true)),
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockAuth(),
     ],
   });
 
@@ -75,8 +74,9 @@ describe('ManageConfigurationMenuComponent', () => {
 
   it('does not show Reset to Defaults menu item if logged in user is not a system administrator', async () => {
     isSysAdmin$.next(false);
+
     await menu.open();
-    const resetToDefaults = await menu.getItems({ text: /Reset to Defaults$/ });
+    const resetToDefaults = await menu.getItems({ text: 'Reset to Defaults' });
 
     expect(resetToDefaults).toHaveLength(0);
   });

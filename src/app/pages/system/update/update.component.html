@@ -9,7 +9,7 @@
   <form class="ix-form-container" [formGroup]="form">
     <div class="train-card-row">
       <ix-checkbox
-        *ixRequiresRoles="[Role.FullAdmin]"
+        *ixHasRole="[Role.FullAdmin]"
         formControlName="auto_check"
         [label]="'Check for Updates Daily and Download if Available' | translate"
         [tooltip]="updatecheckTooltip | translate"
@@ -26,6 +26,7 @@
         [required]="true"
       ></ix-select>
       <button
+        *ixHasRole="[Role.FullAdmin]"
         mat-mini-fab
         color="primary"
         id="refresh-button"
@@ -184,29 +185,34 @@
 <mat-card *ngIf="!isUpdateRunning" id="button-card">
   <div class="row">
     <div class="col-md-12">
+      <ng-container *ngIf="updatesAvailable">
+        <button
+          *ixRequiresRoles="[Role.FullAdmin]"
+          mat-button
+          ixTest="download-updates"
+          [ngClass]="['btn btn-success update-button mat-basic']"
+          [disabled]="status === SystemUpdateStatus.RebootRequired"
+          (click)="downloadUpdate()"
+        >
+          {{ 'Download Updates' | translate }}
+        </button>
+      </ng-container>
+      <ng-container *ngIf="updateDownloaded && status !== SystemUpdateStatus.Unavailable">
+        <button
+          *ixRequiresRoles="[Role.FullAdmin]"
+          mat-button
+          ixTest="apply-pending-update"
+          [ngClass]="['btn btn-success update-button mat-basic']"
+          (click)="applyPendingUpdate()"
+        >
+          {{ 'Apply Pending update' | translate }}
+        </button>
+      </ng-container>
       <button
-        *ngIf="updatesAvailable"
+        *ixRequiresRoles="[Role.FullAdmin]"
         mat-button
-        class="btn btn-success update-button mat-basic"
-        ixTest="download-updates"
-        [disabled]="status === SystemUpdateStatus.RebootRequired"
-        (click)="downloadUpdate()"
-      >
-        {{ 'Download Updates' | translate }}
-      </button>
-      <button
-        *ngIf="updateDownloaded && status !== SystemUpdateStatus.Unavailable"
-        mat-button
-        class="btn btn-success update-button mat-basic"
-        ixTest="apply-pending-update"
-        (click)="applyPendingUpdate()"
-      >
-        {{ 'Apply Pending update' | translate }}
-      </button>
-      <button
-        mat-button
-        class="btn btn-success update-button mat-basic"
         ixTest="install-manual-update"
+        [ngClass]="['btn btn-success update-button mat-basic']"
         (click)="manualUpdate()"
       >
         {{ 'Install Manual Update File' | translate }}
