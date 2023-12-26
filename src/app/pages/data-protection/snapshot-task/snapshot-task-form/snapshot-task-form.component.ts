@@ -6,6 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
+import { Role } from 'app/enums/role.enum';
 import { helptextSnapshotForm } from 'app/helptext/data-protection/snapshot/snapshot-form';
 import {
   PeriodicSnapshotTask,
@@ -55,6 +56,8 @@ export class SnapshotTaskFormComponent implements OnInit {
   });
 
   isLoading = false;
+
+  readonly requiresRoles = [Role.FullAdmin];
 
   readonly labels = {
     dataset: helptextSnapshotForm.dataset_placeholder,

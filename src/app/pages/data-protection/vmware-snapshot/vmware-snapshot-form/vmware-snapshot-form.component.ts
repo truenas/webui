@@ -6,6 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { filter } from 'rxjs/operators';
+import { Role } from 'app/enums/role.enum';
 import { helptextVmwareSnapshot } from 'app/helptext/storage/vmware-snapshot/vmware-snapshot';
 import {
   MatchDatastoresWithDatasets, VmwareDatastore, VmwareFilesystem, VmwareSnapshot, VmwareSnapshotUpdate,
@@ -44,6 +45,8 @@ export class VmwareSnapshotFormComponent implements OnInit {
   });
 
   isLoading = false;
+
+  readonly requiresRoles = [Role.FullAdmin];
 
   readonly labels = {
     hostname: helptextVmwareSnapshot.VMware_snapshot_form_hostname_placeholder,

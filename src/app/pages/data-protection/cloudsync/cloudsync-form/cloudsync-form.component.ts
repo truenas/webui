@@ -17,6 +17,7 @@ import { Direction, directionNames } from 'app/enums/direction.enum';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { FromWizardToAdvancedSubmitted } from 'app/enums/from-wizard-to-advanced.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
+import { Role } from 'app/enums/role.enum';
 import { TransferMode, transferModeNames } from 'app/enums/transfer-mode.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextCloudsync } from 'app/helptext/data-protection/cloudsync/cloudsync';
@@ -118,6 +119,7 @@ export class CloudsyncFormComponent implements OnInit {
   `;
 
   readonly helptext = helptextCloudsync;
+  readonly requiresRoles = [Role.CloudSyncWrite];
 
   readonly directionOptions$ = of(mapToOptions(directionNames, this.translate));
   readonly transferModeOptions$ = of(mapToOptions(transferModeNames, this.translate));

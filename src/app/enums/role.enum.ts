@@ -21,6 +21,7 @@ export enum Role {
   NetworkInterfaceRead = 'NETWORK_INTERFACE_READ',
   NetworkInterfaceWrite = 'NETWORK_INTERFACE_WRITE',
   Readonly = 'READONLY',
+  CloudSyncWrite = 'CLOUD_SYNC_WRITE',
   ReplicationManager = 'REPLICATION_MANAGER',
   ReplicationTaskConfigRead = 'REPLICATION_TASK_CONFIG_READ',
   ReplicationTaskConfigWrite = 'REPLICATION_TASK_CONFIG_WRITE',

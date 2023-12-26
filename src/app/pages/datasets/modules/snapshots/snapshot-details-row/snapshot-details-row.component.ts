@@ -8,6 +8,7 @@ import _ from 'lodash';
 import {
   filter, switchMap, tap, map,
 } from 'rxjs/operators';
+import { Role } from 'app/enums/role.enum';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -36,6 +37,8 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
   get hasClones(): boolean {
     return !!this.snapshotInfo?.properties?.clones?.value;
   }
+
+  readonly Role = Role;
 
   constructor(
     private dialogService: DialogService,

@@ -12,6 +12,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -75,6 +76,7 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
 @NgModule({
   imports: [
     CommonModule,
+    CommonDirectivesModule,
     FlexLayoutModule,
     RouterModule.forChild(dataProtectionRoutes),
     EntityModule,

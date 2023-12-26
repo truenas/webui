@@ -8,6 +8,7 @@ import { merge } from 'rxjs';
 import { debounceTime, filter, switchMap } from 'rxjs/operators';
 import { Direction } from 'app/enums/direction.enum';
 import { FromWizardToAdvancedSubmitted } from 'app/enums/from-wizard-to-advanced.enum';
+import { Role } from 'app/enums/role.enum';
 import { SnapshotNamingOption } from 'app/enums/snapshot-naming-option.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { helptextReplicationWizard } from 'app/helptext/data-protection/replication/replication-wizard';
@@ -71,6 +72,8 @@ export class ReplicationFormComponent implements OnInit {
   isEligibleSnapshotsMessageRed = false;
   isSudoDialogShown = false;
   sshCredentials: KeychainSshCredentials[] = [];
+
+  readonly requiresRoles = [Role.ReplicationManager, Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
 
   constructor(
     private ws: WebSocketService,

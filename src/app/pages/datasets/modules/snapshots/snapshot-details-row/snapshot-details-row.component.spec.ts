@@ -6,6 +6,7 @@ import { SpectatorRouting } from '@ngneat/spectator';
 import { mockProvider, createRoutingFactory } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
@@ -34,6 +35,7 @@ describe('SnapshotDetailsRowComponent', () => {
       FakeFormatDateTimePipe,
     ],
     providers: [
+      mockAuth(),
       mockProvider(AppLoaderService),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),

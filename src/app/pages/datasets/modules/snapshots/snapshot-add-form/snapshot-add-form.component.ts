@@ -11,6 +11,7 @@ import {
   Observable, combineLatest, of, merge,
 } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { Role } from 'app/enums/role.enum';
 import { singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSnapshots } from 'app/helptext/storage/snapshots/snapshots';
 import { Dataset } from 'app/interfaces/dataset.interface';
@@ -56,6 +57,7 @@ export class SnapshotAddFormComponent implements OnInit {
   hasVmsInDataset = false;
 
   readonly helptext = helptextSnapshots;
+  readonly requiresRoles = [Role.ReplicationManager, Role.SnapshotWrite];
 
   constructor(
     private fb: FormBuilder,
