@@ -41,7 +41,7 @@ export class CredentialsSelectComponent extends IxSelectWithNewOption {
 
   setValueFromSlideInResult(
     result: ChainedSlideInCloseResponse,
-    valueSetterCallBack: (value: number) => void,
+    valueSetterCallBack: (value: string | number) => void,
   ): void {
     valueSetterCallBack((result.response as CloudCredential).id);
   }
