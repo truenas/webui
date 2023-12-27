@@ -27,6 +27,7 @@ import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { ReplicationRestoreDialogComponent } from 'app/pages/data-protection/replication/replication-restore-dialog/replication-restore-dialog.component';
+import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
@@ -157,11 +158,11 @@ export class ReplicationTaskCardComponent implements OnInit {
   }
 
   addReplicationTask(): void {
-    // const closer$ = this.chainedSlideInService.pushComponent(ReplicationWizardComponent, true);
-
-    // closer$.pipe(
-    //   filter((response) => !!response.response), untilDestroyed(this)
-    // ).subscribe(() => this.getReplicationTasks());
+    const closer$ = this.chainedSlideInService.pushComponent(ReplicationWizardComponent, true);
+    closer$.pipe(
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe(() => this.getReplicationTasks());
   }
 
   editReplicationTask(row: ReplicationTaskUi): void {

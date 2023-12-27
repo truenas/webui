@@ -24,6 +24,7 @@ import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-tab
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import {
   ReplicationRestoreDialogComponent,
 } from 'app/pages/data-protection/replication/replication-restore-dialog/replication-restore-dialog.component';
@@ -267,14 +268,13 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
     }
   }
 
-  doEdit(/* id: number */): void {
-    // const replication = this.entityList.rows.find((row) => row.id === id);
-    // const closer$ = this.chainedSlideInService.pushComponent(
-    //   ReplicationFormComponent, true, replication
-    // );
-    // closer$.pipe(
-    //   filter((response) => !!response.response), untilDestroyed(this)
-    // ).subscribe(() => this.entityList.getData());
+  doEdit(id: number): void {
+    const replication = this.entityList.rows.find((row) => row.id === id);
+    const closer$ = this.chainedSlideInService.pushComponent(ReplicationFormComponent, true, replication);
+    closer$.pipe(
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe(() => this.entityList.getData());
   }
 
   onCheckboxChange(row: ReplicationTaskUi): void {
