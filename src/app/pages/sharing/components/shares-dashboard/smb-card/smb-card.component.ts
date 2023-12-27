@@ -111,7 +111,7 @@ export class SmbCardComponent implements OnInit {
   }
 
   openForm(row?: SmbShare): void {
-    const slideInRef = this.slideInService.open(SmbFormComponent, { data: row });
+    const slideInRef = this.slideInService.open(SmbFormComponent, { data: { existingSmbShare: row } });
     slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.getSmbShares();
     });

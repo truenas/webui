@@ -86,7 +86,7 @@ export class NfsListComponent implements OnInit {
           iconName: 'edit',
           tooltip: this.translate.instant('Edit'),
           onClick: (nfsShare) => {
-            const slideInRef = this.slideInService.open(NfsFormComponent, { data: nfsShare });
+            const slideInRef = this.slideInService.open(NfsFormComponent, { data: { existingNfsShare: nfsShare } });
             slideInRef.slideInClosed$
               .pipe(filter(Boolean), untilDestroyed(this))
               .subscribe(() => this.dataProvider.load());

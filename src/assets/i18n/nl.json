@@ -343,6 +343,7 @@
   "No similar apps found.": "",
   "Normal VDEV type, used for primary storage operations. ZFS pools always have at least one DATA VDEV.": "",
   "Not Allowed": "",
+  "Not Shared": "",
   "Notifications": "",
   "Num Pending Deletes": "",
   "Number of days to retain local audit messages.": "",

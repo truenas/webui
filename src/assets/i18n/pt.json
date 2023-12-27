@@ -1494,6 +1494,7 @@
   "Nodes Virtual IP states do not agree.": "",
   "Normal VDEV type, used for primary storage operations. ZFS pools always have at least one DATA VDEV.": "",
   "Not Set": "",
+  "Not Shared": "",
   "Not enough free space. Maximum available: {space}": "",
   "Notransfer Timeout": "",
   "Num Pending Deletes": "",

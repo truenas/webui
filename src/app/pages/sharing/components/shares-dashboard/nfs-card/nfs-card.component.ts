@@ -91,7 +91,7 @@ export class NfsCardComponent implements OnInit {
   }
 
   openForm(row?: NfsShare): void {
-    const slideInRef = this.slideInService.open(NfsFormComponent, { data: row });
+    const slideInRef = this.slideInService.open(NfsFormComponent, { data: { existingNfsShare: row } });
 
     slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.getNfsShares();

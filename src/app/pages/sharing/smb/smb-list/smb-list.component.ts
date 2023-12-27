@@ -89,7 +89,7 @@ export class SmbListComponent implements EntityTableConfig<SmbShare> {
 
   doEdit(id: string | number): void {
     const slideInRef = this.slideInService.open(SmbFormComponent, {
-      data: this.entityList.rows.find((share) => share.id === id),
+      data: { existingSmbShare: this.entityList.rows.find((share) => share.id === id) },
     });
     slideInRef.slideInClosed$.pipe(take(1), untilDestroyed(this)).subscribe(() => this.entityList.getData());
   }
