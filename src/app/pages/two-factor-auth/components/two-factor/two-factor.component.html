@@ -26,13 +26,11 @@
     </div>
   </mat-card-actions>
 
-  <mat-card-actions>
-    <ng-container *ngIf="userTwoFactorAuthConfigured">
-      <ix-qr-viewer
-        *ngIf="authService.userTwoFactorConfig$ | async as qrInfo"
-        [qrInfo]="qrInfo?.provisioning_uri"
-        [showWarning]="globalTwoFactorEnabled && showQrCodeWarning"
-      ></ix-qr-viewer>
-    </ng-container>
+  <mat-card-actions *ngIf="userTwoFactorAuthConfigured">
+    <ix-qr-viewer
+      *ngIf="authService.userTwoFactorConfig$ | async as qrInfo"
+      [qrInfo]="qrInfo?.provisioning_uri"
+      [showWarning]="globalTwoFactorEnabled && showQrCodeWarning"
+    ></ix-qr-viewer>
   </mat-card-actions>
 </mat-card>
