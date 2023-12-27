@@ -129,6 +129,8 @@
           mat-icon-button
           type="button"
           [ixTest]="['edit', row.name]"
+          [matTooltip]="'Edit' | translate"
+          [attr.aria-label]="'Edit' | translate"
           (click)="doEdit(row)"
         >
           <ix-icon name="edit"></ix-icon>
