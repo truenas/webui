@@ -30,7 +30,6 @@ export class TwoFactorComponent implements OnInit {
   isDataLoading = false;
   isFormLoading = false;
   globalTwoFactorEnabled: boolean;
-  intervalHint: string;
 
   get global2FaMsg(): string {
     if (!this.globalTwoFactorEnabled) {

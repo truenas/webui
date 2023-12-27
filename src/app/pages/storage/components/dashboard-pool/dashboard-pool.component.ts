@@ -1,11 +1,12 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
+  ChangeDetectionStrategy, Component, Input,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, switchMap, tap } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
+import { Role } from 'app/enums/role.enum';
 import { helptextVolumes } from 'app/helptext/storage/volumes/volume-list';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Pool } from 'app/interfaces/pool.interface';
@@ -33,6 +34,8 @@ export class DashboardPoolComponent {
   @Input() isLoading: boolean;
   @Input() disks: StorageDashboardDisk[];
 
+  protected readonly Role = Role;
+
   constructor(
     private matDialog: MatDialog,
     private dialogService: DialogService,
@@ -41,7 +44,6 @@ export class DashboardPoolComponent {
     private loader: AppLoaderService,
     private ws: WebSocketService,
     private snackbar: SnackbarService,
-    private cdr: ChangeDetectorRef,
     private store: PoolsDashboardStore,
   ) {}
 

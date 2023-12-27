@@ -9,6 +9,7 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { CoreComponents } from 'app/core/core-components.module';
+import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
@@ -44,6 +45,7 @@ import { routes } from 'app/pages/storage/modules/disks/disks.routing';
     MatDividerModule,
     MatProgressBarModule,
     TestIdModule,
+    CommonDirectivesModule,
   ],
   declarations: [
     DiskBulkEditComponent,

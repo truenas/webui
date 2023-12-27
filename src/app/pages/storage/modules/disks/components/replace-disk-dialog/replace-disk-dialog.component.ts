@@ -7,6 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
 import { Observable, map } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { helptextVolumeStatus } from 'app/helptext/storage/volumes/volume-status';
 import { Option } from 'app/interfaces/option.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
@@ -38,6 +39,8 @@ export class ReplaceDiskDialogComponent implements OnInit {
   unusedDisks: UnusedDisk[] = [];
 
   readonly helptext = helptextVolumeStatus;
+
+  protected readonly Role = Role;
 
   constructor(
     private formBuilder: FormBuilder,

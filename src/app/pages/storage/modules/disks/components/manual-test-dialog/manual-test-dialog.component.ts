@@ -9,6 +9,7 @@ import {
   map, of, takeWhile,
 } from 'rxjs';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
+import { Role } from 'app/enums/role.enum';
 import { SmartTestType } from 'app/enums/smart-test-type.enum';
 import { IncomingWebsocketMessage } from 'app/interfaces/api-message.interface';
 import { ManualSmartTest } from 'app/interfaces/smart-test.interface';
@@ -62,6 +63,8 @@ export class ManualTestDialogComponent {
   get hasStartedTests(): boolean {
     return Boolean(this.startedTests.length);
   }
+
+  protected readonly Role = Role;
 
   constructor(
     private ws: WebSocketService,

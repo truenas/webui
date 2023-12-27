@@ -2,7 +2,6 @@ import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
 import { MockAuthService } from 'app/core/testing/classes/mock-auth.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Role } from 'app/enums/role.enum';
 import { IscsiCardComponent } from 'app/pages/sharing/components/shares-dashboard/iscsi-card/iscsi-card.component';
 import { NfsCardComponent } from 'app/pages/sharing/components/shares-dashboard/nfs-card/nfs-card.component';
@@ -22,9 +21,6 @@ describe('SharesDashboardComponent', () => {
       ),
     ],
     providers: [
-      mockWebsocket([
-        mockCall('cluster.utils.is_clustered', true),
-      ]),
       mockAuth(),
     ],
   });

@@ -2,7 +2,6 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import _ from 'lodash';
 import { take } from 'rxjs/operators';
 import { shared, helptextSharingSmb } from 'app/helptext/sharing';
 import { helptextVolumes } from 'app/helptext/storage/volumes/volume-list';
@@ -80,18 +79,6 @@ export class SmbListComponent implements EntityTableConfig<SmbShare> {
     private appLoader: AppLoaderService,
   ) {}
 
-  preInit(entityList: EntityTableComponent<SmbShare>): void {
-    this.entityList = entityList;
-    this.ws.call('cluster.utils.is_clustered').pipe(untilDestroyed(this)).subscribe((isClustered) => {
-      this.isClustered = isClustered;
-      if (this.isClustered) {
-        this.addBtnDisabled = true;
-        this.noAdd = true;
-        _.find(this.entityList.allColumns, { name: helptextSharingSmb.column_enabled }).disabled = true;
-      }
-    });
-  }
-
   afterInit(entityList: EntityTableComponent<SmbShare>): void {
     this.entityList = entityList;
   }
@@ -128,26 +115,23 @@ export class SmbListComponent implements EntityTableConfig<SmbShare> {
         label: helptextSharingSmb.action_share_acl,
         onClick: (row: SmbShare) => {
           this.appLoader.open();
-          this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).pipe(untilDestroyed(this)).subscribe(
-            (isLocked) => {
-              if (isLocked) {
+
+          if (row.locked) {
+            this.appLoader.close();
+            this.lockedPathDialog(row.path);
+          } else {
+            // A home share has a name (homes) set; row.name works for other shares
+            const searchName = row.home ? 'homes' : row.name;
+            this.ws.call('sharing.smb.getacl', [{ share_name: searchName }])
+              .pipe(untilDestroyed(this))
+              .subscribe((shareAcl) => {
                 this.appLoader.close();
-                this.lockedPathDialog(row.path);
-              } else {
-                // A home share has a name (homes) set; row.name works for other shares
-                const searchName = row.home ? 'homes' : row.name;
-                this.ws.call('sharing.smb.getacl', [{ share_name: searchName }])
-                  .pipe(untilDestroyed(this))
-                  .subscribe((shareAcl) => {
-                    this.appLoader.close();
-                    const slideInRef = this.slideInService.open(SmbAclComponent, { data: shareAcl.share_name });
-                    slideInRef.slideInClosed$.pipe(take(1), untilDestroyed(this)).subscribe(() => {
-                      this.entityList.getData();
-                    });
-                  });
-              }
-            },
-          );
+                const slideInRef = this.slideInService.open(SmbAclComponent, { data: shareAcl.share_name });
+                slideInRef.slideInClosed$.pipe(take(1), untilDestroyed(this)).subscribe(() => {
+                  this.entityList.getData();
+                });
+              });
+          }
         },
       },
       {
@@ -158,26 +142,15 @@ export class SmbListComponent implements EntityTableConfig<SmbShare> {
         matTooltip: helptextVolumes.acl_edit_msg,
         label: helptextSharingSmb.action_edit_acl,
         onClick: (row: SmbShare) => {
-          this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).pipe(untilDestroyed(this)).subscribe({
-            next: (isLocked) => {
-              if (isLocked) {
-                this.lockedPathDialog(row.path);
-              } else {
-                this.router.navigate(['/', 'datasets', 'acl', 'edit'], {
-                  queryParams: {
-                    path: row.path_local,
-                  },
-                });
-              }
-            },
-            error: (error: WebsocketError) => {
-              this.dialogService.error({
-                title: helptextSharingSmb.action_edit_acl_dialog.title,
-                message: error.reason,
-                backtrace: error.trace?.formatted,
-              });
-            },
-          });
+          if (row.locked) {
+            this.lockedPathDialog(row.path);
+          } else {
+            this.router.navigate(['/', 'datasets', 'acl', 'edit'], {
+              queryParams: {
+                path: row.path_local,
+              },
+            });
+          }
         },
       },
       {

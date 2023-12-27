@@ -154,7 +154,6 @@ describe('SmbFormComponent', () => {
         mockCall('service.restart'),
         mockCall('sharing.smb.presets', { ...presets }),
         mockCall('filesystem.acl_is_trivial', false),
-        mockCall('pool.dataset.path_in_locked_datasets', false),
       ]),
       mockProvider(IxSlideInService),
       mockProvider(Router),

@@ -12,6 +12,7 @@ import {
   Observable, UnaryFunction, map, of, pipe, switchMap,
 } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
+import { Role } from 'app/enums/role.enum';
 import { helptextImport } from 'app/helptext/storage/volumes/volume-import-wizard';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -48,6 +49,8 @@ export class ImportPoolComponent implements OnInit {
     options: of<Option[]>([]),
   };
 
+  protected readonly Role = Role;
+
   constructor(
     private fb: FormBuilder,
     private slideInRef: IxSlideInRef<ImportPoolComponent>,
@@ -82,6 +85,9 @@ export class ImportPoolComponent implements OnInit {
         this.cdr.markForCheck();
       },
       error: (error: WebsocketError | Job) => {
+        this.isLoading = false;
+        this.cdr.markForCheck();
+
         this.dialogService.error(this.errorHandler.parseError(error));
       },
     });
