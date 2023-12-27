@@ -768,6 +768,7 @@
   "Error occurred": "",
   "Error starting service {serviceName}.": "",
   "Error stopping service {serviceName}.": "",
+  "Error validating pool name": "",
   "Error:": "",
   "Est. Usable Raw Capacity": "",
   "Estimated Raw Capacity": "",

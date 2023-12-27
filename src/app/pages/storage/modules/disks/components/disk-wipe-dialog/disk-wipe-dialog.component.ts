@@ -6,6 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { DiskWipeMethod } from 'app/enums/disk-wipe-method.enum';
+import { Role } from 'app/enums/role.enum';
 import { helptextDisks } from 'app/helptext/storage/disks/disks';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { DialogService } from 'app/services/dialog.service';
@@ -38,6 +39,8 @@ export class DiskWipeDialogComponent {
       value: DiskWipeMethod.FullRandom,
     },
   ]);
+
+  protected readonly Role = Role;
 
   constructor(
     private formBuilder: FormBuilder,

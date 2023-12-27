@@ -23,24 +23,28 @@
     </div>
   </mat-card-content>
   <mat-card-actions *ngIf="isDisk">
-    <ng-container *ngIf="canExtendDisk" [ngTemplateOutlet]="extend"></ng-container>
-    <ng-container *ngIf="canRemoveDisk" [ngTemplateOutlet]="remove"></ng-container>
+    <ng-container *ixRequiresRoles="[Role.FullAdmin]">
+      <ng-container *ngIf="canExtendDisk" [ngTemplateOutlet]="extend"></ng-container>
+      <ng-container *ngIf="canRemoveDisk" [ngTemplateOutlet]="remove"></ng-container>
 
-    <button *ngIf="canDetachDisk" mat-button ixTest="detach" (click)="onDetach()">
-      {{ 'Detach' | translate }}
-    </button>
+      <button *ngIf="canDetachDisk" mat-button ixTest="detach" (click)="onDetach()">
+        {{ 'Detach' | translate }}
+      </button>
 
-    <button *ngIf="canOfflineDisk" mat-button ixTest="offline" (click)="onOffline()">
-      {{ 'Offline' | translate }}
-    </button>
+      <button *ngIf="canOfflineDisk" mat-button ixTest="offline" (click)="onOffline()">
+        {{ 'Offline' | translate }}
+      </button>
 
-    <button *ngIf="canOnlineDisk" mat-button ixTest="online" (click)="onOnline()">
-      {{ 'Online' | translate }}
-    </button>
+      <button *ngIf="canOnlineDisk" mat-button ixTest="online" (click)="onOnline()">
+        {{ 'Online' | translate }}
+      </button>
+    </ng-container>
   </mat-card-actions>
   <mat-card-actions *ngIf="isMirror">
-    <ng-container [ngTemplateOutlet]="extend"></ng-container>
-    <ng-container *ngIf="canRemoveVDEV" [ngTemplateOutlet]="remove"></ng-container>
+    <ng-container *ixRequiresRoles="[Role.FullAdmin]">
+      <ng-container [ngTemplateOutlet]="extend"></ng-container>
+      <ng-container *ngIf="canRemoveVDEV" [ngTemplateOutlet]="remove"></ng-container>
+    </ng-container>
   </mat-card-actions>
 </mat-card>
 
