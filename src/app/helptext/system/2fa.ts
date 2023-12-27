@@ -30,8 +30,7 @@ export const helptext2fa = {
     },
 
     card: {
-      toleranceWindowTooltip: T('Extends the validity of OTP by that many windows of intervals \
-   before and after the current interval'),
+      toleranceWindowTooltip: T('Extends the validity of OTP by that many windows of intervals before and after the current interval'),
     },
   },
 };

@@ -61,7 +61,7 @@
   "Enter a password for the VNC display.": "",
   "Export As CSV": "",
   "Exporters": "",
-  "Extends the validity of OTP by that many windows of intervals    before and after the current interval": "",
+  "Extends the validity of OTP by that many windows of intervals before and after the current interval": "",
   "FTP": "",
   "Failed Authentication: {credentials}": "",
   "Feedback Type": "",
