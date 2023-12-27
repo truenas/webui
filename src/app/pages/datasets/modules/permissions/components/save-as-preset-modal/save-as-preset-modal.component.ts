@@ -15,7 +15,6 @@ import {
   Acl, AclTemplateByPath, AclTemplateCreateParams, NfsAclItem, PosixAclItem,
 } from 'app/interfaces/acl.interface';
 import { DsUncachedGroup, DsUncachedUser } from 'app/interfaces/ds-cache.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SaveAsPresetModalConfig } from 'app/pages/datasets/modules/permissions/interfaces/save-as-preset-modal-config.interface';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
@@ -135,8 +134,8 @@ export class SaveAsPresetModalComponent implements OnInit {
         requests$.push(
           this.userService.getUserByName(ace.who).pipe(
             tap((user: DsUncachedUser) => userWhoToIds.set(ace.who, user.pw_uid)),
-            catchError((error: WebsocketError) => {
-              this.dialogService.error(this.errorHandler.parseWsError(error));
+            catchError((error: unknown) => {
+              this.dialogService.error(this.errorHandler.parseError(error));
               return EMPTY;
             }),
           ),
@@ -146,8 +145,8 @@ export class SaveAsPresetModalComponent implements OnInit {
         requests$.push(
           this.userService.getGroupByName(ace.who).pipe(
             tap((group: DsUncachedGroup) => groupWhoToIds.set(ace.who, group.gr_gid)),
-            catchError((error: WebsocketError) => {
-              this.dialogService.error(this.errorHandler.parseWsError(error));
+            catchError((error: unknown) => {
+              this.dialogService.error(this.errorHandler.parseError(error));
               return EMPTY;
             }),
           ),

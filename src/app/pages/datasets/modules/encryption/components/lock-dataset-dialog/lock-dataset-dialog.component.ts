@@ -60,7 +60,7 @@ export class LockDatasetDialogComponent {
       next: (job) => {
         jobDialogRef.close();
         this.dialogRef.close(true);
-        this.dialogService.error(this.errorHandler.parseJobError(job));
+        this.dialogService.error(this.errorHandler.parseError(job));
       },
       error: (error: WebsocketError | Job) => {
         this.dialogService.error(this.errorHandler.parseError(error));

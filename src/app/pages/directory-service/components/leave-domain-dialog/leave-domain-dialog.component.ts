@@ -6,7 +6,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { JobState } from 'app/enums/job-state.enum';
 import { helptextActiveDirectory } from 'app/helptext/directory-service/active-directory';
 import { LeaveActiveDirectory } from 'app/interfaces/active-directory-config.interface';
-import { Job } from 'app/interfaces/job.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -53,8 +52,8 @@ export class LeaveDomainDialogComponent {
 
           this.dialogRef.close(true);
         },
-        error: (error: Job) => {
-          this.dialogService.error(this.errorHandler.parseJobError(error));
+        error: (error: unknown) => {
+          this.dialogService.error(this.errorHandler.parseError(error));
         },
       });
   }

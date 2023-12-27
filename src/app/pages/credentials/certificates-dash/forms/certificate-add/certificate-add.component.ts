@@ -6,7 +6,6 @@ import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { CertificateCreate, CertificateProfile } from 'app/interfaces/certificate.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { SummarySection } from 'app/modules/common/summary/summary.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -89,12 +88,12 @@ export class CertificateAddComponent {
           this.snackbar.success(this.translate.instant('Certificate has been created.'));
           this.slideInRef.close(true);
         },
-        error: (error: WebsocketError) => {
+        error: (error: unknown) => {
           this.isLoading = false;
           this.cdr.markForCheck();
 
           // TODO: Need to update error handler to open step with an error.
-          this.dialogService.error(this.errorHandler.parseWsError(error));
+          this.dialogService.error(this.errorHandler.parseError(error));
         },
       });
   }

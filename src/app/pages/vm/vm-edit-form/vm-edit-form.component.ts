@@ -16,7 +16,6 @@ import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { VirtualMachine, VirtualMachineUpdate } from 'app/interfaces/virtual-machine.interface';
 import { VmPciPassthroughDevice } from 'app/interfaces/vm-device.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
@@ -157,10 +156,10 @@ export class VmEditFormComponent implements OnInit {
         this.snackbar.success(this.translate.instant('VM updated successfully.'));
         this.slideInRef.close(true);
       },
-      error: (error: WebsocketError) => {
+      error: (error: unknown) => {
         this.isLoading = false;
         this.cdr.markForCheck();
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+        this.dialogService.error(this.errorHandler.parseError(error));
       },
     });
   }

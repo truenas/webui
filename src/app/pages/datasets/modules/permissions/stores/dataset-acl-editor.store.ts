@@ -77,8 +77,8 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
               isLoading: false,
             });
           }),
-          catchError((error: WebsocketError) => {
-            this.dialogService.error(this.errorHandler.parseWsError(error));
+          catchError((error: unknown) => {
+            this.dialogService.error(this.errorHandler.parseError(error));
 
             this.patchState({
               isLoading: false,
@@ -211,7 +211,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
         dialogRef.componentInstance.failure.pipe(takeUntil(this.destroy$)).subscribe({
           next: (failedJob) => {
             dialogRef.close();
-            this.dialogService.error(this.errorHandler.parseJobError(failedJob));
+            this.dialogService.error(this.errorHandler.parseError(failedJob));
           },
           error: (error: WebsocketError | Job) => {
             dialogRef.close();
@@ -295,8 +295,8 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
         requests.push(
           this.userService.getUserByName(ace.who).pipe(
             tap((user) => userWhoToIds.set(ace.who, user.pw_uid)),
-            catchError((error: WebsocketError) => {
-              this.dialogService.error(this.errorHandler.parseWsError(error));
+            catchError((error: unknown) => {
+              this.dialogService.error(this.errorHandler.parseError(error));
               markAceAsHavingErrors(index);
               return EMPTY;
             }),
@@ -310,8 +310,8 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
         requests.push(
           this.userService.getGroupByName(ace.who).pipe(
             tap((group) => groupWhoToIds.set(ace.who, group.gr_gid)),
-            catchError((error: WebsocketError) => {
-              this.dialogService.error(this.errorHandler.parseWsError(error));
+            catchError((error: unknown) => {
+              this.dialogService.error(this.errorHandler.parseError(error));
               markAceAsHavingErrors(index);
               return EMPTY;
             }),
@@ -323,8 +323,8 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
     requests.push(
       this.userService.getUserByName(options.owner).pipe(
         tap((user) => userWhoToIds.set(options.owner, user.pw_uid)),
-        catchError((error: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
+        catchError((error: unknown) => {
+          this.dialogService.error(this.errorHandler.parseError(error));
           return EMPTY;
         }),
       ),
@@ -333,8 +333,8 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
     requests.push(
       this.userService.getGroupByName(options.ownerGroup).pipe(
         tap((group) => groupWhoToIds.set(options.ownerGroup, group.gr_gid)),
-        catchError((error: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
+        catchError((error: unknown) => {
+          this.dialogService.error(this.errorHandler.parseError(error));
           return EMPTY;
         }),
       ),

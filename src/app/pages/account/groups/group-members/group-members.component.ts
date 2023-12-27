@@ -72,7 +72,7 @@ export class GroupMembersComponent implements OnInit {
       error: (error) => {
         this.isFormLoading = false;
         this.cdr.markForCheck();
-        this.dialog.error(this.errorHandler.parseWsError(error));
+        this.dialog.error(this.errorHandler.parseError(error));
       },
     });
   }

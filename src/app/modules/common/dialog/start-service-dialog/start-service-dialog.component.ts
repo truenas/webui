@@ -9,7 +9,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { Observable, forkJoin } from 'rxjs';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { Service } from 'app/interfaces/service.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -98,9 +97,9 @@ export class StartServiceDialogComponent implements OnInit {
           this.isLoading = false;
           this.dialogRef.close(result);
         },
-        error: (error: WebsocketError) => {
+        error: (error: unknown) => {
           this.isLoading = false;
-          this.dialogService.error(this.errorHandler.parseWsError(error));
+          this.dialogService.error(this.errorHandler.parseError(error));
           this.dialogRef.close({
             start: false,
             startAutomatically: false,

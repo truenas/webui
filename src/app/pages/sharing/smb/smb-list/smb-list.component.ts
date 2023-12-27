@@ -190,9 +190,9 @@ export class SmbListComponent implements EntityTableConfig<SmbShare> {
       next: (share) => {
         row.enabled = share.enabled;
       },
-      error: (error: WebsocketError) => {
+      error: (error: unknown) => {
         row.enabled = !row.enabled;
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+        this.dialogService.error(this.errorHandler.parseError(error));
       },
     });
   }

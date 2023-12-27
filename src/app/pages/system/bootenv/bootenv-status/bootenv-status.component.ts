@@ -12,7 +12,6 @@ import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { DeviceNestedDataNode } from 'app/interfaces/device-nested-data-node.interface';
 import { PoolInstance } from 'app/interfaces/pool.interface';
 import { TopologyItem } from 'app/interfaces/storage.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { NestedTreeDataSource } from 'app/modules/ix-tree/nested-tree-datasource';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { BootPoolAttachDialogComponent } from 'app/pages/system/bootenv/boot-pool-attach/boot-pool-attach-dialog.component';
@@ -82,10 +81,10 @@ export class BootStatusListComponent implements OnInit {
         this.isLoading$.next(false);
         this.cdr.markForCheck();
       },
-      error: (error: WebsocketError) => {
+      error: (error: unknown) => {
         this.isLoading$.next(false);
         this.cdr.markForCheck();
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+        this.dialogService.error(this.errorHandler.parseError(error));
       },
     });
   }
