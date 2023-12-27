@@ -58,9 +58,9 @@ export class AllowedAddressesFormComponent implements OnInit {
         this.isFormLoading = false;
         this.cdr.markForCheck();
       },
-      error: (error: WebsocketError) => {
+      error: (error: unknown) => {
         this.isFormLoading = false;
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+        this.dialogService.error(this.errorHandler.parseError(error));
         this.cdr.markForCheck();
       },
     });
@@ -113,9 +113,9 @@ export class AllowedAddressesFormComponent implements OnInit {
         this.cdr.markForCheck();
         this.handleServiceRestart();
       },
-      error: (error: WebsocketError) => {
+      error: (error: unknown) => {
         this.isFormLoading = false;
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+        this.dialogService.error(this.errorHandler.parseError(error));
         this.cdr.markForCheck();
       },
     });

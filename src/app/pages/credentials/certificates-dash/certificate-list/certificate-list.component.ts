@@ -173,7 +173,7 @@ export class CertificateListComponent implements OnInit {
           this.certificateDeleted.emit();
         });
         jobDialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
-          this.dialogService.error(this.errorHandler.parseJobError(err));
+          this.dialogService.error(this.errorHandler.parseError(err));
         });
       });
   }
@@ -231,8 +231,8 @@ export class CertificateListComponent implements OnInit {
               },
             });
         },
-        error: (err: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(err));
+        error: (err: unknown) => {
+          this.dialogService.error(this.errorHandler.parseError(err));
         },
       });
   }
@@ -261,7 +261,7 @@ export class CertificateListComponent implements OnInit {
         });
         dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((failedJob) => {
           this.matDialog.closeAll();
-          this.dialogService.error(this.errorHandler.parseJobError(failedJob));
+          this.dialogService.error(this.errorHandler.parseError(failedJob));
         });
       });
   }

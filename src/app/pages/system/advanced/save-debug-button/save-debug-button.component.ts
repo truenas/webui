@@ -86,7 +86,7 @@ export class SaveDebugButtonComponent {
                 });
               dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
                 this.matDialog.closeAll();
-                this.dialogService.error(this.errorHandler.parseJobError(error));
+                this.dialogService.error(this.errorHandler.parseError(error));
               });
             }),
           );

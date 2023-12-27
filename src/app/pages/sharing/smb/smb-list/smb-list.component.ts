@@ -6,7 +6,6 @@ import { take } from 'rxjs/operators';
 import { shared, helptextSharingSmb } from 'app/helptext/sharing';
 import { helptextVolumes } from 'app/helptext/storage/volumes/volume-list';
 import { SmbShare } from 'app/interfaces/smb-share.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -176,9 +175,9 @@ export class SmbListComponent implements EntityTableConfig<SmbShare> {
       next: (share) => {
         row.enabled = share.enabled;
       },
-      error: (error: WebsocketError) => {
+      error: (error: unknown) => {
         row.enabled = !row.enabled;
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+        this.dialogService.error(this.errorHandler.parseError(error));
       },
     });
   }

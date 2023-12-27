@@ -94,7 +94,7 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
       }),
       catchError((error) => {
         this.isFormLoading = false;
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+        this.dialogService.error(this.errorHandler.parseError(error));
         this.cdr.markForCheck();
         return EMPTY;
       }),

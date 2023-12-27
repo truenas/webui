@@ -5,7 +5,6 @@ import { FormBuilder } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { helptextKerberosSettings } from 'app/helptext/directory-service/kerberos-settings';
 import { KerberosConfigUpdate } from 'app/interfaces/kerberos-config.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -49,8 +48,8 @@ export class KerberosSettingsComponent implements OnInit {
         this.isFormLoading = false;
         this.cdr.markForCheck();
       },
-      error: (error: WebsocketError) => {
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+      error: (error: unknown) => {
+        this.dialogService.error(this.errorHandler.parseError(error));
         this.isFormLoading = false;
         this.cdr.markForCheck();
       },

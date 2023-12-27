@@ -12,7 +12,6 @@ import {
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingSmb } from 'app/helptext/sharing/smb/smb';
 import { SmbShare, SmbSharesec } from 'app/interfaces/smb-share.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
@@ -152,8 +151,8 @@ export class SmbCardComponent implements OnInit {
               this.getSmbShares();
             });
           },
-          error: (error: WebsocketError) => {
-            this.dialogService.error(this.errorHandler.parseWsError(error));
+          error: (error: unknown) => {
+            this.dialogService.error(this.errorHandler.parseError(error));
           },
         });
     }
@@ -189,9 +188,9 @@ export class SmbCardComponent implements OnInit {
       next: () => {
         this.getSmbShares();
       },
-      error: (error: WebsocketError) => {
+      error: (error: unknown) => {
         this.getSmbShares();
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+        this.dialogService.error(this.errorHandler.parseError(error));
       },
     });
   }

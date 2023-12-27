@@ -5,7 +5,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs';
 import { AlertServiceType } from 'app/enums/alert-service-type.enum';
 import { AlertService } from 'app/interfaces/alert-service.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { AlertServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-service.component';
@@ -101,9 +100,9 @@ export class AlertServiceListComponent implements EntityTableConfig<AlertService
             row.enabled = !row.enabled;
           }
         },
-        error: (error: WebsocketError) => {
+        error: (error: unknown) => {
           row.enabled = !row.enabled;
-          this.dialogService.error(this.errorHandler.parseWsError(error));
+          this.dialogService.error(this.errorHandler.parseError(error));
         },
       });
   }

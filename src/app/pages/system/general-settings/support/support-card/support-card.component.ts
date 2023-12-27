@@ -11,7 +11,6 @@ import { Observable, of, switchMap } from 'rxjs';
 import { filter, tap } from 'rxjs/operators';
 import { GiB } from 'app/constants/bytes.constant';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { FeedbackDialogComponent } from 'app/modules/ix-feedback/feedback-dialog/feedback-dialog.component';
 import { FeedbackType } from 'app/modules/ix-feedback/interfaces/feedback.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -182,8 +181,8 @@ export class SupportCardComponent implements OnInit {
             this.translate.instant(helptext.is_production_dialog.message),
           );
         },
-        error: (error: WebsocketError) => {
-          this.dialog.error(this.errorHandler.parseWsError(error));
+        error: (error: unknown) => {
+          this.dialog.error(this.errorHandler.parseError(error));
         },
       });
   }

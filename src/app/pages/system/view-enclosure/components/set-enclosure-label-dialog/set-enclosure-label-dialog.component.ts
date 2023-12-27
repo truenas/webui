@@ -5,7 +5,6 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -67,8 +66,8 @@ export class SetEnclosureLabelDialogComponent implements OnInit {
         next: () => {
           this.dialogRef.close(newLabel);
         },
-        error: (error: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
+        error: (error: unknown) => {
+          this.dialogService.error(this.errorHandler.parseError(error));
           this.dialogRef.close();
         },
       });

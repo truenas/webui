@@ -3,6 +3,8 @@ import { Injector } from '@angular/core';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
+import { ResponseErrorType } from 'app/enums/response-error-type.enum';
+import { WebsocketErrorName } from 'app/enums/websocket-error-name.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/services/dialog.service';
@@ -10,15 +12,12 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 const error = new Error('Dummy Error');
 const wsError = {
-  error: 1,
-  extra: [['SOMETHING'], ['SOMETHING ELSE']],
-  reason: 'SOME REASON',
-  trace: {
-    class: 'CLASS',
-    formatted: 'FORMATTED',
-    frames: null,
-  },
-  type: null,
+  error: 11,
+  errname: WebsocketErrorName.Again,
+  type: ResponseErrorType.Validation,
+  reason: '[EINVAL] user_update.smb: This attribute cannot be changed\n[EINVAL] user_update.smb: Password must be changed in order to enable SMB authentication\n',
+  trace: {},
+  extra: [],
 } as WebsocketError;
 const failedJob = {
   method: 'cloudsync.sync_onetime',
@@ -62,6 +61,10 @@ describe('ErrorHandlerService', () => {
     ],
   });
 
+  beforeAll(() => {
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+  });
+
   beforeEach(() => {
     spectator = createService();
 
@@ -84,6 +87,10 @@ describe('ErrorHandlerService', () => {
     });
   });
 
+  afterAll(() => {
+    jest.restoreAllMocks();
+  });
+
   describe('handleError', () => {
     it('logs normal error to console and sentry', () => {
       jest.spyOn(spectator.service, 'parseError');
@@ -102,9 +109,9 @@ describe('ErrorHandlerService', () => {
       spectator.service.handleError(wsError);
 
       expect(spectator.service.logToSentry).toHaveBeenCalledWith({
-        backtrace: 'FORMATTED',
-        message: 'SOME REASON',
-        title: 'CLASS',
+        backtrace: '',
+        message: wsError.reason,
+        title: 'VALIDATION',
       });
     });
 
@@ -183,6 +190,37 @@ describe('ErrorHandlerService', () => {
       expect(console.error).toHaveBeenCalledWith('Unknown error code', 510);
 
       expect(errorReport).toEqual({ message: 'Fatal error! Check logs.', title: 'Error (510)' });
+    });
+  });
+
+  describe('parseError', () => {
+    it('parses a websocket error', () => {
+      const errorReport = spectator.service.parseError(wsError);
+
+      expect(errorReport).toEqual({
+        title: 'VALIDATION',
+        message: wsError.reason,
+        backtrace: '',
+      });
+    });
+
+    it('parses a failed job', () => {
+      const errorReport = spectator.service.parseError(failedJob);
+
+      expect(errorReport).toEqual([{
+        title: 'Error: path',
+        message: 'DUMMY_ERROR',
+        backtrace: 'EXCEPTION',
+      }]);
+    });
+
+    it('parses a generic JS error', () => {
+      const errorReport = spectator.service.parseError(error);
+
+      expect(errorReport).toEqual({
+        title: 'Error',
+        message: 'Dummy Error',
+      });
     });
   });
 });

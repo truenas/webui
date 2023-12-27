@@ -249,7 +249,7 @@ export class SshConnectionFormComponent implements OnInit {
     return this.ws.call('keychaincredential.setup_ssh_connection', [params]).pipe(
       catchError((error: WebsocketError) => {
         if (error.errname.includes(sslCertificationError) || error.reason.includes(sslCertificationError)) {
-          return this.dialogService.error(this.errorHandler.parseWsError(error)).pipe(
+          return this.dialogService.error(this.errorHandler.parseError(error)).pipe(
             switchMap(() => {
               return this.dialogService.confirm({
                 title: this.translate.instant('Confirm'),
