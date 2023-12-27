@@ -22,6 +22,7 @@ import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
 import { ServiceExtraActionsComponent } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-extra-actions.component';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { SmbCardComponent } from 'app/pages/sharing/components/shares-dashboard/smb-card/smb-card.component';
+import { SmbAclComponent } from 'app/pages/sharing/smb/smb-acl/smb-acl.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
 import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -167,6 +168,8 @@ describe('SmbCardComponent', () => {
       'sharing.smb.getacl',
       [{ share_name: 'homes' }],
     );
+
+    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(SmbAclComponent, { data: 'test' });
   });
 
   it('handles edit Filesystem ACL', async () => {
@@ -176,6 +179,9 @@ describe('SmbCardComponent', () => {
     const editIcon = await table.getHarnessInCell(IxIconHarness.with({ name: 'security' }), 1, 4);
     await editIcon.click();
 
-    expect(router.navigate).toHaveBeenCalledWith(['/', 'datasets', 'acl', 'edit'], { queryParams: { path: '/mnt/APPS/smb1' } });
+    expect(router.navigate).toHaveBeenCalledWith(
+      ['/', 'datasets', 'acl', 'edit'],
+      { queryParams: { path: '/mnt/APPS/smb1' } },
+    );
   });
 });
