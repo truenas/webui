@@ -6,6 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   Observable, catchError, debounceTime, distinctUntilChanged, of, switchMap, take,
 } from 'rxjs';
+import { ErrorReport } from 'app/interfaces/error-report.interface';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -39,9 +40,10 @@ export class PoolWizardNameValidationService {
               });
           }),
           catchError((error) => {
+            const errorReports = this.errorHandler.parseError(error) as ErrorReport;
             return of({
               customValidator: {
-                message: this.errorHandler.parseWsError(error)?.message || this.translate.instant('Error validating pool name'),
+                message: errorReports?.message || this.translate.instant('Error validating pool name'),
               },
               invalidPoolName: true,
             });
