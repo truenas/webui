@@ -12,17 +12,17 @@ import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { ChainedSlideInCloseResponse } from 'app/services/ix-chained-slide-in.service';
 
 @Component({
-  selector: 'ix-credentials-select',
-  templateUrl: './credentials-select.component.html',
+  selector: 'ix-cloud-credentials-select',
+  templateUrl: './cloud-credentials-select.component.html',
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => CredentialsSelectComponent),
+      useExisting: forwardRef(() => CloudCredentialsSelectComponent),
       multi: true,
     },
   ],
 })
-export class CredentialsSelectComponent extends IxSelectWithNewOption {
+export class CloudCredentialsSelectComponent extends IxSelectWithNewOption {
   @Input() label: string;
   @Input() tooltip: string;
   @Input() required: boolean;

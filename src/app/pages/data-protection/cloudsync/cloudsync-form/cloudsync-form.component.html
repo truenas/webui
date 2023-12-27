@@ -58,21 +58,19 @@
         >
           <a
             ixTest="manage-credentials"
-            [routerLink]="['/', 'credentials', 'backup-credentials']"
-            (click)="closer$.next(null)"
-
+            (click)="goToManageCredentials()"
           >
             <div class="link">
               {{ 'Manage Credentials' | translate }}<ix-icon name="open_in_new"></ix-icon>
             </div>
           </a>
-          <ix-credentials-select
+          <ix-cloud-credentials-select
             *ngIf="form.controls.credentials.enabled"
             formControlName="credentials"
             [label]="helptext.credentials_placeholder | translate"
             [tooltip]="helptext.credentials_tooltip | translate"
             [required]="true"
-          ></ix-credentials-select>
+          ></ix-cloud-credentials-select>
           <ix-select
             *ngIf="form.controls.bucket.enabled"
             formControlName="bucket"

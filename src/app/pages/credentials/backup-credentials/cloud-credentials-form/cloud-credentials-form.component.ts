@@ -71,7 +71,7 @@ export class CloudCredentialsFormComponent implements OnInit {
     private snackbarService: SnackbarService,
     private cloudCredentialService: CloudCredentialService,
     @Inject(SLIDE_IN_DATA) private credential: CloudsyncCredential,
-    @Inject(SLIDE_IN_CLOSER) protected closer$: Subject<ChainedSlideInCloseResponse>,
+    @Inject(SLIDE_IN_CLOSER) private closer$: Subject<ChainedSlideInCloseResponse>,
   ) {
     // Has to be earlier than potential `setCredentialsForEdit` call
     this.setFormEvents();
@@ -216,7 +216,7 @@ export class CloudCredentialsFormComponent implements OnInit {
         },
         error: (error: WebsocketError) => {
           this.dialogService.error(this.errorHandler.parseWsError(error));
-          this.closer$.next(null);
+          this.closer$.next({ response: null, error });
         },
       });
   }

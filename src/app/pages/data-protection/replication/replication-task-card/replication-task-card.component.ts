@@ -27,10 +27,9 @@ import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { ReplicationRestoreDialogComponent } from 'app/pages/data-protection/replication/replication-restore-dialog/replication-restore-dialog.component';
-import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
@@ -109,7 +108,8 @@ export class ReplicationTaskCardComponent implements OnInit {
   });
 
   constructor(
-    private slideInService: IxSlideInService,
+    private chainedSlideInService: IxChainedSlideInService,
+    // private slideInService: IxSlideInService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
     private ws: WebSocketService,
@@ -157,16 +157,17 @@ export class ReplicationTaskCardComponent implements OnInit {
   }
 
   addReplicationTask(): void {
-    const slideInRef = this.slideInService.open(ReplicationWizardComponent, { wide: true });
-    slideInRef.slideInClosed$
-      .pipe(filter(Boolean), untilDestroyed(this))
-      .subscribe(() => this.getReplicationTasks());
+    // const closer$ = this.chainedSlideInService.pushComponent(ReplicationWizardComponent, true);
+
+    // closer$.pipe(
+    //   filter((response) => !!response.response), untilDestroyed(this)
+    // ).subscribe(() => this.getReplicationTasks());
   }
 
   editReplicationTask(row: ReplicationTaskUi): void {
-    const slideInRef = this.slideInService.open(ReplicationFormComponent, { data: row, wide: true });
-    slideInRef.slideInClosed$
-      .pipe(filter(Boolean), untilDestroyed(this))
+    const closer$ = this.chainedSlideInService.pushComponent(ReplicationFormComponent, true, row);
+
+    closer$.pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => this.getReplicationTasks());
   }
 

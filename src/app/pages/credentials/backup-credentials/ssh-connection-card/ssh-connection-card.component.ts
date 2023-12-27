@@ -13,7 +13,7 @@ import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { SshConnectionFormComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-form/ssh-connection-form.component';
 import { DialogService } from 'app/services/dialog.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -53,7 +53,7 @@ export class SshConnectionCardComponent implements OnInit {
 
   constructor(
     private ws: WebSocketService,
-    private slideInService: IxSlideInService,
+    private chainedSlideInService: IxChainedSlideInService,
     private translate: TranslateService,
     protected emptyService: EmptyService,
     private dialog: DialogService,
@@ -83,13 +83,13 @@ export class SshConnectionCardComponent implements OnInit {
   }
 
   doAdd(): void {
-    const slideInRef = this.slideInService.open(SshConnectionFormComponent);
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCredentials());
+    const closer$ = this.chainedSlideInService.pushComponent(SshConnectionFormComponent);
+    closer$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCredentials());
   }
 
   doEdit(credential: KeychainSshCredentials): void {
-    const slideInRef = this.slideInService.open(SshConnectionFormComponent, { data: credential });
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCredentials());
+    const closer$ = this.chainedSlideInService.pushComponent(SshConnectionFormComponent, false, credential);
+    closer$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCredentials());
   }
 
   doDelete(credential: KeychainSshCredentials): void {

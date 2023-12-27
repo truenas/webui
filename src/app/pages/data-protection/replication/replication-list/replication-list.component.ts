@@ -24,14 +24,13 @@ import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-tab
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import {
   ReplicationRestoreDialogComponent,
 } from 'app/pages/data-protection/replication/replication-restore-dialog/replication-restore-dialog.component';
 import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 import { ReplicationService } from 'app/services/replication.service';
 import { StorageService } from 'app/services/storage.service';
@@ -91,7 +90,7 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
     private ws: WebSocketService,
     private dialogService: DialogService,
     protected loader: AppLoaderService,
-    private slideInService: IxSlideInService,
+    private chainedSlideInService: IxChainedSlideInService,
     private translate: TranslateService,
     private matDialog: MatDialog,
     private errorHandler: ErrorHandlerService,
@@ -268,6 +267,16 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
     }
   }
 
+  doEdit(/* id: number */): void {
+    // const replication = this.entityList.rows.find((row) => row.id === id);
+    // const closer$ = this.chainedSlideInService.pushComponent(
+    //   ReplicationFormComponent, true, replication
+    // );
+    // closer$.pipe(
+    //   filter((response) => !!response.response), untilDestroyed(this)
+    // ).subscribe(() => this.entityList.getData());
+  }
+
   onCheckboxChange(row: ReplicationTaskUi): void {
     this.ws.call('replication.update', [row.id, { enabled: row.enabled }]).pipe(untilDestroyed(this)).subscribe({
       next: (task) => {
@@ -284,14 +293,11 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
   }
 
   doAdd(): void {
-    const slideInRef = this.slideInService.open(ReplicationWizardComponent, { wide: true });
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.entityList.getData());
-  }
-
-  doEdit(id: number): void {
-    const replication = this.entityList.rows.find((row) => row.id === id);
-    const slideInRef = this.slideInService.open(ReplicationFormComponent, { wide: true, data: replication });
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.entityList.getData());
+    const closer$ = this.chainedSlideInService.pushComponent(ReplicationWizardComponent, true);
+    closer$.pipe(
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe(() => this.entityList.getData());
   }
 
   private listenForWizardToAdvancedSwitching(): void {

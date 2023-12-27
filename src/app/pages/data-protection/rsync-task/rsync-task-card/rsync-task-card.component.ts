@@ -26,6 +26,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -112,6 +113,7 @@ export class RsyncTaskCardComponent implements OnInit {
     private store$: Store<AppState>,
     private snackbar: SnackbarService,
     protected emptyService: EmptyService,
+    private chainedSlideInService: IxChainedSlideInService,
   ) {}
 
   ngOnInit(): void {
@@ -149,9 +151,8 @@ export class RsyncTaskCardComponent implements OnInit {
   }
 
   openForm(row?: RsyncTaskUi): void {
-    const slideInRef = this.slideInService.open(RsyncTaskFormComponent, { data: row, wide: true });
-
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+    const closer$ = this.chainedSlideInService.pushComponent(RsyncTaskFormComponent, true, row);
+    closer$.pipe(filter((response) => !!response.response), untilDestroyed(this)).subscribe(() => {
       this.getRsyncTasks();
     });
   }

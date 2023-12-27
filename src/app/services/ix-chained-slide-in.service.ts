@@ -1,7 +1,9 @@
 import { Injectable, Type } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import { UUID } from 'angular2-uuid';
-import { Observable, Subject, tap } from 'rxjs';
+import {
+  Observable, Subject, take, tap,
+} from 'rxjs';
 
 export interface ChainedSlideInState {
   components: Map<string, ChainedComponentInfo>;
@@ -56,7 +58,7 @@ export class IxChainedSlideInService extends ComponentStore<ChainedSlideInState>
     );
   });
 
-  pushComponentToStore = this.updater((state, chainedComponentInfo: ChainedComponentInfo) => {
+  private pushComponentToStore = this.updater((state, chainedComponentInfo: ChainedComponentInfo) => {
     const newMap = new Map(state.components);
     newMap.set(UUID.UUID(), {
       ...chainedComponentInfo,
@@ -66,7 +68,11 @@ export class IxChainedSlideInService extends ComponentStore<ChainedSlideInState>
     };
   });
 
-  pushComponent(component: Type<unknown>, wide: boolean, data?: unknown): Observable<ChainedSlideInCloseResponse> {
+  pushComponent(
+    component: Type<unknown>,
+    wide = false,
+    data?: unknown,
+  ): Observable<ChainedSlideInCloseResponse> {
     const close$ = new Subject<ChainedSlideInCloseResponse>();
     this.pushComponentToStore({
       component,
@@ -74,14 +80,14 @@ export class IxChainedSlideInService extends ComponentStore<ChainedSlideInState>
       data,
       close$,
     });
-    return close$.asObservable();
+    return close$.asObservable().pipe(take(1));
   }
 
-  popComponent = this.updater((state) => {
+  popComponent = this.updater((state, id: string) => {
     const newMap = new Map(state.components);
-    const all = this.mapToSerializedArray(state.components);
-    const popped = all.pop();
-    newMap.delete(popped.id);
+    const popped = newMap.get(id);
+    popped.close$.complete();
+    newMap.delete(id);
     return {
       components: newMap,
     };

@@ -1,16 +1,15 @@
 import { DatePipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnInit, Output, ViewContainerRef,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Inject, OnInit, Output,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
   BehaviorSubject,
-  debounceTime, filter, map, merge, Observable, of, switchMap,
+  debounceTime, filter, map, merge, Observable, of, Subject, switchMap,
 } from 'rxjs';
 import { DatasetSource } from 'app/enums/dataset.enum';
 import { Direction } from 'app/enums/direction.enum';
@@ -28,7 +27,7 @@ import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { SummaryProvider, SummarySection } from 'app/modules/common/summary/summary.interface';
 import { ixManualValidateError } from 'app/modules/ix-forms/components/ix-errors/ix-errors.component';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { SLIDE_IN_CLOSER } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import {
   forbiddenAsyncValues,
 } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
@@ -37,7 +36,7 @@ import { ReplicationFormComponent } from 'app/pages/data-protection/replication/
 import { SshCredentialsNewOption } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard-data.interface';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
 import { DialogService } from 'app/services/dialog.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { ChainedSlideInCloseResponse, IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 import { ReplicationService } from 'app/services/replication.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -145,7 +144,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   }
 
   constructor(
-    private slideInRef: IxSlideInRef<ReplicationWhatAndWhereComponent>,
+    @Inject(SLIDE_IN_CLOSER) protected closer$: Subject<ChainedSlideInCloseResponse>,
     private formBuilder: FormBuilder,
     private replicationService: ReplicationService,
     private keychainCredentials: KeychainCredentialService,
@@ -153,12 +152,10 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     private translate: TranslateService,
     private datasetService: DatasetService,
     private dialogService: DialogService,
-    private slideInService: IxSlideInService,
-    private matDialog: MatDialog,
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,
-    private viewContainerRef: ViewContainerRef,
+    private chainedSlideInService: IxChainedSlideInService,
   ) {}
 
   ngOnInit(): void {
@@ -401,8 +398,9 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
 
   private createSshConnection(isSource: boolean): void {
     this.openSshConnectionDialog().pipe(
-      filter(Boolean),
-      switchMap((newCredential): Observable<[KeychainSshCredentials, Option[]]> => {
+      filter((response) => !!response.response),
+      map((response) => response.response),
+      switchMap((newCredential: KeychainSshCredentials): Observable<[KeychainSshCredentials, Option[]]> => {
         return this.keychainCredentials.getSshCredentialsOptions().pipe(
           map((options) => [newCredential, options]),
         );
@@ -419,13 +417,8 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     });
   }
 
-  private openSshConnectionDialog(): Observable<KeychainSshCredentials> {
-    return this.matDialog.open(SshConnectionFormComponent, {
-      data: { dialog: true },
-      width: '600px',
-      panelClass: 'ix-overflow-dialog',
-      viewContainerRef: this.viewContainerRef,
-    }).afterClosed();
+  private openSshConnectionDialog(): Observable<ChainedSlideInCloseResponse> {
+    return this.chainedSlideInService.pushComponent(SshConnectionFormComponent);
   }
 
   private genTaskName(source: string[], target: string): void {
@@ -566,11 +559,11 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   }
 
   openAdvanced(): void {
-    this.slideInRef.close();
+    this.closer$.next({ response: false, error: null });
 
-    const slideInRef = this.slideInService.open(ReplicationFormComponent, { wide: true });
-    slideInRef.slideInClosed$.pipe(
-      filter(Boolean),
+    const closer$ = this.chainedSlideInService.pushComponent(ReplicationFormComponent, true);
+    closer$.pipe(
+      filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(() => {
       this.store$.dispatch(fromWizardToAdvancedFormSubmitted({

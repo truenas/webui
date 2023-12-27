@@ -16,6 +16,7 @@ import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.co
 import { CloudsyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
 import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { fromWizardToAdvancedFormSubmitted } from 'app/store/admin-panel/admin.actions';
@@ -110,6 +111,7 @@ export class WidgetBackupComponent extends WidgetComponent implements OnInit {
     private ws: WebSocketService,
     private slideInService: IxSlideInService,
     private actions$: Actions,
+    private chainedSlideInService: IxChainedSlideInService,
   ) {
     super(translate);
 
@@ -163,13 +165,13 @@ export class WidgetBackupComponent extends WidgetComponent implements OnInit {
   }
 
   addReplicationTask(): void {
-    this.slideInService.open(ReplicationWizardComponent, { wide: true }).slideInClosed$
-      .pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getBackups());
+    const closer$ = this.chainedSlideInService.pushComponent(ReplicationWizardComponent, true);
+    closer$.pipe(filter((response) => !!response.response), untilDestroyed(this)).subscribe(() => this.getBackups());
   }
 
   addRsyncTask(): void {
-    this.slideInService.open(RsyncTaskFormComponent, { wide: true }).slideInClosed$
-      .pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getBackups());
+    const closer$ = this.chainedSlideInService.pushComponent(RsyncTaskFormComponent, true);
+    closer$.pipe(filter((response) => !!response.response), untilDestroyed(this)).subscribe(() => this.getBackups());
   }
 
   private listenForWizardToAdvancedSwitching(): void {

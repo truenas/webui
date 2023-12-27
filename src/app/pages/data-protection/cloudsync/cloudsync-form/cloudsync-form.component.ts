@@ -173,7 +173,7 @@ export class CloudsyncFormComponent implements OnInit {
     private store$: Store<AppState>,
     protected cloudCredentialService: CloudCredentialService,
     @Inject(SLIDE_IN_DATA) private editingTask: CloudSyncTaskUi,
-    @Inject(SLIDE_IN_CLOSER) protected closer$: Subject<ChainedSlideInCloseResponse>,
+    @Inject(SLIDE_IN_CLOSER) private closer$: Subject<ChainedSlideInCloseResponse>,
   ) { }
 
   getGoogleDriveProvider(): void {
@@ -793,5 +793,10 @@ export class CloudsyncFormComponent implements OnInit {
         formType: FromWizardToAdvancedSubmitted.CloudSyncTask,
       }));
     });
+  }
+
+  goToManageCredentials(): void {
+    this.router.navigate(['/', 'credentials', 'backup-credentials']);
+    this.closer$.next({ response: false, error: null });
   }
 }

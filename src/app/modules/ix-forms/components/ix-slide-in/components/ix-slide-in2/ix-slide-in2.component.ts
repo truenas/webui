@@ -99,8 +99,7 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
         this.slideInBody.clear();
         this.wasBodyCleared = false;
       });
-      this.componentInfo.close$.next(null);
-      this.chainedSlideInService.popComponent();
+      this.chainedSlideInService.popComponent(this.componentInfo.id);
     });
   }
 

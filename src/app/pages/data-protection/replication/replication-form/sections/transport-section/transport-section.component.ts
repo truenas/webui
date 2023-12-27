@@ -1,8 +1,7 @@
 import {
-  ChangeDetectionStrategy, Component, Input, OnChanges, ViewContainerRef,
+  ChangeDetectionStrategy, Component, Input, OnChanges,
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
@@ -21,6 +20,7 @@ import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-t
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { SshConnectionFormComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-form/ssh-connection-form.component';
 import { SshCredentialsNewOption } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard-data.interface';
+import { ChainedSlideInCloseResponse, IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 
 @UntilDestroy()
@@ -59,8 +59,7 @@ export class TransportSectionComponent implements OnChanges {
     private translate: TranslateService,
     public formatter: IxFormatterService,
     private keychainCredentials: KeychainCredentialService,
-    private matDialog: MatDialog,
-    private viewContainerRef: ViewContainerRef,
+    private chainedSlideInService: IxChainedSlideInService,
   ) {
     this.loadSshConnectionsOptions();
     this.listenForNewSshConnection();
@@ -162,8 +161,9 @@ export class TransportSectionComponent implements OnChanges {
     this.form.controls.ssh_credentials.valueChanges.pipe(
       filter((value) => value === SshCredentialsNewOption.New),
       switchMap(() => this.openSshConnectionDialog()),
-      filter(Boolean),
-      switchMap((newCredential): Observable<[KeychainSshCredentials, Option[]]> => {
+      filter((response) => !!response.response),
+      map((response) => response.response),
+      switchMap((newCredential: KeychainSshCredentials): Observable<[KeychainSshCredentials, Option[]]> => {
         return this.keychainCredentials.getSshCredentialsOptions().pipe(
           map((options) => [newCredential, options]),
         );
@@ -175,12 +175,7 @@ export class TransportSectionComponent implements OnChanges {
     });
   }
 
-  private openSshConnectionDialog(): Observable<KeychainSshCredentials> {
-    return this.matDialog.open(SshConnectionFormComponent, {
-      data: { dialog: true },
-      width: '600px',
-      panelClass: 'ix-overflow-dialog',
-      viewContainerRef: this.viewContainerRef,
-    }).afterClosed();
+  private openSshConnectionDialog(): Observable<ChainedSlideInCloseResponse> {
+    return this.chainedSlideInService.pushComponent(SshConnectionFormComponent);
   }
 }

@@ -94,7 +94,7 @@ export abstract class IxSelectWithNewOption implements ControlValueAccessor, OnI
           this.value = newValue;
           if (newValue === addNewValue) {
             const close$ = this.chainedSlideIn.pushComponent(this.getFormComponentType(), false);
-            close$.pipe(take(1), untilDestroyed(this)).subscribe({
+            close$.pipe(untilDestroyed(this)).subscribe({
               next: (response: ChainedSlideInCloseResponse) => {
                 if (!response.error) {
                   this.fetchUpdatedOptions().pipe(

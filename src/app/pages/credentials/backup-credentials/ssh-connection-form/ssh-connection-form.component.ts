@@ -1,12 +1,13 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit, Optional,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, of, throwError } from 'rxjs';
+import {
+  Observable, Subject, of, throwError,
+} from 'rxjs';
 import {
   catchError, map, switchMap,
 } from 'rxjs/operators';
@@ -21,8 +22,7 @@ import {
 import { SshConnectionSetup } from 'app/interfaces/ssh-connection-setup.interface';
 import { SshCredentials } from 'app/interfaces/ssh-credentials.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { SLIDE_IN_CLOSER, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
@@ -30,6 +30,7 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ChainedSlideInCloseResponse } from 'app/services/ix-chained-slide-in.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -134,13 +135,11 @@ export class SshConnectionFormComponent implements OnInit {
     private keychainCredentialService: KeychainCredentialService,
     private loader: AppLoaderService,
     private validatorsService: IxValidatorsService,
-    private slideInRef: IxSlideInRef<SshConnectionFormComponent>,
     public formatter: IxFormatterService,
     private dialogService: DialogService,
     private snackbar: SnackbarService,
-    @Optional() public dialogRef: MatDialogRef<SshConnectionFormComponent>,
-    @Optional() @Inject(MAT_DIALOG_DATA) public data: { dialog: boolean },
     @Inject(SLIDE_IN_DATA) private existingConnection: KeychainSshCredentials,
+    @Inject(SLIDE_IN_CLOSER) private closer$: Subject<ChainedSlideInCloseResponse>,
   ) { }
 
   ngOnInit(): void {
@@ -198,14 +197,7 @@ export class SshConnectionFormComponent implements OnInit {
       next: (newCredential) => {
         this.isLoading = false;
         this.snackbar.success(this.translate.instant('SSH Connection saved'));
-        // TODO: Ideally this form shouldn't care about how it was called
-        if (this.data?.dialog) {
-          if (this.dialogRef) {
-            this.dialogRef.close(newCredential);
-          }
-        } else {
-          this.slideInRef.close(newCredential);
-        }
+        this.closer$.next({ response: newCredential, error: null });
       },
       error: (error) => {
         this.isLoading = false;

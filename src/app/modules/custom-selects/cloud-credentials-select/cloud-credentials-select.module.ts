@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { CredentialsSelectComponent } from 'app/modules/custom-selects/credentials-select/credentials-select.component';
+import { CloudCredentialsSelectComponent } from 'app/modules/custom-selects/cloud-credentials-select/cloud-credentials-select.component';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 
 @NgModule({
@@ -12,10 +12,10 @@ import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
     TranslateModule,
   ],
   declarations: [
-    CredentialsSelectComponent,
+    CloudCredentialsSelectComponent,
   ],
   exports: [
-    CredentialsSelectComponent,
+    CloudCredentialsSelectComponent,
   ],
 })
-export class CredentialsSelectModule { }
+export class CloudCredentialsSelectModule { }

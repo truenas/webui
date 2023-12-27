@@ -4,7 +4,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  Observable, map, take,
+  Observable, map,
 } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
 import { IxSelectComponent } from 'app/modules/ix-forms/components/ix-select/ix-select.component';
@@ -45,7 +45,7 @@ export class AddNewOptionDirective implements OnInit {
       next: (value) => {
         if (value === addNewValue) {
           const close$ = this.chainedSlideIn.pushComponent(this.ixAddNewOption, false);
-          close$.pipe(take(1), untilDestroyed(this)).subscribe({
+          close$.pipe(untilDestroyed(this)).subscribe({
             next: (response: ChainedSlideInCloseResponse) => {
               this.newOptionAdded.emit(response);
             },

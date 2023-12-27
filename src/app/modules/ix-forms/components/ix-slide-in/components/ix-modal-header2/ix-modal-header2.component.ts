@@ -24,7 +24,7 @@ export class IxModalHeader2Component implements AfterViewInit {
   constructor(
     private translate: TranslateService,
     private chainedSlideIn: IxChainedSlideInService,
-    @Inject(SLIDE_IN_CLOSER) protected slideInCloser$: Subject<unknown>,
+    @Inject(SLIDE_IN_CLOSER) private slideInCloser$: Subject<unknown>,
   ) {}
 
   ngAfterViewInit(): void {
@@ -41,6 +41,6 @@ export class IxModalHeader2Component implements AfterViewInit {
   }
 
   close(): void {
-    this.slideInCloser$.next(null);
+    this.slideInCloser$.next({ response: false, error: null });
   }
 }

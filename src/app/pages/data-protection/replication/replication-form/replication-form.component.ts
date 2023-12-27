@@ -4,7 +4,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { merge } from 'rxjs';
+import { Subject, merge } from 'rxjs';
 import { debounceTime, filter, switchMap } from 'rxjs/operators';
 import { Direction } from 'app/enums/direction.enum';
 import { FromWizardToAdvancedSubmitted } from 'app/enums/from-wizard-to-advanced.enum';
@@ -16,8 +16,7 @@ import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.inter
 import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { SLIDE_IN_CLOSER, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
@@ -41,7 +40,7 @@ import {
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { ChainedSlideInCloseResponse, IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 import { ReplicationService } from 'app/services/replication.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -82,11 +81,11 @@ export class ReplicationFormComponent implements OnInit {
     private snackbar: SnackbarService,
     private datasetService: DatasetService,
     private replicationService: ReplicationService,
-    private slideInService: IxSlideInService,
-    private slideInRef: IxSlideInRef<ReplicationFormComponent>,
+    private chainedSlideInService: IxChainedSlideInService,
     private keychainCredentials: KeychainCredentialService,
     private store$: Store<AppState>,
     @Inject(SLIDE_IN_DATA) public existingReplication: ReplicationTask,
+    @Inject(SLIDE_IN_CLOSER) private closer$: Subject<ChainedSlideInCloseResponse>,
   ) {}
 
   ngOnInit(): void {
@@ -152,7 +151,7 @@ export class ReplicationFormComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe(
         {
-          next: () => {
+          next: (response) => {
             this.snackbar.success(
               this.isNew
                 ? this.translate.instant('Replication task created.')
@@ -160,7 +159,7 @@ export class ReplicationFormComponent implements OnInit {
             );
             this.isLoading = false;
             this.cdr.markForCheck();
-            this.slideInRef.close(true);
+            this.closer$.next({ response, error: null });
           },
           error: (error) => {
             this.isLoading = false;
@@ -172,10 +171,11 @@ export class ReplicationFormComponent implements OnInit {
   }
 
   onSwitchToWizard(): void {
-    this.slideInRef.close();
-    const slideInRef = this.slideInService.open(ReplicationWizardComponent, { wide: true });
-    slideInRef.slideInClosed$.pipe(
-      filter(Boolean),
+    this.closer$.next({ response: false, error: null });
+
+    const closer$ = this.chainedSlideInService.pushComponent(ReplicationWizardComponent, true);
+    closer$.pipe(
+      filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(() => {
       this.store$.dispatch(fromWizardToAdvancedFormSubmitted({
