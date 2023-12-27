@@ -221,7 +221,6 @@ export class CloudCredentialsFormComponent implements OnInit {
           this.isLoading = false;
           this.cdr.markForCheck();
           this.dialogService.error(this.errorHandler.parseWsError(error));
-          this.slideInRef.close();
         },
       });
   }
