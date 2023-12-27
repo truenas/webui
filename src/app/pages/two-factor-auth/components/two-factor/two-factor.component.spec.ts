@@ -37,8 +37,10 @@ describe('TwoFactorComponent', () => {
       }),
       mockProvider(AuthService, {
         user$: of({
-          username: 'dummy',
-          twofactor_auth_configured: true,
+          pw_name: 'dummy',
+          two_factor_config: {
+            secret_configured: true,
+          },
         } as LoggedInUser),
         userTwoFactorConfig$: of({
           provisioning_uri: 'provisioning_uri',

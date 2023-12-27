@@ -13,21 +13,13 @@
     ></ix-service-state-button>
 
     <div class="actions">
-      <ix-tooltip
-        *ngIf="tableHint"
-        [header]="title | translate"
-        [message]="tableHint | translate"
-      ></ix-tooltip>
-
       <button
         mat-button
         [ixTest]="['smb-share', 'add']"
-        [disabled]="isAddActionDisabled"
         (click)="openForm()"
       >{{ 'Add' | translate }}</button>
 
       <ix-service-extra-actions
-        *ngIf="!isClustered"
         [service]="service$ | async"
         [requiresRoles]="requiresRoles"
       ></ix-service-extra-actions>

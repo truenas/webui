@@ -11,9 +11,6 @@ import { CastModule } from 'app/modules/cast/cast.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { AdvancedSearchComponent } from 'app/modules/search-input/components/advanced-search/advanced-search.component';
 import { BasicSearchComponent } from 'app/modules/search-input/components/basic-search/basic-search.component';
-import {
-  OptionsSuggestionsComponent,
-} from 'app/modules/search-input/components/options-suggestions/options-suggestions.component';
 import { AdvancedSearchAutocompleteService } from 'app/modules/search-input/services/advanced-search-autocomplete.service';
 import { QueryParserService } from 'app/modules/search-input/services/query-parser/query-parser.service';
 import { QueryToApiService } from 'app/modules/search-input/services/query-to-api/query-to-api.service';
@@ -42,7 +39,6 @@ import { SearchInputComponent } from './components/search-input/search-input.com
   declarations: [
     SearchInputComponent,
     AdvancedSearchComponent,
-    OptionsSuggestionsComponent,
     BasicSearchComponent,
   ],
   providers: [

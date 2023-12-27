@@ -10,6 +10,7 @@ import {
 import {
   UploadConfigDialogComponent,
 } from 'app/pages/system/general-settings/upload-config-dialog/upload-config-dialog.component';
+import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
 
 @UntilDestroy()
@@ -19,9 +20,12 @@ import { DialogService } from 'app/services/dialog.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ManageConfigurationMenuComponent {
+  protected isSysAdmin$ = this.authService.isSysAdmin$;
+
   constructor(
     private dialogService: DialogService,
     private matDialog: MatDialog,
+    private authService: AuthService,
     private router: Router,
   ) {}
 

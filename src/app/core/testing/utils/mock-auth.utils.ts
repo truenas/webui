@@ -6,6 +6,7 @@ import { Store } from '@ngrx/store';
 import { of } from 'rxjs';
 import { DeepPartial } from 'utility-types';
 import { MockAuthService } from 'app/core/testing/classes/mock-auth.service';
+import { AccountAttribute } from 'app/enums/account-attribute.enum';
 import { Role } from 'app/enums/role.enum';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { AuthService } from 'app/services/auth/auth.service';
@@ -19,6 +20,7 @@ const dummyUser = {
     },
     web_shell: true,
   },
+  account_attributes: [AccountAttribute.Local, AccountAttribute.SysAdmin],
   pw_name: 'root',
   attributes: {} as LoggedInUser['attributes'],
   two_factor_config: {} as LoggedInUser['two_factor_config'],

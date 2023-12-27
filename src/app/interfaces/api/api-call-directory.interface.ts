@@ -417,12 +417,8 @@ export interface ApiCallDirectory {
   'container.image.query': { params: QueryParams<ContainerImage>; response: ContainerImage[] };
   'container.image.delete': { params: DeleteContainerImageParams; response: void };
 
-  // Cluster
-  'cluster.utils.is_clustered': { params: void; response: boolean };
-
   // Device
   'device.get_info': { params: [DeviceType]; response: Device[] };
-  'device.get_pci_ids_for_gpu_isolation': { params: [string]; response: string[] };
 
   // Disk
   'disk.query': { params: QueryParams<Disk, ExtraDiskQueryOptions>; response: Disk[] };
@@ -834,6 +830,7 @@ export interface ApiCallDirectory {
   'vm.device.create': { params: [VmDeviceUpdate]; response: VmDevice };
   'vm.device.delete': { params: [number, VmDeviceDelete?]; response: boolean };
   'vm.device.disk_choices': { params: void; response: Choices };
+  'vm.device.get_pci_ids_for_gpu_isolation': { params: [string]; response: string[] };
   'vm.random_mac': { params: void; response: string };
   'vm.device.query': { params: QueryParams<VmDevice>; response: VmDevice[] };
   'vm.maximum_supported_vcpus': { params: void; response: number };

@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
@@ -12,7 +12,6 @@ import {
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingSmb } from 'app/helptext/sharing/smb/smb';
-import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { SmbShare, SmbSharesec } from 'app/interfaces/smb-share.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
@@ -37,18 +36,13 @@ import { selectService } from 'app/store/services/services.selectors';
   styleUrls: ['./smb-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SmbCardComponent implements OnInit, OnChanges {
-  @Input() isClustered: boolean;
+export class SmbCardComponent implements OnInit {
   service$ = this.store$.select(selectService(ServiceName.Cifs));
   requiresRoles = [Role.SharingSmbWrite, Role.SharingManager, Role.SharingWrite];
 
   smbShares: SmbShare[] = [];
   dataProvider: AsyncDataProvider<SmbShare>;
   title = T('Windows (SMB) Shares');
-
-  isAddActionDisabled = false;
-  isDeleteActionDisabled = false;
-  tableHint?: string;
 
   columns = createTable<SmbShare>([
     textColumn({
@@ -113,23 +107,6 @@ export class SmbCardComponent implements OnInit, OnChanges {
     private store$: Store<ServicesState>,
   ) {}
 
-  ngOnChanges(changes: IxSimpleChanges<this>): void {
-    if (!changes.isClustered?.currentValue && !!changes.isClustered?.previousValue) {
-      this.updateEnabledFieldVisibility(false);
-      this.isAddActionDisabled = false;
-      this.isDeleteActionDisabled = false;
-      this.tableHint = null;
-    }
-
-    if (!!changes.isClustered?.currentValue && !changes.isClustered?.previousValue) {
-      this.updateEnabledFieldVisibility(true);
-
-      this.isAddActionDisabled = true;
-      this.isDeleteActionDisabled = true;
-      this.tableHint = this.translate.instant('This share is configured through TrueCommand');
-    }
-  }
-
   ngOnInit(): void {
     const smbShares$ = this.ws.call('sharing.smb.query').pipe(
       tap((smbShares) => this.smbShares = smbShares),
@@ -141,17 +118,10 @@ export class SmbCardComponent implements OnInit, OnChanges {
   }
 
   openForm(row?: SmbShare): void {
-    if (this.isClustered) {
-      this.dialogService.info(
-        this.translate.instant(this.title),
-        this.translate.instant(this.tableHint),
-      );
-    } else {
-      const slideInRef = this.slideInService.open(SmbFormComponent, { data: row });
-      slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-        this.getSmbShares();
-      });
-    }
+    const slideInRef = this.slideInService.open(SmbFormComponent, { data: row });
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+      this.getSmbShares();
+    });
   }
 
   doDelete(smb: SmbShare): void {

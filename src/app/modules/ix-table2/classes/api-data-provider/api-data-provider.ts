@@ -92,7 +92,7 @@ export class ApiDataProvider<T, M extends ApiCallMethod> extends BaseDataProvide
       {
         'query-filters': (params as unknown as QueryFilters<T>)[0] || [],
         'query-options': {
-          ...this.paginationStrategy.getParams(this.pagination),
+          ...this.paginationStrategy.getParams(this.pagination, this.totalRows),
           ...this.sortingStrategy.getParams(this.sorting),
         },
       },
