@@ -10,7 +10,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { environment } from 'environments/environment';
 import {
-  EMPTY, Observable, catchError, filter, of, pairwise, switchMap, take,
+  Observable, filter, of, pairwise, switchMap, take,
 } from 'rxjs';
 import { ticketAcceptedFiles } from 'app/enums/file-ticket.enum';
 import { JobState } from 'app/enums/job-state.enum';
@@ -19,7 +19,6 @@ import { mapToOptions } from 'app/helpers/options.helper';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { Option } from 'app/interfaces/option.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { FileTicketFormComponent } from 'app/modules/ix-feedback/file-ticket-form/file-ticket-form.component';
 import { FileTicketLicensedFormComponent } from 'app/modules/ix-feedback/file-ticket-licensed-form/file-ticket-licensed-form.component';
 import {
@@ -398,11 +397,6 @@ export class FeedbackDialogComponent implements OnInit {
   private imagesValidation(): void {
     this.form.controls.image.valueChanges.pipe(
       switchMap((images) => this.fileUpload.validateScreenshots(images)),
-      catchError((error: WebsocketError) => {
-        this.formErrorHandler.handleWsFormError(error, this.form);
-
-        return EMPTY;
-      }),
       untilDestroyed(this),
     ).subscribe((validatedFiles) => {
       const validFiles = validatedFiles.filter((file) => !file.error).map((file) => file.file);
