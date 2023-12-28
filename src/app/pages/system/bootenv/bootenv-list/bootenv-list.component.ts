@@ -117,13 +117,6 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
     this.matDialog.open(BootenvStatsDialogComponent);
   }
 
-  doAdd(): void {
-    const slideInRef = this.slideInService.open(BootEnvironmentFormComponent, {
-      data: { operation: BootEnvironmentAction.Create },
-    });
-    this.handleSlideInClosed(slideInRef);
-  }
-
   doRename(bootenv: Bootenv): void {
     const slideInRef = this.slideInService.open(BootEnvironmentFormComponent, {
       data: { operation: BootEnvironmentAction.Rename, name: bootenv.id },
