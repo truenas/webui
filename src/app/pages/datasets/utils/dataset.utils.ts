@@ -1,4 +1,4 @@
-import { DatasetEncryptionType } from 'app/enums/dataset.enum';
+import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { Dataset, DatasetDetails } from 'app/interfaces/dataset.interface';
 import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
@@ -25,7 +25,7 @@ export function isEncryptionRoot(dataset: Pick<Dataset, 'encryption_root' | 'id'
 }
 
 export function isPasswordEncrypted(dataset: Pick<Dataset, 'key_format'>): boolean {
-  return dataset.key_format?.value === DatasetEncryptionType.Passphrase;
+  return dataset.key_format?.value === EncryptionKeyFormat.Passphrase;
 }
 
 export function isIocageMounted(dataset: Pick<Dataset, 'mountpoint'>): boolean {
