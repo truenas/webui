@@ -64,7 +64,7 @@ export class SmbFormComponent implements OnInit {
   isAdvancedMode = false;
   namesInUse: string[] = [];
   readonly helptextSharingSmb = helptextSharingSmb;
-  readonly requiresRoles = [Role.SharingNfsWrite, Role.SharingManager, Role.SharingWrite];
+  readonly requiresRoles = [Role.SharingSmbWrite, Role.SharingManager, Role.SharingWrite];
   private wasStripAclWarningShown = false;
 
   groupProvider: ChipsProvider = (query) => {
