@@ -69,8 +69,8 @@ export class DatasetQuotasGrouplistComponent implements OnInit, OnDestroy {
     private translate: TranslateService,
     private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
-    @Inject(WINDOW) private window: Window,
     private emptyService: EmptyService,
+    @Inject(WINDOW) private window: Window,
   ) { }
 
   ngOnInit(): void {
