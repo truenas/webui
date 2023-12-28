@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnChanges, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
@@ -11,9 +11,7 @@ import {
 } from 'rxjs';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingSmb } from 'app/helptext/sharing/smb/smb';
-import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { SmbShare, SmbSharesec } from 'app/interfaces/smb-share.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
@@ -36,17 +34,12 @@ import { selectService } from 'app/store/services/services.selectors';
   styleUrls: ['./smb-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SmbCardComponent implements OnInit, OnChanges {
-  @Input() isClustered: boolean;
+export class SmbCardComponent implements OnInit {
   service$ = this.store$.select(selectService(ServiceName.Cifs));
 
   smbShares: SmbShare[] = [];
   dataProvider: AsyncDataProvider<SmbShare>;
   title = T('Windows (SMB) Shares');
-
-  isAddActionDisabled = false;
-  isDeleteActionDisabled = false;
-  tableHint?: string;
 
   columns = createTable<SmbShare>([
     textColumn({
@@ -107,23 +100,6 @@ export class SmbCardComponent implements OnInit, OnChanges {
     private store$: Store<ServicesState>,
   ) {}
 
-  ngOnChanges(changes: IxSimpleChanges<this>): void {
-    if (!changes.isClustered?.currentValue && !!changes.isClustered?.previousValue) {
-      this.updateEnabledFieldVisibility(false);
-      this.isAddActionDisabled = false;
-      this.isDeleteActionDisabled = false;
-      this.tableHint = null;
-    }
-
-    if (!!changes.isClustered?.currentValue && !changes.isClustered?.previousValue) {
-      this.updateEnabledFieldVisibility(true);
-
-      this.isAddActionDisabled = true;
-      this.isDeleteActionDisabled = true;
-      this.tableHint = this.translate.instant('This share is configured through TrueCommand');
-    }
-  }
-
   ngOnInit(): void {
     const smbShares$ = this.ws.call('sharing.smb.query').pipe(
       tap((smbShares) => this.smbShares = smbShares),
@@ -135,17 +111,10 @@ export class SmbCardComponent implements OnInit, OnChanges {
   }
 
   openForm(row?: SmbShare): void {
-    if (this.isClustered) {
-      this.dialogService.info(
-        this.translate.instant(this.title),
-        this.translate.instant(this.tableHint),
-      );
-    } else {
-      const slideInRef = this.slideInService.open(SmbFormComponent, { data: row });
-      slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-        this.getSmbShares();
-      });
-    }
+    const slideInRef = this.slideInService.open(SmbFormComponent, { data: { existingSmbShare: row } });
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+      this.getSmbShares();
+    });
   }
 
   doDelete(smb: SmbShare): void {
@@ -167,46 +136,38 @@ export class SmbCardComponent implements OnInit, OnChanges {
   }
 
   doShareAclEdit(row: SmbShare): void {
-    this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).pipe(untilDestroyed(this)).subscribe(
-      (isLocked) => {
-        if (isLocked) {
-          this.showLockedPathDialog(row.path);
-        } else {
-          // A home share has a name (homes) set; row.name works for other shares
-          const searchName = row.home ? 'homes' : row.name;
-          this.ws.call('sharing.smb.getacl', [{ share_name: searchName }])
-            .pipe(untilDestroyed(this))
-            .subscribe({
-              next: (shareAcl: SmbSharesec) => {
-                const slideInRef = this.slideInService.open(SmbAclComponent, { data: shareAcl.share_name });
+    if (row.locked) {
+      this.showLockedPathDialog(row.path);
+    } else {
+      // A home share has a name (homes) set; row.name works for other shares
+      const searchName = row.home ? 'homes' : row.name;
+      this.ws.call('sharing.smb.getacl', [{ share_name: searchName }])
+        .pipe(untilDestroyed(this))
+        .subscribe({
+          next: (shareAcl: SmbSharesec) => {
+            const slideInRef = this.slideInService.open(SmbAclComponent, { data: shareAcl.share_name });
 
-                slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-                  this.getSmbShares();
-                });
-              },
-              error: (error: WebsocketError) => {
-                this.dialogService.error(this.errorHandler.parseWsError(error));
-              },
+            slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+              this.getSmbShares();
             });
-        }
-      },
-    );
+          },
+          error: (error: unknown) => {
+            this.dialogService.error(this.errorHandler.parseError(error));
+          },
+        });
+    }
   }
 
   doFilesystemAclEdit(row: SmbShare): void {
-    this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).pipe(untilDestroyed(this)).subscribe(
-      (isLocked) => {
-        if (isLocked) {
-          this.showLockedPathDialog(row.path);
-        } else {
-          this.router.navigate(['/', 'datasets', 'acl', 'edit'], {
-            queryParams: {
-              path: row.path_local,
-            },
-          });
-        }
-      },
-    );
+    if (row.locked) {
+      this.showLockedPathDialog(row.path);
+    } else {
+      this.router.navigate(['/', 'datasets', 'acl', 'edit'], {
+        queryParams: {
+          path: row.path_local,
+        },
+      });
+    }
   }
 
   private showLockedPathDialog(path: string): void {
@@ -227,9 +188,9 @@ export class SmbCardComponent implements OnInit, OnChanges {
       next: () => {
         this.getSmbShares();
       },
-      error: (error: WebsocketError) => {
+      error: (error: unknown) => {
         this.getSmbShares();
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+        this.dialogService.error(this.errorHandler.parseError(error));
       },
     });
   }

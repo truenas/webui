@@ -158,7 +158,7 @@ export class CertificateSigningRequestsListComponent implements OnInit {
           this.getCertificates();
         });
         jobDialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
-          this.dialogService.error(this.errorHandler.parseJobError(err));
+          this.dialogService.error(this.errorHandler.parseError(err));
         });
       });
   }
@@ -216,8 +216,8 @@ export class CertificateSigningRequestsListComponent implements OnInit {
               },
             });
         },
-        error: (err: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(err));
+        error: (err: unknown) => {
+          this.dialogService.error(this.errorHandler.parseError(err));
         },
       });
   }

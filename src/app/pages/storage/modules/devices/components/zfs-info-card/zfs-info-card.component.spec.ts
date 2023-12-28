@@ -6,6 +6,7 @@ import {
   byText, createComponentFactory, Spectator, mockProvider,
 } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWebsocket, mockCall, mockJob } from 'app/core/testing/utils/mock-websocket.utils';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { DiskType } from 'app/enums/disk-type.enum';
@@ -42,6 +43,7 @@ describe('ZfsInfoCardComponent', () => {
         })),
       }),
       mockProvider(DevicesStore),
+      mockAuth(),
     ],
   });
 

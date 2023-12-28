@@ -136,7 +136,7 @@ export class TunableListComponent implements OnInit {
         });
         jobDialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
           this.dialogService.closeAllDialogs();
-          this.dialogService.error(this.errorHandler.parseJobError(error));
+          this.dialogService.error(this.errorHandler.parseError(error));
         });
       });
   }

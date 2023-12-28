@@ -5,42 +5,48 @@
       <ix-pool-card-icon [type]="iconType" [tooltip]="iconTooltip"></ix-pool-card-icon>
     </h3>
 
-    <button
-      *ngIf="!wasScanInitiated; else runningScanControls"
-      mat-button
-      ixTest="scrub"
-      (click)="onStartScrub()"
-    >
-      {{ 'Scrub' | translate }}
-    </button>
+    <ng-container *ngIf="!wasScanInitiated; else runningScanControls">
+      <button
+        *ixRequiresRoles="[Role.FullAdmin]"
+        mat-button
+        ixTest="scrub"
+        (click)="onStartScrub()"
+      >
+        {{ 'Scrub' | translate }}
+      </button>
+    </ng-container>
 
     <ng-template #runningScanControls>
-      <div *ngIf="isScrub; else disabledButton" class="controls">
-        <button
-          mat-button
-          ixTest="stop-scrub"
-          (click)="onStopScrub()"
-        >
-          {{ 'Stop Scrub' | translate }}
-        </button>
-        <button
-          *ngIf="isScrubPaused; else pauseButton"
-          mat-button
-          ixTest="resume-scrub"
-          (click)="onResumeScrub()"
-        >
-          {{ 'Resume Scrub' | translate }}
-        </button>
-        <ng-template #pauseButton>
-          <button
-            mat-button
-            ixTest="pause-scrub"
-            (click)="onPauseScrub()"
-          >
-            {{ 'Pause Scrub' | translate }}
-          </button>
-        </ng-template>
-      </div>
+      <ng-container *ngIf="isScrub; else disabledButton">
+        <ng-container *ixRequiresRoles="[Role.FullAdmin]">
+          <div class="controls">
+            <button
+              mat-button
+              ixTest="stop-scrub"
+              (click)="onStopScrub()"
+            >
+              {{ 'Stop Scrub' | translate }}
+            </button>
+            <button
+              *ngIf="isScrubPaused; else pauseButton"
+              mat-button
+              ixTest="resume-scrub"
+              (click)="onResumeScrub()"
+            >
+              {{ 'Resume Scrub' | translate }}
+            </button>
+            <ng-template #pauseButton>
+              <button
+                mat-button
+                ixTest="pause-scrub"
+                (click)="onPauseScrub()"
+              >
+                {{ 'Pause Scrub' | translate }}
+              </button>
+            </ng-template>
+          </div>
+        </ng-container>
+      </ng-container>
 
       <ng-template #disabledButton>
         <button mat-button disabled ixTest="scrub-disabled">{{ 'Scrub' | translate }}</button>

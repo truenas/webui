@@ -6,6 +6,8 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   Observable, catchError, debounceTime, distinctUntilChanged, of, switchMap, take,
 } from 'rxjs';
+import { ErrorReport } from 'app/interfaces/error-report.interface';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @Injectable({
@@ -15,6 +17,7 @@ export class PoolWizardNameValidationService {
   constructor(
     private ws: WebSocketService,
     private translate: TranslateService,
+    private errorHandler: ErrorHandlerService,
   ) { }
 
   private errorMessage = this.translate.instant('Invalid pool name (please refer to <a href="https://openzfs.github.io/openzfs-docs/man/8/zpool-create.8.html#DESCRIPTION" target="_blank">the documentation</a> for valid rules for pool name)');
@@ -26,14 +29,6 @@ export class PoolWizardNameValidationService {
       take(1),
       switchMap((value) => {
         return this.ws.call('pool.validate_name', [value]).pipe(
-          catchError(() => {
-            return of({
-              customValidator: {
-                message: this.errorMessage,
-              },
-              invalidPoolName: true,
-            });
-          }),
           switchMap((isValid) => {
             return isValid === true
               ? of(null)
@@ -43,6 +38,15 @@ export class PoolWizardNameValidationService {
                 },
                 invalidPoolName: true,
               });
+          }),
+          catchError((error) => {
+            const errorReports = this.errorHandler.parseError(error) as ErrorReport;
+            return of({
+              customValidator: {
+                message: errorReports?.message || this.translate.instant('Error validating pool name'),
+              },
+              invalidPoolName: true,
+            });
           }),
         );
       }),

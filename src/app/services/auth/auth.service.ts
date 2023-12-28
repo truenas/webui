@@ -17,6 +17,7 @@ import {
   tap,
   timer,
 } from 'rxjs';
+import { AccountAttribute } from 'app/enums/account-attribute.enum';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { Role } from 'app/enums/role.enum';
@@ -63,6 +64,13 @@ export class AuthService {
   );
 
   readonly user$ = this.loggedInUser$.asObservable();
+
+  /**
+   * Special case that only matches root and admin users.
+   */
+  readonly isSysAdmin$ = this.user$.pipe(
+    map((user) => user.account_attributes.includes(AccountAttribute.SysAdmin)),
+  );
 
   readonly userTwoFactorConfig$ = this.loggedInUser$.pipe(
     filter(Boolean),
@@ -253,21 +261,6 @@ export class AuthService {
 
   private getLoggedInUserInformation(): Observable<LoggedInUser> {
     return this.ws.call('auth.me').pipe(
-      switchMap((loggedInUser) => {
-        // TODO: This will be simplified https://github.com/truenas/middleware/pull/12670
-        if (!loggedInUser.privilege.webui_access) {
-          return of(loggedInUser);
-        }
-
-        return this.ws.call('user.query', [[['username', '=', loggedInUser.pw_name]]]).pipe(
-          map((users) => {
-            return {
-              ...loggedInUser,
-              ...users[0],
-            };
-          }),
-        );
-      }),
       tap((loggedInUser) => {
         this.loggedInUser$.next(loggedInUser);
       }),

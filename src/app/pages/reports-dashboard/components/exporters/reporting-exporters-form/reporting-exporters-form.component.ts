@@ -102,7 +102,7 @@ export class ReportingExportersFormComponent implements OnInit {
         this.cdr.markForCheck();
       },
       error: (error) => {
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+        this.dialogService.error(this.errorHandler.parseError(error));
         this.isLoading = false;
         this.isLoadingSchemas = false;
         this.cdr.markForCheck();

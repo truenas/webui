@@ -240,8 +240,8 @@ export class CertificateAuthorityListComponent implements OnInit {
               },
             });
         },
-        error: (err: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(err));
+        error: (err: unknown) => {
+          this.dialogService.error(this.errorHandler.parseError(err));
         },
       });
   }
@@ -262,7 +262,7 @@ export class CertificateAuthorityListComponent implements OnInit {
         switchMap(() => {
           return this.ws.call('certificateauthority.update', [certificate.id, { revoked: true }]).pipe(
             catchError((error) => {
-              this.dialogService.error(this.errorHandler.parseWsError(error));
+              this.dialogService.error(this.errorHandler.parseError(error));
               return EMPTY;
             }),
           );

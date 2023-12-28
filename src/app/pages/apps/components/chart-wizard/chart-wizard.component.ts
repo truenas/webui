@@ -414,9 +414,9 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
     this.cdr.markForCheck();
   }
 
-  private afterAppLoadError(error: WebsocketError): void {
+  private afterAppLoadError(error: unknown): void {
     this.router.navigate(['/apps', 'available']).then(() => {
-      this.dialogService.error(this.errorHandler.parseWsError(error));
+      this.dialogService.error(this.errorHandler.parseError(error));
     });
   }
 

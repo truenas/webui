@@ -16,7 +16,12 @@
   <button mat-menu-item ixTest="upload-configuration" (click)="onUploadConfig()">
     {{ 'Upload File' | translate }}
   </button>
-  <button mat-menu-item ixTest="reset-configuration" (click)="onResetDefaults()">
+  <button
+    *ngIf="isSysAdmin$ | async"
+    mat-menu-item
+    ixTest="reset-configuration"
+    (click)="onResetDefaults()"
+  >
     {{ 'Reset to Defaults' | translate }}
   </button>
 </mat-menu>

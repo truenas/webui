@@ -21,7 +21,7 @@
 
   <mat-menu #userMenu="matMenu">
     <button
-      *ngIf="user?.local"
+      *ngIf="user?.account_attributes.includes(AccountAttribute.Local)"
       name="settings-change-password"
       mat-menu-item
       ixTest="change-password"

@@ -90,7 +90,7 @@ export class ErrorHandlerService implements ErrorHandler {
     };
   }
 
-  parseWsError(error: WebsocketError): ErrorReport {
+  private parseWsError(error: WebsocketError): ErrorReport {
     return {
       title: error.type || error.trace?.class || this.translate.instant('Error'),
       message: error.reason || error?.error?.toString(),
@@ -98,7 +98,7 @@ export class ErrorHandlerService implements ErrorHandler {
     };
   }
 
-  parseJobError(failedJob: Job): ErrorReport | ErrorReport[] {
+  private parseJobError(failedJob: Job): ErrorReport | ErrorReport[] {
     const errorJob = { ...failedJob };
     if (errorJob.exc_info?.extra) {
       errorJob.extra = errorJob.exc_info.extra as Record<string, unknown>;

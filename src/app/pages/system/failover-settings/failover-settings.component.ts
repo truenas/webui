@@ -10,7 +10,6 @@ import {
   filter, map, switchMap, take,
 } from 'rxjs/operators';
 import { helptextSystemFailover } from 'app/helptext/system/failover';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AuthService } from 'app/services/auth/auth.service';
@@ -123,10 +122,10 @@ export class FailoverSettingsComponent implements OnInit {
             helptextSystemFailover.confirm_dialogs.sync_to_message,
           );
         },
-        error: (error: WebsocketError) => {
+        error: (error: unknown) => {
           this.isLoading = false;
           this.cdr.markForCheck();
-          this.dialogService.error(this.errorHandler.parseWsError(error));
+          this.dialogService.error(this.errorHandler.parseError(error));
         },
       });
   }
@@ -154,10 +153,10 @@ export class FailoverSettingsComponent implements OnInit {
             this.translate.instant(helptextSystemFailover.confirm_dialogs.sync_from_message),
           );
         },
-        error: (error: WebsocketError) => {
+        error: (error: unknown) => {
           this.isLoading = false;
           this.cdr.markForCheck();
-          this.dialogService.error(this.errorHandler.parseWsError(error));
+          this.dialogService.error(this.errorHandler.parseError(error));
         },
       });
   }
@@ -178,9 +177,9 @@ export class FailoverSettingsComponent implements OnInit {
           this.setFailoverConfirmation();
           this.setFormRelations();
         },
-        error: (error: WebsocketError) => {
+        error: (error: unknown) => {
           this.isLoading = false;
-          this.dialogService.error(this.errorHandler.parseWsError(error));
+          this.dialogService.error(this.errorHandler.parseError(error));
           this.cdr.markForCheck();
         },
       });

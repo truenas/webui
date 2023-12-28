@@ -200,8 +200,8 @@ export class EncryptionOptionsDialogComponent implements OnInit {
             pbkdf2iters: Number(pbkdf2iters.rawvalue),
           });
         },
-        error: (error: WebsocketError) => {
-          this.dialog.error(this.errorHandler.parseWsError(error));
+        error: (error: unknown) => {
+          this.dialog.error(this.errorHandler.parseError(error));
         },
       });
   }
