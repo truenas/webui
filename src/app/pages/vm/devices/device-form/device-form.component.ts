@@ -87,7 +87,7 @@ export class DeviceFormComponent implements OnInit {
     port: [null as number],
     resolution: [''],
     bind: [''],
-    password: ['', Validators.maxLength(8)],
+    password: [''],
     web: [true],
   });
 
