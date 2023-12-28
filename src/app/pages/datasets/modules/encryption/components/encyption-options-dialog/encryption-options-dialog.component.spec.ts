@@ -6,7 +6,7 @@ import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dial
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
 import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
+import { DatasetEncryptionType } from 'app/enums/dataset.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -57,7 +57,7 @@ describe('EncryptionOptionsDialogComponent', () => {
       encryption_root: 'pool/parent/child',
       children: [],
       key_format: {
-        value: EncryptionKeyFormat.Passphrase,
+        value: DatasetEncryptionType.Passphrase,
       },
     },
     parent: {
@@ -213,7 +213,7 @@ describe('EncryptionOptionsDialogComponent', () => {
           {
             encrypted: true,
             key_format: {
-              value: EncryptionKeyFormat.Hex,
+              value: DatasetEncryptionType.Default,
             },
           },
         ],
@@ -230,7 +230,7 @@ describe('EncryptionOptionsDialogComponent', () => {
       ...defaultDialogData,
       parent: {
         key_format: {
-          value: EncryptionKeyFormat.Passphrase,
+          value: DatasetEncryptionType.Passphrase,
         },
       },
     } as EncryptionOptionsDialogData);

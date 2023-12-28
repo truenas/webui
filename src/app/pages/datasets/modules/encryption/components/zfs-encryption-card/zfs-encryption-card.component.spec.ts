@@ -4,7 +4,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
+import { DatasetEncryptionType } from 'app/enums/dataset.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import {
   EncryptionOptionsDialogComponent,
@@ -42,7 +42,7 @@ describe('ZfsEncryptionCardComponent', () => {
     locked: false,
     encrypted: true,
     key_format: {
-      value: EncryptionKeyFormat.Passphrase,
+      value: DatasetEncryptionType.Passphrase,
     },
     encryption_algorithm: {
       value: 'aes-256-cbc',
@@ -52,7 +52,7 @@ describe('ZfsEncryptionCardComponent', () => {
   const keyEncryptedRoot = {
     ...passwordEncryptedRoot,
     key_format: {
-      value: EncryptionKeyFormat.Hex,
+      value: DatasetEncryptionType.Default,
     },
     key_loaded: true,
   } as DatasetDetails;
