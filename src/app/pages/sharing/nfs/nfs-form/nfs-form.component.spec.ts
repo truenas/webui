@@ -193,7 +193,7 @@ describe('NfsFormComponent', () => {
     beforeEach(async () => {
       spectator = createComponent({
         providers: [
-          { provide: SLIDE_IN_DATA, useValue: existingShare },
+          { provide: SLIDE_IN_DATA, useValue: { existingNfsShare: existingShare } },
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);

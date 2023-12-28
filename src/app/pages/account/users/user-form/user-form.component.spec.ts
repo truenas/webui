@@ -7,6 +7,7 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { allCommands } from 'app/constants/all-commands.constant';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Choices } from 'app/interfaces/choices.interface';
 import { Group } from 'app/interfaces/group.interface';
@@ -102,6 +103,7 @@ describe('UserFormComponent', () => {
           value: [mockUser],
         }],
       }),
+      mockAuth(),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });

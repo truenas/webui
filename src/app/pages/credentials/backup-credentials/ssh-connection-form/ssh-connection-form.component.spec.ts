@@ -7,6 +7,7 @@ import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SshConnectionsSetupMethod } from 'app/enums/ssh-connections-setup-method.enum';
 import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
@@ -61,6 +62,7 @@ describe('SshConnectionFormComponent', () => {
       mockProvider(IxSlideInRef),
       mockProvider(DialogService),
       mockProvider(MatDialogRef),
+      mockAuth(),
       {
         provide: SLIDE_IN_DATA,
         useValue: undefined,

@@ -5,8 +5,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import { filter, switchMap, tap } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { KerberosKeytab } from 'app/interfaces/kerberos-config.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
@@ -53,6 +53,7 @@ export class KerberosKeytabsListComponent implements OnInit {
         {
           iconName: 'delete',
           tooltip: this.translateService.instant('Delete'),
+          requiresRoles: [Role.FullAdmin],
           onClick: (row) => {
             this.dialogService.confirm({
               title: this.translateService.instant('Delete'),
@@ -62,8 +63,8 @@ export class KerberosKeytabsListComponent implements OnInit {
               switchMap(() => this.ws.call('kerberos.keytab.delete', [row.id])),
               untilDestroyed(this),
             ).subscribe({
-              error: (error: WebsocketError) => {
-                this.dialogService.error(this.errorHandler.parseWsError(error));
+              error: (error: unknown) => {
+                this.dialogService.error(this.errorHandler.parseError(error));
               },
               complete: () => {
                 this.getKerberosKeytabs();

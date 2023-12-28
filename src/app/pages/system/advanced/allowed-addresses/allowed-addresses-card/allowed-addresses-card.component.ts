@@ -5,7 +5,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { filter, map, switchMap } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
@@ -94,7 +93,7 @@ export class AllowedAddressesCardComponent implements OnInit {
         untilDestroyed(this),
       ).subscribe({
         next: () => this.deleteAllowedAddress(row),
-        error: (err: WebsocketError) => this.dialog.error(this.errorHandler.parseWsError(err)),
+        error: (err: unknown) => this.dialog.error(this.errorHandler.parseError(err)),
       });
   }
 
@@ -110,7 +109,7 @@ export class AllowedAddressesCardComponent implements OnInit {
         this.store$.dispatch(generalConfigUpdated());
         this.getAllowedAddresses();
       },
-      error: (err: WebsocketError) => this.dialog.error(this.errorHandler.parseWsError(err)),
+      error: (err: unknown) => this.dialog.error(this.errorHandler.parseError(err)),
     });
   }
 

@@ -6,20 +6,29 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, map, tap } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
-import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
+import {
+  actionsColumn,
+} from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
-import { CertificateAcmeAddComponent } from 'app/pages/credentials/certificates-dash/certificate-acme-add/certificate-acme-add.component';
-import { CertificateEditComponent } from 'app/pages/credentials/certificates-dash/certificate-edit/certificate-edit.component';
-import { ConfirmForceDeleteCertificateComponent } from 'app/pages/credentials/certificates-dash/confirm-force-delete-dialog/confirm-force-delete-dialog.component';
+import {
+  CertificateAcmeAddComponent,
+} from 'app/pages/credentials/certificates-dash/certificate-acme-add/certificate-acme-add.component';
+import {
+  CertificateEditComponent,
+} from 'app/pages/credentials/certificates-dash/certificate-edit/certificate-edit.component';
+import {
+  ConfirmForceDeleteCertificateComponent,
+} from 'app/pages/credentials/certificates-dash/confirm-force-delete-dialog/confirm-force-delete-dialog.component';
 import { CsrAddComponent } from 'app/pages/credentials/certificates-dash/csr-add/csr-add.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -68,6 +77,7 @@ export class CertificateSigningRequestsListComponent implements OnInit {
         },
         {
           iconName: 'delete',
+          requiresRoles: [Role.FullAdmin],
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
         },
@@ -148,7 +158,7 @@ export class CertificateSigningRequestsListComponent implements OnInit {
           this.getCertificates();
         });
         jobDialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
-          this.dialogService.error(this.errorHandler.parseJobError(err));
+          this.dialogService.error(this.errorHandler.parseError(err));
         });
       });
   }
@@ -206,8 +216,8 @@ export class CertificateSigningRequestsListComponent implements OnInit {
               },
             });
         },
-        error: (err: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(err));
+        error: (err: unknown) => {
+          this.dialogService.error(this.errorHandler.parseError(err));
         },
       });
   }

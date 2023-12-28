@@ -8,7 +8,6 @@ import { of } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { helptextServiceSmart } from 'app/helptext/services/components/service-snmp';
 import { SnmpConfigUpdate } from 'app/interfaces/snmp-config.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
@@ -124,8 +123,8 @@ export class ServiceSnmpComponent implements OnInit {
         this.form.patchValue(config);
         this.cdr.markForCheck();
       },
-      error: (error: WebsocketError) => {
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+      error: (error: unknown) => {
+        this.dialogService.error(this.errorHandler.parseError(error));
         this.isFormLoading = false;
         this.cdr.markForCheck();
       },

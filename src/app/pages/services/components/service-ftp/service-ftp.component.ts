@@ -11,7 +11,6 @@ import { Role } from 'app/enums/role.enum';
 import { invertUmask } from 'app/helpers/mode.helper';
 import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextServiceFtp } from 'app/helptext/services/components/service-ftp';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
@@ -164,8 +163,8 @@ export class ServiceFtpComponent implements OnInit {
           this.setRootLoginWarning();
           this.cdr.markForCheck();
         },
-        error: (error: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
+        error: (error: unknown) => {
+          this.dialogService.error(this.errorHandler.parseError(error));
           this.isFormLoading = false;
           this.cdr.markForCheck();
         },

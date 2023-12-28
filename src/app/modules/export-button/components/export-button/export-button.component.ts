@@ -49,7 +49,7 @@ export class ExportButtonComponent<T, M extends ApiJobMethod> {
         this.isLoading = false;
         this.cdr.markForCheck();
         if (job.state === JobState.Failed) {
-          this.dialogService.error(this.errorHandler.parseJobError(job));
+          this.dialogService.error(this.errorHandler.parseError(job));
           return EMPTY;
         }
         if (job.state !== JobState.Success) {

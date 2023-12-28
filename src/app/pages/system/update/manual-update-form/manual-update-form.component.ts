@@ -156,7 +156,7 @@ export class ManualUpdateFormComponent implements OnInit {
       this.router.navigate(['/others/reboot'], { skipLocationChange: true });
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
-      this.dialogService.error(this.errorHandler.parseJobError(err));
+      this.dialogService.error(this.errorHandler.parseError(err));
     });
     this.cdr.markForCheck();
   }
@@ -290,7 +290,7 @@ export class ManualUpdateFormComponent implements OnInit {
       });
       return;
     }
-    this.dialogService.error(this.errorHandler.parseJobError(failure));
+    this.dialogService.error(this.errorHandler.parseError(failure));
   };
 
   private resumeUpdateAfterFailure(): void {

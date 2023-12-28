@@ -7,7 +7,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { ReplicationConfig } from 'app/interfaces/replication-config.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -50,9 +49,9 @@ export class ReplicationSettingsFormComponent implements OnInit {
           this.form.patchValue(config);
           this.isFormLoading = false;
         },
-        error: (error: WebsocketError) => {
+        error: (error: unknown) => {
           this.isFormLoading = false;
-          this.dialogService.error(this.errorHandler.parseWsError(error));
+          this.dialogService.error(this.errorHandler.parseError(error));
           this.cdr.markForCheck();
         },
       });
@@ -78,9 +77,9 @@ export class ReplicationSettingsFormComponent implements OnInit {
         this.cdr.markForCheck();
         this.slideInRef.close();
       },
-      error: (error: WebsocketError) => {
+      error: (error: unknown) => {
         this.isFormLoading = false;
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+        this.dialogService.error(this.errorHandler.parseError(error));
         this.cdr.markForCheck();
       },
     });

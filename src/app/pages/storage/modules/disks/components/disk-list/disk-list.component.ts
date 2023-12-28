@@ -17,7 +17,6 @@ import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Choices } from 'app/interfaces/choices.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { Disk, UnusedDisk } from 'app/interfaces/storage.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import {
@@ -205,8 +204,8 @@ export class DiskListComponent implements EntityTableConfig<Disk>, OnDestroy {
           this.smartDiskChoices = disksThatSupportSmart;
           return true;
         }),
-        catchError((error: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
+        catchError((error: unknown) => {
+          this.dialogService.error(this.errorHandler.parseError(error));
           return of(false);
         }),
       ),

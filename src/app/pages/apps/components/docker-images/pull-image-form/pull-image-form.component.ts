@@ -79,7 +79,7 @@ export class PullImageFormComponent {
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
       this.isFormLoading = false;
       dialogRef.close();
-      this.dialogService.error(this.errorHandler.parseJobError(error));
+      this.dialogService.error(this.errorHandler.parseError(error));
       this.cdr.markForCheck();
     });
   }

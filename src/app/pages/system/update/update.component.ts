@@ -292,8 +292,8 @@ export class UpdateComponent implements OnInit {
       next: () => {
         this.check();
       },
-      error: (error: WebsocketError) => {
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+      error: (error: unknown) => {
+        this.dialogService.error(this.errorHandler.parseError(error));
         this.trainValue = prevTrain;
         this.showSpinner = false;
       },
@@ -396,7 +396,7 @@ export class UpdateComponent implements OnInit {
       this.router.navigate(['/others/reboot'], { skipLocationChange: true });
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
-      this.dialogService.error(this.errorHandler.parseJobError(err));
+      this.dialogService.error(this.errorHandler.parseError(err));
     });
   }
 
@@ -529,7 +529,7 @@ export class UpdateComponent implements OnInit {
             this.pendingUpdates();
           });
           dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
-            this.dialogService.error(this.errorHandler.parseJobError(error));
+            this.dialogService.error(this.errorHandler.parseError(error));
           });
         } else {
           this.update();
@@ -629,6 +629,6 @@ export class UpdateComponent implements OnInit {
       });
       return;
     }
-    this.dialogService.error(this.errorHandler.parseJobError(error));
+    this.dialogService.error(this.errorHandler.parseError(error));
   }
 }

@@ -12,7 +12,6 @@ import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextServiceNfs } from 'app/helptext/services/components/service-nfs';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { rangeValidator, portRangeValidator } from 'app/modules/ix-forms/validators/range-validation/range-validation';
@@ -115,8 +114,8 @@ export class ServiceNfsComponent implements OnInit {
           this.isFormLoading = false;
           this.cdr.markForCheck();
         },
-        error: (error: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
+        error: (error: unknown) => {
+          this.dialogService.error(this.errorHandler.parseError(error));
           this.isFormLoading = false;
           this.cdr.markForCheck();
         },

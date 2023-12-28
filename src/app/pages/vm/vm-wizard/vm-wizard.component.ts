@@ -118,9 +118,9 @@ export class VmWizardComponent implements OnInit {
           this.snackbar.success(this.translate.instant('Virtual machine created'));
           this.cdr.markForCheck();
         },
-        error: (error: WebsocketError) => {
+        error: (error: unknown) => {
           this.isLoading = false;
-          this.dialogService.error(this.errorHandler.parseWsError(error));
+          this.dialogService.error(this.errorHandler.parseError(error));
           this.cdr.markForCheck();
         },
       });

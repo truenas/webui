@@ -625,7 +625,6 @@ export interface ApiCallDirectory {
   'pool.dataset.get_instance': { params: [path: string]; response: DatasetDetails };
   'pool.dataset.get_quota': { params: DatasetQuotaQueryParams; response: DatasetQuota[] };
   'pool.dataset.inherit_parent_encryption_properties': { params: [id: string]; response: void };
-  'pool.dataset.path_in_locked_datasets': { params: [path: string]; response: boolean };
   'pool.dataset.processes': { params: [datasetId: string]; response: Process[] };
   'pool.dataset.promote': { params: [id: string]; response: void };
   'pool.dataset.query': { params: QueryParams<Dataset, ExtraDatasetQueryOptions>; response: Dataset[] };

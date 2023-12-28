@@ -6,7 +6,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { EMPTY, switchMap } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 import { helptextDownloadKey } from 'app/helptext/storage/volumes/download-key';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -60,9 +59,9 @@ export class DownloadKeyDialogComponent {
       }),
       untilDestroyed(this),
     ).subscribe({
-      error: (error: WebsocketError) => {
+      error: (error: unknown) => {
         this.loader.close();
-        this.dialog.error(this.errorHandler.parseWsError(error));
+        this.dialog.error(this.errorHandler.parseError(error));
       },
     });
   }
