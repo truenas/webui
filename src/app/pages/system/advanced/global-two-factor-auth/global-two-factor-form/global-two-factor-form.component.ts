@@ -10,6 +10,7 @@ import {
   EMPTY, catchError, filter, of, switchMap, tap,
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
+import { WINDOW } from 'app/helpers/window.helper';
 import { GlobalTwoFactorConfig, GlobalTwoFactorConfigUpdate } from 'app/interfaces/two-factor-config.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
@@ -45,8 +46,9 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
     private translate: TranslateService,
     private snackbar: SnackbarService,
     private authService: AuthService,
-    @Inject(SLIDE_IN_DATA) protected twoFactorConfig: GlobalTwoFactorConfig,
     private router: Router,
+    @Inject(SLIDE_IN_DATA) protected twoFactorConfig: GlobalTwoFactorConfig,
+    @Inject(WINDOW) private window: Window,
   ) {}
 
   ngOnInit(): void {
@@ -85,6 +87,7 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
         return this.ws.call('auth.twofactor.update', [payload]);
       }),
       tap(() => {
+        this.window.localStorage.setItem('showQr2FaWarning', `${this.form.value.enabled}`);
         this.isFormLoading = false;
         this.snackbar.success(this.translate.instant('Settings saved'));
         this.authService.globalTwoFactorConfigUpdated();

@@ -69,6 +69,7 @@ export class AuthService {
    * Special case that only matches root and admin users.
    */
   readonly isSysAdmin$ = this.user$.pipe(
+    filter(Boolean),
     map((user) => user.account_attributes.includes(AccountAttribute.SysAdmin)),
   );
 

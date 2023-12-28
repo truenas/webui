@@ -1,23 +1,23 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
-import { MatDialog } from '@angular/material/dialog';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
+import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { helptext2fa } from 'app/helptext/system/2fa';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { GlobalTwoFactorConfig, UserTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { IxWarningComponent } from 'app/modules/ix-forms/components/ix-warning/ix-warning.component';
-import { QrDialogComponent } from 'app/pages/two-factor-auth/components/two-factor/qr-dialog/qr-dialog.component';
-import { RenewTwoFactorDialogComponent } from 'app/pages/two-factor-auth/components/two-factor/renew-two-factor-dialog/renew-two-factor-dialog.component';
 import { TwoFactorComponent } from 'app/pages/two-factor-auth/components/two-factor/two-factor.component';
 import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 describe('TwoFactorComponent', () => {
   let spectator: Spectator<TwoFactorComponent>;
   let loader: HarnessLoader;
+  let ws: WebSocketService;
 
   const createComponent = createComponentFactory({
     component: TwoFactorComponent,
@@ -28,13 +28,9 @@ describe('TwoFactorComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(MatDialog, {
-        open: jest.fn(() => {
-          return {
-            afterClosed: jest.fn(() => of(true)),
-          };
-        }),
-      }),
+      mockWebsocket([
+        mockCall('user.renew_2fa_secret'),
+      ]),
       mockProvider(AuthService, {
         user$: of({
           pw_name: 'dummy',
@@ -56,6 +52,7 @@ describe('TwoFactorComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    ws = spectator.inject(WebSocketService);
   });
 
   it('shows warning when global setting is disabled', () => {
@@ -86,7 +83,6 @@ describe('TwoFactorComponent', () => {
 
   it('renews secret when button is clicked', async () => {
     const renewBtn = await loader.getHarness(MatButtonHarness.with({ text: 'Renew 2FA Secret' }));
-    jest.spyOn(spectator.component, 'showQrCode').mockImplementation();
     await renewBtn.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
@@ -96,20 +92,9 @@ describe('TwoFactorComponent', () => {
       buttonText: helptext2fa.two_factor.renewSecret.btn,
     });
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(RenewTwoFactorDialogComponent);
-    expect(spectator.component.showQrCode).toHaveBeenCalled();
-  });
-
-  it('opens qr dialog when button clicked', async () => {
-    const qrBtn = await loader.getHarness(MatButtonHarness.with({ text: 'Show QR' }));
-    await qrBtn.click();
-
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(
-      QrDialogComponent,
-      {
-        width: '300px',
-        data: { qrInfo: 'provisioning_uri' },
-      },
-    );
+    expect(ws.call).toHaveBeenCalledWith('user.renew_2fa_secret', ['dummy', {
+      interval: 30,
+      otp_digits: 6,
+    }]);
   });
 });
