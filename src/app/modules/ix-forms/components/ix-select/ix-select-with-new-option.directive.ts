@@ -6,7 +6,8 @@ import { ControlValueAccessor } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  Observable, Subject, map, take,
+  BehaviorSubject,
+  Observable, filter, map, switchMap, take, tap,
 } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
 import { IxSelectComponent } from 'app/modules/ix-forms/components/ix-select/ix-select.component';
@@ -18,8 +19,9 @@ export const addNewValue = 'ADD_NEW';
 @Directive()
 export abstract class IxSelectWithNewOption implements ControlValueAccessor, OnInit, AfterViewInit {
   @Input() disabled: boolean;
+  formComponentIsWide = false;
 
-  @ViewChild(IxSelectComponent) ixSelect: IxSelectComponent;
+  @ViewChild(IxSelectComponent) private ixSelect: IxSelectComponent;
 
   @Input() set value(value: string | number) {
     this.selectValue = value;
@@ -30,7 +32,7 @@ export abstract class IxSelectWithNewOption implements ControlValueAccessor, OnI
     return this.selectValue;
   }
 
-  options = new Subject<Option[]>();
+  private options = new BehaviorSubject<Option[]>([]);
 
   onChange: (value: string | number) => void;
 
@@ -38,7 +40,7 @@ export abstract class IxSelectWithNewOption implements ControlValueAccessor, OnI
 
   private selectValue: string | number;
 
-  notifyValueChange(): void {
+  private notifyValueChange(): void {
     if (this.onChange) {
       this.onChange(this.value);
     }
@@ -88,38 +90,28 @@ export abstract class IxSelectWithNewOption implements ControlValueAccessor, OnI
   abstract fetchUpdatedOptions(): Observable<Option[]>;
 
   ngAfterViewInit(): void {
-    if (this.ixSelect) {
-      this.ixSelect.controlDirective.control.valueChanges.pipe(untilDestroyed(this)).subscribe({
-        next: (newValue: number | string) => {
-          this.value = newValue;
-          if (newValue === addNewValue) {
-            const close$ = this.chainedSlideIn.pushComponent(this.getFormComponentType(), false);
-            close$.pipe(untilDestroyed(this)).subscribe({
-              next: (response: ChainedSlideInCloseResponse) => {
-                if (!response.error) {
-                  this.fetchUpdatedOptions().pipe(
-                    map((options) => {
-                      return [
-                        { label: this.translateService.instant('Add New'), value: addNewValue } as Option,
-                        ...options,
-                      ];
-                    }),
-                    take(1),
-                  ).subscribe({
-                    next: (options) => {
-                      this.options.next(options);
-                    },
-                  });
-                  this.setValueFromSlideInResult(response, (result) => {
-                    this.value = result;
-                    this.ixSelect.controlDirective.control.setValue(result);
-                  });
-                }
-              },
-            });
-          }
-        },
-      });
+    if (!this.ixSelect) {
+      return;
     }
+    this.ixSelect.options = this.options.asObservable();
+    this.ixSelect.ngOnChanges();
+    this.ixSelect.controlDirective.control.valueChanges.pipe(
+      tap((newValue: number | string) => this.value = newValue),
+      filter((newValue: number | string) => newValue === addNewValue),
+      switchMap(() => this.chainedSlideIn.pushComponent(this.getFormComponentType(), this.formComponentIsWide)),
+      filter((response: ChainedSlideInCloseResponse) => !response.error),
+      tap((response) => this.setValueFromSlideInResult(response, this.valueSetterCallback.bind(this))),
+      switchMap(() => this.fetchUpdatedOptions()),
+      tap((options) => this.options.next([
+        { label: this.translateService.instant('Add New'), value: addNewValue } as Option,
+        ...options,
+      ])),
+      untilDestroyed(this),
+    ).subscribe();
   }
+
+  private valueSetterCallback = (result: string | number): void => {
+    this.value = result;
+    this.ixSelect.controlDirective.control.setValue(result);
+  };
 }
