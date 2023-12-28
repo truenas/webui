@@ -31,14 +31,18 @@ export class ReportsService {
   ) {
     this.ws.call('reporting.netdata_graphs').subscribe((reportingGraphs) => {
       this.hasUps = reportingGraphs.some((graph) => graph.name.startsWith(ReportingGraphName.Ups));
-      this.hasTarget = reportingGraphs.some((graph) => graph.name === ReportingGraphName.Target);
+      this.hasTarget = reportingGraphs.some((graph) => {
+        return (graph.name as ReportingGraphName) === ReportingGraphName.Target;
+      });
       this.hasNfs = reportingGraphs.some((graph) => {
         return [
           ReportingGraphName.NfsStat,
           ReportingGraphName.NfsStatBytes,
         ].includes(graph.name as ReportingGraphName);
       });
-      this.hasPartitions = reportingGraphs.some((graph) => graph.name === ReportingGraphName.Partition);
+      this.hasPartitions = reportingGraphs.some((graph) => {
+        return (graph.name as ReportingGraphName) === ReportingGraphName.Partition;
+      });
       this.reportingGraphs$.next(reportingGraphs);
     });
 

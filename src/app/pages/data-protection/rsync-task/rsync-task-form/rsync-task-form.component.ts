@@ -13,7 +13,7 @@ import { mntPath } from 'app/enums/mnt-path.enum';
 import { RsyncMode, RsyncSshConnectMode } from 'app/enums/rsync-mode.enum';
 import { helptextRsyncForm } from 'app/helptext/data-protection/rsync/rsync-form';
 import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
-import { Option } from 'app/interfaces/option.interface';
+import { newOption, Option } from 'app/interfaces/option.interface';
 import { RsyncTask, RsyncTaskUpdate } from 'app/interfaces/rsync-task.interface';
 import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -25,7 +25,6 @@ import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedu
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SshConnectionFormComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-form/ssh-connection-form.component';
-import { SshCredentialsNewOption } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard-data.interface';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 import { UserService } from 'app/services/user.service';
@@ -79,7 +78,7 @@ export class RsyncTaskFormComponent implements OnInit {
     extra: [[] as string[]],
     enabled: [true],
     sshconnectmode: [RsyncSshConnectMode.PrivateKey],
-    ssh_credentials: [null as number | SshCredentialsNewOption],
+    ssh_credentials: [null as number | typeof newOption],
   });
 
   isLoading = false;
@@ -216,7 +215,7 @@ export class RsyncTaskFormComponent implements OnInit {
 
   private listenForNewSshConnection(): void {
     this.form.controls.ssh_credentials.valueChanges.pipe(
-      filter((value) => value === SshCredentialsNewOption.New),
+      filter((value) => value === newOption),
       switchMap(() => this.openSshConnectionDialog()),
       filter(Boolean),
       switchMap((newCredential): Observable<[KeychainSshCredentials, Option[]]> => {

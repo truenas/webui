@@ -108,7 +108,7 @@ export class SnapshotTaskFormComponent implements OnInit {
   }
 
   get isTimeMode(): boolean {
-    return this.form.value.schedule === CronPresetValue.Hourly;
+    return this.form.value.schedule === CronPresetValue.Hourly as string;
   }
 
   setTaskForEdit(): void {

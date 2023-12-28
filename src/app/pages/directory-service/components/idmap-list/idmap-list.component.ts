@@ -8,7 +8,7 @@ import {
   filter, map, of, switchMap, tap,
 } from 'rxjs';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
-import { IdmapName } from 'app/enums/idmap.enum';
+import { IdmapBackend, IdmapName } from 'app/enums/idmap.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextIdmap } from 'app/helptext/directory-service/idmap';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
@@ -143,8 +143,10 @@ export class IdmapListComponent implements OnInit {
           if (row.certificate) {
             row.cert_name = row.certificate.cert_name;
           }
-          if (row.name === IdmapName.DsTypeActiveDirectory && row.idmap_backend === 'AUTORID') {
-            const obj = transformed.find((idmapRow) => idmapRow.name === IdmapName.DsTypeDefaultDomain);
+          if (row.name === IdmapName.DsTypeActiveDirectory as string && row.idmap_backend === IdmapBackend.Autorid) {
+            const obj = transformed.find((idmapRow) => {
+              return idmapRow.name === IdmapName.DsTypeDefaultDomain as string;
+            });
             obj.disableEdit = true;
           }
           row.label = row.name;

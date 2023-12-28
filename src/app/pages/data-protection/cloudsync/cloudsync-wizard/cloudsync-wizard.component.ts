@@ -81,6 +81,7 @@ export class CloudsyncWizardComponent implements AfterViewInit {
         this.cdr.markForCheck();
       },
       error: (err) => {
+        this.isLoading$.next(false);
         this.dialogService.error(this.errorHandler.parseError(err));
       },
     });

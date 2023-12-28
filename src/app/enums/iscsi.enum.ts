@@ -30,7 +30,3 @@ export enum IscsiExtentUsefor {
   Legacyos = 'legacyos',
   Modernos = 'modernos',
 }
-
-export enum IscsiNewOption {
-  New = 'NEW',
-}

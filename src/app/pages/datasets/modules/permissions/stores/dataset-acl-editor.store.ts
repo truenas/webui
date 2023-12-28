@@ -258,7 +258,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
               ? DefaultAclType.Nfs4Home
               : DefaultAclType.PosixHome;
 
-            const homePreset = presets.find((preset) => preset.name === homePresetName);
+            const homePreset = presets.find((preset) => (preset.name as DefaultAclType) === homePresetName);
             if (!homePreset) {
               console.error(`Home preset ${homePresetName} not found`);
               return;
