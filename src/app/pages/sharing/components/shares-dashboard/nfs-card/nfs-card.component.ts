@@ -9,7 +9,6 @@ import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingNfs } from 'app/helptext/sharing';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
@@ -94,7 +93,7 @@ export class NfsCardComponent implements OnInit {
   }
 
   openForm(row?: NfsShare): void {
-    const slideInRef = this.slideInService.open(NfsFormComponent, { data: row });
+    const slideInRef = this.slideInService.open(NfsFormComponent, { data: { existingNfsShare: row } });
 
     slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.getNfsShares();
@@ -130,9 +129,9 @@ export class NfsCardComponent implements OnInit {
       next: () => {
         this.getNfsShares();
       },
-      error: (error: WebsocketError) => {
+      error: (error: unknown) => {
         this.getNfsShares();
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+        this.dialogService.error(this.errorHandler.parseError(error));
       },
     });
   }

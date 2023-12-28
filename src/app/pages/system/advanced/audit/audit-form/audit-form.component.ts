@@ -12,9 +12,9 @@ import {
 import {
   catchError, tap,
 } from 'rxjs/operators';
+import { Role } from 'app/enums/role.enum';
 import { helptextSystemAdvanced as helptext } from 'app/helptext/system/advanced';
 import { AuditConfig } from 'app/interfaces/audit/audit.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -40,7 +40,7 @@ export class AuditFormComponent implements OnInit {
     quota_fill_warning: [null as number, [Validators.required, Validators.min(5), Validators.max(80)]],
     quota_fill_critical: [null as number, [Validators.required, Validators.min(50), Validators.max(95)]],
   });
-
+  protected readonly Role = Role;
   readonly tooltips = {
     retention: helptext.retention_tooltip,
     reservation: helptext.reservation_tooltip,
@@ -99,9 +99,10 @@ export class AuditFormComponent implements OnInit {
             ...auditConfig,
           });
         },
-        error: (error: WebsocketError) => {
+        error: (error: unknown) => {
           this.isFormLoading = false;
-          this.dialogService.error(this.errorHandler.parseWsError(error));
+          this.cdr.markForCheck();
+          this.dialogService.error(this.errorHandler.parseError(error));
         },
       });
   }

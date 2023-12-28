@@ -168,7 +168,7 @@ export class CloudsyncListComponent implements OnInit {
       )),
       catchError((error: Job) => {
         this.getCloudSyncTasks();
-        this.dialogService.error(this.errorHandler.parseJobError(error));
+        this.dialogService.error(this.errorHandler.parseError(error));
         return EMPTY;
       }),
       untilDestroyed(this),
@@ -219,7 +219,7 @@ export class CloudsyncListComponent implements OnInit {
         this.translate.instant('Cloud Sync «{name}» has started.', { name: row.description }),
       )),
       catchError((error: Job) => {
-        this.dialogService.error(this.errorHandler.parseJobError(error));
+        this.dialogService.error(this.errorHandler.parseError(error));
         return EMPTY;
       }),
       untilDestroyed(this),

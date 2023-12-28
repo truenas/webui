@@ -68,6 +68,8 @@ export class GroupFormComponent implements OnInit {
     map((privileges) => privileges.map((privilege) => ({ label: privilege.name, value: privilege.id }))),
   );
 
+  protected readonly Role = Role;
+
   constructor(
     private fb: FormBuilder,
     private ws: WebSocketService,

@@ -170,7 +170,7 @@ export class ReplicationFormComponent implements OnInit {
           error: (error) => {
             this.isLoading = false;
             this.cdr.markForCheck();
-            this.dialog.error(this.errorHandler.parseWsError(error));
+            this.dialog.error(this.errorHandler.parseError(error));
           },
         },
       );

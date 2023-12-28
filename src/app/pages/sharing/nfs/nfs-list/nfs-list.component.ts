@@ -7,7 +7,6 @@ import { filter, tap } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { shared } from 'app/helptext/sharing';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
@@ -76,9 +75,9 @@ export class NfsListComponent implements OnInit {
           next: (share) => {
             row.enabled = share.enabled;
           },
-          error: (error: WebsocketError) => {
+          error: (error: unknown) => {
             row.enabled = !row.enabled;
-            this.dialog.error(this.errorHandler.parseWsError(error));
+            this.dialog.error(this.errorHandler.parseError(error));
           },
         });
       },
@@ -90,7 +89,7 @@ export class NfsListComponent implements OnInit {
           iconName: 'edit',
           tooltip: this.translate.instant('Edit'),
           onClick: (nfsShare) => {
-            const slideInRef = this.slideInService.open(NfsFormComponent, { data: nfsShare });
+            const slideInRef = this.slideInService.open(NfsFormComponent, { data: { existingNfsShare: nfsShare } });
             slideInRef.slideInClosed$
               .pipe(filter(Boolean), untilDestroyed(this))
               .subscribe(() => this.dataProvider.load());

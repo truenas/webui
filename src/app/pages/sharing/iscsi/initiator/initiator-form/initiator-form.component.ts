@@ -8,7 +8,6 @@ import _ from 'lodash';
 import { Role } from 'app/enums/role.enum';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { IscsiGlobalSession } from 'app/interfaces/iscsi-global-config.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { NetworkService } from 'app/services/network.service';
@@ -107,10 +106,10 @@ export class InitiatorFormComponent implements OnInit {
         this.cdr.markForCheck();
         this.onCancel();
       },
-      error: (error: WebsocketError) => {
+      error: (error: unknown) => {
         this.isFormLoading = false;
         this.cdr.markForCheck();
-        this.dialog.error(this.errorHandler.parseWsError(error));
+        this.dialog.error(this.errorHandler.parseError(error));
       },
     });
   }
@@ -121,8 +120,8 @@ export class InitiatorFormComponent implements OnInit {
         this.connectedInitiators = _.unionBy(sessions, (item) => item.initiator && item.initiator_addr);
         this.cdr.markForCheck();
       },
-      error: (error: WebsocketError) => {
-        this.dialog.error(this.errorHandler.parseWsError(error));
+      error: (error: unknown) => {
+        this.dialog.error(this.errorHandler.parseError(error));
       },
     });
   }
@@ -153,10 +152,10 @@ export class InitiatorFormComponent implements OnInit {
           this.isFormLoading = false;
           this.cdr.markForCheck();
         },
-        error: (error: WebsocketError) => {
+        error: (error: unknown) => {
           this.isFormLoading = false;
           this.cdr.markForCheck();
-          this.dialog.error(this.errorHandler.parseWsError(error));
+          this.dialog.error(this.errorHandler.parseError(error));
         },
       });
   }

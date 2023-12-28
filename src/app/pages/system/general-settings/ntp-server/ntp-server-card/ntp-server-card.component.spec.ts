@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of, Subject } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { NtpServer } from 'app/interfaces/ntp-server.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
@@ -69,6 +70,7 @@ describe('NtpServerCardComponent', () => {
         onClose$: new Subject<unknown>(),
         open: jest.fn(() => ({ slideInClosed$: of() })),
       }),
+      mockAuth(),
     ],
   });
 

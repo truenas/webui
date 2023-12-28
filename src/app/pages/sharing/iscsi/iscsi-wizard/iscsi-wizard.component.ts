@@ -347,9 +347,9 @@ export class IscsiWizardComponent implements OnInit {
     }
   }
 
-  handleError(err: WebsocketError): void {
+  handleError(err: unknown): void {
     this.toStop = true;
-    this.dialogService.error(this.errorHandler.parseWsError(err));
+    this.dialogService.error(this.errorHandler.parseError(err));
   }
 
   async onSubmit(): Promise<void> {

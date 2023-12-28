@@ -13,7 +13,6 @@ import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingSmb } from 'app/helptext/sharing/smb/smb';
 import { SmbShare, SmbSharesec } from 'app/interfaces/smb-share.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
@@ -118,7 +117,7 @@ export class SmbCardComponent implements OnInit {
   }
 
   openForm(row?: SmbShare): void {
-    const slideInRef = this.slideInService.open(SmbFormComponent, { data: row });
+    const slideInRef = this.slideInService.open(SmbFormComponent, { data: { existingSmbShare: row } });
     slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.getSmbShares();
     });
@@ -143,46 +142,38 @@ export class SmbCardComponent implements OnInit {
   }
 
   doShareAclEdit(row: SmbShare): void {
-    this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).pipe(untilDestroyed(this)).subscribe(
-      (isLocked) => {
-        if (isLocked) {
-          this.showLockedPathDialog(row.path);
-        } else {
-          // A home share has a name (homes) set; row.name works for other shares
-          const searchName = row.home ? 'homes' : row.name;
-          this.ws.call('sharing.smb.getacl', [{ share_name: searchName }])
-            .pipe(untilDestroyed(this))
-            .subscribe({
-              next: (shareAcl: SmbSharesec) => {
-                const slideInRef = this.slideInService.open(SmbAclComponent, { data: shareAcl.share_name });
+    if (row.locked) {
+      this.showLockedPathDialog(row.path);
+    } else {
+      // A home share has a name (homes) set; row.name works for other shares
+      const searchName = row.home ? 'homes' : row.name;
+      this.ws.call('sharing.smb.getacl', [{ share_name: searchName }])
+        .pipe(untilDestroyed(this))
+        .subscribe({
+          next: (shareAcl: SmbSharesec) => {
+            const slideInRef = this.slideInService.open(SmbAclComponent, { data: shareAcl.share_name });
 
-                slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-                  this.getSmbShares();
-                });
-              },
-              error: (error: WebsocketError) => {
-                this.dialogService.error(this.errorHandler.parseWsError(error));
-              },
+            slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+              this.getSmbShares();
             });
-        }
-      },
-    );
+          },
+          error: (error: unknown) => {
+            this.dialogService.error(this.errorHandler.parseError(error));
+          },
+        });
+    }
   }
 
   doFilesystemAclEdit(row: SmbShare): void {
-    this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).pipe(untilDestroyed(this)).subscribe(
-      (isLocked) => {
-        if (isLocked) {
-          this.showLockedPathDialog(row.path);
-        } else {
-          this.router.navigate(['/', 'datasets', 'acl', 'edit'], {
-            queryParams: {
-              path: row.path_local,
-            },
-          });
-        }
-      },
-    );
+    if (row.locked) {
+      this.showLockedPathDialog(row.path);
+    } else {
+      this.router.navigate(['/', 'datasets', 'acl', 'edit'], {
+        queryParams: {
+          path: row.path_local,
+        },
+      });
+    }
   }
 
   private showLockedPathDialog(path: string): void {
@@ -203,9 +194,9 @@ export class SmbCardComponent implements OnInit {
       next: () => {
         this.getSmbShares();
       },
-      error: (error: WebsocketError) => {
+      error: (error: unknown) => {
         this.getSmbShares();
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+        this.dialogService.error(this.errorHandler.parseError(error));
       },
     });
   }

@@ -209,7 +209,7 @@ export class DatasetUnlockComponent implements OnInit {
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe({
       next: (failedJob) => {
-        this.dialogService.error(this.errorHandler.parseJobError(failedJob));
+        this.dialogService.error(this.errorHandler.parseError(failedJob));
         dialogRef.close();
       },
       error: this.handleError,
@@ -269,7 +269,7 @@ export class DatasetUnlockComponent implements OnInit {
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe({
       next: (failedJob) => {
-        this.dialogService.error(this.errorHandler.parseJobError(failedJob));
+        this.dialogService.error(this.errorHandler.parseError(failedJob));
         dialogRef.close();
       },
       error: this.handleError,

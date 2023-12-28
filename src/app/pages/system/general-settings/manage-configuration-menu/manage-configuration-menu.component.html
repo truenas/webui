@@ -10,18 +10,30 @@
 </button>
 
 <mat-menu #menu="matMenu">
-  <button mat-menu-item ixTest="download-configuration" (click)="onDownloadConfig()">
+  <button
+    *ixRequiresRoles="[Role.FullAdmin]"
+    mat-menu-item
+    ixTest="download-configuration"
+    (click)="onDownloadConfig()"
+  >
     {{ 'Download File' | translate }}
   </button>
-  <button mat-menu-item ixTest="upload-configuration" (click)="onUploadConfig()">
+  <button
+    *ixRequiresRoles="[Role.FullAdmin]"
+    mat-menu-item
+    ixTest="upload-configuration"
+    (click)="onUploadConfig()"
+  >
     {{ 'Upload File' | translate }}
   </button>
-  <button
-    *ngIf="isSysAdmin$ | async"
-    mat-menu-item
-    ixTest="reset-configuration"
-    (click)="onResetDefaults()"
-  >
-    {{ 'Reset to Defaults' | translate }}
-  </button>
+  <ng-container *ngIf="isSysAdmin$ | async">
+    <button
+      *ixRequiresRoles="[Role.FullAdmin]"
+      mat-menu-item
+      ixTest="reset-configuration"
+      (click)="onResetDefaults()"
+    >
+      {{ 'Reset to Defaults' | translate }}
+    </button>
+  </ng-container>
 </mat-menu>

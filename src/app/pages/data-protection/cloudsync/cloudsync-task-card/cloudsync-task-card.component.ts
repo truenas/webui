@@ -16,7 +16,6 @@ import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { helptextCloudsync } from 'app/helptext/data-protection/cloudsync/cloudsync';
 import { CloudSyncTaskUi, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { relativeDateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
@@ -204,9 +203,9 @@ export class CloudSyncTaskCardComponent implements OnInit {
       tapOnce(() => this.snackbar.success(
         this.translate.instant('Cloud Sync «{name}» has started.', { name: row.description }),
       )),
-      catchError((error: Job) => {
+      catchError((error: unknown) => {
         this.getCloudSyncTasks();
-        this.dialogService.error(this.errorHandler.parseJobError(error));
+        this.dialogService.error(this.errorHandler.parseError(error));
         return EMPTY;
       }),
       untilDestroyed(this),
@@ -259,8 +258,8 @@ export class CloudSyncTaskCardComponent implements OnInit {
       tapOnce(() => this.snackbar.success(
         this.translate.instant('Cloud Sync «{name}» has started.', { name: row.description }),
       )),
-      catchError((error: Job) => {
-        this.dialogService.error(this.errorHandler.parseJobError(error));
+      catchError((error: unknown) => {
+        this.dialogService.error(this.errorHandler.parseError(error));
         return EMPTY;
       }),
       untilDestroyed(this),
@@ -313,9 +312,9 @@ export class CloudSyncTaskCardComponent implements OnInit {
         next: () => {
           this.getCloudSyncTasks();
         },
-        error: (err: WebsocketError) => {
+        error: (err: unknown) => {
           this.getCloudSyncTasks();
-          this.dialogService.error(this.errorHandler.parseWsError(err));
+          this.dialogService.error(this.errorHandler.parseError(err));
         },
       });
   }

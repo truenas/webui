@@ -70,6 +70,7 @@ describe('ServiceNfsComponent', () => {
       }),
       mockProvider(IxSlideInRef),
       { provide: SLIDE_IN_DATA, useValue: undefined },
+      mockAuth(),
     ],
   });
 

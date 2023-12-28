@@ -5,6 +5,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { UpsMode } from 'app/enums/ups-mode.enum';
 import { choicesToOptions, singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextServiceUps } from 'app/helptext/services/components/service-ups';
@@ -77,7 +78,7 @@ export class ServiceUpsComponent implements OnInit {
     driver: new SimpleAsyncComboboxProvider(this.ws.call('ups.driver_choices').pipe(choicesToOptions())),
     port: new SimpleAsyncComboboxProvider(this.ws.call('ups.port_choices').pipe(singleArrayToOptions())),
   };
-
+  protected readonly Role = Role;
   readonly tooltips = {
     identifier: helptextServiceUps.ups_identifier_tooltip,
     mode: this.translate.instant(
@@ -157,7 +158,7 @@ export class ServiceUpsComponent implements OnInit {
         },
         error: (error) => {
           this.isFormLoading = false;
-          this.dialogService.error(this.errorHandler.parseWsError(error));
+          this.dialogService.error(this.errorHandler.parseError(error));
           this.cdr.markForCheck();
         },
       });

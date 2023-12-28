@@ -12,7 +12,6 @@ import { Role } from 'app/enums/role.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { Job } from 'app/interfaces/job.interface';
 import { RsyncTaskUi, RsyncTaskUpdate } from 'app/interfaces/rsync-task.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { relativeDateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
@@ -176,9 +175,9 @@ export class RsyncTaskCardComponent implements OnInit {
           name: `${row.remotehost || row.path} ${row.remotemodule ? '- ' + row.remotemodule : ''}`,
         }),
       )),
-      catchError((error: Job) => {
+      catchError((error: unknown) => {
         this.getRsyncTasks();
-        this.dialogService.error(this.errorHandler.parseJobError(error));
+        this.dialogService.error(this.errorHandler.parseError(error));
         return EMPTY;
       }),
       untilDestroyed(this),
@@ -218,9 +217,9 @@ export class RsyncTaskCardComponent implements OnInit {
         next: () => {
           this.getRsyncTasks();
         },
-        error: (err: WebsocketError) => {
+        error: (err: unknown) => {
           this.getRsyncTasks();
-          this.dialogService.error(this.errorHandler.parseWsError(err));
+          this.dialogService.error(this.errorHandler.parseError(err));
         },
       });
   }

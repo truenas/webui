@@ -4,7 +4,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { filter, switchMap } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { PoolScrubTask } from 'app/interfaces/pool-scrub.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { relativeDateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
@@ -126,9 +125,9 @@ export class ScrubTaskCardComponent implements OnInit {
         next: () => {
           this.getScrubTasks();
         },
-        error: (err: WebsocketError) => {
+        error: (err: unknown) => {
           this.getScrubTasks();
-          this.dialogService.error(this.errorHandler.parseWsError(err));
+          this.dialogService.error(this.errorHandler.parseError(err));
         },
       });
   }

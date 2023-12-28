@@ -559,11 +559,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
           this.loader.close();
           this.loaderOpen = false;
         }
-        if (error.hasOwnProperty('reason') && (error.hasOwnProperty('trace') && error.hasOwnProperty('type'))) {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-        } else {
-          this.dialogService.error(this.errorHandler.parseError(error));
-        }
+        this.dialogService.error(this.errorHandler.parseError(error));
       },
     });
   }
@@ -882,7 +878,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
         }
       },
       error: (error) => {
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+        this.dialogService.error(this.errorHandler.parseError(error));
         this.loader.close();
       },
     });
@@ -919,7 +915,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
           return this.ws.call(this.conf.wsDelete as ApiCallMethod, params as ApiCallParams<ApiCallMethod>).pipe(
             take(1),
             catchError((error) => {
-              this.dialogService.error(this.errorHandler.parseWsError(error));
+              this.dialogService.error(this.errorHandler.parseError(error));
               this.loader.close();
               return of(false);
             }),
@@ -1035,7 +1031,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
                 }
               },
               error: (res1) => {
-                this.dialogService.error(this.errorHandler.parseWsError(res1));
+                this.dialogService.error(this.errorHandler.parseError(res1));
                 this.loader.close();
                 this.loaderOpen = false;
               },

@@ -12,7 +12,6 @@ import {
   PeriodicSnapshotTaskUi,
   PeriodicSnapshotTaskUpdate,
 } from 'app/interfaces/periodic-snapshot-task.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { extractActiveHoursFromCron, scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
@@ -158,9 +157,9 @@ export class SnapshotTaskListComponent implements EntityTableConfig<PeriodicSnap
             row.enabled = !row.enabled;
           }
         },
-        error: (error: WebsocketError) => {
+        error: (error: unknown) => {
           row.enabled = !row.enabled;
-          this.dialogService.error(this.errorHandler.parseWsError(error));
+          this.dialogService.error(this.errorHandler.parseError(error));
         },
       });
   }

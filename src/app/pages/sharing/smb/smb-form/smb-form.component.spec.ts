@@ -156,7 +156,6 @@ describe('SmbFormComponent', () => {
         mockCall('service.restart'),
         mockCall('sharing.smb.presets', { ...presets }),
         mockCall('filesystem.acl_is_trivial', false),
-        mockCall('pool.dataset.path_in_locked_datasets', false),
       ]),
       mockProvider(IxSlideInService),
       mockProvider(Router),
@@ -187,7 +186,7 @@ describe('SmbFormComponent', () => {
     beforeEach(async () => {
       spectator = createComponent({
         providers: [
-          { provide: SLIDE_IN_DATA, useValue: existingShare },
+          { provide: SLIDE_IN_DATA, useValue: { existingSmbShare: existingShare } },
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);

@@ -2,6 +2,7 @@ import { AfterViewInit, ChangeDetectionStrategy, Component } from '@angular/core
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable, take, timer } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -12,7 +13,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class AdvancedSettingsComponent implements AfterViewInit {
   isSystemLicensed$: Observable<null | object> = this.ws.call('system.license');
-
+  protected readonly Role = Role;
   constructor(private route: ActivatedRoute, private ws: WebSocketService) {}
 
   ngAfterViewInit(): void {

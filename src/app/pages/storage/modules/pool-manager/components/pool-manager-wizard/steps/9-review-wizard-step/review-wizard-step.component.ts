@@ -6,6 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { VdevType, vdevTypeLabels } from 'app/enums/v-dev-type.enum';
 import { isTopologyLimitedToOneLayout } from 'app/helpers/storage.helper';
 import {
@@ -41,6 +42,8 @@ export class ReviewWizardStepComponent implements OnInit {
   protected totalCapacity$ = this.store.totalUsableCapacity$;
   protected readonly vdevTypeLabels = vdevTypeLabels;
   protected isLimitedToOneLayout = isTopologyLimitedToOneLayout;
+
+  protected readonly Role = Role;
 
   constructor(
     private matDialog: MatDialog,

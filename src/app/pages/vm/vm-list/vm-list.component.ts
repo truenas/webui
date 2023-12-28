@@ -274,7 +274,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
         if (method === this.wsMethods.update) {
           row.autostart = !row.autostart;
         }
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+        this.dialogService.error(this.errorHandler.parseError(error));
       },
     });
   }
@@ -286,8 +286,8 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
           rows = this.resourceTransformIncomingRestData(vms);
           resolve(rows);
         },
-        error: (error: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
+        error: (error: unknown) => {
+          this.dialogService.error(this.errorHandler.parseError(error));
           reject(error);
         },
       });
@@ -320,9 +320,9 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
             });
             this.checkMemory();
           },
-          error: (error: WebsocketError) => {
+          error: (error: unknown) => {
             this.loader.close();
-            this.dialogService.error(this.errorHandler.parseWsError(error));
+            this.dialogService.error(this.errorHandler.parseError(error));
           },
         });
       },
@@ -411,9 +411,9 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
           next: () => {
             this.vmService.openDisplayWebUri(vm.id);
           },
-          error: (error: WebsocketError) => {
+          error: (error: unknown) => {
             this.loader.close();
-            this.dialogService.error(this.errorHandler.parseWsError(error));
+            this.dialogService.error(this.errorHandler.parseError(error));
           },
         });
       },
@@ -440,7 +440,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
           }),
           untilDestroyed(this),
         ).subscribe({
-          error: (error: WebsocketError) => this.dialogService.error(this.errorHandler.parseWsError(error)),
+          error: (error: unknown) => this.dialogService.error(this.errorHandler.parseError(error)),
         });
       },
     }] as EntityTableAction[];

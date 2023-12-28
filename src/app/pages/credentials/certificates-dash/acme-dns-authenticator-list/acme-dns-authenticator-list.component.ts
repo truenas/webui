@@ -4,6 +4,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { switchMap, filter, tap } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
@@ -47,6 +48,7 @@ export class AcmeDnsAuthenticatorListComponent implements OnInit {
         },
         {
           iconName: 'delete',
+          requiresRoles: [Role.FullAdmin],
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
         },

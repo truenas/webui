@@ -9,6 +9,7 @@ import _ from 'lodash';
 import { forkJoin } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { PoolStatus } from 'app/enums/pool-status.enum';
+import { Role } from 'app/enums/role.enum';
 import { helptextVolumes } from 'app/helptext/storage/volumes/volume-list';
 import { Job } from 'app/interfaces/job.interface';
 import { PoolAttachment } from 'app/interfaces/pool-attachment.interface';
@@ -76,6 +77,8 @@ export class ExportDisconnectModalComponent implements OnInit {
   });
 
   restartServices = false;
+
+  protected readonly Role = Role;
 
   constructor(
     private fb: FormBuilder,

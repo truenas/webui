@@ -15,7 +15,6 @@ import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { helptextZvol } from 'app/helptext/storage/volumes/zvol-form';
 import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -266,16 +265,16 @@ export class ZvolFormComponent implements OnInit {
 
               this.cdr.markForCheck();
             },
-            error: (error: WebsocketError): void => {
-              this.dialogService.error(this.errorHandler.parseWsError(error));
+            error: (error: unknown): void => {
+              this.dialogService.error(this.errorHandler.parseError(error));
             },
           });
         }
         this.isLoading = false;
         this.cdr.markForCheck();
       },
-      error: (error: WebsocketError): void => {
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+      error: (error: unknown): void => {
+        this.dialogService.error(this.errorHandler.parseError(error));
       },
     });
   }
@@ -682,8 +681,8 @@ export class ZvolFormComponent implements OnInit {
           this.slideInRef.close(false);
         }
       },
-      error: (error: WebsocketError): void => {
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+      error: (error: unknown): void => {
+        this.dialogService.error(this.errorHandler.parseError(error));
         this.isLoading = false;
         this.cdr.markForCheck();
       },

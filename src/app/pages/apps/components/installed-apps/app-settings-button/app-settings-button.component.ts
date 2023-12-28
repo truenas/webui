@@ -72,7 +72,7 @@ export class AppSettingsButtonComponent {
       });
 
       dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
-        this.dialogService.error(this.errorHandler.parseJobError(err));
+        this.dialogService.error(this.errorHandler.parseError(err));
       });
     });
   }

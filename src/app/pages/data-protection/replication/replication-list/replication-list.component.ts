@@ -18,7 +18,6 @@ import { helptextGlobal } from 'app/helptext/global-helptext';
 import { Job } from 'app/interfaces/job.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { ReplicationTask, ReplicationTaskUi } from 'app/interfaces/replication-task.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ShowLogsDialogComponent } from 'app/modules/common/dialog/show-logs-dialog/show-logs-dialog.component';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
@@ -155,8 +154,8 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
               row.job = { ...job };
               this.cdr.markForCheck();
             },
-            error: (error: Job) => {
-              this.dialogService.error(this.errorHandler.parseJobError(error));
+            error: (error: unknown) => {
+              this.dialogService.error(this.errorHandler.parseError(error));
             },
           });
         },
@@ -215,7 +214,7 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
             },
             error: (err) => {
               this.loader.close();
-              this.dialogService.error(this.errorHandler.parseWsError(err));
+              this.dialogService.error(this.errorHandler.parseError(err));
             },
           });
         },
@@ -284,9 +283,9 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
           row.enabled = !row.enabled;
         }
       },
-      error: (err: WebsocketError) => {
+      error: (err: unknown) => {
         row.enabled = !row.enabled;
-        this.dialogService.error(this.errorHandler.parseWsError(err));
+        this.dialogService.error(this.errorHandler.parseError(err));
       },
     });
   }

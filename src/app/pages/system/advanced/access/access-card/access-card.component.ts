@@ -7,9 +7,9 @@ import { TranslateService } from '@ngx-translate/core';
 import { formatDuration, intervalToDuration } from 'date-fns';
 import { of } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
+import { Role } from 'app/enums/role.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { AuthSession, AuthSessionCredentialsData } from 'app/interfaces/auth-session.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { dateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-date/ix-cell-date.component';
@@ -72,6 +72,7 @@ export class AccessCardComponent implements OnInit {
             : this.translate.instant('Terminate session')),
           onClick: (row) => this.onTerminate(row.id),
           disabled: (row) => of(row.current),
+          requiresRoles: [Role.FullAdmin],
         },
       ],
     }),
@@ -82,6 +83,8 @@ export class AccessCardComponent implements OnInit {
   get isEnterprise(): boolean {
     return this.systemGeneralService.isEnterprise;
   }
+
+  protected readonly Role = Role;
 
   constructor(
     private store$: Store<AppState>,
@@ -128,7 +131,7 @@ export class AccessCardComponent implements OnInit {
         untilDestroyed(this),
       ).subscribe({
         next: () => this.terminateSession(id),
-        error: (err: WebsocketError) => this.dialogService.error(this.errorHandler.parseWsError(err)),
+        error: (err: unknown) => this.dialogService.error(this.errorHandler.parseError(err)),
       });
   }
 
@@ -143,7 +146,7 @@ export class AccessCardComponent implements OnInit {
         untilDestroyed(this),
       ).subscribe({
         next: () => this.terminateOtherSessions(),
-        error: (error: WebsocketError) => this.dialogService.error(this.errorHandler.parseWsError(error)),
+        error: (error: unknown) => this.dialogService.error(this.errorHandler.parseError(error)),
       });
   }
 

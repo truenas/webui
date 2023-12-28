@@ -28,7 +28,6 @@ import { CountManualSnapshotsParams, EligibleManualSnapshotsCount, TargetUnmatch
 import { PeriodicSnapshotTask, PeriodicSnapshotTaskCreate } from 'app/interfaces/periodic-snapshot-task.interface';
 import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { CreateZfsSnapshot, ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -357,8 +356,8 @@ export class ReplicationWizardComponent {
     return values;
   }
 
-  handleError(err: WebsocketError): void {
-    this.dialogService.error(this.errorHandler.parseWsError(err));
+  handleError(err: unknown): void {
+    this.dialogService.error(this.errorHandler.parseError(err));
     this.rollBack();
   }
 
