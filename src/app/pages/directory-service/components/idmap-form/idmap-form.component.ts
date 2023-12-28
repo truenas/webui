@@ -11,6 +11,7 @@ import { filter, switchMap } from 'rxjs/operators';
 import {
   IdmapBackend, IdmapLinkedService, IdmapName, IdmapSchemaMode, IdmapSslEncryptionMode,
 } from 'app/enums/idmap.enum';
+import { Role } from 'app/enums/role.enum';
 import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextIdmap } from 'app/helptext/directory-service/idmap';
 import { IdmapBackendOption, IdmapBackendOptions } from 'app/interfaces/idmap-backend-options.interface';
@@ -146,6 +147,8 @@ export class IdmapFormComponent implements OnInit {
   get currentBackend(): IdmapBackendOption {
     return this.backendChoices?.[this.form.controls.idmap_backend.value];
   }
+
+  protected readonly Role = Role;
 
   constructor(
     private formBuilder: FormBuilder,

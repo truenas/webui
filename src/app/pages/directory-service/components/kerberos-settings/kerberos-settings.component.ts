@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Role } from 'app/enums/role.enum';
 import { helptextKerberosSettings } from 'app/helptext/directory-service/kerberos-settings';
 import { KerberosConfigUpdate } from 'app/interfaces/kerberos-config.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -28,6 +29,8 @@ export class KerberosSettingsComponent implements OnInit {
     appdefaults_aux: helptextKerberosSettings.ks_appdefaults_tooltip,
     libdefaults_aux: helptextKerberosSettings.ks_libdefaults_tooltip,
   };
+
+  protected readonly Role = Role;
 
   constructor(
     private ws: WebSocketService,

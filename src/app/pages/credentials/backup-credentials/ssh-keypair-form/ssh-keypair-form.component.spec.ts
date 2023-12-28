@@ -6,6 +6,7 @@ import { MatMenuHarness } from '@angular/material/menu/testing';
 import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { KeychainSshKeyPair, SshKeyPair } from 'app/interfaces/keychain-credential.interface';
@@ -53,6 +54,7 @@ describe('SshKeypairFormComponent', () => {
       mockProvider(StorageService),
       mockProvider(FormErrorHandlerService),
       mockProvider(DialogService),
+      mockAuth(),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });

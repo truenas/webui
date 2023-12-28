@@ -32,6 +32,7 @@
 
   <mat-card-actions>
     <button
+      *ixRequiresRoles="[Role.AccountWrite]"
       mat-button
       color="primary"
       ixTest="save"

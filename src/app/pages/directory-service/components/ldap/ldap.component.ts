@@ -7,6 +7,7 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { map } from 'rxjs/operators';
+import { Role } from 'app/enums/role.enum';
 import { idNameArrayToOptions, singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextLdap } from 'app/helptext/directory-service/ldap';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
@@ -66,6 +67,8 @@ export class LdapComponent implements OnInit {
   readonly certificates$ = this.systemGeneralService.getCertificates().pipe(idNameArrayToOptions());
   readonly schemaOptions$ = this.ws.call('ldap.schema_choices').pipe(singleArrayToOptions());
   readonly isEnabled$ = this.form.select((values) => values.enable);
+
+  protected readonly Role = Role;
 
   constructor(
     private ws: WebSocketService,

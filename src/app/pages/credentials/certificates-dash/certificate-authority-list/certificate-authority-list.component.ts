@@ -7,22 +7,31 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { isObject } from 'lodash';
 import {
-  switchMap, filter, map, EMPTY, catchError, tap, of,
+  catchError, EMPTY, filter, map, of, switchMap, tap,
 } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { helptextSystemCa } from 'app/helptext/system/ca';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
-import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
+import {
+  actionsColumn,
+} from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';
 import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
-import { CertificateAuthorityAddComponent } from 'app/pages/credentials/certificates-dash/certificate-authority-add/certificate-authority-add.component';
-import { CertificateAuthorityEditComponent } from 'app/pages/credentials/certificates-dash/certificate-authority-edit/certificate-authority-edit.component';
-import { SignCsrDialogComponent } from 'app/pages/credentials/certificates-dash/sign-csr-dialog/sign-csr-dialog.component';
+import {
+  CertificateAuthorityAddComponent,
+} from 'app/pages/credentials/certificates-dash/certificate-authority-add/certificate-authority-add.component';
+import {
+  CertificateAuthorityEditComponent,
+} from 'app/pages/credentials/certificates-dash/certificate-authority-edit/certificate-authority-edit.component';
+import {
+  SignCsrDialogComponent,
+} from 'app/pages/credentials/certificates-dash/sign-csr-dialog/sign-csr-dialog.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -68,6 +77,7 @@ export class CertificateAuthorityListComponent implements OnInit {
         {
           iconName: 'mdi-undo',
           tooltip: this.translate.instant('Revoke'),
+          requiresRoles: [Role.FullAdmin],
           hidden: (row) => of(row.revoked),
           onClick: (row) => this.doRevoke(row),
         },
@@ -83,6 +93,7 @@ export class CertificateAuthorityListComponent implements OnInit {
         },
         {
           iconName: 'delete',
+          requiresRoles: [Role.FullAdmin],
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
         },
@@ -91,8 +102,6 @@ export class CertificateAuthorityListComponent implements OnInit {
   ], {
     rowTestId: (row) => 'ca-' + row.name,
   });
-
-  helptextSystemCa = helptextSystemCa;
 
   constructor(
     private matDialog: MatDialog,

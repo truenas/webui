@@ -5,6 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
+import { Role } from 'app/enums/role.enum';
 import { CertificateCreate, CertificateProfile } from 'app/interfaces/certificate.interface';
 import { SummarySection } from 'app/modules/common/summary/summary.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -47,6 +48,8 @@ export class CertificateAddComponent {
 
   isLoading = false;
   summary: SummarySection[];
+
+  protected readonly Role = Role;
 
   constructor(
     private ws: WebSocketService,

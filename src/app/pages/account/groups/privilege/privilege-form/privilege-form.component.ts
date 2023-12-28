@@ -84,6 +84,8 @@ export class PrivilegeFormComponent implements OnInit {
     );
   };
 
+  protected readonly Role = Role;
+
   constructor(
     private formBuilder: FormBuilder,
     private translate: TranslateService,

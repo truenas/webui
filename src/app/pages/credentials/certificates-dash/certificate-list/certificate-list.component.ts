@@ -9,6 +9,7 @@ import { isObject } from 'lodash';
 import {
   filter, map, of, tap,
 } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -68,6 +69,7 @@ export class CertificateListComponent implements OnInit {
         },
         {
           iconName: 'mdi-undo',
+          requiresRoles: [Role.FullAdmin],
           tooltip: this.translate.instant('Revoke'),
           hidden: (row) => of(!row.can_be_revoked),
           onClick: (row) => this.doRevoke(row),
@@ -84,6 +86,7 @@ export class CertificateListComponent implements OnInit {
         },
         {
           iconName: 'delete',
+          requiresRoles: [Role.FullAdmin],
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
         },

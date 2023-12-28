@@ -9,6 +9,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { CaCreateType } from 'app/enums/ca-create-type.enum';
+import { Role } from 'app/enums/role.enum';
 import { CertificateAuthorityUpdate } from 'app/interfaces/certificate-authority.interface';
 import { CertificateProfile } from 'app/interfaces/certificate.interface';
 import { SummarySection } from 'app/modules/common/summary/summary.interface';
@@ -55,6 +56,8 @@ export class CertificateAuthorityAddComponent implements AfterViewInit {
 
   isLoading = false;
   summary: SummarySection[];
+
+  protected readonly Role = Role;
 
   constructor(
     private ws: WebSocketService,
