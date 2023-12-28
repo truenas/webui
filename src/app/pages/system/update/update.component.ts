@@ -9,7 +9,9 @@ import { Observable, of } from 'rxjs';
 import { filter, pairwise, tap } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
+import { Role } from 'app/enums/role.enum';
 import { SystemUpdateOperationType, SystemUpdateStatus } from 'app/enums/system-update.enum';
+import { filterAsync } from 'app/helpers/operators/filter-async.operator';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextGlobal } from 'app/helptext/global-helptext';
 import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
@@ -25,6 +27,7 @@ import {
   SaveConfigDialogComponent, SaveConfigDialogMessages,
 } from 'app/pages/system/general-settings/save-config-dialog/save-config-dialog.component';
 import { updateAgainCode } from 'app/pages/system/update/update-again-code.constant';
+import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { StorageService } from 'app/services/storage.service';
@@ -92,6 +95,7 @@ export class UpdateComponent implements OnInit {
 
   readonly ProductType = ProductType;
   readonly SystemUpdateStatus = SystemUpdateStatus;
+  protected readonly Role = Role;
 
   constructor(
     protected router: Router,
@@ -106,6 +110,7 @@ export class UpdateComponent implements OnInit {
     private store$: Store<AppState>,
     private fb: FormBuilder,
     private snackbar: SnackbarService,
+    private authService: AuthService,
     @Inject(WINDOW) private window: Window,
   ) {
     this.sysGenService.updateRunning.pipe(untilDestroyed(this)).subscribe((isUpdating: string) => {
@@ -208,7 +213,10 @@ export class UpdateComponent implements OnInit {
       this.onTrainChanged(newTrain, prevTrain);
     });
 
-    this.form.controls.auto_check.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+    this.form.controls.auto_check.valueChanges.pipe(
+      filterAsync(this.authService.hasRole(Role.FullAdmin)),
+      untilDestroyed(this),
+    ).subscribe(() => {
       this.toggleAutoCheck();
     });
   }

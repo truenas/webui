@@ -5,6 +5,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { helptextServiceSmart } from 'app/helptext/services/components/service-snmp';
 import { SnmpConfigUpdate } from 'app/interfaces/snmp-config.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -65,6 +66,7 @@ export class ServiceSnmpComponent implements OnInit {
   readonly authtypeOptions$ = of(helptextServiceSmart.v3_authtype_options);
   readonly privprotoOptions$ = of(helptextServiceSmart.v3_privproto_options);
   readonly logLevelOptions$ = of(helptextServiceSmart.loglevel_options);
+  protected readonly Role = Role;
 
   get isV3SupportEnabled(): boolean {
     return this.form?.value?.v3;

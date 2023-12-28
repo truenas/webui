@@ -3,6 +3,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, map, switchMap } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
@@ -45,6 +46,7 @@ export class AllowedAddressesCardComponent implements OnInit {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.promptDeleteAllowedAddress(row),
+          requiresRoles: [Role.FullAdmin],
         },
       ],
     }),

@@ -84,6 +84,7 @@
       <div class="form-actions">
         <div>
           <button
+            *ixRequiresRoles="[Role.SharingManager, Role.SharingNfsWrite, Role.SharingWrite]"
             mat-button
             type="submit"
             color="primary"

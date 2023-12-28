@@ -10,6 +10,7 @@ import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { BootEnvironmentAction } from 'app/enums/boot-environment-action.enum';
+import { Role } from 'app/enums/role.enum';
 import { helptextSystemBootenv } from 'app/helptext/system/boot-env';
 import {
   BootenvTooltip,
@@ -43,7 +44,7 @@ export class BootEnvironmentFormComponent implements OnInit {
   tooltips: BootenvTooltip = {
     name: helptextSystemBootenv.create_name_tooltip,
   };
-
+  protected readonly Role = Role;
   constructor(
     private translate: TranslateService,
     private formBuilder: FormBuilder,

@@ -4,6 +4,7 @@ import {
 import { FormBuilder } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { Role } from 'app/enums/role.enum';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { ReplicationConfig } from 'app/interfaces/replication-config.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -22,7 +23,7 @@ export class ReplicationSettingsFormComponent implements OnInit {
   form = this.fb.group({
     max_parallel_replication_tasks: [null as number],
   });
-
+  protected readonly Role = Role;
   readonly tooltips = {
     max_parallel_replication_tasks: helptextSystemAdvanced.max_parallel_replication_tasks_tooltip,
   };

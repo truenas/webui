@@ -11,6 +11,7 @@ import {
 import {
   catchError, tap,
 } from 'rxjs/operators';
+import { Role } from 'app/enums/role.enum';
 import { SyslogLevel, SyslogTransport } from 'app/enums/syslog.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSystemAdvanced, helptextSystemAdvanced as helptext } from 'app/helptext/system/advanced';
@@ -44,7 +45,7 @@ export class SyslogFormComponent implements OnInit {
   });
 
   readonly isTlsTransport$ = this.form.select((values) => values.syslog_transport === SyslogTransport.Tls);
-
+  protected readonly Role = Role;
   readonly tooltips = {
     fqdn_syslog: helptext.fqdn_tooltip,
     sysloglevel: helptext.sysloglevel.tooltip,

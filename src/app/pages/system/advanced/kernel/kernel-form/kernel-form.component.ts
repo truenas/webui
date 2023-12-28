@@ -5,6 +5,7 @@ import { FormBuilder } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import { Role } from 'app/enums/role.enum';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
@@ -25,7 +26,7 @@ export class KernelFormComponent implements OnInit {
   form = this.fb.group({
     debugkernel: [false],
   });
-
+  protected readonly Role = Role;
   readonly tooltips = {
     debugkernel: helptextSystemAdvanced.debugkernel_tooltip,
   };

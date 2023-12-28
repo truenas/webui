@@ -5,6 +5,7 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter } from 'rxjs/operators';
+import { Role } from 'app/enums/role.enum';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -28,6 +29,7 @@ export class LicenseComponent {
     fcName: 'license',
     label: helptext.update_license.license_placeholder,
   };
+  protected readonly Role = Role;
 
   constructor(
     private fb: FormBuilder,

@@ -37,6 +37,7 @@
 
       <div class="table-details-row-actions">
         <button
+          *ixRequiresRoles="[Role.FullAdmin]"
           mat-button
           [ixTest]="[cronjob.id, 'run_now']"
           (click)="runNow(cronjob)"
@@ -47,6 +48,7 @@
           (click)="doEdit(cronjob)"
         >{{ 'Edit' | translate }}</button>
         <button
+          *ixRequiresRoles="[Role.FullAdmin]"
           mat-button
           [ixTest]="[cronjob.id, 'delete']"
           (click)="doDelete(cronjob)"

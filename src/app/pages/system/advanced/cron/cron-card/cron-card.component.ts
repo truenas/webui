@@ -7,6 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   filter, from, map, switchMap, tap,
 } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
@@ -71,6 +72,7 @@ export class CronCardComponent implements OnInit {
           iconName: 'play_arrow',
           tooltip: this.translate.instant('Run job'),
           onClick: (row) => this.runNow(row),
+          requiresRoles: [Role.FullAdmin],
         },
         {
           iconName: 'edit',
@@ -81,6 +83,7 @@ export class CronCardComponent implements OnInit {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
+          requiresRoles: [Role.FullAdmin],
         },
       ],
     }),

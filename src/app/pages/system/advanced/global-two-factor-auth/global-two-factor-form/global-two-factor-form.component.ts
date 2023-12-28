@@ -9,6 +9,7 @@ import _ from 'lodash';
 import {
   EMPTY, catchError, filter, of, switchMap, tap,
 } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { GlobalTwoFactorConfig, GlobalTwoFactorConfigUpdate } from 'app/interfaces/two-factor-config.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -33,6 +34,7 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
   });
 
   enableWarning: string = this.translate.instant('Once enabled, users will be required to set up two factor authentication next time they login.');
+  protected readonly Role = Role;
 
   constructor(
     private fb: FormBuilder,

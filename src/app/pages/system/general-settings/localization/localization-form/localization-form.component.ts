@@ -9,6 +9,7 @@ import { Store } from '@ngrx/store';
 import _ from 'lodash';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { Role } from 'app/enums/role.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { LocalizationSettings } from 'app/interfaces/localization-settings.interface';
@@ -107,6 +108,8 @@ export class LocalizationFormComponent implements OnInit {
     label: helptext.time_format.placeholder,
     tooltip: helptext.time_format.tooltip,
   };
+
+  protected readonly Role = Role;
 
   constructor(
     private sysGeneralService: SystemGeneralService,

@@ -7,6 +7,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { forkJoin, of } from 'rxjs';
 import { take } from 'rxjs/operators';
+import { Role } from 'app/enums/role.enum';
 import { SedUser } from 'app/enums/sed-user.enum';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -42,7 +43,7 @@ export class SelfEncryptingDriveFormComponent implements OnInit {
       ),
     ],
   });
-
+  protected readonly Role = Role;
   readonly sedUserOptions$ = of([
     { label: SedUser.User, value: SedUser.User },
     { label: SedUser.Master, value: SedUser.Master },

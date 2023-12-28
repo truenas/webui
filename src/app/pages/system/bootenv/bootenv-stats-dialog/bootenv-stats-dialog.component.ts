@@ -7,6 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { PoolStatus, poolStatusLabels } from 'app/enums/pool-status.enum';
+import { Role } from 'app/enums/role.enum';
 import { PoolInstance } from 'app/interfaces/pool.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -32,6 +33,7 @@ export class BootenvStatsDialogComponent implements OnInit {
 
   readonly PoolStatus = PoolStatus;
   readonly poolStatusLabels = poolStatusLabels;
+  protected readonly Role = Role;
 
   constructor(
     private ws: WebSocketService,

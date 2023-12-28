@@ -15,6 +15,7 @@ import {
   filter, take, tap,
 } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
+import { Role } from 'app/enums/role.enum';
 import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -52,6 +53,7 @@ export class ManualUpdateFormComponent implements OnInit {
   fileLocationOptions$: Observable<Option[]>;
 
   isHaLicensed = false;
+  protected readonly Role = Role;
 
   constructor(
     private dialogService: DialogService,

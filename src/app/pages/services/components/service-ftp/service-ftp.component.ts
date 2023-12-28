@@ -7,6 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { filter, switchMap } from 'rxjs/operators';
+import { Role } from 'app/enums/role.enum';
 import { invertUmask } from 'app/helpers/mode.helper';
 import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextServiceFtp } from 'app/helptext/services/components/service-ftp';
@@ -84,6 +85,7 @@ export class ServiceFtpComponent implements OnInit {
 
   readonly isAnonymousLoginAllowed$ = this.form.select((values) => values.onlyanonymous);
   readonly isTlsEnabled$ = this.form.select((values) => values.tls);
+  protected readonly Role = Role;
 
   constructor(
     private formBuilder: FormBuilder,

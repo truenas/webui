@@ -46,6 +46,7 @@
 
       <ix-form-actions>
         <button
+          *ixRequiresRoles="[Role.FullAdmin]"
           mat-button
           type="submit"
           color="primary"
@@ -55,6 +56,7 @@
           {{ 'Save' | translate }}
         </button>
         <button
+          *ixRequiresRoles="[Role.FullAdmin]"
           mat-button
           type="button"
           ixTest="send-test-alert"

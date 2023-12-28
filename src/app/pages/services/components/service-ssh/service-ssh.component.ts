@@ -5,6 +5,7 @@ import { FormBuilder } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { map, of } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { SshSftpLogFacility, SshSftpLogLevel, SshWeakCipher } from 'app/enums/ssh.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextServiceSsh } from 'app/helptext/services/components/service-ssh';
@@ -66,6 +67,7 @@ export class ServiceSshComponent implements OnInit {
   readonly sftpLogFacilities$ = of(helptextServiceSsh.ssh_sftp_log_facility_options);
   readonly sshWeakCiphers$ = of(helptextServiceSsh.ssh_weak_ciphers_options);
   readonly bindInterfaces$ = this.ws.call('ssh.bindiface_choices').pipe(choicesToOptions());
+  protected readonly Role = Role;
 
   constructor(
     private ws: WebSocketService,
