@@ -11,7 +11,7 @@ import { toHumanReadableKey } from 'app/helpers/object-keys-to-human-readable.he
 import { DynamicFormSchema, DynamicFormSchemaNode } from 'app/interfaces/dynamic-form-schema.interface';
 import { Option } from 'app/interfaces/option.interface';
 import {
-  ExportingExporterList as ReportingExporterList,
+  ReportingExporterList,
   ReportingExporterKey as ReportingExporterType,
   ReportingExporterSchema,
   ReportingExporter,

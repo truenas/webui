@@ -183,7 +183,7 @@ export class PoolManagerValidationService {
         });
       }
       if ([VdevType.Dedup, VdevType.Special, VdevType.Data].includes(topologyCategoryType)) {
-        const vdevType = topologyCategoryType === 'special' ? 'metadata' : topologyCategoryType;
+        const vdevType = topologyCategoryType === VdevType.Special ? 'metadata' : topologyCategoryType;
         errors.push({
           text: this.translate.instant('A stripe {vdevType} VDEV is highly discouraged and will result in data loss if it fails', { vdevType }),
           severity: PoolCreationSeverity.ErrorWarning,

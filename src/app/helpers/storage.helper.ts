@@ -1,5 +1,5 @@
 import { VdevType } from 'app/enums/v-dev-type.enum';
 
-export function isTopologyLimitedToOneLayout(type: string): boolean {
+export function isTopologyLimitedToOneLayout(type: VdevType): boolean {
   return type === VdevType.Spare || type === VdevType.Cache;
 }

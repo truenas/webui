@@ -22,7 +22,7 @@ import { helptextCloudsync } from 'app/helptext/data-protection/cloudsync/clouds
 import { CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
-import { NewOption, Option } from 'app/interfaces/option.interface';
+import { newOption, Option } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -420,7 +420,7 @@ export class CloudsyncWhatAndWhenComponent implements OnInit, OnChanges {
     });
 
     this.form.controls.bucket.valueChanges.pipe(
-      filter((selectedOption) => selectedOption === NewOption.New),
+      filter((selectedOption) => selectedOption === newOption),
       untilDestroyed(this),
     ).subscribe(() => {
       const dialogRef = this.matDialog.open(CreateStorjBucketDialogComponent, {
@@ -455,7 +455,7 @@ export class CloudsyncWhatAndWhenComponent implements OnInit, OnChanges {
           if (credential.provider === CloudsyncProviderName.Storj) {
             bucketOptions.unshift({
               label: this.translate.instant('Add new'),
-              value: NewOption.New,
+              value: newOption,
               disabled: false,
             });
           }
