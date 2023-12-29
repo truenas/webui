@@ -135,15 +135,17 @@ export class ReplicationWizardComponent {
       }),
       switchMap((createdReplication) => {
         if (values.schedule_method === ScheduleMethod.Once && createdReplication) {
-          return this.runReplicationOnce(createdReplication);
+          return this.runReplicationOnce(createdReplication).pipe(
+            catchError((err) => { this.handleError(err); return EMPTY; }),
+            switchMap(() => of(createdReplication)),
+          );
         }
         return of(createdReplication);
       }),
-      catchError((err) => { this.handleError(err); return EMPTY; }),
       untilDestroyed(this),
-    ).subscribe(() => {
+    ).subscribe((createdReplication) => {
       this.cdr.markForCheck();
-      this.closer$.next({ response: null, error: null });
+      this.closer$.next({ response: createdReplication, error: null });
     });
   }
 
