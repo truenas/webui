@@ -38,9 +38,8 @@ export class SshCredentialsSelectComponent extends IxSelectWithNewOption {
 
   setValueFromSlideInResult(
     result: ChainedSlideInCloseResponse,
-    valueSetterCallBack: (value: string | number) => void,
   ): void {
-    valueSetterCallBack((result.response as SshCredentials).id);
+    this.value = (result.response as SshCredentials).id;
   }
 
   getFormComponentType(): ComponentType<unknown> {

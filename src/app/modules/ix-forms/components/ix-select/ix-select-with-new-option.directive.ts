@@ -86,7 +86,6 @@ export abstract class IxSelectWithNewOption implements ControlValueAccessor, OnI
 
   abstract setValueFromSlideInResult(
     result: ChainedSlideInCloseResponse,
-    valueSetterCallback: (value: string | number) => void
   ): void;
   abstract getFormComponentType(): ComponentType<unknown>;
   abstract fetchOptions(): Observable<Option[]>;
@@ -104,7 +103,7 @@ export abstract class IxSelectWithNewOption implements ControlValueAccessor, OnI
       filter((newValue: number | string) => newValue === addNewValue),
       switchMap(() => this.chainedSlideIn.pushComponent(this.getFormComponentType(), this.formComponentIsWide)),
       filter((response: ChainedSlideInCloseResponse) => !response.error),
-      tap((response) => this.setValueFromSlideInResult(response, this.valueSetterCallback.bind(this))),
+      tap((response) => this.setValueFromSlideInResult(response)),
       switchMap(() => this.fetchOptions()),
       tap((options) => this.options.next([
         { label: this.translateService.instant('Add New'), value: addNewValue } as Option,
@@ -113,8 +112,4 @@ export abstract class IxSelectWithNewOption implements ControlValueAccessor, OnI
       untilDestroyed(this),
     ).subscribe();
   }
-
-  private valueSetterCallback = (result: string | number): void => {
-    this.value = result;
-  };
 }
