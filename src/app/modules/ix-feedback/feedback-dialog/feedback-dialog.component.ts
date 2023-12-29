@@ -211,7 +211,7 @@ export class FeedbackDialogComponent implements OnInit {
           this.onSuccess();
         }
       },
-      error: (error) => {
+      error: (error: unknown) => {
         console.error(error);
         this.isLoading = false;
         this.formErrorHandler.handleWsFormError(error, this.form);

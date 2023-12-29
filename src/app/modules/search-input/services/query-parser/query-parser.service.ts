@@ -280,7 +280,9 @@ export class QueryParserService<T> {
 
     if (comparator.toUpperCase() === 'IN' || comparator.toUpperCase() === 'NIN') {
       const valueList = Array.isArray(value)
-        ? value.map((valueItem) => `"${this.mapValueByPropertyType(currentProperty, valueItem) as string}"`).join(', ')
+        ? value.map((valueItem) => {
+          return `"${this.mapValueByPropertyType(currentProperty, valueItem as LiteralValue | LiteralValue[]) as string}"`;
+        }).join(', ')
         : `"${mappedConditionValue}"`;
 
       return `"${mappedConditionProperty}" ${comparator.toUpperCase()} (${valueList})`;

@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject,
 } from '@angular/core';
@@ -51,7 +52,7 @@ export class DownloadKeyDialogComponent {
             this.wasDownloaded = true;
             this.cdr.markForCheck();
           }),
-          catchError((error) => {
+          catchError((error: HttpErrorResponse) => {
             this.dialog.error(this.errorHandler.parseHttpError(error));
             return EMPTY;
           }),

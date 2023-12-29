@@ -1,5 +1,5 @@
 import {
-  firstValueFrom, of, tap,
+  firstValueFrom, of, throwError,
 } from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
@@ -29,31 +29,28 @@ describe('AsyncDataProvider', () => {
 
   it('sets EmptyType when there is data', async () => {
     const request$ = of(testTableData);
-    const dataProvider = new AsyncDataProvider<TestTableData>(request$);
+    const dataProvider = new AsyncDataProvider(request$);
     dataProvider.load();
 
     expect(await firstValueFrom(dataProvider.emptyType$)).toBe(EmptyType.NoSearchResults);
   });
 
   it('sets EmptyType when not data', async () => {
-    const request$ = of([]);
-    const dataProvider = new AsyncDataProvider<TestTableData>(request$);
+    const dataProvider = new AsyncDataProvider(of<TestTableData[]>([]));
     dataProvider.load();
 
     expect(await firstValueFrom(dataProvider.emptyType$)).toBe(EmptyType.NoPageData);
   });
 
   it('sets EmptyType on loading', async () => {
-    const request$ = of();
-    const dataProvider = new AsyncDataProvider<TestTableData>(request$);
+    const dataProvider = new AsyncDataProvider<TestTableData>(of());
     dataProvider.load();
 
     expect(await firstValueFrom(dataProvider.emptyType$)).toBe(EmptyType.Loading);
   });
 
   it('sets EmptyType on error', async () => {
-    const request$ = of([]).pipe(tap(() => { throw new Error(); }));
-    const dataProvider = new AsyncDataProvider<TestTableData>(request$);
+    const dataProvider = new AsyncDataProvider<TestTableData>(throwError(() => new Error()));
     dataProvider.load();
 
     expect(await firstValueFrom(dataProvider.emptyType$)).toBe(EmptyType.Errors);

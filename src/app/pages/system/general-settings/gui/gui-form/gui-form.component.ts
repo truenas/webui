@@ -131,7 +131,7 @@ export class GuiFormComponent {
         this.cdr.markForCheck();
         this.handleServiceRestart(params as SystemGeneralConfigUpdate);
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.isFormLoading = false;
         this.errorHandler.handleWsFormError(error, this.formGroup);
         this.cdr.markForCheck();

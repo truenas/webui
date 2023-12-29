@@ -65,7 +65,7 @@ export class InitiatorFormComponent implements OnInit {
     this.isFormLoading = true;
     this.activatedRoute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       if (params.pk) {
-        this.pk = parseInt(params.pk, 10);
+        this.pk = parseInt(params.pk as string, 10);
         this.setForm();
       } else {
         this.isFormLoading = false;

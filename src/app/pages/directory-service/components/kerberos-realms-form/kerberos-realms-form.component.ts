@@ -89,7 +89,7 @@ export class KerberosRealmsFormComponent implements OnInit {
         this.cdr.markForCheck();
         this.slideInRef.close();
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.isFormLoading = false;
         this.errorHandler.handleWsFormError(error, this.form);
         this.cdr.markForCheck();

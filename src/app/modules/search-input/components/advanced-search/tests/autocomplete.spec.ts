@@ -6,6 +6,7 @@ import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { auditEventLabels, AuditService } from 'app/enums/audit.enum';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
+import { Option } from 'app/interfaces/option.interface';
 import { AdvancedSearchComponent } from 'app/modules/search-input/components/advanced-search/advanced-search.component';
 import { AdvancedSearchHarness } from 'app/modules/search-input/components/advanced-search/advanced-search.harness';
 import {
@@ -43,7 +44,7 @@ describe('AdvancedSearchComponent – autocomplete', () => {
           textProperty(
             'service',
             'Сервіс',
-            of([]),
+            of<Option[]>([]),
             new Map<AuditService, string>([
               [AuditService.Middleware, 'Проміжне програмне забезпечення'],
               [AuditService.Smb, 'Ес-ем-бе'],
@@ -52,7 +53,7 @@ describe('AdvancedSearchComponent – autocomplete', () => {
           textProperty(
             'event',
             'Event',
-            of([]),
+            of<Option[]>([]),
             auditEventLabels,
           ),
           dateProperty(

@@ -113,7 +113,7 @@ export class SnapshotRollbackDialogComponent implements OnInit {
         this.wasDatasetRolledBack = true;
         this.cdr.markForCheck();
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.formErrorHandler.handleWsFormError(error, this.form);
       },
     });

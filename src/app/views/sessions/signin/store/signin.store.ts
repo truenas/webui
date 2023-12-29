@@ -199,7 +199,7 @@ export class SigninStore extends ComponentStore<SigninState> {
     ])
       .pipe(
         tap(
-          ([ips, reasons]) => {
+          ([ips, reasons]: [string[], FailoverDisabledReason[]]) => {
             this.setFailoverDisabledReasons(reasons);
             this.setFailoverIps(ips);
           },

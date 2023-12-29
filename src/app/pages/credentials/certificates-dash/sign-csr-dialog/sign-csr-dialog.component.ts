@@ -56,7 +56,7 @@ export class SignCsrDialogComponent {
           this.snackbar.success(this.translate.instant('Certificate request signed'));
           this.dialogRef.close(true);
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.errorHandler.handleWsFormError(error, this.form);
         },
       });

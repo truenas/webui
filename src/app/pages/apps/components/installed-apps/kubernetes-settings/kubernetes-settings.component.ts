@@ -94,7 +94,7 @@ export class KubernetesSettingsComponent implements OnInit {
             }
             this.slideInRef.close();
           }),
-          catchError((error) => {
+          catchError((error: unknown) => {
             this.formErrorHandler.handleWsFormError(error, this.form);
             return EMPTY;
           }),

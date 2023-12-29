@@ -135,7 +135,7 @@ export class CloudsyncProviderComponent implements OnInit {
           this.save.emit(credential);
           this.cdr.markForCheck();
         },
-        error: (error) => {
+        error: (error: unknown) => {
           // TODO: Errors for nested provider form will be shown in a modal. Can be improved.
           this.isLoading$.next(false);
           this.formErrorHandler.handleWsFormError(error, this.form);
@@ -183,7 +183,7 @@ export class CloudsyncProviderComponent implements OnInit {
         this.isLoading$.next(false);
         this.cdr.markForCheck();
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.isLoading$.next(false);
         this.formErrorHandler.handleWsFormError(error, this.form);
         this.cdr.markForCheck();

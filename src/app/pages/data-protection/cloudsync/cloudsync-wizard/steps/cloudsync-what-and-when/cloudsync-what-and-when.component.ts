@@ -429,7 +429,7 @@ export class CloudsyncWhatAndWhenComponent implements OnInit, OnChanges {
           credentialsId: this.form.controls.credentials.value,
         },
       });
-      dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe((bucket) => {
+      dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe((bucket: string | false) => {
         if (bucket !== false) {
           this.loadBucketOptions();
           this.form.controls.bucket.setValue(bucket);

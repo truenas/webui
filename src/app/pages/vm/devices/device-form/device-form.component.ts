@@ -341,7 +341,7 @@ export class DeviceFormComponent implements OnInit {
           this.cdr.markForCheck();
           this.slideInRef.close(true);
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.errorHandler.handleWsFormError(error, this.typeSpecificForm);
           this.isLoading = false;
           this.cdr.markForCheck();
