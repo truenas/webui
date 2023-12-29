@@ -28,7 +28,6 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
 import { ReplicationWhatAndWhereComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-what-and-where/replication-what-and-where.component';
 import { ReplicationWhenComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-when/replication-when.component';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 const existingTask: ReplicationTask = {
@@ -95,7 +94,6 @@ describe('ReplicationWizardComponent', () => {
         mockCall('zfs.snapshot.create'),
         mockCall('replication.create', existingTask),
       ]),
-      mockProvider(IxSlideInService),
       mockProvider(SnackbarService),
       mockProvider(IxSlideInRef),
       { provide: SLIDE_IN_DATA, useValue: undefined },
