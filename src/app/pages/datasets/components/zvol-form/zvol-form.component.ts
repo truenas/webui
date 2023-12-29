@@ -6,9 +6,10 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { map, of } from 'rxjs';
 import {
-  DatasetEncryptionType, DatasetRecordSize, DatasetSnapdev, DatasetSync, DatasetType,
+  DatasetRecordSize, DatasetSnapdev, DatasetSync, DatasetType,
 } from 'app/enums/dataset.enum';
 import { DeduplicationSetting } from 'app/enums/deduplication-setting.enum';
+import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { inherit } from 'app/enums/with-inherit.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
@@ -311,7 +312,7 @@ export class ZvolFormComponent implements OnInit {
 
     this.inheritEncryptPlaceholder = helptextZvol.dataset_form_encryption.inherit_checkbox_notencrypted;
     if (this.encryptedParent) {
-      if (parent.key_format.value === DatasetEncryptionType.Passphrase) {
+      if (parent.key_format.value === EncryptionKeyFormat.Passphrase) {
         this.passphraseParent = true;
         // if parent is passphrase this dataset cannot be a key type
         this.encryptionType = 'passphrase';

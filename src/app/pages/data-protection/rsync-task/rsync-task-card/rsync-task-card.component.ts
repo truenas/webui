@@ -41,8 +41,7 @@ import { AppState } from 'app/store';
 export class RsyncTaskCardComponent implements OnInit {
   rsyncTasks: RsyncTaskUi[] = [];
   dataProvider: AsyncDataProvider<RsyncTaskUi>;
-  jobStates = new Map<number, string>();
-  readonly jobState = JobState;
+  jobStates = new Map<number, JobState>();
 
   columns = createTable<RsyncTaskUi>([
     textColumn({

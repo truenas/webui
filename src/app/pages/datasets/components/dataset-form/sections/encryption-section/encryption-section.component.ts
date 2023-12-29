@@ -8,6 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { of, switchMap } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
 import { DatasetEncryptionType } from 'app/enums/dataset.enum';
+import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
@@ -78,7 +79,7 @@ export class EncryptionSectionComponent implements OnChanges {
   get parentHasPassphrase(): boolean {
     return this.parent
       && this.parent.encrypted
-      && this.parent.key_format.value === DatasetEncryptionType.Passphrase;
+      && this.parent.key_format.value === EncryptionKeyFormat.Passphrase;
   }
 
   ngOnChanges(): void {

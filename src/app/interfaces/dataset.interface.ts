@@ -13,6 +13,7 @@ import {
   DatasetXattr,
 } from 'app/enums/dataset.enum';
 import { DeduplicationSetting } from 'app/enums/deduplication-setting.enum';
+import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { IscsiExtentType } from 'app/enums/iscsi.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { WithInherit } from 'app/enums/with-inherit.enum';
@@ -27,7 +28,7 @@ export interface Dataset {
   encryption_algorithm: ZfsProperty<string>;
   encryption_root: string;
   id: string;
-  key_format: ZfsProperty<string>;
+  key_format: ZfsProperty<EncryptionKeyFormat>;
   key_loaded: boolean;
   locked: boolean;
   mountpoint: string;
@@ -170,7 +171,7 @@ export interface DatasetDetails {
   available: ZfsProperty<string, number>;
   encryption_algorithm: ZfsProperty<string>;
   encryption_root: string;
-  key_format: ZfsProperty<string>;
+  key_format: ZfsProperty<EncryptionKeyFormat>;
   key_loaded: boolean;
   locked: boolean;
   readonly: boolean;

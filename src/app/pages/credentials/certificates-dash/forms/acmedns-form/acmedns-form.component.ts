@@ -20,7 +20,7 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { WebSocketService } from 'app/services/ws.service';
 
 interface DnsAuthenticatorList {
-  key: string;
+  key: DnsAuthenticatorType;
   variables: string[];
 }
 

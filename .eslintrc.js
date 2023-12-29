@@ -201,7 +201,6 @@ module.exports = {
         "rxjs/no-implicit-any-catch": ["off"],
         "rxjs/no-nested-subscribe": ["off"],
         "sonarjs/cognitive-complexity": ["error", 40],
-        "@typescript-eslint/no-unsafe-enum-comparison": ["off"],
         "@typescript-eslint/no-base-to-string": ["off"],
         "@typescript-eslint/class-literal-property-style": ["off"],
         "@typescript-eslint/no-unnecessary-condition": ["off"],

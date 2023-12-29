@@ -31,7 +31,7 @@ export class ServiceUpsComponent implements OnInit {
 
   form = this.fb.group({
     identifier: [null as string, [Validators.required, Validators.pattern(/^[\w|,|.|\-|_]+$/)]],
-    mode: [null as string],
+    mode: [null as UpsMode],
     remotehost: [null as string, Validators.required],
     remoteport: [null as number, Validators.required],
     driver: [null as string, Validators.required],

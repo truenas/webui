@@ -48,8 +48,7 @@ import { fromWizardToAdvancedFormSubmitted } from 'app/store/admin-panel/admin.a
 export class CloudSyncTaskCardComponent implements OnInit {
   cloudsyncTasks: CloudSyncTaskUi[] = [];
   dataProvider: AsyncDataProvider<CloudSyncTaskUi>;
-  jobStates = new Map<number, string>();
-  readonly jobState = JobState;
+  jobStates = new Map<number, JobState>();
 
   columns = createTable<CloudSyncTaskUi>([
     textColumn({
