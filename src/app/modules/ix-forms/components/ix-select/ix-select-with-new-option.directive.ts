@@ -25,6 +25,7 @@ export abstract class IxSelectWithNewOption implements ControlValueAccessor, OnI
 
   @Input() set value(value: string | number) {
     this.selectValue = value;
+    this.ixSelect?.controlDirective.control.setValue(value);
     this.notifyValueChange();
   }
 
@@ -48,6 +49,7 @@ export abstract class IxSelectWithNewOption implements ControlValueAccessor, OnI
 
   writeValue(value: string | number): void {
     this.selectValue = value;
+    this.ixSelect?.controlDirective.control.setValue(value);
   }
 
   registerOnChange(onChange: (value: unknown) => void): void {
@@ -95,6 +97,7 @@ export abstract class IxSelectWithNewOption implements ControlValueAccessor, OnI
     }
     this.ixSelect.options = this.options.asObservable();
     this.ixSelect.ngOnChanges();
+    this.ixSelect.controlDirective.control.setValue(this.selectValue);
     this.ixSelect.controlDirective.control.valueChanges.pipe(
       filter(Boolean),
       tap((newValue: number | string) => this.value = newValue),
@@ -113,6 +116,5 @@ export abstract class IxSelectWithNewOption implements ControlValueAccessor, OnI
 
   private valueSetterCallback = (result: string | number): void => {
     this.value = result;
-    this.ixSelect.controlDirective.control.setValue(result);
   };
 }
