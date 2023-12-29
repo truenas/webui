@@ -14,6 +14,7 @@ import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextServiceNfs } from 'app/helptext/services/components/service-nfs';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { rangeValidator, portRangeValidator } from 'app/modules/ix-forms/validators/range-validation/range-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AddSpnDialogComponent } from 'app/pages/services/components/service-nfs/add-spn-dialog/add-spn-dialog.component';
@@ -36,7 +37,11 @@ export class ServiceNfsComponent implements OnInit {
   form = this.fb.group({
     allow_nonroot: [false],
     bindip: [[] as string[]],
-    servers: [4, [Validators.required, rangeValidator(1, 256)]],
+    servers_auto: [true],
+    servers: [null as number, [rangeValidator(1, 256), this.validatorsService.validateOnCondition(
+      (control) => !control.parent?.get('servers_auto')?.value,
+      Validators.required,
+    )]],
     protocols: [[NfsProtocol.V3], Validators.required],
     v4_v3owner: [false],
     v4_krb: [false],
@@ -50,6 +55,7 @@ export class ServiceNfsComponent implements OnInit {
     allow_nonroot: helptextServiceNfs.nfs_srv_allow_nonroot_tooltip,
     bindip: helptextServiceNfs.nfs_srv_bindip_tooltip,
     servers: helptextServiceNfs.nfs_srv_servers_tooltip,
+    servers_auto: helptextServiceNfs.nfs_srv_servers_auto_tooltip,
     v4_v3owner: helptextServiceNfs.nfs_srv_v4_v3owner_tooltip,
     v4_krb: helptextServiceNfs.nfs_srv_v4_krb_tooltip,
     mountd_port: helptextServiceNfs.nfs_srv_mountd_port_tooltip,
@@ -73,6 +79,7 @@ export class ServiceNfsComponent implements OnInit {
     private snackbar: SnackbarService,
     private matDialog: MatDialog,
     private slideInRef: IxSlideInRef<ServiceNfsComponent>,
+    private validatorsService: IxValidatorsService,
   ) {}
 
   ngOnInit(): void {
@@ -84,6 +91,12 @@ export class ServiceNfsComponent implements OnInit {
 
   onSubmit(): void {
     const params = this.form.value;
+
+    if (params.servers_auto) {
+      params.servers = null;
+    }
+
+    delete params.servers_auto;
 
     this.isFormLoading = true;
     this.ws.call('nfs.update', [params])
@@ -110,7 +123,10 @@ export class ServiceNfsComponent implements OnInit {
         next: (config) => {
           this.isAddSpnDisabled = !config.v4_krb;
           this.hasNfsStatus = config.keytab_has_nfs_spn;
-          this.form.patchValue(config);
+          this.form.patchValue({
+            ...config,
+            servers_auto: config.managed_nfsd,
+          });
           this.isFormLoading = false;
           this.cdr.markForCheck();
         },
