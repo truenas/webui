@@ -7,15 +7,14 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
+import { Subject, of } from 'rxjs';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { SLIDE_IN_CLOSER, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -74,6 +73,9 @@ describe('CloudCredentialsFormComponent', () => {
   let spectator: Spectator<CloudCredentialsFormComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
+  const closer = {
+    next: jest.fn(),
+  };
   const s3Provider = {
     name: CloudsyncProviderName.AmazonS3,
     title: 'Amazon S3',
@@ -104,14 +106,14 @@ describe('CloudCredentialsFormComponent', () => {
       StorjProviderFormComponent,
     ],
     providers: [
-      mockProvider(IxSlideInRef),
       mockProvider(SnackbarService),
       mockProvider(DialogService),
       { provide: SLIDE_IN_DATA, useValue: undefined },
+      { provide: SLIDE_IN_CLOSER, useValue: new Subject() },
       mockWebsocket([
         mockCall('cloudsync.credentials.query', []),
-        mockCall('cloudsync.credentials.create'),
-        mockCall('cloudsync.credentials.update'),
+        mockCall('cloudsync.credentials.create', fakeCloudsyncCredential),
+        mockCall('cloudsync.credentials.update', fakeCloudsyncCredential),
         mockCall('cloudsync.credentials.verify', {
           valid: true,
         }),
@@ -123,6 +125,9 @@ describe('CloudCredentialsFormComponent', () => {
   describe('rendering', () => {
     beforeEach(async () => {
       spectator = createComponent();
+      Object.defineProperty(spectator.component, 'closer$', {
+        value: closer,
+      });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
     });
@@ -247,7 +252,7 @@ describe('CloudCredentialsFormComponent', () => {
             s3attribute: 's3 value',
           },
         }]);
-        expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalledWith(true);
+        expect(closer.next).toHaveBeenCalledWith({ response: fakeCloudsyncCredential, error: null });
         expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
       });
 
@@ -285,6 +290,9 @@ describe('CloudCredentialsFormComponent', () => {
     beforeEach(async () => {
       spectator = createComponent({
         providers: [{ provide: SLIDE_IN_DATA, useValue: fakeCloudsyncCredential }],
+      });
+      Object.defineProperty(spectator.component, 'closer$', {
+        value: closer,
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
@@ -325,7 +333,7 @@ describe('CloudCredentialsFormComponent', () => {
           },
         },
       ]);
-      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalledWith(true);
+      expect(closer.next).toHaveBeenCalledWith({ response: fakeCloudsyncCredential, error: null });
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
     });
   });
