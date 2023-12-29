@@ -29,7 +29,7 @@ export class CloudCredentialsSelectComponent extends IxSelectWithNewOption {
 
   private cloudCredentialService = inject(CloudCredentialService);
 
-  fetchUpdatedOptions(): Observable<Option[]> {
+  fetchOptions(): Observable<Option[]> {
     return this.cloudCredentialService.getCloudsyncCredentials().pipe(
       map((options) => {
         return options.map((option) => {

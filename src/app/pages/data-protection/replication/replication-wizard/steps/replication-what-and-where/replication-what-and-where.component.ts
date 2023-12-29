@@ -8,8 +8,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  BehaviorSubject,
-  debounceTime, filter, map, merge, Observable, of, Subject, switchMap,
+  debounceTime, filter, map, merge, Observable, of, Subject,
 } from 'rxjs';
 import { DatasetSource } from 'app/enums/dataset.enum';
 import { Direction } from 'app/enums/direction.enum';
@@ -31,7 +30,6 @@ import { SLIDE_IN_CLOSER } from 'app/modules/ix-forms/components/ix-slide-in/ix-
 import {
   forbiddenAsyncValues,
 } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
-import { SshConnectionFormComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-form/ssh-connection-form.component';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { SshCredentialsNewOption } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard-data.interface';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
@@ -101,7 +99,6 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   });
 
   existReplicationOptions$: Observable<Option[]>;
-  readonly sshCredentialsOptions$ = new BehaviorSubject<Option[]>([]);
 
   transportOptions$ = of([
     { label: this.translate.instant('Encryption (more secure, but slower)'), value: TransportMode.Ssh },
@@ -163,8 +160,6 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     this.disableTarget();
     this.loadExistReplication();
     this.loadSshConnections();
-    this.loadSshConnectionOptions();
-    this.listenForNewSshConnection();
 
     this.form.controls.source_datasets_from.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
       this.disableTransportAndSudo(value, this.form.value.target_dataset_from);
@@ -360,65 +355,12 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     );
   }
 
-  private listenForNewSshConnection(): void {
-    this.form.controls.ssh_credentials_source.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
-      if (value === SshCredentialsNewOption.New) {
-        this.createSshConnection(true);
-      } else if (value) {
-        this.remoteSourceNodeProvider = this.replicationService.getTreeNodeProvider(
-          { sshCredential: value, transport: this.form.value.transport || TransportMode.Ssh },
-        );
-      }
-    });
-
-    this.form.controls.ssh_credentials_target.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
-      if (value === SshCredentialsNewOption.New) {
-        this.createSshConnection(false);
-      } else if (value) {
-        this.remoteTargetNodeProvider = this.replicationService.getTreeNodeProvider(
-          { sshCredential: value, transport: this.form.value.transport || TransportMode.Ssh },
-        );
-      }
-    });
-  }
-
   private loadSshConnections(): void {
     this.keychainCredentials.getSshConnections()
       .pipe(untilDestroyed(this))
       .subscribe((connections) => {
         this.sshCredentials = connections;
       });
-  }
-
-  private loadSshConnectionOptions(): void {
-    this.keychainCredentials.getSshCredentialsOptions()
-      .pipe(untilDestroyed(this))
-      .subscribe((options) => this.sshCredentialsOptions$.next(options));
-  }
-
-  private createSshConnection(isSource: boolean): void {
-    this.openSshConnectionDialog().pipe(
-      filter((response) => !!response.response),
-      map((response) => response.response),
-      switchMap((newCredential: KeychainSshCredentials): Observable<[KeychainSshCredentials, Option[]]> => {
-        return this.keychainCredentials.getSshCredentialsOptions().pipe(
-          map((options) => [newCredential, options]),
-        );
-      }),
-      untilDestroyed(this),
-    ).subscribe(([newCredential, sshConnectionsOptions]) => {
-      this.sshCredentialsOptions$.next(sshConnectionsOptions);
-
-      if (isSource) {
-        this.form.controls.ssh_credentials_source.setValue(newCredential.id);
-      } else {
-        this.form.controls.ssh_credentials_target.setValue(newCredential.id);
-      }
-    });
-  }
-
-  private openSshConnectionDialog(): Observable<ChainedSlideInCloseResponse> {
-    return this.chainedSlideInService.pushComponent(SshConnectionFormComponent);
   }
 
   private genTaskName(source: string[], target: string): void {

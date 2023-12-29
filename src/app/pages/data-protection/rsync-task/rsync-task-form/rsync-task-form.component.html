@@ -95,13 +95,12 @@
             </ng-container>
 
             <ng-template #keyChainFields>
-              <ix-select
+              <ix-ssh-credentials-select
                 formControlName="ssh_credentials"
                 [label]="'SSH Connection' | translate"
                 [tooltip]="helptext.rsync_ssh_credentials_tooltip | translate"
-                [options]="sshCredentialsOptions$"
                 [required]="true"
-              ></ix-select>
+              ></ix-ssh-credentials-select>
             </ng-template>
 
             <ix-input

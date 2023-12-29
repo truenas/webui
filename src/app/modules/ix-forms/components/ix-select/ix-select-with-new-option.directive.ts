@@ -66,7 +66,7 @@ export abstract class IxSelectWithNewOption implements ControlValueAccessor, OnI
   private translateService = inject(TranslateService);
 
   ngOnInit(): void {
-    this.fetchUpdatedOptions().pipe(
+    this.fetchOptions().pipe(
       map((options) => {
         return [
           { label: this.translateService.instant('Add New'), value: addNewValue } as Option,
@@ -87,7 +87,7 @@ export abstract class IxSelectWithNewOption implements ControlValueAccessor, OnI
     valueSetterCallback: (value: string | number) => void
   ): void;
   abstract getFormComponentType(): ComponentType<unknown>;
-  abstract fetchUpdatedOptions(): Observable<Option[]>;
+  abstract fetchOptions(): Observable<Option[]>;
 
   ngAfterViewInit(): void {
     if (!this.ixSelect) {
@@ -101,7 +101,7 @@ export abstract class IxSelectWithNewOption implements ControlValueAccessor, OnI
       switchMap(() => this.chainedSlideIn.pushComponent(this.getFormComponentType(), this.formComponentIsWide)),
       filter((response: ChainedSlideInCloseResponse) => !response.error),
       tap((response) => this.setValueFromSlideInResult(response, this.valueSetterCallback.bind(this))),
-      switchMap(() => this.fetchUpdatedOptions()),
+      switchMap(() => this.fetchOptions()),
       tap((options) => this.options.next([
         { label: this.translateService.instant('Add New'), value: addNewValue } as Option,
         ...options,

@@ -2,26 +2,19 @@ import {
   ChangeDetectionStrategy, Component, Input, OnChanges,
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
-import {
-  BehaviorSubject, Observable, filter, map, of, switchMap,
-} from 'rxjs';
+import { of } from 'rxjs';
 import { CompressionType, compressionTypeNames } from 'app/enums/compression-type.enum';
 import { NetcatMode, netcatModeNames } from 'app/enums/netcat-mode.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextReplication } from 'app/helptext/data-protection/replication/replication';
 import { helptextGlobal } from 'app/helptext/global-helptext';
-import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
-import { Option } from 'app/interfaces/option.interface';
 import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
-import { SshConnectionFormComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-form/ssh-connection-form.component';
 import { SshCredentialsNewOption } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard-data.interface';
-import { ChainedSlideInCloseResponse, IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
-import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 
 @UntilDestroy()
 @Component({
@@ -48,7 +41,6 @@ export class TransportSectionComponent implements OnChanges {
 
   readonly netcatActiveSides$ = of(mapToOptions(netcatModeNames, this.translate));
   readonly compressions$ = of(mapToOptions(compressionTypeNames, this.translate));
-  readonly sshCredentialsOptions$ = new BehaviorSubject<Option[]>([]);
 
   readonly sizeSuggestion = this.translate.instant(helptextGlobal.human_readable.suggestion_label);
 
@@ -58,12 +50,7 @@ export class TransportSectionComponent implements OnChanges {
     private formBuilder: FormBuilder,
     private translate: TranslateService,
     public formatter: IxFormatterService,
-    private keychainCredentials: KeychainCredentialService,
-    private chainedSlideInService: IxChainedSlideInService,
-  ) {
-    this.loadSshConnectionsOptions();
-    this.listenForNewSshConnection();
-  }
+  ) { }
 
   ngOnChanges(): void {
     if (this.replication) {
@@ -149,33 +136,5 @@ export class TransportSectionComponent implements OnChanges {
       }, _.isNull),
       speed_limit: null,
     };
-  }
-
-  private loadSshConnectionsOptions(): void {
-    this.keychainCredentials.getSshCredentialsOptions()
-      .pipe(untilDestroyed(this))
-      .subscribe((sshConnections) => this.sshCredentialsOptions$.next(sshConnections));
-  }
-
-  private listenForNewSshConnection(): void {
-    this.form.controls.ssh_credentials.valueChanges.pipe(
-      filter((value) => value === SshCredentialsNewOption.New),
-      switchMap(() => this.openSshConnectionDialog()),
-      filter((response) => !!response.response),
-      map((response) => response.response),
-      switchMap((newCredential: KeychainSshCredentials): Observable<[KeychainSshCredentials, Option[]]> => {
-        return this.keychainCredentials.getSshCredentialsOptions().pipe(
-          map((options) => [newCredential, options]),
-        );
-      }),
-      untilDestroyed(this),
-    ).subscribe(([newCredential, sshConnections]) => {
-      this.sshCredentialsOptions$.next(sshConnections);
-      this.form.controls.ssh_credentials.setValue(newCredential.id);
-    });
-  }
-
-  private openSshConnectionDialog(): Observable<ChainedSlideInCloseResponse> {
-    return this.chainedSlideInService.pushComponent(SshConnectionFormComponent);
   }
 }

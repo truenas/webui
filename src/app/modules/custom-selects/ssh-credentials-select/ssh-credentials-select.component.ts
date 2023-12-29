@@ -4,6 +4,7 @@ import {
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { Observable } from 'rxjs';
+import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
 import { Option } from 'app/interfaces/option.interface';
 import { SshCredentials } from 'app/interfaces/ssh-credentials.interface';
 import { IxSelectWithNewOption } from 'app/modules/ix-forms/components/ix-select/ix-select-with-new-option.directive';
@@ -29,8 +30,10 @@ export class SshCredentialsSelectComponent extends IxSelectWithNewOption {
 
   private keyChainCredsService = inject(KeychainCredentialService);
 
-  fetchUpdatedOptions(): Observable<Option[]> {
-    return this.keyChainCredsService.getSshCredentialsOptions();
+  fetchOptions(): Observable<Option[]> {
+    return this.keyChainCredsService.getSshConnections().pipe(
+      idNameArrayToOptions(),
+    );
   }
 
   setValueFromSlideInResult(
