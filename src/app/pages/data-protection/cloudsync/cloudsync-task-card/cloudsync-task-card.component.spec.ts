@@ -29,7 +29,7 @@ import {
 } from 'app/pages/data-protection/cloudsync/cloudsync-task-card/cloudsync-task-card.component';
 import { CloudsyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
 import { DialogService } from 'app/services/dialog.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -122,10 +122,8 @@ describe('CloudSyncTaskCardComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockProvider(IxSlideInService, {
-        open: jest.fn(() => {
-          return { slideInClosed$: of() };
-        }),
+      mockProvider(IxChainedSlideInService, {
+        pushComponent: jest.fn(() => of()),
       }),
       mockProvider(IxSlideInRef),
       mockProvider(MatDialog, {
@@ -161,19 +159,21 @@ describe('CloudSyncTaskCardComponent', () => {
     const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 6);
     await editButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(CloudsyncFormComponent, {
-      data: cloudsyncTasks[0],
-      wide: true,
-    });
+    expect(spectator.inject(IxChainedSlideInService).pushComponent).toHaveBeenCalledWith(
+      CloudsyncFormComponent,
+      true,
+      cloudsyncTasks[0],
+    );
   });
 
   it('shows form to create new CloudSync Task when Add button is pressed', async () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(CloudsyncWizardComponent, {
-      wide: true,
-    });
+    expect(spectator.inject(IxChainedSlideInService).pushComponent).toHaveBeenCalledWith(
+      CloudsyncWizardComponent,
+      true,
+    );
   });
 
   it('shows confirmation dialog when Run Now button is pressed', async () => {

@@ -29,10 +29,10 @@ import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-cront
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { CloudsyncRestoreDialogComponent } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
+import { CloudsyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
@@ -123,7 +123,6 @@ export class CloudSyncTaskCardComponent implements OnInit {
   });
 
   constructor(
-    private slideInService: IxSlideInService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
     private ws: WebSocketService,
@@ -173,17 +172,23 @@ export class CloudSyncTaskCardComponent implements OnInit {
   }
 
   onAdd(): void {
-    const close$ = this.ixChainedSlideInService.pushComponent(CloudsyncFormComponent, true);
-    close$.pipe(untilDestroyed(this)).subscribe({
+    const close$ = this.ixChainedSlideInService.pushComponent(CloudsyncWizardComponent, true);
+    close$.pipe(
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe({
       next: () => {
-        // console.log('closed', value);
+        this.getCloudSyncTasks();
       },
     });
   }
 
   onEdit(row?: CloudSyncTaskUi): void {
-    const slideInRef = this.slideInService.open(CloudsyncFormComponent, { data: row, wide: true });
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+    const closer$ = this.ixChainedSlideInService.pushComponent(CloudsyncFormComponent, true, row);
+    closer$.pipe(
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe(() => {
       this.getCloudSyncTasks();
     });
   }
