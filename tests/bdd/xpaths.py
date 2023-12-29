@@ -21,6 +21,7 @@ class button:
     leave_Domain = '//button[@ix-auto="button__LEAVE DOMAIN"]'
     i_Agree = '//button[@ix-auto="button__I AGREE"]'
     summit = '//button[@ix-auto="button__SUBMIT"]'
+    close_Popover = '//button[@title="Close popover"]'
 
 
 class checkbox:
@@ -36,6 +37,11 @@ class dashboard:
 class domain_Credentials:
     title = '//h4[contains(.,"Domain Credentials")]'
 
+
+class google_Drive:
+    name_Sort = '//div[contains(text(),"Name") and @role="button"]'
+    music_Folder = '//div[@data-tooltip="Google Drive Folder: music"]'
+    move_To_Trash = '//div[text()="Move to trash?"]'
 
 class input:
     username = '//input[@ix-auto="input__Username"]'

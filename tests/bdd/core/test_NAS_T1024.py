@@ -22,7 +22,6 @@ from pytest_bdd import (
     parsers
 )
 
-
 user = os.environ.get('USER')
 mount_point = f'/tmp/iscsi_{"".join(random.choices(string.digits, k=2))}'
 
