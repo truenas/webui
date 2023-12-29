@@ -96,6 +96,7 @@ export abstract class IxSelectWithNewOption implements ControlValueAccessor, OnI
     this.ixSelect.options = this.options.asObservable();
     this.ixSelect.ngOnChanges();
     this.ixSelect.controlDirective.control.valueChanges.pipe(
+      filter(Boolean),
       tap((newValue: number | string) => this.value = newValue),
       filter((newValue: number | string) => newValue === addNewValue),
       switchMap(() => this.chainedSlideIn.pushComponent(this.getFormComponentType(), this.formComponentIsWide)),
