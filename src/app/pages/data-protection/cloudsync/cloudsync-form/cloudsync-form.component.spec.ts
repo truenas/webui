@@ -3,14 +3,15 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { of, Subject } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { CloudCredentialsSelectModule } from 'app/modules/custom-selects/cloud-credentials-select/cloud-credentials-select.module';
+import { SLIDE_IN_CLOSER, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
@@ -19,7 +20,7 @@ import {
 } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
 import { DialogService } from 'app/services/dialog.service';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('CloudsyncFormComponent', () => {
@@ -73,11 +74,15 @@ describe('CloudsyncFormComponent', () => {
 
   let loader: HarnessLoader;
   let spectator: Spectator<CloudsyncFormComponent>;
+  const closer = {
+    next: jest.fn(),
+  };
   const createComponent = createComponentFactory({
     component: CloudsyncFormComponent,
     imports: [
       IxFormsModule,
       SchedulerModule,
+      CloudCredentialsSelectModule,
       ReactiveFormsModule,
     ],
     declarations: [
@@ -86,8 +91,8 @@ describe('CloudsyncFormComponent', () => {
     providers: [
       mockProvider(DialogService),
       mockWebsocket([
-        mockCall('cloudsync.create'),
-        mockCall('cloudsync.update'),
+        mockCall('cloudsync.create', existingTask),
+        mockCall('cloudsync.update', existingTask),
         mockCall('cloudsync.credentials.query', [
           {
             id: 1,
@@ -126,16 +131,22 @@ describe('CloudsyncFormComponent', () => {
           credentials_oauth: null,
         }]),
       ]),
-      mockProvider(IxSlideInService),
+      mockProvider(IxChainedSlideInService, {
+        pushComponent: jest.fn(() => of()),
+        components$: of([]),
+      }),
       mockProvider(FilesystemService),
-      mockProvider(IxSlideInRef),
       { provide: SLIDE_IN_DATA, useValue: undefined },
+      { provide: SLIDE_IN_CLOSER, useValue: new Subject() },
     ],
   });
 
   describe('adds a new cloudsync', () => {
     beforeEach(() => {
       spectator = createComponent();
+      Object.defineProperty(spectator.component, 'closer$', {
+        value: closer,
+      });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
@@ -173,7 +184,7 @@ describe('CloudsyncFormComponent', () => {
         transfer_mode: TransferMode.Copy,
         transfers: 4,
       }]);
-      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+      expect(closer.next).toHaveBeenCalledWith({ response: existingTask, error: null });
     });
   });
 
@@ -183,6 +194,9 @@ describe('CloudsyncFormComponent', () => {
         providers: [
           { provide: SLIDE_IN_DATA, useValue: existingTask },
         ],
+      });
+      Object.defineProperty(spectator.component, 'closer$', {
+        value: closer,
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
@@ -255,7 +269,7 @@ describe('CloudsyncFormComponent', () => {
         transfer_mode: TransferMode.Copy,
         transfers: 10,
       }]);
-      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+      expect(closer.next).toHaveBeenCalledWith({ response: existingTask, error: null });
     });
   });
 });
