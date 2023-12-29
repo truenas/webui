@@ -9,6 +9,11 @@ export interface ChainedSlideInState {
   components: Map<string, ChainedComponentInfo>;
 }
 
+export interface SwapChainedComponentInfo {
+  oldComponentId: string;
+  newComponentInfo: ChainedComponentInfo;
+}
+
 export interface ChainedComponentInfo {
   component: Type<unknown>;
   close$: Subject<unknown>;
@@ -88,6 +93,22 @@ export class IxChainedSlideInService extends ComponentStore<ChainedSlideInState>
     const popped = newMap.get(id);
     popped.close$.complete();
     newMap.delete(id);
+    return {
+      components: newMap,
+    };
+  });
+
+  swapComponent = this.updater((state, swapInfo: SwapChainedComponentInfo) => {
+    const newMap = new Map(state.components);
+    const popped = newMap.get(swapInfo.oldComponentId);
+    const close$ = popped.close$;
+    newMap.delete(swapInfo.oldComponentId);
+    newMap.set(UUID.UUID(), {
+      component: swapInfo.newComponentInfo.component,
+      wide: swapInfo.newComponentInfo.wide,
+      data: swapInfo.newComponentInfo.data,
+      close$,
+    });
     return {
       components: newMap,
     };

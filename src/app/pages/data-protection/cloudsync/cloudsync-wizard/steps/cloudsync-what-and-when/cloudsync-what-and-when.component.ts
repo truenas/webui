@@ -34,6 +34,7 @@ import { CreateStorjBucketDialogComponent } from 'app/pages/data-protection/clou
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { DialogService } from 'app/services/dialog.service';
 import { FilesystemService } from 'app/services/filesystem.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
@@ -110,6 +111,7 @@ export class CloudsyncWhatAndWhenComponent implements OnInit, OnChanges {
   constructor(
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
+    private chainedSlideInService: IxChainedSlideInService,
     private dialog: DialogService,
     private formBuilder: FormBuilder,
     private translate: TranslateService,
@@ -228,14 +230,15 @@ export class CloudsyncWhatAndWhenComponent implements OnInit, OnChanges {
       filter(Boolean),
       untilDestroyed(this),
     ).subscribe(() => {
-      const slideInRef = this.slideIn.open(CloudsyncFormComponent, { wide: true });
-      slideInRef.slideInClosed$.pipe(
-        filter(Boolean),
+      this.chainedSlideInService.pushComponent(CloudsyncFormComponent, true).pipe(
+        filter((response) => !!response.response),
         untilDestroyed(this),
-      ).subscribe(() => {
-        this.store$.dispatch(fromWizardToAdvancedFormSubmitted({
-          formType: FromWizardToAdvancedSubmitted.CloudSyncTask,
-        }));
+      ).subscribe({
+        next: () => {
+          this.store$.dispatch(fromWizardToAdvancedFormSubmitted({
+            formType: FromWizardToAdvancedSubmitted.CloudSyncTask,
+          }));
+        },
       });
     });
   }
