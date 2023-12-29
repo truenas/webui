@@ -54,7 +54,7 @@ export class SnapshotCloneDialogComponent implements OnInit {
           this.wasDatasetCloned = true;
           this.cdr.markForCheck();
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.errorHandler.handleWsFormError(error, this.form);
         },
       });

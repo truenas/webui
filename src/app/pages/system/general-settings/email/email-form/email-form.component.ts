@@ -151,7 +151,7 @@ export class EmailFormComponent implements OnInit {
           this.slideInRef.close(true);
           this.cdr.markForCheck();
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.isLoading = false;
           this.cdr.markForCheck();
           this.formErrorHandler.handleWsFormError(error, this.form);

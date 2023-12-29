@@ -71,7 +71,7 @@ export class TargetGlobalConfigurationComponent implements OnInit {
           this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Iscsi }));
           this.cdr.markForCheck();
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.setLoading(false);
           this.formErrorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();

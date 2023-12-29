@@ -128,7 +128,7 @@ export class LdapComponent implements OnInit {
             this.slideInRef.close();
           }
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.isLoading = false;
           this.formErrorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();

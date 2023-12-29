@@ -341,7 +341,7 @@ export class UserFormComponent implements OnInit {
             this.slideInRef.close();
             this.cdr.markForCheck();
           },
-          error: (error) => {
+          error: (error: unknown) => {
             this.isFormLoading = false;
             this.errorHandler.handleWsFormError(error, this.form);
             this.cdr.markForCheck();

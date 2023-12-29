@@ -86,7 +86,7 @@ export class SetAdminPasswordFormComponent implements OnInit {
           this.signinStore.showSnackbar(this.translate.instant('Login error. Please try again.'));
         }
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.errorHandler.handleWsFormError(error, this.form);
         this.signinStore.setLoadingState(false);
       },

@@ -217,7 +217,7 @@ export class IdmapFormComponent implements OnInit {
           this.isLoading = false;
           this.slideInRef.close();
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.formErrorHandler.handleWsFormError(error, this.form);
           this.isLoading = false;
           this.cdr.markForCheck();

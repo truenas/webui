@@ -119,7 +119,7 @@ export class CertificateEditComponent implements OnInit {
           this.cdr.markForCheck();
           this.slideInRef.close(true);
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.isLoading = false;
           this.cdr.markForCheck();
           this.errorHandler.handleWsFormError(error, this.form);

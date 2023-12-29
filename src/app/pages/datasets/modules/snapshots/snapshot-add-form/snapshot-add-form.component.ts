@@ -84,7 +84,7 @@ export class SnapshotAddFormComponent implements OnInit {
         this.checkForVmsInDataset();
         this.cdr.markForCheck();
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.errorHandler.handleWsFormError(error, this.form);
         this.isFormLoading = false;
         this.cdr.markForCheck();
@@ -131,7 +131,7 @@ export class SnapshotAddFormComponent implements OnInit {
         this.datasetStore.datasetUpdated();
         this.cdr.markForCheck();
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.isFormLoading = false;
         this.errorHandler.handleWsFormError(error, this.form);
         this.cdr.markForCheck();
@@ -169,7 +169,7 @@ export class SnapshotAddFormComponent implements OnInit {
           this.isFormLoading = false;
           this.cdr.markForCheck();
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.errorHandler.handleWsFormError(error, this.form);
           this.isFormLoading = false;
           this.cdr.markForCheck();

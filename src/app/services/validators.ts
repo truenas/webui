@@ -1,5 +1,5 @@
 import {
-  AbstractControl, FormGroup, UntypedFormControl, ValidatorFn,
+  FormControl, FormGroup, UntypedFormControl, ValidatorFn,
 } from '@angular/forms';
 import _ from 'lodash';
 
@@ -52,9 +52,9 @@ export function greaterThanFg(
 }
 
 export function rangeValidator(min: number, max?: number): ValidatorFn {
-  let thisControl: AbstractControl;
+  let thisControl: FormControl<string>;
 
-  return function rangeValidate(control: AbstractControl) {
+  return function rangeValidate(control: FormControl<string>) {
     let regex;
     if (min === 0) {
       regex = /^(0|[1-9]\d*)$/;

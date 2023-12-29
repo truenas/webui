@@ -120,7 +120,7 @@ export class DiskFormComponent implements OnInit {
           this.slideInRef.close(true);
           this.snackbarService.success(this.translate.instant('Disk settings successfully saved.'));
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.isLoading = false;
           this.cdr.markForCheck();
           this.errorHandler.handleWsFormError(error, this.form);

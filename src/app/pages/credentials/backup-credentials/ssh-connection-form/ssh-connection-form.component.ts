@@ -182,7 +182,7 @@ export class SshConnectionFormComponent implements OnInit {
             remote_host_key: remoteHostKey,
           });
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.formErrorHandler.handleWsFormError(error, this.form);
         },
       });
@@ -210,7 +210,7 @@ export class SshConnectionFormComponent implements OnInit {
           this.slideInRef.close(newCredential);
         }
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.isLoading = false;
         this.cdr.markForCheck();
         this.formErrorHandler.handleWsFormError(error, this.form);

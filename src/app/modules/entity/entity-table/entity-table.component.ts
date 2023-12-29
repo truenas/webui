@@ -692,11 +692,14 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
 
     if (response.data) {
       if (response.data.result) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         rows = new EntityUtils().flattenData(response.data.result) as Row[];
       } else {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         rows = new EntityUtils().flattenData(response.data) as Row[];
       }
     } else {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       rows = new EntityUtils().flattenData(response) as Row[];
     }
 

@@ -607,7 +607,7 @@ export class ZvolFormComponent implements OnInit {
 
     this.ws.call('pool.dataset.create', [data as DatasetCreate]).pipe(untilDestroyed(this)).subscribe({
       next: (dataset) => this.handleZvolCreateUpdate(dataset),
-      error: (error) => {
+      error: (error: unknown) => {
         this.isLoading = false;
         this.formErrorHandler.handleWsFormError(error, this.form);
         this.cdr.markForCheck();
@@ -667,7 +667,7 @@ export class ZvolFormComponent implements OnInit {
         if (!data.volsize || data.volsize >= roundedVolSize) {
           this.ws.call('pool.dataset.update', [this.parentId, data as DatasetUpdate]).pipe(untilDestroyed(this)).subscribe({
             next: (dataset) => this.handleZvolCreateUpdate(dataset),
-            error: (error) => {
+            error: (error: unknown) => {
               this.isLoading = false;
               this.formErrorHandler.handleWsFormError(error, this.form);
               this.cdr.markForCheck();

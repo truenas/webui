@@ -39,7 +39,9 @@ export class GroupMembersComponent implements OnInit {
   ngOnInit(): void {
     this.isFormLoading = true;
     this.activatedRoute.params.pipe(
-      switchMap((params) => this.ws.call('group.query', [[['id', '=', parseInt(params.pk)]]])),
+      switchMap((params) => {
+        return this.ws.call('group.query', [[['id', '=', parseInt(params.pk as string)]]]);
+      }),
       switchMap((groups) => {
         this.group = groups[0];
         this.cdr.markForCheck();

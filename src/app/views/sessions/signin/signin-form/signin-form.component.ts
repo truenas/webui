@@ -97,7 +97,7 @@ export class SigninFormComponent implements OnInit {
           this.cdr.markForCheck();
         }
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.errorHandler.handleWsFormError(error, this.form);
         this.signinStore.setLoadingState(false);
       },
@@ -150,7 +150,7 @@ export class SigninFormComponent implements OnInit {
           this.cdr.markForCheck();
         }
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.errorHandler.handleWsFormError(error, this.form);
         this.signinStore.setLoadingState(false);
       },
