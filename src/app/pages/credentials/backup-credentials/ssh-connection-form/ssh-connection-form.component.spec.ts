@@ -6,12 +6,11 @@ import { MatDialogRef } from '@angular/material/dialog';
 import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SshConnectionsSetupMethod } from 'app/enums/ssh-connections-setup-method.enum';
 import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { SLIDE_IN_CLOSER, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
@@ -25,6 +24,9 @@ describe('SshConnectionFormComponent', () => {
   let loader: HarnessLoader;
   let form: IxFormHarness;
   let websocket: WebSocketService;
+  const closer = {
+    next: jest.fn(),
+  };
 
   const existingConnection = {
     id: 11,
@@ -47,10 +49,11 @@ describe('SshConnectionFormComponent', () => {
       AppLoaderModule,
     ],
     providers: [
+      { provide: SLIDE_IN_CLOSER, useValue: new Subject() },
       mockWebsocket([
         mockCall('keychaincredential.remote_ssh_host_key_scan', 'ssh-rsaAREMOTE'),
-        mockCall('keychaincredential.setup_ssh_connection'),
-        mockCall('keychaincredential.update'),
+        mockCall('keychaincredential.setup_ssh_connection', existingConnection),
+        mockCall('keychaincredential.update', existingConnection),
       ]),
       mockProvider(KeychainCredentialService, {
         getSshKeys: () => of([
@@ -58,7 +61,6 @@ describe('SshConnectionFormComponent', () => {
           { id: 2, name: 'key2' },
         ]),
       }),
-      mockProvider(IxSlideInRef),
       mockProvider(DialogService),
       mockProvider(MatDialogRef),
       {
@@ -72,6 +74,9 @@ describe('SshConnectionFormComponent', () => {
     beforeEach(async () => {
       spectator = createComponent({
         providers: [{ provide: SLIDE_IN_DATA, useValue: existingConnection }],
+      });
+      Object.defineProperty(spectator.component, 'closer$', {
+        value: closer,
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
@@ -117,13 +122,16 @@ describe('SshConnectionFormComponent', () => {
           username: 'root',
         },
       }]);
-      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+      expect(closer.next).toHaveBeenCalledWith({ response: existingConnection, error: null });
     });
   });
 
   describe('Add new SSH', () => {
     beforeEach(async () => {
       spectator = createComponent();
+      Object.defineProperty(spectator.component, 'closer$', {
+        value: closer,
+      });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
       websocket = spectator.inject(WebSocketService);
@@ -161,7 +169,7 @@ describe('SshConnectionFormComponent', () => {
           username: 'john',
         },
       }]);
-      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+      expect(closer.next).toHaveBeenCalledWith({ response: existingConnection, error: null });
     });
 
     it('saves new SSH connection added using semi-automatic setup', async () => {
