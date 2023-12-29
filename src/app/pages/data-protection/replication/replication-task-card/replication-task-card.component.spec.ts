@@ -90,7 +90,6 @@ describe('ReplicationTaskCardComponent', () => {
       }),
       mockProvider(IxChainedSlideInService, {
         pushComponent: jest.fn(() => of()),
-        components$: of([]),
       }),
       mockProvider(IxSlideInRef),
       mockProvider(MatDialog, {

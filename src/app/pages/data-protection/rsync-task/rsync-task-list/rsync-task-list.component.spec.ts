@@ -75,7 +75,6 @@ describe('RsyncTaskListComponent', () => {
     ],
     providers: [
       mockProvider(IxChainedSlideInService, {
-        components$: of([]),
         pushComponent: jest.fn(() => of()),
       }),
       mockProvider(DialogService, {
