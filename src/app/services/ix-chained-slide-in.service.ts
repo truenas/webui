@@ -10,12 +10,10 @@ export interface ChainedComponentRef {
   close: (response: ChainedComponentResponse) => void;
   /**
    * This method will destroy the caller slide-in component and replace it with the
-   * provided new component. However, the "on close" observable of the caller
-   * slide-in component will now work for the incoming new component. Makes it easy
-   * to switch between components that have the same purpose and return the same response
-   * type e.g, form to wizard and wizard to form. The original caller component e.g., a
-   * "list" component will still receive the new component's response in the observable it
-   * got when creating the caller slide-in component with 'pushComponent' method.
+   * provided new component. The new component will also take on the same "on-close"
+   * observable that the caller had. Makes it easy to switch between components that
+   * have the same purpose and return the same response type e.g, form to wizard and
+   * wizard to form.
    */
   swap: (component: Type<unknown>, wide: boolean, data?: unknown) => void;
 }
