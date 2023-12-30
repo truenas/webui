@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { of, Subject } from 'rxjs';
+import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { Direction } from 'app/enums/direction.enum';
@@ -11,7 +11,7 @@ import { mntPath } from 'app/enums/mnt-path.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudCredentialsSelectModule } from 'app/modules/custom-selects/cloud-credentials-select/cloud-credentials-select.module';
-import { SLIDE_IN_CLOSER, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { CHAINED_SLIDE_IN_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
@@ -74,8 +74,8 @@ describe('CloudsyncFormComponent', () => {
 
   let loader: HarnessLoader;
   let spectator: Spectator<CloudsyncFormComponent>;
-  const closer = {
-    next: jest.fn(),
+  const chainedComponentRef = {
+    close: jest.fn(),
   };
   const createComponent = createComponentFactory({
     component: CloudsyncFormComponent,
@@ -137,16 +137,13 @@ describe('CloudsyncFormComponent', () => {
       }),
       mockProvider(FilesystemService),
       { provide: SLIDE_IN_DATA, useValue: undefined },
-      { provide: SLIDE_IN_CLOSER, useValue: new Subject() },
+      { provide: CHAINED_SLIDE_IN_REF, useValue: chainedComponentRef },
     ],
   });
 
   describe('adds a new cloudsync', () => {
     beforeEach(() => {
       spectator = createComponent();
-      Object.defineProperty(spectator.component, 'closer$', {
-        value: closer,
-      });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
@@ -184,7 +181,7 @@ describe('CloudsyncFormComponent', () => {
         transfer_mode: TransferMode.Copy,
         transfers: 4,
       }]);
-      expect(closer.next).toHaveBeenCalledWith({ response: existingTask, error: null });
+      expect(chainedComponentRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
     });
   });
 
@@ -194,9 +191,6 @@ describe('CloudsyncFormComponent', () => {
         providers: [
           { provide: SLIDE_IN_DATA, useValue: existingTask },
         ],
-      });
-      Object.defineProperty(spectator.component, 'closer$', {
-        value: closer,
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
@@ -269,7 +263,7 @@ describe('CloudsyncFormComponent', () => {
         transfer_mode: TransferMode.Copy,
         transfers: 10,
       }]);
-      expect(closer.next).toHaveBeenCalledWith({ response: existingTask, error: null });
+      expect(chainedComponentRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
     });
   });
 });
