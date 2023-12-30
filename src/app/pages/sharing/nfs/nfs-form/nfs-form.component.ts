@@ -10,6 +10,7 @@ import { Observable, of } from 'rxjs';
 import { DatasetPreset } from 'app/enums/dataset.enum';
 import { NfsProtocol } from 'app/enums/nfs-protocol.enum';
 import { NfsSecurityProvider } from 'app/enums/nfs-security-provider.enum';
+import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingNfs } from 'app/helptext/sharing';
 import { DatasetCreate } from 'app/interfaces/dataset.interface';
@@ -34,12 +35,17 @@ import { ServicesState } from 'app/store/services/services.reducer';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NfsFormComponent implements OnInit {
+  existingNfsShare: NfsShare;
+  defaultNfsShare: NfsShare;
+
   isLoading = false;
   isAdvancedMode = false;
   hasNfsSecurityField = false;
   createDatasetProps: Omit<DatasetCreate, 'name'> = {
     share_type: DatasetPreset.Multiprotocol,
   };
+
+  Role = Role;
 
   form = this.formBuilder.group({
     path: ['', Validators.required],
@@ -100,8 +106,11 @@ export class NfsFormComponent implements OnInit {
     private snackbar: SnackbarService,
     private slideInRef: IxSlideInRef<NfsFormComponent>,
     private store$: Store<ServicesState>,
-    @Inject(SLIDE_IN_DATA) private existingNfsShare: NfsShare,
-  ) {}
+    @Inject(SLIDE_IN_DATA) private data: { existingNfsShare?: NfsShare; defaultNfsShare?: NfsShare },
+  ) {
+    this.existingNfsShare = this.data?.existingNfsShare;
+    this.defaultNfsShare = this.data?.defaultNfsShare;
+  }
 
   setNfsShareForEdit(): void {
     this.existingNfsShare.networks.forEach(() => this.addNetworkControl());
@@ -111,6 +120,10 @@ export class NfsFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.checkForNfsSecurityField();
+
+    if (this.defaultNfsShare) {
+      this.form.patchValue(this.defaultNfsShare);
+    }
 
     if (this.existingNfsShare) {
       this.setNfsShareForEdit();
@@ -162,7 +175,7 @@ export class NfsFormComponent implements OnInit {
           this.cdr.markForCheck();
           this.slideInRef.close(true);
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.isLoading = false;
           this.formErrorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();

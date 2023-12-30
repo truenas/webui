@@ -1,23 +1,22 @@
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef, Component, OnInit,
+  ChangeDetectorRef, Component, Inject, OnDestroy, OnInit,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { forkJoin, of } from 'rxjs';
+import { Observable, forkJoin, of } from 'rxjs';
 import {
   catchError,
   filter, switchMap, take, tap,
 } from 'rxjs/operators';
+import { WINDOW } from 'app/helpers/window.helper';
 import { helptext2fa } from 'app/helptext/system/2fa';
 import { ErrorReport } from 'app/interfaces/error-report.interface';
-import { UserTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { QrDialogComponent } from 'app/pages/two-factor-auth/components/two-factor/qr-dialog/qr-dialog.component';
-import { RenewTwoFactorDialogComponent } from 'app/pages/two-factor-auth/components/two-factor/renew-two-factor-dialog/renew-two-factor-dialog.component';
 import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -25,12 +24,12 @@ import { DialogService } from 'app/services/dialog.service';
   styleUrls: ['./two-factor.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TwoFactorComponent implements OnInit {
+export class TwoFactorComponent implements OnInit, OnDestroy {
   userTwoFactorAuthConfigured = false;
   isDataLoading = false;
   isFormLoading = false;
   globalTwoFactorEnabled: boolean;
-  intervalHint: string;
+  showQrCodeWarning = false;
 
   get global2FaMsg(): string {
     if (!this.globalTwoFactorEnabled) {
@@ -54,22 +53,24 @@ export class TwoFactorComponent implements OnInit {
     uri: helptext2fa.two_factor.uri.tooltip,
   };
 
-  get getRenewBtnText(): string {
-    return this.userTwoFactorAuthConfigured
-      ? this.translateService.instant('Renew 2FA secret')
-      : this.translateService.instant('Configure 2FA secret');
-  }
-
   constructor(
+    public authService: AuthService,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
     private translateService: TranslateService,
     protected matDialog: MatDialog,
-    private authService: AuthService,
+    private ws: WebSocketService,
+    @Inject(WINDOW) private window: Window,
   ) {}
 
   ngOnInit(): void {
     this.loadTwoFactorConfigs();
+
+    this.showQrCodeWarning = this.window.localStorage.getItem('showQr2FaWarning') === 'true';
+  }
+
+  ngOnDestroy(): void {
+    this.window.localStorage.setItem('showQr2FaWarning', 'false');
   }
 
   loadTwoFactorConfigs(): void {
@@ -90,72 +91,57 @@ export class TwoFactorComponent implements OnInit {
       });
   }
 
-  openQrDialog(provisioningUri: string): void {
-    const dialogRef = this.matDialog.open(QrDialogComponent, {
-      width: '300px',
-      data: { qrInfo: provisioningUri },
-    });
-    dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe({
-      next: () => {
-        this.userTwoFactorAuthConfigured = true;
-        this.cdr.markForCheck();
-      },
-    });
-  }
-
-  renewSecret(): void {
-    const confirmation$ = this.userTwoFactorAuthConfigured
-      ? this.dialogService.confirm({
-        title: helptext2fa.two_factor.renewSecret.title,
-        message: helptext2fa.two_factor.renewSecret.message,
-        hideCheckbox: true,
-        buttonText: helptext2fa.two_factor.renewSecret.btn,
-      })
-      : of(true);
-    confirmation$.pipe(
+  renewSecretOrEnable2Fa(): void {
+    this.getConfirmation().pipe(
       filter(Boolean),
-      switchMap(() => {
-        this.isFormLoading = true;
-        const dialogRef = this.matDialog.open(RenewTwoFactorDialogComponent);
-        this.cdr.markForCheck();
-        return dialogRef.afterClosed();
-      }),
-      tap((success) => {
-        this.isFormLoading = false;
-        this.cdr.markForCheck();
-        if (success) {
-          this.showQrCode();
-        }
-      }),
-      catchError((error: WebsocketError) => {
-        this.isFormLoading = false;
-        this.cdr.markForCheck();
-        return this.dialogService.error({
-          title: helptext2fa.two_factor.error,
-          message: error.reason,
-          backtrace: error.trace?.formatted,
-        } as ErrorReport);
-      }),
+      switchMap(() => this.renewSecretForUser()),
+      tap(() => this.toggleLoading(false)),
+      catchError((error: WebsocketError) => this.handleError(error)),
       untilDestroyed(this),
     ).subscribe();
   }
 
-  showQrCode(): void {
-    this.isFormLoading = true;
-    this.authService.userTwoFactorConfig$.pipe(take(1), untilDestroyed(this)).subscribe({
-      next: (config: UserTwoFactorConfig) => {
-        this.isFormLoading = false;
-        this.cdr.markForCheck();
-        this.openQrDialog(config.provisioning_uri);
-      },
-      error: (error: WebsocketError) => {
-        this.isFormLoading = false;
-        this.dialogService.error({
-          title: helptext2fa.two_factor.error,
-          message: error.reason,
-          backtrace: error.trace?.formatted,
-        });
-      },
-    });
+  private handleError(error: WebsocketError): Observable<boolean> {
+    this.toggleLoading(false);
+
+    return this.dialogService.error({
+      title: helptext2fa.two_factor.error,
+      message: error.reason,
+      backtrace: error.trace?.formatted,
+    } as ErrorReport);
+  }
+
+  private renewSecretForUser(): Observable<void> {
+    this.toggleLoading(true);
+
+    this.window.localStorage.setItem('showQr2FaWarning', 'true');
+
+    return this.authService.user$.pipe(
+      take(1),
+      switchMap((user) => this.ws.call('user.renew_2fa_secret', [user.pw_name, { interval: 30, otp_digits: 6 }])),
+      switchMap(() => this.authService.refreshUser()),
+      tap(() => {
+        this.userTwoFactorAuthConfigured = true;
+        this.showQrCodeWarning = true;
+      }),
+      untilDestroyed(this),
+    );
+  }
+
+  private getConfirmation(): Observable<boolean> {
+    if (this.userTwoFactorAuthConfigured) {
+      return this.dialogService.confirm({
+        title: helptext2fa.two_factor.renewSecret.title,
+        message: helptext2fa.two_factor.renewSecret.message,
+        hideCheckbox: true,
+        buttonText: helptext2fa.two_factor.renewSecret.btn,
+      });
+    }
+    return of(true);
+  }
+
+  private toggleLoading(isLoading: boolean): void {
+    this.isFormLoading = isLoading;
+    this.cdr.markForCheck();
   }
 }

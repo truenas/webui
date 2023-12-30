@@ -95,6 +95,7 @@
 
       <div class="form-actions">
         <button
+          *ixRequiresRoles="[Role.FullAdmin]"
           mat-button
           type="submit"
           color="primary"
@@ -104,7 +105,13 @@
           {{ 'Save' | translate }}
         </button>
 
-        <button mat-button type="button" ixTest="send-test-mail" (click)="onSendTestEmailPressed()">
+        <button
+          *ixRequiresRoles="[Role.FullAdmin]"
+          mat-button
+          type="button"
+          ixTest="send-test-mail"
+          (click)="onSendTestEmailPressed()"
+        >
           {{ 'Send Test Mail' | translate }}
         </button>
       </div>

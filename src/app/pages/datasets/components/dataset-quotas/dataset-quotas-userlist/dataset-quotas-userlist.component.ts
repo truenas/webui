@@ -145,14 +145,14 @@ export class DatasetQuotasUserlistComponent implements OnInit, OnDestroy {
         this.createDataSource(quotas);
         this.checkInvalidQuotas();
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.emptyType = EmptyType.Errors;
         this.handleError(error);
       },
     });
   }
 
-  handleError = (error: WebsocketError | Job): void => {
+  handleError = (error: unknown): void => {
     this.dialogService.error(this.errorHandler.parseError(error));
   };
 

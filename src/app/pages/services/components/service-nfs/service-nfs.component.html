@@ -12,10 +12,17 @@
           [tooltip]="tooltips.bindip"
         ></ix-select>
 
+        <ix-checkbox
+          formControlName="servers_auto"
+          [label]="'Calculate number of threads dynamically' | translate"
+          [tooltip]="tooltips.servers_auto"
+        ></ix-checkbox>
+
         <ix-input
+          *ngIf="!form.controls.servers_auto.value"
           formControlName="servers"
           type="number"
-          [label]="'Number of threads' | translate"
+          [label]="'Specify number of threads manually' | translate"
           [required]="true"
           [tooltip]="tooltips.servers"
         ></ix-input>
@@ -69,12 +76,6 @@
 
       <ix-fieldset [title]="'Other Options' | translate">
         <ix-checkbox
-          formControlName="udp"
-          [label]="'Serve UDP NFS clients' | translate"
-          [tooltip]="tooltips.udp"
-        ></ix-checkbox>
-
-        <ix-checkbox
           formControlName="allow_nonroot"
           [label]="'Allow non-root mount' | translate"
           [tooltip]="tooltips.allow_nonroot"
@@ -90,6 +91,7 @@
       <div class="form-actions">
         <div>
           <button
+            *ixRequiresRoles="[Role.SharingManager, Role.SharingNfsWrite, Role.SharingWrite]"
             mat-button
             type="submit"
             color="primary"

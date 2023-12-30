@@ -38,7 +38,3 @@ export interface ReplicationWizardData {
   periodic_snapshot_tasks?: number[];
   sudo: boolean;
 }
-
-export enum SshCredentialsNewOption {
-  New = 'NEW',
-}

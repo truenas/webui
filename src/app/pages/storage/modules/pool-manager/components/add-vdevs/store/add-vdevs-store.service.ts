@@ -59,11 +59,11 @@ export class AddVdevsStore extends ComponentStore<AddVdevsState> {
             pool: _.cloneDeep(pools[0]),
           });
         },
-        (error: WebsocketError) => {
+        (error: unknown) => {
           this.patchState({
             isLoading: false,
           });
-          this.dialogService.error(this.errorHandler.parseWsError(error));
+          this.dialogService.error(this.errorHandler.parseError(error));
         },
       ),
       filter((pools) => !!pools),
@@ -88,7 +88,7 @@ export class AddVdevsStore extends ComponentStore<AddVdevsState> {
           this.patchState({
             isLoading: false,
           });
-          this.dialogService.error(this.errorHandler.parseWsError(error));
+          this.dialogService.error(this.errorHandler.parseError(error));
         },
       ),
     );

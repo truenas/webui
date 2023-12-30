@@ -97,11 +97,11 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
           rootDatasets: _.keyBy(rootDatasets, (dataset) => dataset.id),
         });
       },
-      (error: WebsocketError) => {
+      (error: unknown) => {
         this.patchState({
           arePoolsLoading: false,
         });
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+        this.dialogService.error(this.errorHandler.parseError(error));
       },
     );
   }
@@ -133,11 +133,11 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
           areDisksLoading: false,
         });
       },
-      (error: WebsocketError) => {
+      (error: unknown) => {
         this.patchState({
           areDisksLoading: false,
         });
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+        this.dialogService.error(this.errorHandler.parseError(error));
       },
     );
   }

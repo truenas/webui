@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { YesNoPipe } from 'app/core/pipes/yes-no.pipe';
+import { Role } from 'app/enums/role.enum';
 import { Option } from 'app/interfaces/option.interface';
 import { User } from 'app/interfaces/user.interface';
 import {
@@ -24,6 +25,8 @@ import { UrlOptionsService } from 'app/services/url-options.service';
 export class UserDetailsRowComponent {
   @Input() user: User;
   @Output() delete = new EventEmitter<number>();
+
+  protected readonly Role = Role;
 
   constructor(
     private translate: TranslateService,

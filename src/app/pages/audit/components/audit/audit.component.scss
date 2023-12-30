@@ -43,7 +43,16 @@
       align-items: center;
       display: grid;
       grid-gap: 8px;
-      grid-template-columns: minmax(auto, 0.8fr) 0.8fr 1fr 0.8fr 1fr;
+      grid-template-columns: minmax(auto, 0.8fr) 1fr 1fr 0.8fr 1fr;
+
+      @media (max-width: $breakpoint-sm) {
+        grid-template-columns: 1fr 1fr 1fr 1fr 1.2fr;
+
+        th,
+        td {
+          padding: 0 4px !important;
+        }
+      }
     }
 
     .audit-header-row tr {
@@ -98,13 +107,44 @@
   justify-content: space-between;
   padding: 8px 12px;
 
+  @media (max-width: $breakpoint-sm) {
+    display: block;
+  }
+
   .search-container {
     column-gap: 12px;
     display: flex;
 
-    .search-input {
-      max-width: 400px;
+    @media (max-width: $breakpoint-singlecolumn) {
       width: 100%;
     }
+
+    @media (max-width: $breakpoint-sm) {
+      display: block;
+    }
+
+    .search-button-wrapper {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+
+      @media (max-width: $breakpoint-sm) {
+        margin-top: 8px;
+      }
+    }
+
+    .search-input {
+      @media (min-width: $breakpoint-sm) {
+        max-width: 90%;
+      }
+
+      width: 100%;
+    }
+  }
+}
+
+.mobile-hidden {
+  @media (max-width: $breakpoint-md) {
+    display: none;
   }
 }

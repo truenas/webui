@@ -3,7 +3,8 @@ import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { AuditService, AuditEvent } from 'app/enums/audit.enum';
+import { AuditEvent, AuditService } from 'app/enums/audit.enum';
+import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { ExportButtonComponent } from 'app/modules/export-button/components/export-button/export-button.component';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
@@ -14,7 +15,7 @@ import { SearchInputModule } from 'app/modules/search-input/search-input.module'
 import { AuditComponent } from 'app/pages/audit/components/audit/audit.component';
 import { LogDetailsPanelComponent } from 'app/pages/audit/components/log-details-panel/log-details-panel.component';
 import { WebSocketService } from 'app/services/ws.service';
-import { selectTimezone } from 'app/store/system-config/system-config.selectors';
+import { selectAdvancedConfig, selectTimezone } from 'app/store/system-config/system-config.selectors';
 
 describe('AuditComponent', () => {
   let spectator: Spectator<AuditComponent>;
@@ -27,6 +28,7 @@ describe('AuditComponent', () => {
       timestamp: {
         $date: 1702890820000,
       },
+      message_timestamp: 1702890820,
       address: '10.220.2.21',
       username: 'Administrator',
       service: AuditService.Smb,
@@ -40,6 +42,7 @@ describe('AuditComponent', () => {
       timestamp: {
         $date: 1702894523000,
       },
+      message_timestamp: 1702894523,
       address: '10.220.2.21',
       username: 'bob',
       service: AuditService.Smb,
@@ -84,6 +87,16 @@ describe('AuditComponent', () => {
             selector: selectTimezone,
             value: 'UTC',
           },
+          {
+            selector: selectAdvancedConfig,
+            value: {
+              consolemenu: true,
+              serialconsole: true,
+              serialport: 'ttyS0',
+              serialspeed: '9600',
+              motd: 'Welcome back, commander',
+            } as AdvancedConfig,
+          },
         ],
       }),
     ],
@@ -99,7 +112,7 @@ describe('AuditComponent', () => {
   it('loads and shows a table with audit entries', async () => {
     expect(websocket.call).toHaveBeenCalledWith(
       'audit.query',
-      [{ 'query-filters': [], 'query-options': { limit: 50, offset: 0 } }],
+      [{ 'query-filters': [], 'query-options': { limit: 50, offset: 0, order_by: ['-message_timestamp'] } }],
     );
 
     await spectator.fixture.whenStable();
@@ -117,13 +130,14 @@ describe('AuditComponent', () => {
       isBasicQuery: true,
       query: 'search',
     };
+
     search.runSearch.emit();
 
     expect(websocket.call).toHaveBeenLastCalledWith(
       'audit.query',
       [{
         'query-filters': [['OR', [['event', '~', '(?i)search'], ['username', '~', '(?i)search'], ['service', '~', '(?i)search']]]],
-        'query-options': { limit: 50, offset: 0 },
+        'query-options': { limit: 50, offset: 0, order_by: ['-message_timestamp'] },
       }],
     );
   });
@@ -143,7 +157,7 @@ describe('AuditComponent', () => {
       'audit.query',
       [{
         'query-filters': [['event', '=', 'Authentication'], ['username', '~', 'bob']],
-        'query-options': { limit: 50, offset: 0 },
+        'query-options': { limit: 50, offset: 0, order_by: ['-message_timestamp'] },
       }],
     );
   });

@@ -11,6 +11,7 @@ import {
 } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { allCommands } from 'app/constants/all-commands.constant';
+import { Role } from 'app/enums/role.enum';
 import { helptextGroups } from 'app/helptext/account/groups';
 import { Group } from 'app/interfaces/group.interface';
 import { Privilege, PrivilegeUpdate } from 'app/interfaces/privilege.interface';
@@ -66,6 +67,8 @@ export class GroupFormComponent implements OnInit {
   readonly privilegeOptions$ = this.ws.call('privilege.query').pipe(
     map((privileges) => privileges.map((privilege) => ({ label: privilege.name, value: privilege.id }))),
   );
+
+  protected readonly Role = Role;
 
   constructor(
     private fb: FormBuilder,
@@ -153,18 +156,23 @@ export class GroupFormComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe({
       next: (group) => {
+        const roles = this.privilegesList
+          .filter((privilege) => this.form.value.privileges.some((id) => id === privilege.id))
+          .map((role) => role.builtin_name) as Role[];
+
         if (this.isNew) {
           this.snackbar.success(this.translate.instant('Group added'));
-          this.store$.dispatch(groupAdded({ group }));
+          this.store$.dispatch(groupAdded({ group: { ...group, roles } }));
         } else {
           this.snackbar.success(this.translate.instant('Group updated'));
-          this.store$.dispatch(groupChanged({ group }));
+          this.store$.dispatch(groupChanged({ group: { ...group, roles } }));
         }
+
         this.isFormLoading = false;
         this.slideInRef.close();
         this.cdr.markForCheck();
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.isFormLoading = false;
         this.errorHandler.handleWsFormError(error, this.form);
         this.cdr.markForCheck();

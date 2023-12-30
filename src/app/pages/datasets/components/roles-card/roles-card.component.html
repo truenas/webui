@@ -73,5 +73,19 @@
         {{ 'Manage iSCSI Shares' | translate }}
       </a>
     </div>
+    <ng-container *ngIf="canCreateShare">
+      <div class="details-item">
+        <ix-icon class="icon" name="share"></ix-icon>
+        <div class="label">{{ 'Not Shared' | translate }}</div>
+        <a class="action" ixTest="create-smb-share" (click)="createSmbShare()">
+          {{ 'Create SMB Share' | translate }}
+        </a>
+      </div>
+      <div class="details-item">
+        <a class="action" ixTest="create-nfs-share" (click)="createNfsShare()">
+          {{ 'Create NFS Share' | translate }}
+        </a>
+      </div>
+    </ng-container>
   </mat-card-content>
 </mat-card>

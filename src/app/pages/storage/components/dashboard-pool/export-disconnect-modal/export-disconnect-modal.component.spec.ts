@@ -6,6 +6,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import {
   createComponentFactory, mockProvider, Spectator, SpectatorFactory,
 } from '@ngneat/spectator/jest';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
   mockCall, mockJob, mockWebsocket,
 } from 'app/core/testing/utils/mock-websocket.utils';
@@ -78,6 +79,7 @@ describe('ExportDisconnectModalComponent', () => {
         ]),
         mockProvider(DialogService),
         mockProvider(MatDialogRef),
+        mockAuth(),
       ],
       componentProviders: [
         { provide: MAT_DIALOG_DATA, useFactory: () => data.pool },

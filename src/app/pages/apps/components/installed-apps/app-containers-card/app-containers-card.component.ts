@@ -98,7 +98,7 @@ export class AppContainersCardComponent implements OnChanges {
     return getPorts(app.used_ports);
   }
 
-  private shellDialogSubmit(formValue: Record<string, string>): void {
+  private shellDialogSubmit(formValue: PodDialogFormValue): void {
     this.router.navigate([
       '/apps',
       'installed',
@@ -111,7 +111,7 @@ export class AppContainersCardComponent implements OnChanges {
     ]);
   }
 
-  private logDialogSubmit(formValue: Record<string, string>): void {
+  private logDialogSubmit(formValue: PodDialogFormValue): void {
     const tailLines = (formValue.tail_lines).toString();
     this.router.navigate([
       '/apps',

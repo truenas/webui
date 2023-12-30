@@ -1,13 +1,14 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const helptextServiceNfs = {
-  nfs_srv_udp_tooltip: T('Set if NFS clients need to use UDP.'),
-
   nfs_srv_bindip_tooltip: T('Select IP addresses to listen to for NFS requests.\
  Leave empty for NFS to listen to all available addresses. \
  Static IPs need to be configured on the interface to appear on the list.'),
 
   nfs_srv_servers_tooltip: T('Enter an optimal number of threads used\
+ by the kernel NFS server.'),
+
+  nfs_srv_servers_auto_tooltip: T('Automatically sets number of threads used\
  by the kernel NFS server.'),
 
   nfs_srv_allow_nonroot_tooltip: T('Set only if required by the NFS client. Set to allow\

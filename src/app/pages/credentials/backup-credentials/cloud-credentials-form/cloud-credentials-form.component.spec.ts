@@ -9,6 +9,7 @@ import {
 } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
@@ -121,6 +122,7 @@ describe('CloudCredentialsFormComponent', () => {
         }),
         mockCall('cloudsync.providers', [s3Provider, boxProvider, storjProvider]),
       ]),
+      mockAuth(),
     ],
   });
 

@@ -55,6 +55,6 @@ export class IxButtonGroupComponent implements ControlValueAccessor {
 
   onValueChanged(event: MatButtonToggleChange): void {
     this.value = event.value as string;
-    this.onChange(event.value);
+    this.onChange(this.value);
   }
 }

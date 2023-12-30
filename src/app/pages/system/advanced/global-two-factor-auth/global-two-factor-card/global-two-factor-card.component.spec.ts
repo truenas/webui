@@ -42,7 +42,7 @@ describe('GlobalTwoFactorAuthCardComponent', () => {
 
     expect(itemTexts).toEqual([
       'Global 2FA: Disabled',
-      'Window: 3',
+      'Tolerance Window: 3',
       'Two Factor Authentication for SSH: Disabled',
     ]);
   });

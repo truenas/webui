@@ -3,6 +3,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { Role } from 'app/enums/role.enum';
 import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSystemCa } from 'app/helptext/system/ca';
 import { CertificateAuthoritySignRequest } from 'app/interfaces/certificate-authority.interface';
@@ -27,6 +28,8 @@ export class SignCsrDialogComponent {
   csrs$ = this.systemGeneralService.getUnsignedCertificates().pipe(idNameArrayToOptions());
 
   readonly helptext = helptextSystemCa;
+
+  protected readonly Role = Role;
 
   constructor(
     private dialogRef: MatDialogRef<SignCsrDialogComponent>,
@@ -53,7 +56,7 @@ export class SignCsrDialogComponent {
           this.snackbar.success(this.translate.instant('Certificate request signed'));
           this.dialogRef.close(true);
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.errorHandler.handleWsFormError(error, this.form);
         },
       });

@@ -11,6 +11,7 @@ import {
 import {
   catchError, map, switchMap,
 } from 'rxjs/operators';
+import { Role } from 'app/enums/role.enum';
 import { SshConnectionsSetupMethod } from 'app/enums/ssh-connections-setup-method.enum';
 import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSshConnections } from 'app/helptext/system/ssh-connections';
@@ -125,6 +126,8 @@ export class SshConnectionFormComponent implements OnInit {
 
   readonly helptext = helptextSshConnections;
 
+  protected readonly Role = Role;
+
   constructor(
     private formBuilder: FormBuilder,
     private translate: TranslateService,
@@ -178,7 +181,7 @@ export class SshConnectionFormComponent implements OnInit {
             remote_host_key: remoteHostKey,
           });
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.formErrorHandler.handleWsFormError(error, this.form);
         },
       });
@@ -199,7 +202,7 @@ export class SshConnectionFormComponent implements OnInit {
         this.snackbar.success(this.translate.instant('SSH Connection saved'));
         this.chainedSlideInRef.close({ response: newCredential, error: null });
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.isLoading = false;
         this.cdr.markForCheck();
         this.formErrorHandler.handleWsFormError(error, this.form);
@@ -241,7 +244,7 @@ export class SshConnectionFormComponent implements OnInit {
     return this.ws.call('keychaincredential.setup_ssh_connection', [params]).pipe(
       catchError((error: WebsocketError) => {
         if (error.errname.includes(sslCertificationError) || error.reason.includes(sslCertificationError)) {
-          return this.dialogService.error(this.errorHandler.parseWsError(error)).pipe(
+          return this.dialogService.error(this.errorHandler.parseError(error)).pipe(
             switchMap(() => {
               return this.dialogService.confirm({
                 title: this.translate.instant('Confirm'),

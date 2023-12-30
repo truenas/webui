@@ -5,6 +5,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import { Role } from 'app/enums/role.enum';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -37,6 +38,7 @@ export class AccessFormComponent implements OnInit {
   get isEnterprise(): boolean {
     return this.systemGeneralService.isEnterprise;
   }
+  protected readonly Role = Role;
 
   constructor(
     private fb: FormBuilder,
@@ -81,7 +83,7 @@ export class AccessFormComponent implements OnInit {
           },
           error: (error) => {
             this.isLoading = false;
-            this.dialogService.error(this.errorHandler.parseWsError(error));
+            this.dialogService.error(this.errorHandler.parseError(error));
             this.cdr.markForCheck();
           },
         });

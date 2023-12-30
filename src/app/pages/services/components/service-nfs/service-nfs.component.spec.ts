@@ -5,6 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { NfsProtocol } from 'app/enums/nfs-protocol.enum';
@@ -43,7 +44,6 @@ describe('ServiceNfsComponent', () => {
           mountd_port: 123,
           rpcstatd_port: 124,
           rpclockd_port: 124,
-          udp: true,
           userd_manage_gids: false,
         } as NfsConfig),
         mockCall('nfs.bindip_choices', {
@@ -69,6 +69,7 @@ describe('ServiceNfsComponent', () => {
       }),
       mockProvider(IxSlideInRef),
       { provide: SLIDE_IN_DATA, useValue: undefined },
+      mockAuth(),
     ],
   });
 
@@ -85,14 +86,14 @@ describe('ServiceNfsComponent', () => {
     expect(ws.call).toHaveBeenCalledWith('nfs.config');
     expect(values).toEqual({
       'Bind IP Addresses': ['192.168.1.117', '192.168.1.118'],
-      'Number of threads': '3',
+      'Calculate number of threads dynamically': false,
+      'Specify number of threads manually': '3',
       'Enabled Protocols': ['NFSv3', 'NFSv4'],
       'NFSv3 ownership model for NFSv4': false,
       'Require Kerberos for NFSv4': true,
       'mountd(8) bind port': '123',
       'rpc.lockd(8) bind port': '124',
       'rpc.statd(8) bind port': '124',
-      'Serve UDP NFS clients': true,
       'Allow non-root mount': false,
       'Support >16 groups': false,
     });
@@ -102,10 +103,9 @@ describe('ServiceNfsComponent', () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
       'Bind IP Addresses': ['192.168.1.119'],
-      'Number of threads': '4',
+      'Calculate number of threads dynamically': true,
       'Enabled Protocols': ['NFSv4'],
       'NFSv3 ownership model for NFSv4': false,
-      'Serve UDP NFS clients': false,
       'Allow non-root mount': true,
       'Support >16 groups': true,
       'mountd(8) bind port': 554,
@@ -125,8 +125,7 @@ describe('ServiceNfsComponent', () => {
       mountd_port: 554,
       rpclockd_port: 510,
       rpcstatd_port: 562,
-      servers: 4,
-      udp: false,
+      servers: null,
       userd_manage_gids: true,
     }]);
   });

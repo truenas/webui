@@ -74,6 +74,6 @@ export class IxRadioGroupComponent implements ControlValueAccessor {
 
   onRadiosChanged(event: MatRadioChange): void {
     this.value = event.value as string;
-    this.onChange(event.value);
+    this.onChange(this.value);
   }
 }

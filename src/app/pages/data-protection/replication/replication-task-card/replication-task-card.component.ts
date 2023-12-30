@@ -13,7 +13,6 @@ import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { helptextDataProtection } from 'app/helptext/data-protection/data-protection-dashboard/data-protection-dashboard';
 import { Job } from 'app/interfaces/job.interface';
 import { ReplicationTaskUi } from 'app/interfaces/replication-task.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { relativeDateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
@@ -192,9 +191,9 @@ export class ReplicationTaskCardComponent implements OnInit {
         row.job = { ...job };
         this.jobStates.set(job.id, job.state);
       }),
-      catchError((error: Job) => {
+      catchError((error: unknown) => {
         this.getReplicationTasks();
-        this.dialogService.error(this.errorHandler.parseJobError(error));
+        this.dialogService.error(this.errorHandler.parseError(error));
         return EMPTY;
       }),
       untilDestroyed(this),
@@ -230,7 +229,7 @@ export class ReplicationTaskCardComponent implements OnInit {
         });
       },
       error: (err) => {
-        this.dialogService.error(this.errorHandler.parseWsError(err));
+        this.dialogService.error(this.errorHandler.parseError(err));
       },
     });
   }
@@ -265,9 +264,9 @@ export class ReplicationTaskCardComponent implements OnInit {
         next: () => {
           this.getReplicationTasks();
         },
-        error: (err: WebsocketError) => {
+        error: (err: unknown) => {
           this.getReplicationTasks();
-          this.dialogService.error(this.errorHandler.parseWsError(err));
+          this.dialogService.error(this.errorHandler.parseError(err));
         },
       });
   }

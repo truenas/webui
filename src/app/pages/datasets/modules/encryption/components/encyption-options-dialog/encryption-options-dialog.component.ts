@@ -8,7 +8,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { DatasetEncryptionType } from 'app/enums/dataset.enum';
+import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { combineLatestIsAny } from 'app/helpers/operators/combine-latest-is-any.helper';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { DatasetChangeKeyParams } from 'app/interfaces/dataset-change-key.interface';
@@ -97,7 +97,7 @@ export class EncryptionOptionsDialogComponent implements OnInit {
   }
 
   get hasPassphraseParent(): boolean {
-    return this.data.parent?.key_format?.value === DatasetEncryptionType.Passphrase;
+    return this.data.parent?.key_format?.value === EncryptionKeyFormat.Passphrase;
   }
 
   get hasKeyChild(): boolean {
@@ -200,8 +200,8 @@ export class EncryptionOptionsDialogComponent implements OnInit {
             pbkdf2iters: Number(pbkdf2iters.rawvalue),
           });
         },
-        error: (error: WebsocketError) => {
-          this.dialog.error(this.errorHandler.parseWsError(error));
+        error: (error: unknown) => {
+          this.dialog.error(this.errorHandler.parseError(error));
         },
       });
   }

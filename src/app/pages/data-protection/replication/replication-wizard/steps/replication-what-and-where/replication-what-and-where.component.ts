@@ -19,7 +19,7 @@ import { TransportMode } from 'app/enums/transport-mode.enum';
 import { helptextReplicationWizard } from 'app/helptext/data-protection/replication/replication-wizard';
 import { CountManualSnapshotsParams } from 'app/interfaces/count-manual-snapshots.interface';
 import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
-import { Option } from 'app/interfaces/option.interface';
+import { newOption, Option } from 'app/interfaces/option.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { SummaryProvider, SummarySection } from 'app/modules/common/summary/summary.interface';
@@ -30,7 +30,6 @@ import {
   forbiddenAsyncValues,
 } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
-import { SshCredentialsNewOption } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard-data.interface';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ChainedComponentRef, IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
@@ -65,7 +64,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     exist_replication: [null as number],
 
     source_datasets_from: [null as DatasetSource, [Validators.required]],
-    ssh_credentials_source: [null as number | SshCredentialsNewOption, [Validators.required]],
+    ssh_credentials_source: [null as number | typeof newOption, [Validators.required]],
     source_datasets: [[] as string[], [Validators.required]],
     recursive: [false],
     custom_snapshots: [false],
@@ -74,7 +73,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     name_regex: ['', [Validators.required]],
 
     target_dataset_from: [null as DatasetSource, [Validators.required]],
-    ssh_credentials_target: [null as number | SshCredentialsNewOption, [Validators.required]],
+    ssh_credentials_target: [null as number | typeof newOption, [Validators.required]],
     target_dataset: [null as string, [Validators.required]],
     encryption: [false],
     encryption_inherit: [false],
