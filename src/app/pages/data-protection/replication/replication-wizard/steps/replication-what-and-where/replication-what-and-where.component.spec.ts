@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { of, Subject } from 'rxjs';
+import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DatasetSource } from 'app/enums/dataset.enum';
 import { Direction } from 'app/enums/direction.enum';
@@ -17,7 +17,7 @@ import { KeychainCredential } from 'app/interfaces/keychain-credential.interface
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { SshCredentialsSelectModule } from 'app/modules/custom-selects/ssh-credentials-select/ssh-credentials-select.module';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_CLOSER, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { CHAINED_SLIDE_IN_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
@@ -30,8 +30,9 @@ describe('ReplicationWhatAndWhereComponent', () => {
   let spectator: Spectator<ReplicationWhatAndWhereComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
-  const closer = {
-    next: jest.fn(),
+  const chainedComponentRef = {
+    close: jest.fn(),
+    swap: jest.fn(),
   };
 
   const createComponent = createComponentFactory({
@@ -42,7 +43,6 @@ describe('ReplicationWhatAndWhereComponent', () => {
       SshCredentialsSelectModule,
     ],
     providers: [
-      { provide: SLIDE_IN_CLOSER, useValue: new Subject() },
       mockWebsocket([
         mockCall('replication.query', [
           {
@@ -80,6 +80,7 @@ describe('ReplicationWhatAndWhereComponent', () => {
         confirm: jest.fn(() => of()),
       }),
       { provide: SLIDE_IN_DATA, useValue: undefined },
+      { provide: CHAINED_SLIDE_IN_REF, useValue: chainedComponentRef },
     ],
   });
 
@@ -87,9 +88,6 @@ describe('ReplicationWhatAndWhereComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
-    Object.defineProperty(spectator.component, 'closer$', {
-      value: closer,
-    });
 
     await form.fillForm({
       'Source Location': 'On this System',
@@ -204,12 +202,8 @@ describe('ReplicationWhatAndWhereComponent', () => {
   it('opens an advanced dialog when Advanced Replication Creation is pressed', async () => {
     const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Replication Creation' }));
     await advancedButton.click();
-    expect(closer.next).toHaveBeenCalledWith({
-      response: false,
-      error: null,
-    });
     expect(
-      spectator.inject(IxChainedSlideInService).pushComponent,
+      chainedComponentRef.swap,
     ).toHaveBeenCalledWith(ReplicationFormComponent, true);
   });
 });
