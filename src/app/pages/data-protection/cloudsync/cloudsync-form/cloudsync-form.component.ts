@@ -11,7 +11,7 @@ import filesize from 'filesize';
 import _ from 'lodash';
 import { Observable, of } from 'rxjs';
 import {
-  filter, map, pairwise, tap,
+  filter, map, pairwise, startWith, tap,
 } from 'rxjs/operators';
 import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { Direction, directionNames } from 'app/enums/direction.enum';
@@ -286,12 +286,23 @@ export class CloudsyncFormComponent implements OnInit {
     });
 
     this.form.controls.credentials.valueChanges.pipe(
+      startWith(undefined),
       pairwise(),
       untilDestroyed(this),
     ).subscribe(([previousCreds, currentCreds]) => {
-      if (previousCreds.toString() !== addNewIxSelectValue) {
-        this.handleCredentialsChange(currentCreds); return;
+      const isPreviousValueAddNew = previousCreds != null && previousCreds.toString() === addNewIxSelectValue;
+      const isCurrentValueExists = currentCreds != null;
+      const isCurrentValueAddNew = isCurrentValueExists && currentCreds.toString() === addNewIxSelectValue;
+
+      if (!isCurrentValueExists || isCurrentValueAddNew) {
+        return;
       }
+
+      if (!isPreviousValueAddNew) {
+        this.handleCredentialsChange(currentCreds);
+        return;
+      }
+
       this.fetchCloudsyncCredentialsList().pipe(untilDestroyed(this)).subscribe({
         next: () => {
           this.handleCredentialsChange(currentCreds);
