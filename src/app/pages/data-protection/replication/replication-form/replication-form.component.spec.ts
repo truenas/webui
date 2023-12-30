@@ -5,9 +5,7 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents, MockInstance } from 'ng-mocks';
-import {
-  Subject, of,
-} from 'rxjs';
+import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Direction } from 'app/enums/direction.enum';
 import { JobState } from 'app/enums/job-state.enum';
@@ -20,7 +18,7 @@ import { helptextReplicationWizard } from 'app/helptext/data-protection/replicat
 import { KeychainCredential } from 'app/interfaces/keychain-credential.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_CLOSER, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { CHAINED_SLIDE_IN_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
@@ -88,8 +86,9 @@ describe('ReplicationFormComponent', () => {
   let loader: HarnessLoader;
   const remoteNodeProvider = jest.fn();
   const localNodeProvider = jest.fn();
-  const closer = {
-    next: jest.fn(),
+  const chainedComponentRef = {
+    close: jest.fn(),
+    swap: jest.fn(),
   };
 
   const generalForm = new FormGroup({
@@ -156,7 +155,6 @@ describe('ReplicationFormComponent', () => {
       ),
     ],
     providers: [
-      { provide: SLIDE_IN_CLOSER, useValue: new Subject() },
       mockProvider(DatasetService, {
         getDatasetNodeProvider: jest.fn(() => localNodeProvider),
       }),
@@ -187,6 +185,7 @@ describe('ReplicationFormComponent', () => {
       mockProvider(SnackbarService),
       mockProvider(IxSlideInRef),
       { provide: SLIDE_IN_DATA, useValue: undefined },
+      { provide: CHAINED_SLIDE_IN_REF, useValue: chainedComponentRef },
     ],
     componentProviders: [
       mockProvider(ReplicationService, {
@@ -211,22 +210,15 @@ describe('ReplicationFormComponent', () => {
     });
 
     it('switches to wizard when Switch To Wizard is pressed', async () => {
-      Object.defineProperty(spectator.component, 'closer$', {
-        value: closer,
-      });
       const switchButton = await loader.getHarness(MatButtonHarness.with({ text: 'Switch To Wizard' }));
       await switchButton.click();
 
-      expect(closer.next).toHaveBeenCalledWith({ response: false, error: null });
       expect(
-        spectator.inject(IxChainedSlideInService).pushComponent,
+        chainedComponentRef.swap,
       ).toHaveBeenCalledWith(ReplicationWizardComponent, true);
     });
 
     it('creates a new replication task', async () => {
-      Object.defineProperty(spectator.component, 'closer$', {
-        value: closer,
-      });
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
@@ -247,7 +239,7 @@ describe('ReplicationFormComponent', () => {
         auto: true,
         sudo: false,
       }]);
-      expect(closer.next).toHaveBeenCalledWith({ response: existingTask, error: null });
+      expect(chainedComponentRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
     });
   });
 
@@ -256,7 +248,6 @@ describe('ReplicationFormComponent', () => {
       spectator = createComponent({
         providers: [
           { provide: SLIDE_IN_DATA, useValue: { id: 1 } as ReplicationTask },
-          { provide: SLIDE_IN_CLOSER, useValue: new Subject() },
         ],
       });
       tick();
@@ -264,9 +255,6 @@ describe('ReplicationFormComponent', () => {
     }));
 
     it('updates an existing replication task', async () => {
-      Object.defineProperty(spectator.component, 'closer$', {
-        value: closer,
-      });
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
@@ -284,7 +272,7 @@ describe('ReplicationFormComponent', () => {
           sudo: false,
         },
       ]);
-      expect(closer.next).toHaveBeenCalledWith({ response: existingTask, error: null });
+      expect(chainedComponentRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
     });
   });
 
