@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { of, Subject } from 'rxjs';
+import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Direction } from 'app/enums/direction.enum';
 import { RsyncMode } from 'app/enums/rsync-mode.enum';
@@ -12,7 +12,7 @@ import { KeychainCredential } from 'app/interfaces/keychain-credential.interface
 import { RsyncTask } from 'app/interfaces/rsync-task.interface';
 import { User } from 'app/interfaces/user.interface';
 import { SshCredentialsSelectModule } from 'app/modules/custom-selects/ssh-credentials-select/ssh-credentials-select.module';
-import { SLIDE_IN_CLOSER, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { CHAINED_SLIDE_IN_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
@@ -52,8 +52,8 @@ describe('RsyncTaskFormComponent', () => {
     extra: ['param=value'],
   } as RsyncTask;
 
-  const closer = {
-    next: jest.fn(),
+  const chainedComponentRef = {
+    close: jest.fn(),
   };
 
   let spectator: Spectator<RsyncTaskFormComponent>;
@@ -68,7 +68,6 @@ describe('RsyncTaskFormComponent', () => {
       SshCredentialsSelectModule,
     ],
     providers: [
-      { provide: SLIDE_IN_CLOSER, useValue: new Subject() },
       mockWebsocket([
         mockCall('rsynctask.create', existingTask),
         mockCall('rsynctask.update', existingTask),
@@ -98,15 +97,13 @@ describe('RsyncTaskFormComponent', () => {
         ],
       }),
       { provide: SLIDE_IN_DATA, useValue: undefined },
+      { provide: CHAINED_SLIDE_IN_REF, useValue: chainedComponentRef },
     ],
   });
 
   describe('adds a new rsync task', () => {
     beforeEach(async () => {
       spectator = createComponent();
-      Object.defineProperty(spectator.component, 'closer$', {
-        value: closer,
-      });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
     });
@@ -163,7 +160,7 @@ describe('RsyncTaskFormComponent', () => {
         times: false,
         user: 'steven',
       }]);
-      expect(closer.next).toHaveBeenCalledWith({ response: existingTask, error: null });
+      expect(chainedComponentRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
     });
   });
 
@@ -173,9 +170,6 @@ describe('RsyncTaskFormComponent', () => {
         providers: [
           { provide: SLIDE_IN_DATA, useValue: { ...existingTask, id: 1 } },
         ],
-      });
-      Object.defineProperty(spectator.component, 'closer$', {
-        value: closer,
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
@@ -234,7 +228,7 @@ describe('RsyncTaskFormComponent', () => {
           delayupdates: true,
         },
       ]);
-      expect(closer.next).toHaveBeenCalledWith({ response: existingTask, error: null });
+      expect(chainedComponentRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
     });
 
     it('shows SSH fields and saves them when Rsync Mode is SSH and Connect using SSH private key stored in user\'s home directory', async () => {
