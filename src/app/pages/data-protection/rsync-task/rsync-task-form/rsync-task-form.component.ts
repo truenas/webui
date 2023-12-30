@@ -6,7 +6,7 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  BehaviorSubject, Observable, Subject, of,
+  BehaviorSubject, Observable, of,
 } from 'rxjs';
 import { Direction } from 'app/enums/direction.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
@@ -15,7 +15,7 @@ import { helptextRsyncForm } from 'app/helptext/data-protection/rsync/rsync-form
 import { Option } from 'app/interfaces/option.interface';
 import { RsyncTask, RsyncTaskUpdate } from 'app/interfaces/rsync-task.interface';
 import { UserComboboxProvider } from 'app/modules/ix-forms/classes/user-combobox-provider';
-import { SLIDE_IN_CLOSER, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { CHAINED_SLIDE_IN_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { portRangeValidator } from 'app/modules/ix-forms/validators/range-validation/range-validation';
@@ -24,7 +24,7 @@ import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-cront
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SshCredentialsNewOption } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard-data.interface';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { ChainedSlideInCloseResponse } from 'app/services/ix-chained-slide-in.service';
+import { ChainedComponentRef } from 'app/services/ix-chained-slide-in.service';
 import { UserService } from 'app/services/user.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -114,7 +114,7 @@ export class RsyncTaskFormComponent implements OnInit {
     private snackbar: SnackbarService,
     private validatorsService: IxValidatorsService,
     @Inject(SLIDE_IN_DATA) private editingTask: RsyncTask,
-    @Inject(SLIDE_IN_CLOSER) private closer$: Subject<ChainedSlideInCloseResponse>,
+    @Inject(CHAINED_SLIDE_IN_REF) private chainedSlideInRef: ChainedComponentRef,
   ) {}
 
   get isModuleMode(): boolean {
@@ -187,7 +187,7 @@ export class RsyncTaskFormComponent implements OnInit {
           this.snackbar.success(this.translate.instant('Task updated'));
         }
         this.isLoading = false;
-        this.closer$.next({ response: task, error: null });
+        this.chainedSlideInRef.close({ response: task, error: null });
       },
       error: (error) => {
         this.isLoading = false;

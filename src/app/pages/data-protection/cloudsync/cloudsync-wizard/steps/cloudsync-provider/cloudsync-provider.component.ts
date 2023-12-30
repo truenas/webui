@@ -1,5 +1,13 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnInit, Output, ViewChild, ViewContainerRef,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Inject,
+  OnInit,
+  Output,
+  ViewChild,
+  ViewContainerRef,
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -9,12 +17,12 @@ import {
   BehaviorSubject, Observable, combineLatest, filter, of, switchMap,
 } from 'rxjs';
 import { CloudsyncProviderName, cloudsyncProviderNameMap } from 'app/enums/cloudsync-provider.enum';
-import { FromWizardToAdvancedSubmitted } from 'app/enums/from-wizard-to-advanced.enum';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
 import { CloudsyncCredential, CloudsyncCredentialUpdate } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { Option, NewOption } from 'app/interfaces/option.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { CHAINED_SLIDE_IN_REF } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { forbiddenValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -24,11 +32,9 @@ import { defaultCloudProvider, getName, getProviderFormClass } from 'app/pages/d
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { ChainedComponentRef } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
-import { fromWizardToAdvancedFormSubmitted } from 'app/store/admin-panel/admin.actions';
 
 @UntilDestroy()
 @Component({
@@ -67,7 +73,7 @@ export class CloudsyncProviderComponent implements OnInit {
   constructor(
     private ws: WebSocketService,
     private formBuilder: FormBuilder,
-    private chainedSlideInService: IxChainedSlideInService,
+    @Inject(CHAINED_SLIDE_IN_REF) private chainedComponentRef: ChainedComponentRef,
     private cdr: ChangeDetectorRef,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
@@ -75,7 +81,6 @@ export class CloudsyncProviderComponent implements OnInit {
     private translate: TranslateService,
     private snackbarService: SnackbarService,
     private cloudCredentialService: CloudCredentialService,
-    private slideIn: IxSlideInService,
     private store$: Store<AppState>,
   ) {}
 
@@ -194,15 +199,19 @@ export class CloudsyncProviderComponent implements OnInit {
   }
 
   openAdvanced(): void {
-    const close$ = this.chainedSlideInService.pushComponent(CloudsyncFormComponent, true);
-    close$.pipe(
-      filter((response) => !!response.response),
-      untilDestroyed(this),
-    ).subscribe(() => {
-      this.store$.dispatch(fromWizardToAdvancedFormSubmitted({
-        formType: FromWizardToAdvancedSubmitted.CloudSyncTask,
-      }));
-    });
+    this.chainedComponentRef.swap(
+      CloudsyncFormComponent,
+      true,
+    );
+    // const close$ = this.chainedSlideInService.pushComponent(CloudsyncFormComponent, true);
+    // close$.pipe(
+    //   filter((response) => !!response.response),
+    //   untilDestroyed(this),
+    // ).subscribe(() => {
+    //   this.store$.dispatch(fromWizardToAdvancedFormSubmitted({
+    //     formType: FromWizardToAdvancedSubmitted.CloudSyncTask,
+    //   }));
+    // });
   }
 
   private loadProviders(): void {

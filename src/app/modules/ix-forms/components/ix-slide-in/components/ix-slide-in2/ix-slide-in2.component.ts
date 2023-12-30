@@ -15,10 +15,12 @@ import {
 import { NavigationEnd, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
-  Observable, Subject, Subscription, filter, merge, timer,
+  Observable, Subscription, filter, merge, timer,
 } from 'rxjs';
-import { SLIDE_IN_CLOSER, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
-import { ChainedComponentSeralized, ChainedSlideInCloseResponse, IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
+import { CHAINED_SLIDE_IN_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import {
+  ChainedComponentSeralized, ChainedComponentResponse, ChainedComponentRef, IxChainedSlideInService,
+} from 'app/services/ix-chained-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -83,11 +85,12 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
 
   onBackdropClicked(): void {
     if (!this.element || !this.isSlideInOpen) { return; }
-    // this.close$.next(null);/
+    this.componentInfo.close$.next({ response: false, error: null });
+    this.componentInfo.close$.complete();
     this.closeSlideIn();
   }
 
-  closeSlideIn(): void {
+  closeSlideIn(swapped = false): void {
     this.isSlideInOpen = false;
     // Delays are to give time for css transitions
     timer(100).pipe(untilDestroyed(this)).subscribe(() => {
@@ -99,7 +102,9 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
         this.slideInBody.clear();
         this.wasBodyCleared = false;
       });
-      this.chainedSlideInService.popComponent(this.componentInfo.id);
+      if (!swapped) {
+        this.chainedSlideInService.popComponent(this.componentInfo.id);
+      }
     });
   }
 
@@ -134,7 +139,24 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
     const injector = Injector.create({
       providers: [
         { provide: SLIDE_IN_DATA, useValue: data },
-        { provide: SLIDE_IN_CLOSER, useValue: this.componentInfo.close$ as Subject<ChainedSlideInCloseResponse> },
+        {
+          provide: CHAINED_SLIDE_IN_REF,
+          useValue: {
+            close: (response: ChainedComponentResponse) => {
+              this.componentInfo.close$.next(response);
+              this.componentInfo.close$.complete();
+            },
+            swap: (component: Type<unknown>, wide = false, incomingComponentData?: unknown) => {
+              this.chainedSlideInService.swapComponent({
+                swapComponentId: this.componentInfo.id,
+                component,
+                wide,
+                data: incomingComponentData,
+              });
+              this.closeSlideIn(true);
+            },
+          } as ChainedComponentRef,
+        },
       ],
     });
     this.slideInBody.createComponent<T>(componentType, { injector });
@@ -142,7 +164,6 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.element.remove();
-    this.componentInfo.close$.next(null);
   }
 
   private closeOnNavigation(): void {

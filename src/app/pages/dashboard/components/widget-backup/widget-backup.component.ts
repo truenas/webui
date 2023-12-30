@@ -160,13 +160,25 @@ export class WidgetBackupComponent extends WidgetComponent implements OnInit {
   }
 
   addCloudSyncTask(): void {
-    this.slideInService.open(CloudsyncWizardComponent, { wide: true }).slideInClosed$
-      .pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getBackups());
+    this.chainedSlideInService.pushComponent(
+      CloudsyncWizardComponent,
+      true,
+    ).pipe(
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe({
+      next: () => {
+        this.getBackups();
+      },
+    });
   }
 
   addReplicationTask(): void {
     const closer$ = this.chainedSlideInService.pushComponent(ReplicationWizardComponent, true);
-    closer$.pipe(filter((response) => !!response.response), untilDestroyed(this)).subscribe(() => this.getBackups());
+    closer$.pipe(
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe(() => this.getBackups());
   }
 
   addRsyncTask(): void {

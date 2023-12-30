@@ -9,7 +9,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { IxSelectWithNewOption } from 'app/modules/ix-forms/components/ix-select/ix-select-with-new-option.directive';
 import { CloudCredentialsFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/cloud-credentials-form.component';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
-import { ChainedSlideInCloseResponse } from 'app/services/ix-chained-slide-in.service';
+import { ChainedComponentResponse } from 'app/services/ix-chained-slide-in.service';
 
 @Component({
   selector: 'ix-cloud-credentials-select',
@@ -40,7 +40,7 @@ export class CloudCredentialsSelectComponent extends IxSelectWithNewOption {
   }
 
   setValueFromSlideInResult(
-    result: ChainedSlideInCloseResponse,
+    result: ChainedComponentResponse,
   ): void {
     this.value = (result.response as CloudCredential).id;
   }

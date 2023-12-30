@@ -1,27 +1,35 @@
+import { ComponentType } from '@angular/cdk/portal';
 import { Injectable, Type } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import { UUID } from 'angular2-uuid';
 import {
-  Observable, Subject, take, tap,
+  Observable, Subject, tap,
 } from 'rxjs';
 
+export interface ChainedComponentRef {
+  close: (response: ChainedComponentResponse) => void;
+  swap: (component: Type<unknown>, wide: boolean, data?: unknown) => void;
+}
+
+export interface IncomingChainedComponent {
+  component: ComponentType<unknown>;
+  wide: boolean;
+  data: unknown;
+  swapComponentId?: string;
+}
+
 export interface ChainedSlideInState {
-  components: Map<string, ChainedComponentInfo>;
+  components: Map<string, ChainedComponent>;
 }
 
-export interface SwapChainedComponentInfo {
-  oldComponentId: string;
-  newComponentInfo: ChainedComponentInfo;
-}
-
-export interface ChainedComponentInfo {
+export interface ChainedComponent {
   component: Type<unknown>;
-  close$: Subject<unknown>;
-  wide?: boolean;
-  data?: unknown;
+  close$: Subject<ChainedComponentResponse>;
+  wide: boolean;
+  data: unknown;
 }
 
-export interface ChainedSlideInCloseResponse {
+export interface ChainedComponentResponse {
   response: unknown;
   error: unknown;
 }
@@ -29,7 +37,7 @@ export interface ChainedSlideInCloseResponse {
 export interface ChainedComponentSeralized {
   id: string;
   component: Type<unknown>;
-  close$: Subject<unknown>;
+  close$: Subject<ChainedComponentResponse>;
   data?: unknown;
   wide?: boolean;
 }
@@ -63,7 +71,7 @@ export class IxChainedSlideInService extends ComponentStore<ChainedSlideInState>
     );
   });
 
-  private pushComponentToStore = this.updater((state, chainedComponentInfo: ChainedComponentInfo) => {
+  private pushComponentToStore = this.updater((state, chainedComponentInfo: ChainedComponent) => {
     const newMap = new Map(state.components);
     newMap.set(UUID.UUID(), {
       ...chainedComponentInfo,
@@ -77,15 +85,15 @@ export class IxChainedSlideInService extends ComponentStore<ChainedSlideInState>
     component: Type<unknown>,
     wide = false,
     data?: unknown,
-  ): Observable<ChainedSlideInCloseResponse> {
-    const close$ = new Subject<ChainedSlideInCloseResponse>();
+  ): Observable<ChainedComponentResponse> {
+    const close$ = new Subject<ChainedComponentResponse>();
     this.pushComponentToStore({
       component,
       wide,
       data,
       close$,
     });
-    return close$.asObservable().pipe(take(1));
+    return close$.asObservable();
   }
 
   popComponent = this.updater((state, id: string) => {
@@ -98,15 +106,15 @@ export class IxChainedSlideInService extends ComponentStore<ChainedSlideInState>
     };
   });
 
-  swapComponent = this.updater((state, swapInfo: SwapChainedComponentInfo) => {
+  swapComponent = this.updater((state, swapInfo: IncomingChainedComponent) => {
     const newMap = new Map(state.components);
-    const popped = newMap.get(swapInfo.oldComponentId);
+    const popped = newMap.get(swapInfo.swapComponentId);
     const close$ = popped.close$;
-    newMap.delete(swapInfo.oldComponentId);
+    newMap.delete(swapInfo.swapComponentId);
     newMap.set(UUID.UUID(), {
-      component: swapInfo.newComponentInfo.component,
-      wide: swapInfo.newComponentInfo.wide,
-      data: swapInfo.newComponentInfo.data,
+      component: swapInfo.component,
+      wide: swapInfo.wide,
+      data: swapInfo.data,
       close$,
     });
     return {
@@ -114,7 +122,7 @@ export class IxChainedSlideInService extends ComponentStore<ChainedSlideInState>
     };
   });
 
-  mapToSerializedArray(map: Map<string, ChainedComponentInfo>): ChainedComponentSeralized[] {
+  mapToSerializedArray(map: Map<string, ChainedComponent>): ChainedComponentSeralized[] {
     return Array.from(map, ([id, componentInfo]) => {
       return {
         id,
@@ -122,7 +130,7 @@ export class IxChainedSlideInService extends ComponentStore<ChainedSlideInState>
         close$: componentInfo.close$,
         wide: componentInfo.wide,
         data: componentInfo.data,
-      };
+      } as ChainedComponentSeralized;
     });
   }
 }

@@ -1,5 +1,5 @@
 import {
-  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewChild, forwardRef,
+  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, ViewChild, forwardRef,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -9,13 +9,14 @@ import {
 import { cloudsyncProviderNameMap } from 'app/enums/cloudsync-provider.enum';
 import { CloudSyncTask, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { CHAINED_SLIDE_IN_REF } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { CloudsyncProviderComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-provider/cloudsync-provider.component';
 import { CloudsyncWhatAndWhenComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-what-and-when/cloudsync-what-and-when.component';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ChainedComponentRef } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -33,7 +34,7 @@ export class CloudsyncWizardComponent implements AfterViewInit {
   existingCredential: CloudsyncCredential;
 
   constructor(
-    public slideInRef: IxSlideInRef<CloudsyncWizardComponent>,
+    @Inject(CHAINED_SLIDE_IN_REF) private chainedSlideInRef: ChainedComponentRef,
     private ws: WebSocketService,
     private snackbarService: SnackbarService,
     private cdr: ChangeDetectorRef,
@@ -74,10 +75,11 @@ export class CloudsyncWizardComponent implements AfterViewInit {
     this.createTask(payload).pipe(
       untilDestroyed(this),
     ).subscribe({
-      next: () => {
+      next: (response) => {
         this.snackbarService.success(this.translate.instant('Task created'));
         this.isLoading$.next(false);
-        this.slideInRef.close(true);
+        this.chainedSlideInRef.close({ response, error: null });
+
         this.cdr.markForCheck();
       },
       error: (err) => {

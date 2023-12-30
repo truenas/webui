@@ -6,7 +6,7 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  Observable, Subject, of, throwError,
+  Observable, of, throwError,
 } from 'rxjs';
 import {
   catchError, map, switchMap,
@@ -22,7 +22,7 @@ import {
 import { SshConnectionSetup } from 'app/interfaces/ssh-connection-setup.interface';
 import { SshCredentials } from 'app/interfaces/ssh-credentials.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { SLIDE_IN_CLOSER, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { CHAINED_SLIDE_IN_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
@@ -30,7 +30,7 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ChainedSlideInCloseResponse } from 'app/services/ix-chained-slide-in.service';
+import { ChainedComponentRef } from 'app/services/ix-chained-slide-in.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -139,7 +139,7 @@ export class SshConnectionFormComponent implements OnInit {
     private dialogService: DialogService,
     private snackbar: SnackbarService,
     @Inject(SLIDE_IN_DATA) private existingConnection: KeychainSshCredentials,
-    @Inject(SLIDE_IN_CLOSER) private closer$: Subject<ChainedSlideInCloseResponse>,
+    @Inject(CHAINED_SLIDE_IN_REF) private chainedSlideInRef: ChainedComponentRef,
   ) { }
 
   ngOnInit(): void {
@@ -197,7 +197,7 @@ export class SshConnectionFormComponent implements OnInit {
       next: (newCredential) => {
         this.isLoading = false;
         this.snackbar.success(this.translate.instant('SSH Connection saved'));
-        this.closer$.next({ response: newCredential, error: null });
+        this.chainedSlideInRef.close({ response: newCredential, error: null });
       },
       error: (error) => {
         this.isLoading = false;

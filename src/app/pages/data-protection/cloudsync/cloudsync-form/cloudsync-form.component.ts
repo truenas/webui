@@ -10,14 +10,13 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
 import _ from 'lodash';
-import { Observable, Subject, of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import {
   filter, map, switchMap, tap,
 } from 'rxjs/operators';
 import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { Direction, directionNames } from 'app/enums/direction.enum';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
-import { FromWizardToAdvancedSubmitted } from 'app/enums/from-wizard-to-advanced.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { TransferMode, transferModeNames } from 'app/enums/transfer-mode.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
@@ -29,7 +28,7 @@ import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
-import { SLIDE_IN_CLOSER, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { CHAINED_SLIDE_IN_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
@@ -42,11 +41,9 @@ import { CustomTransfersDialogComponent } from 'app/pages/data-protection/clouds
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { DialogService } from 'app/services/dialog.service';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { ChainedSlideInCloseResponse } from 'app/services/ix-chained-slide-in.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { ChainedComponentRef, IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
-import { fromWizardToAdvancedFormSubmitted } from 'app/store/admin-panel/admin.actions';
 
 const customOptionValue = -1;
 
@@ -168,12 +165,12 @@ export class CloudsyncFormComponent implements OnInit {
     private snackbar: SnackbarService,
     protected dialog: DialogService,
     protected matDialog: MatDialog,
-    protected slideInService: IxSlideInService,
+    private chainedSlideInService: IxChainedSlideInService,
     private filesystemService: FilesystemService,
     private store$: Store<AppState>,
     protected cloudCredentialService: CloudCredentialService,
     @Inject(SLIDE_IN_DATA) private editingTask: CloudSyncTaskUi,
-    @Inject(SLIDE_IN_CLOSER) private closer$: Subject<ChainedSlideInCloseResponse>,
+    @Inject(CHAINED_SLIDE_IN_REF) private chainedSlideInRef: ChainedComponentRef,
   ) { }
 
   getGoogleDriveProvider(): void {
@@ -761,7 +758,7 @@ export class CloudsyncFormComponent implements OnInit {
           this.snackbar.success(this.translate.instant('Task updated'));
         }
         this.isLoading = false;
-        this.closer$.next({ response, error: null });
+        this.chainedSlideInRef.close({ response, error: null });
       },
       error: (error) => {
         this.isLoading = false;
@@ -782,21 +779,23 @@ export class CloudsyncFormComponent implements OnInit {
   }
 
   onSwitchToWizard(): void {
-    this.closer$.next(null);
-
-    const slideInRef = this.slideInService.open(CloudsyncWizardComponent, { wide: true });
-    slideInRef.slideInClosed$.pipe(
-      filter(Boolean),
-      untilDestroyed(this),
-    ).subscribe(() => {
-      this.store$.dispatch(fromWizardToAdvancedFormSubmitted({
-        formType: FromWizardToAdvancedSubmitted.CloudSyncTask,
-      }));
-    });
+    this.chainedSlideInRef.swap(
+      CloudsyncWizardComponent,
+      true,
+    );
+    // const slideInRef = this.slideInService.open(CloudsyncWizardComponent, { wide: true });
+    // slideInRef.slideInClosed$.pipe(
+    //   filter(Boolean),
+    //   untilDestroyed(this),
+    // ).subscribe(() => {
+    //   this.store$.dispatch(fromWizardToAdvancedFormSubmitted({
+    //     formType: FromWizardToAdvancedSubmitted.CloudSyncTask,
+    //   }));
+    // });
   }
 
   goToManageCredentials(): void {
     this.router.navigate(['/', 'credentials', 'backup-credentials']);
-    this.closer$.next({ response: false, error: null });
+    this.chainedSlideInRef.close({ response: false, error: null });
   }
 }

@@ -239,8 +239,7 @@ export class CloudsyncListComponent implements OnInit {
 
   openForm(row?: CloudSyncTaskUi): void {
     if (row) {
-      const close$ = this.chainedSlideInService.pushComponent(CloudsyncFormComponent, true, row);
-      close$.pipe(
+      this.chainedSlideInService.pushComponent(CloudsyncFormComponent, true, row).pipe(
         filter((response) => !!response.response),
         untilDestroyed(this),
       ).subscribe({
@@ -249,10 +248,13 @@ export class CloudsyncListComponent implements OnInit {
         },
       });
     } else {
-      const slideInRef = this.slideInService.open(CloudsyncWizardComponent, { wide: true });
-
-      (slideInRef.slideInClosed$).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-        this.getCloudSyncTasks();
+      this.chainedSlideInService.pushComponent(CloudsyncWizardComponent, true).pipe(
+        filter((response) => !!response.response),
+        untilDestroyed(this),
+      ).subscribe({
+        next: () => {
+          this.getCloudSyncTasks();
+        },
       });
     }
   }

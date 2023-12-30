@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnInit, Output,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnChanges, OnInit, Output,
 } from '@angular/core';
 import { Validators, FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -14,7 +14,6 @@ import {
 import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { Direction, directionNames } from 'app/enums/direction.enum';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
-import { FromWizardToAdvancedSubmitted } from 'app/enums/from-wizard-to-advanced.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { TransferMode, transferModeNames } from 'app/enums/transfer-mode.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
@@ -27,6 +26,7 @@ import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
+import { CHAINED_SLIDE_IN_REF } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
@@ -34,11 +34,9 @@ import { CreateStorjBucketDialogComponent } from 'app/pages/data-protection/clou
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { DialogService } from 'app/services/dialog.service';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { ChainedComponentRef } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
-import { fromWizardToAdvancedFormSubmitted } from 'app/store/admin-panel/admin.actions';
 
 type FormValue = CloudsyncWhatAndWhenComponent['form']['value'];
 
@@ -111,13 +109,12 @@ export class CloudsyncWhatAndWhenComponent implements OnInit, OnChanges {
   constructor(
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
-    private chainedSlideInService: IxChainedSlideInService,
+    @Inject(CHAINED_SLIDE_IN_REF) private chainedSlideInRef: ChainedComponentRef,
     private dialog: DialogService,
     private formBuilder: FormBuilder,
     private translate: TranslateService,
     private filesystemService: FilesystemService,
     private cloudCredentialService: CloudCredentialService,
-    private slideIn: IxSlideInService,
     private matDialog: MatDialog,
     private router: Router,
     private store$: Store<AppState>,
@@ -230,16 +227,17 @@ export class CloudsyncWhatAndWhenComponent implements OnInit, OnChanges {
       filter(Boolean),
       untilDestroyed(this),
     ).subscribe(() => {
-      this.chainedSlideInService.pushComponent(CloudsyncFormComponent, true).pipe(
-        filter((response) => !!response.response),
-        untilDestroyed(this),
-      ).subscribe({
-        next: () => {
-          this.store$.dispatch(fromWizardToAdvancedFormSubmitted({
-            formType: FromWizardToAdvancedSubmitted.CloudSyncTask,
-          }));
-        },
-      });
+      this.chainedSlideInRef.swap(CloudsyncFormComponent, true);
+      // this.chainedSlideInService.pushComponent(CloudsyncFormComponent, true).pipe(
+      //   filter((response) => !!response.response),
+      //   untilDestroyed(this),
+      // ).subscribe({
+      //   next: () => {
+      //     this.store$.dispatch(fromWizardToAdvancedFormSubmitted({
+      //       formType: FromWizardToAdvancedSubmitted.CloudSyncTask,
+      //     }));
+      //   },
+      // });
     });
   }
 

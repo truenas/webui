@@ -3,9 +3,8 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Subject } from 'rxjs';
-import { SLIDE_IN_CLOSER } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
-import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
+import { CHAINED_SLIDE_IN_REF } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { ChainedComponentRef, IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -24,7 +23,7 @@ export class IxModalHeader2Component implements AfterViewInit {
   constructor(
     private translate: TranslateService,
     private chainedSlideIn: IxChainedSlideInService,
-    @Inject(SLIDE_IN_CLOSER) private slideInCloser$: Subject<unknown>,
+    @Inject(CHAINED_SLIDE_IN_REF) private chainedSlideInRef: ChainedComponentRef,
   ) {}
 
   ngAfterViewInit(): void {
@@ -41,6 +40,6 @@ export class IxModalHeader2Component implements AfterViewInit {
   }
 
   close(): void {
-    this.slideInCloser$.next({ response: false, error: null });
+    this.chainedSlideInRef.close({ response: false, error: null });
   }
 }

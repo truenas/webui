@@ -173,10 +173,13 @@ export class CloudSyncTaskCardComponent implements OnInit {
   }
 
   onAdd(): void {
-    const slideInRef = this.slideInService.open(CloudsyncWizardComponent, { wide: true });
-
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-      this.getCloudSyncTasks();
+    this.ixChainedSlideInService.pushComponent(CloudsyncWizardComponent, true).pipe(
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe({
+      next: () => {
+        this.getCloudSyncTasks();
+      },
     });
   }
 

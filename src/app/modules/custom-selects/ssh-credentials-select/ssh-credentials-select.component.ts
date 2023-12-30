@@ -9,7 +9,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { SshCredentials } from 'app/interfaces/ssh-credentials.interface';
 import { IxSelectWithNewOption } from 'app/modules/ix-forms/components/ix-select/ix-select-with-new-option.directive';
 import { SshConnectionFormComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-form/ssh-connection-form.component';
-import { ChainedSlideInCloseResponse } from 'app/services/ix-chained-slide-in.service';
+import { ChainedComponentResponse } from 'app/services/ix-chained-slide-in.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 
 @Component({
@@ -37,7 +37,7 @@ export class SshCredentialsSelectComponent extends IxSelectWithNewOption {
   }
 
   setValueFromSlideInResult(
-    result: ChainedSlideInCloseResponse,
+    result: ChainedComponentResponse,
   ): void {
     this.value = (result.response as SshCredentials).id;
   }

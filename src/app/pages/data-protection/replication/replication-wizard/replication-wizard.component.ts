@@ -9,7 +9,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import {
-  catchError, EMPTY, forkJoin, map, Observable, of, Subject, switchMap, tap,
+  catchError, EMPTY, forkJoin, map, Observable, of, switchMap, tap,
 } from 'rxjs';
 import { truenasDbKeyLocation } from 'app/constants/truenas-db-key-location.constant';
 import { DatasetSource } from 'app/enums/dataset.enum';
@@ -30,7 +30,7 @@ import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-t
 import { Schedule } from 'app/interfaces/schedule.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { CreateZfsSnapshot, ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
-import { SLIDE_IN_CLOSER } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { CHAINED_SLIDE_IN_REF } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -39,7 +39,7 @@ import { ReplicationWhatAndWhereComponent } from 'app/pages/data-protection/repl
 import { ReplicationWhenComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-when/replication-when.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { ChainedSlideInCloseResponse } from 'app/services/ix-chained-slide-in.service';
+import { ChainedComponentRef } from 'app/services/ix-chained-slide-in.service';
 import { ReplicationService } from 'app/services/replication.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -74,7 +74,7 @@ export class ReplicationWizardComponent {
     private translate: TranslateService,
     private appLoader: AppLoaderService,
     private snackbar: SnackbarService,
-    @Inject(SLIDE_IN_CLOSER) private closer$: Subject<ChainedSlideInCloseResponse>,
+    @Inject(CHAINED_SLIDE_IN_REF) private chainedSlideInRef: ChainedComponentRef,
   ) {}
 
   setRowId(id: number): void {
@@ -145,7 +145,7 @@ export class ReplicationWizardComponent {
       untilDestroyed(this),
     ).subscribe((createdReplication) => {
       this.cdr.markForCheck();
-      this.closer$.next({ response: createdReplication, error: null });
+      this.chainedSlideInRef.close({ response: createdReplication, error: null });
     });
   }
 

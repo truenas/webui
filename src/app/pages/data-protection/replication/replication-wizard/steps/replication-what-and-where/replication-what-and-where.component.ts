@@ -8,12 +8,11 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  debounceTime, filter, map, merge, Observable, of, Subject,
+  debounceTime, map, merge, Observable, of,
 } from 'rxjs';
 import { DatasetSource } from 'app/enums/dataset.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
-import { FromWizardToAdvancedSubmitted } from 'app/enums/from-wizard-to-advanced.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { SnapshotNamingOption } from 'app/enums/snapshot-naming-option.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
@@ -26,7 +25,7 @@ import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { SummaryProvider, SummarySection } from 'app/modules/common/summary/summary.interface';
 import { ixManualValidateError } from 'app/modules/ix-forms/components/ix-errors/ix-errors.component';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
-import { SLIDE_IN_CLOSER } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { CHAINED_SLIDE_IN_REF } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import {
   forbiddenAsyncValues,
 } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
@@ -34,12 +33,11 @@ import { ReplicationFormComponent } from 'app/pages/data-protection/replication/
 import { SshCredentialsNewOption } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard-data.interface';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
 import { DialogService } from 'app/services/dialog.service';
-import { ChainedSlideInCloseResponse, IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
+import { ChainedComponentRef, IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 import { ReplicationService } from 'app/services/replication.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
-import { fromWizardToAdvancedFormSubmitted } from 'app/store/admin-panel/admin.actions';
 
 @UntilDestroy()
 @Component({
@@ -141,7 +139,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   }
 
   constructor(
-    @Inject(SLIDE_IN_CLOSER) protected closer$: Subject<ChainedSlideInCloseResponse>,
+    @Inject(CHAINED_SLIDE_IN_REF) protected chainedSlideInRef: ChainedComponentRef,
     private formBuilder: FormBuilder,
     private replicationService: ReplicationService,
     private keychainCredentials: KeychainCredentialService,
@@ -501,17 +499,19 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   }
 
   openAdvanced(): void {
-    this.closer$.next({ response: false, error: null });
-
-    const closer$ = this.chainedSlideInService.pushComponent(ReplicationFormComponent, true);
-    closer$.pipe(
-      filter((response) => !!response.response),
-      untilDestroyed(this),
-    ).subscribe(() => {
-      this.store$.dispatch(fromWizardToAdvancedFormSubmitted({
-        formType: FromWizardToAdvancedSubmitted.ReplicationTask,
-      }));
-    });
+    this.chainedSlideInRef.swap(
+      ReplicationFormComponent,
+      true,
+    );
+    // const closer$ = this.chainedSlideInService.pushComponent(ReplicationFormComponent, true);
+    // closer$.pipe(
+    //   filter((response) => !!response.response),
+    //   untilDestroyed(this),
+    // ).subscribe(() => {
+    //   this.store$.dispatch(fromWizardToAdvancedFormSubmitted({
+    //     formType: FromWizardToAdvancedSubmitted.ReplicationTask,
+    //   }));
+    // });
   }
 
   getSnapshots(): void {
