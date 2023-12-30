@@ -6,7 +6,6 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { MatStepperHarness, MatStepperNextHarness } from '@angular/material/stepper/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
-import { Subject } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Direction } from 'app/enums/direction.enum';
 import { JobState } from 'app/enums/job-state.enum';
@@ -20,7 +19,7 @@ import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.inte
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { SummaryComponent } from 'app/modules/common/summary/summary.component';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_CLOSER, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { CHAINED_SLIDE_IN_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
@@ -68,6 +67,10 @@ describe('ReplicationWizardComponent', () => {
   let loader: HarnessLoader;
   let form: IxFormHarness;
   let nextButton: MatStepperNextHarness;
+  const chainedComponentRef = {
+    close: jest.fn(),
+    swap: jest.fn(),
+  };
 
   const createComponent = createComponentFactory({
     component: ReplicationWizardComponent,
@@ -83,7 +86,6 @@ describe('ReplicationWizardComponent', () => {
       MockComponent(SummaryComponent),
     ],
     providers: [
-      { provide: SLIDE_IN_CLOSER, useValue: new Subject() },
       mockWebsocket([
         mockCall('replication.query', []),
         mockCall('keychaincredential.query', []),
@@ -94,6 +96,7 @@ describe('ReplicationWizardComponent', () => {
         mockCall('zfs.snapshot.create'),
         mockCall('replication.create', existingTask),
       ]),
+      { provide: CHAINED_SLIDE_IN_REF, useValue: chainedComponentRef },
       mockProvider(SnackbarService),
       mockProvider(IxSlideInRef),
       { provide: SLIDE_IN_DATA, useValue: undefined },
@@ -120,12 +123,6 @@ describe('ReplicationWizardComponent', () => {
   }
 
   it('creates objects when wizard is submitted', async () => {
-    const closer = {
-      next: jest.fn(),
-    };
-    Object.defineProperty(spectator.component, 'closer$', {
-      value: closer,
-    });
     await form.fillForm({
       'Source Location': 'On this System',
       'Destination Location': 'On this System',
@@ -202,6 +199,6 @@ describe('ReplicationWizardComponent', () => {
     }]);
 
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Replication task created.');
-    expect(closer.next).toHaveBeenCalledWith({ response: existingTask, error: null });
+    expect(chainedComponentRef.close).toHaveBeenCalledWith({ response: existingTask, error: null });
   });
 });
