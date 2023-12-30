@@ -783,15 +783,6 @@ export class CloudsyncFormComponent implements OnInit {
       CloudsyncWizardComponent,
       true,
     );
-    // const slideInRef = this.slideInService.open(CloudsyncWizardComponent, { wide: true });
-    // slideInRef.slideInClosed$.pipe(
-    //   filter(Boolean),
-    //   untilDestroyed(this),
-    // ).subscribe(() => {
-    //   this.store$.dispatch(fromWizardToAdvancedFormSubmitted({
-    //     formType: FromWizardToAdvancedSubmitted.CloudSyncTask,
-    //   }));
-    // });
   }
 
   goToManageCredentials(): void {

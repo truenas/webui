@@ -503,15 +503,6 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
       ReplicationFormComponent,
       true,
     );
-    // const closer$ = this.chainedSlideInService.pushComponent(ReplicationFormComponent, true);
-    // closer$.pipe(
-    //   filter((response) => !!response.response),
-    //   untilDestroyed(this),
-    // ).subscribe(() => {
-    //   this.store$.dispatch(fromWizardToAdvancedFormSubmitted({
-    //     formType: FromWizardToAdvancedSubmitted.ReplicationTask,
-    //   }));
-    // });
   }
 
   getSnapshots(): void {

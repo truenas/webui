@@ -228,16 +228,6 @@ export class CloudsyncWhatAndWhenComponent implements OnInit, OnChanges {
       untilDestroyed(this),
     ).subscribe(() => {
       this.chainedSlideInRef.swap(CloudsyncFormComponent, true);
-      // this.chainedSlideInService.pushComponent(CloudsyncFormComponent, true).pipe(
-      //   filter((response) => !!response.response),
-      //   untilDestroyed(this),
-      // ).subscribe({
-      //   next: () => {
-      //     this.store$.dispatch(fromWizardToAdvancedFormSubmitted({
-      //       formType: FromWizardToAdvancedSubmitted.CloudSyncTask,
-      //     }));
-      //   },
-      // });
     });
   }
 

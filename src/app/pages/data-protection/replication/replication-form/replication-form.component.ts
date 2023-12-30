@@ -173,17 +173,6 @@ export class ReplicationFormComponent implements OnInit {
       ReplicationWizardComponent,
       true,
     );
-    // this.chainedSlideInRef.close({ response: false, error: null });
-
-    // const closer$ = this.chainedSlideInService.pushComponent(ReplicationWizardComponent, true);
-    // closer$.pipe(
-    //   filter((response) => !!response.response),
-    //   untilDestroyed(this),
-    // ).subscribe(() => {
-    //   this.store$.dispatch(fromWizardToAdvancedFormSubmitted({
-    //     formType: FromWizardToAdvancedSubmitted.ReplicationTask,
-    //   }));
-    // });
   }
 
   private getPayload(): ReplicationCreate {

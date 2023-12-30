@@ -2,13 +2,12 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Actions, ofType } from '@ngrx/effects';
+import { Actions } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
   catchError, EMPTY, filter, map, of, switchMap, tap,
 } from 'rxjs';
-import { FromWizardToAdvancedSubmitted } from 'app/enums/from-wizard-to-advanced.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { helptextDataProtection } from 'app/helptext/data-protection/data-protection-dashboard/data-protection-dashboard';
@@ -34,7 +33,6 @@ import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.servic
 import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
-import { fromWizardToAdvancedFormSubmitted } from 'app/store/admin-panel/admin.actions';
 
 @UntilDestroy()
 @Component({
@@ -130,7 +128,6 @@ export class ReplicationTaskCardComponent implements OnInit {
     );
     this.dataProvider = new AsyncDataProvider<ReplicationTaskUi>(replicationTasks$);
     this.getReplicationTasks();
-    this.listenForWizardToAdvancedSwitching();
   }
 
   getReplicationTasks(): void {
@@ -273,13 +270,5 @@ export class ReplicationTaskCardComponent implements OnInit {
           this.dialogService.error(this.errorHandler.parseWsError(err));
         },
       });
-  }
-
-  private listenForWizardToAdvancedSwitching(): void {
-    this.actions$.pipe(
-      ofType(fromWizardToAdvancedFormSubmitted),
-      filter(({ formType }) => formType === FromWizardToAdvancedSubmitted.ReplicationTask),
-      untilDestroyed(this),
-    ).subscribe(() => this.getReplicationTasks());
   }
 }

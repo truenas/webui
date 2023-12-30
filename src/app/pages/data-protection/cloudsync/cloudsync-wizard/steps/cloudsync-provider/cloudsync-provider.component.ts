@@ -203,15 +203,6 @@ export class CloudsyncProviderComponent implements OnInit {
       CloudsyncFormComponent,
       true,
     );
-    // const close$ = this.chainedSlideInService.pushComponent(CloudsyncFormComponent, true);
-    // close$.pipe(
-    //   filter((response) => !!response.response),
-    //   untilDestroyed(this),
-    // ).subscribe(() => {
-    //   this.store$.dispatch(fromWizardToAdvancedFormSubmitted({
-    //     formType: FromWizardToAdvancedSubmitted.CloudSyncTask,
-    //   }));
-    // });
   }
 
   private loadProviders(): void {
