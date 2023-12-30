@@ -9,17 +9,13 @@ import {
 export interface ChainedComponentRef {
   close: (response: ChainedComponentResponse) => void;
   /**
-   * This method will swap the caller 'chained-slide-in' component with the provided component.
-   * The caller component will be destroyed. However, the 'on-close' observable assigned
-   * to the old component will be assigned to the new component being swapped in.
-   * Further explanation: This will allow a "list" component that started a 'chained-slide-in'
-   * with a "wizard" component to continue to listen to the 'on-close' observable even if the
-   * user chooses to use the "form" component instead. Meaning the "wizard" component called
-   * this swap method and destroyed itself and a new instance of the "form" component came in
-   * it's place. The old observable that the "list" component got when opening the "wizard"
-   * component will continue to work for the new "form" component instance as well. This can be
-   * chained infinitely (but shouldn't). This enables one point response handling instead of
-   * chaining new response subscriptions for the 'on-close' observable whenever the swap needs to happen.
+   * This method will destroy the caller slide-in component and replace it with the
+   * provided new component. However, the "on close" observable of the caller
+   * slide-in component will now work for the incoming new component. Makes it easy
+   * to switch between components that have the same purpose and return the same response
+   * type e.g, form to wizard and wizard to form. The original caller component e.g., a
+   * "list" component will still receive the new component's response in the observable it
+   * got when creating the caller slide-in component with 'pushComponent' method.
    */
   swap: (component: Type<unknown>, wide: boolean, data?: unknown) => void;
 }
