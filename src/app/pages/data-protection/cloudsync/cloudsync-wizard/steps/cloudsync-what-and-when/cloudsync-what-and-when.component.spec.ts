@@ -7,7 +7,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { CHAINED_SLIDE_IN_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
@@ -23,6 +23,10 @@ describe('CloudsyncWhatAndWhenComponent', () => {
   let spectator: Spectator<CloudsyncWhatAndWhenComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
+  const chainedComponentRef = {
+    close: jest.fn(),
+    swap: jest.fn(),
+  };
 
   const createComponent = createComponentFactory({
     component: CloudsyncWhatAndWhenComponent,
@@ -35,6 +39,7 @@ describe('CloudsyncWhatAndWhenComponent', () => {
       TransferModeExplanationComponent,
     ],
     providers: [
+      { provide: CHAINED_SLIDE_IN_REF, useValue: chainedComponentRef },
       mockWebsocket([
         mockCall('cloudsync.create'),
         mockCall('cloudsync.update'),
@@ -126,6 +131,6 @@ describe('CloudsyncWhatAndWhenComponent', () => {
       title: 'Switch to Advanced Options',
       hideCheckbox: true,
     });
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(CloudsyncFormComponent, { wide: true });
+    expect(chainedComponentRef.swap).toHaveBeenCalledWith(CloudsyncFormComponent, true);
   });
 });
