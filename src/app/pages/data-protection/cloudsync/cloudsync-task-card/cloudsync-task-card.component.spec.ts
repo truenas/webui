@@ -176,9 +176,9 @@ describe('CloudSyncTaskCardComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(
+    expect(spectator.inject(IxChainedSlideInService).pushComponent).toHaveBeenCalledWith(
       CloudsyncWizardComponent,
-      { wide: true },
+      true,
     );
   });
 
