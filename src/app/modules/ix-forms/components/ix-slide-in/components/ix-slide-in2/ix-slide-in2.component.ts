@@ -78,9 +78,6 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
     ).subscribe((wide) => {
       this.wide = wide;
     });
-    this.componentInfo.close$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.closeSlideIn();
-    });
   }
 
   onBackdropClicked(): void {
@@ -90,7 +87,7 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
     this.closeSlideIn();
   }
 
-  closeSlideIn(swapped = false): void {
+  closeSlideIn(): void {
     this.isSlideInOpen = false;
     // Delays are to give time for css transitions
     timer(100).pipe(untilDestroyed(this)).subscribe(() => {
@@ -102,9 +99,7 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
         this.slideInBody.clear();
         this.wasBodyCleared = false;
       });
-      if (!swapped) {
-        this.chainedSlideInService.popComponent(this.componentInfo.id);
-      }
+      this.chainedSlideInService.popComponent(this.componentInfo.id);
     });
   }
 
@@ -145,6 +140,7 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
             close: (response: ChainedComponentResponse) => {
               this.componentInfo.close$.next(response);
               this.componentInfo.close$.complete();
+              this.closeSlideIn();
             },
             swap: (component: Type<unknown>, wide = false, incomingComponentData?: unknown) => {
               this.chainedSlideInService.swapComponent({
@@ -153,7 +149,7 @@ export class IxSlideIn2Component implements OnInit, OnDestroy {
                 wide,
                 data: incomingComponentData,
               });
-              this.closeSlideIn(true);
+              this.closeSlideIn();
             },
           } as ChainedComponentRef,
         },

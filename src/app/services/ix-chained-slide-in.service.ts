@@ -105,8 +105,6 @@ export class IxChainedSlideInService extends ComponentStore<ChainedSlideInState>
 
   popComponent = this.updater((state, id: string) => {
     const newMap = new Map(state.components);
-    const popped = newMap.get(id);
-    popped.close$.complete();
     newMap.delete(id);
     return {
       components: newMap,
@@ -117,7 +115,6 @@ export class IxChainedSlideInService extends ComponentStore<ChainedSlideInState>
     const newMap = new Map(state.components);
     const popped = newMap.get(swapInfo.swapComponentId);
     const close$ = popped.close$;
-    newMap.delete(swapInfo.swapComponentId);
     newMap.set(UUID.UUID(), {
       component: swapInfo.component,
       wide: swapInfo.wide,
