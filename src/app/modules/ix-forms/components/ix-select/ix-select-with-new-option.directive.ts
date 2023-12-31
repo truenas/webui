@@ -13,7 +13,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { IxSelectComponent } from 'app/modules/ix-forms/components/ix-select/ix-select.component';
 import { ChainedComponentResponse, IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 
-export const addNewValue = 'ADD_NEW';
+export const addNewIxSelectValue = 'ADD_NEW';
 
 @UntilDestroy()
 @Directive()
@@ -71,7 +71,7 @@ export abstract class IxSelectWithNewOption implements ControlValueAccessor, OnI
     this.fetchOptions().pipe(
       map((options) => {
         return [
-          { label: this.translateService.instant('Add New'), value: addNewValue } as Option,
+          { label: this.translateService.instant('Add New'), value: addNewIxSelectValue } as Option,
           ...options,
         ];
       }),
@@ -101,13 +101,13 @@ export abstract class IxSelectWithNewOption implements ControlValueAccessor, OnI
       distinctUntilChanged(),
       filter(Boolean),
       tap((newValue: number | string) => this.value = newValue),
-      filter((newValue: number | string) => newValue === addNewValue),
+      filter((newValue: number | string) => newValue === addNewIxSelectValue),
       switchMap(() => this.chainedSlideIn.pushComponent(this.getFormComponentType(), this.formComponentIsWide)),
       filter((response: ChainedComponentResponse) => !response.error),
       tap((response) => this.setValueFromSlideInResult(response)),
       switchMap(() => this.fetchOptions()),
       tap((options) => this.options.next([
-        { label: this.translateService.instant('Add New'), value: addNewValue } as Option,
+        { label: this.translateService.instant('Add New'), value: addNewIxSelectValue } as Option,
         ...options,
       ])),
       untilDestroyed(this),

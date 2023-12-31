@@ -28,7 +28,7 @@ import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
-import { addNewValue as addNewIxSelectValue } from 'app/modules/ix-forms/components/ix-select/ix-select-with-new-option.directive';
+import { addNewIxSelectValue } from 'app/modules/ix-forms/components/ix-select/ix-select-with-new-option.directive';
 import { CHAINED_SLIDE_IN_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
