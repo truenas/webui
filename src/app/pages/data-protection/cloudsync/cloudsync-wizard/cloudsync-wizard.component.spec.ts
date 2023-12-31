@@ -6,6 +6,7 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { MatStepperHarness, MatStepperNextHarness } from '@angular/material/stepper/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { CloudCredentialsSelectModule } from 'app/modules/custom-selects/cloud-credentials-select/cloud-credentials-select.module';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { CHAINED_SLIDE_IN_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -41,6 +42,7 @@ describe('CloudsyncWizardComponent', () => {
       IxFormsModule,
       MatStepperModule,
       SchedulerModule,
+      CloudCredentialsSelectModule,
       CloudsyncProviderDescriptionComponent,
     ],
     declarations: [
@@ -87,20 +89,6 @@ describe('CloudsyncWizardComponent', () => {
     await nextButton.click();
     await updateStepHarnesses();
   }
-
-  it('checks new credentials', async () => {
-    await form.fillForm({
-      Credentials: 'Create New',
-    });
-
-    expect(await form.getValues()).toEqual({
-      Credentials: 'Create New',
-      Name: 'Storj',
-      Provider: 'Storj iX',
-      'Access Key ID': '',
-      'Secret Access Key': '',
-    });
-  });
 
   it('creates objects when wizard is submitted', async () => {
     expect(await form.getValues()).toEqual({

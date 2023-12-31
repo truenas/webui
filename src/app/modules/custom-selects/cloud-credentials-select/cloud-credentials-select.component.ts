@@ -4,6 +4,7 @@ import {
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR } from '@angular/forms';
 import { Observable, map } from 'rxjs';
+import { cloudsyncProviderNameMap } from 'app/enums/cloudsync-provider.enum';
 import { CloudCredential } from 'app/interfaces/cloud-sync-task.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { IxSelectWithNewOption } from 'app/modules/ix-forms/components/ix-select/ix-select-with-new-option.directive';
@@ -33,7 +34,7 @@ export class CloudCredentialsSelectComponent extends IxSelectWithNewOption {
     return this.cloudCredentialService.getCloudsyncCredentials().pipe(
       map((options) => {
         return options.map((option) => {
-          return { label: `${option.name} (${option.provider})`, value: option.id };
+          return { label: `${option.name} (${cloudsyncProviderNameMap.get(option.provider)})`, value: option.id };
         });
       }),
     );
