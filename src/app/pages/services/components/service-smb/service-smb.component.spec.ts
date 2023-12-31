@@ -8,6 +8,7 @@ import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SmbConfig } from 'app/interfaces/smb-config.interface';
+import { User } from 'app/interfaces/user.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -66,7 +67,13 @@ describe('ServiceSmbComponent', () => {
         }),
         mockCall('smb.update'),
         mockCall('failover.licensed', false),
-        mockCall('user.query'),
+        mockCall(
+          'user.query',
+          [
+            { id: 41, username: 'dummy-user' },
+            { id: 42, username: 'second-user' },
+          ] as User[],
+        ),
       ]),
       mockProvider(IxSlideInService),
       mockProvider(FormErrorHandlerService),
