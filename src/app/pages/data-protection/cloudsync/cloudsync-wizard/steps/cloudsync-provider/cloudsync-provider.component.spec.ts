@@ -6,8 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
-import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
+import { CloudCredentialsSelectModule } from 'app/modules/custom-selects/cloud-credentials-select/cloud-credentials-select.module';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { CHAINED_SLIDE_IN_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -32,9 +31,21 @@ describe('CloudsyncProviderComponent', () => {
     swap: jest.fn(),
   };
 
+  const loading = {
+    emit: jest.fn(),
+  };
+  const save = {
+    emit: jest.fn(),
+  };
+
   const createComponent = createComponentFactory({
     component: CloudsyncProviderComponent,
-    imports: [ReactiveFormsModule, IxFormsModule, CloudsyncProviderDescriptionComponent],
+    imports: [
+      ReactiveFormsModule,
+      IxFormsModule,
+      CloudsyncProviderDescriptionComponent,
+      CloudCredentialsSelectModule,
+    ],
     declarations: [
       GooglePhotosProviderFormComponent,
       StorjProviderFormComponent,
@@ -71,57 +82,25 @@ describe('CloudsyncProviderComponent', () => {
 
   beforeEach(async () => {
     spectator = createComponent();
+    Object.defineProperty(spectator.component, 'loading', {
+      value: loading,
+    });
+    Object.defineProperty(spectator.component, 'save', {
+      value: save,
+    });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     form = await loader.getHarness(IxFormHarness);
   });
 
-  it('loads a list of providers and shows them in Provider select', async () => {
-    await form.fillForm({ Credentials: 'Create New' });
-
-    expect(spectator.inject(CloudCredentialService).getProviders).toHaveBeenCalledWith();
-
-    const providersSelect = await form.getControl('Provider') as IxSelectHarness;
-    expect(await providersSelect.getOptionLabels()).toEqual(['Storj iX', 'Google Photos']);
-
-    await providersSelect.setValue('Storj iX');
-
-    const providerForm = spectator.query(StorjProviderFormComponent);
-    expect(providerForm).toBeTruthy();
-    expect(providerForm.provider).toBe(storjProvider);
-    expect(spectator.query(CloudsyncProviderDescriptionComponent)).toBeTruthy();
-  });
-
-  it('renders dynamic provider specific form when Provider is selected', async () => {
-    await form.fillForm({ Credentials: 'Create New' });
-
-    const providersSelect = await form.getControl('Provider') as IxSelectHarness;
-    await providersSelect.setValue('Google Photos');
-
-    const providerForm = spectator.query(GooglePhotosProviderFormComponent);
-    expect(providerForm).toBeTruthy();
-    expect(providerForm.provider).toBe(googlePhotosProvider);
-  });
-
-  it('returns fields default value when getPayload() is called', async () => {
-    await form.fillForm({ Credentials: 'Create New' });
-
-    expect(spectator.component.getPayload()).toEqual({
-      provider: CloudsyncProviderName.Storj,
-      attributes: {
-        access_key_id: '',
-        secret_access_key: '',
-      },
-      name: 'Storj',
+  it('emits the value of credentials when credentials value changes', async () => {
+    await form.fillForm({
+      Credentials: 'Google Photos (Google Photos)',
     });
-  });
 
-  it('when an existing name is entered, the "Next" button is disabled', async () => {
-    await form.fillForm({ Credentials: 'Create New' });
+    const verifyButton = await loader.getHarness(MatButtonHarness.with({ text: 'Verify Credential' }));
+    await verifyButton.click();
 
-    const nextButton = await loader.getHarness(MatButtonHarness.with({ text: 'Next' }));
-
-    await form.fillForm({ Name: 'Google Photos - testUser' });
-    expect(await nextButton.isDisabled()).not.toBeDisabled();
+    expect(save.emit).toHaveBeenNthCalledWith(1, googlePhotosCreds);
   });
 
   it('verifies entered values when user presses Verify', async () => {
@@ -131,6 +110,9 @@ describe('CloudsyncProviderComponent', () => {
 
     const verifyButton = await loader.getHarness(MatButtonHarness.with({ text: 'Verify Credential' }));
     await verifyButton.click();
+
+    expect(loading.emit).toHaveBeenNthCalledWith(1, true);
+    expect(loading.emit).toHaveBeenNthCalledWith(2, false);
 
     expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.credentials.verify', [{
       provider: 'GOOGLE_PHOTOS',
