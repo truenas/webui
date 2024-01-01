@@ -4,6 +4,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { UUID } from 'angular2-uuid';
 import { environment } from 'environments/environment';
 import {
+  EMPTY,
   merge, Observable, of, Subject, throwError,
 } from 'rxjs';
 import {
@@ -27,6 +28,7 @@ import { WebsocketConnectionService } from 'app/services/websocket-connection.se
 export class WebSocketService {
   private readonly eventSubscriptions = new Map<string, { obs$: Observable<unknown>; takeUntil$: Subject<void> }>();
   mockUtils: MockEnclosureUtils;
+  private isReportingErrors = true;
   constructor(
     protected router: Router,
     protected wsManager: WebsocketConnectionService,
@@ -35,6 +37,8 @@ export class WebSocketService {
     this.wsManager.isConnected$?.pipe(untilDestroyed(this)).subscribe((isConnected) => {
       if (!isConnected) {
         this.clearSubscriptions();
+      } else {
+        this.isReportingErrors = true;
       }
     });
   }
@@ -44,6 +48,9 @@ export class WebSocketService {
   }
 
   call<K extends ApiMethod>(method: K, params?: ApiDirectory[K]['params']): Observable<ApiDirectory[K]['response']> {
+    if (method === 'system.reboot') {
+      this.isReportingErrors = false;
+    }
     const uuid = UUID.UUID();
     return of(uuid).pipe(
       tap(() => {
@@ -55,6 +62,9 @@ export class WebSocketService {
       filter((data: IncomingWebsocketMessage) => data.msg === IncomingApiMessageType.Result && data.id === uuid),
       switchMap((data: IncomingWebsocketMessage) => {
         if ('error' in data && data.error) {
+          if (!this.isReportingErrors) {
+            return EMPTY;
+          }
           console.error('Error: ', data.error);
           return throwError(() => data.error);
         }
@@ -98,6 +108,9 @@ export class WebSocketService {
             takeWhile((job) => job.state !== JobState.Success, true),
             switchMap((job) => {
               if (job.state === JobState.Failed) {
+                if (!this.isReportingErrors) {
+                  return EMPTY;
+                }
                 return throwError(() => job);
               }
               return of(job);
@@ -118,6 +131,9 @@ export class WebSocketService {
       switchMap((apiEvent: unknown) => {
         const erroredEvent = apiEvent as { error: unknown };
         if (erroredEvent.error) {
+          if (!this.isReportingErrors) {
+            return EMPTY;
+          }
           console.error('Error: ', erroredEvent.error);
           return throwError(() => erroredEvent.error);
         }
