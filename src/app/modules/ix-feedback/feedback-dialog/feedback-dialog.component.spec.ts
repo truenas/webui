@@ -195,7 +195,7 @@ describe('FeedbackDialogComponent', () => {
         product_model: 'm40',
         product_type: ProductType.Scale,
       });
-      expect(spectator.inject(IxFeedbackService).addAttachment).toHaveBeenCalled();
+      expect(spectator.inject(IxFeedbackService).uploadReviewAttachment).toHaveBeenCalled();
       expect(spectator.inject(IxFeedbackService).takeScreenshot).toHaveBeenCalled();
       expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
@@ -227,7 +227,7 @@ describe('FeedbackDialogComponent', () => {
           rating: 5,
         }),
       );
-      expect(spectator.inject(IxFeedbackService).addAttachment).toHaveBeenCalled();
+      expect(spectator.inject(IxFeedbackService).uploadReviewAttachment).toHaveBeenCalled();
       expect(spectator.inject(MatDialogRef).close).toHaveBeenCalled();
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
     });

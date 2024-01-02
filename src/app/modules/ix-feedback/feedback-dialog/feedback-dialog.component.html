@@ -60,9 +60,9 @@
 
     <ix-file-input
       *ngIf="form.controls.attach_screenshot.value"
-      formControlName="image"
-      [label]="'Attach image (optional)' | translate"
-      [tooltip]="'Select image you want attach to review' | translate"
+      formControlName="images"
+      [label]="'Attach images (optional)' | translate"
+      [tooltip]="'Select images you want attach to review' | translate"
       [multiple]="true"
       [acceptedFiles]="acceptedFiles"
     ></ix-file-input>

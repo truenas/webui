@@ -75,7 +75,8 @@ export class IxFileUploadService {
   }
 
   validateScreenshots(screenshots: File[]): Observable<ValidatedFile[]> {
-    return from(Array.from(screenshots)).pipe(
+    return from(screenshots).pipe(
+      take(screenshots.length),
       concatMap((file: File): Observable<ValidatedFile> => {
         return this.validateScreenshot(file).pipe(
           catchError((error: ValidatedFile) => of(error)),
