@@ -26,8 +26,8 @@ export class ShowLogsDialogComponent {
   ) { }
 
   downloadLogs(): void {
-    this.ws.call('core.download', ['filesystem.get', [this.job.logs_path], `${this.job.id}.log`]).pipe(
-      switchMap(([_, url]) => this.storage.downloadUrl(url, `${this.job.id}.log`, 'text/plain')),
+    this.ws.call('core.job_download_logs', [this.job.id, `${this.job.id}.log`]).pipe(
+      switchMap((url) => this.storage.downloadUrl(url, `${this.job.id}.log`, 'text/plain')),
       catchError((error: HttpErrorResponse) => {
         this.dialogService.error(this.errorHandler.parseHttpError(error));
         return EMPTY;

@@ -390,6 +390,7 @@ export interface ApiCallDirectory {
 
   // Core
   'core.download': { params: CoreDownloadQuery; response: CoreDownloadResponse };
+  'core.job_download_logs': { params: [ id: number, filename: string ]; response: string };
   'core.get_jobs': { params: QueryParams<Job>; response: Job[] };
   'core.job_abort': { params: [jobId: number]; response: void };
   'core.resize_shell': { params: ResizeShellRequest; response: void };

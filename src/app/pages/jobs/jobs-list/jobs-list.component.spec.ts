@@ -78,7 +78,7 @@ describe('JobsListComponent', () => {
       mockProvider(DialogService),
       mockProvider(MatSnackBar),
       mockWebsocket([
-        mockCall('core.download', [1, 'http://localhost/download/log']),
+        mockCall('core.job_download_logs', 'http://localhost/download/log'),
       ]),
       mockProvider(StorageService, {
         downloadUrl: jest.fn(() => of(undefined)),
@@ -147,7 +147,7 @@ describe('JobsListComponent', () => {
     const [downloadLogsButton] = await loader.getAllHarnesses(MatButtonHarness.with({ text: 'Download Logs' }));
     await downloadLogsButton.click();
 
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('core.download', ['filesystem.get', ['/var/log/jobs/446.log'], '446.log']);
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('core.job_download_logs', [446, '446.log']);
     expect(spectator.inject(StorageService).downloadUrl).toHaveBeenCalledWith('http://localhost/download/log', '446.log', 'text/plain');
   });
 });
