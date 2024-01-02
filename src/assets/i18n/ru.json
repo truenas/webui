@@ -3278,7 +3278,7 @@
   "Endpoint URL": "URL конечной точки",
   "Endpoint type to choose from the service catalogue. <i>Public</i> is recommended, see the <a href=\"https://rclone.org/swift/#swift-region\" target=\"_blank\">rclone documentation</a>.": "Endpoint type to choose from the service catalogue. <i>Public</i> is recommended, see the <a href=\"https://rclone.org/swift/#swift-region\" target=\"_blank\">rclone documentation</a>.",
   "Enter a Name (optional)": "Введите имя (не обязательно)",
-  "Enter a VNC password to automatically pass to the VNC session. Passwords cannot be longer than 8 characters.": "Введите пароль VNC для автоматической передачи VNC сессии.  Пароли не могут быть длиннее 8 символов.",
+  "Enter a VNC password to automatically pass to the VNC session.": "Введите пароль VNC для автоматической передачи VNC сессии.",
   "Enter a description of the Cloud Sync Task.": "Введите описание задачи облачной синхронизации.",
   "Enter a description of the cron job.": "Введите описание задания cron.",
   "Enter a description of the interface.": "Введите описание интерфейса.",

@@ -1874,7 +1874,7 @@
   "Enter <strong>{pool}</strong> below to confirm": "Hieronder <strong>{pool}</strong> invoeren om te bevestigen",
   "Enter <strong>{zvolName}</strong> below to confirm.": "Hieronder <strong>{zvolName}</strong> invoeren om te bevestigen.",
   "Enter a Name (optional)": "Een naam (optioneel) invoeren",
-  "Enter a VNC password to automatically pass to the VNC session. Passwords cannot be longer than 8 characters.": "Een VNC-wachtwoord invoeren om automatisch door te geven aan de VNC-sessie. Wachtwoorden mogen niet langer zijn dan 8 tekens.",
+  "Enter a VNC password to automatically pass to the VNC session.": "Een VNC-wachtwoord invoeren om automatisch door te geven aan de VNC-sessie.",
   "Enter a description of the Cloud Sync Task.": "Een beschrijving invoeren van de cloudsynchronisatietaak.",
   "Enter a description of the cron job.": "Een beschrijving invoeren van de cron-job.",
   "Enter a description of the interface.": "Een beschrijving invoeren van de interface.",

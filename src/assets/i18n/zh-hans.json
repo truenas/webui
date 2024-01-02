@@ -1935,7 +1935,7 @@
   "Enter <strong>{pool}</strong> below to confirm": "在下方输入 <strong>{pool}</strong> 进行确认",
   "Enter <strong>{zvolName}</strong> below to confirm.": "输入存储池名 <strong>{zvolName}</strong> 以确认。",
   "Enter a Name (optional)": "输入名称（可选）",
-  "Enter a VNC password to automatically pass to the VNC session. Passwords cannot be longer than 8 characters.": "输入VNC密码以自动传递到VNC会话。密码不能长于8个字符。",
+  "Enter a VNC password to automatically pass to the VNC session.": "输入VNC密码以自动传递到VNC会话。",
   "Enter a description of the Cloud Sync Task.": "输入云同步任务的描述。",
   "Enter a description of the cron job.": "输入计划任务的描述。",
   "Enter a description of the interface.": "输入接口的描述。",

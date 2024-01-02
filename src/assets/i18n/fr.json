@@ -1701,7 +1701,7 @@
   "Enter <strong>{pool}</strong> below to confirm": "Entrez <strong>{pool}</strong> ci-dessous pour confirmer",
   "Enter <strong>{zvolName}</strong> below to confirm.": "Entrez <strong>{zvolName}</strong> ci-dessous pour confirmer.",
   "Enter a Name (optional)": "Entrez un nom (facultatif)",
-  "Enter a VNC password to automatically pass to the VNC session. Passwords cannot be longer than 8 characters.": "Entrez un mot de passe VNC pour passer automatiquement à la session VNC. Les mots de passe ne peuvent pas dépasser 8 caractères.",
+  "Enter a VNC password to automatically pass to the VNC session.": "Entrez un mot de passe VNC pour passer automatiquement à la session VNC.",
   "Enter a description of the Cloud Sync Task.": "Entrez une description de la tâche Cloud Sync.",
   "Enter a description of the cron job.": "Entrez une description de la tâche cron.",
   "Enter a description of the interface.": "Entrez une description de l'interface.",

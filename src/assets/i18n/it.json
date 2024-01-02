@@ -1184,7 +1184,7 @@
   "Enter <strong>{pool}</strong> below to confirm": "",
   "Enter <strong>{zvolName}</strong> below to confirm.": "",
   "Enter a Name (optional)": "",
-  "Enter a VNC password to automatically pass to the VNC session. Passwords cannot be longer than 8 characters.": "",
+  "Enter a VNC password to automatically pass to the VNC session.": "",
   "Enter a description of the Cloud Sync Task.": "",
   "Enter a description of the cron job.": "",
   "Enter a description of the interface.": "",

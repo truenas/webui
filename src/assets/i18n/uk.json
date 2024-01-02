@@ -1886,7 +1886,7 @@
   "Enter <strong>{pool}</strong> below to confirm": "Введіть <strong>{pool}</strong> нижче для підтвердження",
   "Enter <strong>{zvolName}</strong> below to confirm.": "Введіть <strong>{zvolName}</strong> нижче для підтвердження.",
   "Enter a Name (optional)": "Введіть ім'я (не обов'язково)",
-  "Enter a VNC password to automatically pass to the VNC session. Passwords cannot be longer than 8 characters.": "Введіть пароль VNC для автоматичної передачі VNC сесії. Паролі не можуть бути довшими за 8 символів.",
+  "Enter a VNC password to automatically pass to the VNC session.": "Введіть пароль VNC для автоматичної передачі VNC сесії.",
   "Enter a description of the Cloud Sync Task.": "Введіть опис проблеми хмарної синхронізації.",
   "Enter a description of the cron job.": "Введіть опис завдання Cron.",
   "Enter a description of the interface.": "Введіть опис інтерфейсу.",
