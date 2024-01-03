@@ -14,7 +14,6 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SnapshotCloneDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-clone-dialog/snapshot-clone-dialog.component';
 import { SnapshotRollbackDialogComponent } from 'app/pages/datasets/modules/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
-import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -49,7 +48,6 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
     private matDialog: MatDialog,
     private cdr: ChangeDetectorRef,
     private snackbar: SnackbarService,
-    protected authService: AuthService,
   ) {}
 
   ngOnInit(): void {

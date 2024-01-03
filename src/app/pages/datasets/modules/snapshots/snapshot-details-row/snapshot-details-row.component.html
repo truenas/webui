@@ -46,16 +46,17 @@
         </ng-container>
       </dd>
     </div>
-    <mat-checkbox
-      *ngIf="!isLoading"
-      color="primary"
-      [checked]="isHold"
-      [disabled]="!(authService.hasRole(Role.FullAdmin) | async)"
-      [ixTest]="['hold', snapshot.snapshot_name]"
-      (change)="doHold()"
-    >
-      {{ 'Hold' | translate }}
-    </mat-checkbox>
+    <ng-container *ixRequiresRoles="[Role.FullAdmin]">
+      <mat-checkbox
+        *ngIf="!isLoading"
+        color="primary"
+        [checked]="isHold"
+        [ixTest]="['hold', snapshot.snapshot_name]"
+        (change)="doHold()"
+      >
+        {{ 'Hold' | translate }}
+      </mat-checkbox>
+    </ng-container>
   </dl>
 
   <mat-divider></mat-divider>
