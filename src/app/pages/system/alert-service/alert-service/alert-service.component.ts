@@ -13,6 +13,7 @@ import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AlertLevel, alertLevelLabels } from 'app/enums/alert-level.enum';
 import { alertServiceNames, AlertServiceType } from 'app/enums/alert-service-type.enum';
+import { Role } from 'app/enums/role.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextAlertService } from 'app/helptext/system/alert-service';
 import { AlertService, AlertServiceEdit } from 'app/interfaces/alert-service.interface';
@@ -79,6 +80,7 @@ export class AlertServiceComponent implements OnInit {
   readonly helptext = helptextAlertService;
 
   private alertServiceForm: BaseAlertServiceForm;
+  protected readonly Role = Role;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -138,7 +140,7 @@ export class AlertServiceComponent implements OnInit {
             );
           }
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.isLoading = false;
           this.cdr.detectChanges();
           this.errorHandler.handleWsFormError(error, this.commonForm);
@@ -166,7 +168,7 @@ export class AlertServiceComponent implements OnInit {
           this.snackbar.success(this.translate.instant('Alert service saved'));
           this.slideInRef.close(true);
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.isLoading = false;
           this.cdr.detectChanges();
           this.errorHandler.handleWsFormError(error, this.commonForm);

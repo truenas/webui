@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -37,6 +38,7 @@ describe('BootPoolAttachDialogComponent', () => {
       mockProvider(FormErrorHandlerService),
       mockProvider(DialogService),
       mockProvider(MatDialogRef),
+      mockAuth(),
     ],
   });
 

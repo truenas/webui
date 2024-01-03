@@ -127,10 +127,21 @@
     <ng-container matColumnDef="actions">
       <th *matHeaderCellDef mat-header-cell></th>
       <td *matCellDef="let row; dataSource: dataSource" mat-cell>
+        <button
+          mat-icon-button
+          type="button"
+          [ixTest]="['edit', row.name]"
+          [matTooltip]="'Edit' | translate"
+          [attr.aria-label]="'Edit' | translate"
+          (click)="doEdit(row)"
+        >
+          <ix-icon name="edit"></ix-icon>
+        </button>
         <ng-container *ixRequiresRoles="[Role.DatasetWrite]">
           <button
             *ngIf="row.quota > 0 || row.obj_quota > 0"
             mat-icon-button
+            type="button"
             matTooltipPosition="below"
             [ixTest]="['delete-quota', row.name]"
             [attr.aria-label]="'Delete' | translate"

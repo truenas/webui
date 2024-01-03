@@ -143,7 +143,7 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
       error: (error) => {
         this.isLoading = false;
         this.cdr.markForCheck();
-        this.dialog.error(this.errorHandler.parseWsError(error));
+        this.dialog.error(this.errorHandler.parseError(error));
       },
     });
   }
@@ -171,7 +171,7 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
       error: (error) => {
         this.isLoading = false;
         this.cdr.markForCheck();
-        this.dialog.error(this.errorHandler.parseWsError(error));
+        this.dialog.error(this.errorHandler.parseError(error));
       },
     });
   }
@@ -229,7 +229,7 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
       error: (error) => {
         this.isLoading = false;
         this.cdr.markForCheck();
-        this.dialog.error(this.errorHandler.parseWsError(error));
+        this.dialog.error(this.errorHandler.parseError(error));
       },
     });
   }

@@ -5,8 +5,8 @@ import { FormBuilder } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import { Role } from 'app/enums/role.enum';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -26,7 +26,7 @@ export class KernelFormComponent implements OnInit {
   form = this.fb.group({
     debugkernel: [false],
   });
-
+  protected readonly Role = Role;
   readonly tooltips = {
     debugkernel: helptextSystemAdvanced.debugkernel_tooltip,
   };
@@ -69,9 +69,9 @@ export class KernelFormComponent implements OnInit {
         this.slideInRef.close();
         this.store$.dispatch(advancedConfigUpdated());
       },
-      error: (error: WebsocketError) => {
+      error: (error: unknown) => {
         this.isFormLoading = false;
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+        this.dialogService.error(this.errorHandler.parseError(error));
         this.cdr.markForCheck();
       },
     });

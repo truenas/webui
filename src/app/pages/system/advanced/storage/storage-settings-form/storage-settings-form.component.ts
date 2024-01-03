@@ -12,10 +12,10 @@ import {
   catchError, filter, switchMap, take, tap,
 } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
+import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
@@ -44,7 +44,7 @@ export class StorageSettingsFormComponent implements OnInit {
       this.ixValidator.withMessage(Validators.pattern('^[0-9]*$'), this.translate.instant('Only integers allowed')),
     ]],
   });
-
+  protected readonly Role = Role;
   readonly poolOptions$ = this.ws.call('systemdataset.pool_choices').pipe(choicesToOptions());
 
   constructor(
@@ -88,7 +88,7 @@ export class StorageSettingsFormComponent implements OnInit {
             this.snackbar.success(this.translate.instant('System dataset updated.'));
             this.slideInRef.close();
           }),
-          catchError((error) => {
+          catchError((error: unknown) => {
             this.isFormLoading = false;
             this.formErrorHandler.handleWsFormError(error, this.form);
             this.cdr.markForCheck();
@@ -118,9 +118,9 @@ export class StorageSettingsFormComponent implements OnInit {
           });
           this.cdr.markForCheck();
         },
-        error: (error: WebsocketError) => {
+        error: (error: unknown) => {
           this.isFormLoading = false;
-          this.dialogService.error(this.errorHandler.parseWsError(error));
+          this.dialogService.error(this.errorHandler.parseError(error));
           this.cdr.markForCheck();
         },
       });

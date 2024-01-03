@@ -86,7 +86,7 @@ describe('NfsListComponent', () => {
     await editButton.click();
 
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(NfsFormComponent, {
-      data: shares[0],
+      data: { existingNfsShare: shares[0] },
     });
   });
 

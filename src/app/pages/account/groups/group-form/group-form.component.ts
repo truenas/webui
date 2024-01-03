@@ -68,6 +68,8 @@ export class GroupFormComponent implements OnInit {
     map((privileges) => privileges.map((privilege) => ({ label: privilege.name, value: privilege.id }))),
   );
 
+  protected readonly Role = Role;
+
   constructor(
     private fb: FormBuilder,
     private ws: WebSocketService,
@@ -170,7 +172,7 @@ export class GroupFormComponent implements OnInit {
         this.slideInRef.close();
         this.cdr.markForCheck();
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.isFormLoading = false;
         this.errorHandler.handleWsFormError(error, this.form);
         this.cdr.markForCheck();

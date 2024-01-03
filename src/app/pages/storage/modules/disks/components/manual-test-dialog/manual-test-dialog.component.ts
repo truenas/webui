@@ -9,11 +9,11 @@ import {
   map, of, takeWhile,
 } from 'rxjs';
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
+import { Role } from 'app/enums/role.enum';
 import { SmartTestType } from 'app/enums/smart-test-type.enum';
 import { IncomingWebsocketMessage } from 'app/interfaces/api-message.interface';
 import { ManualSmartTest } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -63,6 +63,8 @@ export class ManualTestDialogComponent {
     return Boolean(this.startedTests.length);
   }
 
+  protected readonly Role = Role;
+
   constructor(
     private ws: WebSocketService,
     private formBuilder: FormBuilder,
@@ -110,9 +112,9 @@ export class ManualTestDialogComponent {
 
           this.cdr.markForCheck();
         },
-        error: (error: WebsocketError) => {
+        error: (error: unknown) => {
           this.dialogRef.close();
-          this.dialogService.error(this.errorHandler.parseWsError(error));
+          this.dialogService.error(this.errorHandler.parseError(error));
           this.cdr.markForCheck();
         },
       });

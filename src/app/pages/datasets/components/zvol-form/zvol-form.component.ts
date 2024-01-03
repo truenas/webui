@@ -6,9 +6,10 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { map, of } from 'rxjs';
 import {
-  DatasetEncryptionType, DatasetRecordSize, DatasetSnapdev, DatasetSync, DatasetType,
+  DatasetRecordSize, DatasetSnapdev, DatasetSync, DatasetType,
 } from 'app/enums/dataset.enum';
 import { DeduplicationSetting } from 'app/enums/deduplication-setting.enum';
+import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { Role } from 'app/enums/role.enum';
 import { inherit } from 'app/enums/with-inherit.enum';
@@ -16,7 +17,6 @@ import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { helptextZvol } from 'app/helptext/storage/volumes/zvol-form';
 import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -269,16 +269,16 @@ export class ZvolFormComponent implements OnInit {
 
               this.cdr.markForCheck();
             },
-            error: (error: WebsocketError): void => {
-              this.dialogService.error(this.errorHandler.parseWsError(error));
+            error: (error: unknown): void => {
+              this.dialogService.error(this.errorHandler.parseError(error));
             },
           });
         }
         this.isLoading = false;
         this.cdr.markForCheck();
       },
-      error: (error: WebsocketError): void => {
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+      error: (error: unknown): void => {
+        this.dialogService.error(this.errorHandler.parseError(error));
       },
     });
   }
@@ -315,7 +315,7 @@ export class ZvolFormComponent implements OnInit {
 
     this.inheritEncryptPlaceholder = helptextZvol.dataset_form_encryption.inherit_checkbox_notencrypted;
     if (this.encryptedParent) {
-      if (parent.key_format.value === DatasetEncryptionType.Passphrase) {
+      if (parent.key_format.value === EncryptionKeyFormat.Passphrase) {
         this.passphraseParent = true;
         // if parent is passphrase this dataset cannot be a key type
         this.encryptionType = 'passphrase';
@@ -610,7 +610,7 @@ export class ZvolFormComponent implements OnInit {
 
     this.ws.call('pool.dataset.create', [data as DatasetCreate]).pipe(untilDestroyed(this)).subscribe({
       next: (dataset) => this.handleZvolCreateUpdate(dataset),
-      error: (error) => {
+      error: (error: unknown) => {
         this.isLoading = false;
         this.formErrorHandler.handleWsFormError(error, this.form);
         this.cdr.markForCheck();
@@ -670,7 +670,7 @@ export class ZvolFormComponent implements OnInit {
         if (!data.volsize || data.volsize >= roundedVolSize) {
           this.ws.call('pool.dataset.update', [this.parentId, data as DatasetUpdate]).pipe(untilDestroyed(this)).subscribe({
             next: (dataset) => this.handleZvolCreateUpdate(dataset),
-            error: (error) => {
+            error: (error: unknown) => {
               this.isLoading = false;
               this.formErrorHandler.handleWsFormError(error, this.form);
               this.cdr.markForCheck();
@@ -685,8 +685,8 @@ export class ZvolFormComponent implements OnInit {
           this.slideInRef.close(false);
         }
       },
-      error: (error: WebsocketError): void => {
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+      error: (error: unknown): void => {
+        this.dialogService.error(this.errorHandler.parseError(error));
         this.isLoading = false;
         this.cdr.markForCheck();
       },

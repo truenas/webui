@@ -250,7 +250,7 @@ export class InterfaceFormComponent implements OnInit {
 
         this.cdr.markForCheck();
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.isLoading = false;
         this.cdr.markForCheck();
         this.errorHandler.handleWsFormError(error, this.form);

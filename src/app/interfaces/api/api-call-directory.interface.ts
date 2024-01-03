@@ -9,6 +9,7 @@ import { OnOff } from 'app/enums/on-off.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { SmbInfoLevel } from 'app/enums/smb-info-level.enum';
+import { SystemEnvironment } from 'app/enums/system-environment.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import {
   Acl,
@@ -271,6 +272,8 @@ import {
  * For events from `subscribed` see ApiEventDirectory.
  */
 export interface ApiCallDirectory {
+  'webui.main.dashboard.sys_info': { params: void; response: SystemInfo };
+
   // Active Directory
   'activedirectory.config': { params: void; response: ActiveDirectoryConfig };
   'activedirectory.update': { params: [ActiveDirectoryUpdate]; response: ActiveDirectoryConfig };
@@ -417,12 +420,8 @@ export interface ApiCallDirectory {
   'container.image.query': { params: QueryParams<ContainerImage>; response: ContainerImage[] };
   'container.image.delete': { params: DeleteContainerImageParams; response: void };
 
-  // Cluster
-  'cluster.utils.is_clustered': { params: void; response: boolean };
-
   // Device
   'device.get_info': { params: [DeviceType]; response: Device[] };
-  'device.get_pci_ids_for_gpu_isolation': { params: [string]; response: string[] };
 
   // Disk
   'disk.query': { params: QueryParams<Disk, ExtraDiskQueryOptions>; response: Disk[] };
@@ -629,7 +628,6 @@ export interface ApiCallDirectory {
   'pool.dataset.get_instance': { params: [path: string]; response: DatasetDetails };
   'pool.dataset.get_quota': { params: DatasetQuotaQueryParams; response: DatasetQuota[] };
   'pool.dataset.inherit_parent_encryption_properties': { params: [id: string]; response: void };
-  'pool.dataset.path_in_locked_datasets': { params: [path: string]; response: boolean };
   'pool.dataset.processes': { params: [datasetId: string]; response: Process[] };
   'pool.dataset.promote': { params: [id: string]; response: void };
   'pool.dataset.query': { params: QueryParams<Dataset, ExtraDatasetQueryOptions>; response: Dataset[] };
@@ -740,7 +738,7 @@ export interface ApiCallDirectory {
   'system.advanced.syslog_certificate_authority_choices': { params: void; response: Choices };
   'system.advanced.sed_global_password': { params: void; response: string };
   'system.is_stable': { params: void; response: boolean };
-  'system.environment': { params: void; response: string };
+  'system.environment': { params: void; response: SystemEnvironment };
   'system.set_time': { params: [number]; response: void };
   'system.security.config': { params: void; response: SystemSecurityConfig };
   'system.security.update': { params: [SystemSecurityConfig]; response: void };
@@ -834,6 +832,7 @@ export interface ApiCallDirectory {
   'vm.device.create': { params: [VmDeviceUpdate]; response: VmDevice };
   'vm.device.delete': { params: [number, VmDeviceDelete?]; response: boolean };
   'vm.device.disk_choices': { params: void; response: Choices };
+  'vm.device.get_pci_ids_for_gpu_isolation': { params: [string]; response: string[] };
   'vm.random_mac': { params: void; response: string };
   'vm.device.query': { params: QueryParams<VmDevice>; response: VmDevice[] };
   'vm.maximum_supported_vcpus': { params: void; response: number };

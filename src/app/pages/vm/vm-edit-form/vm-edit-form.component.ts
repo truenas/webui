@@ -5,7 +5,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  forkJoin, map, of, switchMap,
+  Observable, forkJoin, map, of, switchMap,
 } from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
 import {
@@ -16,7 +16,6 @@ import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { VirtualMachine, VirtualMachineUpdate } from 'app/interfaces/virtual-machine.interface';
 import { VmPciPassthroughDevice } from 'app/interfaces/vm-device.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
@@ -132,31 +131,37 @@ export class VmEditFormComponent implements OnInit {
     const gpusIds = this.form.value.gpus;
 
     const pciIdsRequests$ = gpusIds.map((gpu) => {
-      return this.ws.call('device.get_pci_ids_for_gpu_isolation', [gpu]);
+      return this.ws.call('vm.device.get_pci_ids_for_gpu_isolation', [gpu]);
     });
 
-    forkJoin(pciIdsRequests$).pipe(
-      map((pciIds) => pciIds.flat()),
-      switchMap((pciIds) => [
-        this.ws.call('vm.update', [this.existingVm.id, vmPayload as VirtualMachineUpdate]),
-        this.vmGpuService.updateVmGpus(this.existingVm, gpusIds.concat(pciIds)),
-        this.gpuService.addIsolatedGpuPciIds(gpusIds.concat(pciIds)),
-      ]),
-    )
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        complete: () => {
-          this.isLoading = false;
-          this.cdr.markForCheck();
-          this.snackbar.success(this.translate.instant('VM updated successfully.'));
-          this.slideInRef.close(true);
-        },
-        error: (error: WebsocketError) => {
-          this.isLoading = false;
-          this.cdr.markForCheck();
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-        },
-      });
+    let updateVmRequest$: Observable<unknown>;
+
+    if (pciIdsRequests$.length) {
+      updateVmRequest$ = forkJoin(pciIdsRequests$).pipe(
+        map((pciIds) => pciIds.flat()),
+        switchMap((pciIds) => forkJoin([
+          this.ws.call('vm.update', [this.existingVm.id, vmPayload as VirtualMachineUpdate]),
+          this.vmGpuService.updateVmGpus(this.existingVm, gpusIds.concat(pciIds)),
+          this.gpuService.addIsolatedGpuPciIds(gpusIds.concat(pciIds)),
+        ])),
+      );
+    } else {
+      updateVmRequest$ = this.ws.call('vm.update', [this.existingVm.id, vmPayload as VirtualMachineUpdate]);
+    }
+
+    updateVmRequest$.pipe(untilDestroyed(this)).subscribe({
+      next: () => {
+        this.isLoading = false;
+        this.cdr.markForCheck();
+        this.snackbar.success(this.translate.instant('VM updated successfully.'));
+        this.slideInRef.close(true);
+      },
+      error: (error: unknown) => {
+        this.isLoading = false;
+        this.cdr.markForCheck();
+        this.dialogService.error(this.errorHandler.parseError(error));
+      },
+    });
   }
 
   private setupGpuControl(vm: VirtualMachine): void {

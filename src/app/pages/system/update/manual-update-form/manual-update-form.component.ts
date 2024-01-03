@@ -15,6 +15,7 @@ import {
   filter, take, tap,
 } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
+import { Role } from 'app/enums/role.enum';
 import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -52,6 +53,7 @@ export class ManualUpdateFormComponent implements OnInit {
   fileLocationOptions$: Observable<Option[]>;
 
   isHaLicensed = false;
+  protected readonly Role = Role;
 
   constructor(
     private dialogService: DialogService,
@@ -154,7 +156,7 @@ export class ManualUpdateFormComponent implements OnInit {
       this.router.navigate(['/others/reboot'], { skipLocationChange: true });
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
-      this.dialogService.error(this.errorHandler.parseJobError(err));
+      this.dialogService.error(this.errorHandler.parseError(err));
     });
     this.cdr.markForCheck();
   }
@@ -288,7 +290,7 @@ export class ManualUpdateFormComponent implements OnInit {
       });
       return;
     }
-    this.dialogService.error(this.errorHandler.parseJobError(failure));
+    this.dialogService.error(this.errorHandler.parseError(failure));
   };
 
   private resumeUpdateAfterFailure(): void {

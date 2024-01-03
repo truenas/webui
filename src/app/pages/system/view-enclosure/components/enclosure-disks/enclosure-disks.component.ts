@@ -11,7 +11,7 @@ import { ValueReaction } from 'popmotion/lib/reactions/value';
 import { Subject } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
-import { EnclosureSlotStatus } from 'app/enums/enclosure-slot-status.enum';
+import { EnclosureSlotDiskStatus, EnclosureSlotStatus } from 'app/enums/enclosure-slot-status.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import {
@@ -1122,7 +1122,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   toggleHighlightMode(mode: string): void {
     const enclosureView = this.selectedEnclosureView;
     const selectedSlot = enclosureView.slots[this.selectedSlotNumber];
-    if (selectedSlot.topologyStatus === 'AVAILABLE') { return; }
+    if (selectedSlot.topologyStatus === EnclosureSlotDiskStatus.Available) { return; }
 
     this.labels.events$.next({
       name: mode === 'on' ? 'EnableHighlightMode' : 'DisableHighlightMode',

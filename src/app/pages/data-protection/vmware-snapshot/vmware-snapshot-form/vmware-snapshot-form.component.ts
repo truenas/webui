@@ -144,7 +144,7 @@ export class VmwareSnapshotFormComponent implements OnInit {
             message: helptextVmwareSnapshot.connect_err_dialog.msg,
           });
         } else {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
+          this.dialogService.error(this.errorHandler.parseError(error));
         }
         this.cdr.markForCheck();
       },
@@ -190,7 +190,7 @@ export class VmwareSnapshotFormComponent implements OnInit {
           this.isLoading = false;
           this.slideInRef.close(true);
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.isLoading = false;
           this.formErrorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();

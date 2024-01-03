@@ -35,6 +35,9 @@ import { ServicesState } from 'app/store/services/services.reducer';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NfsFormComponent implements OnInit {
+  existingNfsShare: NfsShare;
+  defaultNfsShare: NfsShare;
+
   isLoading = false;
   isAdvancedMode = false;
   hasNfsSecurityField = false;
@@ -103,8 +106,11 @@ export class NfsFormComponent implements OnInit {
     private snackbar: SnackbarService,
     private slideInRef: IxSlideInRef<NfsFormComponent>,
     private store$: Store<ServicesState>,
-    @Inject(SLIDE_IN_DATA) private existingNfsShare: NfsShare,
-  ) {}
+    @Inject(SLIDE_IN_DATA) private data: { existingNfsShare?: NfsShare; defaultNfsShare?: NfsShare },
+  ) {
+    this.existingNfsShare = this.data?.existingNfsShare;
+    this.defaultNfsShare = this.data?.defaultNfsShare;
+  }
 
   setNfsShareForEdit(): void {
     this.existingNfsShare.networks.forEach(() => this.addNetworkControl());
@@ -114,6 +120,10 @@ export class NfsFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.checkForNfsSecurityField();
+
+    if (this.defaultNfsShare) {
+      this.form.patchValue(this.defaultNfsShare);
+    }
 
     if (this.existingNfsShare) {
       this.setNfsShareForEdit();
@@ -165,7 +175,7 @@ export class NfsFormComponent implements OnInit {
           this.cdr.markForCheck();
           this.slideInRef.close(true);
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.isLoading = false;
           this.formErrorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();

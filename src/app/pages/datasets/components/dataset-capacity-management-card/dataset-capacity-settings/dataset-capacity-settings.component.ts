@@ -151,7 +151,7 @@ export class DatasetCapacitySettingsComponent implements OnInit {
           this.slideInRef.close();
           this.cdr.markForCheck();
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.errorHandler.handleWsFormError(error, this.form);
           this.isLoading = false;
           this.cdr.markForCheck();

@@ -118,7 +118,7 @@ export class IxErrorsComponent implements OnChanges {
       case DefaultValidationError.Pattern:
         return this.defaultErrMessages.pattern();
       case DefaultValidationError.Forbidden:
-        return this.defaultErrMessages.forbidden(this.control.errors.value);
+        return this.defaultErrMessages.forbidden(this.control.errors.value as string);
       case DefaultValidationError.Number:
         return this.defaultErrMessages.number();
       case DefaultValidationError.Cron:

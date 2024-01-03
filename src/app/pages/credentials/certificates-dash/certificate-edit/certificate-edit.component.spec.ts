@@ -8,6 +8,7 @@ import {
 } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
@@ -61,6 +62,7 @@ describe('CertificateEditComponent', () => {
       mockProvider(IxSlideInRef),
       { provide: SLIDE_IN_DATA, useValue: undefined },
       mockProvider(DialogService),
+      mockAuth(),
     ],
     declarations: [
       MockComponent(ViewCertificateDialogComponent),

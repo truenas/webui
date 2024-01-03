@@ -330,7 +330,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  private onScreenSizeChange(newScreenType: string, oldScreenType: string): void {
+  private onScreenSizeChange(newScreenType: ScreenType, oldScreenType: ScreenType): void {
     if (newScreenType === ScreenType.Desktop && oldScreenType === ScreenType.Mobile) {
       this.enableReorderMode();
     }

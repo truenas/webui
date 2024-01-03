@@ -5,6 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DnsAuthenticatorType } from 'app/enums/dns-authenticator-type.enum';
 import { AuthenticatorSchema, DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
@@ -76,6 +77,7 @@ describe('AcmednsFormComponent', () => {
           ] as Schema[],
         }] as AuthenticatorSchema[]),
       ]),
+      mockAuth(),
     ],
   });
 

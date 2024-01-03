@@ -6,6 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -58,6 +59,7 @@ describe('SystemSecurityFormComponent', () => {
       }),
       mockProvider(IxSlideInRef),
       { provide: SLIDE_IN_DATA, useValue: fakeSystemSecurityConfig },
+      mockAuth(),
     ],
   });
 

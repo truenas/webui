@@ -9,7 +9,6 @@ import {
   filter, switchMap, tap, map,
 } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -72,10 +71,10 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
         this.isLoading = false;
         this.cdr.markForCheck();
       },
-      error: (error: WebsocketError) => {
+      error: (error: unknown) => {
         this.isLoading = false;
         this.cdr.markForCheck();
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+        this.dialogService.error(this.errorHandler.parseError(error));
       },
     });
   }

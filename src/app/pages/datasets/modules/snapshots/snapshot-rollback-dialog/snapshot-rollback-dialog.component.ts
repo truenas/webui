@@ -8,7 +8,6 @@ import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { RollbackRecursiveType } from 'app/enums/rollback-recursive-type.enum';
 import { helptextSnapshots } from 'app/helptext/storage/snapshots/snapshots';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ZfsRollbackParams, ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -90,10 +89,10 @@ export class SnapshotRollbackDialogComponent implements OnInit {
         this.isLoading = false;
         this.cdr.markForCheck();
       },
-      error: (error: WebsocketError) => {
+      error: (error: unknown) => {
         this.isLoading = false;
         this.cdr.markForCheck();
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+        this.dialogService.error(this.errorHandler.parseError(error));
       },
     });
   }
@@ -114,7 +113,7 @@ export class SnapshotRollbackDialogComponent implements OnInit {
         this.wasDatasetRolledBack = true;
         this.cdr.markForCheck();
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.formErrorHandler.handleWsFormError(error, this.form);
       },
     });

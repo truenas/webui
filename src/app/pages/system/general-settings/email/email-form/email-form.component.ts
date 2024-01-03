@@ -7,6 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { MailSecurity } from 'app/enums/mail-security.enum';
+import { Role } from 'app/enums/role.enum';
 import { helptextSystemEmail } from 'app/helptext/system/email';
 import { GmailOauthConfig, MailConfig, MailConfigUpdate } from 'app/interfaces/mail-config.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
@@ -56,6 +57,7 @@ export class EmailFormComponent implements OnInit {
 
   isLoading = false;
 
+  protected readonly Role = Role;
   readonly oauthType = OauthButtonType;
   readonly sendMethodOptions$ = of([
     {
@@ -149,7 +151,7 @@ export class EmailFormComponent implements OnInit {
           this.slideInRef.close(true);
           this.cdr.markForCheck();
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.isLoading = false;
           this.cdr.markForCheck();
           this.formErrorHandler.handleWsFormError(error, this.form);

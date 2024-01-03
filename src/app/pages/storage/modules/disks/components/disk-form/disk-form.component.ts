@@ -10,6 +10,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
+import { Role } from 'app/enums/role.enum';
 import { translateOptions } from 'app/helpers/translate.helper';
 import { helptextDisks } from 'app/helptext/storage/disks/disks';
 import { Disk, DiskUpdate } from 'app/interfaces/storage.interface';
@@ -45,6 +46,8 @@ export class DiskFormComponent implements OnInit {
   readonly advpowermgmtOptions$ = of(translateOptions(this.translate, this.helptext.disk_form_advpowermgmt_options));
   isLoading = false;
   existingDisk: Disk;
+
+  protected readonly Role = Role;
 
   constructor(
     private translate: TranslateService,
@@ -117,7 +120,7 @@ export class DiskFormComponent implements OnInit {
           this.slideInRef.close(true);
           this.snackbarService.success(this.translate.instant('Disk settings successfully saved.'));
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.isLoading = false;
           this.cdr.markForCheck();
           this.errorHandler.handleWsFormError(error, this.form);

@@ -462,14 +462,14 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
   }
 
   handleError(err: WebsocketError): void {
-    if (err?.error === ReportingDatabaseError.FailedExport) {
+    if (err?.error === (ReportingDatabaseError.FailedExport as number)) {
       this.report.errorConf = {
         type: EmptyType.Errors,
         title: this.translate.instant('Error getting chart data'),
         message: err.reason,
       };
     }
-    if (err?.error === ReportingDatabaseError.InvalidTimestamp) {
+    if (err?.error === (ReportingDatabaseError.InvalidTimestamp as number)) {
       this.report.errorConf = {
         type: EmptyType.Errors,
         title: this.translate.instant('The reporting database is broken'),

@@ -37,7 +37,7 @@ export class TopbarComponent implements OnInit {
 
   alertBadgeCount$ = this.store$.select(selectImportantUnreadAlertsCount);
 
-  readonly Role = Role;
+  protected readonly Role = Role;
 
   constructor(
     public themeService: ThemeService,

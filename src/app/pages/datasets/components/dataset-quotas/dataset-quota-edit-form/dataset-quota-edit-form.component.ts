@@ -190,7 +190,7 @@ export class DatasetQuotaEditFormComponent implements OnInit {
         this.slideInRef.close(true);
         this.cdr.markForCheck();
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.isFormLoading = false;
         this.cdr.markForCheck();
         this.errorHandler.handleWsFormError(error, this.form);

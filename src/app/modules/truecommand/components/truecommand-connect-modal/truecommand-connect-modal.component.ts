@@ -6,7 +6,6 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { helptextTopbar } from 'app/helptext/topbar';
 import { TrueCommandConfig, UpdateTrueCommand } from 'app/interfaces/true-command-config.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -89,9 +88,9 @@ export class TruecommandConnectModalComponent implements OnInit {
           );
         }
       },
-      error: (err: WebsocketError) => {
+      error: (err: unknown) => {
         this.loader.close();
-        this.dialogService.error(this.errorHandler.parseWsError(err));
+        this.dialogService.error(this.errorHandler.parseError(err));
       },
     });
   }
@@ -120,9 +119,9 @@ export class TruecommandConnectModalComponent implements OnInit {
               hideCancel: true,
             });
           },
-          error: (err: WebsocketError) => {
+          error: (err: unknown) => {
             this.loader.close();
-            this.dialogService.error(this.errorHandler.parseWsError(err));
+            this.dialogService.error(this.errorHandler.parseError(err));
           },
         });
     });

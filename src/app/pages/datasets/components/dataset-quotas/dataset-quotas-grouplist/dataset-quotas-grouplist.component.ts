@@ -18,9 +18,7 @@ import { Role } from 'app/enums/role.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextQuotas } from 'app/helptext/storage/volumes/datasets/dataset-quotas';
 import { DatasetQuota, SetDatasetQuota } from 'app/interfaces/dataset-quota.interface';
-import { Job } from 'app/interfaces/job.interface';
 import { QueryFilter, QueryParams } from 'app/interfaces/query-api.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -72,8 +70,8 @@ export class DatasetQuotasGrouplistComponent implements OnInit, OnDestroy {
     private translate: TranslateService,
     private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
-    @Inject(WINDOW) private window: Window,
     private emptyService: EmptyService,
+    @Inject(WINDOW) private window: Window,
   ) { }
 
   ngOnInit(): void {
@@ -87,7 +85,7 @@ export class DatasetQuotasGrouplistComponent implements OnInit, OnDestroy {
     this.window.localStorage.setItem('useFullFilter', 'true');
   }
 
-  handleError = (error: WebsocketError | Job): void => {
+  handleError = (error: unknown): void => {
     this.dialogService.error(this.errorHandler.parseError(error));
   };
 
@@ -150,7 +148,7 @@ export class DatasetQuotasGrouplistComponent implements OnInit, OnDestroy {
         this.createDataSource(quotas);
         this.checkInvalidQuotas();
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.emptyType = EmptyType.Errors;
         this.handleError(error);
       },
@@ -234,7 +232,7 @@ export class DatasetQuotasGrouplistComponent implements OnInit, OnDestroy {
       next: () => {
         this.getGroupQuotas();
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.handleError(error);
       },
     });

@@ -22,7 +22,7 @@ import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextCloudsync } from 'app/helptext/data-protection/cloudsync/cloudsync';
 import { CloudSyncTaskUi, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
-import { NewOption, SelectOption } from 'app/interfaces/option.interface';
+import { newOption, SelectOption } from 'app/interfaces/option.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
@@ -207,7 +207,7 @@ export class CloudsyncFormComponent implements OnInit {
     this.form.controls.encryption_salt.disable();
 
     this.form.controls.bucket.valueChanges.pipe(untilDestroyed(this)).subscribe((selectedOption) => {
-      if (selectedOption !== NewOption.New) {
+      if (selectedOption !== newOption) {
         return;
       }
       const dialogRef = this.matDialog.open(CreateStorjBucketDialogComponent, {
@@ -216,7 +216,7 @@ export class CloudsyncFormComponent implements OnInit {
           credentialsId: this.form.controls.credentials.value,
         },
       });
-      dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe((bucket) => {
+      dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe((bucket: string | false) => {
         if (bucket !== false) {
           this.isLoading = true;
           this.loadBucketOptions();
@@ -450,7 +450,7 @@ export class CloudsyncFormComponent implements OnInit {
           if (targetCredentials.provider === CloudsyncProviderName.Storj) {
             bucketOptions.unshift({
               label: this.translate.instant('Add new'),
-              value: NewOption.New,
+              value: newOption,
               disabled: false,
             });
           }
@@ -755,7 +755,7 @@ export class CloudsyncFormComponent implements OnInit {
         this.isLoading = false;
         this.slideInRef.close(true);
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.isLoading = false;
         this.errorHandler.handleWsFormError(error, this.form);
         this.cdr.markForCheck();

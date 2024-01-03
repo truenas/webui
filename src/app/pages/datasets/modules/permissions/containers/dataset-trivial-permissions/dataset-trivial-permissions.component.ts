@@ -160,9 +160,9 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
             group: stat.group,
           });
         },
-        error: (error: WebsocketError) => {
+        error: (error: unknown) => {
           this.isLoading = false;
-          this.dialog.error(this.errorHandler.parseWsError(error));
+          this.dialog.error(this.errorHandler.parseError(error));
         },
       });
   }

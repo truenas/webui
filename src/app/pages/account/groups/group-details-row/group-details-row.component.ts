@@ -4,6 +4,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Role } from 'app/enums/role.enum';
 import { Group } from 'app/interfaces/group.interface';
 import {
   DeleteGroupDialogComponent,
@@ -22,6 +23,8 @@ export class GroupDetailsRowComponent {
   @Input() group: Group;
   @Input() colspan: number;
   @Output() delete = new EventEmitter<number>();
+
+  protected readonly Role = Role;
 
   constructor(
     private slideInService: IxSlideInService,

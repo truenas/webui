@@ -6,6 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import _ from 'lodash';
 import { FileSizePipe } from 'ngx-filesize';
 import { map } from 'rxjs/operators';
+import { DiskType } from 'app/enums/disk-type.enum';
 import { redundantListToUniqueOptions } from 'app/helpers/operators/options.operators';
 import {
   ManualDiskSelectionStore,
@@ -25,7 +26,7 @@ export class ManualSelectionDiskFiltersComponent implements OnInit {
 
   protected filterForm = this.formBuilder.group({
     search: [''],
-    diskType: [''],
+    diskType: ['' as DiskType],
     diskSize: [''],
   });
 
