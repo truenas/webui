@@ -18,6 +18,7 @@ import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-sl
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { ChartWizardComponent } from 'app/pages/apps/components/chart-wizard/chart-wizard.component';
+import { DockerHubRateInfoDialogComponent } from 'app/pages/apps/components/dockerhub-rate-limit-info.dialog.ts/dockerhub-rate-limit-info-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { KubernetesStore } from 'app/pages/apps/store/kubernetes-store.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -367,6 +368,13 @@ describe('ChartWizardComponent', () => {
         mockJob('chart.release.update'),
         mockCall('catalog.get_item_details', existingCatalogApp),
         mockCall('chart.release.query', [existingChartEdit]),
+        mockCall('container.image.dockerhub_rate_limit', {
+          total_pull_limit: 13,
+          total_time_limit_in_secs: 21600,
+          remaining_pull_limit: 3,
+          remaining_time_limit_in_secs: 21600,
+          error: null,
+        }),
       ]),
       mockProvider(KubernetesStore, {
         selectedPool$: of('pool set'),
@@ -548,6 +556,18 @@ describe('ChartWizardComponent', () => {
         'Application Name': 'ipfs',
         Version: '1.2.0',
         'Provide access to node network namespace for the workload Another Version': true,
+      });
+    });
+
+    it('shows DockerHub Rate Limit Info Dialog when remaining_pull_limit is less then 5', () => {
+      expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(DockerHubRateInfoDialogComponent, {
+        data: {
+          total_pull_limit: 13,
+          total_time_limit_in_secs: 21600,
+          remaining_pull_limit: 3,
+          remaining_time_limit_in_secs: 21600,
+          error: null,
+        },
       });
     });
   });
