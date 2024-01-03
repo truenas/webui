@@ -29,6 +29,7 @@
 
       <ix-form-actions>
         <button
+          *ixRequiresRoles="[Role.DatasetWrite]"
           mat-button
           type="submit"
           color="primary"

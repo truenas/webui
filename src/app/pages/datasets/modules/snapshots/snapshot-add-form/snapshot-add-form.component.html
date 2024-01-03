@@ -42,6 +42,7 @@
 
       <ix-form-actions>
         <button
+          *ixRequiresRoles="[Role.SnapshotWrite]"
           mat-button
           type="submit"
           color="primary"

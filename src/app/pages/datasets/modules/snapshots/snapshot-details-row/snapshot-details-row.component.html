@@ -46,15 +46,17 @@
         </ng-container>
       </dd>
     </div>
-    <mat-checkbox
-      *ngIf="!isLoading"
-      color="primary"
-      [checked]="isHold"
-      [ixTest]="['hold', snapshot.snapshot_name]"
-      (change)="doHold()"
-    >
-      {{ 'Hold' | translate }}
-    </mat-checkbox>
+    <ng-container *ixRequiresRoles="[Role.FullAdmin]">
+      <mat-checkbox
+        *ngIf="!isLoading"
+        color="primary"
+        [checked]="isHold"
+        [ixTest]="['hold', snapshot.snapshot_name]"
+        (change)="doHold()"
+      >
+        {{ 'Hold' | translate }}
+      </mat-checkbox>
+    </ng-container>
   </dl>
 
   <mat-divider></mat-divider>
@@ -65,6 +67,7 @@
       [matTooltipDisabled]="!hasClones"
     >
       <button
+        *ixRequiresRoles="[Role.SnapshotDelete]"
         mat-button
         [ixTest]="['delete', snapshot.snapshot_name]"
         [disabled]="hasClones"
@@ -75,13 +78,15 @@
       </button>
     </div>
 
-    <button mat-button [ixTest]="['clone', snapshot.snapshot_name]" (click)="doClone(snapshot)">
-      <span>{{ 'Clone To New Dataset' | translate }}</span>
-    </button>
+    <ng-container *ixRequiresRoles="[Role.FullAdmin]">
+      <button mat-button [ixTest]="['clone', snapshot.snapshot_name]" (click)="doClone(snapshot)">
+        <span>{{ 'Clone To New Dataset' | translate }}</span>
+      </button>
 
-    <button mat-button [ixTest]="['rollback', snapshot.snapshot_name]" (click)="doRollback(snapshot)">
-      <span>{{ 'Rollback' | translate }}</span>
-    </button>
+      <button mat-button [ixTest]="['rollback', snapshot.snapshot_name]" (click)="doRollback(snapshot)">
+        <span>{{ 'Rollback' | translate }}</span>
+      </button>
+    </ng-container>
   </ix-table-expandable-row>
 </td>
 

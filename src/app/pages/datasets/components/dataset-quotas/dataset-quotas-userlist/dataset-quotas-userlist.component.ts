@@ -16,6 +16,7 @@ import {
 } from 'rxjs/operators';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
+import { Role } from 'app/enums/role.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextQuotas } from 'app/helptext/storage/volumes/datasets/dataset-quotas';
 import { DatasetQuota, SetDatasetQuota } from 'app/interfaces/dataset-quota.interface';
@@ -59,6 +60,8 @@ export class DatasetQuotasUserlistComponent implements OnInit, OnDestroy {
   get emptyConfigService(): EmptyService {
     return this.emptyService;
   }
+
+  protected readonly Role = Role;
 
   constructor(
     protected ws: WebSocketService,
