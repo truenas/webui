@@ -871,3 +871,33 @@ body .mat-calendar-next-button::after {
     width: 100%;
   }
 }
+
+@media(max-width: $breakpoint-sm) {
+  mat-card {
+    overflow: auto !important;
+  }
+
+  ix-table2,
+  table {
+    overflow: auto;
+
+    tr th {
+      width: 78px;
+    }
+
+    ul li {
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+  }
+
+
+  mat-list-item {
+    height: inherit !important;
+    min-height: 48px;
+
+    span {
+      flex-wrap: wrap;
+    }
+  }
+}
