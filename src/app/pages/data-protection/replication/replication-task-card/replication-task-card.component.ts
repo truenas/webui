@@ -107,7 +107,6 @@ export class ReplicationTaskCardComponent implements OnInit {
 
   constructor(
     private chainedSlideInService: IxChainedSlideInService,
-    // private slideInService: IxSlideInService,
     private translate: TranslateService,
     private errorHandler: ErrorHandlerService,
     private ws: WebSocketService,
