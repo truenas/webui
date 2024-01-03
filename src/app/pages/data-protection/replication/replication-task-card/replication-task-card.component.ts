@@ -2,7 +2,6 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Actions } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
@@ -115,7 +114,6 @@ export class ReplicationTaskCardComponent implements OnInit {
     private snackbar: SnackbarService,
     private matDialog: MatDialog,
     private storage: StorageService,
-    private actions$: Actions,
     protected emptyService: EmptyService,
   ) {}
 

@@ -10,9 +10,11 @@ import {
 import { FormBuilder } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { pairwise, startWith } from 'rxjs';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
 import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { newOption } from 'app/interfaces/option.interface';
+import { addNewIxSelectValue } from 'app/modules/ix-forms/components/ix-select/ix-select-with-new-option.directive';
 import { CHAINED_SLIDE_IN_REF } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -130,11 +132,40 @@ export class CloudsyncProviderComponent implements OnInit {
 
   private setFormEvents(): void {
     this.form.controls.exist_credential.valueChanges
-      .pipe(untilDestroyed(this))
-      .subscribe((credentialId) => {
-        this.existingCredential = this.credentials.find((credential) => credential.id === credentialId);
-        this.save.emit(this.existingCredential);
-        this.cdr.markForCheck();
+      .pipe(
+        startWith(undefined),
+        pairwise(),
+        untilDestroyed(this),
+      ).subscribe(([previousCreds, currentCreds]) => {
+        const isPreviousValueAddNew = previousCreds != null && previousCreds.toString() === addNewIxSelectValue;
+        const isCurrentValueExists = currentCreds != null;
+        const isCurrentValueAddNew = isCurrentValueExists && currentCreds.toString() === addNewIxSelectValue;
+
+        if (!isCurrentValueExists || isCurrentValueAddNew) {
+          return;
+        }
+
+        if (!isPreviousValueAddNew) {
+          this.emitSelectedCredential(currentCreds as number);
+          return;
+        }
+
+        this.loading.emit(true);
+        this.cloudCredentialService.getCloudsyncCredentials().pipe(untilDestroyed(this)).subscribe({
+          next: (creds) => {
+            this.credentials = creds;
+            this.emitSelectedCredential(currentCreds as number);
+          },
+          complete: () => {
+            this.loading.emit(false);
+          },
+        });
       });
+  }
+
+  emitSelectedCredential(credsId: number): void {
+    this.existingCredential = this.credentials.find((credential) => credential.id === credsId);
+    this.save.emit(this.existingCredential);
+    this.cdr.markForCheck();
   }
 }
