@@ -271,7 +271,7 @@ export const helptextApps = {
     },
   },
 
-  dockerhubRateLimit: {
-    message: T('User limit to Dockerhub has almost/or has been reached. Installation process may get stalled as images wouldn\'t be pulled. Current limit would be renewed in {seconds}. Application can still be installed.'),
+  dockerHubRateLimit: {
+    message: T('User limit to Docker Hub has almost/or has been reached. Installation process may get stalled as images wouldn\'t be pulled. Current limit would be renewed in {seconds}. Application can still be installed.'),
   },
 };

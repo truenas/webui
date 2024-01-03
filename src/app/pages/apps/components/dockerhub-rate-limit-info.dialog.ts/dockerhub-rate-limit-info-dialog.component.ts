@@ -18,7 +18,7 @@ export class DockerHubRateInfoDialogComponent {
 
   get warningText(): string {
     return this.translate.instant(
-      this.helpText.dockerhubRateLimit.message,
+      this.helpText.dockerHubRateLimit.message,
       {
         seconds: formatDistance(0, this.data.remaining_time_limit_in_secs * 1000, { includeSeconds: true }),
       },

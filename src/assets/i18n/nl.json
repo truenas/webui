@@ -588,7 +588,7 @@
   "Use Samba LDAP schema extensions to provide support for LDAP authentication with SMB shares. DEPRECATED: Support for legacy samba schema for LDAP has been deprecated and will be removed in a future TrueNAS version.": "",
   "User Two-Factor Authentication Actions": "",
   "User is lacking permissions to access WebUI.": "",
-  "User limit to Dockerhub has almost/or has been reached. Installation process may get stalled as images wouldn't be pulled. Current limit would be renewed in {seconds}. Application can still be installed.": "",
+  "User limit to Docker Hub has almost/or has been reached. Installation process may get stalled as images wouldn't be pulled. Current limit would be renewed in {seconds}. Application can still be installed.": "",
   "Uses one disk for parity while all other disks store data. RAIDZ1 requires at least three disks. RAIDZ is a traditional ZFS data protection scheme. \nChoose RAIDZ over dRAID when managing a smaller set of drives, where simplicity of setup and predictable disk usage are primary considerations.": "",
   "Uses three disks for parity while all other disks store data. RAIDZ3 requires at least five disks. RAIDZ is a traditional ZFS data protection scheme. \nChoose RAIDZ over dRAID when managing a smaller set of drives, where simplicity of setup and predictable disk usage are primary considerations.": "",
   "Uses two disks for parity while all other disks store data. RAIDZ2 requires at least four disks. RAIDZ is a traditional ZFS data protection scheme. \nChoose RAIDZ over dRAID when managing a smaller set of drives, where simplicity of setup and predictable disk usage are primary considerations.": "",
