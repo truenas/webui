@@ -136,7 +136,7 @@
             (click)="doEdit(row)"
           >
             <ix-icon name="edit"></ix-icon>
-          </button>f
+          </button>
           <ng-container *ixRequiresRoles="[Role.DatasetWrite]">
             <button
               *ngIf="row.quota > 0 || row.obj_quota > 0"
