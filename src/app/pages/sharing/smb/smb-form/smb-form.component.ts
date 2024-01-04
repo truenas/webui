@@ -339,6 +339,9 @@ export class SmbFormComponent implements OnInit {
       )
       .subscribe((shareNames) => {
         this.namesInUse = ['global', ...shareNames];
+        if (this.existingSmbShare) {
+          this.namesInUse = this.namesInUse.filter((name) => name !== this.existingSmbShare?.name);
+        }
         this.form.controls.name.setValidators(forbiddenValues(this.namesInUse));
       });
   }
