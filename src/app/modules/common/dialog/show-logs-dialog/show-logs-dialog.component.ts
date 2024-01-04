@@ -3,7 +3,7 @@ import {
   ChangeDetectionStrategy, Component, Inject,
 } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { switchMap, catchError, EMPTY } from 'rxjs';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/services/dialog.service';
@@ -11,6 +11,7 @@ import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 
+@UntilDestroy()
 @Component({
   templateUrl: './show-logs-dialog.component.html',
   styleUrls: ['./show-logs-dialog.component.scss'],
