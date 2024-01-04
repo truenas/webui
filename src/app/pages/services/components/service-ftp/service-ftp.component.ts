@@ -132,7 +132,7 @@ export class ServiceFtpComponent implements OnInit {
           this.slideInRef.close();
           this.cdr.markForCheck();
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.isFormLoading = false;
           this.formErrorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();

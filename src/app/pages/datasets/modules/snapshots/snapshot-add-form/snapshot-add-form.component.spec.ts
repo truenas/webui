@@ -47,6 +47,7 @@ describe('SnapshotAddFormComponent', () => {
       mockProvider(IxSlideInService),
       mockProvider(FormErrorHandlerService),
       mockProvider(IxSlideInRef),
+      mockAuth(),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });

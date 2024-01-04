@@ -11,6 +11,7 @@ import {
 import { DeduplicationSetting } from 'app/enums/deduplication-setting.enum';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { OnOff } from 'app/enums/on-off.enum';
+import { Role } from 'app/enums/role.enum';
 import { inherit } from 'app/enums/with-inherit.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { helptextZvol } from 'app/helptext/storage/volumes/zvol-form';
@@ -92,6 +93,8 @@ export class ZvolFormComponent implements OnInit {
   protected minimumRecommendedBlockSize: DatasetRecordSize;
   protected origVolSize: number;
   protected origHuman: string | number;
+
+  protected readonly Role = Role;
 
   form = this.formBuilder.group({
     name: ['', [Validators.required, forbiddenValues(this.namesInUse)]],
@@ -607,7 +610,7 @@ export class ZvolFormComponent implements OnInit {
 
     this.ws.call('pool.dataset.create', [data as DatasetCreate]).pipe(untilDestroyed(this)).subscribe({
       next: (dataset) => this.handleZvolCreateUpdate(dataset),
-      error: (error) => {
+      error: (error: unknown) => {
         this.isLoading = false;
         this.formErrorHandler.handleWsFormError(error, this.form);
         this.cdr.markForCheck();
@@ -667,7 +670,7 @@ export class ZvolFormComponent implements OnInit {
         if (!data.volsize || data.volsize >= roundedVolSize) {
           this.ws.call('pool.dataset.update', [this.parentId, data as DatasetUpdate]).pipe(untilDestroyed(this)).subscribe({
             next: (dataset) => this.handleZvolCreateUpdate(dataset),
-            error: (error) => {
+            error: (error: unknown) => {
               this.isLoading = false;
               this.formErrorHandler.handleWsFormError(error, this.form);
               this.cdr.markForCheck();

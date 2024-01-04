@@ -44,7 +44,6 @@ import { CommonDirectivesModule } from 'app/directives/common/common-directives.
 import { CastModule } from 'app/modules/cast/cast.module';
 import { EntityEmptyComponent } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
-import { EntityRowDetailsComponent } from 'app/modules/entity/entity-table/entity-row-details/entity-row-details.component';
 import { EntityTableActionsComponent } from 'app/modules/entity/entity-table/entity-table-actions/entity-table-actions.component';
 import { EntityTableAddActionsComponent } from 'app/modules/entity/entity-table/entity-table-add-actions/entity-table-add-actions.component';
 import { EntityTableRowDetailsComponent } from 'app/modules/entity/entity-table/entity-table-row-details/entity-table-row-details.component';
@@ -115,7 +114,6 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
   declarations: [
     EntityTableComponent,
     EntityTableRowDetailsComponent,
-    EntityRowDetailsComponent,
     EntityTableActionsComponent,
     EntityTableAddActionsComponent,
     EntityJobComponent,
@@ -125,7 +123,6 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
   ],
   exports: [
     EntityTableComponent,
-    EntityRowDetailsComponent,
     EntityTableAddActionsComponent,
     EntityTableActionsComponent,
     ToolbarSliderComponent,

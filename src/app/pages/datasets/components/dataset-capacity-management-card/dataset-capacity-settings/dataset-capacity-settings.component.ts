@@ -5,6 +5,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { GiB } from 'app/constants/bytes.constant';
+import { Role } from 'app/enums/role.enum';
 import { inherit } from 'app/enums/with-inherit.enum';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { DatasetDetails, DatasetUpdate } from 'app/interfaces/dataset.interface';
@@ -73,6 +74,8 @@ export class DatasetCapacitySettingsComponent implements OnInit {
     quota_warning_inherit: 'quota_warning',
     quota_critical_inherit: 'quota_critical',
   } as const;
+
+  protected readonly Role = Role;
 
   constructor(
     private ws: WebSocketService,
@@ -148,7 +151,7 @@ export class DatasetCapacitySettingsComponent implements OnInit {
           this.slideInRef.close();
           this.cdr.markForCheck();
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.errorHandler.handleWsFormError(error, this.form);
           this.isLoading = false;
           this.cdr.markForCheck();

@@ -44,6 +44,7 @@ describe('SnapshotDetailsRowComponent', () => {
         mockCall('zfs.snapshot.query', [fakeZfsSnapshot]),
         mockCall('zfs.snapshot.delete'),
       ]),
+      mockAuth(),
     ],
   });
 
@@ -104,4 +105,6 @@ describe('SnapshotDetailsRowComponent', () => {
     );
     expect(ws.call).toHaveBeenNthCalledWith(2, 'zfs.snapshot.delete', [fakeZfsSnapshot.name]);
   });
+
+  // TODO: Tests for Hold checkbox
 });

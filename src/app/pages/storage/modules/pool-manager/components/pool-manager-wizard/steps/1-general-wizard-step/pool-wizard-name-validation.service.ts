@@ -22,7 +22,7 @@ export class PoolWizardNameValidationService {
 
   private errorMessage = this.translate.instant('Invalid pool name (please refer to <a href="https://openzfs.github.io/openzfs-docs/man/8/zpool-create.8.html#DESCRIPTION" target="_blank">the documentation</a> for valid rules for pool name)');
 
-  validatePoolName = (control: AbstractControl): Observable<ValidationErrors | null> => {
+  validatePoolName = (control: AbstractControl<string>): Observable<ValidationErrors | null> => {
     return control.valueChanges.pipe(
       debounceTime(300),
       distinctUntilChanged(),

@@ -43,10 +43,10 @@ export class ErrorHandlerService implements ErrorHandler {
   }
 
   parseError(error: unknown): ErrorReport | ErrorReport[] {
-    if (this.isTypeOfWebsocketError(error)) {
+    if (this.isWebsocketError(error)) {
       return this.parseWsError(error);
     }
-    if (this.isTypeOfJobError(error)) {
+    if (this.isJobError(error)) {
       return this.parseJobError(error);
     }
     if (error instanceof Error) {
@@ -63,7 +63,7 @@ export class ErrorHandlerService implements ErrorHandler {
     Sentry.captureException(sentryCustomExceptionExtraction(error));
   }
 
-  isTypeOfWebsocketError(error: unknown): error is WebsocketError {
+  isWebsocketError(error: unknown): error is WebsocketError {
     return typeof error === 'object'
       && 'error' in error
       && 'extra' in error
@@ -71,7 +71,7 @@ export class ErrorHandlerService implements ErrorHandler {
       && 'trace' in error;
   }
 
-  isTypeOfJobError(obj: unknown): obj is Job {
+  isJobError(obj: unknown): obj is Job {
     return typeof obj === 'object'
     && ('state' in obj
       && 'error' in obj
@@ -149,9 +149,9 @@ export class ErrorHandlerService implements ErrorHandler {
     extractedError: string | WebsocketError | Job,
   ): ErrorReport | ErrorReport[] {
     let parsedError: ErrorReport | ErrorReport[];
-    if (this.isTypeOfWebsocketError(extractedError)) {
+    if (this.isWebsocketError(extractedError)) {
       parsedError = this.parseWsError(extractedError);
-    } else if (this.isTypeOfJobError(extractedError)) {
+    } else if (this.isJobError(extractedError)) {
       parsedError = this.parseJobError(extractedError);
     } else if (typeof extractedError === 'string') {
       parsedError = {
@@ -165,7 +165,7 @@ export class ErrorHandlerService implements ErrorHandler {
 
   private parseHttpErrorObject(error: HttpErrorResponse): ErrorReport[] {
     const errors: ErrorReport[] = [];
-    Object.keys(error.error).forEach((fieldKey) => {
+    Object.keys(error.error as Record<string, string | string[]>).forEach((fieldKey) => {
       const errorEntity = (error.error as Record<string, string | string[]>)[fieldKey];
       if (typeof errorEntity === 'string') {
         errors.push({

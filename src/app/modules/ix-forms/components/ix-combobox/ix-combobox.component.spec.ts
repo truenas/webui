@@ -154,7 +154,7 @@ describe('IxComboboxComponent', () => {
   describe('loader', () => {
     it('loader should be rendered if the provider receives async data', fakeAsync(() => {
       spectator.component.ngOnInit();
-      spectator.setInput('provider', new SimpleAsyncComboboxProvider(of([]).pipe(delay(300))));
+      spectator.setInput('provider', new SimpleAsyncComboboxProvider(of<Option[]>([]).pipe(delay(300))));
       tick(300);
       spectator.detectChanges();
 
@@ -176,7 +176,7 @@ describe('IxComboboxComponent', () => {
     }));
 
     it('loader should be removed after loading options', fakeAsync(() => {
-      spectator.setInput('provider', new SimpleAsyncComboboxProvider(of([])));
+      spectator.setInput('provider', new SimpleAsyncComboboxProvider(of<Option[]>([])));
       tick(300);
       spectator.detectChanges();
 

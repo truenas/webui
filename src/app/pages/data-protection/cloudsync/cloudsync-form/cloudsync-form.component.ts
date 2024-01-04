@@ -218,7 +218,7 @@ export class CloudsyncFormComponent implements OnInit {
           credentialsId: this.form.controls.credentials.value,
         },
       });
-      dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe((bucket) => {
+      dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe((bucket: string | false) => {
         if (bucket !== false) {
           this.isLoading = true;
           this.loadBucketOptions();
@@ -757,7 +757,7 @@ export class CloudsyncFormComponent implements OnInit {
         this.isLoading = false;
         this.slideInRef.close(true);
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.isLoading = false;
         this.errorHandler.handleWsFormError(error, this.form);
         this.cdr.markForCheck();

@@ -60,7 +60,7 @@ export class SystemSecurityFormComponent implements OnInit {
           this.snackbar.success(this.translate.instant('System Security Settings Updated.'));
           this.cdr.markForCheck();
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.isLoading = false;
           this.cdr.markForCheck();
           this.formErrorHandler.handleWsFormError(error, this.form);

@@ -113,7 +113,7 @@ export class BootEnvironmentFormComponent implements OnInit {
             this.isFormLoading = false;
             this.slideInRef.close(true);
           },
-          error: (error) => {
+          error: (error: unknown) => {
             this.isFormLoading = false;
             this.slideInRef.close(false);
             this.errorHandler.handleWsFormError(error, this.formGroup);
@@ -135,7 +135,7 @@ export class BootEnvironmentFormComponent implements OnInit {
             this.isFormLoading = false;
             this.slideInRef.close(true);
           },
-          error: (error) => {
+          error: (error: unknown) => {
             this.isFormLoading = false;
             this.slideInRef.close(false);
             this.errorHandler.handleWsFormError(error, this.formGroup);
@@ -155,7 +155,7 @@ export class BootEnvironmentFormComponent implements OnInit {
             this.isFormLoading = false;
             this.slideInRef.close(true);
           },
-          error: (error) => {
+          error: (error: unknown) => {
             this.isFormLoading = false;
             this.slideInRef.close(false);
             this.errorHandler.handleWsFormError(error, this.formGroup);

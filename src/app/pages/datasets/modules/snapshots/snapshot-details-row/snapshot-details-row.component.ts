@@ -37,7 +37,7 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
     return !!this.snapshotInfo?.properties?.clones?.value;
   }
 
-  readonly Role = Role;
+  protected readonly Role = Role;
 
   constructor(
     private dialogService: DialogService,
@@ -80,10 +80,17 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
   doHold(): void {
     if (!this.isHold) {
       this.ws.call('zfs.snapshot.hold', [this.snapshotInfo.name])
-        .pipe(untilDestroyed(this)).subscribe(() => this.isHold = true);
+        .pipe(
+          this.errorHandler.catchError(),
+          untilDestroyed(this),
+        )
+        .subscribe(() => this.isHold = true);
     } else {
       this.ws.call('zfs.snapshot.release', [this.snapshotInfo.name])
-        .pipe(untilDestroyed(this)).subscribe(() => this.isHold = false);
+        .pipe(
+          this.errorHandler.catchError(),
+          untilDestroyed(this),
+        ).subscribe(() => this.isHold = false);
     }
   }
 

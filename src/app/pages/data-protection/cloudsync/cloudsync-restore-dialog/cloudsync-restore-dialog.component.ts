@@ -59,7 +59,7 @@ export class CloudsyncRestoreDialogComponent {
         next: () => {
           this.dialogRef.close(true);
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.errorHandler.handleWsFormError(error, this.form);
         },
       });

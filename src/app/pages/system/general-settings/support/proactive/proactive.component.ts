@@ -75,7 +75,7 @@ export class ProactiveComponent implements OnInit {
             this.translate.instant(helptext.proactive.dialog_mesage),
           );
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.isLoading = false;
           this.formErrorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();

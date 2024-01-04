@@ -100,7 +100,7 @@ export class ResilverConfigComponent implements OnInit {
           this.cdr.markForCheck();
           this.router.navigate(['/data-protection']);
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.isFormLoading = false;
           this.formErrorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();

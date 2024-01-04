@@ -150,7 +150,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnInit {
         return;
       }
 
-      fromEvent(this.autoCompleteRef.panel.nativeElement, 'scroll')
+      fromEvent((this.autoCompleteRef.panel as ElementRef<HTMLElement>).nativeElement, 'scroll')
         .pipe(
           debounceTime(300),
           map(() => (this.autoCompleteRef.panel as ElementRef<HTMLElement>).nativeElement.scrollTop),

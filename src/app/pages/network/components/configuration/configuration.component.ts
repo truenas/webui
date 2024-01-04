@@ -7,6 +7,7 @@ import { Store } from '@ngrx/store';
 import { of } from 'rxjs';
 import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
 import { ProductType } from 'app/enums/product-type.enum';
+import { Role } from 'app/enums/role.enum';
 import { arrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextNetworkConfiguration } from 'app/helptext/network/configuration/configuration';
 import {
@@ -186,6 +187,8 @@ export class NetworkConfigurationComponent implements OnInit {
     tooltip: helptextNetworkConfiguration.hosts_tooltip,
   };
 
+  protected readonly Role = Role;
+
   constructor(
     private ws: WebSocketService,
     private errorHandler: ErrorHandlerService,
@@ -319,7 +322,7 @@ export class NetworkConfigurationComponent implements OnInit {
           this.cdr.markForCheck();
           this.slideInRef.close(true);
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.isFormLoading = false;
           this.formErrorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();

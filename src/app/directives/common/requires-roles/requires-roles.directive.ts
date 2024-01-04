@@ -39,7 +39,7 @@ export class RequiresRolesDirective {
   get elementClass(): string {
     return this.cssClassList.join(' ');
   }
-  set(val: string): void {
+  set elementClass(val: string) {
     this.cssClassList = val.split(' ');
   }
 

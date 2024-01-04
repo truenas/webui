@@ -112,7 +112,7 @@ describe('FeedbackDialogComponent', () => {
         })),
         takeScreenshot: jest.fn(() => of(new File(['(⌐□_□)'], 'screenshot.png', { type: 'image/png' }))),
         getHostId: jest.fn(() => of('unique-system-host-id-1234')),
-        getReviewAllowed: jest.fn(() => isFeedbackAllowed$.value),
+        isReviewAllowed$: isFeedbackAllowed$,
       }),
       provideMockStore({
         selectors: [

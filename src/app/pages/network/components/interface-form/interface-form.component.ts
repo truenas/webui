@@ -17,6 +17,7 @@ import {
   XmitHashPolicy,
 } from 'app/enums/network-interface.enum';
 import { ProductType } from 'app/enums/product-type.enum';
+import { Role } from 'app/enums/role.enum';
 import { choicesToOptions, singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextInterfacesForm } from 'app/helptext/network/interfaces/interfaces-form';
 import {
@@ -124,6 +125,8 @@ export class InterfaceFormComponent implements OnInit {
   vlanParentInterfaces$ = this.networkService.getVlanParentInterfaceChoices().pipe(choicesToOptions());
 
   failoverGroups$ = of(range(1, 32)).pipe(singleArrayToOptions());
+
+  protected readonly Role = Role;
 
   readonly helptext = helptextInterfacesForm;
 
@@ -247,7 +250,7 @@ export class InterfaceFormComponent implements OnInit {
 
         this.cdr.markForCheck();
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.isLoading = false;
         this.cdr.markForCheck();
         this.errorHandler.handleWsFormError(error, this.form);

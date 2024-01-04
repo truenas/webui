@@ -78,23 +78,25 @@
       </button>
     </div>
 
-    <button
+    <ng-container *ixRequiresRoles="[Role.FullAdmin]">
+      <button
       *ixRequiresRoles="[Role.FullAdmin]"
       mat-button
       [ixTest]="['clone', snapshot.snapshot_name]"
       (click)="doClone(snapshot)"
     >
-      <span>{{ 'Clone To New Dataset' | translate }}</span>
-    </button>
+        <span>{{ 'Clone To New Dataset' | translate }}</span>
+      </button>
 
-    <button
+      <button
       *ixRequiresRoles="[Role.FullAdmin]"
       mat-button
       [ixTest]="['rollback', snapshot.snapshot_name]"
       (click)="doRollback(snapshot)"
     >
-      <span>{{ 'Rollback' | translate }}</span>
-    </button>
+        <span>{{ 'Rollback' | translate }}</span>
+      </button>
+    </ng-container>
   </ix-table-expandable-row>
 </td>
 

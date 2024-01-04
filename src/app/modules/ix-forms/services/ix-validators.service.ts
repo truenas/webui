@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {
-  AbstractControl, ValidationErrors, ValidatorFn, Validators,
+  AbstractControl, FormControl, ValidationErrors, ValidatorFn, Validators,
 } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import isCidr from 'is-cidr';
@@ -52,7 +52,7 @@ export class IxValidatorsService {
   readonly ipCidrV4orCidrV6: { forProperty: 'ip'; validatorFn: () => ValidatorFn } = {
     forProperty: 'ip',
     validatorFn: (): ValidatorFn => {
-      return (control: AbstractControl) => {
+      return (control: FormControl<string>) => {
         if (!control.parent) {
           return null;
         }

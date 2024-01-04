@@ -11,6 +11,7 @@ import { switchMap, tap } from 'rxjs/operators';
 import { IpmiChassisIdentifyState, IpmiIpAddressSource } from 'app/enums/ipmi.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { ProductType } from 'app/enums/product-type.enum';
+import { Role } from 'app/enums/role.enum';
 import { helptextIpmi } from 'app/helptext/network/ipmi/ipmi';
 import { Ipmi, IpmiUpdate } from 'app/interfaces/ipmi.interface';
 import { RadioOption } from 'app/interfaces/option.interface';
@@ -46,6 +47,8 @@ export class IpmiFormComponent implements OnInit {
   queryFilter: QueryParams<Ipmi> = null;
 
   readonly helptext = helptextIpmi;
+
+  protected readonly Role = Role;
 
   form = this.fb.group({
     remoteController: [null as boolean],
@@ -238,7 +241,7 @@ export class IpmiFormComponent implements OnInit {
             this.translate.instant('Successfully saved IPMI settings.'),
           );
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.isLoading = false;
           this.formErrorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();

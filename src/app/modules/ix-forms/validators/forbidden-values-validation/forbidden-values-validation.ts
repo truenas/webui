@@ -7,7 +7,7 @@ import {
 import { catchError } from 'rxjs/operators';
 
 export function forbiddenValues(arrayOfValues: string[], caseInsensitive?: boolean): ValidatorFn {
-  return (control: FormControl): ValidationErrors | null => {
+  return (control: FormControl<string>): ValidationErrors | null => {
     if (control.value === '' || control.value === undefined) {
       return null;
     }
@@ -28,7 +28,7 @@ export function forbiddenAsyncValues(
     }),
   );
 
-  return (control: FormControl): Observable<ValidationErrors> | null => {
+  return (control: FormControl<string>): Observable<ValidationErrors> | null => {
     if (control.value === '' || control.value === undefined) {
       return of(null);
     }

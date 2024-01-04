@@ -1,14 +1,12 @@
 import {
-  Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, Inject,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
-import {
-  AbstractControl, FormBuilder, Validators,
-} from '@angular/forms';
-import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
+import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { format } from 'date-fns-tz';
 import {
-  Observable, combineLatest, of, merge,
+  combineLatest, merge, Observable, of,
 } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
@@ -24,7 +22,9 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { atLeastOne } from 'app/modules/ix-forms/validators/at-least-one-validation';
 import { requiredEmpty } from 'app/modules/ix-forms/validators/required-empty-validation';
-import { snapshotExcludeBootQueryFilter } from 'app/pages/datasets/modules/snapshots/constants/snapshot-exclude-boot.constant';
+import {
+  snapshotExcludeBootQueryFilter,
+} from 'app/pages/datasets/modules/snapshots/constants/snapshot-exclude-boot.constant';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -57,6 +57,8 @@ export class SnapshotAddFormComponent implements OnInit {
   namingSchemaOptions$: Observable<Option[]>;
   hasVmsInDataset = false;
 
+  protected readonly Role = Role;
+
   readonly helptext = helptextSnapshots;
   readonly requiresRoles = [Role.ReplicationManager, Role.SnapshotWrite];
 
@@ -88,7 +90,7 @@ export class SnapshotAddFormComponent implements OnInit {
         this.checkForVmsInDataset();
         this.cdr.markForCheck();
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.errorHandler.handleWsFormError(error, this.form);
         this.isFormLoading = false;
         this.cdr.markForCheck();
@@ -135,7 +137,7 @@ export class SnapshotAddFormComponent implements OnInit {
         this.datasetStore.datasetUpdated();
         this.cdr.markForCheck();
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.isFormLoading = false;
         this.errorHandler.handleWsFormError(error, this.form);
         this.cdr.markForCheck();
@@ -158,12 +160,15 @@ export class SnapshotAddFormComponent implements OnInit {
   }
 
   private getNamingSchemaOptions(): Observable<Option[]> {
-    return this.authService.hasRole(this.requiresRoles).pipe(
-      switchMap((hasRole) => {
-        if (hasRole) {
-          return this.ws.call('replication.list_naming_schemas').pipe(singleArrayToOptions());
+    return this.authService.hasRole([Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull]).pipe(
+      switchMap((hasAccess) => {
+        if (!hasAccess) {
+          return of([]);
         }
-        return of([]);
+
+        return this.ws.call('replication.list_naming_schemas').pipe(
+          singleArrayToOptions(),
+        );
       }),
     );
   }
@@ -178,7 +183,7 @@ export class SnapshotAddFormComponent implements OnInit {
           this.isFormLoading = false;
           this.cdr.markForCheck();
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.errorHandler.handleWsFormError(error, this.form);
           this.isFormLoading = false;
           this.cdr.markForCheck();

@@ -88,7 +88,7 @@ export class StorageSettingsFormComponent implements OnInit {
             this.snackbar.success(this.translate.instant('System dataset updated.'));
             this.slideInRef.close();
           }),
-          catchError((error) => {
+          catchError((error: unknown) => {
             this.isFormLoading = false;
             this.formErrorHandler.handleWsFormError(error, this.form);
             this.cdr.markForCheck();
