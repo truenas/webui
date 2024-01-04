@@ -8,6 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { forkJoin } from 'rxjs';
 import { filter, switchMap } from 'rxjs/operators';
 import { AclType } from 'app/enums/acl-type.enum';
+import { Role } from 'app/enums/role.enum';
 import { helptextPermissions } from 'app/helptext/storage/volumes/datasets/dataset-permissions';
 import { DatasetPermissionsUpdate } from 'app/interfaces/dataset-permissions.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -65,6 +66,8 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
   };
 
   readonly isRecursive$ = this.form.select((values) => values.recursive);
+
+  protected readonly Role = Role;
 
   private oldDatasetMode: string;
 

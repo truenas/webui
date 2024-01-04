@@ -32,6 +32,7 @@ import { selectService } from 'app/store/services/services.selectors';
 })
 export class NfsCardComponent implements OnInit {
   service$ = this.store$.select(selectService(ServiceName.Nfs));
+  requiresRoles = [Role.SharingNfsWrite, Role.SharingWrite];
 
   nfsShares: NfsShare[] = [];
   dataProvider: AsyncDataProvider<NfsShare>;
@@ -49,6 +50,7 @@ export class NfsCardComponent implements OnInit {
       title: helptextSharingNfs.column_enabled,
       propertyName: 'enabled',
       onRowToggle: (row: NfsShare) => this.onChangeEnabledState(row),
+      requiresRoles: this.requiresRoles,
     }),
     actionsColumn({
       cssClass: 'tight-actions',
@@ -62,7 +64,7 @@ export class NfsCardComponent implements OnInit {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
-          requiresRoles: [Role.SharingNfsWrite],
+          requiresRoles: this.requiresRoles,
         },
       ],
     }),

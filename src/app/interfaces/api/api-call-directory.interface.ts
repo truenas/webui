@@ -100,6 +100,7 @@ import {
   CreateDnsAuthenticator,
   DnsAuthenticator, UpdateDnsAuthenticator,
 } from 'app/interfaces/dns-authenticator.interface';
+import { DockerHubRateLimit } from 'app/interfaces/dockerhub-rate-limit.interface';
 import {
   DsUncachedGroup, DsUncachedUser, LoggedInUser,
 } from 'app/interfaces/ds-cache.interface';
@@ -419,6 +420,7 @@ export interface ApiCallDirectory {
   'container.update': { params: [ContainerConfigUpdate]; response: ContainerConfig };
   'container.image.query': { params: QueryParams<ContainerImage>; response: ContainerImage[] };
   'container.image.delete': { params: DeleteContainerImageParams; response: void };
+  'container.image.dockerhub_rate_limit': { params: void; response: DockerHubRateLimit };
 
   // Device
   'device.get_info': { params: [DeviceType]; response: Device[] };

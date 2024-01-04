@@ -8,6 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { filter, first, switchMap } from 'rxjs/operators';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { OnOff } from 'app/enums/on-off.enum';
+import { Role } from 'app/enums/role.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -117,4 +118,6 @@ export class DatasetDetailsCardComponent {
       untilDestroyed(this),
     ).subscribe(() => this.datasetStore.datasetUpdated());
   }
+
+  protected readonly Role = Role;
 }

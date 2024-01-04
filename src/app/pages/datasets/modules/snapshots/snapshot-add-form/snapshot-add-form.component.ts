@@ -1,16 +1,15 @@
 import {
-  Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, Inject,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
-import {
-  AbstractControl, FormBuilder, Validators,
-} from '@angular/forms';
-import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
+import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { format } from 'date-fns-tz';
 import {
-  Observable, combineLatest, of, merge,
+  combineLatest, merge, Observable, of,
 } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
+import { Role } from 'app/enums/role.enum';
 import { singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSnapshots } from 'app/helptext/storage/snapshots/snapshots';
 import { Dataset } from 'app/interfaces/dataset.interface';
@@ -23,8 +22,11 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { atLeastOne } from 'app/modules/ix-forms/validators/at-least-one-validation';
 import { requiredEmpty } from 'app/modules/ix-forms/validators/required-empty-validation';
-import { snapshotExcludeBootQueryFilter } from 'app/pages/datasets/modules/snapshots/constants/snapshot-exclude-boot.constant';
+import {
+  snapshotExcludeBootQueryFilter,
+} from 'app/pages/datasets/modules/snapshots/constants/snapshot-exclude-boot.constant';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
+import { AuthService } from 'app/services/auth/auth.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -55,13 +57,17 @@ export class SnapshotAddFormComponent implements OnInit {
   namingSchemaOptions$: Observable<Option[]>;
   hasVmsInDataset = false;
 
+  protected readonly Role = Role;
+
   readonly helptext = helptextSnapshots;
+  readonly requiresRoles = [Role.ReplicationManager, Role.SnapshotWrite];
 
   constructor(
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
     private ws: WebSocketService,
     private translate: TranslateService,
+    private authService: AuthService,
     private errorHandler: FormErrorHandlerService,
     private validatorsService: IxValidatorsService,
     private datasetStore: DatasetTreeStore,
@@ -154,8 +160,16 @@ export class SnapshotAddFormComponent implements OnInit {
   }
 
   private getNamingSchemaOptions(): Observable<Option[]> {
-    return this.ws.call('replication.list_naming_schemas').pipe(
-      singleArrayToOptions(),
+    return this.authService.hasRole([Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull]).pipe(
+      switchMap((hasAccess) => {
+        if (!hasAccess) {
+          return of([]);
+        }
+
+        return this.ws.call('replication.list_naming_schemas').pipe(
+          singleArrayToOptions(),
+        );
+      }),
     );
   }
 

@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import html2canvas, { Options } from 'html2canvas';
 import {
+  BehaviorSubject,
   Observable, combineLatest, filter, first, map, switchMap,
 } from 'rxjs';
 import {
@@ -14,10 +15,12 @@ import { AppState } from 'app/store';
 import { selectSystemHostId, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 import { ReviewAddedResponse } from './interfaces/feedback.interface';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class IxFeedbackService {
+  isReviewAllowed$ = new BehaviorSubject<boolean>(false);
   private readonly hostname = 'https://feedback.ui.truenas.com';
-  private isReviewAllowed = false;
 
   constructor(
     private httpClient: HttpClient,
@@ -27,16 +30,12 @@ export class IxFeedbackService {
   ) {
     this.checkIfReviewAllowed().subscribe({
       next: (isAllowed) => {
-        this.isReviewAllowed = isAllowed;
+        this.isReviewAllowed$.next(isAllowed);
       },
       error: () => {
-        this.isReviewAllowed = false;
+        this.isReviewAllowed$.next(false);
       },
     });
-  }
-
-  getReviewAllowed(): boolean {
-    return this.isReviewAllowed;
   }
 
   getHostId(): Observable<string> {

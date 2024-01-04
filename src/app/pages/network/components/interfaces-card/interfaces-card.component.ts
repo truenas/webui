@@ -14,6 +14,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, of } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { NetworkInterfaceType } from 'app/enums/network-interface.enum';
+import { Role } from 'app/enums/role.enum';
 import { helptextInterfaces } from 'app/helptext/network/interfaces/interfaces-list';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { AllNetworkInterfacesUpdate } from 'app/interfaces/reporting.interface';
@@ -74,6 +75,7 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
         },
         {
           iconName: 'refresh',
+          requiresRoles: [Role.NetworkInterfaceWrite],
           hidden: (row) => of(!this.isPhysical(row)),
           disabled: () => this.isHaEnabled$,
           dynamicTooltip: () => this.isHaEnabled$.pipe(map((isHaEnabled) => (isHaEnabled
@@ -83,6 +85,7 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
         },
         {
           iconName: 'delete',
+          requiresRoles: [Role.NetworkInterfaceWrite],
           tooltip: this.isHaEnabled ? this.translate.instant(helptextInterfaces.ha_enabled_delete_msg) : '',
           hidden: (row) => of(this.isPhysical(row)),
           onClick: (row) => this.onDelete(row),

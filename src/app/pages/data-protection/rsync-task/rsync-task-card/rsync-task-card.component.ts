@@ -8,6 +8,7 @@ import {
   catchError, EMPTY, filter, map, of, switchMap, tap,
 } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
+import { Role } from 'app/enums/role.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { Job } from 'app/interfaces/job.interface';
 import { RsyncTaskUi, RsyncTaskUpdate } from 'app/interfaces/rsync-task.interface';
@@ -66,6 +67,7 @@ export class RsyncTaskCardComponent implements OnInit {
     toggleColumn({
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
+      requiresRoles: [Role.FullAdmin],
       onRowToggle: (row: RsyncTaskUi) => this.onChangeEnabledState(row),
     }),
     stateButtonColumn({
@@ -85,12 +87,14 @@ export class RsyncTaskCardComponent implements OnInit {
         {
           iconName: 'play_arrow',
           tooltip: this.translate.instant('Run job'),
+          requiresRoles: [Role.FullAdmin],
           hidden: (row) => of(row.job?.state === JobState.Running),
           onClick: (row) => this.runNow(row),
         },
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
+          requiresRoles: [Role.FullAdmin],
           onClick: (row) => this.doDelete(row),
         },
       ],

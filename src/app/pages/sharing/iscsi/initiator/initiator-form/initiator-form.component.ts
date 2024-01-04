@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import _ from 'lodash';
+import { Role } from 'app/enums/role.enum';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { IscsiGlobalSession } from 'app/interfaces/iscsi-global-config.interface';
 import { DialogService } from 'app/services/dialog.service';
@@ -50,6 +51,11 @@ export class InitiatorFormComponent implements OnInit {
   }
 
   readonly helptext = helptextSharingIscsi;
+  readonly requiresRoles = [
+    Role.SharingIscsiInitiatorWrite,
+    Role.SharingIscsiWrite,
+    Role.SharingWrite,
+  ];
 
   constructor(
     private ws: WebSocketService,

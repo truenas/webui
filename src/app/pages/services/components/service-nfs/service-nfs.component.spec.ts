@@ -33,6 +33,7 @@ describe('ServiceNfsComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
+      mockAuth(),
       mockWebsocket([
         mockCall('nfs.config', {
           allow_nonroot: false,

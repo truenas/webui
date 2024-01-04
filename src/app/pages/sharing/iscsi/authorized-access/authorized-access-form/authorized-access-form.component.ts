@@ -5,6 +5,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { IscsiAuthAccess, IscsiAuthAccessUpdate } from 'app/interfaces/iscsi.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -81,6 +82,12 @@ export class AuthorizedAccessFormComponent implements OnInit {
     peeruser: helptextSharingIscsi.authaccess_tooltip_peeruser,
     peersecret: helptextSharingIscsi.authaccess_tooltip_peersecret,
   };
+
+  readonly requiresRoles = [
+    Role.SharingIscsiAuthWrite,
+    Role.SharingIscsiWrite,
+    Role.SharingWrite,
+  ];
 
   constructor(
     private translate: TranslateService,

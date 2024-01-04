@@ -19,6 +19,7 @@ import {
   IscsiExtentUsefor,
 } from 'app/enums/iscsi.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
+import { Role } from 'app/enums/role.enum';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
@@ -109,6 +110,12 @@ export class IscsiWizardComponent implements OnInit {
       ),
     ],
   });
+
+  readonly requiresRoles = [
+    Role.SharingIscsiTargetWrite,
+    Role.SharingIscsiWrite,
+    Role.SharingWrite,
+  ];
 
   get isNewZvol(): boolean {
     return this.form.controls.device.enabled && this.form.value.device.disk === newOption;

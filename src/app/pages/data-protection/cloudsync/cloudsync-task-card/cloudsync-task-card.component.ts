@@ -11,6 +11,7 @@ import {
 } from 'rxjs';
 import { FromWizardToAdvancedSubmitted } from 'app/enums/from-wizard-to-advanced.enum';
 import { JobState } from 'app/enums/job-state.enum';
+import { Role } from 'app/enums/role.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { helptextCloudsync } from 'app/helptext/data-protection/cloudsync/cloudsync';
 import { CloudSyncTaskUi, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
@@ -70,6 +71,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
       onRowToggle: (row: CloudSyncTaskUi) => this.onChangeEnabledState(row),
+      requiresRoles: [Role.CloudSyncWrite],
     }),
     stateButtonColumn({
       title: this.translate.instant('State'),
@@ -90,27 +92,32 @@ export class CloudSyncTaskCardComponent implements OnInit {
           tooltip: this.translate.instant('Run job'),
           hidden: (row) => of(row.job?.state === JobState.Running),
           onClick: (row) => this.runNow(row),
+          requiresRoles: [Role.CloudSyncWrite],
         },
         {
           iconName: 'stop',
           tooltip: this.translate.instant('Stop'),
           hidden: (row) => of(row.job?.state !== JobState.Running),
           onClick: (row) => this.stopCloudSyncTask(row),
+          requiresRoles: [Role.CloudSyncWrite],
         },
         {
           iconName: 'sync',
           tooltip: this.translate.instant('Dry Run'),
           onClick: (row) => this.dryRun(row),
+          requiresRoles: [Role.CloudSyncWrite],
         },
         {
           iconName: 'restore',
           tooltip: this.translate.instant('Restore'),
           onClick: (row) => this.restore(row),
+          requiresRoles: [Role.CloudSyncWrite],
         },
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
+          requiresRoles: [Role.CloudSyncWrite],
         },
       ],
     }),
