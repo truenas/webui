@@ -35,6 +35,7 @@ describe('SnapshotDetailsRowComponent', () => {
       FakeFormatDateTimePipe,
     ],
     providers: [
+      mockAuth(),
       mockProvider(AppLoaderService),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),

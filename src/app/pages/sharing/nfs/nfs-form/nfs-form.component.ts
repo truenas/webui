@@ -45,8 +45,6 @@ export class NfsFormComponent implements OnInit {
     share_type: DatasetPreset.Multiprotocol,
   };
 
-  Role = Role;
-
   form = this.formBuilder.group({
     path: ['', Validators.required],
     comment: [''],
@@ -71,6 +69,7 @@ export class NfsFormComponent implements OnInit {
       : this.translate.instant('Edit NFS Share');
   }
 
+  readonly requiresRoles = [Role.SharingNfsWrite, Role.SharingManager, Role.SharingWrite];
   readonly helptext = helptextSharingNfs;
   readonly userProvider = new UserComboboxProvider(this.userService);
   readonly groupProvider = new GroupComboboxProvider(this.userService);

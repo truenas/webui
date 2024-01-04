@@ -36,6 +36,7 @@ describe('SnapshotAddFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
+      mockAuth(),
       mockWebsocket([
         mockCall('zfs.snapshot.create'),
         mockCall('pool.dataset.query', mockDatasets),

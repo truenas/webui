@@ -6,9 +6,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { format } from 'date-fns-tz';
 import {
-  combineLatest, merge, Observable, of, switchMap,
+  combineLatest, merge, Observable, of,
 } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
 import { singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSnapshots } from 'app/helptext/storage/snapshots/snapshots';
@@ -60,17 +60,18 @@ export class SnapshotAddFormComponent implements OnInit {
   protected readonly Role = Role;
 
   readonly helptext = helptextSnapshots;
+  readonly requiresRoles = [Role.ReplicationManager, Role.SnapshotWrite];
 
   constructor(
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
     private ws: WebSocketService,
     private translate: TranslateService,
+    private authService: AuthService,
     private errorHandler: FormErrorHandlerService,
     private validatorsService: IxValidatorsService,
     private datasetStore: DatasetTreeStore,
     private slideInRef: IxSlideInRef<SnapshotAddFormComponent>,
-    private authService: AuthService,
     @Inject(SLIDE_IN_DATA) private datasetId: string,
   ) {}
 

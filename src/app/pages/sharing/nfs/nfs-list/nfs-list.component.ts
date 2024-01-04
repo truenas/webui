@@ -4,6 +4,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, tap } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { shared } from 'app/helptext/sharing';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
@@ -27,6 +28,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NfsListComponent implements OnInit {
+  requiresRoles = [Role.SharingNfsWrite, Role.SharingManager, Role.SharingWrite];
   filterString = '';
   dataProvider: AsyncDataProvider<NfsShare>;
 
@@ -79,6 +81,7 @@ export class NfsListComponent implements OnInit {
           },
         });
       },
+      requiresRoles: this.requiresRoles,
     }),
     actionsColumn({
       actions: [
@@ -114,6 +117,7 @@ export class NfsListComponent implements OnInit {
               },
             });
           },
+          requiresRoles: this.requiresRoles,
         },
       ],
     }),

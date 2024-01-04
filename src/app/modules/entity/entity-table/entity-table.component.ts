@@ -34,6 +34,7 @@ import {
 } from 'rxjs/operators';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
+import { Role } from 'app/enums/role.enum';
 import { ApiCallMethod, ApiCallParams } from 'app/interfaces/api/api-call-directory.interface';
 import { ApiJobMethod, ApiJobParams } from 'app/interfaces/api/api-job-directory.interface';
 import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
@@ -1203,6 +1204,11 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
   isInteractive(column: string): boolean {
     const item = this.currentColumns.find((obj) => obj.prop === column);
     return (item?.checkbox || item?.toggle || item?.button || item?.showLockedStatus);
+  }
+
+  getRoles(column: string): Role[] {
+    const item = this.currentColumns.find((obj) => obj.prop === column);
+    return item?.requiresRoles;
   }
 
   doRowClick(element: Row): void {

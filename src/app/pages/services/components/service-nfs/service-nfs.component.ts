@@ -66,7 +66,7 @@ export class ServiceNfsComponent implements OnInit {
 
   readonly ipChoices$ = this.ws.call('nfs.bindip_choices').pipe(choicesToOptions());
   readonly protocolOptions$ = of(mapToOptions(nfsProtocolLabels, this.translate));
-  protected readonly Role = Role;
+  readonly requiresRoles = [Role.SharingNfsWrite, Role.SharingWrite];
 
   constructor(
     private ws: WebSocketService,

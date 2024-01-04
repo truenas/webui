@@ -12,7 +12,10 @@
     margin-right: 8px;
   }
 
-  .mdc-label,
+  .mdc-label {
+    text-decoration: line-through;
+  }
+
   .mat-mdc-checkbox,
   .mat-mdc-slide-toggle,
   .mdc-button__label,

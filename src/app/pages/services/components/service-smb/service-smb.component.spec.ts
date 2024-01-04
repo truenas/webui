@@ -32,6 +32,7 @@ describe('ServiceSmbComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
+      mockAuth(),
       mockWebsocket([
         mockCall('smb.config', {
           id: 1,

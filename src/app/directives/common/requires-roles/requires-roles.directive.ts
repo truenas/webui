@@ -15,6 +15,10 @@ export class RequiresRolesDirective {
 
   @Input()
   set ixRequiresRoles(roles: Role[]) {
+    if (!roles?.length) {
+      this.viewContainerRef.createEmbeddedView(this.templateRef);
+      return;
+    }
     this.authService.hasRole(roles).pipe(untilDestroyed(this)).subscribe({
       next: (hasRole) => {
         if (!hasRole) {

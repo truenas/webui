@@ -79,11 +79,21 @@
     </div>
 
     <ng-container *ixRequiresRoles="[Role.FullAdmin]">
-      <button mat-button [ixTest]="['clone', snapshot.snapshot_name]" (click)="doClone(snapshot)">
+      <button
+      *ixRequiresRoles="[Role.FullAdmin]"
+      mat-button
+      [ixTest]="['clone', snapshot.snapshot_name]"
+      (click)="doClone(snapshot)"
+    >
         <span>{{ 'Clone To New Dataset' | translate }}</span>
       </button>
 
-      <button mat-button [ixTest]="['rollback', snapshot.snapshot_name]" (click)="doRollback(snapshot)">
+      <button
+      *ixRequiresRoles="[Role.FullAdmin]"
+      mat-button
+      [ixTest]="['rollback', snapshot.snapshot_name]"
+      (click)="doRollback(snapshot)"
+    >
         <span>{{ 'Rollback' | translate }}</span>
       </button>
     </ng-container>
