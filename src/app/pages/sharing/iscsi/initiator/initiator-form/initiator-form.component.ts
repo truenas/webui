@@ -54,7 +54,6 @@ export class InitiatorFormComponent implements OnInit {
   readonly requiresRoles = [
     Role.SharingIscsiInitiatorWrite,
     Role.SharingIscsiWrite,
-    Role.SharingManager,
     Role.SharingWrite,
   ];
 

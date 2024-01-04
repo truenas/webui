@@ -36,7 +36,6 @@ export class IscsiCardComponent implements OnInit {
   requiresRoles = [
     Role.SharingIscsiTargetWrite,
     Role.SharingIscsiWrite,
-    Role.SharingManager,
     Role.SharingWrite,
   ];
 

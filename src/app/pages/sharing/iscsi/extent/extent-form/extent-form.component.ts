@@ -77,7 +77,6 @@ export class ExtentFormComponent implements OnInit {
   readonly requiresRoles = [
     Role.SharingIscsiExtentWrite,
     Role.SharingIscsiWrite,
-    Role.SharingManager,
     Role.SharingWrite,
   ];
 

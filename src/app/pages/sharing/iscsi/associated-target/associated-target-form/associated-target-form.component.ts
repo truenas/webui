@@ -54,7 +54,6 @@ export class AssociatedTargetFormComponent implements OnInit {
   readonly requiresRoles = [
     Role.SharingIscsiTargetExtentWrite,
     Role.SharingIscsiWrite,
-    Role.SharingManager,
     Role.SharingWrite,
   ];
 

@@ -86,7 +86,6 @@ export class AuthorizedAccessFormComponent implements OnInit {
   readonly requiresRoles = [
     Role.SharingIscsiAuthWrite,
     Role.SharingIscsiWrite,
-    Role.SharingManager,
     Role.SharingWrite,
   ];
 

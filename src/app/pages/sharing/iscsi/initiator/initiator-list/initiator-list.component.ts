@@ -79,7 +79,6 @@ export class InitiatorListComponent implements OnInit {
           requiresRoles: [
             Role.SharingIscsiInitiatorWrite,
             Role.SharingIscsiWrite,
-            Role.SharingManager,
             Role.SharingWrite,
           ],
         },

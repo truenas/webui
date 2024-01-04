@@ -81,7 +81,6 @@ export class ExtentListComponent implements OnInit {
           requiresRoles: [
             Role.SharingIscsiExtentWrite,
             Role.SharingIscsiWrite,
-            Role.SharingManager,
             Role.SharingWrite,
           ],
         },

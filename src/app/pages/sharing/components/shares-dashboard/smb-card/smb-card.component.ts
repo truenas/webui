@@ -37,7 +37,7 @@ import { selectService } from 'app/store/services/services.selectors';
 })
 export class SmbCardComponent implements OnInit {
   service$ = this.store$.select(selectService(ServiceName.Cifs));
-  requiresRoles = [Role.SharingSmbWrite, Role.SharingManager, Role.SharingWrite];
+  requiresRoles = [Role.SharingSmbWrite, Role.SharingWrite];
 
   smbShares: SmbShare[] = [];
   dataProvider: AsyncDataProvider<SmbShare>;

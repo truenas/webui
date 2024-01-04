@@ -108,7 +108,6 @@ export class AssociatedTargetListComponent implements OnInit {
           requiresRoles: [
             Role.SharingIscsiTargetExtentWrite,
             Role.SharingIscsiWrite,
-            Role.SharingManager,
             Role.SharingWrite,
           ],
         },
