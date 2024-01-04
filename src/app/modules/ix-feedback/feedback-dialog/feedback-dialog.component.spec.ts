@@ -143,6 +143,7 @@ describe('FeedbackDialogComponent', () => {
         getTokenForJira: jest.fn(() => mockToken),
         setTokenForJira: jest.fn(),
         getProductType$: of(ProductType.Scale),
+        sessionId$: of('mocked-session-id'),
       }),
       mockProvider(MatDialogRef),
       mockProvider(SnackbarService),
@@ -306,7 +307,7 @@ describe('FeedbackDialogComponent', () => {
         environment: TicketEnvironment.Production,
         criticality: TicketCriticality.Inquiry,
         title: 'Test subject',
-        body: 'Testing ticket body',
+        body: 'Testing ticket body\n\nHost ID: unique-system-host-id-1234\n\nSession ID: mocked-session-id',
         attach_debug: true,
       }]);
     });

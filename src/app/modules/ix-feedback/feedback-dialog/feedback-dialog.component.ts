@@ -66,6 +66,7 @@ export class FeedbackDialogComponent implements OnInit {
 
   private release: string;
   private hostId: string;
+  private sessionId: string;
   private productType: ProductType;
   private systemProduct: string;
   private isIxHardware = false;
@@ -141,6 +142,7 @@ export class FeedbackDialogComponent implements OnInit {
     this.getReleaseVersion();
     this.getHostId();
     this.getProductType();
+    this.getSessionId();
     this.loadIsIxHardware();
   }
 
@@ -222,7 +224,9 @@ export class FeedbackDialogComponent implements OnInit {
   private submitBugOrFeature(): void {
     const values = this.form.value;
     const ticketValues = this.ticketForm.getPayload();
-    const body = `${values.message}\n\nHost ID: ${this.hostId}`;
+    const hostText = `Host ID: ${this.hostId}`;
+    const sessionText = `Session ID: ${this.sessionId}`;
+    const body = [values.message, hostText, sessionText].join('\n\n');
 
     let payload: CreateNewTicket = {
       attach_debug: values.attach_debug,
@@ -453,5 +457,14 @@ export class FeedbackDialogComponent implements OnInit {
     } else {
       this.form.controls.type.setValue([...optionMap.keys()].shift());
     }
+  }
+
+  private getSessionId(): void {
+    this.systemGeneralService.sessionId$
+      .pipe(untilDestroyed(this))
+      .subscribe((sessionId) => {
+        this.sessionId = sessionId;
+        this.cdr.markForCheck();
+      });
   }
 }

@@ -1,10 +1,13 @@
 import { EventEmitter, Inject, Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import * as Sentry from '@sentry/angular';
+import { UUID } from 'angular2-uuid';
 import { fromUnixTime } from 'date-fns';
 import { environment } from 'environments/environment';
 import * as _ from 'lodash';
-import { Subject, Observable, combineLatest } from 'rxjs';
+import {
+  Subject, Observable, combineLatest, BehaviorSubject,
+} from 'rxjs';
 import { filter, map, shareReplay } from 'rxjs/operators';
 import { ProductType } from 'app/enums/product-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -23,6 +26,7 @@ export class SystemGeneralService {
   protected certificateList = 'certificate.query' as const;
   protected caList = 'certificateauthority.query' as const;
 
+  sessionId$ = new BehaviorSubject<string>(UUID.UUID());
   updateRunning = new EventEmitter<string>();
   updateRunningNoticeSent = new EventEmitter<string>();
   updateIsDone$ = new Subject<void>();
@@ -49,13 +53,15 @@ export class SystemGeneralService {
       this.isStable(),
       this.store$.pipe(waitForSystemInfo),
       this.store$.select(selectSystemHostId).pipe(filter(Boolean)),
-    ]).subscribe(([isStable, sysInfo, hostId]) => {
+      this.sessionId$,
+    ]).subscribe(([isStable, sysInfo, hostId, sessionId]) => {
       if (!isStable) {
         Sentry.init({
           dsn: environment.sentryPublicDsn,
           release: sysInfo.version,
         });
         Sentry.configureScope((scope) => {
+          scope.setTag('session_id', sessionId);
           scope.setTag('host_id', hostId);
         });
       } else {
