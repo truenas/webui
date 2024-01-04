@@ -13,6 +13,7 @@ import { Subscription, timer } from 'rxjs';
 import {
   filter, map, skipWhile, take, throttleTime,
 } from 'rxjs/operators';
+import { KiB } from 'app/constants/bytes.constant';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { LinkState, NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
@@ -381,7 +382,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
           }
           (updatedResponse.data as number[][]).forEach((row, index) => {
             // remove first column and convert kilobits/s to bytes
-            (updatedResponse.data as number[][])[index] = [...row.slice(1)];
+            (updatedResponse.data as number[][])[index] = row.slice(1).map((value) => value * KiB);
           });
           return updatedResponse;
         }),
