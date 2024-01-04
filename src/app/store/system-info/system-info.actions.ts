@@ -12,6 +12,11 @@ export const systemFeaturesLoaded = createAction(
   props<{ systemFeatures: SystemFeatures }>(),
 );
 
+export const systemHostIdLoaded = createAction(
+  '[System Info API] System Host ID Loaded',
+  props<{ systemHostId: string }>(),
+);
+
 export const ixHardwareLoaded = createAction(
   '[System Info API] System is IxHardware Loaded',
   props<{ isIxHardware: boolean }>(),

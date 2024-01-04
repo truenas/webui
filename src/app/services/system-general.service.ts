@@ -5,7 +5,7 @@ import { fromUnixTime } from 'date-fns';
 import { environment } from 'environments/environment';
 import * as _ from 'lodash';
 import { Subject, Observable, combineLatest } from 'rxjs';
-import { map, shareReplay } from 'rxjs/operators';
+import { filter, map, shareReplay } from 'rxjs/operators';
 import { ProductType } from 'app/enums/product-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
@@ -15,7 +15,7 @@ import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
-import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
+import { selectSystemHostId, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @Injectable({ providedIn: 'root' })
 export class SystemGeneralService {
@@ -48,11 +48,15 @@ export class SystemGeneralService {
     combineLatest([
       this.isStable(),
       this.store$.pipe(waitForSystemInfo),
-    ]).subscribe(([isStable, sysInfo]) => {
+      this.store$.select(selectSystemHostId).pipe(filter(Boolean)),
+    ]).subscribe(([isStable, sysInfo, hostId]) => {
       if (!isStable) {
         Sentry.init({
           dsn: environment.sentryPublicDsn,
           release: sysInfo.version,
+        });
+        Sentry.configureScope((scope) => {
+          scope.setTag('host_id', hostId);
         });
       } else {
         Sentry.init({

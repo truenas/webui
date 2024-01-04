@@ -12,7 +12,7 @@ import { environment } from 'environments/environment';
 import {
   EMPTY, Observable, catchError, filter, of, pairwise, switchMap, take,
 } from 'rxjs';
-import { ticketAcceptedFiles } from 'app/enums/file-ticket.enum';
+import { TicketType, ticketAcceptedFiles } from 'app/enums/file-ticket.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
@@ -222,12 +222,15 @@ export class FeedbackDialogComponent implements OnInit {
   private submitBugOrFeature(): void {
     const values = this.form.value;
     const ticketValues = this.ticketForm.getPayload();
+    const body = `${values.message}\n\nHost ID: ${this.hostId}`;
 
     let payload: CreateNewTicket = {
-      category: ticketValues.category,
-      body: values.message,
       attach_debug: values.attach_debug,
+      type: values.type === FeedbackType.Bug ? TicketType.Bug : TicketType.Suggestion,
+      category: ticketValues.category,
       title: ticketValues.title,
+      token: ticketValues.token,
+      body,
     };
 
     if (this.isEnterprise) {
@@ -241,7 +244,7 @@ export class FeedbackDialogComponent implements OnInit {
         category: ticketValues.category,
         title: ticketValues.title,
         attach_debug: values.attach_debug,
-        body: values.message,
+        body,
       };
     }
 
@@ -257,9 +260,9 @@ export class FeedbackDialogComponent implements OnInit {
       user_agent: this.window.navigator.userAgent,
       environment: environment.production ? FeedbackEnvironment.Production : FeedbackEnvironment.Development,
       release: this.release,
-      extra: {},
       product_type: this.productType,
       product_model: this.systemProduct && this.isIxHardware ? this.systemProduct : 'Generic',
+      extra: {},
     };
 
     this.feedbackService
@@ -306,13 +309,13 @@ export class FeedbackDialogComponent implements OnInit {
       .subscribe({
         next: () => this.onSuccess(),
         error: (error: HttpErrorResponse) => {
-          this.isLoading = false;
-          this.cdr.markForCheck();
           this.dialogService.error({
             title: this.translate.instant('Uploading failed.'),
             message: error.message,
             backtrace: JSON.stringify(error, null, '  '),
           });
+          this.isLoading = false;
+          this.cdr.markForCheck();
         },
       });
   }
