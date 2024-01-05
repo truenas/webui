@@ -100,6 +100,6 @@ export class PoolsDashboardComponent implements OnInit {
   }
 
   getDisksForPool(pool: Pool): StorageDashboardDisk[] {
-    return this.allDisksByPool[pool.name];
+    return this.allDisksByPool[pool.name] || [];
   }
 }
