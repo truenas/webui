@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
+import { Role } from 'app/enums/role.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import {
   EncryptionOptionsDialogData,
@@ -112,4 +113,6 @@ export class ZfsEncryptionCardComponent {
   get isRoot(): boolean {
     return isRootDataset(this.dataset);
   }
+
+  protected readonly Role = Role;
 }

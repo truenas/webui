@@ -4,10 +4,11 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { merge } from 'rxjs';
+import { merge, of } from 'rxjs';
 import { debounceTime, filter, switchMap } from 'rxjs/operators';
 import { Direction } from 'app/enums/direction.enum';
 import { FromWizardToAdvancedSubmitted } from 'app/enums/from-wizard-to-advanced.enum';
+import { Role } from 'app/enums/role.enum';
 import { SnapshotNamingOption } from 'app/enums/snapshot-naming-option.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { helptextReplicationWizard } from 'app/helptext/data-protection/replication/replication-wizard';
@@ -38,6 +39,7 @@ import {
 import {
   ReplicationWizardComponent,
 } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
+import { AuthService } from 'app/services/auth/auth.service';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -72,6 +74,8 @@ export class ReplicationFormComponent implements OnInit {
   isSudoDialogShown = false;
   sshCredentials: KeychainSshCredentials[] = [];
 
+  readonly requiresRoles = [Role.ReplicationManager, Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
+
   constructor(
     private ws: WebSocketService,
     private errorHandler: ErrorHandlerService,
@@ -86,6 +90,7 @@ export class ReplicationFormComponent implements OnInit {
     private slideInRef: IxSlideInRef<ReplicationFormComponent>,
     private keychainCredentials: KeychainCredentialService,
     private store$: Store<AppState>,
+    private authService: AuthService,
     @Inject(SLIDE_IN_DATA) public existingReplication: ReplicationTask,
   ) {}
 
@@ -165,7 +170,7 @@ export class ReplicationFormComponent implements OnInit {
           error: (error) => {
             this.isLoading = false;
             this.cdr.markForCheck();
-            this.dialog.error(this.errorHandler.parseWsError(error));
+            this.dialog.error(this.errorHandler.parseError(error));
           },
         },
       );
@@ -238,35 +243,40 @@ export class ReplicationFormComponent implements OnInit {
 
     this.isLoading = true;
     this.cdr.markForCheck();
-    this.ws.call('replication.count_eligible_manual_snapshots', [payload])
-      .pipe(untilDestroyed(this))
-      .subscribe(
-        {
-          next: (eligibleSnapshots) => {
-            this.isEligibleSnapshotsMessageRed = eligibleSnapshots.eligible === 0;
-            this.eligibleSnapshotsMessage = this.translate.instant(
-              '{eligible} of {total} existing snapshots of dataset {targetDataset} would be replicated with this task.',
-              {
-                eligible: eligibleSnapshots.eligible,
-                total: eligibleSnapshots.total,
-                targetDataset: formValues.target_dataset,
-              },
-            );
-            this.isLoading = false;
-            this.cdr.markForCheck();
-          },
-          error: (error: WebsocketError) => {
-            this.isEligibleSnapshotsMessageRed = true;
-            this.eligibleSnapshotsMessage = this.translate.instant('Error counting eligible snapshots.');
-            if ('reason' in error) {
-              this.eligibleSnapshotsMessage = `${this.eligibleSnapshotsMessage} ${error.reason}`;
-            }
 
-            this.isLoading = false;
-            this.cdr.markForCheck();
+    this.authService.hasRole(this.requiresRoles).pipe(
+      switchMap((hasRole) => {
+        if (hasRole) {
+          return this.ws.call('replication.count_eligible_manual_snapshots', [payload]);
+        }
+        return of({ eligible: 0, total: 0 });
+      }),
+      untilDestroyed(this),
+    ).subscribe({
+      next: (eligibleSnapshots) => {
+        this.isEligibleSnapshotsMessageRed = eligibleSnapshots.eligible === 0;
+        this.eligibleSnapshotsMessage = this.translate.instant(
+          '{eligible} of {total} existing snapshots of dataset {targetDataset} would be replicated with this task.',
+          {
+            eligible: eligibleSnapshots.eligible,
+            total: eligibleSnapshots.total,
+            targetDataset: formValues.target_dataset,
           },
-        },
-      );
+        );
+        this.isLoading = false;
+        this.cdr.markForCheck();
+      },
+      error: (error: WebsocketError) => {
+        this.isEligibleSnapshotsMessageRed = true;
+        this.eligibleSnapshotsMessage = this.translate.instant('Error counting eligible snapshots.');
+        if ('reason' in error) {
+          this.eligibleSnapshotsMessage = `${this.eligibleSnapshotsMessage} ${error.reason}`;
+        }
+
+        this.isLoading = false;
+        this.cdr.markForCheck();
+      },
+    });
   }
 
   private updateExplorersOnChanges(): void {

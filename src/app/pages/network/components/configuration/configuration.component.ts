@@ -7,12 +7,12 @@ import { Store } from '@ngrx/store';
 import { of } from 'rxjs';
 import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
 import { ProductType } from 'app/enums/product-type.enum';
+import { Role } from 'app/enums/role.enum';
 import { arrayToOptions } from 'app/helpers/operators/options.operators';
-import helptext from 'app/helptext/network/configuration/configuration';
+import { helptextNetworkConfiguration } from 'app/helptext/network/configuration/configuration';
 import {
   NetworkConfiguration, NetworkConfigurationActivity, NetworkConfigurationConfig, NetworkConfigurationUpdate,
 } from 'app/interfaces/network-configuration.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { ipv4Validator, ipv6Validator } from 'app/modules/ix-forms/validators/ip-validation';
@@ -53,139 +53,141 @@ export class NetworkConfigurationComponent implements OnInit {
     hosts: [[] as string[]],
   });
 
-  readonly helptext = helptext;
+  readonly helptext = helptextNetworkConfiguration;
 
   hostname = {
     fcName: 'hostname',
-    label: helptext.hostname_placeholder,
-    tooltip: helptext.hostname_tooltip,
+    label: helptextNetworkConfiguration.hostname_placeholder,
+    tooltip: helptextNetworkConfiguration.hostname_tooltip,
   };
 
   hostnameB = {
     fcName: 'hostname_b',
-    label: helptext.hostname_b_placeholder,
-    tooltip: helptext.hostname_b_tooltip,
+    label: helptextNetworkConfiguration.hostname_b_placeholder,
+    tooltip: helptextNetworkConfiguration.hostname_b_tooltip,
     hidden: true,
   };
 
   hostnameVirtual = {
     fcName: 'hostname_virtual',
-    label: helptext.hostname_virtual_placeholder,
-    tooltip: helptext.hostname_virtual_tooltip,
+    label: helptextNetworkConfiguration.hostname_virtual_placeholder,
+    tooltip: helptextNetworkConfiguration.hostname_virtual_tooltip,
     hidden: true,
   };
 
   inheritDhcp = {
     fcName: 'inherit_dhcp',
-    label: helptext.inherit_dhcp_placeholder,
-    tooltip: helptext.inherit_dhcp_tooltip,
+    label: helptextNetworkConfiguration.inherit_dhcp_placeholder,
+    tooltip: helptextNetworkConfiguration.inherit_dhcp_tooltip,
   };
 
   domain = {
     fcName: 'domain',
-    label: helptext.domain_placeholder,
-    tooltip: helptext.domain_tooltip,
+    label: helptextNetworkConfiguration.domain_placeholder,
+    tooltip: helptextNetworkConfiguration.domain_tooltip,
   };
 
   domains = {
     fcName: 'domains',
-    label: helptext.domains_placeholder,
-    tooltip: helptext.domains_tooltip,
+    label: helptextNetworkConfiguration.domains_placeholder,
+    tooltip: helptextNetworkConfiguration.domains_tooltip,
   };
 
   netbios = {
     fcName: 'netbios',
-    label: helptext.netbios_placeholder,
-    tooltip: helptext.netbios_tooltip,
+    label: helptextNetworkConfiguration.netbios_placeholder,
+    tooltip: helptextNetworkConfiguration.netbios_tooltip,
   };
 
   mdns = {
     fcName: 'mdns',
-    label: helptext.mdns_placeholder,
-    tooltip: helptext.mdns_tooltip,
+    label: helptextNetworkConfiguration.mdns_placeholder,
+    tooltip: helptextNetworkConfiguration.mdns_tooltip,
   };
 
   wsd = {
     fcName: 'wsd',
-    label: helptext.wsd_placeholder,
-    tooltip: helptext.wsd_tooltip,
+    label: helptextNetworkConfiguration.wsd_placeholder,
+    tooltip: helptextNetworkConfiguration.wsd_tooltip,
   };
 
   nameserver1 = {
     fcName: 'nameserver1',
-    label: helptext.nameserver1_placeholder,
-    tooltip: helptext.nameserver1_tooltip,
+    label: helptextNetworkConfiguration.nameserver1_placeholder,
+    tooltip: helptextNetworkConfiguration.nameserver1_tooltip,
   };
 
   nameserver2 = {
     fcName: 'nameserver2',
-    label: helptext.nameserver2_placeholder,
-    tooltip: helptext.nameserver2_tooltip,
+    label: helptextNetworkConfiguration.nameserver2_placeholder,
+    tooltip: helptextNetworkConfiguration.nameserver2_tooltip,
   };
 
   nameserver3 = {
     fcName: 'nameserver3',
-    label: helptext.nameserver3_placeholder,
-    tooltip: helptext.nameserver3_tooltip,
+    label: helptextNetworkConfiguration.nameserver3_placeholder,
+    tooltip: helptextNetworkConfiguration.nameserver3_tooltip,
   };
 
   ipv4gateway = {
     fcName: 'ipv4gateway',
-    label: helptext.ipv4gateway_placeholder,
-    tooltip: helptext.ipv4gateway_tooltip,
+    label: helptextNetworkConfiguration.ipv4gateway_placeholder,
+    tooltip: helptextNetworkConfiguration.ipv4gateway_tooltip,
   };
 
   ipv6gateway = {
     fcName: 'ipv6gateway',
-    label: helptext.ipv6gateway_placeholder,
-    tooltip: helptext.ipv6gateway_tooltip,
+    label: helptextNetworkConfiguration.ipv6gateway_placeholder,
+    tooltip: helptextNetworkConfiguration.ipv6gateway_tooltip,
   };
 
   outboundNetworkActivity = {
     fcName: 'outbound_network_activity',
-    label: helptext.outbound_activity,
+    label: helptextNetworkConfiguration.outbound_activity,
     tooltip: '',
     options: of([
       // Mismatch between enum and label is expected.
       // We will send empty list of services when Allow All or Deny All is selected.
       // I.e. selecting 'Allow All' will send Deny [], effectively allowing all services.
       {
-        label: helptext.outbound_network_activity.allow.placeholder,
+        label: helptextNetworkConfiguration.outbound_network_activity.allow.placeholder,
         value: NetworkActivityType.Deny,
-        tooltip: helptext.outbound_network_activity.allow.tooltip,
+        tooltip: helptextNetworkConfiguration.outbound_network_activity.allow.tooltip,
       },
       {
-        label: helptext.outbound_network_activity.deny.placeholder,
+        label: helptextNetworkConfiguration.outbound_network_activity.deny.placeholder,
         value: NetworkActivityType.Allow,
-        tooltip: helptext.outbound_network_activity.deny.tooltip,
+        tooltip: helptextNetworkConfiguration.outbound_network_activity.deny.tooltip,
       },
       {
-        label: helptext.outbound_network_activity.specific.placeholder,
+        label: helptextNetworkConfiguration.outbound_network_activity.specific.placeholder,
         value: 'SPECIFIC',
-        tooltip: helptext.outbound_network_activity.specific.tooltip,
+        tooltip: helptextNetworkConfiguration.outbound_network_activity.specific.tooltip,
       },
     ]),
   };
 
   outboundNetworkValue = {
     fcName: 'outbound_network_value',
-    label: helptext.outbound_network_value.placeholder,
-    tooltip: helptext.outbound_network_value.tooltip,
+    label: helptextNetworkConfiguration.outbound_network_value.placeholder,
+    tooltip: helptextNetworkConfiguration.outbound_network_value.tooltip,
     options: this.ws.call('network.configuration.activity_choices').pipe(arrayToOptions()),
     hidden: true,
   };
 
   httpproxy = {
     fcName: 'httpproxy',
-    label: helptext.httpproxy_placeholder,
-    tooltip: helptext.httpproxy_tooltip,
+    label: helptextNetworkConfiguration.httpproxy_placeholder,
+    tooltip: helptextNetworkConfiguration.httpproxy_tooltip,
   };
 
   hosts = {
     fcName: 'hosts',
-    label: helptext.hosts_placeholder,
-    tooltip: helptext.hosts_tooltip,
+    label: helptextNetworkConfiguration.hosts_placeholder,
+    tooltip: helptextNetworkConfiguration.hosts_tooltip,
   };
+
+  protected readonly Role = Role;
 
   constructor(
     private ws: WebSocketService,
@@ -270,8 +272,8 @@ export class NetworkConfigurationComponent implements OnInit {
           this.isFormLoading = false;
           this.cdr.markForCheck();
         },
-        error: (error: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
+        error: (error: unknown) => {
+          this.dialogService.error(this.errorHandler.parseError(error));
           this.isFormLoading = false;
           this.cdr.markForCheck();
         },
@@ -320,7 +322,7 @@ export class NetworkConfigurationComponent implements OnInit {
           this.cdr.markForCheck();
           this.slideInRef.close(true);
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.isFormLoading = false;
           this.formErrorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();

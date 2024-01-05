@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject,
 } from '@angular/core';
@@ -5,8 +6,7 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { EMPTY, switchMap } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
-import helptext from 'app/helptext/storage/volumes/download-key';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { helptextDownloadKey } from 'app/helptext/storage/volumes/download-key';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -25,7 +25,7 @@ export interface DownloadKeyDialogParams {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DownloadKeyDialogComponent {
-  protected helptext = helptext;
+  protected helptext = helptextDownloadKey;
   protected wasDownloaded = false;
 
   private filename: string;
@@ -52,7 +52,7 @@ export class DownloadKeyDialogComponent {
             this.wasDownloaded = true;
             this.cdr.markForCheck();
           }),
-          catchError((error) => {
+          catchError((error: HttpErrorResponse) => {
             this.dialog.error(this.errorHandler.parseHttpError(error));
             return EMPTY;
           }),
@@ -60,9 +60,9 @@ export class DownloadKeyDialogComponent {
       }),
       untilDestroyed(this),
     ).subscribe({
-      error: (error: WebsocketError) => {
+      error: (error: unknown) => {
         this.loader.close();
-        this.dialog.error(this.errorHandler.parseWsError(error));
+        this.dialog.error(this.errorHandler.parseError(error));
       },
     });
   }

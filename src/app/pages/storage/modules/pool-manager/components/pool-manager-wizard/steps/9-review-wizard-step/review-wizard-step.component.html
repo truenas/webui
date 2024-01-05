@@ -77,7 +77,7 @@
     matStepperPrevious
     color="accent"
     type="button"
-    ixTest="back"
+    ixTest="back-review"
   >
     {{ 'Back' | translate }}
   </button>
@@ -103,6 +103,7 @@
   </button>
 
   <button
+    *ixRequiresRoles="[Role.FullAdmin]"
     mat-button
     matStepperNext
     color="primary"

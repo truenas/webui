@@ -1,5 +1,6 @@
 <div *ngIf="canChangeLayout; else showLayoutInfo" class="layout-container">
   <ix-select
+    [ixTestOverride]="['layout', type]"
     [formControl]="layoutControl"
     [label]="'Layout' | translate"
     [tooltip]="'Select VDEV layout. This is the first step in setting up your VDEVs.' | translate"
@@ -10,6 +11,7 @@
 <ng-template #showLayoutInfo>
   <ix-input
     *ngIf="isDataVdev || isMetadataVdev"
+    [ixTestOverride]="['layout', type]"
     [formControl]="layoutControl"
     [label]="'Layout' | translate"
     [readonly]="true"

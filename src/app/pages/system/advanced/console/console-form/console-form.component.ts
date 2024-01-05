@@ -6,9 +6,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { of, Subscription } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSystemAdvanced as helptext } from 'app/helptext/system/advanced';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -37,6 +37,7 @@ export class ConsoleFormComponent implements OnInit {
 
   subscriptions: Subscription[] = [];
 
+  protected readonly Role = Role;
   readonly tooltips = {
     consolemenu: helptext.consolemenu_tooltip,
     serialconsole: helptext.serialconsole_tooltip,
@@ -81,9 +82,9 @@ export class ConsoleFormComponent implements OnInit {
           this.isFormLoading = false;
           this.cdr.markForCheck();
         },
-        error: (error: WebsocketError) => {
+        error: (error: unknown) => {
           this.isFormLoading = false;
-          this.dialogService.error(this.errorHandler.parseWsError(error));
+          this.dialogService.error(this.errorHandler.parseError(error));
           this.cdr.markForCheck();
         },
       });
@@ -106,7 +107,7 @@ export class ConsoleFormComponent implements OnInit {
         this.cdr.markForCheck();
         this.slideInRef.close();
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.isFormLoading = false;
         this.formErrorHandler.handleWsFormError(error, this.form);
         this.cdr.markForCheck();

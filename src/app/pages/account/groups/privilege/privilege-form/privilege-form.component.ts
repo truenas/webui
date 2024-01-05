@@ -84,6 +84,8 @@ export class PrivilegeFormComponent implements OnInit {
     );
   };
 
+  protected readonly Role = Role;
+
   constructor(
     private formBuilder: FormBuilder,
     private translate: TranslateService,
@@ -130,7 +132,7 @@ export class PrivilegeFormComponent implements OnInit {
         this.slideInRef.close(true);
         this.cdr.markForCheck();
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.isLoading = false;
         this.errorHandler.handleWsFormError(error, this.form);
         this.cdr.markForCheck();

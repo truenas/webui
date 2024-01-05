@@ -40,7 +40,7 @@ import { inherit, WithInherit } from 'app/enums/with-inherit.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { choicesToOptions, singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
-import helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
+import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
@@ -82,7 +82,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     compression: [inherit as WithInherit<string>],
     atime: [inherit as WithInherit<OnOff>],
     deduplication: [inherit as WithInherit<DeduplicationSetting>],
-    checksum: [inherit as WithInherit<string>],
+    checksum: [inherit as WithInherit<DatasetChecksum>],
     readonly: [inherit as WithInherit<OnOff>],
     exec: [inherit as WithInherit<OnOff>],
     snapdir: [null as WithInherit<DatasetSnapdir>],
@@ -134,7 +134,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   );
   private defaultSpecialSmallBlockSizeOptions$ = of(specialSmallBlockSizeOptions);
 
-  readonly helptext = helptext;
+  readonly helptext = helptextDatasetForm;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -379,7 +379,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
       .subscribe(() => {
         this.dialogService.warn(
           this.translate.instant('ACL Types & ACL Modes'),
-          helptext.acl_type_change_warning,
+          helptextDatasetForm.acl_type_change_warning,
         );
       });
   }
@@ -390,7 +390,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
       hideCancel: true,
       title: this.translate.instant('Default Checksum Warning'),
       hideCheckbox: true,
-      message: this.translate.instant(helptext.deduplicationWarning),
+      message: this.translate.instant(helptextDatasetForm.deduplicationWarning),
       buttonText: this.translate.instant('OK'),
     });
   }
@@ -436,7 +436,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
       if (value === DatasetSync.Disabled && this.form.controls.sync.dirty) {
         this.dialogService.confirm({
           title: this.translate.instant('Warning'),
-          message: helptext.dataset_form_sync_disabled_warning,
+          message: helptextDatasetForm.dataset_form_sync_disabled_warning,
           buttonText: this.translate.instant('Okay'),
           hideCheckbox: true,
           hideCancel: true,

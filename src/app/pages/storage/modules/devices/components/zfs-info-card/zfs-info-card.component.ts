@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, switchMap, tap } from 'rxjs/operators';
+import { Role } from 'app/enums/role.enum';
 import { VdevType, TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { Disk, isTopologyDisk, TopologyItem } from 'app/interfaces/storage.interface';
@@ -32,6 +33,8 @@ export class ZfsInfoCardComponent {
   @Input() topologyCategory: VdevType;
   @Input() poolId: number;
   @Input() hasTopLevelRaidz: boolean;
+
+  protected readonly Role = Role;
 
   get isMirror(): boolean {
     return this.topologyItem.type === TopologyItemType.Mirror;

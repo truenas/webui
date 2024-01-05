@@ -8,7 +8,7 @@ import { of, timer } from 'rxjs';
 import {
   filter, map, switchMap, tap,
 } from 'rxjs/operators';
-import helptext from 'app/helptext/storage/volumes/manager/manager';
+import { helptextManager } from 'app/helptext/storage/volumes/manager/manager';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 
@@ -58,7 +58,7 @@ export class EnclosureWizardStepComponent implements OnInit, OnChanges {
     },
   ]);
 
-  protected readonly helptext = helptext;
+  protected readonly helptext = helptextManager;
 
   constructor(
     private store: PoolManagerStore,

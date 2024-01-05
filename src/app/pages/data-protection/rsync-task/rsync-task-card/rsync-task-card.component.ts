@@ -8,10 +8,10 @@ import {
   catchError, EMPTY, filter, map, of, switchMap, tap,
 } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
+import { Role } from 'app/enums/role.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { Job } from 'app/interfaces/job.interface';
 import { RsyncTaskUi, RsyncTaskUpdate } from 'app/interfaces/rsync-task.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { relativeDateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
@@ -41,8 +41,7 @@ import { AppState } from 'app/store';
 export class RsyncTaskCardComponent implements OnInit {
   rsyncTasks: RsyncTaskUi[] = [];
   dataProvider: AsyncDataProvider<RsyncTaskUi>;
-  jobStates = new Map<number, string>();
-  readonly jobState = JobState;
+  jobStates = new Map<number, JobState>();
 
   columns = createTable<RsyncTaskUi>([
     textColumn({
@@ -68,6 +67,7 @@ export class RsyncTaskCardComponent implements OnInit {
     toggleColumn({
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
+      requiresRoles: [Role.FullAdmin],
       onRowToggle: (row: RsyncTaskUi) => this.onChangeEnabledState(row),
     }),
     stateButtonColumn({
@@ -87,18 +87,20 @@ export class RsyncTaskCardComponent implements OnInit {
         {
           iconName: 'play_arrow',
           tooltip: this.translate.instant('Run job'),
+          requiresRoles: [Role.FullAdmin],
           hidden: (row) => of(row.job?.state === JobState.Running),
           onClick: (row) => this.runNow(row),
         },
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
+          requiresRoles: [Role.FullAdmin],
           onClick: (row) => this.doDelete(row),
         },
       ],
     }),
   ], {
-    rowTestId: (row) => 'card-rsync-task-' + row.id.toString(),
+    rowTestId: (row) => 'card-rsync-task-' + row.path + '-' + row.remotehost,
   });
 
   constructor(
@@ -172,9 +174,9 @@ export class RsyncTaskCardComponent implements OnInit {
           name: `${row.remotehost || row.path} ${row.remotemodule ? '- ' + row.remotemodule : ''}`,
         }),
       )),
-      catchError((error: Job) => {
+      catchError((error: unknown) => {
         this.getRsyncTasks();
-        this.dialogService.error(this.errorHandler.parseJobError(error));
+        this.dialogService.error(this.errorHandler.parseError(error));
         return EMPTY;
       }),
       untilDestroyed(this),
@@ -214,9 +216,9 @@ export class RsyncTaskCardComponent implements OnInit {
         next: () => {
           this.getRsyncTasks();
         },
-        error: (err: WebsocketError) => {
+        error: (err: unknown) => {
           this.getRsyncTasks();
-          this.dialogService.error(this.errorHandler.parseWsError(err));
+          this.dialogService.error(this.errorHandler.parseError(err));
         },
       });
   }

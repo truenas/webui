@@ -17,6 +17,8 @@ import { WebsocketConnectionService } from 'app/services/websocket-connection.se
 export class PowerMenuComponent {
   readonly tooltips = helptextTopbar.mat_tooltips;
 
+  protected isSysAdmin$ = this.authService.isSysAdmin$;
+
   constructor(
     private authService: AuthService,
     private translate: TranslateService,

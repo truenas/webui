@@ -7,6 +7,7 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
@@ -65,6 +66,7 @@ describe('NfsCardComponent', () => {
       ),
     ],
     providers: [
+      mockAuth(),
       mockWebsocket([
         mockCall('sharing.nfs.query', nfsShares),
         mockCall('sharing.nfs.delete'),
@@ -121,7 +123,7 @@ describe('NfsCardComponent', () => {
     await editButton.click();
 
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(NfsFormComponent, {
-      data: expect.objectContaining(nfsShares[0]),
+      data: { existingNfsShare: expect.objectContaining(nfsShares[0]) },
     });
   });
 

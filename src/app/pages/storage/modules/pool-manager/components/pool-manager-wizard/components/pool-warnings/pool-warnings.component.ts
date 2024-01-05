@@ -9,7 +9,7 @@ import _ from 'lodash';
 import {
   of, Observable, combineLatest, startWith,
 } from 'rxjs';
-import helptext from 'app/helptext/storage/volumes/manager/manager';
+import { helptextManager } from 'app/helptext/storage/volumes/manager/manager';
 import { Option } from 'app/interfaces/option.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { getNonUniqueSerialDisksWarning } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/pool-warnings/get-non-unique-serial-disks';
@@ -29,7 +29,7 @@ export class PoolWarningsComponent implements OnInit {
     allowExportedPools: [[] as string[]],
   });
 
-  exportedPoolsWarning = this.translate.instant(helptext.manager_exportedDisksWarning);
+  exportedPoolsWarning = this.translate.instant(helptextManager.manager_exportedDisksWarning);
 
   nonUniqueSerialDisks: UnusedDisk[] = [];
   nonUniqueSerialDisksTooltip: string;

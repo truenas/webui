@@ -8,6 +8,7 @@ import {
   filter, map, switchMap, tap,
 } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
+import { Role } from 'app/enums/role.enum';
 import { RsyncTask } from 'app/interfaces/rsync-task.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import {
@@ -132,6 +133,7 @@ export class RsyncTaskListComponent implements OnInit {
         {
           iconName: 'play_arrow',
           tooltip: this.translate.instant('Run job'),
+          requiresRoles: [Role.FullAdmin],
           onClick: (row) => this.runNow(row),
         },
         {
@@ -142,12 +144,13 @@ export class RsyncTaskListComponent implements OnInit {
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
+          requiresRoles: [Role.FullAdmin],
           onClick: (row) => this.delete(row),
         },
       ],
     }),
   ], {
-    rowTestId: (row) => 'rsync-task-' + row.id.toString(),
+    rowTestId: (row) => 'rsync-task-' + row.path + '-' + row.remotehost,
   });
 
   private allTasks: RsyncTask[] = [];

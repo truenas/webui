@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, from, switchMap } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { Tunable } from 'app/interfaces/tunable.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
@@ -57,11 +58,12 @@ export class SysctlCardComponent implements OnInit {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.onDelete(row),
+          requiresRoles: [Role.FullAdmin],
         },
       ],
     }),
   ], {
-    rowTestId: (row) => 'sysctl-' + row.id.toString(),
+    rowTestId: (row) => 'sysctl-' + row.var + '-' + row.value,
   });
 
   constructor(

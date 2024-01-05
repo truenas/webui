@@ -5,7 +5,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { of } from 'rxjs';
-import helptext from 'app/helptext/storage/volumes/datasets/dataset-acl';
+import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { AclTemplateByPath } from 'app/interfaces/acl.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
@@ -21,7 +21,6 @@ import { WebSocketService } from 'app/services/ws.service';
 @UntilDestroy()
 @Component({
   templateUrl: 'select-preset-modal.component.html',
-  styleUrls: ['./select-preset-modal.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SelectPresetModalComponent implements OnInit {
@@ -38,17 +37,17 @@ export class SelectPresetModalComponent implements OnInit {
 
   readonly usePresetOptions$ = of([
     {
-      label: helptext.type_dialog.radio_preset,
-      tooltip: helptext.type_dialog.radio_preset_tooltip,
+      label: helptextAcl.type_dialog.radio_preset,
+      tooltip: helptextAcl.type_dialog.radio_preset_tooltip,
       value: true,
     },
     {
-      label: helptext.type_dialog.radio_custom,
+      label: helptextAcl.type_dialog.radio_custom,
       value: false,
     },
   ]);
 
-  readonly helptext = helptext.type_dialog;
+  readonly helptext = helptextAcl.type_dialog;
 
   constructor(
     private dialogRef: MatDialogRef<SelectPresetModalComponent>,

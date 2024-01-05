@@ -43,13 +43,20 @@
   >
     <!-- Do not remove #treeNodeTemplate even though it appears to be unused -->
     <ng-template #treeNodeTemplate let-node>
-      <span *ngIf="typeNode(node) as node" [class.selected]="isPathSelected(node.data.path)">
+      <span *ngIf="typeNode(node) as node" class="node-container" [class.selected]="isPathSelected(node.data.path)">
         <ng-container *ngIf="node.data.type === ExplorerNodeType.File; else folderIcon">
           <ix-icon name="insert_drive_file"></ix-icon>
         </ng-container>
 
         <ng-template #folderIcon>
-          <ix-icon name="folder"></ix-icon>
+          <ng-container *ngIf="!node.data.isLock; else lockIcon">
+            <ix-icon *ngIf="node.data.isMountpoint" name="folder"></ix-icon>
+            <ix-icon *ngIf="!node.data.isMountpoint" name="folder_open"></ix-icon>
+          </ng-container>
+        </ng-template>
+
+        <ng-template #lockIcon>
+          <ix-icon *ngIf="node.data.isLock" name="mdi-folder-lock"></ix-icon>
         </ng-template>
 
         <span class="node-name">{{ node.data.name }}</span>

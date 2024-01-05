@@ -5,9 +5,9 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
-import helptext from 'app/helptext/services/components/service-snmp';
+import { Role } from 'app/enums/role.enum';
+import { helptextServiceSmart } from 'app/helptext/services/components/service-snmp';
 import { SnmpConfigUpdate } from 'app/interfaces/snmp-config.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
@@ -50,22 +50,23 @@ export class ServiceSnmpComponent implements OnInit {
   });
 
   readonly tooltips = {
-    location: helptext.location_tooltip,
-    contact: helptext.contact_tooltip,
-    community: helptext.community_tooltip,
-    v3: helptext.v3_tooltip,
-    v3_username: helptext.v3_username_tooltip,
-    v3_authtype: helptext.v3_authtype_tooltip,
-    v3_password: helptext.v3_password_tooltip,
-    v3_privproto: helptext.v3_privproto_tooltip,
-    v3_privpassphrase: helptext.v3_privpassphrase_tooltip,
-    options: helptext.options_tooltip,
-    loglevel: helptext.loglevel_tooltip,
+    location: helptextServiceSmart.location_tooltip,
+    contact: helptextServiceSmart.contact_tooltip,
+    community: helptextServiceSmart.community_tooltip,
+    v3: helptextServiceSmart.v3_tooltip,
+    v3_username: helptextServiceSmart.v3_username_tooltip,
+    v3_authtype: helptextServiceSmart.v3_authtype_tooltip,
+    v3_password: helptextServiceSmart.v3_password_tooltip,
+    v3_privproto: helptextServiceSmart.v3_privproto_tooltip,
+    v3_privpassphrase: helptextServiceSmart.v3_privpassphrase_tooltip,
+    options: helptextServiceSmart.options_tooltip,
+    loglevel: helptextServiceSmart.loglevel_tooltip,
   };
 
-  readonly authtypeOptions$ = of(helptext.v3_authtype_options);
-  readonly privprotoOptions$ = of(helptext.v3_privproto_options);
-  readonly logLevelOptions$ = of(helptext.loglevel_options);
+  readonly authtypeOptions$ = of(helptextServiceSmart.v3_authtype_options);
+  readonly privprotoOptions$ = of(helptextServiceSmart.v3_privproto_options);
+  readonly logLevelOptions$ = of(helptextServiceSmart.loglevel_options);
+  protected readonly Role = Role;
 
   get isV3SupportEnabled(): boolean {
     return this.form?.value?.v3;
@@ -106,7 +107,7 @@ export class ServiceSnmpComponent implements OnInit {
         this.slideInRef.close();
         this.cdr.markForCheck();
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.isFormLoading = false;
         this.formErrorHandler.handleWsFormError(error, this.form);
         this.cdr.markForCheck();
@@ -122,8 +123,8 @@ export class ServiceSnmpComponent implements OnInit {
         this.form.patchValue(config);
         this.cdr.markForCheck();
       },
-      error: (error: WebsocketError) => {
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+      error: (error: unknown) => {
+        this.dialogService.error(this.errorHandler.parseError(error));
         this.isFormLoading = false;
         this.cdr.markForCheck();
       },

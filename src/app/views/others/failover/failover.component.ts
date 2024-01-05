@@ -4,7 +4,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AlertSlice } from 'app/modules/alerts/store/alert.selectors';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -52,8 +51,8 @@ export class FailoverComponent implements OnInit {
     this.location.replaceState('/sessions/signin');
     this.matDialog.closeAll();
     this.ws.call('failover.become_passive').pipe(untilDestroyed(this)).subscribe({
-      error: (error: WebsocketError) => { // error on reboot
-        this.dialogService.error(this.errorHandler.parseWsError(error))
+      error: (error: unknown) => { // error on reboot
+        this.dialogService.error(this.errorHandler.parseError(error))
           .pipe(untilDestroyed(this))
           .subscribe(() => {
             this.router.navigate(['/sessions/signin']);

@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
-import helptext from 'app/helptext/storage/volumes/manager/manager';
+import { helptextManager } from 'app/helptext/storage/volumes/manager/manager';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 
 @UntilDestroy()
@@ -20,7 +20,7 @@ export class DedupWizardStepComponent {
   canChangeLayout = true;
 
   protected readonly VdevType = VdevType;
-  readonly helptext = helptext;
+  readonly helptext = helptextManager;
 
   protected readonly inventory$ = this.store.getInventoryForStep(VdevType.Dedup);
   protected allowedLayouts = [CreateVdevLayout.Mirror, CreateVdevLayout.Stripe];

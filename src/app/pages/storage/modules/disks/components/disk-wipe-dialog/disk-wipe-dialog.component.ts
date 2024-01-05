@@ -6,7 +6,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { DiskWipeMethod } from 'app/enums/disk-wipe-method.enum';
-import helptext from 'app/helptext/storage/disks/disks';
+import { Role } from 'app/enums/role.enum';
+import { helptextDisks } from 'app/helptext/storage/disks/disks';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -23,7 +24,7 @@ export class DiskWipeDialogComponent {
   });
 
   readonly tooltips = {
-    wipe_method: helptext.dw_wipe_method_tooltip,
+    wipe_method: helptextDisks.dw_wipe_method_tooltip,
   };
 
   readonly wipeMethods$ = of([
@@ -38,6 +39,8 @@ export class DiskWipeDialogComponent {
       value: DiskWipeMethod.FullRandom,
     },
   ]);
+
+  protected readonly Role = Role;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -72,7 +75,7 @@ export class DiskWipeDialogComponent {
       },
     });
     const jobComponent = jobDialogRef.componentInstance;
-    jobComponent.setDescription(helptext.diskWipeDialogForm.startDescription);
+    jobComponent.setDescription(helptextDisks.diskWipeDialogForm.startDescription);
     jobComponent.setCall(
       'disk.wipe',
       [this.data.diskName, this.form.value.wipe_method],
@@ -83,7 +86,7 @@ export class DiskWipeDialogComponent {
         this.dialogRef.close();
         this.dialogService.generalDialog({
           title: this.title,
-          message: helptext.diskWipeDialogForm.infoContent,
+          message: helptextDisks.diskWipeDialogForm.infoContent,
           hideCancel: true,
         });
       },

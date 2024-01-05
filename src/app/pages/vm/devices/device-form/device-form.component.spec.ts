@@ -649,7 +649,7 @@ describe('DeviceFormComponent', () => {
       dtype: VmDeviceType.Display,
       attributes: {
         bind: '0.0.0.0',
-        password: '12345678',
+        password: '12345678910',
         web: true,
         type: VmDisplayType.Spice,
         resolution: '1024x768',
@@ -683,7 +683,7 @@ describe('DeviceFormComponent', () => {
         expect(values).toEqual({
           Bind: '0.0.0.0',
           'Device Order': '1002',
-          Password: '12345678',
+          Password: '12345678910',
           Port: '5900',
           Resolution: '1024x768',
           'Web Interface': true,

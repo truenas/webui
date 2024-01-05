@@ -5,7 +5,8 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
-import helptext from 'app/helptext/network/static-routes/static-routes';
+import { Role } from 'app/enums/role.enum';
+import { helptextStaticRoutes } from 'app/helptext/network/static-routes/static-routes';
 import { StaticRoute, UpdateStaticRoute } from 'app/interfaces/static-route.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
@@ -35,10 +36,12 @@ export class StaticRouteFormComponent implements OnInit {
   });
 
   readonly tooltips = {
-    destination: helptext.sr_destination_tooltip,
-    gateway: helptext.sr_gateway_tooltip,
-    description: helptext.sr_description_tooltip,
+    destination: helptextStaticRoutes.sr_destination_tooltip,
+    gateway: helptextStaticRoutes.sr_gateway_tooltip,
+    description: helptextStaticRoutes.sr_description_tooltip,
   };
+
+  protected readonly Role = Role;
 
   constructor(
     private fb: FormBuilder,
@@ -86,8 +89,9 @@ export class StaticRouteFormComponent implements OnInit {
         this.cdr.markForCheck();
         this.slideInRef.close(true);
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.isFormLoading = false;
+        this.cdr.markForCheck();
         this.errorHandler.handleWsFormError(error, this.form);
       },
     });

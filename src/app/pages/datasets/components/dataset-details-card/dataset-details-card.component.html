@@ -81,15 +81,22 @@
     </div>
   </mat-card-content>
   <mat-card-actions *ngIf="dataset.id !== dataset.pool">
+    <ng-container *ixRequiresRoles="[Role.FullAdmin]">
+      <button
+        *ngIf="canBePromoted"
+        mat-button
+        ixTest="promote-dataset"
+        (click)="promoteDataset()"
+      >
+        {{ 'Promote' | translate }}
+      </button>
+    </ng-container>
     <button
-      *ngIf="canBePromoted"
+      *ixRequiresRoles="[Role.DatasetDelete]"
       mat-button
-      ixTest="promote-dataset"
-      (click)="promoteDataset()"
+      ixTest="delete-dataset"
+      (click)="deleteDataset()"
     >
-      {{ 'Promote' | translate }}
-    </button>
-    <button mat-button ixTest="delete-dataset" (click)="deleteDataset()">
       {{ 'Delete' | translate }}
     </button>
   </mat-card-actions>

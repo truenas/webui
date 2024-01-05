@@ -13,6 +13,7 @@ import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolScrubAction } from 'app/enums/pool-scrub-action.enum';
 import { PoolStatus, poolStatusLabels } from 'app/enums/pool-status.enum';
+import { Role } from 'app/enums/role.enum';
 import { LoadingState, toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { secondsToDuration } from 'app/helpers/time.helpers';
 import { Pool, PoolScanUpdate } from 'app/interfaces/pool.interface';
@@ -42,6 +43,8 @@ export class ZfsHealthCardComponent implements OnChanges {
   hasScrubTask$: Observable<LoadingState<boolean>>;
 
   readonly poolStatusLabels = poolStatusLabels;
+
+  protected readonly Role = Role;
 
   constructor(
     private ws: WebSocketService,

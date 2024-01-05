@@ -6,16 +6,17 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { map, of } from 'rxjs';
 import {
-  DatasetEncryptionType, DatasetRecordSize, DatasetSnapdev, DatasetSync, DatasetType,
+  DatasetRecordSize, DatasetSnapdev, DatasetSync, DatasetType,
 } from 'app/enums/dataset.enum';
 import { DeduplicationSetting } from 'app/enums/deduplication-setting.enum';
+import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { OnOff } from 'app/enums/on-off.enum';
+import { Role } from 'app/enums/role.enum';
 import { inherit } from 'app/enums/with-inherit.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
-import helptext from 'app/helptext/storage/volumes/zvol-form';
+import { helptextZvol } from 'app/helptext/storage/volumes/zvol-form';
 import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -70,15 +71,15 @@ interface ZvolFormData {
 export class ZvolFormComponent implements OnInit {
   get title(): string {
     return this.isNew
-      ? this.translate.instant(helptext.zvol_title_add)
-      : this.translate.instant(helptext.zvol_title_edit);
+      ? this.translate.instant(helptextZvol.zvol_title_add)
+      : this.translate.instant(helptextZvol.zvol_title_edit);
   }
 
-  readonly helptext = helptext;
+  readonly helptext = helptextZvol;
   parentId: string;
   isNew = true;
   isLoading = false;
-  inheritEncryptPlaceholder: string = helptext.dataset_form_encryption.inherit_checkbox_placeholder;
+  inheritEncryptPlaceholder: string = helptextZvol.dataset_form_encryption.inherit_checkbox_placeholder;
   namesInUse: string[] = [];
   volBlockSizeWarning: string;
 
@@ -92,6 +93,8 @@ export class ZvolFormComponent implements OnInit {
   protected minimumRecommendedBlockSize: DatasetRecordSize;
   protected origVolSize: number;
   protected origHuman: string | number;
+
+  protected readonly Role = Role;
 
   form = this.formBuilder.group({
     name: ['', [Validators.required, forbiddenValues(this.namesInUse)]],
@@ -266,16 +269,16 @@ export class ZvolFormComponent implements OnInit {
 
               this.cdr.markForCheck();
             },
-            error: (error: WebsocketError): void => {
-              this.dialogService.error(this.errorHandler.parseWsError(error));
+            error: (error: unknown): void => {
+              this.dialogService.error(this.errorHandler.parseError(error));
             },
           });
         }
         this.isLoading = false;
         this.cdr.markForCheck();
       },
-      error: (error: WebsocketError): void => {
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+      error: (error: unknown): void => {
+        this.dialogService.error(this.errorHandler.parseError(error));
       },
     });
   }
@@ -310,15 +313,15 @@ export class ZvolFormComponent implements OnInit {
     this.encryptedParent = parent.encrypted;
     this.encryptionAlgorithm = parent.encryption_algorithm.value;
 
-    this.inheritEncryptPlaceholder = helptext.dataset_form_encryption.inherit_checkbox_notencrypted;
+    this.inheritEncryptPlaceholder = helptextZvol.dataset_form_encryption.inherit_checkbox_notencrypted;
     if (this.encryptedParent) {
-      if (parent.key_format.value === DatasetEncryptionType.Passphrase) {
+      if (parent.key_format.value === EncryptionKeyFormat.Passphrase) {
         this.passphraseParent = true;
         // if parent is passphrase this dataset cannot be a key type
         this.encryptionType = 'passphrase';
         this.form.controls.encryption_type.disable();
       }
-      this.inheritEncryptPlaceholder = helptext.dataset_form_encryption.inherit_checkbox_encrypted;
+      this.inheritEncryptPlaceholder = helptextZvol.dataset_form_encryption.inherit_checkbox_encrypted;
     }
 
     if (this.isNew) {
@@ -450,8 +453,8 @@ export class ZvolFormComponent implements OnInit {
       // if on an encrypted parent we should warn the user, otherwise just disable the fields
         if (this.encryptedParent && !encryption && !this.nonEncryptedWarned) {
           this.dialogService.confirm({
-            title: helptext.dataset_form_encryption.non_encrypted_warning_title,
-            message: helptext.dataset_form_encryption.non_encrypted_warning_warning,
+            title: helptextZvol.dataset_form_encryption.non_encrypted_warning_title,
+            message: helptextZvol.dataset_form_encryption.non_encrypted_warning_warning,
           }).pipe(untilDestroyed(this)).subscribe((isConfirm) => {
             this.nonEncryptedWarned = true;
             if (isConfirm) {
@@ -607,7 +610,7 @@ export class ZvolFormComponent implements OnInit {
 
     this.ws.call('pool.dataset.create', [data as DatasetCreate]).pipe(untilDestroyed(this)).subscribe({
       next: (dataset) => this.handleZvolCreateUpdate(dataset),
-      error: (error) => {
+      error: (error: unknown) => {
         this.isLoading = false;
         this.formErrorHandler.handleWsFormError(error, this.form);
         this.cdr.markForCheck();
@@ -667,7 +670,7 @@ export class ZvolFormComponent implements OnInit {
         if (!data.volsize || data.volsize >= roundedVolSize) {
           this.ws.call('pool.dataset.update', [this.parentId, data as DatasetUpdate]).pipe(untilDestroyed(this)).subscribe({
             next: (dataset) => this.handleZvolCreateUpdate(dataset),
-            error: (error) => {
+            error: (error: unknown) => {
               this.isLoading = false;
               this.formErrorHandler.handleWsFormError(error, this.form);
               this.cdr.markForCheck();
@@ -676,14 +679,14 @@ export class ZvolFormComponent implements OnInit {
         } else {
           this.isLoading = false;
           this.dialogService.error({
-            title: helptext.zvol_save_errDialog.title,
-            message: helptext.zvol_save_errDialog.msg,
+            title: helptextZvol.zvol_save_errDialog.title,
+            message: helptextZvol.zvol_save_errDialog.msg,
           });
           this.slideInRef.close(false);
         }
       },
-      error: (error: WebsocketError): void => {
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+      error: (error: unknown): void => {
+        this.dialogService.error(this.errorHandler.parseError(error));
         this.isLoading = false;
         this.cdr.markForCheck();
       },
@@ -719,7 +722,7 @@ export class ZvolFormComponent implements OnInit {
           return;
         }
 
-        this.volBlockSizeWarning = `${this.translate.instant(helptext.blocksize_warning.a)} ${this.minimumRecommendedBlockSize}. ${this.translate.instant(helptext.blocksize_warning.b)}`;
+        this.volBlockSizeWarning = `${this.translate.instant(helptextZvol.blocksize_warning.a)} ${this.minimumRecommendedBlockSize}. ${this.translate.instant(helptextZvol.blocksize_warning.b)}`;
       });
   }
 

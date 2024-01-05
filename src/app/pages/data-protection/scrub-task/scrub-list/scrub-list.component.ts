@@ -4,6 +4,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, switchMap } from 'rxjs/operators';
+import { Role } from 'app/enums/role.enum';
 import { PoolScrubTask } from 'app/interfaces/pool-scrub.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import {
@@ -82,12 +83,13 @@ export class ScrubListComponent implements OnInit {
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
+          requiresRoles: [Role.FullAdmin],
           onClick: (row) => this.onDelete(row),
         },
       ],
     }),
   ], {
-    rowTestId: (row) => 'scrub-task-' + row.id.toString(),
+    rowTestId: (row) => 'scrub-task-' + row.pool + '-' + row.description,
   });
 
   constructor(

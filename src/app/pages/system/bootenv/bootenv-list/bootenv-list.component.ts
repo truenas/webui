@@ -16,6 +16,7 @@ import {
 } from 'rxjs/operators';
 import { BootEnvironmentAction } from 'app/enums/boot-environment-action.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
+import { Role } from 'app/enums/role.enum';
 import { helptextSystemBootenv } from 'app/helptext/system/boot-env';
 import { Bootenv } from 'app/interfaces/bootenv.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -47,7 +48,7 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   @ViewChild(IxCheckboxColumnComponent, { static: false }) checkboxColumn: IxCheckboxColumnComponent<Bootenv>;
   defaultSort: Sort = { active: 'created', direction: 'desc' };
-
+  protected readonly Role = Role;
   isLoading$ = new BehaviorSubject(false);
   isError$ = new BehaviorSubject(false);
   isNoData$ = new BehaviorSubject(false);
@@ -115,13 +116,6 @@ export class BootEnvironmentListComponent implements OnInit, AfterViewInit {
 
   openBootenvStats(): void {
     this.matDialog.open(BootenvStatsDialogComponent);
-  }
-
-  doAdd(): void {
-    const slideInRef = this.slideInService.open(BootEnvironmentFormComponent, {
-      data: { operation: BootEnvironmentAction.Create },
-    });
-    this.handleSlideInClosed(slideInRef);
   }
 
   doRename(bootenv: Bootenv): void {

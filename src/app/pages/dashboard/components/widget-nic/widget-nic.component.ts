@@ -23,7 +23,7 @@ interface NetTraffic {
 }
 
 interface Slide {
-  name: string;
+  name: Path;
   index?: string;
 }
 
@@ -56,7 +56,7 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
 
   readonly LinkState = LinkState;
   readonly NetworkInterfaceAliasType = NetworkInterfaceAliasType;
-  readonly PathEnum = Path;
+  readonly Path = Path;
 
   get currentSlideName(): string {
     return this.path[parseInt(this.currentSlide)].name;
@@ -70,9 +70,9 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
   title = this.defaultTitle;
 
   path: Slide[] = [
-    { name: this.PathEnum.Overview },
-    { name: this.PathEnum.Empty },
-    { name: this.PathEnum.Empty },
+    { name: Path.Overview },
+    { name: Path.Empty },
+    { name: Path.Empty },
   ];
 
   get ipAddresses(): NetworkInterfaceAlias[] {
@@ -134,9 +134,9 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
     });
   }
 
-  updateSlide(name: string, verified: boolean, slideIndex: number, dataIndex?: number): void {
-    if (name !== this.PathEnum.Overview && !verified) { return; }
-    const slide: Slide = {
+  updateSlide(name: Path, verified: boolean, slideIndex: number, dataIndex?: number): void {
+    if (name !== this.Path.Overview && !verified) { return; }
+    const slide = {
       name,
       index: typeof dataIndex !== 'undefined' ? dataIndex.toString() : null,
     };

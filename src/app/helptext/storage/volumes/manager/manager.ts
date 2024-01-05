@@ -1,6 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export default {
+export const helptextManager = {
   manager_sizeMessage: T('Estimated total raw data capacity'),
 
   manager_extendedSizeMessage: T('Estimated data capacity available after extension.'),

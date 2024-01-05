@@ -55,6 +55,10 @@
     // Wrap long file names
     word-break: break-all;
   }
+
+  .node-container {
+    display: flex;
+  }
 }
 
 .loading-error {

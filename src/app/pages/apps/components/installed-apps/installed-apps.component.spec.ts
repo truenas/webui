@@ -663,6 +663,13 @@ describe('Install app', () => {
           service_cidr: '172.17.0.0/16',
           cluster_dns_ip: '172.17.0.1',
         } as KubernetesConfig),
+        mockCall('container.image.dockerhub_rate_limit', {
+          total_pull_limit: 13,
+          total_time_limit_in_secs: 21600,
+          remaining_pull_limit: 3,
+          remaining_time_limit_in_secs: 21600,
+          error: null,
+        }),
       ]),
       mockProvider(MatDialog, {
         open: jest.fn(() => mockEntityJobComponentRef),

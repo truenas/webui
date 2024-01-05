@@ -2,10 +2,10 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { VmCpuMode } from 'app/enums/vm.enum';
 import { helptextGlobal } from 'app/helptext/global-helptext';
 
-export default {
+export const helptextVmWizard = {
   os_tooltip: T('Choose the VM operating system type.'),
   name_tooltip: T('Enter an alphanumeric name for the virtual machine.'),
-  password_tooltip: T('Enter a password for the virtual machine.'),
+  password_tooltip: T('Enter a password for the VNC display.'),
   description_tooltip: T('Description (optional).'),
   time_tooltip: T('VM system time. Default is <i>Local</i>.'),
   bootloader_tooltip: T('Select <i>UEFI</i> for newer operating systems or\

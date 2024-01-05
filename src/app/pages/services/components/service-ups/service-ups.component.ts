@@ -5,9 +5,10 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { UpsMode } from 'app/enums/ups-mode.enum';
 import { choicesToOptions, singleArrayToOptions } from 'app/helpers/operators/options.operators';
-import helptext from 'app/helptext/services/components/service-ups';
+import { helptextServiceUps } from 'app/helptext/services/components/service-ups';
 import { UpsConfigUpdate } from 'app/interfaces/ups-config.interface';
 import { SimpleAsyncComboboxProvider } from 'app/modules/ix-forms/classes/simple-async-combobox-provider';
 import { IxComboboxProvider } from 'app/modules/ix-forms/components/ix-combobox/ix-combobox-provider';
@@ -30,7 +31,7 @@ export class ServiceUpsComponent implements OnInit {
 
   form = this.fb.group({
     identifier: [null as string, [Validators.required, Validators.pattern(/^[\w|,|.|\-|_]+$/)]],
-    mode: [null as string],
+    mode: [null as UpsMode],
     remotehost: [null as string, Validators.required],
     remoteport: [null as number, Validators.required],
     driver: [null as string, Validators.required],
@@ -50,36 +51,36 @@ export class ServiceUpsComponent implements OnInit {
     optionsupsd: [null as string],
   });
 
-  readonly helptext = helptext;
+  readonly helptext = helptextServiceUps;
   readonly labels = {
-    identifier: helptext.ups_identifier_placeholder,
-    mode: helptext.ups_mode_placeholder,
-    remotehost: helptext.ups_remotehost_placeholder,
-    remoteport: helptext.ups_remoteport_placeholder,
-    driver: helptext.ups_driver_placeholder,
-    port: helptext.ups_port_placeholder,
-    monuser: helptext.ups_monuser_placeholder,
-    monpwd: helptext.ups_monpwd_placeholder,
-    extrausers: helptext.ups_extrausers_placeholder,
-    rmonitor: helptext.ups_rmonitor_placeholder,
-    shutdown: helptext.ups_shutdown_placeholder,
-    shutdowntimer: helptext.ups_shutdowntimer_placeholder,
-    shutdowncmd: helptext.ups_shutdowncmd_placeholder,
-    powerdown: helptext.ups_powerdown_placeholder,
-    nocommwarntime: helptext.ups_nocommwarntime_placeholder,
-    hostsync: helptext.ups_hostsync_placeholder,
-    description: helptext.ups_description_placeholder,
-    options: helptext.ups_options_placeholder,
-    optionsupsd: helptext.ups_optionsupsd_placeholder,
+    identifier: helptextServiceUps.ups_identifier_placeholder,
+    mode: helptextServiceUps.ups_mode_placeholder,
+    remotehost: helptextServiceUps.ups_remotehost_placeholder,
+    remoteport: helptextServiceUps.ups_remoteport_placeholder,
+    driver: helptextServiceUps.ups_driver_placeholder,
+    port: helptextServiceUps.ups_port_placeholder,
+    monuser: helptextServiceUps.ups_monuser_placeholder,
+    monpwd: helptextServiceUps.ups_monpwd_placeholder,
+    extrausers: helptextServiceUps.ups_extrausers_placeholder,
+    rmonitor: helptextServiceUps.ups_rmonitor_placeholder,
+    shutdown: helptextServiceUps.ups_shutdown_placeholder,
+    shutdowntimer: helptextServiceUps.ups_shutdowntimer_placeholder,
+    shutdowncmd: helptextServiceUps.ups_shutdowncmd_placeholder,
+    powerdown: helptextServiceUps.ups_powerdown_placeholder,
+    nocommwarntime: helptextServiceUps.ups_nocommwarntime_placeholder,
+    hostsync: helptextServiceUps.ups_hostsync_placeholder,
+    description: helptextServiceUps.ups_description_placeholder,
+    options: helptextServiceUps.ups_options_placeholder,
+    optionsupsd: helptextServiceUps.ups_optionsupsd_placeholder,
   };
 
   readonly providers: Record<string, IxComboboxProvider> = {
     driver: new SimpleAsyncComboboxProvider(this.ws.call('ups.driver_choices').pipe(choicesToOptions())),
     port: new SimpleAsyncComboboxProvider(this.ws.call('ups.port_choices').pipe(singleArrayToOptions())),
   };
-
+  protected readonly Role = Role;
   readonly tooltips = {
-    identifier: helptext.ups_identifier_tooltip,
+    identifier: helptextServiceUps.ups_identifier_tooltip,
     mode: this.translate.instant(
       'Choose <i>Master</i> if the UPS is plugged directly\
       into the system serial port. The UPS will remain the\
@@ -89,27 +90,27 @@ export class ServiceUpsComponent implements OnInit {
       target="_blank">Network UPS Tools Overview</a>.',
       { url: 'https://networkupstools.org/docs/user-manual.chunked/ar01s02.html#_monitoring_client' },
     ),
-    remotehost: helptext.ups_remotehost_tooltip,
-    remoteport: helptext.ups_remoteport_tooltip,
-    driver: helptext.ups_driver_tooltip,
-    port: helptext.ups_port_tooltip,
-    monuser: helptext.ups_monuser_tooltip,
-    monpwd: helptext.ups_monpwd_tooltip,
-    extrausers: helptext.ups_extrausers_tooltip,
-    rmonitor: helptext.ups_rmonitor_tooltip,
-    shutdown: helptext.ups_shutdown_tooltip,
-    shutdowntimer: helptext.ups_shutdowntimer_tooltip,
-    shutdowncmd: helptext.ups_shutdowncmd_tooltip,
-    powerdown: helptext.ups_powerdown_tooltip,
-    nocommwarntime: helptext.ups_nocommwarntime_tooltip,
-    hostsync: helptext.ups_hostsync_tooltip,
-    description: helptext.ups_description_tooltip,
-    options: helptext.ups_options_tooltip,
-    optionsupsd: helptext.ups_optionsupsd_tooltip,
+    remotehost: helptextServiceUps.ups_remotehost_tooltip,
+    remoteport: helptextServiceUps.ups_remoteport_tooltip,
+    driver: helptextServiceUps.ups_driver_tooltip,
+    port: helptextServiceUps.ups_port_tooltip,
+    monuser: helptextServiceUps.ups_monuser_tooltip,
+    monpwd: helptextServiceUps.ups_monpwd_tooltip,
+    extrausers: helptextServiceUps.ups_extrausers_tooltip,
+    rmonitor: helptextServiceUps.ups_rmonitor_tooltip,
+    shutdown: helptextServiceUps.ups_shutdown_tooltip,
+    shutdowntimer: helptextServiceUps.ups_shutdowntimer_tooltip,
+    shutdowncmd: helptextServiceUps.ups_shutdowncmd_tooltip,
+    powerdown: helptextServiceUps.ups_powerdown_tooltip,
+    nocommwarntime: helptextServiceUps.ups_nocommwarntime_tooltip,
+    hostsync: helptextServiceUps.ups_hostsync_tooltip,
+    description: helptextServiceUps.ups_description_tooltip,
+    options: helptextServiceUps.ups_options_tooltip,
+    optionsupsd: helptextServiceUps.ups_optionsupsd_tooltip,
   };
 
-  readonly modeOptions$ = of(helptext.ups_mode_options);
-  readonly shutdownOptions$ = of(helptext.ups_shutdown_options);
+  readonly modeOptions$ = of(helptextServiceUps.ups_mode_options);
+  readonly shutdownOptions$ = of(helptextServiceUps.ups_shutdown_options);
 
   constructor(
     private ws: WebSocketService,
@@ -157,7 +158,7 @@ export class ServiceUpsComponent implements OnInit {
         },
         error: (error) => {
           this.isFormLoading = false;
-          this.dialogService.error(this.errorHandler.parseWsError(error));
+          this.dialogService.error(this.errorHandler.parseError(error));
           this.cdr.markForCheck();
         },
       });
@@ -183,7 +184,7 @@ export class ServiceUpsComponent implements OnInit {
           this.slideInRef.close();
           this.cdr.markForCheck();
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.isFormLoading = false;
           this.formErrorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();

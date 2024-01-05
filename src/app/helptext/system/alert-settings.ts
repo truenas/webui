@@ -1,6 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export default {
+export const helptextAlertSettings = {
   level_tooltip: T('Customizes the importance of the alert. Each level of \
  importance has a different icon and color to express the level of importance.'),
   policy_tooltip: T('Adjust how often alert notifications are sent, use \

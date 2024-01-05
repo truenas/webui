@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, Component, EventEmitter, OnInit, Output,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -9,6 +9,7 @@ import { isObject } from 'lodash';
 import {
   filter, map, of, tap,
 } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -37,6 +38,8 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CertificateListComponent implements OnInit {
+  @Output() certificateDeleted = new EventEmitter<void>();
+
   filterString = '';
   dataProvider: AsyncDataProvider<Certificate>;
   certificates: Certificate[] = [];
@@ -66,6 +69,7 @@ export class CertificateListComponent implements OnInit {
         },
         {
           iconName: 'mdi-undo',
+          requiresRoles: [Role.FullAdmin],
           tooltip: this.translate.instant('Revoke'),
           hidden: (row) => of(!row.can_be_revoked),
           onClick: (row) => this.doRevoke(row),
@@ -82,13 +86,14 @@ export class CertificateListComponent implements OnInit {
         },
         {
           iconName: 'delete',
+          requiresRoles: [Role.FullAdmin],
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
         },
       ],
     }),
   ], {
-    rowTestId: (row) => 'cert-' + row.id.toString(),
+    rowTestId: (row) => 'cert-' + row.name,
   });
 
   constructor(
@@ -96,7 +101,6 @@ export class CertificateListComponent implements OnInit {
     private ws: WebSocketService,
     private slideInService: IxSlideInService,
     private translate: TranslateService,
-    private cdr: ChangeDetectorRef,
     protected emptyService: EmptyService,
     private storageService: StorageService,
     private dialogService: DialogService,
@@ -169,9 +173,10 @@ export class CertificateListComponent implements OnInit {
         jobDialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
           jobDialogRef.close(true);
           this.getCertificates();
+          this.certificateDeleted.emit();
         });
         jobDialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
-          this.dialogService.error(this.errorHandler.parseJobError(err));
+          this.dialogService.error(this.errorHandler.parseError(err));
         });
       });
   }
@@ -229,8 +234,8 @@ export class CertificateListComponent implements OnInit {
               },
             });
         },
-        error: (err: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(err));
+        error: (err: unknown) => {
+          this.dialogService.error(this.errorHandler.parseError(err));
         },
       });
   }
@@ -259,7 +264,7 @@ export class CertificateListComponent implements OnInit {
         });
         dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((failedJob) => {
           this.matDialog.closeAll();
-          this.dialogService.error(this.errorHandler.parseJobError(failedJob));
+          this.dialogService.error(this.errorHandler.parseError(failedJob));
         });
       });
   }

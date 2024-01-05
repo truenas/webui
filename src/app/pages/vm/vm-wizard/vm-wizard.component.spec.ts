@@ -91,7 +91,7 @@ describe('VmWizardComponent', () => {
         mockCall('vm.device.nic_attach_choices', {
           eno2: 'eno2',
         }),
-        mockCall('device.get_pci_ids_for_gpu_isolation', ['10DE:1401']),
+        mockCall('vm.device.get_pci_ids_for_gpu_isolation', ['10DE:1401']),
       ]),
       mockProvider(GpuService, {
         getGpuOptions: () => of([

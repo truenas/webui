@@ -5,6 +5,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { helptextKerberosRealms } from 'app/helptext/directory-service/kerberos-realms-form-list';
 import { KerberosRealm, KerberosRealmUpdate } from 'app/interfaces/kerberos-realm.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -43,6 +44,8 @@ export class KerberosRealmsFormComponent implements OnInit {
       ? this.translate.instant('Add Kerberos Realm')
       : this.translate.instant('Edit Kerberos Realm');
   }
+
+  protected readonly Role = Role;
 
   constructor(
     private ws: WebSocketService,
@@ -86,7 +89,7 @@ export class KerberosRealmsFormComponent implements OnInit {
         this.cdr.markForCheck();
         this.slideInRef.close();
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.isFormLoading = false;
         this.errorHandler.handleWsFormError(error, this.form);
         this.cdr.markForCheck();

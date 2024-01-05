@@ -9,7 +9,7 @@ import {
 } from 'rxjs';
 import { startWith } from 'rxjs/operators';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
-import helptext from 'app/helptext/storage/volumes/manager/manager';
+import { helptextManager } from 'app/helptext/storage/volumes/manager/manager';
 import { Pool } from 'app/interfaces/pool.interface';
 import { forbiddenAsyncValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { PoolWizardNameValidationService } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/1-general-wizard-step/pool-wizard-name-validation.service';
@@ -91,7 +91,7 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
       this.dialog
         .confirm({
           title: this.translate.instant('Warning'),
-          message: helptext.manager_encryption_message,
+          message: helptextManager.manager_encryption_message,
           buttonText: this.translate.instant('I Understand'),
         })
         .pipe(untilDestroyed(this))

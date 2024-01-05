@@ -9,8 +9,8 @@ export interface ReportingExporterSchema {
   schema: Schema[];
 }
 
-export interface ExportingExporterList {
-  key: string;
+export interface ReportingExporterList {
+  key: ReportingExporterKey;
   variables: string[];
 }
 

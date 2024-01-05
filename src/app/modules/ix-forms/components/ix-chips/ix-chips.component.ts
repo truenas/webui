@@ -36,13 +36,13 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
   @Input() autocompleteProvider: ChipsProvider;
   @Input() options: Observable<Option[]>;
   @Input() resolveValue = false;
+  private resolveOptions: Option[] = [];
 
   @ViewChild('chipInput', { static: true }) chipInput: ElementRef<HTMLInputElement>;
 
   suggestions$: Observable<string[]>;
   values: string[] = [];
   isDisabled = false;
-  private _options: Option[] = [];
 
   get labels(): string[] {
     if (!this.resolveValue) {
@@ -50,8 +50,8 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
     }
 
     return this.values?.map((value) => {
-      if (this.resolveValue && this._options?.length) {
-        return this._options.find((option) => option.value === parseInt(value))?.label;
+      if (this.resolveOptions?.length) {
+        return this.resolveOptions.find((option) => option.value === parseInt(value))?.label;
       }
       return value;
     }).filter(Boolean);
@@ -95,8 +95,8 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
   }
 
   onRemove(itemToRemove: string): void {
-    if (this.resolveValue && this._options?.length) {
-      itemToRemove = this._options.find((option) => option.label === itemToRemove)?.value.toString();
+    if (this.resolveValue && this.resolveOptions?.length) {
+      itemToRemove = this.resolveOptions.find((option) => option.label === itemToRemove)?.value.toString();
     }
     const updatedValues = this.values.filter((value) => String(value) !== String(itemToRemove));
     this.updateValues(updatedValues);
@@ -108,8 +108,8 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
       return;
     }
 
-    if (this.resolveValue && this._options?.length) {
-      const newOption = this._options.find((option) => option.label === newValue);
+    if (this.resolveValue && this.resolveOptions?.length) {
+      const newOption = this.resolveOptions.find((option) => option.label === newValue);
       if (newOption) {
         newValue = newOption.value as string;
       }
@@ -120,7 +120,7 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
   }
 
   onInputBlur(): void {
-    if (!this.allowNewEntries) {
+    if (!this.allowNewEntries || this.resolveValue) {
       this.chipInput.nativeElement.value = null;
       return;
     }
@@ -134,7 +134,7 @@ export class IxChipsComponent implements OnChanges, ControlValueAccessor {
     }
 
     this.options?.pipe(untilDestroyed(this)).subscribe((options) => {
-      this._options = options;
+      this.resolveOptions = options;
     });
   }
 

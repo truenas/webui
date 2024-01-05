@@ -8,8 +8,9 @@ import { TranslateService } from '@ngx-translate/core';
 import { of, switchMap } from 'rxjs';
 import { filter, take } from 'rxjs/operators';
 import { DatasetEncryptionType } from 'app/enums/dataset.enum';
+import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
-import helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
+import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
 import { matchOthersFgValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
 import { DialogService } from 'app/services/dialog.service';
@@ -48,7 +49,7 @@ export class EncryptionSectionComponent implements OnChanges {
     ],
   });
 
-  readonly helptext = helptext;
+  readonly helptext = helptextDatasetForm;
 
   encryptionTypeOptions$ = of([
     { label: T('Key'), value: DatasetEncryptionType.Default },
@@ -78,7 +79,7 @@ export class EncryptionSectionComponent implements OnChanges {
   get parentHasPassphrase(): boolean {
     return this.parent
       && this.parent.encrypted
-      && this.parent.key_format.value === DatasetEncryptionType.Passphrase;
+      && this.parent.key_format.value === EncryptionKeyFormat.Passphrase;
   }
 
   ngOnChanges(): void {
@@ -142,8 +143,8 @@ export class EncryptionSectionComponent implements OnChanges {
         filter((hasEncryption) => !hasEncryption),
         take(1),
         switchMap(() => this.dialog.confirm({
-          title: helptext.dataset_form_encryption.non_encrypted_warning_title,
-          message: helptext.dataset_form_encryption.non_encrypted_warning_warning,
+          title: helptextDatasetForm.dataset_form_encryption.non_encrypted_warning_title,
+          message: helptextDatasetForm.dataset_form_encryption.non_encrypted_warning_warning,
         })),
         untilDestroyed(this),
       )

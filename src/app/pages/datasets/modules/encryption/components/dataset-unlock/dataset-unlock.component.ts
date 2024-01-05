@@ -11,7 +11,7 @@ import {
   from, of, switchMap, tap,
 } from 'rxjs';
 import { DatasetEncryptionType } from 'app/enums/dataset.enum';
-import helptext from 'app/helptext/storage/volumes/datasets/dataset-unlock';
+import { helptextUnlock } from 'app/helptext/storage/volumes/datasets/dataset-unlock';
 import { DatasetEncryptionSummary, DatasetEncryptionSummaryQueryParams, DatasetEncryptionSummaryQueryParamsDataset } from 'app/interfaces/dataset-encryption-summary.interface';
 import { DatasetUnlockParams, DatasetUnlockResult } from 'app/interfaces/dataset-lock.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -60,7 +60,7 @@ export class DatasetUnlockComponent implements OnInit {
     label: this.translate.instant('Provide keys/passphrases manually'),
   }]);
 
-  readonly helptext = helptext;
+  readonly helptext = helptextUnlock;
 
   get useFile(): boolean {
     return this.form.controls.use_file.value;
@@ -110,11 +110,11 @@ export class DatasetUnlockComponent implements OnInit {
 
   getEncryptionSummary(): void {
     const dialogRef = this.matDialog.open(EntityJobComponent, {
-      data: { title: helptext.fetching_encryption_summary_title },
+      data: { title: helptextUnlock.fetching_encryption_summary_title },
       disableClose: true,
     });
     dialogRef.componentInstance.setDescription(
-      this.translate.instant(helptext.fetching_encryption_summary_message) + this.pk,
+      this.translate.instant(helptextUnlock.fetching_encryption_summary_message) + this.pk,
     );
     dialogRef.componentInstance.setCall('pool.dataset.encryption_summary', [this.pk]);
     dialogRef.componentInstance.submit();
@@ -183,7 +183,7 @@ export class DatasetUnlockComponent implements OnInit {
     const values = this.form.value;
     payload.recursive = !values.use_file || values.unlock_children;
     const dialogRef = this.matDialog.open(EntityJobComponent, {
-      data: { title: helptext.unlocking_datasets_title },
+      data: { title: helptextUnlock.unlocking_datasets_title },
       disableClose: true,
     });
 
@@ -209,7 +209,7 @@ export class DatasetUnlockComponent implements OnInit {
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe({
       next: (failedJob) => {
-        this.dialogService.error(this.errorHandler.parseJobError(failedJob));
+        this.dialogService.error(this.errorHandler.parseError(failedJob));
         dialogRef.close();
       },
       error: this.handleError,
@@ -240,11 +240,11 @@ export class DatasetUnlockComponent implements OnInit {
     };
 
     const dialogRef = this.matDialog.open(EntityJobComponent, {
-      data: { title: helptext.fetching_encryption_summary_title },
+      data: { title: helptextUnlock.fetching_encryption_summary_title },
       disableClose: true,
     });
     dialogRef.componentInstance.setDescription(
-      this.translate.instant(helptext.fetching_encryption_summary_message) + this.pk,
+      this.translate.instant(helptextUnlock.fetching_encryption_summary_message) + this.pk,
     );
 
     if (values.use_file) {
@@ -269,7 +269,7 @@ export class DatasetUnlockComponent implements OnInit {
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe({
       next: (failedJob) => {
-        this.dialogService.error(this.errorHandler.parseJobError(failedJob));
+        this.dialogService.error(this.errorHandler.parseError(failedJob));
         dialogRef.close();
       },
       error: this.handleError,

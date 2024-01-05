@@ -7,7 +7,7 @@
         mat-button
         type="button"
         class="manual-disk-selection"
-        ixTest="manual"
+        [ixTest]="['manual', type]"
         (click)="poolManagerStore.openManualSelectionDialog(type)"
       >
         {{ 'Edit Manual Disk Selection' | translate }}

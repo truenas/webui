@@ -113,7 +113,7 @@ describe('FeedbackDialogComponent', () => {
         getHostId: jest.fn(() => of('unique-system-host-id-1234')),
         getOauthToken: jest.fn(() => mockToken),
         setOauthToken: jest.fn(),
-        getReviewAllowed: jest.fn(() => isFeedbackAllowed$.value),
+        isReviewAllowed$: isFeedbackAllowed$,
       }),
       provideMockStore({
         selectors: [

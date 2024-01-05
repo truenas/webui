@@ -10,6 +10,7 @@ import {
   delay, filter, map, switchMap,
 } from 'rxjs/operators';
 import { EmptyType } from 'app/enums/empty-type.enum';
+import { Role } from 'app/enums/role.enum';
 import { ContainerImage } from 'app/interfaces/container-image.interface';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { IxCheckboxColumnComponent } from 'app/modules/ix-tables/components/ix-checkbox-column/ix-checkbox-column.component';
@@ -30,6 +31,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 export class DockerImagesListComponent implements OnInit, AfterViewInit {
   dataSource = new MatTableDataSource<ContainerImage>([]);
 
+  Role = Role;
   displayedColumns = ['select', 'id', 'repo_tags', 'size', 'update', 'actions'];
 
   @ViewChild(MatSort, { static: false }) sort: MatSort;

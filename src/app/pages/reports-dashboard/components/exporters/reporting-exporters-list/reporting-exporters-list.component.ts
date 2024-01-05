@@ -78,7 +78,7 @@ export class ReportingExporterListComponent implements OnInit {
       ],
     }),
   ], {
-    rowTestId: (row) => 'reporting-exporter-' + row.id.toString(),
+    rowTestId: (row) => 'reporting-exporter-' + row.name,
   });
 
   isLoading$ = new BehaviorSubject<boolean>(true);

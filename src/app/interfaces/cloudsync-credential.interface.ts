@@ -1,4 +1,4 @@
-import { CloudsyncProviderName, OneDriveType } from 'app/enums/cloudsync-provider.enum';
+import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
 
 export interface CloudsyncCredential {
   attributes: Record<string, string | number | boolean>;
@@ -21,15 +21,4 @@ export interface CloudsyncBucket {
   Name: string;
   Path: string;
   Enabled: boolean;
-}
-
-export interface CloudsyncOneDriveDrive {
-  drive_type: OneDriveType;
-  drive_id: string;
-}
-
-export interface CloudsyncOneDriveParams {
-  client_id: string;
-  client_secret: string;
-  token: string;
 }

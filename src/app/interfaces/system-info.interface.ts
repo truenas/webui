@@ -2,6 +2,7 @@ import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { ApiDate, ApiTimestamp } from 'app/interfaces/api-date.interface';
 
 export interface SystemInfo {
+  platform: string;
   birthday: ApiTimestamp;
   boottime: ApiTimestamp;
   buildtime: ApiTimestamp;
@@ -22,6 +23,7 @@ export interface SystemInfo {
   uptime: string;
   uptime_seconds: number;
   version: string;
+  remote_info?: SystemInfo;
 }
 
 export interface SystemLicense {
