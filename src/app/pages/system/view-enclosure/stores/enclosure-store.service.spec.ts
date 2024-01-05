@@ -5,9 +5,8 @@ import { MockStorageGenerator } from 'app/core/testing/utils/mock-storage-genera
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import {
-  EnclosureElement, EnclosureElementsGroup,
-  EnclosureSlot,
-  EnclosureView,
+  EnclosureElementsGroup,
+  EnclosureUi, EnclosureUiSlot,
 } from 'app/interfaces/enclosure.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/services/dialog.service';
@@ -45,7 +44,7 @@ describe('EnclosureStore', () => {
       providers: [
         StorageService,
         mockWebsocket([
-          mockCall('enclosure.query', mockStorage.enclosures),
+          mockCall('webui.enclosure.dashboard', mockStorage.enclosures),
           mockCall('pool.query', [mockStorage.poolState as unknown as Pool]),
           mockCall('disk.query', mockStorage.disks),
         ]),
@@ -61,8 +60,8 @@ describe('EnclosureStore', () => {
       expect(mockStorage.poolState.topology.data.length).toBeGreaterThan(0);
       expect(mockStorage.disks).toHaveLength(42);
 
-      const controllerSlots: EnclosureElement[] = mockStorage.getEnclosureSlots(0);
-      const shelfSlots: EnclosureElement[] = mockStorage.getEnclosureSlots(1);
+      const controllerSlots: [string, EnclosureUiSlot][] = mockStorage.getEnclosureSlots(mockStorage.enclosures[0].id);
+      const shelfSlots: [string, EnclosureUiSlot][] = mockStorage.getEnclosureSlots(mockStorage.enclosures[1].id);
       expect(controllerSlots).toHaveLength(24);
       expect(shelfSlots).toHaveLength(24);
     });
@@ -72,9 +71,9 @@ describe('EnclosureStore', () => {
       spectator.service.loadData();
       spectator.service.data$.subscribe((data: EnclosureState) => {
         if (
-          data.areDisksLoading
-          && data.arePoolsLoading
-          && data.areEnclosuresLoading
+          data.areEnclosuresLoading
+          // && data.areDisksLoading
+          // && data.arePoolsLoading
         ) {
           return;
         }
@@ -82,14 +81,16 @@ describe('EnclosureStore', () => {
         expect(data.enclosures).toHaveLength(2);
       });
 
-      spectator.service.enclosureViews$.subscribe((views: EnclosureView[]) => {
+      spectator.service.enclosureViews$.subscribe((views: EnclosureUi[]) => {
         if (!views.length) return;
 
         expect(views).toHaveLength(2);
-        expect(views[0].slots).toHaveLength(24);
-        expect(views[1].slots).toHaveLength(24);
+        expect(Object.keys(views[0].elements['Array Device Slot'])).toHaveLength(24);
+        expect(Object.keys(views[1].elements['Array Device Slot'])).toHaveLength(24);
 
-        const emptySlots = views[1].slots.filter((slot: EnclosureSlot) => !slot.disk);
+        const emptySlots = Object.entries(views[1].elements['Array Device Slot'])
+          .map((keyValue: [string, EnclosureUiSlot]) => keyValue[1])
+          .filter((slot: EnclosureUiSlot) => !slot.dev);
         expect(emptySlots).toHaveLength(6);
       });
     });
@@ -123,7 +124,7 @@ describe('EnclosureStore', () => {
       providers: [
         StorageService,
         mockWebsocket([
-          mockCall('enclosure.query', mockStorage.enclosures),
+          mockCall('webui.enclosure.dashboard', mockStorage.enclosures),
           mockCall('pool.query', [mockStorage.poolState as unknown as Pool]),
           mockCall('disk.query', mockStorage.disks),
         ]),
@@ -139,9 +140,9 @@ describe('EnclosureStore', () => {
       spectator.service.loadData();
       spectator.service.data$.subscribe((data: EnclosureState) => {
         if (
-          data.areDisksLoading
-          && data.arePoolsLoading
-          && data.areEnclosuresLoading
+          data.areEnclosuresLoading
+          // && data.areDisksLoading
+          // && data.arePoolsLoading
         ) {
           return;
         }
@@ -149,15 +150,15 @@ describe('EnclosureStore', () => {
         expect(data.enclosures).toHaveLength(3);
       });
 
-      spectator.service.enclosureViews$.subscribe((views: EnclosureView[]) => {
+      spectator.service.enclosureViews$.subscribe((views: EnclosureUi[]) => {
         if (!views.length) return;
 
         // M50/M60 report 24 slot front chassis and a separate 4 slot rear chassis
         // the EnclosureStore should merge these into a single 28 slot chassis to make it consistent
         // with all other models.
         expect(views).toHaveLength(2);
-        expect(views[0].slots).toHaveLength(28);
-        expect(views[1].slots).toHaveLength(24);
+        expect(Object.keys(views[0].elements['Array Device Slot'])).toHaveLength(28);
+        expect(Object.keys(views[1].elements['Array Device Slot'])).toHaveLength(24);
       });
     });
   });
@@ -189,7 +190,7 @@ describe('EnclosureStore', () => {
       providers: [
         StorageService,
         mockWebsocket([
-          mockCall('enclosure.query', mockStorage.enclosures),
+          mockCall('webui.enclosure.dashboard', mockStorage.enclosures),
           mockCall('pool.query', [mockStorage.poolState as unknown as Pool]),
           mockCall('disk.query', mockStorage.disks),
         ]),
@@ -205,16 +206,16 @@ describe('EnclosureStore', () => {
       spectator.service.loadData();
       spectator.service.data$.subscribe((data: EnclosureState) => {
         if (
-          data.areDisksLoading
-          && data.arePoolsLoading
-          && data.areEnclosuresLoading
+          data.areEnclosuresLoading
+          // && data.areDisksLoading
+          // && data.arePoolsLoading
         ) {
           return;
         }
 
         // No shelves or rear slots and should be marked as rackmount
         expect(data.enclosures).toHaveLength(1);
-        expect(data.enclosureViews[0].isRackmount).toBeTruthy();
+        expect(data.enclosures[0].rackmount).toBeTruthy();
       });
     });
 
@@ -222,9 +223,9 @@ describe('EnclosureStore', () => {
       spectator.service.loadData();
       spectator.service.data$.subscribe((data: EnclosureState) => {
         if (
-          data.areDisksLoading
-          && data.arePoolsLoading
-          && data.areEnclosuresLoading
+          data.areEnclosuresLoading
+          // && data.areDisksLoading
+          // && data.arePoolsLoading
         ) {
           return;
         }
@@ -233,21 +234,18 @@ describe('EnclosureStore', () => {
         const slots = (data.enclosures[0].elements as EnclosureElementsGroup[])[0].elements;
         expect(data.enclosures).toHaveLength(1);
         expect(slots).toHaveLength(12);
-        expect(data.enclosureViews).toHaveLength(1);
-        expect(data.enclosureViews[0].slots).toHaveLength(12);
+        expect(data.enclosures).toHaveLength(1);
+        expect(Object.keys(data.enclosures[0].elements['Array Device Slot'])).toHaveLength(12);
       });
     });
 
     it('should have the correct amount of empty slots', () => {
       spectator.service.loadData();
       spectator.service.data$.subscribe((data: EnclosureState) => {
-        const emptySlots = (data.enclosures[0].elements[0] as EnclosureElementsGroup).elements
-          .filter((element: EnclosureElement) => element.status === 'Not installed');
-        const emptyViewSlots = data.enclosureViews[0].slots
-          .filter((slot: EnclosureSlot) => slot.slotStatus === 'Not installed');
+        const emptySlots = Object.entries(data.enclosures[0].elements['Array Device Slot'])
+          .filter((keyValue: [string, EnclosureUiSlot]) => keyValue[1].status.includes('Not installed'));
 
         expect(emptySlots).toHaveLength(4);
-        expect(emptyViewSlots).toHaveLength(4);
       });
     });
   });

@@ -7,7 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { DndDropEvent } from 'ngx-drag-drop';
 import { FileSizePipe } from 'ngx-filesize';
 import { BehaviorSubject, combineLatest } from 'rxjs';
-import { Enclosure } from 'app/interfaces/enclosure.interface';
+import { EnclosureUi } from 'app/interfaces/enclosure.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { NestedTreeDataSource } from 'app/modules/ix-tree/nested-tree-datasource';
 import {
@@ -42,7 +42,7 @@ const noEnclosureId = 'no-enclosure' as const;
   providers: [FileSizePipe],
 })
 export class ManualSelectionDisksComponent implements OnInit {
-  @Input() enclosures: Enclosure[] = [];
+  @Input() enclosures: EnclosureUi[] = [];
 
   dataSource: NestedTreeDataSource<DiskOrGroup>;
   treeControl = new NestedTreeControl<DiskOrGroup, string>((node) => node.children, {
@@ -95,7 +95,7 @@ export class ManualSelectionDisksComponent implements OnInit {
       });
   }
 
-  private mapDisksToEnclosures(disks: Disk[], enclosures: Enclosure[]): DiskOrGroup[] {
+  private mapDisksToEnclosures(disks: Disk[], enclosures: EnclosureUi[]): DiskOrGroup[] {
     const disksInEnclosures = enclosures.map((enclosure) => {
       // Match behavior of enclosure-disks component
       const currentLabel = enclosure.label !== enclosure.name ? enclosure.label : enclosure.model;

@@ -1,4 +1,4 @@
-import { Enclosure, EnclosureElement } from 'app/interfaces/enclosure.interface';
+import { EnclosureUi, EnclosureElement } from 'app/interfaces/enclosure.interface';
 import { MockEnclosure } from './mock-enclosure-template';
 
 export class MockF60 extends MockEnclosure {
@@ -57,7 +57,7 @@ export class MockF60 extends MockEnclosure {
     ],
     number: 0,
     label: 'F60 NVMe Enclosure',
-  } as Enclosure;
+  } as EnclosureUi;
 
   constructor(number: number) {
     super(number);

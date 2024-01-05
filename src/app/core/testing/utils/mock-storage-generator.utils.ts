@@ -8,7 +8,6 @@ import {
   MockStorage,
   MockTopology,
 } from 'app/core/testing/interfaces/mock-storage-generator.interface';
-import { MockEs102G2 } from 'app/core/testing/utils/enclosure-templates/mock-es102g2';
 import { DiskBus } from 'app/enums/disk-bus.enum';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
@@ -16,27 +15,30 @@ import { DiskType } from 'app/enums/disk-type.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { TopologyItemType, VdevType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
-import { Enclosure, EnclosureElement, EnclosureElementsGroup } from 'app/interfaces/enclosure.interface';
+import { EnclosureUi, EnclosureUiSlot } from 'app/interfaces/enclosure.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import {
-  Disk,
-  EnclosureAndSlot,
+  Disk, EnclosureIdAndSlot,
   TopologyDisk,
   TopologyItem,
   TopologyItemStats,
   VDev,
 } from 'app/interfaces/storage.interface';
-import { MockE16 } from './enclosure-templates/mock-e16';
-import { MockE24 } from './enclosure-templates/mock-e24';
 import { MockEnclosure } from './enclosure-templates/mock-enclosure-template';
 import { MockEs102 } from './enclosure-templates/mock-es102';
+import { MockEs24 } from './enclosure-templates/mock-es24';
+import { MockM50 } from './enclosure-templates/mock-m50';
+
+/* import { MockE16 } from './enclosure-templates/mock-e16';
+import { MockE24 } from './enclosure-templates/mock-e24';
+import { MockEs102 } from './enclosure-templates/mock-es102';
+import { MockEs102G2 } from 'app/core/testing/utils/enclosure-templates/mock-es102g2';
 import { MockEs12 } from './enclosure-templates/mock-es12';
 import { MockEs24 } from './enclosure-templates/mock-es24';
 import { MockEs60 } from './enclosure-templates/mock-es60';
 import { MockEs60G2 } from './enclosure-templates/mock-es60g2';
 import { MockF60 } from './enclosure-templates/mock-f60';
 import { MockM40 } from './enclosure-templates/mock-m40';
-import { MockM50 } from './enclosure-templates/mock-m50';
 import { MockM50Rear } from './enclosure-templates/mock-m50-rear';
 import { MockMini30Eplus } from './enclosure-templates/mock-mini-3.0-e+';
 import { MockMini30X } from './enclosure-templates/mock-mini-3.0-x';
@@ -47,12 +49,12 @@ import { MockR10 } from './enclosure-templates/mock-r10';
 import { MockR20 } from './enclosure-templates/mock-r20';
 import { MockR30 } from './enclosure-templates/mock-r30';
 import { MockR40 } from './enclosure-templates/mock-r40';
-import { MockR50 } from './enclosure-templates/mock-r50';
+import { MockR50 } from './enclosure-templates/mock-r50'; */
 
 export class MockStorageGenerator {
   poolState: Pool;
   disks: Disk[];
-  enclosures: Enclosure[] | null = null;
+  enclosures: EnclosureUi[] | null = null;
   private mockEnclosures: MockEnclosure[] = [];
 
   constructor(mockPool = true) {
@@ -660,13 +662,13 @@ export class MockStorageGenerator {
     this.mockEnclosures = mockEnclosures;
 
     // M50/M60 have separate chassis reported for rear drives
-    if (options.controllerModel === 'M50' || options.controllerModel === 'M60') {
+    /* if (options.controllerModel === 'M50' || options.controllerModel === 'M60') {
       const rearChassis: MockEnclosure = this.generateMockEnclosure(
         options.controllerModel + '-REAR',
         options.expansionModels.length + 1,
       );
       mockEnclosures.push(rearChassis);
-    }
+    } */
 
     // Next populate enclosures based on dispersal setting
     const populated = this.populateEnclosures(mockEnclosures, options.dispersal);
@@ -675,12 +677,12 @@ export class MockStorageGenerator {
   }
 
   private generateMockEnclosure(
-    model = 'M40',
+    model = 'M50',
     enclosureNumber = 0,
   ): MockEnclosure {
     let chassis: MockEnclosure;
     switch (model) {
-      case 'MINI-R':
+      /* case 'MINI-R':
         chassis = new MockMiniR(enclosureNumber);
         break;
       case 'MINI-3.0-E+':
@@ -695,9 +697,6 @@ export class MockStorageGenerator {
       case 'MINI-3.0-XL+':
         chassis = new MockMini30Xl(enclosureNumber);
         break;
-      case 'M50':
-        chassis = new MockM50(enclosureNumber);
-        break;
       case 'M50-REAR':
         chassis = new MockM50Rear(enclosureNumber);
         break;
@@ -710,18 +709,13 @@ export class MockStorageGenerator {
       case 'E24':
         chassis = new MockE24(enclosureNumber);
         break;
-      case 'ES24':
-        chassis = new MockEs24(enclosureNumber);
-        break;
       case 'ES60G2':
         chassis = new MockEs60G2(enclosureNumber);
         break;
       case 'ES60':
         chassis = new MockEs60(enclosureNumber);
         break;
-      case 'ES102':
-        chassis = new MockEs102(enclosureNumber);
-        break;
+
       case 'ES102G2':
         chassis = new MockEs102G2(enclosureNumber);
         break;
@@ -745,6 +739,15 @@ export class MockStorageGenerator {
         break;
       case 'F60':
         chassis = new MockF60(enclosureNumber);
+        break; */
+      case 'M50':
+        chassis = new MockM50(enclosureNumber);
+        break;
+      case 'ES24':
+        chassis = new MockEs24(enclosureNumber);
+        break;
+      case 'ES102':
+        chassis = new MockEs102(enclosureNumber);
         break;
       default:
         console.error('Chassis ' + model + ' not found');
@@ -834,17 +837,19 @@ export class MockStorageGenerator {
     let slotNumber = 1;
     const updatedDisks: Disk[] = [];
 
+    // Enclosure UI no longer uses disk.query info
+    // TODO: Update interfaces for Disk as disk.query endpoint is changing
     disks.forEach((disk: Disk) => {
       if (enclosureNumber < mockEnclosures.length) {
         // Update the enclosure data
-        // const mockEnclosure = mockEnclosures[enclosureNumber];
         mockEnclosures[enclosureNumber].addDiskToSlot(disk.name, slotNumber);
 
         // Update the disk data
         const updatedDisk: Disk = { ...disk }; // Object.assign({}, disk)
-        const enclosureAndSlot: EnclosureAndSlot = {
-          number: mockEnclosures[enclosureNumber].data.number,
+        const enclosureAndSlot: EnclosureIdAndSlot = {
+          id: mockEnclosures[enclosureNumber].data.id,
           slot: slotNumber,
+          number: 0, // TODO: Remove when Disk interface is updated
         };
         updatedDisk.enclosure = enclosureAndSlot;
         updatedDisks.push(updatedDisk);
@@ -882,7 +887,8 @@ export class MockStorageGenerator {
   }
 
   private attachNextAvailableSlot(disks: Disk[]): Disk[] {
-    const emptySlots = this.getAllEmptySlots();
+    // TODO: Add Logic to attachNextAvailableSlot function
+    /* const emptySlots = this.getAllEmptySlots();
     if (disks.length > emptySlots.length) return disks;
 
     return disks.map((disk: Disk, index: number) => {
@@ -890,29 +896,34 @@ export class MockStorageGenerator {
         disk.enclosure = emptySlots[index];
       }
       return disk;
+    }); */
+    return disks;
+  }
+
+  getEnclosureSlots(enclosureId: string): [string, EnclosureUiSlot][] {
+    const selectedEnclosure = this.enclosures.find((enclosure: EnclosureUi) => {
+      return enclosure.id === enclosureId;
     });
+
+    return Object.entries(selectedEnclosure.elements['Array Device Slot']);
   }
 
-  getEnclosureSlots(enclosureNumber: number): EnclosureElement[] {
-    const selectedEnclosure = this.enclosures.find((enclosure: Enclosure) => {
-      return enclosure.number === enclosureNumber;
-    });
-    return (selectedEnclosure.elements[0] as EnclosureElementsGroup).elements;
+  getEmptySlots(enclosureId: string): [string, EnclosureUiSlot][] {
+    return this.getEnclosureSlots(enclosureId)
+      .filter((keyValue: [string, EnclosureUiSlot]) => keyValue[1].status !== 'OK');
   }
 
-  getEmptySlots(enclosureNumber: number): EnclosureElement[] {
-    return this.getEnclosureSlots(enclosureNumber).filter((element: EnclosureElement) => element.status !== 'OK');
-  }
-
-  getAllEmptySlots(): EnclosureAndSlot[] {
-    let allEmptySlots: EnclosureAndSlot[] = [];
+  getAllEmptySlots(): EnclosureIdAndSlot[] {
+    let allEmptySlots: EnclosureIdAndSlot[] = [];
     this.mockEnclosures.forEach((mockEnclosure: MockEnclosure) => {
-      const emptySlots: EnclosureAndSlot[] = mockEnclosure.getEmptySlots().map((element: EnclosureElement) => {
-        return {
-          number: mockEnclosure.data.number,
-          slot: element.slot,
-        };
-      });
+      const emptySlots: EnclosureIdAndSlot[] = mockEnclosure.getEmptySlots()
+        .map((keyValue: [string, EnclosureUiSlot]) => {
+          return {
+            number: 0, // TODO: Remove when Disk interface is updated
+            id: mockEnclosure.data.id,
+            slot: parseInt(keyValue[0]),
+          };
+        });
       allEmptySlots = allEmptySlots.concat(emptySlots);
     });
 

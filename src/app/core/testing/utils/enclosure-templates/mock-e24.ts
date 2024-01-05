@@ -1,4 +1,4 @@
-import { Enclosure } from 'app/interfaces/enclosure.interface';
+import { EnclosureUi } from 'app/interfaces/enclosure.interface';
 import { MockEnclosure } from './mock-enclosure-template';
 
 export class MockE24 extends MockEnclosure {
@@ -294,7 +294,7 @@ export class MockE24 extends MockEnclosure {
     ],
     number: 1,
     label: 'iX 4024Js e001',
-  } as Enclosure;
+  } as EnclosureUi;
 
   constructor(number: number) {
     super(number);

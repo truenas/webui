@@ -1,4 +1,4 @@
-import { Enclosure } from 'app/interfaces/enclosure.interface';
+import { EnclosureUi } from 'app/interfaces/enclosure.interface';
 import { MockEnclosure } from './mock-enclosure-template';
 
 export class MockE16 extends MockEnclosure {
@@ -294,7 +294,7 @@ export class MockE16 extends MockEnclosure {
     ],
     number: 1,
     label: 'ECStream 3U16+4R-4X6G.3P d10c',
-  } as Enclosure;
+  } as EnclosureUi;
 
   constructor(number: number) {
     super(number);

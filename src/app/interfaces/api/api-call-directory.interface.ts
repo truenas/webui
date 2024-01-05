@@ -105,7 +105,7 @@ import {
   DnsAuthenticator, UpdateDnsAuthenticator,
 } from 'app/interfaces/dns-authenticator.interface';
 import { DsUncachedGroup, DsUncachedUser } from 'app/interfaces/ds-cache.interface';
-import { Enclosure } from 'app/interfaces/enclosure.interface';
+import { EnclosureUi } from 'app/interfaces/enclosure.interface';
 import {
   FailoverConfig,
   FailoverRemoteCall,
@@ -442,8 +442,9 @@ export interface ApiCallDirectory {
   'directoryservices.get_state': { params: void; response: DirectoryServicesState };
 
   // Enclosure
-  'enclosure.query': { params: void; response: Enclosure[] };
-  'enclosure.update': { params: [enclosureId: string, update: { label: string }]; response: Enclosure };
+  'enclosure.query': { params: void; response: EnclosureUi[] };
+  'webui.enclosure.dashboard': { params: void; response: EnclosureUi[] };
+  'enclosure.update': { params: [enclosureId: string, update: { label: string }]; response: EnclosureUi };
   'enclosure.set_slot_status': { params: [id: string, slot: number, status: EnclosureSlotStatus ]; response: void };
 
   // Filesystem

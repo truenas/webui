@@ -1,4 +1,4 @@
-import { Enclosure, EnclosureElement } from 'app/interfaces/enclosure.interface';
+import { EnclosureUi, EnclosureElement } from 'app/interfaces/enclosure.interface';
 import { MockEnclosure } from './mock-enclosure-template';
 
 export class MockR40 extends MockEnclosure {
@@ -27,7 +27,7 @@ export class MockR40 extends MockEnclosure {
     ],
     number: 0,
     label: 'Drive Bays',
-  } as Enclosure;
+  } as EnclosureUi;
 
   readonly slotTemplate: EnclosureElement = {
     slot: 1,

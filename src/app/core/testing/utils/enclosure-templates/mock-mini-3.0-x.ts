@@ -1,5 +1,5 @@
 import {
-  Enclosure,
+  EnclosureUi,
   EnclosureElement,
 } from 'app/interfaces/enclosure.interface';
 import { MockEnclosure } from './mock-enclosure-template';
@@ -69,7 +69,7 @@ export class MockMini30X extends MockEnclosure {
     ],
     number: 0,
     label: 'Drive Bays',
-  } as Enclosure;
+  } as EnclosureUi;
 
   constructor(number: number) {
     super(number);

@@ -1,4 +1,4 @@
-import { Enclosure } from 'app/interfaces/enclosure.interface';
+import { EnclosureUi } from 'app/interfaces/enclosure.interface';
 import { MockEnclosure } from './mock-enclosure-template';
 
 export class MockEs12 extends MockEnclosure {
@@ -734,7 +734,7 @@ export class MockEs12 extends MockEnclosure {
     ],
     number: 1,
     label: 'CELESTIC X2012-MT 0443',
-  } as Enclosure;
+  } as EnclosureUi;
 
   constructor(number: number) {
     super(number);

@@ -21,8 +21,8 @@
     <div *ngIf="selectedEnclosureNumber < 1" class="mat-card-title-text">
       {{ currentTab.alias }} on
       {{
-        selectedEnclosureView
-          ? selectedEnclosureView.model + ' (' + selectedEnclosure.number + ')'
+        selectedEnclosure
+          ? selectedEnclosure.model + ' (' + selectedEnclosure.number + ')'
           : '...'
       }}
     </div>
@@ -38,14 +38,15 @@
       <!-- LEGEND -->
       <div class="header-container" id="legend">
         <h3 class="header">{{ 'Pools' | translate }}</h3>
-        <div *ngIf="enclosurePools?.length > 0; else noPools" class="legend">
+        <div *ngIf="enclosureStore.getPools(selectedEnclosure)?.length > 0; else noPools" class="legend">
           <div *ngFor="let pool of selectedEnclosurePools; let i = index" class="legend-item">
             <div
               class="swatch"
               [style.background]="theme[themeKey(theme.accentColors[i])]"
             ></div>
             <div class="legend-label">{{ pool }}</div>
-            <div *ngIf="!findPoolByName(pool)?.healthy" class="legend-icon">
+            <!-- TODO: figure out how to detect pool health data -->
+            <div *ngIf="false" class="legend-icon">
               <ix-icon name="mdi-alert"></ix-icon>
             </div>
           </div>
@@ -78,7 +79,9 @@
               </div>
               <div>
                 <div class="slot-value">
-                  {{ findDiskBySlotNumber(i + 1) ? findDiskBySlotNumber(i + 1).name : 'Empty' }}
+                  {{ selectedEnclosure.elements['Array Device Slot'][i + 1].dev
+                  ? selectedEnclosure.elements['Array Device Slot'][i + 1].dev
+                  : 'Empty' }}
                 </div>
               </div>
             </div>
@@ -90,20 +93,20 @@
         <!-- DISK STATUS -->
         <div *ngIf="chassisView" fxFlex class="disks-overlay status">
           <ng-container *ngFor="let dt of chassisView.driveTrayObjects; let i = index">
-            <div *ngIf="findDiskBySlotNumber(i + 1)" [style.top]="'calc(' + stackPositions()[i].y + 'px + 8px)'">
+            <div *ngIf="selectedEnclosure.elements['Array Device Slot'][i + 1].dev" [style.top]="'calc(' + stackPositions()[i].y + 'px + 8px)'">
               <div class="status-icon">
                 <ix-icon
                   name="check_circle"
                   [ngClass]="{
-                    online: findEnclosureSlotFromSlotNumber(i + 1).topologyStatus === 'ONLINE',
+                    online: selectedEnclosure.elements['Array Device Slot'][i + 1].pool_info.disk_status === 'ONLINE',
                     alert:
-                      findEnclosureSlotFromSlotNumber(i + 1).topologyStatus !== 'ONLINE' &&
-                      findEnclosureSlotFromSlotNumber(i + 1).topologyStatus !== 'AVAILABLE'
+                      selectedEnclosure.elements['Array Device Slot'][i + 1].pool_info.disk_status !== 'ONLINE' &&
+                      selectedEnclosure.elements['Array Device Slot'][i + 1].pool_info.disk_status !== 'AVAILABLE'
                   }"
                 ></ix-icon>
               </div>
               <div class="status-text">
-                {{ findEnclosureSlotFromSlotNumber(i + 1).topologyStatus }}
+                {{ selectedEnclosure.elements['Array Device Slot'][i + 1].status }}
               </div>
             </div>
           </ng-container>
@@ -113,21 +116,22 @@
 
     <!-- DETAILS/OVERVIEW -->
     <div #diskDetails fxFlex id="disks-details">
-      <ng-container *ngIf="selectedSlot?.disk && currentView === 'details'" #details>
+      <ng-container *ngIf="selectedDisk && currentView === 'details'" #details>
         <!-- DISK SELECTED -->
         <div #disksdetails class="header-container" id="details">
           <button class="back-btn" mat-button ixTest="close" (click)="clearDisk()">
             <ix-icon name="close"></ix-icon>
           </button>
           <h3 class="header">
-            {{ 'Drive Details' | translate }} {{ selectedSlot.disk.name }}
+            {{ 'Drive Details' | translate }} {{ selectedSlot.dev }}
           </h3>
           <div>
             <ul>
               <li>
                 <strong>{{ 'Pool' | translate }}:</strong> &nbsp;&nbsp;&nbsp;
                 {{
-                  selectedSlot.disk?.pool ? selectedSlot.disk.pool : ('Disk not attached to any pools.' | translate)
+                  selectedSlot.pool_info?.pool_name ? selectedSlot.pool_info?.pool_name
+                    : ('Disk not attached to any pools.' | translate)
                 }}
               </li>
 
@@ -135,31 +139,32 @@
                 <strong>{{ 'Vdev' | translate }}:</strong> &nbsp;&nbsp;&nbsp;
                 <span>
                   {{
-                    selectedSlot.vdev === null ? ('Unassigned' | translate) : (selectedSlot.vdev.name | uppercase)
+                    selectedSlot.pool_info.vdev_name === null ? ('Unassigned' | translate)
+                      : (selectedSlot.pool_info.vdev_name | uppercase)
                   }}
                 </span>
               </li>
 
               <li>
                 <strong>{{ 'Model' | translate }}:</strong> &nbsp;&nbsp;&nbsp;
-                {{ selectedSlot.disk.model }}
+                {{ selectedDisk.model }}
               </li>
 
               <li>
                 <strong>{{ 'Serial' | translate }}:</strong>
-                &nbsp;&nbsp;&nbsp;{{ selectedSlot.disk.serial }}
+                &nbsp;&nbsp;&nbsp;{{ selectedDisk.serial }}
               </li>
 
               <li>
                 <strong>{{ 'Status' | translate }}:</strong>
-                &nbsp;&nbsp;&nbsp;{{ selectedSlot.topologyStatus }}
+                &nbsp;&nbsp;&nbsp;{{ selectedSlot.pool_info.disk_status }}
               </li>
 
               <li>
                 <strong>{{ 'Rotation Rate' | translate }}:</strong>
                 &nbsp;&nbsp;&nbsp;
-                <ng-container *ngIf="selectedSlot.disk.rotationrate; else flash">
-                  {{ selectedSlot.disk.rotationrate }}
+                <ng-container *ngIf="selectedDisk.rotationrate; else flash">
+                  {{ selectedDisk.rotationrate }}
                   {{ 'RPM' | translate }}
                 </ng-container>
                 <ng-template #flash>
@@ -169,29 +174,29 @@
 
               <li>
                 <strong>{{ 'Advanced Power Management' | translate }}:</strong>
-                &nbsp;&nbsp;&nbsp;{{ selectedSlot.disk.advpowermgmt }}
+                &nbsp;&nbsp;&nbsp;{{ selectedDisk.advpowermgmt }}
               </li>
 
               <li>
                 <strong>{{ 'S.M.A.R.T. Enabled' | translate }}:</strong>
-                &nbsp;&nbsp;&nbsp;{{ selectedSlot.disk.togglesmart | yesNo }}
+                &nbsp;&nbsp;&nbsp;{{ selectedDisk.togglesmart | yesNo }}
               </li>
 
               <li>
                 <strong>{{ 'S.M.A.R.T. Options' | translate }}:</strong>
                 &nbsp;&nbsp;&nbsp;{{
-                  selectedSlot.disk.smartoptions ? selectedSlot.disk.smartoptions : 'None'
+                  selectedDisk.smartoptions ? selectedDisk.smartoptions : 'None'
                 }}
               </li>
 
               <li>
                 <strong>{{ 'Transfer Mode' | translate }}:</strong>
-                &nbsp;&nbsp;&nbsp;{{ selectedSlot.disk.transfermode }}
+                &nbsp;&nbsp;&nbsp;{{ selectedDisk.transfermode }}
               </li>
 
               <li>
                 <strong>{{ 'HDD Standby' | translate }}:</strong>
-                &nbsp;&nbsp;&nbsp;{{ selectedSlot.disk.hddstandby }}
+                &nbsp;&nbsp;&nbsp;{{ selectedDisk.hddstandby }}
               </li>
             </ul>
 
@@ -202,28 +207,28 @@
               fxLayoutAlign="center center"
             >
               <div>
-                <ix-disk-ui [data]="selectedSlot.disk"></ix-disk-ui
+                <ix-disk-ui [data]="selectedDisk"></ix-disk-ui
                 ><!-- disk icon + labels -->
-                <div class="capacity">{{ selectedSlot.disk.size | filesize: { standard: 'iec' } }}</div>
+                <div class="capacity">{{ selectedDisk.size | filesize: { standard: 'iec' } }}</div>
               </div>
               <div class="disk-stats-wrapper" fxFlex>
-                <ul *ngIf="selectedSlot.topologyStats; else nostats" class="disk-stats">
+                <ul *ngIf="selectedSlot.pool_info.pool_name; else nostats" class="disk-stats">
                   <li>
                     <strong>{{ 'Read Errors' | translate }}:</strong>
                     &nbsp;&nbsp;
-                    {{ selectedSlot.topologyStats.read_errors }}
+                    {{ fakeTopologyStats.read_errors }}
                   </li>
 
                   <li>
                     <strong>{{ 'Write Errors' | translate }}:</strong>
                     &nbsp;&nbsp;
-                    {{ selectedSlot.topologyStats.write_errors }}
+                    {{ fakeTopologyStats.write_errors }}
                   </li>
 
                   <li>
                     <strong>{{ 'Checksum Errors' | translate }}:</strong>
                     &nbsp;&nbsp;
-                    {{ selectedSlot.topologyStats.checksum_errors }}
+                    {{ fakeTopologyStats.checksum_errors }}
                   </li>
                 </ul>
                 <ng-template #nostats>
@@ -251,17 +256,17 @@
               <li>
                 <strong>{{ 'Pools' | translate }}:</strong>
                 &nbsp;&nbsp;&nbsp;
-                {{ count(selectedEnclosureView.pools) }}
+                {{ enclosurePools.length }}
               </li>
               <li>
                 <strong>{{ 'Total Disks' | translate }}:</strong>
                 &nbsp;&nbsp;&nbsp;
-                {{ count(selectedEnclosureView.slots) }}
+                {{ totalDisks }}
               </li>
               <li>
                 <strong>{{ 'Estimated Raw Capacity' | translate }}:</strong>
                 &nbsp;&nbsp;&nbsp;
-                {{ rawCapacity(selectedEnclosureView) | filesize: { standard: 'iec' }  }}
+                {{ fakeRawCapacity(selectedEnclosure) | filesize: { standard: 'iec' }  }}
               </li>
               <li>
                 <strong>{{ 'Failed Disks' | translate }}:</strong>

@@ -1,7 +1,7 @@
 import {
   Component, Input,
 } from '@angular/core';
-import { EnclosureElementsGroup } from 'app/interfaces/enclosure.interface';
+import { EnclosureUiElement, EnclosureUiSlot } from 'app/interfaces/enclosure.interface';
 
 @Component({
   selector: 'ix-tab-content',
@@ -9,5 +9,15 @@ import { EnclosureElementsGroup } from 'app/interfaces/enclosure.interface';
   styleUrls: ['./tab-content.component.scss'],
 })
 export class TabContentComponent {
-  @Input() data: EnclosureElementsGroup;
+  @Input() element: Record<number, EnclosureUiElement> | Record<number, EnclosureUiSlot>;
+  get data(): EnclosureUiElement[] {
+    return Object.entries(this.element).map((keyValue: [string, EnclosureUiElement]) => {
+      return keyValue[1];
+    });
+  }
+  displayedColumns: string[] = [
+    'descriptor',
+    'status',
+    'value',
+  ];
 }

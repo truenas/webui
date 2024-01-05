@@ -1,241 +1,289 @@
+import { UUID } from 'angular2-uuid';
 import {
-  Enclosure,
-  EnclosureElement,
-  EnclosureElementData,
-  EnclosureElementsGroup,
+  EnclosureUi,
+  EnclosureUiSlot,
 } from 'app/interfaces/enclosure.interface';
 
 export class MockEnclosure {
+  readonly enclosureId = UUID.UUID();
+  data: EnclosureUi = {
+    name: 'iX 4024Sp e001',
+    model: 'M60',
+    controller: true,
+    dmi: 'TRUENAS-M60-HA',
+    status: [
+      'OK',
+    ],
+    id: '5b0bd6d1a309b57f',
+    vendor: 'iX',
+    product: '4024Sp',
+    revision: 'e001',
+    bsg: '/dev/bsg/17:0:19:0',
+    sg: '/dev/sg433',
+    pci: '17:0:19:0',
+    rackmount: true,
+    top_loaded: false,
+    front_slots: 24,
+    rear_slots: 4,
+    internal_slots: 0,
+    elements: {
+      'Array Device Slot': {
+        1: {
+          descriptor: 'slot00',
+          status: 'OK',
+          dev: 'sdadl',
+          pool_info: null,
+        },
+        2: {
+          descriptor: 'slot01',
+          status: 'OK',
+          dev: 'sdadn',
+          pool_info: null,
+        },
+        3: {
+          descriptor: 'slot02',
+          status: 'OK',
+          dev: 'sdado',
+          pool_info: null,
+        },
+        4: {
+          descriptor: 'slot03',
+          status: 'OK',
+          dev: 'sdadq',
+          pool_info: null,
+        },
+        5: {
+          descriptor: 'slot04',
+          status: 'OK',
+          dev: 'sdads',
+          pool_info: null,
+        },
+        6: {
+          descriptor: 'slot05',
+          status: 'OK',
+          dev: 'sdadw',
+          pool_info: null,
+        },
+        7: {
+          descriptor: 'slot06',
+          status: 'OK',
+          dev: 'sdadx',
+          pool_info: null,
+        },
+        8: {
+          descriptor: 'slot07',
+          status: 'OK',
+          dev: 'sdady',
+          pool_info: null,
+        },
+        9: {
+          descriptor: 'slot08',
+          status: 'OK',
+          dev: 'sdadz',
+          pool_info: null,
+        },
+        10: {
+          descriptor: 'slot09',
+          status: 'OK',
+          dev: 'sdaec',
+          pool_info: null,
+        },
+        11: {
+          descriptor: 'slot10',
+          status: 'OK',
+          dev: 'sdaed',
+          pool_info: null,
+        },
+        12: {
+          descriptor: 'slot11',
+          status: 'OK',
+          dev: 'sdaee',
+          pool_info: null,
+        },
+        13: {
+          descriptor: 'slot12',
+          status: 'OK',
+          dev: 'sdaem',
+          pool_info: null,
+        },
+        14: {
+          descriptor: 'slot13',
+          status: 'OK',
+          dev: 'sdaen',
+          pool_info: null,
+        },
+        15: {
+          descriptor: 'slot14',
+          status: 'OK',
+          dev: 'sdaeo',
+          pool_info: null,
+        },
+        16: {
+          descriptor: 'slot15',
+          status: 'OK',
+          dev: 'sdaep',
+          pool_info: null,
+        },
+        17: {
+          descriptor: 'slot16',
+          status: 'OK',
+          dev: 'sdaeu',
+          pool_info: null,
+        },
+        18: {
+          descriptor: 'slot17',
+          status: 'OK',
+          dev: 'sdaev',
+          pool_info: null,
+        },
+        19: {
+          descriptor: 'slot18',
+          status: 'OK',
+          dev: 'sdaew',
+          pool_info: null,
+        },
+        20: {
+          descriptor: 'slot19',
+          status: 'Not installed',
+          dev: null,
+          pool_info: null,
+        },
+        21: {
+          descriptor: 'slot20',
+          status: 'Not installed',
+          dev: null,
+          pool_info: null,
+        },
+        22: {
+          descriptor: 'slot21',
+          status: 'Not installed',
+          dev: null,
+          pool_info: null,
+        },
+        23: {
+          descriptor: 'slot22',
+          status: 'Not installed',
+          dev: null,
+          pool_info: null,
+        },
+        24: {
+          descriptor: 'slot23',
+          status: 'Not installed',
+          dev: null,
+          pool_info: null,
+        },
+        25: {
+          descriptor: 'Disk #1',
+          status: 'Not installed',
+          dev: null,
+          pool_info: null,
+        },
+        26: {
+          descriptor: 'Disk #2',
+          status: 'OK',
+          dev: 'nvme1n1',
+          pool_info: null,
+        },
+        27: {
+          descriptor: 'Disk #3',
+          status: 'OK',
+          dev: 'nvme2n1',
+          pool_info: null,
+        },
+        28: {
+          descriptor: 'Disk #4',
+          status: 'OK',
+          dev: 'nvme3n1',
+          pool_info: null,
+        },
+      },
+      'SAS Expander': {
+        26: {
+          descriptor: 'SAS3 Expander',
+          status: 'OK',
+          value: null,
+          value_raw: 16777216,
+        },
+      },
+      Enclosure: {
+        28: {
+          descriptor: 'Encl-BpP',
+          status: 'OK, Swapped',
+          value: null,
+          value_raw: 285212672,
+        },
+        29: {
+          descriptor: 'Encl-PeerS',
+          status: 'OK',
+          value: null,
+          value_raw: 16777216,
+        },
+      },
+      'Temperature Sensors': {
+        31: {
+          descriptor: 'ExpP-Die',
+          status: 'OK',
+          value: '37C',
+          value_raw: 16791808,
+        },
+        32: {
+          descriptor: 'ExpS-Die',
+          status: 'OK',
+          value: '37C',
+          value_raw: 16791808,
+        },
+        33: {
+          descriptor: 'Sense BP1',
+          status: 'OK',
+          value: '21C',
+          value_raw: 16787712,
+        },
+        34: {
+          descriptor: 'Sense BP2',
+          status: 'OK',
+          value: '22C',
+          value_raw: 16787968,
+        },
+      },
+      'Voltage Sensor': {
+        36: {
+          descriptor: '5V Sensor',
+          status: 'OK',
+          value: '5.12V',
+          value_raw: 16777728,
+        },
+        37: {
+          descriptor: '12V Sensor',
+          status: 'OK',
+          value: '12.45V',
+          value_raw: 16778461,
+        },
+      },
+    },
+    label: 'iX 4024Sp e001',
+  } as EnclosureUi;
+
+  readonly slotTemplate: EnclosureUiSlot = {
+    descriptor: 'SLOT 000,3FHY4B1T',
+    status: 'OK',
+    dev: 'sda',
+    pool_info: null,
+  };
+
+   readonly emptySlotTemplate: EnclosureUiSlot = {
+     descriptor: 'SLOT 000,3FHY4B1T',
+     status: 'OK',
+     dev: 'sda',
+     pool_info: null,
+   };
+
   enclosureNumber = 0;
-  readonly totalSlotsFront: number = 16;
-  readonly totalSlotsRear: number = 0;
-  readonly totalSlotsInternal: number = 0;
+  readonly totalSlotsFront: number = this.data.front_slots;
+  readonly totalSlotsRear: number = this.data.rear_slots;
+  readonly totalSlotsInternal: number = this.data.internal_slots;
   get totalSlots(): number {
     return this.totalSlotsFront + this.totalSlotsRear + this.totalSlotsInternal;
   }
-
-  data: Enclosure = {
-    id: 'abcdefgh12345678',
-    name: 'iX 1176Ss e007',
-    model: 'Mock',
-    controller: true,
-    elements: [
-      {
-        name: 'Array Device Slot',
-        descriptor: '',
-        header: [
-          'Descriptor',
-          'Status',
-          'Value',
-          'Device',
-        ],
-        elements: [],
-        has_slot_status: false,
-      },
-      {
-        name: 'Enclosure',
-        descriptor: '',
-        header: [
-          'Descriptor',
-          'Status',
-          'Value',
-        ],
-        elements: [
-          {
-            slot: 1,
-            data: {
-              Descriptor: '',
-              Status: 'OK',
-              Value: 'None',
-            },
-            name: 'Enclosure',
-            descriptor: '',
-            status: 'OK',
-            value: 'None',
-            value_raw: '0x1000000',
-          },
-          {
-            slot: 2,
-            data: {
-              Descriptor: '',
-              Status: 'Not installed',
-              Value: 'None',
-            },
-            name: 'Enclosure',
-            descriptor: '',
-            status: 'Not installed',
-            value: 'None',
-            value_raw: '0x5000000',
-          },
-        ],
-        has_slot_status: false,
-      },
-      {
-        name: 'SAS Expander',
-        descriptor: '',
-        header: [
-          'Descriptor',
-          'Status',
-          'Value',
-        ],
-        elements: [
-          {
-            slot: 1,
-            data: {
-              Descriptor: '',
-              Status: 'OK',
-              Value: 'None',
-            },
-            name: 'SAS Expander',
-            descriptor: '',
-            status: 'OK',
-            value: 'None',
-            value_raw: '0x1000000',
-          },
-        ],
-        has_slot_status: false,
-      },
-      {
-        name: 'Temperature Sensor',
-        descriptor: '',
-        header: [
-          'Descriptor',
-          'Status',
-          'Value',
-        ],
-        elements: [
-          {
-            slot: 1,
-            data: {
-              Descriptor: '',
-              Status: 'Unsupported',
-              Value: null,
-            },
-            name: 'Temperature Sensor',
-            descriptor: '',
-            status: 'Unsupported',
-            value: null,
-            value_raw: '0x0',
-          },
-          {
-            slot: 2,
-            data: {
-              Descriptor: '',
-              Status: 'OK',
-              Value: '34C',
-            },
-            name: 'Temperature Sensor',
-            descriptor: '',
-            status: 'OK',
-            value: '34C',
-            value_raw: '0x1003600',
-          },
-          {
-            slot: 3,
-            data: {
-              Descriptor: '',
-              Status: 'OK',
-              Value: '23C',
-            },
-            name: 'Temperature Sensor',
-            descriptor: '',
-            status: 'OK',
-            value: '23C',
-            value_raw: '0x1002b00',
-          },
-          {
-            slot: 4,
-            data: {
-              Descriptor: '',
-              Status: 'OK',
-              Value: '25C',
-            },
-            name: 'Temperature Sensor',
-            descriptor: '',
-            status: 'OK',
-            value: '25C',
-            value_raw: '0x1002d00',
-          },
-        ],
-        has_slot_status: false,
-      },
-      {
-        name: 'Voltage Sensor',
-        descriptor: '',
-        header: [
-          'Descriptor',
-          'Status',
-          'Value',
-        ],
-        elements: [
-          {
-            slot: 1,
-            data: {
-              Descriptor: '',
-              Status: 'OK',
-              Value: '5.04V',
-            },
-            name: 'Voltage Sensor',
-            descriptor: '',
-            status: 'OK',
-            value: '5.04V',
-            value_raw: '0x10001f8',
-          },
-          {
-            slot: 2,
-            data: {
-              Descriptor: '',
-              Status: 'OK',
-              Value: '12.12V',
-            },
-            name: 'Voltage Sensor',
-            descriptor: '',
-            status: 'OK',
-            value: '12.12V',
-            value_raw: '0x10004bc',
-          },
-        ],
-        has_slot_status: false,
-      },
-    ],
-    number: this.enclosureNumber,
-    label: 'iX 1176Ss e007',
-  } as Enclosure;
-
-  readonly emptySlotTemplate: EnclosureElement = {
-    slot: 0,
-    data: {
-      Descriptor: '',
-      Status: 'Not installed',
-      Value: 'None',
-      Device: '',
-    },
-    name: 'Array Device Slot',
-    descriptor: '',
-    status: 'Not installed',
-    value: 'None',
-    value_raw: '0x5000000',
-    fault: false,
-    identify: false,
-  };
-
-  readonly slotTemplate: EnclosureElement = {
-    slot: 0,
-    data: {
-      Descriptor: '',
-      Status: 'OK',
-      Value: 'None',
-      Device: 'device name goes here...',
-    },
-    name: 'Array Device Slot',
-    descriptor: '',
-    status: 'OK',
-    value: 'None',
-    value_raw: '0x1000000',
-    fault: false,
-    identify: false,
-  };
-
   constructor(number: number) {
     this.enclosureNumber = number;
     this.enclosureInit();
@@ -244,43 +292,51 @@ export class MockEnclosure {
   addDiskToSlot(diskName: string, slotNumber: number): this {
     if (!this.data) return this;
 
-    const element: EnclosureElement = { ...this.slotTemplate };
+    /* const element: EnclosureElement = { ...this.slotTemplate };
     const elementData: EnclosureElementData = { ...this.slotTemplate.data };
     elementData.Device = diskName;
     element.slot = slotNumber;
     element.data = elementData;
 
-    this.addSlotToData(element);
+    this.addSlotToData(element); */
+
+    // NEW
+    // const slotKey: string = slotNumber.toString();
+    const slotValue: EnclosureUiSlot = {
+      descriptor: 'SLOT 000,3FHY4B1T',
+      status: 'OK',
+      dev: diskName,
+      pool_info: null,
+    };
+
+    this.data.elements['Array Device Slot'][slotNumber] = slotValue;
+
     return this;
   }
 
-  addDiskToNextEmptySlot(diskName: string): this {
-    const emptySlots = this.getEmptySlots().map((element: EnclosureElement) => element.slot);
+  addDiskToNextEmptySlot(/* diskName: string */): this {
+    /* const emptySlots = this.getEmptySlots().map((element: EnclosureElement) => element.slot);
     if (emptySlots.length === 0) {
       console.warn('No open slots available in enclosure');
     } else {
       this.addDiskToSlot(diskName, emptySlots[0]);
-    }
+    } */
     return this;
   }
 
   removeDiskFromSlot(diskName: string, slotNumber: number): this {
-    const element: EnclosureElement = { ...this.emptySlotTemplate };
+    const element: EnclosureUiSlot = { ...this.emptySlotTemplate };
+    /*
     element.slot = slotNumber;
     const elementData: EnclosureElementData = { ...this.emptySlotTemplate.data };
     element.data = elementData;
-
-    this.addSlotToData(element);
+    */
+    this.addSlotToData(slotNumber, element);
     return this;
   }
 
-  protected addSlotToData(element: EnclosureElement): void {
-    const slotElementsGroup = this.getSlots();
-
-    const slotIndex = slotElementsGroup.findIndex((groupElement: EnclosureElement) => {
-      return groupElement.slot === element.slot;
-    });
-    slotElementsGroup.splice(slotIndex, 1, this.processSlotTemplate(element));
+  protected addSlotToData(slotIndex: number, slot: EnclosureUiSlot): void {
+    this.data.elements['Array Device Slot'][slotIndex] = slot;
   }
 
   enclosureInit(): void {
@@ -290,41 +346,48 @@ export class MockEnclosure {
 
   resetSlotsToEmpty(): void {
     const emptySlots = this.generateEmptySlots();
-    (this.data.elements[0] as EnclosureElementsGroup).elements = emptySlots;
+    emptySlots.forEach((keyValue: [string, EnclosureUiSlot]) => {
+      this.data.elements['Array Device Slot'][parseInt(keyValue[0])] = keyValue[1];
+    });
   }
 
-  generateEmptySlots(totalSlots: number = this.totalSlotsFront): EnclosureElement[] {
-    const emptySlots: EnclosureElement[] = [];
+  generateEmptySlots(totalSlots: number = this.totalSlotsFront): [string, EnclosureUiSlot][] {
+    const emptySlots: [string, EnclosureUiSlot][] = [];
     for (let slotNumber = 1; slotNumber <= totalSlots; slotNumber++) {
-      const slot = { ...this.emptySlotTemplate };
-      slot.slot = slotNumber;
-      emptySlots.push(this.processSlotTemplate(slot));
+      const slotValue: EnclosureUiSlot = { ...this.emptySlotTemplate };
+      const slotKey = slotNumber.toString();
+      emptySlots.push(this.processSlotTemplate([slotKey, slotValue]));
     }
 
     return emptySlots;
   }
 
-  protected processSlotTemplate(element: EnclosureElement): EnclosureElement {
+  protected processSlotTemplate(element: [string, EnclosureUiSlot]): [string, EnclosureUiSlot] {
     // Subclasses can override this method to deal with whatever unique values
     // particular models may require. eg. minis have the original property
     return element;
   }
 
-  protected getSlots(): EnclosureElement[] {
-    return (this.data.elements[0] as EnclosureElementsGroup).elements;
+  protected getSlots(): [string, EnclosureUiSlot][] {
+    // return (this.data.elements[0] as EnclosureElementsGroup).elements;
+    return this.asSlotsArray(this.data.elements['Array Device Slot']);
   }
 
   getSlotByDiskName(diskName: string): number | null {
-    const enclosureElement: EnclosureElement = this.getSlots()
-      .find((element: EnclosureElement) => element.data.Device === diskName);
-    return enclosureElement.slot;
+    const slot: [string, EnclosureUiSlot] = this.getSlots()
+      .find((keyValue: [string, EnclosureUiSlot]) => keyValue[1].dev === diskName);
+    return parseInt(slot[0]);
   }
 
-  getPopulatedSlots(): EnclosureElement[] {
-    return this.getSlots().filter((element: EnclosureElement) => element.status === 'OK');
+  getPopulatedSlots(): [string, EnclosureUiSlot][] {
+    return this.getSlots().filter((keyValue: [string, EnclosureUiSlot]) => keyValue[1].status.includes('OK'));
   }
 
-  getEmptySlots(): EnclosureElement[] {
-    return this.getSlots().filter((element: EnclosureElement) => element.status === 'Not installed');
+  getEmptySlots(): [string, EnclosureUiSlot][] {
+    return this.getSlots().filter((keyValue: [string, EnclosureUiSlot]) => keyValue[1].status === 'Not installed');
+  }
+
+  protected asSlotsArray(obj: object): [string, EnclosureUiSlot][] {
+    return Object.entries(obj) as [string, EnclosureUiSlot][];
   }
 }

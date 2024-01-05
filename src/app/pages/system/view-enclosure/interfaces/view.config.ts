@@ -1,8 +1,10 @@
+import { EnclosureUiElements } from 'app/interfaces/enclosure.interface';
+
 export interface ViewConfig {
-  name: string;
-  alias: string; // Used for tab label
+  name: keyof EnclosureUiElements;
+  alias: string; // Used for tab menu label
   icon: string;
-  id: number;
+  enclosureIndex: number;
   elementIndex?: number;
   showInNavbar: boolean;
 }

@@ -1,4 +1,4 @@
-import { Enclosure } from 'app/interfaces/enclosure.interface';
+import { EnclosureUi } from 'app/interfaces/enclosure.interface';
 import { MockEnclosure } from './mock-enclosure-template';
 
 export class MockEs60G2 extends MockEnclosure {
@@ -2435,7 +2435,7 @@ export class MockEs60G2 extends MockEnclosure {
     ],
     number: 0,
     label: 'HGST H4060-J 3010',
-  } as Enclosure;
+  } as EnclosureUi;
 
   constructor(number: number) {
     super(number);

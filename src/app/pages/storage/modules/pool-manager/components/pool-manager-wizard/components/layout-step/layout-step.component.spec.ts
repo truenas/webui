@@ -2,7 +2,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockComponents } from 'ng-mocks';
 import { BehaviorSubject } from 'rxjs';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
-import { Enclosure } from 'app/interfaces/enclosure.interface';
+import { EnclosureUi } from 'app/interfaces/enclosure.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import {
   AutomatedDiskSelectionComponent,
@@ -27,7 +27,7 @@ describe('LayoutStepComponent', () => {
     { devname: 'sda' },
     { devname: 'sdb' },
   ] as UnusedDisk[];
-  const enclosures = [{ name: 'enclosure' }] as Enclosure[];
+  const enclosures = [{ name: 'enclosure' }] as EnclosureUi[];
 
   const topologyCategory = {
     layout: CreateVdevLayout.Stripe,
