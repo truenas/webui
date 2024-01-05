@@ -199,6 +199,7 @@ nav.view-nav-bar {
 .view-card .dom-overlay.stage-left,
 .view-card .dom-overlay.stage-right {
   display: block;
+  overflow: auto;
   position: absolute;
   width: 25%;
 }
