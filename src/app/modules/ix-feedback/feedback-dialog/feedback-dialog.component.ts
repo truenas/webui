@@ -194,6 +194,8 @@ export class FeedbackDialogComponent implements OnInit {
                 message: this.translate.instant('Uploading screenshots has failed'),
                 backtrace: `Error: ${error.status},\n ${error.error}\n ${error.message}`,
               });
+              this.isLoading = false;
+              this.cdr.markForCheck();
             },
           });
           this.fileUpload.onUploaded$.pipe(
