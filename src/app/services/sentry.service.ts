@@ -17,7 +17,7 @@ export class SentryService {
 
   init(): void {
     combineLatest([
-      this.store$.select(selectSystemIsStable).pipe(filter(Boolean)),
+      this.store$.select(selectSystemIsStable),
       this.store$.pipe(waitForSystemInfo),
       this.store$.select(selectSystemHostId).pipe(filter(Boolean)),
       this.sessionId$,
