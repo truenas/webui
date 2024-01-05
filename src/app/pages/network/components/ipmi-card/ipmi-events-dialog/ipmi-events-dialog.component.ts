@@ -88,6 +88,8 @@ export class IpmiEventsDialogComponent implements OnInit {
       },
       error: (error) => {
         this.dialogService.error(this.errorHandler.parseError(error));
+        this.isLoading = false;
+        this.cdr.markForCheck();
       },
     });
   }

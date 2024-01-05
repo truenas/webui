@@ -6,6 +6,7 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { MatStepperHarness, MatStepperNextHarness } from '@angular/material/stepper/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Direction } from 'app/enums/direction.enum';
 import { JobState } from 'app/enums/job-state.enum';
@@ -86,6 +87,7 @@ describe('ReplicationWizardComponent', () => {
       MockComponent(SummaryComponent),
     ],
     providers: [
+      mockAuth(),
       mockWebsocket([
         mockCall('replication.query', []),
         mockCall('keychaincredential.query', []),

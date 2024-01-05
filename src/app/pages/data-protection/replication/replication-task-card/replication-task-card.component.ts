@@ -8,6 +8,7 @@ import {
   catchError, EMPTY, filter, map, of, switchMap, tap,
 } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
+import { Role } from 'app/enums/role.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { helptextDataProtection } from 'app/helptext/data-protection/data-protection-dashboard/data-protection-dashboard';
 import { Job } from 'app/interfaces/job.interface';
@@ -43,6 +44,7 @@ export class ReplicationTaskCardComponent implements OnInit {
   dataProvider: AsyncDataProvider<ReplicationTaskUi>;
   jobStates = new Map<number, string>();
   readonly jobState = JobState;
+  readonly requiresRoles = [Role.ReplicationManager, Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
 
   columns = createTable<ReplicationTaskUi>([
     textColumn({
@@ -57,6 +59,7 @@ export class ReplicationTaskCardComponent implements OnInit {
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
       onRowToggle: (row: ReplicationTaskUi) => this.onChangeEnabledState(row),
+      requiresRoles: this.requiresRoles,
     }),
     stateButtonColumn({
       title: this.translate.instant('State'),
@@ -81,22 +84,26 @@ export class ReplicationTaskCardComponent implements OnInit {
           tooltip: this.translate.instant('Run job'),
           hidden: (row) => of(row.job?.state === JobState.Running),
           onClick: (row) => this.runNow(row),
+          requiresRoles: this.requiresRoles,
         },
         {
           iconName: 'restore',
           tooltip: this.translate.instant('Restore'),
           onClick: (row) => this.restore(row),
+          requiresRoles: this.requiresRoles,
         },
         {
           iconName: 'download',
           tooltip: this.translate.instant('Download encryption keys'),
           hidden: (row) => of(!row.has_encrypted_dataset_keys),
           onClick: (row) => this.downloadKeys(row),
+          requiresRoles: this.requiresRoles,
         },
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
+          requiresRoles: this.requiresRoles,
         },
       ],
     }),

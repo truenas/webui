@@ -5,6 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs';
 import { YesNoPipe } from 'app/core/pipes/yes-no.pipe';
 import { JobState } from 'app/enums/job-state.enum';
+import { Role } from 'app/enums/role.enum';
 import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
 import {
   PeriodicSnapshotTask,
@@ -12,7 +13,7 @@ import {
   PeriodicSnapshotTaskUpdate,
 } from 'app/interfaces/periodic-snapshot-task.interface';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
-import { EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
+import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { extractActiveHoursFromCron, scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
 import { DialogService } from 'app/services/dialog.service';
@@ -115,6 +116,25 @@ export class SnapshotTaskListComponent implements EntityTableConfig<PeriodicSnap
         next_run: this.taskService.getTaskNextRun(transformedTask.cron_schedule),
       };
     });
+  }
+
+  getActions(): EntityTableAction<PeriodicSnapshotTaskUi>[] {
+    return [{
+      id: 'edit',
+      icon: 'edit',
+      label: 'Edit',
+      onClick: (row: PeriodicSnapshotTaskUi) => {
+        this.doEdit(row.id);
+      },
+    }, {
+      id: 'delete',
+      icon: 'delete',
+      label: 'Delete',
+      requiresRoles: [Role.FullAdmin],
+      onClick: (rowinner: PeriodicSnapshotTaskUi) => {
+        this.entityList.doDelete(rowinner);
+      },
+    }] as EntityTableAction[];
   }
 
   onButtonClick(row: PeriodicSnapshotTaskUi): void {

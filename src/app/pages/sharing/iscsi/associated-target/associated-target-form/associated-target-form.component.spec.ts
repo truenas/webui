@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IscsiTargetExtent } from 'app/interfaces/iscsi.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -35,6 +36,7 @@ describe('AssociatedTargetFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
+      mockAuth(),
       mockProvider(IscsiService, {
         getTargets: () => of([
           { id: 1, name: 'target-1' },

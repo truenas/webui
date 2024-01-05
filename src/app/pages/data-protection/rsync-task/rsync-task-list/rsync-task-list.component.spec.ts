@@ -4,6 +4,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Direction } from 'app/enums/direction.enum';
 import { JobState } from 'app/enums/job-state.enum';
@@ -77,6 +78,7 @@ describe('RsyncTaskListComponent', () => {
       mockProvider(IxChainedSlideInService, {
         pushComponent: jest.fn(() => of()),
       }),
+      mockAuth(),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),

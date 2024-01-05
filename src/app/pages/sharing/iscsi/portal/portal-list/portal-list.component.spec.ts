@@ -5,6 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { SpectatorRouting } from '@ngneat/spectator';
 import { mockProvider, createRoutingFactory } from '@ngneat/spectator/jest';
 import { of, pipe } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Choices } from 'app/interfaces/choices.interface';
 import { IscsiPortal } from 'app/interfaces/iscsi.interface';
@@ -66,6 +67,7 @@ describe('PortalListComponent', () => {
       mockProvider(MatDialog, {
         open: jest.fn(),
       }),
+      mockAuth(),
     ],
   });
 

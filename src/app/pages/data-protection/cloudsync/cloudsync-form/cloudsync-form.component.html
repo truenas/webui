@@ -241,6 +241,7 @@
 
       <div class="form-actions">
         <button
+          *ixRequiresRoles="requiresRoles"
           mat-button
           type="submit"
           color="primary"
@@ -250,6 +251,7 @@
           {{ 'Save' | translate }}
         </button>
         <button
+          *ixRequiresRoles="requiresRoles"
           mat-button
           type="button"
           ixTest="dry-run"

@@ -65,6 +65,7 @@
 
       <mat-card-actions class="buttons">
         <button
+          *ixRequiresRoles="[Role.FullAdmin]"
           mat-button
           type="submit"
           color="primary"
@@ -84,7 +85,13 @@
           {{ 'Manage' | translate }}
         </button>
 
-        <button mat-button type="button" ixTest="toggle-identify-light" (click)="toggleFlashing()">
+        <button
+          *ixRequiresRoles="[Role.FullAdmin]"
+          mat-button
+          type="button"
+          ixTest="toggle-identify-light"
+          (click)="toggleFlashing()"
+        >
           <ng-container *ngIf="!isFlashing">
             <ix-icon name="highlight"></ix-icon>
             {{ 'Flash Identify Light' | translate }}

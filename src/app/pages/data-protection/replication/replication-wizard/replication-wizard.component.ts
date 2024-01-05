@@ -20,6 +20,7 @@ import { mntPath } from 'app/enums/mnt-path.enum';
 import { NetcatMode } from 'app/enums/netcat-mode.enum';
 import { ReadOnlyMode } from 'app/enums/readonly-mode.enum';
 import { RetentionPolicy } from 'app/enums/retention-policy.enum';
+import { Role } from 'app/enums/role.enum';
 import { ScheduleMethod } from 'app/enums/schedule-method.enum';
 import { SnapshotNamingOption } from 'app/enums/snapshot-naming-option.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
@@ -36,6 +37,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { ReplicationWizardData } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard-data.interface';
 import { ReplicationWhatAndWhereComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-what-and-where/replication-what-and-where.component';
 import { ReplicationWhenComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-when/replication-when.component';
+import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { ChainedComponentRef } from 'app/services/ix-chained-slide-in.service';
@@ -74,6 +76,7 @@ export class ReplicationWizardComponent {
     private appLoader: AppLoaderService,
     private snackbar: SnackbarService,
     @Inject(CHAINED_SLIDE_IN_REF) private chainedSlideInRef: ChainedComponentRef,
+    private authService: AuthService,
   ) {}
 
   setRowId(id: number): void {
@@ -173,7 +176,18 @@ export class ReplicationWizardComponent {
   }
 
   getSnapshotsCount(payload: CountManualSnapshotsParams): Observable<EligibleManualSnapshotsCount> {
-    return this.ws.call('replication.count_eligible_manual_snapshots', [payload]);
+    return this.authService.hasRole([
+      Role.ReplicationManager,
+      Role.ReplicationTaskWrite,
+      Role.ReplicationTaskWritePull,
+    ]).pipe(
+      switchMap((hasRole) => {
+        if (hasRole) {
+          return this.ws.call('replication.count_eligible_manual_snapshots', [payload]);
+        }
+        return of({ eligible: 0, total: 0 });
+      }),
+    );
   }
 
   getUnmatchedSnapshots(payload: TargetUnmatchedSnapshotsParams): Observable<Record<string, string[]>> {

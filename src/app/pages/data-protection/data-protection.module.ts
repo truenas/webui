@@ -12,6 +12,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { CloudCredentialsSelectModule } from 'app/modules/custom-selects/cloud-credentials-select/cloud-credentials-select.module';
 import { SshCredentialsSelectModule } from 'app/modules/custom-selects/ssh-credentials-select/ssh-credentials-select.module';
@@ -77,6 +78,7 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
 @NgModule({
   imports: [
     CommonModule,
+    CommonDirectivesModule,
     FlexLayoutModule,
     RouterModule.forChild(dataProtectionRoutes),
     EntityModule,

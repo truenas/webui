@@ -7,6 +7,7 @@ import { MockModule, MockPipe } from 'ng-mocks';
 import { FileSizePipe } from 'ngx-filesize';
 import { CoreComponents } from 'app/core/core-components.module';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { IxEmptyRowHarness } from 'app/modules/ix-tables/components/ix-empty-row/ix-empty-row.component.harness';
@@ -76,6 +77,7 @@ describe('SnapshotListComponent', () => {
           },
         ],
       }),
+      mockAuth(),
     ],
   });
 

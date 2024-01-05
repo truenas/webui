@@ -5,6 +5,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { IscsiTargetExtent, IscsiTargetExtentUpdate } from 'app/interfaces/iscsi.interface';
@@ -49,6 +50,12 @@ export class AssociatedTargetFormComponent implements OnInit {
     lunid: helptextSharingIscsi.associated_target_tooltip_lunid,
     extent: helptextSharingIscsi.associated_target_tooltip_extent,
   };
+
+  readonly requiresRoles = [
+    Role.SharingIscsiTargetExtentWrite,
+    Role.SharingIscsiWrite,
+    Role.SharingWrite,
+  ];
 
   constructor(
     private translate: TranslateService,

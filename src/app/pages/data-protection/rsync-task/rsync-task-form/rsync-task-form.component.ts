@@ -10,6 +10,7 @@ import {
 } from 'rxjs';
 import { Direction } from 'app/enums/direction.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
+import { Role } from 'app/enums/role.enum';
 import { RsyncMode, RsyncSshConnectMode } from 'app/enums/rsync-mode.enum';
 import { helptextRsyncForm } from 'app/helptext/data-protection/rsync/rsync-form';
 import { newOption, Option } from 'app/interfaces/option.interface';
@@ -79,6 +80,8 @@ export class RsyncTaskFormComponent implements OnInit {
   });
 
   isLoading = false;
+
+  readonly requiresRoles = [Role.FullAdmin];
 
   readonly helptext = helptextRsyncForm;
 

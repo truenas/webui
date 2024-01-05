@@ -1,4 +1,3 @@
-import { Location } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
@@ -8,6 +7,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter, switchMap } from 'rxjs/operators';
 import { AclType } from 'app/enums/acl-type.enum';
+import { Role } from 'app/enums/role.enum';
 import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { Acl } from 'app/interfaces/acl.interface';
 import { GroupComboboxProvider } from 'app/modules/ix-forms/classes/group-combobox-provider';
@@ -66,6 +66,8 @@ export class DatasetAclEditorComponent implements OnInit {
   readonly groupProvider = new GroupComboboxProvider(this.userService);
   readonly helptext = helptextAcl;
 
+  protected readonly Role = Role;
+
   constructor(
     private store: DatasetAclEditorStore,
     private router: Router,
@@ -75,7 +77,6 @@ export class DatasetAclEditorComponent implements OnInit {
     private matDialog: MatDialog,
     private userService: UserService,
     private formBuilder: FormBuilder,
-    private location: Location,
   ) { }
 
   ngOnInit(): void {

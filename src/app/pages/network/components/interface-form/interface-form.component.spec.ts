@@ -7,6 +7,7 @@ import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectat
 import { Store, StoreModule } from '@ngrx/store';
 import { of } from 'rxjs';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import {
   LacpduRate,
@@ -132,6 +133,7 @@ describe('InterfaceFormComponent', () => {
         getProductType: () => ProductType.ScaleEnterprise,
       }),
       mockProvider(IxSlideInRef),
+      mockAuth(),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });

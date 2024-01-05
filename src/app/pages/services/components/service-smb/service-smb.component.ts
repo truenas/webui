@@ -59,7 +59,8 @@ export class ServiceSmbComponent implements OnInit {
     aapl_extensions: [false, []],
     multichannel: [false, []],
   });
-  protected readonly Role = Role;
+
+  readonly requiresRoles = [Role.SharingSmbWrite];
   readonly helptext = helptextServiceSmb;
   readonly tooltips = {
     netbiosname: helptextServiceSmb.cifs_srv_netbiosname_tooltip,

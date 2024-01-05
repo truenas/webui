@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SmartTestType } from 'app/enums/smart-test-type.enum';
 import { SmartTestTask } from 'app/interfaces/smart-test.interface';
@@ -44,6 +45,7 @@ describe('SmartTaskFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
+      mockAuth(),
       DialogService,
       mockWebsocket([
         mockCall('smart.test.create'),

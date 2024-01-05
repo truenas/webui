@@ -10,6 +10,7 @@ import {
   EMPTY, catchError, filter, map, switchMap, tap,
 } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
+import { Role } from 'app/enums/role.enum';
 import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { helptextCloudsync } from 'app/helptext/data-protection/cloudsync/cloudsync';
@@ -46,6 +47,7 @@ export class CloudsyncListComponent implements OnInit {
   filterString = '';
   dataProvider: AsyncDataProvider<CloudSyncTaskUi>;
   readonly jobState = JobState;
+  readonly requiresRoles = [Role.CloudSyncWrite];
 
   columns = createTable<CloudSyncTaskUi>([
     textColumn({

@@ -20,6 +20,7 @@ import {
 } from 'rxjs/operators';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { EmptyType } from 'app/enums/empty-type.enum';
+import { Role } from 'app/enums/role.enum';
 import { helptextSnapshots } from 'app/helptext/storage/snapshots/snapshots';
 import { ConfirmOptions } from 'app/interfaces/dialog.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
@@ -97,6 +98,8 @@ export class SnapshotListComponent implements OnInit {
   get emptyConfigService(): EmptyService {
     return this.emptyService;
   }
+
+  protected readonly Role = Role;
 
   constructor(
     private dialogService: DialogService,

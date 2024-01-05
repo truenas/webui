@@ -19,7 +19,10 @@
         (click)="openForm()"
       >{{ 'Add' | translate }}</button>
 
-      <ix-service-extra-actions [service]="service$ | async"></ix-service-extra-actions>
+      <ix-service-extra-actions
+        [service]="service$ | async"
+        [requiresRoles]="requiresRoles"
+      ></ix-service-extra-actions>
     </div>
   </mat-toolbar-row>
 

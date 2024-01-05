@@ -4,6 +4,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import {
@@ -32,6 +33,7 @@ describe('ZfsEncryptionCardComponent', () => {
       mockProvider(DatasetTreeStore, {
         datasetUpdated: jest.fn(),
       }),
+      mockAuth(),
     ],
   });
 

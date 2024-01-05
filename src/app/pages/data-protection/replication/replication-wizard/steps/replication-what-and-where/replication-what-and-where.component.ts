@@ -8,12 +8,13 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  debounceTime, map, merge, Observable, of,
+  debounceTime, map, merge, Observable, of, switchMap,
 } from 'rxjs';
 import { DatasetSource } from 'app/enums/dataset.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
+import { Role } from 'app/enums/role.enum';
 import { SnapshotNamingOption } from 'app/enums/snapshot-naming-option.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { helptextReplicationWizard } from 'app/helptext/data-protection/replication/replication-wizard';
@@ -30,6 +31,7 @@ import {
   forbiddenAsyncValues,
 } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
+import { AuthService } from 'app/services/auth/auth.service';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ChainedComponentRef, IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
@@ -144,6 +146,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     private keychainCredentials: KeychainCredentialService,
     private datePipe: DatePipe,
     private translate: TranslateService,
+    private authService: AuthService,
     private datasetService: DatasetService,
     private dialogService: DialogService,
     private ws: WebSocketService,
@@ -524,7 +527,19 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     }
 
     if (payload.datasets.length > 0 && (payload.naming_schema || payload.name_regex)) {
-      this.ws.call('replication.count_eligible_manual_snapshots', [payload]).pipe(untilDestroyed(this)).subscribe({
+      this.authService.hasRole([
+        Role.ReplicationManager,
+        Role.ReplicationTaskWrite,
+        Role.ReplicationTaskWritePull,
+      ]).pipe(
+        switchMap((hasRole) => {
+          if (hasRole) {
+            return this.ws.call('replication.count_eligible_manual_snapshots', [payload]);
+          }
+          return of({ eligible: 0, total: 0 });
+        }),
+        untilDestroyed(this),
+      ).subscribe({
         next: (snapshotCount) => {
           let snapexpl = '';
           this.isSnapshotsWarning = false;

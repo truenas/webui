@@ -6,6 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { map } from 'rxjs/operators';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
+import { Role } from 'app/enums/role.enum';
 import { helptextGlobal } from 'app/helptext/global-helptext';
 import { helptextQuotas } from 'app/helptext/storage/volumes/datasets/dataset-quotas';
 import { SetDatasetQuota } from 'app/interfaces/dataset-quota.interface';
@@ -81,6 +82,8 @@ export class DatasetQuotaAddFormComponent implements OnInit {
       map((groups) => groups.map((group) => group.group)),
     );
   };
+
+  protected readonly Role = Role;
 
   private datasetId: string;
 

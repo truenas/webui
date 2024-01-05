@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, switchMap, tap } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { IscsiInitiatorGroup } from 'app/interfaces/iscsi.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
@@ -75,6 +76,11 @@ export class InitiatorListComponent implements OnInit {
               },
             });
           },
+          requiresRoles: [
+            Role.SharingIscsiInitiatorWrite,
+            Role.SharingIscsiWrite,
+            Role.SharingWrite,
+          ],
         },
       ],
     }),

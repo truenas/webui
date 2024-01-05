@@ -5,6 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { CHAINED_SLIDE_IN_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
@@ -40,6 +41,7 @@ describe('CloudsyncWhatAndWhenComponent', () => {
     ],
     providers: [
       { provide: CHAINED_SLIDE_IN_REF, useValue: chainedComponentRef },
+      mockAuth(),
       mockWebsocket([
         mockCall('cloudsync.create'),
         mockCall('cloudsync.update'),

@@ -7,6 +7,7 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { Direction } from 'app/enums/direction.enum';
@@ -99,6 +100,7 @@ describe('CloudSyncTaskCardComponent', () => {
       IxTable2Module,
     ],
     providers: [
+      mockAuth(),
       provideMockStore({
         selectors: [
           {

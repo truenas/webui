@@ -9,6 +9,7 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   tap, map, filter, switchMap,
 } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingSmb } from 'app/helptext/sharing/smb/smb';
 import { SmbShare, SmbSharesec } from 'app/interfaces/smb-share.interface';
@@ -36,6 +37,7 @@ import { selectService } from 'app/store/services/services.selectors';
 })
 export class SmbCardComponent implements OnInit {
   service$ = this.store$.select(selectService(ServiceName.Cifs));
+  requiresRoles = [Role.SharingSmbWrite, Role.SharingWrite];
 
   smbShares: SmbShare[] = [];
   dataProvider: AsyncDataProvider<SmbShare>;
@@ -58,6 +60,7 @@ export class SmbCardComponent implements OnInit {
       title: helptextSharingSmb.column_enabled,
       propertyName: 'enabled',
       onRowToggle: (row: SmbShare) => this.onChangeEnabledState(row),
+      requiresRoles: this.requiresRoles,
     }),
     actionsColumn({
       cssClass: 'wide-actions',
@@ -66,11 +69,13 @@ export class SmbCardComponent implements OnInit {
           iconName: 'share',
           tooltip: this.translate.instant('Edit Share ACL'),
           onClick: (row) => this.doShareAclEdit(row),
+          requiresRoles: this.requiresRoles,
         },
         {
           iconName: 'security',
           tooltip: this.translate.instant('Edit Filesystem ACL'),
           onClick: (row) => this.doFilesystemAclEdit(row),
+          requiresRoles: this.requiresRoles,
         },
         {
           iconName: 'edit',
@@ -81,6 +86,7 @@ export class SmbCardComponent implements OnInit {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
+          requiresRoles: this.requiresRoles,
         },
       ],
     }),
