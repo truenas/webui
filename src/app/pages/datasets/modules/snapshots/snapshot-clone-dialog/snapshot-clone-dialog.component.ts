@@ -4,7 +4,7 @@ import {
 import { FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import helptext from 'app/helptext/storage/snapshots/snapshots';
+import { helptextSnapshots } from 'app/helptext/storage/snapshots/snapshots';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -23,7 +23,7 @@ export class SnapshotCloneDialogComponent implements OnInit {
   });
 
   readonly tooltips = {
-    dataset_dst: helptext.snapshot_clone_name_tooltip,
+    dataset_dst: helptextSnapshots.snapshot_clone_name_tooltip,
   };
 
   constructor(
@@ -54,7 +54,7 @@ export class SnapshotCloneDialogComponent implements OnInit {
           this.wasDatasetCloned = true;
           this.cdr.markForCheck();
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.errorHandler.handleWsFormError(error, this.form);
         },
       });

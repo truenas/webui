@@ -11,11 +11,11 @@ import {
 import {
   catchError, tap,
 } from 'rxjs/operators';
+import { Role } from 'app/enums/role.enum';
 import { SyslogLevel, SyslogTransport } from 'app/enums/syslog.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSystemAdvanced, helptextSystemAdvanced as helptext } from 'app/helptext/system/advanced';
 import { AdvancedConfigUpdate } from 'app/interfaces/advanced-config.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -45,7 +45,7 @@ export class SyslogFormComponent implements OnInit {
   });
 
   readonly isTlsTransport$ = this.form.select((values) => values.syslog_transport === SyslogTransport.Tls);
-
+  protected readonly Role = Role;
   readonly tooltips = {
     fqdn_syslog: helptext.fqdn_tooltip,
     sysloglevel: helptext.sysloglevel.tooltip,
@@ -112,7 +112,7 @@ export class SyslogFormComponent implements OnInit {
         this.cdr.markForCheck();
         this.slideInRef.close();
       }),
-      catchError((error) => {
+      catchError((error: unknown) => {
         this.isFormLoading = false;
         this.formErrorHandler.handleWsFormError(error, this.form);
         this.cdr.markForCheck();
@@ -136,9 +136,9 @@ export class SyslogFormComponent implements OnInit {
             syslog_tls_certificate_authority: String(advancedConfig.syslog_tls_certificate_authority),
           });
         },
-        error: (error: WebsocketError) => {
+        error: (error: unknown) => {
           this.isFormLoading = false;
-          this.dialogService.error(this.errorHandler.parseWsError(error));
+          this.dialogService.error(this.errorHandler.parseError(error));
         },
       });
   }

@@ -127,10 +127,6 @@ export type PoolExpandParams = [
   params?: { geli: { passphrase: string } },
 ];
 
-export type PoolInstanceParams = [
-  name: string,
-];
-
 export interface PoolInstance {
   id: number;
   name: string;

@@ -1,7 +1,7 @@
 import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export default {
+export const helptextZvol = {
   zvol_title_add: T('Add Zvol'),
   zvol_title_edit: T('Edit Zvol'),
   zvol_name_placeholder: T('Zvol name'),

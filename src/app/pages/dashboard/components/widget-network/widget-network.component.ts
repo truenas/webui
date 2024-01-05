@@ -430,7 +430,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
   }
 
   chartDataError(err: WebsocketError, nic: BaseNetworkInterface): EmptyConfig {
-    if (err.error === ReportingDatabaseError.InvalidTimestamp) {
+    if (err.error === (ReportingDatabaseError.InvalidTimestamp as number)) {
       const errorMessage = err.reason ? err.reason.replace('[EINVALIDRRDTIMESTAMP] ', '') : null;
       const helpMessage = this.translate.instant('You can clear reporting database and start data collection immediately.');
       return {

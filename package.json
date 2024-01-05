@@ -1,7 +1,7 @@
 {
   "name": "truenas-webui",
   "version": "1.2.0",
-  "license": "BSD",
+  "license": "GPLv3",
   "description": "TrueNAS Angular WebUI",
   "homepage": "https://github.com/truenas/webui/",
   "scripts": {

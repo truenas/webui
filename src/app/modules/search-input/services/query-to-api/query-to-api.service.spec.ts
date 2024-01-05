@@ -1,6 +1,7 @@
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
-import { AuditService } from 'app/enums/audit-event.enum';
+import { AuditService } from 'app/enums/audit.enum';
+import { Option } from 'app/interfaces/option.interface';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import {
   ConnectorType,
@@ -204,7 +205,7 @@ describe('QueryToApiService', () => {
     ]);
 
     expect(condition).toEqual([
-      ['message_timestamp', '>', 1699999200000], ['memory_size', '<', 57671680],
+      ['message_timestamp', '>', 1699999200], ['memory_size', '<', 57671680],
     ]);
   });
 
@@ -222,7 +223,7 @@ describe('QueryToApiService', () => {
       textProperty(
         'service',
         'Сервіс',
-        of([]),
+        of<Option[]>([]),
         new Map<AuditService, string>([
           [AuditService.Middleware, 'Проміжне програмне забезпечення'],
           [AuditService.Smb, 'Ес-ем-бе'],

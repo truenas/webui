@@ -8,7 +8,7 @@ import _ from 'lodash';
 import {
   filter, switchMap, tap, map,
 } from 'rxjs/operators';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { Role } from 'app/enums/role.enum';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -36,6 +36,8 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
   get hasClones(): boolean {
     return !!this.snapshotInfo?.properties?.clones?.value;
   }
+
+  protected readonly Role = Role;
 
   constructor(
     private dialogService: DialogService,
@@ -67,10 +69,10 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
         this.isLoading = false;
         this.cdr.markForCheck();
       },
-      error: (error: WebsocketError) => {
+      error: (error: unknown) => {
         this.isLoading = false;
         this.cdr.markForCheck();
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+        this.dialogService.error(this.errorHandler.parseError(error));
       },
     });
   }
@@ -78,10 +80,17 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
   doHold(): void {
     if (!this.isHold) {
       this.ws.call('zfs.snapshot.hold', [this.snapshotInfo.name])
-        .pipe(untilDestroyed(this)).subscribe(() => this.isHold = true);
+        .pipe(
+          this.errorHandler.catchError(),
+          untilDestroyed(this),
+        )
+        .subscribe(() => this.isHold = true);
     } else {
       this.ws.call('zfs.snapshot.release', [this.snapshotInfo.name])
-        .pipe(untilDestroyed(this)).subscribe(() => this.isHold = false);
+        .pipe(
+          this.errorHandler.catchError(),
+          untilDestroyed(this),
+        ).subscribe(() => this.isHold = false);
     }
   }
 

@@ -6,6 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
+import { Role } from 'app/enums/role.enum';
 import { helptextSnapshotForm } from 'app/helptext/data-protection/snapshot/snapshot-form';
 import {
   PeriodicSnapshotTask,
@@ -55,6 +56,8 @@ export class SnapshotTaskFormComponent implements OnInit {
   });
 
   isLoading = false;
+
+  readonly requiresRoles = [Role.FullAdmin];
 
   readonly labels = {
     dataset: helptextSnapshotForm.dataset_placeholder,
@@ -108,7 +111,7 @@ export class SnapshotTaskFormComponent implements OnInit {
   }
 
   get isTimeMode(): boolean {
-    return this.form.value.schedule === CronPresetValue.Hourly;
+    return this.form.value.schedule === CronPresetValue.Hourly as string;
   }
 
   setTaskForEdit(): void {
@@ -157,7 +160,7 @@ export class SnapshotTaskFormComponent implements OnInit {
         this.isLoading = false;
         this.slideInRef.close(true);
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.isLoading = false;
         this.errorHandler.handleWsFormError(error, this.form);
         this.cdr.markForCheck();

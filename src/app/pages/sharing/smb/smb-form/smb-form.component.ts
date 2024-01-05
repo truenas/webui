@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
@@ -24,6 +25,7 @@ import {
   tap,
 } from 'rxjs/operators';
 import { DatasetPreset } from 'app/enums/dataset.enum';
+import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { helptextSharingSmb } from 'app/helptext/sharing';
@@ -58,11 +60,15 @@ import { selectService } from 'app/store/services/services.selectors';
   templateUrl: './smb-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SmbFormComponent implements OnInit {
+export class SmbFormComponent implements OnInit, AfterViewInit {
+  existingSmbShare: SmbShare;
+  defaultSmbShare: SmbShare;
+
   isLoading = false;
   isAdvancedMode = false;
   namesInUse: string[] = [];
   readonly helptextSharingSmb = helptextSharingSmb;
+  readonly requiresRoles = [Role.SharingSmbWrite, Role.SharingManager, Role.SharingWrite];
   private wasStripAclWarningShown = false;
 
   groupProvider: ChipsProvider = (query) => {
@@ -83,6 +89,7 @@ export class SmbFormComponent implements OnInit {
 
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider({
     directoriesOnly: true,
+    includeSnapshots: false,
   });
 
   presets: SmbPresets;
@@ -153,12 +160,7 @@ export class SmbFormComponent implements OnInit {
 
   form = this.formBuilder.group({
     path: ['', Validators.required],
-    name: ['', {
-      validators: [Validators.required],
-      asyncValidators: [
-        (control: AbstractControl) => this.smbValidationService.validate(control, this.existingSmbShare?.name),
-      ],
-    }],
+    name: ['', Validators.required],
     purpose: [null as SmbPresetType],
     comment: [''],
     enabled: [true],
@@ -205,8 +207,11 @@ export class SmbFormComponent implements OnInit {
     private slideInRef: IxSlideInRef<SmbFormComponent>,
     private store$: Store<ServicesState>,
     private smbValidationService: SmbValidationService,
-    @Inject(SLIDE_IN_DATA) private existingSmbShare: SmbShare,
-  ) { }
+    @Inject(SLIDE_IN_DATA) private data: { existingSmbShare?: SmbShare; defaultSmbShare?: SmbShare },
+  ) {
+    this.existingSmbShare = this.data?.existingSmbShare;
+    this.defaultSmbShare = this.data?.defaultSmbShare;
+  }
 
   ngOnInit(): void {
     this.setupPurposeControl();
@@ -223,9 +228,20 @@ export class SmbFormComponent implements OnInit {
       )
       .subscribe(noop);
 
+    if (this.defaultSmbShare) {
+      this.form.patchValue(this.defaultSmbShare);
+      this.setNameFromPath();
+    }
+
     if (this.existingSmbShare) {
       this.setSmbShareForEdit();
     }
+  }
+
+  ngAfterViewInit(): void {
+    this.form.controls.name.addAsyncValidators([
+      (control: AbstractControl) => this.smbValidationService.validate(control, this.existingSmbShare?.name),
+    ]);
   }
 
   setupAclControl(): void {
@@ -441,6 +457,7 @@ export class SmbFormComponent implements OnInit {
             title: this.translate.instant('Configure ACL'),
             message: this.translate.instant('Do you want to configure the ACL?'),
             buttonText: this.translate.instant('Configure'),
+            cancelText: this.translate.instant('No'),
             hideCheckbox: true,
           }).pipe(untilDestroyed(this)).subscribe((isConfigure) => {
             if (isConfigure) {
@@ -461,10 +478,7 @@ export class SmbFormComponent implements OnInit {
       error: (error: WebsocketError) => {
         if (error?.reason?.includes('[ENOENT]') || error?.reason?.includes('[EXDEV]')) {
           this.dialogService.closeAllDialogs();
-        } else {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
         }
-        this.slideInRef.close();
         this.isLoading = false;
         this.cdr.markForCheck();
         this.formErrorHandler.handleWsFormError(error, this.form);

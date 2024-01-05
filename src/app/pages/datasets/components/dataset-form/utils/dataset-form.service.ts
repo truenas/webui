@@ -6,7 +6,7 @@ import {
 import { map, switchMap, tap } from 'rxjs/operators';
 import { maxDatasetNesting, maxDatasetPath } from 'app/constants/dataset.constants';
 import { inherit } from 'app/enums/with-inherit.enum';
-import helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
+import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/services/dialog.service';
@@ -32,8 +32,8 @@ export class DatasetFormService {
         }
         if (path.split('/').length >= maxDatasetNesting) {
           return this.dialog.warn(
-            this.translate.instant(helptext.pathWarningTitle),
-            this.translate.instant(helptext.pathIsTooDeepWarning),
+            this.translate.instant(helptextDatasetForm.pathWarningTitle),
+            this.translate.instant(helptextDatasetForm.pathIsTooDeepWarning),
           ).pipe(
             tap(() => this.slideInService.closeLast()),
             map(() => false),
@@ -41,8 +41,8 @@ export class DatasetFormService {
         }
         if (path.length >= maxDatasetPath) {
           return this.dialog.warn(
-            this.translate.instant(helptext.pathWarningTitle),
-            this.translate.instant(helptext.pathIsTooLongWarning),
+            this.translate.instant(helptextDatasetForm.pathWarningTitle),
+            this.translate.instant(helptextDatasetForm.pathIsTooLongWarning),
           ).pipe(
             tap(() => this.slideInService.closeLast()),
             map(() => false),

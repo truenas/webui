@@ -6,6 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { Role } from 'app/enums/role.enum';
 import { helptextScrubForm } from 'app/helptext/data-protection/scrub/scrub-form';
 import { CreatePoolScrubTask, PoolScrubTask } from 'app/interfaces/pool-scrub.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -49,6 +50,8 @@ export class ScrubTaskFormComponent implements OnInit {
       return pools.map((pool) => ({ label: pool.name, value: pool.id }));
     }),
   );
+
+  readonly requiresRoles = [Role.FullAdmin];
 
   readonly tooltips = {
     pool: helptextScrubForm.scrub_volume_tooltip,
@@ -109,7 +112,7 @@ export class ScrubTaskFormComponent implements OnInit {
         this.isLoading = false;
         this.slideInRef.close(true);
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.isLoading = false;
         this.errorHandler.handleWsFormError(error, this.form);
         this.cdr.markForCheck();

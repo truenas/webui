@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { AuditEntry } from 'app/interfaces/audit.interface';
+import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 
 @Component({
   selector: 'ix-metadata-details-card',

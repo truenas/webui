@@ -5,6 +5,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { KiB } from 'app/constants/bytes.constant';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IscsiExtentRpm, IscsiExtentType } from 'app/enums/iscsi.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
@@ -52,6 +53,7 @@ describe('ExtentFormComponent', () => {
       FlexLayoutModule,
     ],
     providers: [
+      mockAuth(),
       mockProvider(IxSlideInService),
       mockProvider(StorageService),
       mockProvider(DialogService),

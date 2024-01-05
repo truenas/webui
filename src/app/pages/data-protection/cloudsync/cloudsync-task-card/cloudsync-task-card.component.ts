@@ -11,11 +11,11 @@ import {
 } from 'rxjs';
 import { FromWizardToAdvancedSubmitted } from 'app/enums/from-wizard-to-advanced.enum';
 import { JobState } from 'app/enums/job-state.enum';
+import { Role } from 'app/enums/role.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { helptextCloudsync } from 'app/helptext/data-protection/cloudsync/cloudsync';
 import { CloudSyncTaskUi, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { relativeDateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
@@ -48,8 +48,7 @@ import { fromWizardToAdvancedFormSubmitted } from 'app/store/admin-panel/admin.a
 export class CloudSyncTaskCardComponent implements OnInit {
   cloudsyncTasks: CloudSyncTaskUi[] = [];
   dataProvider: AsyncDataProvider<CloudSyncTaskUi>;
-  jobStates = new Map<number, string>();
-  readonly jobState = JobState;
+  jobStates = new Map<number, JobState>();
 
   columns = createTable<CloudSyncTaskUi>([
     textColumn({
@@ -72,6 +71,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
       onRowToggle: (row: CloudSyncTaskUi) => this.onChangeEnabledState(row),
+      requiresRoles: [Role.CloudSyncWrite],
     }),
     stateButtonColumn({
       title: this.translate.instant('State'),
@@ -92,32 +92,37 @@ export class CloudSyncTaskCardComponent implements OnInit {
           tooltip: this.translate.instant('Run job'),
           hidden: (row) => of(row.job?.state === JobState.Running),
           onClick: (row) => this.runNow(row),
+          requiresRoles: [Role.CloudSyncWrite],
         },
         {
           iconName: 'stop',
           tooltip: this.translate.instant('Stop'),
           hidden: (row) => of(row.job?.state !== JobState.Running),
           onClick: (row) => this.stopCloudSyncTask(row),
+          requiresRoles: [Role.CloudSyncWrite],
         },
         {
           iconName: 'sync',
           tooltip: this.translate.instant('Dry Run'),
           onClick: (row) => this.dryRun(row),
+          requiresRoles: [Role.CloudSyncWrite],
         },
         {
           iconName: 'restore',
           tooltip: this.translate.instant('Restore'),
           onClick: (row) => this.restore(row),
+          requiresRoles: [Role.CloudSyncWrite],
         },
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
+          requiresRoles: [Role.CloudSyncWrite],
         },
       ],
     }),
   ], {
-    rowTestId: (row) => 'card-cloudsync-task-' + row.id.toString(),
+    rowTestId: (row) => 'card-cloudsync-task-' + row.description,
   });
 
   constructor(
@@ -197,9 +202,9 @@ export class CloudSyncTaskCardComponent implements OnInit {
       tapOnce(() => this.snackbar.success(
         this.translate.instant('Cloud Sync «{name}» has started.', { name: row.description }),
       )),
-      catchError((error: Job) => {
+      catchError((error: unknown) => {
         this.getCloudSyncTasks();
-        this.dialogService.error(this.errorHandler.parseJobError(error));
+        this.dialogService.error(this.errorHandler.parseError(error));
         return EMPTY;
       }),
       untilDestroyed(this),
@@ -252,8 +257,8 @@ export class CloudSyncTaskCardComponent implements OnInit {
       tapOnce(() => this.snackbar.success(
         this.translate.instant('Cloud Sync «{name}» has started.', { name: row.description }),
       )),
-      catchError((error: Job) => {
-        this.dialogService.error(this.errorHandler.parseJobError(error));
+      catchError((error: unknown) => {
+        this.dialogService.error(this.errorHandler.parseError(error));
         return EMPTY;
       }),
       untilDestroyed(this),
@@ -306,9 +311,9 @@ export class CloudSyncTaskCardComponent implements OnInit {
         next: () => {
           this.getCloudSyncTasks();
         },
-        error: (err: WebsocketError) => {
+        error: (err: unknown) => {
           this.getCloudSyncTasks();
-          this.dialogService.error(this.errorHandler.parseWsError(err));
+          this.dialogService.error(this.errorHandler.parseError(err));
         },
       });
   }

@@ -1,6 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export default {
+export const helptextIpmi = {
   password_errors: T('20 characters is the maximum length.'),
   password_tooltip: T('Enter the password used to connect to the IPMI\
  interface from a web browser.'),

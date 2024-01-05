@@ -7,6 +7,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
@@ -23,7 +24,7 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { selectServices } from 'app/store/services/services.selectors';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
-describe('SystemDatasetPoolComponent', () => {
+describe('StorageSettingsFormComponent', () => {
   let spectator: Spectator<StorageSettingsFormComponent>;
   let loader: HarnessLoader;
   let ws: MockWebsocketService;
@@ -69,6 +70,7 @@ describe('SystemDatasetPoolComponent', () => {
       }),
       mockProvider(IxSlideInRef),
       { provide: SLIDE_IN_DATA, useValue: undefined },
+      mockAuth(),
     ],
   });
 

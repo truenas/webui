@@ -9,6 +9,7 @@
   </button>
   <mat-menu #rowActions="matMenu">
     <button
+      *ixRequiresRoles="requiresRoles"
       mat-menu-item
       [ixTest]="[service?.service, 'actions-menu', serviceStateLabel]"
       (click)="changeServiceState(service)"

@@ -17,7 +17,7 @@ export function formatLegendSeries(
   series: dygraphs.SeriesLegendData[],
   data: ReportingData,
 ): dygraphs.SeriesLegendData[] {
-  if (data?.name === ReportingGraphName.NetworkInterface) {
+  if (data?.name === (ReportingGraphName.NetworkInterface as string)) {
     series.forEach((element) => {
       element.yHTML = formatInterfaceUnit(element.yHTML);
     });
@@ -27,7 +27,7 @@ export function formatLegendSeries(
 
 // TODO: Messy. Nuke.
 export function formatData(data: ReportingData): ReportingData {
-  if (data.name === ReportingGraphName.NetworkInterface && data.aggregations) {
+  if (data.name === (ReportingGraphName.NetworkInterface as string) && data.aggregations) {
     delete data.aggregations.min; // Will always be showing bogus small values
     Object.keys(data.aggregations).forEach((key) => {
       _.set(data.aggregations, key, (data.aggregations[key as ReportingAggregationKeys] as string[]).map(
@@ -36,7 +36,7 @@ export function formatData(data: ReportingData): ReportingData {
     });
   }
 
-  const shouldBeReversed = data.name === ReportingGraphName.Cpu;
+  const shouldBeReversed = data.name === (ReportingGraphName.Cpu as string);
   if (shouldBeReversed) {
     data.legend = data.legend.reverse();
     (data.data as number[][]).forEach((row, i) => {

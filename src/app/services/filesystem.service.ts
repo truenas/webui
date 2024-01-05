@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { map } from 'rxjs/operators';
+import { map } from 'rxjs';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
+import { FileAttribute } from 'app/enums/file-attribute.enum';
 import { FileType } from 'app/enums/file-type.enum';
 import { FileRecord } from 'app/interfaces/file-record.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
@@ -20,17 +21,23 @@ export class FilesystemService {
   getFilesystemNodeProvider(providerOptions?: {
     directoriesOnly?: boolean;
     showHiddenFiles?: boolean;
+    includeSnapshots?: boolean;
   }): TreeNodeProvider {
     const options = {
       directoriesOnly: false,
       showHiddenFiles: false,
+      includeSnapshots: true,
       ...providerOptions,
     };
 
     return (node: TreeNode<ExplorerNodeData>) => {
-      let typeFilter: [QueryFilter<FileRecord>?] = [];
+      const typeFilter: [QueryFilter<FileRecord>?] = [];
       if (options.directoriesOnly) {
-        typeFilter = [['type', '=', FileType.Directory]];
+        typeFilter.push(['type', '=', FileType.Directory]);
+      }
+
+      if (!options.includeSnapshots) {
+        typeFilter.push(['is_ctldir', '=', false]);
       }
 
       return this.ws.call(
@@ -51,7 +58,8 @@ export class FilesystemService {
             children.push({
               path: file.path,
               name: file.name,
-              isMountpoint: file.is_mountpoint,
+              isMountpoint: file.attributes.includes(FileAttribute.MountRoot),
+              isLock: file.attributes.includes(FileAttribute.Immutable),
               type: file.type === FileType.Directory ? ExplorerNodeType.Directory : ExplorerNodeType.File,
               hasChildren: file.type === FileType.Directory,
             });

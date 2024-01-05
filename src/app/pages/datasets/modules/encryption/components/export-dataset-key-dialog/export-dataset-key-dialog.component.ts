@@ -65,7 +65,7 @@ export class ExportDatasetKeyDialogComponent implements OnInit {
       .subscribe({
         next: (job) => {
           if (job.state === JobState.Failed) {
-            this.dialogService.error(this.errorHandler.parseJobError(job));
+            this.dialogService.error(this.errorHandler.parseError(job));
           } else if (job.state !== JobState.Success) {
             return;
           }

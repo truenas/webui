@@ -19,7 +19,6 @@ import { Pool } from 'app/interfaces/pool.interface';
 import {
   Disk, TopologyDisk, TopologyItem, VDev,
 } from 'app/interfaces/storage.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/services/dialog.service';
 import { DisksUpdateService } from 'app/services/disks-update.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -116,12 +115,8 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
           enclosureViews: [...views],
         });
       },
-      (error: WebsocketError) => {
-        if (Object.keys(error).length) {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-        } else {
-          console.error('Empty websocket error');
-        }
+      (error: unknown) => {
+        this.dialogService.error(this.errorHandler.parseError(error));
       },
     );
   }
@@ -148,11 +143,11 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
           enclosures: [...enclosures],
         });
       },
-      (error: WebsocketError) => {
+      (error: unknown) => {
         this.patchState({
           areEnclosuresLoading: false,
         });
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+        this.dialogService.error(this.errorHandler.parseError(error));
       },
     );
   }
@@ -401,11 +396,11 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
           pools: _.sortBy(pools, (pool) => pool.name),
         });
       },
-      (error: WebsocketError) => {
+      (error: unknown) => {
         this.patchState({
           arePoolsLoading: false,
         });
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+        this.dialogService.error(this.errorHandler.parseError(error));
       },
     );
   }
@@ -422,11 +417,11 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
           areDisksLoading: false,
         });
       },
-      (error: WebsocketError) => {
+      (error: unknown) => {
         this.patchState({
           areDisksLoading: false,
         });
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+        this.dialogService.error(this.errorHandler.parseError(error));
       },
     );
   }

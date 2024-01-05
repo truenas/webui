@@ -9,6 +9,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { map, switchMap } from 'rxjs/operators';
 import { AuditService } from 'app/enums/audit.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
+import { Role } from 'app/enums/role.enum';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
@@ -16,7 +17,6 @@ import { Service, ServiceRow } from 'app/interfaces/service.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { ServiceFtpComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
-import { ServiceLldpComponent } from 'app/pages/services/components/service-lldp/service-lldp.component';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
 import { ServiceSmartComponent } from 'app/pages/services/components/service-smart/service-smart.component';
 import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
@@ -48,6 +48,7 @@ export class ServicesComponent implements OnInit {
   readonly serviceNames = serviceNames;
   readonly serviceName = ServiceName;
   readonly ServiceStatus = ServiceStatus;
+  protected readonly Role = Role;
 
   get emptyConfig(): EmptyConfig {
     if (this.loading) {
@@ -254,9 +255,6 @@ export class ServicesComponent implements OnInit {
         break;
       case ServiceName.Smart:
         this.slideInService.open(ServiceSmartComponent);
-        break;
-      case ServiceName.Lldp:
-        this.slideInService.open(ServiceLldpComponent);
         break;
       default:
         break;

@@ -14,6 +14,7 @@ import {
   debounceTime, filter, map, switchMap, take,
 } from 'rxjs/operators';
 import { allCommands } from 'app/constants/all-commands.constant';
+import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextUsers } from 'app/helptext/account/user-form';
 import { Option } from 'app/interfaces/option.interface';
@@ -37,7 +38,7 @@ import { UserService } from 'app/services/user.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 
-const defaultHomePath = '/nonexistent';
+const defaultHomePath = '/var/empty';
 
 @UntilDestroy({ arrayName: 'subscriptions' })
 @Component({
@@ -125,7 +126,7 @@ export class UserFormComponent implements OnInit {
   shellOptions$: Observable<Option[]>;
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
   readonly groupProvider = new SimpleAsyncComboboxProvider(this.groupOptions$);
-  autocompleteProvider: ChipsProvider = (query) => {
+  autocompleteProvider: ChipsProvider = (query: string) => {
     return this.userService.groupQueryDsCache(query).pipe(
       map((groups) => groups.map((group) => group.group)),
     );
@@ -161,6 +162,8 @@ export class UserFormComponent implements OnInit {
     }
     return '';
   }
+
+  protected readonly Role = Role;
 
   constructor(
     private ws: WebSocketService,
@@ -338,7 +341,7 @@ export class UserFormComponent implements OnInit {
             this.slideInRef.close();
             this.cdr.markForCheck();
           },
-          error: (error) => {
+          error: (error: unknown) => {
             this.isFormLoading = false;
             this.errorHandler.handleWsFormError(error, this.form);
             this.cdr.markForCheck();

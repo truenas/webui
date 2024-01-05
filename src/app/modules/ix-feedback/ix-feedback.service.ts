@@ -3,7 +3,8 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import html2canvas, { Options } from 'html2canvas';
 import {
-  Observable, combineLatest, first, map, switchMap,
+  BehaviorSubject,
+  Observable, combineLatest, first, map, of, switchMap,
 } from 'rxjs';
 import {
   AddReview, AttachmentAddedResponse,
@@ -15,11 +16,13 @@ import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 import { ReviewAddedResponse } from './interfaces/feedback.interface';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class IxFeedbackService {
+  isReviewAllowed$ = new BehaviorSubject<boolean>(false);
+  private oauthToken$ = new BehaviorSubject<string>(null);
   private readonly hostname = 'https://feedback.ui.truenas.com';
-  private oauthToken: string;
-  private isReviewAllowed = false;
 
   constructor(
     private httpClient: HttpClient,
@@ -29,16 +32,12 @@ export class IxFeedbackService {
   ) {
     this.checkIfReviewAllowed().subscribe({
       next: (isAllowed) => {
-        this.isReviewAllowed = isAllowed;
+        this.isReviewAllowed$.next(isAllowed);
       },
       error: () => {
-        this.isReviewAllowed = false;
+        this.isReviewAllowed$.next(false);
       },
     });
-  }
-
-  getReviewAllowed(): boolean {
-    return this.isReviewAllowed;
   }
 
   getHostId(): Observable<string> {
@@ -80,11 +79,11 @@ export class IxFeedbackService {
   }
 
   getOauthToken(): string {
-    return this.oauthToken;
+    return this.oauthToken$.getValue();
   }
 
   setOauthToken(token: string): void {
-    this.oauthToken = token;
+    this.oauthToken$.next(token);
   }
 
   checkIfReviewAllowed(): Observable<boolean> {
@@ -106,17 +105,10 @@ export class IxFeedbackService {
   }
 
   findSimilarTickets(query: string): Observable<SimilarTicket[]> {
-    // Use this endpoint to mock response with similar tickets
-    // TODO: Remove after backend is ready
-    return this.ws.call('support.fetch_categories', []).pipe(
-      map((tickets) => tickets.filter((ticket) => ticket.summary.includes(query))),
-    );
+    if (!this.getOauthToken()) {
+      return of([]);
+    }
 
-    // TODO: Uncomment
-    // if (!this.oauthToken) {
-    //   return of([]);
-    // }
-
-    // return this.ws.call('support.similar_tickets', [this.oauthToken, query]);
+    return this.ws.call('support.similar_tickets', [this.getOauthToken(), query]);
   }
 }

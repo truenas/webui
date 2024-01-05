@@ -79,7 +79,7 @@ describe('VmEditFormComponent', () => {
           Pentium: 'Pentium',
         }),
         mockCall('vm.update'),
-        mockCall('device.get_pci_ids_for_gpu_isolation', ['10DE:1401']),
+        mockCall('vm.device.get_pci_ids_for_gpu_isolation', ['10DE:1401']),
       ]),
       mockProvider(DialogService),
       mockProvider(GpuService, {

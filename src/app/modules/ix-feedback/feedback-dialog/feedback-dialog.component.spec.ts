@@ -81,10 +81,6 @@ describe('FeedbackDialogComponent', () => {
           },
           state: JobState.Running,
         }] as Job[]),
-        mockCall('support.fetch_categories', {
-          API: '11008',
-          WebUI: '10004',
-        }),
         mockJob('support.new_ticket', fakeSuccessfulJob(mockNewTicketResponse as NewTicketResponse)),
         mockJob('support.attach_ticket', fakeSuccessfulJob()),
         mockCall('system.build_time', { $date: 1694835361000 }),
@@ -113,7 +109,7 @@ describe('FeedbackDialogComponent', () => {
         getHostId: jest.fn(() => of('unique-system-host-id-1234')),
         getOauthToken: jest.fn(() => mockToken),
         setOauthToken: jest.fn(),
-        getReviewAllowed: jest.fn(() => isFeedbackAllowed$.value),
+        isReviewAllowed$: isFeedbackAllowed$,
       }),
       provideMockStore({
         selectors: [

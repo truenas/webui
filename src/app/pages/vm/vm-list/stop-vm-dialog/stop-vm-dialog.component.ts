@@ -4,7 +4,7 @@ import {
 import { FormControl } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import helptext from 'app/helptext/vm/vm-list';
+import { helptextVmList } from 'app/helptext/vm/vm-list';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 
 @UntilDestroy()
@@ -16,7 +16,7 @@ import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 export class StopVmDialogComponent {
   forceAfterTimeoutCheckbox = new FormControl(false);
 
-  readonly helptext = helptext;
+  readonly helptext = helptextVmList;
 
   constructor(
     private dialogRef: MatDialogRef<StopVmDialogComponent>,

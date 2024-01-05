@@ -1,7 +1,7 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { helptextGlobal } from 'app/helptext/global-helptext';
 
-export default {
+export const helptextServiceFtp = {
   port_tooltip: T('Set the port the FTP service listens on.'),
   clients_tooltip: T('The maximum number of simultaneous clients.'),
   ipconnections_tooltip: T('Set the maximum number of connections per IP address.\

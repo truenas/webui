@@ -9,6 +9,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { IscsiAuthMethod } from 'app/enums/iscsi.enum';
+import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { IscsiInterface, IscsiPortal } from 'app/interfaces/iscsi.interface';
@@ -86,6 +87,13 @@ export class PortalFormComponent implements OnInit {
   );
   readonly listenOptions$ = this.iscsiService.getIpChoices().pipe(choicesToOptions());
 
+  readonly requiresRoles = [
+    Role.SharingIscsiPortalWrite,
+    Role.SharingIscsiWrite,
+    Role.SharingManager,
+    Role.SharingWrite,
+  ];
+
   constructor(
     private fb: FormBuilder,
     private translate: TranslateService,
@@ -149,7 +157,7 @@ export class PortalFormComponent implements OnInit {
         this.cdr.markForCheck();
         this.slideInRef.close(true);
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.isLoading = false;
         this.errorHandler.handleWsFormError(error, this.form);
         this.cdr.markForCheck();

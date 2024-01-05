@@ -17,9 +17,9 @@ import {
   IscsiExtentRpm,
   IscsiExtentType,
   IscsiExtentUsefor,
-  IscsiNewOption,
 } from 'app/enums/iscsi.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
+import { Role } from 'app/enums/role.enum';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
@@ -38,6 +38,7 @@ import {
   IscsiTargetExtentUpdate,
   IscsiTargetUpdate,
 } from 'app/interfaces/iscsi.interface';
+import { newOption } from 'app/interfaces/option.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { forbiddenValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
@@ -81,16 +82,16 @@ export class IscsiWizardComponent implements OnInit {
       type: [IscsiExtentType.Disk, [Validators.required]],
       path: [mntPath, [Validators.required]],
       filesize: [0, [Validators.required]],
-      disk: [null as IscsiNewOption | string, [Validators.required]],
+      disk: [null as string, [Validators.required]],
       dataset: ['', [Validators.required]],
       volsize: [0, [Validators.required]],
       usefor: [IscsiExtentUsefor.Vmware, [Validators.required]],
-      target: [IscsiNewOption.New as IscsiNewOption | number, [Validators.required]],
+      target: [newOption as typeof newOption | number, [Validators.required]],
     }),
     portal: this.fb.group({
-      portal: [null as IscsiNewOption | number, [Validators.required]],
+      portal: [null as typeof newOption | number, [Validators.required]],
       discovery_authmethod: [IscsiAuthMethod.None, [Validators.required]],
-      discovery_authgroup: [null as IscsiNewOption | number],
+      discovery_authgroup: [null as typeof newOption | number],
       tag: [0, [Validators.min(0), Validators.required]],
       user: ['', [Validators.required]],
       secret: ['', [Validators.minLength(12), Validators.maxLength(16), Validators.required]],
@@ -110,21 +111,27 @@ export class IscsiWizardComponent implements OnInit {
     ],
   });
 
+  readonly requiresRoles = [
+    Role.SharingIscsiTargetWrite,
+    Role.SharingIscsiWrite,
+    Role.SharingWrite,
+  ];
+
   get isNewZvol(): boolean {
-    return this.form.controls.device.enabled && this.form.value.device.disk === IscsiNewOption.New;
+    return this.form.controls.device.enabled && this.form.value.device.disk === newOption;
   }
 
   get isNewAuthgroup(): boolean {
     return this.form.controls.portal.controls.discovery_authgroup.enabled
-      && this.form.value.portal.discovery_authgroup === IscsiNewOption.New;
+      && this.form.value.portal.discovery_authgroup === newOption;
   }
 
   get isNewPortal(): boolean {
-    return this.form.controls.portal.controls.portal.enabled && this.form.value.portal.portal === IscsiNewOption.New;
+    return this.form.controls.portal.controls.portal.enabled && this.form.value.portal.portal === newOption;
   }
 
   get isNewTarget(): boolean {
-    return this.form.value.device.target === IscsiNewOption.New;
+    return this.form.value.device.target === newOption;
   }
 
   get isNewInitiator(): boolean {
@@ -159,7 +166,7 @@ export class IscsiWizardComponent implements OnInit {
         ? (filesize + (blocksizeDefault - filesize % blocksizeDefault)) : filesize;
       extentPayload.path = value.path;
     } else if (extentPayload.type === IscsiExtentType.Disk) {
-      if (value.disk === IscsiNewOption.New) {
+      if (value.disk === newOption) {
         extentPayload.disk = 'zvol/' + this.createdZvol.id.replace(' ', '+');
       } else {
         extentPayload.disk = value.disk;
@@ -248,7 +255,7 @@ export class IscsiWizardComponent implements OnInit {
     this.disablePortalGroup();
 
     this.form.controls.device.controls.target.valueChanges.pipe(untilDestroyed(this)).subscribe((target) => {
-      if (target === IscsiNewOption.New) {
+      if (target === newOption) {
         this.form.controls.portal.enable();
         this.form.controls.initiator.enable();
       } else {
@@ -339,9 +346,9 @@ export class IscsiWizardComponent implements OnInit {
     }
   }
 
-  handleError(err: WebsocketError): void {
+  handleError(err: unknown): void {
     this.toStop = true;
-    this.dialogService.error(this.errorHandler.parseWsError(err));
+    this.dialogService.error(this.errorHandler.parseError(err));
   }
 
   async onSubmit(): Promise<void> {

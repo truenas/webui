@@ -7,7 +7,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
 import { Observable, map } from 'rxjs';
-import helptext from 'app/helptext/storage/volumes/volume-status';
+import { Role } from 'app/enums/role.enum';
+import { helptextVolumeStatus } from 'app/helptext/storage/volumes/volume-status';
 import { Option } from 'app/interfaces/option.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
@@ -37,7 +38,9 @@ export class ReplaceDiskDialogComponent implements OnInit {
   disksProvider = new SimpleAsyncComboboxProvider(this.loadUnusedDisks());
   unusedDisks: UnusedDisk[] = [];
 
-  readonly helptext = helptext;
+  readonly helptext = helptextVolumeStatus;
+
+  protected readonly Role = Role;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -96,10 +99,10 @@ export class ReplaceDiskDialogComponent implements OnInit {
 
   onSubmit(): void {
     const jobDialogRef = this.matDialog.open(EntityJobComponent, {
-      data: { title: helptext.replace_disk.title },
+      data: { title: helptextVolumeStatus.replace_disk.title },
       disableClose: true,
     });
-    jobDialogRef.componentInstance.setDescription(helptext.replace_disk.description);
+    jobDialogRef.componentInstance.setDescription(helptextVolumeStatus.replace_disk.description);
     jobDialogRef.componentInstance.setCall('pool.replace', [this.data.poolId, {
       label: this.data.guid,
       disk: this.form.value.replacement,

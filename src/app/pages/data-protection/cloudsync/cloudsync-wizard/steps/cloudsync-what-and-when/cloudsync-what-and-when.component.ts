@@ -16,13 +16,14 @@ import { Direction, directionNames } from 'app/enums/direction.enum';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { FromWizardToAdvancedSubmitted } from 'app/enums/from-wizard-to-advanced.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
+import { Role } from 'app/enums/role.enum';
 import { TransferMode, transferModeNames } from 'app/enums/transfer-mode.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextCloudsync } from 'app/helptext/data-protection/cloudsync/cloudsync';
 import { CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
-import { NewOption, Option } from 'app/interfaces/option.interface';
+import { newOption, Option } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -101,6 +102,7 @@ export class CloudsyncWhatAndWhenComponent implements OnInit, OnChanges {
   readonly directionOptions$ = of(mapToOptions(directionNames, this.translate));
   readonly transferModeOptions$ = of(mapToOptions(transferModeNames, this.translate));
   readonly helptext = helptextCloudsync;
+  readonly requiresRoles = [Role.CloudSyncWrite];
   readonly transferModeTooltip = `
     ${helptextCloudsync.transfer_mode_warning_sync}<br><br>
     ${helptextCloudsync.transfer_mode_warning_copy}<br><br>
@@ -420,7 +422,7 @@ export class CloudsyncWhatAndWhenComponent implements OnInit, OnChanges {
     });
 
     this.form.controls.bucket.valueChanges.pipe(
-      filter((selectedOption) => selectedOption === NewOption.New),
+      filter((selectedOption) => selectedOption === newOption),
       untilDestroyed(this),
     ).subscribe(() => {
       const dialogRef = this.matDialog.open(CreateStorjBucketDialogComponent, {
@@ -429,7 +431,7 @@ export class CloudsyncWhatAndWhenComponent implements OnInit, OnChanges {
           credentialsId: this.form.controls.credentials.value,
         },
       });
-      dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe((bucket) => {
+      dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe((bucket: string | false) => {
         if (bucket !== false) {
           this.loadBucketOptions();
           this.form.controls.bucket.setValue(bucket);
@@ -455,7 +457,7 @@ export class CloudsyncWhatAndWhenComponent implements OnInit, OnChanges {
           if (credential.provider === CloudsyncProviderName.Storj) {
             bucketOptions.unshift({
               label: this.translate.instant('Add new'),
-              value: NewOption.New,
+              value: newOption,
               disabled: false,
             });
           }

@@ -11,6 +11,7 @@ import {
 } from 'rxjs';
 import { FromWizardToAdvancedSubmitted } from 'app/enums/from-wizard-to-advanced.enum';
 import { JobState } from 'app/enums/job-state.enum';
+import { Role } from 'app/enums/role.enum';
 import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { helptextCloudsync } from 'app/helptext/data-protection/cloudsync/cloudsync';
@@ -47,6 +48,7 @@ export class CloudsyncListComponent implements OnInit {
   filterString = '';
   dataProvider: AsyncDataProvider<CloudSyncTaskUi>;
   readonly jobState = JobState;
+  readonly requiresRoles = [Role.CloudSyncWrite];
 
   columns = createTable<CloudSyncTaskUi>([
     textColumn({
@@ -116,7 +118,7 @@ export class CloudsyncListComponent implements OnInit {
       getValue: (task) => (task.enabled ? this.translate.instant('Yes') : this.translate.instant('No')),
     }),
   ], {
-    rowTestId: (row) => 'cloudsync-task-' + row.id.toString(),
+    rowTestId: (row) => 'cloudsync-task-' + row.description,
   });
 
   get hiddenColumns(): Column<CloudSyncTaskUi, ColumnComponent<CloudSyncTaskUi>>[] {
@@ -166,7 +168,7 @@ export class CloudsyncListComponent implements OnInit {
       )),
       catchError((error: Job) => {
         this.getCloudSyncTasks();
-        this.dialogService.error(this.errorHandler.parseJobError(error));
+        this.dialogService.error(this.errorHandler.parseError(error));
         return EMPTY;
       }),
       untilDestroyed(this),
@@ -217,7 +219,7 @@ export class CloudsyncListComponent implements OnInit {
         this.translate.instant('Cloud Sync «{name}» has started.', { name: row.description }),
       )),
       catchError((error: Job) => {
-        this.dialogService.error(this.errorHandler.parseJobError(error));
+        this.dialogService.error(this.errorHandler.parseError(error));
         return EMPTY;
       }),
       untilDestroyed(this),

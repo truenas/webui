@@ -75,7 +75,6 @@ import { GoogleCloudProviderFormComponent } from './backup-credentials/cloud-cre
 import { GoogleDriveProviderFormComponent } from './backup-credentials/cloud-credentials-form/provider-forms/google-drive-provider-form/google-drive-provider-form.component';
 import { HttpProviderFormComponent } from './backup-credentials/cloud-credentials-form/provider-forms/http-provider-form/http-provider-form.component';
 import { MegaProviderFormComponent } from './backup-credentials/cloud-credentials-form/provider-forms/mega-provider-form/mega-provider-form.component';
-import { OneDriveProviderFormComponent } from './backup-credentials/cloud-credentials-form/provider-forms/one-drive-provider-form/one-drive-provider-form.component';
 import { OpenstackSwiftProviderFormComponent } from './backup-credentials/cloud-credentials-form/provider-forms/openstack-swift-provider-form/openstack-swift-provider-form.component';
 import { PcloudProviderFormComponent } from './backup-credentials/cloud-credentials-form/provider-forms/pcloud-provider-form/pcloud-provider-form.component';
 import { S3ProviderFormComponent } from './backup-credentials/cloud-credentials-form/provider-forms/s3-provider-form/s3-provider-form.component';
@@ -122,7 +121,6 @@ import { CertificateSubjectComponent } from './certificates-dash/forms/common-st
     TokenProviderFormComponent,
     MegaProviderFormComponent,
     AzureProviderFormComponent,
-    OneDriveProviderFormComponent,
     OpenstackSwiftProviderFormComponent,
     PcloudProviderFormComponent,
     SftpProviderFormComponent,

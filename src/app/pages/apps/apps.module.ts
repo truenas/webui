@@ -58,6 +58,7 @@ import { DockerImageUpdateDialogComponent } from 'app/pages/apps/components/dock
 import { DockerImagesListComponent } from 'app/pages/apps/components/docker-images/docker-images-list/docker-images-list.component';
 import { DockerImagesComponentStore } from 'app/pages/apps/components/docker-images/docker-images.store';
 import { PullImageFormComponent } from 'app/pages/apps/components/docker-images/pull-image-form/pull-image-form.component';
+import { DockerHubRateInfoDialogComponent } from 'app/pages/apps/components/dockerhub-rate-limit-info.dialog.ts/dockerhub-rate-limit-info-dialog.component';
 import { AppBulkUpgradeComponent } from 'app/pages/apps/components/installed-apps/app-bulk-upgrade/app-bulk-upgrade.component';
 import { AppInfoCardComponent } from 'app/pages/apps/components/installed-apps/app-info-card/app-info-card.component';
 import { AppRollbackModalComponent } from 'app/pages/apps/components/installed-apps/app-rollback-modal/app-rollback-modal.component';
@@ -127,6 +128,7 @@ import { KubernetesStatusComponent } from './components/installed-apps/kubernete
     AppDetailsHeaderComponent,
     AppBulkUpgradeComponent,
     AppRollbackModalComponent,
+    DockerHubRateInfoDialogComponent,
     SelectPoolDialogComponent,
     AppDetailsSimilarComponent,
     AppSettingsButtonComponent,

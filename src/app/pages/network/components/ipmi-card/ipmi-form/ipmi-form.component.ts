@@ -11,11 +11,11 @@ import { switchMap, tap } from 'rxjs/operators';
 import { IpmiChassisIdentifyState, IpmiIpAddressSource } from 'app/enums/ipmi.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { ProductType } from 'app/enums/product-type.enum';
-import helptext from 'app/helptext/network/ipmi/ipmi';
+import { Role } from 'app/enums/role.enum';
+import { helptextIpmi } from 'app/helptext/network/ipmi/ipmi';
 import { Ipmi, IpmiUpdate } from 'app/interfaces/ipmi.interface';
 import { RadioOption } from 'app/interfaces/option.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -46,7 +46,9 @@ export class IpmiFormComponent implements OnInit {
 
   queryFilter: QueryParams<Ipmi> = null;
 
-  readonly helptext = helptext;
+  readonly helptext = helptextIpmi;
+
+  protected readonly Role = Role;
 
   form = this.fb.group({
     remoteController: [null as boolean],
@@ -54,26 +56,26 @@ export class IpmiFormComponent implements OnInit {
     ipaddress: ['', [
       this.validatorsService.withMessage(
         ipv4Validator(),
-        this.translate.instant(helptext.ip_error),
+        this.translate.instant(helptextIpmi.ip_error),
       ),
     ]],
     gateway: ['', [
       this.validatorsService.withMessage(
         ipv4Validator(),
-        this.translate.instant(helptext.ip_error),
+        this.translate.instant(helptextIpmi.ip_error),
       ),
     ]],
     netmask: ['', [
       this.validatorsService.withMessage(
         ipv4Validator(),
-        this.translate.instant(helptext.ip_error),
+        this.translate.instant(helptextIpmi.ip_error),
       ),
     ]],
     vlan: [null as number],
     password: ['', [
       this.validatorsService.withMessage(
         Validators.maxLength(20),
-        this.translate.instant(helptext.password_errors),
+        this.translate.instant(helptextIpmi.password_errors),
       ),
     ]],
   });
@@ -145,8 +147,8 @@ export class IpmiFormComponent implements OnInit {
           this.isLoading = false;
           this.cdr.markForCheck();
         },
-        error: (error: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
+        error: (error: unknown) => {
+          this.dialogService.error(this.errorHandler.parseError(error));
           this.isLoading = false;
           this.cdr.markForCheck();
         },
@@ -239,7 +241,7 @@ export class IpmiFormComponent implements OnInit {
             this.translate.instant('Successfully saved IPMI settings.'),
           );
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.isLoading = false;
           this.formErrorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();

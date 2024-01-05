@@ -9,6 +9,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { Store } from '@ngrx/store';
 import { provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
@@ -54,6 +55,7 @@ describe('IscsiWizardComponent', () => {
       InitiatorWizardStepComponent,
     ],
     providers: [
+      mockAuth(),
       mockProvider(IxSlideInService),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),

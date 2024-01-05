@@ -273,6 +273,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .mat-calendar-table-header,
   .mat-calendar-table,
   .mat-calendar-body-cell-content,
+  .mat-calendar-table-header th,
   .mat-calendar-body-label {
     @include variable(color, --fg2, $fg2);
   }
@@ -1001,14 +1002,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   tree-viewport {
     max-height: 300px;
     overflow: auto;
-  }
-
-  ix-qr-dialog {
-    text-align: center;
-
-    #qr-dialog-buttons {
-      flex-direction: row-reverse;
-    }
   }
 
   .chip-warn {

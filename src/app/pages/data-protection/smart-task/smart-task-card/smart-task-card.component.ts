@@ -6,6 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   filter, map, switchMap, tap,
 } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { helptextSmart } from 'app/helptext/data-protection/smart/smart';
 import { SmartTestTaskUi } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
@@ -67,12 +68,13 @@ export class SmartTaskCardComponent implements OnInit {
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
+          requiresRoles: [Role.FullAdmin],
           onClick: (row) => this.doDelete(row),
         },
       ],
     }),
   ], {
-    rowTestId: (row) => 'smart-task-' + row.id.toString(),
+    rowTestId: (row) => 'smart-task-' + row.type + '-' + row.disks.join(','),
   });
 
   constructor(

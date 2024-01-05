@@ -75,10 +75,6 @@ export class FeedbackDialogComponent implements OnInit {
   protected feedbackTypeOptions$: Observable<Option[]> = of(mapToOptions(feedbackTypeOptionMap, this.translate));
   readonly acceptedFiles = ticketAcceptedFiles;
 
-  get isReviewAllowed(): boolean {
-    return this.feedbackService.getReviewAllowed();
-  }
-
   get isEnterprise(): boolean {
     return this.systemGeneralService.isEnterprise;
   }
@@ -151,10 +147,10 @@ export class FeedbackDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.addFormListeners();
-    this.updateTypeOptions();
     this.getReleaseVersion();
     this.getHostId();
     this.getProductType();
+    this.getFeedbackTypeOptions();
     this.loadIsIxHardware();
     this.restoreToken();
   }
@@ -198,6 +194,8 @@ export class FeedbackDialogComponent implements OnInit {
                 message: this.translate.instant('Uploading screenshots has failed'),
                 backtrace: `Error: ${error.status},\n ${error.error}\n ${error.message}`,
               });
+              this.isLoading = false;
+              this.cdr.markForCheck();
             },
           });
           this.fileUpload.onUploaded$.pipe(
@@ -226,7 +224,7 @@ export class FeedbackDialogComponent implements OnInit {
           this.onSuccess();
         }
       },
-      error: (error) => {
+      error: (error: unknown) => {
         console.error(error);
         this.isLoading = false;
         this.formErrorHandler.handleWsFormError(error, this.form);
@@ -470,19 +468,29 @@ export class FeedbackDialogComponent implements OnInit {
     }
   }
 
-  private updateTypeOptions(): void {
-    const optionMap = new Map(feedbackTypeOptionMap);
+  private getFeedbackTypeOptions(): void {
+    this.isLoading = true;
+    this.cdr.markForCheck();
 
-    if (!this.isReviewAllowed) {
-      optionMap.delete(FeedbackType.Review);
-    }
+    this.feedbackService.isReviewAllowed$
+      .pipe(untilDestroyed(this))
+      .subscribe((isReviewAllowed) => {
+        const optionMap = new Map(feedbackTypeOptionMap);
 
-    this.feedbackTypeOptions$ = of(mapToOptions(optionMap, this.translate));
-    this.form.controls.type.enable();
-    if (this.type && optionMap.has(this.type)) {
-      this.form.controls.type.setValue(this.type);
-    } else {
-      this.form.controls.type.setValue([...optionMap.keys()].shift());
-    }
+        if (!isReviewAllowed) {
+          optionMap.delete(FeedbackType.Review);
+        }
+
+        this.feedbackTypeOptions$ = of(mapToOptions(optionMap, this.translate));
+        this.form.controls.type.enable();
+        if (this.type && optionMap.has(this.type)) {
+          this.form.controls.type.setValue(this.type);
+        } else {
+          this.form.controls.type.setValue([...optionMap.keys()].shift());
+        }
+
+        this.isLoading = false;
+        this.cdr.markForCheck();
+      });
   }
 }

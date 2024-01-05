@@ -5,7 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import { combineLatest, map, Observable } from 'rxjs';
 import { CreateVdevLayout, VdevType } from 'app/enums/v-dev-type.enum';
-import helptext from 'app/helptext/storage/volumes/manager/manager';
+import { helptextManager } from 'app/helptext/storage/volumes/manager/manager';
 import { Pool } from 'app/interfaces/pool.interface';
 import {
   AddVdevsStore,
@@ -39,7 +39,7 @@ export class PoolManagerValidationService {
     private addVdevsStore: AddVdevsStore,
   ) {}
 
-  exportedPoolsWarning = this.translate.instant(helptext.manager_exportedSelectedDisksWarning);
+  exportedPoolsWarning = this.translate.instant(helptextManager.manager_exportedSelectedDisksWarning);
 
   readonly poolCreationErrors$ = combineLatest([
     this.addVdevsStore.pool$,
@@ -183,7 +183,7 @@ export class PoolManagerValidationService {
         });
       }
       if ([VdevType.Dedup, VdevType.Special, VdevType.Data].includes(topologyCategoryType)) {
-        const vdevType = topologyCategoryType === 'special' ? 'metadata' : topologyCategoryType;
+        const vdevType = topologyCategoryType === VdevType.Special ? 'metadata' : topologyCategoryType;
         errors.push({
           text: this.translate.instant('A stripe {vdevType} VDEV is highly discouraged and will result in data loss if it fails', { vdevType }),
           severity: PoolCreationSeverity.ErrorWarning,

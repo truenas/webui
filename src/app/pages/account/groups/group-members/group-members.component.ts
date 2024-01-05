@@ -4,6 +4,7 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { switchMap } from 'rxjs/operators';
+import { Role } from 'app/enums/role.enum';
 import { Group } from 'app/interfaces/group.interface';
 import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/services/dialog.service';
@@ -24,6 +25,8 @@ export class GroupMembersComponent implements OnInit {
   isFormLoading = false;
   group: Group;
 
+  protected readonly Role = Role;
+
   constructor(
     private ws: WebSocketService,
     private activatedRoute: ActivatedRoute,
@@ -36,7 +39,9 @@ export class GroupMembersComponent implements OnInit {
   ngOnInit(): void {
     this.isFormLoading = true;
     this.activatedRoute.params.pipe(
-      switchMap((params) => this.ws.call('group.query', [[['id', '=', parseInt(params.pk)]]])),
+      switchMap((params) => {
+        return this.ws.call('group.query', [[['id', '=', parseInt(params.pk as string)]]]);
+      }),
       switchMap((groups) => {
         this.group = groups[0];
         this.cdr.markForCheck();
@@ -72,7 +77,7 @@ export class GroupMembersComponent implements OnInit {
       error: (error) => {
         this.isFormLoading = false;
         this.cdr.markForCheck();
-        this.dialog.error(this.errorHandler.parseWsError(error));
+        this.dialog.error(this.errorHandler.parseError(error));
       },
     });
   }

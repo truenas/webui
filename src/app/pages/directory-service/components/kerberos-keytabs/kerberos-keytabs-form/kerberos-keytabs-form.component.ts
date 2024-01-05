@@ -5,6 +5,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { helptextKerberosKeytabs } from 'app/helptext/directory-service/kerberos-keytabs-form-list';
 import { KerberosKeytab } from 'app/interfaces/kerberos-config.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -36,6 +37,8 @@ export class KerberosKeytabsFormComponent implements OnInit {
   isLoading = false;
 
   readonly helptext = helptextKerberosKeytabs;
+
+  protected readonly Role = Role;
 
   constructor(
     private translate: TranslateService,
@@ -89,7 +92,7 @@ export class KerberosKeytabsFormComponent implements OnInit {
           this.isLoading = false;
           this.slideInRef.close();
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.isLoading = false;
           this.errorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();

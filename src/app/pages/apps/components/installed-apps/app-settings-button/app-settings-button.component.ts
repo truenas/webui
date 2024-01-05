@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component,
+  ChangeDetectionStrategy, Component, ViewContainerRef,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -33,10 +33,11 @@ export class AppSettingsButtonComponent {
     private snackbar: SnackbarService,
     private errorHandler: ErrorHandlerService,
     protected kubernetesStore: KubernetesStore,
+    private viewContainerRef: ViewContainerRef,
   ) { }
 
   onChoosePool(): void {
-    this.matDialog.open(SelectPoolDialogComponent);
+    this.matDialog.open(SelectPoolDialogComponent, { viewContainerRef: this.viewContainerRef });
   }
 
   onAdvancedSettings(): void {
@@ -71,7 +72,7 @@ export class AppSettingsButtonComponent {
       });
 
       dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
-        this.dialogService.error(this.errorHandler.parseJobError(err));
+        this.dialogService.error(this.errorHandler.parseError(err));
       });
     });
   }
