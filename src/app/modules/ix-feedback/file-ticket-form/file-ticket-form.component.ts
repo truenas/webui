@@ -3,13 +3,14 @@ import {
 } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import {
   debounceTime, distinctUntilChanged, filter, map, switchMap,
 } from 'rxjs';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import {
-  CreateNewTicket, SimilarTicket,
+  CreateNewTicket,
 } from 'app/modules/ix-feedback/interfaces/file-ticket.interface';
 import { IxFeedbackService } from 'app/modules/ix-feedback/ix-feedback.service';
 
@@ -19,15 +20,21 @@ import { IxFeedbackService } from 'app/modules/ix-feedback/ix-feedback.service';
   styleUrls: ['./file-ticket-form.component.scss'],
 })
 export class FileTicketFormComponent {
-  title = new FormControl<string>('', [Validators.required]);
-  similarTickets$ = this.title.valueChanges.pipe(
+  protected title = new FormControl<string>('', [Validators.required]);
+  protected similarIssues$ = this.title.valueChanges.pipe(
     filter(() => Boolean(this.feedback.getOauthToken())),
-    filter((query) => Boolean(query.length)),
-    debounceTime(300),
+    filter((query) => query.length > 3),
+    debounceTime(500),
     distinctUntilChanged(),
-    switchMap((query) => this.feedback.findSimilarTickets(query)),
-    map((tickets: SimilarTicket[]) => tickets.slice(0, 5)),
+    switchMap((query) => this.feedback.getSimilarIssues(query)),
   );
+  protected readonly hint$ = this.feedback.oauthToken$.pipe(map((token) => {
+    if (token) {
+      return '';
+    }
+
+    return this.translate.instant('Log In To Jira first to enable autocomplete feature for similar issues.');
+  }));
 
   readonly tooltips = {
     title: helptext.title.tooltip,
@@ -36,7 +43,15 @@ export class FileTicketFormComponent {
   constructor(
     private feedback: IxFeedbackService,
     private sanitizer: DomSanitizer,
-  ) {}
+    private translate: TranslateService,
+  ) {
+    this.feedback.oauthToken$.pipe(
+      filter(Boolean),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.title.enable();
+    });
+  }
 
   sanitizeHtml(url: string): SafeHtml {
     return this.sanitizer.bypassSecurityTrustHtml(url);

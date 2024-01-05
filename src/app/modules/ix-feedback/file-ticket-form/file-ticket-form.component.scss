@@ -1,12 +1,14 @@
 @import 'mixins/animations';
 
-.similar-tickets {
+.similar-issues-body {
   background: var(--bg1);
+  max-height: 116px;
+  overflow-y: auto;
   padding: 8px 0;
 }
 
-.similar-ticket {
-  align-items: center;
+.similar-issue {
+  align-items: flex-start;
   display: flex;
   gap: 4px;
   padding: 0 8px;
@@ -16,17 +18,18 @@
   }
 }
 
-.ticket-type-icon {
+.issue-type-icon {
   @include fade-in();
   background: var(--bg2);
   border-radius: 2px;
   display: inline-flex;
   flex: 0 0 auto;
   height: 16px;
+  margin-top: 2px;
   width: 16px;
 }
 
-.similar-tickets-header {
+.similar-issues-header {
   font-weight: bold;
   margin-bottom: 8px;
   margin-top: -12px;

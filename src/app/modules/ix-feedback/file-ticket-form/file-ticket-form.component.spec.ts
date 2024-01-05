@@ -22,8 +22,9 @@ describe('FileTicketFormComponent', () => {
     declarations: [],
     providers: [
       mockProvider(IxFeedbackService, {
+        oauthToken$: of('test-token'),
         getOauthToken: jest.fn(() => 'test-token'),
-        findSimilarTickets: jest.fn(() => of(similarTickets)),
+        getSimilarIssues: jest.fn(() => of(similarTickets)),
       }),
     ],
   });
@@ -42,11 +43,13 @@ describe('FileTicketFormComponent', () => {
     });
   });
 
-  it('checks for similar tickets when title is changed', async () => {
+  it('checks for similar issues when title is changed', async () => {
     const title = await loader.getHarness(IxInputHarness.with({ label: 'Subject' }));
     await title.setValue('Similar');
 
-    expect(spectator.inject(IxFeedbackService).findSimilarTickets).toHaveBeenCalledWith('Similar');
-    expect(spectator.queryAll('.similar-ticket')).toHaveLength(5);
+    expect(spectator.inject(IxFeedbackService).getSimilarIssues).toHaveBeenCalledWith('Similar');
+    expect(spectator.query('.similar-issue-title')).toHaveExactText('The following issues were already reported.');
+    expect(spectator.query('.similar-issue-subtitle')).toHaveExactText('Do any of them look similar?');
+    expect(spectator.queryAll('.similar-issue')).toHaveLength(5);
   });
 });

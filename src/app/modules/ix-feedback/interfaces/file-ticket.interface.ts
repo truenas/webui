@@ -57,13 +57,12 @@ export type AttachTicketParams = [
   ticket: number,
 ];
 
-export type SimilarTicketsParams = [
-  // TODO: They are required
-  token?: string,
-  query?: string,
+export type SimilarIssuesParams = [
+  token: string,
+  query: string,
 ];
 
-export interface SimilarTicket {
+export interface SimilarIssue {
   id: number;
   url: string;
   img: string;

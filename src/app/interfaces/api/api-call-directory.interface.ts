@@ -263,8 +263,8 @@ import {
   ZfsSnapshot,
 } from 'app/interfaces/zfs-snapshot.interface';
 import {
-  SimilarTicket,
-  SimilarTicketsParams,
+  SimilarIssue,
+  SimilarIssuesParams,
   SupportConfig, SupportConfigUpdate,
 } from 'app/modules/ix-feedback/interfaces/file-ticket.interface';
 
@@ -757,7 +757,7 @@ export interface ApiCallDirectory {
   'support.config': { params: void; response: SupportConfig };
   'support.update': { params: [SupportConfigUpdate]; response: SupportConfig };
   'support.attach_ticket_max_size': { params: void; response: number };
-  'support.similar_tickets': { params: SimilarTicketsParams; response: SimilarTicket[] };
+  'support.similar_issues': { params: SimilarIssuesParams; response: SimilarIssue[] };
 
   // SMART
   'smart.test.disk_choices': { params: void; response: Choices };

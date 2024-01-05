@@ -9,7 +9,7 @@ import {
 import {
   AddReview, AttachmentAddedResponse,
 } from 'app/modules/ix-feedback/interfaces/feedback.interface';
-import { SimilarTicket } from 'app/modules/ix-feedback/interfaces/file-ticket.interface';
+import { SimilarIssue } from 'app/modules/ix-feedback/interfaces/file-ticket.interface';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
@@ -21,7 +21,7 @@ import { ReviewAddedResponse } from './interfaces/feedback.interface';
 })
 export class IxFeedbackService {
   isReviewAllowed$ = new BehaviorSubject<boolean>(false);
-  private oauthToken$ = new BehaviorSubject<string>(null);
+  oauthToken$ = new BehaviorSubject<string>(null);
   private readonly hostname = 'https://feedback.ui.truenas.com';
 
   constructor(
@@ -104,11 +104,11 @@ export class IxFeedbackService {
     );
   }
 
-  findSimilarTickets(query: string): Observable<SimilarTicket[]> {
+  getSimilarIssues(query: string): Observable<SimilarIssue[]> {
     if (!this.getOauthToken()) {
       return of([]);
     }
 
-    return this.ws.call('support.similar_tickets', [this.getOauthToken(), query]);
+    return this.ws.call('support.similar_issues', [this.getOauthToken(), query]);
   }
 }

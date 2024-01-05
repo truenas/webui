@@ -4,31 +4,32 @@
   [tooltip]="tooltips.title | translate"
   [placeholder]="tooltips.title | translate"
   [required]="true"
+  [hint]="hint$ | async"
 ></ix-input>
 
-<ng-container *ngIf="similarTickets$ | async as tickets">
-  <div *ngIf="tickets.length" class="similar-tickets-header">
-    <div class="similar-tickets-title">
+<div *ngIf="similarIssues$ | async as issues" class="similar-issues">
+  <div *ngIf="issues.length" class="similar-issues-header">
+    <div class="similar-issues-title">
       {{ 'The following issues were already reported.' | translate }}
     </div>
-    <div class="similar-tickets-subtitle">
+    <div class="similar-issues-subtitle">
       {{ 'Do any of them look similar?' | translate }}
     </div>
   </div>
-  <div *ngIf="tickets.length" class="similar-tickets">
+  <div *ngIf="issues.length" class="similar-issues-body">
     <a
-      *ngFor="let ticket of tickets"
-      class="similar-ticket"
+      *ngFor="let issue of issues"
+      class="similar-issue"
       target="_blank"
-      [href]="ticket.url"
-      [ixTest]="['similar-ticket', ticket.id]"
+      [href]="issue.url"
+      [ixTest]="['similar-issue', issue.id]"
     >
-      <div
-        class="ticket-type-icon"
-        [style.background-image]="'url(https://ixsystems.atlassian.net' + ticket.img + ')'"
-      ></div>
-      <span [innerHTML]="sanitizeHtml(ticket.summary)"></span>
+      <span
+        class="issue-type-icon"
+        [style.background-image]="'url(https://ixsystems.atlassian.net' + issue.img + ')'"
+      ></span>
+      <span [innerHTML]="sanitizeHtml(issue.summary)"></span>
       <ix-icon name="mdi-open-in-new"></ix-icon>
     </a>
   </div>
-</ng-container>
+</div>
