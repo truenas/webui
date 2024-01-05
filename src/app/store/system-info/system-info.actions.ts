@@ -17,6 +17,11 @@ export const systemHostIdLoaded = createAction(
   props<{ systemHostId: string }>(),
 );
 
+export const systemIsStableLoaded = createAction(
+  '[System Info API] System is stable Loaded',
+  props<{ systemIsStable: boolean }>(),
+);
+
 export const ixHardwareLoaded = createAction(
   '[System Info API] System is IxHardware Loaded',
   props<{ isIxHardware: boolean }>(),

@@ -21,6 +21,11 @@ export const selectSystemHostId = createSelector(
   (state) => state.systemHostId,
 );
 
+export const selectSystemIsStable = createSelector(
+  selectSystemInfoState,
+  (state) => state.systemIsStable,
+);
+
 export const selectIsIxHardware = createSelector(
   selectSystemInfoState,
   (state) => state.isIxHardware,

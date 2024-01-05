@@ -9,7 +9,7 @@ import { WebSocketService } from 'app/services/ws.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import {
   ixHardwareLoaded,
-  systemFeaturesLoaded, systemHostIdLoaded, systemInfoLoaded, systemInfoUpdated,
+  systemFeaturesLoaded, systemHostIdLoaded, systemInfoLoaded, systemInfoUpdated, systemIsStableLoaded,
 } from 'app/store/system-info/system-info.actions';
 
 @Injectable()
@@ -78,6 +78,19 @@ export class SystemInfoEffects {
         catchError((error) => {
           console.error(error);
           return of(systemHostIdLoaded({ systemHostId: null }));
+        }),
+      );
+    }),
+  ));
+
+  loadSystemIsStable = createEffect(() => this.actions$.pipe(
+    ofType(adminUiInitialized),
+    mergeMap(() => {
+      return this.ws.call('system.is_stable').pipe(
+        map((systemIsStable) => systemIsStableLoaded({ systemIsStable })),
+        catchError((error) => {
+          console.error(error);
+          return of(systemIsStableLoaded({ systemIsStable: false }));
         }),
       );
     }),

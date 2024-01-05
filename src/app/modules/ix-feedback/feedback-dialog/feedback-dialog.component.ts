@@ -34,6 +34,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxFileUploadService } from 'app/services/ix-file-upload.service';
+import { SentryService } from 'app/services/sentry.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
@@ -128,6 +129,7 @@ export class FeedbackDialogComponent implements OnInit {
     private fileUpload: IxFileUploadService,
     private dialog: DialogService,
     private systemGeneralService: SystemGeneralService,
+    private sentryService: SentryService,
     @Inject(WINDOW) private window: Window,
     @Inject(MAT_DIALOG_DATA) private type: FeedbackType,
   ) {}
@@ -466,7 +468,7 @@ export class FeedbackDialogComponent implements OnInit {
   }
 
   private getSessionId(): void {
-    this.systemGeneralService.sessionId$
+    this.sentryService.sessionId$
       .pipe(untilDestroyed(this))
       .subscribe((sessionId) => {
         this.sessionId = sessionId;
