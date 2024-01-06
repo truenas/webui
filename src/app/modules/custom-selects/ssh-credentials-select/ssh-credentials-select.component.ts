@@ -8,6 +8,7 @@ import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
 import { Option } from 'app/interfaces/option.interface';
 import { SshCredentials } from 'app/interfaces/ssh-credentials.interface';
 import { IxSelectWithNewOption } from 'app/modules/ix-forms/components/ix-select/ix-select-with-new-option.directive';
+import { IxSelectValue } from 'app/modules/ix-forms/components/ix-select/ix-select.component';
 import { SshConnectionFormComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-form/ssh-connection-form.component';
 import { ChainedComponentResponse } from 'app/services/ix-chained-slide-in.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
@@ -36,10 +37,10 @@ export class SshCredentialsSelectComponent extends IxSelectWithNewOption {
     );
   }
 
-  setValueFromSlideInResult(
+  getValueFromChainedResponse(
     result: ChainedComponentResponse,
-  ): void {
-    this.value = (result.response as SshCredentials).id;
+  ): IxSelectValue {
+    return (result.response as SshCredentials).id;
   }
 
   getFormComponentType(): ComponentType<unknown> {

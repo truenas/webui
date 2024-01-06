@@ -8,6 +8,7 @@ import { cloudsyncProviderNameMap } from 'app/enums/cloudsync-provider.enum';
 import { CloudCredential } from 'app/interfaces/cloud-sync-task.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { IxSelectWithNewOption } from 'app/modules/ix-forms/components/ix-select/ix-select-with-new-option.directive';
+import { IxSelectValue } from 'app/modules/ix-forms/components/ix-select/ix-select.component';
 import { CloudCredentialsFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/cloud-credentials-form.component';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { ChainedComponentResponse } from 'app/services/ix-chained-slide-in.service';
@@ -40,10 +41,10 @@ export class CloudCredentialsSelectComponent extends IxSelectWithNewOption {
     );
   }
 
-  setValueFromSlideInResult(
+  getValueFromChainedResponse(
     result: ChainedComponentResponse,
-  ): void {
-    this.value = (result.response as CloudCredential).id;
+  ): IxSelectValue {
+    return (result.response as CloudCredential).id;
   }
 
   getFormComponentType(): ComponentType<unknown> {
