@@ -8,7 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
-import helptext_cloudsync from 'app/helptext/data-protection/cloudsync/cloudsync-form';
+import { helptextCloudsync } from 'app/helptext/data-protection/cloudsync/cloudsync';
 import { CloudsyncRestoreParams } from 'app/interfaces/cloudsync-provider.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -29,7 +29,7 @@ export class CloudsyncRestoreDialogComponent {
   });
 
   readonly treeNodeProvider = this.filesystem.getFilesystemNodeProvider({ directoriesOnly: true });
-  readonly helptext = helptext_cloudsync;
+  readonly helptext = helptextCloudsync;
   readonly transferModes$ = of([
     {
       value: TransferMode.Sync,
@@ -59,7 +59,7 @@ export class CloudsyncRestoreDialogComponent {
         next: () => {
           this.dialogRef.close(true);
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.errorHandler.handleWsFormError(error, this.form);
         },
       });

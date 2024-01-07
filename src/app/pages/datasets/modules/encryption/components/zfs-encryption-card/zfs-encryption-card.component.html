@@ -10,15 +10,17 @@
     >
       {{ 'Edit' | translate }}
     </a>
-    <a
-      *ngIf="canUnlock"
-      mat-button
-      color="primary"
-      ixTest="unlock"
-      [routerLink]="['/datasets', dataset.id, 'unlock']"
-    >
-      {{ 'Unlock' | translate }}
-    </a>
+    <ng-container *ngIf="canUnlock">
+      <a
+        *ixRequiresRoles="[Role.FullAdmin]"
+        mat-button
+        color="primary"
+        ixTest="unlock"
+        [routerLink]="['/datasets', dataset.id, 'unlock']"
+      >
+        {{ 'Unlock' | translate }}
+      </a>
+    </ng-container>
   </mat-card-header>
   <mat-card-content>
     <div class="details-item">
@@ -56,21 +58,23 @@
     </ng-container>
   </mat-card-content>
   <mat-card-actions *ngIf="dataset.encrypted && isEncryptionRoot && !this.dataset.locked">
-    <button
-      *ngIf="canExportKey && isRoot"
-      mat-button
-      ixTest="export-all-keys"
-      (click)="onExportAllKeys()"
-    >
-      {{ 'Export All Keys' | translate }}
-    </button>
+    <ng-container *ixRequiresRoles="[Role.FullAdmin]">
+      <button
+        *ngIf="canExportKey && isRoot"
+        mat-button
+        ixTest="export-all-keys"
+        (click)="onExportAllKeys()"
+      >
+        {{ 'Export All Keys' | translate }}
+      </button>
 
-    <button *ngIf="canExportKey" mat-button ixTest="export-key" (click)="onExportKey()">
-      {{ 'Export Key' | translate }}
-    </button>
+      <button *ngIf="canExportKey" mat-button ixTest="export-key" (click)="onExportKey()">
+        {{ 'Export Key' | translate }}
+      </button>
 
-    <button *ngIf="hasPassphrase" mat-button ixTest="lock" (click)="onLock()">
-      {{ 'Lock' | translate }}
-    </button>
+      <button *ngIf="hasPassphrase" mat-button ixTest="lock" (click)="onLock()">
+        {{ 'Lock' | translate }}
+      </button>
+    </ng-container>
   </mat-card-actions>
 </mat-card>

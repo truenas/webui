@@ -9,8 +9,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { forkJoin } from 'rxjs';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
-import { SupportConfigUpdate } from 'app/interfaces/support.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { SupportConfigUpdate } from 'app/modules/ix-feedback/interfaces/file-ticket.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { emailValidator } from 'app/modules/ix-forms/validators/email-validation/email-validation';
@@ -76,7 +75,7 @@ export class ProactiveComponent implements OnInit {
             this.translate.instant(helptext.proactive.dialog_mesage),
           );
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.isLoading = false;
           this.formErrorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();
@@ -107,11 +106,11 @@ export class ProactiveComponent implements OnInit {
             enabled: isEnabled,
           });
         },
-        error: (error: WebsocketError) => {
+        error: (error: unknown) => {
           this.isFormDisabled = true;
           this.form.disable();
           this.cdr.markForCheck();
-          this.dialogService.error(this.errorHandler.parseWsError(error));
+          this.dialogService.error(this.errorHandler.parseError(error));
         },
       });
   }

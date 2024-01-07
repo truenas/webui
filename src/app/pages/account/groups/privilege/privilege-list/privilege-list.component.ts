@@ -3,7 +3,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { filter, switchMap, tap } from 'rxjs/operators';
-import { roleNames } from 'app/enums/role.enum';
+import { Role, roleNames } from 'app/enums/role.enum';
 import { Privilege } from 'app/interfaces/privilege.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
@@ -33,7 +33,9 @@ export class PrivilegeListComponent implements OnInit {
     }),
     textColumn({
       title: this.translate.instant('Roles'),
-      getValue: (row) => row.roles.map((role) => this.translate.instant(roleNames.get(role))).join(', '),
+      getValue: (row) => row.roles.map((role) => {
+        return roleNames.has(role) ? this.translate.instant(roleNames.get(role)) : role;
+      }).join(', ') || this.translate.instant('N/A'),
     }),
     textColumn({
       title: this.translate.instant('Local Groups'),
@@ -60,10 +62,13 @@ export class PrivilegeListComponent implements OnInit {
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
           hidden: (row) => of(!!row.builtin_name),
+          requiresRoles: [Role.FullAdmin],
         },
       ],
     }),
-  ]);
+  ], {
+    rowTestId: (row) => 'privilege-' + row.name,
+  });
 
   privileges: Privilege[] = [];
 
@@ -115,7 +120,7 @@ export class PrivilegeListComponent implements OnInit {
           this.getPrivileges();
         },
         error: (error) => {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
+          this.dialogService.error(this.errorHandler.parseError(error));
         },
       });
   }

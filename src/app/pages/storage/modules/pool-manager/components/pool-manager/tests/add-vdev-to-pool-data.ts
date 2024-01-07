@@ -114,11 +114,8 @@ export const existingPool = {
     dedup: [],
   },
   healthy: true,
-  warning: true,
   size: 35974646071296,
-  allocated: 11538616320,
-  free: 35963107454976,
-} as unknown as Pool;
+} as Pool;
 
 export const existingPoolDisks = [
   {

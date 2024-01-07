@@ -4,7 +4,8 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { filter } from 'rxjs';
-import helptext from 'app/helptext/topbar';
+import { AccountAttribute } from 'app/enums/account-attribute.enum';
+import { helptextTopbar } from 'app/helptext/topbar';
 import { AboutDialogComponent } from 'app/modules/common/dialog/about/about-dialog.component';
 import {
   ChangePasswordDialogComponent,
@@ -14,10 +15,11 @@ import { AuthService } from 'app/services/auth/auth.service';
 @Component({
   selector: 'ix-user-menu',
   templateUrl: './user-menu.component.html',
+  styleUrls: ['./user-menu.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserMenuComponent {
-  readonly tooltips = helptext.mat_tooltips;
+  readonly tooltips = helptextTopbar.mat_tooltips;
   loggedInUser$ = this.authService.user$.pipe(filter(Boolean));
 
   constructor(
@@ -39,4 +41,6 @@ export class UserMenuComponent {
   onTwoFactorAuth(): void {
     this.router.navigate(['/two-factor-auth']);
   }
+
+  protected readonly AccountAttribute = AccountAttribute;
 }

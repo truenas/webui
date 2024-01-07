@@ -11,12 +11,12 @@ import { filter, switchMap } from 'rxjs/operators';
 import {
   IdmapBackend, IdmapLinkedService, IdmapName, IdmapSchemaMode, IdmapSslEncryptionMode,
 } from 'app/enums/idmap.enum';
+import { Role } from 'app/enums/role.enum';
 import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
-import helptext from 'app/helptext/directory-service/idmap';
+import { helptextIdmap } from 'app/helptext/directory-service/idmap';
 import { IdmapBackendOption, IdmapBackendOptions } from 'app/interfaces/idmap-backend-options.interface';
 import { Idmap, IdmapUpdate } from 'app/interfaces/idmap.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
@@ -100,7 +100,7 @@ export class IdmapFormComponent implements OnInit {
   backendChoices: IdmapBackendOptions;
   isLoading = false;
 
-  readonly helptext = helptext;
+  readonly helptext = helptextIdmap;
 
   readonly editIdmapNames$ = of([
     { label: this.translate.instant('Active Directory - Primary Domain'), value: IdmapName.DsTypeActiveDirectory },
@@ -147,6 +147,8 @@ export class IdmapFormComponent implements OnInit {
   get currentBackend(): IdmapBackendOption {
     return this.backendChoices?.[this.form.controls.idmap_backend.value];
   }
+
+  protected readonly Role = Role;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -215,7 +217,7 @@ export class IdmapFormComponent implements OnInit {
           this.isLoading = false;
           this.slideInRef.close();
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.formErrorHandler.handleWsFormError(error, this.form);
           this.isLoading = false;
           this.cdr.markForCheck();
@@ -242,10 +244,10 @@ export class IdmapFormComponent implements OnInit {
             this.setDefaultsForBackendOptions();
           }
         },
-        error: (error: WebsocketError) => {
+        error: (error: unknown) => {
           this.isLoading = false;
           this.cdr.markForCheck();
-          this.dialogService.error(this.errorHandler.parseWsError(error));
+          this.dialogService.error(this.errorHandler.parseError(error));
         },
       });
   }
@@ -303,8 +305,8 @@ export class IdmapFormComponent implements OnInit {
 
   private askAndClearCache(): Observable<unknown> {
     return this.dialogService.confirm({
-      title: helptext.idmap.clear_cache_dialog.title,
-      message: helptext.idmap.clear_cache_dialog.message,
+      title: helptextIdmap.idmap.clear_cache_dialog.title,
+      message: helptextIdmap.idmap.clear_cache_dialog.message,
       hideCheckbox: true,
     }).pipe(
       switchMap((confirmed) => {
@@ -313,14 +315,14 @@ export class IdmapFormComponent implements OnInit {
         }
 
         const dialog = this.matDialog.open(EntityJobComponent, {
-          data: { title: helptext.idmap.clear_cache_dialog.job_title },
+          data: { title: helptextIdmap.idmap.clear_cache_dialog.job_title },
           disableClose: true,
         });
         dialog.componentInstance.setCall('idmap.clear_idmap_cache');
         dialog.componentInstance.submit();
         dialog.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
           this.snackbar.success(
-            this.translate.instant(helptext.idmap.clear_cache_dialog.success_msg),
+            this.translate.instant(helptextIdmap.idmap.clear_cache_dialog.success_msg),
           );
           dialog.close();
         });

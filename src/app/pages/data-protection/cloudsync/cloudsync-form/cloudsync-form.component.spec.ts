@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { Direction } from 'app/enums/direction.enum';
@@ -28,7 +29,7 @@ describe('CloudsyncFormComponent', () => {
     description: 'New Cloud Sync Task',
     direction: Direction.Push,
     path: '/mnt/my pool',
-    attributes: { folder: '/test/' },
+    attributes: { folder: '/test/' } as Record<string, string>,
     enabled: false,
     transfer_mode: TransferMode.Copy,
     encryption: true,
@@ -52,7 +53,7 @@ describe('CloudsyncFormComponent', () => {
       id: 2,
       name: 'test2',
       provider: 'MEGA',
-      attributes: { user: 'login', pass: 'password' },
+      attributes: { user: 'login', pass: 'password' } as Record<string, string>,
     },
     schedule: {
       minute: '0',
@@ -69,7 +70,7 @@ describe('CloudsyncFormComponent', () => {
     next_run_time: 'Disabled',
     next_run: 'Disabled',
     state: { state: 'PENDING' },
-  } as unknown as CloudSyncTaskUi;
+  } as CloudSyncTaskUi;
 
   let loader: HarnessLoader;
   let spectator: Spectator<CloudsyncFormComponent>;
@@ -84,6 +85,7 @@ describe('CloudsyncFormComponent', () => {
       TransferModeExplanationComponent,
     ],
     providers: [
+      mockAuth(),
       mockProvider(DialogService),
       mockWebsocket([
         mockCall('cloudsync.create'),

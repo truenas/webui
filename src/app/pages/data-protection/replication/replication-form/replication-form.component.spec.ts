@@ -6,11 +6,12 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents, MockInstance } from 'ng-mocks';
 import { of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Direction } from 'app/enums/direction.enum';
 import { SnapshotNamingOption } from 'app/enums/snapshot-naming-option.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
-import helptext from 'app/helptext/data-protection/replication/replication-wizard';
+import { helptextReplicationWizard } from 'app/helptext/data-protection/replication/replication-wizard';
 import { KeychainCredential } from 'app/interfaces/keychain-credential.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -114,6 +115,7 @@ describe('ReplicationFormComponent', () => {
       ),
     ],
     providers: [
+      mockAuth(),
       mockProvider(DatasetService, {
         getDatasetNodeProvider: jest.fn(() => localNodeProvider),
       }),
@@ -292,7 +294,7 @@ describe('ReplicationFormComponent', () => {
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
         buttonText: 'Use Sudo For ZFS Commands',
         hideCheckbox: true,
-        message: helptext.sudo_warning,
+        message: helptextReplicationWizard.sudo_warning,
         title: 'Sudo Enabled',
       });
     }));

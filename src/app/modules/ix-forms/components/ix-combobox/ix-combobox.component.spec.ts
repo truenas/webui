@@ -1,3 +1,4 @@
+import { discardPeriodicTasks, fakeAsync, tick } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { FormControl } from '@ngneat/reactive-forms';
@@ -27,9 +28,6 @@ class FakeProvider implements IxComboboxProvider {
     return this.fetch(filterValue);
   }
 }
-
-// TODO: Replace usages of promise and remove this exception
-/* eslint-disable no-promise-executor-return */
 
 describe('IxComboboxComponent', () => {
   let spectator: Spectator<IxComboboxComponent>;
@@ -88,7 +86,8 @@ describe('IxComboboxComponent', () => {
       expect(formControl.value).toBeNull();
     });
 
-    it('shows values autocomplete when type start', async () => {
+    it('shows values autocomplete when type start', fakeAsync(() => {
+      spectator.component.ngOnInit();
       const provider = [
         { label: 'test1', value: 'value1' },
         { label: 'test2', value: 'value2' },
@@ -97,41 +96,52 @@ describe('IxComboboxComponent', () => {
       ];
 
       spectator.setInput('provider', new SimpleComboboxProvider(provider));
-      await new Promise((smth) => setTimeout(smth, 300));
+      tick(300);
       spectator.typeInElement('test', 'input');
+      tick(300);
 
       expect(spectator.queryAll('mat-option')).toHaveLength(4);
       spectator.queryAll('mat-option').forEach((item, idx) => {
         expect(item).toHaveText(provider[idx].label);
       });
-    });
 
-    it('shows error when options cannot be loaded', async () => {
+      discardPeriodicTasks();
+    }));
+
+    it('shows error when options cannot be loaded', fakeAsync(() => {
+      spectator.component.ngOnInit();
       spectator.setInput('provider', new SimpleComboboxProvider([]));
-      await new Promise((smth) => setTimeout(smth, 300));
+      tick(300);
       spectator.typeInElement('test', 'input');
+      tick(300);
 
       spectator.component.hasErrorInOptions = true;
       spectator.detectComponentChanges();
 
       expect(spectator.queryAll('mat-option')).toHaveLength(1);
       expect(spectator.query('mat-option')).toHaveText('Options cannot be loaded');
-    });
 
-    it('updates form control value when select it from autocomplete', async () => {
+      discardPeriodicTasks();
+    }));
+
+    it('updates form control value when select it from autocomplete', fakeAsync(() => {
+      spectator.component.ngOnInit();
       const provider = [
         { label: 'test1', value: 'value1' },
         { label: 'test2', value: 'value2' },
       ];
 
       spectator.setInput('provider', new SimpleComboboxProvider(provider));
-      await new Promise((smth) => setTimeout(smth, 300));
+      tick(300);
       spectator.typeInElement('test', 'input');
+      tick(300);
 
       expect(spectator.queryAll('mat-option')).toHaveLength(2);
       spectator.click(spectator.queryAll('mat-option')[1]);
       expect(formControl.value).toBe('value2');
-    });
+
+      discardPeriodicTasks();
+    }));
 
     it('disables input when form control is disabled', () => {
       formControl.disable();
@@ -142,32 +152,36 @@ describe('IxComboboxComponent', () => {
   });
 
   describe('loader', () => {
-    it('loader should be rendered if the provider receives async data', async () => {
-      spectator.setInput('provider', new SimpleAsyncComboboxProvider(of([]).pipe(delay(300))));
-      await new Promise((smth) => setTimeout(smth, 300));
+    it('loader should be rendered if the provider receives async data', fakeAsync(() => {
+      spectator.component.ngOnInit();
+      spectator.setInput('provider', new SimpleAsyncComboboxProvider(of<Option[]>([]).pipe(delay(300))));
+      tick(300);
       spectator.detectChanges();
 
       expect(spectator.query('mat-progress-spinner')).toBeVisible();
-    });
+      discardPeriodicTasks();
+    }));
 
-    it('loader should be rendered during the loading of options after type in input', async () => {
+    it('loader should be rendered during the loading of options after type in input', fakeAsync(() => {
+      spectator.component.ngOnInit();
       const provider = [{ label: 'test1', value: 'value1' }];
       spectator.setInput('provider', new FakeProvider(provider));
-      await new Promise((smth) => setTimeout(smth, 300));
-      await new Promise((smth) => setTimeout(smth, 100));
+      tick(300);
       spectator.typeInElement('test', 'input');
-      await new Promise((smth) => setTimeout(smth, 300));
+      tick(300);
       spectator.detectChanges();
 
       expect(spectator.query('mat-progress-spinner')).toBeVisible();
-    });
+      discardPeriodicTasks();
+    }));
 
-    it('loader should be removed after loading options', async () => {
-      spectator.setInput('provider', new SimpleAsyncComboboxProvider(of([])));
-      await new Promise((smth) => setTimeout(smth, 300));
+    it('loader should be removed after loading options', fakeAsync(() => {
+      spectator.setInput('provider', new SimpleAsyncComboboxProvider(of<Option[]>([])));
+      tick(300);
       spectator.detectChanges();
 
       expect(spectator.query('mat-progress-spinner')).not.toBeVisible();
-    });
+      discardPeriodicTasks();
+    }));
   });
 });

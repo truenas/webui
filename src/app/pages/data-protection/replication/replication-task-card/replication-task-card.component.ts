@@ -10,11 +10,11 @@ import {
 } from 'rxjs';
 import { FromWizardToAdvancedSubmitted } from 'app/enums/from-wizard-to-advanced.enum';
 import { JobState } from 'app/enums/job-state.enum';
+import { Role } from 'app/enums/role.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
-import helptext from 'app/helptext/data-protection/data-protection-dashboard/data-protection-dashboard';
+import { helptextDataProtection } from 'app/helptext/data-protection/data-protection-dashboard/data-protection-dashboard';
 import { Job } from 'app/interfaces/job.interface';
 import { ReplicationTaskUi } from 'app/interfaces/replication-task.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { relativeDateColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-relative-date/ix-cell-relative-date.component';
@@ -47,6 +47,7 @@ export class ReplicationTaskCardComponent implements OnInit {
   dataProvider: AsyncDataProvider<ReplicationTaskUi>;
   jobStates = new Map<number, string>();
   readonly jobState = JobState;
+  readonly requiresRoles = [Role.ReplicationManager, Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
 
   columns = createTable<ReplicationTaskUi>([
     textColumn({
@@ -61,6 +62,7 @@ export class ReplicationTaskCardComponent implements OnInit {
       title: this.translate.instant('Enabled'),
       propertyName: 'enabled',
       onRowToggle: (row: ReplicationTaskUi) => this.onChangeEnabledState(row),
+      requiresRoles: this.requiresRoles,
     }),
     stateButtonColumn({
       title: this.translate.instant('State'),
@@ -85,26 +87,32 @@ export class ReplicationTaskCardComponent implements OnInit {
           tooltip: this.translate.instant('Run job'),
           hidden: (row) => of(row.job?.state === JobState.Running),
           onClick: (row) => this.runNow(row),
+          requiresRoles: this.requiresRoles,
         },
         {
           iconName: 'restore',
           tooltip: this.translate.instant('Restore'),
           onClick: (row) => this.restore(row),
+          requiresRoles: this.requiresRoles,
         },
         {
           iconName: 'download',
           tooltip: this.translate.instant('Download encryption keys'),
           hidden: (row) => of(!row.has_encrypted_dataset_keys),
           onClick: (row) => this.downloadKeys(row),
+          requiresRoles: this.requiresRoles,
         },
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
+          requiresRoles: this.requiresRoles,
         },
       ],
     }),
-  ]);
+  ], {
+    rowTestId: (row) => 'replication-task-' + row.name,
+  });
 
   constructor(
     private slideInService: IxSlideInService,
@@ -191,9 +199,9 @@ export class ReplicationTaskCardComponent implements OnInit {
         row.job = { ...job };
         this.jobStates.set(job.id, job.state);
       }),
-      catchError((error: Job) => {
+      catchError((error: unknown) => {
         this.getReplicationTasks();
-        this.dialogService.error(this.errorHandler.parseJobError(error));
+        this.dialogService.error(this.errorHandler.parseError(error));
         return EMPTY;
       }),
       untilDestroyed(this),
@@ -229,7 +237,7 @@ export class ReplicationTaskCardComponent implements OnInit {
         });
       },
       error: (err) => {
-        this.dialogService.error(this.errorHandler.parseWsError(err));
+        this.dialogService.error(this.errorHandler.parseError(err));
       },
     });
   }
@@ -240,7 +248,7 @@ export class ReplicationTaskCardComponent implements OnInit {
     replicationTasks.forEach((task) => {
       task.task_last_snapshot = task.state.last_snapshot
         ? task.state.last_snapshot
-        : this.translate.instant(helptext.no_snapshot_sent_yet);
+        : this.translate.instant(helptextDataProtection.no_snapshot_sent_yet);
 
       if (task.job !== null) {
         this.store$.select(selectJob(task.job.id)).pipe(
@@ -264,9 +272,9 @@ export class ReplicationTaskCardComponent implements OnInit {
         next: () => {
           this.getReplicationTasks();
         },
-        error: (err: WebsocketError) => {
+        error: (err: unknown) => {
           this.getReplicationTasks();
-          this.dialogService.error(this.errorHandler.parseWsError(err));
+          this.dialogService.error(this.errorHandler.parseError(err));
         },
       });
   }

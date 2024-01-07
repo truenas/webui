@@ -5,6 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
@@ -35,7 +36,7 @@ describe('CloudsyncListComponent', () => {
         folder: '',
         fast_list: false,
         acknowledge_abuse: false,
-      },
+      } as Record<string, string | boolean>,
       pre_script: '',
       post_script: '',
       snapshot: false,
@@ -72,7 +73,7 @@ describe('CloudsyncListComponent', () => {
       state: {
         state: 'PENDING',
       },
-    } as unknown as CloudSyncTaskUi,
+    } as CloudSyncTaskUi,
   ];
 
   const createComponent = createComponentFactory({
@@ -83,6 +84,7 @@ describe('CloudsyncListComponent', () => {
       IxTable2Module,
     ],
     providers: [
+      mockAuth(),
       mockWebsocket([
         mockCall('cloudsync.query', cloudSyncList),
       ]),

@@ -1,16 +1,21 @@
 import { Injectable } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
+import { parseISO, startOfDay } from 'date-fns';
 import { ParamsBuilder, ParamsBuilderGroup } from 'app/helpers/params-builder/params-builder.class';
 import { QueryFilter, QueryFilters } from 'app/interfaces/query-api.interface';
 import {
   Condition, ConditionGroup, ConnectorType, isConditionGroup,
+  LiteralValue,
   QueryParsingResult,
 } from 'app/modules/search-input/services/query-parser/query-parsing-result.interface';
-import { SearchProperty } from 'app/modules/search-input/types/search-property.interface';
+import { PropertyType, SearchProperty } from 'app/modules/search-input/types/search-property.interface';
 
 @Injectable()
 export class QueryToApiService<T> {
   private builder: ParamsBuilder<T>;
   private searchProperties: SearchProperty<T>[];
+
+  constructor(private translate: TranslateService) {}
 
   buildFilters(query: QueryParsingResult, properties: SearchProperty<T>[]): QueryFilters<T> {
     this.searchProperties = properties;
@@ -62,8 +67,77 @@ export class QueryToApiService<T> {
   }
 
   private buildCondition(condition: Condition): QueryFilter<T> {
-    // TODO: This should 1) map column name 2) transform column value if necessary
-    // TODO: See searchProperties
-    return [condition.property, condition.comparator, condition.value] as QueryFilter<T>;
+    const currentProperty = this.searchProperties.find((value) => value.label === condition.property);
+    const mappedConditionProperty = (currentProperty?.property || condition.property);
+    const mappedConditionValue = this.mapValueByPropertyType(currentProperty, condition.value);
+
+    return [mappedConditionProperty, condition.comparator.toLowerCase(), mappedConditionValue] as QueryFilter<T>;
+  }
+
+  private mapValueByPropertyType(
+    property: SearchProperty<T>,
+    value: LiteralValue | LiteralValue[],
+  ): LiteralValue | LiteralValue[] {
+    if (property?.propertyType === PropertyType.Date) {
+      return this.parseDateAsUnixSeconds(value);
+    }
+
+    if (property?.propertyType === PropertyType.Memory) {
+      return this.parseMemoryValue(property, value);
+    }
+
+    if (property?.propertyType === PropertyType.Text && property.enumMap) {
+      return this.parseTextValue(property, value);
+    }
+
+    return value;
+  }
+
+  private parseDateAsUnixSeconds(value: LiteralValue | LiteralValue[]): number | number[] {
+    const convertDate = (dateValue: LiteralValue): number | null => {
+      const date = parseISO(dateValue as string);
+      if (Number.isNaN(date.getTime())) {
+        return null;
+      }
+      return startOfDay(date).getTime() / 1000;
+    };
+
+    if (Array.isArray(value)) {
+      return value.map(convertDate);
+    }
+
+    return convertDate(value);
+  }
+
+  private parseMemoryValue(
+    property: SearchProperty<T>,
+    value: LiteralValue | LiteralValue[],
+  ): number | number[] {
+    const parseValue = (memoryValue: LiteralValue): number => {
+      return property.parseValue(memoryValue as string) as number;
+    };
+
+    if (Array.isArray(value)) {
+      return value.map(parseValue);
+    }
+
+    return parseValue(value);
+  }
+
+  private parseTextValue(
+    property: SearchProperty<T>,
+    value: LiteralValue | LiteralValue[],
+  ): string | string[] {
+    const parseValue = (textValue: LiteralValue): string => {
+      return [...property.enumMap.keys() as unknown as string[]].find(
+        (key) => this.translate.instant(property.enumMap.get(key)).toLowerCase() === textValue.toString().toLowerCase(),
+      ) || textValue as string;
+    };
+
+    if (Array.isArray(value)) {
+      return value.map(parseValue);
+    }
+
+    return parseValue(value);
   }
 }

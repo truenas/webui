@@ -130,9 +130,9 @@ export class DeleteDatasetDialogComponent implements OnInit {
 
           this.cdr.markForCheck();
         },
-        error: (error: WebsocketError) => {
+        error: (error: unknown) => {
           this.dialogRef.close(false);
-          this.dialog.error(this.errorHandler.parseWsError(error));
+          this.dialog.error(this.errorHandler.parseError(error));
         },
       });
   }

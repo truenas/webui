@@ -13,8 +13,27 @@ import { QueryComparator } from 'app/interfaces/query-api.interface';
 import { QueryParserService } from 'app/modules/search-input/services/query-parser/query-parser.service';
 import { PropertyType, SearchProperty } from 'app/modules/search-input/types/search-property.interface';
 
-const comparatorSuggestions = ['=', '!=', '<', '>', '<=', '>=', 'IN', 'NIN', '~', '^', '!^', '$', '!$'] as QueryComparator[];
-const logicalSuggestions = ['AND', 'OR'];
+const inComparator = 'in';
+const ninComparator = 'nin';
+const comparatorSuggestions: QueryComparator[] = [
+  '=', '!=', '<', '>', '<=', '>=', inComparator, ninComparator, '~', '^', '!^', '$', '!$',
+];
+
+const orSuggestion = 'OR';
+const andSuggestion = 'AND';
+const logicalSuggestions = [andSuggestion, orSuggestion];
+
+const regexMap = {
+  // Starts and ends with parentheses containing a quoted non-whitespace string.
+  strictQuotedString: /^\("\S+"\)$/,
+  // Starts with a quote, includes any characters, optionally ends with a quote.
+  looselyQuotedString: /^["'].*["']?$/,
+  // Starts and ends with a quote, capturing the content in between.
+  captureBetweenQuotes: /^["']([\s\S]*)["']$/,
+  // Starts and ends with parentheses and a quote, capturing all content in between.
+  captureBetweenQuotesWithParentheses: /^\(["']([\s\S]*)["']\)$/,
+  containsWhitespace: /\s/,
+};
 
 @Injectable()
 export class AdvancedSearchAutocompleteService<T> {
@@ -22,10 +41,26 @@ export class AdvancedSearchAutocompleteService<T> {
   private editorView: EditorView;
   private queryContext: QueryContext;
 
+  private comparatorHints = {
+    '=': this.translate.instant('{comparator} (Equals)', { comparator: '=' }),
+    '!=': this.translate.instant('{comparator} (Not Equals)', { comparator: '!=' }),
+    '<': this.translate.instant('{comparator} (Less Than)', { comparator: '<' }),
+    '>': this.translate.instant('{comparator} (Greater Than)', { comparator: '>' }),
+    '<=': this.translate.instant('{comparator} (Less Than or Equal To)', { comparator: '<=' }),
+    '>=': this.translate.instant('{comparator} (Greater Than or Equal To)', { comparator: '>=' }),
+    '~': this.translate.instant('{comparator} (Contains)', { comparator: '~' }),
+    '^': this.translate.instant('{comparator} (Starts With)', { comparator: '^' }),
+    '!^': this.translate.instant('{comparator} (Not Starts With)', { comparator: '!^' }),
+    '!$': this.translate.instant('{comparator} (Not Ends With)', { comparator: '!$' }),
+    in: this.translate.instant('{comparator} (In)', { comparator: 'IN' }),
+    nin: this.translate.instant('{comparator} (Not In)', { comparator: 'NIN' }),
+    $: this.translate.instant('{comparator} (Ends With)', { comparator: '$' }),
+  } as { [key in QueryComparator]: string };
+
   showDatePicker$ = new BehaviorSubject(false);
 
   constructor(
-    private queryParser: QueryParserService,
+    private queryParser: QueryParserService<T>,
     private translate: TranslateService,
   ) {}
 
@@ -37,11 +72,10 @@ export class AdvancedSearchAutocompleteService<T> {
     this.editorView = editorView;
   }
 
-  setCompletionSource(context: CompletionContext): Promise<CompletionResult> {
+  getCompletions(context: CompletionContext): Promise<CompletionResult> {
     const currentQuery = context.state.doc.toString();
     this.queryContext = this.getQueryContext(currentQuery, context.pos);
     const suggestions$ = this.generateSuggestionsBasedOnContext(this.queryContext);
-    const currentToken = context.matchBefore(/\w*/);
 
     const from = currentQuery.length < this.queryContext.startPosition ? 0 : this.queryContext.startPosition;
     const to = this.queryContext.endPosition;
@@ -52,12 +86,7 @@ export class AdvancedSearchAutocompleteService<T> {
           from,
           to,
           options: uniqBy(suggestions, 'label')
-            .filter((suggestion) => {
-              return suggestion.label && (
-                suggestion.label.toUpperCase().startsWith(currentToken?.text?.toUpperCase())
-                || suggestion.value.toString().toUpperCase().startsWith(currentToken?.text?.toUpperCase())
-              );
-            })
+            .sort((a, b) => a.label.localeCompare(b.label))
             .map((suggestion) => ({
               label: this.translate.instant(suggestion.label),
               apply: () => this.applySuggestionTransformation(suggestion, currentQuery, from, to),
@@ -74,30 +103,32 @@ export class AdvancedSearchAutocompleteService<T> {
     to: number,
   ): void {
     let updatedValue = suggestion.value.toString();
-    let anchor = /^\("\S+"\)$/.test(updatedValue)
+    let anchor = regexMap.strictQuotedString.test(updatedValue)
       ? from + updatedValue.length - 1
       : from + updatedValue.length;
 
     if (
-      /^["'].*["']?$/.test(currentQuery[from - 1]) && /^["'].*["']?$/.test(currentQuery[to])
+      regexMap.looselyQuotedString.test(currentQuery[from - 1]) && regexMap.looselyQuotedString.test(currentQuery[to])
     ) {
-      updatedValue = updatedValue.replace(/['"]/g, '');
+      updatedValue = updatedValue.replace(regexMap.captureBetweenQuotes, '$1');
       anchor = from + updatedValue.length + 1;
 
       if (updatedValue.startsWith('(') && updatedValue.endsWith(')')) {
-        updatedValue = `("${updatedValue.replace(/[()'"]/g, '')}")`;
+        updatedValue = `("${updatedValue.replace(regexMap.captureBetweenQuotesWithParentheses, '$1')}")`;
         from = from - 1;
         to = to + 1;
         anchor = from + updatedValue.length - 1;
       }
+    } else if (
+      regexMap.containsWhitespace.test(updatedValue) && !regexMap.looselyQuotedString.test(updatedValue)
+      && !updatedValue.startsWith('(') && !updatedValue.endsWith(')')
+    ) {
+      updatedValue = `"${updatedValue}"`;
+      anchor = anchor + 2;
     }
 
     this.editorView?.dispatch({
-      changes: {
-        from,
-        to,
-        insert: updatedValue,
-      },
+      changes: { from, to, insert: updatedValue },
       selection: { anchor },
     });
   }
@@ -107,7 +138,7 @@ export class AdvancedSearchAutocompleteService<T> {
     const { lastToken, secondLastToken } = this.getTokenParts(tokens);
     let contextType = ContextType.Property;
 
-    const isPropertyType = comparatorSuggestions.some((item) => item?.toUpperCase() === lastToken?.toUpperCase())
+    const isPropertyType = comparatorSuggestions.some((item) => item?.toLowerCase() === lastToken?.toLowerCase())
       || this.isPartiallyLogicalOperator(lastToken);
 
     const isLogicalOperatorType = (
@@ -117,7 +148,7 @@ export class AdvancedSearchAutocompleteService<T> {
     ) || (
       this.isPartiallyComparator(secondLastToken) && query[cursorPosition] === ')'
       && (
-        (secondLastToken?.toUpperCase() === 'IN' || secondLastToken?.toUpperCase() === 'NIN')
+        (secondLastToken?.toLowerCase() === inComparator || secondLastToken?.toLowerCase() === ninComparator)
         && lastToken?.startsWith('(') && lastToken?.endsWith(')')
       )
     );
@@ -184,32 +215,30 @@ export class AdvancedSearchAutocompleteService<T> {
   }
 
   private isPartiallyComparator(token: string): boolean {
-    return comparatorSuggestions.map((item) => item?.toUpperCase())?.includes(token?.toUpperCase());
+    return comparatorSuggestions.map((item) => item?.toLowerCase())?.includes(token?.toLowerCase());
   }
 
   private isPartiallyLogicalOperator(token: string): boolean {
-    return logicalSuggestions.map((item) => item?.toUpperCase())?.includes(token?.toUpperCase());
+    return logicalSuggestions.map((item) => item?.toLowerCase())?.includes(token?.toLowerCase());
   }
 
   private generateSuggestionsBasedOnContext(context: QueryContext): Observable<Option[]> {
-    // TODO:
-    // eslint-disable-next-line no-console
-    console.log(context);
-
     const { lastToken, secondLastToken, thirdLastToken } = this.getTokenParts(context.tokens);
 
-    const isInOrNin = (lastToken?.toUpperCase() === 'IN' || lastToken?.toUpperCase() === 'NIN')
-      || secondLastToken?.toUpperCase() === 'IN' || secondLastToken?.toUpperCase() === 'NIN';
+    const isInOrNin = (lastToken?.toLowerCase() === inComparator || lastToken?.toLowerCase() === ninComparator)
+      || secondLastToken?.toLowerCase() === inComparator || secondLastToken?.toLowerCase() === ninComparator;
 
-    const searchedProperty = this.properties?.find((property) => property.label?.toUpperCase() === thirdLastToken?.replace(/['"]/g, '')?.toUpperCase()
-      || (property.label?.toUpperCase() === secondLastToken?.replace(/['"]/g, '')?.toUpperCase()
-      && this.isPartiallyComparator(lastToken?.toUpperCase())));
+    const searchedProperty = this.properties?.find((property) => {
+      return property.label?.toLowerCase() === thirdLastToken?.replace(regexMap.captureBetweenQuotes, '$1')?.toLowerCase()
+        || (property.label?.toLowerCase() === secondLastToken?.replace(regexMap.captureBetweenQuotes, '$1')?.toLowerCase()
+        && this.isPartiallyComparator(lastToken));
+    });
 
     this.showDatePicker$.next(false);
 
     switch (context.type) {
       case ContextType.Property:
-        if (isInOrNin && !lastToken?.startsWith('(') && searchedProperty) {
+        if (isInOrNin && !lastToken?.startsWith('(') && searchedProperty?.valueSuggestions$) {
           return searchedProperty.valueSuggestions$.pipe(
             map((options: Option[]) => options.map(({ label, value }) => ({ label, value: `(${value})` }))),
           );
@@ -237,7 +266,7 @@ export class AdvancedSearchAutocompleteService<T> {
             return of([]);
           }
 
-          return searchedProperty?.valueSuggestions$;
+          return searchedProperty?.valueSuggestions$ || of([]);
         }
 
         return of(this.properties.map((property) => ({ label: property.label, value: property.label })));
@@ -246,7 +275,9 @@ export class AdvancedSearchAutocompleteService<T> {
         return of(logicalSuggestions.map((property) => ({ label: property, value: property })));
 
       case ContextType.Comparator:
-        return of(comparatorSuggestions.map((property) => ({ label: property, value: property.toUpperCase() })));
+        return of(comparatorSuggestions.map((property) => ({
+          label: this.comparatorHints?.[property] || property, value: property.toUpperCase(),
+        })));
       default:
         return of([]);
     }

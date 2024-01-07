@@ -62,6 +62,10 @@ export class IxDetailsHeightDirective implements OnInit, OnDestroy, OnChanges {
   onScroll(): void {
     const parentElement = this.layoutService.getContentContainer();
 
+    if (!parentElement) {
+      return;
+    }
+
     if (!this.parentPadding) {
       this.parentPadding = parseFloat(
         this.window

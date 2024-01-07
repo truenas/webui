@@ -1,12 +1,12 @@
 import {
-  ChangeDetectionStrategy, Component, Input,
+  ChangeDetectionStrategy, Component, Input, ViewContainerRef,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  filter, map, Observable, of, switchMap, take, tap,
+  filter, map, Observable, of, switchMap, take,
 } from 'rxjs';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { SelectPoolDialogComponent } from 'app/pages/apps/components/select-pool-dialog/select-pool-dialog.component';
@@ -36,6 +36,7 @@ export class AppDetailsHeaderComponent {
     private dialogService: DialogService,
     private translate: TranslateService,
     private ws: WebSocketService,
+    private viewContainerRef: ViewContainerRef,
   ) {}
 
   get description(): string {
@@ -80,7 +81,7 @@ export class AppDetailsHeaderComponent {
         }).pipe(
           filter(Boolean),
           switchMap(() => this.ws.call('auth.set_attribute', ['appsAgreement', true])),
-          tap(() => this.authService.getLoggedInUserInformation()),
+          switchMap(() => this.authService.refreshUser()),
         );
       }),
 
@@ -96,7 +97,7 @@ export class AppDetailsHeaderComponent {
   }
 
   showChoosePoolModal(): void {
-    const dialog = this.matDialog.open(SelectPoolDialogComponent);
+    const dialog = this.matDialog.open(SelectPoolDialogComponent, { viewContainerRef: this.viewContainerRef });
     dialog.afterClosed().pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.navigateToInstallPage();
     });

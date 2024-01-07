@@ -6,7 +6,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
-import helptext from 'app/helptext/data-protection/snapshot/snapshot-form';
+import { Role } from 'app/enums/role.enum';
+import { helptextSnapshotForm } from 'app/helptext/data-protection/snapshot/snapshot-form';
 import {
   PeriodicSnapshotTask,
   PeriodicSnapshotTaskCreate,
@@ -56,30 +57,32 @@ export class SnapshotTaskFormComponent implements OnInit {
 
   isLoading = false;
 
+  readonly requiresRoles = [Role.FullAdmin];
+
   readonly labels = {
-    dataset: helptext.dataset_placeholder,
-    exclude: helptext.exclude_placeholder,
-    recursive: helptext.recursive_placeholder,
-    lifetime: helptext.lifetime_placeholder,
-    naming_schema: helptext.naming_schema_placeholder,
-    schedule: helptext.snapshot_picker_placeholder,
-    begin: helptext.begin_placeholder,
-    end: helptext.end_placeholder,
-    allow_empty: helptext.allow_empty_placeholder,
-    enabled: helptext.enabled_placeholder,
+    dataset: helptextSnapshotForm.dataset_placeholder,
+    exclude: helptextSnapshotForm.exclude_placeholder,
+    recursive: helptextSnapshotForm.recursive_placeholder,
+    lifetime: helptextSnapshotForm.lifetime_placeholder,
+    naming_schema: helptextSnapshotForm.naming_schema_placeholder,
+    schedule: helptextSnapshotForm.snapshot_picker_placeholder,
+    begin: helptextSnapshotForm.begin_placeholder,
+    end: helptextSnapshotForm.end_placeholder,
+    allow_empty: helptextSnapshotForm.allow_empty_placeholder,
+    enabled: helptextSnapshotForm.enabled_placeholder,
   };
 
   readonly tooltips = {
-    dataset: helptext.dataset_tooltip,
-    exclude: helptext.exclude_tooltip,
-    recursive: helptext.recursive_tooltip,
-    lifetime: helptext.lifetime_tooltip,
-    naming_schema: helptext.naming_schema_tooltip,
-    schedule: helptext.snapshot_picker_tooltip,
-    begin: helptext.begin_tooltip,
-    end: helptext.end_tooltip,
-    allow_empty: helptext.allow_empty_tooltip,
-    enabled: helptext.enabled_tooltip,
+    dataset: helptextSnapshotForm.dataset_tooltip,
+    exclude: helptextSnapshotForm.exclude_tooltip,
+    recursive: helptextSnapshotForm.recursive_tooltip,
+    lifetime: helptextSnapshotForm.lifetime_tooltip,
+    naming_schema: helptextSnapshotForm.naming_schema_tooltip,
+    schedule: helptextSnapshotForm.snapshot_picker_tooltip,
+    begin: helptextSnapshotForm.begin_tooltip,
+    end: helptextSnapshotForm.end_tooltip,
+    allow_empty: helptextSnapshotForm.allow_empty_tooltip,
+    enabled: helptextSnapshotForm.enabled_tooltip,
   };
 
   readonly datasetOptions$ = this.storageService.getDatasetNameOptions();
@@ -108,7 +111,7 @@ export class SnapshotTaskFormComponent implements OnInit {
   }
 
   get isTimeMode(): boolean {
-    return this.form.value.schedule === CronPresetValue.Hourly;
+    return this.form.value.schedule === CronPresetValue.Hourly as string;
   }
 
   setTaskForEdit(): void {
@@ -157,7 +160,7 @@ export class SnapshotTaskFormComponent implements OnInit {
         this.isLoading = false;
         this.slideInRef.close(true);
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.isLoading = false;
         this.errorHandler.handleWsFormError(error, this.form);
         this.cdr.markForCheck();

@@ -7,18 +7,20 @@ import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  combineLatest, lastValueFrom, switchMap,
+  combineLatest, firstValueFrom, lastValueFrom, switchMap,
 } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { ProductType } from 'app/enums/product-type.enum';
+import { Role } from 'app/enums/role.enum';
 import { WINDOW } from 'app/helpers/window.helper';
-import helptext from 'app/helptext/network/interfaces/interfaces-list';
+import { helptextInterfaces } from 'app/helptext/network/interfaces/interfaces-list';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { InterfaceFormComponent } from 'app/pages/network/components/interface-form/interface-form.component';
 import { InterfacesStore } from 'app/pages/network/stores/interfaces.store';
+import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -46,7 +48,7 @@ export class NetworkComponent implements OnInit {
   checkinInterval: Interval;
 
   private navigation: Navigation;
-  helptext = helptext;
+  helptext = helptextInterfaces;
 
   constructor(
     private ws: WebSocketService,
@@ -61,6 +63,7 @@ export class NetworkComponent implements OnInit {
     private systemGeneralService: SystemGeneralService,
     private interfacesStore: InterfacesStore,
     private actions$: Actions,
+    private authService: AuthService,
     @Inject(WINDOW) private window: Window,
   ) {
     this.navigation = this.router.getCurrentNavigation();
@@ -98,11 +101,19 @@ export class NetworkComponent implements OnInit {
   }
 
   async loadCheckinStatus(): Promise<void> {
+    if (!await firstValueFrom(this.authService.hasRole(Role.NetworkInterfaceWrite))) {
+      return;
+    }
+
     this.hasPendingChanges = await this.getPendingChanges();
     this.handleWaitingCheckin(await this.getCheckinWaitingSeconds());
   }
 
   async loadCheckinStatusAfterChange(): Promise<void> {
+    if (!await firstValueFrom(this.authService.hasRole(Role.NetworkInterfaceWrite))) {
+      return;
+    }
+
     let hasPendingChanges = await this.getPendingChanges();
     let checkinWaitingSeconds = await this.getCheckinWaitingSeconds();
 
@@ -199,10 +210,10 @@ export class NetworkComponent implements OnInit {
         }
         this.dialogService
           .confirm({
-            title: helptext.commit_changes_title,
-            message: helptext.commit_changes_warning,
+            title: helptextInterfaces.commit_changes_title,
+            message: helptextInterfaces.commit_changes_warning,
             hideCheckbox: false,
-            buttonText: helptext.commit_button,
+            buttonText: helptextInterfaces.commit_button,
           })
           .pipe(untilDestroyed(this))
           .subscribe((confirm: boolean) => {
@@ -231,13 +242,13 @@ export class NetworkComponent implements OnInit {
     if (this.affectedServices.length > 0) {
       this.dialogService
         .confirm({
-          title: helptext.services_restarted.title,
-          message: this.translate.instant(helptext.services_restarted.message, {
+          title: helptextInterfaces.services_restarted.title,
+          message: this.translate.instant(helptextInterfaces.services_restarted.message, {
             uniqueIPs: this.uniqueIps.join(', '),
             affectedServices: this.affectedServices.join(', '),
           }),
           hideCheckbox: true,
-          buttonText: helptext.services_restarted.button,
+          buttonText: helptextInterfaces.services_restarted.button,
         })
         .pipe(filter(Boolean), untilDestroyed(this))
         .subscribe(() => {
@@ -246,10 +257,10 @@ export class NetworkComponent implements OnInit {
     } else {
       this.dialogService
         .confirm({
-          title: helptext.checkin_title,
-          message: helptext.checkin_message,
+          title: helptextInterfaces.checkin_title,
+          message: helptextInterfaces.checkin_message,
           hideCheckbox: true,
-          buttonText: helptext.checkin_button,
+          buttonText: helptextInterfaces.checkin_button,
         })
         .pipe(filter(Boolean), untilDestroyed(this))
         .subscribe(() => {
@@ -270,7 +281,7 @@ export class NetworkComponent implements OnInit {
         this.store$.dispatch(networkInterfacesChanged({ commit: true, checkIn: true }));
 
         this.snackbar.success(
-          this.translate.instant(helptext.checkin_complete_message),
+          this.translate.instant(helptextInterfaces.checkin_complete_message),
         );
         this.hasPendingChanges = false;
         this.checkinWaiting = false;
@@ -282,10 +293,10 @@ export class NetworkComponent implements OnInit {
   rollbackPendingChanges(): void {
     this.dialogService
       .confirm({
-        title: helptext.rollback_changes_title,
-        message: helptext.rollback_changes_warning,
+        title: helptextInterfaces.rollback_changes_title,
+        message: helptextInterfaces.rollback_changes_warning,
         hideCheckbox: false,
-        buttonText: helptext.rollback_button,
+        buttonText: helptextInterfaces.rollback_button,
       })
       .pipe(untilDestroyed(this))
       .subscribe((confirm: boolean) => {
@@ -306,7 +317,7 @@ export class NetworkComponent implements OnInit {
             this.hasPendingChanges = false;
             this.checkinWaiting = false;
             this.snackbar.success(
-              this.translate.instant(helptext.changes_rolled_back),
+              this.translate.instant(helptextInterfaces.changes_rolled_back),
             );
           });
       });

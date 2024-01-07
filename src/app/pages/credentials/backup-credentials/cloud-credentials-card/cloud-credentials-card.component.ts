@@ -4,6 +4,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { switchMap, filter, tap } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
@@ -50,12 +51,15 @@ export class CloudCredentialsCardComponent implements OnInit {
         },
         {
           iconName: 'delete',
+          requiresRoles: [Role.CloudSyncWrite],
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
         },
       ],
     }),
-  ]);
+  ], {
+    rowTestId: (row) => 'cloud-cred-' + row.name,
+  });
 
   constructor(
     private ws: WebSocketService,

@@ -13,14 +13,13 @@ import { CompressionType, compressionTypeNames } from 'app/enums/compression-typ
 import { NetcatMode, netcatModeNames } from 'app/enums/netcat-mode.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
-import helptext from 'app/helptext/data-protection/replication/replication';
-import globalHelptext from 'app/helptext/global-helptext';
+import { helptextReplication } from 'app/helptext/data-protection/replication/replication';
+import { helptextGlobal } from 'app/helptext/global-helptext';
 import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
-import { Option } from 'app/interfaces/option.interface';
+import { newOption, Option } from 'app/interfaces/option.interface';
 import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { SshConnectionFormComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-form/ssh-connection-form.component';
-import { SshCredentialsNewOption } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard-data.interface';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 
 @UntilDestroy()
@@ -34,7 +33,7 @@ export class TransportSectionComponent implements OnChanges {
   @Input() transport: TransportMode;
 
   form = this.formBuilder.group({
-    ssh_credentials: [null as number | SshCredentialsNewOption],
+    ssh_credentials: [null as number | typeof newOption],
     netcat_active_side: [NetcatMode.Local],
     netcat_active_side_listen_address: [null as string],
     netcat_active_side_port_min: [null as number],
@@ -50,9 +49,9 @@ export class TransportSectionComponent implements OnChanges {
   readonly compressions$ = of(mapToOptions(compressionTypeNames, this.translate));
   readonly sshCredentialsOptions$ = new BehaviorSubject<Option[]>([]);
 
-  readonly sizeSuggestion = this.translate.instant(globalHelptext.human_readable.suggestion_label);
+  readonly sizeSuggestion = this.translate.instant(helptextGlobal.human_readable.suggestion_label);
 
-  protected readonly helptext = helptext;
+  protected readonly helptext = helptextReplication;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -160,7 +159,7 @@ export class TransportSectionComponent implements OnChanges {
 
   private listenForNewSshConnection(): void {
     this.form.controls.ssh_credentials.valueChanges.pipe(
-      filter((value) => value === SshCredentialsNewOption.New),
+      filter((value) => value === newOption),
       switchMap(() => this.openSshConnectionDialog()),
       filter(Boolean),
       switchMap((newCredential): Observable<[KeychainSshCredentials, Option[]]> => {

@@ -85,12 +85,13 @@ export class ShellService {
   }
 
   private onMessage(msg: MessageEvent<ArrayBuffer | string>): void {
-    let data: { id?: string; msg: string };
+    let data: { id?: string; msg: IncomingApiMessageType };
 
     try {
-      data = JSON.parse(msg.data as string) as { id?: string; msg: string };
+      data = JSON.parse(msg.data as string) as { id?: string; msg: IncomingApiMessageType };
     } catch (error: unknown) {
-      data = { msg: 'please discard this' };
+      console.error(error);
+      return;
     }
 
     if (data.msg === IncomingApiMessageType.Connected) {

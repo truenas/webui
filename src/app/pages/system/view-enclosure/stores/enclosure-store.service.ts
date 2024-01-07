@@ -12,7 +12,6 @@ import { Pool } from 'app/interfaces/pool.interface';
 import {
   Disk, TopologyDisk, TopologyItem,
 } from 'app/interfaces/storage.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/services/dialog.service';
 import { DisksUpdateService } from 'app/services/disks-update.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -86,11 +85,11 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
           selectedEnclosure,
         });
       },
-      (error: WebsocketError) => {
+      (error: unknown) => {
         this.patchState({
           areEnclosuresLoading: false,
         });
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+        this.dialogService.error(this.errorHandler.parseError(error));
       },
     );
   }

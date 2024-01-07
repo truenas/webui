@@ -4,8 +4,8 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, switchMap, tap } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { IscsiAuthAccess } from 'app/interfaces/iscsi.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
@@ -71,15 +71,22 @@ export class AuthorizedAccessListComponent implements OnInit {
               untilDestroyed(this),
             ).subscribe({
               next: () => this.dataProvider.load(),
-              error: (error: WebsocketError) => {
-                this.dialogService.error(this.errorHandler.parseWsError(error));
+              error: (error: unknown) => {
+                this.dialogService.error(this.errorHandler.parseError(error));
               },
             });
           },
+          requiresRoles: [
+            Role.SharingIscsiAuthWrite,
+            Role.SharingIscsiWrite,
+            Role.SharingWrite,
+          ],
         },
       ],
     }),
-  ]);
+  ], {
+    rowTestId: (row) => 'iscsi-authorized-access-' + row.user + '-' + row.peeruser,
+  });
 
   constructor(
     public emptyService: EmptyService,

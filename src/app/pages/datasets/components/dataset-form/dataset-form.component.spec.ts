@@ -1,15 +1,19 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { Store } from '@ngrx/store';
 import { MockComponents, MockInstance } from 'ng-mocks';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AclMode } from 'app/enums/acl-type.enum';
-import helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
+import { DatasetPreset } from 'app/enums/dataset.enum';
+import { ServiceName } from 'app/enums/service-name.enum';
+import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
@@ -32,11 +36,24 @@ import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/u
 import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 
 describe('DatasetFormComponent', () => {
   let spectator: Spectator<DatasetFormComponent>;
   let loader: HarnessLoader;
 
+  MockInstance(NameAndOptionsSectionComponent, 'form', new FormGroup({
+    name: new FormControl(''),
+    parent: new FormControl(''),
+    share_type: new FormControl(DatasetPreset.Generic),
+  }));
+  MockInstance(NameAndOptionsSectionComponent, 'datasetPresetForm', new FormGroup({
+    create_smb: new FormControl(true),
+    create_nfs: new FormControl(true),
+    smb_name: new FormControl('new_sbm_name'),
+  }));
+  MockInstance(NameAndOptionsSectionComponent, 'isCreatingSmb', true);
+  MockInstance(NameAndOptionsSectionComponent, 'isCreatingNfs', true);
   MockInstance(NameAndOptionsSectionComponent, 'getPayload', () => ({
     name: 'dataset',
   }));
@@ -73,11 +90,12 @@ describe('DatasetFormComponent', () => {
     ],
     providers: [
       mockWebsocket([
+        mockCall('sharing.smb.create'),
+        mockCall('sharing.nfs.create'),
         mockCall('pool.dataset.create', { id: 'saved-id' } as Dataset),
         mockCall('pool.dataset.update', { id: 'saved-id' } as Dataset),
         mockCall('filesystem.acl_is_trivial', false),
       ]),
-      mockProvider(IxSlideInService),
       mockProvider(IxSlideInService),
       mockProvider(SnackbarService),
       mockProvider(DialogService, {
@@ -95,6 +113,7 @@ describe('DatasetFormComponent', () => {
       }),
       mockProvider(Router),
       mockProvider(IxSlideInRef),
+      mockAuth(),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });
@@ -160,6 +179,28 @@ describe('DatasetFormComponent', () => {
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
+    it('creates new SMB and NFS when new form is submitted', async () => {
+      jest.spyOn(spectator.inject(Store), 'dispatch');
+      const submit = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await submit.click();
+
+      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('sharing.smb.create', [{
+        name: 'new_sbm_name',
+        path: '/mnt/saved-id',
+      }]);
+
+      expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('sharing.nfs.create', [{
+        path: '/mnt/saved-id',
+      }]);
+
+      expect(spectator.inject(Store).dispatch).toHaveBeenCalledWith(
+        checkIfServiceIsEnabled({ serviceName: ServiceName.Cifs }),
+      );
+      expect(spectator.inject(Store).dispatch).toHaveBeenCalledWith(
+        checkIfServiceIsEnabled({ serviceName: ServiceName.Nfs }),
+      );
+    });
+
     it('creates a new dataset when new form is submitted', async () => {
       const submit = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await submit.click();
@@ -193,8 +234,8 @@ describe('DatasetFormComponent', () => {
       expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('filesystem.acl_is_trivial', ['/mnt/parent']);
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(
         expect.objectContaining({
-          title: helptext.afterSubmitDialog.title,
-          message: helptext.afterSubmitDialog.message,
+          title: helptextDatasetForm.afterSubmitDialog.title,
+          message: helptextDatasetForm.afterSubmitDialog.message,
         }),
       );
     });

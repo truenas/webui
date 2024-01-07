@@ -19,6 +19,16 @@
         ></ix-input>
 
         <ix-chips
+          formControlName="privileges"
+          [label]="'Privileges' | translate"
+          [autocompleteProvider]="privilegesProvider"
+          [tooltip]="tooltips.privileges"
+          [options]="privilegeOptions$"
+          [resolveValue]="true"
+          [allowNewEntries]="false"
+        ></ix-chips>
+
+        <ix-chips
           formControlName="sudo_commands"
           [label]="'Allowed sudo commands' | translate"
         ></ix-chips>
@@ -54,6 +64,7 @@
 
       <ix-form-actions>
         <button
+          *ixRequiresRoles="[Role.AccountWrite]"
           mat-button
           type="submit"
           color="primary"

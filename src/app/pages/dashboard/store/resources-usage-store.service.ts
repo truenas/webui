@@ -102,9 +102,12 @@ export class ResourcesUsageStore extends ComponentStore<ResourcesUsageState> {
               dashboardNetworkInterfaces[index].state.aliases.forEach((alias) => {
                 (alias as DashboardNetworkInterfaceAlias).interface = nic;
               });
-              dashboardNetworkInterfaces[index].state.aliases = dashboardNetworkInterfaces[index].state.aliases.concat(
-                dashboardNetworkInterfaces[nicKeys[nic] as number].state.aliases,
-              );
+              if (dashboardNetworkInterfaces[nicKeys[nic] as number]) {
+                const concatenatedAliases = dashboardNetworkInterfaces[index].state.aliases.concat(
+                  dashboardNetworkInterfaces[nicKeys[nic] as number].state.aliases,
+                );
+                dashboardNetworkInterfaces[index].state.aliases = concatenatedAliases;
+              }
 
               // Consolidate vlans
               dashboardNetworkInterfaces[index].state.vlans.forEach((vlan) => { vlan.interface = nic; });

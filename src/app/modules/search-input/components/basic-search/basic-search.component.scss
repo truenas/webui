@@ -1,3 +1,6 @@
+@import 'scss-imports/splitview';
+@import 'mixins/layout';
+
 :host {
   align-items: center;
   background: rgba(0, 0, 0, 0.1);
@@ -56,4 +59,18 @@
   flex-shrink: 1;
   user-select: none;
   white-space: nowrap;
+
+  @media (max-width: $breakpoint-sm) {
+    margin-top: 0;
+    white-space: inherit;
+    width: 70px;
+  }
+}
+
+input {
+  @media (min-width: $breakpoint-md) {
+    min-width: 300px;
+  }
+
+  font-size: 1.1em;
 }

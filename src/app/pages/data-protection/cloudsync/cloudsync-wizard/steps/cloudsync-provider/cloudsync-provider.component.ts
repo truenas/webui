@@ -13,8 +13,7 @@ import { FromWizardToAdvancedSubmitted } from 'app/enums/from-wizard-to-advanced
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
 import { CloudsyncCredential, CloudsyncCredentialUpdate } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
-import { Option, NewOption } from 'app/interfaces/option.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { Option, newOption } from 'app/interfaces/option.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { forbiddenValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -42,7 +41,7 @@ export class CloudsyncProviderComponent implements OnInit {
   form = this.formBuilder.group({
     name: [defaultCloudProvider.name, Validators.required],
     provider: [defaultCloudProvider.provider],
-    exist_credential: [null as number | NewOption],
+    exist_credential: [null as number | typeof newOption],
   });
 
   isLoading$ = new BehaviorSubject(false);
@@ -86,7 +85,13 @@ export class CloudsyncProviderComponent implements OnInit {
   get areActionsDisabled(): boolean {
     return this.isLoading$.value
       || this.form.invalid
+      || !this.form.controls.exist_credential.value
       || this.providerForm?.form?.invalid;
+  }
+
+  get showProviderDescription(): boolean {
+    return this.form.controls.provider.enabled
+      && this.form.controls.provider.value === CloudsyncProviderName.Storj;
   }
 
   ngOnInit(): void {
@@ -130,7 +135,7 @@ export class CloudsyncProviderComponent implements OnInit {
           this.save.emit(credential);
           this.cdr.markForCheck();
         },
-        error: (error) => {
+        error: (error: unknown) => {
           // TODO: Errors for nested provider form will be shown in a modal. Can be improved.
           this.isLoading$.next(false);
           this.formErrorHandler.handleWsFormError(error, this.form);
@@ -178,7 +183,7 @@ export class CloudsyncProviderComponent implements OnInit {
         this.isLoading$.next(false);
         this.cdr.markForCheck();
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.isLoading$.next(false);
         this.formErrorHandler.handleWsFormError(error, this.form);
         this.cdr.markForCheck();
@@ -225,14 +230,14 @@ export class CloudsyncProviderComponent implements OnInit {
               value: credential.id,
             };
           }).sort((a, b) => a.label.localeCompare(b.label));
-          existCredentials.unshift({ label: this.translate.instant('Create New'), value: NewOption.New });
+          existCredentials.unshift({ label: this.translate.instant('Create New'), value: newOption });
           this.existCredentialOptions$ = of(existCredentials);
           this.isLoading$.next(false);
           this.cdr.markForCheck();
         },
-        error: (error: WebsocketError) => {
+        error: (error: unknown) => {
           this.isLoading$.next(false);
-          this.dialogService.error(this.errorHandler.parseWsError(error));
+          this.dialogService.error(this.errorHandler.parseError(error));
         },
       });
   }
@@ -246,7 +251,7 @@ export class CloudsyncProviderComponent implements OnInit {
     this.form.controls.exist_credential.valueChanges
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe((credentialId) => {
-        if (credentialId === NewOption.New) {
+        if (credentialId === newOption) {
           this.existingCredential = null;
           this.form.controls.provider.enable();
           this.form.controls.name.enable();

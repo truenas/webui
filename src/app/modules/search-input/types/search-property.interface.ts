@@ -1,4 +1,3 @@
-import { EventEmitter } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
 
@@ -13,20 +12,16 @@ export interface SearchProperty<T> {
    * Nested properties are supported: 'user.first_name'.
    */
   // TODO: Add support for nested properties.
-  property: keyof T;
+  property: keyof T | string;
   propertyType: PropertyType;
 
   valueSuggestions$?: Observable<Option[]>;
-
+  enumMap?: Map<unknown, string>;
   /**
    * Optional functions to convert value from and to API format.
    */
   formatValue?: (value: unknown) => string;
   parseValue?: (value: string) => unknown;
-}
-
-export interface SearchSuggestionsComponent {
-  suggestionSelected: EventEmitter<unknown>;
 }
 
 export enum PropertyType {

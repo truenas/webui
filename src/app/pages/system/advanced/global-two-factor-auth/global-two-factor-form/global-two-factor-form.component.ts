@@ -9,12 +9,13 @@ import _ from 'lodash';
 import {
   EMPTY, catchError, filter, of, switchMap, tap,
 } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
+import { WINDOW } from 'app/helpers/window.helper';
 import { GlobalTwoFactorConfig, GlobalTwoFactorConfigUpdate } from 'app/interfaces/two-factor-config.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AuthService } from 'app/services/auth/auth.service';
-import { TwoFactorGuardService } from 'app/services/auth/two-factor-guard.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -33,6 +34,7 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
   });
 
   enableWarning: string = this.translate.instant('Once enabled, users will be required to set up two factor authentication next time they login.');
+  protected readonly Role = Role;
 
   constructor(
     private fb: FormBuilder,
@@ -44,9 +46,9 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
     private translate: TranslateService,
     private snackbar: SnackbarService,
     private authService: AuthService,
-    private twoFactorGuardService: TwoFactorGuardService,
-    @Inject(SLIDE_IN_DATA) protected twoFactorConfig: GlobalTwoFactorConfig,
     private router: Router,
+    @Inject(SLIDE_IN_DATA) protected twoFactorConfig: GlobalTwoFactorConfig,
+    @Inject(WINDOW) private window: Window,
   ) {}
 
   ngOnInit(): void {
@@ -85,12 +87,11 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
         return this.ws.call('auth.twofactor.update', [payload]);
       }),
       tap(() => {
+        this.window.localStorage.setItem('showQr2FaWarning', `${this.form.value.enabled}`);
         this.isFormLoading = false;
         this.snackbar.success(this.translate.instant('Settings saved'));
-        this.authService.getTwoFactorConfig();
+        this.authService.globalTwoFactorConfigUpdated();
         if (!_.isEqual(this.twoFactorConfig, payload) && payload.enabled) {
-          this.twoFactorGuardService.updateGlobalConfig();
-          this.twoFactorGuardService.updateUserConfig();
           this.router.navigate(['/two-factor-auth']);
         }
         this.cdr.markForCheck();
@@ -98,7 +99,7 @@ export class GlobalTwoFactorAuthFormComponent implements OnInit {
       }),
       catchError((error) => {
         this.isFormLoading = false;
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+        this.dialogService.error(this.errorHandler.parseError(error));
         this.cdr.markForCheck();
         return EMPTY;
       }),

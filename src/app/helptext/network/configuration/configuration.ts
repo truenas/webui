@@ -1,6 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export default {
+export const helptextNetworkConfiguration = {
   title: T('Edit Global Configuration'),
 
   hostname_placeholder: T('Hostname'),

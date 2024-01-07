@@ -5,12 +5,12 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
 import { Router } from '@angular/router';
-import { SpectatorRouting } from '@ngneat/spectator';
 import {
-  createRoutingFactory, mockProvider,
+  createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { CoreComponents } from 'app/core/core-components.module';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
@@ -19,7 +19,6 @@ import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
 import { ServiceFtpComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
-import { ServiceLldpComponent } from 'app/pages/services/components/service-lldp/service-lldp.component';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
 import { ServiceSmartComponent } from 'app/pages/services/components/service-smart/service-smart.component';
 import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
@@ -47,11 +46,12 @@ const fakeDataSource: Service[] = [...serviceNames.entries()]
   });
 
 describe('ServicesComponent', () => {
-  let spectator: SpectatorRouting<ServicesComponent>;
+  let spectator: Spectator<ServicesComponent>;
   let loader: HarnessLoader;
   let ws: WebSocketService;
+  let table: IxTableHarness;
 
-  const createComponent = createRoutingFactory({
+  const createComponent = createComponentFactory({
     component: ServicesComponent,
     imports: [
       CoreComponents,
@@ -61,7 +61,7 @@ describe('ServicesComponent', () => {
     ],
     providers: [
       mockWebsocket([
-        mockCall('service.update'),
+        mockCall('service.update', 1),
         mockCall('service.start'),
         mockCall('service.stop'),
       ]),
@@ -75,18 +75,18 @@ describe('ServicesComponent', () => {
           value: fakeDataSource,
         }],
       }),
+      mockAuth(),
     ],
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     ws = spectator.inject(WebSocketService);
-    spectator.fixture.detectChanges();
+    table = await loader.getHarness(IxTableHarness);
   });
 
   it('should show table rows', async () => {
-    const table = await loader.getHarness(IxTableHarness);
     const cells = await table.getCells(true);
     const expectedData = [...serviceNames.keys()]
       .filter((service) => !hiddenServices.includes(service))
@@ -100,86 +100,74 @@ describe('ServicesComponent', () => {
     expect(cells).toEqual(expectedRows);
   });
 
-  it('should redirect to configure iSCSI service page when edit button is pressed', async () => {
-    const table = await loader.getHarness(IxTableHarness);
-    const editButton = await table.getHarness(MatButtonHarness.with({ selector: '[name="edit-iSCSI"]' }));
-    await editButton.click();
+  describe('edit', () => {
+    it('should redirect to configure iSCSI service page when edit button is pressed', async () => {
+      const router = spectator.inject(Router);
+      jest.spyOn(router, 'navigate').mockResolvedValue(true);
 
-    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/sharing', 'iscsi']);
+      // TODO: remove name attributes and rely on harnesses instead
+      const editButton = await table.getHarness(MatButtonHarness.with({ selector: '[name="edit-iSCSI"]' }));
+      await editButton.click();
+
+      expect(router.navigate).toHaveBeenCalledWith(['/sharing', 'iscsi']);
+    });
+
+    it('should open FTP configuration when edit button is pressed', async () => {
+      const editButton = await table.getHarness(MatButtonHarness.with({ selector: '[name="edit-FTP"]' }));
+      await editButton.click();
+      expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ServiceFtpComponent, { wide: true });
+    });
+
+    it('should open NFS configuration when edit button is pressed', async () => {
+      const editButton = await table.getHarness(MatButtonHarness.with({ selector: '[name="edit-NFS"]' }));
+      await editButton.click();
+      expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ServiceNfsComponent, { wide: true });
+    });
+
+    it('should open SNMP configuration when edit button is pressed', async () => {
+      const editButton = await table.getHarness(MatButtonHarness.with({ selector: '[name="edit-SNMP"]' }));
+      await editButton.click();
+      expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ServiceSnmpComponent, { wide: true });
+    });
+
+    it('should open UPS configuration when edit button is pressed', async () => {
+      const editButton = await table.getHarness(MatButtonHarness.with({ selector: '[name="edit-UPS"]' }));
+      await editButton.click();
+      expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ServiceUpsComponent, { wide: true });
+    });
+
+    it('should open SSH configuration when edit button is pressed', async () => {
+      const editButton = await table.getHarness(MatButtonHarness.with({ selector: '[name="edit-SSH"]' }));
+      await editButton.click();
+      expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ServiceSshComponent);
+    });
+
+    it('should open SMB configuration when edit button is pressed', async () => {
+      const editButton = await table.getHarness(MatButtonHarness.with({ selector: '[name="edit-SMB"]' }));
+      await editButton.click();
+      expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ServiceSmbComponent);
+    });
+
+    it('should open S.M.A.R.T. configuration when edit button is pressed', async () => {
+      const editButton = await table.getHarness(MatButtonHarness.with({ selector: '[name="edit-S.M.A.R.T."]' }));
+      await editButton.click();
+      expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ServiceSmartComponent);
+    });
   });
 
-  it('should open FTP configuration when edit button is pressed', async () => {
-    const table = await loader.getHarness(IxTableHarness);
-    const editButton = await table.getHarness(MatButtonHarness.with({ selector: '[name="edit-FTP"]' }));
-    await editButton.click();
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ServiceFtpComponent, { wide: true });
-  });
+  describe('view sessions', () => {
+    it('should navigate to view Sessions for SMB when Sessions button is pressed', async () => {
+      const editButton = await table.getHarness(MatButtonHarness.with({ selector: '[name="sessions-SMB"]' }));
+      expect(await (await editButton.host()).getAttribute('href')).toBe('/sharing/smb/status/sessions');
+    });
 
-  it('should open NFS configuration when edit button is pressed', async () => {
-    const table = await loader.getHarness(IxTableHarness);
-    const editButton = await table.getHarness(MatButtonHarness.with({ selector: '[name="edit-NFS"]' }));
-    await editButton.click();
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ServiceNfsComponent, { wide: true });
-  });
-
-  it('should open SNMP configuration when edit button is pressed', async () => {
-    const table = await loader.getHarness(IxTableHarness);
-    const editButton = await table.getHarness(MatButtonHarness.with({ selector: '[name="edit-SNMP"]' }));
-    await editButton.click();
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ServiceSnmpComponent, { wide: true });
-  });
-
-  it('should open UPS configuration when edit button is pressed', async () => {
-    const table = await loader.getHarness(IxTableHarness);
-    const editButton = await table.getHarness(MatButtonHarness.with({ selector: '[name="edit-UPS"]' }));
-    await editButton.click();
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ServiceUpsComponent, { wide: true });
-  });
-
-  it('should open SSH configuration when edit button is pressed', async () => {
-    const table = await loader.getHarness(IxTableHarness);
-    const editButton = await table.getHarness(MatButtonHarness.with({ selector: '[name="edit-SSH"]' }));
-    await editButton.click();
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ServiceSshComponent);
-  });
-
-  it('should open SMB configuration when edit button is pressed', async () => {
-    const table = await loader.getHarness(IxTableHarness);
-    const editButton = await table.getHarness(MatButtonHarness.with({ selector: '[name="edit-SMB"]' }));
-    await editButton.click();
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ServiceSmbComponent);
-  });
-
-  it('should navigate to view Sessions for SMB when Sessions button is pressed', async () => {
-    const table = await loader.getHarness(IxTableHarness);
-    const editButton = await table.getHarness(MatButtonHarness.with({ selector: '[name="sessions-SMB"]' }));
-    await editButton.click();
-    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/sharing', 'smb', 'status', 'sessions']);
-  });
-
-  it('should navigate to view Sessions for NFS when Sessions button is pressed', async () => {
-    const table = await loader.getHarness(IxTableHarness);
-    const editButton = await table.getHarness(MatButtonHarness.with({ selector: '[name="sessions-NFS"]' }));
-    await editButton.click();
-    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/sharing', 'nfs', 'sessions']);
-  });
-
-  it('should open S.M.A.R.T. configuration when edit button is pressed', async () => {
-    const table = await loader.getHarness(IxTableHarness);
-    const editButton = await table.getHarness(MatButtonHarness.with({ selector: '[name="edit-S.M.A.R.T."]' }));
-    await editButton.click();
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ServiceSmartComponent);
-  });
-
-  it('should open LLDP configuration when edit button is pressed', async () => {
-    const table = await loader.getHarness(IxTableHarness);
-    const editButton = await table.getHarness(MatButtonHarness.with({ selector: '[name="edit-LLDP"]' }));
-    await editButton.click();
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ServiceLldpComponent);
+    it('should navigate to view Sessions for NFS when Sessions button is pressed', async () => {
+      const editButton = await table.getHarness(MatButtonHarness.with({ selector: '[name="sessions-NFS"]' }));
+      expect(await (await editButton.host()).getAttribute('href')).toBe('/sharing/nfs/sessions');
+    });
   });
 
   it('should change service enable state when slide is checked', async () => {
-    const table = await loader.getHarness(IxTableHarness);
     const firstRow = await table.getFirstRow();
     const serviceKey = [...serviceNames.entries()].find(([, value]) => value === firstRow.name)[0];
 
@@ -195,5 +183,11 @@ describe('ServicesComponent', () => {
 
     expect(await checkbox.isChecked()).toBeTruthy();
     expect(ws.call).toHaveBeenCalledWith('service.update', [0, { enable: true }]);
+  });
+
+  it('should show audit log icon for SMB service', async () => {
+    const logsButton = await table.getHarness(MatButtonHarness.with({ selector: '[name="logs-SMB"]' }));
+    const url = await (await logsButton.host()).getAttribute('href');
+    expect(decodeURI(url)).toBe('/system/audit/{"searchQuery":{"isBasicQuery":false,"filters":[["service","%3D","SMB"]]}}');
   });
 });

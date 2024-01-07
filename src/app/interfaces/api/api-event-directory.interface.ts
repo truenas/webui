@@ -21,7 +21,7 @@ import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 export interface ApiEventDirectory {
   'alert.list': { response: Alert };
   'chart.release.query': { response: ChartRelease };
-  'chart.release.statistics': { response: { id: string; stats: ChartReleaseStats } }; // KARPOV
+  'chart.release.statistics': { response: { id: string; stats: ChartReleaseStats } };
   'core.get_jobs': { response: Job };
   'directoryservices.status': { response: DirectoryServicesState };
   'failover.status': { response: FailoverStatus };

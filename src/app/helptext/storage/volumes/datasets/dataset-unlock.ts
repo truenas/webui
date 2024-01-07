@@ -1,7 +1,7 @@
 import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export default {
+export const helptextUnlock = {
   dataset_unlock_title: T('Unlock Datasets'),
   unlock_key_file_placeholder: T('Unlock with Key file'),
   unlock_key_file_tooltip: T('Use an exported encryption key file to unlock datasets.'),

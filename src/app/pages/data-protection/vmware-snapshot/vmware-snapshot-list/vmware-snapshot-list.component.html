@@ -31,6 +31,7 @@
             (click)="doEdit(snapshot)"
           >{{ 'Edit' | translate }}</button>
           <button
+            *ixRequiresRoles="requiresRoles"
             mat-button
             [ixTest]="[snapshot.hostname, snapshot.filesystem, 'delete']"
             (click)="doDelete(snapshot)"

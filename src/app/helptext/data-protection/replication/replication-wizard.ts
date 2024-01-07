@@ -1,6 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export default {
+export const helptextReplicationWizard = {
   step1_label: T('What and Where'),
 
   exist_replication_placeholder: T('Load Previous Replication Task'),

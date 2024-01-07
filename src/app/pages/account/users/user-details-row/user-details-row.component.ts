@@ -2,9 +2,11 @@ import {
   Component, ChangeDetectionStrategy, Input, EventEmitter, Output,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { YesNoPipe } from 'app/core/pipes/yes-no.pipe';
+import { Role } from 'app/enums/role.enum';
 import { Option } from 'app/interfaces/option.interface';
 import { User } from 'app/interfaces/user.interface';
 import {
@@ -12,6 +14,7 @@ import {
 } from 'app/pages/account/users/user-details-row/delete-user-dialog/delete-user-dialog.component';
 import { UserFormComponent } from 'app/pages/account/users/user-form/user-form.component';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { UrlOptionsService } from 'app/services/url-options.service';
 
 @UntilDestroy()
 @Component({
@@ -23,11 +26,15 @@ export class UserDetailsRowComponent {
   @Input() user: User;
   @Output() delete = new EventEmitter<number>();
 
+  protected readonly Role = Role;
+
   constructor(
     private translate: TranslateService,
     private slideInService: IxSlideInService,
     private matDialog: MatDialog,
     private yesNoPipe: YesNoPipe,
+    private urlOptions: UrlOptionsService,
+    private router: Router,
   ) {}
 
   getDetails(user: User): Option[] {
@@ -88,6 +95,16 @@ export class UserDetailsRowComponent {
 
         this.delete.emit(user.id);
       });
+  }
+
+  viewLogs(user: User): void {
+    const url = this.urlOptions.buildUrl('/system/audit', {
+      searchQuery: {
+        isBasicQuery: false,
+        filters: [['username', '=', user.username]],
+      },
+    });
+    this.router.navigateByUrl(url);
   }
 
   private getSshStatus(user: User): string {

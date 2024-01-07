@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
+import { TranslateService } from '@ngx-translate/core';
 import { when } from 'jest-when';
 import { Observable, of, Subject } from 'rxjs';
 import { ValuesType } from 'utility-types';
@@ -9,7 +10,7 @@ import {
 } from 'app/core/testing/interfaces/mock-websocket-responses.interface';
 import { ApiCallDirectory, ApiCallMethod, ApiCallParams } from 'app/interfaces/api/api-call-directory.interface';
 import { ApiEventDirectory } from 'app/interfaces/api/api-event-directory.interface';
-import { ApiJobDirectory, ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
+import { ApiJobDirectory, ApiJobMethod, ApiJobParams } from 'app/interfaces/api/api-job-directory.interface';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
@@ -40,8 +41,9 @@ export class MockWebsocketService extends WebSocketService {
   constructor(
     protected router: Router,
     protected wsManager: WebsocketConnectionService,
+    protected translate: TranslateService,
   ) {
-    super(router, wsManager);
+    super(router, wsManager, translate);
 
     this.call = jest.fn();
     this.job = jest.fn();
@@ -57,9 +59,9 @@ export class MockWebsocketService extends WebSocketService {
   }
 
   mockCall<K extends ApiCallMethod>(method: K, response: CallResponseOrFactory<K>): void {
-    const mockedImplementation = (): Observable<unknown> => {
+    const mockedImplementation = (_: K, params: ApiCallParams<K>): Observable<unknown> => {
       if (response instanceof Function) {
-        return of(response());
+        return of(response(params));
       }
 
       return of(response);
@@ -77,10 +79,10 @@ export class MockWebsocketService extends WebSocketService {
       .mockReturnValueOnce(of(response));
   }
   mockJob<K extends ApiJobMethod>(method: K, response: JobResponseOrFactory<K>): void {
-    const getJobResponse = (): Job<ApiJobDirectory[K]['response']> => {
+    const getJobResponse = (params: ApiJobParams<K> = undefined): Job<ApiJobDirectory[K]['response']> => {
       let job: Job;
       if (response instanceof Function) {
-        job = response();
+        job = response(params);
       } else {
         job = response;
       }
@@ -93,7 +95,8 @@ export class MockWebsocketService extends WebSocketService {
     when(this.startJob).calledWith(method).mockReturnValue(of(this.jobIdCounter));
     when(this.startJob).calledWith(method, anyArgument).mockReturnValue(of(this.jobIdCounter));
     when(this.job).calledWith(method).mockImplementation(() => of(getJobResponse()));
-    when(this.job).calledWith(method, anyArgument).mockImplementation(() => of(getJobResponse()));
+    when(this.job).calledWith(method, anyArgument)
+      .mockImplementation((_, params) => of(getJobResponse(params)));
     when(this.call)
       .calledWith('core.get_jobs', [[['id', '=', this.jobIdCounter]]])
       .mockImplementation(() => of([getJobResponse()]));

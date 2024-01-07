@@ -10,7 +10,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { map } from 'rxjs';
 import { CreateVdevLayout, TopologyItemType, VdevType } from 'app/enums/v-dev-type.enum';
-import helptext from 'app/helptext/storage/volumes/manager/manager';
+import { helptextManager } from 'app/helptext/storage/volumes/manager/manager';
 import {
   AddVdevsStore,
 } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
@@ -31,7 +31,7 @@ export class DataWizardStepComponent implements OnInit {
   protected readonly VdevType = VdevType;
   protected readonly inventory$ = this.store.getInventoryForStep(VdevType.Data);
   protected allowedLayouts = Object.values(CreateVdevLayout);
-  readonly helptext = helptext;
+  readonly helptext = helptextManager;
   canChangeLayout = true;
 
   constructor(

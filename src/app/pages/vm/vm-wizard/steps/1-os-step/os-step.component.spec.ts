@@ -51,7 +51,7 @@ describe('OsStepComponent', () => {
       'Shutdown Timeout': 90,
       'Start on Boot': true,
       'Enable Display': true,
-      Password: '12345678',
+      Password: '12345678910',
       Bind: '10.10.16.82',
     });
   }
@@ -70,7 +70,7 @@ describe('OsStepComponent', () => {
       enable_display: true,
       display_type: VmDisplayType.Spice,
       bind: '10.10.16.82',
-      password: '12345678',
+      password: '12345678910',
       hyperv_enlightenments: false,
     });
   });

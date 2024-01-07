@@ -6,6 +6,7 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWebsocket, mockCall, mockJob } from 'app/core/testing/utils/mock-websocket.utils';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
@@ -42,7 +43,7 @@ const certificates = Array.from({ length: 10 }).map((_, index) => ({
   lifetime: 397,
   from: 'Tue Jun 20 06:55:04 2023',
   until: 'Sun Jun 20 06:55:04 2024',
-})) as unknown as Certificate[];
+})) as Certificate[];
 
 describe('CertificateSigningRequestsListComponent', () => {
   let spectator: Spectator<CertificateSigningRequestsListComponent>;
@@ -89,6 +90,7 @@ describe('CertificateSigningRequestsListComponent', () => {
       }),
       mockProvider(StorageService),
       mockProvider(ErrorHandlerService),
+      mockAuth(),
     ],
   });
 

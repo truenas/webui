@@ -8,10 +8,12 @@ import { MatListModule } from '@angular/material/list';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { TranslateModule } from '@ngx-translate/core';
+import { QrCodeModule } from 'ng-qrcode';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
-import { RenewTwoFactorDialogComponent } from 'app/pages/two-factor-auth/components/two-factor/renew-two-factor-dialog/renew-two-factor-dialog.component';
+import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { QrViewerComponent } from 'app/pages/two-factor-auth/components/two-factor/qr-viewer/qr-viewer.component';
 import { TwoFactorComponent } from 'app/pages/two-factor-auth/components/two-factor/two-factor.component';
 import { routing } from 'app/pages/two-factor-auth/two-factor-auth.routing';
 
@@ -29,11 +31,13 @@ import { routing } from 'app/pages/two-factor-auth/two-factor-auth.routing';
     NgxSkeletonLoaderModule,
     MatToolbarModule,
     TranslateModule,
+    TestIdModule,
+    QrCodeModule,
     routing,
   ],
   declarations: [
     TwoFactorComponent,
-    RenewTwoFactorDialogComponent,
+    QrViewerComponent,
   ],
 })
-export default class TwoFactorAuthModule { }
+export class TwoFactorAuthModule { }

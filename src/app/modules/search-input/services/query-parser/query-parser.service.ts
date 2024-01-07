@@ -1,16 +1,24 @@
 import { Injectable } from '@angular/core';
 import { SyntaxNode, TreeCursor } from '@lezer/common';
-import { QueryComparator } from 'app/interfaces/query-api.interface';
+import { TranslateService } from '@ngx-translate/core';
+import { format, fromUnixTime } from 'date-fns';
+import {
+  OrQueryFilter, QueryComparator, QueryFilter, QueryFilters,
+} from 'app/interfaces/query-api.interface';
 import { parser } from 'app/modules/search-input/services/query-parser/query-grammar';
 import {
   Condition,
   ConditionGroup, ConnectorType, LiteralValue, ParsedToken,
+  QueryParsingError,
   QueryParsingResult, QuerySyntaxError,
 } from 'app/modules/search-input/services/query-parser/query-parsing-result.interface';
+import { PropertyType, SearchProperty } from 'app/modules/search-input/types/search-property.interface';
 
 @Injectable()
-export class QueryParserService {
+export class QueryParserService<T> {
   private input: string;
+
+  constructor(private translate: TranslateService) {}
 
   extractTokens(query: string): string[] {
     const tree = parser.parse(query);
@@ -59,16 +67,20 @@ export class QueryParserService {
       console.error(error);
       return {
         hasErrors: true,
-        errors: [error],
+        errors: [error as QueryParsingError],
         tree: null,
       };
     }
   }
 
+  formatFiltersToQuery(structure: QueryFilters<T>, properties: SearchProperty<T>[]): string {
+    return structure.map((element) => this.parseElementFromQueryFilter(element, properties)).join(' AND ');
+  }
+
   private getSyntaxErrors(startingNode: SyntaxNode): QuerySyntaxError[] {
     const errors: QuerySyntaxError[] = [];
     startingNode.cursor().iterate((node) => {
-      if (node.name !== ParsedToken.Error) {
+      if ((node.name as ParsedToken) !== ParsedToken.Error) {
         return;
       }
 
@@ -79,10 +91,11 @@ export class QueryParserService {
   }
 
   private parseNode(node: SyntaxNode): ConditionGroup | Condition {
-    if (node.name === ParsedToken.ConditionGroup) {
+    const name = node.name as ParsedToken;
+    if (name === ParsedToken.ConditionGroup) {
       return this.parseConditionGroup(node);
     }
-    if (node.name === ParsedToken.Condition) {
+    if (name === ParsedToken.Condition) {
       return this.parseCondition(node);
     }
 
@@ -117,7 +130,7 @@ export class QueryParserService {
   }
 
   private parseConnector(node: SyntaxNode): ConnectorType {
-    return node.name === ParsedToken.Or ? ConnectorType.Or : ConnectorType.And;
+    return (node.name as ParsedToken) === ParsedToken.Or ? ConnectorType.Or : ConnectorType.And;
   }
 
   private parseLiteral(node: SyntaxNode): LiteralValue | LiteralValue[] {
@@ -181,5 +194,121 @@ export class QueryParserService {
     }
 
     return queryTokens;
+  }
+
+  private mapValueByPropertyType(
+    property: SearchProperty<T>,
+    value: LiteralValue | LiteralValue[],
+  ): LiteralValue | LiteralValue[] {
+    if (property?.propertyType === PropertyType.Date) {
+      return this.formatUnixSecondsToDate(value as number | number[]);
+    }
+
+    if (property?.propertyType === PropertyType.Memory) {
+      return this.formatMemoryValue(property, value);
+    }
+
+    if (property?.propertyType === PropertyType.Text && property.enumMap) {
+      return this.formatTextValue(property, value);
+    }
+
+    return value;
+  }
+
+  private formatUnixSecondsToDate(value: number | number[]): string | string[] {
+    const convertUnixSeconds = (seconds: number): string => {
+      return format(fromUnixTime(seconds), 'yyyy-MM-dd');
+    };
+
+    if (Array.isArray(value)) {
+      return value.map(convertUnixSeconds);
+    }
+
+    return convertUnixSeconds(value);
+  }
+
+  private formatMemoryValue(
+    property: SearchProperty<T>,
+    value: LiteralValue | LiteralValue[],
+  ): string | string[] {
+    const formatValue = (memoryValue: LiteralValue): string => {
+      return property.formatValue(memoryValue);
+    };
+
+    if (Array.isArray(value)) {
+      return value.map(formatValue);
+    }
+
+    return formatValue(value);
+  }
+
+  private formatTextValue(
+    property: SearchProperty<T>,
+    value: LiteralValue | LiteralValue[],
+  ): string | string[] {
+    const parseValue = (textValue: LiteralValue): string => {
+      return (
+        property.enumMap.get(textValue) ? this.translate.instant(property.enumMap.get(textValue)) : textValue
+      ) as string;
+    };
+
+    if (Array.isArray(value)) {
+      return value.map(parseValue);
+    }
+
+    return parseValue(value);
+  }
+
+  private parseArrayFromQueryFilter(
+    array: QueryFilter<T>[],
+    operator: string,
+    properties: SearchProperty<T>[],
+  ): string {
+    const parsedConditions = array.map((element) => this.parseElementFromQueryFilter(element, properties));
+    const innerTemplate = parsedConditions.join(` ${operator} `);
+    return `(${innerTemplate})`;
+  }
+
+  private conditionToStringFromQueryFilter(
+    condition: QueryFilter<T>,
+    properties: SearchProperty<T>[],
+  ): string {
+    const [property, comparator, value] = condition;
+
+    const currentProperty = properties.find((prop) => prop.property === property);
+    const mappedConditionProperty = (currentProperty?.label || property);
+    const mappedConditionValue = this.mapValueByPropertyType(currentProperty, value as LiteralValue) as string;
+
+    if (comparator.toUpperCase() === 'IN' || comparator.toUpperCase() === 'NIN') {
+      const valueList = Array.isArray(value)
+        ? value.map((valueItem) => {
+          return `"${this.mapValueByPropertyType(currentProperty, valueItem as LiteralValue | LiteralValue[]) as string}"`;
+        }).join(', ')
+        : `"${mappedConditionValue}"`;
+
+      return `"${mappedConditionProperty}" ${comparator.toUpperCase()} (${valueList})`;
+    }
+
+    return `"${mappedConditionProperty}" ${comparator.toUpperCase()} "${mappedConditionValue}"`;
+  }
+
+  private parseElementFromQueryFilter(
+    element: QueryFilters<T> | QueryFilter<T> | OrQueryFilter<T>,
+    properties: SearchProperty<T>[],
+  ): string {
+    if (Array.isArray(element)) {
+      if (typeof element[0] === 'string' && ['OR', 'AND'].includes((element[0] as string).toUpperCase())) {
+        const operator = (element[0] as string).toUpperCase();
+        return this.parseArrayFromQueryFilter(element[1] as QueryFilter<T>[], operator, properties);
+      }
+
+      if (element.length === 3 && typeof element[1] === 'string') {
+        return this.conditionToStringFromQueryFilter(element as QueryFilter<T>, properties);
+      }
+
+      return this.parseArrayFromQueryFilter(element as QueryFilter<T>[], 'AND', properties);
+    }
+
+    return this.conditionToStringFromQueryFilter(element as QueryFilter<T>, properties);
   }
 }

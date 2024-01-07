@@ -7,7 +7,10 @@ import { forkJoin, merge } from 'rxjs';
 import {
   filter, map, mergeMap, switchMap, tap,
 } from 'rxjs/operators';
-import network_interfaces_helptext from 'app/helptext/network/interfaces/interfaces-list';
+import { Role } from 'app/enums/role.enum';
+import { filterAsync } from 'app/helpers/operators/filter-async.operator';
+import { helptextInterfaces } from 'app/helptext/network/interfaces/interfaces-list';
+import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -23,6 +26,7 @@ import {
 export class NetworkInterfacesEffects {
   loadCheckinStatus$ = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized, networkInterfacesChanged),
+    filterAsync(this.authService.hasRole([Role.NetworkInterfaceWrite])),
     mergeMap(() => {
       return forkJoin([
         this.ws.call('interface.has_pending_changes'),
@@ -48,10 +52,10 @@ export class NetworkInterfacesEffects {
     filter(() => this.router.url !== '/network'),
     switchMap(() => {
       return this.dialogService.confirm({
-        title: this.translate.instant(network_interfaces_helptext.checkin_title),
-        message: this.translate.instant(network_interfaces_helptext.pending_checkin_dialog_text),
+        title: this.translate.instant(helptextInterfaces.checkin_title),
+        message: this.translate.instant(helptextInterfaces.pending_checkin_dialog_text),
         hideCheckbox: true,
-        buttonText: this.translate.instant(network_interfaces_helptext.go_to_network),
+        buttonText: this.translate.instant(helptextInterfaces.go_to_network),
       }).pipe(
         filter(Boolean),
         tap(() => {
@@ -68,5 +72,6 @@ export class NetworkInterfacesEffects {
     private errorHandler: ErrorHandlerService,
     private translate: TranslateService,
     private dialogService: DialogService,
+    private authService: AuthService,
   ) { }
 }

@@ -14,7 +14,7 @@ import {
 } from 'app/enums/vm.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
-import helptext from 'app/helptext/vm/vm-wizard/vm-wizard';
+import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { SummaryProvider, SummarySection } from 'app/modules/common/summary/summary.interface';
 import {
   forbiddenAsyncValues,
@@ -51,7 +51,7 @@ export class OsStepComponent implements SummaryProvider {
     password: ['', Validators.required],
   });
 
-  readonly helptext = helptext;
+  readonly helptext = helptextVmWizard;
   readonly VmOs = VmOs;
 
   readonly osOptions$ = of(mapToOptions(vmOsLabels, this.translate));

@@ -8,6 +8,7 @@ import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { NfsProtocol } from 'app/enums/nfs-protocol.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
@@ -72,6 +73,7 @@ describe('NfsFormComponent', () => {
           protocols: [NfsProtocol.V3],
         } as NfsConfig),
       ]),
+      mockAuth(),
       mockProvider(IxSlideInService),
       mockProvider(FilesystemService),
       mockProvider(UserService, {
@@ -191,7 +193,7 @@ describe('NfsFormComponent', () => {
     beforeEach(async () => {
       spectator = createComponent({
         providers: [
-          { provide: SLIDE_IN_DATA, useValue: existingShare },
+          { provide: SLIDE_IN_DATA, useValue: { existingNfsShare: existingShare } },
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);

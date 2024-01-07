@@ -30,7 +30,7 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
 })
 export class TerminalComponent implements OnInit, OnDestroy {
   @Input() conf: TerminalConfiguration;
-  @ViewChild('terminal', { static: true }) container: ElementRef;
+  @ViewChild('terminal', { static: true }) container: ElementRef<HTMLElement>;
 
   waitParentChanges = 300;
   fontSize = 14;

@@ -5,6 +5,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { TunableType } from 'app/enums/tunable-type.enum';
 import { helptextSystemTunable as helptext } from 'app/helptext/system/tunable';
 import { Job } from 'app/interfaces/job.interface';
@@ -35,6 +36,7 @@ export class TunableFormComponent implements OnInit {
     enabled: [true],
   });
 
+  protected readonly Role = Role;
   readonly tooltips = {
     var: helptext.var.tooltip,
     value: helptext.value.tooltip,
@@ -73,7 +75,7 @@ export class TunableFormComponent implements OnInit {
         this.cdr.markForCheck();
         this.slideInRef.close(true);
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.isFormLoading = false;
         this.errorHandler.handleWsFormError(error, this.form);
         this.cdr.markForCheck();

@@ -1,6 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export default {
+export const helptextInterfacesForm = {
   int_type_tooltip: T('Choose the\
  type of interface. <i>Bridge</i> creates a logical link between\
  multiple networks. <i>Link Aggregation</i> combines multiple network\

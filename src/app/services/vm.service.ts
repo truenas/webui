@@ -4,7 +4,6 @@ import { Observable, take } from 'rxjs';
 import { VmNicType } from 'app/enums/vm.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { VirtualizationDetails, VmDisplayWebUriParams, VmDisplayWebUriParamsOptions } from 'app/interfaces/virtual-machine.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -57,9 +56,9 @@ export class VmService {
           this.window.open(webUri.uri, '_blank');
           this.loader.close();
         },
-        error: (error: WebsocketError) => {
+        error: (error: unknown) => {
           this.loader.close();
-          this.dialogService.error(this.errorHandler.parseWsError(error));
+          this.dialogService.error(this.errorHandler.parseError(error));
         },
       });
   }

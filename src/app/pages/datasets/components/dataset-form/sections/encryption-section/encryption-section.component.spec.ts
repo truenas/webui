@@ -4,8 +4,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { DatasetEncryptionType } from 'app/enums/dataset.enum';
-import helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
+import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
+import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxFieldsetHarness } from 'app/modules/ix-forms/components/ix-fieldset/ix-fieldset.harness';
@@ -23,7 +23,7 @@ describe('EncryptionSectionComponent', () => {
   const keyEncryptedDataset = {
     encrypted: true,
     key_format: {
-      value: DatasetEncryptionType.Default,
+      value: EncryptionKeyFormat.Hex,
     },
     encryption_algorithm: {
       value: 'AES-128-GCM',
@@ -32,7 +32,7 @@ describe('EncryptionSectionComponent', () => {
   const passphraseEncryptedDataset = {
     encrypted: true,
     key_format: {
-      value: DatasetEncryptionType.Passphrase,
+      value: EncryptionKeyFormat.Passphrase,
     },
   } as Dataset;
 
@@ -61,6 +61,7 @@ describe('EncryptionSectionComponent', () => {
         parent: {
           encrypted: false,
         } as Dataset,
+        advancedMode: true,
       },
     });
 
@@ -130,8 +131,8 @@ describe('EncryptionSectionComponent', () => {
       });
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
-        title: helptext.dataset_form_encryption.non_encrypted_warning_title,
-        message: helptext.dataset_form_encryption.non_encrypted_warning_warning,
+        title: helptextDatasetForm.dataset_form_encryption.non_encrypted_warning_title,
+        message: helptextDatasetForm.dataset_form_encryption.non_encrypted_warning_warning,
       });
     });
   });

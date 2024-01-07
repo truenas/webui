@@ -109,6 +109,7 @@
           {{ image.update_available ? ('Update available' | translate) : ('Up to date' | translate) }}
         </button>
         <button
+          *ixRequiresRoles="[Role.FullAdmin]"
           mat-menu-item
           [ixTest]="['delete', image.repo_tags.join(', ')]"
           (click)="doDelete([image])"

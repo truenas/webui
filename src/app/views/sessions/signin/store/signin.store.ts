@@ -5,13 +5,15 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ComponentStore, tapResponse } from '@ngrx/component-store';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  combineLatest, forkJoin, Observable, of, Subscription,
+  combineLatest, EMPTY, forkJoin, Observable, of, Subscription, from,
 } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
+import {
+  catchError, filter, map, switchMap, tap,
+} from 'rxjs/operators';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
+import { LoginResult } from 'app/enums/login-result.enum';
 import { WINDOW } from 'app/helpers/window.helper';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -53,7 +55,7 @@ export class SigninStore extends ComponentStore<SigninState> {
     return state.failover && state.failover.status !== FailoverStatus.Single;
   });
 
-  private statusSubscription: Subscription;
+  private failoverStatusSubscription: Subscription;
   private disabledReasonsSubscription: Subscription;
 
   constructor(
@@ -85,8 +87,8 @@ export class SigninStore extends ComponentStore<SigninState> {
         this.systemGeneralService.loadProductType(),
       ]).pipe(
         switchMap(() => this.authService.loginWithToken()),
-        tap((wasLoggedIn: boolean) => {
-          if (!wasLoggedIn) {
+        tap((loginResult) => {
+          if (loginResult !== LoginResult.Success) {
             this.authService.clearAuthToken();
             return;
           }
@@ -94,8 +96,8 @@ export class SigninStore extends ComponentStore<SigninState> {
         }),
         tapResponse(
           () => {},
-          (error: WebsocketError) => {
-            this.dialogService.error(this.errorHandler.parseWsError(error));
+          (error: unknown) => {
+            this.dialogService.error(this.errorHandler.parseError(error));
           },
         ),
       );
@@ -107,25 +109,24 @@ export class SigninStore extends ComponentStore<SigninState> {
       this.setLoadingState(true);
       this.snackbar.dismiss();
     }),
-    tapResponse(
-      () => {
-        this.setLoadingState(false);
-        this.router.navigateByUrl(this.getRedirectUrl()).then(() => {
-          if (this.statusSubscription && !this.statusSubscription.closed) {
-            this.statusSubscription.unsubscribe();
-            this.statusSubscription = null;
-          }
-          if (this.disabledReasonsSubscription && !this.disabledReasonsSubscription.closed) {
-            this.disabledReasonsSubscription.unsubscribe();
-            this.disabledReasonsSubscription = null;
-          }
-        });
-      },
-      (error: WebsocketError) => {
-        this.setLoadingState(false);
-        this.dialogService.error(this.errorHandler.parseWsError(error));
-      },
-    ),
+    // Wait for user to be loaded
+    switchMap(() => this.authService.user$.pipe(filter(Boolean))),
+    switchMap(() => from(this.router.navigateByUrl(this.getRedirectUrl()))),
+    tap(() => {
+      if (this.failoverStatusSubscription && !this.failoverStatusSubscription.closed) {
+        this.failoverStatusSubscription.unsubscribe();
+        this.failoverStatusSubscription = null;
+      }
+      if (this.disabledReasonsSubscription && !this.disabledReasonsSubscription.closed) {
+        this.disabledReasonsSubscription.unsubscribe();
+        this.disabledReasonsSubscription = null;
+      }
+    }),
+    catchError((error: unknown) => {
+      this.setLoadingState(false);
+      this.dialogService.error(this.errorHandler.parseError(error));
+      return EMPTY;
+    }),
   ));
 
   showSnackbar(message: string): void {
@@ -162,7 +163,7 @@ export class SigninStore extends ComponentStore<SigninState> {
 
   getRedirectUrl(): string {
     const redirectUrl = this.window.sessionStorage.getItem('redirectUrl');
-    if (redirectUrl) {
+    if (redirectUrl && !redirectUrl.endsWith('/errors/unauthorized')) {
       return redirectUrl;
     }
 
@@ -198,7 +199,7 @@ export class SigninStore extends ComponentStore<SigninState> {
     ])
       .pipe(
         tap(
-          ([ips, reasons]) => {
+          ([ips, reasons]: [string[], FailoverDisabledReason[]]) => {
             this.setFailoverDisabledReasons(reasons);
             this.setFailoverIps(ips);
           },
@@ -207,7 +208,7 @@ export class SigninStore extends ComponentStore<SigninState> {
   }
 
   private subscribeToFailoverUpdates(): void {
-    this.statusSubscription = this.ws.subscribe('failover.status')
+    this.failoverStatusSubscription = this.ws.subscribe('failover.status')
       .pipe(map((apiEvent) => apiEvent.fields), untilDestroyed(this))
       .subscribe((status) => this.setFailoverStatus(status));
 

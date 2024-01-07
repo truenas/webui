@@ -57,7 +57,9 @@ export class DeviceListComponent implements OnInit {
       sortable: true,
     }),
     actionsColumn({}),
-  ]);
+  ], {
+    rowTestId: (row) => 'vm-device-' + row.dtype + '-' + row.order,
+  });
 
   get vmId(): number {
     return Number(this.route.snapshot.params['pk']);

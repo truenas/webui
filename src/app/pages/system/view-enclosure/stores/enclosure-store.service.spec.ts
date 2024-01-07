@@ -8,7 +8,6 @@ import {
   EnclosureElementsGroup,
   EnclosureUi, EnclosureUiSlot,
 } from 'app/interfaces/enclosure.interface';
-import { Pool } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/services/dialog.service';
 import { StorageService } from 'app/services/storage.service';
 import { EnclosureState, EnclosureStore } from './enclosure-store.service';

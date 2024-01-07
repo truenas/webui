@@ -11,15 +11,13 @@ import { EmptyType } from 'app/enums/empty-type.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { VmBootloader, VmDeviceType } from 'app/enums/vm.enum';
-import globalHelptext from 'app/helptext/global-helptext';
-import helptext from 'app/helptext/vm/vm-list';
-import wizardHelptext from 'app/helptext/vm/vm-wizard/vm-wizard';
+import { WebsocketErrorName } from 'app/enums/websocket-error-name.enum';
+import { helptextGlobal } from 'app/helptext/global-helptext';
+import { helptextVmList } from 'app/helptext/vm/vm-list';
+import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { ApiCallParams } from 'app/interfaces/api/api-call-directory.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
-import {
-  VirtualizationDetails,
-  VirtualMachine, VirtualMachineUpdate,
-} from 'app/interfaces/virtual-machine.interface';
+import { VirtualizationDetails, VirtualMachine, VirtualMachineUpdate } from 'app/interfaces/virtual-machine.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
@@ -39,8 +37,6 @@ import { StorageService } from 'app/services/storage.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { VmService } from 'app/services/vm.service';
 import { WebSocketService } from 'app/services/ws.service';
-
-const noMemoryError = 'ENOMEM';
 
 @UntilDestroy()
 @Component({
@@ -97,8 +93,8 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
   } as const;
 
   availableMemory: string;
-  memTitle = wizardHelptext.vm_mem_title;
-  memWarning = wizardHelptext.memory_warning;
+  memTitle = helptextVmWizard.vm_mem_title;
+  memWarning = helptextVmWizard.memory_warning;
 
   constructor(
     private ws: WebSocketService,
@@ -200,7 +196,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
       } else {
         transformed.port = 'N/A';
         if (transformed.vm_type === 'Container Provider') {
-          transformed.vm_type = globalHelptext.dockerhost;
+          transformed.vm_type = helptextGlobal.dockerhost;
         }
       }
 
@@ -235,10 +231,10 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
 
   onMemoryError(row: VirtualMachineRow): void {
     this.dialogService.confirm({
-      title: helptext.memory_dialog.title,
-      message: helptext.memory_dialog.message,
-      confirmationCheckboxText: helptext.memory_dialog.secondaryCheckboxMessage,
-      buttonText: helptext.memory_dialog.buttonMessage,
+      title: helptextVmList.memory_dialog.title,
+      message: helptextVmList.memory_dialog.message,
+      confirmationCheckboxText: helptextVmList.memory_dialog.secondaryCheckboxMessage,
+      buttonText: helptextVmList.memory_dialog.buttonMessage,
     })
       .pipe(untilDestroyed(this))
       .subscribe((confirmed) => {
@@ -271,14 +267,14 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
       },
       error: (error: WebsocketError) => {
         this.loader.close();
-        if (method === this.wsMethods.start && error.errname === noMemoryError) {
+        if (method === this.wsMethods.start && error.errname === WebsocketErrorName.NoMemory) {
           this.onMemoryError(row);
           return;
         }
         if (method === this.wsMethods.update) {
           row.autostart = !row.autostart;
         }
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+        this.dialogService.error(this.errorHandler.parseError(error));
       },
     });
   }
@@ -290,8 +286,8 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
           rows = this.resourceTransformIncomingRestData(vms);
           resolve(rows);
         },
-        error: (error: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
+        error: (error: unknown) => {
+          this.dialogService.error(this.errorHandler.parseError(error));
           reject(error);
         },
       });
@@ -324,9 +320,9 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
             });
             this.checkMemory();
           },
-          error: (error: WebsocketError) => {
+          error: (error: unknown) => {
             this.loader.close();
-            this.dialogService.error(this.errorHandler.parseWsError(error));
+            this.dialogService.error(this.errorHandler.parseError(error));
           },
         });
       },
@@ -415,9 +411,9 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
           next: () => {
             this.vmService.openDisplayWebUri(vm.id);
           },
-          error: (error: WebsocketError) => {
+          error: (error: unknown) => {
             this.loader.close();
-            this.dialogService.error(this.errorHandler.parseWsError(error));
+            this.dialogService.error(this.errorHandler.parseError(error));
           },
         });
       },
@@ -444,7 +440,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
           }),
           untilDestroyed(this),
         ).subscribe({
-          error: (error: WebsocketError) => this.dialogService.error(this.errorHandler.parseWsError(error)),
+          error: (error: unknown) => this.dialogService.error(this.errorHandler.parseError(error)),
         });
       },
     }] as EntityTableAction[];
@@ -510,7 +506,7 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
       jobDialogRef.close(false);
       this.dialogService.info(
         this.translate.instant('Finished'),
-        this.translate.instant(helptext.stop_dialog.successMessage, { vmName: vm.name }),
+        this.translate.instant(helptextVmList.stop_dialog.successMessage, { vmName: vm.name }),
         true,
       );
     });

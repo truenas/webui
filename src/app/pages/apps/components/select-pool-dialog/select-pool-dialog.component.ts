@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { forkJoin, Observable, of } from 'rxjs';
-import helptext from 'app/helptext/apps/apps';
+import { helptextApps } from 'app/helptext/apps/apps';
 import { KubernetesConfigUpdate } from 'app/interfaces/kubernetes-config.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
@@ -64,7 +64,7 @@ export class SelectPoolDialogComponent implements OnInit {
 
     const dialogRef = this.matDialog.open(EntityJobComponent, {
       data: {
-        title: helptext.choosePool.jobTitle,
+        title: helptextApps.choosePool.jobTitle,
       },
       disableClose: true,
     });
@@ -81,7 +81,7 @@ export class SelectPoolDialogComponent implements OnInit {
       });
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
-      this.dialogService.error(this.errorHandler.parseJobError(err));
+      this.dialogService.error(this.errorHandler.parseError(err));
     });
   }
 
@@ -109,7 +109,7 @@ export class SelectPoolDialogComponent implements OnInit {
           }
         },
         error: (error) => {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
+          this.dialogService.error(this.errorHandler.parseError(error));
           this.dialogRef.close(false);
         },
       });
@@ -117,10 +117,10 @@ export class SelectPoolDialogComponent implements OnInit {
 
   private showNoPoolsWarning(): void {
     this.dialogService.confirm({
-      title: helptext.noPool.title,
-      message: helptext.noPool.message,
+      title: helptextApps.noPool.title,
+      message: helptextApps.noPool.message,
       hideCheckbox: true,
-      buttonText: helptext.noPool.action,
+      buttonText: helptextApps.noPool.action,
     }).pipe(untilDestroyed(this)).subscribe((confirmed) => {
       this.dialogRef.close(false);
       if (!confirmed) {

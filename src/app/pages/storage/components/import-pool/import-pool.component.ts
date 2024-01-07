@@ -12,7 +12,8 @@ import {
   Observable, UnaryFunction, map, of, pipe, switchMap,
 } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
-import helptext from 'app/helptext/storage/volumes/volume-import-wizard';
+import { Role } from 'app/enums/role.enum';
+import { helptextImport } from 'app/helptext/storage/volumes/volume-import-wizard';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -30,7 +31,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ImportPoolComponent implements OnInit {
-  readonly helptext = helptext;
+  readonly helptext = helptextImport;
   isLoading = false;
   importablePools: {
     name: string;
@@ -43,10 +44,12 @@ export class ImportPoolComponent implements OnInit {
 
   pool = {
     fcName: 'guid',
-    label: helptext.guid_placeholder,
-    tooltip: helptext.guid_tooltip,
+    label: helptextImport.guid_placeholder,
+    tooltip: helptextImport.guid_tooltip,
     options: of<Option[]>([]),
   };
+
+  protected readonly Role = Role;
 
   constructor(
     private fb: FormBuilder,
@@ -82,6 +85,9 @@ export class ImportPoolComponent implements OnInit {
         this.cdr.markForCheck();
       },
       error: (error: WebsocketError | Job) => {
+        this.isLoading = false;
+        this.cdr.markForCheck();
+
         this.dialogService.error(this.errorHandler.parseError(error));
       },
     });
@@ -132,7 +138,7 @@ export class ImportPoolComponent implements OnInit {
       this.dialogService.error({
         title: this.translate.instant('Error importing pool'),
         message: error.reason,
-        backtrace: error.trace.formatted,
+        backtrace: error.trace?.formatted,
       });
     } else if ('exception' in error && error.error && error.exception) {
       this.dialogService.error({

@@ -9,6 +9,7 @@ import {
 } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
@@ -25,9 +26,12 @@ import {
 import {
   S3ProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/s3-provider-form/s3-provider-form.component';
+import { StorjProviderFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/storj-provider-form/storj-provider-form.component';
 import {
   TokenProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/token-provider-form/token-provider-form.component';
+import { CloudsyncProviderDescriptionComponent } from 'app/pages/data-protection/cloudsync/cloudsync-provider-description/cloudsync-provider-description.component';
+import { storjProvider } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.testing.utils';
 import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { CloudCredentialsFormComponent } from './cloud-credentials-form.component';
@@ -93,10 +97,12 @@ describe('CloudCredentialsFormComponent', () => {
     imports: [
       ReactiveFormsModule,
       IxFormsModule,
+      CloudsyncProviderDescriptionComponent,
     ],
     declarations: [
       TokenProviderFormComponent,
       S3ProviderFormComponent,
+      StorjProviderFormComponent,
     ],
     providers: [
       mockProvider(IxSlideInRef),
@@ -110,8 +116,9 @@ describe('CloudCredentialsFormComponent', () => {
         mockCall('cloudsync.credentials.verify', {
           valid: true,
         }),
-        mockCall('cloudsync.providers', [s3Provider, boxProvider]),
+        mockCall('cloudsync.providers', [s3Provider, boxProvider, storjProvider]),
       ]),
+      mockAuth(),
     ],
   });
 
@@ -126,7 +133,7 @@ describe('CloudCredentialsFormComponent', () => {
       expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('cloudsync.providers');
 
       const providersSelect = await form.getControl('Provider') as IxSelectHarness;
-      expect(await providersSelect.getOptionLabels()).toEqual(['Amazon S3', 'Box']);
+      expect(await providersSelect.getOptionLabels()).toEqual(['Amazon S3', 'Box', 'Storj iX']);
     });
 
     it('renders dynamic provider specific form when Provider is selected', async () => {
@@ -136,6 +143,16 @@ describe('CloudCredentialsFormComponent', () => {
       const providerForm = spectator.query(S3ProviderFormComponent);
       expect(providerForm).toBeTruthy();
       expect(providerForm.provider).toBe(s3Provider);
+    });
+
+    it('checks storj provider specific form and description when Provider is selected', async () => {
+      const providersSelect = await form.getControl('Provider') as IxSelectHarness;
+      await providersSelect.setValue('Storj iX');
+
+      const providerForm = spectator.query(StorjProviderFormComponent);
+      expect(providerForm).toBeTruthy();
+      expect(providerForm.provider).toBe(storjProvider);
+      expect(spectator.query(CloudsyncProviderDescriptionComponent)).toBeTruthy();
     });
 
     it('renders a token only form for some providers', async () => {

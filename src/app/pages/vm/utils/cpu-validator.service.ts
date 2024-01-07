@@ -7,7 +7,7 @@ import { Observable, of } from 'rxjs';
 import {
   catchError, map, shareReplay,
 } from 'rxjs/operators';
-import helptext from 'app/helptext/vm/vm-wizard/vm-wizard';
+import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -43,7 +43,7 @@ export class CpuValidatorService {
 
           return this.validators.makeErrorMessage(
             'invalidCpus',
-            this.translate.instant(helptext.vcpus_warning, { maxVcpus }),
+            this.translate.instant(helptextVmWizard.vcpus_warning, { maxVcpus }),
           );
         }),
         catchError(() => of(null)),

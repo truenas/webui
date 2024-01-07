@@ -4,8 +4,7 @@ import { Observable, map } from 'rxjs';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
 import { KeychainSshCredentials, KeychainSshKeyPair } from 'app/interfaces/keychain-credential.interface';
-import { Option } from 'app/interfaces/option.interface';
-import { SshCredentialsNewOption } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard-data.interface';
+import { newOption, Option } from 'app/interfaces/option.interface';
 import { WebSocketService } from 'app/services/ws.service';
 
 @Injectable({
@@ -27,7 +26,7 @@ export class KeychainCredentialService {
       idNameArrayToOptions(),
       map((options) => {
         return [
-          { label: this.translate.instant('Create New'), value: SshCredentialsNewOption.New },
+          { label: this.translate.instant('Create New'), value: newOption },
           ...options,
         ];
       }),

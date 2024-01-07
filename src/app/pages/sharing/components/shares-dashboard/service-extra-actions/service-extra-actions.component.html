@@ -9,6 +9,7 @@
   </button>
   <mat-menu #rowActions="matMenu">
     <button
+      *ixRequiresRoles="requiresRoles"
       mat-menu-item
       [ixTest]="[service?.service, 'actions-menu', serviceStateLabel]"
       (click)="changeServiceState(service)"
@@ -29,6 +30,14 @@
       (click)="viewSessions(service.service)"
     >
       {{ '{name} Sessions' | translate: { name: serviceNames.get(service.service) } }}
+    </button>
+    <button
+      *ngIf="hasLogs"
+      mat-menu-item
+      [ixTest]="[service?.service, 'actions-menu', 'logs']"
+      (click)="viewLogs()"
+    >
+      {{ 'Audit Logs' | translate }}
     </button>
   </mat-menu>
 </div>

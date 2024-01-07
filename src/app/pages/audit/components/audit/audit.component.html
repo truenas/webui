@@ -11,26 +11,27 @@
         class="search-input"
         [properties]="searchProperties"
         [query]="searchQuery"
+        (runSearch)="onSearch(searchInput.query); updateUrlOptions(); searchInput.advancedSearch?.hideDatePicker()"
       ></ix-search-input2>
-      <button
-        mat-button
-        color="primary"
-        ixTest="search"
-        (click)="onSearch(searchInput.query); updateUrlOptions()"
-      >
-        {{ 'Search' | translate }}
-      </button>
+      <div class="search-button-wrapper">
+        <button
+          mat-button
+          type="button"
+          color="primary"
+          ixTest="search"
+          (click)="onSearch(searchInput.query); updateUrlOptions(); searchInput.advancedSearch?.hideDatePicker()"
+        >
+          {{ 'Search' | translate }}
+        </button>
+        <ng-container *ngIf="isMobileView" [ngTemplateOutlet]="exportButton"></ng-container>
+      </div>
     </div>
-    <ix-export-button
-      method="audit.export"
-      [searchQuery]="searchQuery"
-      [sorting]="this.dataProvider.sorting"
-    ></ix-export-button>
+    <ng-container *ngIf="!isMobileView" [ngTemplateOutlet]="exportButton"></ng-container>
   </div>
 </mat-card>
 
 <div class="container" fxLayoutGap="16px">
-  <div *ngIf="!(showMobileDetails && isMobileView)" class="table-container">
+  <div class="table-container" [class.mobile-hidden]="showMobileDetails && dataProvider.expandedRow">
     <div class="sticky-header">
       <thead
         class="audit-header-row"
@@ -83,3 +84,13 @@
     ></ix-log-details-panel>
   </div>
 </div>
+
+<ng-template #exportButton>
+  <ix-export-button
+    *ngIf="dataProvider.totalRows"
+    method="audit.export"
+    [searchQuery]="searchQuery"
+    [sorting]="dataProvider.sorting"
+    [defaultFilters]="basicQueryFilters"
+  ></ix-export-button>
+</ng-template>

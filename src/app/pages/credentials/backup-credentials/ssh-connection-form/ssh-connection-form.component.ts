@@ -10,9 +10,10 @@ import { Observable, of, throwError } from 'rxjs';
 import {
   catchError, map, switchMap,
 } from 'rxjs/operators';
+import { Role } from 'app/enums/role.enum';
 import { SshConnectionsSetupMethod } from 'app/enums/ssh-connections-setup-method.enum';
 import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
-import helptext from 'app/helptext/system/ssh-connections';
+import { helptextSshConnections } from 'app/helptext/system/ssh-connections';
 import {
   KeychainCredential,
   KeychainCredentialUpdate,
@@ -122,7 +123,9 @@ export class SshConnectionFormComponent implements OnInit {
     map((username) => username !== 'root'),
   );
 
-  readonly helptext = helptext;
+  readonly helptext = helptextSshConnections;
+
+  protected readonly Role = Role;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -179,7 +182,7 @@ export class SshConnectionFormComponent implements OnInit {
             remote_host_key: remoteHostKey,
           });
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.formErrorHandler.handleWsFormError(error, this.form);
         },
       });
@@ -207,7 +210,7 @@ export class SshConnectionFormComponent implements OnInit {
           this.slideInRef.close(newCredential);
         }
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.isLoading = false;
         this.cdr.markForCheck();
         this.formErrorHandler.handleWsFormError(error, this.form);
@@ -249,7 +252,7 @@ export class SshConnectionFormComponent implements OnInit {
     return this.ws.call('keychaincredential.setup_ssh_connection', [params]).pipe(
       catchError((error: WebsocketError) => {
         if (error.errname.includes(sslCertificationError) || error.reason.includes(sslCertificationError)) {
-          return this.dialogService.error(this.errorHandler.parseWsError(error)).pipe(
+          return this.dialogService.error(this.errorHandler.parseError(error)).pipe(
             switchMap(() => {
               return this.dialogService.confirm({
                 title: this.translate.instant('Confirm'),

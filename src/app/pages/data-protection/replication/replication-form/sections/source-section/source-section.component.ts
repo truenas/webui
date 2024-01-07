@@ -8,7 +8,7 @@ import { map } from 'rxjs/operators';
 import { Direction } from 'app/enums/direction.enum';
 import { SnapshotNamingOption, snapshotNamingOptionNames } from 'app/enums/snapshot-naming-option.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
-import helptext from 'app/helptext/data-protection/replication/replication';
+import { helptextReplication } from 'app/helptext/data-protection/replication/replication';
 import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
@@ -69,7 +69,7 @@ export class SourceSectionComponent implements OnChanges {
     });
   }));
 
-  protected readonly helptext = helptext;
+  protected readonly helptext = helptextReplication;
   protected readonly CronPresetValue = CronPresetValue;
 
   constructor(

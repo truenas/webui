@@ -7,7 +7,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
-import helptext from 'app/helptext/topbar';
+import { Role } from 'app/enums/role.enum';
+import { helptextTopbar } from 'app/helptext/topbar';
 import { AlertSlice, selectImportantUnreadAlertsCount } from 'app/modules/alerts/store/alert.selectors';
 import { UpdateDialogComponent } from 'app/modules/common/dialog/update-dialog/update-dialog.component';
 import { FeedbackDialogComponent } from 'app/modules/ix-feedback/feedback-dialog/feedback-dialog.component';
@@ -32,9 +33,11 @@ export class TopbarComponent implements OnInit {
   updateIsRunning = false;
   systemWillRestart = false;
   updateNotificationSent = false;
-  tooltips = helptext.mat_tooltips;
+  tooltips = helptextTopbar.mat_tooltips;
 
   alertBadgeCount$ = this.store$.select(selectImportantUnreadAlertsCount);
+
+  protected readonly Role = Role;
 
   constructor(
     public themeService: ThemeService,
@@ -110,9 +113,9 @@ export class TopbarComponent implements OnInit {
 
   showUpdateDialog(): void {
     const message = this.isFailoverLicensed || !this.systemWillRestart
-      ? helptext.updateRunning_dialog.message
-      : helptext.updateRunning_dialog.message + helptext.updateRunning_dialog.message_pt2;
-    const title = helptext.updateRunning_dialog.title;
+      ? helptextTopbar.updateRunning_dialog.message
+      : helptextTopbar.updateRunning_dialog.message + helptextTopbar.updateRunning_dialog.message_pt2;
+    const title = helptextTopbar.updateRunning_dialog.title;
 
     this.updateDialog = this.matDialog.open(UpdateDialogComponent, {
       width: '400px',

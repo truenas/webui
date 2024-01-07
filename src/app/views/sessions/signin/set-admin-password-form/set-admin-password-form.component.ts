@@ -6,10 +6,10 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+import { LoginResult } from 'app/enums/login-result.enum';
 import { SystemEnvironment } from 'app/enums/system-environment.enum';
 import { RadioOption } from 'app/interfaces/option.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { matchOthersFgValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
 import { AuthService } from 'app/services/auth/auth.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -57,7 +57,6 @@ export class SetAdminPasswordFormComponent implements OnInit {
     private authService: AuthService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
-    private validators: IxValidatorsService,
     private translate: TranslateService,
     private signinStore: SigninStore,
   ) { }
@@ -78,16 +77,16 @@ export class SetAdminPasswordFormComponent implements OnInit {
       switchMap(() => this.authService.login(username, password)),
       untilDestroyed(this),
     ).subscribe({
-      next: (wasLoggedIn) => {
+      next: (loginResult) => {
         this.signinStore.setLoadingState(false);
 
-        if (wasLoggedIn) {
+        if (loginResult === LoginResult.Success) {
           this.signinStore.handleSuccessfulLogin();
         } else {
           this.signinStore.showSnackbar(this.translate.instant('Login error. Please try again.'));
         }
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.errorHandler.handleWsFormError(error, this.form);
         this.signinStore.setLoadingState(false);
       },

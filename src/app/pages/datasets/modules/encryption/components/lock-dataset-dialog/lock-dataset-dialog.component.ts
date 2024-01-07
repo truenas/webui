@@ -5,7 +5,7 @@ import { FormControl } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import helptext from 'app/helptext/storage/volumes/volume-list';
+import { helptextVolumes } from 'app/helptext/storage/volumes/volume-list';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -38,7 +38,7 @@ export class LockDatasetDialogComponent {
 
     const force = this.forceCheckbox.value;
     const jobDialogRef = this.matDialog.open(EntityJobComponent, {
-      data: { title: helptext.lock_dataset_dialog.locking_dataset },
+      data: { title: helptextVolumes.lock_dataset_dialog.locking_dataset },
       disableClose: true,
     });
     jobDialogRef.componentInstance.setDescription(
@@ -60,7 +60,7 @@ export class LockDatasetDialogComponent {
       next: (job) => {
         jobDialogRef.close();
         this.dialogRef.close(true);
-        this.dialogService.error(this.errorHandler.parseJobError(job));
+        this.dialogService.error(this.errorHandler.parseError(job));
       },
       error: (error: WebsocketError | Job) => {
         this.dialogService.error(this.errorHandler.parseError(error));

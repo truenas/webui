@@ -16,13 +16,14 @@ import { Direction, directionNames } from 'app/enums/direction.enum';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { FromWizardToAdvancedSubmitted } from 'app/enums/from-wizard-to-advanced.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
+import { Role } from 'app/enums/role.enum';
 import { TransferMode, transferModeNames } from 'app/enums/transfer-mode.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
-import helptext from 'app/helptext/data-protection/cloudsync/cloudsync-form';
+import { helptextCloudsync } from 'app/helptext/data-protection/cloudsync/cloudsync';
 import { CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
-import { NewOption, Option } from 'app/interfaces/option.interface';
+import { newOption, Option } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -90,21 +91,22 @@ export class CloudsyncWhatAndWhenComponent implements OnInit, OnChanges {
 
   credentials: CloudsyncCredential[] = [];
   providers: CloudsyncProvider[] = [];
-  bucketPlaceholder: string = helptext.bucket_placeholder;
-  bucketTooltip: string = helptext.bucket_tooltip;
-  bucketInputPlaceholder: string = helptext.bucket_input_placeholder;
-  bucketInputTooltip: string = helptext.bucket_input_tooltip;
+  bucketPlaceholder: string = helptextCloudsync.bucket_placeholder;
+  bucketTooltip: string = helptextCloudsync.bucket_tooltip;
+  bucketInputPlaceholder: string = helptextCloudsync.bucket_input_placeholder;
+  bucketInputTooltip: string = helptextCloudsync.bucket_input_tooltip;
   googleDriveProviderId: number;
   bucketOptions$: Observable<Option[]>;
   readonly fileNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
   readonly bucketNodeProvider = this.getBucketsNodeProvider();
   readonly directionOptions$ = of(mapToOptions(directionNames, this.translate));
   readonly transferModeOptions$ = of(mapToOptions(transferModeNames, this.translate));
-  readonly helptext = helptext;
+  readonly helptext = helptextCloudsync;
+  readonly requiresRoles = [Role.CloudSyncWrite];
   readonly transferModeTooltip = `
-    ${helptext.transfer_mode_warning_sync}<br><br>
-    ${helptext.transfer_mode_warning_copy}<br><br>
-    ${helptext.transfer_mode_warning_move}
+    ${helptextCloudsync.transfer_mode_warning_sync}<br><br>
+    ${helptextCloudsync.transfer_mode_warning_copy}<br><br>
+    ${helptextCloudsync.transfer_mode_warning_move}
   `;
 
   constructor(
@@ -370,10 +372,10 @@ export class CloudsyncWhatAndWhenComponent implements OnInit, OnChanges {
                 this.bucketInputPlaceholder = this.translate.instant('Container');
                 this.bucketInputTooltip = this.translate.instant('Input the pre-defined container to use.');
               } else {
-                this.bucketPlaceholder = helptext.bucket_placeholder;
-                this.bucketTooltip = helptext.bucket_tooltip;
-                this.bucketInputPlaceholder = helptext.bucket_input_placeholder;
-                this.bucketInputTooltip = helptext.bucket_input_tooltip;
+                this.bucketPlaceholder = helptextCloudsync.bucket_placeholder;
+                this.bucketTooltip = helptextCloudsync.bucket_tooltip;
+                this.bucketInputPlaceholder = helptextCloudsync.bucket_input_placeholder;
+                this.bucketInputTooltip = helptextCloudsync.bucket_input_tooltip;
               }
 
               this.loadBucketOptions();
@@ -420,7 +422,7 @@ export class CloudsyncWhatAndWhenComponent implements OnInit, OnChanges {
     });
 
     this.form.controls.bucket.valueChanges.pipe(
-      filter((selectedOption) => selectedOption === NewOption.New),
+      filter((selectedOption) => selectedOption === newOption),
       untilDestroyed(this),
     ).subscribe(() => {
       const dialogRef = this.matDialog.open(CreateStorjBucketDialogComponent, {
@@ -429,7 +431,7 @@ export class CloudsyncWhatAndWhenComponent implements OnInit, OnChanges {
           credentialsId: this.form.controls.credentials.value,
         },
       });
-      dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe((bucket) => {
+      dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe((bucket: string | false) => {
         if (bucket !== false) {
           this.loadBucketOptions();
           this.form.controls.bucket.setValue(bucket);
@@ -455,7 +457,7 @@ export class CloudsyncWhatAndWhenComponent implements OnInit, OnChanges {
           if (credential.provider === CloudsyncProviderName.Storj) {
             bucketOptions.unshift({
               label: this.translate.instant('Add new'),
-              value: NewOption.New,
+              value: newOption,
               disabled: false,
             });
           }

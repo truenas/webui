@@ -12,11 +12,11 @@ import { TranslateService } from '@ngx-translate/core';
 import { combineLatest, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
+import { Role } from 'app/enums/role.enum';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
 import { CloudsyncCredential, CloudsyncCredentialUpdate } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -55,6 +55,8 @@ export class CloudCredentialsFormComponent implements OnInit {
 
   readonly helptext = helptext;
 
+  protected readonly Role = Role;
+
   constructor(
     private ws: WebSocketService,
     private formBuilder: FormBuilder,
@@ -70,6 +72,11 @@ export class CloudCredentialsFormComponent implements OnInit {
   ) {
     // Has to be earlier than potential `setCredentialsForEdit` call
     this.setFormEvents();
+  }
+
+  get showProviderDescription(): boolean {
+    return this.commonForm.controls.provider.enabled
+      && this.commonForm.controls.provider.value === CloudsyncProviderName.Storj;
   }
 
   get isNew(): boolean {
@@ -129,8 +136,8 @@ export class CloudCredentialsFormComponent implements OnInit {
           this.slideInRef.close(true);
           this.cdr.markForCheck();
         },
-        error: (error) => {
-        // TODO: Errors for nested provider form will be shown in a modal. Can be improved.
+        error: (error: unknown) => {
+          // TODO: Errors for nested provider form will be shown in a modal. Can be improved.
           this.isLoading = false;
           this.formErrorHandler.handleWsFormError(error, this.commonForm);
           this.cdr.markForCheck();
@@ -167,7 +174,7 @@ export class CloudCredentialsFormComponent implements OnInit {
           this.isLoading = false;
           this.cdr.markForCheck();
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.isLoading = false;
           this.formErrorHandler.handleWsFormError(error, this.commonForm);
           this.cdr.markForCheck();
@@ -209,9 +216,10 @@ export class CloudCredentialsFormComponent implements OnInit {
           this.isLoading = false;
           this.cdr.markForCheck();
         },
-        error: (error: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-          this.slideInRef.close();
+        error: (error: unknown) => {
+          this.isLoading = false;
+          this.cdr.markForCheck();
+          this.dialogService.error(this.errorHandler.parseError(error));
         },
       });
   }

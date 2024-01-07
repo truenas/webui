@@ -5,6 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
 import {
   mockCall, mockJob, mockWebsocket,
@@ -52,6 +53,7 @@ describe('CertificateAcmeAddComponent', () => {
       ]),
       mockProvider(IxSlideInRef),
       mockProvider(DialogService),
+      mockAuth(),
       mockProvider(MatDialog, {
         open: () => mockEntityJobComponentRef,
       }),

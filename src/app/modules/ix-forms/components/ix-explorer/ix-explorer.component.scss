@@ -35,6 +35,7 @@
 }
 
 .tree-container {
+  background: var(--bg1);
   border-bottom: solid 1px var(--lines);
   border-left: solid 1px var(--lines);
   border-right: solid 1px var(--lines);
@@ -54,6 +55,10 @@
     // Wrap long file names
     word-break: break-all;
   }
+
+  .node-container {
+    display: flex;
+  }
 }
 
 .loading-error {
@@ -63,4 +68,19 @@
 
 .selected {
   color: var(--primary);
+}
+
+.create-dataset-container {
+  background: var(--alt-bg1);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.create-dataset-btn {
+  background: inherit !important;
+  font-size: 12px;
+}
+
+button.create-dataset-btn:hover {
+  background: inherit !important;
 }

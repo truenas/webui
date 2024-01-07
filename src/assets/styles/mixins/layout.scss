@@ -113,7 +113,7 @@ $scrollbar-offset: 20px;
     }
 
     ::ng-deep .cards .scroll-window {
-      display: inline-block;
+      display: inline-table;
     }
 
     ix-dataset-details-panel {

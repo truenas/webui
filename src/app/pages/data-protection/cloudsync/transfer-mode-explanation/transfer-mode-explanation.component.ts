@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
-import helptext_cloudsync from 'app/helptext/data-protection/cloudsync/cloudsync-form';
+import { helptextCloudsync } from 'app/helptext/data-protection/cloudsync/cloudsync';
 
 @Component({
   selector: 'ix-transfer-mode-explanation',
@@ -13,5 +13,5 @@ export class TransferModeExplanationComponent {
 
   readonly TransferMode = TransferMode;
 
-  readonly helptext = helptext_cloudsync;
+  readonly helptext = helptextCloudsync;
 }

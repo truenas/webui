@@ -5,15 +5,16 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { forkJoin, of } from 'rxjs';
+import { of } from 'rxjs';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { NfsProtocol, nfsProtocolLabels } from 'app/enums/nfs-protocol.enum';
+import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
-import helptext from 'app/helptext/services/components/service-nfs';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { helptextServiceNfs } from 'app/helptext/services/components/service-nfs';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { rangeValidator, portRangeValidator } from 'app/modules/ix-forms/validators/range-validation/range-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AddSpnDialogComponent } from 'app/pages/services/components/service-nfs/add-spn-dialog/add-spn-dialog.component';
@@ -36,32 +37,36 @@ export class ServiceNfsComponent implements OnInit {
   form = this.fb.group({
     allow_nonroot: [false],
     bindip: [[] as string[]],
-    servers: [4, [Validators.required, rangeValidator(1, 256)]],
+    servers_auto: [true],
+    servers: [null as number, [rangeValidator(1, 256), this.validatorsService.validateOnCondition(
+      (control) => !control.parent?.get('servers_auto')?.value,
+      Validators.required,
+    )]],
     protocols: [[NfsProtocol.V3], Validators.required],
     v4_v3owner: [false],
     v4_krb: [false],
     mountd_port: [null as number, portRangeValidator()],
     rpcstatd_port: [null as number, portRangeValidator()],
     rpclockd_port: [null as number, portRangeValidator()],
-    udp: [false],
     userd_manage_gids: [false],
   });
 
   readonly tooltips = {
-    allow_nonroot: helptext.nfs_srv_allow_nonroot_tooltip,
-    bindip: helptext.nfs_srv_bindip_tooltip,
-    servers: helptext.nfs_srv_servers_tooltip,
-    v4_v3owner: helptext.nfs_srv_v4_v3owner_tooltip,
-    v4_krb: helptext.nfs_srv_v4_krb_tooltip,
-    mountd_port: helptext.nfs_srv_mountd_port_tooltip,
-    rpcstatd_port: helptext.nfs_srv_rpcstatd_port_tooltip,
-    rpclockd_port: helptext.nfs_srv_rpclockd_port_tooltip,
-    udp: helptext.nfs_srv_udp_tooltip,
-    userd_manage_gids: helptext.nfs_srv_16_tooltip,
+    allow_nonroot: helptextServiceNfs.nfs_srv_allow_nonroot_tooltip,
+    bindip: helptextServiceNfs.nfs_srv_bindip_tooltip,
+    servers: helptextServiceNfs.nfs_srv_servers_tooltip,
+    servers_auto: helptextServiceNfs.nfs_srv_servers_auto_tooltip,
+    v4_v3owner: helptextServiceNfs.nfs_srv_v4_v3owner_tooltip,
+    v4_krb: helptextServiceNfs.nfs_srv_v4_krb_tooltip,
+    mountd_port: helptextServiceNfs.nfs_srv_mountd_port_tooltip,
+    rpcstatd_port: helptextServiceNfs.nfs_srv_rpcstatd_port_tooltip,
+    rpclockd_port: helptextServiceNfs.nfs_srv_rpclockd_port_tooltip,
+    userd_manage_gids: helptextServiceNfs.nfs_srv_16_tooltip,
   };
 
   readonly ipChoices$ = this.ws.call('nfs.bindip_choices').pipe(choicesToOptions());
   readonly protocolOptions$ = of(mapToOptions(nfsProtocolLabels, this.translate));
+  readonly requiresRoles = [Role.SharingNfsWrite, Role.SharingWrite];
 
   constructor(
     private ws: WebSocketService,
@@ -74,6 +79,7 @@ export class ServiceNfsComponent implements OnInit {
     private snackbar: SnackbarService,
     private matDialog: MatDialog,
     private slideInRef: IxSlideInRef<ServiceNfsComponent>,
+    private validatorsService: IxValidatorsService,
   ) {}
 
   ngOnInit(): void {
@@ -86,6 +92,12 @@ export class ServiceNfsComponent implements OnInit {
   onSubmit(): void {
     const params = this.form.value;
 
+    if (params.servers_auto) {
+      params.servers = null;
+    }
+
+    delete params.servers_auto;
+
     this.isFormLoading = true;
     this.ws.call('nfs.update', [params])
       .pipe(untilDestroyed(this))
@@ -96,7 +108,7 @@ export class ServiceNfsComponent implements OnInit {
           this.slideInRef.close();
           this.cdr.markForCheck();
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.isFormLoading = false;
           this.formErrorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();
@@ -110,12 +122,16 @@ export class ServiceNfsComponent implements OnInit {
       .subscribe({
         next: (config) => {
           this.isAddSpnDisabled = !config.v4_krb;
-          this.form.patchValue(config);
+          this.hasNfsStatus = config.keytab_has_nfs_spn;
+          this.form.patchValue({
+            ...config,
+            servers_auto: config.managed_nfsd,
+          });
           this.isFormLoading = false;
           this.cdr.markForCheck();
         },
-        error: (error: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
+        error: (error: unknown) => {
+          this.dialogService.error(this.errorHandler.parseError(error));
           this.isFormLoading = false;
           this.cdr.markForCheck();
         },
@@ -150,14 +166,11 @@ export class ServiceNfsComponent implements OnInit {
   }
 
   private loadState(): void {
-    forkJoin([
-      this.ws.call('kerberos.keytab.has_nfs_principal'),
-      this.ws.call('directoryservices.get_state'),
-    ])
+    this.ws.call('directoryservices.get_state')
       .pipe(untilDestroyed(this))
-      .subscribe(([nfsStatus, { activedirectory }]) => {
-        this.hasNfsStatus = nfsStatus;
+      .subscribe(({ activedirectory }) => {
         this.adHealth = activedirectory;
+        this.cdr.markForCheck();
       });
   }
 
