@@ -82,6 +82,7 @@ describe('CertificateAcmeAddComponent', () => {
     await form.fillForm({
       Identifier: 'new',
       'Terms of Service': true,
+      'Custom ACME Server Directory URI': false,
       'ACME Server Directory URI': "Let's Encrypt Staging Directory",
       'DNS:truenas.com': 'cloudflare',
       'DNS:truenas.io': 'route53',
@@ -94,6 +95,41 @@ describe('CertificateAcmeAddComponent', () => {
       'certificate.create',
       [{
         acme_directory_uri: 'https://acme-staging-v02.api.letsencrypt.org/directory',
+        create_type: CertificateCreateType.CreateAcme,
+        csr_id: 2,
+        dns_mapping: {
+          'DNS:truenas.com': 1,
+          'DNS:truenas.io': 2,
+        },
+        name: 'new',
+        renew_days: 10,
+        tos: true,
+      }],
+    );
+    expect(mockEntityJobComponentRef.componentInstance.submit).toHaveBeenCalled();
+    expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
+  });
+
+  it('allows custom ACME Server Directory URI', async () => {
+    await form.fillForm({
+      Identifier: 'new',
+      'Terms of Service': true,
+      'Custom ACME Server Directory URI': true,
+      'DNS:truenas.com': 'cloudflare',
+      'DNS:truenas.io': 'route53',
+    });
+
+    await form.fillForm({
+      'ACME Server Directory URI': 'https://acme-staging-v02.api.letsencrypt.org/directory-custom',
+    });
+
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    await saveButton.click();
+
+    expect(mockEntityJobComponentRef.componentInstance.setCall).toHaveBeenCalledWith(
+      'certificate.create',
+      [{
+        acme_directory_uri: 'https://acme-staging-v02.api.letsencrypt.org/directory-custom',
         create_type: CertificateCreateType.CreateAcme,
         csr_id: 2,
         dns_mapping: {
