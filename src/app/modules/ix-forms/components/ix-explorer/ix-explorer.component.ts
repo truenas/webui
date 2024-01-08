@@ -69,7 +69,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   treeOptions: ITreeOptions = {
     idField: 'path',
     displayField: 'name',
-    getChildren: (node) => lastValueFrom(this.loadChildren(node)),
+    getChildren: (node: TreeNode<ExplorerNodeData>) => lastValueFrom(this.loadChildren(node)),
     actionMapping: this.actionMapping,
     useTriState: false,
   };
