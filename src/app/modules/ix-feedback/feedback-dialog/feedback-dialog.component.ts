@@ -10,7 +10,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { environment } from 'environments/environment';
 import {
-  EMPTY, Observable, catchError, filter, of, pairwise, switchMap, take,
+  EMPTY, Observable, catchError, delay, distinctUntilChanged, filter, of, pairwise, switchMap, take,
 } from 'rxjs';
 import { TicketType, ticketAcceptedFiles } from 'app/enums/file-ticket.enum';
 import { JobState } from 'app/enums/job-state.enum';
@@ -361,9 +361,14 @@ export class FeedbackDialogComponent implements OnInit {
 
     this.form.controls.token.valueChanges.pipe(
       filter((token) => !!token),
+      distinctUntilChanged(),
+      delay(10),
       untilDestroyed(this),
     ).subscribe((token) => {
       this.feedbackService.setOauthToken(token);
+      if (this.form.valid && !this.isLoading) {
+        this.onSubmit();
+      }
     });
   }
 
