@@ -412,7 +412,7 @@
 
       <!-- Slot with Disk -->
       <div
-        *ngIf="selectedSlot && selectedDisk"
+        *ngIf="selectedSlot?.dev && selectedDisk"
         #diskdetails
         [class]="{ 'disks-details': true, 'disk-selected': selectedSlot.dev }"
       >
