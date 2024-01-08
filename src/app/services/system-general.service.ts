@@ -1,10 +1,10 @@
 import { EventEmitter, Inject, Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
-import * as Sentry from '@sentry/angular';
 import { fromUnixTime } from 'date-fns';
-import { environment } from 'environments/environment';
 import * as _ from 'lodash';
-import { Subject, Observable, combineLatest } from 'rxjs';
+import {
+  Subject, Observable,
+} from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 import { ProductType } from 'app/enums/product-type.enum';
 import { WINDOW } from 'app/helpers/window.helper';
@@ -15,7 +15,6 @@ import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
-import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 @Injectable({ providedIn: 'root' })
 export class SystemGeneralService {
@@ -42,24 +41,6 @@ export class SystemGeneralService {
         return undefined;
       }),
     );
-  }
-
-  toggleSentryInit(): void {
-    combineLatest([
-      this.isStable(),
-      this.store$.pipe(waitForSystemInfo),
-    ]).subscribe(([isStable, sysInfo]) => {
-      if (!isStable) {
-        Sentry.init({
-          dsn: environment.sentryPublicDsn,
-          release: sysInfo.version,
-        });
-      } else {
-        Sentry.init({
-          enabled: false,
-        });
-      }
-    });
   }
 
   getProductType$ = this.ws.call('system.product_type').pipe(shareReplay({ refCount: false, bufferSize: 1 }));
@@ -100,10 +81,6 @@ export class SystemGeneralService {
 
   getCertificateCountryChoices(): Observable<Choices> {
     return this.ws.call('certificate.country_choices');
-  }
-
-  isStable(): Observable<boolean> {
-    return this.ws.call('system.is_stable');
   }
 
   ipChoicesv4(): Observable<Choices> {
