@@ -33,7 +33,7 @@ export class FileTicketFormComponent {
       return '';
     }
 
-    return this.translate.instant('Log In To Jira first to enable autocomplete feature for similar issues.');
+    return this.translate.instant('Login To Jira first to enable autocomplete feature for similar issues.');
   }));
 
   readonly tooltips = {
