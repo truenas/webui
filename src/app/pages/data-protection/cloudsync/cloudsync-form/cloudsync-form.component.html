@@ -1,4 +1,4 @@
-<ix-modal-header [title]="title" [loading]="isLoading"></ix-modal-header>
+<ix-modal-header2 [title]="title" [loading]="isLoading"></ix-modal-header2>
 <mat-card>
   <mat-card-content>
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
@@ -58,21 +58,19 @@
         >
           <a
             ixTest="manage-credentials"
-            [routerLink]="['/', 'credentials', 'backup-credentials']"
-            (click)="slideInRef.close()"
+            (click)="goToManageCredentials()"
           >
             <div class="link">
               {{ 'Manage Credentials' | translate }}<ix-icon name="open_in_new"></ix-icon>
             </div>
           </a>
-          <ix-select
+          <ix-cloud-credentials-select
             *ngIf="form.controls.credentials.enabled"
             formControlName="credentials"
             [label]="helptext.credentials_placeholder | translate"
             [tooltip]="helptext.credentials_tooltip | translate"
             [required]="true"
-            [options]="credentialsOptions$"
-          ></ix-select>
+          ></ix-cloud-credentials-select>
           <ix-select
             *ngIf="form.controls.bucket.enabled"
             formControlName="bucket"
@@ -136,7 +134,7 @@
           [title]="helptext.fieldset_advanced_options | translate"
         >
           <ix-checkbox
-            *ngIf="form.controls.credentials.value === googleDriveProviderId"
+            *ngIf="googleDriveProviderIds.includes(form.controls.credentials.value)"
             formControlName="acknowledge_abuse"
             [label]="helptext.acknowledge_abuse_placeholder | translate"
             [tooltip]="helptext.acknowledge_abuse_tooltip | translate"

@@ -3,13 +3,12 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Actions, ofType } from '@ngrx/effects';
+import { Actions } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  EMPTY, catchError, filter, map, switchMap, tap, Subject,
+  EMPTY, catchError, filter, map, switchMap, tap,
 } from 'rxjs';
-import { FromWizardToAdvancedSubmitted } from 'app/enums/from-wizard-to-advanced.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
@@ -31,11 +30,11 @@ import { CloudsyncRestoreDialogComponent } from 'app/pages/data-protection/cloud
 import { CloudsyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
-import { fromWizardToAdvancedFormSubmitted } from 'app/store/admin-panel/admin.actions';
 
 @UntilDestroy()
 @Component({
@@ -130,6 +129,7 @@ export class CloudsyncListComponent implements OnInit {
     private ws: WebSocketService,
     private translate: TranslateService,
     private taskService: TaskService,
+    private chainedSlideInService: IxChainedSlideInService,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
     private slideInService: IxSlideInService,
@@ -147,7 +147,6 @@ export class CloudsyncListComponent implements OnInit {
     );
     this.dataProvider = new AsyncDataProvider<CloudSyncTaskUi>(cloudSyncTasks$);
     this.getCloudSyncTasks();
-    this.listenForWizardToAdvancedSwitching();
   }
 
   getCloudSyncTasks(): void {
@@ -238,13 +237,25 @@ export class CloudsyncListComponent implements OnInit {
   }
 
   openForm(row?: CloudSyncTaskUi): void {
-    const slideInRef = row
-      ? this.slideInService.open(CloudsyncFormComponent, { data: row, wide: true })
-      : this.slideInService.open(CloudsyncWizardComponent, { wide: true });
-
-    (slideInRef.slideInClosed$ as Subject<unknown>).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-      this.getCloudSyncTasks();
-    });
+    if (row) {
+      this.chainedSlideInService.pushComponent(CloudsyncFormComponent, true, row).pipe(
+        filter((response) => !!response.response),
+        untilDestroyed(this),
+      ).subscribe({
+        next: () => {
+          this.getCloudSyncTasks();
+        },
+      });
+    } else {
+      this.chainedSlideInService.pushComponent(CloudsyncWizardComponent, true).pipe(
+        filter((response) => !!response.response),
+        untilDestroyed(this),
+      ).subscribe({
+        next: () => {
+          this.getCloudSyncTasks();
+        },
+      });
+    }
   }
 
   doDelete(row: CloudSyncTaskUi): void {
@@ -298,13 +309,5 @@ export class CloudsyncListComponent implements OnInit {
 
       return transformed;
     });
-  }
-
-  private listenForWizardToAdvancedSwitching(): void {
-    this.actions$.pipe(
-      ofType(fromWizardToAdvancedFormSubmitted),
-      filter(({ formType }) => formType === FromWizardToAdvancedSubmitted.CloudSyncTask),
-      untilDestroyed(this),
-    ).subscribe(() => this.getCloudSyncTasks());
   }
 }

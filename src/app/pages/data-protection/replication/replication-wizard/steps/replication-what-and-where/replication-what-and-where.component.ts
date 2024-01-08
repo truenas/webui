@@ -1,21 +1,18 @@
 import { DatePipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnInit, Output, ViewContainerRef,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Inject, OnInit, Output,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  BehaviorSubject,
-  debounceTime, filter, map, merge, Observable, of, switchMap,
+  debounceTime, map, merge, Observable, of, switchMap,
 } from 'rxjs';
 import { DatasetSource } from 'app/enums/dataset.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
-import { FromWizardToAdvancedSubmitted } from 'app/enums/from-wizard-to-advanced.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
 import { SnapshotNamingOption } from 'app/enums/snapshot-naming-option.enum';
@@ -29,21 +26,19 @@ import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { SummaryProvider, SummarySection } from 'app/modules/common/summary/summary.interface';
 import { ixManualValidateError } from 'app/modules/ix-forms/components/ix-errors/ix-errors.component';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { CHAINED_SLIDE_IN_REF } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import {
   forbiddenAsyncValues,
 } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
-import { SshConnectionFormComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-form/ssh-connection-form.component';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { AuthService } from 'app/services/auth/auth.service';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
 import { DialogService } from 'app/services/dialog.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { ChainedComponentRef, IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 import { ReplicationService } from 'app/services/replication.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
-import { fromWizardToAdvancedFormSubmitted } from 'app/store/admin-panel/admin.actions';
 
 @UntilDestroy()
 @Component({
@@ -103,7 +98,6 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   });
 
   existReplicationOptions$: Observable<Option[]>;
-  readonly sshCredentialsOptions$ = new BehaviorSubject<Option[]>([]);
 
   transportOptions$ = of([
     { label: this.translate.instant('Encryption (more secure, but slower)'), value: TransportMode.Ssh },
@@ -146,7 +140,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   }
 
   constructor(
-    private slideInRef: IxSlideInRef<ReplicationWhatAndWhereComponent>,
+    @Inject(CHAINED_SLIDE_IN_REF) protected chainedSlideInRef: ChainedComponentRef,
     private formBuilder: FormBuilder,
     private replicationService: ReplicationService,
     private keychainCredentials: KeychainCredentialService,
@@ -155,12 +149,10 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     private authService: AuthService,
     private datasetService: DatasetService,
     private dialogService: DialogService,
-    private slideInService: IxSlideInService,
-    private matDialog: MatDialog,
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private store$: Store<AppState>,
-    private viewContainerRef: ViewContainerRef,
+    private chainedSlideInService: IxChainedSlideInService,
   ) {}
 
   ngOnInit(): void {
@@ -168,8 +160,6 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     this.disableTarget();
     this.loadExistReplication();
     this.loadSshConnections();
-    this.loadSshConnectionOptions();
-    this.listenForNewSshConnection();
 
     this.form.controls.source_datasets_from.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
       this.disableTransportAndSudo(value, this.form.value.target_dataset_from);
@@ -365,69 +355,12 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     );
   }
 
-  private listenForNewSshConnection(): void {
-    this.form.controls.ssh_credentials_source.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
-      if (value === newOption) {
-        this.createSshConnection(true);
-      } else if (value) {
-        this.remoteSourceNodeProvider = this.replicationService.getTreeNodeProvider(
-          { sshCredential: value, transport: this.form.value.transport || TransportMode.Ssh },
-        );
-      }
-    });
-
-    this.form.controls.ssh_credentials_target.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
-      if (value === newOption) {
-        this.createSshConnection(false);
-      } else if (value) {
-        this.remoteTargetNodeProvider = this.replicationService.getTreeNodeProvider(
-          { sshCredential: value, transport: this.form.value.transport || TransportMode.Ssh },
-        );
-      }
-    });
-  }
-
   private loadSshConnections(): void {
     this.keychainCredentials.getSshConnections()
       .pipe(untilDestroyed(this))
       .subscribe((connections) => {
         this.sshCredentials = connections;
       });
-  }
-
-  private loadSshConnectionOptions(): void {
-    this.keychainCredentials.getSshCredentialsOptions()
-      .pipe(untilDestroyed(this))
-      .subscribe((options) => this.sshCredentialsOptions$.next(options));
-  }
-
-  private createSshConnection(isSource: boolean): void {
-    this.openSshConnectionDialog().pipe(
-      filter(Boolean),
-      switchMap((newCredential): Observable<[KeychainSshCredentials, Option[]]> => {
-        return this.keychainCredentials.getSshCredentialsOptions().pipe(
-          map((options) => [newCredential, options]),
-        );
-      }),
-      untilDestroyed(this),
-    ).subscribe(([newCredential, sshConnectionsOptions]) => {
-      this.sshCredentialsOptions$.next(sshConnectionsOptions);
-
-      if (isSource) {
-        this.form.controls.ssh_credentials_source.setValue(newCredential.id);
-      } else {
-        this.form.controls.ssh_credentials_target.setValue(newCredential.id);
-      }
-    });
-  }
-
-  private openSshConnectionDialog(): Observable<KeychainSshCredentials> {
-    return this.matDialog.open(SshConnectionFormComponent, {
-      data: { dialog: true },
-      width: '600px',
-      panelClass: 'ix-overflow-dialog',
-      viewContainerRef: this.viewContainerRef,
-    }).afterClosed();
   }
 
   private genTaskName(source: string[], target: string): void {
@@ -568,17 +501,10 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   }
 
   openAdvanced(): void {
-    this.slideInRef.close();
-
-    const slideInRef = this.slideInService.open(ReplicationFormComponent, { wide: true });
-    slideInRef.slideInClosed$.pipe(
-      filter(Boolean),
-      untilDestroyed(this),
-    ).subscribe(() => {
-      this.store$.dispatch(fromWizardToAdvancedFormSubmitted({
-        formType: FromWizardToAdvancedSubmitted.ReplicationTask,
-      }));
-    });
+    this.chainedSlideInRef.swap(
+      ReplicationFormComponent,
+      true,
+    );
   }
 
   getSnapshots(): void {

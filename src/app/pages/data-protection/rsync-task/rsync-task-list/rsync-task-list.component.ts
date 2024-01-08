@@ -36,7 +36,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -158,7 +158,7 @@ export class RsyncTaskListComponent implements OnInit {
   constructor(
     private translate: TranslateService,
     private ws: WebSocketService,
-    private slideIn: IxSlideInService,
+    private chainedSlideInService: IxChainedSlideInService,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
     private loader: AppLoaderService,
@@ -216,16 +216,14 @@ export class RsyncTaskListComponent implements OnInit {
   }
 
   protected add(): void {
-    this.slideIn.open(RsyncTaskFormComponent, { wide: true })
-      .slideInClosed$
-      .pipe(filter(Boolean), untilDestroyed(this))
+    const closer$ = this.chainedSlideInService.pushComponent(RsyncTaskFormComponent, true);
+    closer$.pipe(filter((response) => !!response.response), untilDestroyed(this))
       .subscribe(() => this.dataProvider.load());
   }
 
   private edit(row: RsyncTask): void {
-    this.slideIn.open(RsyncTaskFormComponent, { data: row, wide: true })
-      .slideInClosed$
-      .pipe(filter(Boolean), untilDestroyed(this))
+    const closer$ = this.chainedSlideInService.pushComponent(RsyncTaskFormComponent, true, row);
+    closer$.pipe(filter((response) => !!response.response), untilDestroyed(this))
       .subscribe(() => this.dataProvider.load());
   }
 

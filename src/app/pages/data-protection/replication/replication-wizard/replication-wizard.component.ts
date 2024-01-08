@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
+  Inject,
   ViewChild,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -29,7 +30,7 @@ import { PeriodicSnapshotTask, PeriodicSnapshotTaskCreate } from 'app/interfaces
 import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
 import { CreateZfsSnapshot, ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { CHAINED_SLIDE_IN_REF } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -39,6 +40,7 @@ import { ReplicationWhenComponent } from 'app/pages/data-protection/replication/
 import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ChainedComponentRef } from 'app/services/ix-chained-slide-in.service';
 import { ReplicationService } from 'app/services/replication.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -67,13 +69,13 @@ export class ReplicationWizardComponent {
   constructor(
     private ws: WebSocketService,
     private replicationService: ReplicationService,
-    private slideInRef: IxSlideInRef<ReplicationWizardComponent>,
     private errorHandler: ErrorHandlerService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
     private translate: TranslateService,
     private appLoader: AppLoaderService,
     private snackbar: SnackbarService,
+    @Inject(CHAINED_SLIDE_IN_REF) private chainedSlideInRef: ChainedComponentRef,
     private authService: AuthService,
   ) {}
 
@@ -135,15 +137,17 @@ export class ReplicationWizardComponent {
       }),
       switchMap((createdReplication) => {
         if (values.schedule_method === ScheduleMethod.Once && createdReplication) {
-          return this.runReplicationOnce(createdReplication);
+          return this.runReplicationOnce(createdReplication).pipe(
+            catchError((err) => { this.handleError(err); return EMPTY; }),
+            switchMap(() => of(createdReplication)),
+          );
         }
         return of(createdReplication);
       }),
-      catchError((err) => { this.handleError(err); return EMPTY; }),
       untilDestroyed(this),
-    ).subscribe(() => {
+    ).subscribe((createdReplication) => {
       this.cdr.markForCheck();
-      this.slideInRef.close(true);
+      this.chainedSlideInRef.close({ response: createdReplication, error: null });
     });
   }
 
