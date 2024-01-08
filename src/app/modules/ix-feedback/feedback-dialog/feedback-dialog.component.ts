@@ -12,7 +12,7 @@ import { environment } from 'environments/environment';
 import {
   EMPTY, Observable, catchError, filter, of, pairwise, switchMap, take,
 } from 'rxjs';
-import { ticketAcceptedFiles } from 'app/enums/file-ticket.enum';
+import { TicketType, ticketAcceptedFiles } from 'app/enums/file-ticket.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
@@ -34,6 +34,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxFileUploadService } from 'app/services/ix-file-upload.service';
+import { SentryService } from 'app/services/sentry.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
@@ -66,6 +67,7 @@ export class FeedbackDialogComponent implements OnInit {
 
   private release: string;
   private hostId: string;
+  private sessionId: string;
   private productType: ProductType;
   private systemProduct: string;
   private isIxHardware = false;
@@ -127,6 +129,7 @@ export class FeedbackDialogComponent implements OnInit {
     private fileUpload: IxFileUploadService,
     private dialog: DialogService,
     private systemGeneralService: SystemGeneralService,
+    private sentryService: SentryService,
     @Inject(WINDOW) private window: Window,
     @Inject(MAT_DIALOG_DATA) private type: FeedbackType,
   ) {}
@@ -136,6 +139,7 @@ export class FeedbackDialogComponent implements OnInit {
     this.getReleaseVersion();
     this.getHostId();
     this.getProductType();
+    this.getSessionId();
     this.getFeedbackTypeOptions();
     this.loadIsIxHardware();
   }
@@ -218,12 +222,17 @@ export class FeedbackDialogComponent implements OnInit {
   private submitBugOrFeature(): void {
     const values = this.form.value;
     const ticketValues = this.ticketForm.getPayload();
+    const hostText = `Host ID: ${this.hostId}`;
+    const sessionText = `Session ID: ${this.sessionId}`;
+    const body = [values.message, hostText, sessionText].join('\n\n');
 
     let payload: CreateNewTicket = {
-      category: ticketValues.category,
-      body: values.message,
       attach_debug: values.attach_debug,
+      type: values.type === FeedbackType.Bug ? TicketType.Bug : TicketType.Suggestion,
+      category: ticketValues.category,
       title: ticketValues.title,
+      token: ticketValues.token,
+      body,
     };
 
     if (this.isEnterprise) {
@@ -237,7 +246,7 @@ export class FeedbackDialogComponent implements OnInit {
         category: ticketValues.category,
         title: ticketValues.title,
         attach_debug: values.attach_debug,
-        body: values.message,
+        body,
       };
     }
 
@@ -253,9 +262,9 @@ export class FeedbackDialogComponent implements OnInit {
       user_agent: this.window.navigator.userAgent,
       environment: environment.production ? FeedbackEnvironment.Production : FeedbackEnvironment.Development,
       release: this.release,
-      extra: {},
       product_type: this.productType,
       product_model: this.systemProduct && this.isIxHardware ? this.systemProduct : 'Generic',
+      extra: {},
     };
 
     this.feedbackService
@@ -302,13 +311,13 @@ export class FeedbackDialogComponent implements OnInit {
       .subscribe({
         next: () => this.onSuccess(),
         error: (error: HttpErrorResponse) => {
-          this.isLoading = false;
-          this.cdr.markForCheck();
           this.dialogService.error({
             title: this.translate.instant('Uploading failed.'),
             message: error.message,
             backtrace: JSON.stringify(error, null, '  '),
           });
+          this.isLoading = false;
+          this.cdr.markForCheck();
         },
       });
   }
@@ -454,6 +463,15 @@ export class FeedbackDialogComponent implements OnInit {
         }
 
         this.isLoading = false;
+        this.cdr.markForCheck();
+      });
+  }
+
+  private getSessionId(): void {
+    this.sentryService.sessionId$
+      .pipe(untilDestroyed(this))
+      .subscribe((sessionId) => {
+        this.sessionId = sessionId;
         this.cdr.markForCheck();
       });
   }
