@@ -5,8 +5,8 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { of, switchMap } from 'rxjs';
-import { filter, take } from 'rxjs/operators';
+import { Subscription, of, switchMap } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
 import { DatasetEncryptionType } from 'app/enums/dataset.enum';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
@@ -27,6 +27,7 @@ export class EncryptionSectionComponent implements OnChanges {
   @Input() advancedMode: boolean;
 
   inheritEncryptionLabel: string;
+  unsettingEncryptionSub: Subscription;
 
   // TODO: Add conditional validators
   readonly form = this.formBuilder.group({
@@ -135,17 +136,32 @@ export class EncryptionSectionComponent implements OnChanges {
 
   private warnAboutUnsettingEncryption(): void {
     if (!this.parent?.encrypted) {
+      this.unsettingEncryptionSub.unsubscribe();
       return;
     }
 
-    this.form.controls.encryption.valueChanges
+    if (!!this.unsettingEncryptionSub && !this.unsettingEncryptionSub.closed) {
+      return;
+    }
+
+    this.unsettingEncryptionSub = this.form.controls.encryption.valueChanges
       .pipe(
         filter((hasEncryption) => !hasEncryption),
-        take(1),
-        switchMap(() => this.dialog.confirm({
-          title: helptextDatasetForm.dataset_form_encryption.non_encrypted_warning_title,
-          message: helptextDatasetForm.dataset_form_encryption.non_encrypted_warning_warning,
-        })),
+        switchMap(() => {
+          if (this.parent.encrypted) {
+            return this.dialog.warn(
+              this.translate.instant('Action not possible'),
+              this.translate.instant('This dataset will have an encrypted parent dataset. It is not possible\
+               to create an unencrypted dataset within an encrypted dataset.'),
+            ).pipe(
+              map(() => false),
+            );
+          }
+          return this.dialog.confirm({
+            title: helptextDatasetForm.dataset_form_encryption.non_encrypted_warning_title,
+            message: helptextDatasetForm.dataset_form_encryption.non_encrypted_warning_warning,
+          });
+        }),
         untilDestroyed(this),
       )
       .subscribe((shouldContinue) => {
