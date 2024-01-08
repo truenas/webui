@@ -116,7 +116,7 @@ export class CertificateAcmeAddComponent {
     this.isLoading = true;
     this.cdr.markForCheck();
 
-    this.ws.call('certificate.get_domain_names', [this.csr.id])
+    this.ws.call('webui.crypto.get_certificate_domain_names', [this.csr.id])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (domains) => {

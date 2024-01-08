@@ -28,7 +28,7 @@ describe('CaIdentifierAndTypeComponent', () => {
     ],
     providers: [
       mockWebsocket([
-        mockCall('certificateauthority.profiles', {
+        mockCall('webui.crypto.certificateauthority_profiles', {
           CA: caProfile,
           'OpenVPN Root CA': openvpnProfile,
         }),
