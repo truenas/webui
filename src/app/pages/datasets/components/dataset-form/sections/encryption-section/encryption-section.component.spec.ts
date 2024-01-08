@@ -51,6 +51,7 @@ describe('EncryptionSectionComponent', () => {
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
+        warn: jest.fn(() => of(true)),
       }),
     ],
   });
@@ -130,10 +131,10 @@ describe('EncryptionSectionComponent', () => {
         Encryption: false,
       });
 
-      expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
-        title: helptextDatasetForm.dataset_form_encryption.non_encrypted_warning_title,
-        message: helptextDatasetForm.dataset_form_encryption.non_encrypted_warning_warning,
-      });
+      expect(spectator.inject(DialogService).warn).toHaveBeenCalledWith(
+        helptextDatasetForm.dataset_form_encryption.unencrypted_not_possible_title,
+        helptextDatasetForm.dataset_form_encryption.unencrypted_not_possible_warning,
+      );
     });
   });
 

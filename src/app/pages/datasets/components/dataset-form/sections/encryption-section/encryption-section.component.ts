@@ -148,19 +148,12 @@ export class EncryptionSectionComponent implements OnChanges {
       .pipe(
         filter((hasEncryption) => !hasEncryption),
         switchMap(() => {
-          if (this.parent.encrypted) {
-            return this.dialog.warn(
-              this.translate.instant('Action not possible'),
-              this.translate.instant('This dataset will have an encrypted parent dataset. It is not possible\
-               to create an unencrypted dataset within an encrypted dataset.'),
-            ).pipe(
-              map(() => false),
-            );
-          }
-          return this.dialog.confirm({
-            title: helptextDatasetForm.dataset_form_encryption.non_encrypted_warning_title,
-            message: helptextDatasetForm.dataset_form_encryption.non_encrypted_warning_warning,
-          });
+          return this.dialog.warn(
+            helptextDatasetForm.dataset_form_encryption.unencrypted_not_possible_title,
+            helptextDatasetForm.dataset_form_encryption.unencrypted_not_possible_warning,
+          ).pipe(
+            map(() => false),
+          );
         }),
         untilDestroyed(this),
       )

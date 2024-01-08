@@ -649,7 +649,7 @@
   "The {name} service is {status}": "",
   "The {service} service is running and will auto-start after a system reboot.": "",
   "The {service} service is running.": "",
-  "This dataset will have an encrypted parent dataset. It is not possible               to create an unencrypted dataset within an encrypted dataset.": "",
+  "This dataset will have an encrypted parent dataset. It is not possible    to create an unencrypted dataset within an encrypted dataset.": "",
   "This field remains empty until a token is obtained.\n      Choose the category that best describes the bug or feature being reported.": "",
   "This information is provided by the catalog maintainer.": "",
   "This pool has an encrypted root dataset which is locked. Do you want to unlock it?": "",
