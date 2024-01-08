@@ -13,6 +13,7 @@ import { Subject } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { EnclosureSlotStatus } from 'app/enums/enclosure-slot-status.enum';
+import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import {
   EnclosureUi,
   EnclosureUiElement,
@@ -158,34 +159,35 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   }
 
   // Find bad status strings in both disk.status and slot.status.
-  // TODO: Move to service or store
   get failedDisks(): DiskFailure[] {
     return [];
-    /* if (!this.selectedEnclosure) return [];
+    if (!this.selectedEnclosure) return [];
 
-    const failedDisks: DiskFailure[] = [];
-    const failedSlots = this.selectedEnclosure.slots.filter((slot: EnclosureSlot) => {
+    const slots: [string, EnclosureUiSlot][] = Object.entries(
+      this.selectedEnclosure.elements['Array Device Slot'],
+    ).filter((keyValue: [string, EnclosureUiSlot]) => {
+      const enclosureSlot = keyValue[1];
       const triggers: string[] = [
         TopologyItemStatus.Unavail,
         TopologyItemStatus.Faulted,
       ];
-      return triggers.includes(slot.topologyStatus);
+      return triggers.includes(enclosureSlot.status);
     });
 
-    failedSlots.forEach((slot: EnclosureSlot) => {
-      if (!slot.disk) return;
-
+    const failedDisks: DiskFailure[] = slots.map((numberAndInfo: [string, EnclosureUiSlot]) => {
+      const slotNumber = Number(numberAndInfo[0]);
+      const slotInfo = numberAndInfo[1];
       const failure: DiskFailure = {
-        disk: slot.disk.name,
-        enclosure: slot.enclosure,
-        slot: slot.slot,
+        disk: slotInfo.dev,
+        enclosure: this.selectedEnclosureNumber,
+        slot: slotNumber,
         location: this.view,
-        reasons: [slot.topologyStatus],
+        reasons: [slotInfo.status],
       };
-      failedDisks.push(failure);
+      return failure;
     });
 
-    return failedDisks; */
+    return failedDisks;
   }
 
   get isTopologyDisk(): boolean {
