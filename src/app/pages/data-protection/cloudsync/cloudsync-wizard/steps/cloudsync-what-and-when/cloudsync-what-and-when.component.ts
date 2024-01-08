@@ -501,7 +501,7 @@ export class CloudsyncWhatAndWhenComponent implements OnInit, OnChanges {
         encryption_salt: this.form.controls.encryption_salt.value,
         attributes: {
           bucket,
-          folder: node.path.slice(1).join('') || '/',
+          folder: node.data.path,
         },
         args: '',
       };
@@ -513,16 +513,18 @@ export class CloudsyncWhatAndWhenComponent implements OnInit, OnChanges {
       return this.ws.call('cloudsync.list_directory', [data]).pipe(
         map((listing) => {
           const nodes: ExplorerNodeData[] = [];
+
           listing.forEach((file) => {
             if (file.IsDir) {
               nodes.push({
-                path: '/' + file.Name,
+                path: `${data.attributes.folder}/${file.Name}`.replace(/\/+/g, '/'),
                 name: file.Name,
                 type: ExplorerNodeType.Directory,
                 hasChildren: true,
               });
             }
           });
+
           return nodes;
         }),
       );
