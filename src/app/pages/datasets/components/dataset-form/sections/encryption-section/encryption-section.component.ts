@@ -136,7 +136,7 @@ export class EncryptionSectionComponent implements OnChanges {
 
   private warnAboutUnsettingEncryption(): void {
     if (!this.parent?.encrypted) {
-      this.unsettingEncryptionSub.unsubscribe();
+      this.unsettingEncryptionSub?.unsubscribe();
       return;
     }
 
