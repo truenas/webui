@@ -602,7 +602,6 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
 
     if (payload.datasets.length > 0 && (payload.naming_schema || payload.name_regex)) {
       this.authService.hasRole([
-        Role.ReplicationManager,
         Role.ReplicationTaskWrite,
         Role.ReplicationTaskWritePull,
       ]).pipe(

@@ -173,7 +173,6 @@ export class ReplicationWizardComponent {
 
   getSnapshotsCount(payload: CountManualSnapshotsParams): Observable<EligibleManualSnapshotsCount> {
     return this.authService.hasRole([
-      Role.ReplicationManager,
       Role.ReplicationTaskWrite,
       Role.ReplicationTaskWritePull,
     ]).pipe(

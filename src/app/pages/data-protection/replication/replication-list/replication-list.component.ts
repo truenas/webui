@@ -60,7 +60,7 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
   queryCallOption: QueryParams<void> = [[], { extra: { check_dataset_encryption_keys: true } }];
   entityList: EntityTableComponent<ReplicationTaskUi>;
   filterValue = '';
-  requiresRoles = [Role.ReplicationManager, Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
+  requiresRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
 
   columns = [
     { name: this.translate.instant('Name'), prop: 'name', always_display: true },

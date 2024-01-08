@@ -74,7 +74,7 @@ export class ReplicationFormComponent implements OnInit {
   isSudoDialogShown = false;
   sshCredentials: KeychainSshCredentials[] = [];
 
-  readonly requiresRoles = [Role.ReplicationManager, Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
+  readonly requiresRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
 
   constructor(
     private ws: WebSocketService,
