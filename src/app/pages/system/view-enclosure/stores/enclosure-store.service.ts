@@ -22,12 +22,14 @@ export interface EnclosureState {
   areEnclosuresLoading: boolean;
   enclosures: EnclosureUi[];
   selectedEnclosure?: string | null;
+  selectedEnclosureDisks?: Disk[] | null;
 }
 
 const initialState: EnclosureState = {
   areEnclosuresLoading: false,
   enclosures: [],
   selectedEnclosure: null,
+  selectedEnclosureDisks: null,
 };
 
 @UntilDestroy()
@@ -189,7 +191,7 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
   }
 
   getDisk(diskName: string): Observable<Disk[]> {
-    return this.ws.call('disk.query', [[['name', '=', diskName]], { extra: { pools: true } }]);
+    return this.ws.call('disk.query', [[['name', '=', diskName]]]);
   }
 
   readonly updateSelectedEnclosure = this.updater((state, selectedEnclosure: string) => {
