@@ -4,7 +4,7 @@ import { Store } from '@ngrx/store';
 import html2canvas, { Options } from 'html2canvas';
 import {
   BehaviorSubject,
-  Observable, combineLatest, first, map, of, switchMap,
+  Observable, combineLatest, filter, first, map, of, switchMap,
 } from 'rxjs';
 import {
   AddReview, AttachmentAddedResponse,
@@ -13,7 +13,7 @@ import { SimilarIssue } from 'app/modules/ix-feedback/interfaces/file-ticket.int
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
-import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
+import { selectSystemHostId, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 import { ReviewAddedResponse } from './interfaces/feedback.interface';
 
 @Injectable({
@@ -41,7 +41,7 @@ export class IxFeedbackService {
   }
 
   getHostId(): Observable<string> {
-    return this.ws.call('system.host_id');
+    return this.store$.select(selectSystemHostId).pipe(filter(Boolean));
   }
 
   addReview(body: AddReview): Observable<ReviewAddedResponse> {

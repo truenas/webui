@@ -57,7 +57,7 @@ describe('JiraOauthComponent', () => {
   });
 
   it('opens a modal with authentication flow when Log In To Provider is pressed', async () => {
-    const loginButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In To Jira' }));
+    const loginButton = await loader.getHarness(MatButtonHarness.with({ text: 'Login To Jira To Submit' }));
     await loginButton.click();
 
     expect(spectator.inject<Window>(WINDOW).open).toHaveBeenCalledWith(
@@ -73,7 +73,7 @@ describe('JiraOauthComponent', () => {
   });
 
   it('calls removeEventListener when oAuth callback is called', async () => {
-    const loginButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In To Jira' }));
+    const loginButton = await loader.getHarness(MatButtonHarness.with({ text: 'Login To Jira To Submit' }));
     await loginButton.click();
 
     expect(spectator.inject<Window>(WINDOW).removeEventListener)

@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import * as cronParser from 'cron-parser';
 import { Options as CronOptions } from 'cronstrue/dist/options';
 import cronstrue from 'cronstrue/i18n';
@@ -116,6 +117,7 @@ export class TaskService {
   constructor(
     protected language: LanguageService,
     protected localeService: LocaleService,
+    private translateService: TranslateService,
   ) {}
 
   getTimeOptions(): Option[] {
@@ -142,7 +144,12 @@ export class TaskService {
       tz: this.localeService.timezone,
     });
 
-    return formatDistanceToNowShortened(schedule.next().value.toDate());
+    const date = schedule?.next()?.value?.toDate();
+    if (!date) {
+      return this.translateService.instant('N/A');
+    }
+
+    return formatDistanceToNowShortened(date);
   }
 
   getTaskNextTime(scheduleExpression: string): Date {

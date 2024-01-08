@@ -46,6 +46,10 @@
   @media #{$media-lt-md} {
     grid-template-columns: auto;
   }
+
+  @media #{$media-lt-sm} {
+    display: block !important;
+  }
 }
 
 .card-list-item .value {
