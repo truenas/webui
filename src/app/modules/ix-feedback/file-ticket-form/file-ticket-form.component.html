@@ -7,7 +7,7 @@
   [hint]="hint$ | async"
 ></ix-input>
 
-<div *ngIf="similarIssues$ | async as issues" class="similar-issues">
+<div *ngIf="hasSimilarIssues$ | async as issues" class="similar-issues">
   <div *ngIf="issues.length" class="similar-issues-header">
     <div class="similar-issues-title">
       {{ 'The following issues were already reported.' | translate }}

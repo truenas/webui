@@ -6,6 +6,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
+  combineLatest,
   debounceTime, distinctUntilChanged, filter, map, switchMap,
 } from 'rxjs';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
@@ -27,6 +28,17 @@ export class FileTicketFormComponent {
     debounceTime(500),
     distinctUntilChanged(),
     switchMap((query) => this.feedback.getSimilarIssues(query)),
+  );
+  protected hasSimilarIssues$ = combineLatest([
+    this.title.valueChanges,
+    this.similarIssues$,
+  ]).pipe(
+    map(([title, issues]) => {
+      if (title.length > 3) {
+        return issues;
+      }
+      return [];
+    }),
   );
   protected readonly hint$ = this.feedback.oauthToken$.pipe(map((token) => {
     if (token) {

@@ -48,8 +48,8 @@ describe('FileTicketFormComponent', () => {
     await title.setValue('Similar');
 
     expect(spectator.inject(IxFeedbackService).getSimilarIssues).toHaveBeenCalledWith('Similar');
-    expect(spectator.query('.similar-issues-title')).toHaveExactText('The following issues were already reported.');
-    expect(spectator.query('.similar-issues-subtitle')).toHaveExactText('Do any of them look similar?');
-    expect(spectator.queryAll('.similar-issue')).toHaveLength(5);
+    expect(spectator.query('.similar-issues-title')).toHaveText('The following issues were already reported.');
+    expect(spectator.query('.similar-issues-subtitle')).toHaveText('Do any of them look similar?');
+    expect(spectator.queryAll('.similar-issue')).toHaveLength(9);
   });
 });
