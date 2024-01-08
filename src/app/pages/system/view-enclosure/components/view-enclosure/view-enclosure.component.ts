@@ -96,10 +96,11 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
 
   get selectedEnclosureId(): string | null {
     if (!this.systemState) return null;
-    const selected: EnclosureUi = this.systemState.enclosures?.find((enclosure: EnclosureUi) => {
+    /* const selected: EnclosureUi = this.systemState.enclosures?.find((enclosure: EnclosureUi) => {
       return enclosure.id === this.systemState.selectedEnclosure;
     });
-    return selected ? selected.id : null;
+    return selected ? selected.id : null; */
+    return this.systemState.selectedEnclosure;
   }
 
   get controller(): EnclosureUi | null {
@@ -209,6 +210,9 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
       takeUntil(this.destroyed$),
       untilDestroyed(this),
     ).subscribe((state: EnclosureState) => {
+      if (!this.selectedEnclosureId && state.selectedEnclosure) {
+        this.selectEnclosure(state.selectedEnclosure);
+      }
       this.systemState = state;
 
       // Only set Hide on first load of data to avoid rendering every update

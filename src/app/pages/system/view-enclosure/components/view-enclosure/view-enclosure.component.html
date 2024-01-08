@@ -42,11 +42,11 @@
           <span class="td">disk data</span>
           <span class="td">
             <mat-spinner
-              *ngIf="!systemState || systemState.areEnclosuresLoading"
+              *ngIf="!systemState || systemState.areDisksLoading"
               class="spinner indicator"
               [diameter]="22"></mat-spinner>
             <ix-icon
-              *ngIf="systemState && !systemState.areEnclosuresLoading"
+              *ngIf="systemState && !systemState.areDisksLoading"
               name="mdi-check-circle"
               class="icon indicator"></ix-icon>
           </span>

@@ -601,12 +601,9 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
           if (isSlotEmpty) {
             this.setCurrentView(this.emptySlotView);
           } else if ((evt).data.enabled) {
-            this.enclosureStore.getDisk(this.selectedSlot.dev)
-              .pipe(untilDestroyed(this))
-              .subscribe((diskResponse: Disk[]) => {
-                this.selectedDisk = diskResponse[0];
-                if (diskResponse.length > 1) console.error('Query Error: Expected one disk but received many');
-              });
+            this.selectedDisk = this.systemState?.selectedEnclosureDisks?.find((disk: Disk) => {
+              return disk.name === this.selectedSlot.dev;
+            });
             this.setCurrentView('details');
           }
           break;

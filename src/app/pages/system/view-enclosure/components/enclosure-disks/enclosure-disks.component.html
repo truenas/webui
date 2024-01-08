@@ -161,7 +161,7 @@
             (mouseenter)="toggleHighlightMode('on')"
             (mouseleave)="toggleHighlightMode('off')"
           >
-            <div *ngIf="selectedSlot.pool_info; else noVdevDisks" class="legend">
+            <div *ngIf="selectedSlot?.pool_info; else noVdevDisks" class="legend">
               <div
                 *ngFor="let vdevDisk of selectedSlot.pool_info.vdev_disks; let i = index;"
                 [class]="['vdev-disk', vdevDisk.dev]"

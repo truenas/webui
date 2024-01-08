@@ -5,7 +5,6 @@ import {
   forkJoin, Observable, of, Subject, tap,
 } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-// import { EnclosureSlotDiskStatus } from 'app/enums/enclosure-slot-status.enum';
 import { VdevType, TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { EnclosureUi, EnclosureUiSlot } from 'app/interfaces/enclosure.interface';
 import { Pool } from 'app/interfaces/pool.interface';
@@ -20,6 +19,7 @@ import { WebSocketService } from 'app/services/ws.service';
 
 export interface EnclosureState {
   areEnclosuresLoading: boolean;
+  areDisksLoading: boolean;
   enclosures: EnclosureUi[];
   selectedEnclosure?: string | null;
   selectedEnclosureDisks?: Disk[] | null;
@@ -27,9 +27,10 @@ export interface EnclosureState {
 
 const initialState: EnclosureState = {
   areEnclosuresLoading: false,
+  areDisksLoading: false,
   enclosures: [],
   selectedEnclosure: null,
-  selectedEnclosureDisks: null,
+  selectedEnclosureDisks: [],
 };
 
 @UntilDestroy()
@@ -57,6 +58,7 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
         this.patchState({
           ...initialState,
           areEnclosuresLoading: true,
+          areDisksLoading: true,
         });
       }),
       switchMap(() => this.updateState()),
@@ -190,11 +192,36 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
     }
   }
 
-  getDisk(diskName: string): Observable<Disk[]> {
-    return this.ws.call('disk.query', [[['name', '=', diskName]]]);
+  getSelectedEnclosureDisks(diskNames: string[]): Observable<Disk[]> {
+    return this.ws.call(
+      'disk.query',
+      [[['name', 'in', diskNames]]],
+    );
   }
 
+  updateSelectedEnclosureDisks(selectedEnclosure: EnclosureUi): void {
+    const diskNames: string[] = Object.entries(selectedEnclosure.elements['Array Device Slot'])
+      .map((keyValue: [string, EnclosureUiSlot]) => {
+        return keyValue[1].dev;
+      });
+
+    this.getSelectedEnclosureDisks(diskNames).pipe(untilDestroyed(this)).subscribe((disks: Disk[]) => {
+      this.updateStateWithSelectedEnclosureDisks(disks);
+    });
+  }
+
+  readonly updateStateWithSelectedEnclosureDisks = this.updater((state, selectedEnclosureDisks: Disk[]) => {
+    return {
+      ...state,
+      selectedEnclosureDisks,
+    };
+  });
+
   readonly updateSelectedEnclosure = this.updater((state, selectedEnclosure: string) => {
+    const selected: EnclosureUi = state.enclosures.find((enclosure: EnclosureUi) => {
+      return enclosure.id === selectedEnclosure;
+    });
+    this.updateSelectedEnclosureDisks(selected);
     return {
       ...state,
       selectedEnclosure,
