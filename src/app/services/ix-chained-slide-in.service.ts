@@ -41,7 +41,7 @@ export interface ChainedComponentResponse {
   error: unknown;
 }
 
-export interface ChainedComponentSeralized {
+export interface ChainedComponentSerialized {
   id: string;
   component: Type<unknown>;
   close$: Subject<ChainedComponentResponse>;
@@ -53,7 +53,7 @@ export interface ChainedComponentSeralized {
   providedIn: 'root',
 })
 export class IxChainedSlideInService extends ComponentStore<ChainedSlideInState> {
-  readonly components$: Observable<ChainedComponentSeralized[]> = this.select(
+  readonly components$: Observable<ChainedComponentSerialized[]> = this.select(
     (state) => this.mapToSerializedArray(state.components),
   );
 
@@ -126,7 +126,7 @@ export class IxChainedSlideInService extends ComponentStore<ChainedSlideInState>
     };
   });
 
-  mapToSerializedArray(map: Map<string, ChainedComponent>): ChainedComponentSeralized[] {
+  mapToSerializedArray(map: Map<string, ChainedComponent>): ChainedComponentSerialized[] {
     return Array.from(map, ([id, componentInfo]) => {
       return {
         id,
@@ -134,7 +134,7 @@ export class IxChainedSlideInService extends ComponentStore<ChainedSlideInState>
         close$: componentInfo.close$,
         wide: componentInfo.wide,
         data: componentInfo.data,
-      } as ChainedComponentSeralized;
+      } as ChainedComponentSerialized;
     });
   }
 }

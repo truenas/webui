@@ -19,7 +19,7 @@ import {
 } from 'rxjs';
 import { CHAINED_SLIDE_IN_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import {
-  ChainedComponentSeralized, ChainedComponentResponse, ChainedComponentRef, IxChainedSlideInService,
+  ChainedComponentSerialized, ChainedComponentResponse, ChainedComponentRef, IxChainedSlideInService,
 } from 'app/services/ix-chained-slide-in.service';
 
 @UntilDestroy()
@@ -29,7 +29,7 @@ import {
   styleUrls: ['./ix-slide-in2.component.scss'],
 })
 export class IxSlideIn2Component implements OnInit, OnDestroy {
-  @Input() componentInfo: ChainedComponentSeralized;
+  @Input() componentInfo: ChainedComponentSerialized;
   @Input() index: number;
   @Input() lastIndex: number;
   @ViewChild('chainedBody', { static: true, read: ViewContainerRef }) slideInBody: ViewContainerRef;

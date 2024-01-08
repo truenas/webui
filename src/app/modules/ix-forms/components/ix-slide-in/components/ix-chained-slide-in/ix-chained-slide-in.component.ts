@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
-  ChainedComponentSeralized,
+  ChainedComponentSerialized,
   IxChainedSlideInService,
 } from 'app/services/ix-chained-slide-in.service';
 
@@ -16,10 +16,10 @@ import {
 export class IxChainedSlideInComponent implements OnInit {
   @Input() id: string;
   @ViewChild('componentWrapper') container: HTMLElement;
-  protected components: ChainedComponentSeralized[];
+  protected components: ChainedComponentSerialized[];
   private element: HTMLElement;
 
-  readonly trackByComponentId: TrackByFunction<ChainedComponentSeralized> = (_, componentRef) => componentRef.id;
+  readonly trackByComponentId: TrackByFunction<ChainedComponentSerialized> = (_, componentRef) => componentRef.id;
 
   constructor(
     private el: ElementRef,
