@@ -1245,6 +1245,7 @@ export class CloudCredentialsFormComponent {
         window.addEventListener('message', doAuth, false);
 
         function doAuth(message) {
+          window.removeEventListener('message', doAuth);
           if (message.data.oauth_portal) {
             if (message.data.error) {
               dialogService.errorReport(T('Error'), message.data.error);
@@ -1263,7 +1264,6 @@ export class CloudCredentialsFormComponent {
               getOnedriveList(message.data);
             }
           }
-          window.removeEventListener('message', doAuth);
         }
       },
     },
