@@ -361,17 +361,17 @@ export interface ApiCallDirectory {
   'certificate.ec_curve_choices': { params: void; response: Choices };
   'certificate.country_choices': { params: void; response: Choices };
   'certificate.extended_key_usage_choices': { params: void; response: ExtendedKeyUsageChoices };
-  'certificate.profiles': { params: void; response: CertificateProfiles };
   'certificate.acme_server_choices': { params: void; response: Choices };
-  'certificate.get_domain_names': { params: [number]; response: string[] };
+  'webui.crypto.certificate_profiles': { params: void; response: CertificateProfiles };
+  'webui.crypto.get_certificate_domain_names': { params: [number]; response: string[] };
 
   // Certificate Authority
   'certificateauthority.create': { params: [CertificateAuthorityUpdate]; response: CertificateAuthority };
   'certificateauthority.query': { params: QueryParams<CertificateAuthority>; response: CertificateAuthority[] };
   'certificateauthority.update': { params: [number, Partial<CertificateAuthorityUpdate>]; response: CertificateAuthority };
   'certificateauthority.delete': { params: [id: number]; response: boolean };
-  'certificateauthority.profiles': { params: void; response: CertificateProfiles };
   'certificateauthority.ca_sign_csr': { params: [CertificateAuthoritySignRequest]; response: CertificateAuthority };
+  'webui.crypto.certificateauthority_profiles': { params: void; response: CertificateProfiles };
 
   // Chart
   'chart.release.pod_logs_choices': { params: [string]; response: Record<string, string[]> };

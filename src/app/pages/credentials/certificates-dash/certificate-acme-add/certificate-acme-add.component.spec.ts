@@ -49,7 +49,7 @@ describe('CertificateAcmeAddComponent', () => {
           },
         ] as DnsAuthenticator[]),
         mockJob('certificate.create', fakeSuccessfulJob()),
-        mockCall('certificate.get_domain_names', ['DNS:truenas.com', 'DNS:truenas.io']),
+        mockCall('webui.crypto.get_certificate_domain_names', ['DNS:truenas.com', 'DNS:truenas.io']),
       ]),
       mockProvider(IxSlideInRef),
       mockProvider(DialogService),
@@ -75,7 +75,7 @@ describe('CertificateAcmeAddComponent', () => {
 
     expect(labels).toContain('DNS:truenas.com');
     expect(labels).toContain('DNS:truenas.io');
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('certificate.get_domain_names', [2]);
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('webui.crypto.get_certificate_domain_names', [2]);
   });
 
   it('creates an ACME certificate when form is submitted', async () => {

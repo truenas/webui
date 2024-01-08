@@ -79,7 +79,7 @@ describe('CertificateAddComponent', () => {
     ],
     providers: [
       mockWebsocket([
-        mockCall('certificate.profiles', {
+        mockCall('webui.crypto.certificate_profiles', {
           'HTTPS RSA Certificate': profile,
         }),
         mockCall('certificate.ec_curve_choices', {
