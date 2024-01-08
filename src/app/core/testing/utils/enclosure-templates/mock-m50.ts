@@ -29,7 +29,8 @@ export class MockM50 extends MockEnclosure {
     rear_slots: 4,
     internal_slots: 0,
     elements: {
-      'Array Device Slot': {
+      'Array Device Slot': {},
+      /* {
         1: {
           descriptor: 'slot00',
           status: 'OK',
@@ -198,7 +199,7 @@ export class MockM50 extends MockEnclosure {
           dev: 'nvme3n1',
           pool_info: null,
         },
-      },
+      }, */
       'SAS Expander': {
         26: {
           descriptor: 'SAS3 Expander',

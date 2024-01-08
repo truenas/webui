@@ -98,10 +98,10 @@
                 <ix-icon
                   name="check_circle"
                   [ngClass]="{
-                    online: selectedEnclosure.elements['Array Device Slot'][i + 1].pool_info.disk_status === 'ONLINE',
+                    online: selectedEnclosure.elements['Array Device Slot'][i + 1].pool_info?.disk_status === 'ONLINE',
                     alert:
-                      selectedEnclosure.elements['Array Device Slot'][i + 1].pool_info.disk_status !== 'ONLINE' &&
-                      selectedEnclosure.elements['Array Device Slot'][i + 1].pool_info.disk_status !== 'AVAILABLE'
+                      selectedEnclosure.elements['Array Device Slot'][i + 1].pool_info?.disk_status !== 'ONLINE' &&
+                      selectedEnclosure.elements['Array Device Slot'][i + 1].pool_info?.disk_status !== 'AVAILABLE'
                   }"
                 ></ix-icon>
               </div>
@@ -139,8 +139,8 @@
                 <strong>{{ 'Vdev' | translate }}:</strong> &nbsp;&nbsp;&nbsp;
                 <span>
                   {{
-                    selectedSlot.pool_info.vdev_name === null ? ('Unassigned' | translate)
-                      : (selectedSlot.pool_info.vdev_name | uppercase)
+                    selectedSlot.pool_info?.vdev_name === null ? ('Unassigned' | translate)
+                      : (selectedSlot.pool_info?.vdev_name | uppercase)
                   }}
                 </span>
               </li>
@@ -157,7 +157,7 @@
 
               <li>
                 <strong>{{ 'Status' | translate }}:</strong>
-                &nbsp;&nbsp;&nbsp;{{ selectedSlot.pool_info.disk_status }}
+                &nbsp;&nbsp;&nbsp;{{ selectedSlot.pool_info?.disk_status }}
               </li>
 
               <li>
@@ -212,7 +212,7 @@
                 <div class="capacity">{{ selectedDisk.size | filesize: { standard: 'iec' } }}</div>
               </div>
               <div class="disk-stats-wrapper" fxFlex>
-                <ul *ngIf="selectedSlot.pool_info.pool_name; else nostats" class="disk-stats">
+                <ul *ngIf="selectedSlot.pool_info?.pool_name; else nostats" class="disk-stats">
                   <li>
                     <strong>{{ 'Read Errors' | translate }}:</strong>
                     &nbsp;&nbsp;

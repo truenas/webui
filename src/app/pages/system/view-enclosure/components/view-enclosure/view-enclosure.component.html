@@ -116,7 +116,7 @@
         <ng-template #mini>
           <div class="mini-container">
             <ix-enclosure-disks-mini
-              *ngIf="events && hasPools && systemState?.enclosures"
+              *ngIf="events && systemState?.enclosures"
               [controller-events]="events"
               [current-tab]="currentView"
               [profile]="systemProfile"

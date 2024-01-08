@@ -53,6 +53,7 @@ export class MockEnclosureUtils {
 
   private enclosureOverrides<K extends ApiCallMethod | ApiJobMethod>(data: unknown, method: K): unknown {
     let mockPayload: unknown;
+
     switch (method) {
       case 'enclosure.query':
       case 'webui.enclosure.dashboard':

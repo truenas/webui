@@ -15,10 +15,11 @@ import { DiskType } from 'app/enums/disk-type.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { TopologyItemType, VdevType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
-import { EnclosureUi, EnclosureUiSlot } from 'app/interfaces/enclosure.interface';
+import { EnclosureUi, EnclosureUiPool, EnclosureUiSlot } from 'app/interfaces/enclosure.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import {
-  Disk, EnclosureIdAndSlot,
+  Disk,
+  EnclosureIdAndSlot,
   TopologyDisk,
   TopologyItem,
   TopologyItemStats,
@@ -28,6 +29,7 @@ import { MockEnclosure } from './enclosure-templates/mock-enclosure-template';
 import { MockEs102 } from './enclosure-templates/mock-es102';
 import { MockEs24 } from './enclosure-templates/mock-es24';
 import { MockM50 } from './enclosure-templates/mock-m50';
+import { MockMini30Xl } from './enclosure-templates/mock-mini-3.0-xl+';
 
 /* import { MockE16 } from './enclosure-templates/mock-e16';
 import { MockE24 } from './enclosure-templates/mock-e24';
@@ -43,7 +45,6 @@ import { MockM50Rear } from './enclosure-templates/mock-m50-rear';
 import { MockMini30Eplus } from './enclosure-templates/mock-mini-3.0-e+';
 import { MockMini30X } from './enclosure-templates/mock-mini-3.0-x';
 import { MockMini30Xplus } from './enclosure-templates/mock-mini-3.0-x+';
-import { MockMini30Xl } from './enclosure-templates/mock-mini-3.0-xl+';
 import { MockMiniR } from './enclosure-templates/mock-mini-r';
 import { MockR10 } from './enclosure-templates/mock-r10';
 import { MockR20 } from './enclosure-templates/mock-r20';
@@ -661,23 +662,14 @@ export class MockStorageGenerator {
     });
     this.mockEnclosures = mockEnclosures;
 
-    // M50/M60 have separate chassis reported for rear drives
-    /* if (options.controllerModel === 'M50' || options.controllerModel === 'M60') {
-      const rearChassis: MockEnclosure = this.generateMockEnclosure(
-        options.controllerModel + '-REAR',
-        options.expansionModels.length + 1,
-      );
-      mockEnclosures.push(rearChassis);
-    } */
-
     // Next populate enclosures based on dispersal setting
     const populated = this.populateEnclosures(mockEnclosures, options.dispersal);
-    this.enclosures = populated.enclosures;
     this.disks = populated.disks;
+    this.enclosures = /* populated.enclosures; */ this.syncEnclosurePoolInfo(populated.enclosures);
   }
 
   private generateMockEnclosure(
-    model = 'M50',
+    model = 'UNKNOWN',
     enclosureNumber = 0,
   ): MockEnclosure {
     let chassis: MockEnclosure;
@@ -693,9 +685,6 @@ export class MockStorageGenerator {
         break;
       case 'MINI-3.0-X+':
         chassis = new MockMini30Xplus(enclosureNumber);
-        break;
-      case 'MINI-3.0-XL+':
-        chassis = new MockMini30Xl(enclosureNumber);
         break;
       case 'M50-REAR':
         chassis = new MockM50Rear(enclosureNumber);
@@ -743,6 +732,9 @@ export class MockStorageGenerator {
       case 'M50':
         chassis = new MockM50(enclosureNumber);
         break;
+      case 'MINI-3.0-XL+':
+        chassis = new MockMini30Xl(enclosureNumber);
+        break;
       case 'ES24':
         chassis = new MockEs24(enclosureNumber);
         break;
@@ -780,6 +772,43 @@ export class MockStorageGenerator {
     }
 
     return populated;
+  }
+
+  private syncEnclosurePoolInfo(enclosures: EnclosureUi[]): EnclosureUi[] {
+    this.poolState?.topology.data.forEach((item: TopologyItem) => {
+      if (item.type === TopologyItemType.Disk) {
+        const stripeDisk: Disk = this.disks.find((dev: Disk) => dev.name === item.disk);
+        const enclosure: EnclosureUi = enclosures.find((enclosureUi: EnclosureUi) => {
+          return enclosureUi.id === stripeDisk.enclosure.id;
+        });
+        enclosure.elements['Array Device Slot'][stripeDisk.enclosure?.slot].pool_info = null;
+      } else {
+        item.children.forEach((child) => {
+          const disk: Disk = this.disks.find((dev: Disk) => dev.name === child.disk);
+          if (disk) {
+            const enclosure: EnclosureUi = enclosures.find((enclosureUi: EnclosureUi) => {
+              return enclosureUi.id === disk.enclosure.id;
+            });
+            const poolInfo: EnclosureUiPool = {
+              pool_name: this.poolState.name,
+              disk_status: child.status,
+              vdev_name: item.name,
+              vdev_type: item.type,
+              vdev_disks: item.children.filter((unfilteredChild: TopologyDisk) => unfilteredChild.disk !== disk.name)
+                .map((sibling: TopologyDisk) => {
+                  return {
+                    enclosure_id: enclosure.id,
+                    slot: disk.enclosure.slot,
+                    dev: sibling.disk,
+                  };
+                }),
+            };
+            enclosure.elements['Array Device Slot'][disk.enclosure?.slot].pool_info = poolInfo;
+          }
+        });
+      }
+    });
+    return enclosures;
   }
 
   updateDisks(disks: Disk[], dispersal: EnclosureDispersalStrategy = EnclosureDispersalStrategy.Default): Disk[] {
