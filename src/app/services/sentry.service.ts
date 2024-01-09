@@ -1,11 +1,12 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import * as Sentry from '@sentry/angular';
 import { UUID } from 'angular2-uuid';
 import { environment } from 'environments/environment';
 import { BehaviorSubject, combineLatest, filter } from 'rxjs';
+import { WINDOW } from 'app/helpers/window.helper';
 import { AppState } from 'app/store';
-import { waitForSystemInfo, selectSystemHostId, selectSystemIsStable } from 'app/store/system-info/system-info.selectors';
+import { waitForSystemInfo, selectSystemHostId } from 'app/store/system-info/system-info.selectors';
 
 @Injectable({
   providedIn: 'root',
@@ -13,29 +14,29 @@ import { waitForSystemInfo, selectSystemHostId, selectSystemIsStable } from 'app
 export class SentryService {
   sessionId$ = new BehaviorSubject<string>(UUID.UUID());
 
-  constructor(private store$: Store<AppState>) {}
+  constructor(
+    private store$: Store<AppState>,
+    @Inject(WINDOW) private window: Window,
+  ) {}
 
   init(): void {
+    if (this.window.location.href.includes('localhost') && !environment.production) {
+      return;
+    }
+
     combineLatest([
-      this.store$.select(selectSystemIsStable),
       this.store$.pipe(waitForSystemInfo),
       this.store$.select(selectSystemHostId).pipe(filter(Boolean)),
       this.sessionId$,
-    ]).subscribe(([isStable, sysInfo, hostId, sessionId]) => {
-      if (!isStable) {
-        Sentry.init({
-          dsn: environment.sentryPublicDsn,
-          release: sysInfo.version,
-        });
-        Sentry.configureScope((scope) => {
-          scope.setTag('session_id', sessionId);
-          scope.setTag('host_id', hostId);
-        });
-      } else {
-        Sentry.init({
-          enabled: false,
-        });
-      }
+    ]).subscribe(([sysInfo, hostId, sessionId]) => {
+      Sentry.init({
+        dsn: environment.sentryPublicDsn,
+        release: sysInfo.version,
+      });
+      Sentry.configureScope((scope) => {
+        scope.setTag('session_id', sessionId);
+        scope.setTag('host_id', hostId);
+      });
     });
   }
 }
