@@ -11,6 +11,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import _ from 'lodash';
 import { BehaviorSubject, of } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { NetworkInterfaceType } from 'app/enums/network-interface.enum';
@@ -198,12 +199,17 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
 
   private subscribeToUpdates(): void {
     this.networkService.subscribeToInOutUpdates().pipe(untilDestroyed(this)).subscribe((updates) => {
+      if (!updates) {
+        return;
+      }
+      const newInOutUpdates = _.cloneDeep(this.inOutUpdates);
       const updatedInterfaces = Object.keys(updates);
       for (const nic of updatedInterfaces) {
-        this.inOutUpdates[nic] = {
+        newInOutUpdates[nic] = {
           ...updates[nic],
         };
       }
+      this.inOutUpdates = newInOutUpdates;
       this.cdr.markForCheck();
     });
   }
