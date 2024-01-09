@@ -29,8 +29,6 @@ import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-inpu
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxStarRatingHarness } from 'app/modules/ix-forms/components/ix-star-rating/ix-star-rating.harness';
 import { IxTextareaHarness } from 'app/modules/ix-forms/components/ix-textarea/ix-textarea.harness';
-import { JiraOauthComponent } from 'app/modules/ix-forms/components/jira-oauth/jira-oauth.component';
-import { JiraOauthHarness } from 'app/modules/ix-forms/components/jira-oauth/jira-oauth.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { OauthButtonComponent } from 'app/modules/oauth-button/components/oauth-button/oauth-button.component';
@@ -67,7 +65,6 @@ describe('FeedbackDialogComponent', () => {
     ],
     declarations: [
       OauthButtonComponent,
-      JiraOauthComponent,
       FileTicketFormComponent,
       FileTicketLicensedFormComponent,
     ],
@@ -250,9 +247,6 @@ describe('FeedbackDialogComponent', () => {
 
       const messageField = await loader.getHarness(IxTextareaHarness.with({ label: 'Message' }));
       await messageField.setValue('Testing ticket body');
-
-      const tokenField = await loader.getHarness(JiraOauthHarness);
-      await tokenField.setValue(mockToken);
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Submit' }));
       await saveButton.click();

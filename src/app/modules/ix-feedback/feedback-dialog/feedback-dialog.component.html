@@ -91,13 +91,13 @@
       {{ 'EULA' | translate }}
     </button>
 
-    <ix-jira-oauth
+    <ix-oauth-button
       *ngIf="showJiraButton"
-      [formControl]="form.controls.token"
-      [label]="'Token' | translate"
-      [tooltip]="tooltips.token | translate"
-      [required]="true"
-    ></ix-jira-oauth>
+      testId="login-to-jira"
+      [oauthType]="oauthType.Jira"
+      [oauthUrl]="'https://support-proxy.ixsystems.com/oauth/initiate?origin='"
+      (loggedIn)="setToken($event); onSubmit();"
+    ></ix-oauth-button>
 
     <button
       *ngIf="!showJiraButton"

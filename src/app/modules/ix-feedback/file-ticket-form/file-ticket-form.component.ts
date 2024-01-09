@@ -13,7 +13,7 @@ import {
   templateUrl: './file-ticket-form.component.html',
 })
 export class FileTicketFormComponent {
-  title = new FormControl<string>('', [Validators.required]);
+  protected title = new FormControl<string>('', [Validators.required]);
 
   readonly tooltips = {
     title: helptext.title.tooltip,
