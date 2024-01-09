@@ -198,7 +198,8 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
 
   private subscribeToUpdates(): void {
     this.networkService.subscribeToInOutUpdates().pipe(untilDestroyed(this)).subscribe((updates) => {
-      for (const nic of Object.keys(updates)) {
+      const updatedInterfaces = Object.keys(updates);
+      for (const nic of updatedInterfaces) {
         this.inOutUpdates[nic] = {
           ...updates[nic],
         };
