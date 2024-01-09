@@ -6,6 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Direction } from 'app/enums/direction.enum';
+import { mntPath } from 'app/enums/mnt-path.enum';
 import { SnapshotNamingOption, snapshotNamingOptionNames } from 'app/enums/snapshot-naming-option.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextReplication } from 'app/helptext/data-protection/replication/replication';
@@ -55,6 +56,7 @@ export class SourceSectionComponent implements OnChanges {
 
   readonly timeOptions$ = of(this.taskService.getTimeOptions());
   readonly snapshotNamingOptions$ = of(mapToOptions(snapshotNamingOptionNames, this.translate));
+  readonly mntPath = mntPath;
 
   readonly periodicSnapshotTasks$ = this.ws.call('pool.snapshottask.query').pipe(map((tasks) => {
     return tasks.map((task) => {
