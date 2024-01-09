@@ -16,26 +16,32 @@ import { TransportMode } from 'app/enums/transport-mode.enum';
 import { helptextReplicationWizard } from 'app/helptext/data-protection/replication/replication-wizard';
 import { KeychainCredential } from 'app/interfaces/keychain-credential.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
+import { SshCredentialsSelectModule } from 'app/modules/custom-selects/ssh-credentials-select/ssh-credentials-select.module';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { CHAINED_SLIDE_IN_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { ReplicationWhatAndWhereComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-what-and-where/replication-what-and-where.component';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
 import { DialogService } from 'app/services/dialog.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 
 describe('ReplicationWhatAndWhereComponent', () => {
   let spectator: Spectator<ReplicationWhatAndWhereComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
+  const chainedComponentRef = {
+    close: jest.fn(),
+    swap: jest.fn(),
+  };
 
   const createComponent = createComponentFactory({
     component: ReplicationWhatAndWhereComponent,
     imports: [
-      ReactiveFormsModule,
       IxFormsModule,
+      ReactiveFormsModule,
+      SshCredentialsSelectModule,
     ],
     providers: [
       mockAuth(),
@@ -62,7 +68,9 @@ describe('ReplicationWhatAndWhereComponent', () => {
         ] as KeychainCredential[]),
         mockCall('replication.count_eligible_manual_snapshots', { total: 0, eligible: 0 }),
       ]),
-      mockProvider(IxSlideInService),
+      mockProvider(IxChainedSlideInService, {
+        pushComponent: jest.fn(() => of()),
+      }),
       mockProvider(DatasetService),
       mockProvider(MatDialog, {
         open: jest.fn(() => ({
@@ -74,6 +82,7 @@ describe('ReplicationWhatAndWhereComponent', () => {
         confirm: jest.fn(() => of()),
       }),
       { provide: SLIDE_IN_DATA, useValue: undefined },
+      { provide: CHAINED_SLIDE_IN_REF, useValue: chainedComponentRef },
     ],
   });
 
@@ -146,14 +155,6 @@ describe('ReplicationWhatAndWhereComponent', () => {
     ]);
   });
 
-  it('opens an extended dialog when choosing to create a new ssh connection', async () => {
-    const matDialog = spectator.inject(MatDialog);
-    jest.spyOn(matDialog, 'open');
-    await form.fillForm({ 'Source Location': 'On a Different System' });
-    await form.fillForm({ 'SSH Connection': 'Create New' });
-    expect(matDialog.open).toHaveBeenCalled();
-  });
-
   it('opens sudo enabled dialog when choosing to existing ssh credential', async () => {
     await form.fillForm({ 'Source Location': 'On a Different System' });
     await form.fillForm({ 'SSH Connection': 'non-root-ssh-connection' });
@@ -179,8 +180,8 @@ describe('ReplicationWhatAndWhereComponent', () => {
     await form.fillForm({
       'Load Previous Replication Task': 'task1 (never ran)',
     });
-
-    expect(spectator.component.getPayload()).toEqual({
+    const payload = spectator.component.getPayload();
+    expect(payload).toEqual({
       exist_replication: 1,
       source_datasets_from: DatasetSource.Local,
       target_dataset_from: DatasetSource.Remote,
@@ -203,7 +204,8 @@ describe('ReplicationWhatAndWhereComponent', () => {
   it('opens an advanced dialog when Advanced Replication Creation is pressed', async () => {
     const advancedButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Replication Creation' }));
     await advancedButton.click();
-    expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalled();
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(ReplicationFormComponent, { wide: true });
+    expect(
+      chainedComponentRef.swap,
+    ).toHaveBeenCalledWith(ReplicationFormComponent, true);
   });
 });

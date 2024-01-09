@@ -16,7 +16,7 @@ import { CloudCredentialsCardComponent } from 'app/pages/credentials/backup-cred
 import { CloudCredentialsFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/cloud-credentials-form.component';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { DialogService } from 'app/services/dialog.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('CloudCredentialsCardComponent', () => {
@@ -69,11 +69,8 @@ describe('CloudCredentialsCardComponent', () => {
       mockProvider(DialogService, {
         confirm: () => of(true),
       }),
-      mockProvider(IxSlideInService, {
-        open: jest.fn(() => {
-          return { slideInClosed$: of(true) };
-        }),
-        onClose$: of(),
+      mockProvider(IxChainedSlideInService, {
+        pushComponent: jest.fn(() => of()),
       }),
       mockProvider(IxSlideInRef),
       mockProvider(MatDialog, {
@@ -103,16 +100,17 @@ describe('CloudCredentialsCardComponent', () => {
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(CloudCredentialsFormComponent);
+    expect(
+      spectator.inject(IxChainedSlideInService).pushComponent,
+    ).toHaveBeenCalledWith(CloudCredentialsFormComponent);
   });
 
   it('opens form when "Edit" button is pressed', async () => {
     const editButton = await table.getHarnessInCell(IxIconHarness.with({ name: 'edit' }), 1, 2);
     await editButton.click();
-
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(CloudCredentialsFormComponent, {
-      data: credentials[0],
-    });
+    expect(
+      spectator.inject(IxChainedSlideInService).pushComponent,
+    ).toHaveBeenCalledWith(CloudCredentialsFormComponent, false, credentials[0]);
   });
 
   it('opens delete dialog when "Delete" button is pressed', async () => {

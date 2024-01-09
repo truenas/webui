@@ -871,3 +871,42 @@ body .mat-calendar-next-button::after {
     width: 100%;
   }
 }
+
+mat-card {
+  overflow: auto !important;
+}
+
+ix-table2,
+table {
+  overflow: auto;
+
+  @media(max-width: $breakpoint-sm) {
+    tr th {
+      width: 78px;
+    }
+  }
+
+  ul li {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+}
+
+mat-list-item {
+  height: inherit !important;
+  min-height: 48px;
+
+  ul {
+    max-width: 100%;
+    white-space: pre-wrap;
+    width: fill-available;
+    word-wrap: break-word;
+  }
+
+  span {
+    flex-wrap: wrap;
+    max-width: fill-available;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+}

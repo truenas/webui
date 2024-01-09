@@ -38,6 +38,7 @@ import { OauthButtonComponent } from 'app/modules/oauth-button/components/oauth-
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
+import { SentryService } from 'app/services/sentry.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { selectIsIxHardware, selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
@@ -143,6 +144,9 @@ describe('FeedbackDialogComponent', () => {
         getTokenForJira: jest.fn(() => mockToken),
         setTokenForJira: jest.fn(),
         getProductType$: of(ProductType.Scale),
+      }),
+      mockProvider(SentryService, {
+        sessionId$: of('mocked-session-id'),
       }),
       mockProvider(MatDialogRef),
       mockProvider(SnackbarService),
@@ -306,7 +310,7 @@ describe('FeedbackDialogComponent', () => {
         environment: TicketEnvironment.Production,
         criticality: TicketCriticality.Inquiry,
         title: 'Test subject',
-        body: 'Testing ticket body',
+        body: 'Testing ticket body\n\nHost ID: unique-system-host-id-1234\n\nSession ID: mocked-session-id',
         attach_debug: true,
       }]);
     });

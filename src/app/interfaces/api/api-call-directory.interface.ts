@@ -406,6 +406,7 @@ export interface ApiCallDirectory {
   'core.download': { params: CoreDownloadQuery; response: CoreDownloadResponse };
   'core.get_jobs': { params: QueryParams<Job>; response: Job[] };
   'core.job_abort': { params: [jobId: number]; response: void };
+  'core.job_download_logs': { params: [ id: number, filename: string ]; response: string };
   'core.resize_shell': { params: ResizeShellRequest; response: void };
 
   // Cronjob
@@ -874,7 +875,14 @@ export interface ApiCallDirectory {
   'vmware.match_datastores_with_datasets': { params: [MatchDatastoresWithDatasetsParams]; response: MatchDatastoresWithDatasets };
   'vmware.query': { params: QueryParams<VmwareSnapshot>; response: VmwareSnapshot[] };
   'vmware.update': { params: [id: number, update: VmwareSnapshotUpdate]; response: VmwareSnapshot };
+
+  // WebUI main
   'webui.main.dashboard.sys_info': { params: void; response: SystemInfo };
+
+  // WebUI Crypto
+  'webui.crypto.certificate_profiles': { params: void; response: CertificateProfiles };
+  'webui.crypto.get_certificate_domain_names': { params: [number]; response: string[] };
+  'webui.crypto.certificateauthority_profiles': { params: void; response: CertificateProfiles };
 
   // ZFS
   'zfs.snapshot.clone': { params: [CloneZfsSnapshot]; response: boolean };

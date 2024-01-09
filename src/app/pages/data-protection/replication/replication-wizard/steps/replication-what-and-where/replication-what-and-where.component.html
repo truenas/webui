@@ -15,14 +15,13 @@
         [tooltip]="helptext.source_datasets_from_tooltip | translate"
         [required]="true"
       ></ix-select>
-      <ix-select
+      <ix-ssh-credentials-select
         *ngIf="form.controls.ssh_credentials_source.enabled"
         formControlName="ssh_credentials_source"
         [label]="helptext.ssh_credentials_source_placeholder | translate"
-        [options]="sshCredentialsOptions$"
         [tooltip]="helptext.ssh_credentials_source_tooltip | translate"
         [required]="true"
-      ></ix-select>
+      ></ix-ssh-credentials-select>
       <ix-explorer
         *ngIf="form.controls.source_datasets.enabled"
         formControlName="source_datasets"
@@ -77,14 +76,13 @@
         [options]="datasetFromOptions$"
         [required]="true"
       ></ix-select>
-      <ix-select
+      <ix-ssh-credentials-select
         *ngIf="form.controls.ssh_credentials_target.enabled"
         formControlName="ssh_credentials_target"
         [label]="helptext.ssh_credentials_target_placeholder | translate"
-        [options]="sshCredentialsOptions$"
         [tooltip]="helptext.ssh_credentials_target_tooltip | translate"
         [required]="true"
-      ></ix-select>
+      ></ix-ssh-credentials-select>
       <ix-explorer
         *ngIf="form.controls.target_dataset.enabled"
         formControlName="target_dataset"

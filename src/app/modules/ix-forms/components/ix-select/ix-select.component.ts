@@ -10,7 +10,7 @@ import { EMPTY, Observable } from 'rxjs';
 import { catchError, debounceTime, tap } from 'rxjs/operators';
 import { SelectOption, SelectOptionValueType } from 'app/interfaces/option.interface';
 
-type IxSelectValue = SelectOptionValueType;
+export type IxSelectValue = SelectOptionValueType;
 
 @UntilDestroy()
 @Component({
