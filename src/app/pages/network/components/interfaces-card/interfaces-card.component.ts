@@ -122,10 +122,20 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.interfacesStore$.loadInterfaces();
-    this.subscribeToUpdates();
     this.interfacesStore$.state$.pipe(untilDestroyed(this)).subscribe((state) => {
       this.isLoading = state.isLoading;
       this.dataProvider.setRows(state.interfaces);
+      this.inOutUpdates = {};
+      for (const nic of state.interfaces) {
+        this.inOutUpdates[nic.name] = {
+          link_state: nic.state?.link_state,
+          received_bytes_rate: 0,
+          sent_bytes_rate: 0,
+          speed: 0,
+        };
+      }
+      this.subscribeToUpdates();
+
       this.cdr.markForCheck();
     });
   }
@@ -188,7 +198,11 @@ export class InterfacesCardComponent implements OnInit, OnChanges {
 
   private subscribeToUpdates(): void {
     this.networkService.subscribeToInOutUpdates().pipe(untilDestroyed(this)).subscribe((updates) => {
-      this.inOutUpdates = updates;
+      for (const nic of Object.keys(updates)) {
+        this.inOutUpdates[nic] = {
+          ...updates[nic],
+        };
+      }
       this.cdr.markForCheck();
     });
   }
