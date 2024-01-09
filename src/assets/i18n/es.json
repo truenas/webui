@@ -3550,6 +3550,7 @@
   "The Group ID (GID) is a unique number used to identify a Unix group. Enter a number above 1000 for a group with user accounts. Groups used by a service must have an ID that matches the default port number used by the service.": "",
   "The Idmap cache should be cleared after finalizing idmap changes.  Click \"Continue\" to clear the cache.": "",
   "The SMB service has been restarted.": "",
+  "The SMB share ACL defines access rights for users of this SMB share up to, but not beyond, the access granted by filesystem ACLs.": "",
   "The SSL certificate to be used for TLS FTP connections. To create a certificate, use <b>System --> Certificates</b>.": "",
   "The TrueNAS controllers do not have the same quantity of disks.": "",
   "The URI used to provision an OTP. The URI (which contains the secret) is encoded in a QR Code.  To set up an OTP app like Google Authenticator, use the app to scan the QR code or enter the secret manually  into the app. The URI is produced by the system when Two-Factor Authentication is first activated.": "",
