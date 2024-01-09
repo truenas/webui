@@ -46,7 +46,6 @@ export class TargetGlobalConfigurationComponent implements OnInit {
   readonly requiresRoles = [
     Role.SharingIscsiGlobalWrite,
     Role.SharingIscsiWrite,
-    Role.SharingManager,
     Role.SharingWrite,
   ];
 

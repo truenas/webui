@@ -28,7 +28,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NfsListComponent implements OnInit {
-  requiresRoles = [Role.SharingNfsWrite, Role.SharingManager, Role.SharingWrite];
+  requiresRoles = [Role.SharingNfsWrite, Role.SharingWrite];
   filterString = '';
   dataProvider: AsyncDataProvider<NfsShare>;
 

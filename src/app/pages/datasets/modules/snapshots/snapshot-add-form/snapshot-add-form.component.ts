@@ -60,7 +60,7 @@ export class SnapshotAddFormComponent implements OnInit {
   protected readonly Role = Role;
 
   readonly helptext = helptextSnapshots;
-  readonly requiresRoles = [Role.ReplicationManager, Role.SnapshotWrite];
+  readonly requiresRoles = [Role.SnapshotWrite];
 
   constructor(
     private fb: FormBuilder,

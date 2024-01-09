@@ -90,7 +90,6 @@ export class PortalFormComponent implements OnInit {
   readonly requiresRoles = [
     Role.SharingIscsiPortalWrite,
     Role.SharingIscsiWrite,
-    Role.SharingManager,
     Role.SharingWrite,
   ];
 

@@ -8,6 +8,9 @@ export enum IncomingApiMessageType {
   Method = 'method',
   Ready = 'ready',
   NoSub = 'nosub',
+
+  // Special type added on the frontend
+  Discard = 'discard',
 }
 
 export enum OutgoingApiMessageType {
