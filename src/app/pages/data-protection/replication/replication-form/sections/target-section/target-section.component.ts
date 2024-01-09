@@ -9,7 +9,6 @@ import { map } from 'rxjs/operators';
 import { truenasDbKeyLocation } from 'app/constants/truenas-db-key-location.constant';
 import { EncryptionKeyFormat, encryptionKeyFormatNames } from 'app/enums/encryption-key-format.enum';
 import { LifetimeUnit, lifetimeUnitNames } from 'app/enums/lifetime-unit.enum';
-import { mntPath } from 'app/enums/mnt-path.enum';
 import { ReadOnlyMode, readonlyModeNames } from 'app/enums/readonly-mode.enum';
 import { RetentionPolicy, retentionPolicyNames } from 'app/enums/retention-policy.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
@@ -53,7 +52,6 @@ export class TargetSectionComponent implements OnInit, OnChanges {
   readonly readonlyModes$ = of(mapToOptions(readonlyModeNames, this.translate));
   readonly encryptionKeyFormats$ = of(mapToOptions(encryptionKeyFormatNames, this.translate));
   readonly lifetimeUnits$ = of(mapToOptions(lifetimeUnitNames, this.translate));
-  readonly mntPath = mntPath;
 
   protected readonly RetentionPolicy = RetentionPolicy;
 
