@@ -90,8 +90,8 @@ export class ShellService {
     try {
       data = JSON.parse(msg.data as string) as { id?: string; msg: IncomingApiMessageType };
     } catch (error: unknown) {
-      console.error(error);
-      return;
+      // TODO: Figure out why we need this.
+      data = { msg: IncomingApiMessageType.Discard } as { id?: string; msg: IncomingApiMessageType };
     }
 
     if (data.msg === IncomingApiMessageType.Connected) {

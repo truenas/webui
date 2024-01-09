@@ -72,7 +72,7 @@ export class AccessCardComponent implements OnInit {
             : this.translate.instant('Terminate session')),
           onClick: (row) => this.onTerminate(row.id),
           disabled: (row) => of(row.current),
-          requiresRoles: [Role.FullAdmin],
+          requiresRoles: [Role.AuthSessionsWrite],
         },
       ],
     }),
