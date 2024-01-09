@@ -281,6 +281,7 @@
   "System Audit Read": "",
   "System Audit Write": "",
   "Table Actions of Expandable Table": "",
+  "The SMB share ACL defines access rights for users of this SMB share up to, but not beyond, the access granted by filesystem ACLs.": "",
   "The following { n, plural, one {docker image} other {# docker images} } will be deleted. Are you sure you want to proceed?": "",
   "The following { n, plural, one {docker image} other {# docker images} } will be updated. Are you sure you want to proceed?": "",
   "This field remains empty until a token is obtained.\n      Choose the category that best describes the bug or feature being reported.": "",

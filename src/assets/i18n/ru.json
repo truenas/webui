@@ -2074,6 +2074,7 @@
   "The <i>Alias</i> field can either be left empty or  have an alias defined for each path in the share.": "",
   "The <i>Use Apple-style character encoding</i> value has changed.  This parameter affects how file names are read from and written to storage. Changes to  this parameter after data is written can prevent accessing or deleting files containing  mangled characters.": "",
   "The Idmap cache should be cleared after finalizing idmap changes.  Click \"Continue\" to clear the cache.": "",
+  "The SMB share ACL defines access rights for users of this SMB share up to, but not beyond, the access granted by filesystem ACLs.": "",
   "The TrueNAS controllers do not have the same quantity of disks.": "",
   "The URI used to provision an OTP. The URI (which contains the secret) is encoded in a QR Code.  To set up an OTP app like Google Authenticator, use the app to scan the QR code or enter the secret manually  into the app. The URI is produced by the system when Two-Factor Authentication is first activated.": "",
   "The VM could not start because the current configuration could potentially require more RAM than is available on the system. Memory overcommitment allows multiple VMs to be launched when there is not enough free memory for configured RAM of all VMs. Use with caution. Would you like to overcommit memory?": "",
