@@ -14,6 +14,8 @@ import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
+import { CloudCredentialsSelectModule } from 'app/modules/custom-selects/cloud-credentials-select/cloud-credentials-select.module';
+import { SshCredentialsSelectModule } from 'app/modules/custom-selects/ssh-credentials-select/ssh-credentials-select.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
@@ -86,6 +88,8 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
     TranslateModule,
     IxTable2Module,
     IxFormsModule,
+    CloudCredentialsSelectModule,
+    SshCredentialsSelectModule,
     PageHeaderModule,
     SchedulerModule,
     MatButtonModule,

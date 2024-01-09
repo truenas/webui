@@ -1,9 +1,11 @@
 import {
-  Component, ElementRef, Input, OnInit, TrackByFunction, Type, ViewChild,
+  Component, ElementRef, Input, OnInit, TrackByFunction, ViewChild,
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Subject } from 'rxjs';
-import { ChainedComponentSeralized as ChainedComponentInfoSeralized, IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
+import {
+  ChainedComponentSerialized,
+  IxChainedSlideInService,
+} from 'app/services/ix-chained-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -14,12 +16,10 @@ import { ChainedComponentSeralized as ChainedComponentInfoSeralized, IxChainedSl
 export class IxChainedSlideInComponent implements OnInit {
   @Input() id: string;
   @ViewChild('componentWrapper') container: HTMLElement;
-  protected components: ChainedComponentInfoSeralized[];
+  protected components: ChainedComponentSerialized[];
   private element: HTMLElement;
 
-  readonly trackByComponentId: TrackByFunction<{
-    component: Type<unknown>; id: string; close$: Subject<unknown>;
-  }> = (_, componentRef) => componentRef.id;
+  readonly trackByComponentId: TrackByFunction<ChainedComponentSerialized> = (_, componentRef) => componentRef.id;
 
   constructor(
     private el: ElementRef,

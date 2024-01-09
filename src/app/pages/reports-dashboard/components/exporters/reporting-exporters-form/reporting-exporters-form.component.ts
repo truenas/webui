@@ -7,6 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
+import { Role } from 'app/enums/role.enum';
 import { toHumanReadableKey } from 'app/helpers/object-keys-to-human-readable.helper';
 import { DynamicFormSchema, DynamicFormSchemaNode } from 'app/interfaces/dynamic-form-schema.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -58,6 +59,7 @@ export class ReportingExportersFormComponent implements OnInit {
 
   protected exporterTypeOptions$: Observable<Option[]>;
   protected reportingExporterList: ReportingExporterList[] = [];
+  protected readonly requiredRoles = [Role.ReportingWrite];
 
   constructor(
     private fb: FormBuilder,

@@ -39,6 +39,7 @@ export class CertificateAcmeAddComponent {
     tos: [false, Validators.requiredTrue],
     renew_days: [10, [Validators.required, Validators.min(0)]],
     acme_directory_uri: ['', Validators.required],
+    custom_acme_directory_uri: [false],
     domains: this.formBuilder.array<string>([]),
   });
 
@@ -115,7 +116,7 @@ export class CertificateAcmeAddComponent {
     this.isLoading = true;
     this.cdr.markForCheck();
 
-    this.ws.call('certificate.get_domain_names', [this.csr.id])
+    this.ws.call('webui.crypto.get_certificate_domain_names', [this.csr.id])
       .pipe(untilDestroyed(this))
       .subscribe({
         next: (domains) => {

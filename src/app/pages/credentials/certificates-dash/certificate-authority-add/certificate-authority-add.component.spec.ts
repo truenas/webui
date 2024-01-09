@@ -115,7 +115,7 @@ describe('CertificateAuthorityAddComponent', () => {
     ],
     providers: [
       mockWebsocket([
-        mockCall('certificateauthority.profiles', {
+        mockCall('webui.crypto.certificateauthority_profiles', {
           CA: profile,
         }),
         mockCall('certificate.ec_curve_choices', {

@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { mockProvider, Spectator, createComponentFactory } from '@ngneat/spectator/jest';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SchemaType } from 'app/enums/schema.enum';
 import { ReportingExporter, ReportingExporterKey } from 'app/interfaces/reporting-exporters.interface';
@@ -63,6 +64,7 @@ describe('ReportingExportersFormComponent', () => {
         mockCall('reporting.exporters.create'),
         mockCall('reporting.exporters.update'),
       ]),
+      mockAuth(),
       mockProvider(FormErrorHandlerService),
       {
         provide: SLIDE_IN_DATA,
