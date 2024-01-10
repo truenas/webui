@@ -35,10 +35,10 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 interface NicInfo {
   ip: string;
   state: LinkState;
-  in: number;
-  out: number;
-  lastSent: number;
-  lastReceived: number;
+  bitsIn: number;
+  bitsOut: number;
+  bitsLastSent: number;
+  bitsLastReceived: number;
   chartData: ChartData<'line'>;
   emptyConfig?: EmptyConfig;
 }
@@ -71,7 +71,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
   aspectRatio = 474 / 200;
   timezone: string;
 
-  minSizeToActiveTrafficArrowIcon = 1024;
+  minSizeToActiveTrafficArrowIcon = 1000;
 
   fetchDataIntervalSubscription: Subscription;
   networkInterfaceUpdate = new Map<string, NetworkInterfaceUpdate>();
@@ -135,7 +135,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
             if (value === 0) {
               return 0;
             }
-            return this.getSpeedLabel(value as number, true);
+            return this.getSpeedLabel(value as number);
           },
         },
       },
@@ -223,21 +223,21 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
           if (usageUpdate.link_state) {
             nicInfo.state = usageUpdate.link_state;
           }
-          nicInfo.in = usageUpdate.received_bytes_rate;
-          nicInfo.out = usageUpdate.sent_bytes_rate;
+          nicInfo.bitsIn = usageUpdate.received_bytes_rate * 8;
+          nicInfo.bitsOut = usageUpdate.sent_bytes_rate * 8;
 
           if (
             usageUpdate.sent_bytes_rate !== undefined
-            && usageUpdate.sent_bytes_rate - nicInfo.lastSent > this.minSizeToActiveTrafficArrowIcon
+            && usageUpdate.sent_bytes_rate - nicInfo.bitsLastSent > this.minSizeToActiveTrafficArrowIcon
           ) {
-            nicInfo.lastSent = usageUpdate.sent_bytes_rate;
+            nicInfo.bitsLastSent = usageUpdate.sent_bytes_rate * 8;
           }
 
           if (
             usageUpdate.received_bytes_rate !== undefined
-            && usageUpdate.received_bytes_rate - nicInfo.lastReceived > this.minSizeToActiveTrafficArrowIcon
+            && usageUpdate.received_bytes_rate - nicInfo.bitsLastReceived > this.minSizeToActiveTrafficArrowIcon
           ) {
-            nicInfo.lastReceived = usageUpdate.received_bytes_rate;
+            nicInfo.bitsLastReceived = usageUpdate.received_bytes_rate * 8;
           }
         }
         this.cdr.markForCheck();
@@ -268,10 +268,10 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
       this.nicInfoMap[nic.state.name] = {
         ip: this.getIpAddress(nic),
         state: this.getLinkState(nic),
-        in: 0,
-        out: 0,
-        lastSent: 0,
-        lastReceived: 0,
+        bitsIn: 0,
+        bitsOut: 0,
+        bitsLastSent: 0,
+        bitsLastReceived: 0,
         chartData: null,
         emptyConfig: this.loadingEmptyConfig,
       };
@@ -480,20 +480,13 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
     return classes;
   }
 
-  showInOutInfo(nic: BaseNetworkInterface): string {
-    const lastSent = this.formatter.convertBytesToHumanReadable(this.nicInfoMap[nic.state.name].lastSent);
-    const lastReceived = this.formatter.convertBytesToHumanReadable(this.nicInfoMap[nic.state.name].lastReceived);
-
-    return `${this.translate.instant('Sent')}: ${lastSent} ${this.translate.instant('Received')}: ${lastReceived}`;
-  }
-
   getIpAddressTooltip(nic: BaseNetworkInterface): string {
     return `${this.translate.instant('IP Address')}: ${this.getIpAddress(nic)}`;
   }
 
-  private getSpeedLabel(value: number, axis = false): string {
-    const converted = filesize(Math.abs(value), { output: 'object', standard: axis ? 'jedec' : 'iec' });
-    return `${this.splitValue(converted.value)}${converted.unit}/s`;
+  private getSpeedLabel(value: number): string {
+    const converted = filesize(Math.round(Math.abs(value)), { bits: true }).replace('bit', 'b');
+    return `${converted}/s`;
   }
 
   private splitValue(value: number): number {
