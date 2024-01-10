@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
-import { Validators } from '@angular/forms';
+import { FormControl, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { NavigationExtras, Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
@@ -17,7 +17,7 @@ import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import helptext from 'app/helptext/data-protection/cloudsync/cloudsync-form';
-import { CloudSyncTaskUi, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
+import { CloudSyncDirectoryListing, CloudSyncTaskUi, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudsyncBucket, CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { SelectOption } from 'app/interfaces/option.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
@@ -60,6 +60,20 @@ export class CloudsyncFormComponent implements OnInit {
     return this.isNew
       ? this.translate.instant('Add Cloud Sync Task')
       : this.translate.instant('Edit Cloud Sync Task');
+  }
+
+  get credentialsDependentControls(): FormControl[] {
+    return [
+      this.form.controls.bucket,
+      this.form.controls.bucket_input,
+      this.form.controls.bucket_policy_only,
+      this.form.controls.folder_source,
+      this.form.controls.folder_destination,
+      this.form.controls.task_encryption,
+      this.form.controls.fast_list,
+      this.form.controls.chunk_size,
+      this.form.controls.storage_class,
+    ];
   }
 
   googleDriveProviderId: number;
@@ -164,8 +178,8 @@ export class CloudsyncFormComponent implements OnInit {
 
   bucketOptions$ = of<SelectOption[]>([]);
 
-  readonly fileNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
-  readonly bucketNodeProvider = this.getBucketsNodeProvider();
+  fileNodeProvider: TreeNodeProvider;
+  bucketNodeProvider: TreeNodeProvider;
 
   constructor(
     public slideInRef: IxSlideInRef<CloudsyncFormComponent>,
@@ -185,6 +199,8 @@ export class CloudsyncFormComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.setFileNodeProvider();
+    this.setBucketNodeProvider();
     this.setupForm();
 
     if (this.editingTask) {
@@ -194,21 +210,15 @@ export class CloudsyncFormComponent implements OnInit {
 
   setupForm(): void {
     this.form.controls.path_source.disable();
-    this.form.controls.bucket.disable();
-    this.form.controls.bucket_input.disable();
-    this.form.controls.folder_destination.disable();
-    this.form.controls.folder_source.disable();
-    this.form.controls.bucket_policy_only.disable();
-
-    this.form.controls.task_encryption.disable();
-    this.form.controls.chunk_size.disable();
-    this.form.controls.storage_class.disable();
-    this.form.controls.fast_list.disable();
     this.form.controls.filename_encryption.disable();
     this.form.controls.encryption_password.disable();
     this.form.controls.encryption_salt.disable();
 
+    this.credentialsDependentControls.forEach((control) => control.disable());
+
     this.form.controls.bucket.valueChanges.pipe(untilDestroyed(this)).subscribe((selectedOption) => {
+      this.form.controls.folder_source.reset([]);
+
       if (selectedOption !== newStorjBucket) {
         return;
       }
@@ -273,7 +283,11 @@ export class CloudsyncFormComponent implements OnInit {
     });
 
     this.form.controls.credentials.valueChanges.pipe(untilDestroyed(this)).subscribe((credentials) => {
+      this.credentialsDependentControls.forEach((control) => control.disable());
+
       if (credentials) {
+        this.enableRemoteExplorer();
+
         if (this.form.controls.direction.value === Direction.Pull) {
           this.form.controls.folder_source.enable();
           this.form.controls.folder_destination.disable();
@@ -339,18 +353,9 @@ export class CloudsyncFormComponent implements OnInit {
             untilDestroyed(this),
           )
           .subscribe();
-      } else {
-        this.form.controls.bucket.disable();
-        this.form.controls.bucket_input.disable();
-        this.form.controls.bucket_policy_only.disable();
-        this.form.controls.folder_source.disable();
-        this.form.controls.folder_destination.disable();
-
-        this.form.controls.task_encryption.disable();
-        this.form.controls.fast_list.disable();
-        this.form.controls.chunk_size.disable();
-        this.form.controls.storage_class.disable();
       }
+
+      this.cdr.markForCheck();
     });
 
     this.form.controls.path_source.valueChanges.pipe(untilDestroyed(this)).subscribe((values: string | string[]) => {
@@ -516,7 +521,7 @@ export class CloudsyncFormComponent implements OnInit {
       }
 
       return this.ws.call('cloudsync.list_directory', [data]).pipe(
-        map((listing) => {
+        map((listing: CloudSyncDirectoryListing[]) => {
           const nodes: ExplorerNodeData[] = [];
           listing.forEach((file) => {
             if (file.IsDir) {
@@ -771,5 +776,25 @@ export class CloudsyncFormComponent implements OnInit {
         this.cdr.markForCheck();
       },
     });
+  }
+
+  private enableRemoteExplorer(): void {
+    this.setBucketNodeProvider();
+
+    if (this.form.controls.direction.value === Direction.Pull) {
+      this.form.controls.folder_source.enable();
+      this.form.controls.folder_destination.disable();
+    } else {
+      this.form.controls.folder_source.disable();
+      this.form.controls.folder_destination.enable();
+    }
+  }
+
+  private setFileNodeProvider(): void {
+    this.fileNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
+  }
+
+  private setBucketNodeProvider(): void {
+    this.bucketNodeProvider = this.getBucketsNodeProvider();
   }
 }

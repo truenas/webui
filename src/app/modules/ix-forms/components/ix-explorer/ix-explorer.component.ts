@@ -92,6 +92,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
 
     if ('nodeProvider' in changes || 'root' in changes) {
       this.setInitialNode();
+      this.cdr.markForCheck();
     }
   }
 
