@@ -76,6 +76,7 @@ export class FeedbackDialogComponent implements OnInit {
   private isIxHardware = false;
   private attachments: File[] = [];
   protected feedbackTypeOptions$: Observable<Option[]> = of(mapToOptions(feedbackTypeOptionMap, this.translate));
+  protected oauthUrl = 'https://support-proxy.ixsystems.com/oauth/initiate?origin=';
   readonly acceptedFiles = ticketAcceptedFiles;
   readonly oauthType = OauthButtonType;
 

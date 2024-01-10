@@ -95,7 +95,7 @@
       *ngIf="showJiraButton"
       testId="login-to-jira"
       [oauthType]="oauthType.Jira"
-      [oauthUrl]="'https://support-proxy.ixsystems.com/oauth/initiate?origin='"
+      [oauthUrl]="oauthUrl"
       (loggedIn)="setToken($event); onSubmit();"
     ></ix-oauth-button>
 
