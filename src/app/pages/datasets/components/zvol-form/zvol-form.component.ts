@@ -231,6 +231,10 @@ export class ZvolFormComponent implements OnInit {
     this.ws.call('pool.dataset.query', [[['id', '=', this.parentId]]]).pipe(untilDestroyed(this)).subscribe({
       next: (parents) => {
         const parent = parents[0];
+        if (parent.encrypted) {
+          this.form.controls.encryption.setValue(true);
+          this.form.controls.encryption.disable();
+        }
 
         this.namesInUse = parent.children?.map((child) => {
           return /[^/]*$/.exec(child.name)[0];

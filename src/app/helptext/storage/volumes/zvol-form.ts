@@ -78,7 +78,8 @@ export const helptextZvol = {
     inherit_checkbox_tooltip: T('Use the encryption properties of the root dataset.'),
     encryption_checkbox_placeholder: T('Encryption'),
     encryption_checkbox_tooltip: T('Secure data within this dataset. Data is unusable until \
-     unlocked with an encryption key or passphrase.'),
+     unlocked with an encryption key or passphrase. If parent dataset has encryption enabled,\
+     it is not possible to disable this option.'),
     encryption_type_placeholder: T('Encryption Type'),
     encryption_type_tooltip: T('How the dataset is secured. Choose between securing with\
  an encryption <i>Key</i> or a user-defined <i>Passphrase</i>. Creating a new key file\

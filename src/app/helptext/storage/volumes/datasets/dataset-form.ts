@@ -118,7 +118,8 @@ export const helptextDatasetForm = {
   dataset_form_encryption: {
     inherit_checkbox_tooltip: T('Use the encryption properties of the root dataset.'),
     encryption_checkbox_tooltip: T('Secure data within this dataset. Data is unusable until \
-     unlocked with an encryption key or passphrase.'),
+     unlocked with an encryption key or passphrase. If parent dataset has encryption enabled, it is \
+     not possible to disable this option.'),
     encryption_type_tooltip: T('How the dataset is secured. Choose between securing with\
  an encryption <i>Key</i> or a user-defined <i>Passphrase</i>. Creating a new key file\
  invalidates any previously downloaded key file for this dataset.\
@@ -142,9 +143,6 @@ export const helptextDatasetForm = {
      defining the encryption key.<br> WARNING: the encryption key is the only means to decrypt the information stored in this \
      dataset. Store the encryption key in a secure location.'),
     key_tooltip: T('Enter or paste a string to use as the encryption key for this dataset.'),
-    unencrypted_not_possible_title: T('Action not possible'),
-    unencrypted_not_possible_warning: T('This dataset will have an encrypted parent dataset. It is not possible\
-    to create an unencrypted dataset within an encrypted dataset.'),
   },
   pathWarningTitle: T('Action Not Possible'),
   pathIsTooLongWarning: T('Dataset name is set by appending the parent path with the name entered by you. The max allowed length for the dataset name is 200. The parent path for this dataset already exceeds that limit. It is not possible to create anymore nested datasets under this path.'),

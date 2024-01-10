@@ -5,7 +5,6 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
-import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxFieldsetHarness } from 'app/modules/ix-forms/components/ix-fieldset/ix-fieldset.harness';
@@ -127,14 +126,10 @@ describe('EncryptionSectionComponent', () => {
       await form.fillForm({
         'Inherit (encrypted)': false,
       });
-      await form.fillForm({
-        Encryption: false,
-      });
 
-      expect(spectator.inject(DialogService).warn).toHaveBeenCalledWith(
-        helptextDatasetForm.dataset_form_encryption.unencrypted_not_possible_title,
-        helptextDatasetForm.dataset_form_encryption.unencrypted_not_possible_warning,
-      );
+      const encryptionFc = (await form.getControl('Encryption'));
+      const isEncryptionDisabled = await encryptionFc.isDisabled();
+      expect(isEncryptionDisabled).toBe(true);
     });
   });
 
