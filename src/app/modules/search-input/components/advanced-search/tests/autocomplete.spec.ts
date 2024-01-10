@@ -103,17 +103,17 @@ describe('AdvancedSearchComponent – autocomplete', () => {
 
       const autocomplete = await searchHarness.getAutocomplete();
       expect(await autocomplete.getOptions()).toEqual([
-        '!^ (Not Starts With)',
+        '= (Equals)',
         '!= (Not Equals)',
-        '!$ (Not Ends With)',
-        '^ (Starts With)',
+        '> (Greater Than)',
         '< (Less Than)',
         '<= (Less Than or Equal To)',
-        '= (Equals)',
-        '> (Greater Than)',
         '>= (Greater Than or Equal To)',
         '~ (Contains)',
+        '^ (Starts With)',
         '$ (Ends With)',
+        '!^ (Not Starts With)',
+        '!$ (Not Ends With)',
         'IN (In)',
         'NIN (Not In)',
       ]);
