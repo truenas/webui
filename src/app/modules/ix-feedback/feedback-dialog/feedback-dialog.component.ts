@@ -385,9 +385,6 @@ export class FeedbackDialogComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe((token) => {
       this.feedbackService.setOauthToken(token);
-      if (this.form.valid && !this.isLoading) {
-        this.onSubmit();
-      }
     });
   }
 
