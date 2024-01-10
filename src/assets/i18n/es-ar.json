@@ -2151,7 +2151,6 @@
   "All": "Todos",
   "All Disks": "Todos los discos",
   "All data on that pool was destroyed.": "Todos los datos de ese grupo fueron destruidos.",
-  "All data stored in this dataset will be decrypted and the dataset marked  as non-encrypted. Do you want to continue?": "Todos los datos almacenados en este conjunto de datos se descifrarán y el conjunto de datos se marcará como no cifrado. ¿Quieres continuar?",
   "All pools are online.": "Todos los pools están en línea.",
   "All selected directories must be at the same level i.e., must have the same parent directory.": "Todos los directorios seleccionados deben estar en el mismo nivel, es decir, deben tener el mismo directorio principal.",
   "All users": "Todos los usuarios",

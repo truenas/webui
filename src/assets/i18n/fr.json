@@ -627,7 +627,6 @@
   "All Disks": "Tous les disques",
   "All Threads": "Tous les threads",
   "All data on that pool was destroyed.": "Toutes les données de ce volume ont été détruites",
-  "All data stored in this dataset will be decrypted and the dataset marked  as non-encrypted. Do you want to continue?": "Toutes les données stockées dans ce dataset seront décryptées et le dataset marqué comme non chiffré. Voulez-vous continuer?",
   "All pools are online.": "Tous les volumes sont en ligne.",
   "All selected directories must be at the same level i.e., must have the same parent directory.": "Tous les répertoires sélectionnés doivent être au même niveau, c'est-à-dire qu'ils doivent avoir le même répertoire parent.",
   "All users": "Tous les utilisateurs",

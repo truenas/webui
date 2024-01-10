@@ -1022,7 +1022,6 @@
   "All Disks": "所有磁盘",
   "All Threads": "所有线程",
   "All data on that pool was destroyed.": "所有在此存储池上的数据将被摧毁。",
-  "All data stored in this dataset will be decrypted and the dataset marked  as non-encrypted. Do you want to continue?": "存储在此数据集中的所有数据都将被解密，并将数据集标记为未加密。 您要继续吗？",
   "All pools are online.": "所有存储池在线",
   "All selected directories must be at the same level i.e., must have the same parent directory.": "所有选定的目录必须处于同一级别，即必须具有相同的父目录。",
   "All users": "所有用户",

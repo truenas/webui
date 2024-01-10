@@ -112,9 +112,6 @@ export const helptextZvol = {
     key_placeholder: T('Key'),
     key_tooltip: T('Enter or paste a string to use as the encryption key for this dataset.'),
     key_validation: [Validators.minLength(64), Validators.maxLength(64)],
-    non_encrypted_warning_title: T('Warning'),
-    non_encrypted_warning_warning: T('All data stored in this dataset will be decrypted and the dataset marked \
- as non-encrypted. Do you want to continue?'),
   },
 
 };

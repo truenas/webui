@@ -948,7 +948,6 @@
   "All Disks": "Всі диски",
   "All Threads": "Всі потоки",
   "All data on that pool was destroyed.": "Усі дані в цьому пулі було знищено.",
-  "All data stored in this dataset will be decrypted and the dataset marked  as non-encrypted. Do you want to continue?": "Усі дані, які зберігаються в цьому наборі даних, будуть розшифровані, а набір даних позначений як незашифрований. Ви хочете продовжити?",
   "All pools are online.": "Всі пули онлайн.",
   "All selected directories must be at the same level i.e., must have the same parent directory.": "Усі вибрані каталоги мають бути на одному рівні, тобто мати однаковий батьківський каталог.",
   "All users": "Всі користувачі",
