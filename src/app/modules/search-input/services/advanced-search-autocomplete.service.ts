@@ -128,11 +128,11 @@ export class AdvancedSearchAutocompleteService<T> {
       anchor = anchor + 2;
     }
 
-    const noExtraSpaceInTheEnd = updatedValue.startsWith('(') || currentQuery[to] === ')';
+    const shouldAppendSpace = !updatedValue.startsWith('(') && currentQuery[to] !== ')';
 
     this.editorView?.dispatch({
-      changes: { from, to, insert: noExtraSpaceInTheEnd ? updatedValue : `${updatedValue} ` },
-      selection: { anchor: noExtraSpaceInTheEnd ? anchor : anchor + 1 },
+      changes: { from, to, insert: shouldAppendSpace ? `${updatedValue} ` : updatedValue },
+      selection: { anchor: shouldAppendSpace ? anchor + 1 : anchor },
     });
 
     startCompletion(this.editorView);
