@@ -283,7 +283,7 @@ export class AdvancedSearchAutocompleteService<T> {
         return of(comparatorSuggestions.map((property, index) => ({
           label: this.comparatorHints?.[property] || property,
           value: property.toUpperCase(),
-          boost: comparatorSuggestions.length - 1 - index,
+          boost: comparatorSuggestions.length - index,
         })));
       default:
         return of([]);
