@@ -1,10 +1,9 @@
-import { Inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import * as Sentry from '@sentry/angular';
 import { UUID } from 'angular2-uuid';
 import { environment } from 'environments/environment';
 import { BehaviorSubject, combineLatest, filter } from 'rxjs';
-import { WINDOW } from 'app/helpers/window.helper';
 import { AppState } from 'app/store';
 import { waitForSystemInfo, selectSystemHostId } from 'app/store/system-info/system-info.selectors';
 
@@ -16,11 +15,10 @@ export class SentryService {
 
   constructor(
     private store$: Store<AppState>,
-    @Inject(WINDOW) private window: Window,
   ) {}
 
   init(): void {
-    if (this.window.location.href.includes('localhost') && !environment.production) {
+    if (!environment.production) {
       return;
     }
 
