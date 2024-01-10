@@ -18,7 +18,7 @@ import { mntPath } from 'app/enums/mnt-path.enum';
 import { SnapshotNamingOption } from 'app/enums/snapshot-naming-option.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import helptext from 'app/helptext/data-protection/replication/replication-wizard';
-import { CountManualSnapshotsParams } from 'app/interfaces/count-manual-snapshots.interface';
+import { CountManualSnapshotsParams, EligibleManualSnapshotsCount } from 'app/interfaces/count-manual-snapshots.interface';
 import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
@@ -50,9 +50,9 @@ import { WebSocketService } from 'app/services/ws.service';
 export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider {
   @Output() customRetentionVisibleChange = new EventEmitter<boolean>();
 
-  readonly datasetNodeProvider = this.datasetService.getDatasetNodeProvider();
-  remoteSourceNodeProvider: TreeNodeProvider;
-  remoteTargetNodeProvider: TreeNodeProvider;
+  sourceNodeProvider: TreeNodeProvider;
+  targetNodeProvider: TreeNodeProvider;
+
   readonly helptext = helptext;
   readonly mntPath = mntPath;
   readonly defaultNamingSchema = 'auto-%Y-%m-%d_%H-%M';
@@ -155,6 +155,8 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     this.loadSshConnections();
     this.loadSshConnectionOptions();
     this.listenForNewSshConnection();
+    this.updateExplorersOnChanges();
+    this.updateExplorers();
 
     this.form.controls.source_datasets_from.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
       this.disableTransportAndSudo(value, this.form.value.target_dataset_from);
@@ -349,7 +351,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
       if (value === SshCredentialsNewOption.New) {
         this.createSshConnection(true);
       } else if (value) {
-        this.remoteSourceNodeProvider = this.replicationService.getTreeNodeProvider(
+        this.sourceNodeProvider = this.replicationService.getTreeNodeProvider(
           { sshCredential: value, transport: this.form.value.transport || TransportMode.Ssh },
         );
       }
@@ -359,7 +361,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
       if (value === SshCredentialsNewOption.New) {
         this.createSshConnection(false);
       } else if (value) {
-        this.remoteTargetNodeProvider = this.replicationService.getTreeNodeProvider(
+        this.targetNodeProvider = this.replicationService.getTreeNodeProvider(
           { sshCredential: value, transport: this.form.value.transport || TransportMode.Ssh },
         );
       }
@@ -568,7 +570,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
 
     if (payload.datasets.length > 0 && (payload.naming_schema || payload.name_regex)) {
       this.ws.call('replication.count_eligible_manual_snapshots', [payload]).pipe(untilDestroyed(this)).subscribe({
-        next: (snapshotCount) => {
+        next: (snapshotCount: EligibleManualSnapshotsCount) => {
           let snapexpl = '';
           this.isSnapshotsWarning = false;
           if (snapshotCount.eligible === 0) {
@@ -598,5 +600,36 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
       && (this.form.value.custom_snapshots || this.form.value.source_datasets_from === DatasetSource.Remote);
 
     this.customRetentionVisibleChange.emit(!hideCustomRetention);
+  }
+
+  private updateExplorersOnChanges(): void {
+    merge(
+      this.form.controls.transport.valueChanges,
+      this.form.controls.ssh_credentials_source.valueChanges,
+      this.form.controls.ssh_credentials_target.valueChanges,
+    )
+      .pipe(
+        // Workaround for https://github.com/angular/angular/issues/13129
+        debounceTime(0),
+        untilDestroyed(this),
+      )
+      .subscribe(() => this.updateExplorers());
+  }
+
+  private updateExplorers(): void {
+    const formValues = this.getPayload();
+    const localProvider = this.datasetService.getDatasetNodeProvider();
+    let remoteProvider: TreeNodeProvider = null;
+
+    if (formValues.ssh_credentials_source || formValues.ssh_credentials_target) {
+      remoteProvider = this.replicationService.getTreeNodeProvider({
+        transport: formValues.transport,
+        sshCredential: (formValues.ssh_credentials_source || formValues.ssh_credentials_target) as number,
+      });
+    }
+
+    this.sourceNodeProvider = !this.isRemoteSource ? localProvider : remoteProvider;
+    this.targetNodeProvider = this.isRemoteTarget ? remoteProvider : localProvider;
+    this.cdr.markForCheck();
   }
 }
