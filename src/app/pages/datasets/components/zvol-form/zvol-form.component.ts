@@ -454,40 +454,26 @@ export class ZvolFormComponent implements OnInit {
 
     this.form.controls.encryption.valueChanges
       .pipe(untilDestroyed(this)).subscribe((encryption: boolean) => {
-      // if on an encrypted parent we should warn the user, otherwise just disable the fields
-        if (this.encryptedParent && !encryption && !this.nonEncryptedWarned) {
-          this.dialogService.confirm({
-            title: helptextZvol.dataset_form_encryption.non_encrypted_warning_title,
-            message: helptextZvol.dataset_form_encryption.non_encrypted_warning_warning,
-          }).pipe(untilDestroyed(this)).subscribe((isConfirm) => {
-            this.nonEncryptedWarned = true;
-            if (isConfirm) {
-              this.setEncryptionFieldsDisabled(true);
-              this.setPassphraseFieldsDisabled(true);
-              this.setKeyFieldsDisabled(true);
-            } else {
-              this.form.controls.encryption.setValue(true);
-            }
-          });
-        } else if (!this.form.controls.inherit_encryption.value) {
-          if (this.encryptionType === 'key') {
-            this.setEncryptionFieldsDisabled(!encryption);
-          } else if (encryption) {
-            this.form.controls.encryption_type.enable();
-            this.form.controls.algorithm.enable();
-          } else {
-            this.form.controls.encryption_type.disable();
-            this.form.controls.algorithm.disable();
-          }
-          if (this.encryptionType === 'key' && !this.generateKey) {
-            this.setKeyFieldsDisabled(!encryption);
-          }
-          if (this.encryptionType === 'passphrase') {
-            this.setPassphraseFieldsDisabled(!encryption);
-          }
-          if (this.passphraseParent) { // keep this field hidden if parent has a passphrase
-            this.form.controls.encryption_type.disable();
-          }
+        if (this.form.controls.inherit_encryption.value) {
+          return;
+        }
+        if (this.encryptionType === 'key') {
+          this.setEncryptionFieldsDisabled(!encryption);
+        } else if (encryption) {
+          this.form.controls.encryption_type.enable();
+          this.form.controls.algorithm.enable();
+        } else {
+          this.form.controls.encryption_type.disable();
+          this.form.controls.algorithm.disable();
+        }
+        if (this.encryptionType === 'key' && !this.generateKey) {
+          this.setKeyFieldsDisabled(!encryption);
+        }
+        if (this.encryptionType === 'passphrase') {
+          this.setPassphraseFieldsDisabled(!encryption);
+        }
+        if (this.passphraseParent) { // keep this field hidden if parent has a passphrase
+          this.form.controls.encryption_type.disable();
         }
       });
     this.form.controls.encryption_type.valueChanges
