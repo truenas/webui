@@ -335,44 +335,11 @@ export class CloudsyncWhatAndWhenComponent implements OnInit, OnChanges {
     });
 
     this.form.controls.path_source.valueChanges.pipe(untilDestroyed(this)).subscribe((values: string | string[]) => {
-      if (!values) {
-        return;
-      }
-      const paths = Array.isArray(values) ? values : [values];
-      if (!paths.length) {
-        return;
-      }
+      this.handleFolderChange(this.form.controls.path_source, values);
+    });
 
-      const parentDirectories = paths.map((value: string) => {
-        const split = value.split('/');
-        const sliced = split.slice(0, split.length - 1);
-        return sliced.join('/');
-      });
-
-      const allMatch = parentDirectories.every((directory: string) => directory === parentDirectories[0]);
-
-      this.updateDescriptionPath(paths.join('/'));
-
-      const pathSourceControl = this.form.controls.path_source;
-      let prevErrors = pathSourceControl.errors;
-      if (prevErrors === null) {
-        prevErrors = {};
-      }
-      if (!allMatch) {
-        pathSourceControl.setErrors({
-          ...prevErrors,
-          misMatchDirectories: {
-            message: this.translate.instant('All selected directories must be at the same level i.e., must have the same parent directory.'),
-          },
-        });
-      } else {
-        delete prevErrors.misMatchDirectories;
-        if (Object.keys(prevErrors).length) {
-          pathSourceControl.setErrors({ ...prevErrors });
-        } else {
-          pathSourceControl.setErrors(null);
-        }
-      }
+    this.form.controls.folder_source.valueChanges.pipe(untilDestroyed(this)).subscribe((values: string | string[]) => {
+      this.handleFolderChange(this.form.controls.folder_source, values);
     });
 
     this.form.controls.credentials.valueChanges.pipe(untilDestroyed(this)).subscribe((credential) => {
@@ -593,5 +560,46 @@ export class CloudsyncWhatAndWhenComponent implements OnInit, OnChanges {
 
   private setBucketNodeProvider(): void {
     this.bucketNodeProvider = this.getBucketsNodeProvider();
+  }
+
+  private handleFolderChange(formControl: FormControl, values: string | string[]): void {
+    if (!values) {
+      return;
+    }
+
+    const sources = Array.isArray(values) ? values : [values];
+
+    if (!sources.length) {
+      return;
+    }
+
+    const parentDirectories = sources.map((value: string) => {
+      const split = value.split('/');
+      const sliced = split.slice(0, split.length - 1);
+      return sliced.join('/');
+    }).filter((value) => value.length);
+
+    const allMatch = parentDirectories.every((directory: string) => directory === parentDirectories[0]);
+
+    let prevErrors = formControl.errors;
+    if (prevErrors === null) {
+      prevErrors = {};
+    }
+
+    if (!allMatch) {
+      formControl.setErrors({
+        ...prevErrors,
+        misMatchDirectories: {
+          message: this.translate.instant('All selected directories must be at the same level i.e., must have the same parent directory.'),
+        },
+      });
+    } else {
+      delete prevErrors.misMatchDirectories;
+      if (Object.keys(prevErrors).length) {
+        formControl.setErrors({ ...prevErrors });
+      } else {
+        formControl.setErrors(null);
+      }
+    }
   }
 }

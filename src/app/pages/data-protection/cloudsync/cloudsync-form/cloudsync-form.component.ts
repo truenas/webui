@@ -322,78 +322,11 @@ export class CloudsyncFormComponent implements OnInit {
     });
 
     this.form.controls.path_source.valueChanges.pipe(untilDestroyed(this)).subscribe((values: string | string[]) => {
-      if (!values) {
-        return;
-      }
-      const paths = Array.isArray(values) ? values : [values];
-      if (!paths.length) {
-        return;
-      }
-
-      const parentDirectories = paths.map((value: string) => {
-        const split = value.split('/');
-        const sliced = split.slice(0, split.length - 1);
-        return sliced.join('/');
-      });
-      const allMatch = parentDirectories.every((directory: string) => directory === parentDirectories[0]);
-
-      const pathSourceControl = this.form.controls.path_source;
-      let prevErrors = pathSourceControl.errors;
-      if (prevErrors === null) {
-        prevErrors = {};
-      }
-      if (!allMatch) {
-        pathSourceControl.setErrors({
-          ...prevErrors,
-          misMatchDirectories: {
-            message: this.translate.instant('All selected directories must be at the same level i.e., must have the same parent directory.'),
-          },
-        });
-      } else {
-        delete prevErrors.misMatchDirectories;
-        if (Object.keys(prevErrors).length) {
-          pathSourceControl.setErrors({ ...prevErrors });
-        } else {
-          pathSourceControl.setErrors(null);
-        }
-      }
+      this.handleFolderChange(this.form.controls.path_source, values);
     });
 
     this.form.controls.folder_source.valueChanges.pipe(untilDestroyed(this)).subscribe((values: string | string[]) => {
-      if (!values) {
-        return;
-      }
-      const sources = Array.isArray(values) ? values : [values];
-      if (!sources.length) {
-        return;
-      }
-      const parentDirectories = sources.map((value: string) => {
-        const split = value.split('/');
-        const sliced = split.slice(0, split.length - 1);
-        return sliced.join('/');
-      });
-      const allMatch = parentDirectories.every((directory: string) => directory === parentDirectories[0]);
-
-      const folderSourceControl = this.form.controls.folder_source;
-      let prevErrors = folderSourceControl.errors;
-      if (prevErrors === null) {
-        prevErrors = {};
-      }
-      if (!allMatch) {
-        folderSourceControl.setErrors({
-          ...prevErrors,
-          misMatchDirectories: {
-            message: this.translate.instant('All selected directories must be at the same level i.e., must have the same parent directory.'),
-          },
-        });
-      } else {
-        delete prevErrors.misMatchDirectories;
-        if (Object.keys(prevErrors).length) {
-          folderSourceControl.setErrors({ ...prevErrors });
-        } else {
-          folderSourceControl.setErrors(null);
-        }
-      }
+      this.handleFolderChange(this.form.controls.folder_source, values);
     });
 
     this.form.controls.transfers.valueChanges.pipe(untilDestroyed(this)).subscribe((value: number) => {
@@ -810,6 +743,47 @@ export class CloudsyncFormComponent implements OnInit {
   goToManageCredentials(): void {
     this.router.navigate(['/', 'credentials', 'backup-credentials']);
     this.chainedSlideInRef.close({ response: false, error: null });
+  }
+
+  private handleFolderChange(formControl: FormControl, values: string | string[]): void {
+    if (!values) {
+      return;
+    }
+
+    const sources = Array.isArray(values) ? values : [values];
+
+    if (!sources.length) {
+      return;
+    }
+
+    const parentDirectories = sources.map((value: string) => {
+      const split = value.split('/');
+      const sliced = split.slice(0, split.length - 1);
+      return sliced.join('/');
+    }).filter((value) => value.length);
+
+    const allMatch = parentDirectories.every((directory: string) => directory === parentDirectories[0]);
+
+    let prevErrors = formControl.errors;
+    if (prevErrors === null) {
+      prevErrors = {};
+    }
+
+    if (!allMatch) {
+      formControl.setErrors({
+        ...prevErrors,
+        misMatchDirectories: {
+          message: this.translate.instant('All selected directories must be at the same level i.e., must have the same parent directory.'),
+        },
+      });
+    } else {
+      delete prevErrors.misMatchDirectories;
+      if (Object.keys(prevErrors).length) {
+        formControl.setErrors({ ...prevErrors });
+      } else {
+        formControl.setErrors(null);
+      }
+    }
   }
 
   private enableRemoteExplorer(): void {
