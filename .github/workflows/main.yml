@@ -125,5 +125,5 @@ jobs:
           git config --global user.name 'Alex Karpov'
           git config --global user.email 'akarpov@ixsystems.com'
           git add src/assets/i18n
-          git commit -m "Resort translation strings"
+          git commit -m "NAS-xxxxxx: Resort translation strings"
           git push
