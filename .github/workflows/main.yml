@@ -21,32 +21,11 @@ jobs:
       - name: Install
         uses: ./.github/actions/prepare
 
-  resort-strings:
-    name: Resort Strings and Commit
-    needs: [install]
-    runs-on: ubuntu-latest
-    if: "contains(join(github.event.pull_request.head_commit.modified, '\n'), 'src/assets/i18n/') || contains(join(github.event.pull_request.head_commit.added, '\n'), 'src/assets/i18n/')"
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ github.head_ref }}
-      - name: Extract Messages
-        run: yarn extract
-      - name: Validate Translations
-        run: yarn validate-translations
-      - name: Commit and Push Changes
-        run: |
-          git config --global user.name 'Alex Karpov'
-          git config --global user.email 'akarpov@ixsystems.com'
-          git add src/assets/i18n
-          git commit -m "Resort translation strings"
-          git push
-
   build:
     name: Build
     needs: [install]
     runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'push' || (github.event_name == 'pull_request' && !contains(join(github.event.pull_request.head_commit.modified, '\n'), 'src/assets/i18n/') && !contains(join(github.event.pull_request.head_commit.added, '\n'), 'src/assets/i18n/')) }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -59,7 +38,7 @@ jobs:
     name: Validate code style
     needs: [install]
     runs-on: ubuntu-latest
-    if: "!contains(github.event.head_commit.modified, 'src/assets/i18n/') && !contains(github.event.head_commit.added, 'src/assets/i18n/')"
+    if: ${{ github.event_name == 'push' || (github.event_name == 'pull_request' && !contains(join(github.event.pull_request.head_commit.modified, '\n'), 'src/assets/i18n/') && !contains(join(github.event.pull_request.head_commit.added, '\n'), 'src/assets/i18n/')) }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -86,7 +65,7 @@ jobs:
     name: Run tests
     needs: [install]
     runs-on: ubuntu-latest
-    if: "!contains(github.event.head_commit.modified, 'src/assets/i18n/') && !contains(github.event.head_commit.added, 'src/assets/i18n/')"
+    if: ${{ github.event_name == 'push' || (github.event_name == 'pull_request' && !contains(join(github.event.pull_request.head_commit.modified, '\n'), 'src/assets/i18n/') && !contains(join(github.event.pull_request.head_commit.added, '\n'), 'src/assets/i18n/')) }}
     env:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
     steps:
@@ -104,3 +83,24 @@ jobs:
           token: ${{ env.CODECOV_TOKEN }}
           fail_ci_if_error: true
 
+  resort-strings:
+    name: Resort Strings and Commit
+    needs: [install]
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'push' && contains(join(github.event.commits.*.added, '\n'), 'src/assets/i18n/') || contains(join(github.event.commits.*.modified, '\n'), 'src/assets/i18n/') || github.event_name == 'pull_request' && github.event.pull_request.head.ref != null }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}
+      - name: Extract Messages
+        run: yarn extract
+      - name: Validate Translations
+        run: yarn validate-translations
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.name 'Alex Karpov'
+          git config --global user.email 'akarpov@ixsystems.com'
+          git add src/assets/i18n
+          git commit -m "Resort translation strings"
+          git push
