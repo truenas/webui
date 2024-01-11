@@ -51,8 +51,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Install
-        uses: ./.github/actions/prepare
       - name: Build
         run: yarn build:prod:aot
 
@@ -64,8 +62,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Install
-        uses: ./.github/actions/prepare
       - name: Generate default environment file
         run: yarn run check-env
       - name: Build
@@ -79,8 +75,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Install
-        uses: ./.github/actions/prepare
       - name: Build
         run: yarn run extract
 
@@ -94,8 +88,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Install
-        uses: ./.github/actions/prepare
       - name: Run tests
         run: yarn test:pr
       - if: ${{ env.CODECOV_TOKEN }}
@@ -114,12 +106,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Install
-        uses: ./.github/actions/prepare
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0 # fetch all history for all branches and tags
       - name: Commit and Push Changes
         run: |
-          git config --global user.name 'Alex Karpov'
-          git config --global user.email 'akarpov@ixsystems.com'
+          # Fetch the full history and checkout the PR's head branch
+          git fetch --no-tags --prune --depth=1 origin +refs/heads/*:refs/remotes/origin/*
           git checkout ${{ github.head_ref }}
           # Ensure the branch is up to date
           git pull origin ${{ github.head_ref }} --no-edit
