@@ -26,12 +26,9 @@ import { IxButtonGroupHarness } from 'app/modules/ix-forms/components/ix-button-
 import { IxCheckboxHarness } from 'app/modules/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxFileInputHarness } from 'app/modules/ix-forms/components/ix-file-input/ix-file-input.harness';
 import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
-import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxStarRatingHarness } from 'app/modules/ix-forms/components/ix-star-rating/ix-star-rating.harness';
 import { IxTextareaHarness } from 'app/modules/ix-forms/components/ix-textarea/ix-textarea.harness';
-import { JiraOauthComponent } from 'app/modules/ix-forms/components/jira-oauth/jira-oauth.component';
-import { JiraOauthHarness } from 'app/modules/ix-forms/components/jira-oauth/jira-oauth.harness';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { OauthButtonComponent } from 'app/modules/oauth-button/components/oauth-button/oauth-button.component';
@@ -68,7 +65,6 @@ describe('FeedbackDialogComponent', () => {
     ],
     declarations: [
       OauthButtonComponent,
-      JiraOauthComponent,
       FileTicketFormComponent,
       FileTicketLicensedFormComponent,
     ],
@@ -83,10 +79,6 @@ describe('FeedbackDialogComponent', () => {
           },
           state: JobState.Running,
         }] as Job[]),
-        mockCall('support.fetch_categories', {
-          API: '11008',
-          WebUI: '10004',
-        }),
         mockJob('support.new_ticket', fakeSuccessfulJob(mockNewTicketResponse as NewTicketResponse)),
         mockJob('support.attach_ticket', fakeSuccessfulJob()),
         mockCall('system.build_time', { $date: 1694835361000 }),
@@ -113,6 +105,8 @@ describe('FeedbackDialogComponent', () => {
         })),
         takeScreenshot: jest.fn(() => of(new File(['(⌐□_□)'], 'screenshot.png', { type: 'image/png' }))),
         getHostId: jest.fn(() => of('unique-system-host-id-1234')),
+        getOauthToken: jest.fn(() => mockToken),
+        setOauthToken: jest.fn(),
         isReviewAllowed$: isFeedbackAllowed$,
       }),
       provideMockStore({
@@ -141,8 +135,6 @@ describe('FeedbackDialogComponent', () => {
       }),
       mockProvider(SystemGeneralService, {
         isEnterprise: jest.fn(() => isEnterprise$.value),
-        getTokenForJira: jest.fn(() => mockToken),
-        setTokenForJira: jest.fn(),
         getProductType$: of(ProductType.Scale),
       }),
       mockProvider(SentryService, {
@@ -256,19 +248,12 @@ describe('FeedbackDialogComponent', () => {
       const messageField = await loader.getHarness(IxTextareaHarness.with({ label: 'Message' }));
       await messageField.setValue('Testing ticket body');
 
-      const tokenField = await loader.getHarness(JiraOauthHarness);
-      await tokenField.setValue(mockToken);
-
-      const categoryField = await loader.getHarness(IxSelectHarness.with({ label: 'Category' }));
-      await categoryField.setValue('WebUI');
-
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Submit' }));
       await saveButton.click();
 
       expect(ws.job).toHaveBeenCalledWith('support.new_ticket', [{
         attach_debug: false,
         body: 'Testing ticket body',
-        category: '10004',
         title: 'Test subject',
         token: mockToken,
         type: 'BUG',
@@ -290,7 +275,6 @@ describe('FeedbackDialogComponent', () => {
         Email: 'fake@admin.com',
         CC: ['fake@test.com'],
         Phone: '12345678',
-        Type: 'Bug',
         Environment: 'Production',
         Criticality: 'Inquiry',
         Subject: 'Test subject',

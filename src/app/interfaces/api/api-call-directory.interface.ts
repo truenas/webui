@@ -262,7 +262,6 @@ import {
   ZfsSnapshot,
 } from 'app/interfaces/zfs-snapshot.interface';
 import {
-  FetchSupportParams,
   SupportConfig, SupportConfigUpdate,
 } from 'app/modules/ix-feedback/interfaces/file-ticket.interface';
 
@@ -751,7 +750,6 @@ export interface ApiCallDirectory {
 
   // Support
   'support.config': { params: void; response: SupportConfig };
-  'support.fetch_categories': { params: FetchSupportParams; response: Choices };
   'support.is_available': { params: void; response: boolean };
   'support.is_available_and_enabled': { params: void; response: boolean };
   'support.update': { params: [SupportConfigUpdate]; response: SupportConfig };

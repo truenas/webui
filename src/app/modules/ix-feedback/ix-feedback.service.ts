@@ -20,6 +20,7 @@ import { ReviewAddedResponse } from './interfaces/feedback.interface';
 })
 export class IxFeedbackService {
   isReviewAllowed$ = new BehaviorSubject<boolean>(false);
+  private oauthToken$ = new BehaviorSubject<string>(null);
   private readonly hostname = 'https://feedback.ui.truenas.com';
 
   constructor(
@@ -74,6 +75,14 @@ export class IxFeedbackService {
         observer.error(error);
       });
     });
+  }
+
+  getOauthToken(): string {
+    return this.oauthToken$.getValue();
+  }
+
+  setOauthToken(token: string): void {
+    this.oauthToken$.next(token);
   }
 
   checkIfReviewAllowed(): Observable<boolean> {

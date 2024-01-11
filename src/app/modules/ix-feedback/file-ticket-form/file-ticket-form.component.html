@@ -1,18 +1,3 @@
-<ix-jira-oauth
-  [formControl]="token"
-  [label]="'Token' | translate"
-  [tooltip]="tooltips.token | translate"
-  [required]="true"
-></ix-jira-oauth>
-
-<ix-select
-  [formControl]="category"
-  [label]="'Category' | translate"
-  [options]="categoryOptions$"
-  [tooltip]="tooltips.category | translate"
-  [required]="true"
-></ix-select>
-
 <ix-input
   [formControl]="title"
   [label]="'Subject' | translate"
