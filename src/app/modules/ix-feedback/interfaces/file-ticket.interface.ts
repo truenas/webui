@@ -2,19 +2,22 @@ import {
   TicketCategory, TicketCriticality, TicketEnvironment, TicketType,
 } from 'app/enums/file-ticket.enum';
 
-export interface CreateNewTicket {
-  attach_debug: boolean;
-  body: string;
-  category?: string | TicketCategory;
-  title: string;
-  type?: TicketType;
-  token?: string;
+interface EnterpriseFields {
   name?: string;
   email?: string;
   cc?: string[];
   phone?: string;
   environment?: TicketEnvironment;
   criticality?: TicketCriticality;
+  category?: TicketCategory;
+}
+
+export interface CreateNewTicket extends EnterpriseFields {
+  attach_debug: boolean;
+  body: string;
+  title: string;
+  type?: TicketType;
+  token?: string;
 }
 
 export interface SupportConfig {
@@ -53,3 +56,18 @@ export type AttachTicketParams = [
   filename: string,
   ticket: number,
 ];
+
+export type SimilarIssuesParams = [
+  token: string,
+  query: string,
+];
+
+export interface SimilarIssue {
+  id: number;
+  url: string;
+  img: string;
+  key: string;
+  keyHtml: string;
+  summary: string;
+  summaryText: string;
+}

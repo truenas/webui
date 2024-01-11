@@ -4,4 +4,32 @@
   [tooltip]="tooltips.title | translate"
   [placeholder]="tooltips.title | translate"
   [required]="true"
+  [hint]="hint$ | async"
 ></ix-input>
+
+<div *ngIf="hasSimilarIssues$ | async as issues" class="similar-issues">
+  <div *ngIf="issues.length" class="similar-issues-header">
+    <div class="similar-issues-title">
+      {{ 'The following issues were already reported.' | translate }}
+    </div>
+    <div class="similar-issues-subtitle">
+      {{ 'Do any of them look similar?' | translate }}
+    </div>
+  </div>
+  <div *ngIf="issues.length" class="similar-issues-body">
+    <a
+      *ngFor="let issue of issues"
+      class="similar-issue"
+      target="_blank"
+      [href]="issue.url"
+      [ixTest]="['similar-issue', issue.id]"
+    >
+      <span
+        class="issue-type-icon"
+        [style.background-image]="'url(https://ixsystems.atlassian.net' + issue.img + ')'"
+      ></span>
+      <span [innerHTML]="sanitizeHtml(issue.summary)"></span>
+      <ix-icon name="mdi-open-in-new"></ix-icon>
+    </a>
+  </div>
+</div>
