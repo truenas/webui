@@ -104,15 +104,15 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ needs.check-if-only-translation-changed.outputs.only_translations == 'true' }}
     steps:
-      - name: Extract Messages
-        run: yarn run extract
-      - name: Validate Translations
-        run: yarn run validate-translations
       - name: Checkout
         uses: actions/checkout@v3
         with:
           ref: ${{ github.event.pull_request.head.ref }}
           fetch-depth: 0
+      - name: Extract Messages
+        run: yarn run extract
+      - name: Validate Translations
+        run: yarn run validate-translations
       - name: Commit and Push Changes
         run: |
           git config --global user.name 'Alex Karpov'
