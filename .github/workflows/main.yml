@@ -119,5 +119,9 @@ jobs:
           git config --global user.email 'akarpov@ixsystems.com'
           git pull origin ${{ github.head_ref }} --no-edit
           git add src/assets/i18n
-          git commit -m "NAS-XXXXXX: Resort translation strings" || echo "No changes to commit."
-          git push origin ${{ github.head_ref }}
+          if ! git diff --quiet --cached; then
+            git commit -m "NAS-XXXXXX: Resort translation strings"
+            git push origin ${{ github.head_ref }}
+          else
+            echo "No changes to commit."
+          fi
