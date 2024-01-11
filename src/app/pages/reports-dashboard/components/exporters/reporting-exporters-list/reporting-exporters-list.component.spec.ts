@@ -5,6 +5,7 @@ import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ReportingExporter, ReportingExporterKey } from 'app/interfaces/reporting-exporters.interface';
+import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
@@ -37,6 +38,7 @@ describe('ReportingExportersListComponent', () => {
     component: ReportingExporterListComponent,
     imports: [
       IxTable2Module,
+      AppCommonModule,
     ],
     providers: [
       mockWebsocket([
