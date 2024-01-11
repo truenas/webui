@@ -29,7 +29,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-
       - name: Check if only translation files were changed
         id: only_translations
         run: |
@@ -51,6 +50,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Install
+        uses: ./.github/actions/prepare
       - name: Build
         run: yarn build:prod:aot
 
@@ -62,6 +63,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Install
+        uses: ./.github/actions/prepare
       - name: Generate default environment file
         run: yarn run check-env
       - name: Build
@@ -75,6 +78,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Install
+        uses: ./.github/actions/prepare
       - name: Build
         run: yarn run extract
 
@@ -88,6 +93,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Install
+        uses: ./.github/actions/prepare
       - name: Run tests
         run: yarn test:pr
       - if: ${{ env.CODECOV_TOKEN }}
@@ -109,6 +116,8 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.ref }}
           fetch-depth: 0
+      - name: Install
+        uses: ./.github/actions/prepare
       - name: Extract Messages
         run: yarn run extract
       - name: Validate Translations
