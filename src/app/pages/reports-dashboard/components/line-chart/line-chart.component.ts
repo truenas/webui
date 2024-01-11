@@ -10,6 +10,7 @@ import {
   GiB, KiB, MiB, TiB,
 } from 'app/constants/bytes.constant';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
+import { ReportingGraphName } from 'app/enums/reporting.enum';
 import { ReportingData } from 'app/interfaces/reporting.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { Theme } from 'app/interfaces/theme.interface';
@@ -79,7 +80,12 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
     const labels = data.shift();
     const fg2 = this.themeService.currentTheme().fg2;
     const fg2Type = this.utils.getValueType(fg2);
-    const fg2Rgb = fg2Type === 'hex' ? this.utils.hexToRgb(this.themeService.currentTheme().fg2).rgb : this.utils.rgbToArray(fg2);
+    let fg2Rgb;
+    if (fg2Type === 'hex') {
+      fg2Rgb = this.utils.hexToRgb(this.themeService.currentTheme().fg2).rgb;
+    } else {
+      fg2Rgb = this.utils.rgbToArray(fg2);
+    }
     const gridLineColor = `rgba(${fg2Rgb[0]}, ${fg2Rgb[1]}, ${fg2Rgb[2]}, 0.25)`;
 
     const options: dygraphs.Options = {
@@ -98,78 +104,13 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
       axes: {
         y: {
           yRangePad: 24,
-          axisLabelFormatter: (numero: number) => {
-            const converted = this.formatLabelValue(numero, this.inferUnits(this.labelY), 1, true, true);
-            const suffix = converted.suffix ? converted.suffix : '';
-            return `${this.limitDecimals(converted.value)} ${suffix}`;
-          },
+          axisLabelFormatter: this.axisLabelFormatter.bind(this),
         },
       },
-      legendFormatter: (legend: dygraphs.LegendData) => {
-        const getSuffix = (converted: Conversion): string => {
-          if (converted.shortName !== undefined) {
-            return converted.shortName;
-          }
-
-          return converted.suffix !== undefined ? converted.suffix : '';
-        };
-
-        const clone = { ...legend } as LegendDataWithStackedTotalHtml;
-        clone.series.forEach((item: dygraphs.SeriesLegendData, index: number) => {
-          if (!item.y) { return; }
-          const converted = this.formatLabelValue(item.y, this.inferUnits(this.labelY), 1, true);
-          const suffix = getSuffix(converted);
-          clone.series[index].yHTML = `${this.limitDecimals(converted.value)} ${suffix}`;
-          if (!clone.stackedTotal) {
-            clone.stackedTotal = 0;
-          }
-          clone.stackedTotal += item.y;
-        });
-        if (clone.stackedTotal >= 0) {
-          const converted = this.formatLabelValue(clone.stackedTotal, this.inferUnits(this.labelY), 1, true);
-          const suffix = getSuffix(converted);
-          clone.stackedTotalHTML = `${this.limitDecimals(converted.value)} ${suffix}`;
-        }
-        this.reportsService.emitLegendEvent(clone);
-        return '';
-      },
-      series: () => {
-        const series: Record<string, { plotter: typeof smoothPlotter }> = {};
-        this.data.legend.forEach((item) => {
-          series[item] = { plotter: smoothPlotter };
-        });
-
-        return series;
-      },
-      drawCallback: (dygraph: Dygraph & { axes_: { maxyval: number }[] }) => {
-        if (dygraph.axes_.length) {
-          const numero = dygraph.axes_[0].maxyval;
-          const converted = this.formatLabelValue(numero, this.inferUnits(this.labelY));
-          if (converted.prefix) {
-            this.yLabelPrefix = converted.prefix;
-          } else {
-            this.yLabelPrefix = '';
-          }
-        } else {
-          console.warn('axes not found');
-        }
-      },
-      zoomCallback: (startDate: number, endDate: number) => {
-        const maxZoomLevel = 5 * 60 * 1000;
-        const zoomRange = endDate - startDate;
-
-        if (zoomRange < maxZoomLevel) {
-          this.chart.updateOptions({
-            dateWindow: [this.lastMinDate, this.lastMaxDate],
-            animatedZooms: false,
-          });
-          return;
-        }
-
-        this.lastMinDate = startDate;
-        this.lastMaxDate = endDate;
-        this.zoomChange.emit([startDate, endDate]);
-      },
+      legendFormatter: this.legendFormatter.bind(this),
+      series: this.series.bind(this),
+      drawCallback: this.drawCallback.bind(this),
+      zoomCallback: this.zoomCallback.bind(this),
       stackedGraph: this.stacked,
     } as unknown as dygraphs.Options;
 
@@ -320,6 +261,113 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
     }
     return Math.round(numero);
   }
+
+  axisLabelFormatter = (numero: number): string => {
+    if (this.report?.name === ReportingGraphName.NetworkInterface) {
+      let rate = numero;
+      let unitMultiplier = 1;
+      while (rate > 1000) {
+        unitMultiplier *= 1000;
+        rate = rate / unitMultiplier;
+      }
+      return `${this.limitDecimals(rate)}`;
+    }
+    const converted = this.formatLabelValue(numero, this.inferUnits(this.labelY), 1, true, true);
+    const suffix = converted.suffix ? converted.suffix : '';
+    return `${this.limitDecimals(converted.value)} ${suffix}`;
+  };
+
+  series = (): Record<string, { plotter: typeof smoothPlotter }> => {
+    const series: Record<string, { plotter: typeof smoothPlotter }> = {};
+    this.data.legend.forEach((item) => {
+      series[item] = { plotter: smoothPlotter };
+    });
+
+    return series;
+  };
+
+  legendFormatter = (legend: dygraphs.LegendData): string => {
+    const getSuffix = (converted: Conversion): string => {
+      if (converted.shortName !== undefined) {
+        return converted.shortName;
+      }
+
+      return converted.suffix !== undefined ? converted.suffix : '';
+    };
+
+    const clone = { ...legend } as LegendDataWithStackedTotalHtml;
+    clone.series.forEach((item: dygraphs.SeriesLegendData, index: number) => {
+      if (!item.y) { return; }
+      const converted = this.formatLabelValue(item.y, this.inferUnits(this.labelY), 1, true);
+      const suffix = getSuffix(converted);
+      clone.series[index].yHTML = `${this.limitDecimals(converted.value)} ${suffix}`;
+      if (!clone.stackedTotal) {
+        clone.stackedTotal = 0;
+      }
+      clone.stackedTotal += item.y;
+    });
+    if (clone.stackedTotal >= 0) {
+      const converted = this.formatLabelValue(clone.stackedTotal, this.inferUnits(this.labelY), 1, true);
+      const suffix = getSuffix(converted);
+      clone.stackedTotalHTML = `${this.limitDecimals(converted.value)} ${suffix}`;
+    }
+    this.reportsService.emitLegendEvent(clone);
+    return '';
+  };
+
+  drawCallback = (dygraph: Dygraph & { axes_: { maxyval: number }[] }): void => {
+    if (dygraph.axes_.length) {
+      const numero = dygraph.axes_[0].maxyval;
+      if (this.report?.name === ReportingGraphName.NetworkInterface) {
+        let unitMultiplier = 1;
+        let rate = numero;
+        while (rate > 1000) {
+          unitMultiplier *= 1000;
+          rate = rate / unitMultiplier;
+        }
+        switch (true) {
+          case unitMultiplier < 1000:
+            this.yLabelPrefix = 'Kilo';
+            break;
+          case unitMultiplier < 1000 * 1000:
+            this.yLabelPrefix = 'Mega';
+            break;
+          case unitMultiplier < 1000 * 1000 * 1000:
+            this.yLabelPrefix = 'Giga';
+            break;
+          case unitMultiplier < 1000 * 1000 * 1000 * 1000:
+            this.yLabelPrefix = 'Tera';
+            break;
+        }
+        return;
+      }
+      const converted = this.formatLabelValue(numero, this.inferUnits(this.labelY));
+      if (converted.prefix) {
+        this.yLabelPrefix = converted.prefix;
+      } else {
+        this.yLabelPrefix = '';
+      }
+    } else {
+      console.warn('axes not found');
+    }
+  };
+
+  zoomCallback = (startDate: number, endDate: number): void => {
+    const maxZoomLevel = 5 * 60 * 1000;
+    const zoomRange = endDate - startDate;
+
+    if (zoomRange < maxZoomLevel) {
+      this.chart.updateOptions({
+        dateWindow: [this.lastMinDate, this.lastMaxDate],
+        animatedZooms: false,
+      });
+      return;
+    }
+
+    this.lastMinDate = startDate;
+    this.lastMaxDate = endDate;
+    this.zoomChange.emit([startDate, endDate]);
+  };
 
   getValueForAxis(value: number, prefix: string): number {
     if (prefix === 'Tebi') return value / 1000 ** 4;
