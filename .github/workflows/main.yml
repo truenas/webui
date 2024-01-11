@@ -104,6 +104,10 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ needs.check-if-only-translation-changed.outputs.only_translations == 'true' }}
     steps:
+      - name: Extract Messages
+        run: yarn run extract
+      - name: Validate Translations
+        run: yarn run validate-translations
       - name: Checkout
         uses: actions/checkout@v3
         with:
@@ -113,6 +117,7 @@ jobs:
         run: |
           git config --global user.name 'Alex Karpov'
           git config --global user.email 'akarpov@ixsystems.com'
+          git pull origin ${{ github.head_ref }} --no-edit
           git add src/assets/i18n
           git commit -m "NAS-XXXXXX: Resort translation strings" || echo "No changes to commit."
           git push origin ${{ github.head_ref }}
