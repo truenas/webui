@@ -21,6 +21,27 @@ jobs:
       - name: Install
         uses: ./.github/actions/prepare
 
+  check-only-translation-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      only_translations: ${{ steps.only_translations.outputs.result }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Check if only translation files have changed
+        id: only_translations
+        run: |
+          FILES_API_URL="https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.number }}/files"
+          FILES=$(curl -s -X GET -G $FILES_API_URL -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" | jq -r '.[] | .filename')
+          TRANSLATION_FILES_CHANGED=$(echo "$FILES" | grep -c "src/assets/i18n" || true)
+          TOTAL_FILES_CHANGED=$(echo "$FILES" | wc -l | xargs)
+          if [ "$TOTAL_FILES_CHANGED" == "$TRANSLATION_FILES_CHANGED" ]; then
+            echo "::set-output name=result::true"
+          else
+            echo "::set-output name=result::false"
+          fi
+
   build:
     name: Build
     needs: [install]
@@ -64,7 +85,7 @@ jobs:
     name: Run tests
     needs: [install]
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'push' || (github.event_name == 'pull_request' && !contains(join(github.event.pull_request.head_commit.modified, '\n'), 'src/assets/i18n/') && !contains(join(github.event.pull_request.head_commit.added, '\n'), 'src/assets/i18n/')) }}
+    if: ${{ needs.check-only-translation-changes.outputs.only_translations == 'false' }}
     env:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
     steps:
@@ -84,9 +105,9 @@ jobs:
 
   resort-strings:
     name: Resort Strings and Commit
-    needs: [install]
+    needs: [check-only-translation-changes, install]
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'push' && contains(join(github.event.commits.*.added, '\n'), 'src/assets/i18n/') || contains(join(github.event.commits.*.modified, '\n'), 'src/assets/i18n/') || github.event_name == 'pull_request' && github.event.pull_request.head.ref != null }}
+    if: ${{ needs.check-only-translation-changes.outputs.only_translations == 'true' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
