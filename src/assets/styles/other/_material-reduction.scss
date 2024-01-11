@@ -872,10 +872,6 @@ body .mat-calendar-next-button::after {
   }
 }
 
-mat-card {
-  overflow: auto !important;
-}
-
 ix-table2,
 table {
   overflow: auto;
@@ -889,12 +885,6 @@ table {
   ul li {
     white-space: pre-wrap;
     word-wrap: break-word;
-  }
-}
-
-mat-card {
-  mat-list-item {
-    padding: 0 !important;
   }
 }
 

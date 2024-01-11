@@ -16,7 +16,7 @@ import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
 import { RsyncTaskListComponent } from 'app/pages/data-protection/rsync-task/rsync-task-list/rsync-task-list.component';
 import { DialogService } from 'app/services/dialog.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
@@ -75,12 +75,10 @@ describe('RsyncTaskListComponent', () => {
       IxTable2Module,
     ],
     providers: [
-      mockAuth(),
-      mockProvider(IxSlideInService, {
-        open: jest.fn(() => {
-          return { slideInClosed$: of() };
-        }),
+      mockProvider(IxChainedSlideInService, {
+        pushComponent: jest.fn(() => of()),
       }),
+      mockAuth(),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
@@ -160,10 +158,11 @@ describe('RsyncTaskListComponent', () => {
     const editIcon = await table.getHarnessInRow(IxIconHarness.with({ name: 'edit' }), '/mnt/Pool1');
     await editIcon.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(RsyncTaskFormComponent, {
-      data: tasks[0],
-      wide: true,
-    });
+    expect(spectator.inject(IxChainedSlideInService).pushComponent).toHaveBeenCalledWith(
+      RsyncTaskFormComponent,
+      true,
+      tasks[0],
+    );
   });
 
   it('deletes a network interface with confirmation when Delete icon is pressed', async () => {

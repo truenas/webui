@@ -82,7 +82,6 @@ export class TargetFormComponent implements OnInit {
   readonly requiresRoles = [
     Role.SharingIscsiTargetWrite,
     Role.SharingIscsiWrite,
-    Role.SharingManager,
     Role.SharingWrite,
   ];
 

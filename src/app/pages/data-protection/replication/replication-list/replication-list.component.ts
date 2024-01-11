@@ -4,12 +4,11 @@ import { Component, ChangeDetectorRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Actions, ofType } from '@ngrx/effects';
+import { Actions } from '@ngrx/effects';
 import { TranslateService } from '@ngx-translate/core';
 import {
   filter, switchMap, tap,
 } from 'rxjs/operators';
-import { FromWizardToAdvancedSubmitted } from 'app/enums/from-wizard-to-advanced.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
@@ -31,13 +30,12 @@ import {
 import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 import { ReplicationService } from 'app/services/replication.service';
 import { StorageService } from 'app/services/storage.service';
 import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { fromWizardToAdvancedFormSubmitted } from 'app/store/admin-panel/admin.actions';
 
 @UntilDestroy()
 @Component({
@@ -60,7 +58,7 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
   queryCallOption: QueryParams<void> = [[], { extra: { check_dataset_encryption_keys: true } }];
   entityList: EntityTableComponent<ReplicationTaskUi>;
   filterValue = '';
-  requiresRoles = [Role.ReplicationManager, Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
+  requiresRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
 
   columns = [
     { name: this.translate.instant('Name'), prop: 'name', always_display: true },
@@ -94,7 +92,7 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
     private ws: WebSocketService,
     private dialogService: DialogService,
     protected loader: AppLoaderService,
-    private slideInService: IxSlideInService,
+    private chainedSlideInService: IxChainedSlideInService,
     private translate: TranslateService,
     private matDialog: MatDialog,
     private errorHandler: ErrorHandlerService,
@@ -109,7 +107,6 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
 
   afterInit(entityList: EntityTableComponent<ReplicationTaskUi>): void {
     this.entityList = entityList;
-    this.listenForWizardToAdvancedSwitching();
   }
 
   resourceTransformIncomingRestData(tasks: ReplicationTask[]): ReplicationTaskUi[] {
@@ -275,6 +272,15 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
     }
   }
 
+  doEdit(id: number): void {
+    const replication = this.entityList.rows.find((row) => row.id === id);
+    const closer$ = this.chainedSlideInService.pushComponent(ReplicationFormComponent, true, replication);
+    closer$.pipe(
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe(() => this.entityList.getData());
+  }
+
   onCheckboxChange(row: ReplicationTaskUi): void {
     this.ws.call('replication.update', [row.id, { enabled: row.enabled }]).pipe(untilDestroyed(this)).subscribe({
       next: (task) => {
@@ -291,20 +297,9 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
   }
 
   doAdd(): void {
-    const slideInRef = this.slideInService.open(ReplicationWizardComponent, { wide: true });
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.entityList.getData());
-  }
-
-  doEdit(id: number): void {
-    const replication = this.entityList.rows.find((row) => row.id === id);
-    const slideInRef = this.slideInService.open(ReplicationFormComponent, { wide: true, data: replication });
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.entityList.getData());
-  }
-
-  private listenForWizardToAdvancedSwitching(): void {
-    this.actions$.pipe(
-      ofType(fromWizardToAdvancedFormSubmitted),
-      filter(({ formType }) => formType === FromWizardToAdvancedSubmitted.ReplicationTask),
+    const closer$ = this.chainedSlideInService.pushComponent(ReplicationWizardComponent, true);
+    closer$.pipe(
+      filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(() => this.entityList.getData());
   }

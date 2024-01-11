@@ -7,14 +7,16 @@ import { MatStepperHarness, MatStepperNextHarness } from '@angular/material/step
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { CloudCredentialsSelectModule } from 'app/modules/custom-selects/cloud-credentials-select/cloud-credentials-select.module';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { CHAINED_SLIDE_IN_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { GooglePhotosProviderFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/google-photos-provider-form/google-photos-provider-form.component';
 import { StorjProviderFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/storj-provider-form/storj-provider-form.component';
+import { CloudsyncProviderDescriptionComponent } from 'app/pages/data-protection/cloudsync/cloudsync-provider-description/cloudsync-provider-description.component';
 import { googlePhotosCreds, googlePhotosProvider, storjProvider } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.testing.utils';
 import { CloudsyncProviderComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-provider/cloudsync-provider.component';
 import { CloudsyncWhatAndWhenComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-what-and-when/cloudsync-what-and-when.component';
@@ -29,6 +31,10 @@ describe('CloudsyncWizardComponent', () => {
   let loader: HarnessLoader;
   let form: IxFormHarness;
   let nextButton: MatStepperNextHarness;
+  const chainedComponentRef = {
+    close: jest.fn(),
+    swap: jest.fn(),
+  };
 
   const createComponent = createComponentFactory({
     component: CloudsyncWizardComponent,
@@ -37,6 +43,8 @@ describe('CloudsyncWizardComponent', () => {
       IxFormsModule,
       MatStepperModule,
       SchedulerModule,
+      CloudCredentialsSelectModule,
+      CloudsyncProviderDescriptionComponent,
     ],
     declarations: [
       CloudsyncProviderComponent,
@@ -46,6 +54,7 @@ describe('CloudsyncWizardComponent', () => {
       StorjProviderFormComponent,
     ],
     providers: [
+      { provide: CHAINED_SLIDE_IN_REF, useValue: chainedComponentRef },
       mockAuth(),
       mockWebsocket([
         mockCall('cloudsync.create'),
@@ -82,20 +91,6 @@ describe('CloudsyncWizardComponent', () => {
     await nextButton.click();
     await updateStepHarnesses();
   }
-
-  it('checks new credentials', async () => {
-    await form.fillForm({
-      Credentials: 'Create New',
-    });
-
-    expect(await form.getValues()).toEqual({
-      Credentials: 'Create New',
-      Name: 'Storj',
-      Provider: 'Storj iX',
-      'Access Key ID': '',
-      'Secret Access Key': '',
-    });
-  });
 
   it('creates objects when wizard is submitted', async () => {
     expect(await form.getValues()).toEqual({

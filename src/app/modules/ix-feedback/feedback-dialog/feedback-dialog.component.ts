@@ -30,6 +30,7 @@ import { IxFeedbackService } from 'app/modules/ix-feedback/ix-feedback.service';
 import { ixManualValidateError } from 'app/modules/ix-forms/components/ix-errors/ix-errors.component';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { rangeValidator } from 'app/modules/ix-forms/validators/range-validation/range-validation';
+import { OauthButtonType } from 'app/modules/oauth-button/interfaces/oauth-button.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -75,7 +76,9 @@ export class FeedbackDialogComponent implements OnInit {
   private isIxHardware = false;
   private attachments: File[] = [];
   protected feedbackTypeOptions$: Observable<Option[]> = of(mapToOptions(feedbackTypeOptionMap, this.translate));
+  protected oauthUrl = 'https://support-proxy.ixsystems.com/oauth/initiate?origin=';
   readonly acceptedFiles = ticketAcceptedFiles;
+  readonly oauthType = OauthButtonType;
 
   get isEnterprise(): boolean {
     return this.systemGeneralService.isEnterprise;
@@ -160,7 +163,12 @@ export class FeedbackDialogComponent implements OnInit {
   }
 
   onSubmit(): void {
+    if (!this.form.valid || this.isLoading) {
+      return;
+    }
+
     this.isLoading = true;
+    this.cdr.markForCheck();
     switch (this.form.controls.type.value) {
       case FeedbackType.Review:
         this.submitReview();
@@ -171,6 +179,10 @@ export class FeedbackDialogComponent implements OnInit {
         this.submitBugOrFeature();
         break;
     }
+  }
+
+  setToken(token: string): void {
+    this.form.patchValue({ token });
   }
 
   onUserGuidePressed(): void {
@@ -374,9 +386,6 @@ export class FeedbackDialogComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe((token) => {
       this.feedbackService.setOauthToken(token);
-      if (this.form.valid && !this.isLoading) {
-        this.onSubmit();
-      }
     });
   }
 
