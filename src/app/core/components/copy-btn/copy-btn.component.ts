@@ -29,8 +29,8 @@ export class CopyButtonComponent {
     const textArea = document.createElement('textarea');
     textArea.value = this.text;
     textArea.style.position = 'fixed';
-    textArea.style.left = '-9999px';
-    textArea.style.top = '-9999px';
+    textArea.style.left = '-99px';
+    textArea.style.top = '-99px';
     document.body.appendChild(textArea);
     textArea.focus();
     textArea.select();
