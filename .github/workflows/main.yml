@@ -21,15 +21,16 @@ jobs:
       - name: Install
         uses: ./.github/actions/prepare
 
-  check-only-translation-changes:
+  check-if-only-translation-changed:
     runs-on: ubuntu-latest
+    name: 'Check if only translation files were changed'
     outputs:
       only_translations: ${{ steps.only_translations.outputs.result }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Check if only translation files have changed
+      - name: Check if only translation files were changed
         id: only_translations
         run: |
           FILES_API_URL="https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.number }}/files"
@@ -44,8 +45,9 @@ jobs:
 
   build:
     name: Build
-    needs: [install]
+    needs: [check-if-only-translation-changed, install]
     runs-on: ubuntu-latest
+    if: ${{ needs.check-if-only-translation-changed.outputs.only_translations == 'false' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -56,9 +58,9 @@ jobs:
 
   lint:
     name: Validate code style
-    needs: [install]
+    needs: [check-if-only-translation-changed, install]
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'push' || (github.event_name == 'pull_request' && !contains(join(github.event.pull_request.head_commit.modified, '\n'), 'src/assets/i18n/') && !contains(join(github.event.pull_request.head_commit.added, '\n'), 'src/assets/i18n/')) }}
+    if: ${{ needs.check-if-only-translation-changed.outputs.only_translations == 'false' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -71,7 +73,8 @@ jobs:
 
   lint-translations:
     name: Validate translation strings
-    needs: [install]
+    needs: [check-if-only-translation-changed, install]
+    if: ${{ needs.check-if-only-translation-changed.outputs.only_translations == 'false' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -83,9 +86,9 @@ jobs:
 
   test:
     name: Run tests
-    needs: [install]
+    needs: [check-if-only-translation-changed, install]
     runs-on: ubuntu-latest
-    if: ${{ needs.check-only-translation-changes.outputs.only_translations == 'false' }}
+    if: ${{ needs.check-if-only-translation-changed.outputs.only_translations == 'false' }}
     env:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
     steps:
@@ -104,19 +107,19 @@ jobs:
           fail_ci_if_error: true
 
   resort-strings:
-    name: Resort Strings and Commit
-    needs: [check-only-translation-changes, install]
+    name: Resort Strings and Commit if only translations were added
+    needs: [check-if-only-translation-changed, install]
     runs-on: ubuntu-latest
-    if: ${{ needs.check-only-translation-changes.outputs.only_translations == 'true' }}
+    if: ${{ needs.check-if-only-translation-changed.outputs.only_translations == 'true' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-        with:
-          ref: ${{ github.head_ref }}
+      - name: Install
+        uses: ./.github/actions/prepare
       - name: Extract Messages
-        run: yarn extract
+        run: yarn run extract
       - name: Validate Translations
-        run: yarn validate-translations
+        run: yarn run validate-translations
       - name: Commit and Push Changes
         run: |
           git config --global user.name 'Alex Karpov'
