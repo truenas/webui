@@ -108,20 +108,14 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: ${{ github.event.pull_request.head.ref }}
-          fetch-depth: 0 # fetch all history for all branches and tags
+          fetch-depth: 0
       - name: Commit and Push Changes
         run: |
-          # Fetch the full history and checkout the PR's head branch
-          git fetch --no-tags --prune --depth=1 origin +refs/heads/*:refs/remotes/origin/*
           git checkout ${{ github.head_ref }}
           # Ensure the branch is up to date
           git pull origin ${{ github.head_ref }} --no-edit
           # Stage any changes
           git add src/assets/i18n
           # Only commit if there are changes
-          if ! git diff --quiet --cached; then
-            git commit -m "NAS-XXXXXX: Resort translation strings" || echo "No changes to commit."
-            git push origin ${{ github.head_ref }}
-          else
-            echo "No changes to commit."
-          fi
+          git commit -m "NAS-XXXXXX: Resort translation strings" || echo "No changes to commit."
+          git push origin ${{ github.head_ref }}
