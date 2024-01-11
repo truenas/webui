@@ -577,7 +577,7 @@ export class CloudsyncWhatAndWhenComponent implements OnInit, OnChanges {
       const split = value.split('/');
       const sliced = split.slice(0, split.length - 1);
       return sliced.join('/');
-    }).filter((value) => value.length);
+    });
 
     const allMatch = parentDirectories.every((directory: string) => directory === parentDirectories[0]);
 
