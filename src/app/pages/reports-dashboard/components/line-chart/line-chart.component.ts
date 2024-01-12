@@ -266,7 +266,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
     if (this.report?.name === ReportingGraphName.NetworkInterface) {
       let rate = numero;
       let unitMultiplier = 1;
-      while (rate > 1000) {
+      while (rate >= 1000) {
         unitMultiplier *= 1000;
         rate = rate / unitMultiplier;
       }
@@ -287,30 +287,57 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
   };
 
   legendFormatter = (legend: dygraphs.LegendData): string => {
-    const getSuffix = (converted: Conversion): string => {
-      if (converted.shortName !== undefined) {
-        return converted.shortName;
-      }
+    // const getSuffix = (converted: Conversion): string => {
+    //   if (converted.shortName !== undefined) {
+    //     return converted.shortName;
+    //   }
 
-      return converted.suffix !== undefined ? converted.suffix : '';
-    };
+    //   return converted.suffix !== undefined ? converted.suffix : '';
+    // };
 
     const clone = { ...legend } as LegendDataWithStackedTotalHtml;
     clone.series.forEach((item: dygraphs.SeriesLegendData, index: number) => {
       if (!item.y) { return; }
-      const converted = this.formatLabelValue(item.y, this.inferUnits(this.labelY), 1, true);
-      const suffix = getSuffix(converted);
-      clone.series[index].yHTML = `${this.limitDecimals(converted.value)} ${suffix}`;
-      if (!clone.stackedTotal) {
-        clone.stackedTotal = 0;
+      if (this.report.name === ReportingGraphName.NetworkInterface) {
+        let bits = item.y;
+        let multiplier = 1;
+        while (bits >= 1000) {
+          multiplier *= 1000;
+          bits = bits / multiplier;
+        }
+        switch (true) {
+          case multiplier < 1000:
+            clone.series[index].yHTML = `${this.limitDecimals(bits)} kb/s`;
+            break;
+          case multiplier < 1000 * 1000:
+            clone.series[index].yHTML = `${this.limitDecimals(bits)} Mb/s`;
+            break;
+          case multiplier < 1000 * 1000 * 1000:
+            clone.series[index].yHTML = `${this.limitDecimals(bits)} Gb/s`;
+            break;
+          case multiplier < 1000 * 1000 * 1000 * 1000:
+            clone.series[index].yHTML = `${this.limitDecimals(bits)} Tb/s`;
+            break;
+        }
       }
-      clone.stackedTotal += item.y;
+      // else {
+      //   const yConverted = this.formatLabelValue(item.y, this.inferUnits(this.labelY), 1, true);
+      //   const ySuffix = getSuffix(yConverted);
+      //   clone.series[index].yHTML = `${this.limitDecimals(yConverted.value)} ${ySuffix}`;
+      //   if (!clone.stackedTotal) {
+      //     clone.stackedTotal = 0;
+      //   }
+      //   clone.stackedTotal += item.y;
+      //   if (clone.stackedTotal >= 0) {
+      //     const stackedTotalConverted = this.formatLabelValue(
+      //       clone.stackedTotal, this.inferUnits(this.labelY), 1, true
+      //     );
+      //     const stackedTotalSuffix = getSuffix(stackedTotalConverted);
+      //     clone.stackedTotalHTML = `${this.limitDecimals(stackedTotalConverted.value)} ${stackedTotalSuffix}`;
+      //   }
+      // }
     });
-    if (clone.stackedTotal >= 0) {
-      const converted = this.formatLabelValue(clone.stackedTotal, this.inferUnits(this.labelY), 1, true);
-      const suffix = getSuffix(converted);
-      clone.stackedTotalHTML = `${this.limitDecimals(converted.value)} ${suffix}`;
-    }
+
     this.reportsService.emitLegendEvent(clone);
     return '';
   };
@@ -321,7 +348,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
       if (this.report?.name === ReportingGraphName.NetworkInterface) {
         let unitMultiplier = 1;
         let rate = numero;
-        while (rate > 1000) {
+        while (rate >= 1000) {
           unitMultiplier *= 1000;
           rate = rate / unitMultiplier;
         }

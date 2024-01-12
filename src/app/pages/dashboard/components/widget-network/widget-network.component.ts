@@ -488,11 +488,4 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
     const converted = filesize(Math.round(Math.abs(value)), { bits: true }).replace('bit', 'b');
     return `${converted}/s`;
   }
-
-  private splitValue(value: number): number {
-    if (value < 1024) {
-      return Number(value.toString().slice(0, 4));
-    }
-    return Math.round(value);
-  }
 }
