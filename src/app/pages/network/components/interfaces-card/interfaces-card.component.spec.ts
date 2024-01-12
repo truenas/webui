@@ -187,6 +187,6 @@ describe('InterfacesCardComponent', () => {
 
     const statusIcons = spectator.queryAll(InterfaceStatusIconComponent);
     expect(statusIcons).toHaveLength(3);
-    expect(statusIcons[0].update).toBe(someUpdate);
+    expect(statusIcons[0].update).toEqual(someUpdate);
   });
 });
