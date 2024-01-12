@@ -90,7 +90,7 @@
 
               <div class="control-buttons">
                 <button
-                  *ixRequiresRoles="[Role.FullAdmin]"
+                  *ixRequiresRoles="[Role.FilesystemAttrsWrite, Role.FilesystemFullControl]"
                   mat-button
                   color="primary"
                   class="action"
@@ -114,7 +114,7 @@
                 </a>
                 <ng-template #stripButton>
                   <button
-                    *ixRequiresRoles="[Role.FullAdmin]"
+                    *ixRequiresRoles="[Role.FilesystemAttrsWrite, Role.FilesystemFullControl]"
                     mat-button
                     color="warn"
                     class="action"

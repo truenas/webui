@@ -28,7 +28,6 @@ export class ReplicationService {
       const childDatasets$ = cachedDatasets
         ? of(cachedDatasets)
         : this.authService.hasRole([
-          Role.ReplicationManager,
           Role.ReplicationTaskWrite,
           Role.ReplicationTaskWritePull,
         ]).pipe(

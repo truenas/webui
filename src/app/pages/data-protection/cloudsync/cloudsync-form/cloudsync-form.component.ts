@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
-import { Validators } from '@angular/forms';
+import { FormControl, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { NavigationExtras, Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
@@ -65,6 +65,20 @@ export class CloudsyncFormComponent implements OnInit {
     return this.isNew
       ? this.translate.instant('Add Cloud Sync Task')
       : this.translate.instant('Edit Cloud Sync Task');
+  }
+
+  get credentialsDependentControls(): FormControl[] {
+    return [
+      this.form.controls.bucket,
+      this.form.controls.bucket_input,
+      this.form.controls.bucket_policy_only,
+      this.form.controls.folder_source,
+      this.form.controls.folder_destination,
+      this.form.controls.task_encryption,
+      this.form.controls.fast_list,
+      this.form.controls.chunk_size,
+      this.form.controls.storage_class,
+    ];
   }
 
   googleDriveProviderIds: number[] = [];
@@ -152,8 +166,8 @@ export class CloudsyncFormComponent implements OnInit {
 
   bucketOptions$ = of<SelectOption[]>([]);
 
-  readonly fileNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
-  readonly bucketNodeProvider = this.getBucketsNodeProvider();
+  fileNodeProvider: TreeNodeProvider;
+  bucketNodeProvider: TreeNodeProvider;
 
   constructor(
     private translate: TranslateService,
@@ -200,6 +214,8 @@ export class CloudsyncFormComponent implements OnInit {
   ngOnInit(): void {
     this.getCredentialsList();
     this.getProviders();
+    this.setFileNodeProvider();
+    this.setBucketNodeProvider();
     this.setupForm();
 
     if (this.editingTask) {
@@ -209,19 +225,11 @@ export class CloudsyncFormComponent implements OnInit {
 
   setupForm(): void {
     this.form.controls.path_source.disable();
-    this.form.controls.bucket.disable();
-    this.form.controls.bucket_input.disable();
-    this.form.controls.folder_destination.disable();
-    this.form.controls.folder_source.disable();
-    this.form.controls.bucket_policy_only.disable();
-
-    this.form.controls.task_encryption.disable();
-    this.form.controls.chunk_size.disable();
-    this.form.controls.storage_class.disable();
-    this.form.controls.fast_list.disable();
     this.form.controls.filename_encryption.disable();
     this.form.controls.encryption_password.disable();
     this.form.controls.encryption_salt.disable();
+
+    this.credentialsDependentControls.forEach((control) => control.disable());
 
     this.form.controls.bucket.valueChanges.pipe(untilDestroyed(this)).subscribe((selectedOption) => {
       if (selectedOption !== newOption) {
@@ -292,6 +300,7 @@ export class CloudsyncFormComponent implements OnInit {
       pairwise(),
       untilDestroyed(this),
     ).subscribe(([previousCreds, currentCreds]) => {
+      this.form.controls.folder_source.reset([]);
       const isPreviousValueAddNew = previousCreds != null && previousCreds.toString() === addNewIxSelectValue;
       const isCurrentValueExists = currentCreds != null;
       const isCurrentValueAddNew = isCurrentValueExists && currentCreds.toString() === addNewIxSelectValue;
@@ -313,78 +322,11 @@ export class CloudsyncFormComponent implements OnInit {
     });
 
     this.form.controls.path_source.valueChanges.pipe(untilDestroyed(this)).subscribe((values: string | string[]) => {
-      if (!values) {
-        return;
-      }
-      const paths = Array.isArray(values) ? values : [values];
-      if (!paths.length) {
-        return;
-      }
-
-      const parentDirectories = paths.map((value: string) => {
-        const split = value.split('/');
-        const sliced = split.slice(0, split.length - 1);
-        return sliced.join('/');
-      });
-      const allMatch = parentDirectories.every((directory: string) => directory === parentDirectories[0]);
-
-      const pathSourceControl = this.form.controls.path_source;
-      let prevErrors = pathSourceControl.errors;
-      if (prevErrors === null) {
-        prevErrors = {};
-      }
-      if (!allMatch) {
-        pathSourceControl.setErrors({
-          ...prevErrors,
-          misMatchDirectories: {
-            message: this.translate.instant('All selected directories must be at the same level i.e., must have the same parent directory.'),
-          },
-        });
-      } else {
-        delete prevErrors.misMatchDirectories;
-        if (Object.keys(prevErrors).length) {
-          pathSourceControl.setErrors({ ...prevErrors });
-        } else {
-          pathSourceControl.setErrors(null);
-        }
-      }
+      this.handleFolderChange(this.form.controls.path_source, values);
     });
 
     this.form.controls.folder_source.valueChanges.pipe(untilDestroyed(this)).subscribe((values: string | string[]) => {
-      if (!values) {
-        return;
-      }
-      const sources = Array.isArray(values) ? values : [values];
-      if (!sources.length) {
-        return;
-      }
-      const parentDirectories = sources.map((value: string) => {
-        const split = value.split('/');
-        const sliced = split.slice(0, split.length - 1);
-        return sliced.join('/');
-      });
-      const allMatch = parentDirectories.every((directory: string) => directory === parentDirectories[0]);
-
-      const folderSourceControl = this.form.controls.folder_source;
-      let prevErrors = folderSourceControl.errors;
-      if (prevErrors === null) {
-        prevErrors = {};
-      }
-      if (!allMatch) {
-        folderSourceControl.setErrors({
-          ...prevErrors,
-          misMatchDirectories: {
-            message: this.translate.instant('All selected directories must be at the same level i.e., must have the same parent directory.'),
-          },
-        });
-      } else {
-        delete prevErrors.misMatchDirectories;
-        if (Object.keys(prevErrors).length) {
-          folderSourceControl.setErrors({ ...prevErrors });
-        } else {
-          folderSourceControl.setErrors(null);
-        }
-      }
+      this.handleFolderChange(this.form.controls.folder_source, values);
     });
 
     this.form.controls.transfers.valueChanges.pipe(untilDestroyed(this)).subscribe((value: number) => {
@@ -494,6 +436,8 @@ export class CloudsyncFormComponent implements OnInit {
   }
 
   handleCredentialsChange(credentials: number): void {
+    this.credentialsDependentControls.forEach((control) => control.disable());
+
     if (credentials) {
       this.enableRemoteExplorer();
       const targetCredentials = _.find(this.credentialsList, { id: credentials });
@@ -501,7 +445,7 @@ export class CloudsyncFormComponent implements OnInit {
       if (targetProvider?.buckets) {
         this.isLoading = true;
         if (targetCredentials.provider === CloudsyncProviderName.MicrosoftAzure
-          || targetCredentials.provider === CloudsyncProviderName.Hubic
+            || targetCredentials.provider === CloudsyncProviderName.Hubic
         ) {
           this.bucketPlaceholder = this.translate.instant('Container');
           this.bucketTooltip = this.translate.instant('Select the pre-defined container to use.');
@@ -533,26 +477,17 @@ export class CloudsyncFormComponent implements OnInit {
 
       const taskSchemas = ['task_encryption', 'fast_list', 'chunk_size', 'storage_class'];
       for (const i of taskSchemas) {
-        const tobeDisable = !(_.findIndex(taskSchema, { property: i }) > -1);
+        const toBeDisable = !(_.findIndex(taskSchema, { property: i }) > -1);
         if (i === 'task_encryption' || i === 'fast_list' || i === 'chunk_size' || i === 'storage_class') {
-          if (tobeDisable) {
+          if (toBeDisable) {
             this.form.controls[i].disable();
           } else {
             this.form.controls[i].enable();
           }
         }
       }
-    } else {
-      this.form.controls.bucket.disable();
-      this.form.controls.bucket_input.disable();
-      this.form.controls.bucket_policy_only.disable();
-      this.form.controls.folder_source.disable();
-      this.form.controls.folder_destination.disable();
 
-      this.form.controls.task_encryption.disable();
-      this.form.controls.fast_list.disable();
-      this.form.controls.chunk_size.disable();
-      this.form.controls.storage_class.disable();
+      this.cdr.markForCheck();
     }
   }
 
@@ -798,16 +733,6 @@ export class CloudsyncFormComponent implements OnInit {
     });
   }
 
-  private enableRemoteExplorer(): void {
-    if (this.form.controls.direction.value === Direction.Pull) {
-      this.form.controls.folder_source.enable();
-      this.form.controls.folder_destination.disable();
-    } else {
-      this.form.controls.folder_source.disable();
-      this.form.controls.folder_destination.enable();
-    }
-  }
-
   onSwitchToWizard(): void {
     this.chainedSlideInRef.swap(
       CloudsyncWizardComponent,
@@ -818,5 +743,66 @@ export class CloudsyncFormComponent implements OnInit {
   goToManageCredentials(): void {
     this.router.navigate(['/', 'credentials', 'backup-credentials']);
     this.chainedSlideInRef.close({ response: false, error: null });
+  }
+
+  private handleFolderChange(formControl: FormControl, values: string | string[]): void {
+    if (!values) {
+      return;
+    }
+
+    const sources = Array.isArray(values) ? values : [values];
+
+    if (!sources.length) {
+      return;
+    }
+
+    const parentDirectories = sources.map((value: string) => {
+      const split = value.split('/');
+      const sliced = split.slice(0, split.length - 1);
+      return sliced.join('/');
+    });
+
+    const allMatch = parentDirectories.every((directory: string) => directory === parentDirectories[0]);
+
+    let prevErrors = formControl.errors;
+    if (prevErrors === null) {
+      prevErrors = {};
+    }
+
+    if (!allMatch) {
+      formControl.setErrors({
+        ...prevErrors,
+        misMatchDirectories: {
+          message: this.translate.instant('All selected directories must be at the same level i.e., must have the same parent directory.'),
+        },
+      });
+    } else {
+      delete prevErrors.misMatchDirectories;
+      if (Object.keys(prevErrors).length) {
+        formControl.setErrors({ ...prevErrors });
+      } else {
+        formControl.setErrors(null);
+      }
+    }
+  }
+
+  private enableRemoteExplorer(): void {
+    this.setBucketNodeProvider();
+
+    if (this.form.controls.direction.value === Direction.Pull) {
+      this.form.controls.folder_source.enable();
+      this.form.controls.folder_destination.disable();
+    } else {
+      this.form.controls.folder_source.disable();
+      this.form.controls.folder_destination.enable();
+    }
+  }
+
+  private setFileNodeProvider(): void {
+    this.fileNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
+  }
+
+  private setBucketNodeProvider(): void {
+    this.bucketNodeProvider = this.getBucketsNodeProvider();
   }
 }

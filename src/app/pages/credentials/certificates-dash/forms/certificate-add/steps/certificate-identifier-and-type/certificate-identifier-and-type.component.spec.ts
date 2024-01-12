@@ -28,7 +28,7 @@ describe('CertificateIdentifierAndTypeComponent', () => {
     ],
     providers: [
       mockWebsocket([
-        mockCall('certificate.profiles', {
+        mockCall('webui.crypto.certificate_profiles', {
           'HTTPS ECC Certificate': httpsProfile,
           'Openvpn Client Certificate': openvpnProfile,
         }),

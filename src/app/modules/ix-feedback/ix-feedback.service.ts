@@ -4,11 +4,12 @@ import { Store } from '@ngrx/store';
 import html2canvas, { Options } from 'html2canvas';
 import {
   BehaviorSubject,
-  Observable, combineLatest, filter, first, map, switchMap,
+  Observable, combineLatest, filter, first, map, of, switchMap,
 } from 'rxjs';
 import {
   AddReview, AttachmentAddedResponse,
 } from 'app/modules/ix-feedback/interfaces/feedback.interface';
+import { SimilarIssue } from 'app/modules/ix-feedback/interfaces/file-ticket.interface';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
@@ -20,6 +21,7 @@ import { ReviewAddedResponse } from './interfaces/feedback.interface';
 })
 export class IxFeedbackService {
   isReviewAllowed$ = new BehaviorSubject<boolean>(false);
+  oauthToken$ = new BehaviorSubject<string>(null);
   private readonly hostname = 'https://feedback.ui.truenas.com';
 
   constructor(
@@ -76,6 +78,14 @@ export class IxFeedbackService {
     });
   }
 
+  getOauthToken(): string {
+    return this.oauthToken$.getValue();
+  }
+
+  setOauthToken(token: string): void {
+    this.oauthToken$.next(token);
+  }
+
   checkIfReviewAllowed(): Observable<boolean> {
     return combineLatest([
       this.store$.pipe(waitForSystemInfo),
@@ -92,5 +102,13 @@ export class IxFeedbackService {
           .pipe(map((response) => !response.value));
       }),
     );
+  }
+
+  getSimilarIssues(query: string): Observable<SimilarIssue[]> {
+    if (!this.getOauthToken()) {
+      return of([]);
+    }
+
+    return this.ws.call('support.similar_issues', [this.getOauthToken(), query]);
   }
 }

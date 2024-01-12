@@ -71,7 +71,7 @@ export class ReplicationFormComponent implements OnInit {
   isSudoDialogShown = false;
   sshCredentials: KeychainSshCredentials[] = [];
 
-  readonly requiresRoles = [Role.ReplicationManager, Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
+  readonly requiresRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
 
   constructor(
     private ws: WebSocketService,
@@ -282,6 +282,10 @@ export class ReplicationFormComponent implements OnInit {
         untilDestroyed(this),
       )
       .subscribe(() => this.updateExplorers());
+
+    this.transportSection.form.controls.ssh_credentials.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+      this.targetSection.form.controls.target_dataset.reset();
+    });
   }
 
   private updateExplorers(): void {

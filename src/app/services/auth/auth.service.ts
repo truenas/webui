@@ -138,7 +138,11 @@ export class AuthService {
   }
 
   loginWithToken(): Observable<LoginResult> {
-    return this.makeRequest('auth.login_with_token', [this.token || '']).pipe(
+    if (!this.token) {
+      return of(LoginResult.NoToken);
+    }
+
+    return this.makeRequest('auth.login_with_token', [this.token]).pipe(
       switchMap((wasLoggedIn) => {
         return this.processLoginResult(wasLoggedIn);
       }),

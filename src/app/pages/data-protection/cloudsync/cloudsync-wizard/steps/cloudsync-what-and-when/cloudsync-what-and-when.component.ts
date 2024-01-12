@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnChanges, OnInit, Output,
 } from '@angular/core';
-import { Validators, FormBuilder } from '@angular/forms';
+import { Validators, FormBuilder, FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { NavigationExtras, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -94,8 +94,10 @@ export class CloudsyncWhatAndWhenComponent implements OnInit, OnChanges {
   bucketInputTooltip: string = helptextCloudsync.bucket_input_tooltip;
   googleDriveProviderIds: number[] = [];
   bucketOptions$: Observable<Option[]>;
-  readonly fileNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
-  readonly bucketNodeProvider = this.getBucketsNodeProvider();
+
+  fileNodeProvider: TreeNodeProvider;
+  bucketNodeProvider: TreeNodeProvider;
+
   readonly directionOptions$ = of(mapToOptions(directionNames, this.translate));
   readonly transferModeOptions$ = of(mapToOptions(transferModeNames, this.translate));
   readonly helptext = helptextCloudsync;
@@ -105,6 +107,20 @@ export class CloudsyncWhatAndWhenComponent implements OnInit, OnChanges {
     ${helptextCloudsync.transfer_mode_warning_copy}<br><br>
     ${helptextCloudsync.transfer_mode_warning_move}
   `;
+
+  get credentialsDependentControls(): FormControl[] {
+    return [
+      this.form.controls.bucket,
+      this.form.controls.bucket_input,
+      this.form.controls.bucket_policy_only,
+      this.form.controls.folder_source,
+      this.form.controls.folder_destination,
+      this.form.controls.task_encryption,
+      this.form.controls.fast_list,
+      this.form.controls.chunk_size,
+      this.form.controls.storage_class,
+    ];
+  }
 
   constructor(
     private ws: WebSocketService,
@@ -138,6 +154,8 @@ export class CloudsyncWhatAndWhenComponent implements OnInit, OnChanges {
   ngOnInit(): void {
     this.setupForm();
     this.setupFormListeners();
+    this.setFileNodeProvider();
+    this.setBucketNodeProvider();
   }
 
   onSave(): void {
@@ -265,19 +283,11 @@ export class CloudsyncWhatAndWhenComponent implements OnInit, OnChanges {
 
   private setupForm(): void {
     this.form.controls.path_source.disable();
-    this.form.controls.bucket.disable();
-    this.form.controls.bucket_input.disable();
-    this.form.controls.folder_destination.disable();
-    this.form.controls.folder_source.disable();
-    this.form.controls.bucket_policy_only.disable();
-
-    this.form.controls.task_encryption.disable();
-    this.form.controls.chunk_size.disable();
-    this.form.controls.storage_class.disable();
-    this.form.controls.fast_list.disable();
     this.form.controls.filename_encryption.disable();
     this.form.controls.encryption_password.disable();
     this.form.controls.encryption_salt.disable();
+
+    this.credentialsDependentControls.forEach((control) => control.disable());
   }
 
   private setupFormListeners(): void {
@@ -325,47 +335,17 @@ export class CloudsyncWhatAndWhenComponent implements OnInit, OnChanges {
     });
 
     this.form.controls.path_source.valueChanges.pipe(untilDestroyed(this)).subscribe((values: string | string[]) => {
-      if (!values) {
-        return;
-      }
-      const paths = Array.isArray(values) ? values : [values];
-      if (!paths.length) {
-        return;
-      }
+      this.handleFolderChange(this.form.controls.path_source, values);
+    });
 
-      const parentDirectories = paths.map((value: string) => {
-        const split = value.split('/');
-        const sliced = split.slice(0, split.length - 1);
-        return sliced.join('/');
-      });
-
-      const allMatch = parentDirectories.every((directory: string) => directory === parentDirectories[0]);
-
-      this.updateDescriptionPath(paths.join('/'));
-
-      const pathSourceControl = this.form.controls.path_source;
-      let prevErrors = pathSourceControl.errors;
-      if (prevErrors === null) {
-        prevErrors = {};
-      }
-      if (!allMatch) {
-        pathSourceControl.setErrors({
-          ...prevErrors,
-          misMatchDirectories: {
-            message: this.translate.instant('All selected directories must be at the same level i.e., must have the same parent directory.'),
-          },
-        });
-      } else {
-        delete prevErrors.misMatchDirectories;
-        if (Object.keys(prevErrors).length) {
-          pathSourceControl.setErrors({ ...prevErrors });
-        } else {
-          pathSourceControl.setErrors(null);
-        }
-      }
+    this.form.controls.folder_source.valueChanges.pipe(untilDestroyed(this)).subscribe((values: string | string[]) => {
+      this.handleFolderChange(this.form.controls.folder_source, values);
     });
 
     this.form.controls.credentials.valueChanges.pipe(untilDestroyed(this)).subscribe((credential) => {
+      this.form.controls.folder_source.reset([]);
+      this.credentialsDependentControls.forEach((control) => control.disable());
+
       if (credential) {
         this.enableRemoteExplorer();
         const targetCredentials = _.find(this.credentials, { id: credential });
@@ -407,26 +387,15 @@ export class CloudsyncWhatAndWhenComponent implements OnInit, OnChanges {
 
         const taskSchemas = ['task_encryption', 'fast_list', 'chunk_size', 'storage_class'];
         for (const i of taskSchemas) {
-          const tobeDisable = !(_.findIndex(taskSchema, { property: i }) > -1);
+          const toBeDisable = !(_.findIndex(taskSchema, { property: i }) > -1);
           if (i === 'task_encryption' || i === 'fast_list' || i === 'chunk_size' || i === 'storage_class') {
-            if (tobeDisable) {
+            if (toBeDisable) {
               this.form.controls[i].disable();
             } else {
               this.form.controls[i].enable();
             }
           }
         }
-      } else {
-        this.form.controls.bucket.disable();
-        this.form.controls.bucket_input.disable();
-        this.form.controls.bucket_policy_only.disable();
-        this.form.controls.folder_source.disable();
-        this.form.controls.folder_destination.disable();
-
-        this.form.controls.task_encryption.disable();
-        this.form.controls.fast_list.disable();
-        this.form.controls.chunk_size.disable();
-        this.form.controls.storage_class.disable();
       }
     });
 
@@ -567,6 +536,8 @@ export class CloudsyncWhatAndWhenComponent implements OnInit, OnChanges {
   }
 
   private enableRemoteExplorer(): void {
+    this.setBucketNodeProvider();
+
     if (this.form.controls.direction.value === Direction.Pull) {
       this.form.controls.folder_source.enable();
       this.form.controls.folder_destination.disable();
@@ -580,6 +551,55 @@ export class CloudsyncWhatAndWhenComponent implements OnInit, OnChanges {
     if (!this.form.controls.description.touched) {
       const [name] = this.form.controls.description.value.split(' - ');
       this.form.controls.description.setValue(`${name} - ${path}`);
+    }
+  }
+
+  private setFileNodeProvider(): void {
+    this.fileNodeProvider = this.filesystemService.getFilesystemNodeProvider({ directoriesOnly: true });
+  }
+
+  private setBucketNodeProvider(): void {
+    this.bucketNodeProvider = this.getBucketsNodeProvider();
+  }
+
+  private handleFolderChange(formControl: FormControl, values: string | string[]): void {
+    if (!values) {
+      return;
+    }
+
+    const sources = Array.isArray(values) ? values : [values];
+
+    if (!sources.length) {
+      return;
+    }
+
+    const parentDirectories = sources.map((value: string) => {
+      const split = value.split('/');
+      const sliced = split.slice(0, split.length - 1);
+      return sliced.join('/');
+    });
+
+    const allMatch = parentDirectories.every((directory: string) => directory === parentDirectories[0]);
+
+    let prevErrors = formControl.errors;
+    if (prevErrors === null) {
+      prevErrors = {};
+    }
+
+    if (!allMatch) {
+      formControl.setErrors({
+        ...prevErrors,
+        misMatchDirectories: {
+          message: this.translate.instant('All selected directories must be at the same level i.e., must have the same parent directory.'),
+        },
+      });
+    } else {
+      delete prevErrors.misMatchDirectories;
+      if (Object.keys(prevErrors).length) {
+        formControl.setErrors({ ...prevErrors });
+      } else {
+        formControl.setErrors(null);
+      }
     }
   }
 }

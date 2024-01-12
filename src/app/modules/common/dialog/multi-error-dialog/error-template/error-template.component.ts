@@ -58,9 +58,9 @@ export class ErrorTemplateComponent {
   }
 
   downloadLogs(): void {
-    this.ws.call('core.download', ['filesystem.get', [this.logs.logs_path], `${this.logs.id}.log`])
+    this.ws.call('core.job_download_logs', [this.logs.id, `${this.logs.id}.log`])
       .pipe(this.errorHandler.catchError(), untilDestroyed(this))
-      .subscribe(([, url]) => {
+      .subscribe((url) => {
         const mimetype = 'text/plain';
         this.storage.streamDownloadFile(url, `${this.logs.id}.log`, mimetype).pipe(untilDestroyed(this)).subscribe({
           next: (file) => {

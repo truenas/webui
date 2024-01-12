@@ -10,7 +10,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { environment } from 'environments/environment';
 import {
-  EMPTY, Observable, catchError, filter, of, pairwise, switchMap, take,
+  EMPTY, Observable, catchError, delay, distinctUntilChanged, filter, of, pairwise, switchMap, take,
 } from 'rxjs';
 import { TicketType, ticketAcceptedFiles } from 'app/enums/file-ticket.enum';
 import { JobState } from 'app/enums/job-state.enum';
@@ -30,6 +30,7 @@ import { IxFeedbackService } from 'app/modules/ix-feedback/ix-feedback.service';
 import { ixManualValidateError } from 'app/modules/ix-forms/components/ix-errors/ix-errors.component';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { rangeValidator } from 'app/modules/ix-forms/validators/range-validation/range-validation';
+import { OauthButtonType } from 'app/modules/oauth-button/interfaces/oauth-button.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -59,6 +60,8 @@ export class FeedbackDialogComponent implements OnInit {
     rating: [undefined as number, [Validators.required, rangeValidator(1, maxRatingValue)]],
     message: [''],
 
+    token: [''],
+
     image: [null as File[]],
     attach_debug: [false],
     attach_screenshot: [false],
@@ -73,7 +76,9 @@ export class FeedbackDialogComponent implements OnInit {
   private isIxHardware = false;
   private attachments: File[] = [];
   protected feedbackTypeOptions$: Observable<Option[]> = of(mapToOptions(feedbackTypeOptionMap, this.translate));
+  protected oauthUrl = 'https://support-proxy.ixsystems.com/oauth/initiate?origin=';
   readonly acceptedFiles = ticketAcceptedFiles;
+  readonly oauthType = OauthButtonType;
 
   get isEnterprise(): boolean {
     return this.systemGeneralService.isEnterprise;
@@ -85,6 +90,29 @@ export class FeedbackDialogComponent implements OnInit {
 
   get isBugOrFeature(): boolean {
     return [FeedbackType.Bug, FeedbackType.Suggestion].includes(this.form.controls.type.value);
+  }
+
+  get messagePlaceholder(): string {
+    switch (this.form.controls.type.value) {
+      case FeedbackType.Review:
+        return helptext.review.message.placeholder;
+      case FeedbackType.Bug:
+      case FeedbackType.Suggestion:
+      default:
+        return helptext.bug.message.placeholder;
+    }
+  }
+
+  get showJiraButton(): boolean {
+    if (this.isReview
+        || this.isEnterprise
+        || this.form.controls.token.disabled
+        || this.form.controls.token.value
+    ) {
+      return false;
+    }
+
+    return true;
   }
 
   readonly tooltips = {
@@ -101,17 +129,6 @@ export class FeedbackDialogComponent implements OnInit {
     environment: helptext.environment.tooltip,
     criticality: helptext.criticality.tooltip,
   };
-
-  get messagePlaceholder(): string {
-    switch (this.form.controls.type.value) {
-      case FeedbackType.Review:
-        return helptext.review.message.placeholder;
-      case FeedbackType.Bug:
-      case FeedbackType.Suggestion:
-      default:
-        return helptext.bug.message.placeholder;
-    }
-  }
 
   constructor(
     private ws: WebSocketService,
@@ -142,10 +159,16 @@ export class FeedbackDialogComponent implements OnInit {
     this.getSessionId();
     this.getFeedbackTypeOptions();
     this.loadIsIxHardware();
+    this.restoreToken();
   }
 
   onSubmit(): void {
+    if (!this.form.valid || this.isLoading) {
+      return;
+    }
+
     this.isLoading = true;
+    this.cdr.markForCheck();
     switch (this.form.controls.type.value) {
       case FeedbackType.Review:
         this.submitReview();
@@ -156,6 +179,10 @@ export class FeedbackDialogComponent implements OnInit {
         this.submitBugOrFeature();
         break;
     }
+  }
+
+  setToken(token: string): void {
+    this.form.patchValue({ token });
   }
 
   onUserGuidePressed(): void {
@@ -183,6 +210,8 @@ export class FeedbackDialogComponent implements OnInit {
                 message: this.translate.instant('Uploading screenshots has failed'),
                 backtrace: `Error: ${error.status},\n ${error.error}\n ${error.message}`,
               });
+              this.isLoading = false;
+              this.cdr.markForCheck();
             },
           });
           this.fileUpload.onUploaded$.pipe(
@@ -227,11 +256,11 @@ export class FeedbackDialogComponent implements OnInit {
     const body = [values.message, hostText, sessionText].join('\n\n');
 
     let payload: CreateNewTicket = {
+      token: values.token,
       attach_debug: values.attach_debug,
       type: values.type === FeedbackType.Bug ? TicketType.Bug : TicketType.Suggestion,
       category: ticketValues.category,
       title: ticketValues.title,
-      token: ticketValues.token,
       body,
     };
 
@@ -349,6 +378,15 @@ export class FeedbackDialogComponent implements OnInit {
           }
         }
       });
+
+    this.form.controls.token.valueChanges.pipe(
+      filter((token) => !!token),
+      distinctUntilChanged(),
+      delay(10),
+      untilDestroyed(this),
+    ).subscribe((token) => {
+      this.feedbackService.setOauthToken(token);
+    });
   }
 
   private getHostId(): void {
@@ -387,6 +425,8 @@ export class FeedbackDialogComponent implements OnInit {
   }
 
   private switchToReview(): void {
+    this.form.controls.token.disable();
+    this.form.controls.token.removeValidators(Validators.required);
     this.form.controls.message.removeValidators(Validators.required);
     this.form.controls.attach_debug.disable();
 
@@ -394,6 +434,8 @@ export class FeedbackDialogComponent implements OnInit {
   }
 
   private switchToBugOrImprovement(): void {
+    this.form.controls.token.enable();
+    this.form.controls.token.addValidators(Validators.required);
     this.form.controls.message.addValidators(Validators.required);
     this.form.controls.attach_debug.enable();
 
@@ -439,6 +481,13 @@ export class FeedbackDialogComponent implements OnInit {
     }
 
     this.cdr.markForCheck();
+  }
+
+  private restoreToken(): void {
+    const token = this.feedbackService.getOauthToken();
+    if (token) {
+      this.form.controls.token.setValue(token);
+    }
   }
 
   private getFeedbackTypeOptions(): void {
