@@ -396,7 +396,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
           const chartData: ChartData<'line'> = {
             datasets: [
               {
-                label: `incoming [${networkInterfaceName}]`,
+                label: this.translate.instant('Incoming [{networkInterfaceName}]', { networkInterfaceName }),
                 data: (response.data as number[][]).map((item, index) => ({ x: labels[index], y: item[0] })),
                 borderColor: this.themeService.currentTheme().blue,
                 backgroundColor: this.themeService.currentTheme().blue,
@@ -406,7 +406,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
                 fill: true,
               },
               {
-                label: `outgoing [${networkInterfaceName}]`,
+                label: this.translate.instant('Outgoing [{networkInterfaceName}]', { networkInterfaceName }),
                 data: (response.data as number[][]).map((item, index) => ({ x: labels[index], y: -item[1] })),
                 borderColor: this.themeService.currentTheme().orange,
                 backgroundColor: this.themeService.currentTheme().orange,
@@ -484,7 +484,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
     return `${this.translate.instant('IP Address')}: ${this.getIpAddress(nic)}`;
   }
 
-  private getSpeedLabel(value: number): string {
+  protected getSpeedLabel(value: number): string {
     const converted = filesize(Math.round(Math.abs(value)), { bits: true }).replace('bit', 'b');
     return `${converted}/s`;
   }

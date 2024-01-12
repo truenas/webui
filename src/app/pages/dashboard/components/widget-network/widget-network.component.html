@@ -107,11 +107,11 @@
                           <ul *ngIf="getLinkState(nic) === LinkState.Up">
                             <li>
                               <span class="label">{{ 'In' | translate }}:</span>
-                              {{ nicInfoMap[nic.state.name]?.bitsIn | filesize: { bits: true } }}
+                              {{ getSpeedLabel(nicInfoMap[nic.state.name]?.bitsIn) }}
                             </li>
                             <li>
                               <span class="label">{{ 'Out' | translate }}:</span
-                              >{{ nicInfoMap[nic.state.name]?.bitsOut | filesize: { bits: true } }}
+                              >{{ getSpeedLabel(nicInfoMap[nic.state.name]?.bitsOut) }}
                             </li>
                           </ul>
                           <span *ngIf="getLinkState(nic) !== LinkState.Up">
