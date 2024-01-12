@@ -53,6 +53,29 @@ export class UserService {
     }));
   }
 
+  smbGroupQueryDsCache(search = '', hideBuiltIn = false, offset = 0): Observable<Group[]> {
+    const queryArgs: QueryFilter<Group>[] = [['smb', '=', true]];
+    search = search.trim();
+    if (search.length > 0) {
+      queryArgs.push(['group', '^', search]);
+    }
+    if (hideBuiltIn) {
+      queryArgs.push(['builtin', '=', false]);
+    }
+    return combineLatest([
+      this.groupQueryDsCacheByName(search),
+      this.ws.call(this.groupQuery, [queryArgs, { ...this.queryOptions, offset, order_by: ['builtin'] }]),
+    ]).pipe(map(([groupSearchedByName, groups]) => {
+      const groupIds = groupSearchedByName.map((groupsByName) => groupsByName.id);
+      groups = groups.filter(
+        (group) => {
+          return !groupIds.some((gid) => gid === group.id);
+        },
+      );
+      return [...groups, ...groupSearchedByName];
+    }));
+  }
+
   getGroupByName(groupname: string): Observable<DsUncachedGroup> {
     return this.ws.call(this.uncachedGroupQuery, [{ groupname }]);
   }
@@ -68,5 +91,14 @@ export class UserService {
 
   getUserByName(username: string): Observable<DsUncachedUser> {
     return this.ws.call(this.uncachedUserQuery, [{ username }]);
+  }
+
+  smbUserQueryDsCache(search = '', offset = 0): Observable<User[]> {
+    const queryArgs: QueryFilter<User>[] = [['smb', '=', true]];
+    search = search.trim();
+    if (search.length > 0) {
+      queryArgs.push(['username', '^', search]);
+    }
+    return this.ws.call(this.userQuery, [queryArgs, { ...this.queryOptions, offset, order_by: ['builtin'] }]);
   }
 }
