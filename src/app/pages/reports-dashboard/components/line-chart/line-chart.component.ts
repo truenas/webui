@@ -319,6 +319,24 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
             clone.series[index].yHTML = `${this.limitDecimals(bits)} Tb/s`;
             break;
         }
+      } else {
+        const yConverted = this.formatLabelValue(item.y, this.inferUnits(this.labelY), 1, true);
+        const ySuffix = this.getSuffix(yConverted);
+        clone.series[index].yHTML = `${this.limitDecimals(yConverted.value)} ${ySuffix}`;
+        if (!clone.stackedTotal) {
+          clone.stackedTotal = 0;
+        }
+        clone.stackedTotal += item.y;
+        if (clone.stackedTotal >= 0) {
+          const stackedTotalConverted = this.formatLabelValue(
+            clone.stackedTotal,
+            this.inferUnits(this.labelY),
+            1,
+            true,
+          );
+          const stackedTotalSuffix = this.getSuffix(stackedTotalConverted);
+          clone.stackedTotalHTML = `${this.limitDecimals(stackedTotalConverted.value)} ${stackedTotalSuffix}`;
+        }
       }
     });
 
