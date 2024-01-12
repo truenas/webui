@@ -187,12 +187,12 @@ export class SmbAclComponent implements OnInit {
     ace: SmbSharesecAce,
   ): Observable<Group[]> | Observable<User[]> | Observable<string[]> {
     if (ace.ae_who_id?.id_type === NfsAclTag.UserGroup) {
-      const queryArgs: QueryFilter<Group>[] = [['gid', '=', ace.ae_who_id?.id]];
+      const queryArgs: QueryFilter<Group>[] = [['gid', '=', ace.ae_who_id?.id], ['smb', '=', true]];
       return this.ws.call('group.query', [queryArgs]);
     }
 
     if (ace.ae_who_id?.id_type === NfsAclTag.User) {
-      const queryArgs: QueryFilter<User>[] = [['uid', '=', ace.ae_who_id?.id]];
+      const queryArgs: QueryFilter<User>[] = [['uid', '=', ace.ae_who_id?.id], ['smb', '=', true]];
       return this.ws.call('user.query', [queryArgs]);
     }
 
