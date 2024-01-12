@@ -160,6 +160,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   }
 
   onInputChanged(inputValue: string): void {
+    this.inputValue = inputValue;
     this.value = this.multiple ? inputValue.split(',') : inputValue;
     this.selectTreeNodes(Array.isArray(this.value) ? this.value : [this.value]);
     this.onChange(this.value);
@@ -188,7 +189,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   }
 
   private updateInputValue(): void {
-    this.inputValue = Array.isArray(this.value) ? this.value.join(',') : this.value || '';
+    this.inputValue = Array.isArray(this.value) ? this.value.filter((value) => value.length).join(',') : this.value || '';
   }
 
   private selectTreeNodes(nodeIds: string[]): void {
