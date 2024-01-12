@@ -3,17 +3,15 @@ import {
 } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { of, switchMap } from 'rxjs';
-import { filter, take } from 'rxjs/operators';
+import { of } from 'rxjs';
 import { DatasetEncryptionType } from 'app/enums/dataset.enum';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
 import { matchOthersFgValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
-import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -26,7 +24,11 @@ export class EncryptionSectionComponent implements OnChanges {
   @Input() parent: Dataset;
   @Input() advancedMode: boolean;
 
-  inheritEncryptionLabel: string;
+  get inheritEncryptionLabel(): string {
+    return this.parent.encrypted
+      ? this.translate.instant('Inherit (encrypted)')
+      : this.translate.instant('Inherit (non-encrypted)');
+  }
 
   // TODO: Add conditional validators
   readonly form = this.formBuilder.group({
@@ -59,7 +61,6 @@ export class EncryptionSectionComponent implements OnChanges {
 
   constructor(
     private formBuilder: FormBuilder,
-    private dialog: DialogService,
     private translate: TranslateService,
     private ws: WebSocketService,
   ) {}
@@ -85,7 +86,7 @@ export class EncryptionSectionComponent implements OnChanges {
   ngOnChanges(): void {
     if (this.parent) {
       this.setInheritValues();
-      this.warnAboutUnsettingEncryption();
+      this.disableEncryptionIfParentEncrypted();
     }
   }
 
@@ -120,10 +121,6 @@ export class EncryptionSectionComponent implements OnChanges {
   }
 
   private setInheritValues(): void {
-    this.inheritEncryptionLabel = this.parent.encrypted
-      ? this.translate.instant('Inherit (encrypted)')
-      : this.translate.instant('Inherit (non-encrypted)');
-
     if (this.parentHasPassphrase) {
       this.form.controls.encryption_type.setValue(DatasetEncryptionType.Passphrase);
     }
@@ -133,27 +130,10 @@ export class EncryptionSectionComponent implements OnChanges {
     }
   }
 
-  private warnAboutUnsettingEncryption(): void {
+  private disableEncryptionIfParentEncrypted(): void {
     if (!this.parent?.encrypted) {
       return;
     }
-
-    this.form.controls.encryption.valueChanges
-      .pipe(
-        filter((hasEncryption) => !hasEncryption),
-        take(1),
-        switchMap(() => this.dialog.confirm({
-          title: helptextDatasetForm.dataset_form_encryption.non_encrypted_warning_title,
-          message: helptextDatasetForm.dataset_form_encryption.non_encrypted_warning_warning,
-        })),
-        untilDestroyed(this),
-      )
-      .subscribe((shouldContinue) => {
-        if (shouldContinue) {
-          return;
-        }
-
-        this.form.controls.encryption.setValue(true);
-      });
+    this.form.controls.encryption.disable();
   }
 }
