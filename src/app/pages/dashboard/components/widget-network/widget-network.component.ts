@@ -8,7 +8,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { ChartData, ChartOptions } from 'chart.js';
 import { sub } from 'date-fns';
 import { utcToZonedTime } from 'date-fns-tz';
-import filesize from 'filesize';
 import { Subscription, timer } from 'rxjs';
 import {
   filter, map, skipWhile, take, throttleTime,
@@ -20,7 +19,6 @@ import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { BaseNetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
 import { NetworkInterfaceUpdate, ReportingDatabaseError, ReportingNameAndId } from 'app/interfaces/reporting.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { ResourcesUsageStore } from 'app/pages/dashboard/store/resources-usage-store.service';
 import { deepCloneState } from 'app/pages/dashboard/utils/deep-clone-state.helper';
@@ -154,7 +152,6 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
     private ws: WebSocketService,
     public translate: TranslateService,
     private dialog: DialogService,
-    private formatter: IxFormatterService,
     private localeService: LocaleService,
     public themeService: ThemeService,
     private store$: Store<AppState>,
@@ -485,7 +482,30 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
   }
 
   protected getSpeedLabel(value: number): string {
-    const converted = filesize(Math.round(Math.abs(value)), { bits: true }).replace('bit', 'b');
-    return `${converted}/s`;
+    let bits = Math.abs(value);
+    let multiplier = 1;
+    while (bits >= 1000) {
+      multiplier *= 1000;
+      bits = bits / multiplier;
+    }
+    let label = '';
+    switch (true) {
+      case multiplier < 1000:
+        label = `${bits} b/s`;
+        break;
+      case multiplier < 1000 * 1000:
+        label = `${bits} kb/s`;
+        break;
+      case multiplier < 1000 * 1000 * 1000:
+        label = `${bits} Mb/s`;
+        break;
+      case multiplier < 1000 * 1000 * 1000 * 1000:
+        label = `${bits} Gb/s`;
+        break;
+      case multiplier < 1000 * 1000 * 1000 * 1000 * 1000:
+        label = `${bits} Tb/s`;
+        break;
+    }
+    return label;
   }
 }

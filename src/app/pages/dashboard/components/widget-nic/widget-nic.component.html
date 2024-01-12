@@ -121,7 +121,7 @@
                           <strong>{{ 'In' | translate }}: &nbsp;</strong>
                         </div>
                         <div class="td value">
-                          <span class="stat">{{ traffic.bitsReceived | filesize: { bits: true }  }}</span>/s
+                          <span class="stat">{{ getSpeedLabel(traffic.bitsReceived)  }}</span>/s
                         </div>
                       </div>
                       <div class="tr">
@@ -129,7 +129,7 @@
                           <strong>{{ 'Out' | translate }}: </strong>&nbsp;
                         </div>
                         <div class="td value">
-                          <span class="stat">{{ traffic.bitsSent | filesize: { bits: true } }}</span>/s
+                          <span class="stat">{{ getSpeedLabel(traffic.bitsSent) }}</span>/s
                         </div>
                       </div>
                     </div>
