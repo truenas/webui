@@ -41,7 +41,7 @@ export class ZfsInfoCardComponent {
   }
 
   get isRaidzParent(): boolean {
-    return raidzItems.includes(this.topologyItem.type);
+    return raidzItems.includes(this.topologyParentItem.type);
   }
 
   get isDraidOrMirrorParent(): boolean {
@@ -62,6 +62,7 @@ export class ZfsInfoCardComponent {
       && (this.topologyCategory === VdevType.Data
         || this.topologyCategory === VdevType.Dedup
         || this.topologyCategory === VdevType.Special
+        || this.topologyCategory === VdevType.Log
       ) && this.topologyItem.status !== TopologyItemStatus.Unavail;
   }
 
