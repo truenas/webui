@@ -4,10 +4,8 @@
 
 .container-dualListBox {
   align-items: center;
-
   box-align: center;
   display: flex;
-  flex-align: center;
 }
 
 .container-dualListBox > div {
@@ -61,9 +59,8 @@
   background: var(--primary);
   color: var(--fg2);
   display: inline-flex;
-  font-size: 14px;
-  min-height: 48px;
-  padding: 12px 0;
+  max-height: 48px;
+  padding: 0 16px;
   width: 100%;
 }
 
