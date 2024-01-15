@@ -6,7 +6,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { BehaviorSubject, of } from 'rxjs';
+import { BehaviorSubject, Subject, of } from 'rxjs';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockWebsocket, mockCall, mockJob } from 'app/core/testing/utils/mock-websocket.utils';
@@ -35,6 +35,7 @@ import { OauthButtonComponent } from 'app/modules/oauth-button/components/oauth-
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
+import { IxFileUploadService } from 'app/services/ix-file-upload.service';
 import { SentryService } from 'app/services/sentry.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { selectIsIxHardware, selectSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -56,7 +57,7 @@ describe('FeedbackDialogComponent', () => {
     ticket: 123456789,
     url: 'https://mock.jira/ticket',
   };
-
+  const fileUploaded$ = new Subject<void>();
   const createComponent = createComponentFactory({
     component: FeedbackDialogComponent,
     imports: [
@@ -82,6 +83,7 @@ describe('FeedbackDialogComponent', () => {
         mockJob('support.new_ticket', fakeSuccessfulJob(mockNewTicketResponse as NewTicketResponse)),
         mockJob('support.attach_ticket', fakeSuccessfulJob()),
         mockCall('system.build_time', { $date: 1694835361000 }),
+        mockCall('support.attach_ticket_max_size', 30),
       ]),
       mockProvider(AuthService, {
         authToken$: of('token.is.mocked'),
@@ -95,7 +97,7 @@ describe('FeedbackDialogComponent', () => {
       },
       mockProvider(IxFeedbackService, {
         addReview: jest.fn(() => of({ success: true, review_id: 1 })),
-        addAttachment: jest.fn(() => of({
+        uploadReviewAttachment: jest.fn(() => of({
           data: {
             date_created: 'Thu, 22 Jun 2023 06:54:48 GMT',
             filename: '8e2182dc-e400-4ebe-af6f-132cb8ffc5c5.png',
@@ -144,6 +146,14 @@ describe('FeedbackDialogComponent', () => {
       mockProvider(SnackbarService),
       mockProvider(IxSlideInRef),
       mockProvider(Router),
+      mockProvider(IxFileUploadService, {
+        onUploaded$: fileUploaded$,
+        onUploading$: of(),
+        upload: jest.fn(() => {
+          fileUploaded$.next();
+          return of();
+        }),
+      }),
     ],
   });
 
@@ -205,13 +215,13 @@ describe('FeedbackDialogComponent', () => {
       await message.setValue('hi there. can you improve this?. thanks.');
 
       const takeScreenshot = await loader.getHarness(IxCheckboxHarness.with({ label: 'Take screenshot of the current page' }));
-      await takeScreenshot.setValue(false);
+      await takeScreenshot.setValue(true);
 
       const attachImages = await loader.getHarness(IxCheckboxHarness.with({ label: 'Attach additional images' }));
       await attachImages.setValue(true);
 
       const attachmentFile = new File(['(⌐□_□)'], 'chucknorris.png', { type: 'image/png' });
-      const image = await loader.getHarness(IxFileInputHarness.with({ label: 'Attach image (optional)' }));
+      const image = await loader.getHarness(IxFileInputHarness.with({ label: 'Attach images (optional)' }));
       await image.setValue([attachmentFile]);
 
       const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Submit' }));
@@ -280,6 +290,8 @@ describe('FeedbackDialogComponent', () => {
         Subject: 'Test subject',
         Message: 'Testing ticket body',
         'Attach debug': true,
+        'Take screenshot of the current page': false,
+        'Attach additional images': false,
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Submit' }));

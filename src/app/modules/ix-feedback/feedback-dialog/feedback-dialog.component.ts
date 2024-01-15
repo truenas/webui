@@ -61,10 +61,10 @@ export class FeedbackDialogComponent implements OnInit {
 
     token: [''],
 
+    attach_images: [false],
     images: [null as File[]],
     attach_debug: [false],
-    attach_screenshot: [false],
-    take_screenshot: [true],
+    attach_screenshot: [true],
   });
 
   private release: string;
@@ -220,8 +220,7 @@ export class FeedbackDialogComponent implements OnInit {
       switchMap((job) => {
         const requests$: Observable<unknown>[] = [];
 
-        if (this.attachments.length) {
-          this.listenForUploading();
+        if (this.form.controls.attach_images.value && this.attachments.length) {
           this.attachments.forEach((file) => {
             const request$ = this.fileUpload.upload(file, 'support.attach_ticket', [{
               ticket: job.result.ticket,
@@ -232,8 +231,9 @@ export class FeedbackDialogComponent implements OnInit {
           });
         }
 
-        if (this.form.controls.take_screenshot.value) {
+        if (this.form.controls.attach_screenshot.value) {
           const request$ = this.feedbackService.takeScreenshot().pipe(
+            filter(Boolean),
             switchMap((file) => this.fileUpload.upload(file, 'support.attach_ticket', [{
               ticket: job.result.ticket,
               filename: file.name,
@@ -247,10 +247,7 @@ export class FeedbackDialogComponent implements OnInit {
       }),
       untilDestroyed(this),
     ).subscribe({
-      next: () => {
-        this.isLoading = false;
-        this.onSuccess();
-      },
+      next: () => this.onSuccess(),
       error: (error: unknown) => {
         console.error(error);
         this.isLoading = false;
@@ -310,7 +307,7 @@ export class FeedbackDialogComponent implements OnInit {
     this.feedbackService
       .addReview(values)
       .pipe(
-        switchMap((response) => this.uploadReviewAttachments(response)),
+        switchMap((response) => forkJoin(this.uploadReviewAttachments(response))),
         untilDestroyed(this),
       )
       .subscribe({
@@ -323,22 +320,24 @@ export class FeedbackDialogComponent implements OnInit {
       });
   }
 
-  private uploadReviewAttachments(response: ReviewAddedResponse): Observable<AttachmentAddedResponse[]> {
+  private uploadReviewAttachments(response: ReviewAddedResponse): Observable<AttachmentAddedResponse>[] {
     const requests$: Observable<AttachmentAddedResponse>[] = [];
 
-    if (this.form.controls.take_screenshot.value) {
+    if (this.form.controls.attach_screenshot.value) {
       const request$ = this.feedbackService.takeScreenshot().pipe(
         switchMap((image) => this.feedbackService.uploadReviewAttachment(response.review_id, image)),
       );
       requests$.push(request$);
     }
 
-    this.attachments.forEach((image) => {
-      const request$ = this.feedbackService.uploadReviewAttachment(response.review_id, image);
-      requests$.push(request$);
-    });
+    if (this.form.controls.attach_images.value && this.attachments.length) {
+      this.attachments.forEach((image) => {
+        const request$ = this.feedbackService.uploadReviewAttachment(response.review_id, image);
+        requests$.push(request$);
+      });
+    }
 
-    return forkJoin(requests$);
+    return requests$;
   }
 
   private onSuccess(): void {
