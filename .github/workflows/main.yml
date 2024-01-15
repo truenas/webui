@@ -22,7 +22,7 @@ jobs:
         uses: ./.github/actions/prepare
 
   check-files:
-    - name: Check if translations only were changed
+    name: Check if translations only were changed
     runs-on: ubuntu-latest
     outputs:
       translations-only: ${{ steps.filter.outputs.translations-only }}
