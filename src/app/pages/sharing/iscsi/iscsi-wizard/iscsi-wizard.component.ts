@@ -8,7 +8,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  lastValueFrom, forkJoin, Observable, switchMap, tap, of, map, take,
+  lastValueFrom, forkJoin,
 } from 'rxjs';
 import { patterns } from 'app/constants/name-patterns.constant';
 import { DatasetType } from 'app/enums/dataset.enum';
@@ -20,8 +20,7 @@ import {
 } from 'app/enums/iscsi.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
-import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
-import { ServiceStatus } from 'app/enums/service-status.enum';
+import { ServiceName } from 'app/enums/service-name.enum';
 import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
 import {
   IscsiAuthAccess,
@@ -51,7 +50,6 @@ import { IscsiService } from 'app/services/iscsi.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { ServicesState } from 'app/store/services/services.reducer';
-import { selectService } from 'app/store/services/services.selectors';
 
 @UntilDestroy()
 @Component({
@@ -450,54 +448,4 @@ export class IscsiWizardComponent implements OnInit {
     this.cdr.markForCheck();
     this.slideInRef.close(true);
   }
-
-  checkIfServiceRestartIsNeeded(): Observable<boolean> {
-    return this.store$.select(selectService(ServiceName.Iscsi)).pipe(
-      map((service) => service.state === ServiceStatus.Running),
-      take(1),
-      switchMap(() => this.warnAboutActiveIscsiSessions()),
-      switchMap((confirmed) => {
-        if (confirmed) {
-          this.loader.open();
-          return this.ws.call('service.restart', [ServiceName.Iscsi]).pipe(
-            tap(() => {
-              this.loader.close();
-              this.snackbar.success(
-                this.translateService.instant(
-                  '{name} service has been restarted',
-                  { name: serviceNames.get(ServiceName.Iscsi) },
-                ),
-              );
-            }),
-          );
-        }
-        return of(false);
-      }),
-      untilDestroyed(this),
-    );
-  }
-
-  warnAboutActiveIscsiSessions = (): Observable<boolean> => {
-    return this.iscsiService.getGlobalSessions().pipe(
-      switchMap((sessions) => {
-        if (!sessions.length) {
-          return of(true);
-        }
-        let message = this.translateService.instant(
-          'Stop {serviceName}?',
-          { serviceName: serviceNames.get(ServiceName.Iscsi) },
-        );
-        if (sessions.length) {
-          message = `<font color="red">${this.translateService.instant('There are {sessions} active iSCSI connections.', { sessions: sessions.length })}</font><br>${this.translateService.instant('Restarting the service would mean to stop the {serviceName} service and close these connections?', { serviceName: serviceNames.get(ServiceName.Iscsi) })}`;
-        }
-
-        return this.dialogService.confirm({
-          title: this.translateService.instant('Alert'),
-          message,
-          hideCheckbox: true,
-          buttonText: this.translateService.instant('Restart'),
-        });
-      }),
-    );
-  };
 }
