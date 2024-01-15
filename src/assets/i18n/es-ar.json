@@ -998,7 +998,7 @@
   "One-Time Password (if necessary)": "",
   "One-Time Password if two factor authentication is enabled.": "",
   "Online disk {name}?": "",
-  "Only Readonly, Sharing Manager or Full Admin roles are supported in WebUI.": "",
+  "Only Readonly Admin, Sharing Admin or Full Admin roles are supported in WebUI.": "",
   "Only appears if <i>Device</i> is selected. Select the unused zvol or zvol snapshot.": "",
   "Only first {number} examples are shown.": "",
   "Only image(s) will be updated": "",

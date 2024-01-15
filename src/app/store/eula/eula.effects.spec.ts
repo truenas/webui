@@ -53,7 +53,7 @@ describe('EulaEffects', () => {
     jest.clearAllMocks();
 
     const authMock = spectator.inject(MockAuthService);
-    authMock.setRoles([Role.Readonly]);
+    authMock.setRoles([Role.ReadonlyAdmin]);
     actions$.next(adminUiInitialized());
 
     expect(spectator.inject(WebSocketService).call).not.toHaveBeenCalledWith('truenas.is_eula_accepted');

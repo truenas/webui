@@ -23,7 +23,7 @@ describe('HasRolesDirective', () => {
 
   it('does not show an element when user doe not have correct roles', () => {
     spectator = createHost(
-      '<div *ixHasRole="[Role.Readonly]">Content</div>',
+      '<div *ixHasRole="[Role.ReadonlyAdmin]">Content</div>',
       {
         hostProps: { Role },
       },
@@ -31,7 +31,7 @@ describe('HasRolesDirective', () => {
 
     const authService = spectator.inject(AuthService);
 
-    expect(authService.hasRole).toHaveBeenCalledWith([Role.Readonly]);
+    expect(authService.hasRole).toHaveBeenCalledWith([Role.ReadonlyAdmin]);
     expect(spectator.query('div')).not.toExist();
   });
 
