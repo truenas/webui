@@ -444,14 +444,11 @@ export class IscsiWizardComponent implements OnInit {
     }
 
     this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Iscsi }));
-    this.checkIfServiceRestartIsNeeded().pipe(untilDestroyed(this)).subscribe({
-      complete: () => {
-        this.loader.close();
-        this.isLoading = false;
-        this.cdr.markForCheck();
-        this.slideInRef.close(true);
-      },
-    });
+
+    this.loader.close();
+    this.isLoading = false;
+    this.cdr.markForCheck();
+    this.slideInRef.close(true);
   }
 
   checkIfServiceRestartIsNeeded(): Observable<boolean> {
