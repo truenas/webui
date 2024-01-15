@@ -34,9 +34,9 @@ jobs:
         run: |
           FILES_API_URL="https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.number }}/files"
           FILES=$(curl -s -X GET -G $FILES_API_URL -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" | jq -r '.[] | .filename')
-          TRANSLATION_FILES_CHANGED=$(echo "$FILES" | grep -c "src/assets/i18n" || true)
+          TRANSLATION_FILES_CHANGED=$(echo "$FILES" | grep -c "src/assets/i18n/" || echo "0")
           TOTAL_FILES_CHANGED=$(echo "$FILES" | wc -l | xargs)
-          if [ "$TOTAL_FILES_CHANGED" == "$TRANSLATION_FILES_CHANGED" ]; then
+          if [ "$TOTAL_FILES_CHANGED" -eq "$TRANSLATION_FILES_CHANGED" ]; then
             echo "::set-output name=result::true"
           else
             echo "::set-output name=result::false"
