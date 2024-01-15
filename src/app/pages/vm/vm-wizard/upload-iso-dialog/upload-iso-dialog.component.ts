@@ -59,6 +59,9 @@ export class UploadIsoDialogComponent {
       this.loader.close();
       this.dialogRef.close(uploadPath);
     });
-    this.uploadService.upload(file, 'filesystem.put', [uploadPath, { mode: 493 }]);
+
+    this.uploadService.upload(file, 'filesystem.put', [uploadPath, { mode: 493 }])
+      .pipe(untilDestroyed(this))
+      .subscribe();
   }
 }

@@ -197,11 +197,7 @@ export class FeedbackDialogComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe({
         error: (error: HttpErrorResponse) => {
-          this.dialog.error({
-            title: this.translate.instant('Ticket'),
-            message: this.translate.instant('Uploading screenshots has failed'),
-            backtrace: `Error: ${error.status},\n ${error.error}\n ${error.message}`,
-          });
+          console.error(`Uploading Error: ${error.status},\n ${error.error}\n ${error.message}`);
         },
       });
     this.fileUpload.onUploaded$
@@ -221,22 +217,39 @@ export class FeedbackDialogComponent implements OnInit {
     this.isLoading = true;
     this.ws.job('support.new_ticket', [payload]).pipe(
       filter((job) => job.state === JobState.Success),
-      untilDestroyed(this),
-    ).subscribe({
-      next: (job) => {
+      switchMap((job) => {
+        const requests$: Observable<unknown>[] = [];
+
         if (this.attachments.length) {
           this.listenForUploading();
           this.attachments.forEach((file) => {
-            this.fileUpload.upload(file, 'support.attach_ticket', [{
+            const request$ = this.fileUpload.upload(file, 'support.attach_ticket', [{
               ticket: job.result.ticket,
               filename: file.name,
               token: payload.token,
             }]);
+            requests$.push(request$);
           });
-        } else {
-          this.isLoading = false;
-          this.onSuccess();
         }
+
+        if (this.form.controls.take_screenshot.value) {
+          const request$ = this.feedbackService.takeScreenshot().pipe(
+            switchMap((file) => this.fileUpload.upload(file, 'support.attach_ticket', [{
+              ticket: job.result.ticket,
+              filename: file.name,
+              token: payload.token,
+            }])),
+          );
+          requests$.push(request$);
+        }
+
+        return forkJoin(requests$);
+      }),
+      untilDestroyed(this),
+    ).subscribe({
+      next: () => {
+        this.isLoading = false;
+        this.onSuccess();
       },
       error: (error: unknown) => {
         console.error(error);
@@ -311,25 +324,28 @@ export class FeedbackDialogComponent implements OnInit {
   }
 
   private uploadReviewAttachments(response: ReviewAddedResponse): Observable<AttachmentAddedResponse[]> {
+    const requests$: Observable<AttachmentAddedResponse>[] = [];
+
     if (this.form.controls.take_screenshot.value) {
-      // const screenshot = this.feedbackService.takeScreenshot();
-      // this.attachments.push(screenshot);
-    }
-    if (this.form.controls.attach_screenshot.value
-      && this.form.controls.images.value?.length) {
-      this.attachments.push(...this.form.controls.images.value);
+      const request$ = this.feedbackService.takeScreenshot().pipe(
+        switchMap((image) => this.feedbackService.uploadReviewAttachment(response.review_id, image)),
+      );
+      requests$.push(request$);
     }
 
-    const requests = this.attachments
-      .map((image) => this.feedbackService.uploadReviewAttachment(response.review_id, image));
+    this.attachments.forEach((image) => {
+      const request$ = this.feedbackService.uploadReviewAttachment(response.review_id, image);
+      requests$.push(request$);
+    });
 
-    return forkJoin(requests);
+    return forkJoin(requests$);
   }
 
   private onSuccess(): void {
     this.snackbar.success(
       this.translate.instant(
-        'Thank you for sharing your feedback with us! Your insights are valuable in helping us improve our product.',
+        `Thank you for sharing your feedback with us!
+        Your insights are valuable in helping us improve our product.`,
       ),
     );
     this.isLoading = false;
