@@ -551,8 +551,6 @@ export interface ApiCallDirectory {
   'iscsi.targetextent.query': { params: QueryParams<IscsiTargetExtent>; response: IscsiTargetExtent[] };
   'iscsi.targetextent.update': { params: [id: number, extent: IscsiTargetExtentUpdate]; response: IscsiTargetExtent };
 
-  // HERE
-
   // Kerberos
   'kerberos.config': { params: void; response: KerberosConfig };
   'kerberos.keytab.create': { params: [KerberosKeytabUpdate]; response: KerberosKeytab };

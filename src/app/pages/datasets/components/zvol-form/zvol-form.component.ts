@@ -360,7 +360,7 @@ export class ZvolFormComponent implements OnInit {
     this.syncOptions.unshift({ label: `${inheritTr} (${parent.sync.rawvalue})`, value: inherit });
     this.compressionOptions.unshift({ label: `${inheritTr} (${parent.compression.rawvalue})`, value: inherit });
     this.deduplicationOptions.unshift({ label: `${inheritTr} (${parent.deduplication.rawvalue})`, value: inherit });
-    this.volblocksizeOptions.unshift({ label: `${inheritTr}`, value: inherit });
+    this.volblocksizeOptions.unshift({ label: inheritTr, value: inherit });
     this.snapdevOptions.unshift({ label: `${inheritTr} (${parent.snapdev.rawvalue})`, value: inherit });
 
     this.form.controls.sync.setValue(inherit);
