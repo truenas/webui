@@ -34,6 +34,7 @@ import {
 } from 'rxjs/operators';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
+import { Role } from 'app/enums/role.enum';
 import { ApiCallMethod, ApiCallParams } from 'app/interfaces/api/api-call-directory.interface';
 import { ApiJobMethod, ApiJobParams } from 'app/interfaces/api/api-job-directory.interface';
 import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
@@ -558,11 +559,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
           this.loader.close();
           this.loaderOpen = false;
         }
-        if (error.hasOwnProperty('reason') && (error.hasOwnProperty('trace') && error.hasOwnProperty('type'))) {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
-        } else {
-          this.dialogService.error(this.errorHandler.parseError(error));
-        }
+        this.dialogService.error(this.errorHandler.parseError(error));
       },
     });
   }
@@ -696,11 +693,14 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
 
     if (response.data) {
       if (response.data.result) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         rows = new EntityUtils().flattenData(response.data.result) as Row[];
       } else {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         rows = new EntityUtils().flattenData(response.data) as Row[];
       }
     } else {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       rows = new EntityUtils().flattenData(response) as Row[];
     }
 
@@ -881,7 +881,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
         }
       },
       error: (error) => {
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+        this.dialogService.error(this.errorHandler.parseError(error));
         this.loader.close();
       },
     });
@@ -918,7 +918,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
           return this.ws.call(this.conf.wsDelete as ApiCallMethod, params as ApiCallParams<ApiCallMethod>).pipe(
             take(1),
             catchError((error) => {
-              this.dialogService.error(this.errorHandler.parseWsError(error));
+              this.dialogService.error(this.errorHandler.parseError(error));
               this.loader.close();
               return of(false);
             }),
@@ -1034,7 +1034,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
                 }
               },
               error: (res1) => {
-                this.dialogService.error(this.errorHandler.parseWsError(res1));
+                this.dialogService.error(this.errorHandler.parseError(res1));
                 this.loader.close();
                 this.loaderOpen = false;
               },
@@ -1204,6 +1204,11 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
   isInteractive(column: string): boolean {
     const item = this.currentColumns.find((obj) => obj.prop === column);
     return (item?.checkbox || item?.toggle || item?.button || item?.showLockedStatus);
+  }
+
+  getRoles(column: string): Role[] {
+    const item = this.currentColumns.find((obj) => obj.prop === column);
+    return item?.requiresRoles;
   }
 
   doRowClick(element: Row): void {

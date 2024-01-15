@@ -7,6 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import { RetentionPolicy } from 'app/enums/retention-policy.enum';
+import { Role } from 'app/enums/role.enum';
 import { ScheduleMethod } from 'app/enums/schedule-method.enum';
 import { helptextReplicationWizard } from 'app/helptext/data-protection/replication/replication-wizard';
 import { Option } from 'app/interfaces/option.interface';
@@ -35,6 +36,7 @@ export class ReplicationWhenComponent implements OnInit, OnChanges, SummaryProvi
   });
 
   readonly helptext = helptextReplicationWizard;
+  readonly requiresRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
 
   scheduleMethodOptions$ = of([
     { label: this.translate.instant('Run On a Schedule'), value: ScheduleMethod.Cron },

@@ -28,6 +28,7 @@ describe('ManageConfigurationMenuComponent', () => {
       mockProvider(Router),
       mockProvider(AuthService, {
         isSysAdmin$,
+        hasRole: jest.fn(() => of(true)),
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -73,8 +74,9 @@ describe('ManageConfigurationMenuComponent', () => {
 
   it('does not show Reset to Defaults menu item if logged in user is not a system administrator', async () => {
     isSysAdmin$.next(false);
+
     await menu.open();
-    const resetToDefaults = await menu.getItems({ text: /Reset to Defaults$/ });
+    const resetToDefaults = await menu.getItems({ text: 'Reset to Defaults' });
 
     expect(resetToDefaults).toHaveLength(0);
   });

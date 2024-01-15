@@ -82,7 +82,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     compression: [inherit as WithInherit<string>],
     atime: [inherit as WithInherit<OnOff>],
     deduplication: [inherit as WithInherit<DeduplicationSetting>],
-    checksum: [inherit as WithInherit<string>],
+    checksum: [inherit as WithInherit<DatasetChecksum>],
     readonly: [inherit as WithInherit<OnOff>],
     exec: [inherit as WithInherit<OnOff>],
     snapdir: [null as WithInherit<DatasetSnapdir>],

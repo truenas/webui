@@ -3,6 +3,7 @@ import {
   byText, createComponentFactory, Spectator, mockProvider,
 } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Disk, TopologyDisk } from 'app/interfaces/storage.interface';
 import {
@@ -25,6 +26,7 @@ describe('HardwareDiskEncryptionComponent', () => {
           afterClosed: () => of(),
         })),
       }),
+      mockAuth(),
     ],
   });
 

@@ -2,74 +2,76 @@ import {
   Component,
 } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
-import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
-import _ from 'lodash';
-import { Observable } from 'rxjs';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import {
-  debounceTime,
-  filter, map, switchMap,
-} from 'rxjs/operators';
+  combineLatest,
+  debounceTime, distinctUntilChanged, filter, map, switchMap,
+} from 'rxjs';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
-import { Option } from 'app/interfaces/option.interface';
 import {
   CreateNewTicket,
 } from 'app/modules/ix-feedback/interfaces/file-ticket.interface';
-import { SystemGeneralService } from 'app/services/system-general.service';
-import { WebSocketService } from 'app/services/ws.service';
+import { IxFeedbackService } from 'app/modules/ix-feedback/ix-feedback.service';
 
 @UntilDestroy()
 @Component({
   templateUrl: './file-ticket-form.component.html',
+  styleUrls: ['./file-ticket-form.component.scss'],
 })
 export class FileTicketFormComponent {
-  token = new FormControl<string>('', [Validators.required]);
-  title = new FormControl<string>('', [Validators.required]);
-  category = new FormControl<string>({ value: '', disabled: true }, [Validators.required]);
-  categoryOptions$: Observable<Option[]> = this.token.valueChanges.pipe(
-    debounceTime(300),
-    switchMap((token) => this.ws.call('support.fetch_categories', [token])),
-    map((choices) => Object.entries(choices).map(([label, value]) => ({ label, value }))),
-    map((options) => _.sortBy(options, ['label'])),
+  protected title = new FormControl<string>('', [Validators.required]);
+  protected similarIssues$ = this.title.valueChanges.pipe(
+    filter(() => Boolean(this.feedback.getOauthToken())),
+    filter((query) => query.length > 3),
+    debounceTime(500),
+    distinctUntilChanged(),
+    switchMap((query) => this.feedback.getSimilarIssues(query)),
   );
+  protected hasSimilarIssues$ = combineLatest([
+    this.title.valueChanges,
+    this.similarIssues$,
+  ]).pipe(
+    map(([title, issues]) => {
+      if (title.length > 3) {
+        return issues;
+      }
+      return [];
+    }),
+  );
+  protected readonly hint$ = this.feedback.oauthToken$.pipe(map((token) => {
+    if (token) {
+      return '';
+    }
+
+    return this.translate.instant('Login To Jira first to enable autocomplete feature for similar issues.');
+  }));
+
   readonly tooltips = {
-    token: helptext.token.tooltip,
-    category: helptext.category.tooltip,
     title: helptext.title.tooltip,
   };
 
   constructor(
-    private ws: WebSocketService,
-    private systemGeneralService: SystemGeneralService,
+    private feedback: IxFeedbackService,
+    private sanitizer: DomSanitizer,
+    private translate: TranslateService,
   ) {
-    this.restoreToken();
-    this.addFormListeners();
-  }
-
-  private addFormListeners(): void {
-    this.token.valueChanges.pipe(
-      filter((token) => !!token),
+    this.feedback.oauthToken$.pipe(
+      filter(Boolean),
       untilDestroyed(this),
-    ).subscribe((token) => {
-      this.category.enable();
-      this.systemGeneralService.setTokenForJira(token);
+    ).subscribe(() => {
+      this.title.enable();
     });
   }
 
-  private restoreToken(): void {
-    const token = this.systemGeneralService.getTokenForJira();
-    if (token) {
-      this.token.setValue(token);
-      this.category.enable();
-    } else {
-      this.category.disable();
-    }
+  sanitizeHtml(url: string): SafeHtml {
+    return this.sanitizer.bypassSecurityTrustHtml(url);
   }
 
   getPayload(): Partial<CreateNewTicket> {
     return {
-      category: this.category.value,
       title: this.title.value,
-      token: this.token.value,
     };
   }
 }

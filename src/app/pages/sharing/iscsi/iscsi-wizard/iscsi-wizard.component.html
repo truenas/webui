@@ -62,6 +62,7 @@
             ixTest="back"
           >{{ 'Back' | translate }}</button>
           <button
+            *ixRequiresRoles="requiresRoles"
             mat-button
             color="primary"
             type="submit"

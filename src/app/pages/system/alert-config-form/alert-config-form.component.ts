@@ -8,10 +8,10 @@ import { forkJoin, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { AlertPolicy } from 'app/enums/alert-policy.enum';
+import { Role } from 'app/enums/role.enum';
 import { trackById } from 'app/helpers/track-by.utils';
 import { helptextAlertSettings } from 'app/helptext/system/alert-settings';
 import { AlertCategory, AlertClassesUpdate, AlertClassSettings } from 'app/interfaces/alert.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -48,6 +48,8 @@ export class AlertConfigFormComponent implements OnInit {
       return policyList.map((policy) => ({ label: policy, value: policy }));
     }),
   );
+
+  protected readonly Role = Role;
 
   constructor(
     private ws: WebSocketService,
@@ -92,10 +94,10 @@ export class AlertConfigFormComponent implements OnInit {
           this.isFormLoading = false;
           this.cdr.markForCheck();
         },
-        error: (error: WebsocketError) => {
+        error: (error: unknown) => {
           this.isFormLoading = false;
           this.cdr.markForCheck();
-          this.dialogService.error(this.errorHandler.parseWsError(error));
+          this.dialogService.error(this.errorHandler.parseError(error));
         },
       });
   }

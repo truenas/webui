@@ -12,6 +12,7 @@ import {
 } from 'rxjs';
 import { DatasetPreset } from 'app/enums/dataset.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
+import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.interface';
@@ -57,6 +58,8 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
 
   parentDataset: Dataset;
   existingDataset: Dataset;
+
+  protected readonly Role = Role;
 
   constructor(
     private ws: WebSocketService,
@@ -140,7 +143,7 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
       error: (error) => {
         this.isLoading = false;
         this.cdr.markForCheck();
-        this.dialog.error(this.errorHandler.parseWsError(error));
+        this.dialog.error(this.errorHandler.parseError(error));
       },
     });
   }
@@ -168,7 +171,7 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
       error: (error) => {
         this.isLoading = false;
         this.cdr.markForCheck();
-        this.dialog.error(this.errorHandler.parseWsError(error));
+        this.dialog.error(this.errorHandler.parseError(error));
       },
     });
   }
@@ -226,7 +229,7 @@ export class DatasetFormComponent implements OnInit, AfterViewInit {
       error: (error) => {
         this.isLoading = false;
         this.cdr.markForCheck();
-        this.dialog.error(this.errorHandler.parseWsError(error));
+        this.dialog.error(this.errorHandler.parseError(error));
       },
     });
   }

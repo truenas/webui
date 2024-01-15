@@ -31,7 +31,7 @@ interface Conversion {
   styleUrls: ['./line-chart.component.scss'],
 })
 export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
-  @ViewChild('wrapper', { static: true }) el: ElementRef;
+  @ViewChild('wrapper', { static: true }) el: ElementRef<HTMLElement>;
   @Input() chartId: string;
   @Input() chartColors: string[];
   @Input() data: ReportingData;

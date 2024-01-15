@@ -5,10 +5,10 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { SmartPowerMode } from 'app/enums/smart-power.mode';
 import { helptextServiceSmart } from 'app/helptext/services/components/service-smart';
 import { SmartConfigUpdate } from 'app/interfaces/smart-test.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -47,7 +47,7 @@ export class ServiceSmartComponent implements OnInit {
     { label: this.translate.instant('Standby'), value: SmartPowerMode.Standby },
     { label: this.translate.instant('Idle'), value: SmartPowerMode.Idle },
   ]);
-
+  protected readonly Role = Role;
   constructor(
     private ws: WebSocketService,
     private formErrorHandler: FormErrorHandlerService,
@@ -70,8 +70,8 @@ export class ServiceSmartComponent implements OnInit {
           this.isFormLoading = false;
           this.cdr.markForCheck();
         },
-        error: (error: WebsocketError) => {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
+        error: (error: unknown) => {
+          this.dialogService.error(this.errorHandler.parseError(error));
           this.isFormLoading = false;
           this.cdr.markForCheck();
         },
@@ -91,7 +91,7 @@ export class ServiceSmartComponent implements OnInit {
           this.slideInRef.close();
           this.cdr.markForCheck();
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.isFormLoading = false;
           this.formErrorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();

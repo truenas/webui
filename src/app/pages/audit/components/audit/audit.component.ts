@@ -231,7 +231,7 @@ export class AuditComponent implements OnInit, OnDestroy {
 
   private setSearchProperties(auditEntries: AuditEntry[]): void {
     this.searchProperties = searchProperties<AuditEntry>([
-      textProperty('audit_id', this.translate.instant('ID'), of([])),
+      textProperty('audit_id', this.translate.instant('ID'), of<Option[]>([])),
       dateProperty(
         'message_timestamp',
         this.translate.instant('Timestamp'),
@@ -313,7 +313,7 @@ export class AuditComponent implements OnInit, OnDestroy {
 
   private loadParamsFromRoute(): void {
     this.activatedRoute.params.pipe(untilDestroyed(this)).subscribe((params) => {
-      const options = this.urlOptionsService.parseUrlOptions(params.options);
+      const options = this.urlOptionsService.parseUrlOptions(params.options as string);
 
       this.pagination = {
         pageSize: options.pagination?.pageSize || 50,

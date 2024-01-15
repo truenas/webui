@@ -4,10 +4,10 @@ import {
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
+import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { IscsiGlobalConfigUpdate } from 'app/interfaces/iscsi-global-config.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -43,6 +43,12 @@ export class TargetGlobalConfigurationComponent implements OnInit {
     alua: helptextSharingIscsi.globalconf_tooltip_alua,
   };
 
+  readonly requiresRoles = [
+    Role.SharingIscsiGlobalWrite,
+    Role.SharingIscsiWrite,
+    Role.SharingWrite,
+  ];
+
   constructor(
     private ws: WebSocketService,
     private fb: FormBuilder,
@@ -72,7 +78,7 @@ export class TargetGlobalConfigurationComponent implements OnInit {
           this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Iscsi }));
           this.cdr.markForCheck();
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.setLoading(false);
           this.formErrorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();
@@ -88,8 +94,8 @@ export class TargetGlobalConfigurationComponent implements OnInit {
         this.form.patchValue(config);
         this.setLoading(false);
       },
-      error: (error: WebsocketError) => {
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+      error: (error: unknown) => {
+        this.dialogService.error(this.errorHandler.parseError(error));
         this.setLoading(false);
       },
     });

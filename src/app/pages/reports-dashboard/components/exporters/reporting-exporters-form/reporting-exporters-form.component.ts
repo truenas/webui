@@ -7,11 +7,12 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
+import { Role } from 'app/enums/role.enum';
 import { toHumanReadableKey } from 'app/helpers/object-keys-to-human-readable.helper';
 import { DynamicFormSchema, DynamicFormSchemaNode } from 'app/interfaces/dynamic-form-schema.interface';
 import { Option } from 'app/interfaces/option.interface';
 import {
-  ExportingExporterList as ReportingExporterList,
+  ReportingExporterList,
   ReportingExporterKey as ReportingExporterType,
   ReportingExporterSchema,
   ReportingExporter,
@@ -58,6 +59,7 @@ export class ReportingExportersFormComponent implements OnInit {
 
   protected exporterTypeOptions$: Observable<Option[]>;
   protected reportingExporterList: ReportingExporterList[] = [];
+  protected readonly requiredRoles = [Role.ReportingWrite];
 
   constructor(
     private fb: FormBuilder,
@@ -102,7 +104,7 @@ export class ReportingExportersFormComponent implements OnInit {
         this.cdr.markForCheck();
       },
       error: (error) => {
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+        this.dialogService.error(this.errorHandler.parseError(error));
         this.isLoading = false;
         this.isLoadingSchemas = false;
         this.cdr.markForCheck();
@@ -212,7 +214,7 @@ export class ReportingExportersFormComponent implements OnInit {
         this.isLoading = false;
         this.slideInRef.close(true);
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.isLoading = false;
         this.formErrorHandler.handleWsFormError(error, this.form);
         this.cdr.markForCheck();

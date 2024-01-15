@@ -339,8 +339,9 @@ certificate still approved.'),
       tooltip: T('Number of days to renew certificate before expiring.'),
     },
     dir_uri: {
-      tooltip: T('URI of the ACME Server Directory. Choose a\
- preconfigured URI or enter a custom URI.'),
+      tooltip: T('URI of the ACME Server Directory. Choose a pre configured URI'),
+      custom_checkbox_tooltip: T('Use Custom ACME Server Directory URI'),
+      custom_input_tooltip: T('URI of the ACME Server Directory. Enter a custom URI.'),
     },
     authenticator: {
       tooltip: T('Authenticator to validate the Domain. Choose a\

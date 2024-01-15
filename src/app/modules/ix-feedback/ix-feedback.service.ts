@@ -3,21 +3,26 @@ import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import html2canvas, { Options } from 'html2canvas';
 import {
-  Observable, combineLatest, first, map, switchMap,
+  BehaviorSubject,
+  Observable, combineLatest, filter, first, map, of, switchMap,
 } from 'rxjs';
 import {
   AddReview, AttachmentAddedResponse,
 } from 'app/modules/ix-feedback/interfaces/feedback.interface';
+import { SimilarIssue } from 'app/modules/ix-feedback/interfaces/file-ticket.interface';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
-import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
+import { selectSystemHostId, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 import { ReviewAddedResponse } from './interfaces/feedback.interface';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class IxFeedbackService {
+  isReviewAllowed$ = new BehaviorSubject<boolean>(false);
+  oauthToken$ = new BehaviorSubject<string>(null);
   private readonly hostname = 'https://feedback.ui.truenas.com';
-  private isReviewAllowed = false;
 
   constructor(
     private httpClient: HttpClient,
@@ -27,20 +32,16 @@ export class IxFeedbackService {
   ) {
     this.checkIfReviewAllowed().subscribe({
       next: (isAllowed) => {
-        this.isReviewAllowed = isAllowed;
+        this.isReviewAllowed$.next(isAllowed);
       },
       error: () => {
-        this.isReviewAllowed = false;
+        this.isReviewAllowed$.next(false);
       },
     });
   }
 
-  getReviewAllowed(): boolean {
-    return this.isReviewAllowed;
-  }
-
   getHostId(): Observable<string> {
-    return this.ws.call('system.host_id');
+    return this.store$.select(selectSystemHostId).pipe(filter(Boolean));
   }
 
   addReview(body: AddReview): Observable<ReviewAddedResponse> {
@@ -77,6 +78,14 @@ export class IxFeedbackService {
     });
   }
 
+  getOauthToken(): string {
+    return this.oauthToken$.getValue();
+  }
+
+  setOauthToken(token: string): void {
+    this.oauthToken$.next(token);
+  }
+
   checkIfReviewAllowed(): Observable<boolean> {
     return combineLatest([
       this.store$.pipe(waitForSystemInfo),
@@ -93,5 +102,13 @@ export class IxFeedbackService {
           .pipe(map((response) => !response.value));
       }),
     );
+  }
+
+  getSimilarIssues(query: string): Observable<SimilarIssue[]> {
+    if (!this.getOauthToken()) {
+      return of([]);
+    }
+
+    return this.ws.call('support.similar_issues', [this.getOauthToken(), query]);
   }
 }

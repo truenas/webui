@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { Weekday } from 'app/enums/weekday.enum';
 import { helptextResilver } from 'app/helptext/storage/resilver/resilver';
 import { ResilverConfigUpdate } from 'app/interfaces/resilver-config.interface';
@@ -40,6 +41,8 @@ export class ResilverConfigComponent implements OnInit {
       Weekday.Sunday,
     ], Validators.required],
   });
+
+  readonly requiresRoles = [Role.FullAdmin];
 
   readonly tooltips = {
     enabled: helptextResilver.enabled_tooltip,
@@ -79,7 +82,7 @@ export class ResilverConfigComponent implements OnInit {
         error: (error) => {
           this.isFormLoading = false;
           this.cdr.markForCheck();
-          this.dialogService.error(this.errorHandler.parseWsError(error));
+          this.dialogService.error(this.errorHandler.parseError(error));
         },
       });
   }
@@ -97,7 +100,7 @@ export class ResilverConfigComponent implements OnInit {
           this.cdr.markForCheck();
           this.router.navigate(['/data-protection']);
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.isFormLoading = false;
           this.formErrorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();

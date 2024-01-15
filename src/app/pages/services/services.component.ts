@@ -9,6 +9,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { map, switchMap } from 'rxjs/operators';
 import { AuditService } from 'app/enums/audit.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
+import { Role } from 'app/enums/role.enum';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
@@ -47,6 +48,7 @@ export class ServicesComponent implements OnInit {
   readonly serviceNames = serviceNames;
   readonly serviceName = ServiceName;
   readonly ServiceStatus = ServiceStatus;
+  protected readonly Role = Role;
 
   get emptyConfig(): EmptyConfig {
     if (this.loading) {

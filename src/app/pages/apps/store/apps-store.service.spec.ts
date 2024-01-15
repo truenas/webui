@@ -65,7 +65,7 @@ describe('AppsStore', () => {
         error: jest.fn(),
       }),
       mockProvider(ErrorHandlerService, {
-        parseWsError: jest.fn(),
+        parseError: jest.fn(),
       }),
       mockProvider(ApplicationsService, {
         getAvailableApps: jest.fn(() => of(availableApps)) as () => Observable<AvailableApp[]>,

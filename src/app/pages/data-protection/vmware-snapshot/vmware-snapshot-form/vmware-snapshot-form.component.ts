@@ -6,6 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { filter } from 'rxjs/operators';
+import { Role } from 'app/enums/role.enum';
 import { helptextVmwareSnapshot } from 'app/helptext/storage/vmware-snapshot/vmware-snapshot';
 import {
   MatchDatastoresWithDatasets, VmwareDatastore, VmwareFilesystem, VmwareSnapshot, VmwareSnapshotUpdate,
@@ -44,6 +45,8 @@ export class VmwareSnapshotFormComponent implements OnInit {
   });
 
   isLoading = false;
+
+  readonly requiresRoles = [Role.FullAdmin];
 
   readonly labels = {
     hostname: helptextVmwareSnapshot.VMware_snapshot_form_hostname_placeholder,
@@ -144,7 +147,7 @@ export class VmwareSnapshotFormComponent implements OnInit {
             message: helptextVmwareSnapshot.connect_err_dialog.msg,
           });
         } else {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
+          this.dialogService.error(this.errorHandler.parseError(error));
         }
         this.cdr.markForCheck();
       },
@@ -190,7 +193,7 @@ export class VmwareSnapshotFormComponent implements OnInit {
           this.isLoading = false;
           this.slideInRef.close(true);
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.isLoading = false;
           this.formErrorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();

@@ -21,10 +21,32 @@ jobs:
       - name: Install
         uses: ./.github/actions/prepare
 
+  check-if-only-translation-changed:
+    runs-on: ubuntu-latest
+    name: 'Check if only translation files were changed'
+    outputs:
+      only_translations: ${{ steps.only_translations.outputs.result }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Check if only translation files were changed
+        id: only_translations
+        run: |
+          FILES_API_URL="https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.number }}/files"
+          FILES=$(curl -s -X GET -G $FILES_API_URL -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" | jq -r '.[] | .filename')
+          TRANSLATION_FILES_CHANGED=$(echo "$FILES" | grep -c "src/assets/i18n" || true)
+          TOTAL_FILES_CHANGED=$(echo "$FILES" | wc -l | xargs)
+          if [ "$TOTAL_FILES_CHANGED" == "$TRANSLATION_FILES_CHANGED" ]; then
+            echo "::set-output name=result::true"
+          else
+            echo "::set-output name=result::false"
+          fi
+
   build:
     name: Build
-    needs: [install]
+    needs: [check-if-only-translation-changed, install]
     runs-on: ubuntu-latest
+    if: ${{ needs.check-if-only-translation-changed.outputs.only_translations == 'false' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -35,8 +57,9 @@ jobs:
 
   lint:
     name: Validate code style
-    needs: [install]
+    needs: [check-if-only-translation-changed, install]
     runs-on: ubuntu-latest
+    if: ${{ needs.check-if-only-translation-changed.outputs.only_translations == 'false' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -49,7 +72,8 @@ jobs:
 
   lint-translations:
     name: Validate translation strings
-    needs: [install]
+    needs: [check-if-only-translation-changed, install]
+    if: ${{ needs.check-if-only-translation-changed.outputs.only_translations == 'false' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -61,8 +85,9 @@ jobs:
 
   test:
     name: Run tests
-    needs: [install]
+    needs: [check-if-only-translation-changed, install]
     runs-on: ubuntu-latest
+    if: ${{ needs.check-if-only-translation-changed.outputs.only_translations == 'false' }}
     env:
       CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
     steps:
@@ -79,3 +104,33 @@ jobs:
           name: webui
           token: ${{ env.CODECOV_TOKEN }}
           fail_ci_if_error: true
+
+  resort-strings:
+    name: Resort Strings and Commit if only translations were added
+    needs: [check-if-only-translation-changed, install]
+    runs-on: ubuntu-latest
+    if: ${{ needs.check-if-only-translation-changed.outputs.only_translations == 'true' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 1
+      - name: Install
+        uses: ./.github/actions/prepare
+      - name: Extract Messages
+        run: yarn run extract
+      - name: Validate Translations
+        run: yarn run validate-translations
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.name 'BugClerk'
+          git config --global user.email 'bugclerk@ixsystems.com'
+          git pull origin ${{ github.head_ref }} --no-edit
+          git add src/assets/i18n
+          if ! git diff --quiet --cached; then
+            git commit -m "NAS-XXXXXX: Auto resort translation strings"
+            git push origin ${{ github.head_ref }}
+          else
+            echo "No changes to commit."
+          fi

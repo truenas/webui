@@ -8,6 +8,7 @@ import { MockComponent } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { helptextVolumes } from 'app/helptext/storage/volumes/volume-list';
 import { Pool } from 'app/interfaces/pool.interface';
@@ -61,6 +62,7 @@ describe('DashboardPoolComponent', () => {
         mockCall('pool.upgrade'),
         mockJob('pool.expand', fakeSuccessfulJob()),
       ]),
+      mockAuth(),
     ],
   });
 

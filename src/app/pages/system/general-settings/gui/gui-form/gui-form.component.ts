@@ -13,6 +13,7 @@ import { combineLatest, of } from 'rxjs';
 import {
   filter, switchMap, takeUntil, tap,
 } from 'rxjs/operators';
+import { Role } from 'app/enums/role.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
@@ -64,6 +65,7 @@ export class GuiFormComponent {
   };
 
   readonly helptext = helptext;
+  protected readonly Role = Role;
 
   constructor(
     private fb: FormBuilder,
@@ -129,7 +131,7 @@ export class GuiFormComponent {
         this.cdr.markForCheck();
         this.handleServiceRestart(params as SystemGeneralConfigUpdate);
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.isFormLoading = false;
         this.errorHandler.handleWsFormError(error, this.formGroup);
         this.cdr.markForCheck();

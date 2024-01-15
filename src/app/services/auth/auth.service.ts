@@ -69,6 +69,7 @@ export class AuthService {
    * Special case that only matches root and admin users.
    */
   readonly isSysAdmin$ = this.user$.pipe(
+    filter(Boolean),
     map((user) => user.account_attributes.includes(AccountAttribute.SysAdmin)),
   );
 
@@ -137,7 +138,11 @@ export class AuthService {
   }
 
   loginWithToken(): Observable<LoginResult> {
-    return this.makeRequest('auth.login_with_token', [this.token || '']).pipe(
+    if (!this.token) {
+      return of(LoginResult.NoToken);
+    }
+
+    return this.makeRequest('auth.login_with_token', [this.token]).pipe(
       switchMap((wasLoggedIn) => {
         return this.processLoginResult(wasLoggedIn);
       }),

@@ -8,6 +8,7 @@ import {
   filter, map, switchMap, tap,
 } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
+import { Role } from 'app/enums/role.enum';
 import { RsyncTask } from 'app/interfaces/rsync-task.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import {
@@ -35,7 +36,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -132,6 +133,7 @@ export class RsyncTaskListComponent implements OnInit {
         {
           iconName: 'play_arrow',
           tooltip: this.translate.instant('Run job'),
+          requiresRoles: [Role.FullAdmin],
           onClick: (row) => this.runNow(row),
         },
         {
@@ -142,6 +144,7 @@ export class RsyncTaskListComponent implements OnInit {
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
+          requiresRoles: [Role.FullAdmin],
           onClick: (row) => this.delete(row),
         },
       ],
@@ -155,7 +158,7 @@ export class RsyncTaskListComponent implements OnInit {
   constructor(
     private translate: TranslateService,
     private ws: WebSocketService,
-    private slideIn: IxSlideInService,
+    private chainedSlideInService: IxChainedSlideInService,
     private dialogService: DialogService,
     private errorHandler: ErrorHandlerService,
     private loader: AppLoaderService,
@@ -213,16 +216,14 @@ export class RsyncTaskListComponent implements OnInit {
   }
 
   protected add(): void {
-    this.slideIn.open(RsyncTaskFormComponent, { wide: true })
-      .slideInClosed$
-      .pipe(filter(Boolean), untilDestroyed(this))
+    const closer$ = this.chainedSlideInService.pushComponent(RsyncTaskFormComponent, true);
+    closer$.pipe(filter((response) => !!response.response), untilDestroyed(this))
       .subscribe(() => this.dataProvider.load());
   }
 
   private edit(row: RsyncTask): void {
-    this.slideIn.open(RsyncTaskFormComponent, { data: row, wide: true })
-      .slideInClosed$
-      .pipe(filter(Boolean), untilDestroyed(this))
+    const closer$ = this.chainedSlideInService.pushComponent(RsyncTaskFormComponent, true, row);
+    closer$.pipe(filter((response) => !!response.response), untilDestroyed(this))
       .subscribe(() => this.dataProvider.load());
   }
 

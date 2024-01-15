@@ -7,6 +7,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { IscsiGlobalConfig } from 'app/interfaces/iscsi-global-config.interface';
@@ -36,6 +37,7 @@ describe('TargetGlobalConfigurationComponent', () => {
       IxFormsModule,
     ],
     providers: [
+      mockAuth(),
       mockWebsocket([
         mockCall('iscsi.global.config', {
           basename: 'iqn.2005-10.org.freenas.ctl',

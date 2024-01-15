@@ -80,7 +80,7 @@ export class QueryParserService<T> {
   private getSyntaxErrors(startingNode: SyntaxNode): QuerySyntaxError[] {
     const errors: QuerySyntaxError[] = [];
     startingNode.cursor().iterate((node) => {
-      if (node.name !== ParsedToken.Error) {
+      if ((node.name as ParsedToken) !== ParsedToken.Error) {
         return;
       }
 
@@ -91,10 +91,11 @@ export class QueryParserService<T> {
   }
 
   private parseNode(node: SyntaxNode): ConditionGroup | Condition {
-    if (node.name === ParsedToken.ConditionGroup) {
+    const name = node.name as ParsedToken;
+    if (name === ParsedToken.ConditionGroup) {
       return this.parseConditionGroup(node);
     }
-    if (node.name === ParsedToken.Condition) {
+    if (name === ParsedToken.Condition) {
       return this.parseCondition(node);
     }
 
@@ -129,7 +130,7 @@ export class QueryParserService<T> {
   }
 
   private parseConnector(node: SyntaxNode): ConnectorType {
-    return node.name === ParsedToken.Or ? ConnectorType.Or : ConnectorType.And;
+    return (node.name as ParsedToken) === ParsedToken.Or ? ConnectorType.Or : ConnectorType.And;
   }
 
   private parseLiteral(node: SyntaxNode): LiteralValue | LiteralValue[] {
@@ -280,7 +281,9 @@ export class QueryParserService<T> {
 
     if (comparator.toUpperCase() === 'IN' || comparator.toUpperCase() === 'NIN') {
       const valueList = Array.isArray(value)
-        ? value.map((valueItem) => `"${this.mapValueByPropertyType(currentProperty, valueItem) as string}"`).join(', ')
+        ? value.map((valueItem) => {
+          return `"${this.mapValueByPropertyType(currentProperty, valueItem as LiteralValue | LiteralValue[]) as string}"`;
+        }).join(', ')
         : `"${mappedConditionValue}"`;
 
       return `"${mappedConditionProperty}" ${comparator.toUpperCase()} (${valueList})`;

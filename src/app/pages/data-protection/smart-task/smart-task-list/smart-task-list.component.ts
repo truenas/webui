@@ -3,6 +3,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { helptextSmart } from 'app/helptext/data-protection/smart/smart';
 import { SmartTestTaskUi } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
@@ -114,6 +115,7 @@ export class SmartTaskListComponent implements EntityTableConfig {
       id: 'delete',
       icon: 'delete',
       label: 'Delete',
+      requiresRoles: [Role.FullAdmin],
       onClick: (rowinner: SmartTestTaskUi) => {
         this.entityList.doDelete(rowinner);
       },

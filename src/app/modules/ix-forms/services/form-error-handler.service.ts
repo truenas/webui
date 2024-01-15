@@ -20,16 +20,20 @@ export class FormErrorHandlerService {
    * TODO: See if second `string` in fieldsMap can be typed to key of formGroup.
    */
   handleWsFormError(
-    error: WebsocketError | Job,
+    error: unknown,
     formGroup: UntypedFormGroup,
     fieldsMap: Record<string, string> = {},
   ): void {
-    if ('type' in error && error.type === ResponseErrorType.Validation && error.extra) {
+    if (this.errorHandler.isWebsocketError(error) && error.type === ResponseErrorType.Validation && error.extra) {
       this.handleValidationError(error, formGroup, fieldsMap);
       return;
     }
 
-    if ('exc_info' in error && error.exc_info.type === ResponseErrorType.Validation && error.exc_info.extra) {
+    if (
+      this.errorHandler.isJobError(error)
+      && error.exc_info.type === ResponseErrorType.Validation
+      && error.exc_info.extra
+    ) {
       this.handleValidationError({ ...error, extra: error.exc_info.extra as Job['extra'] }, formGroup, fieldsMap);
       return;
     }
@@ -61,7 +65,7 @@ export class FormErrorHandlerService {
         const isExactMatch = (text: string, match: string): boolean => new RegExp(`\\b${match}\\b`).test(text);
 
         control = (control as UntypedFormArray).controls
-          .find((controlOfArray) => isExactMatch(errorMessage, controlOfArray.value));
+          .find((controlOfArray) => isExactMatch(errorMessage, controlOfArray.value as string));
       }
 
       if (!control) {

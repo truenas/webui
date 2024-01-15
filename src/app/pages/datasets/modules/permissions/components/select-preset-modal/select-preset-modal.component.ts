@@ -21,7 +21,6 @@ import { WebSocketService } from 'app/services/ws.service';
 @UntilDestroy()
 @Component({
   templateUrl: 'select-preset-modal.component.html',
-  styleUrls: ['./select-preset-modal.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SelectPresetModalComponent implements OnInit {

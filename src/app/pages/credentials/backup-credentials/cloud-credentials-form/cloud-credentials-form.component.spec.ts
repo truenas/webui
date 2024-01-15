@@ -9,13 +9,13 @@ import {
 } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { IxSelectHarness } from 'app/modules/ix-forms/components/ix-select/ix-select.harness';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { CHAINED_SLIDE_IN_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -91,6 +91,10 @@ describe('CloudCredentialsFormComponent', () => {
     },
   } as CloudsyncCredential;
 
+  const chainedComponentRef = {
+    close: jest.fn(),
+  };
+
   const createComponent = createComponentFactory({
     component: CloudCredentialsFormComponent,
     imports: [
@@ -104,19 +108,21 @@ describe('CloudCredentialsFormComponent', () => {
       StorjProviderFormComponent,
     ],
     providers: [
-      mockProvider(IxSlideInRef),
+
       mockProvider(SnackbarService),
       mockProvider(DialogService),
       { provide: SLIDE_IN_DATA, useValue: undefined },
+      { provide: CHAINED_SLIDE_IN_REF, useValue: chainedComponentRef },
       mockWebsocket([
         mockCall('cloudsync.credentials.query', []),
-        mockCall('cloudsync.credentials.create'),
-        mockCall('cloudsync.credentials.update'),
+        mockCall('cloudsync.credentials.create', fakeCloudsyncCredential),
+        mockCall('cloudsync.credentials.update', fakeCloudsyncCredential),
         mockCall('cloudsync.credentials.verify', {
           valid: true,
         }),
         mockCall('cloudsync.providers', [s3Provider, boxProvider, storjProvider]),
       ]),
+      mockAuth(),
     ],
   });
 
@@ -247,7 +253,7 @@ describe('CloudCredentialsFormComponent', () => {
             s3attribute: 's3 value',
           },
         }]);
-        expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalledWith(true);
+        expect(chainedComponentRef.close).toHaveBeenCalledWith({ response: fakeCloudsyncCredential, error: null });
         expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
       });
 
@@ -325,7 +331,7 @@ describe('CloudCredentialsFormComponent', () => {
           },
         },
       ]);
-      expect(spectator.inject(IxSlideInRef).close).toHaveBeenCalledWith(true);
+      expect(chainedComponentRef.close).toHaveBeenCalledWith({ response: fakeCloudsyncCredential, error: null });
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
     });
   });

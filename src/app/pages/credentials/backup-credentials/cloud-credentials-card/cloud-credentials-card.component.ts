@@ -4,6 +4,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { switchMap, filter, tap } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
@@ -14,7 +15,7 @@ import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { CloudCredentialsFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/cloud-credentials-form.component';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { DialogService } from 'app/services/dialog.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -50,6 +51,7 @@ export class CloudCredentialsCardComponent implements OnInit {
         },
         {
           iconName: 'delete',
+          requiresRoles: [Role.CloudSyncWrite],
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
         },
@@ -61,9 +63,9 @@ export class CloudCredentialsCardComponent implements OnInit {
 
   constructor(
     private ws: WebSocketService,
-    private slideInService: IxSlideInService,
     private translate: TranslateService,
     protected emptyService: EmptyService,
+    private chainedSlideinService: IxChainedSlideInService,
     private dialog: DialogService,
     private cloudCredentialService: CloudCredentialService,
   ) {}
@@ -99,15 +101,15 @@ export class CloudCredentialsCardComponent implements OnInit {
   }
 
   doAdd(): void {
-    const slideInRef = this.slideInService.open(CloudCredentialsFormComponent);
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+    const close$ = this.chainedSlideinService.pushComponent(CloudCredentialsFormComponent);
+    close$.pipe(filter((response) => !!response.response), untilDestroyed(this)).subscribe(() => {
       this.getCredentials();
     });
   }
 
   doEdit(credential: CloudsyncCredential): void {
-    const slideInRef = this.slideInService.open(CloudCredentialsFormComponent, { data: credential });
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+    const close$ = this.chainedSlideinService.pushComponent(CloudCredentialsFormComponent, false, credential);
+    close$.pipe(filter((response) => !!response.response), untilDestroyed(this)).subscribe(() => {
       this.getCredentials();
     });
   }

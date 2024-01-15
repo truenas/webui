@@ -80,7 +80,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   treeOptions: ITreeOptions = {
     idField: 'path',
     displayField: 'name',
-    getChildren: (node) => lastValueFrom(this.loadChildren(node)),
+    getChildren: (node: TreeNode<ExplorerNodeData>) => lastValueFrom(this.loadChildren(node)),
     actionMapping: this.actionMapping,
     useTriState: false,
   };
@@ -100,6 +100,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
 
     if ('nodeProvider' in changes || 'root' in changes) {
       this.setInitialNode();
+      this.cdr.markForCheck();
     }
   }
 
@@ -131,10 +132,10 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
     if (this.multiple) {
       this.selectTreeNodes([
         ...Object.keys(this.tree.treeModel.selectedLeafNodeIds),
-        event.node.id,
+        event.node.id as string,
       ]);
     } else {
-      this.selectTreeNodes([event.node.id]);
+      this.selectTreeNodes([event.node.id as string]);
     }
 
     this.onSelectionChanged();
@@ -171,6 +172,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   }
 
   onInputChanged(inputValue: string): void {
+    this.inputValue = inputValue;
     this.value = this.multiple ? inputValue.split(',') : inputValue;
     this.selectTreeNodes(Array.isArray(this.value) ? this.value : [this.value]);
     this.onChange(this.value);
@@ -227,7 +229,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
   }
 
   private updateInputValue(): void {
-    this.inputValue = Array.isArray(this.value) ? this.value.join(',') : this.value || '';
+    this.inputValue = Array.isArray(this.value) ? this.value.filter((value) => value.length).join(',') : this.value || '';
   }
 
   private selectTreeNodes(nodeIds: string[]): void {

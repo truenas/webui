@@ -8,6 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
+import { Role } from 'app/enums/role.enum';
 import { helptextSshKeypairs } from 'app/helptext/system/ssh-keypairs';
 import {
   KeychainCredentialUpdate,
@@ -52,6 +53,8 @@ export class SshKeypairFormComponent implements OnInit {
 
   readonly canDownloadPublicKey$ = this.form.value$.pipe(map((value) => value.name && value.public_key));
   readonly canDownloadPrivateKey$ = this.form.value$.pipe(map((value) => value.name && value.private_key));
+
+  protected readonly Role = Role;
 
   constructor(
     private fb: FormBuilder,
@@ -140,7 +143,7 @@ export class SshKeypairFormComponent implements OnInit {
         this.cdr.markForCheck();
         this.slideInRef.close(true);
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.isFormLoading = false;
         this.formErrorHandler.handleWsFormError(error, this.form);
         this.cdr.markForCheck();

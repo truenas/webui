@@ -64,7 +64,7 @@ export class CreateDatasetDialogComponent implements OnInit {
         },
         error: (error) => {
           this.isLoading$.next(false);
-          this.dialog.error(this.errorHandler.parseWsError(error));
+          this.dialog.error(this.errorHandler.parseError(error));
         },
       });
   }

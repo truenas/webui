@@ -8,6 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { forkJoin } from 'rxjs';
 import { filter, switchMap } from 'rxjs/operators';
 import { AclType } from 'app/enums/acl-type.enum';
+import { Role } from 'app/enums/role.enum';
 import { helptextPermissions } from 'app/helptext/storage/volumes/datasets/dataset-permissions';
 import { DatasetPermissionsUpdate } from 'app/interfaces/dataset-permissions.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -65,6 +66,8 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
   };
 
   readonly isRecursive$ = this.form.select((values) => values.recursive);
+
+  protected readonly Role = Role;
 
   private oldDatasetMode: string;
 
@@ -124,7 +127,7 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
     jobComponent.setCall('pool.dataset.permission', payload);
     jobComponent.submit();
     jobComponent.failure.pipe(untilDestroyed(this)).subscribe((failedJob) => {
-      this.dialog.error(this.errorHandler.parseJobError(failedJob));
+      this.dialog.error(this.errorHandler.parseError(failedJob));
     });
     jobComponent.success.pipe(untilDestroyed(this)).subscribe({
       next: () => {
@@ -157,9 +160,9 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
             group: stat.group,
           });
         },
-        error: (error: WebsocketError) => {
+        error: (error: unknown) => {
           this.isLoading = false;
-          this.dialog.error(this.errorHandler.parseWsError(error));
+          this.dialog.error(this.errorHandler.parseError(error));
         },
       });
   }

@@ -8,7 +8,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { DatasetEncryptionType } from 'app/enums/dataset.enum';
+import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
+import { Role } from 'app/enums/role.enum';
 import { combineLatestIsAny } from 'app/helpers/operators/combine-latest-is-any.helper';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { DatasetChangeKeyParams } from 'app/interfaces/dataset-change-key.interface';
@@ -16,7 +17,6 @@ import { Dataset } from 'app/interfaces/dataset.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
-import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { matchOthersFgValidator } from 'app/modules/ix-forms/validators/password-validation/password-validation';
 import { findInTree } from 'app/modules/ix-tree/utils/find-in-tree.utils';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -77,6 +77,8 @@ export class EncryptionOptionsDialogComponent implements OnInit {
 
   readonly encryptionTypeOptions$ = of(helptextDatasetForm.dataset_form_encryption.encryption_type_options);
 
+  protected readonly Role = Role;
+
   constructor(
     private fb: FormBuilder,
     private ws: WebSocketService,
@@ -84,7 +86,6 @@ export class EncryptionOptionsDialogComponent implements OnInit {
     private loader: AppLoaderService,
     private dialog: DialogService,
     private dialogRef: MatDialogRef<EncryptionOptionsDialogComponent>,
-    private validatorsService: IxValidatorsService,
     private formErrorHandler: FormErrorHandlerService,
     private errorHandler: ErrorHandlerService,
     private snackbar: SnackbarService,
@@ -97,7 +98,7 @@ export class EncryptionOptionsDialogComponent implements OnInit {
   }
 
   get hasPassphraseParent(): boolean {
-    return this.data.parent?.key_format?.value === DatasetEncryptionType.Passphrase;
+    return this.data.parent?.key_format?.value === EncryptionKeyFormat.Passphrase;
   }
 
   get hasKeyChild(): boolean {
@@ -200,8 +201,8 @@ export class EncryptionOptionsDialogComponent implements OnInit {
             pbkdf2iters: Number(pbkdf2iters.rawvalue),
           });
         },
-        error: (error: WebsocketError) => {
-          this.dialog.error(this.errorHandler.parseWsError(error));
+        error: (error: unknown) => {
+          this.dialog.error(this.errorHandler.parseError(error));
         },
       });
   }

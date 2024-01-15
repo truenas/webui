@@ -9,6 +9,7 @@ import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
 import { of } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
+import { Role } from 'app/enums/role.enum';
 import { helptextSystemBootenv } from 'app/helptext/system/boot-env';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -43,6 +44,8 @@ export class BootPoolAttachDialogComponent implements OnInit {
     label: this.translate.instant(helptextSystemBootenv.expand_placeholder),
     tooltip: this.translate.instant(helptextSystemBootenv.expand_tooltip),
   };
+
+  protected readonly Role = Role;
 
   constructor(
     private fb: FormBuilder,
@@ -119,7 +122,7 @@ export class BootPoolAttachDialogComponent implements OnInit {
             this.dialogRef.close(true);
           });
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.isFormLoading = false;
         this.errorHandler.handleWsFormError(error, this.form);
         this.cdr.markForCheck();

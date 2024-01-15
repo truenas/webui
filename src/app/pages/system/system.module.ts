@@ -17,7 +17,6 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { QrCodeModule } from 'ng-qrcode';
 import { NgxFilesizeModule } from 'ngx-filesize';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
@@ -128,7 +127,6 @@ import {
 import { ManualUpdateFormComponent } from 'app/pages/system/update/manual-update-form/manual-update-form.component';
 import { UpdateComponent } from 'app/pages/system/update/update.component';
 import { EnclosureModule } from 'app/pages/system/view-enclosure/enclosure.module';
-import { QrDialogComponent } from 'app/pages/two-factor-auth/components/two-factor/qr-dialog/qr-dialog.component';
 import { ConsoleCardComponent } from './advanced/console/console-card/console-card.component';
 import { SysctlCardComponent } from './advanced/sysctl/sysctl-card/sysctl-card.component';
 import { AlertSettingsComponent } from './alert-settings/alert-settings.component';
@@ -164,7 +162,6 @@ import { routing } from './system.routing';
     MatToolbarModule,
     MatListModule,
     MatButtonModule,
-    QrCodeModule,
     ReactiveFormsModule,
     routing,
     TooltipModule,
@@ -214,7 +211,6 @@ import { routing } from './system.routing';
     NtpServerFormComponent,
     NtpServerCardComponent,
     ProactiveComponent,
-    QrDialogComponent,
     ReplicationSettingsFormComponent,
     AccessFormComponent,
     AllowedAddressesFormComponent,

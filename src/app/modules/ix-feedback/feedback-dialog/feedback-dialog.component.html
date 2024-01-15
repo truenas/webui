@@ -91,7 +91,16 @@
       {{ 'EULA' | translate }}
     </button>
 
+    <ix-oauth-button
+      *ngIf="showJiraButton"
+      testId="login-to-jira"
+      [oauthType]="oauthType.Jira"
+      [oauthUrl]="oauthUrl"
+      (loggedIn)="setToken($event); onSubmit();"
+    ></ix-oauth-button>
+
     <button
+      *ngIf="!showJiraButton"
       mat-button
       type="submit"
       color="primary"

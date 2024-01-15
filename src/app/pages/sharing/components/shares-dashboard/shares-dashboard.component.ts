@@ -8,5 +8,5 @@ import { Role } from 'app/enums/role.enum';
   styleUrls: ['./shares-dashboard.component.scss'],
 })
 export class SharesDashboardComponent {
-  readonly Role = Role;
+  protected readonly Role = Role;
 }

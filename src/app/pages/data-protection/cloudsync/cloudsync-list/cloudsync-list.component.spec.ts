@@ -5,6 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
@@ -16,6 +17,7 @@ import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/clou
 import { CloudsyncListComponent } from 'app/pages/data-protection/cloudsync/cloudsync-list/cloudsync-list.component';
 import { CloudsyncRestoreDialogComponent } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
 import { DialogService } from 'app/services/dialog.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { TaskService } from 'app/services/task.service';
@@ -83,6 +85,10 @@ describe('CloudsyncListComponent', () => {
       IxTable2Module,
     ],
     providers: [
+      mockProvider(IxChainedSlideInService, {
+        pushComponent: jest.fn(() => of()),
+      }),
+      mockAuth(),
       mockWebsocket([
         mockCall('cloudsync.query', cloudSyncList),
       ]),
@@ -145,10 +151,11 @@ describe('CloudsyncListComponent', () => {
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Edit' }));
     await editButton.click();
 
-    expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(CloudsyncFormComponent, {
-      data: expect.objectContaining(cloudSyncList[0]),
-      wide: true,
-    });
+    expect(spectator.inject(IxChainedSlideInService).pushComponent).toHaveBeenCalledWith(
+      CloudsyncFormComponent,
+      true,
+      expect.objectContaining(cloudSyncList[0]),
+    );
   });
 
   it('deletes a Cloud Sync with confirmation when Delete button is pressed', async () => {

@@ -84,7 +84,7 @@
           [tooltip]="helptext.dataset_form_encryption.inherit_checkbox_tooltip | translate"
         ></ix-checkbox>
         <ix-checkbox
-          *ngIf="form.controls.encryption.enabled"
+          *ngIf="!form.controls.inherit_encryption.value"
           formControlName="encryption"
           [label]="helptext.dataset_form_encryption.encryption_checkbox_placeholder | translate"
           [tooltip]="helptext.dataset_form_encryption.encryption_checkbox_tooltip | translate"
@@ -144,6 +144,7 @@
 
       <ix-form-actions>
         <button
+          *ixRequiresRoles="[Role.DatasetWrite]"
           mat-button
           type="submit"
           color="primary"

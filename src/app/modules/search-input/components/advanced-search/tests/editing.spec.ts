@@ -4,6 +4,7 @@ import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { auditEventLabels, AuditService } from 'app/enums/audit.enum';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
+import { Option } from 'app/interfaces/option.interface';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { AdvancedSearchComponent } from 'app/modules/search-input/components/advanced-search/advanced-search.component';
@@ -49,12 +50,12 @@ describe('AdvancedSearchComponent – editing', () => {
           textProperty(
             'username',
             'Username',
-            of([]),
+            of<Option[]>([]),
           ),
           textProperty(
             'service',
             'Сервіс',
-            of([]),
+            of<Option[]>([]),
             new Map<AuditService, string>([
               [AuditService.Middleware, 'Проміжне програмне забезпечення'],
               [AuditService.Smb, 'Ес-ем-бе'],
@@ -63,7 +64,7 @@ describe('AdvancedSearchComponent – editing', () => {
           textProperty(
             'event',
             'Event',
-            of([]),
+            of<Option[]>([]),
             auditEventLabels,
           ),
         ]),

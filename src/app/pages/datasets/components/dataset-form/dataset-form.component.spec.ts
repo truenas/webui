@@ -8,6 +8,7 @@ import { Store } from '@ngrx/store';
 import { MockComponents, MockInstance } from 'ng-mocks';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AclMode } from 'app/enums/acl-type.enum';
 import { DatasetPreset } from 'app/enums/dataset.enum';
@@ -112,6 +113,7 @@ describe('DatasetFormComponent', () => {
       }),
       mockProvider(Router),
       mockProvider(IxSlideInRef),
+      mockAuth(),
       { provide: SLIDE_IN_DATA, useValue: undefined },
     ],
   });

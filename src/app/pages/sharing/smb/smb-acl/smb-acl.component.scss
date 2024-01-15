@@ -4,6 +4,10 @@
   }
 }
 
+mat-card {
+  overflow: hidden !important;
+}
+
 .entry-row {
   column-gap: 10px;
   display: flex;

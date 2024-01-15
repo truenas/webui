@@ -8,7 +8,6 @@ import { catchError } from 'rxjs/operators';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { helptextNetworkConfiguration } from 'app/helptext/network/configuration/configuration';
 import { helptextIpmi } from 'app/helptext/network/ipmi/ipmi';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { ipv4Validator } from 'app/modules/ix-forms/validators/ip-validation';
 import { DialogService } from 'app/services/dialog.service';
@@ -59,8 +58,8 @@ export class DefaultGatewayDialogComponent {
     this.dialogRef.close();
     const formValues = this.form.value;
     this.ws.call('interface.save_default_route', [formValues.defaultGateway]).pipe(
-      catchError((error: WebsocketError) => {
-        this.dialog.error(this.errorHandler.parseWsError(error));
+      catchError((error: unknown) => {
+        this.dialog.error(this.errorHandler.parseError(error));
         return EMPTY;
       }),
       untilDestroyed(this),

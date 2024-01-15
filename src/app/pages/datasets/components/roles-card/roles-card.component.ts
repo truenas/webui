@@ -1,8 +1,15 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import _ from 'lodash';
+import { filter } from 'rxjs';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
+import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { ixApplications } from 'app/pages/datasets/utils/dataset.utils';
+import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
+import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
+@UntilDestroy()
 @Component({
   selector: 'ix-roles-card',
   templateUrl: './roles-card.component.html',
@@ -47,5 +54,39 @@ export class RolesCardComponent {
       }
     }
     return shareNamesPretty;
+  }
+
+  get canCreateShare(): boolean {
+    return !this.hasChildrenWithShares
+      && !this.isSystemDataset
+      && !this.isApplications
+      && !this.dataset.apps?.length
+      && !this.dataset.vms?.length
+      && !this.dataset.smb_shares?.length
+      && !this.dataset.nfs_shares?.length
+      && !this.dataset.iscsi_shares?.length;
+  }
+
+  constructor(
+    private slideInService: IxSlideInService,
+    private datasetStore: DatasetTreeStore,
+  ) {}
+
+  createSmbShare(): void {
+    const slideInRef = this.slideInService.open(SmbFormComponent, {
+      data: { defaultSmbShare: { path: this.dataset.mountpoint } },
+    });
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+      this.datasetStore.datasetUpdated();
+    });
+  }
+
+  createNfsShare(): void {
+    const slideInRef = this.slideInService.open(NfsFormComponent, {
+      data: { defaultNfsShare: { path: this.dataset.mountpoint } },
+    });
+    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+      this.datasetStore.datasetUpdated();
+    });
   }
 }

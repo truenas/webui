@@ -10,9 +10,9 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { environment } from 'environments/environment';
 import {
-  Observable, filter, forkJoin, of, pairwise, switchMap, take,
+  Observable, of, take, filter, switchMap, forkJoin, pairwise, distinctUntilChanged, delay,
 } from 'rxjs';
-import { ticketAcceptedFiles } from 'app/enums/file-ticket.enum';
+import { TicketType, ticketAcceptedFiles } from 'app/enums/file-ticket.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
@@ -22,17 +22,19 @@ import { Option } from 'app/interfaces/option.interface';
 import { FileTicketFormComponent } from 'app/modules/ix-feedback/file-ticket-form/file-ticket-form.component';
 import { FileTicketLicensedFormComponent } from 'app/modules/ix-feedback/file-ticket-licensed-form/file-ticket-licensed-form.component';
 import {
-  AddReview, AttachmentAddedResponse, FeedbackEnvironment, FeedbackType, ReviewAddedResponse, ReviewAddedResponse, feedbackTypeOptionMap,
+  AddReview, AttachmentAddedResponse, FeedbackEnvironment, FeedbackType, ReviewAddedResponse, feedbackTypeOptionMap,
 } from 'app/modules/ix-feedback/interfaces/feedback.interface';
 import { CreateNewTicket } from 'app/modules/ix-feedback/interfaces/file-ticket.interface';
 import { IxFeedbackService } from 'app/modules/ix-feedback/ix-feedback.service';
 import { ixManualValidateError } from 'app/modules/ix-forms/components/ix-errors/ix-errors.component';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { rangeValidator } from 'app/modules/ix-forms/validators/range-validation/range-validation';
+import { OauthButtonType } from 'app/modules/oauth-button/interfaces/oauth-button.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxFileUploadService } from 'app/services/ix-file-upload.service';
+import { SentryService } from 'app/services/sentry.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
@@ -57,6 +59,8 @@ export class FeedbackDialogComponent implements OnInit {
     rating: [undefined as number, [Validators.required, rangeValidator(1, maxRatingValue)]],
     message: [''],
 
+    token: [''],
+
     images: [null as File[]],
     attach_debug: [false],
     attach_screenshot: [false],
@@ -65,16 +69,15 @@ export class FeedbackDialogComponent implements OnInit {
 
   private release: string;
   private hostId: string;
+  private sessionId: string;
   private productType: ProductType;
   private systemProduct: string;
   private isIxHardware = false;
   private attachments: File[] = [];
   protected feedbackTypeOptions$: Observable<Option[]> = of(mapToOptions(feedbackTypeOptionMap, this.translate));
+  protected oauthUrl = 'https://support-proxy.ixsystems.com/oauth/initiate?origin=';
   readonly acceptedFiles = ticketAcceptedFiles;
-
-  get isReviewAllowed(): boolean {
-    return this.feedbackService.getReviewAllowed();
-  }
+  readonly oauthType = OauthButtonType;
 
   get isEnterprise(): boolean {
     return this.systemGeneralService.isEnterprise;
@@ -86,6 +89,29 @@ export class FeedbackDialogComponent implements OnInit {
 
   get isBugOrFeature(): boolean {
     return [FeedbackType.Bug, FeedbackType.Suggestion].includes(this.form.controls.type.value);
+  }
+
+  get messagePlaceholder(): string {
+    switch (this.form.controls.type.value) {
+      case FeedbackType.Review:
+        return helptext.review.message.placeholder;
+      case FeedbackType.Bug:
+      case FeedbackType.Suggestion:
+      default:
+        return helptext.bug.message.placeholder;
+    }
+  }
+
+  get showJiraButton(): boolean {
+    if (this.isReview
+        || this.isEnterprise
+        || this.form.controls.token.disabled
+        || this.form.controls.token.value
+    ) {
+      return false;
+    }
+
+    return true;
   }
 
   readonly tooltips = {
@@ -103,17 +129,6 @@ export class FeedbackDialogComponent implements OnInit {
     criticality: helptext.criticality.tooltip,
   };
 
-  get messagePlaceholder(): string {
-    switch (this.form.controls.type.value) {
-      case FeedbackType.Review:
-        return helptext.review.message.placeholder;
-      case FeedbackType.Bug:
-      case FeedbackType.Suggestion:
-      default:
-        return helptext.bug.message.placeholder;
-    }
-  }
-
   constructor(
     private ws: WebSocketService,
     private router: Router,
@@ -130,21 +145,29 @@ export class FeedbackDialogComponent implements OnInit {
     private fileUpload: IxFileUploadService,
     private dialog: DialogService,
     private systemGeneralService: SystemGeneralService,
+    private sentryService: SentryService,
     @Inject(WINDOW) private window: Window,
     @Inject(MAT_DIALOG_DATA) private type: FeedbackType,
   ) {}
 
   ngOnInit(): void {
     this.addFormListeners();
-    this.updateTypeOptions();
     this.getReleaseVersion();
     this.getHostId();
     this.getProductType();
+    this.getSessionId();
+    this.getFeedbackTypeOptions();
     this.loadIsIxHardware();
+    this.restoreToken();
   }
 
   onSubmit(): void {
+    if (!this.form.valid || this.isLoading) {
+      return;
+    }
+
     this.isLoading = true;
+    this.cdr.markForCheck();
     switch (this.form.controls.type.value) {
       case FeedbackType.Review:
         this.submitReview();
@@ -155,6 +178,10 @@ export class FeedbackDialogComponent implements OnInit {
         this.submitBugOrFeature();
         break;
     }
+  }
+
+  setToken(token: string): void {
+    this.form.patchValue({ token });
   }
 
   onUserGuidePressed(): void {
@@ -211,7 +238,7 @@ export class FeedbackDialogComponent implements OnInit {
           this.onSuccess();
         }
       },
-      error: (error) => {
+      error: (error: unknown) => {
         console.error(error);
         this.isLoading = false;
         this.formErrorHandler.handleWsFormError(error, this.form);
@@ -222,12 +249,17 @@ export class FeedbackDialogComponent implements OnInit {
   private submitBugOrFeature(): void {
     const values = this.form.value;
     const ticketValues = this.ticketForm.getPayload();
+    const hostText = `Host ID: ${this.hostId}`;
+    const sessionText = `Session ID: ${this.sessionId}`;
+    const body = [values.message, hostText, sessionText].join('\n\n');
 
     let payload: CreateNewTicket = {
-      category: ticketValues.category,
-      body: values.message,
+      token: values.token,
       attach_debug: values.attach_debug,
+      type: values.type === FeedbackType.Bug ? TicketType.Bug : TicketType.Suggestion,
+      category: ticketValues.category,
       title: ticketValues.title,
+      body,
     };
 
     if (this.isEnterprise) {
@@ -241,7 +273,7 @@ export class FeedbackDialogComponent implements OnInit {
         category: ticketValues.category,
         title: ticketValues.title,
         attach_debug: values.attach_debug,
-        body: values.message,
+        body,
       };
     }
 
@@ -257,9 +289,9 @@ export class FeedbackDialogComponent implements OnInit {
       user_agent: this.window.navigator.userAgent,
       environment: environment.production ? FeedbackEnvironment.Production : FeedbackEnvironment.Development,
       release: this.release,
-      extra: {},
       product_type: this.productType,
       product_model: this.systemProduct && this.isIxHardware ? this.systemProduct : 'Generic',
+      extra: {},
     };
 
     this.feedbackService
@@ -321,6 +353,15 @@ export class FeedbackDialogComponent implements OnInit {
           }
         }
       });
+
+    this.form.controls.token.valueChanges.pipe(
+      filter((token) => !!token),
+      distinctUntilChanged(),
+      delay(10),
+      untilDestroyed(this),
+    ).subscribe((token) => {
+      this.feedbackService.setOauthToken(token);
+    });
   }
 
   private getHostId(): void {
@@ -361,6 +402,8 @@ export class FeedbackDialogComponent implements OnInit {
   }
 
   private switchToReview(): void {
+    this.form.controls.token.disable();
+    this.form.controls.token.removeValidators(Validators.required);
     this.form.controls.message.removeValidators(Validators.required);
     this.form.controls.attach_debug.disable();
 
@@ -368,6 +411,8 @@ export class FeedbackDialogComponent implements OnInit {
   }
 
   private switchToBugOrImprovement(): void {
+    this.form.controls.token.enable();
+    this.form.controls.token.addValidators(Validators.required);
     this.form.controls.message.addValidators(Validators.required);
     this.form.controls.attach_debug.enable();
 
@@ -375,7 +420,7 @@ export class FeedbackDialogComponent implements OnInit {
   }
 
   private imagesValidation(): void {
-    this.form.controls.image.valueChanges.pipe(
+    this.form.controls.images.valueChanges.pipe(
       switchMap((images) => this.fileUpload.validateScreenshots(images)),
       untilDestroyed(this),
     ).subscribe((validatedFiles) => {
@@ -385,9 +430,9 @@ export class FeedbackDialogComponent implements OnInit {
       const invalidImages = validatedFiles.filter((file) => file.error).map((file) => file.error);
       if (invalidImages.length) {
         const message = invalidImages.map((error) => `${error.name} – ${error.errorMessage}`).join('\n');
-        this.form.controls.image.setErrors({ [ixManualValidateError]: { message } });
+        this.form.controls.images.setErrors({ [ixManualValidateError]: { message } });
       } else {
-        this.form.controls.image.setErrors(null);
+        this.form.controls.images.setErrors(null);
       }
       this.cdr.markForCheck();
     });
@@ -411,19 +456,45 @@ export class FeedbackDialogComponent implements OnInit {
     this.cdr.markForCheck();
   }
 
-  private updateTypeOptions(): void {
-    const optionMap = new Map(feedbackTypeOptionMap);
-
-    if (!this.isReviewAllowed) {
-      optionMap.delete(FeedbackType.Review);
+  private restoreToken(): void {
+    const token = this.feedbackService.getOauthToken();
+    if (token) {
+      this.form.controls.token.setValue(token);
     }
+  }
 
-    this.feedbackTypeOptions$ = of(mapToOptions(optionMap, this.translate));
-    this.form.controls.type.enable();
-    if (this.type && optionMap.has(this.type)) {
-      this.form.controls.type.setValue(this.type);
-    } else {
-      this.form.controls.type.setValue([...optionMap.keys()].shift());
-    }
+  private getFeedbackTypeOptions(): void {
+    this.isLoading = true;
+    this.cdr.markForCheck();
+
+    this.feedbackService.isReviewAllowed$
+      .pipe(untilDestroyed(this))
+      .subscribe((isReviewAllowed) => {
+        const optionMap = new Map(feedbackTypeOptionMap);
+
+        if (!isReviewAllowed) {
+          optionMap.delete(FeedbackType.Review);
+        }
+
+        this.feedbackTypeOptions$ = of(mapToOptions(optionMap, this.translate));
+        this.form.controls.type.enable();
+        if (this.type && optionMap.has(this.type)) {
+          this.form.controls.type.setValue(this.type);
+        } else {
+          this.form.controls.type.setValue([...optionMap.keys()].shift());
+        }
+
+        this.isLoading = false;
+        this.cdr.markForCheck();
+      });
+  }
+
+  private getSessionId(): void {
+    this.sentryService.sessionId$
+      .pipe(untilDestroyed(this))
+      .subscribe((sessionId) => {
+        this.sessionId = sessionId;
+        this.cdr.markForCheck();
+      });
   }
 }

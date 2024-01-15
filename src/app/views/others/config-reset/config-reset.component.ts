@@ -66,7 +66,7 @@ export class ConfigResetComponent implements OnInit {
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((failedJob) => {
       dialogRef.close();
-      this.dialogService.error(this.errorHandler.parseJobError(failedJob));
+      this.dialogService.error(this.errorHandler.parseError(failedJob));
     });
   }
 }

@@ -123,7 +123,7 @@ describe('NfsCardComponent', () => {
     await editButton.click();
 
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(NfsFormComponent, {
-      data: expect.objectContaining(nfsShares[0]),
+      data: { existingNfsShare: expect.objectContaining(nfsShares[0]) },
     });
   });
 
