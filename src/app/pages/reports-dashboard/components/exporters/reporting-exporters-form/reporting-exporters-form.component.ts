@@ -188,7 +188,7 @@ export class ReportingExportersFormComponent implements OnInit {
     }
 
     for (const [key, value] of Object.entries(values.attributes)) {
-      if (value === undefined || value === '') {
+      if (value === undefined || value === null || value === '') {
         delete values.attributes[key];
       }
     }
