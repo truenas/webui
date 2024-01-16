@@ -4,6 +4,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IscsiAuthMethod, IscsiTargetMode } from 'app/enums/iscsi.enum';
@@ -16,6 +17,7 @@ import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-sl
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
+import { TargetNameValidationService } from 'app/pages/sharing/iscsi/target/target-name-validation.service';
 import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -57,6 +59,9 @@ describe('TargetFormComponent', () => {
       mockProvider(IxSlideInService),
       mockProvider(DialogService),
       mockProvider(IxSlideInRef),
+      mockProvider(TargetNameValidationService, {
+        validateTargetName: () => of(null),
+      }),
       { provide: SLIDE_IN_DATA, useValue: undefined },
       mockWebsocket([
         mockCall('iscsi.target.create'),
@@ -243,6 +248,34 @@ describe('TargetFormComponent', () => {
         { label: '55', value: 55 },
         { label: '66', value: 66 },
       ]);
+    });
+  });
+
+  describe('validation error handling', () => {
+    beforeEach(async () => {
+      spectator = createComponent({
+        providers: [
+          mockProvider(TargetNameValidationService, {
+            validateTargetName: () => of({
+              customValidator: {
+                message: 'Target with this name already exists',
+              },
+              invalidTargetName: true,
+            }),
+          }),
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+    });
+
+    it('should display an error message for invalid target name', async () => {
+      await form.fillForm({
+        'Target Name': 'name_test',
+      });
+
+      const errorMessage = spectator.query('.form-error span');
+      expect(errorMessage).toContainText('Target with this name already exists');
     });
   });
 });
