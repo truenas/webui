@@ -7,17 +7,17 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  EMPTY, finalize, map, Observable, switchMap,
+  finalize, map, Observable, of, switchMap,
 } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { ticketAcceptedFiles, TicketType } from 'app/enums/file-ticket.enum';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { FeedbackDialogComponent } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
-import { FeedbackService } from 'app/modules/feedback/feedback.service';
 import { FeedbackType } from 'app/modules/feedback/interfaces/feedback.interface';
 import {
   CreateNewTicket,
 } from 'app/modules/feedback/interfaces/file-ticket.interface';
+import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { ImageValidatorService } from 'app/modules/ix-forms/validators/image-validator/image-validator.service';
 import { OauthButtonType } from 'app/modules/oauth-button/interfaces/oauth-button.interface';
@@ -102,15 +102,15 @@ export class FileTicketComponent {
     );
   }
 
-  private addAttachmentsIfNeeded({ ticketId, token }: { ticketId: number; token: string }): Observable<unknown> {
+  private addAttachmentsIfNeeded({ ticketId, token }: { ticketId: number; token: string }): Observable<void> {
     const takeScreenshot = this.form.value.take_screenshot;
     const images = this.form.value.images;
 
     if (!takeScreenshot && images.length === 0) {
-      return EMPTY;
+      return of(undefined);
     }
 
-    return this.feedbackService.addAttachmentsToTicket({
+    return this.feedbackService.addTicketAttachments({
       token,
       ticketId,
       takeScreenshot,
@@ -118,13 +118,12 @@ export class FileTicketComponent {
     }).pipe(
       catchError(() => {
         // Do not fail if attachments were not uploaded.
-        // TODO: Do differently
         this.dialogService.error({
           title: this.translate.instant(helptext.attachmentsFailed.title),
           message: this.translate.instant(helptext.attachmentsFailed.message),
         });
 
-        return EMPTY;
+        return of(undefined);
       }),
     );
   }

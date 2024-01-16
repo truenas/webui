@@ -4,12 +4,12 @@ import { Store } from '@ngrx/store';
 import html2canvas, { Options } from 'html2canvas';
 import {
   BehaviorSubject,
-  Observable, combineLatest, filter, first, map, of, switchMap, forkJoin, EMPTY,
+  Observable, combineLatest, filter, first, map, of, switchMap, forkJoin, throwError,
 } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, take } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import {
-  AddReview, AttachmentAddedResponse,
+  AddReview, AttachmentAddedResponse, ReviewAddedResponse,
 } from 'app/modules/feedback/interfaces/feedback.interface';
 import {
   CreateNewTicket,
@@ -22,7 +22,6 @@ import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectSystemHostId, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
-import { ReviewAddedResponse } from './interfaces/feedback.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -43,7 +42,7 @@ export class FeedbackService {
   ) {}
 
   getHostId(): Observable<string> {
-    return this.store$.select(selectSystemHostId).pipe(filter(Boolean));
+    return this.store$.select(selectSystemHostId).pipe(filter(Boolean), take(1));
   }
 
   addReview(body: AddReview): Observable<ReviewAddedResponse> {
@@ -119,18 +118,15 @@ export class FeedbackService {
   }
 
   getSimilarIssues(query: string): Observable<SimilarIssue[]> {
-    if (!this.getOauthToken()) {
-      return of([]);
-    }
-
-    return this.ws.call('support.similar_issues', [this.getOauthToken(), query]);
+    return this.ws.call('support.similar_issues', [query]);
   }
 
   addDebugInfoToMessage(message: string): Observable<string> {
-    return forkJoin([
+    return combineLatest([
       this.getHostId(),
       this.sentryService.sessionId$,
     ]).pipe(
+      take(1),
       map(([hostId, sessionId]) => {
         const hostText = `Host ID: ${hostId}`;
         const sessionText = `Session ID: ${sessionId}`;
@@ -146,7 +142,7 @@ export class FeedbackService {
     );
   }
 
-  addAttachmentsToTicket({
+  addTicketAttachments({
     ticketId,
     token,
     attachments,
@@ -156,35 +152,56 @@ export class FeedbackService {
     attachments: File[];
     token?: string;
     takeScreenshot: boolean;
-  }): Observable<unknown[]> {
-    return of(attachments).pipe(
-      switchMap((images) => {
-        // Optionally take a screenshot.
-        if (!takeScreenshot) {
-          return of(images);
+  }): Observable<void> {
+    // Make requests and map to boolean for successful uploads.
+    const requests = attachments.map((attachment) => {
+      return this.addTicketAttachment({ ticketId, attachment, token });
+    });
+
+    if (takeScreenshot) {
+      const takeScreenshotRequest$ = this.takeScreenshot().pipe(
+        switchMap((screenshot) => this.addTicketAttachment({ ticketId, attachment: screenshot, token })),
+      );
+      requests.push(takeScreenshotRequest$);
+    }
+
+    if (requests.length === 0) {
+      return of(undefined);
+    }
+
+    // TODO: Check what happens if more than 20 attachments are uploaded at the same time.
+    return forkJoin(requests).pipe(
+      switchMap((results) => {
+        const wereAllImagesUploaded = results.every(Boolean);
+        if (wereAllImagesUploaded) {
+          return of(undefined);
         }
 
-        return this.takeScreenshot().pipe(
-          map((file) => [...images || [], file]),
-        );
+        return throwError(() => new Error('Not all images were uploaded.'));
       }),
-      switchMap((attachmentsToUpload) => {
-        if (attachmentsToUpload.length === 0) {
-          return EMPTY;
-        }
+    );
+  }
 
-        // TODO: Check what happens if more than 20 attachments are uploaded at the same time.
-        const requests = attachmentsToUpload.map((attachment) => {
-          return this.fileUpload.upload2(attachment, 'support.attach_ticket', [{
-            token,
-            ticket: ticketId,
-            filename: attachment.name,
-          }]).pipe(
-            filter((event) => event instanceof HttpResponse),
-          );
-        });
-
-        return forkJoin(requests);
+  private addTicketAttachment({
+    ticketId,
+    attachment,
+    token,
+  }: {
+    ticketId: number;
+    attachment: File;
+    token?: string;
+  }): Observable<boolean> {
+    return this.fileUpload.upload2(attachment, 'support.attach_ticket', [{
+      token,
+      ticket: ticketId,
+      filename: attachment.name,
+    }]).pipe(
+      filter((event) => event instanceof HttpResponse),
+      take(1),
+      map(() => true),
+      catchError((error: unknown) => {
+        console.error(error);
+        return of(false);
       }),
     );
   }

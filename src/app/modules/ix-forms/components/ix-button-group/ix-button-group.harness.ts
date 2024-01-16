@@ -39,7 +39,6 @@ export class IxButtonGroupHarness extends ComponentHarness implements IxFormCont
   }
 
   async setValue(value: string): Promise<void> {
-    // TODO: Should fail if item is missing
     const buttons = await (await this.getButtonToggleGroupHarness()).getToggles({ text: value });
     if (!buttons.length) {
       throw new Error(`No button with text "${value}" found`);

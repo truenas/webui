@@ -20,12 +20,12 @@ import { ticketAcceptedFiles } from 'app/enums/file-ticket.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { FeedbackDialogComponent } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
-import { FeedbackService } from 'app/modules/feedback/feedback.service';
 import {
   AddReview,
   FeedbackEnvironment,
   ReviewAddedResponse,
 } from 'app/modules/feedback/interfaces/feedback.interface';
+import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
 import { ImageValidatorService } from 'app/modules/ix-forms/validators/image-validator/image-validator.service';
 import { rangeValidator } from 'app/modules/ix-forms/validators/range-validation/range-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';

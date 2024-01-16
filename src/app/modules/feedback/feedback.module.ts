@@ -14,7 +14,7 @@ import { FileReviewComponent } from 'app/modules/feedback/components/file-review
 import { FileTicketComponent } from 'app/modules/feedback/components/file-ticket/file-ticket.component';
 import { FileTicketLicensedComponent } from 'app/modules/feedback/components/file-ticket-licensed/file-ticket-licensed.component';
 import { SimilarIssuesComponent } from 'app/modules/feedback/components/similar-issues/similar-issues.component';
-import { FeedbackService } from 'app/modules/feedback/feedback.service';
+import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';

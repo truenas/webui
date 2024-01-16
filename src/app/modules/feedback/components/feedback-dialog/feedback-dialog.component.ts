@@ -10,8 +10,8 @@ import {
 } from 'rxjs';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { Option } from 'app/interfaces/option.interface';
-import { FeedbackService } from 'app/modules/feedback/feedback.service';
 import { FeedbackType, feedbackTypesLabels } from 'app/modules/feedback/interfaces/feedback.interface';
+import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 
 @UntilDestroy()
@@ -43,6 +43,20 @@ export class FeedbackDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadFeedbackTypes();
+  }
+
+  protected onIsLoadingChange(newValue: boolean): void {
+    this.isLoading = newValue;
+
+    // Do not let user switch to a different component because it stops active jobs.
+    // TODO: Decide if we want to prevent dialog from being closed for the same reason.
+    if (newValue) {
+      this.typeControl.disable();
+    } else {
+      this.typeControl.enable();
+    }
+
+    this.cdr.markForCheck();
   }
 
   private loadFeedbackTypes(): void {

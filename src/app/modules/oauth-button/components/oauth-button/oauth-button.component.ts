@@ -19,6 +19,7 @@ import { DialogService } from 'app/services/dialog.service';
 export class OauthButtonComponent {
   @Input() oauthType: OauthButtonType;
   @Input() isLoggedIn = false;
+  @Input() disabled = false;
   @Input() oauthUrl: string;
   @Input() testId: string;
 

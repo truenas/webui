@@ -58,7 +58,6 @@ export type AttachTicketParams = [
 ];
 
 export type SimilarIssuesParams = [
-  token: string,
   query: string,
 ];
 

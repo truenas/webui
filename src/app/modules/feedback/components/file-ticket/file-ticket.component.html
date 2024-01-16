@@ -42,7 +42,7 @@
       class="attach-images"
       [label]="'Attach images (optional)' | translate"
       [tooltip]="'Select images you want attach to review' | translate"
-      [multiple]="false"
+      [multiple]="true"
       [acceptedFiles]="acceptedFiles"
     ></ix-file-input>
   </form>
@@ -50,11 +50,11 @@
 
 <mat-dialog-actions>
   <ix-form-actions>
-    <!-- TODO: Disabled condition -->
     <ix-oauth-button
       testId="login-to-jira"
       [oauthType]="OauthButtonType.Jira"
       [oauthUrl]="oauthUrl"
+      [disabled]="form.invalid || isLoading"
       (loggedIn)="onSubmit($event);"
     ></ix-oauth-button>
   </ix-form-actions>

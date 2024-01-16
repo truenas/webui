@@ -29,14 +29,16 @@
   <ix-file-review
     *ngIf="isReview; else fileTicket"
     [dialogRef]="dialogRef"
-    [(isLoading)]="isLoading"
+    [isLoading]="isLoading"
+    (isLoadingChange)="onIsLoadingChange($event)"
   ></ix-file-review>
 
   <ng-template #fileTicket>
     <ix-file-ticket-licensed
       *ngIf="isEnterprise$ | async; else nonEnterpriseTicket"
       [dialogRef]="dialogRef"
-      [(isLoading)]="isLoading"
+      [isLoading]="isLoading"
+      (isLoadingChange)="onIsLoadingChange($event)"
     ></ix-file-ticket-licensed>
   </ng-template>
 
@@ -44,7 +46,8 @@
     <ix-file-ticket
       [type]="typeControl.value | cast"
       [dialogRef]="dialogRef"
-      [(isLoading)]="isLoading"
+      [isLoading]="isLoading"
+      (isLoadingChange)="onIsLoadingChange($event)"
     ></ix-file-ticket>
   </ng-template>
 </ng-template>

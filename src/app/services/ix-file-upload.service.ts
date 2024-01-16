@@ -1,5 +1,5 @@
 import {
-  HttpClient, HttpEventType, HttpProgressEvent, HttpRequest, HttpResponse,
+  HttpClient, HttpEvent, HttpEventType, HttpProgressEvent, HttpRequest, HttpResponse,
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
@@ -158,6 +158,7 @@ export class IxFileUploadService {
     });
   }
 
+  // TODO: Potential race condition.
   private getSystemFileSizeLimit(): void {
     this.ws.call('support.attach_ticket_max_size').subscribe((size) => {
       this.fileSizeLimit = size * MiB;

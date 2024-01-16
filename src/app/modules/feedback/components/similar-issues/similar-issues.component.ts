@@ -4,7 +4,7 @@ import {
 import {
   BehaviorSubject, combineLatest, debounceTime, distinctUntilChanged, filter, map, switchMap,
 } from 'rxjs';
-import { FeedbackService } from 'app/modules/feedback/feedback.service';
+import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
 
 @Component({
   selector: 'ix-similar-issues',

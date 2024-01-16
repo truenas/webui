@@ -2,7 +2,7 @@ import { discardPeriodicTasks, fakeAsync, tick } from '@angular/core/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { SimilarIssuesComponent } from 'app/modules/feedback/components/similar-issues/similar-issues.component';
-import { FeedbackService } from 'app/modules/feedback/feedback.service';
+import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
 
 describe('SimilarIssuesComponent', () => {
   let spectator: Spectator<SimilarIssuesComponent>;

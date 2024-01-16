@@ -11,9 +11,9 @@ import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
 import { TicketType } from 'app/enums/file-ticket.enum';
 import { FileTicketComponent } from 'app/modules/feedback/components/file-ticket/file-ticket.component';
 import { SimilarIssuesComponent } from 'app/modules/feedback/components/similar-issues/similar-issues.component';
-import { FeedbackService } from 'app/modules/feedback/feedback.service';
 import { FeedbackType } from 'app/modules/feedback/interfaces/feedback.interface';
 import { CreateNewTicket } from 'app/modules/feedback/interfaces/file-ticket.interface';
+import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { ImageValidatorService } from 'app/modules/ix-forms/validators/image-validator/image-validator.service';
@@ -41,7 +41,7 @@ describe('FileTicketComponent', () => {
     providers: [
       mockProvider(FeedbackService, {
         createNewTicket: jest.fn(() => of({ ticket: 24 })),
-        addAttachmentsToTicket: jest.fn(() => of(undefined)),
+        addTicketAttachments: jest.fn(() => of(undefined)),
         addDebugInfoToMessage: (message: string) => of(`${message} Session ID: 12345`),
       }),
       mockProvider(ImageValidatorService, {
@@ -119,7 +119,7 @@ describe('FileTicketComponent', () => {
     loginToJiraButton.loggedIn.emit('jira-token');
 
     expect(feedbackService.createNewTicket).toHaveBeenCalledWith(expectedTicket);
-    expect(feedbackService.addAttachmentsToTicket).toHaveBeenCalledWith({
+    expect(feedbackService.addTicketAttachments).toHaveBeenCalledWith({
       token: 'jira-token',
       ticketId: 24,
       takeScreenshot: true,

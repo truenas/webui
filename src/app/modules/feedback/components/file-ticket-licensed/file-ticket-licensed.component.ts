@@ -9,7 +9,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as EmailValidator from 'email-validator';
 import {
-  EMPTY,
   finalize,
   Observable,
   of, switchMap,
@@ -25,10 +24,10 @@ import { mapToOptions } from 'app/helpers/options.helper';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { FeedbackDialogComponent } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
-import { FeedbackService } from 'app/modules/feedback/feedback.service';
 import {
   CreateNewTicket,
 } from 'app/modules/feedback/interfaces/file-ticket.interface';
+import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { emailValidator } from 'app/modules/ix-forms/validators/email-validation/email-validation';
@@ -150,23 +149,22 @@ export class FileTicketLicensedComponent {
     const images = this.form.value.images;
 
     if (!takeScreenshot && images.length === 0) {
-      return EMPTY;
+      return of(undefined);
     }
 
-    return this.feedbackService.addAttachmentsToTicket({
+    return this.feedbackService.addTicketAttachments({
       ticketId,
       takeScreenshot,
       attachments: images,
     }).pipe(
       catchError(() => {
         // Do not fail if attachments were not uploaded.
-        // TODO: Do differently
         this.dialogService.error({
           title: this.translate.instant(helptext.attachmentsFailed.title),
           message: this.translate.instant(helptext.attachmentsFailed.message),
         });
 
-        return EMPTY;
+        return of(undefined);
       }),
     );
   }

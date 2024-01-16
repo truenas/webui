@@ -15,8 +15,8 @@ import { WINDOW } from 'app/helpers/window.helper';
 import {
   FileTicketLicensedComponent,
 } from 'app/modules/feedback/components/file-ticket-licensed/file-ticket-licensed.component';
-import { FeedbackService } from 'app/modules/feedback/feedback.service';
 import { CreateNewTicket } from 'app/modules/feedback/interfaces/file-ticket.interface';
+import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { ImageValidatorService } from 'app/modules/ix-forms/validators/image-validator/image-validator.service';
@@ -39,7 +39,7 @@ describe('FileTicketLicensedFormComponent', () => {
     providers: [
       mockProvider(FeedbackService, {
         createNewTicket: jest.fn(() => of({ ticket: 24 })),
-        addAttachmentsToTicket: jest.fn(() => of(undefined)),
+        addTicketAttachments: jest.fn(() => of(undefined)),
         addDebugInfoToMessage: (message: string) => of(`${message} Session ID: 12345`),
       }),
       mockProvider(ImageValidatorService, {
@@ -51,7 +51,7 @@ describe('FileTicketLicensedFormComponent', () => {
   });
 
   const expectedTicket = {
-    attach_debug: false,
+    attach_debug: true,
     body: 'New request Session ID: 12345',
     category: TicketCategory.Performance,
     cc: ['marcus@gmail.com'],
@@ -130,7 +130,7 @@ describe('FileTicketLicensedFormComponent', () => {
     await submitButton.click();
 
     expect(feedbackService.createNewTicket).toHaveBeenCalledWith(expectedTicket);
-    expect(feedbackService.addAttachmentsToTicket).toHaveBeenCalledWith({
+    expect(feedbackService.addTicketAttachments).toHaveBeenCalledWith({
       ticketId: 24,
       takeScreenshot: true,
       attachments: fakeAttachments,
