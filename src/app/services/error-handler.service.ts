@@ -49,6 +49,9 @@ export class ErrorHandlerService implements ErrorHandler {
     if (this.isJobError(error)) {
       return this.parseJobError(error);
     }
+    if (this.isHttpError(error)) {
+      return this.parseHttpError(error);
+    }
     if (error instanceof Error) {
       return {
         title: this.translate?.instant('Error') || 'Error',
@@ -79,10 +82,14 @@ export class ErrorHandlerService implements ErrorHandler {
       && 'exc_info' in obj);
   }
 
+  isHttpError(obj: unknown): obj is HttpErrorResponse {
+    return obj instanceof HttpErrorResponse;
+  }
+
   catchError<T>(): MonoTypeOperatorFunction<T> {
     return (source$: Observable<T>) => {
       return source$.pipe(
-        catchError((error: WebsocketError | Job) => {
+        catchError((error: unknown) => {
           this.dialog.error(this.parseError(error));
           return EMPTY;
         }),

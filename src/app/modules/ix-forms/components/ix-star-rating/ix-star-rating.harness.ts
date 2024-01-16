@@ -30,6 +30,7 @@ export class IxStarRatingHarness extends ComponentHarness implements IxFormContr
   }
 
   async getValue(): Promise<number> {
+    // TODO: Infinite loop.
     return this.getValue();
   }
 

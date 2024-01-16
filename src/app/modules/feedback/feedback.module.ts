@@ -1,15 +1,20 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { FlexModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { FeedbackDialogComponent } from 'app/modules/ix-feedback/feedback-dialog/feedback-dialog.component';
-import { FileTicketFormComponent } from 'app/modules/ix-feedback/file-ticket-form/file-ticket-form.component';
-import { FileTicketLicensedFormComponent } from 'app/modules/ix-feedback/file-ticket-licensed-form/file-ticket-licensed-form.component';
-import { IxFeedbackService } from 'app/modules/ix-feedback/ix-feedback.service';
+import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { CastModule } from 'app/modules/cast/cast.module';
+import { FeedbackDialogComponent } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
+import { FileReviewComponent } from 'app/modules/feedback/components/file-review/file-review.component';
+import { FileTicketComponent } from 'app/modules/feedback/components/file-ticket/file-ticket.component';
+import { FileTicketLicensedComponent } from 'app/modules/feedback/components/file-ticket-licensed/file-ticket-licensed.component';
+import { SimilarIssuesComponent } from 'app/modules/feedback/components/similar-issues/similar-issues.component';
+import { FeedbackService } from 'app/modules/feedback/feedback.service';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
@@ -30,14 +35,19 @@ import { TestIdModule } from 'app/modules/test-id/test-id.module';
     TestIdModule,
     TranslateModule,
     OauthButtonModule,
+    CastModule,
+    FlexModule,
+    NgxSkeletonLoaderModule,
   ],
   declarations: [
     FeedbackDialogComponent,
-    FileTicketFormComponent,
-    FileTicketLicensedFormComponent,
+    FileTicketComponent,
+    FileTicketLicensedComponent,
+    FileReviewComponent,
+    SimilarIssuesComponent,
   ],
   providers: [
-    IxFeedbackService,
+    FeedbackService,
   ],
 })
-export class IxFeedbackModule { }
+export class FeedbackModule { }

@@ -265,7 +265,7 @@ import {
   SimilarIssue,
   SimilarIssuesParams,
   SupportConfig, SupportConfigUpdate,
-} from 'app/modules/ix-feedback/interfaces/file-ticket.interface';
+} from 'app/modules/feedback/interfaces/file-ticket.interface';
 
 /**
  * API definitions for `call` methods.

@@ -1,0 +1,38 @@
+:host {
+  display: block;
+  max-width: 100%;
+  width: 550px;
+
+  ::ng-deep {
+    ix-textarea {
+      textarea {
+        max-height: 40vh;
+        min-height: 7vh;
+        min-width: 96.5%;
+      }
+    }
+
+    form {
+      padding: 0;
+    }
+  }
+
+  mat-dialog-content {
+    padding: 0;
+  }
+}
+
+.close-feedback-dialog {
+  position: absolute;
+  right: 16px;
+  top: 24px;
+}
+
+.feedback-type {
+  margin-left: 24px;
+}
+
+.placeholder {
+  min-height: 350px;
+  padding: 15px 24px;
+}

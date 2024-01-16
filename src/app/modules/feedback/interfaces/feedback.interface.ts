@@ -7,7 +7,7 @@ export enum FeedbackType {
   Suggestion = 'FEATURE',
 }
 
-export const feedbackTypeOptionMap = new Map<FeedbackType, string>([
+export const feedbackTypesLabels = new Map<FeedbackType, string>([
   [FeedbackType.Review, T('Rate this page')],
   [FeedbackType.Bug, T('Report a bug')],
   [FeedbackType.Suggestion, T('Suggest an improvement')],
@@ -57,10 +57,4 @@ export interface AttachmentAddedResponse {
     filename: string;
     id: number;
   };
-}
-
-export interface BlacklistAddedReponse {
-  id: number;
-  version: string;
-  product_types: ProductType[];
 }

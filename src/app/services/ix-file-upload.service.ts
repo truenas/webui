@@ -30,6 +30,9 @@ export class IxFileUploadService {
     private authService: AuthService,
   ) { }
 
+  /**
+   * @deprecated Use upload2 instead.
+   */
   upload(
     file: File,
     method: ApiJobMethod,
@@ -65,19 +68,51 @@ export class IxFileUploadService {
     });
   }
 
-  // TODO: Consider moving error handling out of onUploading or consolidating everything in one method.
+  /**
+   * Reports progress.
+   * You need to filter for `(event) => event instanceof HttpResponse` to wait for response.
+   */
+  upload2(
+    file: File,
+    method: ApiJobMethod,
+    params: unknown[] = [],
+  ): Observable<HttpEvent<unknown>> {
+    return this.authService.authToken$.pipe(
+      take(1),
+      map((token) => {
+        const endPoint = '/_upload?auth_token=' + token;
+        const formData = new FormData();
+        formData.append('data', JSON.stringify({
+          method,
+          params,
+        }));
+        formData.append('file', file, file.name);
+        return new HttpRequest('POST', endPoint, formData, {
+          reportProgress: true,
+        });
+      }),
+      switchMap((req) => this.http.request(req)),
+    );
+  }
+
+  /**
+   * @deprecated Use upload2.
+   */
   get onUploading$(): Subject<HttpProgressEvent> {
     return this.fileUploadProgress$;
   }
 
+  /**
+   * @deprecated Use upload2.
+   */
   get onUploaded$(): Subject<HttpResponse<unknown>> {
     return this.fileUploadSuccess$;
   }
 
-  validateScreenshots(screenshots: File[]): Observable<ValidatedFile[]> {
+  validateImages(screenshots: File[]): Observable<ValidatedFile[]> {
     return from(Array.from(screenshots)).pipe(
       concatMap((file: File): Observable<ValidatedFile> => {
-        return this.validateScreenshot(file).pipe(
+        return this.validateImage(file).pipe(
           catchError((error: ValidatedFile) => of(error)),
         );
       }),
@@ -85,7 +120,7 @@ export class IxFileUploadService {
     );
   }
 
-  validateScreenshot(file: File): Observable<ValidatedFile> {
+  validateImage(file: File): Observable<ValidatedFile> {
     const fileReader = new FileReader();
     const { type, name, size } = file;
     return new Observable((observer: Observer<ValidatedFile>) => {
