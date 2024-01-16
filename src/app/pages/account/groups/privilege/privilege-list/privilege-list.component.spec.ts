@@ -22,7 +22,7 @@ const fakePrivilegeDataSource: Privilege[] = [
     web_shell: true,
     local_groups: [{}],
     ds_groups: [{}, {}],
-    roles: [Role.SharingManager],
+    roles: [Role.SharingAdmin],
   },
   {
     id: 2,
@@ -30,7 +30,7 @@ const fakePrivilegeDataSource: Privilege[] = [
     web_shell: false,
     local_groups: [],
     ds_groups: [{}],
-    roles: [Role.FullAdmin, Role.Readonly],
+    roles: [Role.FullAdmin, Role.ReadonlyAdmin],
   },
 ] as Privilege[];
 
@@ -71,8 +71,8 @@ describe('PrivilegeListComponent', () => {
   it('should show table rows', async () => {
     const expectedRows = [
       ['Name', 'Roles', 'Local Groups', 'DS Groups', 'Web Shell Access', ''],
-      ['privilege1', 'Sharing Manager', '1', '2', 'Yes', ''],
-      ['privilege2', 'Full Admin, Readonly', '0', '1', 'No', ''],
+      ['privilege1', 'Sharing Admin', '1', '2', 'Yes', ''],
+      ['privilege2', 'Full Admin, Readonly Admin', '0', '1', 'No', ''],
     ];
 
     const cells = await table.getCellTexts();

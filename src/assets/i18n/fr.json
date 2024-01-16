@@ -2756,7 +2756,7 @@
   "Online": "En ligne",
   "Online Disk": "Disque en ligne",
   "Online disk {name}?": "Disque {name} en ligne ?",
-  "Only Readonly, Sharing Manager or Full Admin roles are supported in WebUI.": "Seuls les rôles Lecture seule, Gestionnaire de partage ou Administrateur complet sont pris en charge dans WebUI.",
+  "Only Readonly Admin, Sharing Admin or Full Admin roles are supported in WebUI.": "Seuls les rôles Lecture seule, Gestionnaire de partage ou Administrateur complet sont pris en charge dans WebUI.",
   "Only Replicate Snapshots Matching Schedule": "Planification correspondant uniquement aux instantanés répliqués",
   "Only appears if <i>Device</i> is selected. Select the unused zvol or zvol snapshot.": "N'apparaît que si <i>Périphérique</i> est sélectionné. Sélectionnez l'instantané zvol ou zvol inutilisé.",
   "Only appears if a <i>File</i> or  zvol is selected. When the specified percentage of free space is reached, the system issues an alert.": "N'apparaît que si un <i>fichier</i> ou un zvol est sélectionné. Lorsque le pourcentage d'espace libre spécifié est atteint, le système émet une alerte.",
