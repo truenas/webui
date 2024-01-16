@@ -65,7 +65,7 @@
 
       <mat-card-actions class="buttons">
         <button
-          *ixRequiresRoles="[Role.FullAdmin]"
+          *ixRequiresRoles="[Role.IpmiWrite, Role.FullAdmin]"
           mat-button
           type="submit"
           color="primary"
@@ -86,7 +86,7 @@
         </button>
 
         <button
-          *ixRequiresRoles="[Role.FullAdmin]"
+          *ixRequiresRoles="[Role.IpmiWrite, Role.FullAdmin]"
           mat-button
           type="button"
           ixTest="toggle-identify-light"
