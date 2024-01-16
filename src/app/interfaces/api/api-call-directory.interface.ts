@@ -106,7 +106,6 @@ import {
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import {
   FailoverConfig,
-  FailoverRemoteCall,
   FailoverUpdate,
 } from 'app/interfaces/failover.interface';
 import { FileRecord, ListdirQueryParams } from 'app/interfaces/file-record.interface';
@@ -439,7 +438,6 @@ export interface ApiCallDirectory {
 
   // Failover
   'failover.become_passive': { params: void; response: void };
-  'failover.call_remote': { params: FailoverRemoteCall; response: unknown };
   'failover.config': { params: void; response: FailoverConfig };
   'failover.disabled.reasons': { params: void; response: FailoverDisabledReason[] };
   'failover.get_ips': { params: void; response: string[] };
@@ -519,7 +517,7 @@ export interface ApiCallDirectory {
   'ipmi.chassis.info': { params: void; response: IpmiChassis };
   'ipmi.is_loaded': { params: void; response: boolean };
   'ipmi.lan.query': { params: QueryParams<Ipmi>; response: Ipmi[] };
-  'ipmi.lan.update': { params: [id: number, update: IpmiUpdate]; response: Ipmi };
+  'ipmi.lan.update': { params: [id: number, update: IpmiUpdate, apply_remote: boolean]; response: Ipmi };
 
   // iSCSI
   'iscsi.auth.create': { params: [IscsiAuthAccessUpdate]; response: IscsiAuthAccess };

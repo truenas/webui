@@ -192,7 +192,7 @@ export class IpmiFormComponent implements OnInit {
           if (isUsingRemote) {
             return this.remoteControllerData
               ? of([this.remoteControllerData])
-              : this.ws.call('failover.call_remote', ['ipmi.lan.query', this.queryFilter]) as Observable<Ipmi[]>;
+              : this.ws.call('ipmi.lan.query', this.queryFilter); // TODO: Add remote param when available
           }
           return this.defaultControllerData
             ? of([this.defaultControllerData])
@@ -225,14 +225,10 @@ export class IpmiFormComponent implements OnInit {
       delete value.vlan;
     }
     const ipmiUpdate: IpmiUpdate = { ...value };
-    let call$: Observable<Ipmi>;
+    const applyRemote = this.form.controls.remoteController.value;
 
-    if (this.form.controls.remoteController.value) {
-      call$ = this.ws.call('failover.call_remote', ['ipmi.lan.update', [this.ipmiId, ipmiUpdate]]) as Observable<Ipmi>;
-    } else {
-      call$ = this.ws.call('ipmi.lan.update', [this.ipmiId, ipmiUpdate]);
-    }
-    call$.pipe(untilDestroyed(this))
+    this.ws.call('ipmi.lan.update', [this.ipmiId, ipmiUpdate, applyRemote])
+      .pipe(untilDestroyed(this))
       .subscribe({
         next: () => {
           this.isLoading = false;
