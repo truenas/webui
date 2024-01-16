@@ -179,7 +179,7 @@
               </div>
 
               <div
-                *ngIf="!systemInfo || (isHaLicensed && isPassive && !hasHa)"
+                *ngIf="!systemInfo && isHaLicensed && isPassive && !hasHa"
                 class="data-container ha-status"
                 fxFlex
               >

@@ -52,7 +52,7 @@ describe('AdvancedSettingsComponent', () => {
     ],
     providers: [
       mockWebsocket([
-        mockCall('system.license', {}),
+        mockCall('system.security.info.fips_available', true),
       ]),
       mockAuth(),
     ],

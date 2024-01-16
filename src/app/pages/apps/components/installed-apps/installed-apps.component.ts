@@ -439,7 +439,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     this.dataSource = (charts || this.dataSource).sort((a, b) => {
       const isAsc = sort.direction === SortDirection.Asc;
 
-      switch (sort.active) {
+      switch (sort.active as SortableField) {
         case SortableField.Application:
           return doSortCompare(a.name, b.name, isAsc);
         case SortableField.Status:

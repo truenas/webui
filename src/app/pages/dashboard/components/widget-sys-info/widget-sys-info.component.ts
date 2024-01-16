@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { take } from 'rxjs/operators';
+import { filter, take } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import { ScreenType } from 'app/enums/screen-type.enum';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
@@ -25,7 +25,7 @@ import { SystemGeneralService } from 'app/services/system-general.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
-import { selectHasOnlyMismatchVersionsReason, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
+import { selectHaStatus, selectHasOnlyMismatchVersionsReason, selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectIsIxHardware, waitForSystemFeatures } from 'app/store/system-info/system-info.selectors';
 
 @UntilDestroy()
@@ -56,7 +56,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
   updateAvailable = false;
   isIxHardware = false;
   isUpdateRunning = false;
-  hasHa: boolean;
+  hasHa = this.window.localStorage.getItem('ha_status') === 'true';
   updateMethod = 'update.update';
   screenType = ScreenType.Desktop;
 
@@ -87,8 +87,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
       const currentScreenType = changes[0].mqAlias === 'xs' ? ScreenType.Mobile : ScreenType.Desktop;
       this.screenType = currentScreenType;
     });
-
-    this.hasHa = this.window.localStorage.getItem('ha_status') === 'true';
   }
 
   get licenseString(): string {
@@ -103,6 +101,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
     this.loadSystemInfo();
     this.getEnclosureSupport();
     this.getIsIxHardware();
+    this.listenForHaStatus();
   }
 
   loadSystemInfo(): void {
@@ -142,6 +141,15 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
         } else {
           this.processSysInfo(systemInfo);
         }
+        this.cdr.markForCheck();
+      });
+  }
+
+  private listenForHaStatus(): void {
+    this.store$.select(selectHaStatus)
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe(({ hasHa }) => {
+        this.hasHa = hasHa;
         this.cdr.markForCheck();
       });
   }

@@ -1,6 +1,7 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { QueryFilters } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
 import { AdvancedSearchComponent } from 'app/modules/search-input/components/advanced-search/advanced-search.component';
 import { BasicSearchComponent } from 'app/modules/search-input/components/basic-search/basic-search.component';
@@ -55,12 +56,10 @@ describe('SearchInputComponent', () => {
     expect(await searchHarness.isInAdvancedMode()).toBe(true);
   });
 
-  // TODO: Enable
-  // eslint-disable-next-line jest/no-disabled-tests
-  it.skip('retains old values in each mode when user is switching between them', async () => {
+  it('retains old values in each mode when user is switching between them', async () => {
     await searchHarness.setValue('basic');
     await searchHarness.toggleMode();
-    expect(await searchHarness.getValue()).toBe('');
+    expect(await searchHarness.getValue()).toBe('Service = "SMB" AND Event = "CLOSE"');
 
     await searchHarness.setValue('Username = "Bob"');
 
@@ -68,8 +67,45 @@ describe('SearchInputComponent', () => {
     expect(await searchHarness.getValue()).toBe('basic');
 
     await searchHarness.toggleMode();
-    expect(await searchHarness.getValue()).toBe('Username = "Bob"');
+    expect(await searchHarness.getValue()).toBe('"Username" = "Bob"');
   });
 
-  // TODO: Test case for emit.
+  it('emits "queryChange" and "runSearch" when "BasicSearchComponent" emits events', () => {
+    jest.spyOn(spectator.component.queryChange, 'emit').mockImplementation();
+    jest.spyOn(spectator.component.runSearch, 'emit').mockImplementation();
+
+    expect(spectator.queryAll(BasicSearchComponent)).toHaveLength(1);
+    spectator.query(BasicSearchComponent).queryChange.emit('query string');
+    spectator.query(BasicSearchComponent).runSearch.emit();
+
+    expect(spectator.component.queryChange.emit).toHaveBeenCalledWith({
+      isBasicQuery: true,
+      query: 'query string',
+    });
+
+    expect(spectator.component.runSearch.emit).toHaveBeenCalledWith();
+  });
+
+  it('emits "queryChange" and "runSearch" when "AdvancedSearchComponent" emits events', () => {
+    jest.spyOn(spectator.component.queryChange, 'emit').mockImplementation();
+    jest.spyOn(spectator.component.runSearch, 'emit').mockImplementation();
+
+    spectator.setInput('query', {
+      isBasicQuery: false,
+      filters: [],
+    });
+
+    const filters = [['username', '=', 'Bob']] as unknown as QueryFilters<unknown>;
+
+    expect(spectator.queryAll(AdvancedSearchComponent)).toHaveLength(1);
+    spectator.query(AdvancedSearchComponent).paramsChange.emit(filters);
+    spectator.query(AdvancedSearchComponent).runSearch.emit();
+
+    expect(spectator.component.queryChange.emit).toHaveBeenCalledWith({
+      isBasicQuery: false,
+      filters,
+    });
+
+    expect(spectator.component.runSearch.emit).toHaveBeenCalledWith();
+  });
 });

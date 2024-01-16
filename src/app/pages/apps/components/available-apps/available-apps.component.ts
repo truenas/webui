@@ -59,7 +59,7 @@ export class AvailableAppsComponent implements OnInit {
   }
 
   trackByAppSectionTitle(_: number, appSection: AppsByCategory): string {
-    return `${appSection.title}`;
+    return appSection.title;
   }
 
   applyCategoryFilter(category: string): void {

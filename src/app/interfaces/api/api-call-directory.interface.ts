@@ -551,8 +551,6 @@ export interface ApiCallDirectory {
   'iscsi.targetextent.query': { params: QueryParams<IscsiTargetExtent>; response: IscsiTargetExtent[] };
   'iscsi.targetextent.update': { params: [id: number, extent: IscsiTargetExtentUpdate]; response: IscsiTargetExtent };
 
-  // HERE
-
   // Kerberos
   'kerberos.config': { params: void; response: KerberosConfig };
   'kerberos.keytab.create': { params: [KerberosKeytabUpdate]; response: KerberosKeytab };
@@ -756,10 +754,12 @@ export interface ApiCallDirectory {
   'support.is_available_and_enabled': { params: void; response: boolean };
   'support.update': { params: [SupportConfigUpdate]; response: SupportConfig };
   'support.similar_issues': { params: SimilarIssuesParams; response: SimilarIssue[] };
+  'support.attach_ticket_max_size': { params: void; response: number };
 
   // System
   'system.advanced.config': { params: void; response: AdvancedConfig };
   'system.advanced.sed_global_password': { params: void; response: string };
+  'system.advanced.sed_global_password_is_set': { params: void; response: boolean };
   'system.advanced.serial_port_choices': { params: void; response: Choices };
   'system.advanced.syslog_certificate_authority_choices': { params: void; response: Choices };
   'system.advanced.syslog_certificate_choices': { params: void; response: Choices };
@@ -789,6 +789,7 @@ export interface ApiCallDirectory {
   'system.ntpserver.update': { params: [id: number, params: CreateNtpServer]; response: NtpServer };
   'system.product_type': { params: void; response: ProductType };
   'system.security.config': { params: void; response: SystemSecurityConfig };
+  'system.security.info.fips_available': { params: void; response: boolean };
   'system.security.update': { params: [SystemSecurityConfig]; response: void };
   'system.set_time': { params: [number]; response: void };
 
