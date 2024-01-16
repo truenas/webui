@@ -234,7 +234,7 @@ export class VolumeStatusComponent implements OnInit {
 
         this.ws.call('disk.query', [
           [
-            ['devname', '=', diskName],
+            ['devname', '=', diskName.split('/').reverse()[0]],
           ],
         ]).subscribe((res) => {
           this.editDiskRoute.push(this.pk, 'edit', res[0].identifier);
