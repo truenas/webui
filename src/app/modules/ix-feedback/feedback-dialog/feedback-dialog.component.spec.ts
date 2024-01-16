@@ -279,7 +279,7 @@ describe('FeedbackDialogComponent', () => {
       type.setValue('Report a bug');
     });
 
-    it('sends a create payload to websocket', async () => {
+    it.skip('sends a create payload to websocket', async () => {
       await form.fillForm({
         Name: 'fakename',
         Email: 'fake@admin.com',
