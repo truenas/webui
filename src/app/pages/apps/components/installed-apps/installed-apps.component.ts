@@ -63,6 +63,11 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   showMobileDetails = false;
   isMobileView = false;
   appJobs = new Map<string, Job<ChartScaleResult, ChartScaleQueryParams>>();
+  sortingInfo: Sort = {
+    active: SortableField.Application,
+    direction: SortDirection.Asc,
+  };
+
   readonly sortableField = SortableField;
 
   entityEmptyConf: EmptyConfig = {
@@ -277,7 +282,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
       untilDestroyed(this),
     ).subscribe({
       next: ([,,charts]) => {
-        this.dataSource = charts.sort((a, b) => doSortCompare(a.name, b.name, true));
+        this.sortChanged(this.sortingInfo, charts);
         this.selectAppForDetails(this.activatedRoute.snapshot.paramMap.get('appId'));
         this.cdr.markForCheck();
       },
@@ -414,11 +419,13 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
     return status;
   }
 
-  sortChanged(sort: Sort): void {
-    this.dataSource = this.dataSource.sort((a, b) => {
+  sortChanged(sort: Sort, charts?: ChartRelease[]): void {
+    this.sortingInfo = sort;
+
+    this.dataSource = (charts || this.dataSource).sort((a, b) => {
       const isAsc = sort.direction === SortDirection.Asc;
 
-      switch (sort.active) {
+      switch (sort.active as SortableField) {
         case SortableField.Application:
           return doSortCompare(a.name, b.name, isAsc);
         case SortableField.Status:
