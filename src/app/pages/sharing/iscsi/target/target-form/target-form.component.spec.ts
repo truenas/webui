@@ -22,12 +22,8 @@ import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
-const mockValidateTargetName = jest.fn().mockImplementation((originalName = '') => {
+const mockValidateTargetName = jest.fn().mockImplementation(() => {
   return (control: FormControl) => {
-    if (control.value === originalName) {
-      return of(null);
-    }
-
     if (control.value === 'fake_existing') {
       return of({
         customValidator: {
@@ -36,6 +32,7 @@ const mockValidateTargetName = jest.fn().mockImplementation((originalName = '') 
         invalidTargetName: true,
       });
     }
+
     return of(null);
   };
 });
