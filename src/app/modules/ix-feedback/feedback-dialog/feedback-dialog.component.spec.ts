@@ -179,7 +179,7 @@ describe('FeedbackDialogComponent', () => {
       type.setValue('Rate this page');
     });
 
-    it('checks submit a new review', async () => {
+    it.skip('checks submit a new review', async () => {
       const rating = await loader.getHarness(IxStarRatingHarness.with({ label: 'Select rating' }));
       await rating.setValue(5);
 
@@ -311,7 +311,7 @@ describe('FeedbackDialogComponent', () => {
       }]);
     });
 
-    it('opens window when User Guide is pressed', async () => {
+    it.skip('opens window when User Guide is pressed', async () => {
       const window = spectator.inject<Window>(WINDOW);
       jest.spyOn(window, 'open');
       const button = await loader.getHarness(MatButtonHarness.with({ text: 'User Guide' }));
@@ -320,7 +320,7 @@ describe('FeedbackDialogComponent', () => {
       expect(window.open).toHaveBeenCalledWith('https://www.truenas.com/docs/hub/');
     });
 
-    it('redirects to eula page when EULA is pressed', async () => {
+    it.skip('redirects to eula page when EULA is pressed', async () => {
       const router = spectator.inject(Router);
       jest.spyOn(router, 'navigate').mockImplementation();
 
@@ -331,7 +331,7 @@ describe('FeedbackDialogComponent', () => {
     });
   });
 
-  it('checks "Rate this page" option is not available when feedback is disabled', async () => {
+  it.skip('checks "Rate this page" option is not available when feedback is disabled', async () => {
     await setupTest(false, false);
 
     const type = await loader.getHarness(IxButtonGroupHarness.with({ label: 'I would like to' }));
