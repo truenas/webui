@@ -20,7 +20,7 @@ export class TargetNameValidationService {
     private errorHandler: ErrorHandlerService,
   ) { }
 
-  errors = [
+  private errors = [
     this.translate.instant('Target with this name already exists'),
     this.translate.instant('Only lowercase alphanumeric characters plus dot (.), dash (-), and colon (:) are allowed.'),
   ];
