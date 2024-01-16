@@ -12,7 +12,7 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AdvancedSettingsComponent implements AfterViewInit {
-  isSystemLicensed$: Observable<null | object> = this.ws.call('system.license');
+  isSystemLicensed$: Observable<boolean> = this.ws.call('system.security.info.fips_available');
   protected readonly Role = Role;
   constructor(private route: ActivatedRoute, private ws: WebSocketService) {}
 
