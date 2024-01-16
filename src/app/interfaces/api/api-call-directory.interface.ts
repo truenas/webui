@@ -754,6 +754,7 @@ export interface ApiCallDirectory {
   'support.is_available_and_enabled': { params: void; response: boolean };
   'support.update': { params: [SupportConfigUpdate]; response: SupportConfig };
   'support.similar_issues': { params: SimilarIssuesParams; response: SimilarIssue[] };
+  'support.attach_ticket_max_size': { params: void; response: number };
 
   // System
   'system.advanced.config': { params: void; response: AdvancedConfig };
