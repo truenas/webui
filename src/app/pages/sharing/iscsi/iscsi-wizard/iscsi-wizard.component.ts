@@ -444,7 +444,7 @@ export class IscsiWizardComponent implements OnInit {
         if (iscsiService.state === ServiceStatus.Stopped) {
           return this.startAndEnableService(iscsiService);
         }
-        return this.restartService();
+        return of();
       }),
     );
   }
@@ -495,64 +495,5 @@ export class IscsiWizardComponent implements OnInit {
           return requests.length ? forkJoin(requests) : of(requests);
         }),
       );
-  };
-
-  restartService(): Observable<unknown> {
-    return this.confirmRestart().pipe(
-      switchMap((confirmed) => {
-        if (confirmed) {
-          this.loader.open();
-          return this.ws.call('service.restart', [ServiceName.Iscsi]).pipe(
-            tap(() => {
-              this.loader.close();
-              this.snackbar.success(
-                this.translateService.instant(
-                  '{name} service has been restarted', { name: serviceNames.get(ServiceName.Iscsi) },
-                ),
-              );
-            }),
-          );
-        }
-        return of();
-      }),
-    );
-  }
-
-  confirmRestart(): Observable<boolean> {
-    return this.dialogService.confirm({
-      title: this.translateService.instant('Restart {name} Service?', { name: serviceNames.get(ServiceName.Iscsi) }),
-      message: this.translateService.instant('Some changes might not take affect until the {name} service has been restarted. Would you like to restart the {name} service now?', { name: serviceNames.get(ServiceName.Iscsi) }),
-      hideCheckbox: true,
-    }).pipe(
-      switchMap((confirmed) => {
-        if (confirmed) {
-          return this.warnAboutActiveIscsiSessions();
-        }
-        return of(false);
-      }),
-    );
-  }
-
-  warnAboutActiveIscsiSessions = (): Observable<boolean> => {
-    return this.iscsiService.getGlobalSessions().pipe(
-      switchMap((sessions) => {
-        if (!sessions.length) {
-          return of(true);
-        }
-        let message = this.translateService.instant(
-          'Stop {serviceName}?', { serviceName: serviceNames.get(ServiceName.Iscsi) },
-        );
-        if (sessions.length) {
-          message = `<font color="red">${this.translateService.instant('There are {sessions} active iSCSI connections.', { sessions: sessions.length })}</font><br>${this.translateService.instant('Restarting the service would mean to stop the {serviceName} service and close these connections?', { serviceName: serviceNames.get(ServiceName.Iscsi) })}`;
-        }
-
-        return this.dialogService.confirm({
-          title: this.translateService.instant('Alert'),
-          message,
-          hideCheckbox: true,
-          buttonText: this.translateService.instant('Stop'),
-        });
-      }),
-    );
   };
 }
