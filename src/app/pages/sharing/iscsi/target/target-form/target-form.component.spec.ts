@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
@@ -21,6 +21,24 @@ import { TargetNameValidationService } from 'app/pages/sharing/iscsi/target/targ
 import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
+
+const mockValidateTargetName = jest.fn().mockImplementation((originalName = '') => {
+  return (control: FormControl) => {
+    if (control.value === originalName) {
+      return of(null);
+    }
+
+    if (control.value === 'fake_existing') {
+      return of({
+        customValidator: {
+          message: 'Target with this name already exists',
+        },
+        invalidTargetName: true,
+      });
+    }
+    return of(null);
+  };
+});
 
 describe('TargetFormComponent', () => {
   let spectator: Spectator<TargetFormComponent>;
@@ -60,7 +78,7 @@ describe('TargetFormComponent', () => {
       mockProvider(DialogService),
       mockProvider(IxSlideInRef),
       mockProvider(TargetNameValidationService, {
-        validateTargetName: () => of(null),
+        validateTargetName: mockValidateTargetName,
       }),
       { provide: SLIDE_IN_DATA, useValue: undefined },
       mockWebsocket([
@@ -253,25 +271,14 @@ describe('TargetFormComponent', () => {
 
   describe('validation error handling', () => {
     beforeEach(async () => {
-      spectator = createComponent({
-        providers: [
-          mockProvider(TargetNameValidationService, {
-            validateTargetName: () => of({
-              customValidator: {
-                message: 'Target with this name already exists',
-              },
-              invalidTargetName: true,
-            }),
-          }),
-        ],
-      });
+      spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
     });
 
     it('should display an error message for invalid target name', async () => {
       await form.fillForm({
-        'Target Name': 'name_test',
+        'Target Name': 'fake_existing',
       });
 
       const errorMessage = spectator.query('.form-error span');

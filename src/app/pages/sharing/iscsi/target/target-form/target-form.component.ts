@@ -92,7 +92,7 @@ export class TargetFormComponent implements OnInit {
     name: [
       '',
       [Validators.required],
-      [this.targetNameValidationService.validateTargetName],
+      [this.targetNameValidationService.validateTargetName(this.editingTarget?.name)],
     ],
     alias: [''],
     mode: [IscsiTargetMode.Iscsi],

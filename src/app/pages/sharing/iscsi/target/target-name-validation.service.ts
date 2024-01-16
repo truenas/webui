@@ -25,35 +25,41 @@ export class TargetNameValidationService {
     this.translate.instant('Only lowercase alphanumeric characters plus dot (.), dash (-), and colon (:) are allowed.'),
   ];
 
-  validateTargetName = (control: AbstractControl<string>): Observable<ValidationErrors | null> => {
-    return control.valueChanges.pipe(
-      debounceTime(300),
-      distinctUntilChanged(),
-      take(1),
-      switchMap((value) => {
-        return this.ws.call('iscsi.target.validate_name', [value]).pipe(
-          switchMap((error) => {
-            return error
-              ? of({
+  validateTargetName = (originalName: string) => {
+    return (control: AbstractControl<string>): Observable<ValidationErrors | null> => {
+      if (control.value === originalName) {
+        return of(null);
+      }
+
+      return control.valueChanges.pipe(
+        debounceTime(300),
+        distinctUntilChanged(),
+        take(1),
+        switchMap((value) => {
+          return this.ws.call('iscsi.target.validate_name', [value]).pipe(
+            switchMap((error) => {
+              return error
+                ? of({
+                  customValidator: {
+                    message: this.getError(error) || error,
+                  },
+                  invalidTargetName: true,
+                })
+                : of(null);
+            }),
+            catchError((error) => {
+              const errorReports = this.errorHandler.parseError(error) as ErrorReport;
+              return of({
                 customValidator: {
-                  message: this.getError(error) || error,
+                  message: errorReports?.message || this.translate.instant('Error validating target name'),
                 },
                 invalidTargetName: true,
-              })
-              : of(null);
-          }),
-          catchError((error) => {
-            const errorReports = this.errorHandler.parseError(error) as ErrorReport;
-            return of({
-              customValidator: {
-                message: errorReports?.message || this.translate.instant('Error validating target name'),
-              },
-              invalidTargetName: true,
-            });
-          }),
-        );
-      }),
-    );
+              });
+            }),
+          );
+        }),
+      );
+    };
   };
 
   private getError(errorValue: string): string {
