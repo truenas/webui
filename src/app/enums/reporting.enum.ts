@@ -13,7 +13,7 @@ export enum ReportingGraphName {
   SystemLoad = 'load',
   Target = 'ctl', // deprecated or unavailable
   Uptime = 'uptime',
-  Ups = 'ups', // deprecated or unavailable
+  Ups = 'ups',
   ZfsArcRatio = 'arcratio',
   ZfsArcResult = 'arcresult',
   ZfsArcSize = 'arcsize',
