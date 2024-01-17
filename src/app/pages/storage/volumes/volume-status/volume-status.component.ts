@@ -229,12 +229,11 @@ export class VolumeStatusComponent implements OnInit {
       id: 'edit',
       label: helptext.actions_label.edit,
       onClick: (row) => {
-        const pIndex = row.name.lastIndexOf('p');
-        const diskName = pIndex > -1 ? row.name.substring(0, pIndex) : row.name;
+        const devname = this.trimDiskName(this.getLeaf(row.name), 'p');
 
         this.ws.call('disk.query', [
           [
-            ['devname', '=', diskName.split('/').reverse()[0]],
+            ['devname', '=', devname],
           ],
         ]).subscribe((res) => {
           this.editDiskRoute.push(this.pk, 'edit', res[0].identifier);
@@ -246,12 +245,7 @@ export class VolumeStatusComponent implements OnInit {
       id: 'offline',
       label: helptext.actions_label.offline,
       onClick: (row) => {
-        let name = row.name;
-        // if use path as name, show the full path
-        if (!_.startsWith(name, '/')) {
-          const pIndex = name.lastIndexOf('p');
-          name = pIndex > -1 ? name.substring(0, pIndex) : name;
-        }
+        const name = this.trimDiskName(row.name, 'p');
         this.dialogService.confirm(
           helptext.offline_disk.title,
           helptext.offline_disk.message + name + '?' + (this.pool.encrypt == 0 ? '' : helptext.offline_disk.encryptPoolWarning),
@@ -279,8 +273,7 @@ export class VolumeStatusComponent implements OnInit {
       id: 'online',
       label: helptext.actions_label.online,
       onClick: (row) => {
-        const pIndex = row.name.lastIndexOf('p');
-        const diskName = pIndex > -1 ? row.name.substring(0, pIndex) : row.name;
+        const diskName = this.trimDiskName(row.name, 'p');
 
         this.dialogService.confirm(
           helptext.online_disk.title,
@@ -309,11 +302,7 @@ export class VolumeStatusComponent implements OnInit {
       id: 'replace',
       label: helptext.actions_label.replace,
       onClick: (row) => {
-        let name = row.name;
-        if (!_.startsWith(name, '/')) {
-          const pIndex = name.lastIndexOf('p');
-          name = pIndex > -1 ? name.substring(0, pIndex) : name;
-        }
+        const name = this.trimDiskName(row.name, 'p');
         const pk = this.pk;
         _.find(this.replaceDiskFormFields, { name: 'label' }).value = row.guid;
 
@@ -358,11 +347,7 @@ export class VolumeStatusComponent implements OnInit {
       id: 'remove',
       label: helptext.actions_label.remove,
       onClick: (row) => {
-        let diskName = row.name;
-        if (!_.startsWith(row.name, '/')) {
-          const pIndex = row.name.lastIndexOf('p');
-          diskName = pIndex > -1 ? row.name.substring(0, pIndex) : row.name;
-        }
+        const diskName = this.trimDiskName(row.name, 'p');
 
         this.dialogService.confirm(
           helptext.remove_disk.title,
@@ -390,8 +375,7 @@ export class VolumeStatusComponent implements OnInit {
       id: 'detach',
       label: helptext.actions_label.detach,
       onClick: (row) => {
-        const pIndex = row.name.lastIndexOf('p');
-        const diskName = pIndex > -1 ? row.name.substring(0, pIndex) : row.name;
+        const diskName = this.trimDiskName(row.name, 'p');
 
         this.dialogService.confirm(
           helptext.detach_disk.title,
@@ -484,11 +468,7 @@ export class VolumeStatusComponent implements OnInit {
       id: 'Remove',
       label: helptext.actions_label.remove,
       onClick: (row) => {
-        let diskName = row.name;
-        if (!_.startsWith(row.name, '/')) {
-          const pIndex = row.name.lastIndexOf('p');
-          diskName = pIndex > -1 ? row.name.substring(0, pIndex) : row.name;
-        }
+        const diskName = this.trimDiskName(row.name, 'p');
 
         this.dialogService.confirm(
           helptext.remove_disk.title,
@@ -607,5 +587,13 @@ export class VolumeStatusComponent implements OnInit {
     if (data != null) {
       return this.localeService.formatDateTime(new Date(data.$date));
     }
+  }
+
+  private getLeaf(url: string): string {
+    return url.split('/').pop();
+  }
+
+  private trimDiskName(diskName: string, trimSubstring: string): string {
+    return _.startsWith(diskName, '/') ? diskName : diskName.split(trimSubstring)[0];
   }
 }
