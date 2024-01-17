@@ -47,7 +47,7 @@ export class TargetListComponent implements OnInit {
           iconName: 'edit',
           tooltip: this.translate.instant('Edit'),
           onClick: (target) => {
-            const slideInRef = this.slideInService.open(TargetFormComponent, { data: target });
+            const slideInRef = this.slideInService.open(TargetFormComponent, { data: target, wide: true });
             slideInRef.slideInClosed$
               .pipe(filter(Boolean), untilDestroyed(this))
               .subscribe(() => this.dataProvider.load());

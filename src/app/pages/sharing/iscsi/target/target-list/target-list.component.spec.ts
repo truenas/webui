@@ -86,6 +86,7 @@ describe('TargetListComponent', () => {
 
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(TargetFormComponent, {
       data: targets[0],
+      wide: true,
     });
   });
 
