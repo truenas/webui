@@ -12,7 +12,10 @@ export const routes: Routes = [
   },
   {
     path: ':options',
-    data: { title: T('Audit') },
+    data: {
+      isNew: true,
+      title: T('Audit'),
+    },
     component: AuditComponent,
     pathMatch: 'full',
   },

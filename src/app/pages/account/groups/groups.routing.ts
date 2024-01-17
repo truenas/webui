@@ -28,7 +28,11 @@ export const routes: Routes = [
       {
         path: 'privileges',
         component: PrivilegeListComponent,
-        data: { title: T('Privileges'), breadcrumb: T('Privileges') },
+        data: {
+          title: T('Privileges'),
+          breadcrumb: T('Privileges'),
+          isNew: true,
+        },
       },
     ],
   },
