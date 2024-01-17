@@ -38,7 +38,7 @@ export const helptextSharingSmb = {
 
   placeholder_home: T('Use as Home Share'),
   tooltip_home: T(
-    'Allows the share to host user home \
+    'Legacy feature. <br><br>Allows the share to host user home \
  directories. Each user is given a personal home directory when \
  connecting to the share which is not accessible by other users. This \
  allows for a personal, dynamic share. Only one share can be used \
@@ -94,7 +94,7 @@ export const helptextSharingSmb = {
 
   placeholder_guestok: T('Allow Guest Access'),
   tooltip_guestok: T(
-    'Privileges are the same as the guest account. \
+    'Legacy feature. <br><br>Privileges are the same as the guest account. \
  Guest access is disabled by default in Windows 10 version 1709 and \
  Windows Server version 1903. Additional client-side configuration is \
  required to provide guest access to these clients.<br><br> \

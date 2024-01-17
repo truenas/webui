@@ -48,7 +48,7 @@ export class IxFeedbackService {
     return this.httpClient.post<ReviewAddedResponse>(`${this.hostname}/api/reviews/add/`, body);
   }
 
-  addAttachment(reviewId: number, image: File): Observable<AttachmentAddedResponse> {
+  uploadReviewAttachment(reviewId: number, image: File): Observable<AttachmentAddedResponse> {
     const formData = new FormData();
     formData.append('image', image);
 

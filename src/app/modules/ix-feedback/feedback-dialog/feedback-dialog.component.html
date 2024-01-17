@@ -47,23 +47,23 @@
     ></ix-checkbox>
 
     <ix-checkbox
-      formControlName="take_screenshot"
+      formControlName="attach_screenshot"
       [label]="'Take screenshot of the current page' | translate"
       [tooltip]="'Capture and attach screenshot to the review' | translate"
     ></ix-checkbox>
 
     <ix-checkbox
-      *ngIf="form.controls.attach_screenshot.enabled"
-      formControlName="attach_screenshot"
+      *ngIf="form.controls.attach_images.enabled"
+      formControlName="attach_images"
       [label]="'Attach additional images' | translate"
     ></ix-checkbox>
 
     <ix-file-input
-      *ngIf="form.controls.attach_screenshot.value"
-      formControlName="image"
-      [label]="'Attach image (optional)' | translate"
-      [tooltip]="'Select image you want attach to review' | translate"
-      [multiple]="false"
+      *ngIf="form.controls.attach_images.value"
+      formControlName="images"
+      [label]="'Attach images (optional)' | translate"
+      [tooltip]="'Select images you want attach to review' | translate"
+      [multiple]="true"
       [acceptedFiles]="acceptedFiles"
     ></ix-file-input>
   </form>

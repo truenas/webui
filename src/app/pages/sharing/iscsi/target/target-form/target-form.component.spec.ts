@@ -1,7 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
@@ -12,30 +12,15 @@ import {
   IscsiAuthAccess, IscsiInitiatorGroup, IscsiPortal, IscsiTarget,
 } from 'app/interfaces/iscsi.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
-import { TargetNameValidationService } from 'app/pages/sharing/iscsi/target/target-name-validation.service';
 import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
-
-const mockValidateTargetName = jest.fn().mockImplementation(() => {
-  return (control: FormControl) => {
-    if (control.value === 'fake_existing') {
-      return of({
-        customValidator: {
-          message: 'Target with this name already exists',
-        },
-        invalidTargetName: true,
-      });
-    }
-
-    return of(null);
-  };
-});
 
 describe('TargetFormComponent', () => {
   let spectator: Spectator<TargetFormComponent>;
@@ -74,13 +59,11 @@ describe('TargetFormComponent', () => {
       mockProvider(IxSlideInService),
       mockProvider(DialogService),
       mockProvider(IxSlideInRef),
-      mockProvider(TargetNameValidationService, {
-        validateTargetName: mockValidateTargetName,
-      }),
       { provide: SLIDE_IN_DATA, useValue: undefined },
       mockWebsocket([
         mockCall('iscsi.target.create'),
         mockCall('iscsi.target.update'),
+        mockCall('iscsi.target.validate_name', null),
         mockCall('iscsi.portal.query', [{
           comment: 'comment_1',
           id: 1,
@@ -273,13 +256,26 @@ describe('TargetFormComponent', () => {
       form = await loader.getHarness(IxFormHarness);
     });
 
+    beforeEach(async () => {
+      spectator = createComponent();
+      websocket = spectator.inject(WebSocketService);
+      jest.spyOn(websocket, 'call').mockImplementation((method) => {
+        if (method === 'iscsi.target.validate_name') {
+          return of('Target with this name already exists');
+        }
+        return null;
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+    });
+
     it('should display an error message for invalid target name', async () => {
       await form.fillForm({
-        'Target Name': 'fake_existing',
+        'Target Name': 'name_test',
       });
 
-      const errorMessage = spectator.query('.form-error span');
-      expect(errorMessage).toContainText('Target with this name already exists');
+      const nameControl = await loader.getHarness(IxInputHarness.with({ label: 'Target Name' }));
+      expect(await nameControl.getErrorText()).toBe('Target with this name already exists');
     });
   });
 });

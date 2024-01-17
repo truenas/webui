@@ -10,7 +10,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { environment } from 'environments/environment';
 import {
-  EMPTY, Observable, catchError, delay, distinctUntilChanged, filter, of, pairwise, switchMap, take,
+  Observable, of, take, filter, switchMap, forkJoin, pairwise, distinctUntilChanged, delay,
 } from 'rxjs';
 import { TicketType, ticketAcceptedFiles } from 'app/enums/file-ticket.enum';
 import { JobState } from 'app/enums/job-state.enum';
@@ -19,11 +19,10 @@ import { mapToOptions } from 'app/helpers/options.helper';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { Option } from 'app/interfaces/option.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { FileTicketFormComponent } from 'app/modules/ix-feedback/file-ticket-form/file-ticket-form.component';
 import { FileTicketLicensedFormComponent } from 'app/modules/ix-feedback/file-ticket-licensed-form/file-ticket-licensed-form.component';
 import {
-  AddReview, FeedbackEnvironment, FeedbackType, feedbackTypeOptionMap,
+  AddReview, AttachmentAddedResponse, FeedbackEnvironment, FeedbackType, ReviewAddedResponse, feedbackTypeOptionMap,
 } from 'app/modules/ix-feedback/interfaces/feedback.interface';
 import { CreateNewTicket } from 'app/modules/ix-feedback/interfaces/file-ticket.interface';
 import { IxFeedbackService } from 'app/modules/ix-feedback/ix-feedback.service';
@@ -62,10 +61,10 @@ export class FeedbackDialogComponent implements OnInit {
 
     token: [''],
 
-    image: [null as File[]],
+    attach_images: [false],
+    images: [null as File[]],
     attach_debug: [false],
-    attach_screenshot: [false],
-    take_screenshot: [true],
+    attach_screenshot: [true],
   });
 
   private release: string;
@@ -193,53 +192,62 @@ export class FeedbackDialogComponent implements OnInit {
     this.router.navigate(['system', 'support', 'eula']);
   }
 
+  private listenForUploading(): void {
+    this.fileUpload.onUploading$
+      .pipe(untilDestroyed(this))
+      .subscribe({
+        error: (error: HttpErrorResponse) => {
+          console.error(`Uploading Error: ${error.status},\n ${error.error}\n ${error.message}`);
+        },
+      });
+    this.fileUpload.onUploaded$
+      .pipe(take(this.attachments.length), untilDestroyed(this))
+      .subscribe({
+        error: (error) => {
+          console.error(error);
+        },
+        complete: () => {
+          this.isLoading = false;
+          this.onSuccess();
+        },
+      });
+  }
+
   private createNewTicket(payload: CreateNewTicket): void {
     this.isLoading = true;
     this.ws.job('support.new_ticket', [payload]).pipe(
       filter((job) => job.state === JobState.Success),
-      untilDestroyed(this),
-    ).subscribe({
-      next: (job) => {
-        if (this.attachments.length) {
-          this.fileUpload.onUploading$.pipe(
-            untilDestroyed(this),
-          ).subscribe({
-            error: (error: HttpErrorResponse) => {
-              this.dialog.error({
-                title: this.translate.instant('Ticket'),
-                message: this.translate.instant('Uploading screenshots has failed'),
-                backtrace: `Error: ${error.status},\n ${error.error}\n ${error.message}`,
-              });
-              this.isLoading = false;
-              this.cdr.markForCheck();
-            },
-          });
-          this.fileUpload.onUploaded$.pipe(
-            take(this.attachments.length),
-            untilDestroyed(this),
-          ).subscribe({
-            next: () => {},
-            error: (error) => {
-              // TODO: Improve error handling
-              console.error(error);
-            },
-            complete: () => {
-              this.isLoading = false;
-              this.onSuccess();
-            },
-          });
+      switchMap((job) => {
+        const requests$: Observable<unknown>[] = [];
+
+        if (this.form.controls.attach_images.value && this.attachments.length) {
           this.attachments.forEach((file) => {
-            this.fileUpload.upload(file, 'support.attach_ticket', [{
+            const request$ = this.fileUpload.upload(file, 'support.attach_ticket', [{
               ticket: job.result.ticket,
               filename: file.name,
               token: payload.token,
             }]);
+            requests$.push(request$);
           });
-        } else {
-          this.isLoading = false;
-          this.onSuccess();
         }
-      },
+
+        if (this.form.controls.attach_screenshot.value) {
+          const request$ = this.feedbackService.takeScreenshot().pipe(
+            filter(Boolean),
+            switchMap((file) => this.fileUpload.upload(file, 'support.attach_ticket', [{
+              ticket: job.result.ticket,
+              filename: file.name,
+              token: payload.token,
+            }])),
+          );
+          requests$.push(request$);
+        }
+
+        return forkJoin(requests$);
+      }),
+      untilDestroyed(this),
+    ).subscribe({
+      next: () => this.onSuccess(),
       error: (error: unknown) => {
         console.error(error);
         this.isLoading = false;
@@ -298,33 +306,12 @@ export class FeedbackDialogComponent implements OnInit {
 
     this.feedbackService
       .addReview(values)
-      .pipe(untilDestroyed(this))
+      .pipe(
+        switchMap((response) => forkJoin(this.uploadReviewAttachments(response))),
+        untilDestroyed(this),
+      )
       .subscribe({
-        next: (response) => {
-          if (this.form.controls.take_screenshot.value && response.success) {
-            this.feedbackService
-              .takeScreenshot()
-              .pipe(untilDestroyed(this))
-              .subscribe({
-                next: (file) => {
-                  this.addAttachment(response.review_id, file);
-                },
-                error: (error) => {
-                  console.error(error);
-                  this.isLoading = false;
-                  this.cdr.markForCheck();
-                },
-              });
-          }
-          if (this.form.controls.attach_screenshot.value
-            && this.form.controls.image.value?.length
-            && response.success) {
-            this.addAttachment(response.review_id, this.form.controls.image.value[0]);
-          }
-          if (response.success) {
-            this.onSuccess();
-          }
-        },
+        next: () => this.onSuccess(),
         error: (error: HttpErrorResponse) => {
           this.isLoading = false;
           this.dialogService.error(this.errorHandler.parseHttpError(error));
@@ -333,28 +320,31 @@ export class FeedbackDialogComponent implements OnInit {
       });
   }
 
-  private addAttachment(reviewId: number, image: File): void {
-    this.feedbackService
-      .addAttachment(reviewId, image)
-      .pipe(untilDestroyed(this))
-      .subscribe({
-        next: () => this.onSuccess(),
-        error: (error: HttpErrorResponse) => {
-          this.dialogService.error({
-            title: this.translate.instant('Uploading failed.'),
-            message: error.message,
-            backtrace: JSON.stringify(error, null, '  '),
-          });
-          this.isLoading = false;
-          this.cdr.markForCheck();
-        },
+  private uploadReviewAttachments(response: ReviewAddedResponse): Observable<AttachmentAddedResponse>[] {
+    const requests$: Observable<AttachmentAddedResponse>[] = [];
+
+    if (this.form.controls.attach_screenshot.value) {
+      const request$ = this.feedbackService.takeScreenshot().pipe(
+        switchMap((image) => this.feedbackService.uploadReviewAttachment(response.review_id, image)),
+      );
+      requests$.push(request$);
+    }
+
+    if (this.form.controls.attach_images.value && this.attachments.length) {
+      this.attachments.forEach((image) => {
+        const request$ = this.feedbackService.uploadReviewAttachment(response.review_id, image);
+        requests$.push(request$);
       });
+    }
+
+    return requests$;
   }
 
   private onSuccess(): void {
     this.snackbar.success(
       this.translate.instant(
-        'Thank you for sharing your feedback with us! Your insights are valuable in helping us improve our product.',
+        `Thank you for sharing your feedback with us!
+        Your insights are valuable in helping us improve our product.`,
       ),
     );
     this.isLoading = false;
@@ -418,10 +408,12 @@ export class FeedbackDialogComponent implements OnInit {
   }
 
   private getReleaseVersion(): void {
-    this.store$.pipe(waitForSystemInfo, take(1), untilDestroyed(this)).subscribe((systemInfo) => {
-      this.release = systemInfo.version;
-      this.systemProduct = systemInfo.system_product;
-    });
+    this.store$
+      .pipe(waitForSystemInfo, take(1), untilDestroyed(this))
+      .subscribe((systemInfo) => {
+        this.release = systemInfo.version;
+        this.systemProduct = systemInfo.system_product;
+      });
   }
 
   private switchToReview(): void {
@@ -443,23 +435,19 @@ export class FeedbackDialogComponent implements OnInit {
   }
 
   private imagesValidation(): void {
-    this.form.controls.image.valueChanges.pipe(
+    this.form.controls.images.valueChanges.pipe(
       switchMap((images) => this.fileUpload.validateScreenshots(images)),
-      catchError((error: WebsocketError) => {
-        this.formErrorHandler.handleWsFormError(error, this.form);
-
-        return EMPTY;
-      }),
       untilDestroyed(this),
     ).subscribe((validatedFiles) => {
-      const validFiles = validatedFiles.filter((file) => !file.error).map((file) => file.file);
-      const invalidFiles = validatedFiles.filter((file) => file.error).map((file) => file.error);
-      this.attachments = validFiles;
-      if (invalidFiles.length) {
-        const message = invalidFiles.map((error) => `${error.name} – ${error.errorMessage}`).join('\n');
-        this.form.controls.image.setErrors({ [ixManualValidateError]: { message } });
+      const validatedImages = validatedFiles.filter((file) => !file.error).map((file) => file.file);
+      this.attachments = validatedImages;
+
+      const invalidImages = validatedFiles.filter((file) => file.error).map((file) => file.error);
+      if (invalidImages.length) {
+        const message = invalidImages.map((error) => `${error.name} – ${error.errorMessage}`).join('\n');
+        this.form.controls.images.setErrors({ [ixManualValidateError]: { message } });
       } else {
-        this.form.controls.image.setErrors(null);
+        this.form.controls.images.setErrors(null);
       }
       this.cdr.markForCheck();
     });

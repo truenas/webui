@@ -7,6 +7,7 @@ import {
   Observable, catchError, debounceTime, distinctUntilChanged, of, switchMap, take,
 } from 'rxjs';
 import { ErrorReport } from 'app/interfaces/error-report.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -27,27 +28,17 @@ export class TargetNameValidationService {
 
   validateTargetName = (originalName: string) => {
     return (control: AbstractControl<string>): Observable<ValidationErrors | null> => {
-      if (control.value === originalName) {
-        return of(null);
-      }
-
       return control.valueChanges.pipe(
         debounceTime(300),
         distinctUntilChanged(),
         take(1),
         switchMap((value) => {
+          if (control.value === originalName) {
+            return of(null);
+          }
+
           return this.ws.call('iscsi.target.validate_name', [value]).pipe(
-            switchMap((error) => {
-              return error
-                ? of({
-                  customValidator: {
-                    message: this.getError(error) || error,
-                  },
-                  invalidTargetName: true,
-                })
-                : of(null);
-            }),
-            catchError((error) => {
+            catchError((error: WebsocketError) => {
               const errorReports = this.errorHandler.parseError(error) as ErrorReport;
               return of({
                 customValidator: {
@@ -55,6 +46,16 @@ export class TargetNameValidationService {
                 },
                 invalidTargetName: true,
               });
+            }),
+            switchMap((responseError: string) => {
+              return responseError === null
+                ? of(null)
+                : of({
+                  customValidator: {
+                    message: this.getError(responseError) || responseError,
+                  },
+                  invalidTargetName: true,
+                });
             }),
           );
         }),
