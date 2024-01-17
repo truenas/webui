@@ -53,6 +53,9 @@ import { AuthGuardService } from './services/auth/auth-guard.service';
 import { EntityTableService } from './services/entity-table.service';
 import { RoutePartsService } from './services/route-parts/route-parts.service';
 
+const a = 0;
+if (a) { getWindow(); }
+
 @NgModule({
   imports: [
     BrowserModule,
