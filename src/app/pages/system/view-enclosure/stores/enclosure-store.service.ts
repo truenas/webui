@@ -5,10 +5,11 @@ import _ from 'lodash';
 import {
   combineLatest, forkJoin, Observable, of, Subject, tap,
 } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 import { EnclosureSlotDiskStatus } from 'app/enums/enclosure-slot-status.enum';
 import { VdevType, TopologyItemType } from 'app/enums/v-dev-type.enum';
 import {
+  DiskEnclosureInfo,
   Enclosure,
   EnclosureElement,
   EnclosureElementsGroup,
@@ -22,7 +23,6 @@ import {
 import { DialogService } from 'app/services/dialog.service';
 import { DisksUpdateService } from 'app/services/disks-update.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 export interface EnclosureState {
@@ -65,7 +65,6 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
     private ws: WebSocketService,
     private disksUpdateService: DisksUpdateService,
     private dialogService: DialogService,
-    private sorter: StorageService,
     private errorHandler: ErrorHandlerService,
   ) {
     super(initialState);
@@ -86,26 +85,67 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
     );
   });
 
-  updateState(): Observable<{
+  getDiskInfoFromEnclosures(diskName: string, enclosures: Enclosure[]): DiskEnclosureInfo {
+    for (const enclosure of enclosures) {
+      for (const element of enclosure.elements) {
+        const diskEnclosureInfo = this.getDiskInfoFromEnclosureElements(diskName, enclosure.number, element);
+        if (diskEnclosureInfo) {
+          return diskEnclosureInfo;
+        }
+      }
+    }
+    return null;
+  }
+
+  getDiskInfoFromEnclosureElements(
+    diskName: string,
+    enclosure: number,
+    enclosureElement: EnclosureElement | EnclosureElementsGroup,
+  ): DiskEnclosureInfo {
+    if ((enclosureElement as EnclosureElement).data?.Device === diskName) {
+      return {
+        enclosure,
+        slot: (enclosureElement as EnclosureElement).slot,
+      };
+    }
+    enclosureElement = enclosureElement as EnclosureElementsGroup;
+    if (!enclosureElement.elements?.length) {
+      return null;
+    }
+
+    for (const element of enclosureElement.elements) {
+      const diskEnclosureInfo = this.getDiskInfoFromEnclosureElements(diskName, enclosure, element);
+      if (diskEnclosureInfo) {
+        return diskEnclosureInfo;
+      }
+    }
+    return null;
+  }
+
+  private updateState(): Observable<{
     enclosures: Enclosure[];
     pools: Pool[];
     disks: Disk[];
     enclosureViews: EnclosureView[];
   }> {
-    return forkJoin({
-      enclosures: this.getEnclosures().pipe(
-        this.patchStateWithEnclosureData(),
-      ),
-      pools: this.getPools().pipe(
-        this.patchStateWithPoolData(),
-      ),
-      disks: this.getDisks().pipe(
-        this.patchStateWithDisksData(),
-      ),
-      enclosureViews: this.getEnclosureViewsData().pipe(
-        this.patchStateWithEnclosureViewsData(),
-      ),
-    });
+    return this.getEnclosures().pipe(
+      switchMap((enclosures) => {
+        return forkJoin({
+          enclosures: of(enclosures).pipe(
+            this.patchStateWithEnclosureData(),
+          ),
+          pools: this.getPools().pipe(
+            this.patchStateWithPoolData(),
+          ),
+          disks: this.getDisks(enclosures).pipe(
+            this.patchStateWithDisksData(),
+          ),
+          enclosureViews: this.getEnclosureViewsData().pipe(
+            this.patchStateWithEnclosureViewsData(),
+          ),
+        });
+      }),
+    );
   }
 
   patchStateWithEnclosureViewsData(): (source: Observable<EnclosureView[]>) => Observable<EnclosureView[]> {
@@ -122,11 +162,14 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
   }
 
   getEnclosureViewsData(): Observable<EnclosureView[]> {
-    return combineLatest({
-      enclosures: this.getEnclosures(),
-      pools: this.getPools(),
-      disks: this.getDisks(),
-    }).pipe(
+    return this.getEnclosures().pipe(
+      switchMap((enclosures) => {
+        return combineLatest({
+          enclosures: of(enclosures),
+          pools: this.getPools(),
+          disks: this.getDisks(enclosures),
+        });
+      }),
       switchMap(this.processData.bind(this)),
     );
   }
@@ -405,8 +448,24 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
     );
   }
 
-  getDisks(): Observable<Disk[]> {
-    return this.ws.call('disk.query', [[], { extra: { pools: true } }]);
+  getDisks(enclosures: Enclosure[]): Observable<Disk[]> {
+    return this.ws.call('disk.query', [[], { extra: { pools: true } }]).pipe(
+      map((disks) => {
+        return disks.map((disk) => {
+          const enclosureInfo = this.getDiskInfoFromEnclosures(disk.name, enclosures);
+          if (enclosureInfo) {
+            return {
+              ...disk,
+              enclosure: {
+                number: enclosureInfo.enclosure,
+                slot: enclosureInfo.slot,
+              },
+            };
+          }
+          return disk;
+        });
+      }),
+    );
   }
 
   patchStateWithDisksData(): (source: Observable<Disk[]>) => Observable<Disk[]> {
