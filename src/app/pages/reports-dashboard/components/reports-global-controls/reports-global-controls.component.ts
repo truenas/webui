@@ -7,7 +7,9 @@ import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
-import { take } from 'rxjs';
+import { BehaviorSubject, combineLatest, take } from 'rxjs';
+import { Option } from 'app/interfaces/option.interface';
+import { ReportingGraph } from 'app/interfaces/reporting-graph.interface';
 import { ReportTab, ReportType } from 'app/pages/reports-dashboard/interfaces/report-tab.interface';
 import { ReportsService } from 'app/pages/reports-dashboard/reports.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -33,6 +35,8 @@ export class ReportsGlobalControlsComponent implements OnInit {
   diskDevices$ = this.reportsService.getDiskDevices();
   diskMetrics$ = this.reportsService.getDiskMetrics();
   @Output() diskOptionsChanged = new EventEmitter<{ devices: string[]; metrics: string[] }>();
+  diskDevicesOptions$ = new BehaviorSubject<Option[]>([]);
+  allDiskDevices: Option[];
 
   readonly ReportType = ReportType;
 
@@ -49,6 +53,28 @@ export class ReportsGlobalControlsComponent implements OnInit {
     this.setupTabs();
     this.setAutoRefreshControl();
     this.setupDisksTab();
+    this.setupDevicesFiltering();
+  }
+
+  setupDevicesFiltering(): void {
+    combineLatest([
+      this.reportsService.getReportGraphs(),
+      this.form.controls.metrics.valueChanges,
+    ]).pipe(
+      untilDestroyed(this),
+    ).subscribe({
+      next: ([graphs, metrics]: [ReportingGraph[], string[]]) => {
+        this.diskDevicesOptions$.next(this.allDiskDevices.filter((device) => {
+          for (const metric of metrics) {
+            const selectedGraph = graphs.find((graph) => graph.name === metric);
+            if (selectedGraph?.identifiers.includes(device.value.toString())) {
+              return true;
+            }
+          }
+          return false;
+        }));
+      },
+    });
   }
 
   isActiveTab(tab: ReportTab): boolean {
@@ -74,6 +100,7 @@ export class ReportsGlobalControlsComponent implements OnInit {
       });
     });
     this.diskDevices$.pipe(untilDestroyed(this)).subscribe((disks) => {
+      this.allDiskDevices = disks;
       const disksNames = this.route.snapshot.queryParams.disks as string[] | string;
       let devices: string[];
       if (disksNames) {
