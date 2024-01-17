@@ -145,6 +145,7 @@
     "ngx-skeleton-loader": "~5.0.0",
     "ngx-translate-messageformat-compiler": "~5.0.1",
     "ngx-webstorage": "~12.0.0",
+    "paths-filter": "dorny/paths-filter",
     "pixi-filters": "~2.7.1",
     "pixi.js": "~4.7.1",
     "popmotion": "~8.7.1",
@@ -157,8 +158,8 @@
     "zone.js": "~0.13.1"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^16.2.0",
     "@angular-devkit/core": "^16.1.1",
+    "@angular-devkit/build-angular": "^16.2.0",
     "@angular-eslint/builder": "~16.2.0",
     "@angular-eslint/eslint-plugin": "~16.2.0",
     "@angular-eslint/eslint-plugin-template": "~16.2.0",

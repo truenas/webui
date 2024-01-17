@@ -550,6 +550,7 @@ export interface ApiCallDirectory {
   'iscsi.targetextent.delete': { params: [id: number, force?: boolean]; response: boolean };
   'iscsi.targetextent.query': { params: QueryParams<IscsiTargetExtent>; response: IscsiTargetExtent[] };
   'iscsi.targetextent.update': { params: [id: number, extent: IscsiTargetExtentUpdate]; response: IscsiTargetExtent };
+  'iscsi.target.validate_name': { params: string[]; response: null | string };
 
   // Kerberos
   'kerberos.config': { params: void; response: KerberosConfig };

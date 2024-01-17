@@ -7,7 +7,7 @@ import {
   OnInit,
 } from '@angular/core';
 import {
-  Validators, FormBuilder, AbstractControl,
+  Validators, FormBuilder,
 } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -240,7 +240,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.form.controls.name.addAsyncValidators([
-      (control: AbstractControl) => this.smbValidationService.validate(control, this.existingSmbShare?.name),
+      this.smbValidationService.validate(this.existingSmbShare?.name),
     ]);
   }
 
