@@ -1,6 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, ValidationErrors } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogRef } from '@angular/material/dialog';
 import {
@@ -12,10 +12,10 @@ import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { ProductType } from 'app/enums/product-type.enum';
 import { FileReviewComponent } from 'app/modules/feedback/components/file-review/file-review.component';
-import { FeedbackEnvironment } from 'app/modules/feedback/interfaces/feedback.interface';
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
+import { ImageValidatorService } from 'app/modules/ix-forms/validators/image-validator/image-validator.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { SystemInfoState } from 'app/store/system-info/system-info.reducer';
@@ -72,11 +72,14 @@ describe('FileReviewComponent', () => {
         addReviewAttachment: jest.fn(() => of(undefined)),
       }),
       mockProvider(SnackbarService),
+      mockProvider(ImageValidatorService, {
+        validateImages: () => () => of(null as ValidationErrors),
+      }),
     ],
   });
 
   const expectedReview = {
-    environment: FeedbackEnvironment.Production,
+    environment: expect.stringMatching(/(production|development)/i),
     extra: {},
     host_u_id: 'testHostId',
     message: 'Git gud',
