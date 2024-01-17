@@ -294,6 +294,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
       .pipe(untilDestroyed(this))
       .subscribe((job: Job<ChartScaleResult, ChartScaleQueryParams>) => {
         this.appJobs.set(name, job);
+        this.sortChanged(this.sortingInfo);
         this.cdr.markForCheck();
       });
   }
@@ -303,6 +304,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
       .pipe(untilDestroyed(this))
       .subscribe((job: Job<ChartScaleResult, ChartScaleQueryParams>) => {
         this.appJobs.set(name, job);
+        this.sortChanged(this.sortingInfo);
         this.cdr.markForCheck();
       });
   }
@@ -429,7 +431,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
         case SortableField.Application:
           return doSortCompare(a.name, b.name, isAsc);
         case SortableField.Status:
-          return doSortCompare(a.status, b.status, isAsc);
+          return doSortCompare(this.getAppStatus(a.name), this.getAppStatus(b.name), isAsc);
         case SortableField.Updates:
           return doSortCompare(
             (a.update_available || a.container_images_update_available) ? 1 : 0,
@@ -486,6 +488,7 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
       .subscribe((event) => {
         const [name] = event.fields.arguments;
         this.appJobs.set(name, event.fields);
+        this.sortChanged(this.sortingInfo);
         this.cdr.markForCheck();
       });
   }
