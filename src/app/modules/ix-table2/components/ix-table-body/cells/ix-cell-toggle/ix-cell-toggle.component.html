@@ -1,7 +1,19 @@
-<mat-slide-toggle
-  color="primary"
-  ixTest="row-toggle"
-  [checked]="checked"
-  (change)="onSlideToggleChanged($event)"
-  (click)="$event.stopPropagation()"
-></mat-slide-toggle>
+<ng-container *ngIf="!requiresRoles?.length">
+  <mat-slide-toggle
+    color="primary"
+    [ixTest]="[title, rowTestId(row), 'row-toggle']"
+    [checked]="checked"
+    (change)="onSlideToggleChanged($event)"
+    (click)="$event.stopPropagation()"
+  ></mat-slide-toggle>
+</ng-container>
+<ng-container *ngIf="requiresRoles?.length">
+  <mat-slide-toggle
+    *ixRequiresRoles="requiresRoles"
+    color="primary"
+    [ixTest]="[title, rowTestId(row), 'row-toggle']"
+    [checked]="checked"
+    (change)="onSlideToggleChanged($event)"
+    (click)="$event.stopPropagation()"
+  ></mat-slide-toggle>
+</ng-container>

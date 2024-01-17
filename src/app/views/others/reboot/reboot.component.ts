@@ -3,7 +3,6 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
@@ -35,8 +34,8 @@ export class RebootComponent implements OnInit {
 
     this.matDialog.closeAll();
     this.ws.job('system.reboot').pipe(untilDestroyed(this)).subscribe({
-      error: (error: WebsocketError) => { // error on reboot
-        this.dialogService.error(this.errorHandler.parseWsError(error))
+      error: (error: unknown) => { // error on reboot
+        this.dialogService.error(this.errorHandler.parseError(error))
           .pipe(untilDestroyed(this))
           .subscribe(() => {
             this.router.navigate(['/sessions/signin']);

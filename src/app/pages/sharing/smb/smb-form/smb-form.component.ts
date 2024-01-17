@@ -1,15 +1,17 @@
 import {
+  AfterViewInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   Inject,
   OnInit,
 } from '@angular/core';
-import { Validators, FormBuilder } from '@angular/forms';
+import {
+  Validators, FormBuilder,
+} from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Actions } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
@@ -22,9 +24,12 @@ import {
   take,
   tap,
 } from 'rxjs/operators';
+import { DatasetPreset } from 'app/enums/dataset.enum';
+import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { helptextSharingSmb } from 'app/helptext/sharing';
+import { DatasetCreate } from 'app/interfaces/dataset.interface';
 import { Option } from 'app/interfaces/option.interface';
 import {
   SmbPresets,
@@ -37,10 +42,10 @@ import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-sli
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
-import { forbiddenValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { RestartSmbDialogComponent } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
+import { SmbValidationService } from 'app/pages/sharing/smb/smb-form/smb-validator.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -55,11 +60,15 @@ import { selectService } from 'app/store/services/services.selectors';
   templateUrl: './smb-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SmbFormComponent implements OnInit {
+export class SmbFormComponent implements OnInit, AfterViewInit {
+  existingSmbShare: SmbShare;
+  defaultSmbShare: SmbShare;
+
   isLoading = false;
   isAdvancedMode = false;
   namesInUse: string[] = [];
   readonly helptextSharingSmb = helptextSharingSmb;
+  readonly requiresRoles = [Role.SharingSmbWrite, Role.SharingWrite];
   private wasStripAclWarningShown = false;
 
   groupProvider: ChipsProvider = (query) => {
@@ -70,12 +79,17 @@ export class SmbFormComponent implements OnInit {
 
   title: string = helptextSharingSmb.formTitleAdd;
 
+  createDatasetProps: Omit<DatasetCreate, 'name'> = {
+    share_type: DatasetPreset.Smb,
+  };
+
   get isNew(): boolean {
     return !this.existingSmbShare;
   }
 
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider({
     directoriesOnly: true,
+    includeSnapshots: false,
   });
 
   presets: SmbPresets;
@@ -146,7 +160,7 @@ export class SmbFormComponent implements OnInit {
 
   form = this.formBuilder.group({
     path: ['', Validators.required],
-    name: ['', [Validators.required]],
+    name: ['', Validators.required],
     purpose: [null as SmbPresetType],
     comment: [''],
     enabled: [true],
@@ -192,12 +206,14 @@ export class SmbFormComponent implements OnInit {
     private snackbar: SnackbarService,
     private slideInRef: IxSlideInRef<SmbFormComponent>,
     private store$: Store<ServicesState>,
-    private actions$: Actions,
-    @Inject(SLIDE_IN_DATA) private existingSmbShare: SmbShare,
-  ) { }
+    private smbValidationService: SmbValidationService,
+    @Inject(SLIDE_IN_DATA) private data: { existingSmbShare?: SmbShare; defaultSmbShare?: SmbShare },
+  ) {
+    this.existingSmbShare = this.data?.existingSmbShare;
+    this.defaultSmbShare = this.data?.defaultSmbShare;
+  }
 
   ngOnInit(): void {
-    this.getUnusableNamesForShare();
     this.setupPurposeControl();
 
     this.setupAndApplyPurposePresets()
@@ -212,9 +228,20 @@ export class SmbFormComponent implements OnInit {
       )
       .subscribe(noop);
 
+    if (this.defaultSmbShare) {
+      this.form.patchValue(this.defaultSmbShare);
+      this.setNameFromPath();
+    }
+
     if (this.existingSmbShare) {
       this.setSmbShareForEdit();
     }
+  }
+
+  ngAfterViewInit(): void {
+    this.form.controls.name.addAsyncValidators([
+      this.smbValidationService.validate(this.existingSmbShare?.name),
+    ]);
   }
 
   setupAclControl(): void {
@@ -345,19 +372,6 @@ export class SmbFormComponent implements OnInit {
     );
   }
 
-  getUnusableNamesForShare(): void {
-    this.ws
-      .call('sharing.smb.query', [])
-      .pipe(
-        map((shares) => shares.map((share) => share.name)),
-        untilDestroyed(this),
-      )
-      .subscribe((shareNames) => {
-        this.namesInUse = ['global', ...shareNames];
-        this.form.controls.name.setValidators(forbiddenValues(this.namesInUse));
-      });
-  }
-
   showStripAclWarning(): void {
     this.dialogService
       .confirm({
@@ -443,6 +457,7 @@ export class SmbFormComponent implements OnInit {
             title: this.translate.instant('Configure ACL'),
             message: this.translate.instant('Do you want to configure the ACL?'),
             buttonText: this.translate.instant('Configure'),
+            cancelText: this.translate.instant('No'),
             hideCheckbox: true,
           }).pipe(untilDestroyed(this)).subscribe((isConfigure) => {
             if (isConfigure) {
@@ -463,10 +478,7 @@ export class SmbFormComponent implements OnInit {
       error: (error: WebsocketError) => {
         if (error?.reason?.includes('[ENOENT]') || error?.reason?.includes('[EXDEV]')) {
           this.dialogService.closeAllDialogs();
-        } else {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
         }
-        this.slideInRef.close();
         this.isLoading = false;
         this.cdr.markForCheck();
         this.formErrorHandler.handleWsFormError(error, this.form);

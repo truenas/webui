@@ -1,6 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export default {
+export const helptextVmList = {
   memory_dialog: {
     title: T('ERROR: Not Enough Memory'),
     message: T('The VM could not start because the current configuration could potentially\

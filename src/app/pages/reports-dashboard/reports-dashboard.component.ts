@@ -73,7 +73,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
 
   activateTabFromUrl(): void {
     const subpath = this.route.snapshot?.url[0]?.path;
-    const tabFound = this.allTabs.find((tab) => tab.value === subpath);
+    const tabFound = this.allTabs.find((tab) => (tab.value as string) === subpath);
     this.updateActiveTab(tabFound || this.allTabs[0]);
   }
 
@@ -100,6 +100,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
               ReportingGraphName.Cpu,
               ReportingGraphName.CpuTemp,
               ReportingGraphName.SystemLoad,
+              ReportingGraphName.Processes,
             ].includes(graphName);
             break;
           case ReportType.Memory:

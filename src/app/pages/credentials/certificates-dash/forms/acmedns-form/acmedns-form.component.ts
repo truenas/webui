@@ -8,6 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { DnsAuthenticatorType } from 'app/enums/dns-authenticator-type.enum';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
+import { Role } from 'app/enums/role.enum';
 import { helptextSystemAcme as helptext } from 'app/helptext/system/acme';
 import { AuthenticatorSchema, DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
 import { DynamicFormSchema, DynamicFormSchemaNode } from 'app/interfaces/dynamic-form-schema.interface';
@@ -19,7 +20,7 @@ import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-erro
 import { WebSocketService } from 'app/services/ws.service';
 
 interface DnsAuthenticatorList {
-  key: string;
+  key: DnsAuthenticatorType;
   variables: string[];
 }
 
@@ -62,6 +63,8 @@ export class AcmednsFormComponent implements OnInit {
 
   authenticatorOptions$: Observable<Option[]>;
   private editingAcmedns: DnsAuthenticator;
+
+  protected readonly Role = Role;
 
   constructor(
     private translate: TranslateService,
@@ -192,7 +195,7 @@ export class AcmednsFormComponent implements OnInit {
         this.isLoading = false;
         this.slideInRef.close(true);
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.isLoading = false;
         this.errorHandler.handleWsFormError(error, this.form);
         this.cdr.markForCheck();

@@ -129,7 +129,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     background-color: rgba(0, 0, 0, 0.75);
   }
 
-
   .mat-bg-accent,
   .mat-raised-button.mat-accent,
   .mat-fab.mat-accent,
@@ -273,6 +272,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .mat-calendar-table-header,
   .mat-calendar-table,
   .mat-calendar-body-cell-content,
+  .mat-calendar-table-header th,
   .mat-calendar-body-label {
     @include variable(color, --fg2, $fg2);
   }
@@ -568,7 +568,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   // Style file trees to be highlighted with a theme color
   .node-content-wrapper:hover,
   .node-content-wrapper-focused {
-    background-color: var(--bg2);
+    background-color: var(--bg1);
     box-shadow: none;
   }
 
@@ -1001,14 +1001,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   tree-viewport {
     max-height: 300px;
     overflow: auto;
-  }
-
-  ix-qr-dialog {
-    text-align: center;
-
-    #qr-dialog-buttons {
-      flex-direction: row-reverse;
-    }
   }
 
   .chip-warn {

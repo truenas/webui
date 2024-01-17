@@ -1,10 +1,13 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { AccessCardComponent } from 'app/pages/system/advanced/access/access-card/access-card.component';
 import { AdvancedSettingsComponent } from 'app/pages/system/advanced/advanced-settings.component';
 import {
   AllowedAddressesCardComponent,
 } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses-card/allowed-addresses-card.component';
+import { AuditCardComponent } from 'app/pages/system/advanced/audit/audit-card/audit-card.component';
 import { ConsoleCardComponent } from 'app/pages/system/advanced/console/console-card/console-card.component';
 import { CronCardComponent } from 'app/pages/system/advanced/cron/cron-card/cron-card.component';
 import { GlobalTwoFactorAuthCardComponent } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-card/global-two-factor-card.component';
@@ -18,7 +21,6 @@ import {
 import {
   SelfEncryptingDriveCardComponent,
 } from 'app/pages/system/advanced/self-encrypting-drive/self-encrypting-drive-card/self-encrypting-drive-card.component';
-import { SessionsCardComponent } from 'app/pages/system/advanced/sessions/sessions-card/sessions-card.component';
 import { StorageCardComponent } from 'app/pages/system/advanced/storage/storage-card/storage-card.component';
 import { SysctlCardComponent } from 'app/pages/system/advanced/sysctl/sysctl-card/sysctl-card.component';
 import { SyslogCardComponent } from 'app/pages/system/advanced/syslog/syslog-card/syslog-card.component';
@@ -39,7 +41,8 @@ describe('AdvancedSettingsComponent', () => {
         SysctlCardComponent,
         StorageCardComponent,
         ReplicationSettingsCardComponent,
-        SessionsCardComponent,
+        AccessCardComponent,
+        AuditCardComponent,
         AllowedAddressesCardComponent,
         SelfEncryptingDriveCardComponent,
         IsolatedGpusCardComponent,
@@ -49,8 +52,9 @@ describe('AdvancedSettingsComponent', () => {
     ],
     providers: [
       mockWebsocket([
-        mockCall('system.license', {}),
+        mockCall('system.security.info.fips_available', true),
       ]),
+      mockAuth(),
     ],
   });
 
@@ -67,7 +71,8 @@ describe('AdvancedSettingsComponent', () => {
     expect(spectator.query(SysctlCardComponent)).toExist();
     expect(spectator.query(StorageCardComponent)).toExist();
     expect(spectator.query(ReplicationSettingsCardComponent)).toExist();
-    expect(spectator.query(SessionsCardComponent)).toExist();
+    expect(spectator.query(AccessCardComponent)).toExist();
+    expect(spectator.query(AuditCardComponent)).toExist();
     expect(spectator.query(AllowedAddressesCardComponent)).toExist();
     expect(spectator.query(SelfEncryptingDriveCardComponent)).toExist();
     expect(spectator.query(IsolatedGpusCardComponent)).toExist();

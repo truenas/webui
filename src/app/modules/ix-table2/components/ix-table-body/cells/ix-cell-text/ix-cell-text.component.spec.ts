@@ -18,11 +18,12 @@ describe('IxCellTextComponent', () => {
       props: {
         propertyName: 'stringField',
         row: { stringField: 'text in cell' },
+        rowTestId: (row) => 'text-' + row.stringField.toString(),
       } as Partial<IxCellTextComponent<TestTableData>>,
     });
   });
 
   it('shows text in template', () => {
-    expect(spectator.element.textContent.trim()).toBe('text in cell');
+    expect(spectator.element.querySelector('span').textContent.trim()).toBe('text in cell');
   });
 });

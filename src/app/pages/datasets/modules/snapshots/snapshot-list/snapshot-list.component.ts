@@ -20,7 +20,8 @@ import {
 } from 'rxjs/operators';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { EmptyType } from 'app/enums/empty-type.enum';
-import helptext from 'app/helptext/storage/snapshots/snapshots';
+import { Role } from 'app/enums/role.enum';
+import { helptextSnapshots } from 'app/helptext/storage/snapshots/snapshots';
 import { ConfirmOptions } from 'app/interfaces/dialog.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
@@ -98,6 +99,8 @@ export class SnapshotListComponent implements OnInit {
     return this.emptyService;
   }
 
+  protected readonly Role = Role;
+
   constructor(
     private dialogService: DialogService,
     private translate: TranslateService,
@@ -149,17 +152,17 @@ export class SnapshotListComponent implements OnInit {
   getConfirmOptions(): ConfirmOptions {
     if (this.showExtraColumns) {
       return {
-        title: this.translate.instant(helptext.extra_cols.title_hide),
-        message: this.translate.instant(helptext.extra_cols.message_hide),
-        buttonText: this.translate.instant(helptext.extra_cols.button_hide),
+        title: this.translate.instant(helptextSnapshots.extra_cols.title_hide),
+        message: this.translate.instant(helptextSnapshots.extra_cols.message_hide),
+        buttonText: this.translate.instant(helptextSnapshots.extra_cols.button_hide),
         hideCheckbox: true,
       };
     }
 
     return {
-      title: this.translate.instant(helptext.extra_cols.title_show),
-      message: this.translate.instant(helptext.extra_cols.message_show),
-      buttonText: this.translate.instant(helptext.extra_cols.button_show),
+      title: this.translate.instant(helptextSnapshots.extra_cols.title_show),
+      message: this.translate.instant(helptextSnapshots.extra_cols.message_show),
+      buttonText: this.translate.instant(helptextSnapshots.extra_cols.button_show),
       hideCheckbox: true,
     };
   }

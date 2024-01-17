@@ -33,7 +33,7 @@ export class InterfacesStore extends ComponentStore<InterfacesState> {
         return this.ws.call('interface.query').pipe(
           tap({
             next: (interfaces) => this.patchState({ interfaces }),
-            error: (error) => this.dialogService.error(this.errorHandler.parseWsError(error)),
+            error: (error) => this.dialogService.error(this.errorHandler.parseError(error)),
             complete: () => this.patchState({ isLoading: false }),
           }),
         );

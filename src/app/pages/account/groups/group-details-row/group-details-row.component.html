@@ -15,14 +15,16 @@
       <span>{{ 'Edit' | translate }}</span>
     </button>
 
-    <button
-      *ngIf="!group.builtin"
-      mat-button
-      [ixTest]="[group.group, 'delete']"
-      (click)="doDelete(group)"
-    >
-      <ix-icon name="delete"></ix-icon>
-      <span>{{ 'Delete' | translate }}</span>
-    </button>
+    <ng-container *ixRequiresRoles="[Role.AccountWrite]">
+      <button
+        *ngIf="!group.builtin"
+        mat-button
+        [ixTest]="[group.group, 'delete']"
+        (click)="doDelete(group)"
+      >
+        <ix-icon name="delete"></ix-icon>
+        <span>{{ 'Delete' | translate }}</span>
+      </button>
+    </ng-container>
   </ix-table2-expandable-row>
 </td>

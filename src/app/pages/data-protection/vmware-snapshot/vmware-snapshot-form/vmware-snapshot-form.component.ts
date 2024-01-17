@@ -6,7 +6,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import helptext from 'app/helptext/storage/vmware-snapshot/vm-ware-snapshot';
+import { Role } from 'app/enums/role.enum';
+import { helptextVmwareSnapshot } from 'app/helptext/storage/vmware-snapshot/vmware-snapshot';
 import {
   MatchDatastoresWithDatasets, VmwareDatastore, VmwareFilesystem, VmwareSnapshot, VmwareSnapshotUpdate,
 } from 'app/interfaces/vmware.interface';
@@ -45,20 +46,22 @@ export class VmwareSnapshotFormComponent implements OnInit {
 
   isLoading = false;
 
+  readonly requiresRoles = [Role.FullAdmin];
+
   readonly labels = {
-    hostname: helptext.VMware_snapshot_form_hostname_placeholder,
-    username: helptext.VMware_snapshot_form_username_placeholder,
-    password: helptext.VMware_snapshot_form_password_placeholder,
-    filesystem: helptext.VMware_snapshot_form_filesystem_placeholder,
-    datastore: helptext.VMware_snapshot_form_datastore_placeholder,
+    hostname: helptextVmwareSnapshot.VMware_snapshot_form_hostname_placeholder,
+    username: helptextVmwareSnapshot.VMware_snapshot_form_username_placeholder,
+    password: helptextVmwareSnapshot.VMware_snapshot_form_password_placeholder,
+    filesystem: helptextVmwareSnapshot.VMware_snapshot_form_filesystem_placeholder,
+    datastore: helptextVmwareSnapshot.VMware_snapshot_form_datastore_placeholder,
   };
 
   readonly tooltips = {
-    hostname: helptext.VMware_snapshot_form_hostname_tooltip,
-    username: helptext.VMware_snapshot_form_username_tooltip,
-    password: helptext.VMware_snapshot_form_password_tooltip,
-    filesystem: helptext.VMware_snapshot_form_filesystem_tooltip,
-    datastore: helptext.VMware_snapshot_form_datastore_tooltip,
+    hostname: helptextVmwareSnapshot.VMware_snapshot_form_hostname_tooltip,
+    username: helptextVmwareSnapshot.VMware_snapshot_form_username_tooltip,
+    password: helptextVmwareSnapshot.VMware_snapshot_form_password_tooltip,
+    filesystem: helptextVmwareSnapshot.VMware_snapshot_form_filesystem_tooltip,
+    datastore: helptextVmwareSnapshot.VMware_snapshot_form_datastore_tooltip,
   };
 
   private datastoreList: VmwareDatastore[];
@@ -140,11 +143,11 @@ export class VmwareSnapshotFormComponent implements OnInit {
         this.datastoreOptions$ = of([]);
         if (error.reason && error.reason.includes('[ETIMEDOUT]')) {
           this.dialogService.error({
-            title: helptext.connect_err_dialog.title,
-            message: helptext.connect_err_dialog.msg,
+            title: helptextVmwareSnapshot.connect_err_dialog.title,
+            message: helptextVmwareSnapshot.connect_err_dialog.msg,
           });
         } else {
-          this.dialogService.error(this.errorHandler.parseWsError(error));
+          this.dialogService.error(this.errorHandler.parseError(error));
         }
         this.cdr.markForCheck();
       },
@@ -190,7 +193,7 @@ export class VmwareSnapshotFormComponent implements OnInit {
           this.isLoading = false;
           this.slideInRef.close(true);
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.isLoading = false;
           this.formErrorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();

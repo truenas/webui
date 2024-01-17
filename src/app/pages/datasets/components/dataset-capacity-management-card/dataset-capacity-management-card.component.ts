@@ -10,7 +10,6 @@ import {
 import { DatasetType, DatasetQuotaType } from 'app/enums/dataset.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DatasetCapacitySettingsComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-settings/dataset-capacity-settings.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -100,9 +99,9 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
         this.isLoadingQuotas = false;
         this.cdr.markForCheck();
       },
-      error: (error: WebsocketError) => {
+      error: (error: unknown) => {
         this.isLoadingQuotas = false;
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+        this.dialogService.error(this.errorHandler.parseError(error));
         this.cdr.markForCheck();
       },
     });
@@ -121,8 +120,8 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
         this.inheritedQuotasDataset = dataset;
         this.cdr.markForCheck();
       },
-      error: (error: WebsocketError) => {
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+      error: (error: unknown) => {
+        this.dialogService.error(this.errorHandler.parseError(error));
       },
     });
   }

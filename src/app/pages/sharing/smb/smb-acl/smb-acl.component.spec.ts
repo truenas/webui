@@ -56,6 +56,7 @@ describe('SmbAclComponent', () => {
     id: 0,
     uid: 0,
     username: 'root',
+    smb: true,
   };
 
   const createComponent = createComponentFactory({
@@ -69,17 +70,19 @@ describe('SmbAclComponent', () => {
         mockCall('sharing.smb.getacl', mockAcl),
         mockCall('sharing.smb.setacl'),
         mockCall('user.query', [rootUser] as TnUser[]),
-        mockCall('group.query', [{ group: 'wheel', id: 1, gid: 1 }] as Group[]),
+        mockCall('group.query', [{
+          group: 'wheel', id: 1, gid: 1, smb: true,
+        }] as Group[]),
       ]),
       mockProvider(IxSlideInService),
       mockProvider(DialogService),
       mockProvider(IxSlideInRef),
       mockProvider(UserService, {
-        userQueryDsCache: () => of([
+        smbUserQueryDsCache: () => of([
           { username: 'root', id: 0, uid: 0 },
           { username: 'trunk' },
         ] as User[]),
-        groupQueryDsCache: () => of([
+        smbGroupQueryDsCache: () => of([
           { group: 'wheel', id: 1, gid: 1 },
           { group: 'vip' },
         ]),

@@ -3,8 +3,10 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of, pipe } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
+import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
@@ -40,8 +42,10 @@ describe('NfsListComponent', () => {
     imports: [
       IxTable2Module,
       AppLoaderModule,
+      AppCommonModule,
     ],
     providers: [
+      mockAuth(),
       mockProvider(AppLoaderService),
       mockProvider(ErrorHandlerService),
       mockProvider(EmptyService),
@@ -86,7 +90,7 @@ describe('NfsListComponent', () => {
     await editButton.click();
 
     expect(spectator.inject(IxSlideInService).open).toHaveBeenCalledWith(NfsFormComponent, {
-      data: shares[0],
+      data: { existingNfsShare: shares[0] },
     });
   });
 

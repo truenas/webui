@@ -18,6 +18,7 @@ describe('IxCellSizeComponent', () => {
       props: {
         propertyName: 'numberField',
         row: { numberField: 5 * 1024 * 1024 * 1024 },
+        rowTestId: () => '',
       } as Partial<IxCellSizeComponent<TestTableData>>,
     });
   });

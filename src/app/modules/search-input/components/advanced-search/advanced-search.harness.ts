@@ -1,4 +1,7 @@
 import { ComponentHarness } from '@angular/cdk/testing';
+import {
+  CodemirrorAutocompleteHarness,
+} from 'app/modules/search-input/components/advanced-search/codemirror-autocomplete.harness';
 
 export class AdvancedSearchHarness extends ComponentHarness {
   static hostSelector = 'ix-advanced-search';
@@ -7,6 +10,7 @@ export class AdvancedSearchHarness extends ComponentHarness {
   getInputArea = this.locatorFor('.cm-content');
   getInputPlaceholder = this.locatorFor('.cm-placeholder');
   getSwitchLink = this.locatorFor('.switch-link');
+  getAutocomplete = this.documentRootLocatorFactory().locatorFor(CodemirrorAutocompleteHarness);
 
   async getValue(): Promise<string> {
     return (await (this.getInputArea())).text();
@@ -19,7 +23,15 @@ export class AdvancedSearchHarness extends ComponentHarness {
   async setValue(value: string): Promise<void> {
     const inputArea = await this.getInputArea();
     await inputArea.setContenteditableValue(value);
-    return inputArea.dispatchEvent('input');
+
+    await inputArea.dispatchEvent('input');
+
+    // Using fakeAsync doesn't work for some reason.
+    await new Promise((resolve) => {
+      setTimeout(resolve);
+    });
+
+    await this.forceStabilize();
   }
 
   async clickSwitchToBasic(): Promise<void> {

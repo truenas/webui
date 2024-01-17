@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, forkJoin, of } from 'rxjs';
@@ -13,7 +14,7 @@ import {
 import { assertUnreachable } from 'app/helpers/assert-unreachable.utils';
 import { arrayToOptions, choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
-import helptext from 'app/helptext/vm/devices/device-add-edit';
+import { helptextDevice } from 'app/helptext/vm/devices/device-add-edit';
 import {
   VmDevice, VmDeviceUpdate,
 } from 'app/interfaces/vm-device.interface';
@@ -28,7 +29,7 @@ import { NetworkService } from 'app/services/network.service';
 import { VmService } from 'app/services/vm.service';
 import { WebSocketService } from 'app/services/ws.service';
 
-const specifyCustom = 'Specify custom';
+const specifyCustom = T('Specify custom');
 
 @UntilDestroy()
 @Component({
@@ -86,7 +87,7 @@ export class DeviceFormComponent implements OnInit {
     port: [null as number],
     resolution: [''],
     bind: [''],
-    password: ['', Validators.maxLength(8)],
+    password: [''],
     web: [true],
   });
 
@@ -99,7 +100,7 @@ export class DeviceFormComponent implements OnInit {
     }),
   });
 
-  readonly helptext = helptext;
+  readonly helptext = helptextDevice;
   readonly VmDeviceType = VmDeviceType;
   readonly usbDeviceOptions$ = this.ws.call('vm.device.usb_passthrough_choices').pipe(
     map((usbDevices) => {
@@ -110,7 +111,7 @@ export class DeviceFormComponent implements OnInit {
         return { label, value: id };
       });
       options.push({
-        label: specifyCustom,
+        label: this.translate.instant(specifyCustom),
         value: specifyCustom,
       });
       return options;
@@ -340,7 +341,7 @@ export class DeviceFormComponent implements OnInit {
           this.cdr.markForCheck();
           this.slideInRef.close(true);
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.errorHandler.handleWsFormError(error, this.typeSpecificForm);
           this.isLoading = false;
           this.cdr.markForCheck();

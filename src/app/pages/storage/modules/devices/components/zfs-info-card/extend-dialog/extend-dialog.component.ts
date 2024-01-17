@@ -9,7 +9,7 @@ import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
 import { Observable, map } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
-import helptext from 'app/helptext/storage/volumes/volume-status';
+import { helptextVolumeStatus } from 'app/helptext/storage/volumes/volume-status';
 import { Option } from 'app/interfaces/option.interface';
 import { PoolAttachParams } from 'app/interfaces/pool.interface';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
@@ -36,7 +36,7 @@ export class ExtendDialogComponent implements OnInit {
     newDisk: ['', Validators.required],
   });
 
-  readonly helptext = helptext;
+  readonly helptext = helptextVolumeStatus;
 
   disksProvider = new SimpleAsyncComboboxProvider(this.loadUnusedDisks());
   unusedDisks: UnusedDisk[] = [];
@@ -72,7 +72,7 @@ export class ExtendDialogComponent implements OnInit {
     }
     this.dialogService.warn(
       this.translate.instant('Warning') + ': ' + unusedDisk.name,
-      this.translate.instant(helptext.exported_pool_warning, { pool: `'${unusedDisk.exported_zpool}'` }),
+      this.translate.instant(helptextVolumeStatus.exported_pool_warning, { pool: `'${unusedDisk.exported_zpool}'` }),
     );
   }
 

@@ -1,48 +1,42 @@
 import { DatePipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnInit, Output, ViewContainerRef,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Inject, OnInit, Output,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  BehaviorSubject,
-  debounceTime, filter, map, merge, Observable, of, switchMap,
+  debounceTime, map, merge, Observable, of, switchMap,
 } from 'rxjs';
 import { DatasetSource } from 'app/enums/dataset.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
-import { FromWizardToAdvancedSubmitted } from 'app/enums/from-wizard-to-advanced.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
+import { Role } from 'app/enums/role.enum';
 import { SnapshotNamingOption } from 'app/enums/snapshot-naming-option.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
-import helptext from 'app/helptext/data-protection/replication/replication-wizard';
-import { CountManualSnapshotsParams } from 'app/interfaces/count-manual-snapshots.interface';
+import { helptextReplicationWizard } from 'app/helptext/data-protection/replication/replication-wizard';
+import { CountManualSnapshotsParams, EligibleManualSnapshotsCount } from 'app/interfaces/count-manual-snapshots.interface';
 import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
-import { Option } from 'app/interfaces/option.interface';
+import { newOption, Option } from 'app/interfaces/option.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { SummaryProvider, SummarySection } from 'app/modules/common/summary/summary.interface';
 import { ixManualValidateError } from 'app/modules/ix-forms/components/ix-errors/ix-errors.component';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
+import { CHAINED_SLIDE_IN_REF } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import {
   forbiddenAsyncValues,
 } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
-import { SshConnectionFormComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-form/ssh-connection-form.component';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
-import { SshCredentialsNewOption } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard-data.interface';
+import { AuthService } from 'app/services/auth/auth.service';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
 import { DialogService } from 'app/services/dialog.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { ChainedComponentRef } from 'app/services/ix-chained-slide-in.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 import { ReplicationService } from 'app/services/replication.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { AppState } from 'app/store';
-import { fromWizardToAdvancedFormSubmitted } from 'app/store/admin-panel/admin.actions';
 
 @UntilDestroy()
 @Component({
@@ -55,10 +49,10 @@ import { fromWizardToAdvancedFormSubmitted } from 'app/store/admin-panel/admin.a
 export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider {
   @Output() customRetentionVisibleChange = new EventEmitter<boolean>();
 
-  readonly datasetNodeProvider = this.datasetService.getDatasetNodeProvider();
-  remoteSourceNodeProvider: TreeNodeProvider;
-  remoteTargetNodeProvider: TreeNodeProvider;
-  readonly helptext = helptext;
+  sourceNodeProvider: TreeNodeProvider;
+  targetNodeProvider: TreeNodeProvider;
+
+  readonly helptext = helptextReplicationWizard;
   readonly mntPath = mntPath;
   readonly defaultNamingSchema = 'auto-%Y-%m-%d_%H-%M';
   sshCredentials: KeychainSshCredentials[] = [];
@@ -70,7 +64,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     exist_replication: [null as number],
 
     source_datasets_from: [null as DatasetSource, [Validators.required]],
-    ssh_credentials_source: [null as number | SshCredentialsNewOption, [Validators.required]],
+    ssh_credentials_source: [null as number | typeof newOption, [Validators.required]],
     source_datasets: [[] as string[], [Validators.required]],
     recursive: [false],
     custom_snapshots: [false],
@@ -79,7 +73,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     name_regex: ['', [Validators.required]],
 
     target_dataset_from: [null as DatasetSource, [Validators.required]],
-    ssh_credentials_target: [null as number | SshCredentialsNewOption, [Validators.required]],
+    ssh_credentials_target: [null as number | typeof newOption, [Validators.required]],
     target_dataset: [null as string, [Validators.required]],
     encryption: [false],
     encryption_inherit: [false],
@@ -102,7 +96,6 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   });
 
   existReplicationOptions$: Observable<Option[]>;
-  readonly sshCredentialsOptions$ = new BehaviorSubject<Option[]>([]);
 
   transportOptions$ = of([
     { label: this.translate.instant('Encryption (more secure, but slower)'), value: TransportMode.Ssh },
@@ -115,8 +108,14 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   ]);
 
   schemaOrRegexOptions$ = of([
-    { label: this.translate.instant(helptext.naming_schema_placeholder), value: SnapshotNamingOption.NamingSchema },
-    { label: this.translate.instant(helptext.name_regex_placeholder), value: SnapshotNamingOption.NameRegex },
+    {
+      label: this.translate.instant(helptextReplicationWizard.naming_schema_placeholder),
+      value: SnapshotNamingOption.NamingSchema,
+    },
+    {
+      label: this.translate.instant(helptextReplicationWizard.name_regex_placeholder),
+      value: SnapshotNamingOption.NameRegex,
+    },
   ]);
 
   encryptionKeyFormatOptions$ = of([
@@ -134,24 +133,22 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
 
   get schemaOrRegexLabel(): string {
     return this.form.value.source_datasets_from === DatasetSource.Local
-      ? helptext.name_schema_or_regex_placeholder_push : helptext.name_schema_or_regex_placeholder_pull;
+      ? helptextReplicationWizard.name_schema_or_regex_placeholder_push
+      : helptextReplicationWizard.name_schema_or_regex_placeholder_pull;
   }
 
   constructor(
-    private slideInRef: IxSlideInRef<ReplicationWhatAndWhereComponent>,
+    @Inject(CHAINED_SLIDE_IN_REF) protected chainedSlideInRef: ChainedComponentRef,
     private formBuilder: FormBuilder,
     private replicationService: ReplicationService,
     private keychainCredentials: KeychainCredentialService,
     private datePipe: DatePipe,
     private translate: TranslateService,
+    private authService: AuthService,
     private datasetService: DatasetService,
     private dialogService: DialogService,
-    private slideInService: IxSlideInService,
-    private matDialog: MatDialog,
     private ws: WebSocketService,
     private cdr: ChangeDetectorRef,
-    private store$: Store<AppState>,
-    private viewContainerRef: ViewContainerRef,
   ) {}
 
   ngOnInit(): void {
@@ -159,8 +156,8 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     this.disableTarget();
     this.loadExistReplication();
     this.loadSshConnections();
-    this.loadSshConnectionOptions();
-    this.listenForNewSshConnection();
+    this.updateExplorersOnChanges();
+    this.updateExplorers();
 
     this.form.controls.source_datasets_from.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
       this.disableTransportAndSudo(value, this.form.value.target_dataset_from);
@@ -297,7 +294,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
 
         this.dialogService.confirm({
           title: this.translate.instant('Sudo Enabled'),
-          message: helptext.sudo_warning,
+          message: helptextReplicationWizard.sudo_warning,
           hideCheckbox: true,
           buttonText: this.translate.instant('Use Sudo For ZFS Commands'),
         }).pipe(untilDestroyed(this)).subscribe((useSudo) => {
@@ -307,12 +304,148 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
       });
   }
 
+  loadReplicationTask(task: ReplicationTask): void {
+    if (!task) {
+      return;
+    }
+
+    if (task.direction === Direction.Push) {
+      this.form.patchValue({
+        source_datasets_from: DatasetSource.Local,
+        target_dataset_from: task.ssh_credentials ? DatasetSource.Remote : DatasetSource.Local,
+      });
+      if (task.ssh_credentials) {
+        this.form.controls.ssh_credentials_target.setValue(task.ssh_credentials?.id);
+      }
+    } else {
+      this.form.patchValue({
+        source_datasets_from: DatasetSource.Remote,
+        target_dataset_from: DatasetSource.Local,
+        ssh_credentials_source: task.ssh_credentials?.id,
+      });
+    }
+
+    const sourcePrefix = this.form.value.source_datasets_from === DatasetSource.Remote ? '' : `${mntPath}/`;
+    const targetPrefix = this.form.value.target_dataset_from === DatasetSource.Remote ? '' : `${mntPath}/`;
+    this.form.patchValue({
+      source_datasets: task.source_datasets.map((item) => sourcePrefix + item),
+      target_dataset: targetPrefix + task.target_dataset,
+      transport: task.transport,
+      name: task.name,
+    });
+  }
+
+  clearReplicationTask(): void {
+    this.form.patchValue({
+      source_datasets_from: null,
+      ssh_credentials_source: null,
+      source_datasets: [],
+      recursive: false,
+      custom_snapshots: false,
+      schema_or_regex: SnapshotNamingOption.NamingSchema,
+      naming_schema: 'auto-%Y-%m-%d_%H-%M',
+      name_regex: '',
+
+      target_dataset_from: null,
+      ssh_credentials_target: null,
+      target_dataset: null,
+      encryption: false,
+      encryption_key_format: null,
+      encryption_key_generate: true,
+      encryption_key_hex: '',
+      encryption_key_passphrase: '',
+      encryption_key_location_truenasdb: true,
+      encryption_key_location: '',
+
+      transport: TransportMode.Ssh,
+      sudo: false,
+      name: '',
+    });
+  }
+
+  openAdvanced(): void {
+    this.chainedSlideInRef.swap(
+      ReplicationFormComponent,
+      true,
+    );
+  }
+
+  getSnapshots(): void {
+    const value = this.form.value;
+    let transport = value.transport || TransportMode.Local;
+    if (value.ssh_credentials_target) {
+      transport = TransportMode.Local;
+    }
+
+    const payload: CountManualSnapshotsParams = {
+      datasets: value.source_datasets?.map((item) => item.replace(`${mntPath}/`, '')) || [],
+      transport: value.ssh_credentials_target ? TransportMode.Local : transport,
+      ssh_credentials: transport === TransportMode.Local ? null : value.ssh_credentials_source as number,
+    };
+
+    if (value.schema_or_regex === SnapshotNamingOption.NameRegex) {
+      payload.name_regex = value.name_regex;
+    } else {
+      payload.naming_schema = value.naming_schema ? value.naming_schema?.split(' ') : [this.defaultNamingSchema];
+    }
+
+    if (payload.datasets.length > 0 && (payload.naming_schema || payload.name_regex)) {
+      this.authService.hasRole([
+        Role.ReplicationTaskWrite,
+        Role.ReplicationTaskWritePull,
+      ]).pipe(
+        switchMap((hasRole) => {
+          if (hasRole) {
+            return this.ws.call('replication.count_eligible_manual_snapshots', [payload]);
+          }
+          return of({ eligible: 0, total: 0 });
+        }),
+        untilDestroyed(this),
+      ).subscribe({
+        next: (snapshotCount: EligibleManualSnapshotsCount) => {
+          let snapexpl = '';
+          this.isSnapshotsWarning = false;
+          if (snapshotCount.eligible === 0) {
+            if (value.source_datasets_from === DatasetSource.Local) {
+              snapexpl = this.translate.instant('Snapshots will be created automatically.');
+            } else {
+              this.isSnapshotsWarning = true;
+            }
+          }
+          this.snapshotsText = `${this.translate.instant('{count} snapshots found.', { count: snapshotCount.eligible })} ${snapexpl}`;
+          this.cdr.markForCheck();
+        },
+        error: (error: WebsocketError) => {
+          this.snapshotsText = '';
+          this.form.controls.source_datasets.setErrors({ [ixManualValidateError]: { message: error.reason } });
+          this.cdr.markForCheck();
+        },
+      });
+    } else {
+      this.snapshotsText = '';
+      this.cdr.markForCheck();
+    }
+  }
+
+  checkCustomVisible(): void {
+    const hideCustomRetention = this.form.value.schema_or_regex === SnapshotNamingOption.NameRegex
+      && (this.form.value.custom_snapshots || this.form.value.source_datasets_from === DatasetSource.Remote);
+
+    this.customRetentionVisibleChange.emit(!hideCustomRetention);
+  }
+
   getSummary(): SummarySection {
     const values = this.form.value;
 
     return [
-      { label: this.translate.instant(helptext.source_datasets_placeholder), value: values.source_datasets.join(',') },
-      { label: this.translate.instant(helptext.target_dataset_placeholder), value: values.target_dataset },
+      {
+        label: this.translate.instant(helptextReplicationWizard.source_datasets_placeholder),
+        value: values.source_datasets.join(','),
+      },
+      {
+        label: this.translate.instant(helptextReplicationWizard.target_dataset_placeholder),
+        value: values.target_dataset,
+      },
     ];
   }
 
@@ -350,69 +483,12 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     );
   }
 
-  private listenForNewSshConnection(): void {
-    this.form.controls.ssh_credentials_source.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
-      if (value === SshCredentialsNewOption.New) {
-        this.createSshConnection(true);
-      } else if (value) {
-        this.remoteSourceNodeProvider = this.replicationService.getTreeNodeProvider(
-          { sshCredential: value, transport: this.form.value.transport || TransportMode.Ssh },
-        );
-      }
-    });
-
-    this.form.controls.ssh_credentials_target.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
-      if (value === SshCredentialsNewOption.New) {
-        this.createSshConnection(false);
-      } else if (value) {
-        this.remoteTargetNodeProvider = this.replicationService.getTreeNodeProvider(
-          { sshCredential: value, transport: this.form.value.transport || TransportMode.Ssh },
-        );
-      }
-    });
-  }
-
   private loadSshConnections(): void {
     this.keychainCredentials.getSshConnections()
       .pipe(untilDestroyed(this))
       .subscribe((connections) => {
         this.sshCredentials = connections;
       });
-  }
-
-  private loadSshConnectionOptions(): void {
-    this.keychainCredentials.getSshCredentialsOptions()
-      .pipe(untilDestroyed(this))
-      .subscribe((options) => this.sshCredentialsOptions$.next(options));
-  }
-
-  private createSshConnection(isSource: boolean): void {
-    this.openSshConnectionDialog().pipe(
-      filter(Boolean),
-      switchMap((newCredential): Observable<[KeychainSshCredentials, Option[]]> => {
-        return this.keychainCredentials.getSshCredentialsOptions().pipe(
-          map((options) => [newCredential, options]),
-        );
-      }),
-      untilDestroyed(this),
-    ).subscribe(([newCredential, sshConnectionsOptions]) => {
-      this.sshCredentialsOptions$.next(sshConnectionsOptions);
-
-      if (isSource) {
-        this.form.controls.ssh_credentials_source.setValue(newCredential.id);
-      } else {
-        this.form.controls.ssh_credentials_target.setValue(newCredential.id);
-      }
-    });
-  }
-
-  private openSshConnectionDialog(): Observable<KeychainSshCredentials> {
-    return this.matDialog.open(SshConnectionFormComponent, {
-      data: { dialog: true },
-      width: '600px',
-      panelClass: 'ix-overflow-dialog',
-      viewContainerRef: this.viewContainerRef,
-    }).afterClosed();
   }
 
   private genTaskName(source: string[], target: string): void {
@@ -493,129 +569,34 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     this.form.controls.custom_snapshots.disable();
   }
 
-  loadReplicationTask(task: ReplicationTask): void {
-    if (!task) {
-      return;
-    }
+  private updateExplorersOnChanges(): void {
+    merge(
+      this.form.controls.transport.valueChanges,
+      this.form.controls.ssh_credentials_source.valueChanges,
+      this.form.controls.ssh_credentials_target.valueChanges,
+    )
+      .pipe(
+        // Workaround for https://github.com/angular/angular/issues/13129
+        debounceTime(0),
+        untilDestroyed(this),
+      )
+      .subscribe(() => this.updateExplorers());
+  }
 
-    if (task.direction === Direction.Push) {
-      this.form.patchValue({
-        source_datasets_from: DatasetSource.Local,
-        target_dataset_from: task.ssh_credentials ? DatasetSource.Remote : DatasetSource.Local,
+  private updateExplorers(): void {
+    const formValues = this.getPayload();
+    const localProvider = this.datasetService.getDatasetNodeProvider();
+    let remoteProvider: TreeNodeProvider = null;
+
+    if (formValues.ssh_credentials_source || formValues.ssh_credentials_target) {
+      remoteProvider = this.replicationService.getTreeNodeProvider({
+        transport: formValues.transport,
+        sshCredential: (formValues.ssh_credentials_source || formValues.ssh_credentials_target) as number,
       });
-      if (task.ssh_credentials) {
-        this.form.controls.ssh_credentials_target.setValue(task.ssh_credentials?.id);
-      }
-    } else {
-      this.form.patchValue({
-        source_datasets_from: DatasetSource.Remote,
-        target_dataset_from: DatasetSource.Local,
-        ssh_credentials_source: task.ssh_credentials?.id,
-      });
     }
 
-    const sourcePrefix = this.form.value.source_datasets_from === DatasetSource.Remote ? '' : `${mntPath}/`;
-    const targetPrefix = this.form.value.target_dataset_from === DatasetSource.Remote ? '' : `${mntPath}/`;
-    this.form.patchValue({
-      source_datasets: task.source_datasets.map((item) => sourcePrefix + item),
-      target_dataset: targetPrefix + task.target_dataset,
-      transport: task.transport,
-      name: task.name,
-    });
-  }
-
-  clearReplicationTask(): void {
-    this.form.patchValue({
-      source_datasets_from: null,
-      ssh_credentials_source: null,
-      source_datasets: [],
-      recursive: false,
-      custom_snapshots: false,
-      schema_or_regex: SnapshotNamingOption.NamingSchema,
-      naming_schema: 'auto-%Y-%m-%d_%H-%M',
-      name_regex: '',
-
-      target_dataset_from: null,
-      ssh_credentials_target: null,
-      target_dataset: null,
-      encryption: false,
-      encryption_key_format: null,
-      encryption_key_generate: true,
-      encryption_key_hex: '',
-      encryption_key_passphrase: '',
-      encryption_key_location_truenasdb: true,
-      encryption_key_location: '',
-
-      transport: TransportMode.Ssh,
-      sudo: false,
-      name: '',
-    });
-  }
-
-  openAdvanced(): void {
-    this.slideInRef.close();
-
-    const slideInRef = this.slideInService.open(ReplicationFormComponent, { wide: true });
-    slideInRef.slideInClosed$.pipe(
-      filter(Boolean),
-      untilDestroyed(this),
-    ).subscribe(() => {
-      this.store$.dispatch(fromWizardToAdvancedFormSubmitted({
-        formType: FromWizardToAdvancedSubmitted.ReplicationTask,
-      }));
-    });
-  }
-
-  getSnapshots(): void {
-    const value = this.form.value;
-    let transport = value.transport || TransportMode.Local;
-    if (value.ssh_credentials_target) {
-      transport = TransportMode.Local;
-    }
-
-    const payload: CountManualSnapshotsParams = {
-      datasets: value.source_datasets?.map((item) => item.replace(`${mntPath}/`, '')) || [],
-      transport: value.ssh_credentials_target ? TransportMode.Local : transport,
-      ssh_credentials: transport === TransportMode.Local ? null : value.ssh_credentials_source as number,
-    };
-
-    if (value.schema_or_regex === SnapshotNamingOption.NameRegex) {
-      payload.name_regex = value.name_regex;
-    } else {
-      payload.naming_schema = value.naming_schema ? value.naming_schema?.split(' ') : [this.defaultNamingSchema];
-    }
-
-    if (payload.datasets.length > 0 && (payload.naming_schema || payload.name_regex)) {
-      this.ws.call('replication.count_eligible_manual_snapshots', [payload]).pipe(untilDestroyed(this)).subscribe({
-        next: (snapshotCount) => {
-          let snapexpl = '';
-          this.isSnapshotsWarning = false;
-          if (snapshotCount.eligible === 0) {
-            if (value.source_datasets_from === DatasetSource.Local) {
-              snapexpl = this.translate.instant('Snapshots will be created automatically.');
-            } else {
-              this.isSnapshotsWarning = true;
-            }
-          }
-          this.snapshotsText = `${this.translate.instant('{count} snapshots found.', { count: snapshotCount.eligible })} ${snapexpl}`;
-          this.cdr.markForCheck();
-        },
-        error: (error: WebsocketError) => {
-          this.snapshotsText = '';
-          this.form.controls.source_datasets.setErrors({ [ixManualValidateError]: { message: error.reason } });
-          this.cdr.markForCheck();
-        },
-      });
-    } else {
-      this.snapshotsText = '';
-      this.cdr.markForCheck();
-    }
-  }
-
-  checkCustomVisible(): void {
-    const hideCustomRetention = this.form.value.schema_or_regex === SnapshotNamingOption.NameRegex
-      && (this.form.value.custom_snapshots || this.form.value.source_datasets_from === DatasetSource.Remote);
-
-    this.customRetentionVisibleChange.emit(!hideCustomRetention);
+    this.sourceNodeProvider = !this.isRemoteSource ? localProvider : remoteProvider;
+    this.targetNodeProvider = this.isRemoteTarget ? remoteProvider : localProvider;
+    this.cdr.markForCheck();
   }
 }

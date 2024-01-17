@@ -16,6 +16,7 @@
   <button
     mat-button
     ixTest="do-not-start"
+    [disabled]="isLoading"
     (click)="onCancel()"
   >{{ 'No' | translate }}</button>
 
@@ -23,6 +24,7 @@
     mat-button
     color="primary"
     ixTest="enable-service"
+    [disabled]="isLoading"
     (click)="onSubmit()"
   >{{ 'Start' | translate }}</button>
 </ix-form-actions>

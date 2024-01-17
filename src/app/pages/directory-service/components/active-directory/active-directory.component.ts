@@ -9,10 +9,10 @@ import { TranslateService } from '@ngx-translate/core';
 import { forkJoin, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
+import { Role } from 'app/enums/role.enum';
 import { singleArrayToOptions } from 'app/helpers/operators/options.operators';
-import helptext from 'app/helptext/directory-service/active-directory';
+import { helptextActiveDirectory } from 'app/helptext/directory-service/active-directory';
 import { NssInfoType } from 'app/interfaces/active-directory.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
@@ -60,7 +60,7 @@ export class ActiveDirectoryComponent implements OnInit {
 
   hasKerberosPrincipal$ = this.form.select((values) => values.kerberos_principal);
 
-  readonly helptext = helptext;
+  readonly helptext = helptextActiveDirectory;
   readonly kerberosRealms$ = this.ws.call('kerberos.realm.query').pipe(
     map((realms) => {
       return realms.map((realm) => ({
@@ -71,6 +71,8 @@ export class ActiveDirectoryComponent implements OnInit {
   );
   readonly kerberosPrincipals$ = this.ws.call('kerberos.keytab.kerberos_principal_choices').pipe(singleArrayToOptions());
   readonly nssOptions$ = this.ws.call('activedirectory.nss_info_choices').pipe(singleArrayToOptions());
+
+  protected readonly Role = Role;
 
   constructor(
     private ws: WebSocketService,
@@ -100,13 +102,13 @@ export class ActiveDirectoryComponent implements OnInit {
       next: () => {
         this.isLoading = false;
         this.snackbarService.success(
-          this.translate.instant(helptext.activedirectory_custactions_clearcache_dialog_message),
+          this.translate.instant(helptextActiveDirectory.activedirectory_custactions_clearcache_dialog_message),
         );
         this.cdr.markForCheck();
       },
-      error: (error: WebsocketError) => {
+      error: (error: unknown) => {
         this.isLoading = false;
-        this.dialogService.error(this.errorHandler.parseWsError(error));
+        this.dialogService.error(this.errorHandler.parseError(error));
         this.cdr.markForCheck();
       },
     });
@@ -143,7 +145,7 @@ export class ActiveDirectoryComponent implements OnInit {
             this.slideInRef.close(true);
           }
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.isLoading = false;
           this.formErrorHandler.handleWsFormError(error, this.form);
           this.cdr.markForCheck();
@@ -164,10 +166,10 @@ export class ActiveDirectoryComponent implements OnInit {
           this.isLoading = false;
           this.cdr.markForCheck();
         },
-        error: (error: WebsocketError) => {
+        error: (error: unknown) => {
           this.isLoading = false;
           this.cdr.markForCheck();
-          this.dialogService.error(this.errorHandler.parseWsError(error));
+          this.dialogService.error(this.errorHandler.parseError(error));
         },
       });
   }
@@ -208,7 +210,7 @@ export class ActiveDirectoryComponent implements OnInit {
       this.slideInRef.close(true);
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
-      this.dialogService.error(this.errorHandler.parseJobError(error));
+      this.dialogService.error(this.errorHandler.parseError(error));
       dialogRef.close(true);
     });
   }

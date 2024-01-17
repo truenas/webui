@@ -163,8 +163,8 @@ export class JobsListComponent implements OnInit, AfterViewInit {
   }
 
   downloadLogs(job: Job): void {
-    this.ws.call('core.download', ['filesystem.get', [job.logs_path], `${job.id}.log`]).pipe(
-      switchMap(([_, url]) => this.storage.downloadUrl(url, `${job.id}.log`, 'text/plain')),
+    this.ws.call('core.job_download_logs', [job.id, `${job.id}.log`]).pipe(
+      switchMap((url) => this.storage.downloadUrl(url, `${job.id}.log`, 'text/plain')),
       catchError((error: HttpErrorResponse) => {
         this.dialogService.error(this.errorHandler.parseHttpError(error));
         return EMPTY;

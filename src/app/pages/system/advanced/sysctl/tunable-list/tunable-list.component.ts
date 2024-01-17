@@ -5,6 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, tap } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { Tunable } from 'app/interfaces/tunable.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
@@ -66,10 +67,13 @@ export class TunableListComponent implements OnInit {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.doDelete(row),
+          requiresRoles: [Role.FullAdmin],
         },
       ],
     }),
-  ]);
+  ], {
+    rowTestId: (row) => 'tunable-' + row.var + '-' + row.value,
+  });
 
   constructor(
     private errorHandler: ErrorHandlerService,
@@ -134,7 +138,7 @@ export class TunableListComponent implements OnInit {
         });
         jobDialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
           this.dialogService.closeAllDialogs();
-          this.dialogService.error(this.errorHandler.parseJobError(error));
+          this.dialogService.error(this.errorHandler.parseError(error));
         });
       });
   }

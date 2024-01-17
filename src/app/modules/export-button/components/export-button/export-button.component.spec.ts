@@ -5,7 +5,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
-import { AuditEntry } from 'app/interfaces/audit.interface';
+import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { ExportButtonComponent } from 'app/modules/export-button/components/export-button/export-button.component';
 import { SortDirection } from 'app/modules/ix-table2/enums/sort-direction.enum';

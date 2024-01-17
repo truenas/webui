@@ -45,7 +45,9 @@ export class SmbLockListComponent implements OnInit {
       title: this.translate.instant('Num Pending Deletes'),
       propertyName: 'num_pending_deletes',
     }),
-  ]);
+  ], {
+    rowTestId: (row) => 'smb-lock-' + row.filename + '-' + row.fileid.devid + '-' + row.fileid.extid,
+  });
 
   constructor(
     private ws: WebSocketService,

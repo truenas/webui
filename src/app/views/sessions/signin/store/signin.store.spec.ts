@@ -7,6 +7,7 @@ import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.util
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
+import { LoginResult } from 'app/enums/login-result.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { FailoverDisabledReasonEvent } from 'app/interfaces/failover-disabled-reasons.interface';
@@ -72,7 +73,7 @@ describe('SigninStore', () => {
     Object.defineProperty(authService, 'user$', {
       get: () => of({ twofactor_auth_configured: false }),
     });
-    jest.spyOn(authService, 'loginWithToken').mockReturnValue(of(true));
+    jest.spyOn(authService, 'loginWithToken').mockReturnValue(of(LoginResult.Success));
   });
 
   describe('selectors', () => {

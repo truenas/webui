@@ -6,6 +6,7 @@ import {
   Observable, filter, shareReplay,
 } from 'rxjs';
 import { toLoadingState, LoadingState } from 'app/helpers/operators/to-loading-state.helper';
+import { helptext2fa } from 'app/helptext/system/2fa';
 import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { AdvancedSettingsService } from 'app/pages/system/advanced/advanced-settings.service';
 import { GlobalTwoFactorAuthFormComponent } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-form/global-two-factor-form.component';
@@ -20,6 +21,7 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class GlobalTwoFactorAuthCardComponent implements OnInit {
   protected twoFactorConfig$: Observable<LoadingState<GlobalTwoFactorConfig>>;
+  readonly helpText = helptext2fa;
 
   constructor(
     private ws: WebSocketService,

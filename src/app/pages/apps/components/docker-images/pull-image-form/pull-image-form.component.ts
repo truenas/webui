@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { latestVersion } from 'app/constants/catalog.constants';
-import helptext from 'app/helptext/apps/apps';
+import { helptextApps } from 'app/helptext/apps/apps';
 import { PullContainerImageParams } from 'app/interfaces/container-image.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -28,10 +28,10 @@ export class PullImageFormComponent {
   });
 
   readonly tooltips = {
-    from_image: helptext.pullImageForm.imageName.tooltip,
-    tag: helptext.pullImageForm.imageTags.tooltip,
-    username: helptext.pullImageForm.username.tooltip,
-    password: helptext.pullImageForm.password.tooltip,
+    from_image: helptextApps.pullImageForm.imageName.tooltip,
+    tag: helptextApps.pullImageForm.imageTags.tooltip,
+    username: helptextApps.pullImageForm.username.tooltip,
+    password: helptextApps.pullImageForm.password.tooltip,
   };
 
   constructor(
@@ -79,7 +79,7 @@ export class PullImageFormComponent {
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
       this.isFormLoading = false;
       dialogRef.close();
-      this.dialogService.error(this.errorHandler.parseJobError(error));
+      this.dialogService.error(this.errorHandler.parseError(error));
       this.cdr.markForCheck();
     });
   }

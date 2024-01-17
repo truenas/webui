@@ -3,8 +3,9 @@ import { DataProvider } from 'app/modules/ix-table2/interfaces/data-provider.int
 export abstract class ColumnComponent<T> {
   identifier?: boolean;
   propertyName: keyof T;
-  title?: string;
+  title: string;
   cssClass?: string;
+  rowTestId: (row: T) => string;
   sortBy?: (row: T) => string | number;
   sortable?: boolean;
   getValue?: (row: T) => unknown;

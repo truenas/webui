@@ -1,6 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export default {
+export const helptextKerberosRealms = {
   krbrealm_form_realm_tooltip: T('Enter the name of the realm.'),
 
   multiple_values: T('Separate multiple values by pressing <code>Enter</code>.'),

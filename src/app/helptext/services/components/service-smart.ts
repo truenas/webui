@@ -1,6 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export default {
+export const helptextServiceSmart = {
   smart_interval_tooltip: T('Define a number of minutes for <a\
  href="https://linux.die.net/man/8/smartd"\
  target="_blank">smartd</a> to wake up and check if any\

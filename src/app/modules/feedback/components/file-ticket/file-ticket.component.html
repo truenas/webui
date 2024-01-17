@@ -1,0 +1,61 @@
+<mat-dialog-content>
+  <form [formGroup]="form">
+    <ix-input
+      formControlName="title"
+      [label]="'Subject' | translate"
+      [tooltip]="tooltips.title | translate"
+      [placeholder]="tooltips.title | translate"
+      [required]="true"
+    ></ix-input>
+
+    <ix-similar-issues [query]="form.controls.title.value"></ix-similar-issues>
+
+    <ix-textarea
+      formControlName="message"
+      [label]="'Message' | translate"
+      [rows]="8"
+      [placeholder]="messagePlaceholder | translate"
+      [required]="true"
+    ></ix-textarea>
+
+    <ix-checkbox
+      formControlName="attach_debug"
+      [label]="'Attach debug' | translate"
+      [tooltip]="tooltips.attach_debug | translate"
+      [hint]="'Debugs may contain log files with personal information such as usernames or other identifying information about your system.' | translate"
+    ></ix-checkbox>
+
+    <ix-checkbox
+      formControlName="take_screenshot"
+      [label]="'Take screenshot of the current page' | translate"
+      [tooltip]="'Capture and attach screenshot to the review' | translate"
+    ></ix-checkbox>
+
+    <ix-checkbox
+      formControlName="attach_images"
+      [label]="'Attach additional images' | translate"
+    ></ix-checkbox>
+
+    <ix-file-input
+      *ngIf="form.controls.attach_images.value"
+      formControlName="images"
+      class="attach-images"
+      [label]="'Attach images (optional)' | translate"
+      [tooltip]="'Select images you want attach to review' | translate"
+      [multiple]="true"
+      [acceptedFiles]="acceptedFiles"
+    ></ix-file-input>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <ix-form-actions>
+    <ix-oauth-button
+      testId="login-to-jira"
+      [oauthType]="OauthButtonType.Jira"
+      [oauthUrl]="oauthUrl"
+      [disabled]="form.invalid || isLoading"
+      (loggedIn)="onSubmit($event);"
+    ></ix-oauth-button>
+  </ix-form-actions>
+</mat-dialog-actions>

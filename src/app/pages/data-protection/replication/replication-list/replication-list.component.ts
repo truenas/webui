@@ -4,20 +4,19 @@ import { Component, ChangeDetectorRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Actions, ofType } from '@ngrx/effects';
+import { Actions } from '@ngrx/effects';
 import { TranslateService } from '@ngx-translate/core';
 import {
   filter, switchMap, tap,
 } from 'rxjs/operators';
-import { FromWizardToAdvancedSubmitted } from 'app/enums/from-wizard-to-advanced.enum';
 import { JobState } from 'app/enums/job-state.enum';
+import { Role } from 'app/enums/role.enum';
 import { formatDistanceToNowShortened } from 'app/helpers/format-distance-to-now-shortened';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
-import globalHelptext from 'app/helptext/global-helptext';
+import { helptextGlobal } from 'app/helptext/global-helptext';
 import { Job } from 'app/interfaces/job.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { ReplicationTask, ReplicationTaskUi } from 'app/interfaces/replication-task.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ShowLogsDialogComponent } from 'app/modules/common/dialog/show-logs-dialog/show-logs-dialog.component';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
@@ -31,13 +30,12 @@ import {
 import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 import { ReplicationService } from 'app/services/replication.service';
 import { StorageService } from 'app/services/storage.service';
 import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { fromWizardToAdvancedFormSubmitted } from 'app/store/admin-panel/admin.actions';
 
 @UntilDestroy()
 @Component({
@@ -60,6 +58,7 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
   queryCallOption: QueryParams<void> = [[], { extra: { check_dataset_encryption_keys: true } }];
   entityList: EntityTableComponent<ReplicationTaskUi>;
   filterValue = '';
+  requiresRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];
 
   columns = [
     { name: this.translate.instant('Name'), prop: 'name', always_display: true },
@@ -70,7 +69,9 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
     { name: this.translate.instant('Target Dataset'), prop: 'target_dataset', hidden: true },
     { name: this.translate.instant('Recursive'), prop: 'recursive', hidden: true },
     { name: this.translate.instant('Auto'), prop: 'auto', hidden: true },
-    { name: this.translate.instant('Enabled'), prop: 'enabled', checkbox: true },
+    {
+      name: this.translate.instant('Enabled'), prop: 'enabled', checkbox: true, requiresRoles: this.requiresRoles,
+    },
     { name: this.translate.instant('Last Run'), prop: 'last_run', hidden: true },
     {
       name: this.translate.instant('State'), prop: 'state', button: true, state: 'state',
@@ -91,7 +92,7 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
     private ws: WebSocketService,
     private dialogService: DialogService,
     protected loader: AppLoaderService,
-    private slideInService: IxSlideInService,
+    private chainedSlideInService: IxChainedSlideInService,
     private translate: TranslateService,
     private matDialog: MatDialog,
     private errorHandler: ErrorHandlerService,
@@ -106,7 +107,6 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
 
   afterInit(entityList: EntityTableComponent<ReplicationTaskUi>): void {
     this.entityList = entityList;
-    this.listenForWizardToAdvancedSwitching();
   }
 
   resourceTransformIncomingRestData(tasks: ReplicationTask[]): ReplicationTaskUi[] {
@@ -131,6 +131,7 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
         icon: 'play_arrow',
         name: 'run',
         label: this.translate.instant('Run Now'),
+        requiresRoles: this.requiresRoles,
         onClick: (row: ReplicationTaskUi) => {
           this.dialogService.confirm({
             title: this.translate.instant('Run Now'),
@@ -150,8 +151,8 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
               row.job = { ...job };
               this.cdr.markForCheck();
             },
-            error: (error: Job) => {
-              this.dialogService.error(this.errorHandler.parseJobError(error));
+            error: (error: unknown) => {
+              this.dialogService.error(this.errorHandler.parseError(error));
             },
           });
         },
@@ -162,6 +163,7 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
         name: 'restore',
         label: this.translate.instant('Restore'),
         icon: 'restore',
+        requiresRoles: this.requiresRoles,
         onClick: (row: ReplicationTaskUi) => {
           const dialog = this.matDialog.open(ReplicationRestoreDialogComponent, {
             data: row.id,
@@ -191,6 +193,7 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
         icon: 'download',
         name: 'download_keys',
         label: this.translate.instant('Download keys'),
+        requiresRoles: this.requiresRoles,
         onClick: (row) => {
           this.loader.open();
           this.ws.call('core.download', ['pool.dataset.export_keys_for_replication', [row.id], `${row.name}_encryption_keys.json`]).pipe(untilDestroyed(this)).subscribe({
@@ -208,7 +211,7 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
             },
             error: (err) => {
               this.loader.close();
-              this.dialogService.error(this.errorHandler.parseWsError(err));
+              this.dialogService.error(this.errorHandler.parseError(err));
             },
           });
         },
@@ -219,6 +222,7 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
       icon: 'delete',
       name: 'delete',
       label: this.translate.instant('Delete'),
+      requiresRoles: this.requiresRoles,
       onClick: (row: ReplicationTaskUi) => {
         this.entityList.doDelete(row);
       },
@@ -264,8 +268,17 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
         this.matDialog.open(ShowLogsDialogComponent, { data: row.job });
       }
     } else {
-      this.dialogService.warn(globalHelptext.noLogDialog.title, globalHelptext.noLogDialog.message);
+      this.dialogService.warn(helptextGlobal.noLogDialog.title, helptextGlobal.noLogDialog.message);
     }
+  }
+
+  doEdit(id: number): void {
+    const replication = this.entityList.rows.find((row) => row.id === id);
+    const closer$ = this.chainedSlideInService.pushComponent(ReplicationFormComponent, true, replication);
+    closer$.pipe(
+      filter((response) => !!response.response),
+      untilDestroyed(this),
+    ).subscribe(() => this.entityList.getData());
   }
 
   onCheckboxChange(row: ReplicationTaskUi): void {
@@ -276,28 +289,17 @@ export class ReplicationListComponent implements EntityTableConfig<ReplicationTa
           row.enabled = !row.enabled;
         }
       },
-      error: (err: WebsocketError) => {
+      error: (err: unknown) => {
         row.enabled = !row.enabled;
-        this.dialogService.error(this.errorHandler.parseWsError(err));
+        this.dialogService.error(this.errorHandler.parseError(err));
       },
     });
   }
 
   doAdd(): void {
-    const slideInRef = this.slideInService.open(ReplicationWizardComponent, { wide: true });
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.entityList.getData());
-  }
-
-  doEdit(id: number): void {
-    const replication = this.entityList.rows.find((row) => row.id === id);
-    const slideInRef = this.slideInService.open(ReplicationFormComponent, { wide: true, data: replication });
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.entityList.getData());
-  }
-
-  private listenForWizardToAdvancedSwitching(): void {
-    this.actions$.pipe(
-      ofType(fromWizardToAdvancedFormSubmitted),
-      filter(({ formType }) => formType === FromWizardToAdvancedSubmitted.ReplicationTask),
+    const closer$ = this.chainedSlideInService.pushComponent(ReplicationWizardComponent, true);
+    closer$.pipe(
+      filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe(() => this.entityList.getData());
   }

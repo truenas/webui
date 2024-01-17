@@ -5,6 +5,7 @@ import { FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { Role } from 'app/enums/role.enum';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
@@ -26,6 +27,7 @@ export class SystemSecurityFormComponent implements OnInit {
   });
 
   isLoading = false;
+  protected readonly Role = Role;
 
   constructor(
     private ws: WebSocketService,
@@ -58,7 +60,7 @@ export class SystemSecurityFormComponent implements OnInit {
           this.snackbar.success(this.translate.instant('System Security Settings Updated.'));
           this.cdr.markForCheck();
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.isLoading = false;
           this.cdr.markForCheck();
           this.formErrorHandler.handleWsFormError(error, this.form);

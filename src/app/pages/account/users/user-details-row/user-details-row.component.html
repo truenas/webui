@@ -8,15 +8,17 @@
     <span>{{ 'Edit' | translate }}</span>
   </button>
 
-  <button
-    *ngIf="!user.builtin"
-    mat-button
-    [ixTest]="['delete', user.username]"
-    (click)="doDelete(user)"
-  >
-    <ix-icon name="delete"></ix-icon>
-    <span>{{ 'Delete' | translate }}</span>
-  </button>
+  <ng-container *ixRequiresRoles="[Role.AccountWrite]">
+    <button
+      *ngIf="!user.builtin"
+      mat-button
+      [ixTest]="['delete', user.username]"
+      (click)="doDelete(user)"
+    >
+      <ix-icon name="delete"></ix-icon>
+      <span>{{ 'Delete' | translate }}</span>
+    </button>
+  </ng-container>
 
   <button
     mat-button

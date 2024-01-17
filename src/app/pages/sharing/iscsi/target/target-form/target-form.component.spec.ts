@@ -4,12 +4,15 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { of } from 'rxjs';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IscsiAuthMethod, IscsiTargetMode } from 'app/enums/iscsi.enum';
 import {
   IscsiAuthAccess, IscsiInitiatorGroup, IscsiPortal, IscsiTarget,
 } from 'app/interfaces/iscsi.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -60,6 +63,7 @@ describe('TargetFormComponent', () => {
       mockWebsocket([
         mockCall('iscsi.target.create'),
         mockCall('iscsi.target.update'),
+        mockCall('iscsi.target.validate_name', null),
         mockCall('iscsi.portal.query', [{
           comment: 'comment_1',
           id: 1,
@@ -100,6 +104,7 @@ describe('TargetFormComponent', () => {
           user: 'user_2',
         }] as IscsiAuthAccess[]),
       ]),
+      mockAuth(),
     ],
   });
 
@@ -241,6 +246,36 @@ describe('TargetFormComponent', () => {
         { label: '55', value: 55 },
         { label: '66', value: 66 },
       ]);
+    });
+  });
+
+  describe('validation error handling', () => {
+    beforeEach(async () => {
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+    });
+
+    beforeEach(async () => {
+      spectator = createComponent();
+      websocket = spectator.inject(WebSocketService);
+      jest.spyOn(websocket, 'call').mockImplementation((method) => {
+        if (method === 'iscsi.target.validate_name') {
+          return of('Target with this name already exists');
+        }
+        return null;
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+    });
+
+    it('should display an error message for invalid target name', async () => {
+      await form.fillForm({
+        'Target Name': 'name_test',
+      });
+
+      const nameControl = await loader.getHarness(IxInputHarness.with({ label: 'Target Name' }));
+      expect(await nameControl.getErrorText()).toBe('Target with this name already exists');
     });
   });
 });

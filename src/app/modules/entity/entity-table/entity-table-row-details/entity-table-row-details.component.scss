@@ -2,6 +2,7 @@
   display: block;
 
   button {
+    margin-right: 8px;
     padding: 8px 16px;
   }
 
@@ -14,6 +15,7 @@
   p {
     line-height: 24px;
     margin: 0;
+    word-break: break-word;
   }
 
   .mat-icon.widget-icon {

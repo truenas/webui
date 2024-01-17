@@ -4,6 +4,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { switchMap, filter, tap } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
@@ -13,7 +14,7 @@ import { createTable } from 'app/modules/ix-table2/utils';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { SshConnectionFormComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-form/ssh-connection-form.component';
 import { DialogService } from 'app/services/dialog.service';
-import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -43,15 +44,18 @@ export class SshConnectionCardComponent implements OnInit {
         {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
+          requiresRoles: [Role.KeychainCredentialWrite],
           onClick: (row) => this.doDelete(row),
         },
       ],
     }),
-  ]);
+  ], {
+    rowTestId: (row) => 'ssh-con-' + row.name,
+  });
 
   constructor(
     private ws: WebSocketService,
-    private slideInService: IxSlideInService,
+    private chainedSlideInService: IxChainedSlideInService,
     private translate: TranslateService,
     protected emptyService: EmptyService,
     private dialog: DialogService,
@@ -81,13 +85,13 @@ export class SshConnectionCardComponent implements OnInit {
   }
 
   doAdd(): void {
-    const slideInRef = this.slideInService.open(SshConnectionFormComponent);
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCredentials());
+    const closer$ = this.chainedSlideInService.pushComponent(SshConnectionFormComponent);
+    closer$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCredentials());
   }
 
   doEdit(credential: KeychainSshCredentials): void {
-    const slideInRef = this.slideInService.open(SshConnectionFormComponent, { data: credential });
-    slideInRef.slideInClosed$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCredentials());
+    const closer$ = this.chainedSlideInService.pushComponent(SshConnectionFormComponent, false, credential);
+    closer$.pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCredentials());
   }
 
   doDelete(credential: KeychainSshCredentials): void {

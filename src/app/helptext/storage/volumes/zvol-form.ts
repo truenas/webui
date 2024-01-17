@@ -1,7 +1,7 @@
 import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export default {
+export const helptextZvol = {
   zvol_title_add: T('Add Zvol'),
   zvol_title_edit: T('Edit Zvol'),
   zvol_name_placeholder: T('Zvol name'),
@@ -78,7 +78,8 @@ export default {
     inherit_checkbox_tooltip: T('Use the encryption properties of the root dataset.'),
     encryption_checkbox_placeholder: T('Encryption'),
     encryption_checkbox_tooltip: T('Secure data within this dataset. Data is unusable until \
-     unlocked with an encryption key or passphrase.'),
+     unlocked with an encryption key or passphrase. If parent dataset has encryption enabled,\
+     it is not possible to disable this option.'),
     encryption_type_placeholder: T('Encryption Type'),
     encryption_type_tooltip: T('How the dataset is secured. Choose between securing with\
  an encryption <i>Key</i> or a user-defined <i>Passphrase</i>. Creating a new key file\
@@ -111,9 +112,6 @@ export default {
     key_placeholder: T('Key'),
     key_tooltip: T('Enter or paste a string to use as the encryption key for this dataset.'),
     key_validation: [Validators.minLength(64), Validators.maxLength(64)],
-    non_encrypted_warning_title: T('Warning'),
-    non_encrypted_warning_warning: T('All data stored in this dataset will be decrypted and the dataset marked \
- as non-encrypted. Do you want to continue?'),
   },
 
 };

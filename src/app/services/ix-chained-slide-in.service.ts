@@ -1,23 +1,50 @@
+import { ComponentType } from '@angular/cdk/portal';
 import { Injectable, Type } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import { UUID } from 'angular2-uuid';
-import { Observable, Subject, tap } from 'rxjs';
+import {
+  Observable, Subject, tap,
+} from 'rxjs';
+
+export interface ChainedComponentRef {
+  close: (response: ChainedComponentResponse) => void;
+  /**
+   * This method will destroy the caller slide-in component and replace it with the
+   * provided new component. The new component will also take on the same "on-close"
+   * observable that the caller had. Makes it easy to switch between components that
+   * have the same purpose and return the same response type e.g, form to wizard and
+   * wizard to form.
+   */
+  swap: (component: Type<unknown>, wide: boolean, data?: unknown) => void;
+}
+
+export interface IncomingChainedComponent {
+  component: ComponentType<unknown>;
+  wide: boolean;
+  data: unknown;
+  swapComponentId?: string;
+}
 
 export interface ChainedSlideInState {
-  components: Map<string, ChainedComponentInfo>;
+  components: Map<string, ChainedComponent>;
 }
 
-export interface ChainedComponentInfo {
+export interface ChainedComponent {
   component: Type<unknown>;
-  close$: Subject<unknown>;
-  wide?: boolean;
-  data?: unknown;
+  close$: Subject<ChainedComponentResponse>;
+  wide: boolean;
+  data: unknown;
 }
 
-export interface ChainedComponentSeralized {
+export interface ChainedComponentResponse {
+  response: unknown;
+  error: unknown;
+}
+
+export interface ChainedComponentSerialized {
   id: string;
   component: Type<unknown>;
-  close$: Subject<unknown>;
+  close$: Subject<ChainedComponentResponse>;
   data?: unknown;
   wide?: boolean;
 }
@@ -26,7 +53,7 @@ export interface ChainedComponentSeralized {
   providedIn: 'root',
 })
 export class IxChainedSlideInService extends ComponentStore<ChainedSlideInState> {
-  readonly components$: Observable<ChainedComponentSeralized[]> = this.select(
+  readonly components$: Observable<ChainedComponentSerialized[]> = this.select(
     (state) => this.mapToSerializedArray(state.components),
   );
 
@@ -51,7 +78,7 @@ export class IxChainedSlideInService extends ComponentStore<ChainedSlideInState>
     );
   });
 
-  pushComponent = this.updater((state, chainedComponentInfo: ChainedComponentInfo) => {
+  private pushComponentToStore = this.updater((state, chainedComponentInfo: ChainedComponent) => {
     const newMap = new Map(state.components);
     newMap.set(UUID.UUID(), {
       ...chainedComponentInfo,
@@ -61,17 +88,45 @@ export class IxChainedSlideInService extends ComponentStore<ChainedSlideInState>
     };
   });
 
-  popComponent = this.updater((state) => {
+  pushComponent(
+    component: Type<unknown>,
+    wide = false,
+    data?: unknown,
+  ): Observable<ChainedComponentResponse> {
+    const close$ = new Subject<ChainedComponentResponse>();
+    this.pushComponentToStore({
+      component,
+      wide,
+      data,
+      close$,
+    });
+    return close$.asObservable();
+  }
+
+  popComponent = this.updater((state, id: string) => {
     const newMap = new Map(state.components);
-    const all = this.mapToSerializedArray(state.components);
-    const popped = all.pop();
-    newMap.delete(popped.id);
+    newMap.delete(id);
     return {
       components: newMap,
     };
   });
 
-  mapToSerializedArray(map: Map<string, ChainedComponentInfo>): ChainedComponentSeralized[] {
+  swapComponent = this.updater((state, swapInfo: IncomingChainedComponent) => {
+    const newMap = new Map(state.components);
+    const popped = newMap.get(swapInfo.swapComponentId);
+    const close$ = popped.close$;
+    newMap.set(UUID.UUID(), {
+      component: swapInfo.component,
+      wide: swapInfo.wide,
+      data: swapInfo.data,
+      close$,
+    });
+    return {
+      components: newMap,
+    };
+  });
+
+  mapToSerializedArray(map: Map<string, ChainedComponent>): ChainedComponentSerialized[] {
     return Array.from(map, ([id, componentInfo]) => {
       return {
         id,
@@ -79,7 +134,7 @@ export class IxChainedSlideInService extends ComponentStore<ChainedSlideInState>
         close$: componentInfo.close$,
         wide: componentInfo.wide,
         data: componentInfo.data,
-      };
+      } as ChainedComponentSerialized;
     });
   }
 }

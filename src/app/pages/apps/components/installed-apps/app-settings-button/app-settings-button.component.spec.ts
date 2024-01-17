@@ -1,5 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { ViewContainerRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuHarness } from '@angular/material/menu/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
@@ -16,6 +17,7 @@ describe('AppSettingsButtonComponent', () => {
   let spectator: Spectator<AppSettingsButtonComponent>;
   let loader: HarnessLoader;
   let menu: MatMenuHarness;
+  const viewContainerRef: ViewContainerRef = null;
 
   const createComponent = createComponentFactory({
     component: AppSettingsButtonComponent,
@@ -36,6 +38,9 @@ describe('AppSettingsButtonComponent', () => {
 
   beforeEach(async () => {
     spectator = createComponent();
+    Object.defineProperty(spectator.component, 'viewContainerRef', {
+      value: viewContainerRef,
+    });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     menu = await loader.getHarness(MatMenuHarness);
   });
@@ -47,7 +52,7 @@ describe('AppSettingsButtonComponent', () => {
     await menu.open();
     await menu.clickItem({ text: 'Choose Pool' });
 
-    expect(matDialog.open).toHaveBeenCalledWith(SelectPoolDialogComponent);
+    expect(matDialog.open).toHaveBeenCalledWith(SelectPoolDialogComponent, { viewContainerRef });
   });
 
   it('shows Advanced Settings slide once Settings button -> Advanced Settings clicked', async () => {

@@ -7,7 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { DatasetCaseSensitivity, DatasetPreset, datasetPresetLabels } from 'app/enums/dataset.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
-import helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
+import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.interface';
 import {
   forbiddenValues,
@@ -43,7 +43,7 @@ export class NameAndOptionsSectionComponent implements OnInit, OnChanges {
     smb_name: [''],
   });
 
-  readonly helptext = helptext;
+  readonly helptext = helptextDatasetForm;
   readonly DatasetPreset = DatasetPreset;
 
   get isCreatingSmb(): boolean {

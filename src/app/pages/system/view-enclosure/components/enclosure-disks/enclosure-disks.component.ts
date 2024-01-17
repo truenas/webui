@@ -11,7 +11,7 @@ import { ValueReaction } from 'popmotion/lib/reactions/value';
 import { Subject } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
-import { EnclosureSlotStatus } from 'app/enums/enclosure-slot-status.enum';
+import { EnclosureSlotDiskStatus, EnclosureSlotStatus } from 'app/enums/enclosure-slot-status.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import {
@@ -238,7 +238,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   subenclosure: { poolKeys: Record<string, number> }; // Declare rear and internal enclosure visualizations here
 
   chassis: Chassis;
-  view: string = EnclosureLocation.Front;
+  view = EnclosureLocation.Front;
   get chassisView(): ChassisView {
     if (!this.chassis) return null;
 
@@ -290,7 +290,9 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
     this.diskTemperatureService.listenForTemperatureUpdates();
 
     this.diskTemperatureService.temperature$.pipe(untilDestroyed(this)).subscribe((data) => {
-      const chassisView: ChassisView = this.chassisView && this.view === 'rear' ? this.chassis?.rear : this.chassis?.front;
+      const chassisView: ChassisView = this.chassisView && this.view === EnclosureLocation.Rear
+        ? this.chassis?.rear
+        : this.chassis?.front;
       if (!this.chassis || !chassisView?.driveTrayObjects) { return; }
 
       const clone: Temperature = { ...data };
@@ -444,7 +446,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   }
 
   // Recreates enclosure when switching between enclosures or front/rear/internal visualizations
-  loadEnclosure(enclosureView: EnclosureView, view?: string, update?: boolean): void {
+  loadEnclosure(enclosureView: EnclosureView, view?: EnclosureLocation, update?: boolean): void {
     if (this.selectedSlotNumber > -1) {
       this.clearDisk();
     }
@@ -1026,7 +1028,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
 
     // Health based on disk.status
     if (enclosureSlot.disk && enclosureSlot.topologyStatus) {
-      switch (enclosureSlot.topologyStatus) {
+      switch (enclosureSlot.topologyStatus as string) {
         case 'ONLINE':
           enclosure.events.next({
             name: 'ChangeDriveTrayColor',
@@ -1131,7 +1133,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   toggleHighlightMode(mode: string): void {
     const enclosureView = this.selectedEnclosureView;
     const selectedSlot = enclosureView.slots[this.selectedSlotNumber];
-    if (selectedSlot.topologyStatus === 'AVAILABLE') { return; }
+    if (selectedSlot.topologyStatus === EnclosureSlotDiskStatus.Available) { return; }
 
     this.labels.events$.next({
       name: mode === 'on' ? 'EnableHighlightMode' : 'DisableHighlightMode',
@@ -1227,7 +1229,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnDestroy {
   }
 
   // Changes front/rear/internal
-  enclosureOverride(view: string): void {
+  enclosureOverride(view: EnclosureLocation): void {
     if (view !== this.view) {
       this.clearDisk();
       this.loadEnclosure(this.selectedEnclosureView, view, true);

@@ -1,6 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export default {
+export const helptextShell = {
   dialog_title: T('Copy and Paste'),
 
   copy_paste_message: T(

@@ -17,7 +17,6 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { QrCodeModule } from 'ng-qrcode';
 import { NgxFilesizeModule } from 'ngx-filesize';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
@@ -36,6 +35,8 @@ import { OauthButtonModule } from 'app/modules/oauth-button/oauth-button.module'
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
+import { AccessCardComponent } from 'app/pages/system/advanced/access/access-card/access-card.component';
+import { AccessFormComponent } from 'app/pages/system/advanced/access/access-form/access-form.component';
 import { AdvancedSettingsComponent } from 'app/pages/system/advanced/advanced-settings.component';
 import {
   AllowedAddressesCardComponent,
@@ -68,8 +69,6 @@ import {
   SelfEncryptingDriveCardComponent,
 } from 'app/pages/system/advanced/self-encrypting-drive/self-encrypting-drive-card/self-encrypting-drive-card.component';
 import { SelfEncryptingDriveFormComponent } from 'app/pages/system/advanced/self-encrypting-drive/self-encrypting-drive-form/self-encrypting-drive-form.component';
-import { SessionsCardComponent } from 'app/pages/system/advanced/sessions/sessions-card/sessions-card.component';
-import { TokenSettingsComponent } from 'app/pages/system/advanced/sessions/token-settings/token-settings.component';
 import { StorageCardComponent } from 'app/pages/system/advanced/storage/storage-card/storage-card.component';
 import { StorageSettingsFormComponent } from 'app/pages/system/advanced/storage/storage-settings-form/storage-settings-form.component';
 import { TunableFormComponent } from 'app/pages/system/advanced/sysctl/tunable-form/tunable-form.component';
@@ -128,12 +127,10 @@ import {
 import { ManualUpdateFormComponent } from 'app/pages/system/update/manual-update-form/manual-update-form.component';
 import { UpdateComponent } from 'app/pages/system/update/update.component';
 import { EnclosureModule } from 'app/pages/system/view-enclosure/enclosure.module';
-import { QrDialogComponent } from 'app/pages/two-factor-auth/components/two-factor/qr-dialog/qr-dialog.component';
 import { ConsoleCardComponent } from './advanced/console/console-card/console-card.component';
 import { SysctlCardComponent } from './advanced/sysctl/sysctl-card/sysctl-card.component';
 import { AlertSettingsComponent } from './alert-settings/alert-settings.component';
 import { BootenvNodeItemComponent } from './bootenv/bootenv-status/bootenv-node-item/bootenv-node-item.component';
-import { FileTicketModule } from './file-ticket/file-ticket.module';
 import { SetProductionStatusDialogComponent } from './general-settings/support/set-production-status-dialog/set-production-status-dialog.component';
 import { routing } from './system.routing';
 
@@ -165,7 +162,6 @@ import { routing } from './system.routing';
     MatToolbarModule,
     MatListModule,
     MatButtonModule,
-    QrCodeModule,
     ReactiveFormsModule,
     routing,
     TooltipModule,
@@ -174,7 +170,6 @@ import { routing } from './system.routing';
     MatDialogModule,
     AppCommonModule,
     LayoutModule,
-    FileTicketModule,
     MatExpansionModule,
     MatSlideToggleModule,
     AppLoaderModule,
@@ -216,9 +211,8 @@ import { routing } from './system.routing';
     NtpServerFormComponent,
     NtpServerCardComponent,
     ProactiveComponent,
-    QrDialogComponent,
     ReplicationSettingsFormComponent,
-    TokenSettingsComponent,
+    AccessFormComponent,
     AllowedAddressesFormComponent,
     SysInfoComponent,
     SyslogCardComponent,
@@ -263,7 +257,7 @@ import { routing } from './system.routing';
     BootPoolDeleteDialogComponent,
     SetProductionStatusDialogComponent,
     ConsoleCardComponent,
-    SessionsCardComponent,
+    AccessCardComponent,
     AllowedAddressesCardComponent,
     SelfEncryptingDriveCardComponent,
     IsolatedGpusCardComponent,

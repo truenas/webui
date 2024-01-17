@@ -12,7 +12,10 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
+import { CloudCredentialsSelectModule } from 'app/modules/custom-selects/cloud-credentials-select/cloud-credentials-select.module';
+import { SshCredentialsSelectModule } from 'app/modules/custom-selects/ssh-credentials-select/ssh-credentials-select.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxIconModule } from 'app/modules/ix-icon/ix-icon.module';
@@ -21,6 +24,7 @@ import { LayoutModule } from 'app/modules/layout/layout.module';
 import { PageHeaderModule } from 'app/modules/page-header/page-header.module';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
 import { TestIdModule } from 'app/modules/test-id/test-id.module';
+import { CloudsyncProviderDescriptionComponent } from 'app/pages/data-protection/cloudsync/cloudsync-provider-description/cloudsync-provider-description.component';
 import {
   CloudsyncRestoreDialogComponent,
 } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
@@ -74,6 +78,7 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
 @NgModule({
   imports: [
     CommonModule,
+    CommonDirectivesModule,
     FlexLayoutModule,
     RouterModule.forChild(dataProtectionRoutes),
     EntityModule,
@@ -83,6 +88,8 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
     TranslateModule,
     IxTable2Module,
     IxFormsModule,
+    CloudCredentialsSelectModule,
+    SshCredentialsSelectModule,
     PageHeaderModule,
     SchedulerModule,
     MatButtonModule,
@@ -95,6 +102,7 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
     MatToolbarModule,
     MatTooltipModule,
     MatDividerModule,
+    CloudsyncProviderDescriptionComponent,
   ],
   declarations: [
     SnapshotTaskListComponent,

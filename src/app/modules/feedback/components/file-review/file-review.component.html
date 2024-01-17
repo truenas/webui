@@ -1,0 +1,54 @@
+<mat-dialog-content>
+  <form [formGroup]="form">
+    <ix-star-rating
+      *ngIf="form.controls.rating.enabled"
+      formControlName="rating"
+      [label]="'Select Rating' | translate"
+      [required]="true"
+    ></ix-star-rating>
+
+    <ix-textarea
+      formControlName="message"
+      [label]="'Message' | translate"
+      [rows]="5"
+      [placeholder]="messagePlaceholder | translate"
+    ></ix-textarea>
+
+    <ix-checkbox
+      formControlName="take_screenshot"
+      [label]="'Take screenshot of the current page' | translate"
+      [tooltip]="'Capture and attach screenshot to the review' | translate"
+    ></ix-checkbox>
+
+    <ix-checkbox
+      *ngIf="form.controls.attach_images.enabled"
+      formControlName="attach_images"
+      [label]="'Attach additional images' | translate"
+    ></ix-checkbox>
+
+    <ix-file-input
+      *ngIf="form.controls.attach_images.value"
+      formControlName="images"
+      class="attach-images"
+      [label]="'Attach images (optional)' | translate"
+      [tooltip]="'Select images you want attach to review' | translate"
+      [multiple]="true"
+      [acceptedFiles]="acceptedFiles"
+    ></ix-file-input>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <ix-form-actions>
+    <button
+      mat-button
+      type="submit"
+      color="primary"
+      ixTest="submit"
+      [disabled]="form.invalid || isLoading"
+      (click)="onSubmit()"
+    >
+      {{ 'Submit' | translate }}
+    </button>
+  </ix-form-actions>
+</mat-dialog-actions>

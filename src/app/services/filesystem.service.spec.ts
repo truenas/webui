@@ -2,6 +2,7 @@ import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { lastValueFrom } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
+import { FileAttribute } from 'app/enums/file-attribute.enum';
 import { FileType } from 'app/enums/file-type.enum';
 import { FileRecord } from 'app/interfaces/file-record.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
@@ -19,11 +20,13 @@ describe('FilesystemService', () => {
             path: '/mnt/parent/directory',
             name: 'directory',
             type: FileType.Directory,
+            attributes: [FileAttribute.MountRoot],
           },
           {
             path: '/mnt/parent/file.txt',
             name: 'file.txt',
             type: FileType.File,
+            attributes: [FileAttribute.Immutable],
           },
         ] as FileRecord[]),
       ]),
@@ -54,12 +57,16 @@ describe('FilesystemService', () => {
           name: 'directory',
           path: '/mnt/parent/directory',
           type: ExplorerNodeType.Directory,
+          isMountpoint: true,
+          isLock: false,
         },
         {
           hasChildren: false,
           name: 'file.txt',
           path: '/mnt/parent/file.txt',
           type: ExplorerNodeType.File,
+          isMountpoint: false,
+          isLock: true,
         },
       ]);
     });

@@ -4,6 +4,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, switchMap, tap } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { VmwareSnapshot } from 'app/interfaces/vmware.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { textColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-text/ix-cell-text.component';
@@ -47,7 +48,11 @@ export class VmwareSnapshotListComponent implements OnInit {
       propertyName: 'datastore',
       sortable: true,
     }),
-  ]);
+  ], {
+    rowTestId: (row) => 'vmware-snapshot-' + row.hostname,
+  });
+
+  readonly requiresRoles = [Role.FullAdmin];
 
   constructor(
     protected translate: TranslateService,

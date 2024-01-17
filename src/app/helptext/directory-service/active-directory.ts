@@ -1,6 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export default {
+export const helptextActiveDirectory = {
   activedirectory_custactions_clearcache_dialog_message: T('The cache is being rebuilt.'),
 
   ad_leave_domain_dialog: {
@@ -20,7 +20,7 @@ export default {
  Unset to force domain names to be prepended to user names. One possible reason for unsetting this value\
  is to prevent username collisions when Allow Trusted Domains is set and there are identical usernames in\
  more than one domain.'),
-  activedirectory_default_dom_tooltip: T('Unset to prepend the domain name to the username.\
+  activedirectory_default_dom_tooltip: T('Set the domain name to the username.\
  Unset to prevent name collisions when Allow Trusted Domains is set and multiple domains use the same\
  username.'),
   activedirectory_dns_updates_tooltip: T('Set to enable Samba to do DNS updates when joining a domain.'),

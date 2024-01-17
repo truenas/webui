@@ -22,6 +22,4 @@ export interface SelectOption<T = SelectOptionValueType> extends Option<T> {
   hoverTooltip?: string;
 }
 
-export enum NewOption {
-  New = 'NEW',
-}
+export const newOption = 'NEW';

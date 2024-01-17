@@ -4,6 +4,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { switchMap, from, filter } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
 import { actionsColumn } from 'app/modules/ix-table2/components/ix-table-body/cells/ix-cell-actions/ix-cell-actions.component';
@@ -66,10 +67,13 @@ export class InitShutdownCardComponent implements OnInit {
           iconName: 'delete',
           tooltip: this.translate.instant('Delete'),
           onClick: (row) => this.onDelete(row),
+          requiresRoles: [Role.FullAdmin],
         },
       ],
     }),
-  ]);
+  ], {
+    rowTestId: (row) => 'card-init-shutdown-' + row.command + '-' + row.when,
+  });
 
   constructor(
     private slideInService: IxSlideInService,

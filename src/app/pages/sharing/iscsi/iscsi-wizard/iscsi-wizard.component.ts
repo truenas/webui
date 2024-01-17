@@ -8,7 +8,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  lastValueFrom, forkJoin, Observable, switchMap, tap, of, map, take,
+  lastValueFrom, forkJoin,
 } from 'rxjs';
 import { patterns } from 'app/constants/name-patterns.constant';
 import { DatasetType } from 'app/enums/dataset.enum';
@@ -17,11 +17,10 @@ import {
   IscsiExtentRpm,
   IscsiExtentType,
   IscsiExtentUsefor,
-  IscsiNewOption,
 } from 'app/enums/iscsi.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
-import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
-import { ServiceStatus } from 'app/enums/service-status.enum';
+import { Role } from 'app/enums/role.enum';
+import { ServiceName } from 'app/enums/service-name.enum';
 import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
 import {
   IscsiAuthAccess,
@@ -38,6 +37,7 @@ import {
   IscsiTargetExtentUpdate,
   IscsiTargetUpdate,
 } from 'app/interfaces/iscsi.interface';
+import { newOption } from 'app/interfaces/option.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { forbiddenValues } from 'app/modules/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
@@ -50,7 +50,6 @@ import { IscsiService } from 'app/services/iscsi.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { ServicesState } from 'app/store/services/services.reducer';
-import { selectService } from 'app/store/services/services.selectors';
 
 @UntilDestroy()
 @Component({
@@ -81,16 +80,16 @@ export class IscsiWizardComponent implements OnInit {
       type: [IscsiExtentType.Disk, [Validators.required]],
       path: [mntPath, [Validators.required]],
       filesize: [0, [Validators.required]],
-      disk: [null as IscsiNewOption | string, [Validators.required]],
+      disk: [null as string, [Validators.required]],
       dataset: ['', [Validators.required]],
       volsize: [0, [Validators.required]],
       usefor: [IscsiExtentUsefor.Vmware, [Validators.required]],
-      target: [IscsiNewOption.New as IscsiNewOption | number, [Validators.required]],
+      target: [newOption as typeof newOption | number, [Validators.required]],
     }),
     portal: this.fb.group({
-      portal: [null as IscsiNewOption | number, [Validators.required]],
+      portal: [null as typeof newOption | number, [Validators.required]],
       discovery_authmethod: [IscsiAuthMethod.None, [Validators.required]],
-      discovery_authgroup: [null as IscsiNewOption | number],
+      discovery_authgroup: [null as typeof newOption | number],
       tag: [0, [Validators.min(0), Validators.required]],
       user: ['', [Validators.required]],
       secret: ['', [Validators.minLength(12), Validators.maxLength(16), Validators.required]],
@@ -110,21 +109,27 @@ export class IscsiWizardComponent implements OnInit {
     ],
   });
 
+  readonly requiresRoles = [
+    Role.SharingIscsiTargetWrite,
+    Role.SharingIscsiWrite,
+    Role.SharingWrite,
+  ];
+
   get isNewZvol(): boolean {
-    return this.form.controls.device.enabled && this.form.value.device.disk === IscsiNewOption.New;
+    return this.form.controls.device.enabled && this.form.value.device.disk === newOption;
   }
 
   get isNewAuthgroup(): boolean {
     return this.form.controls.portal.controls.discovery_authgroup.enabled
-      && this.form.value.portal.discovery_authgroup === IscsiNewOption.New;
+      && this.form.value.portal.discovery_authgroup === newOption;
   }
 
   get isNewPortal(): boolean {
-    return this.form.controls.portal.controls.portal.enabled && this.form.value.portal.portal === IscsiNewOption.New;
+    return this.form.controls.portal.controls.portal.enabled && this.form.value.portal.portal === newOption;
   }
 
   get isNewTarget(): boolean {
-    return this.form.value.device.target === IscsiNewOption.New;
+    return this.form.value.device.target === newOption;
   }
 
   get isNewInitiator(): boolean {
@@ -159,7 +164,7 @@ export class IscsiWizardComponent implements OnInit {
         ? (filesize + (blocksizeDefault - filesize % blocksizeDefault)) : filesize;
       extentPayload.path = value.path;
     } else if (extentPayload.type === IscsiExtentType.Disk) {
-      if (value.disk === IscsiNewOption.New) {
+      if (value.disk === newOption) {
         extentPayload.disk = 'zvol/' + this.createdZvol.id.replace(' ', '+');
       } else {
         extentPayload.disk = value.disk;
@@ -248,7 +253,7 @@ export class IscsiWizardComponent implements OnInit {
     this.disablePortalGroup();
 
     this.form.controls.device.controls.target.valueChanges.pipe(untilDestroyed(this)).subscribe((target) => {
-      if (target === IscsiNewOption.New) {
+      if (target === newOption) {
         this.form.controls.portal.enable();
         this.form.controls.initiator.enable();
       } else {
@@ -339,9 +344,9 @@ export class IscsiWizardComponent implements OnInit {
     }
   }
 
-  handleError(err: WebsocketError): void {
+  handleError(err: unknown): void {
     this.toStop = true;
-    this.dialogService.error(this.errorHandler.parseWsError(err));
+    this.dialogService.error(this.errorHandler.parseError(err));
   }
 
   async onSubmit(): Promise<void> {
@@ -437,63 +442,10 @@ export class IscsiWizardComponent implements OnInit {
     }
 
     this.store$.dispatch(checkIfServiceIsEnabled({ serviceName: ServiceName.Iscsi }));
-    this.checkIfServiceRestartIsNeeded().pipe(untilDestroyed(this)).subscribe({
-      complete: () => {
-        this.loader.close();
-        this.isLoading = false;
-        this.cdr.markForCheck();
-        this.slideInRef.close(true);
-      },
-    });
+
+    this.loader.close();
+    this.isLoading = false;
+    this.cdr.markForCheck();
+    this.slideInRef.close(true);
   }
-
-  checkIfServiceRestartIsNeeded(): Observable<boolean> {
-    return this.store$.select(selectService(ServiceName.Iscsi)).pipe(
-      map((service) => service.state === ServiceStatus.Running),
-      take(1),
-      switchMap(() => this.warnAboutActiveIscsiSessions()),
-      switchMap((confirmed) => {
-        if (confirmed) {
-          this.loader.open();
-          return this.ws.call('service.restart', [ServiceName.Iscsi]).pipe(
-            tap(() => {
-              this.loader.close();
-              this.snackbar.success(
-                this.translateService.instant(
-                  '{name} service has been restarted',
-                  { name: serviceNames.get(ServiceName.Iscsi) },
-                ),
-              );
-            }),
-          );
-        }
-        return of(false);
-      }),
-      untilDestroyed(this),
-    );
-  }
-
-  warnAboutActiveIscsiSessions = (): Observable<boolean> => {
-    return this.iscsiService.getGlobalSessions().pipe(
-      switchMap((sessions) => {
-        if (!sessions.length) {
-          return of(true);
-        }
-        let message = this.translateService.instant(
-          'Stop {serviceName}?',
-          { serviceName: serviceNames.get(ServiceName.Iscsi) },
-        );
-        if (sessions.length) {
-          message = `<font color="red">${this.translateService.instant('There are {sessions} active iSCSI connections.', { sessions: sessions.length })}</font><br>${this.translateService.instant('Restarting the service would mean to stop the {serviceName} service and close these connections?', { serviceName: serviceNames.get(ServiceName.Iscsi) })}`;
-        }
-
-        return this.dialogService.confirm({
-          title: this.translateService.instant('Alert'),
-          message,
-          hideCheckbox: true,
-          buttonText: this.translateService.instant('Restart'),
-        });
-      }),
-    );
-  };
 }

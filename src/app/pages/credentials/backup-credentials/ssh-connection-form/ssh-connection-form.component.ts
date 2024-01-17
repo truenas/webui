@@ -1,18 +1,20 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit, Optional,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnInit,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, of, throwError } from 'rxjs';
+import {
+  Observable, of, throwError,
+} from 'rxjs';
 import {
   catchError, map, switchMap,
 } from 'rxjs/operators';
+import { Role } from 'app/enums/role.enum';
 import { SshConnectionsSetupMethod } from 'app/enums/ssh-connections-setup-method.enum';
 import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
-import helptext from 'app/helptext/system/ssh-connections';
+import { helptextSshConnections } from 'app/helptext/system/ssh-connections';
 import {
   KeychainCredential,
   KeychainCredentialUpdate,
@@ -21,8 +23,7 @@ import {
 import { SshConnectionSetup } from 'app/interfaces/ssh-connection-setup.interface';
 import { SshCredentials } from 'app/interfaces/ssh-credentials.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
-import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
+import { CHAINED_SLIDE_IN_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
@@ -30,6 +31,7 @@ import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
+import { ChainedComponentRef } from 'app/services/ix-chained-slide-in.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -122,7 +124,9 @@ export class SshConnectionFormComponent implements OnInit {
     map((username) => username !== 'root'),
   );
 
-  readonly helptext = helptext;
+  readonly helptext = helptextSshConnections;
+
+  protected readonly Role = Role;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -134,13 +138,11 @@ export class SshConnectionFormComponent implements OnInit {
     private keychainCredentialService: KeychainCredentialService,
     private loader: AppLoaderService,
     private validatorsService: IxValidatorsService,
-    private slideInRef: IxSlideInRef<SshConnectionFormComponent>,
     public formatter: IxFormatterService,
     private dialogService: DialogService,
     private snackbar: SnackbarService,
-    @Optional() public dialogRef: MatDialogRef<SshConnectionFormComponent>,
-    @Optional() @Inject(MAT_DIALOG_DATA) public data: { dialog: boolean },
     @Inject(SLIDE_IN_DATA) private existingConnection: KeychainSshCredentials,
+    @Inject(CHAINED_SLIDE_IN_REF) private chainedSlideInRef: ChainedComponentRef,
   ) { }
 
   ngOnInit(): void {
@@ -179,7 +181,7 @@ export class SshConnectionFormComponent implements OnInit {
             remote_host_key: remoteHostKey,
           });
         },
-        error: (error) => {
+        error: (error: unknown) => {
           this.formErrorHandler.handleWsFormError(error, this.form);
         },
       });
@@ -198,16 +200,9 @@ export class SshConnectionFormComponent implements OnInit {
       next: (newCredential) => {
         this.isLoading = false;
         this.snackbar.success(this.translate.instant('SSH Connection saved'));
-        // TODO: Ideally this form shouldn't care about how it was called
-        if (this.data?.dialog) {
-          if (this.dialogRef) {
-            this.dialogRef.close(newCredential);
-          }
-        } else {
-          this.slideInRef.close(newCredential);
-        }
+        this.chainedSlideInRef.close({ response: newCredential, error: null });
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.isLoading = false;
         this.cdr.markForCheck();
         this.formErrorHandler.handleWsFormError(error, this.form);
@@ -249,7 +244,7 @@ export class SshConnectionFormComponent implements OnInit {
     return this.ws.call('keychaincredential.setup_ssh_connection', [params]).pipe(
       catchError((error: WebsocketError) => {
         if (error.errname.includes(sslCertificationError) || error.reason.includes(sslCertificationError)) {
-          return this.dialogService.error(this.errorHandler.parseWsError(error)).pipe(
+          return this.dialogService.error(this.errorHandler.parseError(error)).pipe(
             switchMap(() => {
               return this.dialogService.confirm({
                 title: this.translate.instant('Confirm'),

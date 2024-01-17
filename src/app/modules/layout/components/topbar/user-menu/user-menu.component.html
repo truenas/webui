@@ -8,12 +8,12 @@
     [matMenuTriggerFor]="userMenu"
   >
     <span
-      *ngIf="user?.username"
+      *ngIf="user?.pw_name"
       class="username"
-      [matTooltip]="user.username"
+      [matTooltip]="user.pw_name"
       [matMenuTriggerFor]="userMenu"
     >
-      {{ user.username }}
+      {{ user.pw_name }}
     </span>
 
     <ix-icon name="account_circle"></ix-icon>
@@ -21,7 +21,7 @@
 
   <mat-menu #userMenu="matMenu">
     <button
-      *ngIf="user?.local"
+      *ngIf="user?.account_attributes.includes(AccountAttribute.Local)"
       name="settings-change-password"
       mat-menu-item
       ixTest="change-password"

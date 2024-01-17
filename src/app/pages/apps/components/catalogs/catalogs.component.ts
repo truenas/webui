@@ -6,7 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, tap } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
-import helptext from 'app/helptext/apps/apps';
+import { helptextApps } from 'app/helptext/apps/apps';
 import { Catalog } from 'app/interfaces/catalog.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
@@ -58,7 +58,9 @@ export class CatalogsComponent implements OnInit {
       propertyName: 'preferred_trains',
       sortable: true,
     }),
-  ]);
+  ], {
+    rowTestId: (row) => 'catalog-' + row.label,
+  });
 
   constructor(
     private matDialog: MatDialog,
@@ -121,9 +123,9 @@ export class CatalogsComponent implements OnInit {
 
   doAdd(): void {
     this.dialogService.confirm({
-      title: helptext.thirdPartyRepoWarning.title,
-      message: helptext.thirdPartyRepoWarning.message,
-      buttonText: helptext.thirdPartyRepoWarning.btnMsg,
+      title: helptextApps.thirdPartyRepoWarning.title,
+      message: helptextApps.thirdPartyRepoWarning.message,
+      buttonText: helptextApps.thirdPartyRepoWarning.btnMsg,
       hideCheckbox: true,
     }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       const slideInRef = this.slideInService.open(CatalogAddFormComponent);
@@ -161,7 +163,7 @@ export class CatalogsComponent implements OnInit {
   onRefreshAll(): void {
     const dialogRef = this.matDialog.open(EntityJobComponent, {
       data: {
-        title: helptext.refreshing,
+        title: helptextApps.refreshing,
       },
     });
     dialogRef.componentInstance.setCall('catalog.sync_all');
@@ -175,7 +177,7 @@ export class CatalogsComponent implements OnInit {
   syncRow(row: Catalog): void {
     const dialogRef = this.matDialog.open(EntityJobComponent, {
       data: {
-        title: helptext.refreshing,
+        title: helptextApps.refreshing,
       },
     });
     dialogRef.componentInstance.setCall('catalog.sync', [row.label]);

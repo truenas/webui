@@ -1,0 +1,36 @@
+<ix-modal-header
+  [title]="'Access Settings' | translate"
+  [loading]="isLoading"
+></ix-modal-header>
+<mat-card>
+  <mat-card-content>
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+      <ix-fieldset>
+        <ix-input
+          formControlName="token_lifetime"
+          type="number"
+          [label]="'Token Lifetime' | translate"
+          [tooltip]="'Time in seconds after which current user session will be disconnected. Interacting with UI extends the session.' | translate"
+        ></ix-input>
+        <ix-checkbox
+          *ngIf="isEnterprise"
+          formControlName="ds_auth"
+          [label]="'Allow Directory Service users to access WebUI' | translate"
+        ></ix-checkbox>
+      </ix-fieldset>
+
+      <ix-form-actions>
+        <button
+          *ixRequiresRoles="[Role.FullAdmin]"
+          mat-button
+          type="submit"
+          color="primary"
+          ixTest="save"
+          [disabled]="form.invalid || isLoading"
+        >
+          {{ 'Save' | translate }}
+        </button>
+      </ix-form-actions>
+    </form>
+  </mat-card-content>
+</mat-card>

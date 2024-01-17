@@ -6,9 +6,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import {
-  distinctUntilChanged,
-  filter, of, switchMap, tap,
+  distinctUntilChanged, EMPTY, switchMap,
 } from 'rxjs';
+import { LoginResult } from 'app/enums/login-result.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { AuthService } from 'app/services/auth/auth.service';
@@ -28,6 +28,7 @@ export class SigninFormComponent implements OnInit {
 
   protected isLastLoginAttemptFailed = false;
   protected isLastOtpAttemptFailed = false;
+  protected lastLoginError: string;
 
   form = this.formBuilder.group({
     username: [''],
@@ -77,45 +78,46 @@ export class SigninFormComponent implements OnInit {
           this.signinStore.setLoadingState(false);
           this.hasTwoFactor = true;
 
-          const message: string = this.translate.instant('2FA has been configured for this account. Enter the OTP to continue.');
+          const message = this.translate.instant('2FA has been configured for this account. Enter the OTP to continue.');
           this.signinStore.showSnackbar(message);
 
           this.cdr.markForCheck();
-          return of(false);
+          return EMPTY;
         }
-        return this.authService.login(formValues.username, formValues.password).pipe(
-          tap((wasLoggedIn) => {
-            if (!wasLoggedIn) {
-              this.handleFailedLogin();
-              this.signinStore.setLoadingState(false);
-              this.cdr.markForCheck();
-            }
-          }),
-        );
+        return this.authService.login(formValues.username, formValues.password);
       }),
-      filter(Boolean),
       untilDestroyed(this),
     ).subscribe({
-      next: () => {
-        this.signinStore.handleSuccessfulLogin();
+      next: (loginResult) => {
+        this.signinStore.setLoadingState(false);
+        if (loginResult === LoginResult.Success) {
+          this.signinStore.handleSuccessfulLogin();
+        } else {
+          this.handleFailedLogin(loginResult);
+          this.cdr.markForCheck();
+        }
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.errorHandler.handleWsFormError(error, this.form);
         this.signinStore.setLoadingState(false);
       },
     });
   }
 
-  private handleFailedLogin(): void {
+  private handleFailedLogin(loginResult: LoginResult): void {
     this.isLastLoginAttemptFailed = true;
     this.cdr.markForCheck();
-    const message: string = this.translate.instant('Wrong username or password. Please try again.');
-    this.signinStore.showSnackbar(message);
+    this.lastLoginError = loginResult === LoginResult.NoAccess
+      ? this.translate.instant('User is lacking permissions to access WebUI.')
+      : this.translate.instant('Wrong username or password. Please try again.');
+    this.signinStore.showSnackbar(this.lastLoginError);
   }
 
-  private handleFailedOtpLogin(): void {
-    const message: string = this.translate.instant('Incorrect or expired OTP. Please try again.');
-    this.signinStore.showSnackbar(message);
+  private handleFailedOtpLogin(loginResult: LoginResult): void {
+    this.lastLoginError = loginResult === LoginResult.NoAccess
+      ? this.translate.instant('User is lacking permissions to access WebUI.')
+      : this.translate.instant('Incorrect or expired OTP. Please try again.');
+    this.signinStore.showSnackbar(this.lastLoginError);
     this.form.patchValue({ otp: '' });
     this.form.controls.otp.updateValueAndValidity();
     this.isLastOtpAttemptFailed = true;
@@ -137,20 +139,18 @@ export class SigninFormComponent implements OnInit {
     this.signinStore.setLoadingState(true);
     const formValues = this.form.value;
     this.authService.login(formValues.username, formValues.password, formValues.otp).pipe(
-      tap((wasLoggedIn) => {
-        if (!wasLoggedIn) {
-          this.handleFailedOtpLogin();
+      untilDestroyed(this),
+    ).subscribe({
+      next: (loginResult) => {
+        if (loginResult === LoginResult.Success) {
+          this.signinStore.handleSuccessfulLogin();
+        } else {
+          this.handleFailedOtpLogin(loginResult);
           this.signinStore.setLoadingState(false);
           this.cdr.markForCheck();
         }
-      }),
-      filter(Boolean),
-      untilDestroyed(this),
-    ).subscribe({
-      next: () => {
-        this.signinStore.handleSuccessfulLogin();
       },
-      error: (error) => {
+      error: (error: unknown) => {
         this.errorHandler.handleWsFormError(error, this.form);
         this.signinStore.setLoadingState(false);
       },

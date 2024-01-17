@@ -407,7 +407,6 @@ function mockConfigReport(options: ReportOptions, mockConfig: MockEnclosureConfi
     process.exit(0);
   }
 
-
   const headers = generateHeaders('current mock configuration');
   const header: string = options.showHeader ? headers.header : '';
   const footer: string = options.showFooter ? headers.footer : '';

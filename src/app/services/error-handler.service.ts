@@ -43,11 +43,14 @@ export class ErrorHandlerService implements ErrorHandler {
   }
 
   parseError(error: unknown): ErrorReport | ErrorReport[] {
-    if (this.isTypeOfWebsocketError(error)) {
+    if (this.isWebsocketError(error)) {
       return this.parseWsError(error);
     }
-    if (this.isTypeOfJobError(error)) {
+    if (this.isJobError(error)) {
       return this.parseJobError(error);
+    }
+    if (this.isHttpError(error)) {
+      return this.parseHttpError(error);
     }
     if (error instanceof Error) {
       return {
@@ -63,7 +66,7 @@ export class ErrorHandlerService implements ErrorHandler {
     Sentry.captureException(sentryCustomExceptionExtraction(error));
   }
 
-  isTypeOfWebsocketError(error: unknown): error is WebsocketError {
+  isWebsocketError(error: unknown): error is WebsocketError {
     return typeof error === 'object'
       && 'error' in error
       && 'extra' in error
@@ -71,7 +74,7 @@ export class ErrorHandlerService implements ErrorHandler {
       && 'trace' in error;
   }
 
-  isTypeOfJobError(obj: unknown): obj is Job {
+  isJobError(obj: unknown): obj is Job {
     return typeof obj === 'object'
     && ('state' in obj
       && 'error' in obj
@@ -79,10 +82,14 @@ export class ErrorHandlerService implements ErrorHandler {
       && 'exc_info' in obj);
   }
 
+  isHttpError(obj: unknown): obj is HttpErrorResponse {
+    return obj instanceof HttpErrorResponse;
+  }
+
   catchError<T>(): MonoTypeOperatorFunction<T> {
     return (source$: Observable<T>) => {
       return source$.pipe(
-        catchError((error: WebsocketError | Job) => {
+        catchError((error: unknown) => {
           this.dialog.error(this.parseError(error));
           return EMPTY;
         }),
@@ -90,7 +97,7 @@ export class ErrorHandlerService implements ErrorHandler {
     };
   }
 
-  parseWsError(error: WebsocketError): ErrorReport {
+  private parseWsError(error: WebsocketError): ErrorReport {
     return {
       title: error.type || error.trace?.class || this.translate.instant('Error'),
       message: error.reason || error?.error?.toString(),
@@ -98,7 +105,7 @@ export class ErrorHandlerService implements ErrorHandler {
     };
   }
 
-  parseJobError(failedJob: Job): ErrorReport | ErrorReport[] {
+  private parseJobError(failedJob: Job): ErrorReport | ErrorReport[] {
     const errorJob = { ...failedJob };
     if (errorJob.exc_info?.extra) {
       errorJob.extra = errorJob.exc_info.extra as Record<string, unknown>;
@@ -149,9 +156,9 @@ export class ErrorHandlerService implements ErrorHandler {
     extractedError: string | WebsocketError | Job,
   ): ErrorReport | ErrorReport[] {
     let parsedError: ErrorReport | ErrorReport[];
-    if (this.isTypeOfWebsocketError(extractedError)) {
+    if (this.isWebsocketError(extractedError)) {
       parsedError = this.parseWsError(extractedError);
-    } else if (this.isTypeOfJobError(extractedError)) {
+    } else if (this.isJobError(extractedError)) {
       parsedError = this.parseJobError(extractedError);
     } else if (typeof extractedError === 'string') {
       parsedError = {
@@ -165,7 +172,7 @@ export class ErrorHandlerService implements ErrorHandler {
 
   private parseHttpErrorObject(error: HttpErrorResponse): ErrorReport[] {
     const errors: ErrorReport[] = [];
-    Object.keys(error.error).forEach((fieldKey) => {
+    Object.keys(error.error as Record<string, string | string[]>).forEach((fieldKey) => {
       const errorEntity = (error.error as Record<string, string | string[]>)[fieldKey];
       if (typeof errorEntity === 'string') {
         errors.push({

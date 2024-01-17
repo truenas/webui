@@ -28,7 +28,9 @@ export class SmbNotificationListComponent implements OnInit {
     textColumn({ title: this.translate.instant('Filter'), propertyName: 'filter' }),
     textColumn({ title: this.translate.instant('Subdir Filter'), propertyName: 'subdir_filter' }),
     textColumn({ title: this.translate.instant('Creation Time'), propertyName: 'creation_time' }),
-  ]);
+  ], {
+    rowTestId: (row) => 'smb-notification-' + row.creation_time + '-' + row.server_id.unique_id,
+  });
 
   constructor(
     private ws: WebSocketService,
