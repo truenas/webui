@@ -1,12 +1,3 @@
-<ix-input
-  [formControl]="title"
-  [label]="'Subject' | translate"
-  [tooltip]="tooltips.title | translate"
-  [placeholder]="tooltips.title | translate"
-  [required]="true"
-  [hint]="hint$ | async"
-></ix-input>
-
 <div *ngIf="hasSimilarIssues$ | async as issues" class="similar-issues">
   <div *ngIf="issues.length" class="similar-issues-header">
     <div class="similar-issues-title">
@@ -26,9 +17,9 @@
     >
       <span
         class="issue-type-icon"
-        [style.background-image]="'url(https://ixsystems.atlassian.net' + issue.img + ')'"
+        [style.background-image]="'url(' + jiraHostname + issue.img + ')'"
       ></span>
-      <span [innerHTML]="sanitizeHtml(issue.summary)"></span>
+      <span class="issue-summary">{{ issue.summaryText }}</span>
       <ix-icon name="mdi-open-in-new"></ix-icon>
     </a>
   </div>
