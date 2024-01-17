@@ -444,7 +444,7 @@ export class IscsiWizardComponent implements OnInit {
         if (iscsiService.state === ServiceStatus.Stopped) {
           return this.startAndEnableService(iscsiService);
         }
-        return of();
+        return of(null);
       }),
     );
   }
