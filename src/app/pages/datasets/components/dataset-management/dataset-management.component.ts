@@ -235,7 +235,8 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
       .subscribe({
         next: (selectedBranch: DatasetDetails[]) => {
           selectedBranch.forEach((datasetFromSelectedBranch) => {
-            const expandedDataset = this.dataSource.data.find((dataset) => dataset.id === datasetFromSelectedBranch.id);
+            const expandedDataset = this.treeControl.dataNodes
+              .find((dataset) => dataset.id === datasetFromSelectedBranch.id);
             this.treeControl.expand(expandedDataset);
           });
         },
