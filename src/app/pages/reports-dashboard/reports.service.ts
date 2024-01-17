@@ -136,7 +136,8 @@ export class ReportsService {
           .map((disk) => {
             const [value] = disk.devname.split(' ');
             return { label: disk.devname, value };
-          });
+          })
+          .sort((a, b) => a.label.localeCompare(b.label));
       }),
       shareReplay({ refCount: true, bufferSize: 1 }),
     );
