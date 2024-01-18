@@ -9,6 +9,7 @@ import { ShowLogsDialogComponent } from 'app/modules/common/dialog/show-logs-dia
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { Column, ColumnComponent } from 'app/modules/ix-table2/interfaces/table-column.interface';
 import { DialogService } from 'app/services/dialog.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 interface RowState {
   state: {
@@ -29,12 +30,14 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> {
   matDialog: MatDialog;
   translate: TranslateService;
   dialogService: DialogService;
+  errorHandler: ErrorHandlerService;
 
   constructor() {
     super();
     this.matDialog = inject(MatDialog);
     this.translate = inject(TranslateService);
     this.dialogService = inject(DialogService);
+    this.errorHandler = inject(ErrorHandlerService);
   }
 
   getWarnings?: (row: T) => unknown[];
@@ -72,8 +75,9 @@ export class IxCellStateButtonComponent<T> extends ColumnComponent<T> {
         dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
           dialogRef.close();
         });
-        dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe(() => {
+        dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
           dialogRef.close();
+          this.errorHandler.showErrorModal(error);
         });
         dialogRef.componentInstance.aborted.pipe(untilDestroyed(this)).subscribe(() => {
           dialogRef.close();

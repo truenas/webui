@@ -22,6 +22,7 @@ import {
   ManageCatalogSummaryDialogComponent,
 } from 'app/pages/apps/components/catalogs/manage-catalog-summary/manage-catalog-summary-dialog.component';
 import { DialogService } from 'app/services/dialog.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { CatalogEditFormComponent } from './catalog-edit-form/catalog-edit-form.component';
@@ -69,6 +70,7 @@ export class CatalogsComponent implements OnInit {
     private slideInService: IxSlideInService,
     private translate: TranslateService,
     protected emptyService: EmptyService,
+    private errorHandler: ErrorHandlerService,
   ) {}
 
   ngOnInit(): void {
@@ -172,6 +174,10 @@ export class CatalogsComponent implements OnInit {
       this.dialogService.closeAllDialogs();
       this.refresh();
     });
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
+      dialogRef.close();
+      this.errorHandler.showErrorModal(error);
+    });
   }
 
   syncRow(row: Catalog): void {
@@ -185,6 +191,10 @@ export class CatalogsComponent implements OnInit {
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.dialogService.closeAllDialogs();
       this.refresh();
+    });
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
+      dialogRef.close();
+      this.errorHandler.showErrorModal(error);
     });
   }
 }
