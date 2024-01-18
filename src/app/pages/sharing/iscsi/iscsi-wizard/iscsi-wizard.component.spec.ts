@@ -62,7 +62,6 @@ describe('IscsiWizardComponent', () => {
         mockCall('service.update'),
         mockCall('service.start'),
         mockCall('iscsi.global.sessions', [] as IscsiGlobalSession[]),
-        mockCall('service.restart'),
         mockCall('iscsi.extent.query', []),
         mockCall('iscsi.target.query', []),
         mockCall('iscsi.portal.query', []),
