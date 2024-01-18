@@ -49,7 +49,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
         this.allTabs = this.reportsService.getReportTabs();
         this.allReports = reports.map((report) => {
           const list = [];
-          if (report.identifiers) {
+          if (report.identifiers?.length) {
             report.identifiers.forEach(() => list.push(true));
           } else {
             list.push(true);
@@ -131,7 +131,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
             condition = ReportingGraphName.Target === graphName;
             break;
           case ReportType.Ups:
-            condition = report.name.startsWith(ReportingGraphName.Ups);
+            condition = graphName.startsWith(ReportingGraphName.Ups);
             break;
           case ReportType.Zfs:
             condition = [
@@ -144,6 +144,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
             break;
           default:
             condition = true;
+            break;
         }
 
         return condition;
@@ -166,7 +167,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
     const result: Report[] = [];
     list.forEach((report) => {
       // With identifiers
-      if (report.identifiers) {
+      if (report.identifiers?.length) {
         report.identifiers.forEach((identifier, index) => {
           const flattenedReport = { ...report };
 
@@ -182,7 +183,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
             result.push(flattenedReport);
           }
         });
-      } else if (!report.identifiers && report.isRendered[0]) {
+      } else if (!report.identifiers?.length && report.isRendered[0]) {
         // Without identifiers
         const flattenedReport = { ...report };
         flattenedReport.identifiers = [];
