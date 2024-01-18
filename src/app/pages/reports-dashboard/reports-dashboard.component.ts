@@ -191,7 +191,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy {
       }
     });
 
-    return result;
+    return result.sort((a, b) => a.identifiers?.[0]?.localeCompare(b.identifiers?.[0]));
   }
 
   buildDiskMetrics(): void {
