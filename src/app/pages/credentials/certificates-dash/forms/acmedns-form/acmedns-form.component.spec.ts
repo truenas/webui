@@ -69,7 +69,7 @@ describe('AcmednsFormComponent', () => {
           key: 'route53' as DnsAuthenticatorType,
           schema: [
             {
-              _name_: 'access_key_id', _required_: true, title: 'Access Key Id', type: 'string',
+              _name_: 'access_key_id', _required_: true, title: 'Access Key ID', type: 'string',
             },
             {
               _name_: 'secret_access_key', _required_: true, title: 'Secret Access Key', type: 'string',
@@ -111,14 +111,14 @@ describe('AcmednsFormComponent', () => {
       expect(values).toEqual({
         Name: 'name_test',
         Authenticator: 'route53',
-        'Access Key Id': 'access_key_id',
+        'Access Key ID': 'access_key_id',
         'Secret Access Key': 'secret_access_key',
       });
 
       expect(disabledState).toEqual({
         Name: false,
         Authenticator: false,
-        'Access Key Id': false,
+        'Access Key ID': false,
         'Secret Access Key': false,
       });
     });
