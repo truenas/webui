@@ -57,6 +57,7 @@ import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-ta
 import { SnapshotTaskListComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-list/snapshot-task-list.component';
 import { VmwareSnapshotFormComponent } from 'app/pages/data-protection/vmware-snapshot/vmware-snapshot-form/vmware-snapshot-form.component';
 import { VmwareSnapshotListComponent } from 'app/pages/data-protection/vmware-snapshot/vmware-snapshot-list/vmware-snapshot-list.component';
+import { VmwareStatusCellComponent } from 'app/pages/data-protection/vmware-snapshot/vmware-snapshot-list/vmware-status-cell/vmware-status-cell.component';
 import { CloudsyncFormComponent } from './cloudsync/cloudsync-form/cloudsync-form.component';
 import { CloudsyncListComponent } from './cloudsync/cloudsync-list/cloudsync-list.component';
 import { CloudsyncWizardComponent } from './cloudsync/cloudsync-wizard/cloudsync-wizard.component';
@@ -84,6 +85,7 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
     EntityModule,
     ReactiveFormsModule,
     MatProgressBarModule,
+    MatTooltipModule,
     MatCardModule,
     TranslateModule,
     IxTable2Module,
@@ -109,6 +111,7 @@ import { SmartTaskListComponent } from './smart-task/smart-task-list/smart-task-
     SnapshotTaskFormComponent,
     VmwareSnapshotFormComponent,
     VmwareSnapshotListComponent,
+    VmwareStatusCellComponent,
     RsyncTaskListComponent,
     RsyncTaskFormComponent,
     SmartTaskListComponent,
