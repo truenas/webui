@@ -134,7 +134,7 @@ export class SessionsCardComponent {
   asDuration(tokenLifetime: number): string {
     const duration = intervalToDuration({ start: 0, end: tokenLifetime * 1000 });
     return formatDuration(duration, {
-      format: ['hours', 'minutes', 'seconds'],
+      format: ['days', 'hours', 'minutes', 'seconds'],
     });
   }
 
