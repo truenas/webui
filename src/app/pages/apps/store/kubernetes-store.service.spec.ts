@@ -17,7 +17,7 @@ describe('KubernetesStore', () => {
         getKubernetesConfig: jest.fn(() => {
           return of({ pool: 'ix-applications-pool' } as KubernetesConfig);
         }) as () => Observable<KubernetesConfig>,
-        getKubernetesServiceStarted: jest.fn(() => of(true)) as () => Observable<boolean>,
+        getKubernetesServiceStarted: jest.fn(() => of(false)) as () => Observable<boolean>,
       }),
     ],
   });
@@ -39,7 +39,7 @@ describe('KubernetesStore', () => {
   it('emits the kubernetes status', () => {
     testScheduler.run(({ expectObservable }) => {
       expectObservable(spectator.service.isKubernetesStarted$).toBe('a', {
-        a: true,
+        a: false,
       });
     });
   });
