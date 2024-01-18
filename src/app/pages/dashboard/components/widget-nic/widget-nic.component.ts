@@ -183,22 +183,22 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
       multiplier *= 1000;
       bits = bits / multiplier;
     }
-    let label = '';
+    let label = bits.toFixed(1);
     switch (true) {
       case multiplier < 1000:
-        label = `${bits} b`;
+        label += ' b';
         break;
       case multiplier < 1000 * 1000:
-        label = `${bits} kb`;
+        label += ' kb';
         break;
       case multiplier < 1000 * 1000 * 1000:
-        label = `${bits} Mb`;
+        label += ' Mb';
         break;
       case multiplier < 1000 * 1000 * 1000 * 1000:
-        label = `${bits} Gb`;
+        label += ' Gb';
         break;
       case multiplier < 1000 * 1000 * 1000 * 1000 * 1000:
-        label = `${bits} Tb`;
+        label += ' Tb';
         break;
     }
     return label;

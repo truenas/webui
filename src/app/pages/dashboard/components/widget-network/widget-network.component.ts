@@ -488,22 +488,22 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
       multiplier *= 1000;
       bits = bits / multiplier;
     }
-    let label = '';
+    let label = bits.toFixed(1);
     switch (true) {
       case multiplier < 1000:
-        label = `${bits} b/s`;
+        label += ' b/s';
         break;
       case multiplier < 1000 * 1000:
-        label = `${bits} kb/s`;
+        label += ' kb/s';
         break;
       case multiplier < 1000 * 1000 * 1000:
-        label = `${bits} Mb/s`;
+        label += ' Mb/s';
         break;
       case multiplier < 1000 * 1000 * 1000 * 1000:
-        label = `${bits} Gb/s`;
+        label += ' Gb/s';
         break;
       case multiplier < 1000 * 1000 * 1000 * 1000 * 1000:
-        label = `${bits} Tb/s`;
+        label += ' Tb/s';
         break;
     }
     return label;
