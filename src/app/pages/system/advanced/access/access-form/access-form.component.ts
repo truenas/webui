@@ -29,8 +29,8 @@ export class AccessFormComponent implements OnInit {
   form = this.fb.group({
     token_lifetime: [defaultPreferences.lifetime, [
       Validators.required,
-      Validators.min(30),
-      Validators.max(Math.floor(2 ** 31 / 1000 - 1)), // Max value for setTimeout
+      Validators.min(30), // Min value allowed is 30 seconds.
+      Validators.max(2147482), // Max value is 2147482 seconds, or 24 days, 20 hours, 31 minutes, and 22 seconds.
     ]],
     ds_auth: [false],
   });
@@ -38,6 +38,7 @@ export class AccessFormComponent implements OnInit {
   get isEnterprise(): boolean {
     return this.systemGeneralService.isEnterprise;
   }
+
   protected readonly Role = Role;
 
   constructor(

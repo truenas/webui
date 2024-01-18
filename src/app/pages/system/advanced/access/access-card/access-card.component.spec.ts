@@ -60,7 +60,7 @@ describe('AccessCardComponent', () => {
           {
             selector: selectPreferences,
             value: {
-              lifetime: 60,
+              lifetime: 2147482,
             },
           },
           {
@@ -93,7 +93,7 @@ describe('AccessCardComponent', () => {
 
   it('shows current token lifetime', async () => {
     const lifetime = (await loader.getAllHarnesses(MatListItemHarness))[0];
-    expect(await lifetime.getFullText()).toBe('Token Lifetime: 1 minute');
+    expect(await lifetime.getFullText()).toBe('Token Lifetime: 24 days 20 hours 31 minutes 22 seconds');
   });
 
   it('shows whether DS users are allowed access to WebUI', async () => {
