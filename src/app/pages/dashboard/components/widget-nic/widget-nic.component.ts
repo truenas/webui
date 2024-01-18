@@ -186,19 +186,19 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
     let label = '';
     switch (true) {
       case multiplier < 1000:
-        label = `${bits} b/s`;
+        label = `${bits} b`;
         break;
       case multiplier < 1000 * 1000:
-        label = `${bits} kb/s`;
+        label = `${bits} kb`;
         break;
       case multiplier < 1000 * 1000 * 1000:
-        label = `${bits} Mb/s`;
+        label = `${bits} Mb`;
         break;
       case multiplier < 1000 * 1000 * 1000 * 1000:
-        label = `${bits} Gb/s`;
+        label = `${bits} Gb`;
         break;
       case multiplier < 1000 * 1000 * 1000 * 1000 * 1000:
-        label = `${bits} Tb/s`;
+        label = `${bits} Tb`;
         break;
     }
     return label;
