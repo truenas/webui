@@ -1,7 +1,13 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import {
+  ChangeDetectionStrategy, Component, OnInit,
+} from '@angular/core';
+import {
+  ActivatedRoute, NavigationEnd, NavigationSkipped, Router,
+} from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Observable, take, timer } from 'rxjs';
+import {
+  Observable, filter, switchMap, take, timer,
+} from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -11,26 +17,51 @@ import { WebSocketService } from 'app/services/ws.service';
   styleUrls: ['./advanced-settings.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AdvancedSettingsComponent implements AfterViewInit {
+export class AdvancedSettingsComponent implements OnInit {
   isSystemLicensed$: Observable<boolean> = this.ws.call('system.security.info.fips_available');
   protected readonly Role = Role;
-  constructor(private route: ActivatedRoute, private ws: WebSocketService) {}
 
-  ngAfterViewInit(): void {
-    this.route.fragment.pipe(untilDestroyed(this)).subscribe((fragment: string) => {
-      const sessionsContainer = document.getElementById('sessions-card');
+  constructor(
+    private ws: WebSocketService,
+    private router: Router,
+    private route: ActivatedRoute,
+  ) {}
 
-      if (fragment === 'sessions' && sessionsContainer) {
+  ngOnInit(): void {
+    this.handleFragment(this.route.snapshot.fragment);
+
+    this.router.events.pipe(
+      filter((event) => event instanceof NavigationEnd || event instanceof NavigationSkipped),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.handleFragment(this.route.snapshot.fragment);
+    });
+  }
+
+  private handleFragment(fragment: string): void {
+    if (fragment === 'access') {
+      const sessionsContainer = document.getElementById('access-card');
+      if (sessionsContainer) {
         this.handleHashScrollIntoView(sessionsContainer);
       }
-    });
+    }
   }
 
   private handleHashScrollIntoView(container: HTMLElement): void {
     const highlightedClass = 'highlighted-card';
 
-    container?.scrollIntoView({ block: 'center' });
-    container.classList.add(highlightedClass);
-    timer(2000).pipe(take(1), untilDestroyed(this)).subscribe(() => container.classList.remove(highlightedClass));
+    timer(100).pipe(
+      take(1),
+      switchMap(() => {
+        container?.scrollIntoView({ block: 'center' });
+        container.classList.add(highlightedClass);
+        return timer(2000);
+      }),
+      untilDestroyed(this),
+    ).subscribe(() => container.classList.remove(highlightedClass));
+  }
+
+  viewSessionsCard(): void {
+    this.router.navigate(['/system', 'advanced'], { fragment: 'access' });
   }
 }
