@@ -2050,6 +2050,7 @@
   "Minutes when this task will run.": "",
   "Minutes/Hours": "",
   "Minutes/Hours/Days": "",
+  "Missing group {gid}": "",
   "Missing permissions for this action": "",
   "Mixed Capacity": "",
   "Mixing disks of different sizes in a vdev is not recommended.": "",

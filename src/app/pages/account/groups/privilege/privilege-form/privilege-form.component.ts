@@ -105,7 +105,9 @@ export class PrivilegeFormComponent implements OnInit {
   setPrivilegeForEdit(): void {
     this.form.patchValue({
       ...this.existingPrivilege,
-      local_groups: this.existingPrivilege.local_groups.map((group) => group.group),
+      local_groups: this.existingPrivilege.local_groups.map(
+        (group) => group.group || this.translate.instant('Missing group {gid}', { gid: group.gid }),
+      ),
       ds_groups: this.existingPrivilege.ds_groups.map((group) => group.group),
     });
     this.cdr.markForCheck();
