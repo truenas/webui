@@ -89,6 +89,7 @@
   <ix-export-button
     *ngIf="dataProvider.totalRows"
     method="audit.export"
+    coreDownloadMethod="audit.download_report"
     [searchQuery]="searchQuery"
     [sorting]="dataProvider.sorting"
     [defaultFilters]="basicQueryFilters"

@@ -5,6 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { catchError, EMPTY, switchMap } from 'rxjs';
 import { ExportFormat } from 'app/enums/export-format.enum';
 import { JobState } from 'app/enums/job-state.enum';
+import { ApiCallDirectory } from 'app/interfaces/api/api-call-directory.interface';
 import { ApiJobMethod, ApiJobParams } from 'app/interfaces/api/api-job-directory.interface';
 import { PropertyPath } from 'app/interfaces/property-path.type';
 import { QueryFilters, QueryOptions } from 'app/interfaces/query-api.interface';
@@ -20,10 +21,12 @@ import { WebSocketService } from 'app/services/ws.service';
 @Component({
   selector: 'ix-export-button',
   templateUrl: './export-button.component.html',
+  styleUrls: ['./export-button.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ExportButtonComponent<T, M extends ApiJobMethod> {
   @Input() method: M;
+  @Input() coreDownloadMethod: keyof ApiCallDirectory;
   @Input() searchQuery: SearchQuery<T>;
   @Input() defaultFilters: QueryFilters<T>;
   @Input() sorting: TableSort<T>;
@@ -46,7 +49,6 @@ export class ExportButtonComponent<T, M extends ApiJobMethod> {
       this.getQueryOptions(this.sorting),
     )).pipe(
       switchMap((job) => {
-        this.isLoading = false;
         this.cdr.markForCheck();
         if (job.state === JobState.Failed) {
           this.dialogService.error(this.errorHandler.parseError(job));
@@ -56,11 +58,9 @@ export class ExportButtonComponent<T, M extends ApiJobMethod> {
           return EMPTY;
         }
         const url = job.result as string;
-        return this.ws.call('core.download', [this.method, [{}], url]);
+        return this.ws.call('core.download', [this.coreDownloadMethod || this.method, [{}], url]);
       }),
-      switchMap(([, url]) => {
-        return this.storage.downloadUrl(url, `${this.filename}.csv`, 'text/csv');
-      }),
+      switchMap(([, url]) => this.storage.downloadUrl(url, `${this.filename}.csv`, 'text/csv')),
       catchError((error) => {
         this.isLoading = false;
         this.cdr.markForCheck();
@@ -68,7 +68,9 @@ export class ExportButtonComponent<T, M extends ApiJobMethod> {
         return EMPTY;
       }),
       untilDestroyed(this),
-    ).subscribe();
+    ).subscribe(() => {
+      this.isLoading = false;
+    });
   }
 
   private getExportParams(
