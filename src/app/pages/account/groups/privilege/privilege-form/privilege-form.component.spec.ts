@@ -25,7 +25,11 @@ describe('PrivilegeFormComponent', () => {
     id: 10,
     name: 'privilege',
     web_shell: true,
-    local_groups: [{ gid: 111, group: 'Group A' }, { gid: 222, group: 'Group B' }],
+    local_groups: [
+      { gid: 111, group: 'Group A' },
+      { gid: 222, group: 'Group B' },
+      { gid: 333, group: null },
+    ],
     ds_groups: [],
     roles: [Role.ReadonlyAdmin],
   } as Privilege;
@@ -116,7 +120,7 @@ describe('PrivilegeFormComponent', () => {
       expect(values).toEqual({
         Name: 'privilege',
         'Web Shell Access': true,
-        'Local Groups': ['Group A', 'Group B'],
+        'Local Groups': ['Group A', 'Group B', 'Missing group 333'],
         'Directory Services Groups': [],
         Roles: ['Readonly Admin'],
       });
