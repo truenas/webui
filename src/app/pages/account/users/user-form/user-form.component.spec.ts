@@ -253,7 +253,6 @@ describe('UserFormComponent', () => {
     it('sends an update payload to websocket and closes modal when save is pressed', async () => {
       const form = await loader.getHarness(IxFormHarness);
       await form.fillForm({
-        'Auxiliary Groups': ['mock-group', 'test-group'],
         'Full Name': 'updated',
         'Home Directory': '/home/updated',
         'Primary Group': 'mock-group',
@@ -266,6 +265,10 @@ describe('UserFormComponent', () => {
         'Allowed sudo commands': ['pwd'],
         'Allowed sudo commands with no password': [],
         'Allow all sudo commands with no password': true,
+      });
+
+      await form.fillForm({
+        'Auxiliary Groups': ['mock-group', 'test-group'],
       });
 
       await form.fillForm({
