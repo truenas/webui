@@ -26,11 +26,11 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class ExportButtonComponent<T, M extends ApiJobMethod> {
   @Input() method: M;
-  @Input() coreDownloadMethod: keyof ApiCallDirectory;
   @Input() searchQuery: SearchQuery<T>;
   @Input() defaultFilters: QueryFilters<T>;
   @Input() sorting: TableSort<T>;
   @Input() filename = 'data';
+  @Input() coreDownloadMethod?: keyof ApiCallDirectory;
 
   isLoading = false;
 
