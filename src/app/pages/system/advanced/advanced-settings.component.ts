@@ -1,12 +1,14 @@
+import { DOCUMENT } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, OnInit,
+  AfterViewInit,
+  ChangeDetectionStrategy, Component, Inject, OnInit,
 } from '@angular/core';
 import {
   ActivatedRoute, NavigationEnd, NavigationSkipped, Router,
 } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
-  Observable, filter, switchMap, take, timer,
+  Observable, filter, take, timer,
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { WebSocketService } from 'app/services/ws.service';
@@ -17,7 +19,7 @@ import { WebSocketService } from 'app/services/ws.service';
   styleUrls: ['./advanced-settings.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AdvancedSettingsComponent implements OnInit {
+export class AdvancedSettingsComponent implements OnInit, AfterViewInit {
   isSystemLicensed$: Observable<boolean> = this.ws.call('system.security.info.fips_available');
   protected readonly Role = Role;
 
@@ -25,11 +27,10 @@ export class AdvancedSettingsComponent implements OnInit {
     private ws: WebSocketService,
     private router: Router,
     private route: ActivatedRoute,
+    @Inject(DOCUMENT) private document: Document,
   ) {}
 
   ngOnInit(): void {
-    this.handleFragment(this.route.snapshot.fragment);
-
     this.router.events.pipe(
       filter((event) => event instanceof NavigationEnd || event instanceof NavigationSkipped),
       untilDestroyed(this),
@@ -38,9 +39,13 @@ export class AdvancedSettingsComponent implements OnInit {
     });
   }
 
+  ngAfterViewInit(): void {
+    this.handleFragment(this.route.snapshot.fragment);
+  }
+
   private handleFragment(fragment: string): void {
     if (fragment === 'access') {
-      const sessionsContainer = document.getElementById('access-card');
+      const sessionsContainer = this.document.getElementById('access-card');
       if (sessionsContainer) {
         this.handleHashScrollIntoView(sessionsContainer);
       }
@@ -50,18 +55,11 @@ export class AdvancedSettingsComponent implements OnInit {
   private handleHashScrollIntoView(container: HTMLElement): void {
     const highlightedClass = 'highlighted-card';
 
-    timer(100).pipe(
+    container?.scrollIntoView({ block: 'center' });
+    container.classList.add(highlightedClass);
+    timer(2000).pipe(
       take(1),
-      switchMap(() => {
-        container?.scrollIntoView({ block: 'center' });
-        container.classList.add(highlightedClass);
-        return timer(2000);
-      }),
       untilDestroyed(this),
     ).subscribe(() => container.classList.remove(highlightedClass));
-  }
-
-  viewSessionsCard(): void {
-    this.router.navigate(['/system', 'advanced'], { fragment: 'access' });
   }
 }
