@@ -8,6 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { ChartData, ChartOptions } from 'chart.js';
 import { sub } from 'date-fns';
 import { utcToZonedTime } from 'date-fns-tz';
+import prettyBytes from 'pretty-bytes';
 import { Subscription, timer } from 'rxjs';
 import {
   filter, map, skipWhile, take, throttleTime,
@@ -103,7 +104,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
             if (tooltipItem.parsed.y === 0) {
               label += 0;
             } else {
-              label = this.getSpeedLabel(Number(tooltipItem.parsed.y));
+              label = prettyBytes(Number(tooltipItem.parsed.y), { bits: true }) + '/s';
             }
             return label;
           },
@@ -133,7 +134,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
             if (value === 0) {
               return 0;
             }
-            return this.getSpeedLabel(value as number);
+            return prettyBytes(value as number, { bits: true });
           },
         },
       },
@@ -479,33 +480,5 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
 
   getIpAddressTooltip(nic: BaseNetworkInterface): string {
     return `${this.translate.instant('IP Address')}: ${this.getIpAddress(nic)}`;
-  }
-
-  protected getSpeedLabel(value: number): string {
-    let bits = Math.abs(value);
-    let multiplier = 1;
-    while (bits >= 1000) {
-      multiplier *= 1000;
-      bits = bits / multiplier;
-    }
-    let label = bits.toFixed(1);
-    switch (true) {
-      case multiplier < 1000:
-        label += ' b/s';
-        break;
-      case multiplier < 1000 * 1000:
-        label += ' kb/s';
-        break;
-      case multiplier < 1000 * 1000 * 1000:
-        label += ' Mb/s';
-        break;
-      case multiplier < 1000 * 1000 * 1000 * 1000:
-        label += ' Gb/s';
-        break;
-      case multiplier < 1000 * 1000 * 1000 * 1000 * 1000:
-        label += ' Tb/s';
-        break;
-    }
-    return label;
   }
 }

@@ -6,6 +6,7 @@ import { utcToZonedTime } from 'date-fns-tz';
 import Dygraph, { dygraphs } from 'dygraphs';
 // eslint-disable-next-line
 import smoothPlotter from 'dygraphs/src/extras/smooth-plotter.js';
+import prettyBytes from 'pretty-bytes';
 import {
   GiB, KiB, MiB, TiB,
 } from 'app/constants/bytes.constant';
@@ -178,6 +179,9 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
   }
 
   formatAxisName(): string {
+    if (this.report.name === ReportingGraphName.NetworkInterface) {
+      return this.yLabelPrefix + '/s';
+    }
     switch (true) {
       case this.labelY.toLowerCase() === 'seconds':
         return 'Days';
@@ -264,13 +268,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   axisLabelFormatter = (numero: number): string => {
     if (this.report?.name === ReportingGraphName.NetworkInterface) {
-      let rate = numero;
-      let unitMultiplier = 1;
-      while (rate >= 1000) {
-        unitMultiplier *= 1000;
-        rate = rate / unitMultiplier;
-      }
-      return `${this.limitDecimals(rate)}`;
+      return prettyBytes(numero * 1000, { bits: true }).split(' ')[0];
     }
     const converted = this.formatLabelValue(numero, this.inferUnits(this.labelY), 1, true, true);
     const suffix = converted.suffix ? converted.suffix : '';
@@ -296,29 +294,10 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   legendFormatter = (legend: dygraphs.LegendData): string => {
     const clone = { ...legend } as LegendDataWithStackedTotalHtml;
-    clone.series.forEach((item: dygraphs.SeriesLegendData, index: number) => {
+    clone.series.forEach((item: dygraphs.SeriesLegendData, index: number): void => {
       if (!item.y) { return; }
       if (this.report.name === ReportingGraphName.NetworkInterface) {
-        let bits = item.y;
-        let multiplier = 1;
-        while (bits >= 1000) {
-          multiplier *= 1000;
-          bits = bits / multiplier;
-        }
-        switch (true) {
-          case multiplier < 1000:
-            clone.series[index].yHTML = `${this.limitDecimals(bits)} kb/s`;
-            break;
-          case multiplier < 1000 * 1000:
-            clone.series[index].yHTML = `${this.limitDecimals(bits)} Mb/s`;
-            break;
-          case multiplier < 1000 * 1000 * 1000:
-            clone.series[index].yHTML = `${this.limitDecimals(bits)} Gb/s`;
-            break;
-          case multiplier < 1000 * 1000 * 1000 * 1000:
-            clone.series[index].yHTML = `${this.limitDecimals(bits)} Tb/s`;
-            break;
-        }
+        clone.series[index].yHTML = prettyBytes(item.y * 1000, { bits: true }) + '/s';
       } else {
         const yConverted = this.formatLabelValue(item.y, this.inferUnits(this.labelY), 1, true);
         const ySuffix = this.getSuffix(yConverted);
@@ -348,26 +327,10 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
     if (dygraph.axes_.length) {
       const numero = dygraph.axes_[0].maxyval;
       if (this.report?.name === ReportingGraphName.NetworkInterface) {
-        let unitMultiplier = 1;
-        let rate = numero;
-        while (rate >= 1000) {
-          unitMultiplier *= 1000;
-          rate = rate / unitMultiplier;
-        }
-        switch (true) {
-          case unitMultiplier < 1000:
-            this.yLabelPrefix = 'Kilo';
-            break;
-          case unitMultiplier < 1000 * 1000:
-            this.yLabelPrefix = 'Mega';
-            break;
-          case unitMultiplier < 1000 * 1000 * 1000:
-            this.yLabelPrefix = 'Giga';
-            break;
-          case unitMultiplier < 1000 * 1000 * 1000 * 1000:
-            this.yLabelPrefix = 'Tera';
-            break;
-        }
+        this.yLabelPrefix = prettyBytes(
+          numero * 1000,
+          { bits: true, space: true },
+        ).split(' ')[1];
         return;
       }
       const converted = this.formatLabelValue(numero, this.inferUnits(this.labelY));
