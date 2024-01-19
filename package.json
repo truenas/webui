@@ -148,6 +148,7 @@
     "pixi-filters": "~2.7.1",
     "pixi.js": "~4.7.1",
     "popmotion": "~8.7.1",
+    "pretty-bytes": "~6.1.1",
     "rxjs": "~7.8.1",
     "stylefire": "~7.0.2",
     "text-security": "~3.2.1",

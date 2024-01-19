@@ -1,5 +1,6 @@
 import { dygraphs } from 'dygraphs';
 import _ from 'lodash';
+import prettyBytes from 'pretty-bytes';
 import {
   TiB, GiB, MiB, KiB,
 } from 'app/constants/bytes.constant';
@@ -19,7 +20,10 @@ export function formatLegendSeries(
 ): dygraphs.SeriesLegendData[] {
   if (data?.name === (ReportingGraphName.NetworkInterface as string)) {
     series.forEach((element) => {
-      element.yHTML = formatInterfaceUnit(element.yHTML);
+      if (!element.yHTML) {
+        return;
+      }
+      element.yHTML = prettyBytes(Number(element.yHTML) * 1000, { bits: true }) + '/s';
     });
   }
   return series;
