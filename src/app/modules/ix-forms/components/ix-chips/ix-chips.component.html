@@ -32,6 +32,7 @@
       [matAutocomplete]="auto"
       [matChipInputFor]="chipList"
       [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+      [matChipInputAddOnBlur]="allowNewEntries || !resolveValue"
       (blur)="onInputBlur()"
       (matChipInputTokenEnd)="allowNewEntries ? onAdd($event.value) : null"
     />
