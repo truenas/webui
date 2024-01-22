@@ -49,8 +49,10 @@ jobs:
         run: |
           if [[ "${{ steps.filter.outputs.translations }}" == 'true' ]] && [[ "${{ steps.filter.outputs.other }}" == 'false' ]]; then
             echo "translations-only=true" >> $GITHUB_ENV
+            echo "::set-output name=translations-only::true"
           else
             echo "translations-only=false" >> $GITHUB_ENV
+            echo "::set-output name=translations-only::false"
           fi
 
   build:
