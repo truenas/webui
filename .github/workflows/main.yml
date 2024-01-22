@@ -25,7 +25,7 @@ jobs:
     name: Check if translations only were changed
     runs-on: ubuntu-latest
     outputs:
-      translations-only: ${{ steps.set-output.outputs.translations-only }}
+      translations-only: ${{ steps.filter.outputs.translations-only }}
     steps:
       - uses: actions/checkout@v3
 
