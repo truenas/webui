@@ -25,7 +25,7 @@ jobs:
     name: Check if translations only were changed
     runs-on: ubuntu-latest
     outputs:
-      translations-only: ${{ steps.filter.outputs.translations-only }}
+      translations-only: ${{ steps.set-output.outputs.translations-only }}
     steps:
       - uses: actions/checkout@v3
 
@@ -33,13 +33,19 @@ jobs:
         uses: dorny/paths-filter@v2
         with:
           filters: |
-            translations-only:
+            all:
+              - '**'
+            translations:
               - 'src/assets/i18n/**'
-              - '!**/*.*'  # Exclude all other file types
 
-      - name: Debug output
+      - name: Set output
+        id: set-output
         run: |
-          echo "Translations: ${{ steps.filter.outputs.translations-only }}"
+          if [[ "${{ steps.filter.outputs.translations }}" == 'true' ]] && [[ "${{ steps.filter.outputs.all }}" == 'src/assets/i18n/**' ]]; then
+            echo "translations-only=true" >> $GITHUB_ENV
+          else
+            echo "translations-only=false" >> $GITHUB_ENV
+          fi
 
   build:
     name: Build
