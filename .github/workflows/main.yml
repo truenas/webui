@@ -44,7 +44,7 @@ jobs:
 
       - name: Debug translations-only
         run: |
-          echo "The value of translations-only is $translations-only"
+          echo "The value of translations-only is ${{ $translations-only }}"
 
       - name: Set output
         id: set-output
