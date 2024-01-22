@@ -48,6 +48,11 @@ jobs:
             echo "::set-output name=translations-only::false"
           fi
 
+      - name: Debug output
+        run: |
+          echo "Translations: ${{ steps.filter.outputs.translations }}"
+          echo "Other: ${{ steps.filter.outputs.other }}"
+
   build:
     name: Build
     needs: [check-files, install]
