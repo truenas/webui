@@ -78,7 +78,6 @@ def the_user_edit_page_should_open_add_the_root_group_and_click_save(driver):
     assert wait_on_element(driver, 10, xpaths.add_User.edit_Title)
     assert wait_on_element_disappear(driver, 10, xpaths.popup.please_Wait)
     assert wait_on_element(driver, 7, xpaths.add_User.auxiliary_Groups_Select, 'clickable')
-
     driver.find_element_by_xpath(xpaths.add_User.auxiliary_Groups_Select).click()
     assert wait_on_element(driver, 7, xpaths.add_User.root_Group_Option, 'clickable')
     driver.find_element_by_xpath(xpaths.add_User.root_Group_Option).click()
@@ -96,19 +95,8 @@ def change_should_be_saved_reopen_the_edit_page_root_group_value_should_be_visib
     driver.find_element_by_xpath(xpaths.users.eric_User).click()
     assert wait_on_element(driver, 10, xpaths.users.eric_Edit_Button, 'clickable')
     driver.find_element_by_xpath(xpaths.users.eric_Edit_Button).click()
-    assert wait_on_element(driver, 10, xpaths.add_User.edit_Title)
+    assert wait_on_element(driver, 5, xpaths.add_User.edit_Title)
     assert wait_on_element_disappear(driver, 10, xpaths.popup.please_Wait)
-    assert wait_on_element(driver, 7, xpaths.add_User.auxiliary_Groups_Select, 'clickable')
-    element = driver.find_element_by_xpath(xpaths.add_User.auxiliary_Groups_Select)
 
-    driver.find_element_by_xpath(xpaths.add_User.auxiliary_Groups_Select).click()
-    assert wait_on_element(driver, 7, xpaths.add_User.root_Group_Option, 'clickable')
-    element = driver.find_element_by_xpath('//span[contains(.,"root")]')
-    # Scroll to root
-    driver.execute_script("arguments[0].scrollIntoView();", element)
-    time.sleep(0.5)
-    assert wait_for_attribute_value(driver, 5, xpaths.add_User.root_Group_Option, 'class', 'mdc-list-item--selected')
-    # return to dashboard
-    ActionChains(driver).send_keys(Keys.TAB).perform()
-    time.sleep(0.5)
+    assert wait_on_element(driver, 5, xpaths.add_User.ericbsd_Root_Chip)
     driver.find_element_by_xpath(xpaths.button.close_Icon).click()
