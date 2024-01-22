@@ -22,19 +22,31 @@ jobs:
         uses: ./.github/actions/prepare
 
   check-files:
-    name: Check if translations only were changed
-    runs-on: ubuntu-latest
-    outputs:
-      translations-only: ${{ steps.filter.outputs.translations-only }}
-    steps:
-      - uses: actions/checkout@v3
+      name: Check if translations only were changed
+      runs-on: ubuntu-latest
+      outputs:
+        translations-only: ${{ steps.filter.outputs.translations-only }}
+      steps:
+        - uses: actions/checkout@v3
 
-      - id: filter
-        uses: dorny/paths-filter@v2
-        with:
-          filters: |
-            translations-only:
-              - 'src/assets/i18n/**'
+        - id: filter
+          uses: dorny/paths-filter@v2
+          with:
+            filters: |
+              translations:
+                - 'src/assets/i18n/**'
+              other:
+                - '**'
+                - '!src/assets/i18n/**'
+            list-files: shell
+
+        - name: Set output
+          id: set-output
+          run: |
+            if [ "${{ steps.filter.outputs.translations }}" == 'true' ] && [ "${{ steps.filter.outputs.other }}" == 'false' ]; then
+              echo "translations-only=true" >> $GITHUB_ENV
+            else
+              echo "translations-only=false" >> $GITHUB_ENV
 
   build:
     name: Build
