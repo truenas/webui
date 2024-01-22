@@ -7,7 +7,8 @@
       [checked]="!this.hideBuiltinUsers"
       (change)="toggleBuiltins()"
     >
-      <label>{{ 'Show Built-in Users NOW2' | translate }}</label>
+      <label>{{ 'Show Built-in Users NOW2' | translate }}
+      </label>
     </mat-slide-toggle>
     <button mat-button ixTest="add-user" [color]="'primary'" (click)="doAdd()">
       {{ 'Add' | translate }}
