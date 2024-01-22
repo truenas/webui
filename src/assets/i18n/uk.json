@@ -131,7 +131,7 @@
   "Continue with the upgrade": "",
   "Controls whether  <a href=\"https://www.truenas.com/docs/scale/scaleuireference/dataprotection/smarttestsscreensscale/\" target=\"_blank\">SMART monitoring and scheduled SMART tests</a>  are enabled.": "",
   "Controls whether audit messages will be generated for the share. <br><br> <b>Note</b>: Auditing may not be enabled if SMB1 support is enabled for the server.": "",
-  "Copy Json": "",
+  "Copy Json NOW": "",
   "Copy Text": "",
   "Create": "",
   "Create Dataset": "",
