@@ -33,15 +33,21 @@ jobs:
         uses: dorny/paths-filter@v2
         with:
           filters: |
-            all:
-              - '**'
             translations:
               - 'src/assets/i18n/**'
+            other:
+              - '**'
+              - '!src/assets/i18n/**'
+
+      - name: Debug Filter Outputs
+        run: |
+          echo "Translations Filter Output: ${{ steps.filter.outputs.translations }}"
+          echo "Other Filter Output: ${{ steps.filter.outputs.other }}"
 
       - name: Set output
         id: set-output
         run: |
-          if [[ "${{ steps.filter.outputs.translations }}" == 'true' ]] && [[ "${{ steps.filter.outputs.all }}" == 'src/assets/i18n/**' ]]; then
+          if [[ "${{ steps.filter.outputs.translations }}" == 'true' ]] && [[ "${{ steps.filter.outputs.other }}" == 'false' ]]; then
             echo "translations-only=true" >> $GITHUB_ENV
           else
             echo "translations-only=false" >> $GITHUB_ENV
