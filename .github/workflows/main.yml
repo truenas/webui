@@ -22,10 +22,6 @@ jobs:
         uses: ./.github/actions/prepare
 
   check-files:
-    name: Check if translations only were changed
-    runs-on: ubuntu-latest
-    outputs:
-      translations-only: ${{ steps.set-output.outputs.translations-only }}
     steps:
       - uses: actions/checkout@v3
 
@@ -33,25 +29,27 @@ jobs:
         id: check-changed
         run: |
           echo "Changed files:"
-          git diff --name-only ${{ github.event.before }} ${{ github.sha }} | tee changed-files.txt
-          if grep -qvE '^src/assets/i18n/' changed-files.txt; then
-            echo "Other files changed"
-            echo "translations-only=false" >> $GITHUB_ENV
-            echo "TRANSLATIONS_ONLY=false" >> $GITHUB_ENV
-          else
-            echo "Only translation files changed"
-            echo "translations-only=true" >> $GITHUB_ENV
-            echo "TRANSLATIONS_ONLY=true" >> $GITHUB_ENV
-          fi
+          CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
+          echo "$CHANGED_FILES"
+
+          translations_only="true"
+          for file in $CHANGED_FILES; do
+            if [[ ! "$file" =~ ^src/assets/i18n/ ]]; then
+              translations_only="false"
+              break
+            fi
+          done
+
+          echo "translations-only=$translations_only" >> $GITHUB_ENV
 
       - name: Debug translations-only
         run: |
-          echo "The value of TRANSLATIONS_ONLY is $TRANSLATIONS_ONLY"
+          echo "The value of translations-only is $translations_only"
 
       - name: Set output
         id: set-output
         run: |
-          echo "::set-output name=translations-only::$TRANSLATIONS_ONLY"
+          echo "::set-output name=translations-only::$translations_only"
 
   build:
     name: Build
