@@ -7,9 +7,14 @@
 }
 
 .row {
-  border-top: solid 1px var(--contrast-lighter);
+  border-top: solid 1px var(--lines);
   height: 48px;
   position: relative;
+
+  &:focus {
+    box-shadow: 0 0 0 1px var(--focus-bg) inset;
+    outline-width: 0;
+  }
 
   td {
     box-sizing: border-box;
