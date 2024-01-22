@@ -32,6 +32,6 @@ export class SessionExpiringDialogComponent {
 
   viewSessionsCard(): void {
     this.extendSession();
-    this.router.navigate(['/system', 'advanced'], { fragment: 'sessions' });
+    this.router.navigate(['/system', 'advanced'], { fragment: 'access' });
   }
 }
