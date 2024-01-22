@@ -61,7 +61,7 @@ class add_User:
     sudo_Checkbox = '//mat-checkbox[contains(.,"Allow all sudo commands")]'
     ssh_Password_Enabled_Checkbox = '//*[@data-test="checkbox-ssh-password-enabled"]'
     email_Input = '//ix-input[@formcontrolname="email"]//input'
-    auxiliary_Groups_Select = '//ix-select[@formcontrolname="groups"]//mat-select'
+    auxiliary_Groups_Select = '//*[@data-test="input-groups"]'
     root_Group_Option = '//mat-option[contains(.,"root")]'
     wheel_Group_Option = '//mat-option[contains(.,"wheel")]'
     qatest_Group_Option = '//mat-option[contains(.,"qatest")]'
@@ -85,6 +85,8 @@ class add_User:
     identification_Legend = '//legend[normalize-space(text())="Identification"]'
     authentication_Legend = '//legend[normalize-space(text())="Authentication"]'
     samba_Authentication_Checkbox = '//*[@data-test="checkbox-smb"]'
+    ericbsd_Root_Chip = '//mat-chip-row[contains(.,"root")]'
+
 
 
 class add_Zvol:
@@ -497,8 +499,8 @@ class network:
     def interface_Row(interface):
         return f'//td[contains(.,"{interface}")]'
 
-    def interface_Edit_Button(interface):
-        return f'//*[@data-test="button-edit-interface-{interface}"]'
+    def interface_Edit_Button(interface) -> str:
+        return f'//*[@data-test="button-interface-{interface}-edit-row-action"]'
 
 
 class pool_manager:
