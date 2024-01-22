@@ -6,6 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { forkJoin } from 'rxjs';
+import { Role } from 'app/enums/role.enum';
 import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSystemKmip } from 'app/helptext/system/kmip';
 import { KmipConfigUpdate } from 'app/interfaces/kmip-config.interface';
@@ -39,6 +40,8 @@ export class KmipComponent implements OnInit {
     validate: [false],
     force_clear: [false],
   });
+
+  protected readonly requiredRoles = [Role.KmipWrite];
 
   readonly helptext = helptextSystemKmip;
   readonly certificates$ = this.systemGeneralService.getCertificates().pipe(idNameArrayToOptions());
