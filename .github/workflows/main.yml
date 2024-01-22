@@ -48,7 +48,6 @@ jobs:
             echo "translations-only=false" >> $GITHUB_ENV
           fi
 
-
       - name: Set output
         id: set-output
         run: |
