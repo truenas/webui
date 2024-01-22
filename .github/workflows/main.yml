@@ -39,19 +39,20 @@ jobs:
               - '**'
               - '!src/assets/i18n/**'
 
-      - name: Set output
-        id: set-output
-        run: |
-          if [ "${{ steps.filter.outputs.translations }}" == 'true' ] && [ "${{ steps.filter.outputs.other }}" == 'false' ]; then
-            echo "::set-output name=translations-only::true"
-          else
-            echo "::set-output name=translations-only::false"
-          fi
-
       - name: Debug output
         run: |
           echo "Translations: ${{ steps.filter.outputs.translations }}"
           echo "Other: ${{ steps.filter.outputs.other }}"
+
+
+      - name: Set output
+        id: set-output
+        run: |
+          if [[ "${{ steps.filter.outputs.translations }}" == 'true' ]] && [[ "${{ steps.filter.outputs.other }}" == 'false' ]]; then
+            echo "translations-only=true" >> $GITHUB_ENV
+          else
+            echo "translations-only=false" >> $GITHUB_ENV
+          fi
 
   build:
     name: Build
