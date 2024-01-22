@@ -47,6 +47,7 @@ jobs:
               echo "translations-only=true" >> $GITHUB_ENV
             else
               echo "translations-only=false" >> $GITHUB_ENV
+            fi
 
   build:
     name: Build
