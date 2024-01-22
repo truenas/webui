@@ -54,7 +54,7 @@ jobs:
     name: Build
     needs: [check-files, install]
     runs-on: ubuntu-latest
-      if: ${{ needs.check-files.outputs.translations-only == 'false' }}
+    if: ${{ needs.check-files.outputs.translations-only == 'false' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
