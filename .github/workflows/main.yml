@@ -39,11 +39,6 @@ jobs:
               - '**'
               - '!src/assets/i18n/**'
 
-      - name: Debug Filter Outputs
-        run: |
-          echo "Translations Filter Output: ${{ steps.filter.outputs.translations }}"
-          echo "Other Filter Output: ${{ steps.filter.outputs.other }}"
-
       - name: Set output
         id: set-output
         run: |
@@ -59,6 +54,7 @@ jobs:
     name: Build
     needs: [check-files, install]
     runs-on: ubuntu-latest
+      if: ${{ needs.check-files.outputs.translations-only == 'false' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -67,7 +63,6 @@ jobs:
       - name: Debug translations-only output
         run: echo "The value of translations-only is ${{ needs.check-files.outputs.translations-only }}"
       - name: Build
-        if: ${{ needs.check-files.outputs.translations-only == 'false' }}
         run: yarn build:prod:aot
 
   lint:
