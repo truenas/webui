@@ -33,29 +33,13 @@ jobs:
         uses: dorny/paths-filter@v2
         with:
           filters: |
-            translations:
+            translations-only:
               - 'src/assets/i18n/**'
               - '!**/*.*'  # Exclude all other file types
-            other:
-              - '**'
 
-      - name: Set output
-        id: set-output
+      - name: Debug output
         run: |
-          if [[ "${{ steps.filter.outputs.translations }}" == 'true' ]] && [[ "${{ steps.filter.outputs.other }}" == 'false' ]]; then
-            echo "translations-only=true" >> $GITHUB_ENV
-          else
-            echo "translations-only=false" >> $GITHUB_ENV
-          fi
-
-      - name: Set output
-        id: set-output
-        run: |
-          if [[ "${{ steps.filter.outputs.translations }}" == 'true' ]] && [[ "${{ steps.filter.outputs.other }}" == 'false' ]]; then
-            echo "translations-only=true" >> $GITHUB_ENV
-          else
-            echo "translations-only=false" >> $GITHUB_ENV
-          fi
+          echo "Translations: ${{ steps.filter.outputs.translations-only }}"
 
   build:
     name: Build
