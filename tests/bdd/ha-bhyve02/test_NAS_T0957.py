@@ -109,7 +109,7 @@ def change_the_users_email_to_an_invalid_email_ie_email_and_click_save(driver, i
 @then('You should not be allowed to save the invalid email')
 def you_should_not_be_allowed_to_save_the_invalid_email(driver):
     """You should not be allowed to save the invalid email."""
-    assert wait_on_element(driver, 7, '//div[contains(.,"Not a valid E-Mail address")]')
+    assert wait_on_element(driver, 7, xpaths.add_User.email_Error_Message)
 
 
 @then('Try saving a blank email')
@@ -124,5 +124,5 @@ def try_saving_a_blank_email(driver):
 @then('You should not be allowed to save a blank email')
 def You_should_not_be_allowed_to_save_a_blank_email(driver):
     """You should not be allowed to save a blank email."""
-    assert wait_on_element(driver, 7, '//div[contains(.,"Not a valid E-Mail address")]')
+    assert wait_on_element(driver, 7, xpaths.add_User.email_Error_Message)
     driver.find_element_by_xpath(xpaths.button.close_Icon).click()

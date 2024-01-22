@@ -26,7 +26,7 @@ def test_verify_that_users_cannot_save_an_invalid_email():
 @given('the browser is open, the TrueNAS URL and logged in')
 def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_password, request):
     """the browser is open, the TrueNAS URL and logged in."""
-    depends(request, ['First_User'], scope='session')
+    #depends(request, ['First_User'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, xpaths.login.user_Input)
@@ -85,7 +85,7 @@ def you_should_not_be_able_to_save_the_changes_and_an_error_message_should_appea
     """you should not be able to save the changes and an error message should appear."""
     wait_on_element(driver, 10, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
-    assert wait_on_element(driver, 7, '//div[contains(.,"Not a valid E-Mail address")]')
+    assert wait_on_element(driver, 7, xpaths.add_User.email_Error_Message)
     time.sleep(0.5)
     assert wait_on_element(driver, 5, xpaths.button.close_Icon, 'clickable')
     driver.find_element_by_xpath(xpaths.button.close_Icon).click()

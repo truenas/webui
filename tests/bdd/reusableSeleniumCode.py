@@ -113,8 +113,10 @@ def Leave_Domain(driver, user, password):
 
 def License_Agrement(driver):
     if wait_on_element(driver, 2, xpaths.popup.license_Agrement_Title):
-        assert wait_on_element(driver, 2, xpaths.button.Continue, 'clickable')
-        driver.find_element_by_xpath(xpaths.button.Continue).click()
+        if wait_on_element(driver, 5, f'({xpaths.button.Continue})[2]', 'clickable'):
+            driver.find_element_by_xpath(f'({xpaths.button.Continue})[2]').click()
+        if wait_on_element(driver, 5, xpaths.button.Continue, 'clickable'):
+            driver.find_element_by_xpath(xpaths.button.Continue).click()
 
 
 def Login(driver, user, password):
