@@ -76,9 +76,8 @@
           formControlName="groups"
           [label]="'Auxiliary Groups' | translate"
           [tooltip]="tooltips.groups | translate"
-          [options]="groupOptions$"
           [resolveValue]="true"
-          [allowNewEntries]="false"
+          [resolveOptions]="groupOptions$"
           [autocompleteProvider]="autocompleteProvider"
         ></ix-chips>
 
