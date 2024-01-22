@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, take } from 'rxjs/operators';
+import { filter, repeat, take } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import { ScreenType } from 'app/enums/screen-type.enum';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
@@ -134,13 +134,9 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
 
   getSystemInfo(): void {
     this.ws.call('webui.main.dashboard.sys_info')
-      .pipe(untilDestroyed(this))
+      .pipe(repeat({ delay: 5000 }), untilDestroyed(this))
       .subscribe((systemInfo) => {
-        if (this.isPassive) {
-          this.processSysInfo(systemInfo.remote_info);
-        } else {
-          this.processSysInfo(systemInfo);
-        }
+        this.processSysInfo(systemInfo);
         this.cdr.markForCheck();
       });
   }
@@ -190,7 +186,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
   }
 
   processSysInfo(systemInfo: SystemInfo): void {
-    this.systemInfo = systemInfo;
+    this.systemInfo = this.isPassive ? systemInfo.remote_info : systemInfo;
     this.setProductImage();
     this.ready = true;
   }
