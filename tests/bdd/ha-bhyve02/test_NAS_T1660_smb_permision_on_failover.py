@@ -84,6 +84,7 @@ def input_smb1_for_dataset_name_select_smb_for_share_type_and_click_save(driver)
     driver.find_element_by_xpath(xpaths.add_Dataset.share_Type_Select).click()
     assert wait_on_element(driver, 5, xpaths.add_Dataset.share_Type_SMB_Option, 'clickable')
     driver.find_element_by_xpath(xpaths.add_Dataset.share_Type_SMB_Option).click()
+    rsc.Click_On_Element(driver, xpaths.add_Dataset.create_Smb_Checkbox)
     assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
     driver.find_element_by_xpath(xpaths.button.save).click()
 
