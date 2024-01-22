@@ -35,14 +35,18 @@ jobs:
           filters: |
             translations:
               - 'src/assets/i18n/**'
+              - '!**/*.*'  # Exclude all other file types
             other:
               - '**'
-              - '!src/assets/i18n/**'
 
-      - name: Debug output
+      - name: Set output
+        id: set-output
         run: |
-          echo "Translations: ${{ steps.filter.outputs.translations }}"
-          echo "Other: ${{ steps.filter.outputs.other }}"
+          if [[ "${{ steps.filter.outputs.translations }}" == 'true' ]] && [[ "${{ steps.filter.outputs.other }}" == 'false' ]]; then
+            echo "translations-only=true" >> $GITHUB_ENV
+          else
+            echo "translations-only=false" >> $GITHUB_ENV
+          fi
 
 
       - name: Set output
