@@ -1,6 +1,4 @@
-import { dygraphs } from 'dygraphs';
 import _ from 'lodash';
-import prettyBytes from 'pretty-bytes';
 import {
   TiB, GiB, MiB, KiB,
 } from 'app/constants/bytes.constant';
@@ -9,24 +7,20 @@ import { ReportingAggregationKeys, ReportingData } from 'app/interfaces/reportin
 
 export function formatInterfaceUnit(value: string): string {
   if (value && value.split(' ', 2)[0] !== '0' && !value?.endsWith('/s')) {
-    value += value?.endsWith('b') || value?.endsWith('B') ? '/s' : 'b/s';
+    if (Number.isNaN(Number(value[value.length - 1]))) {
+      let changedValue = value.substring(0, value.length - 1);
+      changedValue += ' ' + value[value.length - 1];
+      value = changedValue;
+    }
+    if (value?.endsWith('b')) {
+      value += 'it/s';
+    } else if (value?.endsWith('B')) {
+      value += '/s';
+    } else {
+      value += 'bit/s';
+    }
   }
   return value;
-}
-
-export function formatLegendSeries(
-  series: dygraphs.SeriesLegendData[],
-  data: ReportingData,
-): dygraphs.SeriesLegendData[] {
-  if (data?.name === (ReportingGraphName.NetworkInterface as string)) {
-    series.forEach((element) => {
-      if (!element.yHTML) {
-        return;
-      }
-      element.yHTML = prettyBytes(Number(element.yHTML) * 1000, { bits: true }) + '/s';
-    });
-  }
-  return series;
 }
 
 // TODO: Messy. Nuke.
