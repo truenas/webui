@@ -11,6 +11,7 @@ import { AppsFiltersSort, AppsFiltersValues } from 'app/interfaces/apps-filters-
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { AppsByCategory, AppsStore } from 'app/pages/apps/store/apps-store.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 export const filterInitialValues: AppsFiltersValues = {
   categories: [],
@@ -128,6 +129,7 @@ export class AppsFilterStore extends ComponentStore<AppsFilterState> {
     private appsStore: AppsStore,
     private appsService: ApplicationsService,
     private translate: TranslateService,
+    private errorHandler: ErrorHandlerService,
   ) {
     super(initialState);
   }
@@ -175,8 +177,8 @@ export class AppsFilterStore extends ComponentStore<AppsFilterState> {
           };
         });
       },
-      error: () => {
-        this.handleError();
+      error: (error: unknown) => {
+        this.handleError(error);
         return EMPTY;
       },
     });
@@ -322,7 +324,8 @@ export class AppsFilterStore extends ComponentStore<AppsFilterState> {
     return appsByCategory;
   }
 
-  private handleError(): void {
+  private handleError(error: unknown): void {
+    this.errorHandler.showErrorModal(error);
     this.patchState((state: AppsFilterState): AppsFilterState => {
       return {
         ...state,
