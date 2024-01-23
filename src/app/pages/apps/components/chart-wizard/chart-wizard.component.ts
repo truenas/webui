@@ -248,6 +248,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
 
     this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((failedJob) => {
       this.formErrorHandler.handleWsFormError(failedJob, this.form);
+      this.dialogRef.close();
       this.cdr.markForCheck();
     });
   }
@@ -420,7 +421,7 @@ export class ChartWizardComponent implements OnInit, OnDestroy {
 
   private afterAppLoadError(error: unknown): void {
     this.router.navigate(['/apps', 'available']).then(() => {
-      this.dialogService.error(this.errorHandler.parseError(error));
+      this.errorHandler.showErrorModal(error);
     });
   }
 
