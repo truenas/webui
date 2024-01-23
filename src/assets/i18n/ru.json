@@ -800,7 +800,7 @@
   "Expected Finished Time:": "",
   "Export": "",
   "Export All Keys": "",
-  "Export As CSV": "",
+  "Export As {fileType}": "",
   "Export Key": "",
   "Export/disconnect pool: {pool}": "",
   "Exported": "",
