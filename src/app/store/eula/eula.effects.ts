@@ -43,6 +43,7 @@ export class EulaEffects {
             hideCancel: true,
           });
         }
+
         return of(null);
       }),
       filter(Boolean),
