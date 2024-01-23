@@ -30,6 +30,8 @@ export class ExportButtonComponent<T, M extends ApiJobMethod> {
   @Input() defaultFilters: QueryFilters<T>;
   @Input() sorting: TableSort<T>;
   @Input() filename = 'data';
+  @Input() fileType = '.csv';
+  @Input() fileMimeType = 'text/csv';
   @Input() coreDownloadMethod?: keyof ApiCallDirectory;
 
   isLoading = false;
@@ -60,7 +62,7 @@ export class ExportButtonComponent<T, M extends ApiJobMethod> {
         const url = job.result as string;
         return this.ws.call('core.download', [this.coreDownloadMethod || this.method, [{}], url]);
       }),
-      switchMap(([, url]) => this.storage.downloadUrl(url, `${this.filename}.csv`, 'text/csv')),
+      switchMap(([, url]) => this.storage.downloadUrl(url, `${this.filename}${this.fileType}`, this.fileMimeType)),
       catchError((error) => {
         this.isLoading = false;
         this.cdr.markForCheck();
