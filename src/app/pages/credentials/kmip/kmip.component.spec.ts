@@ -6,6 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
 import {
   mockCall, mockJob, mockWebsocket,
@@ -61,6 +62,7 @@ describe('KmipComponent', () => {
           { id: 2, name: 'Secondary Authority' },
         ]),
       }),
+      mockAuth(),
     ],
   });
 
