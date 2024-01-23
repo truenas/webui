@@ -200,6 +200,10 @@ export class InstalledAppsComponent implements OnInit, AfterViewInit {
   viewDetails(app: ChartRelease): void {
     this.selectAppForDetails(app.id);
 
+    this.router.navigate([
+      '/apps/installed', app.catalog, app.catalog_train, app.id,
+    ]);
+
     if (this.isMobileView) {
       this.showMobileDetails = true;
 
