@@ -31,6 +31,7 @@
   "Account: {account}": "",
   "Active: TrueNAS Controller {id}": "",
   "Add Allowed Initiators (IQN)": "",
+  "Add Hello": "",
   "Add Reporting Exporter": "",
   "Add Vdevs to Pool": "",
   "Add the required no. of disks to get a vdev size estimate": "",
