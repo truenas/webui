@@ -29,32 +29,26 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - id: filter
-        uses: dorny/paths-filter@v2
-        with:
-          filters: |
-            translations:
-              - 'src/assets/i18n/**'
-            other:
-              - '**'
-              - '!src/assets/i18n/**'
-
-      - name: Set output
-        id: set-output
+      - name: Check changed files
+        id: check-changed
         run: |
-          if [[ "${{ steps.filter.outputs.translations }}" == 'true' ]] && [[ "${{ steps.filter.outputs.other }}" == 'false' ]]; then
-            echo "translations-only=true" >> $GITHUB_ENV
-            echo "::set-output name=translations-only::true"
-          else
-            echo "translations-only=false" >> $GITHUB_ENV
-            echo "::set-output name=translations-only::false"
-          fi
+          CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
+          echo "Changed files:"
+          echo "$CHANGED_FILES"
 
-      - name: Debug output
-        run: |
-          echo "Translations Filter Output: ${{ steps.filter.outputs.translations }}"
-          echo "Other Filter Output: ${{ steps.filter.outputs.other }}"
-          echo "Final translations-only: ${{ steps.set-output.outputs.translations-only }}"
+          TRANSLATIONS_ONLY="true"
+          for file in $CHANGED_FILES; do
+            if [[ "$file" != "src/assets/i18n/"* ]]; then
+              TRANSLATIONS_ONLY="false"
+              break
+            fi
+          done
+
+          echo "TRANSLATIONS_ONLY=$TRANSLATIONS_ONLY" >> $GITHUB_ENV
+          echo "::set-output name=translations-only::$TRANSLATIONS_ONLY"
+
+      - name: Debug translations-only
+        run: echo "The value of translations-only is $TRANSLATIONS_ONLY"
 
   build:
     name: Build
