@@ -28,21 +28,20 @@ jobs:
       translations-only: ${{ steps.set-output.outputs.translations-only }}
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 2  # Fetches the last two commits for diff
 
       - name: Check changed files
         id: check-changed
         run: |
-          CHANGED_FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }})
+          echo "Comparing changes with the previous commit"
+          CHANGED_FILES=$(git diff --name-only HEAD~1 ${{ github.sha }})
           echo "Changed files:"
           echo "$CHANGED_FILES"
 
-          # Initialize translations-only as true
           TRANSLATIONS_ONLY="true"
-
-          # Check each changed file
           for file in $CHANGED_FILES; do
             if [[ "$file" != "src/assets/i18n/"* ]]; then
-              # If any file is not in the translations directory, set to false
               TRANSLATIONS_ONLY="false"
               break
             fi
@@ -53,8 +52,6 @@ jobs:
 
       - name: Debug translations-only
         run: |
-          echo "Changed files:"
-          git diff --name-only ${{ github.event.before }} ${{ github.sha }}
           echo "The value of translations-only is $TRANSLATIONS_ONLY"
 
   build:
