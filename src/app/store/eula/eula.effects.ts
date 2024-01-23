@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { filter, mergeMap, switchMap } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
 import { filterAsync } from 'app/helpers/operators/filter-async.operator';
@@ -14,6 +14,8 @@ import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 
 @Injectable()
 export class EulaEffects {
+  isEulaDialogShown = false;
+
   checkEula$ = createEffect(() => this.actions$.pipe(
     ofType(adminUiInitialized),
     filter(() => this.systemGeneralService.isEnterprise),
@@ -30,13 +32,18 @@ export class EulaEffects {
   private showEulaDialog(): Observable<void> {
     return this.ws.call('truenas.get_eula').pipe(
       switchMap((eula) => {
-        return this.dialogService.confirm({
-          title: this.translate.instant('End User License Agreement - TrueNAS'),
-          message: eula,
-          hideCheckbox: true,
-          buttonText: this.translate.instant('I Agree'),
-          hideCancel: true,
-        });
+        if (!this.isEulaDialogShown) {
+          this.isEulaDialogShown = true;
+
+          return this.dialogService.confirm({
+            title: this.translate.instant('End User License Agreement - TrueNAS'),
+            message: eula,
+            hideCheckbox: true,
+            buttonText: this.translate.instant('I Agree'),
+            hideCancel: true,
+          });
+        }
+        return of(null);
       }),
       filter(Boolean),
       switchMap(() => this.ws.call('truenas.accept_eula')),
