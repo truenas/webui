@@ -3,7 +3,7 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import {
   EMPTY,
-  Observable, catchError, combineLatest, switchMap, tap,
+  Observable, catchError, combineLatest, of, switchMap, tap,
 } from 'rxjs';
 import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
@@ -102,6 +102,10 @@ export class AppsStore extends ComponentStore<AppsState> {
 
   private loadLatestApps(): Observable<unknown> {
     return this.appsService.getLatestApps().pipe(
+      catchError((error) => {
+        this.handleError(error);
+        return of([]);
+      }),
       tap((latestApps: AvailableApp[]) => {
         this.patchState((state) => {
           return {
@@ -115,6 +119,10 @@ export class AppsStore extends ComponentStore<AppsState> {
 
   private loadAvailableApps(): Observable<unknown> {
     return this.appsService.getAvailableApps().pipe(
+      catchError((error) => {
+        this.handleError(error);
+        return of([]);
+      }),
       tap((availableApps: AvailableApp[]) => {
         this.patchState((state) => {
           return {
@@ -132,6 +140,10 @@ export class AppsStore extends ComponentStore<AppsState> {
 
   private loadCategories(): Observable<unknown> {
     return this.appsService.getAllAppsCategories().pipe(
+      catchError((error) => {
+        this.handleError(error);
+        return of([]);
+      }),
       tap((categories: string[]) => {
         this.patchState((state) => {
           return {
