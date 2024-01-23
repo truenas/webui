@@ -20,6 +20,7 @@ import { AppsFilterStore } from 'app/pages/apps/store/apps-filter-store.service'
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { DialogService } from 'app/services/dialog.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 @UntilDestroy()
 @Component({
@@ -74,6 +75,7 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
     protected applicationsStore: AppsStore,
     protected appsFilterStore: AppsFilterStore,
     protected installedAppsStore: InstalledAppsStore,
+    private errorHandler: ErrorHandlerService,
   ) {}
 
   ngOnInit(): void {
@@ -138,6 +140,10 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
       this.dialogService.closeAllDialogs();
       this.applicationsStore.initialize();
       this.cdr.markForCheck();
+    });
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
+      dialogRef.close();
+      this.errorHandler.showErrorModal(error);
     });
   }
 

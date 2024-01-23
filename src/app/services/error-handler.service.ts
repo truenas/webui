@@ -90,11 +90,15 @@ export class ErrorHandlerService implements ErrorHandler {
     return (source$: Observable<T>) => {
       return source$.pipe(
         catchError((error: unknown) => {
-          this.dialog.error(this.parseError(error));
+          this.showErrorModal(error);
           return EMPTY;
         }),
       );
     };
+  }
+
+  showErrorModal(error: unknown): void {
+    this.dialog.error(this.parseError(error));
   }
 
   private parseWsError(error: WebsocketError): ErrorReport {

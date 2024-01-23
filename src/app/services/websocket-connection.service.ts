@@ -1,5 +1,4 @@
 import { Inject, Injectable } from '@angular/core';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { UUID } from 'angular2-uuid';
 import { environment } from 'environments/environment';
 import {
@@ -11,7 +10,6 @@ import { WEBSOCKET } from 'app/helpers/websocket.helper';
 import { WINDOW } from 'app/helpers/window.helper';
 import { ApiEvent, IncomingWebsocketMessage } from 'app/interfaces/api-message.interface';
 
-@UntilDestroy()
 @Injectable({
   providedIn: 'root',
 })
@@ -58,6 +56,7 @@ export class WebsocketConnectionService {
     @Inject(WEBSOCKET) private webSocket: typeof rxjsWebsocket,
   ) {
     this.initializeWebsocket();
+    this.subscribeToConnectionStatus();
     this.setupPing();
   }
 
@@ -90,20 +89,7 @@ export class WebsocketConnectionService {
           this.isConnected$.next(true);
         }
       }),
-      untilDestroyed(this),
     ).subscribe();
-    this.isConnected$.pipe(untilDestroyed(this)).subscribe({
-      next: (isConnected) => {
-        this.isConnectionReady = isConnected;
-        if (isConnected) {
-          const keys = this.pendingCallsBeforeConnectionReady.keys();
-          for (const key of keys) {
-            this.send(this.pendingCallsBeforeConnectionReady.get(key));
-            this.pendingCallsBeforeConnectionReady.delete(key);
-          }
-        }
-      },
-    });
   }
 
   private onOpen(): void {
@@ -131,7 +117,7 @@ export class WebsocketConnectionService {
   }
 
   reconnect(): void {
-    timer(this.reconnectTimeoutMillis).pipe(untilDestroyed(this)).subscribe({
+    timer(this.reconnectTimeoutMillis).subscribe({
       next: () => {
         this.isTryingReconnect = false;
         this.initializeWebsocket();
@@ -152,7 +138,6 @@ export class WebsocketConnectionService {
 
         return interval(this.pingTimeoutMillis);
       }),
-      untilDestroyed(this),
     ).subscribe(() => {
       this.ws$.next({ msg: OutgoingApiMessageType.Ping, id: UUID.UUID() });
     });
@@ -194,6 +179,13 @@ export class WebsocketConnectionService {
     }
   }
 
+  sendPendingCalls(): void {
+    this.pendingCallsBeforeConnectionReady.forEach((value, key) => {
+      this.send(value);
+      this.pendingCallsBeforeConnectionReady.delete(key);
+    });
+  }
+
   closeWebsocketConnection(): void {
     this.ws$.complete();
   }
@@ -205,5 +197,16 @@ export class WebsocketConnectionService {
   setupConnectionUrl(protocol: string, remote: string): void {
     this.connectionUrl = (protocol === 'https:' ? 'wss://' : 'ws://')
       + remote + '/websocket';
+  }
+
+  private subscribeToConnectionStatus(): void {
+    this.isConnected$.subscribe({
+      next: (isConnected) => {
+        this.isConnectionReady = isConnected;
+        if (isConnected) {
+          this.sendPendingCalls();
+        }
+      },
+    });
   }
 }
