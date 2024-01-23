@@ -105,6 +105,7 @@ export class KmipComponent implements OnInit {
     });
     dialogRef.componentInstance.setCall('kmip.update', [this.form.value as KmipConfigUpdate]);
     dialogRef.componentInstance.submit();
+    // test
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.snackbar.success(this.translate.instant('Settings saved.'));
       dialogRef.close(true);
