@@ -27,18 +27,10 @@ interface RowState {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IxCellStateButtonComponent<T> extends ColumnComponent<T> {
-  matDialog: MatDialog;
-  translate: TranslateService;
-  dialogService: DialogService;
-  errorHandler: ErrorHandlerService;
-
-  constructor() {
-    super();
-    this.matDialog = inject(MatDialog);
-    this.translate = inject(TranslateService);
-    this.dialogService = inject(DialogService);
-    this.errorHandler = inject(ErrorHandlerService);
-  }
+  matDialog: MatDialog = inject(MatDialog);
+  translate: TranslateService = inject(TranslateService);
+  dialogService: DialogService = inject(DialogService);
+  errorHandler: ErrorHandlerService = inject(ErrorHandlerService);
 
   getWarnings?: (row: T) => unknown[];
   getJob?: (row: T) => Job;
