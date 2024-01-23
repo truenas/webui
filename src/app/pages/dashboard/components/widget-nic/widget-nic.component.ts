@@ -175,32 +175,4 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
     const navigationExtras: NavigationExtras = { state: { editInterface: nicState.name } };
     this.router.navigate(['network'], navigationExtras);
   }
-
-  protected getSpeedLabel(value: number): string {
-    let bits = Math.abs(value);
-    let multiplier = 1;
-    while (bits >= 1000) {
-      multiplier *= 1000;
-      bits = bits / multiplier;
-    }
-    let label = bits.toFixed(1);
-    switch (true) {
-      case multiplier < 1000:
-        label += ' b';
-        break;
-      case multiplier < 1000 * 1000:
-        label += ' kb';
-        break;
-      case multiplier < 1000 * 1000 * 1000:
-        label += ' Mb';
-        break;
-      case multiplier < 1000 * 1000 * 1000 * 1000:
-        label += ' Gb';
-        break;
-      case multiplier < 1000 * 1000 * 1000 * 1000 * 1000:
-        label += ' Tb';
-        break;
-    }
-    return label;
-  }
 }
