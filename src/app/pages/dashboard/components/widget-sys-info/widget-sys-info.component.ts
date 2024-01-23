@@ -2,7 +2,7 @@ import { TitleCasePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
-  Component, Inject, Input, OnInit,
+  Component, Inject, Input, OnDestroy, OnInit,
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
 import { Router } from '@angular/router';
@@ -41,7 +41,7 @@ import { selectIsIxHardware, waitForSystemFeatures } from 'app/store/system-info
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [TitleCasePipe],
 })
-export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
+export class WidgetSysInfoComponent extends WidgetComponent implements OnInit, OnDestroy {
   protected isHaLicensed = false;
   @Input() isPassive = false;
   protected enclosureSupport = false;
@@ -106,6 +106,12 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnInit {
     this.getIsIxHardware();
     this.getIsHaLicensed();
     this.listenForHaStatus();
+  }
+
+  ngOnDestroy(): void {
+    if (this.uptimeInterval) {
+      clearInterval(this.uptimeInterval);
+    }
   }
 
   getIsIxHardware(): void {
