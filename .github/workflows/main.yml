@@ -25,16 +25,15 @@ jobs:
     name: Check if translations only were changed
     runs-on: ubuntu-latest
     outputs:
-      translations-only: ${{ steps.set-output.outputs.translations-only }}
+      translations-only: ${{ steps.determine-changes.outputs.translations-only }}
     steps:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 2  # Fetches the last two commits for diff
 
-      - name: Check changed files
-        id: check-changed
+      - name: Determine if only translations were changed
+        id: determine-changes
         run: |
-          echo "Comparing changes with the previous commit"
           CHANGED_FILES=$(git diff --name-only HEAD~1 ${{ github.sha }})
           echo "Changed files:"
           echo "$CHANGED_FILES"
@@ -47,19 +46,10 @@ jobs:
             fi
           done
 
-          echo "TRANSLATIONS_ONLY=$TRANSLATIONS_ONLY" >> $GITHUB_ENV
-          echo "::set-output name=translations-only::$TRANSLATIONS_ONLY"
-
-      - name: Set output
-        id: set-output
-        run: |
           echo "::set-output name=translations-only::$TRANSLATIONS_ONLY"
 
       - name: Debug translations-only
-      run: |
-        echo "The value of TRANSLATIONS_ONLY (env) is $TRANSLATIONS_ONLY"
-        echo "The value of translations-only (output) is ${{ steps.set-output.outputs.translations-only }}"
-
+        run: echo "The value of translations-only is ${{ steps.determine-changes.outputs.translations-only }}"
 
   build:
     name: Build
