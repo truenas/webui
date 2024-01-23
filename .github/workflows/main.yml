@@ -50,9 +50,16 @@ jobs:
           echo "TRANSLATIONS_ONLY=$TRANSLATIONS_ONLY" >> $GITHUB_ENV
           echo "::set-output name=translations-only::$TRANSLATIONS_ONLY"
 
-      - name: Debug translations-only
+      - name: Set output
+        id: set-output
         run: |
-          echo "The value of translations-only is $TRANSLATIONS_ONLY"
+          echo "::set-output name=translations-only::$TRANSLATIONS_ONLY"
+
+      - name: Debug translations-only
+      run: |
+        echo "The value of TRANSLATIONS_ONLY (env) is $TRANSLATIONS_ONLY"
+        echo "The value of translations-only (output) is ${{ steps.set-output.outputs.translations-only }}"
+
 
   build:
     name: Build
@@ -63,8 +70,10 @@ jobs:
         uses: actions/checkout@v3
       - name: Install
         uses: ./.github/actions/prepare
+
       - name: Debug translations-only output
         run: echo "The value of translations-only is ${{ needs.check-files.outputs.translations-only }}"
+
       - name: Build
         if: ${{ needs.check-files.outputs.translations-only == 'false' }}
         run: yarn build:prod:aot
