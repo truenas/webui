@@ -39,11 +39,6 @@ jobs:
               - '**'
               - '!src/assets/i18n/**'
 
-      - name: Debug filter results
-        run: |
-          echo "Translations Filter Output: ${{ steps.filter.outputs.translations }}"
-          echo "Other Filter Output: ${{ steps.filter.outputs.other }}"
-
       - name: Set output
         id: set-output
         run: |
@@ -54,6 +49,12 @@ jobs:
             echo "translations-only=false" >> $GITHUB_ENV
             echo "::set-output name=translations-only::false"
           fi
+
+      - name: Debug output
+        run: |
+          echo "Translations Filter Output: ${{ steps.filter.outputs.translations }}"
+          echo "Other Filter Output: ${{ steps.filter.outputs.other }}"
+          echo "Final translations-only: ${{ steps.set-output.outputs.translations-only }}"
 
   build:
     name: Build
