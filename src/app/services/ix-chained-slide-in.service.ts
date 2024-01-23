@@ -1,9 +1,10 @@
 import { ComponentType } from '@angular/cdk/portal';
-import { Injectable, Type } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { Inject, Injectable, Type } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import { UUID } from 'angular2-uuid';
 import {
-  Observable, Subject, tap,
+  Observable, Subject, take, tap, timer,
 } from 'rxjs';
 
 export interface ChainedComponentRef {
@@ -61,7 +62,9 @@ export class IxChainedSlideInService extends ComponentStore<ChainedSlideInState>
     return !!(this.mapToSerializedArray(state.components).pop()?.wide);
   });
 
-  constructor() {
+  constructor(
+    @Inject(DOCUMENT) private document: Document,
+  ) {
     super({ components: new Map() });
     this.initialize();
   }
@@ -106,6 +109,7 @@ export class IxChainedSlideInService extends ComponentStore<ChainedSlideInState>
   popComponent = this.updater((state, id: string) => {
     const newMap = new Map(state.components);
     newMap.delete(id);
+    this.focusOnTheCloseButton();
     return {
       components: newMap,
     };
@@ -121,6 +125,7 @@ export class IxChainedSlideInService extends ComponentStore<ChainedSlideInState>
       data: swapInfo.data,
       close$,
     });
+    this.focusOnTheCloseButton();
     return {
       components: newMap,
     };
@@ -135,6 +140,12 @@ export class IxChainedSlideInService extends ComponentStore<ChainedSlideInState>
         wide: componentInfo.wide,
         data: componentInfo.data,
       } as ChainedComponentSerialized;
+    });
+  }
+
+  private focusOnTheCloseButton(): void {
+    timer(100).pipe(take(1)).subscribe(() => {
+      this.document.getElementById('ix-close-icon')?.focus();
     });
   }
 }
