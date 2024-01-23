@@ -103,6 +103,8 @@ export class KmipComponent implements OnInit {
       data: { title: helptextSystemKmip.jobDialog.title },
       disableClose: true,
     });
+
+    // test
     dialogRef.componentInstance.setCall('kmip.update', [this.form.value as KmipConfigUpdate]);
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
