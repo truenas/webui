@@ -104,7 +104,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
             if (tooltipItem.parsed.y === 0) {
               label += 0;
             } else {
-              label = prettyBytes(Number(tooltipItem.parsed.y), { bits: true }) + '/s';
+              label = prettyBytes(Math.abs(Number(tooltipItem.parsed.y)), { bits: true }) + '/s';
             }
             return label;
           },
@@ -134,7 +134,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
             if (value === 0) {
               return 0;
             }
-            return prettyBytes(value as number, { bits: true });
+            return prettyBytes(Number(value), { bits: true });
           },
         },
       },
