@@ -29,7 +29,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          fetch-depth: 2  # Fetches the last two commits for diff
+          fetch-depth: 2
 
       - name: Determine if only translations were changed
         id: determine-changes
@@ -48,9 +48,6 @@ jobs:
 
           echo "::set-output name=translations-only::$TRANSLATIONS_ONLY"
 
-      - name: Debug translations-only
-        run: echo "The value of translations-only is ${{ steps.determine-changes.outputs.translations-only }}"
-
   build:
     name: Build
     needs: [check-files, install]
@@ -60,10 +57,6 @@ jobs:
         uses: actions/checkout@v3
       - name: Install
         uses: ./.github/actions/prepare
-
-      - name: Debug translations-only output
-        run: echo "The value of translations-only is ${{ needs.check-files.outputs.translations-only }}"
-
       - name: Build
         if: ${{ needs.check-files.outputs.translations-only == 'false' }}
         run: yarn build:prod:aot
