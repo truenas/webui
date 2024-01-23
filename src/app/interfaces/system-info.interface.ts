@@ -3,7 +3,6 @@ import { ApiDate, ApiTimestamp } from 'app/interfaces/api-date.interface';
 
 export interface SystemInfo {
   platform: string;
-  birthday: ApiTimestamp;
   boottime: ApiTimestamp;
   buildtime: ApiTimestamp;
   cores: number;
