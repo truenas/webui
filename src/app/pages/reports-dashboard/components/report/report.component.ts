@@ -11,6 +11,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import { add, isToday, sub } from 'date-fns';
+import _ from 'lodash';
 import {
   BehaviorSubject, Subscription, timer,
 } from 'rxjs';
@@ -33,7 +34,7 @@ import {
 } from 'app/pages/reports-dashboard/interfaces/report.interface';
 import { refreshInterval } from 'app/pages/reports-dashboard/reports.constants';
 import { ReportsService } from 'app/pages/reports-dashboard/reports.service';
-import { formatData, formatLegendSeries } from 'app/pages/reports-dashboard/utils/report.utils';
+import { formatData } from 'app/pages/reports-dashboard/utils/report.utils';
 import { DialogService } from 'app/services/dialog.service';
 import { LocaleService } from 'app/services/locale.service';
 import { ThemeService } from 'app/services/theme/theme.service';
@@ -140,7 +141,6 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
     this.reportsService.legendEventEmitterObs$.pipe(untilDestroyed(this)).subscribe({
       next: (data: LegendDataWithStackedTotalHtml) => {
         const clone = { ...data };
-        clone.series = formatLegendSeries(data.series, this.data);
         clone.xHTML = this.formatTime(data.x);
         this.legendData = clone as LegendDataWithStackedTotalHtml;
       },
@@ -453,7 +453,7 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
       untilDestroyed(this),
     ).subscribe({
       next: (event) => {
-        this.data = formatData(event);
+        this.data = formatData(_.cloneDeep(event));
       },
       error: (err: WebsocketError) => {
         this.handleError(err);
