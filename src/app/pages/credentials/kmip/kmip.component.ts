@@ -104,7 +104,6 @@ export class KmipComponent implements OnInit {
   onSubmit(): void {
     const dialogRef = this.matDialog.open(EntityJobComponent, {
       data: { title: helptextSystemKmip.jobDialog.title },
-      disableClose: true,
     });
     dialogRef.componentInstance.setCall('kmip.update', [this.form.value as KmipConfigUpdate]);
     dialogRef.componentInstance.submit();
