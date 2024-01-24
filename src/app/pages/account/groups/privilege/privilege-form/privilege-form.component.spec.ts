@@ -120,7 +120,7 @@ describe('PrivilegeFormComponent', () => {
       expect(values).toEqual({
         Name: 'privilege',
         'Web Shell Access': true,
-        'Local Groups': ['Group A', 'Group B', 'Missing group 333'],
+        'Local Groups': ['Group A', 'Group B', 'Missing group - 333'],
         'Directory Services Groups': [],
         Roles: ['Readonly Admin'],
       });
