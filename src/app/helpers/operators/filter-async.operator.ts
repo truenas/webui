@@ -1,5 +1,5 @@
 import {
-  filter, first, map, Observable, OperatorFunction, switchMap,
+  filter, map, Observable, OperatorFunction, switchMap,
 } from 'rxjs';
 
 /**
@@ -11,7 +11,6 @@ export function filterAsync<T>(asyncPredicate$: Observable<boolean>): OperatorFu
   return (source$: Observable<T>) => source$.pipe(
     switchMap((item) => asyncPredicate$.pipe(
       filter((result) => result),
-      first(),
       map(() => item),
     )),
   );

@@ -157,6 +157,8 @@ export class AuthService {
    */
   hasRole(roles: Role[] | Role): Observable<boolean> {
     return this.loggedInUser$.pipe(
+      filter(Boolean),
+      take(1),
       map((user) => {
         const currentRoles = user?.privilege?.roles?.$set || [];
         const neededRoles = Array.isArray(roles) ? roles : [roles];
