@@ -8,7 +8,6 @@ import { SystemFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { WebSocketService } from 'app/services/ws.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import {
-  ixHardwareLoaded,
   systemFeaturesLoaded, systemHostIdLoaded, systemInfoLoaded, systemInfoUpdated, systemIsStableLoaded,
 } from 'app/store/system-info/system-info.actions';
 
@@ -52,20 +51,6 @@ export class SystemInfoEffects {
         return of(systemFeaturesLoaded({ systemFeatures: features }));
       }
       return of(systemFeaturesLoaded({ systemFeatures: features }));
-    }),
-  ));
-
-  loadIsIxHardware = createEffect(() => this.actions$.pipe(
-    ofType(adminUiInitialized),
-    mergeMap(() => {
-      return this.ws.call('system.is_ix_hardware').pipe(
-        map((isIxHardware) => ixHardwareLoaded({ isIxHardware })),
-        catchError((error) => {
-          // TODO: Show error message to user?
-          console.error(error);
-          return of(ixHardwareLoaded({ isIxHardware: false }));
-        }),
-      );
     }),
   ));
 
