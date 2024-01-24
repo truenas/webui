@@ -9,6 +9,7 @@ import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
 import * as _ from 'lodash';
 import { Observable, of } from 'rxjs';
+import { PoolStatus } from 'app/enums/pool-status.enum';
 import { Option, SelectOption } from 'app/interfaces/option.interface';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { AddToPoolType, ManageUnusedDiskDialogResource } from 'app/pages/storage/components/unused-resources/unused-disk-card/manage-unused-disk-dialog/manage-unused-disk-dialog.interface';
@@ -31,7 +32,7 @@ export class ManageUnusedDiskDialogComponent implements OnInit {
   ]);
 
   readonly poolOptions$: Observable<Option[]> = of(
-    this.resource.pools.map((pool) => ({
+    this.resource.pools.filter((pool) => pool.status !== PoolStatus.Offline).map((pool) => ({
       label: pool.name,
       value: pool.id,
     })),
