@@ -64,8 +64,6 @@ export class MockEnclosureUtils {
         return this.mockConfig.mockEnclosure ? { $date: 1676641039000 } : data;
       case 'system.info':
         return this.mockConfig.mockEnclosure ? this.mockSystemInfo(data as SystemInfo) : data;
-      case 'system.is_ix_hardware':
-        return this.mockConfig.mockEnclosure ? true : data;
       case 'smart.test.results':
       case 'disk.query': {
         // Sometimes response only has two keys "name" and "type"

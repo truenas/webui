@@ -16,7 +16,7 @@ import { DisksUpdateService } from 'app/services/disks-update.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { selectTheme } from 'app/store/preferences/preferences.selectors';
-import { selectIsIxHardware, waitForSystemFeatures, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
+import { waitForSystemFeatures, waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 export interface SystemProfile {
   enclosureStore$: Observable<EnclosureState>;
@@ -128,7 +128,6 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
     return shelves.length;
   }
 
-  isIxHardware = false;
   private _systemProduct: string;
   get systemProduct(): string {
     return this._systemProduct;
@@ -195,12 +194,6 @@ export class ViewEnclosureComponent implements AfterViewInit, OnDestroy {
           this.systemProduct = sysInfo.system_product;
         }
       });
-
-    this.store$.select(selectIsIxHardware).pipe(
-      untilDestroyed(this),
-    ).subscribe((isIxHardware) => {
-      this.isIxHardware = isIxHardware;
-    });
 
     this.store$.pipe(waitForSystemFeatures, untilDestroyed(this)).subscribe((systemFeatures) => {
       this.supportedHardware = systemFeatures.enclosure;
