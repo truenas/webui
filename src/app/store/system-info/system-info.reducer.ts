@@ -2,7 +2,7 @@ import { createReducer, on } from '@ngrx/store';
 import { SystemFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import {
-  systemFeaturesLoaded, systemHostIdLoaded, systemInfoLoaded, systemIsStableLoaded,
+  ixHardwareLoaded, systemFeaturesLoaded, systemHostIdLoaded, systemInfoLoaded, systemIsStableLoaded,
 } from 'app/store/system-info/system-info.actions';
 
 export interface SystemInfoState {
@@ -23,12 +23,9 @@ const initialState: SystemInfoState = {
 
 export const systemInfoReducer = createReducer(
   initialState,
-  on(systemInfoLoaded, (state, { systemInfo }) => ({
-    ...state,
-    systemInfo,
-    isIxHardware: systemInfo.system_manufacturer?.includes('iXsystems'),
-  })),
+  on(systemInfoLoaded, (state, { systemInfo }) => ({ ...state, systemInfo })),
   on(systemFeaturesLoaded, (state, { systemFeatures }) => ({ ...state, systemFeatures })),
   on(systemHostIdLoaded, (state, { systemHostId }) => ({ ...state, systemHostId })),
   on(systemIsStableLoaded, (state, { systemIsStable }) => ({ ...state, systemIsStable })),
+  on(ixHardwareLoaded, (state, { isIxHardware }) => ({ ...state, isIxHardware })),
 );
