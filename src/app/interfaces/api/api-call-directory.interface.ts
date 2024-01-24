@@ -780,6 +780,7 @@ export interface ApiCallDirectory {
   'system.general.update': { params: [SystemGeneralConfigUpdate]; response: SystemGeneralConfig };
   'system.host_id': { params: void; response: string };
   'system.info': { params: void; response: SystemInfo };
+  'system.is_ix_hardware': { params: void; response: boolean };
   'system.is_stable': { params: void; response: boolean };
   'system.license': { params: void; response: null | object };
   'system.license_update': { params: [license: string]; response: void };
