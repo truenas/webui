@@ -19,7 +19,6 @@ import {
   AclTemplateCreateResponse,
 } from 'app/interfaces/acl.interface';
 import { ActiveDirectoryConfig } from 'app/interfaces/active-directory-config.interface';
-import { ActiveDirectoryUpdate } from 'app/interfaces/active-directory.interface';
 import { AdvancedConfig, AdvancedConfigUpdate } from 'app/interfaces/advanced-config.interface';
 import { AlertService, AlertServiceEdit } from 'app/interfaces/alert-service.interface';
 import {
@@ -153,7 +152,7 @@ import {
 import { KmipConfig } from 'app/interfaces/kmip-config.interface';
 import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
 import { KubernetesStatusData } from 'app/interfaces/kubernetes-status-data.interface';
-import { LdapConfig, LdapConfigUpdate, LdapConfigUpdateResult } from 'app/interfaces/ldap-config.interface';
+import { LdapConfig } from 'app/interfaces/ldap-config.interface';
 import { MailConfig, MailConfigUpdate } from 'app/interfaces/mail-config.interface';
 import {
   NetworkConfiguration,
@@ -283,7 +282,6 @@ export interface ApiCallDirectory {
   // Active Directory
   'activedirectory.config': { params: void; response: ActiveDirectoryConfig };
   'activedirectory.nss_info_choices': { params: void; response: string[] };
-  'activedirectory.update': { params: [ActiveDirectoryUpdate]; response: ActiveDirectoryConfig };
 
   // Alert
   'alert.dismiss': { params: string[]; response: void };
@@ -590,7 +588,6 @@ export interface ApiCallDirectory {
   'ldap.config': { params: void; response: LdapConfig };
   'ldap.schema_choices': { params: void; response: string[] };
   'ldap.ssl_choices': { params: void; response: string[] };
-  'ldap.update': { params: [LdapConfigUpdate]; response: LdapConfigUpdateResult };
 
   // Mail
   'mail.config': { params: void; response: MailConfig };

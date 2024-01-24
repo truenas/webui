@@ -126,6 +126,9 @@ export class DialogService {
     }
   }
 
+  /**
+   * Experimental. API subject to change.
+   */
   jobProgress<M extends ApiJobMethod>(
     job$: Observable<Job<ApiJobDirectory[M]['response']>>,
     { title, description, showRealtimeLogs }: {

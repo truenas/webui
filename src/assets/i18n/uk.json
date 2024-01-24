@@ -3668,7 +3668,6 @@
   "Setting this option is discouraged as it increases security risk.": "Встановлення цієї опції не рекомендується, оскільки це збільшує ризик безпеки.",
   "Setting this option reduces the security of the connection, so only use it if the client does not understand reused SSL sessions.": "Встановлення цього параметра знижує безпеку з'єднання, тому використовуйте його лише в тому випадку, якщо клієнт не розуміє повторних сеансів SSL.",
   "Setting this option will result in timeouts if <b>identd</b> is not running on the client.": "Встановлення цього параметра призведе до тайм-аутів, якщо <b>ідентифікатор </b> не буде запущений на клієнті.",
-  "Setting up LDAP": "Налаштування LDAP",
   "Settings": "Налаштування",
   "Settings Requiring Re-Initialization": "Параметри, які потребують повторної ініціалізації",
   "Settings saved.": "Налаштування збережені.",

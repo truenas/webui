@@ -3683,7 +3683,6 @@
   "Setting this option is discouraged as it increases security risk.": "不建议设置此选项，因为它会增加安全风险。",
   "Setting this option reduces the security of the connection, so only use it if the client does not understand reused SSL sessions.": "设置此选项会降低连接的安全性，因此仅在客户端不了解重用的SSL会话时才使用它。",
   "Setting this option will result in timeouts if <b>identd</b> is not running on the client.": "如果<b>identd</b>未在客户端上运行，则设置此选项将导致超时。",
-  "Setting up LDAP": "设置 LDAP",
   "Settings": "设置",
   "Settings Requiring Re-Initialization": "需要重新初始化的设置",
   "Settings saved": "设置已保存",

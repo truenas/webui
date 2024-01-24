@@ -3661,7 +3661,6 @@
   "Setting this option is discouraged as it increases security risk.": "Het instellen van deze optie wordt afgeraden omdat dit het beveiligingsrisico vergroot.",
   "Setting this option reduces the security of the connection, so only use it if the client does not understand reused SSL sessions.": "Als u deze optie instelt, vermindert de beveiliging van de verbinding, dus gebruik deze alleen als de client hergebruikte SSL-sessies niet begrijpt.",
   "Setting this option will result in timeouts if <b>identd</b> is not running on the client.": "Het instellen van deze optie resulteert in time-outs als <b>identd</b> niet actief is op de client.",
-  "Setting up LDAP": "LDAP instellen",
   "Settings": "Instellingen",
   "Settings Requiring Re-Initialization": "Instellingen waarvoor herinitialisatie is vereist",
   "Settings saved": "Instellingen zijn opgeslagen",

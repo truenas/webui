@@ -3589,7 +3589,6 @@
   "Setting this option is discouraged as it increases security risk.": "Il est déconseillé de configurer cette option car elle augmente le risque de sécurité.",
   "Setting this option reduces the security of the connection, so only use it if the client does not understand reused SSL sessions.": "Le paramétrage de cette option réduit la sécurité de la connexion, donc ne l'utilisez que si le client ne comprend pas les sessions SSL réutilisées.",
   "Setting this option will result in timeouts if <b>identd</b> is not running on the client.": "Le réglage de cette option entraînera des délais d'attente si <b>identd</b> ne s'exécute pas sur le client.",
-  "Setting up LDAP": "Configuration de LDAP",
   "Settings": "Paramètres",
   "Settings Requiring Re-Initialization": "Paramètres nécessitant une réinitialisation",
   "Settings saved": "Paramètres sauvegardés",
