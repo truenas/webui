@@ -6,8 +6,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
-import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
+import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
+import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxIconHarness } from 'app/modules/ix-icon/ix-icon.harness';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
@@ -45,7 +45,7 @@ describe('CloudCredentialsCardComponent', () => {
         key: '<key>',
       },
     },
-  ] as CloudsyncCredential[];
+  ] as CloudSyncCredential[];
 
   const providers = [{
     name: 'GOOGLE_DRIVE',
@@ -53,7 +53,7 @@ describe('CloudCredentialsCardComponent', () => {
   }, {
     name: 'B2',
     title: 'Backblaze B2',
-  }] as CloudsyncProvider[];
+  }] as CloudSyncProvider[];
 
   const createComponent = createComponentFactory({
     component: CloudCredentialsCardComponent,

@@ -15,13 +15,13 @@ import {
 import { DialogService } from 'app/services/dialog.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { CloudsyncRestoreDialogComponent } from './cloudsync-restore-dialog.component';
+import { CloudSyncRestoreDialogComponent } from './cloudsync-restore-dialog.component';
 
-describe('CloudsyncRestoreDialogComponent', () => {
-  let spectator: Spectator<CloudsyncRestoreDialogComponent>;
+describe('CloudSyncRestoreDialogComponent', () => {
+  let spectator: Spectator<CloudSyncRestoreDialogComponent>;
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
-    component: CloudsyncRestoreDialogComponent,
+    component: CloudSyncRestoreDialogComponent,
     imports: [
       ReactiveFormsModule,
       IxFormsModule,

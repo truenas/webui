@@ -13,9 +13,9 @@ import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-sli
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
 import { AppLoaderModule } from 'app/modules/loader/app-loader.module';
-import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
-import { CloudsyncListComponent } from 'app/pages/data-protection/cloudsync/cloudsync-list/cloudsync-list.component';
-import { CloudsyncRestoreDialogComponent } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
+import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
+import { CloudSyncListComponent } from 'app/pages/data-protection/cloudsync/cloudsync-list/cloudsync-list.component';
+import { CloudSyncRestoreDialogComponent } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
 import { DialogService } from 'app/services/dialog.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -23,8 +23,8 @@ import { LocaleService } from 'app/services/locale.service';
 import { TaskService } from 'app/services/task.service';
 import { WebSocketService } from 'app/services/ws.service';
 
-describe('CloudsyncListComponent', () => {
-  let spectator: Spectator<CloudsyncListComponent>;
+describe('CloudSyncListComponent', () => {
+  let spectator: Spectator<CloudSyncListComponent>;
   let loader: HarnessLoader;
   let table: IxTable2Harness;
 
@@ -78,7 +78,7 @@ describe('CloudsyncListComponent', () => {
   ];
 
   const createComponent = createComponentFactory({
-    component: CloudsyncListComponent,
+    component: CloudSyncListComponent,
     imports: [
       AppLoaderModule,
       EntityModule,
@@ -152,7 +152,7 @@ describe('CloudsyncListComponent', () => {
     await editButton.click();
 
     expect(spectator.inject(IxChainedSlideInService).pushComponent).toHaveBeenCalledWith(
-      CloudsyncFormComponent,
+      CloudSyncFormComponent,
       true,
       expect.objectContaining(cloudSyncList[0]),
     );
@@ -182,7 +182,7 @@ describe('CloudsyncListComponent', () => {
     const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'Restore' }));
     await editButton.click();
 
-    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(CloudsyncRestoreDialogComponent, {
+    expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(CloudSyncRestoreDialogComponent, {
       data: 1,
     });
   });

@@ -12,16 +12,16 @@ import { CHAINED_SLIDE_IN_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/compon
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SchedulerModule } from 'app/modules/scheduler/scheduler.module';
-import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
+import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { googlePhotosCreds, googlePhotosProvider } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.testing.utils';
-import { CloudsyncWhatAndWhenComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-what-and-when/cloudsync-what-and-when.component';
+import { CloudSyncWhatAndWhenComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-what-and-when/cloudsync-what-and-when.component';
 import { TransferModeExplanationComponent } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
 import { DatasetService } from 'app/services/dataset-service/dataset.service';
 import { DialogService } from 'app/services/dialog.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
-describe('CloudsyncWhatAndWhenComponent', () => {
-  let spectator: Spectator<CloudsyncWhatAndWhenComponent>;
+describe('CloudSyncWhatAndWhenComponent', () => {
+  let spectator: Spectator<CloudSyncWhatAndWhenComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
   const chainedComponentRef = {
@@ -30,7 +30,7 @@ describe('CloudsyncWhatAndWhenComponent', () => {
   };
 
   const createComponent = createComponentFactory({
-    component: CloudsyncWhatAndWhenComponent,
+    component: CloudSyncWhatAndWhenComponent,
     imports: [
       ReactiveFormsModule,
       IxFormsModule,
@@ -133,6 +133,6 @@ describe('CloudsyncWhatAndWhenComponent', () => {
       title: 'Switch to Advanced Options',
       hideCheckbox: true,
     });
-    expect(chainedComponentRef.swap).toHaveBeenCalledWith(CloudsyncFormComponent, true);
+    expect(chainedComponentRef.swap).toHaveBeenCalledWith(CloudSyncFormComponent, true);
   });
 });
