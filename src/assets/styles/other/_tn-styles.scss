@@ -1276,3 +1276,9 @@ mat-form-field {
 .multi-error-dialog.mat-mdc-dialog-content {
   overflow: auto !important;
 }
+
+.highlighted-text {
+  color: var(--primary);
+  cursor: pointer;
+  text-decoration: underline;
+}

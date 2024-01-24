@@ -4,6 +4,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { TranslateModule } from '@ngx-translate/core';
 import { AutofocusDirective } from 'app/directives/common/autofocus/autofocus.directive';
 import { HasRoleDirective } from 'app/directives/common/has-role/has-role.directive';
+import { HighlightTextDirective } from 'app/directives/common/highlight-text/highlight-text.directive';
 import { IfNightlyDirective } from 'app/directives/common/if-nightly/if-nightly.directive';
 import { RequiresRolesWrapperComponent } from 'app/directives/common/requires-roles/requires-roles-wrapper.component';
 import { RequiresRolesDirective } from 'app/directives/common/requires-roles/requires-roles.directive';
@@ -23,6 +24,7 @@ import { LetDirective } from './app-let.directive';
     RequiresRolesWrapperComponent,
     RequiresRolesDirective,
     AutofocusDirective,
+    HighlightTextDirective,
     StepActivationDirective,
   ],
   exports: [
@@ -32,6 +34,7 @@ import { LetDirective } from './app-let.directive';
     RequiresRolesWrapperComponent,
     RequiresRolesDirective,
     AutofocusDirective,
+    HighlightTextDirective,
     StepActivationDirective,
   ],
 })
