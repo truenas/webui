@@ -30,11 +30,18 @@ export class TestDirective {
 
   get normalizedDescription(): string[] {
     const description = this.overrideDirective?.overrideDescription ?? this.description;
-    const normalizedDescription = Array.isArray(description) ? description : [description];
+    let normalizedDescription = Array.isArray(description) ? description : [description];
 
-    return normalizedDescription
+    normalizedDescription = normalizedDescription
       .filter((part) => part)
       .map((part) => kebabCase(String(part)));
+
+    if (this.overrideDirective?.appendInitialDataTestLastPart) {
+      const normalizedInitialDescription = Array.isArray(this.description) ? this.description : [this.description];
+      normalizedDescription.push(normalizedInitialDescription[normalizedInitialDescription.length - 1]);
+    }
+
+    return normalizedDescription as string[];
   }
 
   @HostBinding('attr.data-test')
