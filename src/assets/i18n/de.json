@@ -1315,6 +1315,7 @@
   "IP": "",
   "IP address of the remote system with <i>UPS Mode</i> set as <i>Master</i>. Enter a valid IP address in the format <i>192.168.0.1</i>.": "",
   "IP address on which the connection <b>Active Side</b> listens. Defaults to <i>0.0.0.0</i>.": "",
+  "IP addresses and networks that are allowed to use API and UI. If this list is empty, then all IP addresses are allowed to use API and UI.": "",
   "IPMI": "",
   "IPMI Events": "",
   "IPMI Password Reset": "",

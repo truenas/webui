@@ -1,8 +1,16 @@
 <mat-card>
   <mat-toolbar-row>
-    <h3 class="card-title">
-      {{ 'Allowed IP Addresses' | translate }}
-    </h3>
+    <div fxFlex fxLayoutAlign="start center">
+      <h3 class="card-title">
+        {{ 'Allowed IP Addresses' | translate }}
+      </h3>
+
+      <ix-tooltip
+        class="tooltip"
+        [header]="'Allowed IP Addresses' | translate"
+        [message]="'IP addresses and networks that are allowed to use API and UI. If this list is empty, then all IP addresses are allowed to use API and UI.' | translate"
+      ></ix-tooltip>
+    </div>
 
     <div class="actions action-icon">
       <button
