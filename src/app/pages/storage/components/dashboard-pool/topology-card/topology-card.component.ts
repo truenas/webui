@@ -200,6 +200,10 @@ export class TopologyCardComponent implements OnInit, OnChanges {
     ].includes(poolState.status);
   }
 
+  protected get isPoolOffline(): boolean {
+    return this.poolState?.status === PoolStatus.Offline;
+  }
+
   dashboardDiskToDisk(dashDisk: StorageDashboardDisk): Disk {
     const output: EmptyDiskObject | Disk = {};
     const keys: string[] = Object.keys(dashDisk);
