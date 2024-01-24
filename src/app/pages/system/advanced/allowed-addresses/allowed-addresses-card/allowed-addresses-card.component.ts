@@ -28,7 +28,7 @@ interface AllowedAddressRow {
 @UntilDestroy()
 @Component({
   selector: 'ix-allowed-addresses-card',
-  styleUrls: ['../../common-card.scss'],
+  styleUrls: ['../../common-card.scss', './allowed-addresses-card.component.scss'],
   templateUrl: './allowed-addresses-card.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
