@@ -284,6 +284,7 @@
   "Hubic": "",
   "I would like to": "",
   "IP": "",
+  "IP addresses and networks that are allowed to use API and UI. If this list is empty, then all IP addresses are allowed to use API and UI.": "",
   "IPMI Events": "",
   "IPMI Read": "",
   "IPMI Write": "",
