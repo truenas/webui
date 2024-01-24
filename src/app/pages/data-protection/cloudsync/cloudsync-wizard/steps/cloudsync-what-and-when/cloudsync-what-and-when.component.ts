@@ -24,7 +24,7 @@ import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { newOption, Option } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
 import { CHAINED_SLIDE_IN_REF } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
@@ -444,7 +444,7 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
           this.form.controls.bucket_input.disable();
           this.cdr.markForCheck();
         },
-        error: (error: WebsocketError) => {
+        error: (error: WebSocketError) => {
           this.form.controls.bucket.disable();
           this.form.controls.bucket_input.enable();
           this.dialog.closeAllDialogs();

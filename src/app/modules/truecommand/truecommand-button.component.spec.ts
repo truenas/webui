@@ -6,7 +6,7 @@ import {
   Spectator, createComponentFactory, mockProvider, SpectatorFactory,
 } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -47,7 +47,7 @@ describe('TruecommandButtonComponent', () => {
         TruecommandStatusModalComponent,
       ],
       providers: [
-        mockWebsocket([
+        mockWebSocket([
           mockCall('truecommand.config', getFakeConfig(config)),
         ]),
         mockProvider(DialogService, {

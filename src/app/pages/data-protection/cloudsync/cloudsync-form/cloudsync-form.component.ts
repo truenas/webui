@@ -26,7 +26,7 @@ import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interfa
 import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { newOption, SelectOption } from 'app/interfaces/option.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
 import { addNewIxSelectValue } from 'app/modules/ix-forms/components/ix-select/ix-select-with-new-option.directive';
@@ -369,7 +369,7 @@ export class CloudSyncFormComponent implements OnInit {
           this.form.controls.bucket_input.disable();
           this.cdr.markForCheck();
         },
-        error: (error: WebsocketError) => {
+        error: (error: WebSocketError) => {
           this.isLoading = false;
           this.form.controls.bucket.disable();
           this.form.controls.bucket_input.enable();

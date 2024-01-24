@@ -6,7 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
+import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -18,7 +18,7 @@ import { WebSocketService } from 'app/services/ws.service';
 export class RebootComponent implements OnInit {
   constructor(
     protected ws: WebSocketService,
-    private wsManager: WebsocketConnectionService,
+    private wsManager: WebSocketConnectionService,
     protected router: Router,
     private errorHandler: ErrorHandlerService,
     protected loader: AppLoaderService,
@@ -43,7 +43,7 @@ export class RebootComponent implements OnInit {
       },
       complete: () => { // show reboot screen
         this.wsManager.prepareShutdown();
-        this.wsManager.closeWebsocketConnection();
+        this.wsManager.closeWebSocketConnection();
         setTimeout(() => {
           this.router.navigate(['/sessions/signin']);
         }, 5000);

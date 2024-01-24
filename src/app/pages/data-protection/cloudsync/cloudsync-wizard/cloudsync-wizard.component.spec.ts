@@ -6,7 +6,7 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { MatStepperHarness, MatStepperNextHarness } from '@angular/material/stepper/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CloudCredentialsSelectModule } from 'app/modules/custom-selects/cloud-credentials-select/cloud-credentials-select.module';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { CHAINED_SLIDE_IN_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
@@ -56,7 +56,7 @@ describe('CloudSyncWizardComponent', () => {
     providers: [
       { provide: CHAINED_SLIDE_IN_REF, useValue: chainedComponentRef },
       mockAuth(),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('cloudsync.create'),
         mockCall('cloudsync.credentials.query', [googlePhotosCreds]),
         mockCall('cloudsync.credentials.create'),

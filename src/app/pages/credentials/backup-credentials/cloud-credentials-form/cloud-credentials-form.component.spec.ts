@@ -8,9 +8,9 @@ import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
@@ -113,7 +113,7 @@ describe('CloudCredentialsFormComponent', () => {
       mockProvider(DialogService),
       { provide: SLIDE_IN_DATA, useValue: undefined },
       { provide: CHAINED_SLIDE_IN_REF, useValue: chainedComponentRef },
-      mockWebsocket([
+      mockWebSocket([
         mockCall('cloudsync.credentials.query', []),
         mockCall('cloudsync.credentials.create', fakeCloudSyncCredential),
         mockCall('cloudsync.credentials.update', fakeCloudSyncCredential),
@@ -200,7 +200,7 @@ describe('CloudCredentialsFormComponent', () => {
       });
 
       it('shows an error when verification fails', async () => {
-        const websocketMock = spectator.inject(MockWebsocketService);
+        const websocketMock = spectator.inject(MockWebSocketService);
         websocketMock.mockCall('cloudsync.credentials.verify', {
           valid: false,
           excerpt: 'Missing some important field',

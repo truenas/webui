@@ -5,7 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
@@ -92,7 +92,7 @@ describe('CloudSyncFormComponent', () => {
     providers: [
       mockAuth(),
       mockProvider(DialogService),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('cloudsync.create', existingTask),
         mockCall('cloudsync.update', existingTask),
         mockCall('cloudsync.credentials.query', [

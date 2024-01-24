@@ -4,16 +4,16 @@ import { environment } from 'environments/environment';
 import {
   BehaviorSubject, interval, NEVER, Observable, of, switchMap, tap, timer,
 } from 'rxjs';
-import { webSocket as rxjsWebsocket, WebSocketSubject } from 'rxjs/webSocket';
+import { webSocket as rxjsWebSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { IncomingApiMessageType, OutgoingApiMessageType } from 'app/enums/api-message-type.enum';
 import { WEBSOCKET } from 'app/helpers/websocket.helper';
 import { WINDOW } from 'app/helpers/window.helper';
-import { ApiEvent, IncomingWebsocketMessage } from 'app/interfaces/api-message.interface';
+import { ApiEvent, IncomingWebSocketMessage } from 'app/interfaces/api-message.interface';
 
 @Injectable({
   providedIn: 'root',
 })
-export class WebsocketConnectionService {
+export class WebSocketConnectionService {
   private ws$: WebSocketSubject<unknown>;
 
   private readonly pingTimeoutMillis = 20 * 1000;
@@ -53,14 +53,14 @@ export class WebsocketConnectionService {
 
   constructor(
     @Inject(WINDOW) protected window: Window,
-    @Inject(WEBSOCKET) private webSocket: typeof rxjsWebsocket,
+    @Inject(WEBSOCKET) private webSocket: typeof rxjsWebSocket,
   ) {
-    this.initializeWebsocket();
+    this.initializeWebSocket();
     this.subscribeToConnectionStatus();
     this.setupPing();
   }
 
-  private initializeWebsocket(): void {
+  private initializeWebSocket(): void {
     if (this.ws$) {
       this.ws$.complete();
     }
@@ -75,7 +75,7 @@ export class WebsocketConnectionService {
       },
     });
     this.wsAsObservable$ = this.ws$.asObservable().pipe(
-      switchMap((data: IncomingWebsocketMessage) => {
+      switchMap((data: IncomingWebSocketMessage) => {
         if (this.hasAuthError(data)) {
           this.ws$.complete();
         }
@@ -84,7 +84,7 @@ export class WebsocketConnectionService {
     );
     // At least one explicit subscription required to keep the connection open
     this.ws$.pipe(
-      tap((response: IncomingWebsocketMessage) => {
+      tap((response: IncomingWebSocketMessage) => {
         if (response.msg === IncomingApiMessageType.Connected) {
           this.isConnected$.next(true);
         }
@@ -94,7 +94,7 @@ export class WebsocketConnectionService {
 
   private onOpen(): void {
     if (this.isTryingReconnect) {
-      this.closeWebsocketConnection();
+      this.closeWebSocketConnection();
       return;
     }
     this.shutDownInProgress = false;
@@ -120,12 +120,12 @@ export class WebsocketConnectionService {
     timer(this.reconnectTimeoutMillis).subscribe({
       next: () => {
         this.isTryingReconnect = false;
-        this.initializeWebsocket();
+        this.initializeWebSocket();
       },
     });
   }
 
-  private hasAuthError(data: IncomingWebsocketMessage): boolean {
+  private hasAuthError(data: IncomingWebSocketMessage): boolean {
     return 'error' in data && data.error.error === 207;
   }
 
@@ -186,7 +186,7 @@ export class WebsocketConnectionService {
     });
   }
 
-  closeWebsocketConnection(): void {
+  closeWebSocketConnection(): void {
     this.ws$.complete();
   }
 

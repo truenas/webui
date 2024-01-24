@@ -5,11 +5,11 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
 import {
-  mockCall, mockJob, mockWebsocket,
+  mockCall, mockJob, mockWebSocket,
 } from 'app/core/testing/utils/mock-websocket.utils';
 import { helptextSystemKmip } from 'app/helptext/system/kmip';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -31,7 +31,7 @@ describe('KmipComponent', () => {
       IxFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('kmip.config', {
           server: 'kmip.truenas.com',
           enabled: false,
@@ -134,7 +134,7 @@ describe('KmipComponent', () => {
 
   describe('pending sync', () => {
     beforeEach(() => {
-      spectator.inject(MockWebsocketService).mockCall('kmip.kmip_sync_pending', true);
+      spectator.inject(MockWebSocketService).mockCall('kmip.kmip_sync_pending', true);
       spectator.component.ngOnInit();
     });
 

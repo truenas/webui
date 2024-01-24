@@ -6,7 +6,7 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -89,7 +89,7 @@ describe('CloudSyncListComponent', () => {
         pushComponent: jest.fn(() => of()),
       }),
       mockAuth(),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('cloudsync.query', cloudSyncList),
       ]),
       mockProvider(DialogService, {

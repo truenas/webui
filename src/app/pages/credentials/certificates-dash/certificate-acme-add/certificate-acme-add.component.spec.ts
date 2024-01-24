@@ -8,7 +8,7 @@ import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockEntityJobComponentRef } from 'app/core/testing/utils/mock-entity-job-component-ref.utils';
 import {
-  mockCall, mockJob, mockWebsocket,
+  mockCall, mockJob, mockWebSocket,
 } from 'app/core/testing/utils/mock-websocket.utils';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
@@ -33,7 +33,7 @@ describe('CertificateAcmeAddComponent', () => {
       IxFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('certificate.acme_server_choices', {
           'https://acme-staging-v02.api.letsencrypt.org/directory': "Let's Encrypt Staging Directory",
           'https://acme-v02.api.letsencrypt.org/directory': "Let's Encrypt Production Directory",

@@ -25,8 +25,8 @@ describe('DevicesStore', () => {
 
   it('loads pool topology, disks and sets loading indicators when loadNodes is called', () => {
     testScheduler.run(({ cold, expectObservable }) => {
-      const mockWebsocket = spectator.inject(WebSocketService);
-      jest.spyOn(mockWebsocket, 'call').mockImplementation((method) => {
+      const mockWebSocket = spectator.inject(WebSocketService);
+      jest.spyOn(mockWebSocket, 'call').mockImplementation((method) => {
         if (method === 'pool.query') {
           return cold('-b|', {
             b: [{

@@ -5,8 +5,8 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of, throwError } from 'rxjs';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DatasetAttachment } from 'app/interfaces/pool-attachment.interface';
 import { Process } from 'app/interfaces/process.interface';
 import { VolumesListDataset } from 'app/interfaces/volumes-list-pool.interface';
@@ -38,7 +38,7 @@ describe('DeleteDatasetDialogComponent', () => {
         } as VolumesListDataset,
       },
       mockProvider(MatDialogRef),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('pool.dataset.delete'),
         mockCall('pool.dataset.attachments', [
           {
@@ -139,7 +139,7 @@ describe('DeleteDatasetDialogComponent', () => {
   });
 
   it('asks to force delete a dataset if it cannot be deleted because device is busy', async () => {
-    const websocketMock = spectator.inject(MockWebsocketService);
+    const websocketMock = spectator.inject(MockWebSocketService);
     jest.spyOn(websocketMock, 'call').mockImplementationOnce(() => throwError(() => ({
       reason: 'Device busy',
     })));

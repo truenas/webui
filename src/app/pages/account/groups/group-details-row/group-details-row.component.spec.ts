@@ -9,7 +9,7 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { MockModule } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { Group } from 'app/interfaces/group.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { IxTable2Module } from 'app/modules/ix-table2/ix-table2.module';
@@ -46,7 +46,7 @@ describe('GroupDetailsRowComponent', () => {
     ],
     providers: [
       mockProvider(IxSlideInService),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('user.query'),
         mockCall('group.delete'),
         mockCall('group.query', []),
