@@ -5,7 +5,14 @@
 
     <p>
       {{ 'Change Token Lifetime in' | translate }}
-      <b ixHighlightText (click)="viewSessionsCard()">{{ 'Advanced Settings → Access' | translate }}</b>
+      <b
+        ixNavigateAndInteract
+        navigateHash="access-card"
+        [navigateRoute]="['/system', 'advanced']"
+        (click)="viewSessionsCard()"
+      >
+        {{ 'Advanced Settings → Access' | translate }}
+      </b>
     </p>
   </div>
 </div>
