@@ -166,6 +166,18 @@ def Select_Option(driver, xpath):
     driver.find_element_by_xpath(xpath).click()
 
 
+def set_checkbox(driver: classmethod, xpath: str) -> None:
+    set_checkbox_by_state(driver, xpath, True)
+
+
+def set_checkbox_by_state(driver: classmethod, xpath: str, state: bool) -> None:
+    assert wait_on_element(driver, 5, xpath, 'clickable')
+    if driver.find_element_by_xpath(f'{xpath}//input').get_property('checked') != state:
+        driver.find_element_by_xpath(xpath).click()
+    assert driver.find_element_by_xpath(f'{xpath}//input').get_property('checked') == state
+
+
+
 def Start_Or_Restart_SMB_Service(driver):
     if wait_on_element(driver, 10, xpaths.popup.smb_Start_Title):
         Start_SMB_Service(driver)
@@ -192,6 +204,10 @@ def Trigger_Failover(driver):
     assert wait_on_element(driver, 10, xpaths.dashboard.system_Information_Standby_Title)
     assert wait_on_element(driver, 10, xpaths.button.initiate_Failover, 'clickable')
     driver.find_element_by_xpath(xpaths.button.initiate_Failover).click()
+
+
+def unset_checkbox(driver: classmethod, xpath: str) -> None:
+    set_checkbox_by_state(driver, xpath, False)
 
 
 def Verify_Degraded_Alert(driver):
