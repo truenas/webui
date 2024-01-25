@@ -1,42 +1,49 @@
-import { Component, DebugElement } from '@angular/core';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
 import { Router } from '@angular/router';
+import { createDirectiveFactory, SpectatorDirective } from '@ngneat/spectator/jest';
 import { NavigateAndInteractDirective } from './navigate-and-interact.directive';
 
-@Component({
-  template: '<div ixNavigateAndInteract [navigateRoute]="[\'/some-path\']" [navigateHash]="hash"></div>',
-})
-class TestHostComponent {
-  hash = 'testHash';
-}
-
 describe('NavigateAndInteractDirective', () => {
-  let component: TestHostComponent;
-  let fixture: ComponentFixture<TestHostComponent>;
-  let debugElement: DebugElement;
-  const mockRouter = { navigate: jest.fn() };
+  let spectator: SpectatorDirective<NavigateAndInteractDirective>;
+  let mockRouter: Router;
+  const createDirective = createDirectiveFactory({
+    directive: NavigateAndInteractDirective,
+    mocks: [Router],
+  });
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [NavigateAndInteractDirective, TestHostComponent],
-      providers: [
-        { provide: Router, useValue: mockRouter },
-      ],
-    }).compileComponents();
-
-    fixture = TestBed.createComponent(TestHostComponent);
-    component = fixture.componentInstance;
-    debugElement = fixture.debugElement.query(By.directive(NavigateAndInteractDirective));
-    fixture.detectChanges();
+  beforeEach(() => {
+    spectator = createDirective('<div ixNavigateAndInteract [navigateRoute]="[\'/some-path\']" navigateHash="testHash"></div>');
+    mockRouter = spectator.inject(Router);
   });
 
   it('should create an instance', () => {
-    expect(component).toBeTruthy();
+    expect(spectator.directive).toBeTruthy();
   });
 
   it('should call router.navigate with correct parameters on click', () => {
-    debugElement.triggerEventHandler('click', null);
+    spectator.dispatchMouseEvent(spectator.element, 'click');
     expect(mockRouter.navigate).toHaveBeenCalledWith(['/some-path'], { fragment: 'testHash' });
+  });
+
+  it('should scroll to and highlight the element with the given ID', () => {
+    const scrollIntoViewMock = jest.fn();
+    HTMLElement.prototype.scrollIntoView = scrollIntoViewMock;
+
+    const mockElement = document.createElement('div');
+    mockElement.id = 'testHash';
+    document.body.appendChild(mockElement);
+
+    const clickSpy = jest.spyOn(HTMLElement.prototype, 'click');
+
+    spectator.dispatchMouseEvent(spectator.element, 'click');
+
+    setTimeout(() => {
+      expect(scrollIntoViewMock).toHaveBeenCalled();
+      expect(clickSpy).toHaveBeenCalled();
+
+      // Clean up
+      document.body.removeChild(mockElement);
+      // Restore original scrollIntoView
+      delete HTMLElement.prototype.scrollIntoView;
+    }, 0);
   });
 });
