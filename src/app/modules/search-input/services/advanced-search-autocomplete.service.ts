@@ -128,7 +128,8 @@ export class AdvancedSearchAutocompleteService<T> {
       anchor = anchor + 2;
     }
 
-    const shouldAppendSpace = !updatedValue.startsWith('(') && currentQuery[to] !== ')';
+    const shouldAppendSpace = !updatedValue.startsWith('(') && currentQuery[to] !== ')'
+      && currentQuery[to] !== '"' && currentQuery[to] !== "'";
 
     this.editorView?.dispatch({
       changes: { from, to, insert: shouldAppendSpace ? `${updatedValue} ` : updatedValue },

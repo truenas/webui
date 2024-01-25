@@ -32,19 +32,13 @@
 
 <div class="container" fxLayoutGap="16px">
   <div class="table-container" [class.mobile-hidden]="showMobileDetails && dataProvider.expandedRow">
-    <div class="sticky-header">
-      <thead
-        class="audit-header-row"
-        ix-table-head
-        [columns]="columns"
-        [dataProvider]="dataProvider"
-      ></thead>
-    </div>
+    <ng-container *ngIf="!isMobileView" [ngTemplateOutlet]="thead"></ng-container>
 
     <ix-table2
       [ix-table2-empty]="!(dataProvider.currentPageCount$ | async)"
       [emptyConfig]="emptyService.defaultEmptyConfig(dataProvider.emptyType$ | async)"
     >
+      <ng-container *ngIf="isMobileView" [ngTemplateOutlet]="thead"></ng-container>
       <tbody
         ix-table-body
         [columns]="columns"
@@ -94,4 +88,15 @@
     [sorting]="dataProvider.sorting"
     [defaultFilters]="basicQueryFilters"
   ></ix-export-button>
+</ng-template>
+
+<ng-template #thead>
+  <div class="sticky-header">
+    <thead
+      class="audit-header-row"
+      ix-table-head
+      [columns]="columns"
+      [dataProvider]="dataProvider"
+    ></thead>
+  </div>
 </ng-template>
