@@ -94,7 +94,7 @@ describe('AutomatedDiskSelection', () => {
     expect(spectator.query(NormalSelectionComponent)).toBeNull();
   });
 
-  it('doesnt let the layout change when canChangeLayout is false', async () => {
+  it('does not let the layout change when canChangeLayout is false', async () => {
     spectator.setInput('canChangeLayout', false);
 
     layoutSelect = await loader.getHarnessOrNull(IxSelectHarness.with({ label: 'Layout' }));

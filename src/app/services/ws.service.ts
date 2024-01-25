@@ -14,14 +14,14 @@ import { MockEnclosureUtils } from 'app/core/testing/utils/mock-enclosure.utils'
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ResponseErrorType } from 'app/enums/response-error-type.enum';
-import { WebsocketErrorName } from 'app/enums/websocket-error-name.enum';
+import { WebSocketErrorName } from 'app/enums/websocket-error-name.enum';
 import { ApiCallDirectory, ApiCallMethod } from 'app/interfaces/api/api-call-directory.interface';
 import { ApiEventDirectory } from 'app/interfaces/api/api-event-directory.interface';
 import { ApiJobDirectory, ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
-import { ApiEvent, IncomingWebsocketMessage, ResultMessage } from 'app/interfaces/api-message.interface';
+import { ApiEvent, IncomingWebSocketMessage, ResultMessage } from 'app/interfaces/api-message.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 
 @UntilDestroy()
 @Injectable({
@@ -33,7 +33,7 @@ export class WebSocketService {
 
   constructor(
     protected router: Router,
-    protected wsManager: WebsocketConnectionService,
+    protected wsManager: WebSocketConnectionService,
     protected translate: TranslateService,
   ) {
     if (environment.mockConfig && !environment?.production) this.mockUtils = new MockEnclosureUtils();
@@ -134,8 +134,8 @@ export class WebSocketService {
         });
       }),
       switchMap(() => this.ws$),
-      filter((data: IncomingWebsocketMessage) => data.msg === IncomingApiMessageType.Result && data.id === uuid),
-      switchMap((data: IncomingWebsocketMessage) => {
+      filter((data: IncomingWebSocketMessage) => data.msg === IncomingApiMessageType.Result && data.id === uuid),
+      switchMap((data: IncomingWebSocketMessage) => {
         if ('error' in data && data.error) {
           this.printError(data.error, { method, params });
           const error = this.enhanceError(data.error, { method });
@@ -167,8 +167,8 @@ export class WebSocketService {
     );
   }
 
-  private printError(error: WebsocketError, context: { method: string; params: unknown }): void {
-    if (error.errname === WebsocketErrorName.NoAccess) {
+  private printError(error: WebSocketError, context: { method: string; params: unknown }): void {
+    if (error.errname === WebSocketErrorName.NoAccess) {
       console.error(`Access denied to ${context.method} with ${context.params ? JSON.stringify(context.params) : 'no params'}`);
       return;
     }
@@ -181,8 +181,8 @@ export class WebSocketService {
     console.error('Error: ', error);
   }
 
-  private enhanceError(error: WebsocketError, context: { method: string }): WebsocketError {
-    if (error.errname === WebsocketErrorName.NoAccess) {
+  private enhanceError(error: WebSocketError, context: { method: string }): WebSocketError {
+    if (error.errname === WebSocketErrorName.NoAccess) {
       return {
         ...error,
         reason: this.translate.instant('Access denied to {method}', { method: context.method }),

@@ -1,5 +1,5 @@
 import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 
 export interface PongMessage {
   id: string;
@@ -15,7 +15,7 @@ export interface ResultMessage<T = unknown> {
   id: string;
   msg: IncomingApiMessageType.Result;
   result?: T;
-  error?: WebsocketError;
+  error?: WebSocketError;
 }
 
 export interface ConnectedMessage {
@@ -33,7 +33,7 @@ export interface ApiEvent<T = unknown> {
   | IncomingApiMessageType.NoSub;
 }
 
-export type IncomingWebsocketMessage =
+export type IncomingWebSocketMessage =
   | PongMessage
   | SubscriptionReadyMessage
   | ResultMessage

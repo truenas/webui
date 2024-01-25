@@ -7,7 +7,7 @@ import {
   Observable, catchError, debounceTime, distinctUntilChanged, of, switchMap, take,
 } from 'rxjs';
 import { ErrorReport } from 'app/interfaces/error-report.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -38,7 +38,7 @@ export class TargetNameValidationService {
           }
 
           return this.ws.call('iscsi.target.validate_name', [value]).pipe(
-            catchError((error: WebsocketError) => {
+            catchError((error: WebSocketError) => {
               const errorReports = this.errorHandler.parseError(error) as ErrorReport;
               return of({
                 customValidator: {

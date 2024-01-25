@@ -4,21 +4,21 @@ import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/sp
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { ResponseErrorType } from 'app/enums/response-error-type.enum';
-import { WebsocketErrorName } from 'app/enums/websocket-error-name.enum';
+import { WebSocketErrorName } from 'app/enums/websocket-error-name.enum';
 import { Job } from 'app/interfaces/job.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 const error = new Error('Dummy Error');
 const wsError = {
   error: 11,
-  errname: WebsocketErrorName.Again,
+  errname: WebSocketErrorName.Again,
   type: ResponseErrorType.Validation,
   reason: '[EINVAL] user_update.smb: This attribute cannot be changed\n[EINVAL] user_update.smb: Password must be changed in order to enable SMB authentication\n',
   trace: {},
   extra: [],
-} as WebsocketError;
+} as WebSocketError;
 const failedJob = {
   method: 'cloudsync.sync_onetime',
   description: null,

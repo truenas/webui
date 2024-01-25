@@ -12,7 +12,7 @@ import {
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
 import { tapOnce } from 'app/helpers/operators/tap-once.operator';
-import { helptextCloudsync } from 'app/helptext/data-protection/cloudsync/cloudsync';
+import { helptextCloudSync } from 'app/helptext/data-protection/cloudsync/cloudsync';
 import { CloudSyncTaskUi, CloudSyncTaskUpdate } from 'app/interfaces/cloud-sync-task.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { AsyncDataProvider } from 'app/modules/ix-table2/classes/async-data-provider/async-data-provider';
@@ -26,9 +26,9 @@ import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { CloudsyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
-import { CloudsyncRestoreDialogComponent } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
-import { CloudsyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
+import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
+import { CloudSyncRestoreDialogComponent } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
+import { CloudSyncWizardComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { IxChainedSlideInService } from 'app/services/ix-chained-slide-in.service';
@@ -175,7 +175,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
   }
 
   onAdd(): void {
-    this.ixChainedSlideInService.pushComponent(CloudsyncWizardComponent, true).pipe(
+    this.ixChainedSlideInService.pushComponent(CloudSyncWizardComponent, true).pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
     ).subscribe({
@@ -186,7 +186,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
   }
 
   onEdit(row?: CloudSyncTaskUi): void {
-    const closer$ = this.ixChainedSlideInService.pushComponent(CloudsyncFormComponent, true, row);
+    const closer$ = this.ixChainedSlideInService.pushComponent(CloudSyncFormComponent, true, row);
     closer$.pipe(
       filter((response) => !!response.response),
       untilDestroyed(this),
@@ -253,8 +253,8 @@ export class CloudSyncTaskCardComponent implements OnInit {
 
   dryRun(row: CloudSyncTaskUi): void {
     this.dialogService.confirm({
-      title: helptextCloudsync.dry_run_title,
-      message: helptextCloudsync.dry_run_dialog,
+      title: helptextCloudSync.dry_run_title,
+      message: helptextCloudSync.dry_run_dialog,
       hideCheckbox: true,
     }).pipe(
       filter(Boolean),
@@ -278,7 +278,7 @@ export class CloudSyncTaskCardComponent implements OnInit {
   }
 
   restore(row: CloudSyncTaskUi): void {
-    const dialog = this.matDialog.open(CloudsyncRestoreDialogComponent, {
+    const dialog = this.matDialog.open(CloudSyncRestoreDialogComponent, {
       data: row.id,
     });
     dialog.afterClosed().pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => this.getCloudSyncTasks());

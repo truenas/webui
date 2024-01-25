@@ -6,7 +6,7 @@ import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DnsAuthenticatorType } from 'app/enums/dns-authenticator-type.enum';
 import { AuthenticatorSchema, DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -49,7 +49,7 @@ describe('AcmednsFormComponent', () => {
         provide: SLIDE_IN_DATA,
         useValue: undefined,
       },
-      mockWebsocket([
+      mockWebSocket([
         mockCall('acme.dns.authenticator.create'),
         mockCall('acme.dns.authenticator.update'),
         mockCall('acme.dns.authenticator.authenticator_schemas', [{

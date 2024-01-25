@@ -20,7 +20,7 @@ import { mntPath } from 'app/enums/mnt-path.enum';
 import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { CreateDatasetDialogComponent } from 'app/modules/ix-forms/components/ix-explorer/create-dataset-dialog/create-dataset-dialog.component';
 import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/tree-node-provider.interface';
 
@@ -250,7 +250,7 @@ export class IxExplorerComponent implements OnInit, OnChanges, ControlValueAcces
     }
 
     return this.nodeProvider(node).pipe(
-      catchError((error: WebsocketError | Error) => {
+      catchError((error: WebSocketError | Error) => {
         this.loadingError = 'reason' in error ? error.reason : error.message;
         this.cdr.markForCheck();
         return of([]);

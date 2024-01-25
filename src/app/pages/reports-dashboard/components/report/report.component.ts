@@ -23,7 +23,7 @@ import { ReportingGraphName } from 'app/enums/reporting.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { ReportingData, ReportingDatabaseError } from 'app/interfaces/reporting.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { LineChartComponent } from 'app/pages/reports-dashboard/components/line-chart/line-chart.component';
 import { ReportStepDirection } from 'app/pages/reports-dashboard/enums/report-step-direction.enum';
@@ -455,13 +455,13 @@ export class ReportComponent extends WidgetComponent implements OnInit, OnChange
       next: (event) => {
         this.data = formatData(event);
       },
-      error: (err: WebsocketError) => {
+      error: (err: WebSocketError) => {
         this.handleError(err);
       },
     });
   }
 
-  handleError(err: WebsocketError): void {
+  handleError(err: WebSocketError): void {
     if (err?.error === (ReportingDatabaseError.FailedExport as number)) {
       this.report.errorConf = {
         type: EmptyType.Errors,

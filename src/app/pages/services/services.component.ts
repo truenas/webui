@@ -14,7 +14,7 @@ import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Service, ServiceRow } from 'app/interfaces/service.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { EmptyService } from 'app/modules/ix-tables/services/empty.service';
 import { ServiceFtpComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
@@ -200,7 +200,7 @@ export class ServicesComponent implements OnInit {
           );
         }
       },
-      error: (error: WebsocketError) => {
+      error: (error: WebSocketError) => {
         let message = this.translate.instant('Error starting service {serviceName}.', { serviceName });
         if (rpc === 'service.stop') {
           message = this.translate.instant('Error stopping service {serviceName}.', { serviceName });

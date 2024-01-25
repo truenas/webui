@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { CaCreateType } from 'app/enums/ca-create-type.enum';
 import { CertificateProfile } from 'app/interfaces/certificate.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -27,7 +27,7 @@ describe('CaIdentifierAndTypeComponent', () => {
       IxFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('webui.crypto.certificateauthority_profiles', {
           CA: caProfile,
           'OpenVPN Root CA': openvpnProfile,

@@ -4,7 +4,7 @@ import { UUID } from 'angular2-uuid';
 import { WebSocketSubject, WebSocketSubjectConfig } from 'rxjs/webSocket';
 import { OutgoingApiMessageType } from 'app/enums/api-message-type.enum';
 import { WEBSOCKET } from 'app/helpers/websocket.helper';
-import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
+import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 
 const fakeSocketUrl = 'ws://localhost:1234';
 let fakeSocketConfig: WebSocketSubjectConfig<unknown>;
@@ -18,12 +18,12 @@ function fakeSocket<T>(urlConfigOrSource: WebSocketSubjectConfig<T>): WebSocketS
   return fakeSocket$;
 }
 
-describe('WebsocketConnectionService', () => {
-  let spectator: SpectatorService<WebsocketConnectionService>;
+describe('WebSocketConnectionService', () => {
+  let spectator: SpectatorService<WebSocketConnectionService>;
   let nextFakeSocket$: WebSocketSubject<unknown>;
 
   const createService = createServiceFactory({
-    service: WebsocketConnectionService,
+    service: WebSocketConnectionService,
     providers: [
       {
         provide: WEBSOCKET,

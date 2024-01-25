@@ -7,7 +7,7 @@ import {
 import { provideMockStore } from '@ngrx/store/testing';
 import { lastValueFrom, of } from 'rxjs';
 import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
-import { mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
 import { IxFileUploadService } from 'app/services/ix-file-upload.service';
 import { SentryService } from 'app/services/sentry.service';
@@ -20,7 +20,7 @@ describe('FeedbackService', () => {
   const createService = createServiceFactory({
     service: FeedbackService,
     providers: [
-      mockWebsocket([
+      mockWebSocket([
 
       ]),
       provideMockStore({
