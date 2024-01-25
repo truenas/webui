@@ -142,7 +142,7 @@ def run_testing():
         sys.executable,
         '-m',
         'pytest',
-        '-v',
+        '-vs',
         test_suite,
         "--junitxml=results/junit/webui_test.xml",
         "--cucumber-json=results/cucumber/webui_test.json"

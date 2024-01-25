@@ -79,7 +79,7 @@ def on_the_add_dataset_slide_input_name_my_ad_dataset_and_share_type_smb(driver,
     driver.find_element_by_xpath(xpaths.add_Dataset.share_Type_Select).click()
     assert wait_on_element(driver, 5, xpaths.add_Dataset.share_Type_SMB_Option, 'clickable')
     driver.find_element_by_xpath(xpaths.add_Dataset.share_Type_SMB_Option).click()
-    time.sleep(2)
+    time.sleep(5)
     save_screenshot(driver, 'screenshot/scale/before_uncheck_smb.png')
     rsc.unset_checkbox(driver, xpaths.add_Dataset.create_Smb_Checkbox)
     save_screenshot(driver, 'screenshot/scale/after_uncheck_smb.png')
