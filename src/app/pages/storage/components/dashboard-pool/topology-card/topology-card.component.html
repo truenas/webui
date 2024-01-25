@@ -33,7 +33,7 @@
           >
             <ix-icon name="error" class="pool-icon icon-warning"></ix-icon>
           </span>
-          <span *ngIf="isPoolOffline">{{ 'Offline VDEVs' | translate }}</span>
+          <span *ngIf="isPoolOffline" class="offline-data-vdevs">{{ 'Offline VDEVs' | translate }}</span>
         </div>
       </div>
       <div class="vdev-line">
@@ -84,4 +84,4 @@
     </div>
   </mat-card-content>
 </mat-card>
-<ng-template #notAvailable>{{ 'N/A' | translate }}</ng-template>
+<ng-template #notAvailable><span class="vdev-value">{{ 'N/A' | translate }}</span></ng-template>
