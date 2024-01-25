@@ -1,7 +1,7 @@
 <div *ngIf="canChangeLayout; else showLayoutInfo" class="layout-container">
   <ix-select
     [ixTestOverride]="['layout']"
-    [appendInitialDataTestLastPart]="true"
+    [keepLastPart]="true"
     [formControl]="layoutControl"
     [label]="'Layout' | translate"
     [tooltip]="'Select VDEV layout. This is the first step in setting up your VDEVs.' | translate"
@@ -13,7 +13,7 @@
   <ix-input
     *ngIf="isDataVdev || isMetadataVdev"
     [ixTestOverride]="['layout']"
-    [appendInitialDataTestLastPart]="true"
+    [keepLastPart]="true"
     [formControl]="layoutControl"
     [label]="'Layout' | translate"
     [readonly]="true"

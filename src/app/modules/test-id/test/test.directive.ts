@@ -36,7 +36,7 @@ export class TestDirective {
       .filter((part) => part)
       .map((part) => kebabCase(String(part)));
 
-    if (this.overrideDirective?.appendInitialDataTestLastPart) {
+    if (this.overrideDirective?.keepLastPart) {
       const normalizedInitialDescription = Array.isArray(this.description) ? this.description : [this.description];
       normalizedDescription.push(normalizedInitialDescription[normalizedInitialDescription.length - 1]);
     }
