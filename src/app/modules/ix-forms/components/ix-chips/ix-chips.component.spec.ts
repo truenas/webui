@@ -203,7 +203,7 @@ describe('IxChipsComponent', () => {
   describe('ix-chip with resolveValue', () => {
     it('should resolve value and add it to values array', async () => {
       spectator.setInput('resolveValue', true);
-      spectator.setInput('options', of([
+      spectator.setInput('resolveOptions', of([
         { label: 'Option 1', value: 1 },
         { label: 'Option 2', value: 2 },
       ]));
@@ -217,7 +217,7 @@ describe('IxChipsComponent', () => {
 
     it('should not resolve values', async () => {
       spectator.setInput('resolveValue', false);
-      spectator.setInput('options', of([
+      spectator.setInput('resolveOptions', of([
         { label: 'Option 1', value: 1 },
         { label: 'Option 2', value: 2 },
       ]));

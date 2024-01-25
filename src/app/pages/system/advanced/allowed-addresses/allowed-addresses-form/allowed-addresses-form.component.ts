@@ -11,7 +11,7 @@ import {
 import { catchError } from 'rxjs/operators';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemGeneral } from 'app/helptext/system/general';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { IxValidatorsService } from 'app/modules/ix-forms/services/ix-validators.service';
 import { ipv4Validator } from 'app/modules/ix-forms/validators/ip-validation';
@@ -90,7 +90,7 @@ export class AllowedAddressesFormComponent implements OnInit {
       filter(Boolean),
       switchMap(() => {
         return this.ws.call('system.general.ui_restart').pipe(
-          catchError((error: WebsocketError) => {
+          catchError((error: WebSocketError) => {
             this.dialogService.error({
               title: helptextSystemGeneral.dialog_error_title,
               message: error.reason,

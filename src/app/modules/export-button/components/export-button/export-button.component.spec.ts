@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
@@ -22,7 +22,7 @@ describe('ExportButtonComponent', () => {
   const createComponent = createComponentFactory({
     component: ExportButtonComponent<EntryType, typeof method>,
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockJob(method, { result: '/path/data.csv', state: JobState.Success } as Job<string>),
         mockCall('core.download', [33456, '/_download/33456?auth_token=1234567890']),
       ]),

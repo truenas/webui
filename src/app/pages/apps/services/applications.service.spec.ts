@@ -1,7 +1,7 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { firstValueFrom } from 'rxjs';
 import { ixChartApp } from 'app/constants/catalog.constants';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
 import { AppsFiltersSort, AppsFiltersValues } from 'app/interfaces/apps-filters-values.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
@@ -35,7 +35,7 @@ describe('ApplicationsService', () => {
   const createService = createServiceFactory({
     service: ApplicationsService,
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('chart.release.upgrade_summary'),
         mockCall('app.available', appsResponse),
         mockCall('app.latest', appsResponse),

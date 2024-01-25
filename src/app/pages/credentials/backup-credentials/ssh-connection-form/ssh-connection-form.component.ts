@@ -22,7 +22,7 @@ import {
 } from 'app/interfaces/keychain-credential.interface';
 import { SshConnectionSetup } from 'app/interfaces/ssh-connection-setup.interface';
 import { SshCredentials } from 'app/interfaces/ssh-credentials.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { CHAINED_SLIDE_IN_REF, SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
@@ -242,7 +242,7 @@ export class SshConnectionFormComponent implements OnInit {
     }
 
     return this.ws.call('keychaincredential.setup_ssh_connection', [params]).pipe(
-      catchError((error: WebsocketError) => {
+      catchError((error: WebSocketError) => {
         if (error.errname.includes(sslCertificationError) || error.reason.includes(sslCertificationError)) {
           return this.dialogService.error(this.errorHandler.parseError(error)).pipe(
             switchMap(() => {

@@ -8,7 +8,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of, Subject } from 'rxjs';
 import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DatasetEncryptionType } from 'app/enums/dataset.enum';
 import { DatasetEncryptionSummary } from 'app/interfaces/dataset-encryption-summary.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
@@ -52,7 +52,7 @@ describe('DatasetUnlockComponent', () => {
       mockProvider(ActivatedRoute, {
         snapshot: { params: { datasetId: 'pool_name_1' } },
       }),
-      mockWebsocket([
+      mockWebSocket([
         mockJob('pool.dataset.encryption_summary'),
       ]),
       mockProvider(DialogService),

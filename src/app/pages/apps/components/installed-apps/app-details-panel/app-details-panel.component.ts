@@ -1,7 +1,6 @@
 import {
   ChangeDetectionStrategy, Component, EventEmitter, Input, Output,
 } from '@angular/core';
-import { Router } from '@angular/router';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { AppStatus } from 'app/pages/apps/enum/app-status.enum';
 
@@ -16,12 +15,9 @@ export class AppDetailsPanelComponent {
   @Input() status: AppStatus;
   @Output() startApp = new EventEmitter<void>();
   @Output() stopApp = new EventEmitter<void>();
-
-  constructor(
-    private router: Router,
-  ) { }
+  @Output() closeMobileDetails = new EventEmitter<void>();
 
   onCloseMobileDetails(): void {
-    this.router.navigate(['/apps', 'installed'], { state: { hideMobileDetails: true } });
+    this.closeMobileDetails.emit();
   }
 }

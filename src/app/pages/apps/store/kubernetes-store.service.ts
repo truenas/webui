@@ -9,6 +9,7 @@ import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
 import { KubernetesStatusData } from 'app/interfaces/kubernetes-status-data.interface';
 import { KubernetesStatus } from 'app/pages/apps/enum/kubernetes-status.enum';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
+import { ErrorHandlerService } from 'app/services/error-handler.service';
 
 export interface KubernetesState {
   kubernetesConfig: KubernetesConfig;
@@ -38,7 +39,10 @@ export class KubernetesStore extends ComponentStore<KubernetesState> {
   readonly kubernetesStatus$ = this.select((state) => state.kubernetesStatus);
   readonly kubernetesStatusDescription$ = this.select((state) => state.kubernetesStatusDescription);
 
-  constructor(private appsService: ApplicationsService) {
+  constructor(
+    private appsService: ApplicationsService,
+    private errorHandler: ErrorHandlerService,
+  ) {
     super(initialState);
     this.initialize();
   }
@@ -70,18 +74,20 @@ export class KubernetesStore extends ComponentStore<KubernetesState> {
         });
       }),
       switchMap(() => this.loadKubernetesStatus()),
-      catchError(() => {
-        this.handleError();
+      catchError((error) => {
+        this.handleError(error);
         return EMPTY;
       }),
     );
   });
 
-  private handleError(): void {
+  private handleError(error: unknown): void {
+    this.errorHandler.showErrorModal(error);
     this.patchState((state: KubernetesState): KubernetesState => {
       return {
         ...state,
         isLoading: false,
+        isKubernetesStarted: false,
       };
     });
   }

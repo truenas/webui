@@ -6,7 +6,7 @@ import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DnsAuthenticatorType } from 'app/enums/dns-authenticator-type.enum';
 import { AuthenticatorSchema, DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -49,7 +49,7 @@ describe('AcmednsFormComponent', () => {
         provide: SLIDE_IN_DATA,
         useValue: undefined,
       },
-      mockWebsocket([
+      mockWebSocket([
         mockCall('acme.dns.authenticator.create'),
         mockCall('acme.dns.authenticator.update'),
         mockCall('acme.dns.authenticator.authenticator_schemas', [{
@@ -69,7 +69,7 @@ describe('AcmednsFormComponent', () => {
           key: 'route53' as DnsAuthenticatorType,
           schema: [
             {
-              _name_: 'access_key_id', _required_: true, title: 'Access Key Id', type: 'string',
+              _name_: 'access_key_id', _required_: true, title: 'Access Key ID', type: 'string',
             },
             {
               _name_: 'secret_access_key', _required_: true, title: 'Secret Access Key', type: 'string',
@@ -111,14 +111,14 @@ describe('AcmednsFormComponent', () => {
       expect(values).toEqual({
         Name: 'name_test',
         Authenticator: 'route53',
-        'Access Key Id': 'access_key_id',
+        'Access Key ID': 'access_key_id',
         'Secret Access Key': 'secret_access_key',
       });
 
       expect(disabledState).toEqual({
         Name: false,
         Authenticator: false,
-        'Access Key Id': false,
+        'Access Key ID': false,
         'Secret Access Key': false,
       });
     });

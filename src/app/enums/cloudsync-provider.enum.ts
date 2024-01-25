@@ -1,6 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export enum CloudsyncProviderName {
+export enum CloudSyncProviderName {
   AmazonS3 = 'S3',
   BackblazeB2 = 'B2',
   Box = 'BOX',
@@ -21,23 +21,23 @@ export enum CloudsyncProviderName {
   Yandex = 'YANDEX',
 }
 
-export const cloudsyncProviderNameMap = new Map<CloudsyncProviderName, string>([
-  [CloudsyncProviderName.AmazonS3, T('Amazon S3')],
-  [CloudsyncProviderName.BackblazeB2, T('Backblaze B2')],
-  [CloudsyncProviderName.Box, T('Box')],
-  [CloudsyncProviderName.Dropbox, T('Dropbox')],
-  [CloudsyncProviderName.Ftp, T('FTP')],
-  [CloudsyncProviderName.GoogleCloudStorage, T('Google Cloud Storage')],
-  [CloudsyncProviderName.GoogleDrive, T('Google Drive')],
-  [CloudsyncProviderName.GooglePhotos, T('Google Photos')],
-  [CloudsyncProviderName.Hubic, T('Hubic')],
-  [CloudsyncProviderName.Http, T('HTTP')],
-  [CloudsyncProviderName.Mega, T('Mega')],
-  [CloudsyncProviderName.MicrosoftAzure, T('Microsoft Azure')],
-  [CloudsyncProviderName.OpenstackSwift, T('OpenStack Swift')],
-  [CloudsyncProviderName.Pcloud, T('pCloud')],
-  [CloudsyncProviderName.Sftp, T('SFTP')],
-  [CloudsyncProviderName.Storj, T('Storj')],
-  [CloudsyncProviderName.Webdav, T('WebDAV')],
-  [CloudsyncProviderName.Yandex, T('Yandex')],
+export const cloudSyncProviderNameMap = new Map<CloudSyncProviderName, string>([
+  [CloudSyncProviderName.AmazonS3, T('Amazon S3')],
+  [CloudSyncProviderName.BackblazeB2, T('Backblaze B2')],
+  [CloudSyncProviderName.Box, T('Box')],
+  [CloudSyncProviderName.Dropbox, T('Dropbox')],
+  [CloudSyncProviderName.Ftp, T('FTP')],
+  [CloudSyncProviderName.GoogleCloudStorage, T('Google Cloud Storage')],
+  [CloudSyncProviderName.GoogleDrive, T('Google Drive')],
+  [CloudSyncProviderName.GooglePhotos, T('Google Photos')],
+  [CloudSyncProviderName.Hubic, T('Hubic')],
+  [CloudSyncProviderName.Http, T('HTTP')],
+  [CloudSyncProviderName.Mega, T('Mega')],
+  [CloudSyncProviderName.MicrosoftAzure, T('Microsoft Azure')],
+  [CloudSyncProviderName.OpenstackSwift, T('OpenStack Swift')],
+  [CloudSyncProviderName.Pcloud, T('pCloud')],
+  [CloudSyncProviderName.Sftp, T('SFTP')],
+  [CloudSyncProviderName.Storj, T('Storj')],
+  [CloudSyncProviderName.Webdav, T('WebDAV')],
+  [CloudSyncProviderName.Yandex, T('Yandex')],
 ]);

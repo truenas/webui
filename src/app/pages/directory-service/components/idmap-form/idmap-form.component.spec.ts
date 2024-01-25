@@ -9,7 +9,7 @@ import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
-  mockCall, mockJob, mockWebsocket,
+  mockCall, mockJob, mockWebSocket,
 } from 'app/core/testing/utils/mock-websocket.utils';
 import { IdmapBackend, IdmapName, IdmapSslEncryptionMode } from 'app/enums/idmap.enum';
 import { helptextIdmap } from 'app/helptext/directory-service/idmap';
@@ -60,7 +60,7 @@ describe('IdmapFormComponent', () => {
       MockComponent(WithManageCertificatesLinkComponent),
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('idmap.create'),
         mockCall('idmap.update'),
         mockJob('idmap.clear_idmap_cache', fakeSuccessfulJob()),

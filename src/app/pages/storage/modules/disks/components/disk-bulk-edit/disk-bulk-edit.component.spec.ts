@@ -5,7 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { CoreBulkQuery, CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
@@ -59,7 +59,7 @@ describe('DiskBulkEditComponent', () => {
       mockProvider(IxSlideInRef),
       mockProvider(SnackbarService),
       mockProvider(DialogService),
-      mockWebsocket([
+      mockWebSocket([
         mockJob('core.bulk', fakeSuccessfulJob(mockJobSuccessResponse)),
       ]),
     ],

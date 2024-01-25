@@ -15,7 +15,7 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
-import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
+import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { haSettingsUpdated } from 'app/store/ha-info/ha-info.actions';
@@ -58,7 +58,7 @@ export class FailoverSettingsComponent implements OnInit {
     private translate: TranslateService,
     private snackbar: SnackbarService,
     private store$: Store<AppState>,
-    private wsManager: WebsocketConnectionService,
+    private wsManager: WebSocketConnectionService,
   ) {}
 
   ngOnInit(): void {
@@ -84,7 +84,7 @@ export class FailoverSettingsComponent implements OnInit {
             this.authService.logout().pipe(untilDestroyed(this)).subscribe({
               next: () => {
                 this.authService.clearAuthToken();
-                this.wsManager.closeWebsocketConnection();
+                this.wsManager.closeWebSocketConnection();
               },
             });
           }

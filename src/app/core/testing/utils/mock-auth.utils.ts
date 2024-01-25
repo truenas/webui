@@ -10,7 +10,7 @@ import { AccountAttribute } from 'app/enums/account-attribute.enum';
 import { Role } from 'app/enums/role.enum';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { AuthService } from 'app/services/auth/auth.service';
-import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
+import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 const dummyUser = {
@@ -39,7 +39,7 @@ export function mockAuth(
       provide: AuthService,
       useFactory: () => {
         const mockService = new MockAuthService(
-          createSpyObject(WebsocketConnectionService, {
+          createSpyObject(WebSocketConnectionService, {
             isConnected$: of(true),
           }),
           createSpyObject(Store),

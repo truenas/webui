@@ -2,7 +2,7 @@ import { environment } from 'environments/environment';
 import { MockEnclosureConfig } from 'app/core/testing/interfaces/mock-enclosure-utils.interface';
 import { ApiCallDirectory, ApiCallMethod } from 'app/interfaces/api/api-call-directory.interface';
 import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
-import { IncomingWebsocketMessage, ResultMessage } from 'app/interfaces/api-message.interface';
+import { IncomingWebSocketMessage, ResultMessage } from 'app/interfaces/api-message.interface';
 import { Disk, UnusedDisk } from 'app/interfaces/storage.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { MockStorageGenerator } from './mock-storage-generator.utils';
@@ -43,7 +43,7 @@ export class MockEnclosureUtils {
 
   overrideMessage<K extends ApiCallMethod | ApiJobMethod>(data: ResultMessage, method: K): ResultMessage {
     const mockData = this.enclosureOverrides(data.result, method);
-    const mockMessage: IncomingWebsocketMessage = {
+    const mockMessage: IncomingWebSocketMessage = {
       id: data.id,
       msg: data.msg,
       result: mockData,

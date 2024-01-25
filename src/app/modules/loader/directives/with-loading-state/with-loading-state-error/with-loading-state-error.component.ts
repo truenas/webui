@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 
 // TODO: Parse error and show something better than just "Error"
 @Component({
@@ -7,5 +7,5 @@ import { WebsocketError } from 'app/interfaces/websocket-error.interface';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WithLoadingStateErrorComponent {
-  @Input() error: Error | WebsocketError;
+  @Input() error: Error | WebSocketError;
 }

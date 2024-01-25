@@ -22,10 +22,10 @@ import { IncomingApiMessageType } from 'app/enums/api-message-type.enum';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { Role } from 'app/enums/role.enum';
 import { ApiCallDirectory, ApiCallMethod } from 'app/interfaces/api/api-call-directory.interface';
-import { IncomingWebsocketMessage, ResultMessage } from 'app/interfaces/api-message.interface';
+import { IncomingWebSocketMessage, ResultMessage } from 'app/interfaces/api-message.interface';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
-import { WebsocketConnectionService } from 'app/services/websocket-connection.service';
+import { WebSocketConnectionService } from 'app/services/websocket-connection.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { AppState } from 'app/store';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
@@ -81,7 +81,7 @@ export class AuthService {
   private cachedGlobalTwoFactorConfig: GlobalTwoFactorConfig;
 
   constructor(
-    private wsManager: WebsocketConnectionService,
+    private wsManager: WebSocketConnectionService,
     private store$: Store<AppState>,
     private ws: WebSocketService,
   ) {
@@ -233,7 +233,7 @@ export class AuthService {
       subscriber.next();
     }).pipe(take(1));
 
-    const uuidFilteredResponse$ = this.getFilteredWebsocketResponse<boolean>(uuid);
+    const uuidFilteredResponse$ = this.getFilteredWebSocketResponse<boolean>(uuid);
 
     return combineLatest([
       requestTrigger$,
@@ -244,9 +244,9 @@ export class AuthService {
     );
   }
 
-  private getFilteredWebsocketResponse<T>(uuid: string): Observable<T> {
+  private getFilteredWebSocketResponse<T>(uuid: string): Observable<T> {
     return this.wsManager.websocket$.pipe(
-      filter((data: IncomingWebsocketMessage) => data.msg === IncomingApiMessageType.Result && data.id === uuid),
+      filter((data: IncomingWebSocketMessage) => data.msg === IncomingApiMessageType.Result && data.id === uuid),
       map((data: ResultMessage<T>) => data.result),
       take(1),
     );
