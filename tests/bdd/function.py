@@ -359,3 +359,7 @@ def create_Encrypted_Pool(hostname, auth, pool_name):
         }
     }
     post_Pool(hostname, auth, pool_name, payload)
+
+
+def save_screenshot(driver, name):
+    driver.save_screenshot(name)

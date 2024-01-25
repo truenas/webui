@@ -8,7 +8,8 @@ import xpaths
 from function import (
     wait_on_element,
     is_element_present,
-    wait_on_element_disappear
+    wait_on_element_disappear,
+    save_screenshot
 )
 from pytest_bdd import (
     given,
@@ -29,7 +30,7 @@ def test_create_an_active_directory_dataset_on_a_system_dataset_pool():
 @given('the browser is open, the TrueNAS URL and logged in')
 def the_browser_is_open_the_truenas_url_and_logged_in(driver, nas_ip, root_password, request):
     """the browser is open, the TrueNAS URL and logged in."""
-    depends(request, ['AD_Setup'], scope='session')
+    #depends(request, ['AD_Setup'], scope='session')
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, xpaths.login.user_Input)
@@ -79,14 +80,15 @@ def on_the_add_dataset_slide_input_name_my_ad_dataset_and_share_type_smb(driver,
     assert wait_on_element(driver, 5, xpaths.add_Dataset.share_Type_SMB_Option, 'clickable')
     driver.find_element_by_xpath(xpaths.add_Dataset.share_Type_SMB_Option).click()
     time.sleep(2)
+    save_screenshot(driver, 'screenshot/before_uncheck_smb.png')
     rsc.Click_On_Element(driver, xpaths.add_Dataset.create_Smb_Checkbox)
+    save_screenshot(driver, 'screenshot/after_uncheck_smb.png')
 
 
 @then(parsers.parse('click Save the "{dataset_name}" data should be created'))
 def click_save_the_my_ad_dataset_data_should_be_created(driver, dataset_name):
     """click Save the "my_ad_dataset" data should be created."""
-    assert wait_on_element(driver, 5, xpaths.button.save, 'clickable')
-    driver.find_element_by_xpath(xpaths.button.save).click()
+    rsc.Click_On_Element(driver, xpaths.button.save)
     assert wait_on_element_disappear(driver, 60, xpaths.progress.progressbar)
     assert wait_on_element(driver, 10, xpaths.dataset.dataset_Name(dataset_name))
 
