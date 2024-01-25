@@ -5,8 +5,8 @@ import { MatIconTestingModule } from '@angular/material/icon/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { CoreComponents } from 'app/core/core-components.module';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
@@ -61,7 +61,7 @@ const poolInstance = {
 describe('BootStatusListComponent', () => {
   let spectator: Spectator<BootStatusListComponent>;
   let loader: HarnessLoader;
-  let websocket: MockWebsocketService;
+  let websocket: MockWebSocketService;
 
   const createComponent = createComponentFactory({
     component: BootStatusListComponent,
@@ -76,7 +76,7 @@ describe('BootStatusListComponent', () => {
       mockProvider(DialogService),
       mockProvider(SnackbarService),
       mockProvider(MatDialogRef),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('boot.get_state', poolInstance),
       ]),
     ],
@@ -89,7 +89,7 @@ describe('BootStatusListComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    websocket = spectator.inject(MockWebsocketService);
+    websocket = spectator.inject(MockWebSocketService);
   });
 
   it('loads boot pool state and shows it when one disk', async () => {

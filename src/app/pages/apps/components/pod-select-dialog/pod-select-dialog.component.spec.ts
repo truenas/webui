@@ -4,8 +4,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { PodSelectDialogType } from 'app/enums/pod-select-dialog.enum';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
@@ -26,7 +26,7 @@ describe('PodSelectDialogComponent', () => {
     ],
     providers: [
       mockProvider(MatDialogRef),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('chart.release.pod_console_choices', {
           pod1: ['container11', 'container12', 'container13'],
           pod2: ['container21', 'container22'],
@@ -129,7 +129,7 @@ describe('PodSelectDialogComponent', () => {
     });
 
     it('warning dialog should be displayed if there are no pods', () => {
-      const ws = spectator.inject(MockWebsocketService);
+      const ws = spectator.inject(MockWebSocketService);
       ws.mockCall('chart.release.pod_console_choices', {});
       spectator.component.ngOnInit();
       spectator.detectChanges();

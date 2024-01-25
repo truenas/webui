@@ -9,7 +9,7 @@ import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { helptextVolumes } from 'app/helptext/storage/volumes/volume-list';
 import { Pool } from 'app/interfaces/pool.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -57,7 +57,7 @@ describe('DashboardPoolComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('disk.query', []),
         mockCall('pool.upgrade'),
         mockJob('pool.expand', fakeSuccessfulJob()),

@@ -11,14 +11,14 @@ import { EmptyType } from 'app/enums/empty-type.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { VmBootloader, VmDeviceType } from 'app/enums/vm.enum';
-import { WebsocketErrorName } from 'app/enums/websocket-error-name.enum';
+import { WebSocketErrorName } from 'app/enums/websocket-error-name.enum';
 import { helptextGlobal } from 'app/helptext/global-helptext';
 import { helptextVmList } from 'app/helptext/vm/vm-list';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { ApiCallParams } from 'app/interfaces/api/api-call-directory.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { VirtualizationDetails, VirtualMachine, VirtualMachineUpdate } from 'app/interfaces/virtual-machine.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
@@ -265,9 +265,9 @@ export class VmListComponent implements EntityTableConfig<VirtualMachineRow> {
         }
         this.checkMemory();
       },
-      error: (error: WebsocketError) => {
+      error: (error: WebSocketError) => {
         this.loader.close();
-        if (method === this.wsMethods.start && error.errname === WebsocketErrorName.NoMemory) {
+        if (method === this.wsMethods.start && error.errname === WebSocketErrorName.NoMemory) {
           this.onMemoryError(row);
           return;
         }

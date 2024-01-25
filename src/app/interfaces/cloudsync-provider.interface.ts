@@ -1,17 +1,17 @@
-import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
+import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 
-export interface CloudsyncProvider {
+export interface CloudSyncProvider {
   bucket_title: string;
   buckets: boolean;
   credentials_oauth: string;
   credentials_schema: unknown[];
-  name: CloudsyncProviderName;
+  name: CloudSyncProviderName;
   task_schema: unknown[]; // Not really used
   title: string;
 }
 
-export type CloudsyncRestoreParams = [
+export type CloudSyncRestoreParams = [
   id: number,
   params: {
     description: string;

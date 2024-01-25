@@ -5,9 +5,9 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { TreeModule } from '@bugsplat/angular-tree-component';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { InitShutdownScriptType } from 'app/enums/init-shutdown-script-type.enum';
 import { InitShutdownScriptWhen } from 'app/enums/init-shutdown-script-when.enum';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
@@ -24,7 +24,7 @@ import { SystemGeneralService } from 'app/services/system-general.service';
 describe('InitShutdownFormComponent', () => {
   let spectator: Spectator<InitShutdownFormComponent>;
   let loader: HarnessLoader;
-  let ws: MockWebsocketService;
+  let ws: MockWebSocketService;
   const createComponent = createComponentFactory({
     component: InitShutdownFormComponent,
     imports: [
@@ -33,7 +33,7 @@ describe('InitShutdownFormComponent', () => {
       TreeModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('initshutdownscript.create'),
         mockCall('initshutdownscript.update'),
       ]),
@@ -57,7 +57,7 @@ describe('InitShutdownFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(MockWebsocketService);
+      ws = spectator.inject(MockWebSocketService);
     });
 
     it('saves values for new script when form is being submitted', async () => {
@@ -129,7 +129,7 @@ describe('InitShutdownFormComponent', () => {
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      ws = spectator.inject(MockWebsocketService);
+      ws = spectator.inject(MockWebSocketService);
     });
 
     it('shows current group values when form is being edited', async () => {

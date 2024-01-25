@@ -1,7 +1,7 @@
 import { SpectatorService, createServiceFactory } from '@ngneat/spectator/jest';
 import { TestScheduler } from 'rxjs/testing';
 import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { DashboardStorageStore } from 'app/pages/dashboard/store/dashboard-storage-store.service';
@@ -28,7 +28,7 @@ describe('DashboardStorageStoreService', () => {
   const createService = createServiceFactory({
     service: DashboardStorageStore,
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('pool.query', [
           {
             name: 'pool2',

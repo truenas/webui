@@ -4,7 +4,7 @@ import { MockComponent } from 'ng-mocks';
 import { MockStorageScenario } from 'app/core/testing/enums/mock-storage.enum';
 import { diskToDashboardDisk } from 'app/core/testing/utils/mock-storage-dashboard.utils';
 import { MockStorageGenerator } from 'app/core/testing/utils/mock-storage-generator.utils';
-import { mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
@@ -31,7 +31,7 @@ describe('TopologyCardComponent', () => {
       MockComponent(PoolCardIconComponent),
     ],
     providers: [
-      mockWebsocket([]),
+      mockWebSocket([]),
     ],
   });
 

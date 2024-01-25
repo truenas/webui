@@ -8,7 +8,7 @@ import { ImgFallbackModule } from 'ngx-img-fallback';
 import { BulkListItemComponent } from 'app/core/components/bulk-list-item/bulk-list-item.component';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { CoreBulkQuery } from 'app/interfaces/core-bulk.interface';
@@ -116,7 +116,7 @@ describe('AppBulkUpgradeComponent', () => {
       mockProvider(MatDialogRef),
       mockProvider(DialogService),
       mockProvider(SnackbarService),
-      mockWebsocket([
+      mockWebSocket([
         mockJob('core.bulk'),
         mockCall('chart.release.upgrade_summary', fakeUpgradeSummary),
         mockJob('chart.release.upgrade', fakeSuccessfulJob(fakeAppOne)),

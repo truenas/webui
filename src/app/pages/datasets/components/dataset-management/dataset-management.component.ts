@@ -38,7 +38,7 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { TreeDataSource } from 'app/modules/ix-tree/tree-datasource';
 import { TreeFlattener } from 'app/modules/ix-tree/tree-flattener';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
@@ -177,7 +177,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit, OnDes
     });
   }
 
-  handleError = (error: WebsocketError | Job): void => {
+  handleError = (error: WebSocketError | Job): void => {
     this.dialogService.error(this.errorHandler.parseError(error));
   };
 

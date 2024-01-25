@@ -70,12 +70,12 @@ import {
   CloudSyncTaskUpdate,
 } from 'app/interfaces/cloud-sync-task.interface';
 import {
-  CloudsyncBucket,
-  CloudsyncCredential,
-  CloudsyncCredentialUpdate,
-  CloudsyncCredentialVerify, CloudsyncCredentialVerifyResult,
+  CloudSyncBucket,
+  CloudSyncCredential,
+  CloudSyncCredentialUpdate,
+  CloudSyncCredentialVerify, CloudSyncCredentialVerifyResult,
 } from 'app/interfaces/cloudsync-credential.interface';
-import { CloudsyncProvider, CloudsyncRestoreParams } from 'app/interfaces/cloudsync-provider.interface';
+import { CloudSyncProvider, CloudSyncRestoreParams } from 'app/interfaces/cloudsync-provider.interface';
 import { ContainerConfig, ContainerConfigUpdate } from 'app/interfaces/container-config.interface';
 import {
   ContainerImage, DeleteContainerImageParams,
@@ -379,21 +379,21 @@ export interface ApiCallDirectory {
   'chart.release.query': { params: ChartReleaseQueryParams; response: ChartRelease[] };
   'chart.release.upgrade_summary': { params: ChartReleaseUpgradeParams; response: UpgradeSummary };
 
-  // Cloudsync
+  // CloudSync
   'cloudsync.abort': { params: [id: number]; response: boolean };
   'cloudsync.create': { params: [CloudSyncTaskUpdate]; response: CloudSyncTask };
   'cloudsync.create_bucket': { params: [number, string]; response: void };
-  'cloudsync.credentials.create': { params: [CloudsyncCredentialUpdate]; response: CloudsyncCredential };
+  'cloudsync.credentials.create': { params: [CloudSyncCredentialUpdate]; response: CloudSyncCredential };
   'cloudsync.credentials.delete': { params: [id: number]; response: boolean };
-  'cloudsync.credentials.query': { params: QueryParams<CloudsyncCredential>; response: CloudsyncCredential[] };
-  'cloudsync.credentials.update': { params: [id: number, update: CloudsyncCredentialUpdate]; response: CloudsyncCredential };
-  'cloudsync.credentials.verify': { params: [CloudsyncCredentialVerify]; response: CloudsyncCredentialVerifyResult };
+  'cloudsync.credentials.query': { params: QueryParams<CloudSyncCredential>; response: CloudSyncCredential[] };
+  'cloudsync.credentials.update': { params: [id: number, update: CloudSyncCredentialUpdate]; response: CloudSyncCredential };
+  'cloudsync.credentials.verify': { params: [CloudSyncCredentialVerify]; response: CloudSyncCredentialVerifyResult };
   'cloudsync.delete': { params: [id: number]; response: boolean };
-  'cloudsync.list_buckets': { params: [id: number]; response: CloudsyncBucket[] };
+  'cloudsync.list_buckets': { params: [id: number]; response: CloudSyncBucket[] };
   'cloudsync.list_directory': { params: [CloudSyncListDirectoryParams]; response: CloudSyncDirectoryListing[] };
-  'cloudsync.providers': { params: void; response: CloudsyncProvider[] };
+  'cloudsync.providers': { params: void; response: CloudSyncProvider[] };
   'cloudsync.query': { params: QueryParams<CloudSyncTask>; response: CloudSyncTask[] };
-  'cloudsync.restore': { params: CloudsyncRestoreParams; response: void };
+  'cloudsync.restore': { params: CloudSyncRestoreParams; response: void };
   'cloudsync.update': { params: [id: number, task: CloudSyncTaskUpdate]; response: CloudSyncTask };
 
   // Container

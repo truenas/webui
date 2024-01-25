@@ -3,9 +3,9 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IpmiEvent } from 'app/interfaces/ipmi.interface';
 import { EntityEmptyComponent } from 'app/modules/entity/entity-empty/entity-empty.component';
 import {
@@ -23,7 +23,7 @@ describe('IpmiEventsDialogComponent', () => {
       EntityEmptyComponent,
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockJob('ipmi.sel.elist', fakeSuccessfulJob([
           {
             id: 1,
@@ -70,8 +70,8 @@ describe('IpmiEventsDialogComponent', () => {
 
   describe('no events', () => {
     beforeEach(() => {
-      const mockedWebsocket = spectator.inject(MockWebsocketService);
-      mockedWebsocket.mockJob('ipmi.sel.elist', fakeSuccessfulJob([] as IpmiEvent[]));
+      const mockedWebSocket = spectator.inject(MockWebSocketService);
+      mockedWebSocket.mockJob('ipmi.sel.elist', fakeSuccessfulJob([] as IpmiEvent[]));
 
       spectator.component.ngOnInit();
       spectator.detectChanges();

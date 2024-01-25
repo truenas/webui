@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { ContainerConfig } from 'app/interfaces/container-config.interface';
 import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
@@ -29,7 +29,7 @@ describe('KubernetesSettingsComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('kubernetes.config', {
           node_ip: '10.123.45.67',
           route_v4_interface: 'enp0s7',

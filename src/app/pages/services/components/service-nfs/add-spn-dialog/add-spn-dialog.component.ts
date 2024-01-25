@@ -6,7 +6,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
-import { CloudsyncRestoreDialogComponent } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
+import { CloudSyncRestoreDialogComponent } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -28,7 +28,7 @@ export class AddSpnDialogComponent {
     private errorHandler: ErrorHandlerService,
     private formBuilder: FormBuilder,
     private translate: TranslateService,
-    private dialogRef: MatDialogRef<CloudsyncRestoreDialogComponent>,
+    private dialogRef: MatDialogRef<CloudSyncRestoreDialogComponent>,
     private dialogService: DialogService,
     private loader: AppLoaderService,
   ) { }

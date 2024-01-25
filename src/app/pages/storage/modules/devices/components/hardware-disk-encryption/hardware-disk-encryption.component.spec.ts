@@ -4,7 +4,7 @@ import {
 } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Disk, TopologyDisk } from 'app/interfaces/storage.interface';
 import {
   ManageDiskSedDialogComponent,
@@ -17,7 +17,7 @@ describe('HardwareDiskEncryptionComponent', () => {
   const createComponent = createComponentFactory({
     component: HardwareDiskEncryptionComponent,
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('disk.query', [{ passwd: '' } as Disk]),
         mockCall('system.advanced.sed_global_password_is_set', true),
       ]),

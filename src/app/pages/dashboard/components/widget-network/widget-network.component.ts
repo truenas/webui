@@ -19,7 +19,7 @@ import { LinkState, NetworkInterfaceAliasType } from 'app/enums/network-interfac
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { BaseNetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
 import { NetworkInterfaceUpdate, ReportingDatabaseError, ReportingNameAndId } from 'app/interfaces/reporting.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { ResourcesUsageStore } from 'app/pages/dashboard/store/resources-usage-store.service';
@@ -421,7 +421,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
           this.nicInfoMap[networkInterfaceName].chartData = chartData;
           this.cdr.markForCheck();
         },
-        error: (err: WebsocketError) => {
+        error: (err: WebSocketError) => {
           this.nicInfoMap[networkInterfaceName].emptyConfig = this.chartDataError(err, nic);
           this.cdr.markForCheck();
         },
@@ -429,7 +429,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements OnInit, A
     });
   }
 
-  chartDataError(err: WebsocketError, nic: BaseNetworkInterface): EmptyConfig {
+  chartDataError(err: WebSocketError, nic: BaseNetworkInterface): EmptyConfig {
     if (err.error === (ReportingDatabaseError.InvalidTimestamp as number)) {
       const errorMessage = err.reason ? err.reason.replace('[EINVALIDRRDTIMESTAMP] ', '') : null;
       const helpMessage = this.translate.instant('You can clear reporting database and start data collection immediately.');

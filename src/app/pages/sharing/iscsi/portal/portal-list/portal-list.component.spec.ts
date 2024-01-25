@@ -6,7 +6,7 @@ import { SpectatorRouting } from '@ngneat/spectator';
 import { mockProvider, createRoutingFactory } from '@ngneat/spectator/jest';
 import { of, pipe } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Choices } from 'app/interfaces/choices.interface';
 import { IscsiPortal } from 'app/interfaces/iscsi.interface';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
@@ -53,7 +53,7 @@ describe('PortalListComponent', () => {
       mockProvider(AppLoaderService, {
         withLoader: jest.fn(() => pipe()),
       }),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('iscsi.portal.query', portals),
         mockCall('iscsi.portal.delete'),
         mockCall('iscsi.portal.listen_ip_choices', { '0.0.0.0': '0.0.0.0' } as Choices),

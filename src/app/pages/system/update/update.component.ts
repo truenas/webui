@@ -19,7 +19,7 @@ import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { SystemUpdateTrain } from 'app/interfaces/system-update.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -186,7 +186,7 @@ export class UpdateComponent implements OnInit {
           // To remember train description if user switches away and then switches back
           this.trainDescriptionOnPageLoad = this.currentTrainDescription;
         },
-        error: (error: WebsocketError) => {
+        error: (error: WebSocketError) => {
           this.dialogService.warn(
             error.trace.class,
             this.translate.instant('TrueNAS was unable to reach update servers.'),
@@ -374,7 +374,7 @@ export class UpdateComponent implements OnInit {
         }
         this.showSpinner = false;
       },
-      error: (err: WebsocketError) => {
+      error: (err: WebSocketError) => {
         this.generalUpdateError = `${err.reason.replace('>', '').replace('<', '')}: ${this.translate.instant('Automatic update check failed. Please check system network settings.')}`;
         this.showSpinner = false;
       },
@@ -479,7 +479,7 @@ export class UpdateComponent implements OnInit {
           this.dialogService.info(this.translate.instant('Check Now'), this.translate.instant('No updates available.'));
         }
       },
-      error: (error: WebsocketError) => {
+      error: (error: WebSocketError) => {
         this.dialogService.error({
           title: this.translate.instant('Error checking for updates.'),
           message: error.reason,
