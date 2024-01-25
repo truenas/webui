@@ -25,14 +25,14 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ExportButtonComponent<T, M extends ApiJobMethod> {
-  @Input() method: M;
+  @Input() jobMethod: M;
   @Input() searchQuery: SearchQuery<T>;
   @Input() defaultFilters: QueryFilters<T>;
   @Input() sorting: TableSort<T>;
   @Input() filename = 'data';
   @Input() fileType = 'csv';
   @Input() fileMimeType = 'text/csv';
-  @Input() coreDownloadMethod?: keyof ApiCallDirectory;
+  @Input() downloadMethod?: keyof ApiCallDirectory;
 
   isLoading = false;
 
@@ -46,7 +46,7 @@ export class ExportButtonComponent<T, M extends ApiJobMethod> {
 
   onExport(): void {
     this.isLoading = true;
-    this.ws.job(this.method, this.getExportParams(
+    this.ws.job(this.jobMethod, this.getExportParams(
       this.getQueryFilters(this.searchQuery),
       this.getQueryOptions(this.sorting),
     )).pipe(
@@ -60,7 +60,7 @@ export class ExportButtonComponent<T, M extends ApiJobMethod> {
           return EMPTY;
         }
         const url = job.result as string;
-        return this.ws.call('core.download', [this.coreDownloadMethod || this.method, [{}], url]);
+        return this.ws.call('core.download', [this.downloadMethod || this.jobMethod, [{}], url]);
       }),
       switchMap(([, url]) => this.storage.downloadUrl(url, `${this.filename}.${this.fileType}`, this.fileMimeType)),
       catchError((error) => {
