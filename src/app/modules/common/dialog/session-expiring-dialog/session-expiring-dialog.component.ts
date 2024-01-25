@@ -14,9 +14,6 @@ import { ConfirmOptionsWithSecondaryCheckbox } from 'app/interfaces/dialog.inter
 export class SessionExpiringDialogComponent {
   options: ConfirmOptionsWithSecondaryCheckbox;
 
-  isSubmitEnabled = false;
-  isSecondaryCheckboxChecked = false;
-
   constructor(
     private dialogRef: MatDialogRef<SessionExpiringDialogComponent>,
     @Inject(MAT_DIALOG_DATA) options: ConfirmOptionsWithSecondaryCheckbox,

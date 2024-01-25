@@ -908,3 +908,4 @@ export interface ApiCallDirectory {
 export type ApiCallMethod = keyof ApiCallDirectory;
 
 export type ApiCallParams<T extends ApiCallMethod> = ApiCallDirectory[T]['params'];
+export type ApiCallResponse<T extends ApiCallMethod> = ApiCallDirectory[T]['response'];

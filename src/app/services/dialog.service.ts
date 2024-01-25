@@ -4,7 +4,7 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 import { Observable, of } from 'rxjs';
 import { JobProgressDialogRef } from 'app/classes/job-progress-dialog-ref.class';
 import { JobProgressDialog } from 'app/classes/job-progress-dialog.class';
-import { ApiJobDirectory, ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
+import { ApiJobMethod, ApiJobResponse } from 'app/interfaces/api/api-job-directory.interface';
 import {
   ConfirmOptions,
   ConfirmOptionsWithSecondaryCheckbox,
@@ -127,7 +127,7 @@ export class DialogService {
   }
 
   jobProgress<M extends ApiJobMethod>(
-    job$: Observable<Job<ApiJobDirectory[M]['response']>>,
+    job$: Observable<Job<ApiJobResponse<M>>>,
     { title, description, showRealtimeLogs }: {
       title?: string;
       description?: string;

@@ -27,11 +27,9 @@ import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import * as _ from 'lodash';
 import {
-  Observable, of, Subscription, EMPTY, Subject, BehaviorSubject,
+  Observable, Subscription, EMPTY, Subject, BehaviorSubject,
 } from 'rxjs';
-import {
-  catchError, filter, switchMap, take, tap,
-} from 'rxjs/operators';
+import { take } from 'rxjs/operators';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
@@ -43,14 +41,12 @@ import { Job } from 'app/interfaces/job.interface';
 import { TableDisplayedColumns } from 'app/interfaces/preferences.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { WebSocketError } from 'app/interfaces/websocket-error.interface';
-import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import {
   EntityTableAction,
   EntityTableColumn, EntityTableColumnProp,
-  EntityTableConfig, EntityTableConfigConfig, EntityTableConfirmDialog, SomeRow,
+  EntityTableConfig, EntityTableConfigConfig, SomeRow,
 } from 'app/modules/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { selectJob } from 'app/modules/jobs/store/job.selectors';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -887,47 +883,6 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
     });
   }
 
-  doDeleteJob(item: Row): Observable<{ state: JobState } | boolean> {
-    const deleteMsg = this.getDeleteMessage(item);
-    let id: string | number;
-    if (this.conf.config.deleteMsg && this.conf.config.deleteMsg.id_prop) {
-      id = item[this.conf.config.deleteMsg.id_prop] as string | number;
-    } else {
-      id = item.id;
-    }
-    let dialog: EntityTableConfirmDialog = {};
-    if (this.conf.confirmDeleteDialog) {
-      dialog = this.conf.confirmDeleteDialog;
-    }
-
-    return this.dialogService
-      .confirm({
-        title: dialog.hasOwnProperty('title') ? dialog.title : this.translate.instant('Delete'),
-        message: dialog.hasOwnProperty('message') ? dialog.message + deleteMsg : deleteMsg,
-        hideCheckbox: dialog.hasOwnProperty('hideCheckbox') ? dialog.hideCheckbox : false,
-        buttonText: dialog.hasOwnProperty('button') ? dialog.button : this.translate.instant('Delete'),
-      })
-      .pipe(
-        filter(Boolean),
-        tap(() => {
-          this.loader.open();
-          this.loaderOpen = true;
-        }),
-        switchMap(() => {
-          const params = this.conf.wsDeleteParams ? this.conf.wsDeleteParams(this.toDeleteRow, id) : [id];
-          return this.ws.call(this.conf.wsDelete as ApiCallMethod, params as ApiCallParams<ApiCallMethod>).pipe(
-            take(1),
-            catchError((error) => {
-              this.dialogService.error(this.errorHandler.parseError(error));
-              this.loader.close();
-              return of(false);
-            }),
-          );
-        }),
-        switchMap((jobId: number) => (jobId ? this.store$.select(selectJob(jobId)) : of(false))),
-      );
-  }
-
   getMultiDeleteMessage(items: Row[]): string {
     let deleteMsg = 'Delete the selected items?';
     if (this.conf.config.deleteMsg) {
@@ -1143,18 +1098,6 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
       default:
         return 'fn-theme-primary';
     }
-  }
-
-  runningStateButton(jobid: number): void {
-    const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: this.translate.instant('Task is running') } });
-    dialogRef.componentInstance.jobId = jobid;
-    dialogRef.componentInstance.wsshow();
-    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-      dialogRef.close();
-    });
-    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe(() => {
-      dialogRef.close();
-    });
   }
 
   get columnsProps(): string[] {

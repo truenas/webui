@@ -35,10 +35,6 @@ export interface SupportConfig {
 
 export type SupportConfigUpdate = Omit<SupportConfig, 'id'>;
 
-export type FetchSupportParams = [
-  token: string,
-];
-
 export interface NewTicketResponse {
   ticket: number;
   url: string;
