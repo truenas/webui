@@ -9,7 +9,7 @@ import {
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { IxInputHarness } from 'app/modules/ix-forms/components/ix-input/ix-input.harness';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -54,7 +54,7 @@ describe('CertificateEditComponent', () => {
       IxFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockJob('certificate.update'),
       ]),
       mockProvider(MatDialog),

@@ -13,7 +13,7 @@ import {
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptext2fa } from 'app/helptext/system/2fa';
 import { ErrorReport } from 'app/interfaces/error-report.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { AuthService } from 'app/services/auth/auth.service';
 import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -96,12 +96,12 @@ export class TwoFactorComponent implements OnInit, OnDestroy {
       filter(Boolean),
       switchMap(() => this.renewSecretForUser()),
       tap(() => this.toggleLoading(false)),
-      catchError((error: WebsocketError) => this.handleError(error)),
+      catchError((error: WebSocketError) => this.handleError(error)),
       untilDestroyed(this),
     ).subscribe();
   }
 
-  private handleError(error: WebsocketError): Observable<boolean> {
+  private handleError(error: WebSocketError): Observable<boolean> {
     this.toggleLoading(false);
 
     return this.dialogService.error({

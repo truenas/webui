@@ -5,8 +5,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIconHarness } from '@angular/material/icon/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { DirectoryServicesState } from 'app/interfaces/directory-services-state.interface';
@@ -25,7 +25,7 @@ describe('DirectoryServicesIndicatorComponent', () => {
   const createComponent = createComponentFactory({
     component: DirectoryServicesIndicatorComponent,
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('directoryservices.get_state', {
           activedirectory: DirectoryServiceState.Healthy,
           ldap: DirectoryServiceState.Disabled,
@@ -65,7 +65,7 @@ describe('DirectoryServicesIndicatorComponent', () => {
     const icon = spectator.query('button');
     expect(icon).toExist();
 
-    const websocketMock = spectator.inject(MockWebsocketService);
+    const websocketMock = spectator.inject(MockWebSocketService);
     websocketMock.subscribe.mockImplementation(() => of({
       fields: {
         activedirectory: DirectoryServiceState.Disabled,

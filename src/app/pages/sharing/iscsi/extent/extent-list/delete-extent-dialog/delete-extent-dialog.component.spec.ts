@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { IscsiExtentType } from 'app/enums/iscsi.enum';
 import { IscsiExtent } from 'app/interfaces/iscsi.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -25,7 +25,7 @@ describe('DeleteExtentDialogComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('iscsi.extent.delete'),
       ]),
       mockProvider(MatDialogRef),

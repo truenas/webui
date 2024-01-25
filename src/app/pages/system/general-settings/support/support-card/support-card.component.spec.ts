@@ -9,7 +9,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
-import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { SystemInfo, SystemLicense } from 'app/interfaces/system-info.interface';
 import { AppLoaderService } from 'app/modules/loader/app-loader.service';
@@ -42,7 +42,7 @@ describe('SupportCardComponent', () => {
       mockProvider(DialogService),
       mockProvider(MatSnackBar),
       mockProvider(AppLoaderService),
-      mockWebsocket([
+      mockWebSocket([
         mockCall('truenas.is_production', true),
         mockJob('truenas.set_production'),
       ]),

@@ -6,9 +6,9 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { BulkListItemComponent } from 'app/core/components/bulk-list-item/bulk-list-item.component';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockJob, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { PullContainerImageResponse } from 'app/interfaces/container-image.interface';
 import { CoreBulkQuery, CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -58,7 +58,7 @@ describe('DockerImageUpdateDialogComponent', () => {
       mockProvider(AppLoaderService),
       mockProvider(MatDialogRef),
       mockProvider(DialogService),
-      mockWebsocket([
+      mockWebSocket([
         mockJob('core.bulk'),
         mockJob('container.image.pull', fakeSuccessfulJob()),
       ]),
@@ -78,7 +78,7 @@ describe('DockerImageUpdateDialogComponent', () => {
         [{ from_image: 'truenas/middleware', tag: '0.1.2' }],
       ],
     ];
-    spectator.inject(MockWebsocketService).mockJob('core.bulk', fakeSuccessfulJob(mockSuccessBulkResponse, jobArguments));
+    spectator.inject(MockWebSocketService).mockJob('core.bulk', fakeSuccessfulJob(mockSuccessBulkResponse, jobArguments));
 
     expect(spectator.fixture.nativeElement).toHaveText('The following 2 docker images will be updated. Are you sure you want to proceed?');
 
@@ -100,7 +100,7 @@ describe('DockerImageUpdateDialogComponent', () => {
         [{ from_image: 'truenas/middleware', tag: '0.1.2' }],
       ],
     ];
-    spectator.inject(MockWebsocketService).mockJob('core.bulk', fakeSuccessfulJob(mockFailedBulkResponse, jobArguments));
+    spectator.inject(MockWebSocketService).mockJob('core.bulk', fakeSuccessfulJob(mockFailedBulkResponse, jobArguments));
 
     const updateButton = await loader.getHarness(MatButtonHarness.with({ text: 'Update' }));
     await updateButton.click();

@@ -25,7 +25,7 @@
   }
 
   &:focus-within {
-    border: thin solid var(--primary);
+    outline: 1.5px solid var(--primary);
   }
 
   .reset-input {

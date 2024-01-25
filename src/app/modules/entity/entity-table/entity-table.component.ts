@@ -42,7 +42,7 @@ import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { TableDisplayedColumns } from 'app/interfaces/preferences.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import {
   EntityTableAction,
@@ -552,7 +552,7 @@ export class EntityTableComponent<Row extends SomeRow = SomeRow> implements OnIn
       next: (response) => {
         this.handleData(response, skipActions);
       },
-      error: (error: WebsocketError) => {
+      error: (error: WebSocketError) => {
         this.isTableEmpty = true;
         this.configureEmptyTable(EmptyType.Errors, String(error.error) || error.reason);
         if (this.loaderOpen) {

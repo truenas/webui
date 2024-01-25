@@ -6,22 +6,24 @@
   <ng-container *ngIf="componentsSize > 1 && !disableClose">
     <button
       mat-icon-button
+      id="ix-close-icon"
       [ixTest]="['close-slide-in']"
       [matTooltip]="tooltip"
       (click)="close()"
     >
-      <ix-icon id="ix-close-icon" name="mdi-chevron-left" ></ix-icon>
+      <ix-icon name="mdi-chevron-left" ></ix-icon>
     </button>
   </ng-container>
   <h3 class="ix-form-title">{{ title | translate }}</h3>
   <ng-container *ngIf="componentsSize <= 1 && !disableClose">
     <button
       mat-icon-button
+      id="ix-close-icon"
       [ixTest]="['close-slide-in']"
       [matTooltip]="tooltip"
       (click)="close()"
     >
-      <ix-icon id="ix-close-icon" name="cancel" ></ix-icon>
+      <ix-icon name="cancel" (keydown.enter)="close()"></ix-icon>
     </button>
   </ng-container>
 </div>

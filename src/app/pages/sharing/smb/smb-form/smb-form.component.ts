@@ -36,7 +36,7 @@ import {
   SmbPresetType,
   SmbShare,
 } from 'app/interfaces/smb-share.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { ChipsProvider } from 'app/modules/ix-forms/components/ix-chips/chips-provider';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
 import { SLIDE_IN_DATA } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.token';
@@ -475,7 +475,7 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
           this.slideInRef.close(true);
         }
       },
-      error: (error: WebsocketError) => {
+      error: (error: WebSocketError) => {
         if (error?.reason?.includes('[ENOENT]') || error?.reason?.includes('[EXDEV]')) {
           this.dialogService.closeAllDialogs();
         }

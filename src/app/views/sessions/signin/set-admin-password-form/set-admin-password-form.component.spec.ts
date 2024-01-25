@@ -4,8 +4,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { MockWebSocketService } from 'app/core/testing/classes/mock-websocket.service';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { SystemEnvironment } from 'app/enums/system-environment.enum';
 import { IxRadioGroupHarness } from 'app/modules/ix-forms/components/ix-radio-group/ix-radio-group.harness';
@@ -30,7 +30,7 @@ describe('SetAdminPasswordFormComponent', () => {
       IxFormsModule,
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('user.setup_local_administrator'),
         mockCall('system.environment', SystemEnvironment.Default),
       ]),
@@ -92,7 +92,7 @@ describe('SetAdminPasswordFormComponent', () => {
   });
 
   it('checks environment status and shows EC2 Instance ID when environment is EC2', async () => {
-    const websocket = spectator.inject(MockWebsocketService);
+    const websocket = spectator.inject(MockWebSocketService);
     websocket.mockCall('system.environment', SystemEnvironment.Ec2);
 
     spectator.component.ngOnInit();

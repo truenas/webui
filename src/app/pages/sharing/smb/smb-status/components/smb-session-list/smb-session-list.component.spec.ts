@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
-import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { SmbSession } from 'app/interfaces/smb-status.interface';
 import { AppCommonModule } from 'app/modules/common/app-common.module';
 import { EntityModule } from 'app/modules/entity/entity.module';
@@ -47,7 +47,7 @@ describe('SmbSessionListComponent', () => {
   const createComponent = createComponentFactory({
     component: SmbSessionListComponent,
     imports: [AppLoaderModule, EntityModule, IxTable2Module, AppCommonModule],
-    providers: [mockWebsocket([mockCall('smb.status', sessions)])],
+    providers: [mockWebSocket([mockCall('smb.status', sessions)])],
   });
 
   beforeEach(async () => {

@@ -1,50 +1,50 @@
-import { CloudsyncProviderName } from 'app/enums/cloudsync-provider.enum';
-import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
+import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
+import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 
 export const httpProvider = {
-  name: CloudsyncProviderName.Http,
+  name: CloudSyncProviderName.Http,
   title: 'Http',
   buckets: false,
   bucket_title: 'Bucket',
   task_schema: [],
   credentials_schema: [],
   credentials_oauth: null,
-} as CloudsyncProvider;
+} as CloudSyncProvider;
 
 export const megaProvider = {
-  name: CloudsyncProviderName.Mega,
+  name: CloudSyncProviderName.Mega,
   title: 'Mega',
   buckets: false,
   bucket_title: 'Bucket',
   task_schema: [],
   credentials_schema: [],
   credentials_oauth: null,
-} as CloudsyncProvider;
+} as CloudSyncProvider;
 
 export const storjProvider = {
-  name: CloudsyncProviderName.Storj,
+  name: CloudSyncProviderName.Storj,
   title: 'Storj iX',
   credentials_schema: [],
   credentials_oauth: null,
   buckets: true,
   bucket_title: 'Bucket',
   task_schema: [],
-} as CloudsyncProvider;
+} as CloudSyncProvider;
 
 export const googlePhotosProvider = {
-  name: CloudsyncProviderName.GooglePhotos,
+  name: CloudSyncProviderName.GooglePhotos,
   title: 'Google Photos',
   credentials_schema: [],
   credentials_oauth: null,
   buckets: false,
   bucket_title: 'Bucket',
   task_schema: [],
-} as CloudsyncProvider;
+} as CloudSyncProvider;
 
 export const googlePhotosCreds = {
   id: 1,
   name: 'Google Photos',
-  provider: CloudsyncProviderName.GooglePhotos,
+  provider: CloudSyncProviderName.GooglePhotos,
   attributes: {
     client_id: 'test-client-id',
     client_secret: 'test-client-secret',
@@ -55,7 +55,7 @@ export const googlePhotosCreds = {
 export const httpProviderCreds = {
   id: 2,
   name: 'HTTP Provider',
-  provider: CloudsyncProviderName.Http,
+  provider: CloudSyncProviderName.Http,
   attributes: {
     url: 'http',
   },
@@ -64,7 +64,7 @@ export const httpProviderCreds = {
 export const megaProviderCreds = {
   id: 3,
   name: 'test2',
-  provider: CloudsyncProviderName.Mega,
+  provider: CloudSyncProviderName.Mega,
   attributes: {
     user: 'login',
     pass: 'password',

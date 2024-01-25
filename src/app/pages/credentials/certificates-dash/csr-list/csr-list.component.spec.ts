@@ -7,7 +7,7 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockWebsocket, mockCall, mockJob } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockWebSocket, mockCall, mockJob } from 'app/core/testing/utils/mock-websocket.utils';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { IxSlideInRef } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in-ref';
@@ -69,7 +69,7 @@ describe('CertificateSigningRequestsListComponent', () => {
       IxTable2Module,
     ],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('certificate.query', certificates),
         mockJob('certificate.delete', fakeSuccessfulJob(true)),
       ]),

@@ -2,7 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory } from '@ngneat/spectator/jest';
-import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockWebSocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
 import { Nfs3Session, Nfs4Session, NfsType } from 'app/interfaces/nfs-share.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxTable2Harness } from 'app/modules/ix-table2/components/ix-table2/ix-table2.harness';
@@ -44,7 +44,7 @@ describe('NfsSessionListComponent', () => {
     component: NfsSessionListComponent,
     imports: [AppLoaderModule, EntityModule, IxTable2Module],
     providers: [
-      mockWebsocket([
+      mockWebSocket([
         mockCall('nfs.get_nfs3_clients', nfs3Sessions),
         mockCall('nfs.get_nfs4_clients', nfs4Sessions),
       ]),

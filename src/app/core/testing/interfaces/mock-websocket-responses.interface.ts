@@ -2,21 +2,21 @@ import { ApiCallDirectory, ApiCallMethod, ApiCallParams } from 'app/interfaces/a
 import { ApiJobDirectory, ApiJobMethod, ApiJobParams } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
 
-export enum MockWebsocketResponseType {
+export enum MockWebSocketResponseType {
   // eslint-disable-next-line @typescript-eslint/no-shadow
   Job = 'job',
   Call = 'call',
 }
 
-export interface MockWebsocketCallResponse {
-  type: MockWebsocketResponseType.Call;
+export interface MockWebSocketCallResponse {
+  type: MockWebSocketResponseType.Call;
   method: ApiCallMethod;
   response: unknown;
   id?: number;
 }
 
-export interface MockWebsocketJobResponse {
-  type: MockWebsocketResponseType.Job;
+export interface MockWebSocketJobResponse {
+  type: MockWebSocketResponseType.Job;
   method: ApiJobMethod;
   response: Job | ((params: unknown) => Job);
   id?: number;

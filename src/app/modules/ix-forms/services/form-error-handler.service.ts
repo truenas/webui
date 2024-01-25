@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { AbstractControl, UntypedFormArray, UntypedFormGroup } from '@angular/forms';
 import { ResponseErrorType } from 'app/enums/response-error-type.enum';
 import { Job } from 'app/interfaces/job.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { WebSocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogService } from 'app/services/dialog.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 
@@ -24,7 +24,7 @@ export class FormErrorHandlerService {
     formGroup: UntypedFormGroup,
     fieldsMap: Record<string, string> = {},
   ): void {
-    if (this.errorHandler.isWebsocketError(error) && error.type === ResponseErrorType.Validation && error.extra) {
+    if (this.errorHandler.isWebSocketError(error) && error.type === ResponseErrorType.Validation && error.extra) {
       this.handleValidationError(error, formGroup, fieldsMap);
       return;
     }
@@ -43,11 +43,11 @@ export class FormErrorHandlerService {
   }
 
   private handleValidationError(
-    error: WebsocketError | Job,
+    error: WebSocketError | Job,
     formGroup: UntypedFormGroup,
     fieldsMap: Record<string, string>,
   ): void {
-    const extra = (error as WebsocketError).extra as string[][];
+    const extra = (error as WebSocketError).extra as string[][];
     for (const extraItem of extra) {
       const field = extraItem[0].split('.').pop();
       const errorMessage = extraItem[1];

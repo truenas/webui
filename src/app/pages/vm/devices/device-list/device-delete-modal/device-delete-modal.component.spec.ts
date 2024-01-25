@@ -6,7 +6,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import {
   createComponentFactory, mockProvider, Spectator, SpectatorFactory,
 } from '@ngneat/spectator/jest';
-import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { mockCall, mockWebSocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { VmDeviceType } from 'app/enums/vm.enum';
 import { VmDevice, VmDiskDevice, VmRawFileDevice } from 'app/interfaces/vm-device.interface';
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
@@ -28,7 +28,7 @@ describe('DeviceDeleteModalComponent', () => {
         ReactiveFormsModule,
       ],
       providers: [
-        mockWebsocket([
+        mockWebSocket([
           mockCall('vm.device.delete'),
         ]),
         mockProvider(DialogService),

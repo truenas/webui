@@ -1,3 +1,4 @@
+import { A11yModule } from '@angular/cdk/a11y';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
@@ -90,6 +91,7 @@ import { WithManageCertificatesLinkComponent } from './components/with-manage-ce
     MatDialogModule,
     MatButtonToggleModule,
     OauthButtonModule,
+    A11yModule,
   ],
   declarations: [
     IxInputComponent,
