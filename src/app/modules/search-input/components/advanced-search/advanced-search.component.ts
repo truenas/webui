@@ -37,6 +37,7 @@ const setDiagnostics = StateEffect.define<unknown[] | null>();
 export class AdvancedSearchComponent<T> implements OnInit {
   @Input() query: QueryFilters<T> = [];
   @Input() properties: SearchProperty<T>[] = [];
+  @Input() placeholder = this.translate.instant('Service = "SMB" AND Event = "CLOSE"');
 
   @Output() paramsChange = new EventEmitter<QueryFilters<T>>();
   @Output() switchToBasic = new EventEmitter<void>();
@@ -121,14 +122,13 @@ export class AdvancedSearchComponent<T> implements OnInit {
       state: EditorState.create({
         extensions: [
           autocompleteExtension,
-          EditorView.lineWrapping,
           updateListener,
-          closeBrackets(),
-          // TODO: Extract placeholder into a property with a default value (or auto-build one based on the properties).
-          placeholder(this.translate.instant('Service = "SMB" AND Event = "CLOSE"')),
           advancedSearchLinter,
           diagnosticField,
           customKeyMap,
+          EditorView.lineWrapping,
+          closeBrackets(),
+          placeholder(this.placeholder),
         ],
       }),
       parent: this.inputArea.nativeElement,
