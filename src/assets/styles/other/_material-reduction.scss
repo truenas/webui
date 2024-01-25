@@ -871,6 +871,18 @@ body .mat-calendar-next-button::after {
   }
 }
 
+body .mat-vertical-content {
+  @media(max-width: $breakpoint-sm) {
+    padding: 0 8px 8px;
+  }
+}
+
+.hide-xs {
+  @media(max-width: $breakpoint-xs) {
+    display: none;
+  }
+}
+
 ix-table2,
 table {
   overflow: auto;

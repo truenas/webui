@@ -53,7 +53,7 @@ export enum ConnectorType {
 }
 
 export function isConditionGroup(node: ConditionGroup | Condition): node is ConditionGroup {
-  return (node as ConditionGroup).connector !== undefined;
+  return (node as ConditionGroup)?.connector !== undefined;
 }
 
 export enum ParsedToken {
