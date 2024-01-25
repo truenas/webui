@@ -917,3 +917,8 @@ mat-list-item {
     word-wrap: break-word;
   }
 }
+
+.highlighted-element {
+  outline: 1.5px solid var(--primary) !important;
+  transition: 0.3s ease all;
+}
