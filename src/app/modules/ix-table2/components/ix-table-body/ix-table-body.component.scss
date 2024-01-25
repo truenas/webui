@@ -1,3 +1,5 @@
+@import 'scss-imports/splitview';
+
 :host {
   background: var(--bg2);
 }
@@ -24,6 +26,10 @@
     text-align: left;
     text-overflow: ellipsis;
     white-space: nowrap;
+
+    @media(max-width: $breakpoint-sm) {
+      padding: 0 8px;
+    }
   }
 
   .toggle-cell {
@@ -47,6 +53,10 @@
     font-size: 14px;
     padding: 0 16px;
     position: relative;
+
+    @media(max-width: $breakpoint-sm) {
+      padding: 0 8px;
+    }
   }
 }
 

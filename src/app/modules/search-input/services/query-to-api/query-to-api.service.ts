@@ -31,7 +31,9 @@ export class QueryToApiService<T> {
       return;
     }
 
-    paramsGroup.filter(...this.buildCondition(node));
+    if (node) {
+      paramsGroup.filter(...this.buildCondition(node));
+    }
   }
 
   private buildGroup(paramsGroup: ParamsBuilderGroup<T>, conditionGroup: ConditionGroup): void {

@@ -1,3 +1,5 @@
+@import 'scss-imports/splitview';
+
 tr {
   th {
     font-size: 12px;
@@ -7,6 +9,10 @@ tr {
     text-align: left;
     text-overflow: ellipsis;
     white-space: nowrap;
+
+    @media(max-width: $breakpoint-sm) {
+      padding: 0 8px;
+    }
 
     .title-container {
       align-items: center;
