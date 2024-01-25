@@ -13,17 +13,17 @@ import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 describe('ExportButtonComponent', () => {
-  const method: ApiJobMethod = 'audit.export';
+  const jobMethod: ApiJobMethod = 'audit.export';
   type EntryType = AuditEntry;
 
-  let spectator: Spectator<ExportButtonComponent<EntryType, typeof method>>;
+  let spectator: Spectator<ExportButtonComponent<EntryType, typeof jobMethod>>;
   let loader: HarnessLoader;
 
   const createComponent = createComponentFactory({
-    component: ExportButtonComponent<EntryType, typeof method>,
+    component: ExportButtonComponent<EntryType, typeof jobMethod>,
     providers: [
       mockWebSocket([
-        mockJob(method, { result: '/path/data.csv', state: JobState.Success } as Job<string>),
+        mockJob(jobMethod, { result: '/path/data.csv', state: JobState.Success } as Job<string>),
         mockCall('core.download', [33456, '/_download/33456?auth_token=1234567890']),
       ]),
       mockProvider(StorageService, {
@@ -35,7 +35,7 @@ describe('ExportButtonComponent', () => {
   beforeEach(() => {
     spectator = createComponent({
       props: {
-        method,
+        jobMethod,
         defaultFilters: [['event', '~', '(?i)search query']],
       },
     });
@@ -46,12 +46,12 @@ describe('ExportButtonComponent', () => {
     const exportButton = await loader.getHarness(MatButtonHarness.with({ text: 'Export As CSV' }));
     await exportButton.click();
 
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(method, [{
+    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(jobMethod, [{
       export_format: 'CSV',
       'query-filters': [],
       'query-options': {},
     }]);
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('core.download', [method, [{}], '/path/data.csv']);
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('core.download', [jobMethod, [{}], '/path/data.csv']);
     expect(spectator.inject(StorageService).downloadUrl).toHaveBeenLastCalledWith(
       '/_download/33456?auth_token=1234567890',
       'data.csv',
@@ -74,12 +74,12 @@ describe('ExportButtonComponent', () => {
     const exportButton = await loader.getHarness(MatButtonHarness.with({ text: 'Export As CSV' }));
     await exportButton.click();
 
-    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(method, [{
+    expect(spectator.inject(WebSocketService).job).toHaveBeenCalledWith(jobMethod, [{
       export_format: 'CSV',
       'query-filters': [['event', '~', '(?i)search query']],
       'query-options': { order_by: ['-service'] },
     }]);
-    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('core.download', [method, [{}], '/path/data.csv']);
+    expect(spectator.inject(WebSocketService).call).toHaveBeenCalledWith('core.download', [jobMethod, [{}], '/path/data.csv']);
     expect(spectator.inject(StorageService).downloadUrl).toHaveBeenLastCalledWith(
       '/_download/33456?auth_token=1234567890',
       'data.csv',
