@@ -21,7 +21,6 @@ import { FeedbackService } from 'app/modules/feedback/services/feedback.service'
 import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { ImageValidatorService } from 'app/modules/ix-forms/validators/image-validator/image-validator.service';
 import { OauthButtonType } from 'app/modules/oauth-button/interfaces/oauth-button.interface';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { DialogService } from 'app/services/dialog.service';
 
 @UntilDestroy()
@@ -64,7 +63,6 @@ export class FileTicketComponent {
     private translate: TranslateService,
     private imageValidator: ImageValidatorService,
     private formErrorHandler: FormErrorHandlerService,
-    private snackbar: SnackbarService,
   ) {}
 
   onSubmit(token: string): void {
@@ -77,13 +75,13 @@ export class FileTicketComponent {
         return this.addAttachmentsIfNeeded({
           token,
           ticketId: createdTicket.ticket,
-        });
+        }).pipe(switchMap(() => of(createdTicket)));
       }),
       finalize(() => this.isLoadingChange.emit(false)),
       untilDestroyed(this),
     )
       .subscribe({
-        complete: () => this.onSuccess(),
+        next: (createdTicket) => this.onSuccess(createdTicket.url),
         error: (error) => this.formErrorHandler.handleWsFormError(error, this.form),
       });
   }
@@ -128,12 +126,8 @@ export class FileTicketComponent {
     );
   }
 
-  private onSuccess(): void {
-    this.snackbar.success(
-      this.translate.instant(
-        'Thank you for sharing your feedback with us! Your insights are valuable in helping us improve our product.',
-      ),
-    );
+  private onSuccess(ticketUrl: string): void {
+    this.feedbackService.showSnackbar(ticketUrl);
     this.dialogRef.close();
   }
 }

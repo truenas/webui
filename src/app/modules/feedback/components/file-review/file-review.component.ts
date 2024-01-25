@@ -28,7 +28,6 @@ import {
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
 import { ImageValidatorService } from 'app/modules/ix-forms/validators/image-validator/image-validator.service';
 import { rangeValidator } from 'app/modules/ix-forms/validators/range-validation/range-validation';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ErrorHandlerService } from 'app/services/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
@@ -69,7 +68,6 @@ export class FileReviewComponent {
     private systemGeneralService: SystemGeneralService,
     private feedbackService: FeedbackService,
     private translate: TranslateService,
-    private snackbar: SnackbarService,
     @Inject(WINDOW) private window: Window,
   ) {}
 
@@ -163,11 +161,7 @@ export class FileReviewComponent {
   }
 
   private onSuccess(): void {
-    this.snackbar.success(
-      this.translate.instant(
-        'Thank you for sharing your feedback with us! Your insights are valuable in helping us improve our product.',
-      ),
-    );
+    this.feedbackService.showSnackbar();
     this.dialogRef.close();
   }
 }

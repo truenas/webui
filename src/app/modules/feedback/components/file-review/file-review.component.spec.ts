@@ -16,7 +16,6 @@ import { FeedbackService } from 'app/modules/feedback/services/feedback.service'
 import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { ImageValidatorService } from 'app/modules/ix-forms/validators/image-validator/image-validator.service';
-import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { SystemInfoState } from 'app/store/system-info/system-info.reducer';
 import { selectSystemInfoState } from 'app/store/system-info/system-info.selectors';
@@ -71,7 +70,6 @@ describe('FileReviewComponent', () => {
         takeScreenshot: jest.fn(() => of(fakeScreenshot)),
         addReviewAttachment: jest.fn(() => of(undefined)),
       }),
-      mockProvider(SnackbarService),
       mockProvider(ImageValidatorService, {
         validateImages: () => () => of(null as ValidationErrors),
       }),
@@ -113,7 +111,7 @@ describe('FileReviewComponent', () => {
 
     expect(feedbackService.addReview).toHaveBeenCalledWith(expectedReview);
     expect(dialogRef.close).toHaveBeenCalled();
-    expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
+    expect(feedbackService.showSnackbar).toHaveBeenCalledWith();
   });
 
   it('takes screenshot and uploads it when corresponding checkbox is ticked', async () => {

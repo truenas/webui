@@ -1,6 +1,8 @@
 import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
+import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
 import { Store } from '@ngrx/store';
+import { TranslateService } from '@ngx-translate/core';
 import html2canvas, { Options } from 'html2canvas';
 import {
   BehaviorSubject,
@@ -8,6 +10,7 @@ import {
 } from 'rxjs';
 import { catchError, take } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
+import { WINDOW } from 'app/helpers/window.helper';
 import {
   AddReview, AttachmentAddedResponse, ReviewAddedResponse,
 } from 'app/modules/feedback/interfaces/feedback.interface';
@@ -16,6 +19,8 @@ import {
   NewTicketResponse,
   SimilarIssue,
 } from 'app/modules/feedback/interfaces/file-ticket.interface';
+import { SnackbarConfig } from 'app/modules/snackbar/components/snackbar/snackbar-config.interface';
+import { SnackbarComponent } from 'app/modules/snackbar/components/snackbar/snackbar.component';
 import { IxFileUploadService } from 'app/services/ix-file-upload.service';
 import { SentryService } from 'app/services/sentry.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -39,6 +44,9 @@ export class FeedbackService {
     private systemGeneralService: SystemGeneralService,
     private sentryService: SentryService,
     private fileUpload: IxFileUploadService,
+    private matSnackBar: MatSnackBar,
+    private translate: TranslateService,
+    @Inject(WINDOW) private window: Window,
   ) {}
 
   getHostId(): Observable<string> {
@@ -180,6 +188,26 @@ export class FeedbackService {
         return throwError(() => new Error('Not all images were uploaded.'));
       }),
     );
+  }
+
+  showSnackbar(ticketUrl?: string): MatSnackBarRef<SnackbarComponent> {
+    const data: SnackbarConfig = {
+      message: this.translate.instant(
+        'Thank you for sharing your feedback with us! Your insights are valuable in helping us improve our product.',
+      ),
+      icon: 'check',
+      iconCssColor: 'var(--green)',
+    };
+
+    if (ticketUrl) {
+      data.message = this.translate.instant('Thank you. Ticket was submitted succesfully.');
+      data.button = {
+        title: this.translate.instant('Open ticket'),
+        action: () => this.window.open(ticketUrl, '_blank'),
+      };
+    }
+
+    return this.matSnackBar.openFromComponent(SnackbarComponent, { data });
   }
 
   private addTicketAttachment({
