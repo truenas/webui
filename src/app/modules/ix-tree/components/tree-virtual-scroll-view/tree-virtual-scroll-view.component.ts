@@ -91,7 +91,9 @@ export class TreeVirtualScrollViewComponent<T> extends Tree<T> implements OnChan
   }
 
   ngOnDestroy(): void {
-    this.scrollableElement.removeAllListeners();
+    if (this.scrollableElement) {
+      this.scrollableElement.removeEventListener('scroll', this.scrolled.bind(this));
+    }
   }
 
   scrollToTop(): void {
