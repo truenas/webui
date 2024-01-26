@@ -12,13 +12,7 @@ export function formatInterfaceUnit(value: string): string {
       changedValue += ' ' + value[value.length - 1];
       value = changedValue;
     }
-    if (value?.endsWith('b')) {
-      value += 'it/s';
-    } else if (value?.endsWith('B')) {
-      value += '/s';
-    } else {
-      value += 'bit/s';
-    }
+    value += 'b/s';
   }
   return value;
 }
