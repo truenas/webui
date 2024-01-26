@@ -5,7 +5,7 @@ import {
   GiB, KiB, MiB, TiB,
 } from 'app/constants/bytes.constant';
 
-export function base2Conversion(value: number, baseUnit: 'b' | 'B'): [formatted: number, unit: string] {
+export function normalizeFileSizeBase2(value: number, baseUnit: 'b' | 'B'): [formatted: number, unit: string] {
   let formatted = value;
   let increment = 1;
   while (formatted >= 1024) {
@@ -27,7 +27,7 @@ export function base2Conversion(value: number, baseUnit: 'b' | 'B'): [formatted:
   }
 }
 
-export function base10Conversion(value: number, baseUnit: 'b' | 'B'): [formatted: number, unit: string] {
+export function normalizeFileSizeBase10(value: number, baseUnit: 'b' | 'B'): [formatted: number, unit: string] {
   let formatted = value;
   let increment = 1;
   while (formatted >= 1000) {

@@ -11,7 +11,7 @@ import {
 } from 'app/constants/bytes.constant';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { ReportingGraphName } from 'app/enums/reporting.enum';
-import { base10Conversion } from 'app/helpers/filesize.utils';
+import { normalizeFileSizeBase10 } from 'app/helpers/filesize.utils';
 import { ReportingData } from 'app/interfaces/reporting.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { Theme } from 'app/interfaces/theme.interface';
@@ -268,7 +268,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
 
   axisLabelFormatter = (numero: number): string => {
     if (this.report?.name === ReportingGraphName.NetworkInterface) {
-      const [formatted] = base10Conversion(numero * 1000, 'b');
+      const [formatted] = normalizeFileSizeBase10(numero * 1000, 'b');
       return formatted.toString();
     }
     const converted = this.formatLabelValue(numero, this.inferUnits(this.labelY), 1, true, true);
@@ -298,7 +298,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
     clone.series.forEach((item: dygraphs.SeriesLegendData, index: number): void => {
       if (!item.y) { return; }
       if (this.report.name === ReportingGraphName.NetworkInterface) {
-        const [formatted, unit] = base10Conversion(item.y * 1000, 'b');
+        const [formatted, unit] = normalizeFileSizeBase10(item.y * 1000, 'b');
         clone.series[index].yHTML = formatted + ' ' + unit + '/s';
         if (item.y < 1) {
           clone.series[index].yHTML = clone.series[index].yHTML.replace('b/s', 'bit/s');
@@ -332,7 +332,7 @@ export class LineChartComponent implements AfterViewInit, OnDestroy, OnChanges {
     if (dygraph.axes_.length) {
       const numero = dygraph.axes_[0].maxyval;
       if (this.report?.name === ReportingGraphName.NetworkInterface) {
-        const [, unit] = base10Conversion(numero * 1000, 'b');
+        const [, unit] = normalizeFileSizeBase10(numero * 1000, 'b');
         this.yLabelPrefix = unit;
         return;
       }

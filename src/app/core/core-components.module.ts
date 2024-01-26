@@ -14,8 +14,8 @@ import { CopyButtonComponent } from 'app/core/components/copy-btn/copy-btn.compo
 import { IxDetailsHeightDirective } from 'app/core/components/directives/details-height/details-height.directive';
 import { TextLimiterTooltipComponent } from 'app/core/components/directives/text-limiter/text-limiter-tooltip/text-limiter-tooltip.component';
 import { TextLimiterDirective } from 'app/core/components/directives/text-limiter/text-limiter.directive';
-import { Base10BytesPipe } from 'app/core/pipes/base-10-bytes.pipe';
-import { Base2BytesPipe } from 'app/core/pipes/base-2-bytes.pipe';
+import { Base10SizePipe } from 'app/core/pipes/base-10-size.pipe';
+import { Base2SizePipe } from 'app/core/pipes/base-2-size.pipe';
 import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
 import { MapValuePipe } from 'app/core/pipes/map-value.pipe';
 import { ScheduleToCrontabPipe } from 'app/core/pipes/schedule-to-crontab.pipe';
@@ -54,8 +54,8 @@ import { CleanLinkPipe } from './pipes/clean-link.pipe';
     YesNoPipe,
     BulkListItemComponent,
     CleanLinkPipe,
-    Base2BytesPipe,
-    Base10BytesPipe,
+    Base2SizePipe,
+    Base10SizePipe,
     ScheduleToCrontabPipe,
     DragHandleComponent,
     UptimePipe,
@@ -75,8 +75,8 @@ import { CleanLinkPipe } from './pipes/clean-link.pipe';
     MapValuePipe,
     YesNoPipe,
     CleanLinkPipe,
-    Base2BytesPipe,
-    Base10BytesPipe,
+    Base2SizePipe,
+    Base10SizePipe,
     ScheduleToCrontabPipe,
     UptimePipe,
   ],
