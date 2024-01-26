@@ -10,6 +10,8 @@ on:
       - '**'
     paths-ignore:
       - 'tests/**'
+  pull_request_target:
+    types: [opened, synchronize, reopened]
 
 jobs:
   install:
